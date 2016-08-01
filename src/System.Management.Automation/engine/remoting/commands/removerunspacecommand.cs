@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Remoting;
- 
+
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Host;
 using System.Diagnostics.CodeAnalysis;
@@ -47,20 +47,20 @@ namespace Microsoft.PowerShell.Commands
                    Position = 0,
                    ValueFromPipeline = true,
                    ValueFromPipelineByPropertyName = true,
-                   ParameterSetName=RemovePSSessionCommand.SessionParameterSet)]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]           
+                   ParameterSetName = RemovePSSessionCommand.SessionParameterSet)]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public PSSession[] Session
         {
             get
             {
-                return remoteRunspaceInfos;
+                return _remoteRunspaceInfos;
             }
             set
             {
-                remoteRunspaceInfos = value;
+                _remoteRunspaceInfos = value;
             }
         }
-        private PSSession[] remoteRunspaceInfos;
+        private PSSession[] _remoteRunspaceInfos;
 
         /// <summary>
         /// ID of target container.
@@ -73,10 +73,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public override string[] ContainerId
         {
-            get { return containerId; }
-            set { containerId = value; }
+            get { return _containerId; }
+            set { _containerId = value; }
         }
-        private string[] containerId;
+        private string[] _containerId;
 
         /// <summary>
         /// Guid of target virtual machine.
@@ -90,10 +90,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("VMGuid")]
         public override Guid[] VMId
         {
-            get { return vmId; }
-            set { vmId = value; }
+            get { return _vmId; }
+            set { _vmId = value; }
         }
-        private Guid[] vmId;
+        private Guid[] _vmId;
 
         /// <summary>
         /// Name of target virtual machine.
@@ -106,10 +106,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public override string[] VMName
         {
-            get { return vmName; }
-            set { vmName = value; }
+            get { return _vmName; }
+            set { _vmName = value; }
         }
-        private string[] vmName;
+        private string[] _vmName;
 
         #endregion Parameters
 
@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 case RemovePSSessionCommand.SessionParameterSet:
                     {
-                        toRemove = remoteRunspaceInfos;
+                        toRemove = _remoteRunspaceInfos;
                     }
                     break;
                 default:
@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
                             string msg = System.Management.Automation.Internal.StringUtil.Format(
                                 RemotingErrorIdStrings.RemoveRunspaceNotConnected, remoteRunspace.PSSessionName);
                             Exception reason = new RuntimeException(msg);
-                            ErrorRecord errorRecord = new ErrorRecord(reason, "RemoveSessionCannotConnectToServer", 
+                            ErrorRecord errorRecord = new ErrorRecord(reason, "RemoveSessionCannotConnectToServer",
                                 ErrorCategory.InvalidOperation, remoteRunspace);
                             WriteError(errorRecord);
 

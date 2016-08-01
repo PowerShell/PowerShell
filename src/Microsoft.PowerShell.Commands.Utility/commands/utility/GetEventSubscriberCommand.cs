@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Collections.Generic;
 using System.Management.Automation;
@@ -10,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Lists all event subscribers.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "EventSubscriber", DefaultParameterSetName="BySource", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135155")]
+    [Cmdlet(VerbsCommon.Get, "EventSubscriber", DefaultParameterSetName = "BySource", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135155")]
     [OutputType(typeof(PSEventSubscriber))]
     public class GetEventSubscriberCommand : PSCmdlet
     {
@@ -24,19 +25,19 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return sourceIdentifier;
+                return _sourceIdentifier;
             }
             set
             {
-                sourceIdentifier = value;
+                _sourceIdentifier = value;
 
-                if(value != null)
+                if (value != null)
                 {
-                    matchPattern = WildcardPattern.Get(value, WildcardOptions.IgnoreCase);
+                    _matchPattern = WildcardPattern.Get(value, WildcardOptions.IgnoreCase);
                 }
             }
         }
-        private string sourceIdentifier = null;
+        private string _sourceIdentifier = null;
 
         /// <summary>
         /// An identifier for this event subscription
@@ -47,14 +48,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return subscriptionId;
+                return _subscriptionId;
             }
             set
             {
-                subscriptionId = value;
+                _subscriptionId = value;
             }
         }
-        private int subscriptionId = -1;
+        private int _subscriptionId = -1;
 
 
         /// <summary>
@@ -65,18 +66,18 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return force;
+                return _force;
             }
             set
             {
-                force = value;
+                _force = value;
             }
         }
-        private SwitchParameter force;
+        private SwitchParameter _force;
 
         #endregion parameters
 
-        WildcardPattern matchPattern;
+        private WildcardPattern _matchPattern;
 
         /// <summary>
         /// Get the subscribers
@@ -88,18 +89,18 @@ namespace Microsoft.PowerShell.Commands
             // Go through all the received events and write them to the output
             // pipeline
             List<PSEventSubscriber> subscribers = new List<PSEventSubscriber>(Events.Subscribers);
-            foreach(PSEventSubscriber subscriber in subscribers)
+            foreach (PSEventSubscriber subscriber in subscribers)
             {
                 // If they specified a event identifier and we don't match, continue
-                if((sourceIdentifier != null) &&
-                   (! matchPattern.IsMatch(subscriber.SourceIdentifier)))
+                if ((_sourceIdentifier != null) &&
+                   (!_matchPattern.IsMatch(subscriber.SourceIdentifier)))
                 {
                     continue;
                 }
 
                 // If they specified a subscription identifier and we don't match, continue
-                if((subscriptionId >= 0) &&
-                    (subscriber.SubscriptionId != subscriptionId))
+                if ((_subscriptionId >= 0) &&
+                    (subscriber.SubscriptionId != _subscriptionId))
                 {
                     continue;
                 }
@@ -109,35 +110,35 @@ namespace Microsoft.PowerShell.Commands
                 {
                     continue;
                 }
-               
+
                 WriteObject(subscriber);
                 foundMatch = true;
             }
 
             // Generate an error if we couldn't find the subscription identifier,
             // and no globbing was done.
-            if(! foundMatch)
+            if (!foundMatch)
             {
-                bool lookingForSource = (sourceIdentifier != null) &&
-                    (! WildcardPattern.ContainsWildcardCharacters(sourceIdentifier));
-                bool lookingForId = (subscriptionId >= 0);
-                
-                if(lookingForSource || lookingForId)
+                bool lookingForSource = (_sourceIdentifier != null) &&
+                    (!WildcardPattern.ContainsWildcardCharacters(_sourceIdentifier));
+                bool lookingForId = (_subscriptionId >= 0);
+
+                if (lookingForSource || lookingForId)
                 {
                     object identifier = null;
                     string error = null;
 
-                    if(lookingForSource)
+                    if (lookingForSource)
                     {
-                        identifier = sourceIdentifier;
+                        identifier = _sourceIdentifier;
                         error = EventingStrings.EventSubscriptionSourceNotFound;
                     }
-                    else if(lookingForId)
+                    else if (lookingForId)
                     {
-                        identifier = subscriptionId;
+                        identifier = _subscriptionId;
                         error = EventingStrings.EventSubscriptionNotFound;
                     }
-                    
+
                     ErrorRecord errorRecord = new ErrorRecord(
                         new ArgumentException(String.Format(System.Globalization.CultureInfo.CurrentCulture, error, identifier)),
                         "INVALID_SOURCE_IDENTIFIER",
@@ -146,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
 
                     WriteError(errorRecord);
                 }
-             }
+            }
         }
     }
 }

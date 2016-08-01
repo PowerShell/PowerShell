@@ -21,7 +21,7 @@ using System;
 
 
 namespace System.Management.Automation.Remoting
-{    
+{
     /// <summary>
     /// This struct is used to represent contents from configuration xml. The
     /// XML is passed to plugins by WSMan API.
@@ -51,12 +51,12 @@ namespace System.Management.Automation.Remoting
         internal const string SESSIONCONFIGTOKEN = "sessionconfigurationdata";
         internal const string PSVERSIONTOKEN = "PSVersion";
         internal const string MAXPSVERSIONTOKEN = "MaxPSVersion";
-		internal const string MODULESTOIMPORT = "ModulesToImport";
-		internal const string HOSTMODE = "hostmode";
-		internal const string ENDPOINTCONFIGURATIONTYPE = "sessiontype";
-		internal const string WORKFLOWCOREASSEMBLY = "Microsoft.PowerShell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL";
-		internal const string WORKFLOWCORETYPENAME = "Microsoft.PowerShell.Workflow.PSWorkflowSessionConfiguration";
-		internal const string PSWORKFLOWMODULE = "%windir%\\system32\\windowspowershell\\v1.0\\Modules\\PSWorkflow";
+        internal const string MODULESTOIMPORT = "ModulesToImport";
+        internal const string HOSTMODE = "hostmode";
+        internal const string ENDPOINTCONFIGURATIONTYPE = "sessiontype";
+        internal const string WORKFLOWCOREASSEMBLY = "Microsoft.PowerShell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL";
+        internal const string WORKFLOWCORETYPENAME = "Microsoft.PowerShell.Workflow.PSWorkflowSessionConfiguration";
+        internal const string PSWORKFLOWMODULE = "%windir%\\system32\\windowspowershell\\v1.0\\Modules\\PSWorkflow";
         internal const string CONFIGFILEPATH = "configfilepath";
         internal const string CONFIGFILEPATH_CamelCase = "ConfigFilePath";
 
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Remoting
                     break;
                 case MAXRCVDCMDSIZETOKEN:
                     AssertValueNotAssigned(MAXRCVDCMDSIZETOKEN, MaxReceivedCommandSizeMB);
-                    MaxReceivedCommandSizeMB = GetIntValueInBytes(optionValue);                    
+                    MaxReceivedCommandSizeMB = GetIntValueInBytes(optionValue);
                     break;
                 case THREADOPTIONSTOKEN:
                     AssertValueNotAssigned(THREADOPTIONSTOKEN, ShellThreadOptions);
@@ -171,7 +171,7 @@ namespace System.Management.Automation.Remoting
             if (originalValue != null)
             {
                 throw PSTraceSource.NewArgumentException(optionName,
-                    RemotingErrorIdStrings.DuplicateInitializationParameterFound, optionName, INITPARAMETERSTOKEN); 
+                    RemotingErrorIdStrings.DuplicateInitializationParameterFound, optionName, INITPARAMETERSTOKEN);
             }
         }
 
@@ -315,7 +315,7 @@ namespace System.Management.Automation.Remoting
         {
             try
             {
-                return (PSSessionConfiguration)Activator.CreateInstance(EndPointConfigurationType);                
+                return (PSSessionConfiguration)Activator.CreateInstance(EndPointConfigurationType);
             }
             catch (TypeLoadException)
             {
@@ -351,7 +351,7 @@ namespace System.Management.Automation.Remoting
         /// Tracer for Server Remote session
         /// </summary>
         [TraceSourceAttribute("ServerRemoteSession", "ServerRemoteSession")]
-        private static readonly PSTraceSource tracer = PSTraceSource.GetTracer("ServerRemoteSession", "ServerRemoteSession");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ServerRemoteSession", "ServerRemoteSession");
         #endregion tracer
 
         #region public interfaces
@@ -371,7 +371,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="sessionConfigurationData"></param>
         /// <param name="senderInfo"></param>
-		/// <param name="configProviderId"></param>
+        /// <param name="configProviderId"></param>
         /// <returns></returns>
         public virtual InitialSessionState GetInitialSessionState(PSSessionConfigurationData sessionConfigurationData,
             PSSenderInfo senderInfo, string configProviderId)
@@ -423,7 +423,7 @@ namespace System.Management.Automation.Remoting
         }
 
         #endregion
-        
+
         #region IDisposable Overrides
 
         /// <summary>
@@ -447,7 +447,7 @@ namespace System.Management.Automation.Remoting
         #endregion
 
         #region GetInitialSessionState from 3rd party shell ids
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -472,14 +472,14 @@ namespace System.Management.Automation.Remoting
         {
             ConfigurationDataFromXML configData = null;
 
-            if (!ssnStateProviders.ContainsKey(initializationParameters))
+            if (!s_ssnStateProviders.ContainsKey(initializationParameters))
             {
                 LoadRSConfigProvider(shellId, initializationParameters);
             }
 
-            lock (syncObject)
+            lock (s_syncObject)
             {
-                if (!ssnStateProviders.TryGetValue(initializationParameters, out configData))
+                if (!s_ssnStateProviders.TryGetValue(initializationParameters, out configData))
                 {
                     throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.NonExistentInitialSessionStateProvider, shellId);
                 }
@@ -493,16 +493,16 @@ namespace System.Management.Automation.Remoting
             ConfigurationDataFromXML configData = ConfigurationDataFromXML.Create(initializationParameters);
 
             Type endPointConfigType = LoadAndAnalyzeAssembly(shellId,
-                configData.ApplicationBase, 
-                configData.AssemblyName, 
+                configData.ApplicationBase,
+                configData.AssemblyName,
                 configData.EndPointConfigurationTypeName);
             Dbg.Assert(endPointConfigType != null, "EndPointConfiguration type cannot be null");
             configData.EndPointConfigurationType = endPointConfigType;
-            lock (syncObject)
+            lock (s_syncObject)
             {
-                if (!ssnStateProviders.ContainsKey(initializationParameters))
+                if (!s_ssnStateProviders.ContainsKey(initializationParameters))
                 {
-                    ssnStateProviders.Add(initializationParameters, configData);
+                    s_ssnStateProviders.Add(initializationParameters, configData);
                 }
             }
         }
@@ -524,16 +524,16 @@ namespace System.Management.Automation.Remoting
         /// Type instance representing the EndPointConfiguration to load.
         /// This Type can be instantiated when needed.
         /// </returns>
-        private static Type LoadAndAnalyzeAssembly(string shellId, string applicationBase, 
+        private static Type LoadAndAnalyzeAssembly(string shellId, string applicationBase,
             string assemblyName, string typeToLoad)
-        {         
+        {
             if ((string.IsNullOrEmpty(assemblyName) && !string.IsNullOrEmpty(typeToLoad)) ||
                  (!string.IsNullOrEmpty(assemblyName) && string.IsNullOrEmpty(typeToLoad)))
             {
                 throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.TypeNeedsAssembly,
                     ConfigurationDataFromXML.ASSEMBLYTOKEN,
                     ConfigurationDataFromXML.SHELLCONFIGTYPETOKEN,
-                    ConfigurationDataFromXML.INITPARAMETERSTOKEN);                    
+                    ConfigurationDataFromXML.INITPARAMETERSTOKEN);
             }
 
             Assembly assembly = null;
@@ -550,7 +550,7 @@ namespace System.Management.Automation.Remoting
                         assemblyName, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
                 }
             }
-            
+
             // configuration xml specified an assembly and typetoload.
             if (null != assembly)
             {
@@ -596,7 +596,7 @@ namespace System.Management.Automation.Remoting
 
             // load the default PowerShell since plugin config
             // did not specify a typename to load.
-            return  typeof(DefaultRemotePowerShellConfiguration);
+            return typeof(DefaultRemotePowerShellConfiguration);
         }
 
         /// <summary>
@@ -625,32 +625,32 @@ namespace System.Management.Automation.Remoting
                 }
                 catch (ArgumentException e)
                 {
-                    tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
+                    s_tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
                         applicationBase, e.Message);
                 }
                 catch (PathTooLongException e)
                 {
-                    tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
+                    s_tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
                            applicationBase, e.Message);
                 }
                 catch (FileNotFoundException e)
                 {
-                    tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
+                    s_tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
                         applicationBase, e.Message);
                 }
                 catch (IOException e)
                 {
-                    tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
+                    s_tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
                         applicationBase, e.Message);
                 }
                 catch (System.Security.SecurityException e)
                 {
-                    tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
+                    s_tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
                            applicationBase, e.Message);
                 }
                 catch (UnauthorizedAccessException e)
                 {
-                    tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
+                    s_tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
                         applicationBase, e.Message);
                 }
             }
@@ -666,22 +666,22 @@ namespace System.Management.Automation.Remoting
                 }
                 catch (FileLoadException e)
                 {
-                    tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
+                    s_tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
                 }
                 catch (BadImageFormatException e)
                 {
-                    tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
+                    s_tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
                 }
                 catch (FileNotFoundException e)
                 {
-                    tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
+                    s_tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
                 }
 
                 if (null != result)
                 {
                     return result;
                 }
-                tracer.WriteLine("Loading assembly from path {0}", applicationBase);
+                s_tracer.WriteLine("Loading assembly from path {0}", applicationBase);
                 try
                 {
                     String assemblyPath;
@@ -705,15 +705,15 @@ namespace System.Management.Automation.Remoting
                 }
                 catch (FileLoadException e)
                 {
-                    tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
+                    s_tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
                 }
                 catch (BadImageFormatException e)
                 {
-                    tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
+                    s_tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
                 }
                 catch (FileNotFoundException e)
                 {
-                    tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
+                    s_tracer.TraceWarning("Not able to load assembly {0}: {1}", assemblyName, e.Message);
                 }
             }
             finally
@@ -780,7 +780,7 @@ namespace System.Management.Automation.Remoting
             object value = registryKey.GetValue(name);
             if (value == null && mandatory == true)
             {
-                tracer.TraceError("Mandatory property {0} not specified for registry key {1}",
+                s_tracer.TraceError("Mandatory property {0} not specified for registry key {1}",
                         name, registryKey.Name);
                 throw PSTraceSource.NewArgumentException("name", RemotingErrorIdStrings.MandatoryValueNotPresent, name, registryKey.Name);
             }
@@ -788,7 +788,7 @@ namespace System.Management.Automation.Remoting
             string s = value as string;
             if (string.IsNullOrEmpty(s) && mandatory == true)
             {
-                tracer.TraceError("Value is null or empty for mandatory property {0} in {1}",
+                s_tracer.TraceError("Value is null or empty for mandatory property {0} in {1}",
                         name, registryKey.Name);
                 throw PSTraceSource.NewArgumentException("name", RemotingErrorIdStrings.MandatoryValueNotInCorrectFormat, name, registryKey.Name);
             }
@@ -799,9 +799,9 @@ namespace System.Management.Automation.Remoting
         private const string configProvidersKeyName = "PSConfigurationProviders";
         private const string configProviderApplicationBaseKeyName = "ApplicationBase";
         private const string configProviderAssemblyNameKeyName = "AssemblyName";
-        private static Dictionary<string, ConfigurationDataFromXML> ssnStateProviders =
+        private static Dictionary<string, ConfigurationDataFromXML> s_ssnStateProviders =
             new Dictionary<string, ConfigurationDataFromXML>(StringComparer.OrdinalIgnoreCase);
-        private static object syncObject = new object();
+        private static object s_syncObject = new object();
 
         #endregion
     }
@@ -818,7 +818,7 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         public override InitialSessionState GetInitialSessionState(PSSenderInfo senderInfo)
         {
-			InitialSessionState result = InitialSessionState.CreateDefault2();
+            InitialSessionState result = InitialSessionState.CreateDefault2();
             // TODO: Remove this after RDS moved to $using
             if (senderInfo.ConnectionString != null && senderInfo.ConnectionString.Contains("MSP=7a83d074-bb86-4e52-aa3e-6cc73cc066c8")) { PSSessionConfigurationData.IsServerManager = true; }
 
@@ -987,7 +987,7 @@ namespace System.Management.Automation.Remoting
             new ConfigTypeEntry(RunAsVirtualAccountGroups,      new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
             new ConfigTypeEntry(SchemaVersion,                  new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
             new ConfigTypeEntry(ScriptsToProcess,               new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
-            new ConfigTypeEntry(SessionType,                    new ConfigTypeEntry.TypeValidationCallback(ISSValidationCallback)), 
+            new ConfigTypeEntry(SessionType,                    new ConfigTypeEntry.TypeValidationCallback(ISSValidationCallback)),
             new ConfigTypeEntry(TranscriptDirectory,            new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
             new ConfigTypeEntry(TypesToProcess,                 new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
             new ConfigTypeEntry(UserDriveMaxSize,               new ConfigTypeEntry.TypeValidationCallback(IntegerTypeValidationCallback)),
@@ -1010,7 +1010,7 @@ namespace System.Management.Automation.Remoting
         {
             bool validKey = false;
 
-            foreach (ConfigTypeEntry configEntry  in ConfigFileKeys)
+            foreach (ConfigTypeEntry configEntry in ConfigFileKeys)
             {
                 if (String.Equals(configEntry.Key, de.Key.ToString(), StringComparison.OrdinalIgnoreCase))
                 {
@@ -1086,7 +1086,7 @@ namespace System.Management.Automation.Remoting
                 catch (ArgumentException)
                 {
                     // Do nothing here
-                }                  
+                }
             }
 
             cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeValidEnum, key, typeof(PSLanguageMode).FullName,
@@ -1124,7 +1124,7 @@ namespace System.Management.Automation.Remoting
             cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeValidEnum, key, DISCUtils.ExecutionPolicyType.FullName,
                 LanguagePrimitives.EnumSingleTypeConverter.EnumValues(DISCUtils.ExecutionPolicyType), path));
 
-            return false;          
+            return false;
         }
 
         /// <summary>
@@ -1139,7 +1139,7 @@ namespace System.Management.Automation.Remoting
         {
             Hashtable hash = obj as Hashtable;
 
-            if(hash == null)
+            if (hash == null)
             {
                 cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeHashtable, key, path));
                 return false;
@@ -1166,23 +1166,23 @@ namespace System.Management.Automation.Remoting
                 return false;
             }
 
-            foreach(Hashtable hashtable in hashtables)
+            foreach (Hashtable hashtable in hashtables)
             {
-                if(!hashtable.ContainsKey(AliasNameToken))
+                if (!hashtable.ContainsKey(AliasNameToken))
                 {
                     cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey, key, AliasNameToken, path));
                     return false;
                 }
 
-                if(!hashtable.ContainsKey(AliasValueToken))
+                if (!hashtable.ContainsKey(AliasValueToken))
                 {
                     cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey, key, AliasValueToken, path));
                     return false;
                 }
-                
+
                 foreach (string aliasKey in hashtable.Keys)
                 {
-                    if(!String.Equals(aliasKey, AliasNameToken, StringComparison.OrdinalIgnoreCase) && 
+                    if (!String.Equals(aliasKey, AliasNameToken, StringComparison.OrdinalIgnoreCase) &&
                        !String.Equals(aliasKey, AliasValueToken, StringComparison.OrdinalIgnoreCase) &&
                        !String.Equals(aliasKey, AliasDescriptionToken, StringComparison.OrdinalIgnoreCase) &&
                        !String.Equals(aliasKey, AliasOptionsToken, StringComparison.OrdinalIgnoreCase))
@@ -1233,7 +1233,7 @@ namespace System.Management.Automation.Remoting
                     cmdlet.WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.DISCKeyMustBeScriptBlock, FunctionValueToken, key, path));
                     return false;
                 }
-                
+
                 foreach (string functionKey in hashtable.Keys)
                 {
                     if (!String.Equals(functionKey, FunctionNameToken, StringComparison.OrdinalIgnoreCase) &&
@@ -1389,7 +1389,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// !! NOTE that this list MUST be updated when new capability session configuration properties are added.
         /// </summary>
-        private static readonly HashSet<string> AllowedRoleCapabilityKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        private static readonly HashSet<string> s_allowedRoleCapabilityKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "RoleCapabilities",
             "ModulesToImport",
@@ -1689,7 +1689,7 @@ namespace System.Management.Automation.Remoting
                         throw invalidOperationEx;
                     }
 
-                    if (!AllowedRoleCapabilityKeys.Contains(roleCapabilityKey))
+                    if (!s_allowedRoleCapabilityKeys.Contains(roleCapabilityKey))
                     {
                         var invalidOperationEx = new PSInvalidOperationException(
                             string.Format(RemotingErrorIdStrings.InvalidRoleCapabilityKey, roleCapabilityKey));
@@ -1708,15 +1708,15 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal sealed class DISCPowerShellConfiguration : PSSessionConfiguration
     {
-        private string configFile;
-        private Hashtable configHash;
+        private string _configFile;
+        private Hashtable _configHash;
 
         /// <summary>
         /// Gets the configuration hashtable that results from parsing the specified configuration file
         /// </summary>
         internal Hashtable ConfigHash
         {
-            get { return configHash; }
+            get { return _configHash; }
         }
 
         /// <summary>
@@ -1730,8 +1730,8 @@ namespace System.Management.Automation.Remoting
         /// </param>
         internal DISCPowerShellConfiguration(string configFile, Func<string, bool> roleVerifier)
         {
-            this.configFile = configFile;
-            if(roleVerifier == null)
+            _configFile = configFile;
+            if (roleVerifier == null)
             {
                 roleVerifier = (role) => false;
             }
@@ -1747,7 +1747,7 @@ namespace System.Management.Automation.Remoting
                 ExternalScriptInfo script = DISCUtils.GetScriptInfoForFile(Runspace.DefaultRunspace.ExecutionContext,
                     configFile, out scriptName);
 
-                configHash = DISCUtils.LoadConfigFile(Runspace.DefaultRunspace.ExecutionContext, script);
+                _configHash = DISCUtils.LoadConfigFile(Runspace.DefaultRunspace.ExecutionContext, script);
                 MergeRoleRulesIntoConfigHash(roleVerifier);
                 MergeRoleCapabilitiesIntoConfigHash();
 
@@ -1770,13 +1770,13 @@ namespace System.Management.Automation.Remoting
         // Takes the "Roles" node in the config hash, and merges all that apply into the base configuration.
         private void MergeRoleRulesIntoConfigHash(Func<string, bool> roleVerifier)
         {
-            if (configHash.ContainsKey(ConfigFileConstants.RoleDefinitions))
+            if (_configHash.ContainsKey(ConfigFileConstants.RoleDefinitions))
             {
                 // Extract the 'Roles' hashtable
-                IDictionary roleEntry = configHash[ConfigFileConstants.RoleDefinitions] as IDictionary;
-                if(roleEntry == null)
+                IDictionary roleEntry = _configHash[ConfigFileConstants.RoleDefinitions] as IDictionary;
+                if (roleEntry == null)
                 {
-                    string message = StringUtil.Format(RemotingErrorIdStrings.InvalidRoleEntry, configHash["Roles"].GetType().FullName);
+                    string message = StringUtil.Format(RemotingErrorIdStrings.InvalidRoleEntry, _configHash["Roles"].GetType().FullName);
                     PSInvalidOperationException ioe = new PSInvalidOperationException(message);
                     ioe.SetErrorId("InvalidRoleDefinitionNotHashtable");
                     throw ioe;
@@ -1811,9 +1811,9 @@ namespace System.Management.Automation.Remoting
         // Takes the "RoleCapabilities" node in the config hash, and merges its values into the base configuration.
         private void MergeRoleCapabilitiesIntoConfigHash()
         {
-            if (configHash.ContainsKey(ConfigFileConstants.RoleCapabilities))
+            if (_configHash.ContainsKey(ConfigFileConstants.RoleCapabilities))
             {
-                string[] roleCapabilities = TryGetStringArray(configHash[ConfigFileConstants.RoleCapabilities]);
+                string[] roleCapabilities = TryGetStringArray(_configHash[ConfigFileConstants.RoleCapabilities]);
 
                 if (roleCapabilities != null)
                 {
@@ -1846,9 +1846,9 @@ namespace System.Management.Automation.Remoting
                 ArrayList customizationValue = new ArrayList();
 
                 // First, take all values from the master config table
-                if (configHash.ContainsKey(customizationString))
+                if (_configHash.ContainsKey(customizationString))
                 {
-                    IEnumerable existingValueAsCollection = LanguagePrimitives.GetEnumerable(configHash[customization]);
+                    IEnumerable existingValueAsCollection = LanguagePrimitives.GetEnumerable(_configHash[customization]);
                     if (existingValueAsCollection != null)
                     {
                         foreach (Object value in existingValueAsCollection)
@@ -1858,7 +1858,7 @@ namespace System.Management.Automation.Remoting
                     }
                     else
                     {
-                        customizationValue.Add(configHash[customization]);
+                        customizationValue.Add(_configHash[customization]);
                     }
                 }
 
@@ -1877,7 +1877,7 @@ namespace System.Management.Automation.Remoting
                 }
 
                 // Now update the config table for this role.
-                configHash[customization] = customizationValue.ToArray();
+                _configHash[customization] = customizationValue.ToArray();
             }
         }
 
@@ -1934,7 +1934,7 @@ namespace System.Management.Automation.Remoting
             InitialSessionState iss = null;
 
             // Create the initial session state
-            string initialSessionState = TryGetValue(configHash, ConfigFileConstants.SessionType);
+            string initialSessionState = TryGetValue(_configHash, ConfigFileConstants.SessionType);
             SessionType sessionType = SessionType.Default;
             bool cmdletVisibilityApplied = IsNonDefaultVisibiltySpecified(ConfigFileConstants.VisibleCmdlets);
             bool functionVisiblityApplied = IsNonDefaultVisibiltySpecified(ConfigFileConstants.VisibleFunctions);
@@ -1985,7 +1985,7 @@ namespace System.Management.Automation.Remoting
             // Add providers
             if (providerVisibiltyApplied)
             {
-                string[] providers = TryGetStringArray(configHash[ConfigFileConstants.VisibleProviders]);
+                string[] providers = TryGetStringArray(_configHash[ConfigFileConstants.VisibleProviders]);
 
                 if (providers != null)
                 {
@@ -2011,9 +2011,9 @@ namespace System.Management.Automation.Remoting
             }
 
             // Add assemblies and modules);
-            if (configHash.ContainsKey(ConfigFileConstants.AssembliesToLoad))
+            if (_configHash.ContainsKey(ConfigFileConstants.AssembliesToLoad))
             {
-                string[] assemblies = TryGetStringArray(configHash[ConfigFileConstants.AssembliesToLoad]);
+                string[] assemblies = TryGetStringArray(_configHash[ConfigFileConstants.AssembliesToLoad]);
 
                 if (assemblies != null)
                 {
@@ -2024,18 +2024,18 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            if (configHash.ContainsKey(ConfigFileConstants.ModulesToImport))
+            if (_configHash.ContainsKey(ConfigFileConstants.ModulesToImport))
             {
-                object[] modules = TryGetObjectsOfType<object>(configHash[ConfigFileConstants.ModulesToImport],
-                                                               new Type[] {typeof (string), typeof (Hashtable)});
-                if ((configHash[ConfigFileConstants.ModulesToImport] != null) && (modules == null))
+                object[] modules = TryGetObjectsOfType<object>(_configHash[ConfigFileConstants.ModulesToImport],
+                                                               new Type[] { typeof(string), typeof(Hashtable) });
+                if ((_configHash[ConfigFileConstants.ModulesToImport] != null) && (modules == null))
                 {
                     string message = StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustBeStringOrHashtableArray,
                         ConfigFileConstants.ModulesToImport);
                     PSInvalidOperationException ioe = new PSInvalidOperationException(message);
                     ioe.SetErrorId("InvalidModulesToImportKeyEntries");
 
-                    throw ioe; 
+                    throw ioe;
                 }
 
                 if (null != modules)
@@ -2047,7 +2047,7 @@ namespace System.Management.Automation.Remoting
                         string moduleName = module as string;
                         if (!string.IsNullOrEmpty(moduleName))
                         {
-                            moduleSpec = new ModuleSpecification(moduleName);    
+                            moduleSpec = new ModuleSpecification(moduleName);
                         }
                         else
                         {
@@ -2085,9 +2085,9 @@ namespace System.Management.Automation.Remoting
             }
 
             // Define members
-            if (configHash.ContainsKey(ConfigFileConstants.VisibleCmdlets))
+            if (_configHash.ContainsKey(ConfigFileConstants.VisibleCmdlets))
             {
-                object[] cmdlets = TryGetObjectsOfType<object>(configHash[ConfigFileConstants.VisibleCmdlets],
+                object[] cmdlets = TryGetObjectsOfType<object>(_configHash[ConfigFileConstants.VisibleCmdlets],
                                                                new Type[] { typeof(string), typeof(Hashtable) });
 
                 if (cmdlets == null)
@@ -2103,9 +2103,9 @@ namespace System.Management.Automation.Remoting
                 ProcessVisibleCommands(iss, cmdlets);
             }
 
-            if (configHash.ContainsKey(ConfigFileConstants.AliasDefinitions))
+            if (_configHash.ContainsKey(ConfigFileConstants.AliasDefinitions))
             {
-                Hashtable[] aliases = TryGetHashtableArray(configHash[ConfigFileConstants.AliasDefinitions]);
+                Hashtable[] aliases = TryGetHashtableArray(_configHash[ConfigFileConstants.AliasDefinitions]);
 
                 if (aliases != null)
                 {
@@ -2121,16 +2121,16 @@ namespace System.Management.Automation.Remoting
                             {
                                 iss.Commands.Remove(entry.Name, typeof(SessionStateAliasEntry));
                             }
-                            
+
                             iss.Commands.Add(entry);
                         }
                     }
                 }
             }
 
-            if (configHash.ContainsKey(ConfigFileConstants.VisibleAliases))
+            if (_configHash.ContainsKey(ConfigFileConstants.VisibleAliases))
             {
-                string[] aliases = DISCPowerShellConfiguration.TryGetStringArray(configHash[ConfigFileConstants.VisibleAliases]);
+                string[] aliases = DISCPowerShellConfiguration.TryGetStringArray(_configHash[ConfigFileConstants.VisibleAliases]);
 
                 if (aliases != null)
                 {
@@ -2160,9 +2160,9 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            if (configHash.ContainsKey(ConfigFileConstants.FunctionDefinitions))
+            if (_configHash.ContainsKey(ConfigFileConstants.FunctionDefinitions))
             {
-                Hashtable[] functions = TryGetHashtableArray(configHash[ConfigFileConstants.FunctionDefinitions]);
+                Hashtable[] functions = TryGetHashtableArray(_configHash[ConfigFileConstants.FunctionDefinitions]);
 
                 if (functions != null)
                 {
@@ -2178,9 +2178,9 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            if (configHash.ContainsKey(ConfigFileConstants.VisibleFunctions))
+            if (_configHash.ContainsKey(ConfigFileConstants.VisibleFunctions))
             {
-                object[] functions = TryGetObjectsOfType<object>(configHash[ConfigFileConstants.VisibleFunctions],
+                object[] functions = TryGetObjectsOfType<object>(_configHash[ConfigFileConstants.VisibleFunctions],
                                                                new Type[] { typeof(string), typeof(Hashtable) });
 
                 if (functions == null)
@@ -2196,15 +2196,15 @@ namespace System.Management.Automation.Remoting
                 ProcessVisibleCommands(iss, functions);
             }
 
-            if (configHash.ContainsKey(ConfigFileConstants.VariableDefinitions))
+            if (_configHash.ContainsKey(ConfigFileConstants.VariableDefinitions))
             {
-                Hashtable[] variables = TryGetHashtableArray(configHash[ConfigFileConstants.VariableDefinitions]);
+                Hashtable[] variables = TryGetHashtableArray(_configHash[ConfigFileConstants.VariableDefinitions]);
 
                 if (variables != null)
                 {
                     foreach (Hashtable variable in variables)
                     {
-                        if (variable.ContainsKey(ConfigFileConstants.VariableValueToken) && 
+                        if (variable.ContainsKey(ConfigFileConstants.VariableValueToken) &&
                             ((variable[ConfigFileConstants.VariableValueToken] as ScriptBlock) != null))
                         {
                             iss.DynamicVariablesToDefine.Add(variable);
@@ -2221,9 +2221,9 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            if (configHash.ContainsKey(ConfigFileConstants.EnvironmentVariables))
+            if (_configHash.ContainsKey(ConfigFileConstants.EnvironmentVariables))
             {
-                Hashtable[] variablesList = TryGetHashtableArray(configHash[ConfigFileConstants.EnvironmentVariables]);
+                Hashtable[] variablesList = TryGetHashtableArray(_configHash[ConfigFileConstants.EnvironmentVariables]);
 
                 if (variablesList != null)
                 {
@@ -2239,9 +2239,9 @@ namespace System.Management.Automation.Remoting
             }
 
             // Update type data
-            if (configHash.ContainsKey(ConfigFileConstants.TypesToProcess))
+            if (_configHash.ContainsKey(ConfigFileConstants.TypesToProcess))
             {
-                string[] types = DISCPowerShellConfiguration.TryGetStringArray(configHash[ConfigFileConstants.TypesToProcess]);
+                string[] types = DISCPowerShellConfiguration.TryGetStringArray(_configHash[ConfigFileConstants.TypesToProcess]);
 
                 if (types != null)
                 {
@@ -2256,9 +2256,9 @@ namespace System.Management.Automation.Remoting
             }
 
             // Update format data
-            if (configHash.ContainsKey(ConfigFileConstants.FormatsToProcess))
+            if (_configHash.ContainsKey(ConfigFileConstants.FormatsToProcess))
             {
-                string[] formats = DISCPowerShellConfiguration.TryGetStringArray(configHash[ConfigFileConstants.FormatsToProcess]);
+                string[] formats = DISCPowerShellConfiguration.TryGetStringArray(_configHash[ConfigFileConstants.FormatsToProcess]);
 
                 if (formats != null)
                 {
@@ -2273,12 +2273,12 @@ namespace System.Management.Automation.Remoting
             }
 
             // Add external commands
-            if (configHash.ContainsKey(ConfigFileConstants.VisibleExternalCommands))
+            if (_configHash.ContainsKey(ConfigFileConstants.VisibleExternalCommands))
             {
-                string[] externalCommands = TryGetStringArray(configHash[ConfigFileConstants.VisibleExternalCommands]);
+                string[] externalCommands = TryGetStringArray(_configHash[ConfigFileConstants.VisibleExternalCommands]);
                 if (externalCommands != null)
                 {
-                    foreach(string command in externalCommands)
+                    foreach (string command in externalCommands)
                     {
                         if (command.EndsWith(".ps1", StringComparison.OrdinalIgnoreCase))
                         {
@@ -2301,9 +2301,9 @@ namespace System.Management.Automation.Remoting
             }
 
             // Register startup scripts
-            if (configHash.ContainsKey(ConfigFileConstants.ScriptsToProcess))
+            if (_configHash.ContainsKey(ConfigFileConstants.ScriptsToProcess))
             {
-                string[] startupScripts = DISCPowerShellConfiguration.TryGetStringArray(configHash[ConfigFileConstants.ScriptsToProcess]);
+                string[] startupScripts = DISCPowerShellConfiguration.TryGetStringArray(_configHash[ConfigFileConstants.ScriptsToProcess]);
 
                 if (startupScripts != null)
                 {
@@ -2352,39 +2352,39 @@ namespace System.Management.Automation.Remoting
             }
 
             // Set the execution policy
-            if (configHash.ContainsKey(ConfigFileConstants.ExecutionPolicy))
+            if (_configHash.ContainsKey(ConfigFileConstants.ExecutionPolicy))
             {
-                Microsoft.PowerShell.ExecutionPolicy executionPolicy = (Microsoft.PowerShell.ExecutionPolicy) Enum.Parse(
-                    typeof(Microsoft.PowerShell.ExecutionPolicy), configHash[ConfigFileConstants.ExecutionPolicy].ToString(), true);
+                Microsoft.PowerShell.ExecutionPolicy executionPolicy = (Microsoft.PowerShell.ExecutionPolicy)Enum.Parse(
+                    typeof(Microsoft.PowerShell.ExecutionPolicy), _configHash[ConfigFileConstants.ExecutionPolicy].ToString(), true);
                 iss.ExecutionPolicy = executionPolicy;
             }
 
             // Set the language mode
-            if (configHash.ContainsKey(ConfigFileConstants.LanguageMode))
+            if (_configHash.ContainsKey(ConfigFileConstants.LanguageMode))
             {
-                System.Management.Automation.PSLanguageMode languageMode = (System.Management.Automation.PSLanguageMode) Enum.Parse(
-                    typeof(System.Management.Automation.PSLanguageMode), configHash[ConfigFileConstants.LanguageMode].ToString(), true);
+                System.Management.Automation.PSLanguageMode languageMode = (System.Management.Automation.PSLanguageMode)Enum.Parse(
+                    typeof(System.Management.Automation.PSLanguageMode), _configHash[ConfigFileConstants.LanguageMode].ToString(), true);
                 iss.LanguageMode = languageMode;
             }
 
             // Set the transcript directory
-            if (configHash.ContainsKey(ConfigFileConstants.TranscriptDirectory))
+            if (_configHash.ContainsKey(ConfigFileConstants.TranscriptDirectory))
             {
-                iss.TranscriptDirectory = configHash[ConfigFileConstants.TranscriptDirectory].ToString();
+                iss.TranscriptDirectory = _configHash[ConfigFileConstants.TranscriptDirectory].ToString();
             }
 
             // Process User Drive
-            if (configHash.ContainsKey(ConfigFileConstants.MountUserDrive))
+            if (_configHash.ContainsKey(ConfigFileConstants.MountUserDrive))
             {
-                if (Convert.ToBoolean(configHash[ConfigFileConstants.MountUserDrive], CultureInfo.InvariantCulture) == true)
+                if (Convert.ToBoolean(_configHash[ConfigFileConstants.MountUserDrive], CultureInfo.InvariantCulture) == true)
                 {
                     iss.UserDriveEnabled = true;
                     iss.UserDriveUserName = (senderInfo != null) ? senderInfo.UserInfo.Identity.Name : null;
 
                     // Set user drive max drive if provided.
-                    if (configHash.ContainsKey(ConfigFileConstants.UserDriveMaxSize))
+                    if (_configHash.ContainsKey(ConfigFileConstants.UserDriveMaxSize))
                     {
-                        long userDriveMaxSize = Convert.ToInt64(configHash[ConfigFileConstants.UserDriveMaxSize]);
+                        long userDriveMaxSize = Convert.ToInt64(_configHash[ConfigFileConstants.UserDriveMaxSize]);
                         if (userDriveMaxSize > 0)
                         {
                             iss.UserDriveMaximumSize = userDriveMaxSize;
@@ -2409,7 +2409,7 @@ namespace System.Management.Automation.Remoting
             foreach (var copyToRemoteFn in CopyFileRemoteUtils.GetAllCopyToRemoteScriptFunctions())
             {
                 var functionEntry = new SessionStateFunctionEntry(
-                    copyToRemoteFn["Name"] as string, 
+                    copyToRemoteFn["Name"] as string,
                     copyToRemoteFn["Definition"] as string);
                 iss.Commands.Add(functionEntry);
             }
@@ -2631,7 +2631,7 @@ namespace System.Management.Automation.Remoting
             }
 
             SessionStateEntryVisibility visibility = SessionStateEntryVisibility.Private;
-            if (! isAliasVisibilityDefined)
+            if (!isAliasVisibilityDefined)
             {
                 visibility = SessionStateEntryVisibility.Public;
             }
@@ -2672,7 +2672,7 @@ namespace System.Management.Automation.Remoting
             newFunction.LanguageMode = PSLanguageMode.FullLanguage;
 
             SessionStateEntryVisibility functionVisibility = SessionStateEntryVisibility.Private;
-            if (! isFunctionVisibilityDefined)
+            if (!isFunctionVisibilityDefined)
             {
                 functionVisibility = SessionStateEntryVisibility.Public;
             }
@@ -2711,7 +2711,7 @@ namespace System.Management.Automation.Remoting
             }
 
             SessionStateEntryVisibility visibility = SessionStateEntryVisibility.Private;
-            if(languageMode == PSLanguageMode.FullLanguage)
+            if (languageMode == PSLanguageMode.FullLanguage)
             {
                 visibility = SessionStateEntryVisibility.Public;
             }
@@ -2726,11 +2726,11 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         private bool IsNonDefaultVisibiltySpecified(string configFileKey)
         {
-            if (configHash.ContainsKey(configFileKey))
+            if (_configHash.ContainsKey(configFileKey))
             {
                 string[] commands =
-                    DISCPowerShellConfiguration.TryGetStringArray(configHash[configFileKey]);
-                
+                    DISCPowerShellConfiguration.TryGetStringArray(_configHash[configFileKey]);
+
                 if ((commands == null) || (commands.Length == 0))
                 {
                     return false;
@@ -2741,7 +2741,7 @@ namespace System.Management.Automation.Remoting
 
             return false;
         }
-        
+
         /// <summary>
         /// Attempts to get a value from a hashtable
         /// </summary>
@@ -2849,7 +2849,7 @@ namespace System.Management.Automation.Remoting
                     {
                         if (obj.GetType().Equals(type))
                         {
-                            return new T[] {obj as T};
+                            return new T[] { obj as T };
                         }
                     }
                 }

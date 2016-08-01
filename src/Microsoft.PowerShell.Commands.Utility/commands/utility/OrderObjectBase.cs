@@ -133,10 +133,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] Property
         {
-            get { return expr; }
-            set { expr = value; }
+            get { return _expr; }
+            set { _expr = value; }
         }
-        private object[] expr;
+        private object[] _expr;
 
         #endregion Parameters
     }
@@ -153,16 +153,16 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal SwitchParameter DescendingOrder
         {
-            get { return !ascending; }
-            set { ascending = !value; }
+            get { return !_ascending; }
+            set { _ascending = !value; }
         }
-        private bool ascending = true;
+        private bool _ascending = true;
 
         internal List<PSObject> InputObjects
         {
             get
             {
-                return inputObjects;
+                return _inputObjects;
             }
         }
 
@@ -188,15 +188,14 @@ namespace Microsoft.PowerShell.Commands
         {
             if (InputObject != null && InputObject != AutomationNull.Value)
             {
-                inputObjects.Add(InputObject);
+                _inputObjects.Add(InputObject);
             }
         }
 
         /// <summary>
         /// list of incoming objects to compare
         /// </summary>
-        private List<PSObject> inputObjects = new List<PSObject>();
-
+        private List<PSObject> _inputObjects = new List<PSObject>();
     }
 
     internal sealed class OrderByProperty
@@ -206,7 +205,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return orderMatrix;
+                return _orderMatrix;
             }
         }
 
@@ -214,7 +213,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return comparer;
+                return _comparer;
             }
         }
         internal List<MshParameter> MshParameterList
@@ -245,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
             TerminatingErrorContext invocationContext = new TerminatingErrorContext(cmdlet);
             // compare-object and group-object use the same definition here
             ParameterProcessor processor = cmdlet is SortObjectCommand ?
-                new ParameterProcessor(new SortObjectExpressionParameterDefinition()):
+                new ParameterProcessor(new SortObjectExpressionParameterDefinition()) :
                 new ParameterProcessor(new GroupObjectExpressionParameterDefinition());
 
             if (expr == null && inputObjects != null && inputObjects.Count > 0)
@@ -268,16 +267,16 @@ namespace Microsoft.PowerShell.Commands
             TerminatingErrorContext invocationContext = new TerminatingErrorContext(cmdlet);
             // compare-object and group-object use the same definition here
             ParameterProcessor processor = cmdlet is SortObjectCommand ?
-                new ParameterProcessor(new SortObjectExpressionParameterDefinition()):
+                new ParameterProcessor(new SortObjectExpressionParameterDefinition()) :
                 new ParameterProcessor(new GroupObjectExpressionParameterDefinition());
 
             if (expr != null)
             {
-                if (unexpandedParameterList == null)
+                if (_unexpandedParameterList == null)
                 {
-                    unexpandedParameterList = processor.ProcessParameters(expr, invocationContext);
+                    _unexpandedParameterList = processor.ProcessParameters(expr, invocationContext);
 
-                    foreach (MshParameter unexpandedParameter in unexpandedParameterList)
+                    foreach (MshParameter unexpandedParameter in _unexpandedParameterList)
                     {
                         MshExpression mshExpression = (MshExpression)unexpandedParameter.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey);
                         if (!mshExpression.HasWildCardCharacters) // this special cases 1) script blocks and 2) wildcard-less strings
@@ -286,12 +285,12 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            if (unExpandedParametersWithWildCardPattern == null)
+                            if (_unExpandedParametersWithWildCardPattern == null)
                             {
-                                unExpandedParametersWithWildCardPattern = new List<MshParameter>();
+                                _unExpandedParametersWithWildCardPattern = new List<MshParameter>();
                             }
 
-                            unExpandedParametersWithWildCardPattern.Add(unexpandedParameter);
+                            _unExpandedParametersWithWildCardPattern.Add(unexpandedParameter);
                         }
                     }
                 }
@@ -383,13 +382,13 @@ namespace Microsoft.PowerShell.Commands
         internal static string[] GetDefaultKeyPropertySet(PSObject mshObj)
         {
             PSMemberSet standardNames = mshObj.PSStandardMembers;
-            if(standardNames == null)
+            if (standardNames == null)
             {
                 return null;
             }
             PSPropertySet defaultKeys = standardNames.Members["DefaultKeyPropertySet"] as PSPropertySet;
 
-            if(defaultKeys == null)
+            if (defaultKeys == null)
             {
                 return null;
             }
@@ -463,7 +462,7 @@ namespace Microsoft.PowerShell.Commands
                         ascendingOverrides[k] = null;
                     }
                     else if (isAscendingDefined && isDescendingDefined &&
-                        (bool) ascendingVal == (bool) descendingVal )
+                        (bool)ascendingVal == (bool)descendingVal)
                     {
                         // if both ascending and descending defined but their values conflict
                         // they are ignored.
@@ -475,7 +474,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        ascendingOverrides[k] = ! (bool)descendingVal;
+                        ascendingOverrides[k] = !(bool)descendingVal;
                     }
                 }
             }
@@ -498,8 +497,8 @@ namespace Microsoft.PowerShell.Commands
             Diagnostics.Assert(cmdlet != null, "cmdlet must be an instance");
 
             ProcessExpressionParameter(inputObjects, cmdlet, expr, out _mshParameterList);
-            orderMatrix = CreateOrderMatrix(cmdlet, inputObjects, _mshParameterList);
-            comparer = CreateComparer(orderMatrix, _mshParameterList, ascending, cultureInfo, caseSensitive);
+            _orderMatrix = CreateOrderMatrix(cmdlet, inputObjects, _mshParameterList);
+            _comparer = CreateComparer(_orderMatrix, _mshParameterList, ascending, cultureInfo, caseSensitive);
         }
 
         /// <summary>
@@ -508,7 +507,7 @@ namespace Microsoft.PowerShell.Commands
         internal OrderByProperty()
         {
             _mshParameterList = new List<MshParameter>();
-            orderMatrix = new List<OrderByPropertyEntry>();
+            _orderMatrix = new List<OrderByPropertyEntry>();
         }
 
         /// <summary>
@@ -527,9 +526,9 @@ namespace Microsoft.PowerShell.Commands
         {
             Diagnostics.Assert(cmdlet != null, "cmdlet must be an instance");
 
-            if (unExpandedParametersWithWildCardPattern != null)
+            if (_unExpandedParametersWithWildCardPattern != null)
             {
-                ExpandExpressions(inputObject, unExpandedParametersWithWildCardPattern, _mshParameterList);
+                ExpandExpressions(inputObject, _unExpandedParametersWithWildCardPattern, _mshParameterList);
             }
 
             List<ErrorRecord> evaluationErrors = new List<ErrorRecord>();
@@ -553,21 +552,21 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// comparer for orderMatrix
         /// </summary>
-        private OrderByPropertyComparer comparer = null;
+        private OrderByPropertyComparer _comparer = null;
 
         /// <summary>
         /// a logical matrix where each row is an input object and its property values specified by Properties
         /// </summary>
-        private List<OrderByPropertyEntry> orderMatrix = null;
+        private List<OrderByPropertyEntry> _orderMatrix = null;
 
         // list of processed parameters obtained from the Expression array
         private List<MshParameter> _mshParameterList = null;
 
         // list of unprocessed parameters obtained from the Expression array.
-        private List<MshParameter> unexpandedParameterList = null;
+        private List<MshParameter> _unexpandedParameterList = null;
 
         // list of unprocessed parameters with wild card patterns.
-        private List<MshParameter> unExpandedParametersWithWildCardPattern = null;
+        private List<MshParameter> _unExpandedParametersWithWildCardPattern = null;
     }
 
     internal static class OrderByPropertyEntryEvaluationHelper
@@ -655,10 +654,10 @@ namespace Microsoft.PowerShell.Commands
     {
         internal OrderByPropertyComparer(bool[] ascending, CultureInfo cultureInfo, bool caseSensitive)
         {
-            this.propertyComparers = new ObjectCommandComparer[ascending.Length];
+            _propertyComparers = new ObjectCommandComparer[ascending.Length];
             for (int k = 0; k < ascending.Length; k++)
             {
-                this.propertyComparers[k] = new ObjectCommandComparer(ascending[k], cultureInfo, caseSensitive);
+                _propertyComparers[k] = new ObjectCommandComparer(ascending[k], cultureInfo, caseSensitive);
             }
         }
 
@@ -667,13 +666,13 @@ namespace Microsoft.PowerShell.Commands
             // we have to take into consideration that some vectors
             // might be shorter than others
             int order = 0;
-            for (int k = 0; k < propertyComparers.Length; k++)
+            for (int k = 0; k < _propertyComparers.Length; k++)
             {
                 ObjectCommandPropertyValue firstValue = (k < firstEntry.orderValues.Count) ?
                     firstEntry.orderValues[k] : ObjectCommandPropertyValue.NonExistingProperty;
                 ObjectCommandPropertyValue secondValue = (k < secondEntry.orderValues.Count) ?
                     secondEntry.orderValues[k] : ObjectCommandPropertyValue.NonExistingProperty;
-                order = propertyComparers[k].Compare(firstValue, secondValue);
+                order = _propertyComparers[k].Compare(firstValue, secondValue);
 
                 if (order != 0)
                     return order;
@@ -715,8 +714,7 @@ namespace Microsoft.PowerShell.Commands
             return new OrderByPropertyComparer(ascending, cultureInfo, caseSensitive);
         }
 
-        ObjectCommandComparer[] propertyComparers = null;
+        private ObjectCommandComparer[] _propertyComparers = null;
     }
-
 }
 

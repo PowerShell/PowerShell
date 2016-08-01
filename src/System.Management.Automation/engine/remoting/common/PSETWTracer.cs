@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,7 +15,7 @@ namespace System.Management.Automation.Internal
     /// <summary>
     /// Defines enumerations for the keywords
     /// </summary>
-    enum PSKeyword : ulong
+    internal enum PSKeyword : ulong
     {
         Runspace = 0x1,
         Pipeline = 0x2,
@@ -32,7 +33,7 @@ namespace System.Management.Automation.Internal
     /// <summary>
     /// Define enumerations for levels
     /// </summary>
-    enum PSLevel : byte
+    internal enum PSLevel : byte
     {
         LogAlways = 0x0,
         Critical = 0x1,
@@ -46,7 +47,7 @@ namespace System.Management.Automation.Internal
     /// <summary>
     /// Defines enumerations for op codes
     /// </summary>
-    enum PSOpcode : byte
+    internal enum PSOpcode : byte
     {
         WinStart = 0x1,
         WinStop = 0x2,
@@ -54,7 +55,7 @@ namespace System.Management.Automation.Internal
         Close = 0xB,
         Connect = 0xC,
         Disconnect = 0xD,
-        Negotiate  = 0xE,
+        Negotiate = 0xE,
         Create = 0xF,
         Constructor = 0x10,
         Dispose = 0x11,
@@ -74,7 +75,7 @@ namespace System.Management.Automation.Internal
     /// <remarks>add an entry for a new event that you
     /// add to the manifest. Set it to the same value
     /// that was set in the manifest</remarks>
-    enum PSEventId : int
+    internal enum PSEventId : int
     {
         HostNameResolve = 0x1001,
         SchemeResolve = 0x1002,
@@ -199,7 +200,7 @@ namespace System.Management.Automation.Internal
     /// <summary>
     /// Defines enumerations for channels
     /// </summary>
-    enum PSChannel : byte
+    internal enum PSChannel : byte
     {
         Operational = 0x10,
         Analytic = 0x11
@@ -208,7 +209,7 @@ namespace System.Management.Automation.Internal
     /// <summary>
     /// Defines enumerations for tasks
     /// </summary>
-    enum PSTask : int
+    internal enum PSTask : int
     {
         None = 0x0,
         CreateRunspace = 0x1,
@@ -232,7 +233,7 @@ namespace System.Management.Automation.Internal
     /// </summary>
     /// <remarks>all messages in V2 timeframe
     /// should be of version 1</remarks>
-    enum PSEventVersion : byte
+    internal enum PSEventVersion : byte
     {
         One = 0x1,
     }

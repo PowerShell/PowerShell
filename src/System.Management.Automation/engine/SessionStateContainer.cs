@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
@@ -713,7 +714,6 @@ namespace System.Management.Automation
 
                 foreach (string providerPath in providerPaths)
                 {
-
                     result = IsItemContainer(providerInstance, providerPath, context);
                     if (result == false)
                     {
@@ -2758,11 +2758,10 @@ namespace System.Management.Automation
                 if (recurse)
                 {
                     // Now get all the children that are containers and recurse into them
-                    
+
                     // Limiter for recursion
                     if (depth > 0) // this includes special case 'depth == uint.MaxValue' for unlimited recursion
                     {
-
                         GetChildNames(
                             providerInstance,
                             newProviderPath,
@@ -3714,13 +3713,13 @@ namespace System.Management.Automation
                     bool isSymbolicJunctionOrHardLink = false;
                     // Symbolic link targets are allowed to not exist on both Windows and Linux
                     bool allowNonexistingPath = false;
-                    
-                    if(type != null)
+
+                    if (type != null)
                     {
                         WildcardPattern typeEvaluator = WildcardPattern.Get(type + "*", WildcardOptions.IgnoreCase | WildcardOptions.Compiled);
 
                         if (typeEvaluator.IsMatch("symboliclink") || typeEvaluator.IsMatch("junction") || typeEvaluator.IsMatch("hardlink"))
-                        {                            
+                        {
                             isSymbolicJunctionOrHardLink = true;
                             allowNonexistingPath = typeEvaluator.IsMatch("symboliclink");
                         }
@@ -3750,22 +3749,22 @@ namespace System.Management.Automation
                             out targetProvider,
                             out targetProviderInstance);
 
-                        if(String.Compare(targetProvider.Name, "filesystem", StringComparison.OrdinalIgnoreCase) != 0)
+                        if (String.Compare(targetProvider.Name, "filesystem", StringComparison.OrdinalIgnoreCase) != 0)
                         {
                             throw PSTraceSource.NewNotSupportedException(SessionStateStrings.MustBeFileSystemPath);
                         }
-                        
-                        if(globbedTarget.Count > 1)
+
+                        if (globbedTarget.Count > 1)
                         {
                             throw PSTraceSource.NewInvalidOperationException(SessionStateStrings.PathResolvedToMultiple, targetPath);
                         }
 
-                        if(globbedTarget.Count == 0)
+                        if (globbedTarget.Count == 0)
                         {
                             throw PSTraceSource.NewInvalidOperationException(SessionStateStrings.PathNotFound, targetPath);
                         }
 
-                        content = globbedTarget[0];                        
+                        content = globbedTarget[0];
                     }
 
                     NewItemPrivate(providerInstance, composedPath, type, content, context);
@@ -4544,12 +4543,12 @@ namespace System.Management.Automation
 
             if (!destinationIsRemote)
             {
-                 providerDestinationPath =
-                    Globber.GetProviderPath(
-                        copyPath,
-                        context,
-                        out destinationProvider,
-                        out unusedDrive);
+                providerDestinationPath =
+                   Globber.GetProviderPath(
+                       copyPath,
+                       context,
+                       out destinationProvider,
+                       out unusedDrive);
             }
             else
             {
@@ -4561,14 +4560,14 @@ namespace System.Management.Automation
                                             new ArgumentNullException(
                                                     String.Format(
                                                     System.Globalization.CultureInfo.InvariantCulture,
-                                                    SessionStateStrings.CopyItemRemotelyPathIsNullOrEmpty, 
+                                                    SessionStateStrings.CopyItemRemotelyPathIsNullOrEmpty,
                                                     "Destination")),
                                             "CopyItemRemoteDestinationIsNullOrEmpty",
                                             ErrorCategory.InvalidArgument,
                                             providerDestinationPath));
                     return;
                 }
-                
+
                 string root = ValidateRemotePathAndGetRoot(providerDestinationPath, session, context, remoteLanguageMode, false);
                 if (root == null)
                 {
@@ -4576,7 +4575,7 @@ namespace System.Management.Automation
                 }
             }
 
-            tracer.WriteLine("providerDestinationPath = {0}", providerDestinationPath);
+            s_tracer.WriteLine("providerDestinationPath = {0}", providerDestinationPath);
 
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
@@ -4599,7 +4598,7 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    providerInstance = this._context.SessionState.Internal.GetProviderInstance("FileSystem");
+                    providerInstance = _context.SessionState.Internal.GetProviderInstance("FileSystem");
                     providerPaths = new Collection<string>();
                     providerPaths.Add(path);
                 }
@@ -4633,7 +4632,7 @@ namespace System.Management.Automation
 
                     return;
                 }
-                
+
                 bool destinationIsContainer = false;
 
                 if (!destinationIsRemote)
@@ -4643,7 +4642,7 @@ namespace System.Management.Automation
                         providerDestinationPath,
                         context);
 
-                    tracer.WriteLine("destinationIsContainer = {0}", destinationIsContainer);
+                    s_tracer.WriteLine("destinationIsContainer = {0}", destinationIsContainer);
                 }
 
                 foreach (string providerPath in providerPaths)
@@ -4671,7 +4670,7 @@ namespace System.Management.Automation
                             providerPath,
                             context);
 
-                    tracer.WriteLine("sourcIsContainer = {0}", sourceIsContainer);
+                    s_tracer.WriteLine("sourcIsContainer = {0}", sourceIsContainer);
 
                     if (sourceIsContainer)
                     {
@@ -4692,7 +4691,6 @@ namespace System.Management.Automation
                                     "CopyContainerToContainerWithoutRecurseOrContainer",
                                     ErrorCategory.InvalidArgument,
                                     providerPath));
-
                             }
                             else if (recurse && copyContainers == CopyContainers.CopyChildrenOfTargetContainer)
                             {
@@ -4715,7 +4713,6 @@ namespace System.Management.Automation
                                     recurse,
                                     context);
                             }
-
                         }
                         else
                         {
@@ -4852,7 +4849,6 @@ namespace System.Management.Automation
                     path,
                     e);
             }
-
         } // CopyItem
 
         /// <summary>
@@ -5046,7 +5042,7 @@ namespace System.Management.Automation
                 if (fileSystemProviders.Count > 0)
                 {
                     providerPath = path;
-                    providerInstance = this._context.EngineSessionState.GetProviderInstance(
+                    providerInstance = _context.EngineSessionState.GetProviderInstance(
                         fileSystemProviders[0]);
                 }
             }
@@ -5229,7 +5225,7 @@ namespace System.Management.Automation
             // If the remote path is not absolute, display an error to the user.
             if (op["IsAbsolute"] != null)
             {
-                bool isAbsolute = (bool) op["IsAbsolute"];
+                bool isAbsolute = (bool)op["IsAbsolute"];
                 if (!isAbsolute)
                 {
                     context.WriteError(new ErrorRecord(
@@ -5281,8 +5277,8 @@ namespace System.Management.Automation
             {
                 context.WriteError(new ErrorRecord(
                                     new InvalidOperationException(
-                                        String.Format(System.Globalization.CultureInfo.InvariantCulture, 
-                                            SessionStateStrings.CopyItemSessionProperties, 
+                                        String.Format(System.Globalization.CultureInfo.InvariantCulture,
+                                            SessionStateStrings.CopyItemSessionProperties,
                                             "Availability", session.Availability)),
                                             "SessionIsNotAvailable",
                                         ErrorCategory.InvalidOperation,
@@ -5296,7 +5292,7 @@ namespace System.Management.Automation
 
             return true;
         }
-        
+
         #endregion CopyItem
 
         #endregion ContainerCmdletProvider accessors
@@ -5318,7 +5314,6 @@ namespace System.Management.Automation
         /// </summary>
         Delete = 2
     }
-
 }
 
 #pragma warning restore 56500

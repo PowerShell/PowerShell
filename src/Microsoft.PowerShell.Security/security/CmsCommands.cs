@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
-        PSDataCollection<PSObject> inputObjects = new PSDataCollection<PSObject>();
+        private PSDataCollection<PSObject> _inputObjects = new PSDataCollection<PSObject>();
 
         /// <summary>
         /// Gets or sets the content of the CMS Message by path.
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
-        private string resolvedPath = null;
+        private string _resolvedPath = null;
 
         /// <summary>
         /// Emits the protected message to a file path.
@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
-        private string resolvedOutFile = null;
+        private string _resolvedOutFile = null;
 
         /// <summary>
         /// Validate / convert arguments
@@ -107,20 +107,20 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(error);
                 }
 
-                resolvedPath = resolvedPaths[0];
+                _resolvedPath = resolvedPaths[0];
             }
 
             if (!String.IsNullOrEmpty(LiteralPath))
             {
                 // Validate that the path exists
                 SessionState.InvokeProvider.Item.Get(new string[] { LiteralPath }, false, true);
-                resolvedPath = LiteralPath;
+                _resolvedPath = LiteralPath;
             }
 
             // Validate OutFile
             if (!String.IsNullOrEmpty(OutFile))
             {
-                resolvedOutFile = GetUnresolvedProviderPathFromPSPath(OutFile);
+                _resolvedOutFile = GetUnresolvedProviderPathFromPSPath(OutFile);
             }
         }
 
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (String.Equals("ByContent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
-                inputObjects.Add(Content);
+                _inputObjects.Add(Content);
             }
         }
 
@@ -144,16 +144,16 @@ namespace Microsoft.PowerShell.Commands
         {
             byte[] contentBytes = null;
 
-            if (inputObjects.Count > 0)
+            if (_inputObjects.Count > 0)
             {
                 StringBuilder outputString = new StringBuilder();
 
                 Collection<PSObject> output = System.Management.Automation.PowerShell.Create().
                     AddCommand("Microsoft.PowerShell.Utility\\Out-String").
                     AddParameter("Stream").
-                    Invoke(inputObjects);
+                    Invoke(_inputObjects);
 
-                foreach(PSObject outputObject in output)
+                foreach (PSObject outputObject in output)
                 {
                     if (outputString.Length > 0)
                     {
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                contentBytes = System.IO.File.ReadAllBytes(resolvedPath);
+                contentBytes = System.IO.File.ReadAllBytes(_resolvedPath);
             }
 
             ErrorRecord terminatingError = null;
@@ -178,13 +178,13 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(terminatingError);
             }
 
-            if (String.IsNullOrEmpty(resolvedOutFile))
+            if (String.IsNullOrEmpty(_resolvedOutFile))
             {
                 WriteObject(encodedContent);
             }
             else
             {
-                System.IO.File.WriteAllText(resolvedOutFile, encodedContent);
+                System.IO.File.WriteAllText(_resolvedOutFile, encodedContent);
             }
         }
     }
@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
-        StringBuilder contentBuffer = new StringBuilder();
+        private StringBuilder _contentBuffer = new StringBuilder();
 
         /// <summary>
         /// Gets or sets the CMS Message by path.
@@ -231,7 +231,7 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
-        private string resolvedPath = null;
+        private string _resolvedPath = null;
 
 
         /// <summary>
@@ -257,14 +257,14 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(error);
                 }
 
-                resolvedPath = resolvedPaths[0];
+                _resolvedPath = resolvedPaths[0];
             }
 
             if (!String.IsNullOrEmpty(LiteralPath))
             {
                 // Validate that the path exists
                 SessionState.InvokeProvider.Item.Get(new string[] { LiteralPath }, false, true);
-                resolvedPath = LiteralPath;
+                _resolvedPath = LiteralPath;
             }
         }
 
@@ -277,12 +277,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (String.Equals("ByContent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
-                if (contentBuffer.Length > 0)
+                if (_contentBuffer.Length > 0)
                 {
-                    contentBuffer.Append(Environment.NewLine);
+                    _contentBuffer.Append(Environment.NewLine);
                 }
 
-                contentBuffer.Append(Content);
+                _contentBuffer.Append(Content);
             }
         }
 
@@ -296,11 +296,11 @@ namespace Microsoft.PowerShell.Commands
             // Read in the content
             if (String.Equals("ByContent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
-                actualContent = contentBuffer.ToString();
+                actualContent = _contentBuffer.ToString();
             }
             else
             {
-                actualContent = System.IO.File.ReadAllText(resolvedPath);
+                actualContent = System.IO.File.ReadAllText(_resolvedPath);
             }
 
             // Extract out the bytes and Base64 decode them
@@ -353,7 +353,7 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
-        private StringBuilder contentBuffer = new StringBuilder();
+        private StringBuilder _contentBuffer = new StringBuilder();
 
         /// <summary>
         /// Gets or sets the Windows Event Log Message with contents to be decrypted.
@@ -385,7 +385,7 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
-        private string resolvedPath = null;
+        private string _resolvedPath = null;
 
         /// <summary>
         /// Determines whether to include the decrypted content in its original context,
@@ -432,14 +432,14 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(error);
                 }
 
-                resolvedPath = resolvedPaths[0];
+                _resolvedPath = resolvedPaths[0];
             }
 
             if (!String.IsNullOrEmpty(LiteralPath))
             {
                 // Validate that the path exists
                 SessionState.InvokeProvider.Item.Get(new string[] { LiteralPath }, false, true);
-                resolvedPath = LiteralPath;
+                _resolvedPath = LiteralPath;
             }
         }
 
@@ -454,12 +454,12 @@ namespace Microsoft.PowerShell.Commands
             // If we're process by content, collect it.
             if (String.Equals("ByContent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
-                if (contentBuffer.Length > 0)
+                if (_contentBuffer.Length > 0)
                 {
-                    contentBuffer.Append(Environment.NewLine);
+                    _contentBuffer.Append(Environment.NewLine);
                 }
 
-                contentBuffer.Append(Content);
+                _contentBuffer.Append(Content);
             }
 
             // If we're processing event log records, decrypt those inline.
@@ -497,11 +497,11 @@ namespace Microsoft.PowerShell.Commands
             // Read in the content
             if (String.Equals("ByContent", this.ParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
-                actualContent = contentBuffer.ToString();
+                actualContent = _contentBuffer.ToString();
             }
             else
             {
-                actualContent = System.IO.File.ReadAllText(resolvedPath);
+                actualContent = System.IO.File.ReadAllText(_resolvedPath);
             }
 
             string decrypted = Decrypt(actualContent);

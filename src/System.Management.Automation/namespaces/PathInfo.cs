@@ -3,7 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
@@ -21,10 +21,10 @@ namespace System.Management.Automation
             {
                 PSDriveInfo result = null;
 
-                if (drive != null &&
-                    !drive.Hidden)
+                if (_drive != null &&
+                    !_drive.Hidden)
                 {
-                    result = drive;
+                    result = _drive;
                 }
 
                 return result;
@@ -38,10 +38,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return provider;
+                return _provider;
             }
         } // Provider
-                    
+
         /// <summary>
         /// This is the internal mechanism to get the hidden drive.
         /// </summary>
@@ -52,7 +52,7 @@ namespace System.Management.Automation
         ///
         internal PSDriveInfo GetDrive()
         {
-            return drive;
+            return _drive;
         } // GetDrive
 
         /// <summary>
@@ -71,19 +71,19 @@ namespace System.Management.Automation
         {
             get
             {
-                if (providerPath == null)
+                if (_providerPath == null)
                 {
                     // Construct the providerPath
 
-                    LocationGlobber pathGlobber = sessionState.Internal.ExecutionContext.LocationGlobber;
-                    providerPath = pathGlobber.GetProviderPath (Path);
+                    LocationGlobber pathGlobber = _sessionState.Internal.ExecutionContext.LocationGlobber;
+                    _providerPath = pathGlobber.GetProviderPath(Path);
                 }
 
-                return providerPath;
+                return _providerPath;
             }
         }
-        private string providerPath;
-        private SessionState sessionState;
+        private string _providerPath;
+        private SessionState _sessionState;
 
         /// <summary>
         /// Gets the MSH path that this object represents.
@@ -93,12 +93,12 @@ namespace System.Management.Automation
             get
             {
                 return this.ToString();
-            } 
+            }
         } // Path
 
-        private PSDriveInfo drive;
-        private ProviderInfo provider;
-        private string path = String.Empty;
+        private PSDriveInfo _drive;
+        private ProviderInfo _provider;
+        private string _path = String.Empty;
 
         /// <summary>
         /// Gets a string representing the MSH path.
@@ -109,21 +109,21 @@ namespace System.Management.Automation
         /// </returns>
         public override string ToString()
         {
-            string result = path;
+            string result = _path;
 
 
-            if (drive == null ||
-                drive.Hidden)
+            if (_drive == null ||
+                _drive.Hidden)
             {
                 // For hidden drives just return the current location
                 result =
                     LocationGlobber.GetProviderQualifiedPath(
-                        path,
-                        provider);
+                        _path,
+                        _provider);
             }
             else
             {
-                result = LocationGlobber.GetDriveQualifiedPath(path, drive);
+                result = LocationGlobber.GetDriveQualifiedPath(_path, _drive);
             }
 
             return result;
@@ -168,14 +168,13 @@ namespace System.Management.Automation
 
             if (sessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException ("sessionState");
+                throw PSTraceSource.NewArgumentNullException("sessionState");
             }
 
-            this.drive = drive;
-            this.provider = provider;
-            this.path = path;
-            this.sessionState = sessionState;
+            _drive = drive;
+            _provider = provider;
+            _path = path;
+            _sessionState = sessionState;
         } // constructor
     } // PathInfo
-
 } // namespace System.Management.Automation

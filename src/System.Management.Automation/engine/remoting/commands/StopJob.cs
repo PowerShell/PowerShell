@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,19 +32,19 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = RemoveJobCommand.JobParameterSet)]
         [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]        
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Job[] Job
         {
             get
             {
-                return jobs;
+                return _jobs;
             }
             set
             {
-                jobs = value;
+                _jobs = value;
             }
         }
-        private Job[] jobs;
+        private Job[] _jobs;
 
         /// <summary>
         /// Pass the Job object through the pipeline.
@@ -53,14 +54,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return passThru;
+                return _passThru;
             }
             set
             {
-                passThru = value;
+                _passThru = value;
             }
         }
-        private bool passThru;
+        private bool _passThru;
 
         /// <summary>
         /// 
@@ -119,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
 
                 default:
                     {
-                        jobsToStop = CopyJobsToList(jobs, false, false);
+                        jobsToStop = CopyJobsToList(_jobs, false, false);
                     }
                     break;
             }
@@ -193,7 +194,7 @@ namespace Microsoft.PowerShell.Commands
                 _waitForJobs.WaitOne();
 
             foreach (var e in _errorsToWrite) WriteError(e);
-            if (passThru)
+            if (_passThru)
             {
                 foreach (var job in _allJobsToStop) WriteObject(job);
             }

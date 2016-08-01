@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
         public void GetSecurityDescriptor(string path,
                                           AccessControlSections sections)
         {
-            ObjectSecurity sd=null;
+            ObjectSecurity sd = null;
             path = NormalizePath(path);
 
             if (String.IsNullOrEmpty(path))
@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (System.Security.SecurityException e)
             {
-                WriteError (new ErrorRecord (e, e.GetType().FullName, ErrorCategory.PermissionDenied, path));
+                WriteError(new ErrorRecord(e, e.GetType().FullName, ErrorCategory.PermissionDenied, path));
             }
             finally
             {
@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
         ///     securitydescriptor is null.
         /// </exception>
         public void SetSecurityDescriptor(
-            string path, 
+            string path,
             ObjectSecurity securityDescriptor)
         {
             if (String.IsNullOrEmpty(path))
@@ -174,10 +174,10 @@ namespace Microsoft.PowerShell.Commands
                     // Try to set the entire security descriptor
                     SetSecurityDescriptor(path, sd, AccessControlSections.All);
                 }
-                catch(PrivilegeNotHeldException)
+                catch (PrivilegeNotHeldException)
                 {
                     // Get the security descriptor of the destination path
-                    ObjectSecurity existingDescriptor =  new FileInfo(path).GetAccessControl();
+                    ObjectSecurity existingDescriptor = new FileInfo(path).GetAccessControl();
                     Type ntAccountType = typeof(System.Security.Principal.NTAccount);
 
                     AccessControlSections sections = AccessControlSections.All;
@@ -194,13 +194,13 @@ namespace Microsoft.PowerShell.Commands
                     // If they didn't modify the owner, don't try to set that section.
                     if (sd.GetOwner(ntAccountType) == existingDescriptor.GetOwner(ntAccountType))
                     {
-                        sections &= ~ AccessControlSections.Owner;
+                        sections &= ~AccessControlSections.Owner;
                     }
 
                     // If they didn't modify the group, don't try to set that section.
                     if (sd.GetGroup(ntAccountType) == existingDescriptor.GetGroup(ntAccountType))
                     {
-                        sections &= ~ AccessControlSections.Group;
+                        sections &= ~AccessControlSections.Group;
                     }
 
                     // Try to set the security descriptor again, this time with a reduced set
@@ -324,22 +324,22 @@ namespace Microsoft.PowerShell.Commands
         {
             ObjectSecurity sd = null;
 
-            switch(itemType)
+            switch (itemType)
             {
-            case ItemType.File:
-                sd = new FileSecurity(); 
-                break;
+                case ItemType.File:
+                    sd = new FileSecurity();
+                    break;
 
-            case ItemType.Directory:
-                sd = new DirectorySecurity(); 
-                break;
+                case ItemType.Directory:
+                    sd = new DirectorySecurity();
+                    break;
             }
 
             return sd;
         }
 
         private static ErrorRecord CreateErrorRecord(string path,
-												     string errorId)
+                                                     string errorId)
         {
             string message = null;
 
@@ -355,7 +355,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion ISecurityDescriptorCmdletProvider members
-
     }
 }
 

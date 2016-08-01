@@ -1,8 +1,8 @@
 //-----------------------------------------------------------------------
-// <copyright file="ShowCommandParameterInfo.cs" company="Microsoft">
 //     Copyright © Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+
 namespace Microsoft.PowerShell.Commands.ShowCommandExtension
 {
     using System;
@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
     using System.Linq;
     using System.Management.Automation;
 
-    
+
     /// <summary>
     /// Implements a facade around ShowCommandParameterInfo and its deserialized counterpart
     /// </summary>
@@ -40,14 +40,14 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
             this.ParameterType = new ShowCommandParameterType(other.ParameterType);
             this.Position = other.Position;
 
-            var validateSetAttribute = other.Attributes.Where(x=>typeof(ValidateSetAttribute).IsAssignableFrom(x.GetType())).Cast<ValidateSetAttribute>().LastOrDefault();
-            if(validateSetAttribute != null)
+            var validateSetAttribute = other.Attributes.Where(x => typeof(ValidateSetAttribute).IsAssignableFrom(x.GetType())).Cast<ValidateSetAttribute>().LastOrDefault();
+            if (validateSetAttribute != null)
             {
                 this.HasParameterSet = true;
                 this.ValidParamSetValues = validateSetAttribute.ValidValues;
             }
         }
-        
+
         /// <summary>
         /// Creates an instance of the ShowCommandParameterInfo class based on a PSObject object
         /// </summary>
@@ -73,37 +73,37 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
                 this.ValidParamSetValues = ShowCommandCommandInfo.GetObjectEnumerable((other.Members["ValidParamSetValues"].Value as PSObject).BaseObject as System.Collections.ArrayList).Cast<string>().ToList();
             }
         }
-        
+
         /// <summary>
         /// Gets the name of the parameter.
         /// </summary>
         public string Name { get; private set; }
-        
+
         /// <remarks>
         /// True if the parameter is dynamic, or false otherwise.
         /// </remarks>
         public bool IsMandatory { get; private set; }
-        
+
         /// <summary>
         /// Gets whether the parameter can take values from the incoming pipeline object.
         /// </summary>
         public bool ValueFromPipeline { get; private set; }
-        
+
         /// <summary>
         /// Gets the type of the parameter.
         /// </summary>
         public ShowCommandParameterType ParameterType { get; private set; }
-        
+
         /// <summary>
         /// The possible values of this parameter
         /// </summary>
         public IList<string> ValidParamSetValues { get; private set; }
-        
+
         /// <summary>
         /// Gets whether the parameter has a parameter set.
         /// </summary>
         public bool HasParameterSet { get; private set; }
-        
+
         /// <summary>
         /// Gets the position in which the parameter can be specified on the command line
         /// if not named. If the returned value is int.MinValue then the parameter must be named.

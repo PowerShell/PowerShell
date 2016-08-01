@@ -3,7 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -40,7 +40,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("variable");
             }
 
-            this.variable = variable;
+            _variable = variable;
         }
         #endregion constructor
 
@@ -74,7 +74,7 @@ namespace System.Management.Automation
 
             base.InsertItem(index, item);
 
-            variable.SetValueRaw(variableValue, true);
+            _variable.SetValueRaw(variableValue, true);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace System.Management.Automation
 
             base.SetItem(index, item);
 
-            variable.SetValueRaw(variableValue, true);
+            _variable.SetValueRaw(variableValue, true);
         }
         #endregion Collection overrides
 
@@ -135,7 +135,7 @@ namespace System.Management.Automation
         /// 
         private object VerifyNewAttribute(Attribute item)
         {
-            object variableValue = variable.Value;
+            object variableValue = _variable.Value;
 
             // Perform transformation before validating
             ArgumentTransformationAttribute argumentTransformation = item as ArgumentTransformationAttribute;
@@ -160,8 +160,8 @@ namespace System.Management.Automation
                     "ValidateSetFailure",
                     null,
                     Metadata.InvalidMetadataForCurrentValue,
-                    variable.Name,
-                    ((variable.Value != null) ? variable.Value.ToString() : ""));
+                    _variable.Name,
+                    ((_variable.Value != null) ? _variable.Value.ToString() : ""));
 
                 throw e;
             }
@@ -173,7 +173,7 @@ namespace System.Management.Automation
         /// The variable whose value needs to be verified anytime
         /// the attributes change.
         /// </summary>
-        private PSVariable variable;
+        private PSVariable _variable;
         #endregion private data
     }
 }

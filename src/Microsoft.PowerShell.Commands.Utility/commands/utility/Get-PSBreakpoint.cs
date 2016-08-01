@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Collections.Generic;
 using System.Management.Automation;
@@ -76,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Variables of the breakpoints to output
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification="It's OK to use arrays for cmdlet parameters")]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "It's OK to use arrays for cmdlet parameters")]
         [Parameter(ParameterSetName = "Variable", Mandatory = true)]
         [ValidateNotNull]
         public string[] Variable
@@ -152,9 +153,9 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     _id,
-                    delegate(Breakpoint breakpoint, int id) 
+                    delegate (Breakpoint breakpoint, int id)
                     {
-                        return breakpoint.Id == id; 
+                        return breakpoint.Id == id;
                     }
                 );
             }
@@ -163,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     _command,
-                    delegate(Breakpoint breakpoint, string command)
+                    delegate (Breakpoint breakpoint, string command)
                     {
                         CommandBreakpoint commandBreakpoint = breakpoint as CommandBreakpoint;
 
@@ -180,7 +181,7 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     _variable,
-                    delegate(Breakpoint breakpoint, string variable)
+                    delegate (Breakpoint breakpoint, string variable)
                     {
                         VariableBreakpoint variableBreakpoint = breakpoint as VariableBreakpoint;
 
@@ -197,7 +198,7 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     _type,
-                    delegate(Breakpoint breakpoint, BreakpointType type) 
+                    delegate (Breakpoint breakpoint, BreakpointType type)
                     {
                         switch (type)
                         {
@@ -239,7 +240,7 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     _script,
-                    delegate(Breakpoint breakpoint, string script)
+                    delegate (Breakpoint breakpoint, string script)
                     {
                         if (breakpoint.Script == null)
                         {

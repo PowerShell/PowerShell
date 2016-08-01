@@ -40,9 +40,9 @@ namespace System.Management.Automation.PerformanceData
         /// </summary>
         public CounterInfo(int id, CounterType type, string name)
         {
-            this._Id = id;
-            this._Type = type;
-            this._Name = name;
+            _Id = id;
+            _Type = type;
+            _Name = name;
         }
 
         /// <summary>
@@ -50,9 +50,9 @@ namespace System.Management.Automation.PerformanceData
         /// </summary>
         public CounterInfo(int id, CounterType type)
         {
-            this._Id = id;
-            this._Type = type;
-            this._Name = null;
+            _Id = id;
+            _Type = type;
+            _Name = null;
         }
         #endregion
 
@@ -64,7 +64,7 @@ namespace System.Management.Automation.PerformanceData
         {
             get
             {
-                return this._Name;
+                return _Name;
             }
         }
 
@@ -75,7 +75,7 @@ namespace System.Management.Automation.PerformanceData
         {
             get
             {
-                return this._Id;
+                return _Id;
             }
         }
 
@@ -87,7 +87,7 @@ namespace System.Management.Automation.PerformanceData
         {
             get
             {
-                return this._Type;
+                return _Type;
             }
         }
 
@@ -113,7 +113,7 @@ namespace System.Management.Automation.PerformanceData
         private readonly CounterInfo[] _counterInfoArray;
 
         #endregion
-        
+
         #region Protected Members
         /// <summary>
         /// A reference to the encapsulated counter set instance.
@@ -130,7 +130,7 @@ namespace System.Management.Automation.PerformanceData
 
 
         #endregion
-        
+
         #region Constructors
         /// <summary>
         /// Constructor that creates an instance of CounterSetRegistrarBase derived type
@@ -143,23 +143,23 @@ namespace System.Management.Automation.PerformanceData
             Guid counterSetId,
             CounterSetInstanceType counterSetInstType,
             CounterInfo[] counterInfoArray,
-            string counterSetName=null)
+            string counterSetName = null)
         {
-            this._providerId = providerId;
-            this._counterSetId = counterSetId;
-            this._counterSetInstanceType = counterSetInstType;
-            this._counterSetName = counterSetName;
-            if((counterInfoArray == null)
+            _providerId = providerId;
+            _counterSetId = counterSetId;
+            _counterSetInstanceType = counterSetInstType;
+            _counterSetName = counterSetName;
+            if ((counterInfoArray == null)
                 || (counterInfoArray.Length == 0))
             {
                 throw new ArgumentNullException("counterInfoArray");
             }
 
-            this._counterInfoArray = new CounterInfo[counterInfoArray.Length];
+            _counterInfoArray = new CounterInfo[counterInfoArray.Length];
 
             for (int i = 0; i < counterInfoArray.Length; i++)
             {
-                this._counterInfoArray[i] =
+                _counterInfoArray[i] =
                     new CounterInfo(
                         counterInfoArray[i].Id,
                         counterInfoArray[i].Type,
@@ -179,23 +179,22 @@ namespace System.Management.Automation.PerformanceData
             {
                 throw new ArgumentNullException("srcCounterSetRegistrarBase");
             }
-            this._providerId = srcCounterSetRegistrarBase._providerId;
-            this._counterSetId = srcCounterSetRegistrarBase._counterSetId;
-            this._counterSetInstanceType = srcCounterSetRegistrarBase._counterSetInstanceType;
-            this._counterSetName = srcCounterSetRegistrarBase._counterSetName;
+            _providerId = srcCounterSetRegistrarBase._providerId;
+            _counterSetId = srcCounterSetRegistrarBase._counterSetId;
+            _counterSetInstanceType = srcCounterSetRegistrarBase._counterSetInstanceType;
+            _counterSetName = srcCounterSetRegistrarBase._counterSetName;
 
             CounterInfo[] counterInfoArrayRef = srcCounterSetRegistrarBase._counterInfoArray;
-            this._counterInfoArray = new CounterInfo[counterInfoArrayRef.Length];
+            _counterInfoArray = new CounterInfo[counterInfoArrayRef.Length];
 
             for (int i = 0; i < counterInfoArrayRef.Length; i++)
             {
-                this._counterInfoArray[i] =
+                _counterInfoArray[i] =
                     new CounterInfo(
                         counterInfoArrayRef[i].Id,
                         counterInfoArrayRef[i].Type,
                         counterInfoArrayRef[i].Name);
             }
-
         }
         #endregion
 
@@ -204,11 +203,11 @@ namespace System.Management.Automation.PerformanceData
         /// <summary>
         /// Getter method for ProviderId property
         /// </summary>
-        public Guid ProviderId 
-        { 
+        public Guid ProviderId
+        {
             get
             {
-                return this._providerId;
+                return _providerId;
             }
         }
 
@@ -219,7 +218,7 @@ namespace System.Management.Automation.PerformanceData
         {
             get
             {
-                return this._counterSetId;
+                return _counterSetId;
             }
         }
 
@@ -230,7 +229,7 @@ namespace System.Management.Automation.PerformanceData
         {
             get
             {
-                return this._counterSetName;
+                return _counterSetName;
             }
         }
 
@@ -241,7 +240,7 @@ namespace System.Management.Automation.PerformanceData
         {
             get
             {
-                return this._counterSetInstanceType;
+                return _counterSetInstanceType;
             }
         }
 
@@ -253,11 +252,11 @@ namespace System.Management.Automation.PerformanceData
         {
             get
             {
-                return this._counterInfoArray;
+                return _counterInfoArray;
             }
         }
 
-        
+
         /// <summary>
         /// Getter method that returns an instance of the CounterSetInstanceBase's 
         /// derived type
@@ -273,13 +272,13 @@ namespace System.Management.Automation.PerformanceData
                 return this._counterSetInstanceBase;
             }
         }
-        
+
         #endregion
 
-        
+
         #region Public Methods
 
-        
+
         /// <summary>
         /// Method that disposes the referenced instance of the CounterSetInstanceBase's derived type.
         /// This method is invoked by the PSPerfCountersMgr to dispose the appropriate
@@ -287,9 +286,8 @@ namespace System.Management.Automation.PerformanceData
         /// cleanup procedure.
         /// </summary>
         public abstract void DisposeCounterSetInstance();
-        
+
         #endregion
-    
     }
 
     /// <summary>
@@ -333,7 +331,7 @@ namespace System.Management.Automation.PerformanceData
         #endregion
 
         #region CounterSetRegistrarBase Overrides
-        
+
         #region Protected Methods
 
         /// <summary>
@@ -354,12 +352,10 @@ namespace System.Management.Automation.PerformanceData
         {
             base._counterSetInstanceBase.Dispose();
         }
-        
-        #endregion
-       
-        
+
         #endregion
 
+
+        #endregion
     }
-
 }

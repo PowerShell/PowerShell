@@ -33,19 +33,19 @@ namespace Microsoft.PowerShell.Commands
         /// 
         /// </summary>
         /// <value></value>
-        
+
         [Parameter(Position = 0, ParameterSetName = "ByPath")]
         [ValidateNotNullOrEmpty]
         public string Path
         {
             get
             {
-                return outFilename;
+                return _outFilename;
             }
             set
             {
-                isFilenameSet = true;
-                outFilename = value;
+                _isFilenameSet = true;
+                _outFilename = value;
             }
         }
 
@@ -59,16 +59,16 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return outFilename;
+                return _outFilename;
             }
             set
             {
-                isFilenameSet = true;
-                outFilename = value;
-                isLiteralPath = true;
+                _isFilenameSet = true;
+                _outFilename = value;
+                _isLiteralPath = true;
             }
         }
-        bool isLiteralPath = false;
+        private bool _isLiteralPath = false;
 
         /// <summary>
         /// The literal name of the file in which to write the transcript.
@@ -86,17 +86,17 @@ namespace Microsoft.PowerShell.Commands
         /// 
         /// </summary>
         /// <value></value>
-        
+
         [Parameter]
         public SwitchParameter Append
         {
             get
             {
-                return shouldAppend;
+                return _shouldAppend;
             }
             set
             {
-                shouldAppend = value;
+                _shouldAppend = value;
             }
         }
 
@@ -107,20 +107,20 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>
         /// The read-only attribute will not be replaced when the transcript is done.
         /// </remarks>
-        
+
         [Parameter()]
         public SwitchParameter Force
         {
             get
             {
-                return force;
+                return _force;
             }
             set
             {
-                force = value;
+                _force = value;
             }
         }
-        private bool force;
+        private bool _force;
 
         /// <summary>
         /// Property that prevents file overwrite.
@@ -131,14 +131,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return noclobber;
+                return _noclobber;
             }
             set
             {
-                noclobber = value;
+                _noclobber = value;
             }
         }
-        private bool noclobber;
+        private bool _noclobber;
 
         /// <summary>
         /// Whether to include command invocation time headers between commands.
@@ -157,35 +157,35 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             // If they haven't specified a path, figure out the correct output path.
-            if (!isFilenameSet)
+            if (!_isFilenameSet)
             {
                 // read the filename from $TRANSCRIPT
                 object value = this.GetVariableValue("global:TRANSCRIPT", null);
-                
+
                 // $TRANSCRIPT is not set, so create a file name (the default: $HOME/My Documents/PowerShell_transcript.YYYYMMDDmmss.txt)
                 if (value == null)
                 {
                     // If they've specified an output directory, use it. Otherwise, use "My Documents"
-                    if(OutputDirectory != null)
+                    if (OutputDirectory != null)
                     {
-                        outFilename = System.Management.Automation.Host.PSHostUserInterface.GetTranscriptPath(OutputDirectory, false);
-                        isLiteralPath = true;
+                        _outFilename = System.Management.Automation.Host.PSHostUserInterface.GetTranscriptPath(OutputDirectory, false);
+                        _isLiteralPath = true;
                     }
                     else
                     {
-                        outFilename = System.Management.Automation.Host.PSHostUserInterface.GetTranscriptPath();
+                        _outFilename = System.Management.Automation.Host.PSHostUserInterface.GetTranscriptPath();
                     }
                 }
                 else
                 {
-                    outFilename = (string) value;
+                    _outFilename = (string)value;
                 }
             }
 
             // Normalize outFilename here in case it is a relative path
             try
             {
-                string effectiveFilePath = ResolveFilePath(Path, isLiteralPath);
+                string effectiveFilePath = ResolveFilePath(Path, _isLiteralPath);
 
                 if (!ShouldProcess(effectiveFilePath))
                     return;
@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Commands
                         Exception uae = new UnauthorizedAccessException(message);
                         ErrorRecord errorRecord = new ErrorRecord(
                             uae, "NoClobber", ErrorCategory.ResourceExists, effectiveFilePath);
-                        
+
                         // NOTE: this call will throw
                         ThrowTerminatingError(errorRecord);
                     }
@@ -225,16 +225,16 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // If they didn't specify -Append, delete the file
-                    if (!shouldAppend)
+                    if (!_shouldAppend)
                     {
                         System.IO.File.Delete(effectiveFilePath);
                     }
                 }
 
-                System.Management.Automation.Remoting.PSSenderInfo psSenderInfo = 
+                System.Management.Automation.Remoting.PSSenderInfo psSenderInfo =
                     this.SessionState.PSVariable.GetValue("PSSenderInfo") as System.Management.Automation.Remoting.PSSenderInfo;
                 Host.UI.StartTranscribing(effectiveFilePath, psSenderInfo, IncludeInvocationHeader.ToBool());
-                
+
                 // ch.StartTranscribing(effectiveFilePath, Append);
 
                 // NTRAID#Windows Out Of Band Releases-931008-2006/03/21
@@ -335,9 +335,9 @@ namespace Microsoft.PowerShell.Commands
             ThrowTerminatingError(errorRecord);
         }
 
-        private bool shouldAppend;
-        private string outFilename;
-        private bool isFilenameSet;
+        private bool _shouldAppend;
+        private string _outFilename;
+        private bool _isFilenameSet;
     }
 }
 

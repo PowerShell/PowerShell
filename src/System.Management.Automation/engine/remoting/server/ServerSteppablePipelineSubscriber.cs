@@ -1,6 +1,7 @@
 /********************************************************************++
  * Copyright (c) Microsoft Corporation.  All rights reserved.
  * --********************************************************************/
+
 using System;
 using System.Threading;
 using System.Collections.Generic;
@@ -39,31 +40,31 @@ namespace System.Management.Automation
     {
         #region Private data
 
-        private object syncObject = new object();
-        private bool initialized = false;
-        private PSLocalEventManager eventManager;
-        private PSEventSubscriber startSubscriber;
-        private PSEventSubscriber processSubscriber;
+        private object _syncObject = new object();
+        private bool _initialized = false;
+        private PSLocalEventManager _eventManager;
+        private PSEventSubscriber _startSubscriber;
+        private PSEventSubscriber _processSubscriber;
 
         #endregion
 
         internal void SubscribeEvents(ServerSteppablePipelineDriver driver)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (!initialized)
+                if (!_initialized)
                 {
-                    eventManager = (object)driver.LocalPowerShell.Runspace.Events as PSLocalEventManager;
+                    _eventManager = (object)driver.LocalPowerShell.Runspace.Events as PSLocalEventManager;
 
-                    if (eventManager != null)
+                    if (_eventManager != null)
                     {
-                        startSubscriber = eventManager.SubscribeEvent(this, "StartSteppablePipeline", Guid.NewGuid().ToString(), null,
+                        _startSubscriber = _eventManager.SubscribeEvent(this, "StartSteppablePipeline", Guid.NewGuid().ToString(), null,
                             new PSEventReceivedEventHandler(this.HandleStartEvent), true, false, true);
 
-                        processSubscriber = eventManager.SubscribeEvent(this, "RunProcessRecord", Guid.NewGuid().ToString(), null,
+                        _processSubscriber = _eventManager.SubscribeEvent(this, "RunProcessRecord", Guid.NewGuid().ToString(), null,
                             new PSEventReceivedEventHandler(this.HandleProcessRecord), true, false, true);
                     }
-                    initialized = true;
+                    _initialized = true;
                 }
             }
         }
@@ -280,12 +281,12 @@ namespace System.Management.Automation
         /// <param name="driver">steppable pipeline driver</param>
         internal void FireStartSteppablePipeline(ServerSteppablePipelineDriver driver)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (eventManager != null)
+                if (_eventManager != null)
                 {
-                    eventManager.GenerateEvent(startSubscriber.SourceIdentifier, this, 
-                        new object[1] { new ServerSteppablePipelineDriverEventArg(driver) }, null, true, false);               
+                    _eventManager.GenerateEvent(_startSubscriber.SourceIdentifier, this,
+                        new object[1] { new ServerSteppablePipelineDriverEventArg(driver) }, null, true, false);
                 }
             }
         }
@@ -296,11 +297,11 @@ namespace System.Management.Automation
         /// <param name="driver">steppable pipeline driver</param>
         internal void FireHandleProcessRecord(ServerSteppablePipelineDriver driver)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (eventManager != null)
+                if (_eventManager != null)
                 {
-                    eventManager.GenerateEvent(processSubscriber.SourceIdentifier, this,
+                    _eventManager.GenerateEvent(_processSubscriber.SourceIdentifier, this,
                         new object[1] { new ServerSteppablePipelineDriverEventArg(driver) }, null, true, false);
                 }
             }

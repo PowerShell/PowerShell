@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal static class CommandsCommon
     {
- #if CORECLR
+#if CORECLR
         // AccessViolationException/StackOverflowException Not In CoreCLR.
         // The CoreCLR team told us to not check for these exceptions because they
         // usually won't be caught.

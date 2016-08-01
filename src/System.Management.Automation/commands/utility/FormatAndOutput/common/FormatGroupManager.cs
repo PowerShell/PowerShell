@@ -21,24 +21,24 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="groupingExpression">name of the grouping porperty</param>
         /// <param name="displayLabel">dispaly name of the property</param>
-        internal void Initialize (MshExpression groupingExpression, string displayLabel)
+        internal void Initialize(MshExpression groupingExpression, string displayLabel)
         {
-            groupingKeyExpression = groupingExpression;
-            label = displayLabel;
+            _groupingKeyExpression = groupingExpression;
+            _label = displayLabel;
         }
 
         internal object CurrentGroupingKeyPropertyValue
         {
-            get { return this.currentGroupingKeyPropertyValue; }
+            get { return _currentGroupingKeyPropertyValue; }
         }
 
         internal string GroupingKeyDisplayName
         {
-            get 
+            get
             {
-                if (this.label != null)
-                    return this.label;
-                return this.groupingKeyDisplayName;
+                if (_label != null)
+                    return _label;
+                return _groupingKeyDisplayName;
             }
         }
 
@@ -47,29 +47,29 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="so">object to use to compute the property value</param>
         /// <returns>true if there was an update</returns>
-        internal bool UpdateGroupingKeyValue (PSObject so)
+        internal bool UpdateGroupingKeyValue(PSObject so)
         {
-            if (this.groupingKeyExpression == null)
+            if (_groupingKeyExpression == null)
                 return false;
 
-            List<MshExpressionResult> results = this.groupingKeyExpression.GetValues (so);
+            List<MshExpressionResult> results = _groupingKeyExpression.GetValues(so);
 
             // if we have more that one match, we have to select the first one
             if (results.Count > 0 && results[0].Exception == null)
             {
                 // no exception got thrown, so we can update
                 object newValue = results[0].Result;
-                object oldValue = this.currentGroupingKeyPropertyValue;
+                object oldValue = _currentGroupingKeyPropertyValue;
 
-                this.currentGroupingKeyPropertyValue = newValue;
+                _currentGroupingKeyPropertyValue = newValue;
 
                 // now do the comparison
-                bool update = !(IsEqual(this.currentGroupingKeyPropertyValue, oldValue) ||
-                                IsEqual(oldValue, this.currentGroupingKeyPropertyValue));
+                bool update = !(IsEqual(_currentGroupingKeyPropertyValue, oldValue) ||
+                                IsEqual(oldValue, _currentGroupingKeyPropertyValue));
 
-                if (update && this.label == null)
+                if (update && _label == null)
                 {
-                    this.groupingKeyDisplayName = results[0].ResolvedExpression.ToString();
+                    _groupingKeyDisplayName = results[0].ResolvedExpression.ToString();
                 }
                 return update;
             }
@@ -108,23 +108,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// value of the display label passed in. 
         /// </summary>
-        private string label = null;
+        private string _label = null;
 
         /// <summary>
         /// value of the current active grouping key
         /// </summary>
-        private string groupingKeyDisplayName = null;
+        private string _groupingKeyDisplayName = null;
 
         /// <summary>
         /// name of the current grouping key
         /// </summary>
-        private MshExpression groupingKeyExpression = null;
+        private MshExpression _groupingKeyExpression = null;
 
         /// <summary>
         /// the current value of the grouping key
         /// </summary>
-        private object currentGroupingKeyPropertyValue = AutomationNull.Value;
+        private object _currentGroupingKeyPropertyValue = AutomationNull.Value;
     }
-
 }
 

@@ -19,7 +19,7 @@ namespace System.Management.Automation
     /// located in the Monad / CustomShell Path as well as in the Application Base
     /// of PSSnapIns
     /// </remarks>
-    internal class FaqHelpProvider: HelpProviderWithFullCache
+    internal class FaqHelpProvider : HelpProviderWithFullCache
     {
         /// <summary>
         /// Constructor for FaqHelpProvider

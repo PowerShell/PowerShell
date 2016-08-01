@@ -12,7 +12,6 @@ using System.Globalization;
 
 namespace System.Management.Automation.Host
 {
-
     #region Ancillary types.  
 
     // I would have preferred to make these nested types within PSHostRawUserInterface, but that 
@@ -26,7 +25,7 @@ namespace System.Management.Automation.Host
     /// 
     /// </summary>
 
-    public 
+    public
     struct Coordinates
     {
         /// <summary>
@@ -37,10 +36,10 @@ namespace System.Management.Automation.Host
 
         public int X
         {
-            get { return x; }
-            set { x = value; }
+            get { return _x; }
+            set { _x = value; }
         }
-        private int x;
+        private int _x;
 
         /// <summary>
         /// 
@@ -50,11 +49,11 @@ namespace System.Management.Automation.Host
 
         public int Y
         {
-            get { return y; }
-            set { y = value; }
+            get { return _y; }
+            set { _y = value; }
         }
 
-        private int y;
+        private int _y;
 
 
         /// <summary>
@@ -73,11 +72,11 @@ namespace System.Management.Automation.Host
         /// 
         /// </param>
 
-        public 
+        public
         Coordinates(int x, int y)
         {
-            this.x = x;
-            this.y = y;
+            _x = x;
+            _y = y;
         }
 
 
@@ -127,7 +126,7 @@ namespace System.Management.Automation.Host
 
             if (obj is Coordinates)
             {
-                result = this == ((Coordinates) obj);
+                result = this == ((Coordinates)obj);
             }
 
             return result;
@@ -160,16 +159,16 @@ namespace System.Management.Automation.Host
                 {
                     // add one and invert to avoid an overflow.
 
-                    i64 = (UInt64) (-1 * (X + 1));
+                    i64 = (UInt64)(-1 * (X + 1));
                 }
                 else
                 {
-                    i64 = (UInt64) (-X);
+                    i64 = (UInt64)(-X);
                 }
             }
             else
             {
-                i64 = (UInt64) X;
+                i64 = (UInt64)X;
             }
 
             // rotate 32 bits to the left.
@@ -182,16 +181,16 @@ namespace System.Management.Automation.Host
             {
                 if (Y == Int32.MinValue)
                 {
-                    i64 += (UInt64) (-1 * (Y + 1));
+                    i64 += (UInt64)(-1 * (Y + 1));
                 }
                 else
                 {
-                    i64 += (UInt64) (-Y);
+                    i64 += (UInt64)(-Y);
                 }
             }
             else
             {
-                i64 += (UInt64) Y;
+                i64 += (UInt64)Y;
             }
 
             int result = i64.GetHashCode();
@@ -270,7 +269,7 @@ namespace System.Management.Automation.Host
     /// 
     /// </summary>
 
-    public 
+    public
     struct Size
     {
         /// <summary>
@@ -281,11 +280,11 @@ namespace System.Management.Automation.Host
 
         public int Width
         {
-            get { return width; }
-            set { width = value; }
+            get { return _width; }
+            set { _width = value; }
         }
-        private int width;
-	        
+        private int _width;
+
         /// <summary>
         /// 
         /// Gets and sets the Height
@@ -294,10 +293,10 @@ namespace System.Management.Automation.Host
 
         public int Height
         {
-            get { return height; }
-            set { height = value; }
+            get { return _height; }
+            set { _height = value; }
         }
-        private int height;
+        private int _height;
 
 
         /// <summary>
@@ -316,11 +315,11 @@ namespace System.Management.Automation.Host
         /// 
         /// </param>
 
-        public 
+        public
         Size(int width, int height)
         {
-            this.width = width;
-            this.height = height;
+            _width = width;
+            _height = height;
         }
 
 
@@ -498,7 +497,6 @@ namespace System.Management.Automation.Host
         {
             return !(first == second);
         }
-
     }
 
 
@@ -522,7 +520,7 @@ namespace System.Management.Automation.Host
         /// </summary>
 
         AllowCtrlC = 0x0001,
-        
+
         /// <summary>
         /// 
         /// Do not display the character for the key in the window when pressed.  
@@ -538,7 +536,7 @@ namespace System.Management.Automation.Host
         /// </summary>
 
         IncludeKeyDown = 0x0004,
-        
+
         /// <summary>
         /// 
         /// Include key up events.  Either one of IncludeKeyDown and IncludeKeyUp or both must be specified.
@@ -575,43 +573,43 @@ namespace System.Management.Automation.Host
         /// <summary>
         /// The right ctrl key is pressed.
         /// </summary>
-        
+
         RightCtrlPressed = 0x0004,
 
         /// <summary>
         /// The left ctrl key is pressed.
         /// </summary>
-        
+
         LeftCtrlPressed = 0x0008,
 
         /// <summary>
         /// The shift key is pressed.
         /// </summary>
-        
+
         ShiftPressed = 0x0010,
 
         /// <summary>
         /// The numlock light is on.
         /// </summary>
-        
+
         NumLockOn = 0x0020,
 
         /// <summary>
         /// The scrolllock light is on.
         /// </summary>
-        
+
         ScrollLockOn = 0x0040,
 
         /// <summary>
         /// The capslock light is on.
         /// </summary>
-        
+
         CapsLockOn = 0x0080,
 
         /// <summary>
         /// The key is enhanced.
         /// </summary>
-        
+
         EnhancedKey = 0x0100
     }
 
@@ -622,8 +620,8 @@ namespace System.Management.Automation.Host
     /// Represents information of a keystroke
     /// 
     /// </summary>
-    
-    public 
+
+    public
     struct KeyInfo
     {
         /// <summary>
@@ -634,47 +632,47 @@ namespace System.Management.Automation.Host
 
         public int VirtualKeyCode
         {
-            get { return virtualKeyCode; }
-            set { virtualKeyCode = value; }
+            get { return _virtualKeyCode; }
+            set { _virtualKeyCode = value; }
         }
-        private int virtualKeyCode;
+        private int _virtualKeyCode;
 
-	
+
         /// <summary>
         /// Gets and set unicode Character of the key
         /// </summary>
 
         public char Character
         {
-            get { return character; }
-            set { character = value; }
+            get { return _character; }
+            set { _character = value; }
         }
-        private char character;
+        private char _character;
 
-	
+
         /// <summary>
         /// State of the control keys.
         /// </summary>
-        
+
         public ControlKeyStates ControlKeyState
         {
-            get { return controlKeyState; }
-            set { controlKeyState = value; }
+            get { return _controlKeyState; }
+            set { _controlKeyState = value; }
         }
-	
-        private ControlKeyStates controlKeyState;
+
+        private ControlKeyStates _controlKeyState;
 
 
         /// <summary>
         /// Gets and set the status of whether this instance is generated by a key pressed or released
         /// </summary>
-        
+
         public bool KeyDown
         {
-            get { return keyDown; }
-            set { keyDown = value; }
+            get { return _keyDown; }
+            set { _keyDown = value; }
         }
-        private bool keyDown;
+        private bool _keyDown;
 
         /// <summary>
         /// 
@@ -712,10 +710,10 @@ namespace System.Management.Automation.Host
             bool keyDown
         )
         {
-            this.virtualKeyCode = virtualKeyCode;
-            this.character = ch;
-            this.controlKeyState = controlKeyState;
-            this.keyDown = keyDown;
+            _virtualKeyCode = virtualKeyCode;
+            _character = ch;
+            _controlKeyState = controlKeyState;
+            _keyDown = keyDown;
         }
 
         /// <summary>
@@ -793,10 +791,10 @@ namespace System.Management.Automation.Host
             UInt32 i32 = KeyDown ? 0x10000000U : 0;
 
             // mask in ControlKeyState
-            i32 |= ((uint) ControlKeyState) << 16;
+            i32 |= ((uint)ControlKeyState) << 16;
 
             // mask in the VirtualKeyCode
-            i32 |= (UInt32) VirtualKeyCode;
+            i32 |= (UInt32)VirtualKeyCode;
 
             return i32.GetHashCode();
         }
@@ -877,7 +875,7 @@ namespace System.Management.Automation.Host
     /// 
     /// </summary>
 
-    public 
+    public
     struct Rectangle
     {
         /// <summary>
@@ -888,12 +886,12 @@ namespace System.Management.Automation.Host
 
         public int Left
         {
-            get { return left; }
-            set { left = value; }
+            get { return _left; }
+            set { _left = value; }
         }
-        private int left;
+        private int _left;
 
-        
+
         /// <summary>
         /// 
         /// Gets and sets the top of the rectangle
@@ -902,12 +900,12 @@ namespace System.Management.Automation.Host
 
         public int Top
         {
-            get { return top; }
-            set { top = value; }
+            get { return _top; }
+            set { _top = value; }
         }
-        private int top;
-	
-        
+        private int _top;
+
+
         /// <summary>
         /// 
         /// Gets and sets the right side of the rectangle 
@@ -916,13 +914,13 @@ namespace System.Management.Automation.Host
 
         public int Right
         {
-            get { return right; }
-            set { right = value; }
+            get { return _right; }
+            set { _right = value; }
         }
-        private int right;
+        private int _right;
 
-	        
-      
+
+
         /// <summary>
         /// 
         /// Gets and sets the bottom of the rectanngle
@@ -931,10 +929,10 @@ namespace System.Management.Automation.Host
 
         public int Bottom
         {
-            get { return bottom; }
-            set { bottom = value; }
+            get { return _bottom; }
+            set { _bottom = value; }
         }
-        private int bottom;
+        private int _bottom;
 
 
         /// <summary>
@@ -983,10 +981,10 @@ namespace System.Management.Automation.Host
                 throw PSTraceSource.NewArgumentException("bottom", MshHostRawUserInterfaceStrings.LessThanErrorTemplate, "bottom", "top");
             }
 
-            this.left = left;
-            this.top = top;
-            this.right = right;
-            this.bottom = bottom;
+            _left = left;
+            _top = top;
+            _right = right;
+            _bottom = bottom;
         }
 
 
@@ -1208,7 +1206,7 @@ namespace System.Management.Automation.Host
     /// 
     /// </summary>
 
-    public 
+    public
     struct BufferCell
     {
         /// <summary>
@@ -1219,11 +1217,11 @@ namespace System.Management.Automation.Host
 
         public char Character
         {
-            get { return character; }
-            set { character = value; }
+            get { return _character; }
+            set { _character = value; }
         }
-        private char character;
-	
+        private char _character;
+
 
         // we reuse System.ConsoleColor - it's in the core assembly, and I think it would be confusing to create another
         // essentially identical enum
@@ -1236,11 +1234,11 @@ namespace System.Management.Automation.Host
 
         public ConsoleColor ForegroundColor
         {
-            get { return foregroundColor; }
-            set { foregroundColor = value; }
+            get { return _foregroundColor; }
+            set { _foregroundColor = value; }
         }
-        private ConsoleColor foregroundColor;
-       
+        private ConsoleColor _foregroundColor;
+
         /// <summary>
         /// 
         /// Gets and sets the background color
@@ -1249,10 +1247,10 @@ namespace System.Management.Automation.Host
 
         public ConsoleColor BackgroundColor
         {
-            get { return backgroundColor; }
-            set { backgroundColor = value; }
+            get { return _backgroundColor; }
+            set { _backgroundColor = value; }
         }
-        private ConsoleColor backgroundColor;
+        private ConsoleColor _backgroundColor;
 
         /// <summary>
         /// 
@@ -1262,11 +1260,11 @@ namespace System.Management.Automation.Host
 
         public BufferCellType BufferCellType
         {
-            get { return bufferCellType; }
-            set { bufferCellType = value; }
+            get { return _bufferCellType; }
+            set { _bufferCellType = value; }
         }
 
-        private BufferCellType bufferCellType;
+        private BufferCellType _bufferCellType;
 
 
 
@@ -1300,10 +1298,10 @@ namespace System.Management.Automation.Host
         public
         BufferCell(char character, ConsoleColor foreground, ConsoleColor background, BufferCellType bufferCellType)
         {
-            this.character = character;
-            this.foregroundColor = foreground;
-            this.backgroundColor = background;
-            this.bufferCellType = bufferCellType;
+            _character = character;
+            _foregroundColor = foreground;
+            _backgroundColor = background;
+            _bufferCellType = bufferCellType;
         }
 
 
@@ -1509,7 +1507,7 @@ namespace System.Management.Automation.Host
     /// <seealso cref="System.Management.Automation.Host.PSHost"/>
     /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface"/>
 
-    public abstract 
+    public abstract
     class PSHostRawUserInterface
     {
         /// <summary>
@@ -1517,7 +1515,7 @@ namespace System.Management.Automation.Host
         /// Protected constructor which does nothing.  Provided per .Net design guidelines section 4.3.1
         /// 
         /// </summary>
-        
+
         protected
         PSHostRawUserInterface()
         {
@@ -1759,7 +1757,7 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.KeyAvailable"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.WindowPosition"/>
 
-        public 
+        public
         KeyInfo
         ReadKey()
         {
@@ -1861,7 +1859,7 @@ namespace System.Management.Automation.Host
         }
 
 
-        
+
         /// <summary>
         /// 
         /// Copies the <see cref="System.Management.Automation.Host.BufferCell"/> array into the screen buffer at the
@@ -1888,7 +1886,7 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.GetBufferContents"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.ScrollBufferContents"/>
 
-        public abstract 
+        public abstract
         void
         SetBufferContents(Coordinates origin, BufferCell[,] contents);
 
@@ -1995,7 +1993,7 @@ namespace System.Management.Automation.Host
         public abstract
         BufferCell[,]
         GetBufferContents(Rectangle rectangle);
- 
+
 
 
         /// <summary>
@@ -2039,9 +2037,9 @@ namespace System.Management.Automation.Host
         void
         ScrollBufferContents
         (
-            Rectangle source,     
+            Rectangle source,
             Coordinates destination,
-            Rectangle clip,       
+            Rectangle clip,
             BufferCell fill
         );
 
@@ -2234,7 +2232,7 @@ namespace System.Management.Automation.Host
         BufferCell[,]
         NewBufferCellArray(string[] contents, ConsoleColor foregroundColor, ConsoleColor backgroundColor)
         {
-            #pragma warning disable 56506
+#pragma warning disable 56506
 
             if (contents == null)
             {
@@ -2291,7 +2289,7 @@ namespace System.Management.Automation.Host
                 }
             }
             return results;
-            #pragma warning restore 56506
+#pragma warning restore 56506
         }
 #pragma warning restore 56506
 

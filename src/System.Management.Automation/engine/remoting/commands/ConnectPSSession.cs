@@ -70,10 +70,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public PSSession[] Session
         {
-            get { return this.remotePSSessionInfo; }
-            set { this.remotePSSessionInfo = value; }
+            get { return _remotePSSessionInfo; }
+            set { _remotePSSessionInfo = value; }
         }
-        private PSSession[] remotePSSessionInfo;
+        private PSSession[] _remotePSSessionInfo;
 
         /// <summary>
         /// Computer names to connect to.
@@ -87,10 +87,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Cn")]
         public override String[] ComputerName
         {
-            get { return this.computerNames; }
-            set { this.computerNames = value; }
+            get { return _computerNames; }
+            set { _computerNames = value; }
         }
-        private String[] computerNames;
+        private String[] _computerNames;
 
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
@@ -104,13 +104,13 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ConnectPSSessionCommand.ComputerNameGuidParameterSet)]
         public String ApplicationName
         {
-            get { return appName; }
+            get { return _appName; }
             set
             {
-                appName = ResolveAppName(value);
+                _appName = ResolveAppName(value);
             }
         }
-        private String appName;
+        private String _appName;
 
         /// <summary>
         /// If this parameter is not specified then the value specified in
@@ -127,13 +127,13 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
         public String ConfigurationName
         {
-            get { return shell; }
+            get { return _shell; }
             set
             {
-                shell = ResolveShell(value);
+                _shell = ResolveShell(value);
             }
         }
-        private String shell;
+        private String _shell;
 
         /// <summary>
         /// A complete URI(s) specified for the remote computer and shell to 
@@ -150,10 +150,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Uri[] ConnectionUri
         {
-            get { return uris; }
-            set { uris = value; }
+            get { return _uris; }
+            set { _uris = value; }
         }
-        private Uri[] uris;
+        private Uri[] _uris;
 
         /// <summary>
         /// The AllowRedirection parameter enables the implicit redirection functionality.
@@ -162,10 +162,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
         public SwitchParameter AllowRedirection
         {
-            get { return this.allowRedirection; }
-            set { this.allowRedirection = value; }
+            get { return _allowRedirection; }
+            set { _allowRedirection = value; }
         }
-        private bool allowRedirection = false;
+        private bool _allowRedirection = false;
 
         /// <summary>
         /// RemoteRunspaceId to retrieve corresponding PSSession
@@ -211,15 +211,15 @@ namespace Microsoft.PowerShell.Commands
         [Credential()]
         public PSCredential Credential
         {
-            get { return this.psCredential; }
-            set 
-            { 
-                this.psCredential = value;
+            get { return _psCredential; }
+            set
+            {
+                _psCredential = value;
 
                 PSRemotingBaseCmdlet.ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
-        private PSCredential psCredential;
+        private PSCredential _psCredential;
 
         /// <summary>
         /// Use basic authentication to authenticate the user.
@@ -230,15 +230,15 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
         public AuthenticationMechanism Authentication
         {
-            get { return this.authentication; }
+            get { return _authentication; }
             set
             {
-                this.authentication = value;
+                _authentication = value;
 
                 PSRemotingBaseCmdlet.ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
-        private AuthenticationMechanism authentication;
+        private AuthenticationMechanism _authentication;
 
 
         /// <summary>
@@ -251,15 +251,15 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
         public string CertificateThumbprint
         {
-            get { return this.thumbprint; }
+            get { return _thumbprint; }
             set
             {
-                this.thumbprint = value;
+                _thumbprint = value;
 
                 PSRemotingBaseCmdlet.ValidateSpecifiedAuthentication(Credential, CertificateThumbprint, Authentication);
             }
         }
-        private string thumbprint;
+        private string _thumbprint;
 
 
         /// <summary>
@@ -280,14 +280,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return port;
+                return _port;
             }
             set
             {
-                port = value;
+                _port = value;
             }
         }
-        private Int32 port;
+        private Int32 _port;
 
 
         /// <summary>
@@ -304,14 +304,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return useSSL;
+                return _useSSL;
             }
             set
             {
-                useSSL = value;
+                _useSSL = value;
             }
         }
-        private SwitchParameter useSSL;
+        private SwitchParameter _useSSL;
 
 
         /// <summary>
@@ -323,10 +323,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
         public PSSessionOption SessionOption
         {
-            get { return this.sessionOption; }
-            set { this.sessionOption = value; }
+            get { return _sessionOption; }
+            set { _sessionOption = value; }
         }
-        private PSSessionOption sessionOption;
+        private PSSessionOption _sessionOption;
 
 
         /// <summary>
@@ -344,10 +344,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.InstanceIdParameterSet)]
         public Int32 ThrottleLimit
         {
-            get { return this.throttleLimit; }
-            set { this.throttleLimit = value; }
+            get { return _throttleLimit; }
+            set { _throttleLimit = value; }
         }
-        private Int32 throttleLimit = 0;
+        private Int32 _throttleLimit = 0;
 
         /// <summary>
         /// Overriding to suppress this parameter
@@ -393,8 +393,8 @@ namespace Microsoft.PowerShell.Commands
         {
             base.BeginProcessing();
 
-            this.throttleManager.ThrottleLimit = ThrottleLimit;
-            this.throttleManager.ThrottleComplete += new EventHandler<EventArgs>(HandleThrottleConnectComplete);
+            _throttleManager.ThrottleLimit = ThrottleLimit;
+            _throttleManager.ThrottleComplete += new EventHandler<EventArgs>(HandleThrottleConnectComplete);
         }
 
         /// <summary>
@@ -423,25 +423,25 @@ namespace Microsoft.PowerShell.Commands
             catch (PSRemotingDataStructureException)
             {
                 // Allow cmdlet to end and then re-throw exception.
-                this.operationsComplete.Set();
+                _operationsComplete.Set();
                 throw;
             }
             catch (PSRemotingTransportException)
             {
                 // Allow cmdlet to end and then re-throw exception.
-                this.operationsComplete.Set();
+                _operationsComplete.Set();
                 throw;
             }
             catch (RemoteException)
             {
                 // Allow cmdlet to end and then re-throw exception.
-                this.operationsComplete.Set();
+                _operationsComplete.Set();
                 throw;
             }
             catch (InvalidRunspaceStateException)
             {
                 // Allow cmdlet to end and then re-throw exception.
-                this.operationsComplete.Set();
+                _operationsComplete.Set();
                 throw;
             }
 
@@ -453,29 +453,29 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            this.throttleManager.EndSubmitOperations();
+            _throttleManager.EndSubmitOperations();
 
             // Wait for all connect operations to complete.
-            this.operationsComplete.WaitOne();
+            _operationsComplete.WaitOne();
 
             // If there are failed connect operations due to stale 
             // session state then perform the query retry here.
-            if (failedSessions.Count > 0)
+            if (_failedSessions.Count > 0)
             {
                 RetryFailedSessions();
             }
 
             // Read all objects in the stream pipeline.
-            while (this.stream.ObjectReader.Count > 0)
+            while (_stream.ObjectReader.Count > 0)
             {
-                Object streamObject = stream.ObjectReader.Read();
+                Object streamObject = _stream.ObjectReader.Read();
                 WriteStreamObject((Action<Cmdlet>)streamObject);
             }
 
-            this.stream.ObjectWriter.Close();
+            _stream.ObjectWriter.Close();
 
             // Add all successfully connected sessions to local repository.
-            foreach (PSSession psSession in this.allSessions)
+            foreach (PSSession psSession in _allSessions)
             {
                 if (psSession.Runspace.RunspaceStateInfo.State == RunspaceState.Opened)
                 {
@@ -492,17 +492,17 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing()
         {
             // Close the output stream for any further writes.
-            this.stream.ObjectWriter.Close();
+            _stream.ObjectWriter.Close();
 
             // Stop any remote server queries that may be running.
-            this.queryRunspaces.StopAllOperations();
+            _queryRunspaces.StopAllOperations();
 
             // Signal the ThrottleManager to stop any further 
             // PSSession connect processing.
-            this.throttleManager.StopAllOperations();
+            _throttleManager.StopAllOperations();
 
             // Signal the Retry throttle manager in case it is running.
-            this.retryThrottleManager.StopAllOperations();
+            _retryThrottleManager.StopAllOperations();
         }
 
         #endregion
@@ -523,7 +523,7 @@ namespace Microsoft.PowerShell.Commands
             private static object s_LockObject = new object();
 
             internal ConnectRunspaceOperation(
-                PSSession session, 
+                PSSession session,
                 ObjectStream stream,
                 PSHost host,
                 QueryRunspaces queryRunspaces,
@@ -675,7 +675,7 @@ namespace Microsoft.PowerShell.Commands
                             writeError = false;
                         }
                     }
-                    
+
                     if (writeError)
                     {
                         // Connect operation failed, write error.
@@ -730,7 +730,7 @@ namespace Microsoft.PowerShell.Commands
                     // and this particular method may be called on a thread that
                     // is different from Pipeline Execution Thread. Hence using
                     // a delegate to perform the WriteObject.
-                    Action<Cmdlet> outputWriter = delegate(Cmdlet cmdlet)
+                    Action<Cmdlet> outputWriter = delegate (Cmdlet cmdlet)
                     {
                         cmdlet.WriteObject(outSession);
                     };
@@ -766,7 +766,7 @@ namespace Microsoft.PowerShell.Commands
                                 session.Runspace.RunspaceStateInfo.State.ToString()), null);
                     }
                     ErrorRecord errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, null);
-                    Action<Cmdlet> errorWriter = delegate(Cmdlet cmdlet)
+                    Action<Cmdlet> errorWriter = delegate (Cmdlet cmdlet)
                     {
                         cmdlet.WriteError(errorRecord);
                     };
@@ -809,12 +809,12 @@ namespace Microsoft.PowerShell.Commands
         private Collection<PSSession> QueryForDisconnectedSessions()
         {
             Collection<WSManConnectionInfo> connectionInfos = GetConnectionObjects();
-            Collection<PSSession> psSessions = this.queryRunspaces.GetDisconnectedSessions(connectionInfos, this.Host, this.stream,
-                                                    this.RunspaceRepository, this.throttleLimit,
+            Collection<PSSession> psSessions = _queryRunspaces.GetDisconnectedSessions(connectionInfos, this.Host, _stream,
+                                                    this.RunspaceRepository, _throttleLimit,
                                                     SessionFilterState.Disconnected, this.InstanceId, this.Name, ConfigurationName);
-            
+
             // Write any error output from stream object.
-            Collection<object> streamObjects = this.stream.ObjectReader.NonBlockingRead();
+            Collection<object> streamObjects = _stream.ObjectReader.NonBlockingRead();
             foreach (object streamObject in streamObjects)
             {
                 WriteStreamObject((Action<Cmdlet>)streamObject);
@@ -835,9 +835,9 @@ namespace Microsoft.PowerShell.Commands
             // Get all remote runspaces to disconnect.
             if (ParameterSetName == DisconnectPSSessionCommand.SessionParameterSet)
             {
-                if (this.remotePSSessionInfo != null)
+                if (_remotePSSessionInfo != null)
                 {
-                    foreach (PSSession psSession in this.remotePSSessionInfo)
+                    foreach (PSSession psSession in _remotePSSessionInfo)
                     {
                         psSessions.Add(psSession);
                     }
@@ -904,10 +904,10 @@ namespace Microsoft.PowerShell.Commands
 
                         ConnectRunspaceOperation connectOperation = new ConnectRunspaceOperation(
                             psSession,
-                            this.stream,
+                            _stream,
                             this.Host,
                             null,
-                            this.failedSessions);
+                            _failedSessions);
                         connectOperations.Add(connectOperation);
                     }
                     else if (psSession.Runspace.RunspaceStateInfo.State != RunspaceState.Opened)
@@ -925,19 +925,19 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                this.allSessions.Add(psSession);
+                _allSessions.Add(psSession);
             }
 
             if (connectOperations.Count > 0)
             {
                 // Make sure operations are not set as complete while processing input.
-                this.operationsComplete.Reset();
+                _operationsComplete.Reset();
 
                 // Submit list of connect operations.
-                this.throttleManager.SubmitOperations(connectOperations);
+                _throttleManager.SubmitOperations(connectOperations);
 
                 // Write any output now.
-                Collection<object> streamObjects = this.stream.ObjectReader.NonBlockingRead();
+                Collection<object> streamObjects = _stream.ObjectReader.NonBlockingRead();
                 foreach (object streamObject in streamObjects)
                 {
                     WriteStreamObject((Action<Cmdlet>)streamObject);
@@ -952,7 +952,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="eventArgs">EventArgs</param>
         private void HandleThrottleConnectComplete(object sender, EventArgs eventArgs)
         {
-            this.operationsComplete.Set();
+            _operationsComplete.Set();
         }
 
         private Collection<WSManConnectionInfo> GetConnectionObjects()
@@ -1025,7 +1025,7 @@ namespace Microsoft.PowerShell.Commands
                 connectionInfo.MaximumConnectionRedirectionCount = 0;
             }
 
-            if (!this.allowRedirection)
+            if (!_allowRedirection)
             {
                 // uri redirection required explicit user consent
                 connectionInfo.MaximumConnectionRedirectionCount = 0;
@@ -1044,8 +1044,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 Collection<PSSession> connectedSessions = new Collection<PSSession>();
                 List<IThrottleOperation> retryConnectionOperations = new List<IThrottleOperation>();
-                retryThrottleManager.ThrottleLimit = ThrottleLimit;
-                retryThrottleManager.ThrottleComplete += (sender, eventArgs) =>
+                _retryThrottleManager.ThrottleLimit = ThrottleLimit;
+                _retryThrottleManager.ThrottleComplete += (sender, eventArgs) =>
                     {
                         try
                         {
@@ -1054,18 +1054,18 @@ namespace Microsoft.PowerShell.Commands
                         catch (ObjectDisposedException) { }
                     };
 
-                foreach (var session in failedSessions)
+                foreach (var session in _failedSessions)
                 {
                     retryConnectionOperations.Add(new ConnectRunspaceOperation(
                         session,
-                        this.stream,
+                        _stream,
                         this.Host,
                         new QueryRunspaces(),
                         connectedSessions));
                 }
 
-                retryThrottleManager.SubmitOperations(retryConnectionOperations);
-                retryThrottleManager.EndSubmitOperations();
+                _retryThrottleManager.SubmitOperations(retryConnectionOperations);
+                _retryThrottleManager.EndSubmitOperations();
 
                 retrysComplete.WaitOne();
 
@@ -1103,15 +1103,15 @@ namespace Microsoft.PowerShell.Commands
         {
             if (disposing)
             {
-                this.throttleManager.Dispose();
+                _throttleManager.Dispose();
 
-                this.operationsComplete.WaitOne();
-                this.operationsComplete.Dispose();
+                _operationsComplete.WaitOne();
+                _operationsComplete.Dispose();
 
-                this.throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleConnectComplete);
-                this.retryThrottleManager.Dispose();
+                _throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleConnectComplete);
+                _retryThrottleManager.Dispose();
 
-                this.stream.Dispose();
+                _stream.Dispose();
             }
         }
 
@@ -1120,24 +1120,24 @@ namespace Microsoft.PowerShell.Commands
         #region Private Members
 
         // Collection of PSSessions to be connected.
-        private Collection<PSSession> allSessions = new Collection<PSSession>();
+        private Collection<PSSession> _allSessions = new Collection<PSSession>();
 
         // Object used to perform network disconnect operations in a limited manner.
-        private ThrottleManager throttleManager = new ThrottleManager();
+        private ThrottleManager _throttleManager = new ThrottleManager();
 
         // Event indicating that all disconnect operations through the ThrottleManager
         // are complete.
-        private ManualResetEvent operationsComplete = new ManualResetEvent(true);
+        private ManualResetEvent _operationsComplete = new ManualResetEvent(true);
 
         // Object used for querying remote runspaces.
-        QueryRunspaces queryRunspaces = new QueryRunspaces();
+        private QueryRunspaces _queryRunspaces = new QueryRunspaces();
 
         // Object to collect output data from multiple threads.
-        private ObjectStream stream = new ObjectStream();
+        private ObjectStream _stream = new ObjectStream();
 
         // Support for connection retry on failure.
-        private ThrottleManager retryThrottleManager = new ThrottleManager();
-        private Collection<PSSession> failedSessions = new Collection<PSSession>();
+        private ThrottleManager _retryThrottleManager = new ThrottleManager();
+        private Collection<PSSession> _failedSessions = new Collection<PSSession>();
 
         #endregion
     }
@@ -1150,7 +1150,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal QueryRunspaces()
         {
-            this.stopProcessing = false;
+            _stopProcessing = false;
         }
 
         #endregion
@@ -1172,9 +1172,9 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="matchNames">Array of session Names to match to.</param>
         /// <param name="configurationName">Configuration name to match to.</param>
         /// <returns>Collection of disconnected PSSession objects.</returns>
-        internal Collection<PSSession> GetDisconnectedSessions(Collection<WSManConnectionInfo> connectionInfos, PSHost host, 
-                                                               ObjectStream stream, RunspaceRepository runspaceRepository, 
-                                                               int throttleLimit, SessionFilterState filterState, 
+        internal Collection<PSSession> GetDisconnectedSessions(Collection<WSManConnectionInfo> connectionInfos, PSHost host,
+                                                               ObjectStream stream, RunspaceRepository runspaceRepository,
+                                                               int throttleLimit, SessionFilterState filterState,
                                                                Guid[] matchIds, string[] matchNames, string configurationName)
         {
             Collection<PSSession> filteredPSSesions = new Collection<PSSession>();
@@ -1204,7 +1204,7 @@ namespace Microsoft.PowerShell.Commands
                             Exception reason = new RuntimeException(msg, e.InnerException);
                             ErrorRecord errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, connectionInfo);
                             stream.ObjectWriter.Write((Action<Cmdlet>)(cmdlet => cmdlet.WriteError(errorRecord)));
-                        }                        
+                        }
                     }
                     else
                     {
@@ -1212,7 +1212,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (this.stopProcessing)
+                if (_stopProcessing)
                 {
                     break;
                 }
@@ -1270,7 +1270,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Return only PSSessions that match provided Ids or Names.
-            if ((matchIds != null)  && (filteredPSSesions.Count > 0))
+            if ((matchIds != null) && (filteredPSSesions.Count > 0))
             {
                 Collection<PSSession> matchIdsSessions = new Collection<PSSession>();
                 foreach (Guid id in matchIds)
@@ -1278,7 +1278,7 @@ namespace Microsoft.PowerShell.Commands
                     bool matchFound = false;
                     foreach (PSSession psSession in filteredPSSesions)
                     {
-                        if (this.stopProcessing)
+                        if (_stopProcessing)
                         {
                             break;
                         }
@@ -1312,7 +1312,7 @@ namespace Microsoft.PowerShell.Commands
                     bool matchFound = false;
                     foreach (PSSession psSession in filteredPSSesions)
                     {
-                        if (this.stopProcessing)
+                        if (_stopProcessing)
                         {
                             break;
                         }
@@ -1390,7 +1390,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (e == null ||
                 e.Message == null)
-            { 
+            {
                 return string.Empty;
             }
 
@@ -1448,7 +1448,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal void StopAllOperations()
         {
-            this.stopProcessing = true;
+            _stopProcessing = true;
         }
 
         /// <summary>
@@ -1518,13 +1518,12 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Members
 
-        private bool stopProcessing;
+        private bool _stopProcessing;
 
         private static readonly object s_SyncObject = new object();
         private static TypeTable s_TypeTable;
 
         #endregion
-
     }
 
     #endregion

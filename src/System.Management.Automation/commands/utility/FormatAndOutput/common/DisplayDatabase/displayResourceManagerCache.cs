@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Reflection;
@@ -14,47 +15,47 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal enum LoadingResult { NoError, AssemblyNotFound, ResourceNotFound, StringNotFound }
         internal enum AssemblyBindingStatus { NotFound, FoundInGac, FoundInPath };
 
-        internal string GetTextTokenString (TextToken tt)
+        internal string GetTextTokenString(TextToken tt)
         {
             if (tt.resource != null)
             {
-                string resString = this.GetString (tt.resource);
+                string resString = this.GetString(tt.resource);
                 if (resString != null)
                     return resString;
             }
             return tt.text;
         }
 
-        internal void VerifyResource (StringResourceReference resourceReference, out LoadingResult result, out AssemblyBindingStatus bindingStatus)
+        internal void VerifyResource(StringResourceReference resourceReference, out LoadingResult result, out AssemblyBindingStatus bindingStatus)
         {
-            GetStringHelper (resourceReference, out result, out bindingStatus);
+            GetStringHelper(resourceReference, out result, out bindingStatus);
         }
 
-        private string GetString (StringResourceReference resourceReference)
+        private string GetString(StringResourceReference resourceReference)
         {
             LoadingResult result;
             AssemblyBindingStatus bindingStatus;
-            return GetStringHelper (resourceReference, out result, out bindingStatus);
+            return GetStringHelper(resourceReference, out result, out bindingStatus);
         }
 
-        private string GetStringHelper (StringResourceReference resourceReference, out LoadingResult result, out AssemblyBindingStatus bindingStatus)
+        private string GetStringHelper(StringResourceReference resourceReference, out LoadingResult result, out AssemblyBindingStatus bindingStatus)
         {
             result = LoadingResult.AssemblyNotFound;
             bindingStatus = AssemblyBindingStatus.NotFound;
 
             AssemblyLoadResult loadResult = null;
             // try first to see if we have an assembly reference in the cache
-            if (_resourceReferenceToAssemblyCache.Contains (resourceReference))
+            if (_resourceReferenceToAssemblyCache.Contains(resourceReference))
             {
                 loadResult = _resourceReferenceToAssemblyCache[resourceReference] as AssemblyLoadResult;
                 bindingStatus = loadResult.status;
             }
             else
             {
-                loadResult = new AssemblyLoadResult ();
+                loadResult = new AssemblyLoadResult();
                 // we do not have an assembly, we try to load it
                 bool foundInGac;
-                loadResult.a = LoadAssemblyFromResourceReference (resourceReference, out foundInGac);
+                loadResult.a = LoadAssemblyFromResourceReference(resourceReference, out foundInGac);
                 if (loadResult.a == null)
                 {
                     loadResult.status = AssemblyBindingStatus.NotFound;
@@ -65,7 +66,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // add to the cache even if null
-                _resourceReferenceToAssemblyCache.Add (resourceReference, loadResult);
+                _resourceReferenceToAssemblyCache.Add(resourceReference, loadResult);
             }
 
             bindingStatus = loadResult.status;
@@ -76,12 +77,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 result = LoadingResult.AssemblyNotFound;
                 return null;
             }
-            
+
 
             // load now the resource from the resource manager cache
             try
             {
-                string val = ResourceManagerCache.GetResourceString (loadResult.a, resourceReference.baseName, resourceReference.resourceId);
+                string val = ResourceManagerCache.GetResourceString(loadResult.a, resourceReference.baseName, resourceReference.resourceId);
                 if (val == null)
                 {
                     result = LoadingResult.StringNotFound;
@@ -217,8 +218,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         private AssemblyNameResolver _assemblyNameResolver = new AssemblyNameResolver();
-        private Hashtable _resourceReferenceToAssemblyCache = new Hashtable ();
+        private Hashtable _resourceReferenceToAssemblyCache = new Hashtable();
     }
-
 }
 

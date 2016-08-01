@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet("Write", "Output", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113427", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteOutputCommand : PSCmdlet
     {
-        private PSObject[] inputObjects = null;
+        private PSObject[] _inputObjects = null;
 
         /// <summary>
         /// Holds the list of objects to be Written
@@ -24,8 +24,8 @@ namespace Microsoft.PowerShell.Commands
         [AllowEmptyCollection]
         public PSObject[] InputObject
         {
-            get { return inputObjects; }
-            set { inputObjects = value; }
+            get { return _inputObjects; }
+            set { _inputObjects = value; }
         }
 
         /// <summary>
@@ -44,9 +44,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (null == inputObjects)
+            if (null == _inputObjects)
             {
-                WriteObject(inputObjects);
+                WriteObject(_inputObjects);
                 return;
             }
 
@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 enumerate = false;
             }
-            foreach (PSObject inputObject in inputObjects) // compensate for ValueFromRemainingArguments
+            foreach (PSObject inputObject in _inputObjects) // compensate for ValueFromRemainingArguments
             {
                 WriteObject(inputObject, enumerate);
             }

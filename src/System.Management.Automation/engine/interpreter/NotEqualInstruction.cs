@@ -19,132 +19,164 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace System.Management.Automation.Interpreter {
-    internal abstract class NotEqualInstruction : Instruction {
+namespace System.Management.Automation.Interpreter
+{
+    internal abstract class NotEqualInstruction : Instruction
+    {
         // Perf: EqualityComparer<T> but is 3/2 to 2 times slower.
-        private static Instruction _Reference, _Boolean, _SByte, _Int16, _Char, _Int32, _Int64, _Byte, _UInt16, _UInt32, _UInt64, _Single, _Double;
+        private static Instruction s_reference,s_boolean,s_SByte,s_int16,s_char,s_int32,s_int64,s_byte,s_UInt16,s_UInt32,s_UInt64,s_single,s_double;
 
         public override int ConsumedStack { get { return 2; } }
         public override int ProducedStack { get { return 1; } }
 
-        private NotEqualInstruction() {
+        private NotEqualInstruction()
+        {
         }
 
-        internal sealed class NotEqualBoolean : NotEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
+        internal sealed class NotEqualBoolean : NotEqualInstruction
+        {
+            public override int Run(InterpretedFrame frame)
+            {
                 frame.Push(((Boolean)frame.Pop()) != ((Boolean)frame.Pop()));
                 return +1;
             }
         }
 
-        internal sealed class NotEqualSByte : NotEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
+        internal sealed class NotEqualSByte : NotEqualInstruction
+        {
+            public override int Run(InterpretedFrame frame)
+            {
                 frame.Push(((SByte)frame.Pop()) != ((SByte)frame.Pop()));
                 return +1;
             }
         }
 
-        internal sealed class NotEqualInt16 : NotEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
+        internal sealed class NotEqualInt16 : NotEqualInstruction
+        {
+            public override int Run(InterpretedFrame frame)
+            {
                 frame.Push(((Int16)frame.Pop()) != ((Int16)frame.Pop()));
                 return +1;
             }
         }
 
-        internal sealed class NotEqualChar : NotEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
+        internal sealed class NotEqualChar : NotEqualInstruction
+        {
+            public override int Run(InterpretedFrame frame)
+            {
                 frame.Push(((Char)frame.Pop()) != ((Char)frame.Pop()));
                 return +1;
             }
         }
 
-        internal sealed class NotEqualInt32 : NotEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
+        internal sealed class NotEqualInt32 : NotEqualInstruction
+        {
+            public override int Run(InterpretedFrame frame)
+            {
                 frame.Push(((Int32)frame.Pop()) != ((Int32)frame.Pop()));
                 return +1;
             }
         }
 
-        internal sealed class NotEqualInt64 : NotEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
+        internal sealed class NotEqualInt64 : NotEqualInstruction
+        {
+            public override int Run(InterpretedFrame frame)
+            {
                 frame.Push(((Int64)frame.Pop()) != ((Int64)frame.Pop()));
                 return +1;
             }
         }
 
-        internal sealed class NotEqualByte : NotEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
+        internal sealed class NotEqualByte : NotEqualInstruction
+        {
+            public override int Run(InterpretedFrame frame)
+            {
                 frame.Push(((Byte)frame.Pop()) != ((Byte)frame.Pop()));
                 return +1;
             }
         }
 
-        internal sealed class NotEqualUInt16 : NotEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
+        internal sealed class NotEqualUInt16 : NotEqualInstruction
+        {
+            public override int Run(InterpretedFrame frame)
+            {
                 frame.Push(((UInt16)frame.Pop()) != ((UInt16)frame.Pop()));
                 return +1;
             }
         }
 
-        internal sealed class NotEqualUInt32 : NotEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
+        internal sealed class NotEqualUInt32 : NotEqualInstruction
+        {
+            public override int Run(InterpretedFrame frame)
+            {
                 frame.Push(((UInt32)frame.Pop()) != ((UInt32)frame.Pop()));
                 return +1;
             }
         }
 
-        internal sealed class NotEqualUInt64 : NotEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
+        internal sealed class NotEqualUInt64 : NotEqualInstruction
+        {
+            public override int Run(InterpretedFrame frame)
+            {
                 frame.Push(((UInt64)frame.Pop()) != ((UInt64)frame.Pop()));
                 return +1;
             }
         }
 
-        internal sealed class NotEqualSingle : NotEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
+        internal sealed class NotEqualSingle : NotEqualInstruction
+        {
+            public override int Run(InterpretedFrame frame)
+            {
                 frame.Push(((Single)frame.Pop()) != ((Single)frame.Pop()));
                 return +1;
             }
         }
 
-        internal sealed class NotEqualDouble : NotEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
+        internal sealed class NotEqualDouble : NotEqualInstruction
+        {
+            public override int Run(InterpretedFrame frame)
+            {
                 frame.Push(((Double)frame.Pop()) != ((Double)frame.Pop()));
                 return +1;
             }
         }
 
-        internal sealed class NotEqualReference : NotEqualInstruction {
-            public override int Run(InterpretedFrame frame) {
+        internal sealed class NotEqualReference : NotEqualInstruction
+        {
+            public override int Run(InterpretedFrame frame)
+            {
                 frame.Push(frame.Pop() != frame.Pop());
                 return +1;
             }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-        public static Instruction Create(Type type) {
+        public static Instruction Create(Type type)
+        {
             var typeInfo = type.GetTypeInfo();
             // Boxed enums can be unboxed as their underlying types:
             var typeToUse = typeInfo.IsEnum ? Enum.GetUnderlyingType(type) : type;
-            switch (typeToUse.GetTypeCode()) {
-                case TypeCode.Boolean: return _Boolean ?? (_Boolean = new NotEqualBoolean());
-                case TypeCode.SByte: return _SByte ?? (_SByte = new NotEqualSByte());
-                case TypeCode.Byte: return _Byte ?? (_Byte = new NotEqualByte());
-                case TypeCode.Char: return _Char ?? (_Char = new NotEqualChar());
-                case TypeCode.Int16: return _Int16 ?? (_Int16 = new NotEqualInt16());
-                case TypeCode.Int32: return _Int32 ?? (_Int32 = new NotEqualInt32());
-                case TypeCode.Int64: return _Int64 ?? (_Int64 = new NotEqualInt64());
+            switch (typeToUse.GetTypeCode())
+            {
+                case TypeCode.Boolean: return s_boolean ?? (s_boolean = new NotEqualBoolean());
+                case TypeCode.SByte: return s_SByte ?? (s_SByte = new NotEqualSByte());
+                case TypeCode.Byte: return s_byte ?? (s_byte = new NotEqualByte());
+                case TypeCode.Char: return s_char ?? (s_char = new NotEqualChar());
+                case TypeCode.Int16: return s_int16 ?? (s_int16 = new NotEqualInt16());
+                case TypeCode.Int32: return s_int32 ?? (s_int32 = new NotEqualInt32());
+                case TypeCode.Int64: return s_int64 ?? (s_int64 = new NotEqualInt64());
 
-                case TypeCode.UInt16: return _UInt16 ?? (_UInt16 = new NotEqualInt16());
-                case TypeCode.UInt32: return _UInt32 ?? (_UInt32 = new NotEqualInt32());
-                case TypeCode.UInt64: return _UInt64 ?? (_UInt64 = new NotEqualInt64());
+                case TypeCode.UInt16: return s_UInt16 ?? (s_UInt16 = new NotEqualInt16());
+                case TypeCode.UInt32: return s_UInt32 ?? (s_UInt32 = new NotEqualInt32());
+                case TypeCode.UInt64: return s_UInt64 ?? (s_UInt64 = new NotEqualInt64());
 
-                case TypeCode.Single: return _Single ?? (_Single = new NotEqualSingle());
-                case TypeCode.Double: return _Double ?? (_Double = new NotEqualDouble());
+                case TypeCode.Single: return s_single ?? (s_single = new NotEqualSingle());
+                case TypeCode.Double: return s_double ?? (s_double = new NotEqualDouble());
 
                 case TypeCode.Object:
-                    if (!typeInfo.IsValueType) {
-                        return _Reference ?? (_Reference = new NotEqualReference());
+                    if (!typeInfo.IsValueType)
+                    {
+                        return s_reference ?? (s_reference = new NotEqualReference());
                     }
                     // TODO: Nullable<T>
                     throw new NotImplementedException();
@@ -154,7 +186,8 @@ namespace System.Management.Automation.Interpreter {
             }
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return "NotEqual()";
         }
     }

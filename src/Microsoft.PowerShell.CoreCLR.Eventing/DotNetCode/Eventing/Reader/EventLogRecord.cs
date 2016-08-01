@@ -1,11 +1,6 @@
-// ==++==
-// 
-//   Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
-// ==--==
+
 /*============================================================
 **
-** Class: EventLogRecord
 **
 ** Purpose: 
 ** This public class is an EventLog implementation of EventRecord.  An
@@ -16,10 +11,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace System.Diagnostics.Eventing.Reader {
-    
-    public class EventLogRecord : EventRecord {
-
+namespace System.Diagnostics.Eventing.Reader
+{
+    public class EventLogRecord : EventRecord
+    {
         private const int SYSTEM_PROPERTY_COUNT = 18;
 
         //
@@ -27,357 +22,431 @@ namespace System.Diagnostics.Eventing.Reader {
         // invoking methods on it is marked SecurityCritical as appropriate.
         //
         [System.Security.SecuritySafeCritical]
-        private EventLogHandle handle;
+        private EventLogHandle _handle;
 
-        private EventLogSession session;
+        private EventLogSession _session;
 
-        private NativeWrapper.SystemProperties systemProperties;
-        private string containerChannel;
-        private int[] matchedQueryIds;
+        private NativeWrapper.SystemProperties _systemProperties;
+        private string _containerChannel;
+        private int[] _matchedQueryIds;
 
         //a dummy object which is used only for the locking.
-        object syncObject;
+        private object _syncObject;
 
         //cached DisplayNames for each instance
-        private string levelName = null;
-        private string taskName = null;
-        private string opcodeName = null;
-        private IEnumerable<string> keywordsNames = null;
+        private string _levelName = null;
+        private string _taskName = null;
+        private string _opcodeName = null;
+        private IEnumerable<string> _keywordsNames = null;
 
         //cached DisplayNames for each instance
-        private bool levelNameReady;
-        private bool taskNameReady;
-        private bool opcodeNameReady;
+        private bool _levelNameReady;
+        private bool _taskNameReady;
+        private bool _opcodeNameReady;
 
-        private ProviderMetadataCachedInformation cachedMetadataInformation;
+        private ProviderMetadataCachedInformation _cachedMetadataInformation;
 
         // marking as TreatAsSafe because just passing around a reference to an EventLogHandle is safe.
         [System.Security.SecuritySafeCritical]
-        internal EventLogRecord(EventLogHandle handle, EventLogSession session, ProviderMetadataCachedInformation cachedMetadataInfo) {
-            this.cachedMetadataInformation = cachedMetadataInfo;
-            this.handle = handle;
-            this.session = session;
-            systemProperties = new NativeWrapper.SystemProperties();
-            syncObject = new object();
+        internal EventLogRecord(EventLogHandle handle, EventLogSession session, ProviderMetadataCachedInformation cachedMetadataInfo)
+        {
+            _cachedMetadataInformation = cachedMetadataInfo;
+            _handle = handle;
+            _session = session;
+            _systemProperties = new NativeWrapper.SystemProperties();
+            _syncObject = new object();
         }
 
-        internal EventLogHandle Handle {
+        internal EventLogHandle Handle
+        {
             // just returning reference to security critical type, the methods
             // of that type are protected by SecurityCritical as appropriate.
             [System.Security.SecuritySafeCritical]
-            get {
-                return handle;
+            get
+            {
+                return _handle;
             }
         }
 
 
-        internal void PrepareSystemData() {
-
-            if (this.systemProperties.filled)
+        internal void PrepareSystemData()
+        {
+            if (_systemProperties.filled)
                 return;
 
             //prepare the System Context, if it is not already initialized.
-            this.session.SetupSystemContext();
+            _session.SetupSystemContext();
 
-            lock (this.syncObject) {
-                if (this.systemProperties.filled == false) {
-                    NativeWrapper.EvtRenderBufferWithContextSystem(this.session.renderContextHandleSystem, this.handle, UnsafeNativeMethods.EvtRenderFlags.EvtRenderEventValues, this.systemProperties, SYSTEM_PROPERTY_COUNT);
-                    this.systemProperties.filled = true;
+            lock (_syncObject)
+            {
+                if (_systemProperties.filled == false)
+                {
+                    NativeWrapper.EvtRenderBufferWithContextSystem(_session.renderContextHandleSystem, _handle, UnsafeNativeMethods.EvtRenderFlags.EvtRenderEventValues, _systemProperties, SYSTEM_PROPERTY_COUNT);
+                    _systemProperties.filled = true;
                 }
             }
         }
 
-        public override int Id {
-            get {
+        public override int Id
+        {
+            get
+            {
                 PrepareSystemData();
-                if (this.systemProperties.Id == null)
+                if (_systemProperties.Id == null)
                     return 0;
-                return (int)this.systemProperties.Id;
+                return (int)_systemProperties.Id;
             }
         }
 
-        public override byte? Version {
-            get {
+        public override byte? Version
+        {
+            get
+            {
                 PrepareSystemData();
-                return this.systemProperties.Version;
+                return _systemProperties.Version;
             }
         }
 
-        public override int? Qualifiers {
-            get {
+        public override int? Qualifiers
+        {
+            get
+            {
                 PrepareSystemData();
-                return (int?)(uint?)this.systemProperties.Qualifiers;
+                return (int?)(uint?)_systemProperties.Qualifiers;
             }
         }
 
-        public override byte? Level {
-            get {
+        public override byte? Level
+        {
+            get
+            {
                 PrepareSystemData();
-                return this.systemProperties.Level;
+                return _systemProperties.Level;
             }
         }
 
-        public override int? Task {
-            get {
+        public override int? Task
+        {
+            get
+            {
                 PrepareSystemData();
-                return (int?)(uint?)this.systemProperties.Task;
+                return (int?)(uint?)_systemProperties.Task;
             }
         }
 
-        public override short? Opcode {
-            get {
+        public override short? Opcode
+        {
+            get
+            {
                 PrepareSystemData();
-                return (short?)(ushort?)this.systemProperties.Opcode;
+                return (short?)(ushort?)_systemProperties.Opcode;
             }
         }
 
-        public override long? Keywords {
-            get {
+        public override long? Keywords
+        {
+            get
+            {
                 PrepareSystemData();
-                return (long?)this.systemProperties.Keywords;
+                return (long?)_systemProperties.Keywords;
             }
         }
 
-        public override long? RecordId {
-            get {
+        public override long? RecordId
+        {
+            get
+            {
                 PrepareSystemData();
-                return (long?)this.systemProperties.RecordId;
+                return (long?)_systemProperties.RecordId;
             }
         }
 
-        public override string ProviderName {
-            get {
+        public override string ProviderName
+        {
+            get
+            {
                 PrepareSystemData();
-                return this.systemProperties.ProviderName;
+                return _systemProperties.ProviderName;
             }
         }
 
-        public override Guid? ProviderId {
-            get {
+        public override Guid? ProviderId
+        {
+            get
+            {
                 PrepareSystemData();
-                return this.systemProperties.ProviderId;
+                return _systemProperties.ProviderId;
             }
         }
 
-        public override string LogName {
-            get {
+        public override string LogName
+        {
+            get
+            {
                 PrepareSystemData();
-                return this.systemProperties.ChannelName;
+                return _systemProperties.ChannelName;
             }
         }
 
-        public override int? ProcessId {
-            get {
+        public override int? ProcessId
+        {
+            get
+            {
                 PrepareSystemData();
-                return (int?)this.systemProperties.ProcessId;
+                return (int?)_systemProperties.ProcessId;
             }
         }
 
-        public override int? ThreadId {
-            get {
+        public override int? ThreadId
+        {
+            get
+            {
                 PrepareSystemData();
-                return (int?)this.systemProperties.ThreadId;
+                return (int?)_systemProperties.ThreadId;
             }
         }
 
-        public override string MachineName {
-            get {
+        public override string MachineName
+        {
+            get
+            {
                 PrepareSystemData();
-                return this.systemProperties.ComputerName;
+                return _systemProperties.ComputerName;
             }
         }
 
-        public override System.Security.Principal.SecurityIdentifier UserId {
-            get {
+        public override System.Security.Principal.SecurityIdentifier UserId
+        {
+            get
+            {
                 PrepareSystemData();
-                return this.systemProperties.UserId;
+                return _systemProperties.UserId;
             }
         }
 
-        public override DateTime? TimeCreated {
-            get {
+        public override DateTime? TimeCreated
+        {
+            get
+            {
                 PrepareSystemData();
-                return this.systemProperties.TimeCreated;
+                return _systemProperties.TimeCreated;
             }
         }
 
-        public override Guid? ActivityId {
-            get {
+        public override Guid? ActivityId
+        {
+            get
+            {
                 PrepareSystemData();
-                return this.systemProperties.ActivityId;
+                return _systemProperties.ActivityId;
             }
         }
 
-        public override Guid? RelatedActivityId {
-            get {
+        public override Guid? RelatedActivityId
+        {
+            get
+            {
                 PrepareSystemData();
-                return this.systemProperties.RelatedActivityId;
+                return _systemProperties.RelatedActivityId;
             }
         }
 
-        public string ContainerLog {
-            get {
-                if (this.containerChannel != null)
-                    return this.containerChannel;
-                lock (this.syncObject) {
-                    if (this.containerChannel == null) {
-                        this.containerChannel = (string)NativeWrapper.EvtGetEventInfo(this.Handle, UnsafeNativeMethods.EvtEventPropertyId.EvtEventPath);
+        public string ContainerLog
+        {
+            get
+            {
+                if (_containerChannel != null)
+                    return _containerChannel;
+                lock (_syncObject)
+                {
+                    if (_containerChannel == null)
+                    {
+                        _containerChannel = (string)NativeWrapper.EvtGetEventInfo(this.Handle, UnsafeNativeMethods.EvtEventPropertyId.EvtEventPath);
                     }
-                    return this.containerChannel;
+                    return _containerChannel;
                 }
             }
         }
 
-        public IEnumerable<int> MatchedQueryIds {
-            get {
-                if (this.matchedQueryIds != null)
-                    return this.matchedQueryIds;
-                lock (this.syncObject) {
-                    if (this.matchedQueryIds == null) {
-                        this.matchedQueryIds = (int[])NativeWrapper.EvtGetEventInfo(this.Handle, UnsafeNativeMethods.EvtEventPropertyId.EvtEventQueryIDs);
+        public IEnumerable<int> MatchedQueryIds
+        {
+            get
+            {
+                if (_matchedQueryIds != null)
+                    return _matchedQueryIds;
+                lock (_syncObject)
+                {
+                    if (_matchedQueryIds == null)
+                    {
+                        _matchedQueryIds = (int[])NativeWrapper.EvtGetEventInfo(this.Handle, UnsafeNativeMethods.EvtEventPropertyId.EvtEventQueryIDs);
                     }
-                    return this.matchedQueryIds;
+                    return _matchedQueryIds;
                 }
             }
         }
 
-        
-        public override EventBookmark Bookmark {
+
+        public override EventBookmark Bookmark
+        {
             [System.Security.SecuritySafeCritical]
-            get {
-
+            get
+            {
                 EventLogHandle bookmarkHandle = NativeWrapper.EvtCreateBookmark(null);
-                NativeWrapper.EvtUpdateBookmark(bookmarkHandle, this.handle);
+                NativeWrapper.EvtUpdateBookmark(bookmarkHandle, _handle);
                 string bookmarkText = NativeWrapper.EvtRenderBookmark(bookmarkHandle);
 
                 return new EventBookmark(bookmarkText);
             }
         }
 
-        public override string FormatDescription() {
-
-            return this.cachedMetadataInformation.GetFormatDescription(this.ProviderName, this.handle);
+        public override string FormatDescription()
+        {
+            return _cachedMetadataInformation.GetFormatDescription(this.ProviderName, _handle);
         }
 
-        public override string FormatDescription(IEnumerable<object> values) {
+        public override string FormatDescription(IEnumerable<object> values)
+        {
             if (values == null) return this.FormatDescription();
 
             //copy the value IEnumerable to an array.
             string[] theValues = new string[0];
             int i = 0;
-            foreach (object o in values) {
-                if ( theValues.Length == i )
-                    Array.Resize( ref theValues, i+1 );
+            foreach (object o in values)
+            {
+                if (theValues.Length == i)
+                    Array.Resize(ref theValues, i + 1);
                 theValues[i] = o.ToString();
                 i++;
-            } 
+            }
 
-            return this.cachedMetadataInformation.GetFormatDescription(this.ProviderName, this.handle, theValues);
+            return _cachedMetadataInformation.GetFormatDescription(this.ProviderName, _handle, theValues);
         }
 
-        public override string LevelDisplayName {
-            get {
-                if ( this.levelNameReady )
-                    return this.levelName;
-                lock (this.syncObject) {
-                    if (this.levelNameReady == false) {
-                        this.levelNameReady = true;
-                        this.levelName = this.cachedMetadataInformation.GetLevelDisplayName(this.ProviderName, this.handle);
+        public override string LevelDisplayName
+        {
+            get
+            {
+                if (_levelNameReady)
+                    return _levelName;
+                lock (_syncObject)
+                {
+                    if (_levelNameReady == false)
+                    {
+                        _levelNameReady = true;
+                        _levelName = _cachedMetadataInformation.GetLevelDisplayName(this.ProviderName, _handle);
                     }
-                    return this.levelName;
+                    return _levelName;
                 }
             }
         }
 
 
-        public override string OpcodeDisplayName {
-            get {
-                lock (this.syncObject) {
-                    if (this.opcodeNameReady == false) {
-                        this.opcodeNameReady = true;
-                        this.opcodeName = this.cachedMetadataInformation.GetOpcodeDisplayName(this.ProviderName, this.handle);
-
+        public override string OpcodeDisplayName
+        {
+            get
+            {
+                lock (_syncObject)
+                {
+                    if (_opcodeNameReady == false)
+                    {
+                        _opcodeNameReady = true;
+                        _opcodeName = _cachedMetadataInformation.GetOpcodeDisplayName(this.ProviderName, _handle);
                     }
-                    return this.opcodeName;
+                    return _opcodeName;
                 }
             }
         }
 
-        public override string TaskDisplayName {
-            get {
-                if (this.taskNameReady == true)
-                    return this.taskName;
-                lock (this.syncObject) {
-                    if (this.taskNameReady == false) {
-                        this.taskNameReady = true;
-                        this.taskName = this.cachedMetadataInformation.GetTaskDisplayName(this.ProviderName, this.handle);
+        public override string TaskDisplayName
+        {
+            get
+            {
+                if (_taskNameReady == true)
+                    return _taskName;
+                lock (_syncObject)
+                {
+                    if (_taskNameReady == false)
+                    {
+                        _taskNameReady = true;
+                        _taskName = _cachedMetadataInformation.GetTaskDisplayName(this.ProviderName, _handle);
                     }
-                    return this.taskName;
+                    return _taskName;
                 }
             }
         }
 
-        public override IEnumerable<string> KeywordsDisplayNames {
-            get {
-                if (this.keywordsNames != null)
-                    return this.keywordsNames;
-                lock (this.syncObject) {
-                    if (this.keywordsNames == null) {
-                        this.keywordsNames = this.cachedMetadataInformation.GetKeywordDisplayNames(this.ProviderName, this.handle);
+        public override IEnumerable<string> KeywordsDisplayNames
+        {
+            get
+            {
+                if (_keywordsNames != null)
+                    return _keywordsNames;
+                lock (_syncObject)
+                {
+                    if (_keywordsNames == null)
+                    {
+                        _keywordsNames = _cachedMetadataInformation.GetKeywordDisplayNames(this.ProviderName, _handle);
                     }
-                    return this.keywordsNames;
+                    return _keywordsNames;
                 }
             }
         }
 
 
-        public override IList<EventProperty> Properties {
-            get {
-                this.session.SetupUserContext();
-                IList<object> properties = NativeWrapper.EvtRenderBufferWithContextUserOrValues(this.session.renderContextHandleUser, this.handle);
+        public override IList<EventProperty> Properties
+        {
+            get
+            {
+                _session.SetupUserContext();
+                IList<object> properties = NativeWrapper.EvtRenderBufferWithContextUserOrValues(_session.renderContextHandleUser, _handle);
                 List<EventProperty> list = new List<EventProperty>();
-                foreach (object value in properties) {
+                foreach (object value in properties)
+                {
                     list.Add(new EventProperty(value));
                 }
                 return list;
             }
         }
 
-        public IList<object> GetPropertyValues(EventLogPropertySelector propertySelector) {
+        public IList<object> GetPropertyValues(EventLogPropertySelector propertySelector)
+        {
             if (propertySelector == null)
                 throw new ArgumentNullException("propertySelector");
-            return NativeWrapper.EvtRenderBufferWithContextUserOrValues(propertySelector.Handle, this.handle);
+            return NativeWrapper.EvtRenderBufferWithContextUserOrValues(propertySelector.Handle, _handle);
         }
 
         // marked as SecurityCritical because it allocates SafeHandle
         // marked as TreatAsSafe because it performs Demand.
         [System.Security.SecuritySafeCritical]
-        public override string ToXml() {
+        public override string ToXml()
+        {
             StringBuilder renderBuffer = new StringBuilder(2000);
-            NativeWrapper.EvtRender(EventLogHandle.Zero, this.handle, UnsafeNativeMethods.EvtRenderFlags.EvtRenderEventXml, renderBuffer);
+            NativeWrapper.EvtRender(EventLogHandle.Zero, _handle, UnsafeNativeMethods.EvtRenderFlags.EvtRenderEventXml, renderBuffer);
             return renderBuffer.ToString();
         }
 
         [System.Security.SecuritySafeCritical]
-        protected override void Dispose(bool disposing) {
-            try {
-
-                if ( this.handle != null && !this.handle.IsInvalid )
-                    this.handle.Dispose();
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (_handle != null && !_handle.IsInvalid)
+                    _handle.Dispose();
             }
-            finally {
+            finally
+            {
                 base.Dispose(disposing);
             }
         }
 
         // marked as SecurityCritical because allocates SafeHandle.
         [System.Security.SecurityCritical]
-        internal static EventLogHandle GetBookmarkHandleFromBookmark(EventBookmark bookmark) {
+        internal static EventLogHandle GetBookmarkHandleFromBookmark(EventBookmark bookmark)
+        {
             if (bookmark == null)
                 return EventLogHandle.Zero;
             EventLogHandle handle = NativeWrapper.EvtCreateBookmark(bookmark.BookmarkText);
             return handle;
         }
     }
-
 }

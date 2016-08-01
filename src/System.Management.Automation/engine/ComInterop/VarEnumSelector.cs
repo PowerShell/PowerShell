@@ -11,7 +11,8 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Management.Automation.ComInterop;
 
-namespace System.Management.Automation.ComInterop {
+namespace System.Management.Automation.ComInterop
+{
     /// <summary>
     /// If a managed user type (as opposed to a primitive type or a COM object) is passed as an argument to a COM call, we need
     /// to determine the VarEnum type we will marshal it as. We have the following options:
@@ -26,22 +27,27 @@ namespace System.Management.Automation.ComInterop {
     /// 
     /// VarEnumSelector implements option # 3
     /// </summary>
-    internal class VarEnumSelector {
+    internal class VarEnumSelector
+    {
         private readonly VariantBuilder[] _variantBuilders;
 
-        private static readonly Dictionary<VarEnum, Type> _ComToManagedPrimitiveTypes = CreateComToManagedPrimitiveTypes();
-        private static readonly IList<IList<VarEnum>> _ComPrimitiveTypeFamilies = CreateComPrimitiveTypeFamilies();
+        private static readonly Dictionary<VarEnum, Type> s_comToManagedPrimitiveTypes = CreateComToManagedPrimitiveTypes();
+        private static readonly IList<IList<VarEnum>> s_comPrimitiveTypeFamilies = CreateComPrimitiveTypeFamilies();
 
-        internal VarEnumSelector(Type[] explicitArgTypes) {
+        internal VarEnumSelector(Type[] explicitArgTypes)
+        {
             _variantBuilders = new VariantBuilder[explicitArgTypes.Length];
 
-            for (int i = 0; i < explicitArgTypes.Length; i++) {
+            for (int i = 0; i < explicitArgTypes.Length; i++)
+            {
                 _variantBuilders[i] = GetVariantBuilder(explicitArgTypes[i]);
             }
         }
 
-        internal VariantBuilder[] VariantBuilders {
-            get {
+        internal VariantBuilder[] VariantBuilders
+        {
+            get
+            {
                 return _variantBuilders;
             }
         }
@@ -112,18 +118,22 @@ namespace System.Management.Automation.ComInterop {
         /// 2. There is no Type to represent COM types. __ComObject is a private type, and Object is too
         ///    general.
         /// </summary>
-        internal static Type GetManagedMarshalType(VarEnum varEnum) {
+        internal static Type GetManagedMarshalType(VarEnum varEnum)
+        {
             Debug.Assert((varEnum & VarEnum.VT_BYREF) == 0);
 
-            if (varEnum == VarEnum.VT_CY) {
+            if (varEnum == VarEnum.VT_CY)
+            {
                 return typeof(CurrencyWrapper);
             }
 
-            if (Variant.IsPrimitiveType(varEnum)) {
-                return _ComToManagedPrimitiveTypes[varEnum];
+            if (Variant.IsPrimitiveType(varEnum))
+            {
+                return s_comToManagedPrimitiveTypes[varEnum];
             }
 
-            switch (varEnum) {
+            switch (varEnum)
+            {
                 case VarEnum.VT_EMPTY:
                 case VarEnum.VT_NULL:
                 case VarEnum.VT_UNKNOWN:
@@ -139,7 +149,8 @@ namespace System.Management.Automation.ComInterop {
             }
         }
 
-        private static Dictionary<VarEnum, Type> CreateComToManagedPrimitiveTypes() {
+        private static Dictionary<VarEnum, Type> CreateComToManagedPrimitiveTypes()
+        {
             Dictionary<VarEnum, Type> dict = new Dictionary<VarEnum, Type>();
 
             #region Generated Outer ComToManagedPrimitiveTypes
@@ -182,7 +193,8 @@ namespace System.Management.Automation.ComInterop {
         /// Creates a family of COM types such that within each family, there is a completely non-lossy
         /// conversion from a type to an earlier type in the family.
         /// </summary>
-        private static IList<IList<VarEnum>> CreateComPrimitiveTypeFamilies() {
+        private static IList<IList<VarEnum>> CreateComPrimitiveTypeFamilies()
+        {
             VarEnum[][] typeFamilies = new VarEnum[][] {
                 new VarEnum[] { VarEnum.VT_I8, VarEnum.VT_I4, VarEnum.VT_I2, VarEnum.VT_I1 },
                 new VarEnum[] { VarEnum.VT_UI8, VarEnum.VT_UI4, VarEnum.VT_UI2, VarEnum.VT_UI1 },
@@ -205,13 +217,17 @@ namespace System.Management.Automation.ComInterop {
         /// <summary>
         /// Get the (one representative type for each) primitive type families that the argument can be converted to
         /// </summary>
-        private static List<VarEnum> GetConversionsToComPrimitiveTypeFamilies(Type argumentType) {
+        private static List<VarEnum> GetConversionsToComPrimitiveTypeFamilies(Type argumentType)
+        {
             List<VarEnum> compatibleComTypes = new List<VarEnum>();
 
-            foreach (IList<VarEnum> typeFamily in _ComPrimitiveTypeFamilies) {
-                foreach (VarEnum candidateType in typeFamily) {
-                    Type candidateManagedType = _ComToManagedPrimitiveTypes[candidateType];
-                    if (TypeUtils.IsImplicitlyConvertible(argumentType, candidateManagedType, true)) {
+            foreach (IList<VarEnum> typeFamily in s_comPrimitiveTypeFamilies)
+            {
+                foreach (VarEnum candidateType in typeFamily)
+                {
+                    Type candidateManagedType = s_comToManagedPrimitiveTypes[candidateType];
+                    if (TypeUtils.IsImplicitlyConvertible(argumentType, candidateManagedType, true))
+                    {
                         compatibleComTypes.Add(candidateType);
                         // Move on to the next type family. We need atmost one type from each family
                         break;
@@ -225,17 +241,23 @@ namespace System.Management.Automation.ComInterop {
         /// If there is more than one type family that the argument can be converted to, we will throw a
         /// AmbiguousMatchException instead of randomly picking a winner.
         /// </summary>
-        private static void CheckForAmbiguousMatch(Type argumentType, List<VarEnum> compatibleComTypes) {
-            if (compatibleComTypes.Count <= 1) {
+        private static void CheckForAmbiguousMatch(Type argumentType, List<VarEnum> compatibleComTypes)
+        {
+            if (compatibleComTypes.Count <= 1)
+            {
                 return;
             }
 
             String typeNames = "";
-            for (int i = 0; i < compatibleComTypes.Count; i++) {
-                string typeName = _ComToManagedPrimitiveTypes[compatibleComTypes[i]].Name;
-                if (i == (compatibleComTypes.Count - 1)) {
+            for (int i = 0; i < compatibleComTypes.Count; i++)
+            {
+                string typeName = s_comToManagedPrimitiveTypes[compatibleComTypes[i]].Name;
+                if (i == (compatibleComTypes.Count - 1))
+                {
                     typeNames += " and ";
-                } else if (i != 0) {
+                }
+                else if (i != 0)
+                {
                     typeNames += ", ";
                 }
                 typeNames += typeName;
@@ -245,14 +267,15 @@ namespace System.Management.Automation.ComInterop {
             throw Error.AmbiguousConversion(argumentType.Name, typeNames);
         }
 
-        private static bool TryGetPrimitiveComType(Type argumentType, out VarEnum primitiveVarEnum) {
-
+        private static bool TryGetPrimitiveComType(Type argumentType, out VarEnum primitiveVarEnum)
+        {
             #region Generated Outer Managed To COM Primitive Type Map
 
             // *** BEGIN GENERATED CODE ***
             // generated by function: gen_ManagedToComPrimitiveTypes from: generate_comdispatch.py
 
-            switch (Type.GetTypeCode(argumentType)) {
+            switch (Type.GetTypeCode(argumentType))
+            {
                 case TypeCode.Boolean:
                     primitiveVarEnum = VarEnum.VT_BOOL;
                     return true;
@@ -300,22 +323,26 @@ namespace System.Management.Automation.ComInterop {
                     return true;
             }
 
-            if (argumentType == typeof(CurrencyWrapper)) {
+            if (argumentType == typeof(CurrencyWrapper))
+            {
                 primitiveVarEnum = VarEnum.VT_CY;
                 return true;
             }
 
-            if (argumentType == typeof(ErrorWrapper)) {
+            if (argumentType == typeof(ErrorWrapper))
+            {
                 primitiveVarEnum = VarEnum.VT_ERROR;
                 return true;
             }
 
-            if (argumentType == typeof(IntPtr)) {
+            if (argumentType == typeof(IntPtr))
+            {
                 primitiveVarEnum = VarEnum.VT_PTR;
                 return true;
             }
 
-            if (argumentType == typeof(UIntPtr)) {
+            if (argumentType == typeof(UIntPtr))
+            {
                 primitiveVarEnum = VarEnum.VT_PTR;
                 return true;
             }
@@ -331,11 +358,13 @@ namespace System.Management.Automation.ComInterop {
         /// <summary>
         /// Is there a unique primitive type that has the best conversion for the argument
         /// </summary>
-        private static bool TryGetPrimitiveComTypeViaConversion(Type argumentType, out VarEnum primitiveVarEnum) {
+        private static bool TryGetPrimitiveComTypeViaConversion(Type argumentType, out VarEnum primitiveVarEnum)
+        {
             // Look for a unique type family that the argument can be converted to.
             List<VarEnum> compatibleComTypes = GetConversionsToComPrimitiveTypeFamilies(argumentType);
             CheckForAmbiguousMatch(argumentType, compatibleComTypes);
-            if (compatibleComTypes.Count == 1) {
+            if (compatibleComTypes.Count == 1)
+            {
                 primitiveVarEnum = compatibleComTypes[0];
                 return true;
             }
@@ -349,55 +378,73 @@ namespace System.Management.Automation.ComInterop {
         // Type.InvokeMember tries to marshal objects as VT_DISPATCH, and falls back to VT_UNKNOWN
         // VT_RECORD here just indicates that we have user defined type.
         // We will try VT_DISPATCH and then call GetNativeVariantForObject.
-        const VarEnum VT_DEFAULT = VarEnum.VT_RECORD;
+        private const VarEnum VT_DEFAULT = VarEnum.VT_RECORD;
 
-        private VarEnum GetComType(ref Type argumentType) {
-            if (argumentType == typeof(Missing)) {
+        private VarEnum GetComType(ref Type argumentType)
+        {
+            if (argumentType == typeof(Missing))
+            {
                 //actual variant type will be VT_ERROR | E_PARAMNOTFOUND 
                 return VarEnum.VT_RECORD;
             }
 
-            if (argumentType.IsArray) {
+            if (argumentType.IsArray)
+            {
                 //actual variant type will be VT_ARRAY | VT_<ELEMENT_TYPE>
                 return VarEnum.VT_ARRAY;
             }
 
-            if (argumentType == typeof(UnknownWrapper)) {
+            if (argumentType == typeof(UnknownWrapper))
+            {
                 return VarEnum.VT_UNKNOWN;
-            } else if (argumentType == typeof(DispatchWrapper)) {
+            }
+            else if (argumentType == typeof(DispatchWrapper))
+            {
                 return VarEnum.VT_DISPATCH;
-            } else if (argumentType == typeof(VariantWrapper)) {
+            }
+            else if (argumentType == typeof(VariantWrapper))
+            {
                 return VarEnum.VT_VARIANT;
-            } else if (argumentType == typeof(BStrWrapper)) {
+            }
+            else if (argumentType == typeof(BStrWrapper))
+            {
                 return VarEnum.VT_BSTR;
-            } else if (argumentType == typeof(ErrorWrapper)) {
+            }
+            else if (argumentType == typeof(ErrorWrapper))
+            {
                 return VarEnum.VT_ERROR;
-            } else if (argumentType == typeof(CurrencyWrapper)) {
+            }
+            else if (argumentType == typeof(CurrencyWrapper))
+            {
                 return VarEnum.VT_CY;
             }
 
             // Many languages require an explicit cast for an enum to be used as the underlying type.
             // However, we want to allow this conversion for COM without requiring an explicit cast
             // so that enums from interop assemblies can be used as arguments. 
-            if (argumentType.IsEnum) {
+            if (argumentType.IsEnum)
+            {
                 argumentType = Enum.GetUnderlyingType(argumentType);
                 return GetComType(ref argumentType);
             }
 
             // COM cannot express valuetype nulls so we will convert to underlying type
             // it will throw if there is no value
-            if (TypeUtils.IsNullableType(argumentType)) {
+            if (TypeUtils.IsNullableType(argumentType))
+            {
                 argumentType = TypeUtils.GetNonNullableType(argumentType);
                 return GetComType(ref argumentType);
             }
 
             //generic types cannot be exposed to COM so they do not implement COM interfaces.
-            if (argumentType.IsGenericType) {
+            if (argumentType.IsGenericType)
+            {
                 return VarEnum.VT_UNKNOWN;
             }
 
             VarEnum primitiveVarEnum;
-            if (TryGetPrimitiveComType(argumentType, out primitiveVarEnum)) {
+            if (TryGetPrimitiveComType(argumentType, out primitiveVarEnum))
+            {
                 return primitiveVarEnum;
             }
 
@@ -408,29 +455,36 @@ namespace System.Management.Automation.ComInterop {
         /// <summary>
         /// Get the COM Variant type that argument should be marshaled as for a call to COM
         /// </summary>
-        private VariantBuilder GetVariantBuilder(Type argumentType) {
+        private VariantBuilder GetVariantBuilder(Type argumentType)
+        {
             //argumentType is coming from MarshalType, null means the dynamic object holds
             //a null value and not byref
-            if (argumentType == null) {
+            if (argumentType == null)
+            {
                 return new VariantBuilder(VarEnum.VT_EMPTY, new NullArgBuilder());
             }
 
-            if (argumentType == typeof(DBNull)) {
+            if (argumentType == typeof(DBNull))
+            {
                 return new VariantBuilder(VarEnum.VT_NULL, new NullArgBuilder());
             }
 
             ArgBuilder argBuilder;
 
-            if (argumentType.IsByRef) {
+            if (argumentType.IsByRef)
+            {
                 Type elementType = argumentType.GetElementType();
 
                 VarEnum elementVarEnum;
-                if (elementType == typeof(object) || elementType == typeof(DBNull)) {
+                if (elementType == typeof(object) || elementType == typeof(DBNull))
+                {
                     //no meaningful value to pass ByRef. 
                     //perhaps the calee will replace it with something.
                     //need to pass as a variant reference
                     elementVarEnum = VarEnum.VT_VARIANT;
-                } else {
+                }
+                else
+                {
                     elementVarEnum = GetComType(ref elementType);
                 }
 
@@ -448,19 +502,23 @@ namespace System.Management.Automation.ComInterop {
         // This helper is called when we are looking for a ByVal marhsalling
         // In a ByVal case we can take into account conversions or IConvertible if all other 
         // attempts to find marshalling type failed 
-        private static ArgBuilder GetByValArgBuilder(Type elementType, ref VarEnum elementVarEnum) {
+        private static ArgBuilder GetByValArgBuilder(Type elementType, ref VarEnum elementVarEnum)
+        {
             // if VT indicates that marshalling type is unknown
-            if (elementVarEnum == VT_DEFAULT) {
+            if (elementVarEnum == VT_DEFAULT)
+            {
                 //trying to find a conversion.
                 VarEnum convertibleTo;
-                if (TryGetPrimitiveComTypeViaConversion(elementType, out convertibleTo)) {
+                if (TryGetPrimitiveComTypeViaConversion(elementType, out convertibleTo))
+                {
                     elementVarEnum = convertibleTo;
                     Type marshalType = GetManagedMarshalType(elementVarEnum);
                     return new ConversionArgBuilder(elementType, GetSimpleArgBuilder(marshalType, elementVarEnum));
                 }
 
                 //checking for IConvertible.
-                if (typeof(IConvertible).IsAssignableFrom(elementType)) {
+                if (typeof(IConvertible).IsAssignableFrom(elementType))
+                {
                     return new ConvertibleArgBuilder();
                 }
             }
@@ -468,10 +526,12 @@ namespace System.Management.Automation.ComInterop {
         }
 
         // This helper can produce a builder for types that are directly supported by Variant.
-        private static SimpleArgBuilder GetSimpleArgBuilder(Type elementType, VarEnum elementVarEnum) {
+        private static SimpleArgBuilder GetSimpleArgBuilder(Type elementType, VarEnum elementVarEnum)
+        {
             SimpleArgBuilder argBuilder;
 
-            switch (elementVarEnum) {
+            switch (elementVarEnum)
+            {
                 case VarEnum.VT_BSTR:
                     argBuilder = new StringArgBuilder(elementType);
                     break;
@@ -500,9 +560,12 @@ namespace System.Management.Automation.ComInterop {
                     break;
                 default:
                     var marshalType = GetManagedMarshalType(elementVarEnum);
-                    if (elementType == marshalType) {
+                    if (elementType == marshalType)
+                    {
                         argBuilder = new SimpleArgBuilder(elementType);
-                    } else {
+                    }
+                    else
+                    {
                         argBuilder = new ConvertArgBuilder(elementType, marshalType);
                     }
                     break;

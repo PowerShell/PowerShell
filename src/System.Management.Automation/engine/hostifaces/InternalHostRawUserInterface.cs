@@ -21,8 +21,8 @@ namespace System.Management.Automation.Internal.Host
         InternalHostRawUserInterface(PSHostRawUserInterface externalRawUI, InternalHost parentHost)
         {
             // externalRawUI may be null
-            this.externalRawUI = externalRawUI;
-            this.parentHost = parentHost;
+            _externalRawUI = externalRawUI;
+            _parentHost = parentHost;
         }
 
 
@@ -44,7 +44,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
 
-        
+
         /// <summary>
         /// 
         /// See base class
@@ -61,23 +61,23 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                ConsoleColor result = externalRawUI.ForegroundColor;
+                ConsoleColor result = _externalRawUI.ForegroundColor;
 
                 return result;
             }
             set
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                externalRawUI.ForegroundColor = value;
+                _externalRawUI.ForegroundColor = value;
             }
         }
 
@@ -100,23 +100,23 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                ConsoleColor result = externalRawUI.BackgroundColor;
+                ConsoleColor result = _externalRawUI.BackgroundColor;
 
                 return result;
             }
             set
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                externalRawUI.BackgroundColor = value;
+                _externalRawUI.BackgroundColor = value;
             }
         }
 
@@ -139,23 +139,23 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                Coordinates result = externalRawUI.CursorPosition;
+                Coordinates result = _externalRawUI.CursorPosition;
 
                 return result;
             }
             set
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                externalRawUI.CursorPosition = value;
+                _externalRawUI.CursorPosition = value;
             }
         }
 
@@ -178,23 +178,23 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                Coordinates result = externalRawUI.WindowPosition;
+                Coordinates result = _externalRawUI.WindowPosition;
 
                 return result;
             }
             set
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                externalRawUI.WindowPosition = value;
+                _externalRawUI.WindowPosition = value;
             }
         }
 
@@ -217,23 +217,23 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                int result = externalRawUI.CursorSize;
+                int result = _externalRawUI.CursorSize;
 
                 return result;
             }
             set
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                externalRawUI.CursorSize = value;
+                _externalRawUI.CursorSize = value;
             }
         }
 
@@ -256,23 +256,23 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                Size result = externalRawUI.BufferSize;
+                Size result = _externalRawUI.BufferSize;
 
                 return result;
             }
             set
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                externalRawUI.BufferSize = value;
+                _externalRawUI.BufferSize = value;
             }
         }
 
@@ -295,23 +295,23 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                Size result = externalRawUI.WindowSize;
+                Size result = _externalRawUI.WindowSize;
 
                 return result;
             }
             set
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                externalRawUI.WindowSize = value;
+                _externalRawUI.WindowSize = value;
             }
         }
 
@@ -334,12 +334,12 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                Size result = externalRawUI.MaxWindowSize;
+                Size result = _externalRawUI.MaxWindowSize;
 
                 return result;
             }
@@ -364,12 +364,12 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                Size result = externalRawUI.MaxPhysicalWindowSize;
+                Size result = _externalRawUI.MaxPhysicalWindowSize;
 
                 return result;
             }
@@ -394,20 +394,20 @@ namespace System.Management.Automation.Internal.Host
         KeyInfo
         ReadKey(ReadKeyOptions options)
         {
-            if (externalRawUI == null)
+            if (_externalRawUI == null)
             {
                 ThrowNotInteractive();
             }
             KeyInfo result = new KeyInfo();
             try
             {
-               result = externalRawUI.ReadKey(options);
+                result = _externalRawUI.ReadKey(options);
             }
             catch (PipelineStoppedException)
             {
                 //PipelineStoppedException is thrown by host when it wants 
                 //to stop the pipeline. 
-                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)this.parentHost.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
+                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parentHost.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
                     throw;
@@ -434,12 +434,12 @@ namespace System.Management.Automation.Internal.Host
         void
         FlushInputBuffer()
         {
-            if (externalRawUI == null)
+            if (_externalRawUI == null)
             {
                 ThrowNotInteractive();
             }
 
-            externalRawUI.FlushInputBuffer();
+            _externalRawUI.FlushInputBuffer();
         }
 
 
@@ -461,12 +461,12 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                bool result = externalRawUI.KeyAvailable;
+                bool result = _externalRawUI.KeyAvailable;
 
                 return result;
             }
@@ -491,28 +491,28 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                string result = externalRawUI.WindowTitle;
+                string result = _externalRawUI.WindowTitle;
 
                 return result;
             }
             set
             {
-                if (externalRawUI == null)
+                if (_externalRawUI == null)
                 {
                     ThrowNotInteractive();
                 }
 
-                externalRawUI.WindowTitle = value;
+                _externalRawUI.WindowTitle = value;
             }
         }
 
 
-        
+
         /// <summary>
         /// 
         /// See base class
@@ -528,12 +528,12 @@ namespace System.Management.Automation.Internal.Host
         void
         SetBufferContents(Coordinates origin, BufferCell[,] contents)
         {
-            if (externalRawUI == null)
+            if (_externalRawUI == null)
             {
                 ThrowNotInteractive();
             }
 
-            externalRawUI.SetBufferContents(origin, contents);
+            _externalRawUI.SetBufferContents(origin, contents);
         }
 
 
@@ -558,12 +558,12 @@ namespace System.Management.Automation.Internal.Host
         void
         SetBufferContents(Rectangle r, BufferCell fill)
         {
-            if (externalRawUI == null)
+            if (_externalRawUI == null)
             {
                 ThrowNotInteractive();
             }
 
-            externalRawUI.SetBufferContents(r, fill);
+            _externalRawUI.SetBufferContents(r, fill);
         }
 
 
@@ -584,14 +584,14 @@ namespace System.Management.Automation.Internal.Host
         BufferCell[,]
         GetBufferContents(Rectangle r)
         {
-            if (externalRawUI == null)
+            if (_externalRawUI == null)
             {
                 ThrowNotInteractive();
             }
 
-            return externalRawUI.GetBufferContents(r);
+            return _externalRawUI.GetBufferContents(r);
         }
- 
+
 
 
         /// <summary>
@@ -616,18 +616,18 @@ namespace System.Management.Automation.Internal.Host
         void
         ScrollBufferContents
         (
-            Rectangle source,     
+            Rectangle source,
             Coordinates destination,
-            Rectangle clip,       
+            Rectangle clip,
             BufferCell fill
         )
         {
-            if (externalRawUI == null)
+            if (_externalRawUI == null)
             {
                 ThrowNotInteractive();
             }
 
-            externalRawUI.ScrollBufferContents(source, destination, clip, fill);
+            _externalRawUI.ScrollBufferContents(source, destination, clip, fill);
         }
 
         /// <summary>
@@ -641,11 +641,11 @@ namespace System.Management.Automation.Internal.Host
         /// </exception>
         public override int LengthInBufferCells(string str)
         {
-            if (externalRawUI == null)
+            if (_externalRawUI == null)
             {
                 ThrowNotInteractive();
             }
-            return externalRawUI.LengthInBufferCells(str);
+            return _externalRawUI.LengthInBufferCells(str);
         }
 
         /// <summary>
@@ -663,11 +663,11 @@ namespace System.Management.Automation.Internal.Host
             Dbg.Assert(offset >= 0, "offset >= 0");
             Dbg.Assert(string.IsNullOrEmpty(str) || (offset < str.Length), "offset < str.Length");
 
-            if (externalRawUI == null)
+            if (_externalRawUI == null)
             {
                 ThrowNotInteractive();
             }
-            return externalRawUI.LengthInBufferCells(str, offset);
+            return _externalRawUI.LengthInBufferCells(str, offset);
         }
 
 
@@ -684,15 +684,14 @@ namespace System.Management.Automation.Internal.Host
         int
         LengthInBufferCells(char character)
         {
-            if (externalRawUI == null)
+            if (_externalRawUI == null)
             {
                 ThrowNotInteractive();
             }
-            return externalRawUI.LengthInBufferCells(character);
+            return _externalRawUI.LengthInBufferCells(character);
         }
 
-        private PSHostRawUserInterface externalRawUI;
-        private InternalHost parentHost;
+        private PSHostRawUserInterface _externalRawUI;
+        private InternalHost _parentHost;
     }
-    
 }  // namespace 

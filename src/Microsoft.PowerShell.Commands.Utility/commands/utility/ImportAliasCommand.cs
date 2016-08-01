@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -31,20 +32,20 @@ namespace Microsoft.PowerShell.Commands
         /// The path from which to import the aliases
         /// </summary>
         /// 
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline=true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
         public string Path
         {
             get
             {
-                return path;
+                return _path;
             }
 
             set
             {
-                path = value;
+                _path = value;
             }
         }
-        private string path;
+        private string _path;
 
         /// <summary>
         /// The literal path from which to import the aliases
@@ -56,12 +57,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return path;
+                return _path;
             }
 
             set
             {
-                path = value;
+                _path = value;
             }
         }
 
@@ -75,15 +76,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return scope;
+                return _scope;
             }
 
             set
             {
-                scope = value;
+                _scope = value;
             }
         }
-        private string scope;
+        private string _scope;
 
         /// <summary>
         /// If set to true, the alias that is set is passed to the
@@ -95,15 +96,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return passThru;
+                return _passThru;
             }
 
             set
             {
-                passThru = value;
+                _passThru = value;
             }
         }
-        private bool passThru;
+        private bool _passThru;
 
         /// <summary>
         /// If set to true and an existing alias of the same name exists
@@ -115,15 +116,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return force;
+                return _force;
             }
 
             set
             {
-                force = value;
+                _force = value;
             }
         }
-        private bool force;
+        private bool _force;
 
         #endregion Parameters
 
@@ -254,14 +255,14 @@ namespace Microsoft.PowerShell.Commands
             }
         } // ProcessRecord
 
-        private Dictionary<string, CommandTypes> existingCommands;
+        private Dictionary<string, CommandTypes> _existingCommands;
         private Dictionary<string, CommandTypes> ExistingCommands
         {
             get
             {
-                if (existingCommands == null)
+                if (_existingCommands == null)
                 {
-                    existingCommands = new Dictionary<string, CommandTypes>(StringComparer.OrdinalIgnoreCase);
+                    _existingCommands = new Dictionary<string, CommandTypes>(StringComparer.OrdinalIgnoreCase);
                     CommandSearcher searcher = new CommandSearcher(
                         "*",
                         SearchResolutionOptions.CommandNameIsPattern | SearchResolutionOptions.ResolveAliasPatterns | SearchResolutionOptions.ResolveFunctionPatterns,
@@ -270,19 +271,19 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (CommandInfo commandInfo in searcher)
                     {
-                        existingCommands[commandInfo.Name] = commandInfo.CommandType;
+                        _existingCommands[commandInfo.Name] = commandInfo.CommandType;
                     }
 
                     // Also add commands from the analysis cache
                     foreach (CommandInfo commandInfo in System.Management.Automation.Internal.ModuleUtils.GetMatchingCommands("*", this.Context, this.MyInvocation.CommandOrigin))
                     {
-                        if (!existingCommands.ContainsKey(commandInfo.Name))
+                        if (!_existingCommands.ContainsKey(commandInfo.Name))
                         {
-                             existingCommands[commandInfo.Name] = commandInfo.CommandType;
+                            _existingCommands[commandInfo.Name] = commandInfo.CommandType;
                         }
                     }
                 }
-                return existingCommands;
+                return _existingCommands;
             }
         }
 

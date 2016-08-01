@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -27,20 +28,20 @@ namespace Microsoft.PowerShell.Commands
         /// The WMI Object to use
         /// </summary>
         /// 
-        [Parameter(ValueFromPipeline = true,Mandatory = true,ParameterSetName = "object")]
+        [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "object")]
         public ManagementObject InputObject
         {
-            get { return this.inputObject; }
-            set { this.inputObject = value; }
+            get { return _inputObject; }
+            set { _inputObject = value; }
         }
         /// <summary>
         /// The WMI Path to use
         /// </summary>
-        [Parameter(ParameterSetName = "path",Mandatory = true)]
+        [Parameter(ParameterSetName = "path", Mandatory = true)]
         public string Path
         {
-            get { return this.path; }
-            set { this.path = value; }
+            get { return _path; }
+            set { _path = value; }
         }
         /// <summary>
         /// The WMI class to use
@@ -48,19 +49,19 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "class")]
         public string Class
         {
-            get { return this.className; }
-            set { this.className = value; }
+            get { return _className; }
+            set { _className = value; }
         }
         /// <summary>
         /// The WMI Method to execute
         /// </summary>
-        [Parameter(Position = 1,Mandatory = true)]
+        [Parameter(Position = 1, Mandatory = true)]
         public string Name
         {
-            get { return this.methodName; }
-            set { this.methodName = value; }
+            get { return _methodName; }
+            set { _methodName = value; }
         }
-        
+
         /// <summary>
         /// The parameters to the method specified by MethodName
         /// </summary>
@@ -70,18 +71,18 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Args")]
         public object[] ArgumentList
         {
-            get { return this.argumentList; }
-            set { this.argumentList = value; }
+            get { return _argumentList; }
+            set { _argumentList = value; }
         }
-        
+
         #endregion Parameters
 
         #region parameter data
-        private string path = null;
-        private string className = null;
-        private string methodName = null;
-        private ManagementObject inputObject = null;
-        private object[] argumentList = null;
+        private string _path = null;
+        private string _className = null;
+        private string _methodName = null;
+        private ManagementObject _inputObject = null;
+        private object[] _argumentList = null;
 
         #endregion parameter data
         #region Command code
@@ -90,38 +91,38 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-             if( this.AsJob )
+            if (this.AsJob)
             {
                 RunAsJob("Invoke-WMIMethod");
                 return;
             }
-            if (inputObject != null)
+            if (_inputObject != null)
             {
                 object result = null;
-                ManagementBaseObject inputParameters =null ; 
+                ManagementBaseObject inputParameters = null;
                 try
                 {
-                    inputParameters = inputObject.GetMethodParameters(methodName);
-                    if(argumentList != null )
+                    inputParameters = _inputObject.GetMethodParameters(_methodName);
+                    if (_argumentList != null)
                     {
-                        int inParamCount = argumentList.Length;
+                        int inParamCount = _argumentList.Length;
                         foreach (PropertyData property in inputParameters.Properties)
                         {
                             if (inParamCount == 0)
                                 break;
-                            property.Value = argumentList[argumentList.Length - inParamCount];
+                            property.Value = _argumentList[_argumentList.Length - inParamCount];
                             inParamCount--;
                         }
                     }
-                     if (!ShouldProcess(
-                        StringUtil.Format(WmiResources.WmiMethodNameForConfirmation,
-                        inputObject["__CLASS"].ToString(),
-                        this.Name)
-                    ))
+                    if (!ShouldProcess(
+                       StringUtil.Format(WmiResources.WmiMethodNameForConfirmation,
+                       _inputObject["__CLASS"].ToString(),
+                       this.Name)
+                   ))
                     {
                         return;
                     }
-                    result = inputObject.InvokeMethod(methodName, inputParameters,null);
+                    result = _inputObject.InvokeMethod(_methodName, inputParameters, null);
                 }
                 catch (ManagementException e)
                 {
@@ -145,14 +146,14 @@ namespace Microsoft.PowerShell.Commands
                 ManagementPath mPath = null;
                 object result = null;
                 ManagementObject mObject = null;
-                if( path != null)
+                if (_path != null)
                 {
-                    mPath = new ManagementPath(path);
-                    if(String.IsNullOrEmpty(mPath.NamespacePath))
+                    mPath = new ManagementPath(_path);
+                    if (String.IsNullOrEmpty(mPath.NamespacePath))
                     {
                         mPath.NamespacePath = this.Namespace;
                     }
-                    else if( namespaceSpecified )
+                    else if (namespaceSpecified)
                     {
                         //ThrowTerminatingError
                         ThrowTerminatingError(new ErrorRecord(
@@ -161,8 +162,8 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.InvalidOperation,
                             this.Namespace));
                     }
-                    
-                    if( mPath.Server != "." && serverNameSpecified )
+
+                    if (mPath.Server != "." && serverNameSpecified)
                     {
                         //ThrowTerminatingError
                         ThrowTerminatingError(new ErrorRecord(
@@ -172,7 +173,7 @@ namespace Microsoft.PowerShell.Commands
                             ComputerName));
                     }
                     //If server name is specified loop through it.
-                    if ( !(mPath.Server == "." && serverNameSpecified))
+                    if (!(mPath.Server == "." && serverNameSpecified))
                     {
                         string[] serverName = new string[] { mPath.Server };
                         ComputerName = serverName;
@@ -183,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
                     result = null;
                     try
                     {
-                        if( path != null )
+                        if (_path != null)
                         {
                             mPath.Server = name;
                             if (mPath.IsClass)
@@ -202,19 +203,19 @@ namespace Microsoft.PowerShell.Commands
                         else
                         {
                             ManagementScope scope = new ManagementScope(WMIHelper.GetScopeString(name, this.Namespace), options);
-                            ManagementClass mClass = new ManagementClass(className);
+                            ManagementClass mClass = new ManagementClass(_className);
                             mObject = mClass;
                             mObject.Scope = scope;
                         }
-                        ManagementBaseObject inputParameters =  mObject.GetMethodParameters(methodName);
-                        if(argumentList != null )
+                        ManagementBaseObject inputParameters = mObject.GetMethodParameters(_methodName);
+                        if (_argumentList != null)
                         {
-                            int inParamCount = argumentList.Length;
+                            int inParamCount = _argumentList.Length;
                             foreach (PropertyData property in inputParameters.Properties)
                             {
                                 if (inParamCount == 0)
                                     break;
-                                object argument = PSObject.Base(argumentList[argumentList.Length - inParamCount]);
+                                object argument = PSObject.Base(_argumentList[_argumentList.Length - inParamCount]);
                                 if (property.IsArray)
                                 {
                                     property.Value = MakeBaseObjectArray(argument);
@@ -226,15 +227,15 @@ namespace Microsoft.PowerShell.Commands
                                 inParamCount--;
                             }
                         }
-                     if (!ShouldProcess(
-                             StringUtil.Format(WmiResources.WmiMethodNameForConfirmation,
-                        mObject["__CLASS"].ToString(),
-                        this.Name)
-                    ))
-                    {
-                        return;
-                    }
-                        result = mObject.InvokeMethod(this.methodName, inputParameters,null);
+                        if (!ShouldProcess(
+                                StringUtil.Format(WmiResources.WmiMethodNameForConfirmation,
+                           mObject["__CLASS"].ToString(),
+                           this.Name)
+                       ))
+                        {
+                            return;
+                        }
+                        result = mObject.InvokeMethod(_methodName, inputParameters, null);
                     }
                     catch (ManagementException e)
                     {
@@ -296,5 +297,5 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Command code
-        }//InvokeWMIObject
+    }//InvokeWMIObject
 }

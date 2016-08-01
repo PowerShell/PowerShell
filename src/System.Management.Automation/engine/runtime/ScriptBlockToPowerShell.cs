@@ -196,7 +196,7 @@ namespace System.Management.Automation
                 return AstVisitAction.SkipChildren;
             }
 
-            return  CheckScriptBlock(ast);
+            return CheckScriptBlock(ast);
         }
     }
 
@@ -208,7 +208,7 @@ namespace System.Management.Automation
     {
         private readonly PowerShell _powershell;
         private ExecutionContext _context;
-        private Dictionary<string, object> _usingValueMap; 
+        private Dictionary<string, object> _usingValueMap;
         private bool? _createLocalScope;
 
         private ScriptBlockToPowerShellConverter()
@@ -388,7 +388,7 @@ namespace System.Management.Automation
                         var variableAst = usingAst.SubExpression as VariableExpressionAst;
                         if (variableAst == null)
                         {
-                            throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException), 
+                            throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                                 usingAst.Extent, "CantGetUsingExpressionValueWithSpecifiedVariableDictionary", AutomationExceptions.CantGetUsingExpressionValueWithSpecifiedVariableDictionary, usingAst.Extent.Text);
                         }
 
@@ -417,7 +417,7 @@ namespace System.Management.Automation
             catch (RuntimeException rte)
             {
                 if (rte.ErrorRecord.FullyQualifiedErrorId.Equals("VariableIsUndefined", StringComparison.Ordinal))
-                {                    
+                {
                     throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                         usingAst.Extent, "UsingVariableIsUndefined", AutomationExceptions.UsingVariableIsUndefined, rte.ErrorRecord.TargetObject);
                 }
@@ -466,12 +466,12 @@ namespace System.Management.Automation
         /// <param name="sbClosestToPreviousUsingExpr">The ScriptBlockAst that represents the scope of the previously analyzed UsingExpressions</param>
         private static bool HasUsingExpressionsInDifferentScopes(UsingExpressionAst usingExpr, Ast topLevelParent, ref ScriptBlockAst sbClosestToPreviousUsingExpr)
         {
-            Diagnostics.Assert(topLevelParent is ScriptBlockAst || topLevelParent is FunctionDefinitionAst, 
+            Diagnostics.Assert(topLevelParent is ScriptBlockAst || topLevelParent is FunctionDefinitionAst,
                 "the top level parent should be either a ScriptBlockAst or FunctionDefinitionAst");
 
             // Scan up the parents of a UsingExpression to check if it's in a nested function/filter/ScriptBlock
             Ast current = usingExpr;
-            do 
+            do
             {
                 current = current.Parent;
 
@@ -521,7 +521,6 @@ namespace System.Management.Automation
                     // The current UsingExpression is in a different scope from the previous UsingExpression we analyzed.
                     return true;
                 }
-
             } while (current != topLevelParent);
 
             Diagnostics.Assert(false, "Unreachable Code. Top level parent is eitehr ScriptBlockAst or FunctionDefinitionAst, so it should return within the loop for sure.");
@@ -529,7 +528,7 @@ namespace System.Management.Automation
             return true;
         }
 
-        void ConvertPipeline(PipelineAst pipelineAst, bool isTrustedInput)
+        private void ConvertPipeline(PipelineAst pipelineAst, bool isTrustedInput)
         {
             foreach (var command in pipelineAst.PipelineElements)
             {
@@ -663,15 +662,14 @@ namespace System.Management.Automation
                             {
                                 try
                                 {
-                                        argument = GetSafeValueVisitor.GetSafeValue(exprAst, _context, GetSafeValueVisitor.SafeValueContext.GetPowerShell);
+                                    argument = GetSafeValueVisitor.GetSafeValue(exprAst, _context, GetSafeValueVisitor.SafeValueContext.GetPowerShell);
                                 }
                                 catch (System.Exception)
                                 {
-
                                     throw new ScriptBlockToPowerShellNotSupportedException(
                                         "CantConvertWithDynamicExpression",
                                         null,
-                                        AutomationExceptions.CantConvertWithDynamicExpression, 
+                                        AutomationExceptions.CantConvertWithDynamicExpression,
                                         exprAst.Extent.Text);
                                 }
                             }

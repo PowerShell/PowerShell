@@ -36,8 +36,6 @@ namespace Microsoft.PowerShell
 
         internal enum DataFormat
         {
-
-
             /// <summary>
             /// 
             /// text format -- i.e. stream text just as out-default would display it.
@@ -64,7 +62,7 @@ namespace Microsoft.PowerShell
 
 
 
-        protected 
+        protected
         Serialization(DataFormat dataFormat, string streamName)
         {
             Dbg.Assert(!string.IsNullOrEmpty(streamName), "stream needs a name");
@@ -100,8 +98,8 @@ namespace Microsoft.PowerShell
                     XmlWriterSettings settings = new XmlWriterSettings();
                     settings.CheckCharacters = false;
                     settings.OmitXmlDeclaration = true;
-                    xmlWriter = XmlWriter.Create(textWriter, settings);
-                    xmlSerializer = new Serializer(xmlWriter);
+                    _xmlWriter = XmlWriter.Create(textWriter, settings);
+                    _xmlSerializer = new Serializer(_xmlWriter);
                     break;
                 case DataFormat.Text:
                 default:
@@ -130,12 +128,12 @@ namespace Microsoft.PowerShell
                 case DataFormat.None:
                     break;
                 case DataFormat.XML:
-                    if (firstCall)
+                    if (_firstCall)
                     {
-                        firstCall = false;
+                        _firstCall = false;
                         textWriter.WriteLine(Serialization.XmlCliTag);
                     }
-                    xmlSerializer.Serialize(o, streamName);
+                    _xmlSerializer.Serialize(o, streamName);
                     break;
                 case DataFormat.Text:
                 default:
@@ -156,8 +154,8 @@ namespace Microsoft.PowerShell
                     break;
 
                 case DataFormat.XML:
-                    xmlSerializer.Done();
-                    xmlSerializer = null;
+                    _xmlSerializer.Done();
+                    _xmlSerializer = null;
                     break;
 
                 case DataFormat.Text:
@@ -170,9 +168,9 @@ namespace Microsoft.PowerShell
 
 
         internal TextWriter textWriter;
-        private XmlWriter xmlWriter;
-        private Serializer xmlSerializer;
-        bool firstCall = true;
+        private XmlWriter _xmlWriter;
+        private Serializer _xmlSerializer;
+        private bool _firstCall = true;
     }
 
 
@@ -192,8 +190,8 @@ namespace Microsoft.PowerShell
                 return;
 
             textReader = input;
-            firstLine = textReader.ReadLine();
-            if (String.Compare(firstLine, Serialization.XmlCliTag, StringComparison.OrdinalIgnoreCase) == 0)
+            _firstLine = textReader.ReadLine();
+            if (String.Compare(_firstLine, Serialization.XmlCliTag, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 // format should be XML
 
@@ -203,8 +201,8 @@ namespace Microsoft.PowerShell
             switch (format)
             {
                 case DataFormat.XML:
-                    xmlReader = XmlReader.Create(textReader);
-                    xmlDeserializer = new Deserializer(xmlReader);
+                    _xmlReader = XmlReader.Create(textReader);
+                    _xmlDeserializer = new Deserializer(_xmlReader);
                     break;
                 case DataFormat.Text:
                 default:
@@ -224,31 +222,31 @@ namespace Microsoft.PowerShell
             switch (format)
             {
                 case DataFormat.None:
-                    atEnd = true;
+                    _atEnd = true;
                     return null;
 
                 case DataFormat.XML:
                     string unused;
-                    o = xmlDeserializer.Deserialize(out unused);
+                    o = _xmlDeserializer.Deserialize(out unused);
                     break;
 
                 case DataFormat.Text:
                 default:
-                    if (atEnd)
+                    if (_atEnd)
                     {
                         return null;
                     }
-                    if (firstLine != null)
+                    if (_firstLine != null)
                     {
-                        o = firstLine;
-                        firstLine = null;
+                        o = _firstLine;
+                        _firstLine = null;
                     }
                     else
                     {
                         o = textReader.ReadLine();
                         if (o == null)
                         {
-                            atEnd = true;
+                            _atEnd = true;
                         }
                     }
                     break;
@@ -268,17 +266,17 @@ namespace Microsoft.PowerShell
                 switch (format)
                 {
                     case DataFormat.None:
-                        atEnd = true;
+                        _atEnd = true;
                         result = true;
                         break;
 
                     case DataFormat.XML:
-                        result = xmlDeserializer.Done();
+                        result = _xmlDeserializer.Done();
                         break;
 
                     case DataFormat.Text:
                     default:
-                        result = atEnd;
+                        result = _atEnd;
                         break;
                 }
                 return result;
@@ -305,12 +303,11 @@ namespace Microsoft.PowerShell
 
 
         internal TextReader textReader;
-        private XmlReader xmlReader;
-        private Deserializer xmlDeserializer;
-        private string firstLine;
-        bool atEnd;
+        private XmlReader _xmlReader;
+        private Deserializer _xmlDeserializer;
+        private string _firstLine;
+        private bool _atEnd;
     }
-
 }   // namespace 
 
 

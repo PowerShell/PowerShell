@@ -29,8 +29,8 @@ using AstUtils = System.Management.Automation.Interpreter.Utils;
 using Microsoft.PowerShell.CoreClr.Stubs;
 #endif
 
-namespace System.Management.Automation.Interpreter {
-
+namespace System.Management.Automation.Interpreter
+{
     /// <summary>
     /// Visits a LambdaExpression, replacing the constants with direct accesses
     /// to their StrongBox fields. This is very similar to what
@@ -39,7 +39,8 @@ namespace System.Management.Automation.Interpreter {
     /// Also inserts debug information tracking similar to what the interpreter
     /// would do.
     /// </summary>
-    internal sealed class LightLambdaClosureVisitor : ExpressionVisitor {
+    internal sealed class LightLambdaClosureVisitor : ExpressionVisitor
+    {
         /// <summary>
         /// Local variable mapping.
         /// </summary>
@@ -58,7 +59,8 @@ namespace System.Management.Automation.Interpreter {
         /// </summary>
         private readonly Stack<HashSet<ParameterExpression>> _shadowedVars = new Stack<HashSet<ParameterExpression>>();
 
-        private LightLambdaClosureVisitor(Dictionary<ParameterExpression, LocalVariable> closureVariables, ParameterExpression closureArray) {
+        private LightLambdaClosureVisitor(Dictionary<ParameterExpression, LocalVariable> closureVariables, ParameterExpression closureArray)
+        {
             Assert.NotNull(closureVariables, closureArray);
             _closureArray = closureArray;
             _closureVars = closureVariables;
@@ -71,7 +73,8 @@ namespace System.Management.Automation.Interpreter {
         /// <param name="lambda">The lambda to bind.</param>
         /// <param name="closureVariables">Variables which are being accessed defined in the outer scope.</param>
         /// <returns>A delegate that can be called to produce a delegate bound to the passed in closure array.</returns>
-        internal static Func<StrongBox<object>[], Delegate> BindLambda(LambdaExpression lambda, Dictionary<ParameterExpression, LocalVariable> closureVariables) {
+        internal static Func<StrongBox<object>[], Delegate> BindLambda(LambdaExpression lambda, Dictionary<ParameterExpression, LocalVariable> closureVariables)
+        {
             // 1. Create rewriter
             var closure = Expression.Parameter(typeof(StrongBox<object>[]), "closure");
             var visitor = new LightLambdaClosureVisitor(closureVariables, closure);
@@ -88,63 +91,79 @@ namespace System.Management.Automation.Interpreter {
 
         #region closures
 
-        protected override Expression VisitLambda<T>(Expression<T> node) {
+        protected override Expression VisitLambda<T>(Expression<T> node)
+        {
             _shadowedVars.Push(new HashSet<ParameterExpression>(node.Parameters));
             Expression b = Visit(node.Body);
             _shadowedVars.Pop();
-            if (b == node.Body) {
+            if (b == node.Body)
+            {
                 return node;
             }
             return Expression.Lambda<T>(b, node.Name, node.TailCall, node.Parameters);
         }
 
-        protected override Expression VisitBlock(BlockExpression node) {
-            if (node.Variables.Count > 0) {
+        protected override Expression VisitBlock(BlockExpression node)
+        {
+            if (node.Variables.Count > 0)
+            {
                 _shadowedVars.Push(new HashSet<ParameterExpression>(node.Variables));
             }
             var b = Visit(node.Expressions);
-            if (node.Variables.Count > 0) {
+            if (node.Variables.Count > 0)
+            {
                 _shadowedVars.Pop();
             }
-            if (b == node.Expressions) {
+            if (b == node.Expressions)
+            {
                 return node;
             }
             return Expression.Block(node.Variables, b);
         }
 
-        protected override CatchBlock VisitCatchBlock(CatchBlock node) {
-            if (node.Variable != null) {
+        protected override CatchBlock VisitCatchBlock(CatchBlock node)
+        {
+            if (node.Variable != null)
+            {
                 _shadowedVars.Push(new HashSet<ParameterExpression>(new[] { node.Variable }));
             }
             Expression b = Visit(node.Body);
             Expression f = Visit(node.Filter);
-            if (node.Variable != null) {
+            if (node.Variable != null)
+            {
                 _shadowedVars.Pop();
             }
-            if (b == node.Body && f == node.Filter) {
+            if (b == node.Body && f == node.Filter)
+            {
                 return node;
             }
             return Expression.MakeCatchBlock(node.Test, node.Variable, b, f);
         }
 
-        protected override Expression VisitRuntimeVariables(RuntimeVariablesExpression node) {
+        protected override Expression VisitRuntimeVariables(RuntimeVariablesExpression node)
+        {
             int count = node.Variables.Count;
             var boxes = new List<Expression>();
             var vars = new List<ParameterExpression>();
             var indexes = new int[count];
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < count; i++)
+            {
                 Expression box = GetClosureItem(node.Variables[i], false);
-                if (box == null) {
+                if (box == null)
+                {
                     indexes[i] = vars.Count;
                     vars.Add(node.Variables[i]);
-                } else {
+                }
+                else
+                {
                     indexes[i] = -1 - boxes.Count;
                     boxes.Add(box);
                 }
             }
 
             // No variables were rewritten. Just return the original node.
-            if (boxes.Count == 0) {
+            if (boxes.Count == 0)
+            {
                 return node;
             }
 
@@ -152,7 +171,8 @@ namespace System.Management.Automation.Interpreter {
 
             // All of them were rewritten. Just return the array, wrapped in a
             // read-only collection.
-            if (vars.Count == 0) {
+            if (vars.Count == 0)
+            {
                 return Expression.Invoke(
                     Expression.Constant((Func<IStrongBox[], IRuntimeVariables>)RuntimeVariables.Create),
                     boxesArray
@@ -164,22 +184,26 @@ namespace System.Management.Automation.Interpreter {
             return Expression.Invoke(AstUtils.Constant(helper), Expression.RuntimeVariables(vars), boxesArray, AstUtils.Constant(indexes));
         }
 
-        protected override Expression VisitParameter(ParameterExpression node) {
+        protected override Expression VisitParameter(ParameterExpression node)
+        {
             Expression closureItem = GetClosureItem(node, true);
-            if (closureItem == null) {
+            if (closureItem == null)
+            {
                 return node;
             }
             // Convert can go away if we switch to strongly typed StrongBox
             return AstUtils.Convert(closureItem, node.Type);
         }
 
-        protected override Expression VisitBinary(BinaryExpression node) {
+        protected override Expression VisitBinary(BinaryExpression node)
+        {
             if (node.NodeType == ExpressionType.Assign &&
-                node.Left.NodeType == ExpressionType.Parameter) {
-
+                node.Left.NodeType == ExpressionType.Parameter)
+            {
                 var variable = (ParameterExpression)node.Left;
                 Expression closureItem = GetClosureItem(variable, true);
-                if (closureItem != null) {
+                if (closureItem != null)
+                {
                     // We need to convert to object to store the value in the box.
                     return Expression.Block(
                         new[] { variable },
@@ -192,16 +216,20 @@ namespace System.Management.Automation.Interpreter {
             return base.VisitBinary(node);
         }
 
-        private Expression GetClosureItem(ParameterExpression variable, bool unbox) {
+        private Expression GetClosureItem(ParameterExpression variable, bool unbox)
+        {
             // Skip variables that are shadowed by a nested scope/lambda
-            foreach (HashSet<ParameterExpression> hidden in _shadowedVars) {
-                if (hidden.Contains(variable)) {
+            foreach (HashSet<ParameterExpression> hidden in _shadowedVars)
+            {
+                if (hidden.Contains(variable))
+                {
                     return null;
                 }
             }
 
             LocalVariable loc;
-            if (!_closureVars.TryGetValue(variable, out loc)) {
+            if (!_closureVars.TryGetValue(variable, out loc))
+            {
                 throw new InvalidOperationException("unbound variable: " + variable.Name);
             }
 
@@ -209,7 +237,8 @@ namespace System.Management.Automation.Interpreter {
             return (unbox) ? LightCompiler.Unbox(result) : result;
         }
 
-        protected override Expression VisitExtension(Expression node) {
+        protected override Expression VisitExtension(Expression node)
+        {
             // Reduce extensions now so we can find embedded variables
             return Visit(node.ReduceExtensions());
         }
@@ -220,7 +249,8 @@ namespace System.Management.Automation.Interpreter {
         /// <summary>
         /// Provides a list of variables, supporing read/write of the values
         /// </summary>
-        private sealed class MergedRuntimeVariables : IRuntimeVariables {
+        private sealed class MergedRuntimeVariables : IRuntimeVariables
+        {
             private readonly IRuntimeVariables _first;
             private readonly IRuntimeVariables _second;
 
@@ -228,30 +258,39 @@ namespace System.Management.Automation.Interpreter {
             // Positive values mean the first array, negative means the second
             private readonly int[] _indexes;
 
-            private MergedRuntimeVariables(IRuntimeVariables first, IRuntimeVariables second, int[] indexes) {
+            private MergedRuntimeVariables(IRuntimeVariables first, IRuntimeVariables second, int[] indexes)
+            {
                 _first = first;
                 _second = second;
                 _indexes = indexes;
             }
 
-            internal static IRuntimeVariables Create(IRuntimeVariables first, IRuntimeVariables second, int[] indexes) {
+            internal static IRuntimeVariables Create(IRuntimeVariables first, IRuntimeVariables second, int[] indexes)
+            {
                 return new MergedRuntimeVariables(first, second, indexes);
             }
 
-            int IRuntimeVariables.Count {
+            int IRuntimeVariables.Count
+            {
                 get { return _indexes.Length; }
             }
 
-            object IRuntimeVariables.this[int index] {
-                get {
+            object IRuntimeVariables.this[int index]
+            {
+                get
+                {
                     index = _indexes[index];
                     return (index >= 0) ? _first[index] : _second[-1 - index];
                 }
-                set {
+                set
+                {
                     index = _indexes[index];
-                    if (index >= 0) {
+                    if (index >= 0)
+                    {
                         _first[index] = value;
-                    } else {
+                    }
+                    else
+                    {
                         _second[-1 - index] = value;
                     }
                 }

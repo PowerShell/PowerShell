@@ -101,7 +101,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="obj">object to get all the member information from</param>
         /// <returns>all members in obj</returns>
-        protected abstract PSMemberInfoInternalCollection<T> GetMembers<T>(object obj) where T: PSMemberInfo;
+        protected abstract PSMemberInfoInternalCollection<T> GetMembers<T>(object obj) where T : PSMemberInfo;
 
         #endregion member
 
@@ -204,7 +204,7 @@ namespace System.Management.Automation
                 returnValue.Append(definitions[i]);
                 returnValue.Append(", ");
             }
-            
+
             returnValue.Remove(returnValue.Length - 2, 2);
             return returnValue.ToString();
         }
@@ -319,17 +319,17 @@ namespace System.Management.Automation
         }
 
         #endregion parameterized property      
-        
+
         #endregion virtual
 
         #region base
 
         #region private
 
-        private static Exception NewException(Exception e, string errorId, 
+        private static Exception NewException(Exception e, string errorId,
             string targetErrorId, string resourceString, params object[] parameters)
         {
-            object[] newParameters = new object[parameters.Length+1];
+            object[] newParameters = new object[parameters.Length + 1];
             for (int i = 0; i < parameters.Length; i++)
             {
                 newParameters[i + 1] = parameters[i];
@@ -369,7 +369,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal T BaseGetMember<T>(object obj, string memberName) where T:PSMemberInfo
+        internal T BaseGetMember<T>(object obj, string memberName) where T : PSMemberInfo
         {
             try
             {
@@ -916,7 +916,7 @@ namespace System.Management.Automation
                 {
                     return 1;
                 }
-                else if(candidate1.parameters.Length > candidate2.parameters.Length)
+                else if (candidate1.parameters.Length > candidate2.parameters.Length)
                 {
                     return -1;
                 }
@@ -1252,9 +1252,9 @@ namespace System.Management.Automation
             // }
             //
             // If we have such information in invocationConstraints then we should call method on the baseClass.
-            if (invocationConstraints != null && 
-                invocationConstraints.MethodTargetType != null && 
-                methodInfo.method != null && 
+            if (invocationConstraints != null &&
+                invocationConstraints.MethodTargetType != null &&
+                methodInfo.method != null &&
                 methodInfo.method.DeclaringType != null)
             {
                 Type targetType = methodInfo.method.DeclaringType;
@@ -1272,7 +1272,7 @@ namespace System.Management.Automation
             }
             return methodInfo;
         }
-        
+
         private static MethodInformation FindBestMethodImpl(
             MethodInformation[] methods,
             PSMethodInvocationConstraints invocationConstraints,
@@ -1281,7 +1281,6 @@ namespace System.Management.Automation
             ref string errorMsg,
             out bool expandParamsOnBest)
         {
-
             expandParamsOnBest = false;
 
             // Small optimization so we don't calculate type distances when there is only one method
@@ -1345,7 +1344,7 @@ namespace System.Management.Automation
                 if (arguments.Length != parameters.Length)
                 {
                     // Skip methods w/ an incorrect # of arguments.
-                    
+
                     if (arguments.Length > parameters.Length)
                     {
                         // If too many args,it's only OK if the method is varargs.
@@ -1370,7 +1369,8 @@ namespace System.Management.Automation
                             int optionals = 0;
                             for (int j = 0; j < parameters.Length; j++)
                             {
-                                if (parameters[j].isOptional) {
+                                if (parameters[j].isOptional)
+                                {
                                     optionals += 1;
                                 }
                             }
@@ -1411,7 +1411,7 @@ namespace System.Management.Automation
                             if (candidate.conversionRanks[j] == ConversionRank.None)
                             {
                                 candidate = null;
-                            }                             
+                            }
                         }
                         else
                         {
@@ -1471,8 +1471,8 @@ namespace System.Management.Automation
                     return null;
                 }
             }
-            
-            OverloadCandidate bestCandidate = candidates.Count == 1 
+
+            OverloadCandidate bestCandidate = candidates.Count == 1
                 ? candidates[0]
                 : FindBestCandidate(candidates, arguments, invocationConstraints);
             if (bestCandidate != null)
@@ -1554,7 +1554,7 @@ namespace System.Management.Automation
         }
 
         internal static MethodInformation GetBestMethodAndArguments(
-            string methodName, 
+            string methodName,
             MethodInformation[] methods,
             object[] arguments,
             out object[] newArguments)
@@ -1563,7 +1563,7 @@ namespace System.Management.Automation
         }
 
         internal static MethodInformation GetBestMethodAndArguments(
-            string methodName, 
+            string methodName,
             MethodInformation[] methods,
             PSMethodInvocationConstraints invocationConstraints,
             object[] arguments,
@@ -1586,8 +1586,8 @@ namespace System.Management.Automation
         /// Called in GetBestMethodAndArguments after a call to FindBestMethod to perform the
         /// type conversion, copying(varArg) and optional value setting of the final arguments.
         /// </summary>        
-        internal static object[] GetMethodArgumentsBase(string methodName, 
-            ParameterInformation[] parameters, object[] arguments, 
+        internal static object[] GetMethodArgumentsBase(string methodName,
+            ParameterInformation[] parameters, object[] arguments,
             bool expandParamsOnBest)
         {
             int parametersLength = parameters.Length;
@@ -1677,14 +1677,14 @@ namespace System.Management.Automation
         /// <param name="newArguments">the complete array of new arguments</param>
         /// <param name="parameter">the parameter to use</param>
         /// <param name="index">the index in newArguments to set</param>
-        internal static void SetNewArgument(string methodName, object[] arguments, 
+        internal static void SetNewArgument(string methodName, object[] arguments,
             object[] newArguments, ParameterInformation parameter, int index)
         {
             if (arguments.Length > index)
             {
                 try
                 {
-                    newArguments[index] = MethodArgumentConvertTo(arguments[index], parameter.isByRef, index, 
+                    newArguments[index] = MethodArgumentConvertTo(arguments[index], parameter.isByRef, index,
                         parameter.parameterType, CultureInfo.InvariantCulture);
                 }
                 catch (InvalidCastException e)
@@ -1704,7 +1704,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal static object MethodArgumentConvertTo(object valueToConvert, 
+        internal static object MethodArgumentConvertTo(object valueToConvert,
             bool isParameterByRef, int parameterIndex, Type resultType,
             IFormatProvider formatProvider)
         {
@@ -1755,8 +1755,8 @@ namespace System.Management.Automation
             }
             return obj;
         }
-        
-        internal static object PropertySetAndMethodArgumentConvertTo(object valueToConvert, 
+
+        internal static object PropertySetAndMethodArgumentConvertTo(object valueToConvert,
             Type resultType, IFormatProvider formatProvider)
         {
             using (PSObject.memberResolution.TraceScope("Converting parameter \"{0}\" to \"{1}\".", valueToConvert, resultType))
@@ -1794,14 +1794,14 @@ namespace System.Management.Automation
                 typeInfo = type.GetTypeInfo();
                 if (typeInfo.IsPrimitive)
                 {
-                    if      (type == typeof(byte))   { generator.Emit(OpCodes.Ldind_U1); }
+                    if (type == typeof(byte)) { generator.Emit(OpCodes.Ldind_U1); }
                     else if (type == typeof(ushort)) { generator.Emit(OpCodes.Ldind_U2); }
-                    else if (type == typeof(uint))   { generator.Emit(OpCodes.Ldind_U4); }
-                    else if (type == typeof(sbyte))  { generator.Emit(OpCodes.Ldind_I8); }
-                    else if (type == typeof(short))  { generator.Emit(OpCodes.Ldind_I2); }
-                    else if (type == typeof(int))    { generator.Emit(OpCodes.Ldind_I4); }
-                    else if (type == typeof(long))   { generator.Emit(OpCodes.Ldind_I8); }
-                    else if (type == typeof(float))  { generator.Emit(OpCodes.Ldind_R4); }
+                    else if (type == typeof(uint)) { generator.Emit(OpCodes.Ldind_U4); }
+                    else if (type == typeof(sbyte)) { generator.Emit(OpCodes.Ldind_I8); }
+                    else if (type == typeof(short)) { generator.Emit(OpCodes.Ldind_I2); }
+                    else if (type == typeof(int)) { generator.Emit(OpCodes.Ldind_I4); }
+                    else if (type == typeof(long)) { generator.Emit(OpCodes.Ldind_I8); }
+                    else if (type == typeof(float)) { generator.Emit(OpCodes.Ldind_R4); }
                     else if (type == typeof(double)) { generator.Emit(OpCodes.Ldind_R8); }
                 }
                 else if (typeInfo.IsValueType)
@@ -1843,15 +1843,15 @@ namespace System.Management.Automation
     internal class CacheTable
     {
         internal Collection<object> memberCollection;
-        private Dictionary<string, int> indexes;
+        private Dictionary<string, int> _indexes;
         internal CacheTable()
         {
             memberCollection = new Collection<object>();
-            indexes = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            _indexes = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         }
         internal void Add(string name, object member)
         {
-            indexes[name] = memberCollection.Count;
+            _indexes[name] = memberCollection.Count;
             memberCollection.Add(member);
         }
         internal object this[string name]
@@ -1859,7 +1859,7 @@ namespace System.Management.Automation
             get
             {
                 int indexObj;
-                if (!indexes.TryGetValue(name, out indexObj))
+                if (!_indexes.TryGetValue(name, out indexObj))
                 {
                     return null;
                 }
@@ -1898,9 +1898,9 @@ namespace System.Management.Automation
         internal bool hasOptional;
         internal bool isGeneric;
 
-        private bool useReflection;
+        private bool _useReflection;
         private delegate object MethodInvoker(object target, object[] arguments);
-        private MethodInvoker methodInvoker;
+        private MethodInvoker _methodInvoker;
 
         /// <summary>
         /// This constructor supports .net methods
@@ -1964,37 +1964,37 @@ namespace System.Management.Automation
                 }
             }
 
-            if (!useReflection)
+            if (!_useReflection)
             {
-                if (methodInvoker == null)
+                if (_methodInvoker == null)
                 {
                     if (!(method is MethodInfo))
                     {
-                        useReflection = true;
+                        _useReflection = true;
                     }
                     else
                     {
-                        methodInvoker = GetMethodInvoker((MethodInfo) method);
+                        _methodInvoker = GetMethodInvoker((MethodInfo)method);
                     }
                 }
-                if (methodInvoker != null)
+                if (_methodInvoker != null)
                 {
-                    return methodInvoker(target, arguments);
+                    return _methodInvoker(target, arguments);
                 }
             }
             return method.Invoke(target, arguments);
         }
 
-        private static OpCode[] _ldc = new OpCode[] {
+        private static OpCode[] s_ldc = new OpCode[] {
             OpCodes.Ldc_I4_0, OpCodes.Ldc_I4_1, OpCodes.Ldc_I4_2, OpCodes.Ldc_I4_3, OpCodes.Ldc_I4_4,
             OpCodes.Ldc_I4_5, OpCodes.Ldc_I4_6, OpCodes.Ldc_I4_7, OpCodes.Ldc_I4_8
         };
 
         private static void EmitLdc(ILGenerator emitter, int c)
         {
-            if (c < _ldc.Length)
+            if (c < s_ldc.Length)
             {
-                emitter.Emit(_ldc[c]);
+                emitter.Emit(s_ldc[c]);
             }
             else
             {
@@ -2028,7 +2028,7 @@ namespace System.Management.Automation
             methodToCall = null;
 
             Type valuetype = method.DeclaringType;
-            
+
             Diagnostics.Assert(valuetype.GetTypeInfo().IsValueType, "This code only works with valuetypes");
 
             Type[] interfaces = valuetype.GetInterfaces();
@@ -2048,7 +2048,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        [SuppressMessage("NullPtr", "#pw26500", Justification="This is a false positive. Original warning was on the deference of 'locals' on line 1863: emitter.Emit(OpCodes.Ldloca, locals[cLocal])")]
+        [SuppressMessage("NullPtr", "#pw26500", Justification = "This is a false positive. Original warning was on the deference of 'locals' on line 1863: emitter.Emit(OpCodes.Ldloca, locals[cLocal])")]
         private MethodInvoker GetMethodInvoker(MethodInfo method)
         {
             Type type;
@@ -2161,7 +2161,7 @@ namespace System.Management.Automation
                         type = FindInterfaceForMethod(method, out methodToCall);
                         if (type == null)
                         {
-                            useReflection = true;
+                            _useReflection = true;
                             return null;
                         }
                         emitter.Emit(OpCodes.Ldarg_0);
@@ -2323,51 +2323,51 @@ namespace System.Management.Automation
                                                               BindingFlags.IgnoreCase | BindingFlags.Instance);
         private const BindingFlags staticBindingFlags = (BindingFlags.FlattenHierarchy | BindingFlags.Public |
                                                               BindingFlags.IgnoreCase | BindingFlags.Static);
-        private bool isStatic;
+        private bool _isStatic;
 
         internal DotNetAdapter() { }
 
         internal DotNetAdapter(bool isStatic)
         {
-            this.isStatic = isStatic;            
+            _isStatic = isStatic;
         }
 
         // This static is thread safe based on the lock in GetInstancePropertyReflectionTable
         /// <summary>
         /// CLR reflection property cache for instance properties
         /// </summary>
-        private static Dictionary<Type, CacheTable> instancePropertyCacheTable = new Dictionary<Type, CacheTable>();
+        private static Dictionary<Type, CacheTable> s_instancePropertyCacheTable = new Dictionary<Type, CacheTable>();
 
         // This static is thread safe based on the lock in GetStaticPropertyReflectionTable
         /// <summary>
         /// CLR reflection property cache for static properties
         /// </summary>
-        private static Dictionary<Type, CacheTable> staticPropertyCacheTable = new Dictionary<Type, CacheTable>();
+        private static Dictionary<Type, CacheTable> s_staticPropertyCacheTable = new Dictionary<Type, CacheTable>();
 
         // This static is thread safe based on the lock in GetInstanceMethodReflectionTable
         /// <summary>
         /// CLR reflection method cache for instance methods
         /// </summary>
-        private static Dictionary<Type, CacheTable> instanceMethodCacheTable = new Dictionary<Type, CacheTable>();
+        private static Dictionary<Type, CacheTable> s_instanceMethodCacheTable = new Dictionary<Type, CacheTable>();
 
         // This static is thread safe based on the lock in GetStaticMethodReflectionTable
         /// <summary>
         /// CLR reflection method cache for static methods
         /// </summary>
-        private static Dictionary<Type, CacheTable> staticMethodCacheTable = new Dictionary<Type, CacheTable>();
+        private static Dictionary<Type, CacheTable> s_staticMethodCacheTable = new Dictionary<Type, CacheTable>();
 
         // This static is thread safe based on the lock in GetInstanceMethodReflectionTable
         /// <summary>
         /// CLR reflection method cache for instance events
         /// </summary>
-        private static readonly Dictionary<Type, Dictionary<string, EventCacheEntry>> instanceEventCacheTable
+        private static readonly Dictionary<Type, Dictionary<string, EventCacheEntry>> s_instanceEventCacheTable
             = new Dictionary<Type, Dictionary<string, EventCacheEntry>>();
 
         // This static is thread safe based on the lock in GetStaticMethodReflectionTable
         /// <summary>
         /// CLR reflection method cache for static events
         /// </summary>
-        private static readonly Dictionary<Type, Dictionary<string, EventCacheEntry>> staticEventCacheTable
+        private static readonly Dictionary<Type, Dictionary<string, EventCacheEntry>> s_staticEventCacheTable
             = new Dictionary<Type, Dictionary<string, EventCacheEntry>>();
 
         internal class MethodCacheEntry
@@ -2493,7 +2493,7 @@ namespace System.Management.Automation
                     propertyTypeInfo.IsGenericType ||
                     declaringTypeInfo.IsGenericType ||
                     property.DeclaringType.IsComObject() ||
-                    property.PropertyType.IsComObject() )
+                    property.PropertyType.IsComObject())
                 {
                     this.readOnly = property.GetSetMethod() == null;
                     this.writeOnly = property.GetGetMethod() == null;
@@ -2540,7 +2540,7 @@ namespace System.Management.Automation
                 }
             }
 
-            void InitGetter()
+            private void InitGetter()
             {
                 if (writeOnly || useReflection)
                     return;
@@ -2570,11 +2570,11 @@ namespace System.Management.Automation
                     }
                     Expression getterExpr;
 
-                    if (declaringTypeInfo.IsGenericTypeDefinition)                     
+                    if (declaringTypeInfo.IsGenericTypeDefinition)
                     {
                         Expression innerException = Expression.New(CachedReflectionInfo.GetValueException_ctor,
                             Expression.Constant("PropertyGetException"),
-                            Expression.Constant(null, typeof(Exception)),                    
+                            Expression.Constant(null, typeof(Exception)),
                             Expression.Constant(ParserStrings.PropertyInGenericType),
                             Expression.NewArrayInit(typeof(object), Expression.Constant(field.Name)));
                         getterExpr = Compiler.ThrowRuntimeErrorWithInnerException("PropertyGetException",
@@ -2583,10 +2583,10 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        getterExpr = Expression.Field(instance, field).Cast(typeof(object));                    
+                        getterExpr = Expression.Field(instance, field).Cast(typeof(object));
                     }
 
-                    this._getterDelegate = Expression.Lambda<GetterDelegate>(getterExpr, parameter).Compile();
+                    _getterDelegate = Expression.Lambda<GetterDelegate>(getterExpr, parameter).Compile();
                     return;
                 }
 
@@ -2594,11 +2594,11 @@ namespace System.Management.Automation
                 var propertyGetter = property.GetGetMethod(true);
 
                 instance = this.isStatic ? null : parameter.Cast(propertyGetter.DeclaringType);
-                this._getterDelegate = Expression.Lambda<GetterDelegate>(
+                _getterDelegate = Expression.Lambda<GetterDelegate>(
                     Expression.Property(instance, property).Cast(typeof(object)), parameter).Compile();
             }
 
-            void InitSetter()
+            private void InitSetter()
             {
                 if (readOnly || useReflection)
                     return;
@@ -2642,7 +2642,7 @@ namespace System.Management.Automation
                     else if (readOnly)
                     {
                         errMessage = ParserStrings.PropertyIsReadOnly;
-                    }                
+                    }
 
                     if (errMessage != null)
                     {
@@ -2659,15 +2659,15 @@ namespace System.Management.Automation
                     {
                         setterExpr = Expression.Assign(Expression.Field(instance, field), Expression.Convert(value, field.FieldType));
                     }
-                    this._setterDelegate = Expression.Lambda<SetterDelegate>(setterExpr, parameter, value).Compile();
+                    _setterDelegate = Expression.Lambda<SetterDelegate>(setterExpr, parameter, value).Compile();
                     return;
                 }
 
-                var property = (PropertyInfo) member;
+                var property = (PropertyInfo)member;
                 MethodInfo propertySetter = property.GetSetMethod(true);
 
                 instance = this.isStatic ? null : parameter.Cast(propertySetter.DeclaringType);
-                this._setterDelegate =
+                _setterDelegate =
                     Expression.Lambda<SetterDelegate>(
                         Expression.Assign(Expression.Property(instance, property),
                             Expression.Convert(value, property.PropertyType)), parameter, value).Compile();
@@ -2697,7 +2697,7 @@ namespace System.Management.Automation
                     {
                         InitSetter();
                     }
-                    
+
                     return _setterDelegate;
                 }
             }
@@ -2709,18 +2709,18 @@ namespace System.Management.Automation
             internal bool isStatic;
             internal Type propertyType;
 
-            private AttributeCollection attributes;
+            private AttributeCollection _attributes;
             internal AttributeCollection Attributes
             {
                 get
                 {
-                    if (this.attributes == null)
+                    if (_attributes == null)
                     {
                         // Since AttributeCollection can only be constructed with an Attribute[], one is built.
                         var objAttributes = this.member.GetCustomAttributes(true);
-                        attributes = new AttributeCollection(objAttributes.Cast<Attribute>().ToArray());
+                        _attributes = new AttributeCollection(objAttributes.Cast<Attribute>().ToArray());
                     }
-                    return this.attributes;
+                    return _attributes;
                 }
             }
         }
@@ -3125,7 +3125,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The dictionary cache about if an assembly supports reflection execution on its internal types.
         /// </summary>
-        private static readonly ConcurrentDictionary<string, bool> DisallowReflectionCache =
+        private static readonly ConcurrentDictionary<string, bool> s_disallowReflectionCache =
             new ConcurrentDictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
@@ -3136,7 +3136,7 @@ namespace System.Management.Automation
         {
             bool disallowReflection = false;
             Assembly assembly = typeInfo.Assembly;
-            if (DisallowReflectionCache.TryGetValue(assembly.FullName, out disallowReflection))
+            if (s_disallowReflectionCache.TryGetValue(assembly.FullName, out disallowReflection))
             {
                 return disallowReflection;
             }
@@ -3153,7 +3153,7 @@ namespace System.Management.Automation
                 disallowReflection = disablePrivateReflectionAttribute != null;
             }
 
-            DisallowReflectionCache.TryAdd(assembly.FullName, disallowReflection);
+            s_disallowReflectionCache.TryAdd(assembly.FullName, disallowReflection);
             return disallowReflection;
         }
 
@@ -3188,17 +3188,17 @@ namespace System.Management.Automation
         /// <param name="type">type to load properties for</param>
         private static CacheTable GetStaticPropertyReflectionTable(Type type)
         {
-            lock (staticPropertyCacheTable)
+            lock (s_staticPropertyCacheTable)
             {
                 CacheTable typeTable = null;
-                if (staticPropertyCacheTable.TryGetValue(type, out typeTable))
+                if (s_staticPropertyCacheTable.TryGetValue(type, out typeTable))
                 {
                     return typeTable;
                 }
 
                 typeTable = new CacheTable();
                 PopulatePropertyReflectionTable(type, typeTable, staticBindingFlags);
-                staticPropertyCacheTable[type] = typeTable;
+                s_staticPropertyCacheTable[type] = typeTable;
                 return typeTable;
             }
         }
@@ -3209,17 +3209,17 @@ namespace System.Management.Automation
         /// <param name="type">type to load methods for</param>
         private static CacheTable GetStaticMethodReflectionTable(Type type)
         {
-            lock (staticMethodCacheTable)
+            lock (s_staticMethodCacheTable)
             {
                 CacheTable typeTable = null;
-                if (staticMethodCacheTable.TryGetValue(type, out typeTable))
+                if (s_staticMethodCacheTable.TryGetValue(type, out typeTable))
                 {
                     return typeTable;
                 }
 
                 typeTable = new CacheTable();
                 PopulateMethodReflectionTable(type, typeTable, staticBindingFlags);
-                staticMethodCacheTable[type] = typeTable;
+                s_staticMethodCacheTable[type] = typeTable;
                 return typeTable;
             }
         }
@@ -3230,16 +3230,16 @@ namespace System.Management.Automation
         /// <param name="type">type containing properties to load in typeTable</param>
         private static Dictionary<string, EventCacheEntry> GetStaticEventReflectionTable(Type type)
         {
-            lock (staticEventCacheTable)
+            lock (s_staticEventCacheTable)
             {
                 Dictionary<string, EventCacheEntry> typeTable;
-                if (staticEventCacheTable.TryGetValue(type, out typeTable))
+                if (s_staticEventCacheTable.TryGetValue(type, out typeTable))
                 {
                     return typeTable;
                 }
                 typeTable = new Dictionary<string, EventCacheEntry>();
                 PopulateEventReflectionTable(type, typeTable, staticBindingFlags);
-                staticEventCacheTable[type] = typeTable;
+                s_staticEventCacheTable[type] = typeTable;
                 return typeTable;
             }
         }
@@ -3252,16 +3252,16 @@ namespace System.Management.Automation
         /// <param name="type">type with properties to load in typeTable</param>
         private static CacheTable GetInstancePropertyReflectionTable(Type type)
         {
-            lock (instancePropertyCacheTable)
+            lock (s_instancePropertyCacheTable)
             {
                 CacheTable typeTable = null;
-                if (instancePropertyCacheTable.TryGetValue(type, out typeTable))
+                if (s_instancePropertyCacheTable.TryGetValue(type, out typeTable))
                 {
                     return typeTable;
                 }
                 typeTable = new CacheTable();
                 PopulatePropertyReflectionTable(type, typeTable, instanceBindingFlags);
-                instancePropertyCacheTable[type] = typeTable;
+                s_instancePropertyCacheTable[type] = typeTable;
                 return typeTable;
             }
         }
@@ -3272,16 +3272,16 @@ namespace System.Management.Automation
         /// <param name="type">type with methods to load in typeTable</param>
         private static CacheTable GetInstanceMethodReflectionTable(Type type)
         {
-            lock (instanceMethodCacheTable)
+            lock (s_instanceMethodCacheTable)
             {
                 CacheTable typeTable = null;
-                if (instanceMethodCacheTable.TryGetValue(type, out typeTable))
+                if (s_instanceMethodCacheTable.TryGetValue(type, out typeTable))
                 {
                     return typeTable;
                 }
                 typeTable = new CacheTable();
                 PopulateMethodReflectionTable(type, typeTable, instanceBindingFlags);
-                instanceMethodCacheTable[type] = typeTable;
+                s_instanceMethodCacheTable[type] = typeTable;
                 return typeTable;
             }
         }
@@ -3317,16 +3317,16 @@ namespace System.Management.Automation
         /// <param name="type">type containing methods to load in typeTable</param>
         private static Dictionary<string, EventCacheEntry> GetInstanceEventReflectionTable(Type type)
         {
-            lock (instanceEventCacheTable)
+            lock (s_instanceEventCacheTable)
             {
                 Dictionary<string, EventCacheEntry> typeTable;
-                if (instanceEventCacheTable.TryGetValue(type, out typeTable))
+                if (s_instanceEventCacheTable.TryGetValue(type, out typeTable))
                 {
                     return typeTable;
                 }
                 typeTable = new Dictionary<string, EventCacheEntry>(StringComparer.OrdinalIgnoreCase);
                 PopulateEventReflectionTable(type, typeTable, instanceBindingFlags);
-                instanceEventCacheTable[type] = typeTable;
+                s_instanceEventCacheTable[type] = typeTable;
                 return typeTable;
             }
         }
@@ -3356,7 +3356,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            CacheTable typeTable = this.isStatic
+            CacheTable typeTable = _isStatic
                 ? GetStaticPropertyReflectionTable((Type)obj)
                 : GetInstancePropertyReflectionTable(obj.GetType());
 
@@ -3392,7 +3392,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            CacheTable typeTable = this.isStatic
+            CacheTable typeTable = _isStatic
                 ? GetStaticMethodReflectionTable((Type)obj)
                 : GetInstanceMethodReflectionTable(obj.GetType());
 
@@ -3415,7 +3415,7 @@ namespace System.Management.Automation
             return new PSMethod(methods[0].method.Name, this, obj, methods, isSpecial, isHidden) as T;
         }
 
-        internal void AddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members, bool ignoreDuplicates) where T: PSMemberInfo
+        internal void AddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members, bool ignoreDuplicates) where T : PSMemberInfo
         {
             bool lookingForProperties = typeof(T).IsAssignableFrom(typeof(PSProperty));
             bool lookingForParameterizedProperties = IsTypeParameterizedProperty(typeof(T));
@@ -3424,7 +3424,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            CacheTable table = this.isStatic
+            CacheTable table = _isStatic
                 ? GetStaticPropertyReflectionTable((Type)obj)
                 : GetInstancePropertyReflectionTable(obj.GetType());
 
@@ -3439,7 +3439,8 @@ namespace System.Management.Automation
                         {
                             var isHidden = propertyEntry.member.GetCustomAttributes(typeof(HiddenAttribute), false).Any();
                             members.Add(new PSProperty(propertyEntry.member.Name, this,
-                                obj, propertyEntry) { IsHidden = isHidden } as T);
+                                obj, propertyEntry)
+                            { IsHidden = isHidden } as T);
                         }
                     }
                 }
@@ -3458,14 +3459,14 @@ namespace System.Management.Automation
             }
         }
 
-        internal void AddAllMethods<T>(object obj, PSMemberInfoInternalCollection<T> members, bool ignoreDuplicates) where T: PSMemberInfo
+        internal void AddAllMethods<T>(object obj, PSMemberInfoInternalCollection<T> members, bool ignoreDuplicates) where T : PSMemberInfo
         {
             if (!typeof(T).IsAssignableFrom(typeof(PSMethod)))
             {
                 return;
             }
 
-            CacheTable table = this.isStatic
+            CacheTable table = _isStatic
                 ? GetStaticMethodReflectionTable((Type)obj)
                 : GetInstanceMethodReflectionTable(obj.GetType());
 
@@ -3499,7 +3500,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            var table = this.isStatic 
+            var table = _isStatic
                 ? GetStaticEventReflectionTable((Type)obj)
                 : GetInstanceEventReflectionTable(obj.GetType());
 
@@ -3548,12 +3549,12 @@ namespace System.Management.Automation
 
         internal override bool SiteBinderCanOptimize { get { return true; } }
 
-        private static ConcurrentDictionary<Type, ConsolidatedString> typeToTypeNameDictionary =
+        private static ConcurrentDictionary<Type, ConsolidatedString> s_typeToTypeNameDictionary =
             new ConcurrentDictionary<Type, ConsolidatedString>();
 
         internal static ConsolidatedString GetInternedTypeNameHierarchy(Type type)
         {
-            return typeToTypeNameDictionary.GetOrAdd(type,
+            return s_typeToTypeNameDictionary.GetOrAdd(type,
                                                      t => new ConsolidatedString(GetDotNetTypeNameHierarchy(t), interned: true));
         }
 
@@ -3669,7 +3670,6 @@ namespace System.Management.Automation
                 {
                     return adapterData.getterDelegate(property.baseObject);
                 }
-
             }
 
             FieldInfo field = adapterData.member as FieldInfo;
@@ -3692,7 +3692,7 @@ namespace System.Management.Automation
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
             PropertyCacheEntry adapterData = (PropertyCacheEntry)property.adapterData;
-            
+
             if (adapterData.readOnly)
             {
                 throw new SetValueException("ReadOnlyProperty",
@@ -3703,7 +3703,7 @@ namespace System.Management.Automation
 
             PropertyInfo propertyInfo = adapterData.member as PropertyInfo;
             if (propertyInfo != null)
-            {                    
+            {
                 if (convertIfPossible)
                 {
                     setValue = PropertySetAndMethodArgumentConvertTo(setValue, propertyInfo.PropertyType, CultureInfo.InvariantCulture);
@@ -3857,7 +3857,7 @@ namespace System.Management.Automation
             // a TargetInvocationException only when the invocation uses reflection so we need to bubble them up here as well.
             //
             catch (ParameterBindingException) { throw; }
-            catch (FlowControlException)  { throw; }
+            catch (FlowControlException) { throw; }
             catch (ScriptCallDepthException) { throw; }
             catch (PipelineStoppedException) { throw; }
             catch (Exception e)
@@ -3917,9 +3917,9 @@ namespace System.Management.Automation
         /// <exception cref="MethodInvocationException">if the method throws an exception</exception>
         /// <exception cref="MethodException">if we could not find a method for the given arguments</exception>
         internal static object MethodInvokeDotNet(
-            string methodName, 
-            object target, 
-            MethodInformation[] methodInformation, 
+            string methodName,
+            object target,
+            MethodInformation[] methodInformation,
             PSMethodInvocationConstraints invocationConstraints,
             object[] arguments)
         {
@@ -4040,7 +4040,7 @@ namespace System.Management.Automation
             if (methodEntry.IsGenericMethodDefinition)
             {
                 builder.Append("[");
-                
+
                 Type[] genericArgs = methodEntry.GetGenericArguments();
                 for (int i = 0; i < genericArgs.Length; i++)
                 {
@@ -4114,9 +4114,9 @@ namespace System.Management.Automation
         {
             MethodCacheEntry methodEntry = (MethodCacheEntry)method.adapterData;
             return DotNetAdapter.MethodInvokeDotNet(
-                method.Name, 
+                method.Name,
                 method.baseObject,
-                methodEntry.methodInformationStructures, 
+                methodEntry.methodInformationStructures,
                 invocationConstraints,
                 arguments);
         }
@@ -4302,7 +4302,7 @@ namespace System.Management.Automation
                     return parameterizedProperty as T;
                 }
             }
-            return null;            
+            return null;
         }
     }
 
@@ -4313,10 +4313,10 @@ namespace System.Management.Automation
     /// </summary>
     internal class DotNetAdapterWithComTypeName : DotNetAdapter
     {
-        private ComTypeInfo comTypeInfo;
+        private ComTypeInfo _comTypeInfo;
         internal DotNetAdapterWithComTypeName(ComTypeInfo comTypeInfo)
         {
-            this.comTypeInfo = comTypeInfo;
+            _comTypeInfo = comTypeInfo;
         }
 
         protected override IEnumerable<string> GetTypeNameHierarchy(object obj)
@@ -4325,7 +4325,7 @@ namespace System.Management.Automation
             {
                 if (type.FullName.Equals("System.__ComObject"))
                 {
-                    yield return ComAdapter.GetComTypeName(comTypeInfo.Clsid);
+                    yield return ComAdapter.GetComTypeName(_comTypeInfo.Clsid);
                 }
                 yield return type.FullName;
             }
@@ -4456,7 +4456,7 @@ namespace System.Management.Automation
         }
 
         #endregion method specific
-        
+
         #endregion virtual
     }
     /// <summary>
@@ -4615,7 +4615,7 @@ namespace System.Management.Automation
         {
             PSProperty property = DoGetProperty(obj, memberName);
 
-            if (typeof(T).IsAssignableFrom(typeof(PSProperty)) && property!=null)
+            if (typeof(T).IsAssignableFrom(typeof(PSProperty)) && property != null)
             {
                 return property as T;
             }
@@ -4689,7 +4689,6 @@ namespace System.Management.Automation
     /// </summary>
     internal class XmlNodeAdapter : PropertyOnlyAdapter
     {
-
         #region virtual
         /// <summary>
         /// Returns the TypeNameHierarchy out of an object
@@ -5041,7 +5040,7 @@ namespace System.Management.Automation
     internal class TypeInference
     {
         [TraceSource("ETS", "Extended Type System")]
-        private static readonly PSTraceSource tracer = PSTraceSource.GetTracer("ETS", "Extended Type System");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ETS", "Extended Type System");
 
         internal static MethodInformation Infer(MethodInformation genericMethod, Type[] argumentTypes)
         {
@@ -5084,7 +5083,7 @@ namespace System.Management.Automation
             // we can try to infer for this signature instead
             //   M<T1,T2,T3>)(T1, T2, ..., T3, T3, T3, T3)
             // where T3 is repeated appropriate number of times depending on the number of actual method arguments.
-            if (inferredMethod == null && 
+            if (inferredMethod == null &&
                 hasVarArgs &&
                 typesOfMethodArguments.Length >= (typesOfMethodParameters.Length - 1))
             {
@@ -5110,11 +5109,11 @@ namespace System.Management.Automation
             Dbg.Assert(typesOfMethodParameters != null, "Caller should verify that typesOfMethodParameters != null");
             Dbg.Assert(typesOfMethodArguments != null, "Caller should verify that typesOfMethodArguments != null");
 
-            using (tracer.TraceScope("Inferring type parameters for the following method: {0}", genericMethod))
+            using (s_tracer.TraceScope("Inferring type parameters for the following method: {0}", genericMethod))
             {
-                if (PSTraceSourceOptions.WriteLine == (tracer.Options & PSTraceSourceOptions.WriteLine))
+                if (PSTraceSourceOptions.WriteLine == (s_tracer.Options & PSTraceSourceOptions.WriteLine))
                 {
-                    tracer.WriteLine(
+                    s_tracer.WriteLine(
                         "Types of method arguments: {0}",
                         string.Join(", ", typesOfMethodArguments.Select(t => t.ToString()).ToArray()));
                 }
@@ -5134,22 +5133,22 @@ namespace System.Management.Automation
                 try
                 {
                     MethodInfo instantiatedMethod = genericMethod.MakeGenericMethod(inferredTypeParameters.ToArray());
-                    tracer.WriteLine("Inference succesful: {0}", instantiatedMethod);
+                    s_tracer.WriteLine("Inference succesful: {0}", instantiatedMethod);
                     return instantiatedMethod;
                 }
                 catch (ArgumentException e)
                 {
                     // Inference failure - most likely due to generic constraints being violated (i.e. where T: IEnumerable)
-                    tracer.WriteLine("Inference failure: {0}", e.Message);
+                    s_tracer.WriteLine("Inference failure: {0}", e.Message);
                     return null;
                 }
             }
         }
 
-        private readonly HashSet<Type>[] typeParameterIndexToSetOfInferenceCandidates;
+        private readonly HashSet<Type>[] _typeParameterIndexToSetOfInferenceCandidates;
 
 #if DEBUG
-        private readonly HashSet<Type> typeParametersOfTheMethod;
+        private readonly HashSet<Type> _typeParametersOfTheMethod;
 #endif
 
         internal TypeInference(ICollection<Type> typeParameters)
@@ -5160,24 +5159,24 @@ namespace System.Management.Automation
                 typeParameters.All(t => t.IsGenericParameter),
                 "Caller should verify that typeParameters are really generic type parameters");
 #endif
-            this.typeParameterIndexToSetOfInferenceCandidates = new HashSet<Type>[typeParameters.Count];
+            _typeParameterIndexToSetOfInferenceCandidates = new HashSet<Type>[typeParameters.Count];
 #if DEBUG
             List<int> listOfTypeParameterPositions = typeParameters.Select(t => t.GenericParameterPosition).ToList();
             listOfTypeParameterPositions.Sort();
             Dbg.Assert(
-                listOfTypeParameterPositions.Count == listOfTypeParameterPositions.Distinct().Count(), 
+                listOfTypeParameterPositions.Count == listOfTypeParameterPositions.Distinct().Count(),
                 "No type parameters should occupy the same position");
             Dbg.Assert(
-                listOfTypeParameterPositions.All(p => p >= 0), 
+                listOfTypeParameterPositions.All(p => p >= 0),
                 "Type parameter positions should be between 0 and #ofParams");
             Dbg.Assert(
-                listOfTypeParameterPositions.All(p => p < this.typeParameterIndexToSetOfInferenceCandidates.Length), 
+                listOfTypeParameterPositions.All(p => p < _typeParameterIndexToSetOfInferenceCandidates.Length),
                 "Type parameter positions should be between 0 and #ofParams");
 
-            this.typeParametersOfTheMethod = new HashSet<Type>();
+            _typeParametersOfTheMethod = new HashSet<Type>();
             foreach (Type t in typeParameters)
             {
-                this.typeParametersOfTheMethod.Add(t);
+                _typeParametersOfTheMethod.Add(t);
             }
 #endif
         }
@@ -5187,21 +5186,21 @@ namespace System.Management.Automation
 #if DEBUG
             Dbg.Assert(typeParameter != null, "Caller should verify typeParameter != null");
             Dbg.Assert(
-                this.typeParametersOfTheMethod.Contains(typeParameter),
+                _typeParametersOfTheMethod.Contains(typeParameter),
                 "Caller should verify that typeParameter is actuall a generic type parameter of the method");
 #endif
 
             ICollection<Type> inferenceCandidates =
-                this.typeParameterIndexToSetOfInferenceCandidates[typeParameter.GenericParameterPosition];
+                _typeParameterIndexToSetOfInferenceCandidates[typeParameter.GenericParameterPosition];
 
             if ((inferenceCandidates != null) && (inferenceCandidates.Any(t => t == typeof(LanguagePrimitives.Null))))
             {
                 Type firstValueType = inferenceCandidates.FirstOrDefault(t => t.GetTypeInfo().IsValueType);
                 if (firstValueType != null)
                 {
-                    tracer.WriteLine("Cannot reconcile null and {0} (a value type)", firstValueType);
+                    s_tracer.WriteLine("Cannot reconcile null and {0} (a value type)", firstValueType);
                     inferenceCandidates = null;
-                    this.typeParameterIndexToSetOfInferenceCandidates[typeParameter.GenericParameterPosition] = null;
+                    _typeParameterIndexToSetOfInferenceCandidates[typeParameter.GenericParameterPosition] = null;
                 }
                 else
                 {
@@ -5209,7 +5208,7 @@ namespace System.Management.Automation
                     if (inferenceCandidates.Count == 0)
                     {
                         inferenceCandidates = null;
-                        this.typeParameterIndexToSetOfInferenceCandidates[typeParameter.GenericParameterPosition] = null;
+                        _typeParameterIndexToSetOfInferenceCandidates[typeParameter.GenericParameterPosition] = null;
                     }
                 }
             }
@@ -5218,7 +5217,7 @@ namespace System.Management.Automation
             {
                 // "base class" assignability-wise (to account for interfaces)
                 Type commonBaseClass = inferenceCandidates.FirstOrDefault(
-                    potentiallyCommonBaseClass => 
+                    potentiallyCommonBaseClass =>
                         inferenceCandidates.All(
                             otherCandidate =>
                                 otherCandidate == potentiallyCommonBaseClass ||
@@ -5231,15 +5230,15 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    tracer.WriteLine("Multiple unreconcilable inferences for type parameter {0}", typeParameter);
+                    s_tracer.WriteLine("Multiple unreconcilable inferences for type parameter {0}", typeParameter);
                     inferenceCandidates = null;
-                    this.typeParameterIndexToSetOfInferenceCandidates[typeParameter.GenericParameterPosition] = null;
+                    _typeParameterIndexToSetOfInferenceCandidates[typeParameter.GenericParameterPosition] = null;
                 }
             }
 
             if (inferenceCandidates == null)
             {
-                tracer.WriteLine("Couldn't infer type parameter {0}", typeParameter);
+                s_tracer.WriteLine("Couldn't infer type parameter {0}", typeParameter);
                 return null;
             }
             else
@@ -5256,7 +5255,7 @@ namespace System.Management.Automation
 
             if (leftList.Count != rightList.Count)
             {
-                tracer.WriteLine("Mismatch in number of parameters and arguments");
+                s_tracer.WriteLine("Mismatch in number of parameters and arguments");
                 return false;
             }
 
@@ -5264,7 +5263,7 @@ namespace System.Management.Automation
             {
                 if (!this.Unify(leftList[i], rightList[i]))
                 {
-                    tracer.WriteLine("Couldn't unify {0} with {1}", leftList[i], rightList[i]);
+                    s_tracer.WriteLine("Couldn't unify {0} with {1}", leftList[i], rightList[i]);
                     return false;
                 }
             }
@@ -5284,18 +5283,18 @@ namespace System.Management.Automation
             {
 #if DEBUG
                 Dbg.Assert(
-                    this.typeParametersOfTheMethod.Contains(parameterType),
+                    _typeParametersOfTheMethod.Contains(parameterType),
                     "Only uninstantinated generic type parameters encountered in real life, should be the ones coming from the method");
 #endif
 
-                HashSet<Type> inferenceCandidates = this.typeParameterIndexToSetOfInferenceCandidates[parameterType.GenericParameterPosition];
+                HashSet<Type> inferenceCandidates = _typeParameterIndexToSetOfInferenceCandidates[parameterType.GenericParameterPosition];
                 if (inferenceCandidates == null)
                 {
                     inferenceCandidates = new HashSet<Type>();
-                    this.typeParameterIndexToSetOfInferenceCandidates[parameterType.GenericParameterPosition] = inferenceCandidates;
+                    _typeParameterIndexToSetOfInferenceCandidates[parameterType.GenericParameterPosition] = inferenceCandidates;
                 }
                 inferenceCandidates.Add(argumentType);
-                tracer.WriteLine("Inferred {0} => {1}", parameterType, argumentType);
+                s_tracer.WriteLine("Inferred {0} => {1}", parameterType, argumentType);
                 return true;
             }
 
@@ -5311,7 +5310,7 @@ namespace System.Management.Automation
                     return this.Unify(parameterType.GetElementType(), argumentType.GetElementType());
                 }
 
-                tracer.WriteLine("Couldn't unify array {0} with {1}", parameterType, argumentType);
+                s_tracer.WriteLine("Couldn't unify array {0} with {1}", parameterType, argumentType);
                 return false;
             }
 
@@ -5333,7 +5332,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    tracer.WriteLine("Couldn't unify reference type {0} with {1}", parameterType, argumentType);
+                    s_tracer.WriteLine("Couldn't unify reference type {0} with {1}", parameterType, argumentType);
                     return false;
                 }
             }
@@ -5359,7 +5358,7 @@ namespace System.Management.Automation
             }
 
             Dbg.Assert(false, "Unrecognized kind of type");
-            tracer.WriteLine("Unrecognized kind of type: {0}", parameterType);
+            s_tracer.WriteLine("Unrecognized kind of type: {0}", parameterType);
             return false;
         }
 
@@ -5393,7 +5392,7 @@ namespace System.Management.Automation
                 baseType = baseType.GetTypeInfo().BaseType;
             }
 
-            tracer.WriteLine("Attempt to unify different constructed types: {0} and {1}", parameterType, argumentType);
+            s_tracer.WriteLine("Attempt to unify different constructed types: {0} and {1}", parameterType, argumentType);
             return false;
         }
 

@@ -33,7 +33,7 @@ namespace System.Management.Automation.Remoting
         private bool _isStartFragment;
         private bool _isEndFragment;
         private byte[] _blob;
-        private int _blobLength; 
+        private int _blobLength;
 
         /// <summary>
         /// SFlag stands for the IsStartFragment. It is the bit value in the binary encoding.
@@ -99,7 +99,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="isEndFragment">
         /// true if this is a EndFragment.
         /// </param>
-        internal FragmentedRemoteObject(byte[] blob, long objectId, long fragmentId, 
+        internal FragmentedRemoteObject(byte[] blob, long objectId, long fragmentId,
             bool isEndFragment)
         {
             Dbg.Assert((null != blob) || (blob.Length == 0), "Cannot create a fragment for null or empty data.");
@@ -163,11 +163,10 @@ namespace System.Management.Automation.Remoting
         internal int BlobLength
         {
             get { return _blobLength; }
-            set 
+            set
             {
-
-                Dbg.Assert(value >= 0 , "BlobLength cannot be less than 0.");
-                _blobLength = value; 
+                Dbg.Assert(value >= 0, "BlobLength cannot be less than 0.");
+                _blobLength = value;
             }
         }
 
@@ -177,10 +176,10 @@ namespace System.Management.Automation.Remoting
         internal byte[] Blob
         {
             get { return _blob; }
-            set 
+            set
             {
                 Dbg.Assert(null != value, "Blob cannot be null");
-                _blob = value; 
+                _blob = value;
             }
         }
 
@@ -235,7 +234,7 @@ namespace System.Management.Automation.Remoting
             byte[] result = new byte[totalLength];
 
             int idx = 0;
-            
+
             // release build will optimize the calculation of the constants
 
             // ObjectId
@@ -263,9 +262,9 @@ namespace System.Management.Automation.Remoting
             // E-flag and S-Flag
             idx = _flagsOffset;
             byte s_flag = IsStartFragment ? SFlag : (byte)0;
-            byte e_flag = IsEndFragment? EFlag : (byte)0;
+            byte e_flag = IsEndFragment ? EFlag : (byte)0;
 
-            result[idx++] = (byte)(s_flag | e_flag );
+            result[idx++] = (byte)(s_flag | e_flag);
 
             // BlobLength
             idx = _blobLengthOffset;
@@ -426,7 +425,7 @@ namespace System.Management.Automation.Remoting
         {
             Dbg.Assert(null != fragmentBytes, "fragment cannot be null");
             Dbg.Assert(fragmentBytes.Length >= HeaderLength, "not enough data to decode blob length.");
-                        
+
             int blobLength = 0;
             int idx = startIndex + _blobLengthOffset;
 
@@ -436,7 +435,7 @@ namespace System.Management.Automation.Remoting
             blobLength += ((int)fragmentBytes[idx++]) & 0xFF;
 
             return blobLength;
-        }       
+        }
     }
 
 
@@ -448,35 +447,35 @@ namespace System.Management.Automation.Remoting
     internal class SerializedDataStream : Stream, IDisposable
     {
         [TraceSourceAttribute("SerializedDataStream", "SerializedDataStream")]
-        static private PSTraceSource _trace = PSTraceSource.GetTracer("SerializedDataStream", "SerializedDataStream");        
+        static private PSTraceSource s_trace = PSTraceSource.GetTracer("SerializedDataStream", "SerializedDataStream");
         #region Global Constants
-        
-        static private long _objectIdSequenceNumber = 0;
-        
+
+        static private long s_objectIdSequenceNumber = 0;
+
         #endregion
 
         #region Private Data
 
-        private bool isEntered;
-        private FragmentedRemoteObject currentFragment;
-        private long fragmentId;
+        private bool _isEntered;
+        private FragmentedRemoteObject _currentFragment;
+        private long _fragmentId;
 
-        private int fragmentSize;
-        private object syncObject;
-        private bool isDisposed;
-        private bool notifyOnWriteFragmentImmediately;
+        private int _fragmentSize;
+        private object _syncObject;
+        private bool _isDisposed;
+        private bool _notifyOnWriteFragmentImmediately;
 
         // MemoryStream does not dynamically resize as data is read. This will waste
         // lot of memory as data sent on the network will still be there in memory.
         // To avoid this a queue of memory streams (each stream is of fragmentsize)
         // is created..so after data is sent the MemoryStream is disposed there by
         // clearing resources.
-        private Queue<MemoryStream> queuedStreams;
-        private MemoryStream writeStream;
-        private MemoryStream readStream;
-        private int writeOffset;
-        private int readOffSet;
-        private long length;
+        private Queue<MemoryStream> _queuedStreams;
+        private MemoryStream _writeStream;
+        private MemoryStream _readStream;
+        private int _writeOffset;
+        private int _readOffSet;
+        private long _length;
 
         /// <summary>
         /// Callback that is called once a fragmented data is available.
@@ -487,8 +486,8 @@ namespace System.Management.Automation.Remoting
         /// <param name="isEndFragment">
         /// true if data represents EndFragment of an object.
         /// </param>
-        internal delegate void OnDataAvailableCallback(byte[] data, bool isEndFragment); 
-        private OnDataAvailableCallback onDataAvailableCallback;
+        internal delegate void OnDataAvailableCallback(byte[] data, bool isEndFragment);
+        private OnDataAvailableCallback _onDataAvailableCallback;
 
         #endregion
 
@@ -502,12 +501,12 @@ namespace System.Management.Automation.Remoting
         /// </param>
         internal SerializedDataStream(int fragmentSize)
         {
-            _trace.WriteLine("Creating SerializedDataStream with fragmentsize : {0}", fragmentSize);
+            s_trace.WriteLine("Creating SerializedDataStream with fragmentsize : {0}", fragmentSize);
             Dbg.Assert(fragmentSize > 0, "fragmentsize should be greater than 0.");
-            syncObject = new object();
-            currentFragment = new FragmentedRemoteObject();
-            queuedStreams = new Queue<MemoryStream>();
-            this.fragmentSize = fragmentSize;
+            _syncObject = new object();
+            _currentFragment = new FragmentedRemoteObject();
+            _queuedStreams = new Queue<MemoryStream>();
+            _fragmentSize = fragmentSize;
         }
 
         /// <summary>
@@ -528,8 +527,8 @@ namespace System.Management.Automation.Remoting
         {
             if (null != callbackToNotify)
             {
-                notifyOnWriteFragmentImmediately = true;
-                onDataAvailableCallback = callbackToNotify;
+                _notifyOnWriteFragmentImmediately = true;
+                _onDataAvailableCallback = callbackToNotify;
             }
         }
 
@@ -544,16 +543,16 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void Enter()
         {
-            Dbg.Assert(!isEntered, "Stream is already entered. You cannot enter into stream again.");
-            isEntered = true;
-            fragmentId = 0;
+            Dbg.Assert(!_isEntered, "Stream is already entered. You cannot enter into stream again.");
+            _isEntered = true;
+            _fragmentId = 0;
 
             // Initialize the current fragment
-            currentFragment.ObjectId = GetObjectId();
-            currentFragment.FragmentId = fragmentId;
-            currentFragment.IsStartFragment = true;
-            currentFragment.BlobLength = 0;
-            currentFragment.Blob = new byte[fragmentSize];
+            _currentFragment.ObjectId = GetObjectId();
+            _currentFragment.FragmentId = _fragmentId;
+            _currentFragment.IsStartFragment = true;
+            _currentFragment.BlobLength = 0;
+            _currentFragment.Blob = new byte[_fragmentSize];
         }
 
         /// <summary>
@@ -562,12 +561,12 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void Exit()
         {
-            isEntered = false;
+            _isEntered = false;
             // write left over data
-            if (currentFragment.BlobLength > 0)
+            if (_currentFragment.BlobLength > 0)
             {
                 // this is endfragment...as we are in Exit
-                currentFragment.IsEndFragment = true;
+                _currentFragment.IsEndFragment = true;
                 WriteCurrentFragmentAndReset();
             }
         }
@@ -587,22 +586,22 @@ namespace System.Management.Automation.Remoting
         /// </param>
         public override void Write(byte[] buffer, int offset, int count)
         {
-            Dbg.Assert(isEntered, "Stream should be Entered before writing into.");
+            Dbg.Assert(_isEntered, "Stream should be Entered before writing into.");
 
             int offsetToReadFrom = offset;
             int amountLeft = count;
 
             while (amountLeft > 0)
             {
-                int dataLeftInTheFragment = fragmentSize - FragmentedRemoteObject.HeaderLength - currentFragment.BlobLength;
+                int dataLeftInTheFragment = _fragmentSize - FragmentedRemoteObject.HeaderLength - _currentFragment.BlobLength;
                 if (dataLeftInTheFragment > 0)
                 {
                     int amountToWriteIntoFragment = (amountLeft > dataLeftInTheFragment) ? dataLeftInTheFragment : amountLeft;
                     amountLeft = amountLeft - amountToWriteIntoFragment;
 
                     // Write data into fragment
-                    Array.Copy(buffer, offsetToReadFrom, currentFragment.Blob, currentFragment.BlobLength, amountToWriteIntoFragment);
-                    currentFragment.BlobLength += amountToWriteIntoFragment;
+                    Array.Copy(buffer, offsetToReadFrom, _currentFragment.Blob, _currentFragment.BlobLength, amountToWriteIntoFragment);
+                    _currentFragment.BlobLength += amountToWriteIntoFragment;
                     offsetToReadFrom += amountToWriteIntoFragment;
 
                     // write only if amountLeft is more than 0. I dont write if amountLeft is 0 as we are not
@@ -625,7 +624,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="value"></param>
         public override void WriteByte(byte value)
         {
-            Dbg.Assert(isEntered, "Stream should be Entered before writing into.");
+            Dbg.Assert(_isEntered, "Stream should be Entered before writing into.");
             byte[] buffer = new byte[1];
             buffer[0] = value;
             Write(buffer, 0, 1);
@@ -644,15 +643,15 @@ namespace System.Management.Automation.Remoting
         /// </returns>
         internal byte[] ReadOrRegisterCallback(OnDataAvailableCallback callback)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (length <= 0)
+                if (_length <= 0)
                 {
-                    onDataAvailableCallback = callback;
+                    _onDataAvailableCallback = callback;
                     return null;
                 }
 
-                int bytesToRead = length > fragmentSize ? fragmentSize : (int)length;
+                int bytesToRead = _length > _fragmentSize ? _fragmentSize : (int)_length;
                 byte[] result = new byte[bytesToRead];
                 Read(result, 0, bytesToRead);
                 return result;
@@ -665,15 +664,14 @@ namespace System.Management.Automation.Remoting
         /// <returns></returns>
         internal byte[] Read()
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-
-                if (isDisposed)
+                if (_isDisposed)
                 {
                     return null;
                 }
 
-                int bytesToRead = length > fragmentSize ? fragmentSize : (int)length;
+                int bytesToRead = _length > _fragmentSize ? _fragmentSize : (int)_length;
                 if (bytesToRead > 0)
                 {
                     byte[] result = new byte[bytesToRead];
@@ -683,7 +681,7 @@ namespace System.Management.Automation.Remoting
                 else
                 {
                     return null;
-                }                
+                }
             }
         }
 
@@ -701,58 +699,58 @@ namespace System.Management.Automation.Remoting
             Collection<MemoryStream> memoryStreamsToDispose = new Collection<MemoryStream>();
             MemoryStream prevReadStream = null;
 
-            lock (syncObject)
+            lock (_syncObject)
             {
                 // technically this should throw an exception..but remoting callstack
                 // is optimized ie., we are not locking in every layer (in powershell)
                 // to save on performance..as a result there may be cases where
                 // upper layer is trying to add stuff and stream is disposed while
                 // adding stuff.
-                if (isDisposed)
+                if (_isDisposed)
                 {
                     return 0;
                 }
 
-                while(dataWritten < count)
+                while (dataWritten < count)
                 {
-                    if (null == readStream)
+                    if (null == _readStream)
                     {
-                        if (queuedStreams.Count > 0)
+                        if (_queuedStreams.Count > 0)
                         {
-                            readStream = queuedStreams.Dequeue();
-                            if ((!readStream.CanRead) || (prevReadStream == readStream))
+                            _readStream = _queuedStreams.Dequeue();
+                            if ((!_readStream.CanRead) || (prevReadStream == _readStream))
                             {
                                 // if the stream is disposed CanRead returns false
                                 // this will happen if a Write enqueues the stream
                                 // and a Read reads the data without dequeuing
-                                readStream = null;
+                                _readStream = null;
                                 continue;
                             }
                         }
                         else
                         {
-                            readStream = writeStream;
+                            _readStream = _writeStream;
                         }
 
-                        Dbg.Assert(readStream.Length > 0, "Not enough data to read.");
-                        readOffSet = 0;
+                        Dbg.Assert(_readStream.Length > 0, "Not enough data to read.");
+                        _readOffSet = 0;
                     }
 
-                    readStream.Position = readOffSet;
-                    int result = readStream.Read(buffer, offSetToWriteTo, count - dataWritten);
-                    _trace.WriteLine("Read {0} data from readstream: {1}", result, readStream.GetHashCode());
+                    _readStream.Position = _readOffSet;
+                    int result = _readStream.Read(buffer, offSetToWriteTo, count - dataWritten);
+                    s_trace.WriteLine("Read {0} data from readstream: {1}", result, _readStream.GetHashCode());
                     dataWritten += result;
                     offSetToWriteTo += result;
-                    readOffSet += result;
-                    length -= result;
+                    _readOffSet += result;
+                    _length -= result;
 
                     // dispose only if we dont read from the current write stream.
-                    if ((readStream.Capacity == readOffSet) && (readStream != writeStream))
+                    if ((_readStream.Capacity == _readOffSet) && (_readStream != _writeStream))
                     {
-                        _trace.WriteLine("Adding readstream {0} to dispose collection.", readStream.GetHashCode());
-                        memoryStreamsToDispose.Add(readStream);
-                        prevReadStream = readStream;
-                        readStream = null;
+                        s_trace.WriteLine("Adding readstream {0} to dispose collection.", _readStream.GetHashCode());
+                        memoryStreamsToDispose.Add(_readStream);
+                        prevReadStream = _readStream;
+                        _readStream = null;
                     }
                 }
             }
@@ -760,7 +758,7 @@ namespace System.Management.Automation.Remoting
             // Dispose the memory streams outside of the lock
             foreach (MemoryStream streamToDispose in memoryStreamsToDispose)
             {
-                _trace.WriteLine("Disposing stream: {0}", streamToDispose.GetHashCode());
+                s_trace.WriteLine("Disposing stream: {0}", streamToDispose.GetHashCode());
                 streamToDispose.Dispose();
             }
 
@@ -773,15 +771,15 @@ namespace System.Management.Automation.Remoting
             PSEtwLog.LogAnalyticVerbose(
                 PSEventId.SentRemotingFragment, PSOpcode.Send, PSTask.None,
                 PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
-                (Int64)(currentFragment.ObjectId),
-                (Int64)(currentFragment.FragmentId),
-                currentFragment.IsStartFragment ? 1 : 0,
-                currentFragment.IsEndFragment ? 1 : 0,
-                (UInt32)(currentFragment.BlobLength),
-                new PSETWBinaryBlob(currentFragment.Blob, 0, currentFragment.BlobLength));
+                (Int64)(_currentFragment.ObjectId),
+                (Int64)(_currentFragment.FragmentId),
+                _currentFragment.IsStartFragment ? 1 : 0,
+                _currentFragment.IsEndFragment ? 1 : 0,
+                (UInt32)(_currentFragment.BlobLength),
+                new PSETWBinaryBlob(_currentFragment.Blob, 0, _currentFragment.BlobLength));
 
             // finally write into memory stream
-            byte[] data = currentFragment.GetBytes();
+            byte[] data = _currentFragment.GetBytes();
             int amountLeft = data.Length;
             int offSetToReadFrom = 0;
 
@@ -789,72 +787,72 @@ namespace System.Management.Automation.Remoting
             // to write into memory stream..instead give the
             // data directly to user and let him figure out what to do.
             // This will save write + read + dispose!!
-            if (!notifyOnWriteFragmentImmediately)
+            if (!_notifyOnWriteFragmentImmediately)
             {
-                lock (syncObject)
+                lock (_syncObject)
                 {
                     // technically this should throw an exception..but remoting callstack
                     // is optimized ie., we are not locking in every layer (in powershell)
                     // to save on performance..as a result there may be cases where
                     // upper layer is trying to add stuff and stream is disposed while
                     // adding stuff.
-                    if (isDisposed)
+                    if (_isDisposed)
                     {
                         return;
                     }
 
-                    if (null == writeStream)
+                    if (null == _writeStream)
                     {
-                        writeStream = new MemoryStream(fragmentSize);
-                        _trace.WriteLine("Created write stream: {0}", writeStream.GetHashCode());
-                        writeOffset = 0;
+                        _writeStream = new MemoryStream(_fragmentSize);
+                        s_trace.WriteLine("Created write stream: {0}", _writeStream.GetHashCode());
+                        _writeOffset = 0;
                     }
 
                     while (amountLeft > 0)
                     {
-                        int dataLeftInWriteStream = writeStream.Capacity - writeOffset;
+                        int dataLeftInWriteStream = _writeStream.Capacity - _writeOffset;
                         if (dataLeftInWriteStream == 0)
                         {
                             // enqueue the current write stream and create a new one.
                             EnqueueWriteStream();
-                            dataLeftInWriteStream = writeStream.Capacity - writeOffset;
+                            dataLeftInWriteStream = _writeStream.Capacity - _writeOffset;
                         }
 
                         int amountToWriteIntoStream = (amountLeft > dataLeftInWriteStream) ? dataLeftInWriteStream : amountLeft;
                         amountLeft = amountLeft - amountToWriteIntoStream;
                         // write data
-                        writeStream.Position = writeOffset;
-                        writeStream.Write(data, offSetToReadFrom, amountToWriteIntoStream);
+                        _writeStream.Position = _writeOffset;
+                        _writeStream.Write(data, offSetToReadFrom, amountToWriteIntoStream);
                         offSetToReadFrom += amountToWriteIntoStream;
-                        writeOffset += amountToWriteIntoStream;
-                        length += amountToWriteIntoStream;
+                        _writeOffset += amountToWriteIntoStream;
+                        _length += amountToWriteIntoStream;
                     }
                 }
             }
 
             // call the callback since we have data available
-            if (null != onDataAvailableCallback)
+            if (null != _onDataAvailableCallback)
             {
-                onDataAvailableCallback(data, currentFragment.IsEndFragment);
+                _onDataAvailableCallback(data, _currentFragment.IsEndFragment);
             }
 
             // prepare a new fragment
-            currentFragment.FragmentId = ++fragmentId;
-            currentFragment.IsStartFragment = false;
-            currentFragment.IsEndFragment = false;
-            currentFragment.BlobLength = 0;
-            currentFragment.Blob = new byte[fragmentSize];
+            _currentFragment.FragmentId = ++_fragmentId;
+            _currentFragment.IsStartFragment = false;
+            _currentFragment.IsEndFragment = false;
+            _currentFragment.BlobLength = 0;
+            _currentFragment.Blob = new byte[_fragmentSize];
         }
 
         private void EnqueueWriteStream()
         {
-            _trace.WriteLine("Queuing write stream: {0} Length: {1} Capacity: {2}",
-                writeStream.GetHashCode(), writeStream.Length, writeStream.Capacity);
-            queuedStreams.Enqueue(writeStream);
-            
-            writeStream = new MemoryStream(fragmentSize);
-            writeOffset = 0;
-            _trace.WriteLine("Created write stream: {0}", writeStream.GetHashCode());
+            s_trace.WriteLine("Queuing write stream: {0} Length: {1} Capacity: {2}",
+                _writeStream.GetHashCode(), _writeStream.Length, _writeStream.Capacity);
+            _queuedStreams.Enqueue(_writeStream);
+
+            _writeStream = new MemoryStream(_fragmentSize);
+            _writeOffset = 0;
+            s_trace.WriteLine("Created write stream: {0}", _writeStream.GetHashCode());
         }
         /// <summary>
         /// This method provides a thread safe way to get an object id.
@@ -864,7 +862,7 @@ namespace System.Management.Automation.Remoting
         /// </returns>
         private static long GetObjectId()
         {
-            return System.Threading.Interlocked.Increment(ref _objectIdSequenceNumber);
+            return System.Threading.Interlocked.Increment(ref s_objectIdSequenceNumber);
         }
 
         #endregion
@@ -875,9 +873,9 @@ namespace System.Management.Automation.Remoting
         {
             if (disposing)
             {
-                lock (syncObject)
+                lock (_syncObject)
                 {
-                    foreach (MemoryStream streamToDispose in queuedStreams)
+                    foreach (MemoryStream streamToDispose in _queuedStreams)
                     {
                         // make sure we dispose only once.
                         if (streamToDispose.CanRead)
@@ -886,17 +884,17 @@ namespace System.Management.Automation.Remoting
                         }
                     }
 
-                    if ((null != readStream) && (readStream.CanRead))
+                    if ((null != _readStream) && (_readStream.CanRead))
                     {
-                        readStream.Dispose();
+                        _readStream.Dispose();
                     }
 
-                    if ((null != writeStream) && (writeStream.CanRead))
+                    if ((null != _writeStream) && (_writeStream.CanRead))
                     {
-                        writeStream.Dispose();
+                        _writeStream.Dispose();
                     }
 
-                    isDisposed = true;
+                    _isDisposed = true;
                 }
             }
         }
@@ -904,7 +902,7 @@ namespace System.Management.Automation.Remoting
         #endregion
 
         #region Stream Overrides
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -920,7 +918,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Gets the length of the stream in bytes.
         /// </summary>
-        public override long Length { get { return length; } }
+        public override long Length { get { return _length; } }
         /// <summary>
         /// 
         /// </summary>
@@ -954,19 +952,19 @@ namespace System.Management.Automation.Remoting
         {
             throw new NotSupportedException();
         }
-        
+
         #endregion
 
         #region IDisposable Members
 
-        private bool disposed = false;
+        private bool _disposed = false;
 
         public new void Dispose()
         {
-            if (!this.disposed)
+            if (!_disposed)
             {
                 GC.SuppressFinalize(this);
-                this.disposed = true;
+                _disposed = true;
             }
             base.Dispose();
         }
@@ -983,7 +981,7 @@ namespace System.Management.Automation.Remoting
     internal class Fragmentor
     {
         #region Global Constants
-        static private UTF8Encoding _utf8Encoding = new UTF8Encoding();
+        static private UTF8Encoding s_utf8Encoding = new UTF8Encoding();
         // This const defines the default depth to be used for serializing objects for remoting.
         private const int SerializationDepthForRemoting = 1;
         #endregion
@@ -1007,8 +1005,8 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(fragmentSize > 0, "fragment size cannot be less than 0.");
             _fragmentSize = fragmentSize;
             _serializationContext = new SerializationContext(
-                SerializationDepthForRemoting, 
-                SerializationOptions.RemotingOptions, 
+                SerializationDepthForRemoting,
+                SerializationOptions.RemotingOptions,
                 cryptoHelper);
             _deserializationContext = new DeserializationContext(
                 DeserializationOptions.RemotingOptions,
@@ -1147,6 +1145,6 @@ namespace System.Management.Automation.Remoting
             }
 
             return PSObject.AsPSObject(result);
-        } 
+        }
     }
 }

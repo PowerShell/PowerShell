@@ -64,7 +64,7 @@ namespace System.Management.Automation.Runspaces
             yield return new FormatViewDefinition("children",
                 ListControl.Create()
                     .GroupByProperty("PSParentPath", customControl: sharedControls[0])
-                    .StartEntry(entrySelectedByType: new[] {"System.IO.FileInfo"})
+                    .StartEntry(entrySelectedByType: new[] { "System.IO.FileInfo" })
                         .AddItemProperty(@"Name")
                         .AddItemProperty(@"Length")
                         .AddItemProperty(@"CreationTime")
@@ -90,7 +90,7 @@ namespace System.Management.Automation.Runspaces
                 WideControl.Create()
                     .GroupByProperty("PSParentPath", customControl: sharedControls[0])
                     .AddPropertyEntry("Name")
-                    .AddPropertyEntry("Name", format: "[{0}]", entrySelectedByType: new[] {"System.IO.DirectoryInfo"})
+                    .AddPropertyEntry("Name", format: "[{0}]", entrySelectedByType: new[] { "System.IO.DirectoryInfo" })
                 .EndWideControl());
         }
 

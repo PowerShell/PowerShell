@@ -19,45 +19,45 @@ namespace System.Management.Automation.Remoting
 {
     internal class WSManPluginServerTransportManager : AbstractServerSessionTransportManager
     {
-        private WSManNativeApi.WSManPluginRequest requestDetails;
+        private WSManNativeApi.WSManPluginRequest _requestDetails;
 
-            // the following variables are used to block thread from sending
+        // the following variables are used to block thread from sending
         // data to the client until the client sends a receive request.
-        private bool isRequestPending;
-        private object syncObject;
-        private ManualResetEvent waitHandle;
-        private Dictionary<Guid, WSManPluginServerTransportManager> activeCmdTransportManagers;
-        private bool isClosed;
+        private bool _isRequestPending;
+        private object _syncObject;
+        private ManualResetEvent _waitHandle;
+        private Dictionary<Guid, WSManPluginServerTransportManager> _activeCmdTransportManagers;
+        private bool _isClosed;
         // used to keep track of last error..this will be used
         // for reporting operation complete to WSMan.
-        private Exception lastErrorReported;
+        private Exception _lastErrorReported;
         // used with RegisterWaitForSingleObject. This object needs to be freed
         // upon close
-        private WSManPluginOperationShutdownContext shutDownContext;
+        private WSManPluginOperationShutdownContext _shutDownContext;
 
         // tracker used in conjunction with WSMan API to identify a particular
         // shell context.
-        RegisteredWaitHandle registeredShutDownWaitHandle;
+        private RegisteredWaitHandle _registeredShutDownWaitHandle;
 
         // event that gets raised when Prepare is called. Respective Session 
         // object can use this callback to ReportContext to client.
         public event EventHandler<EventArgs> PrepareCalled;
-    
+
         #region Constructor
 
         internal WSManPluginServerTransportManager(
-            int fragmentSize, 
+            int fragmentSize,
             PSRemotingCryptoHelper cryptoHelper)
             : base(fragmentSize, cryptoHelper)
         {
-            syncObject = new Object();
-            activeCmdTransportManagers = new Dictionary<Guid, WSManPluginServerTransportManager>();
-            waitHandle = new ManualResetEvent(false);
+            _syncObject = new Object();
+            _activeCmdTransportManagers = new Dictionary<Guid, WSManPluginServerTransportManager>();
+            _waitHandle = new ManualResetEvent(false);
         }
-        
+
         #endregion
 
-         #region Inherited_from_AbstractServerSessionTransportManager
+        #region Inherited_from_AbstractServerSessionTransportManager
         internal override void Close(
             Exception reasonForClose)
         {
@@ -73,28 +73,28 @@ namespace System.Management.Automation.Remoting
         /// <param name="reasonForClose"></param>
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", Justification = "The WSManPluginReceiveResult return value is not documented and is not needed in this case.")]
         internal void DoClose(
-            bool isShuttingDown, 
+            bool isShuttingDown,
             Exception reasonForClose)
         {
-            if (isClosed)
+            if (_isClosed)
             {
                 return;
             }
 
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (isClosed)
+                if (_isClosed)
                 {
                     return;
                 }
 
-                isClosed = true;
-                lastErrorReported = reasonForClose;
+                _isClosed = true;
+                _lastErrorReported = reasonForClose;
 
-                if (!isRequestPending)
+                if (!_isRequestPending)
                 {
                     // release threads blocked on the sending data to client if any
-                    waitHandle.Set();
+                    _waitHandle.Set();
                 }
             }
 
@@ -105,51 +105,51 @@ namespace System.Management.Automation.Remoting
             {
                 RaiseClosingEvent();
 
-                foreach (var cmdTrsprtKvp in activeCmdTransportManagers)
+                foreach (var cmdTrsprtKvp in _activeCmdTransportManagers)
                 {
                     cmdTrsprtKvp.Value.Close(reasonForClose);
                 }
-                activeCmdTransportManagers.Clear();
+                _activeCmdTransportManagers.Clear();
 
-                if (null != registeredShutDownWaitHandle)
+                if (null != _registeredShutDownWaitHandle)
                 {
                     // This will not wait for the callback to complete.
-                    registeredShutDownWaitHandle.Unregister(null);
-                    registeredShutDownWaitHandle = null;
+                    _registeredShutDownWaitHandle.Unregister(null);
+                    _registeredShutDownWaitHandle = null;
                 }
 
                 // Delete the context only if isShuttingDown != true. isShuttingDown will
                 // be true only when the method is called from RegisterWaitForSingleObject
                 // handler..in which case the context will be freed from the callback.
-                if (null != shutDownContext)
+                if (null != _shutDownContext)
                 {
-                    shutDownContext = null;
+                    _shutDownContext = null;
                 }
 
                 // This might happen when client did not send a receive request
                 // but the server is closing
-                if (null != requestDetails)
+                if (null != _requestDetails)
                 {
                     // Notify that no more data is being sent on this transport.
                     WSManNativeApi.WSManPluginReceiveResult(
-                        requestDetails.unmanagedHandle, 
+                        _requestDetails.unmanagedHandle,
                         (int)WSManNativeApi.WSManFlagReceive.WSMAN_FLAG_RECEIVE_RESULT_NO_MORE_DATA,
                         WSManPluginConstants.SupportedOutputStream,
                         IntPtr.Zero,
                         WSManNativeApi.WSMAN_COMMAND_STATE_DONE,
                         0);
-            
-                    WSManPluginInstance.ReportWSManOperationComplete(requestDetails, reasonForClose);
+
+                    WSManPluginInstance.ReportWSManOperationComplete(_requestDetails, reasonForClose);
                     // We should not use request details again after reporting operation complete
                     // so releasing the resource. Remember not to free this memory as this memory
                     // is allocated and owned by WSMan.
-                    requestDetails = null;
+                    _requestDetails = null;
                 }
             }
             finally
             {
                 // dispose resources
-                waitHandle.Dispose();
+                _waitHandle.Dispose();
             }
         }
 
@@ -159,7 +159,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal override void ReportExecutionStatusAsRunning()
         {
-            if (true == isClosed)
+            if (true == _isClosed)
             {
                 return;
             }
@@ -168,12 +168,12 @@ namespace System.Management.Automation.Remoting
 
             //there should have been a receive request in place already
 
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (!isClosed)
+                if (!_isClosed)
                 {
                     result = WSManNativeApi.WSManPluginReceiveResult(
-                        requestDetails.unmanagedHandle, 
+                        _requestDetails.unmanagedHandle,
                         0,
                         null,
                         IntPtr.Zero,
@@ -186,7 +186,7 @@ namespace System.Management.Automation.Remoting
             {
                 ReportError(result, "WSManPluginReceiveResult");
             }
-        } 
+        }
 
         /// <summary>
         /// if flush is true, data will be sent immediately to the client. This is accomplished
@@ -197,27 +197,27 @@ namespace System.Management.Automation.Remoting
         /// <param name="reportAsPending"></param>
         /// <param name="reportAsDataBoundary"></param>
         protected override void SendDataToClient(
-            byte[] data, 
-            bool flush, 
-            bool reportAsPending, 
+            byte[] data,
+            bool flush,
+            bool reportAsPending,
             bool reportAsDataBoundary)
         {
-            if (true == isClosed)
+            if (true == _isClosed)
             {
                 return;
             }
 
             // double-check locking mechanism is used here to avoid entering into lock
             // every time data is sent..entering/exiting from lock is costly.
-            if (!isRequestPending)
-            {        
+            if (!_isRequestPending)
+            {
                 // Dont send data until we have received request from client.
                 // The following blocks the calling thread. The thread is 
                 // unblocked once a request from client arrives.
-                waitHandle.WaitOne();
-                isRequestPending = true;
+                _waitHandle.WaitOne();
+                _isRequestPending = true;
                 // at this point request must be pending..so dispose waitHandle
-                waitHandle.Dispose();
+                _waitHandle.Dispose();
             }
 
             int result = (int)WSManPluginErrorCodes.NoError;
@@ -225,20 +225,20 @@ namespace System.Management.Automation.Remoting
             // to send data to client using WSMan API.    
             using (WSManNativeApi.WSManData_ManToUn dataToBeSent = new WSManNativeApi.WSManData_ManToUn(data))
             {
-                lock (syncObject)
+                lock (_syncObject)
                 {
-                    if (!isClosed)
+                    if (!_isClosed)
                     {
                         int flags = 0;
                         if (flush)
-                            flags |= (int) WSManNativeApi.WSManFlagReceive.WSMAN_FLAG_RECEIVE_FLUSH;
+                            flags |= (int)WSManNativeApi.WSManFlagReceive.WSMAN_FLAG_RECEIVE_FLUSH;
                         if (reportAsDataBoundary)
                             //currently assigning hardcoded value for this flag, this is a new change in wsman.h and needs to be replaced with the actual definition once
                             // modified wsman.h is in public headers
-                            flags |= (int) WSManNativeApi.WSManFlagReceive.WSMAN_FLAG_RECEIVE_RESULT_DATA_BOUNDARY;
+                            flags |= (int)WSManNativeApi.WSManFlagReceive.WSMAN_FLAG_RECEIVE_RESULT_DATA_BOUNDARY;
 
                         result = WSManNativeApi.WSManPluginReceiveResult(
-                            requestDetails.unmanagedHandle,
+                            _requestDetails.unmanagedHandle,
                             flags,
                             WSManPluginConstants.SupportedOutputStream,
                             dataToBeSent,
@@ -270,24 +270,24 @@ namespace System.Management.Automation.Remoting
         internal override AbstractServerTransportManager GetCommandTransportManager(
             Guid powerShellCmdId)
         {
-            return activeCmdTransportManagers[powerShellCmdId];
+            return _activeCmdTransportManagers[powerShellCmdId];
         }
 
         // Used by command transport manager to manage cmd transport manager instances by session.
         internal void ReportTransportMgrForCmd(
-            Guid cmdId, 
+            Guid cmdId,
             WSManPluginServerTransportManager transportManager)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (isClosed)
+                if (_isClosed)
                 {
                     return;
                 }
 
-                if (!activeCmdTransportManagers.ContainsKey(cmdId))
+                if (!_activeCmdTransportManagers.ContainsKey(cmdId))
                 {
-                    activeCmdTransportManagers.Add(cmdId, transportManager);
+                    _activeCmdTransportManagers.Add(cmdId, transportManager);
                 }
             }
         }
@@ -295,70 +295,70 @@ namespace System.Management.Automation.Remoting
         internal override void RemoveCommandTransportManager(
             Guid cmdId)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (isClosed)
+                if (_isClosed)
                 {
                     return;
                 }
 
-                activeCmdTransportManagers.Remove(cmdId);
+                _activeCmdTransportManagers.Remove(cmdId);
             }
         }
-#endregion
+        #endregion
         internal bool EnableTransportManagerSendDataToClient(
             WSManNativeApi.WSManPluginRequest requestDetails,
             WSManPluginOperationShutdownContext ctxtToReport)
         {
-            shutDownContext = ctxtToReport;
+            _shutDownContext = ctxtToReport;
             bool isRegisterWaitForSingleObjectSucceeded = true;
-            lock (syncObject) 
+            lock (_syncObject)
             {
-                if (isRequestPending)
+                if (_isRequestPending)
                 {
                     // if a request is already pending..ignore this.
                     WSManPluginInstance.ReportWSManOperationComplete(
-                        requestDetails, 
+                        requestDetails,
                         WSManPluginErrorCodes.NoError);
                     return false;
                 }
 
-                if (isClosed)
+                if (_isClosed)
                 {
-                    WSManPluginInstance.ReportWSManOperationComplete(requestDetails, lastErrorReported);
+                    WSManPluginInstance.ReportWSManOperationComplete(requestDetails, _lastErrorReported);
                     return false;
                 }
 
-                isRequestPending = true;
-                this.requestDetails = requestDetails;
+                _isRequestPending = true;
+                _requestDetails = requestDetails;
 
                 if (Platform.IsWindows)
                 {
-                	// Wrap the provided handle so it can be passed to the registration function
-                	SafeWaitHandle safeWaitHandle = new SafeWaitHandle(requestDetails.shutdownNotificationHandle, false); // Owned by WinRM
-                	EventWaitHandle eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
-                	ClrFacade.SetSafeWaitHandle(eventWaitHandle, safeWaitHandle);
+                    // Wrap the provided handle so it can be passed to the registration function
+                    SafeWaitHandle safeWaitHandle = new SafeWaitHandle(requestDetails.shutdownNotificationHandle, false); // Owned by WinRM
+                    EventWaitHandle eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
+                    ClrFacade.SetSafeWaitHandle(eventWaitHandle, safeWaitHandle);
 
-                	this.registeredShutDownWaitHandle = ThreadPool.RegisterWaitForSingleObject(
-                			eventWaitHandle,
-							new WaitOrTimerCallback(WSManPluginManagedEntryWrapper.PSPluginOperationShutdownCallback),
-							shutDownContext,
-							-1, // INFINITE
-							true); // TODO: Do I need to worry not being able to set missing WT_TRANSFER_IMPERSONATION?
-                	if (null == this.registeredShutDownWaitHandle)
-                	{
-                		isRegisterWaitForSingleObjectSucceeded = false;
-                	}
+                    _registeredShutDownWaitHandle = ThreadPool.RegisterWaitForSingleObject(
+                            eventWaitHandle,
+                            new WaitOrTimerCallback(WSManPluginManagedEntryWrapper.PSPluginOperationShutdownCallback),
+                            _shutDownContext,
+                            -1, // INFINITE
+                            true); // TODO: Do I need to worry not being able to set missing WT_TRANSFER_IMPERSONATION?
+                    if (null == _registeredShutDownWaitHandle)
+                    {
+                        isRegisterWaitForSingleObjectSucceeded = false;
+                    }
                 }
                 // release thread waiting to send data to the client.
-                waitHandle.Set();
+                _waitHandle.Set();
             }
 
             if (!isRegisterWaitForSingleObjectSucceeded)
             {
                 WSManPluginInstance.PerformCloseOperation(ctxtToReport);
                 WSManPluginInstance.ReportOperationComplete(
-                    requestDetails, 
+                    requestDetails,
                     WSManPluginErrorCodes.ShutdownRegistrationFailed,
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginShutdownRegistrationFailed));
@@ -375,7 +375,7 @@ namespace System.Management.Automation.Remoting
         // a command like StateChangedInfo etc.
         internal void PerformStop()
         {
-            if (isRequestPending)
+            if (_isRequestPending)
             {
                 RaiseClosingEvent();
             }
@@ -386,30 +386,30 @@ namespace System.Management.Automation.Remoting
         }
     }
 
-    class WSManPluginCommandTransportManager : WSManPluginServerTransportManager
+    internal class WSManPluginCommandTransportManager : WSManPluginServerTransportManager
     {
-        private WSManPluginServerTransportManager serverTransportMgr;
-        private System.Guid cmdId;
-        
+        private WSManPluginServerTransportManager _serverTransportMgr;
+        private System.Guid _cmdId;
+
         // Create Cmd Transport Manager for this sessn trnsprt manager
         internal WSManPluginCommandTransportManager(WSManPluginServerTransportManager srvrTransportMgr)
             : base(srvrTransportMgr.Fragmentor.FragmentSize, srvrTransportMgr.CryptoHelper)
         {
-            this.serverTransportMgr = srvrTransportMgr;
+            _serverTransportMgr = srvrTransportMgr;
             this.TypeTable = srvrTransportMgr.TypeTable;
         }
 
         internal void Initialize()
         {
-            this.PowerShellGuidObserver += new System.EventHandler(OnPowershellGuidReported);    
-            this.MigrateDataReadyEventHandlers(serverTransportMgr);
+            this.PowerShellGuidObserver += new System.EventHandler(OnPowershellGuidReported);
+            this.MigrateDataReadyEventHandlers(_serverTransportMgr);
         }
 
         private void OnPowershellGuidReported(object src, System.EventArgs args)
-        {    
-            cmdId = (System.Guid) src;
-            serverTransportMgr.ReportTransportMgrForCmd(cmdId, this);
-            this.PowerShellGuidObserver -= new System.EventHandler(this.OnPowershellGuidReported);    
+        {
+            _cmdId = (System.Guid)src;
+            _serverTransportMgr.ReportTransportMgrForCmd(_cmdId, this);
+            this.PowerShellGuidObserver -= new System.EventHandler(this.OnPowershellGuidReported);
         }
     }
 } // namespace System.Management.Automation.Remoting

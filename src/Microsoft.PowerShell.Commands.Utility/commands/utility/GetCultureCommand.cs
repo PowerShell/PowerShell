@@ -9,7 +9,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Returns the thread's current culture.
     /// </summary>
-    [Cmdlet( VerbsCommon.Get, "Culture", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113312")]
+    [Cmdlet(VerbsCommon.Get, "Culture", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113312")]
     [OutputType(typeof(System.Globalization.CultureInfo))]
     public sealed class GetCultureCommand : PSCmdlet
     {
@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            WriteObject( Host.CurrentCulture );
+            WriteObject(Host.CurrentCulture);
         } // EndProcessing
     } // GetCultureCommand
 } // Microsoft.PowerShell.Commands

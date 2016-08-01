@@ -117,7 +117,7 @@ namespace System.Management.Automation
         internal List<RequiredModuleInfo> DiscoveredModules { get; set; }
         internal List<string> DiscoveredCommandFilters { get; set; }
         internal bool AddsSelfToPath { get; set; }
-        internal List<TypeDefinitionAst> DiscoveredClasses { get; set; } 
+        internal List<TypeDefinitionAst> DiscoveredClasses { get; set; }
     }
 
     // Defines the visitor that analyzes a script to determine its exports
@@ -137,19 +137,19 @@ namespace System.Management.Automation
 
         static ExportVisitor()
         {
-            var nameParam = new ParameterInfo {name = "Name", position = 0};
-            var valueParam = new ParameterInfo {name = "Value", position = 1};
-            var aliasParameterInfo = new ParameterBindingInfo {parameterInfo = new [] {nameParam, valueParam}};
+            var nameParam = new ParameterInfo { name = "Name", position = 0 };
+            var valueParam = new ParameterInfo { name = "Value", position = 1 };
+            var aliasParameterInfo = new ParameterBindingInfo { parameterInfo = new[] { nameParam, valueParam } };
 
-            var functionParam = new ParameterInfo {name = "Function", position = -1};
-            var cmdletParam = new ParameterInfo {name = "Cmdlet", position = -1};
-            var aliasParam = new ParameterInfo {name = "Alias", position = -1};
-            var ipmoParameterInfo = new ParameterBindingInfo {parameterInfo = new [] {nameParam, functionParam, cmdletParam, aliasParam}};
+            var functionParam = new ParameterInfo { name = "Function", position = -1 };
+            var cmdletParam = new ParameterInfo { name = "Cmdlet", position = -1 };
+            var aliasParam = new ParameterInfo { name = "Alias", position = -1 };
+            var ipmoParameterInfo = new ParameterBindingInfo { parameterInfo = new[] { nameParam, functionParam, cmdletParam, aliasParam } };
 
-            functionParam = new ParameterInfo {name = "Function", position = 0};
-            var exportModuleMemberInfo = new ParameterBindingInfo {parameterInfo = new[] {functionParam, cmdletParam, aliasParam}};
+            functionParam = new ParameterInfo { name = "Function", position = 0 };
+            var exportModuleMemberInfo = new ParameterBindingInfo { parameterInfo = new[] { functionParam, cmdletParam, aliasParam } };
 
-            parameterBindingInfoTable = new Dictionary<string, ParameterBindingInfo>(StringComparer.OrdinalIgnoreCase)
+            s_parameterBindingInfoTable = new Dictionary<string, ParameterBindingInfo>(StringComparer.OrdinalIgnoreCase)
             {
                 {"New-Alias",                                      aliasParameterInfo},
                 {@"Microsoft.PowerShell.Utility\New-Alias",        aliasParameterInfo},
@@ -345,7 +345,7 @@ namespace System.Management.Automation
                 {
                     ModuleIntrinsics.Tracer.WriteLine("Discovered module import: {0}", moduleName);
                     DiscoveredModules.Add(
-                        new RequiredModuleInfo 
+                        new RequiredModuleInfo
                         {
                             Name = moduleName,
                             CommandsToPostFilter = commandsToPostFilter
@@ -373,7 +373,7 @@ namespace System.Management.Automation
                 {
                     DiscoveredCommandFilters.Add(exportedCommandName);
                     ModuleIntrinsics.Tracer.WriteLine("Discovered explicit export: {0}", exportedCommandName);
-                    
+
                     // If the export doesn't contain wildcards, then add it to the
                     // discovered commands as well. It is likely that they created
                     // the command dynamically
@@ -397,7 +397,6 @@ namespace System.Management.Automation
                     {
                         DiscoveredAliases[exportedAlias] = null;
                     }
-
                 };
                 ProcessCmdletArguments(boundParameters["Alias"], onEachAlias);
 
@@ -452,7 +451,7 @@ namespace System.Management.Automation
         {
             var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
 
-            var parameterBindingInfo = parameterBindingInfoTable[commandName].parameterInfo;
+            var parameterBindingInfo = s_parameterBindingInfoTable[commandName].parameterInfo;
 
             int positionsBound = 0;
 
@@ -540,14 +539,14 @@ namespace System.Management.Automation
             return result;
         }
 
-        private static Dictionary<string, ParameterBindingInfo> parameterBindingInfoTable;
+        private static Dictionary<string, ParameterBindingInfo> s_parameterBindingInfoTable;
 
-        class ParameterBindingInfo
+        private class ParameterBindingInfo
         {
             internal ParameterInfo[] parameterInfo;
         }
 
-        struct ParameterInfo
+        private struct ParameterInfo
         {
             internal string name;
             internal int position;
@@ -562,5 +561,4 @@ namespace System.Management.Automation
         internal string Name { get; set; }
         internal List<string> CommandsToPostFilter { get; set; }
     }
-
 } // System.Management.Automation

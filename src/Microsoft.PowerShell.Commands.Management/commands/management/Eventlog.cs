@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -87,8 +88,8 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _after = value;
-                isDateSpecified = true;
-                isFilterSpecified = true;
+                _isDateSpecified = true;
+                _isFilterSpecified = true;
             }
         }
         private DateTime _after;
@@ -104,8 +105,8 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _before = value;
-                isDateSpecified = true;
-                isFilterSpecified = true;
+                _isDateSpecified = true;
+                _isFilterSpecified = true;
             }
         }
         private DateTime _before;
@@ -122,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _username = value;
-                isFilterSpecified = true;
+                _isFilterSpecified = true;
             }
         }
         private String[] _username;
@@ -134,15 +135,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, ParameterSetName = "LogName")]
         [ValidateNotNullOrEmpty()]
         [ValidateRangeAttribute((long)0, long.MaxValue)]
-	[SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public long[] InstanceId
         {
             get { return _instanceIds; }
             set
             {
                 _instanceIds = value;
-                isFilterSpecified = true;
-
+                _isFilterSpecified = true;
             }
         }
         private long[] _instanceIds = null;
@@ -155,14 +155,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "LogName")]
         [ValidateNotNullOrEmpty()]
         [ValidateRangeAttribute((int)1, int.MaxValue)]
-	[SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public int[] Index
         {
             get { return _indexes; }
             set
             {
                 _indexes = value;
-                isFilterSpecified = true;
+                _isFilterSpecified = true;
             }
         }
         private int[] _indexes = null;
@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _entryTypes = value;
-                isFilterSpecified = true;
+                _isFilterSpecified = true;
             }
         }
         private string[] _entryTypes = null;
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _sources = value;
-                isFilterSpecified = true;
+                _isFilterSpecified = true;
             }
         }
         private string[] _sources;
@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _message = value;
-                isFilterSpecified = true;
+                _isFilterSpecified = true;
             }
         }
         private string _message;
@@ -285,9 +285,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets true when Filter is Specified
         /// </summary>
-        private bool isFilterSpecified = false;
-        private bool isDateSpecified = false;
-        private bool isThrowError = true;
+        private bool _isFilterSpecified = false;
+        private bool _isDateSpecified = false;
+        private bool _isThrowError = true;
 
         /// <summary>
         /// Process the specified logs
@@ -413,7 +413,6 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     entry = entries[i];
-
                 }
                 catch (ArgumentException e)
                 {
@@ -450,7 +449,7 @@ namespace Microsoft.PowerShell.Commands
                   || lastindex - entry.Index == 1)))
                 {
                     lastindex = entry.Index;
-                    if (isFilterSpecified)
+                    if (_isFilterSpecified)
                     {
                         if (!FiltersMatch(entry))
                             continue;
@@ -473,7 +472,7 @@ namespace Microsoft.PowerShell.Commands
                     processed++;
                 }
             }
-            if (!matchesfound && isThrowError)
+            if (!matchesfound && _isThrowError)
             {
                 Exception Ex = new ArgumentException(StringUtil.Format(EventlogResources.NoEntriesFound, log.Log, ""));
                 WriteError(new ErrorRecord(Ex, "GetEventLogNoEntriesFound", ErrorCategory.ObjectNotFound, null));
@@ -518,7 +517,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (WildcardPattern.ContainsWildcardCharacters(source))
                     {
-                        isThrowError = false;
+                        _isThrowError = false;
                     }
                     WildcardPattern wildcardpattern = WildcardPattern.Get(source, WildcardOptions.IgnoreCase);
                     if (wildcardpattern.IsMatch(entry.Source))
@@ -533,7 +532,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (WildcardPattern.ContainsWildcardCharacters(_message))
                 {
-                    isThrowError = false;
+                    _isThrowError = false;
                 }
                 WildcardPattern wildcardpattern = WildcardPattern.Get(_message, WildcardOptions.IgnoreCase);
                 if (!wildcardpattern.IsMatch(entry.Message))
@@ -546,7 +545,7 @@ namespace Microsoft.PowerShell.Commands
                 bool usernamematch = false;
                 foreach (string user in _username)
                 {
-                    isThrowError = false;
+                    _isThrowError = false;
                     if (entry.UserName != null)
                     {
                         WildcardPattern wildcardpattern = WildcardPattern.Get(user, WildcardOptions.IgnoreCase);
@@ -559,25 +558,25 @@ namespace Microsoft.PowerShell.Commands
                 }
                 if (!usernamematch) return usernamematch;
             }
-            if (isDateSpecified)
+            if (_isDateSpecified)
             {
-                isThrowError = false;
+                _isThrowError = false;
                 bool datematch = false;
-                if (!_after.Equals(Initial) && _before.Equals(Initial))
+                if (!_after.Equals(_initial) && _before.Equals(_initial))
                 {
                     if (entry.TimeGenerated > _after)
                     {
                         datematch = true;
                     }
                 }
-                else if (!_before.Equals(Initial) && _after.Equals(Initial))
+                else if (!_before.Equals(_initial) && _after.Equals(_initial))
                 {
                     if (entry.TimeGenerated < _before)
                     {
                         datematch = true;
                     }
                 }
-                else if (!_after.Equals(Initial) && !_before.Equals(Initial))
+                else if (!_after.Equals(_initial) && !_before.Equals(_initial))
                 {
                     if (_after > _before || _after == _before)
                     {
@@ -627,7 +626,7 @@ namespace Microsoft.PowerShell.Commands
             return matchingLogs;
         }
         //private string ErrorBase = "EventlogResources";
-        private DateTime Initial = new DateTime();
+        private DateTime _initial = new DateTime();
 
         #endregion Private
     }//GetEventLogCommand
@@ -733,11 +732,9 @@ namespace Microsoft.PowerShell.Commands
                         WriteError(er);
                         continue;
                     }
-
                 }
             }
         }
-
 
         //beginprocessing
 
@@ -878,13 +875,13 @@ namespace Microsoft.PowerShell.Commands
 
         public string ComputerName
         {
-            get { return compname; }
+            get { return _compname; }
             set
             {
-                compname = value;
+                _compname = value;
             }
         }
-        private string compname = ".";
+        private string _compname = ".";
 
         #endregion Parameters
         # region private
@@ -904,35 +901,32 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-
             string _computerName = string.Empty;
-            if ((compname.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (compname.Equals(".", StringComparison.OrdinalIgnoreCase)))
+            if ((_compname.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (_compname.Equals(".", StringComparison.OrdinalIgnoreCase)))
             {
                 _computerName = "localhost";
             }
             else
             {
-                _computerName = compname;
+                _computerName = _compname;
             }
             try
             {
-                if (!(EventLog.SourceExists(_source, compname)))
+                if (!(EventLog.SourceExists(_source, _compname)))
                 {
                     ErrorRecord er = new ErrorRecord(new InvalidOperationException(StringUtil.Format(EventlogResources.SourceDoesNotExist, null, _computerName, _source)), null, ErrorCategory.InvalidOperation, null);
                     WriteError(er);
-
                 }
                 else
                 {
-                    if (!(EventLog.Exists(_logName, compname)))
+                    if (!(EventLog.Exists(_logName, _compname)))
                     {
                         ErrorRecord er = new ErrorRecord(new InvalidOperationException(StringUtil.Format(EventlogResources.LogDoesNotExist, _logName, _computerName)), null, ErrorCategory.InvalidOperation, null);
                         WriteError(er);
-
                     }
                     else
                     {
-                        EventLog _myevent = new EventLog(_logName, compname, _source);
+                        EventLog _myevent = new EventLog(_logName, _compname, _source);
                         _myevent.WriteEntry(_message, _entryType, _eventId, _category, _rawData);
                     }
                 }
@@ -944,16 +938,14 @@ namespace Microsoft.PowerShell.Commands
             catch (InvalidOperationException ex)
             {
                 WriteNonTerminatingError(ex, "AccessDenied", StringUtil.Format(EventlogResources.AccessDenied, _logName, null, _source), ErrorCategory.PermissionDenied);
-
             }
             catch (Win32Exception ex)
             {
                 WriteNonTerminatingError(ex, "OSWritingError", StringUtil.Format(EventlogResources.OSWritingError, null, null, null), ErrorCategory.WriteError);
-
             }
             catch (System.IO.IOException ex)
             {
-                WriteNonTerminatingError(ex, "PathDoesNotExist", StringUtil.Format(EventlogResources.PathDoesNotExist, null, compname, null), ErrorCategory.InvalidOperation);
+                WriteNonTerminatingError(ex, "PathDoesNotExist", StringUtil.Format(EventlogResources.PathDoesNotExist, null, _compname, null), ErrorCategory.InvalidOperation);
             }
         }//beginprocessing
 
@@ -1016,11 +1008,11 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _retention = value;
-                retentionSpecified = true;
+                _retentionSpecified = true;
             }
         }
         private Int32 _retention;
-        bool retentionSpecified = false;
+        private bool _retentionSpecified = false;
         /// <summary>
         /// Overflow action to be taken.
         /// </summary>
@@ -1035,11 +1027,11 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _overflowaction = value;
-                overflowSpecified = true;
+                _overflowSpecified = true;
             }
         }
         private System.Diagnostics.OverflowAction _overflowaction;
-        bool overflowSpecified = false;
+        private bool _overflowSpecified = false;
         /// <summary>
         /// Maximum size of this log.
         /// </summary>
@@ -1051,11 +1043,11 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _maximumKilobytes = value;
-                maxkbSpecified = true;
+                _maxkbSpecified = true;
             }
         }
         private Int64 _maximumKilobytes;
-        bool maxkbSpecified = false;
+        private bool _maxkbSpecified = false;
         #endregion Parameters
 
         # region private
@@ -1109,7 +1101,7 @@ namespace Microsoft.PowerShell.Commands
                                 EventLog newLog = new EventLog(logname, compname);
                                 int _minRetention = newLog.MinimumRetentionDays;
                                 System.Diagnostics.OverflowAction _newFlowAction = newLog.OverflowAction;
-                                if (retentionSpecified && overflowSpecified)
+                                if (_retentionSpecified && _overflowSpecified)
                                 {
                                     if (_overflowaction.CompareTo(System.Diagnostics.OverflowAction.OverwriteOlder) == 0)
                                     {
@@ -1122,7 +1114,7 @@ namespace Microsoft.PowerShell.Commands
                                         continue;
                                     }
                                 }
-                                else if (retentionSpecified && !overflowSpecified)
+                                else if (_retentionSpecified && !_overflowSpecified)
                                 {
                                     if (_newFlowAction.CompareTo(System.Diagnostics.OverflowAction.OverwriteOlder) == 0)
                                     {
@@ -1135,11 +1127,11 @@ namespace Microsoft.PowerShell.Commands
                                         continue;
                                     }
                                 }
-                                else if (!retentionSpecified && overflowSpecified)
+                                else if (!_retentionSpecified && _overflowSpecified)
                                 {
                                     newLog.ModifyOverflowPolicy(_overflowaction, _minRetention);
                                 }
-                                if (maxkbSpecified)
+                                if (_maxkbSpecified)
                                 {
                                     int kiloByte = 1024;
                                     _maximumKilobytes = _maximumKilobytes / kiloByte;
@@ -1160,7 +1152,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (ArgumentOutOfRangeException ex)
                     {
-                        if (!retentionSpecified && !maxkbSpecified)
+                        if (!_retentionSpecified && !_maxkbSpecified)
                         {
                             WriteNonTerminatingError(ex, EventlogResources.InvalidArgument, "InvalidArgument", ErrorCategory.InvalidData, null, null);
                         }
@@ -1239,7 +1231,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (SystemException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "InvalidComputerName", ErrorCategory.InvalidArgument, this._computerName);
+                ErrorRecord er = new ErrorRecord(ex, "InvalidComputerName", ErrorCategory.InvalidArgument, _computerName);
                 WriteError(er);
             }
         }
@@ -1271,7 +1263,6 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.New, "EventLog", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135235", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public class NewEventLogCommand : PSCmdlet
     {
-
         # region Parameter
         /// <summary>
         /// The following is the definition of the input parameter "CategoryResourceFile".
@@ -1443,7 +1434,6 @@ namespace Microsoft.PowerShell.Commands
                     WriteNonTerminatingError(ex, EventlogResources.AccessIsDenied, "AccessIsDenied", ErrorCategory.InvalidOperation, null, null, null, null);
                     continue;
                 }
-
             }
         }
         //End BeginProcessing()
@@ -1474,13 +1464,13 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public String[] ComputerName
         {
-            get { return computername; }
+            get { return _computername; }
             set
             {
-                computername = value;
+                _computername = value;
             }
         }
-        private string[] computername = { "." };
+        private string[] _computername = { "." };
 
         /// <summary>
         /// The following is the definition of the input parameter "LogName".
@@ -1494,13 +1484,13 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public String[] LogName
         {
-            get { return logname; }
+            get { return _logname; }
             set
             {
-                logname = value;
+                _logname = value;
             }
         }
-        private String[] logname;
+        private String[] _logname;
 
         /// <summary>
         /// The following is the definition of the input parameter "RemoveSource".
@@ -1518,13 +1508,13 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public String[] Source
         {
-            get { return source; }
+            get { return _source; }
             set
             {
-                source = value;
+                _source = value;
             }
         }
-        private String[] source;
+        private String[] _source;
 
 
 
@@ -1536,7 +1526,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 string computer = string.Empty;
-                foreach (string compName in computername)
+                foreach (string compName in _computername)
                 {
                     if ((compName.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (compName.Equals(".", StringComparison.OrdinalIgnoreCase)))
                     {
@@ -1548,12 +1538,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                     if (ParameterSetName.Equals("Default"))
                     {
-                        foreach (string log in logname)
+                        foreach (string log in _logname)
                         {
-
                             try
                             {
-
                                 if (EventLog.Exists(log, compName))
                                 {
                                     if (!ShouldProcess(StringUtil.Format(EventlogResources.RemoveEventLogWarning, log, computer)))
@@ -1574,16 +1562,13 @@ namespace Microsoft.PowerShell.Commands
                                 ErrorRecord er = new ErrorRecord(new InvalidOperationException(StringUtil.Format(EventlogResources.PathDoesNotExist, null, computer)), null, ErrorCategory.InvalidOperation, null);
                                 WriteError(er);
                                 continue;
-
-
                             }
                         }
                     }
                     else
                     {
-                        foreach (string src in source)
+                        foreach (string src in _source)
                         {
-
                             try
                             {
                                 if (EventLog.SourceExists(src, compName))
@@ -1603,12 +1588,9 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (System.IO.IOException)
                             {
-
                                 ErrorRecord er = new ErrorRecord(new InvalidOperationException(StringUtil.Format(EventlogResources.PathDoesNotExist, null, computer)), null, ErrorCategory.InvalidOperation, null);
                                 WriteError(er);
                                 continue;
-
-
                             }
                         }
                     }
@@ -1618,16 +1600,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorRecord er = new ErrorRecord(ex, "NewEventlogException", ErrorCategory.SecurityError, null);
                 WriteError(er);
-
             }
         }//End BeginProcessing()
-
-
-
     }//End Class
 
     #endregion RemoveEventLogCommand
-
-
 }//Microsoft.PowerShell.Commands
 

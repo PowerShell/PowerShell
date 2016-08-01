@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
@@ -53,24 +54,24 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("context");
             }
 
-            this.path = path;
-            this.extension = System.IO.Path.GetExtension(path);
-            this.context = context;
+            _path = path;
+            _extension = System.IO.Path.GetExtension(path);
+            _context = context;
         } // ApplicationInfo ctor
-        private ExecutionContext context;
+        private ExecutionContext _context;
         #endregion ctor
 
-         /// <summary>
+        /// <summary>
         /// Gets the path for the application file.
         /// </summary>
         public string Path
         {
             get
             {
-                return path;
+                return _path;
             }
         }// Path
-        private string path = String.Empty;
+        private string _path = String.Empty;
 
         /// <summary>
         /// Gets the extension of the application file.
@@ -79,10 +80,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return extension;
+                return _extension;
             }
         } // Extension
-        private string extension = String.Empty;
+        private string _extension = String.Empty;
 
         /// <summary>
         /// Gets the path of the application file.
@@ -112,7 +113,7 @@ namespace System.Management.Automation
             {
                 if (_version == null)
                 {
-                    FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(path);
+                    FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(_path);
                     _version = new Version(versionInfo.ProductMajorPart, versionInfo.ProductMinorPart, versionInfo.ProductBuildPart, versionInfo.ProductPrivatePart);
                 }
 
@@ -127,9 +128,9 @@ namespace System.Management.Automation
         /// </summary>
         public override SessionStateEntryVisibility Visibility
         {
-            get 
+            get
             {
-                return context.EngineSessionState.CheckApplicationVisibility(path);
+                return _context.EngineSessionState.CheckApplicationVisibility(_path);
             }
             set { throw PSTraceSource.NewNotImplementedException(); }
         }
@@ -150,6 +151,6 @@ namespace System.Management.Automation
                 return _outputType;
             }
         }
-        ReadOnlyCollection<PSTypeName> _outputType = null;
+        private ReadOnlyCollection<PSTypeName> _outputType = null;
     } // ApplicationInfo
 } // namespace System.Management.Automation

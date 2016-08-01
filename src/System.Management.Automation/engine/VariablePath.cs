@@ -16,15 +16,15 @@ namespace System.Management.Automation
     [Flags]
     internal enum VariablePathFlags
     {
-        None           = 0x00,
-        Local          = 0x01,
-        Script         = 0x02,
-        Global         = 0x04,
-        Private        = 0x08,
-        Variable       = 0x10,
-        Function       = 0x20,
+        None = 0x00,
+        Local = 0x01,
+        Script = 0x02,
+        Global = 0x04,
+        Private = 0x08,
+        Variable = 0x10,
+        Function = 0x20,
         DriveQualified = 0x40,
-        Unqualified    = 0x80,
+        Unqualified = 0x80,
 
         // If any of these bits are set, the path does not represent an unscoped variable.
         UnscopedVariableMask = Local | Script | Global | Private | Function | DriveQualified,
@@ -95,8 +95,8 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-            this._userPath = path;
-            this._flags = knownFlags;
+            _userPath = path;
+            _flags = knownFlags;
 
             string candidateScope = null;
             string candidateScopeUpper = null;
@@ -105,44 +105,44 @@ namespace System.Management.Automation
             int currentCharIndex = 0;
             int lastScannedColon = -1;
 
-            scanScope:
+        scanScope:
             switch (path[0])
             {
-            case 'g':
-            case 'G':
-                candidateScope = "lobal";
-                candidateScopeUpper = "LOBAL";
-                candidateFlags = VariablePathFlags.Global;
-                break;
-            case 'l':
-            case 'L':
-                candidateScope = "ocal";
-                candidateScopeUpper = "OCAL";
-                candidateFlags = VariablePathFlags.Local;
-                break;
-            case 'p':
-            case 'P':
-                candidateScope = "rivate";
-                candidateScopeUpper = "RIVATE";
-                candidateFlags = VariablePathFlags.Private;
-                break;
-            case 's':
-            case 'S':
-                candidateScope = "cript";
-                candidateScopeUpper = "CRIPT";
-                candidateFlags = VariablePathFlags.Script;
-                break;
-            case 'v':
-            case 'V':
-                if (knownFlags == VariablePathFlags.None)
-                {
-                    // If we see 'variable:', our namespaceId will be empty, and
-                    // we'll also need to scan for the scope again.
-                    candidateScope = "ariable";
-                    candidateScopeUpper = "ARIABLE";
-                    candidateFlags = VariablePathFlags.Variable;
-                }
-                break;
+                case 'g':
+                case 'G':
+                    candidateScope = "lobal";
+                    candidateScopeUpper = "LOBAL";
+                    candidateFlags = VariablePathFlags.Global;
+                    break;
+                case 'l':
+                case 'L':
+                    candidateScope = "ocal";
+                    candidateScopeUpper = "OCAL";
+                    candidateFlags = VariablePathFlags.Local;
+                    break;
+                case 'p':
+                case 'P':
+                    candidateScope = "rivate";
+                    candidateScopeUpper = "RIVATE";
+                    candidateFlags = VariablePathFlags.Private;
+                    break;
+                case 's':
+                case 'S':
+                    candidateScope = "cript";
+                    candidateScopeUpper = "CRIPT";
+                    candidateFlags = VariablePathFlags.Script;
+                    break;
+                case 'v':
+                case 'V':
+                    if (knownFlags == VariablePathFlags.None)
+                    {
+                        // If we see 'variable:', our namespaceId will be empty, and
+                        // we'll also need to scan for the scope again.
+                        candidateScope = "ariable";
+                        candidateScopeUpper = "ARIABLE";
+                        candidateFlags = VariablePathFlags.Variable;
+                    }
+                    break;
             }
 
             if (candidateScope != null)
@@ -157,7 +157,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (j == candidateScope.Length && 
+                if (j == candidateScope.Length &&
                     currentCharIndex < path.Length &&
                     path[currentCharIndex] == ':')
                 {
@@ -202,7 +202,7 @@ namespace System.Management.Automation
 
             if (_flags == VariablePathFlags.None)
             {
-                this._flags = VariablePathFlags.Unqualified | VariablePathFlags.Variable;
+                _flags = VariablePathFlags.Unqualified | VariablePathFlags.Variable;
             }
         }
 
@@ -260,7 +260,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the path defines a variable.
         /// </summary>
-        public bool IsVariable { get { return 0 != (_flags & VariablePathFlags.Variable); }  }
+        public bool IsVariable { get { return 0 != (_flags & VariablePathFlags.Variable); } }
 
         /// <summary>
         /// Returns true if the path defines a function.

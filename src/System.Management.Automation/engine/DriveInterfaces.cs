@@ -1,12 +1,13 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Management.Automation;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
@@ -48,7 +49,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("sessionState");
             }
 
-            this.sessionState = sessionState;
+            _sessionState = sessionState;
         } // DriveManagementIntrinsics internal
 
         #endregion Constructors
@@ -68,10 +69,10 @@ namespace System.Management.Automation
             get
             {
                 Dbg.Diagnostics.Assert(
-                    sessionState != null,
+                    _sessionState != null,
                     "The only constructor for this class should always set the sessionState field");
 
-                return sessionState.CurrentDrive;
+                return _sessionState.CurrentDrive;
             } // get
         } // Current
 
@@ -124,12 +125,12 @@ namespace System.Management.Automation
         public PSDriveInfo New(PSDriveInfo drive, string scope)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.NewDrive(drive, scope);
+            return _sessionState.NewDrive(drive, scope);
         } // New
 
         /// <summary>
@@ -182,17 +183,17 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal void New(
-            PSDriveInfo drive, 
-            string scope, 
+            PSDriveInfo drive,
+            string scope,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.NewDrive(drive, scope, context);
+            _sessionState.NewDrive(drive, scope, context);
         } // New
 
         /// <summary>
@@ -222,16 +223,16 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal object NewDriveDynamicParameters(
-            string providerId, 
+            string providerId,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.NewDriveDynamicParameters(providerId, context);
+            return _sessionState.NewDriveDynamicParameters(providerId, context);
         } // NewDriveDynamicParameters
 
         #endregion New
@@ -259,12 +260,12 @@ namespace System.Management.Automation
         public void Remove(string driveName, bool force, string scope)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.RemoveDrive(driveName, force, scope);
+            _sessionState.RemoveDrive(driveName, force, scope);
         } // Remove
 
         /// <summary>
@@ -291,24 +292,24 @@ namespace System.Management.Automation
         /// </param>
         ///
         internal void Remove(
-            string driveName, 
+            string driveName,
             bool force,
-            string scope, 
+            string scope,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.RemoveDrive(driveName, force, scope, context);
+            _sessionState.RemoveDrive(driveName, force, scope, context);
         } // RemoveDrive
 
         #endregion Remove
 
         #region Get
-        
+
         /// <summary>
         /// Gets the drive information for the drive specified by name.
         /// </summary>
@@ -331,12 +332,12 @@ namespace System.Management.Automation
         public PSDriveInfo Get(string driveName)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetDrive(driveName);
+            return _sessionState.GetDrive(driveName);
         } // GetDrive
 
         /// <summary>
@@ -374,12 +375,12 @@ namespace System.Management.Automation
         public PSDriveInfo GetAtScope(string driveName, string scope)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetDrive(driveName, scope);
+            return _sessionState.GetDrive(driveName, scope);
         } // GetAtScope
 
         /// <summary>
@@ -388,12 +389,12 @@ namespace System.Management.Automation
         public Collection<PSDriveInfo> GetAll()
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
-            return sessionState.Drives(null);
+            return _sessionState.Drives(null);
         } // GetAll
-        
+
         /// <summary>
         /// Retrieves all the drives in the specified scope
         /// </summary>
@@ -415,10 +416,10 @@ namespace System.Management.Automation
         public Collection<PSDriveInfo> GetAllAtScope(string scope)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
-            return sessionState.Drives(scope);
+            return _sessionState.Drives(scope);
         } // GetAllAtScope
 
         /// <summary>
@@ -435,12 +436,12 @@ namespace System.Management.Automation
         public Collection<PSDriveInfo> GetAllForProvider(string providerName)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetDrivesForProvider(providerName);
+            return _sessionState.GetDrivesForProvider(providerName);
         } // GetAllForProvider
 
         #endregion GetDrive
@@ -450,7 +451,7 @@ namespace System.Management.Automation
         #region private data
 
         // A private reference to the internal session state of the engine.
-        private SessionStateInternal sessionState;
+        private SessionStateInternal _sessionState;
 
         #endregion private data
     } // DriveIntrinsics

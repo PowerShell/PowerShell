@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 namespace System.Management.Automation.Internal
 {
     using System;
@@ -21,11 +22,11 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="stream">the stream to write</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null</exception>
-        public ObjectWriter ([In, Out] ObjectStreamBase stream)
+        public ObjectWriter([In, Out] ObjectStreamBase stream)
         {
             if (stream == null)
             {
-                throw new ArgumentNullException ("stream");
+                throw new ArgumentNullException("stream");
             }
 
             _stream = stream;
@@ -108,9 +109,9 @@ namespace System.Management.Automation.Internal
         /// <exception cref="ObjectDisposedException">
         /// The stream is already disposed
         /// </exception>
-        public override void Close ()
+        public override void Close()
         {
-            _stream.Close ();
+            _stream.Close();
             // 2003/09/02-JonN I removed setting _stream
             // to null, now all of the tests for null can come out.
         }
@@ -122,9 +123,9 @@ namespace System.Management.Automation.Internal
         /// <exception cref="ObjectDisposedException">
         /// The underlying stream is disposed
         /// </exception>
-        public override void Flush ()
+        public override void Flush()
         {
-            _stream.Flush ();
+            _stream.Flush();
         }
 
         /// <summary>
@@ -144,7 +145,7 @@ namespace System.Management.Automation.Internal
         /// </remarks>
         public override int Write(object obj)
         {
-            return _stream.Write (obj);
+            return _stream.Write(obj);
         }
 
         /// <summary>
@@ -170,7 +171,7 @@ namespace System.Management.Automation.Internal
         /// </remarks>
         public override int Write(object obj, bool enumerateCollection)
         {
-            return _stream.Write (obj, enumerateCollection);
+            return _stream.Write(obj, enumerateCollection);
         }
 
 #if (false)
@@ -216,7 +217,7 @@ namespace System.Management.Automation.Internal
     internal class PSDataCollectionWriter<T> : ObjectWriter
     {
         #region Constructors
-        
+
         /// <summary>
         /// Construct with an existing PSDataCollectionStream
         /// </summary>

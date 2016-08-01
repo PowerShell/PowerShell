@@ -12,33 +12,36 @@ using System.Globalization;
 using Marshal = System.Runtime.InteropServices.Marshal;
 using VarEnum = System.Runtime.InteropServices.VarEnum;
 
-namespace System.Management.Automation.ComInterop {
-
-    internal class ComMethodDesc {
-
+namespace System.Management.Automation.ComInterop
+{
+    internal class ComMethodDesc
+    {
         private readonly int _memid;  // this is the member id extracted from FUNCDESC.memid
         private readonly string _name;
         internal readonly INVOKEKIND InvokeKind;
         private readonly int _paramCnt;
 
-        private ComMethodDesc(int dispId) {
+        private ComMethodDesc(int dispId)
+        {
             _memid = dispId;
         }
 
         internal ComMethodDesc(string name, int dispId)
-            : this(dispId) {
+            : this(dispId)
+        {
             // no ITypeInfo constructor
             _name = name;
         }
 
         internal ComMethodDesc(string name, int dispId, INVOKEKIND invkind)
-            : this(name, dispId) {
+            : this(name, dispId)
+        {
             InvokeKind = invkind;
         }
 
         internal ComMethodDesc(ITypeInfo typeInfo, FUNCDESC funcDesc)
-            : this(funcDesc.memid) {
-
+            : this(funcDesc.memid)
+        {
             InvokeKind = funcDesc.invkind;
 
             int cNames;
@@ -46,7 +49,8 @@ namespace System.Management.Automation.ComInterop {
             typeInfo.GetNames(_memid, rgNames, rgNames.Length, out cNames);
 
             bool skipLast = false;
-            if (IsPropertyPut && rgNames[rgNames.Length - 1] == null) {
+            if (IsPropertyPut && rgNames[rgNames.Length - 1] == null)
+            {
                 rgNames[rgNames.Length - 1] = "value";
                 cNames++;
                 skipLast = true;
@@ -55,32 +59,40 @@ namespace System.Management.Automation.ComInterop {
             _name = rgNames[0];
 
             _paramCnt = funcDesc.cParams;
-            
+
             ReturnType = ComUtil.GetTypeFromTypeDesc(funcDesc.elemdescFunc.tdesc);
             ParameterInformation = ComUtil.GetParameterInformation(funcDesc, skipLast);
         }
 
-        public string Name {
-            get {
+        public string Name
+        {
+            get
+            {
                 Debug.Assert(_name != null);
                 return _name;
             }
         }
 
-        public int DispId {
+        public int DispId
+        {
             get { return _memid; }
         }
 
-        public bool IsPropertyGet {
-            get {
+        public bool IsPropertyGet
+        {
+            get
+            {
                 return (InvokeKind & INVOKEKIND.INVOKE_PROPERTYGET) != 0;
             }
         }
 
-        public bool IsDataMember {
-            get {
+        public bool IsDataMember
+        {
+            get
+            {
                 //must be regular get
-                if (!IsPropertyGet || DispId == ComDispIds.DISPID_NEWENUM) {
+                if (!IsPropertyGet || DispId == ComDispIds.DISPID_NEWENUM)
+                {
                     return false;
                 }
 
@@ -89,20 +101,26 @@ namespace System.Management.Automation.ComInterop {
             }
         }
 
-        public bool IsPropertyPut {
-            get {
+        public bool IsPropertyPut
+        {
+            get
+            {
                 return (InvokeKind & (INVOKEKIND.INVOKE_PROPERTYPUT | INVOKEKIND.INVOKE_PROPERTYPUTREF)) != 0;
             }
         }
 
-        public bool IsPropertyPutRef {
-            get {
+        public bool IsPropertyPutRef
+        {
+            get
+            {
                 return (InvokeKind & INVOKEKIND.INVOKE_PROPERTYPUTREF) != 0;
             }
         }
-        
-        internal int ParamCount {
-            get {
+
+        internal int ParamCount
+        {
+            get
+            {
                 return _paramCnt;
             }
         }
@@ -115,7 +133,6 @@ namespace System.Management.Automation.ComInterop {
             get;
             set;
         }
-        
     }
 }
 

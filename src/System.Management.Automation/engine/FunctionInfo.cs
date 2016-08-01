@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Text;
 using System.Management.Automation.Runspaces;
@@ -65,20 +66,19 @@ namespace System.Management.Automation
         /// If <paramref name="function"/> is null.
         /// </exception>
         /// 
-        internal FunctionInfo(string name, ScriptBlock function, ExecutionContext context, string helpFile): base(name, CommandTypes.Function, context)
+        internal FunctionInfo(string name, ScriptBlock function, ExecutionContext context, string helpFile) : base(name, CommandTypes.Function, context)
         {
             if (function == null)
             {
                 throw PSTraceSource.NewArgumentNullException("function");
             }
 
-            this._scriptBlock = function;
+            _scriptBlock = function;
 
-            CmdletInfo.SplitCmdletName(name, out verb, out noun);
+            CmdletInfo.SplitCmdletName(name, out _verb, out _noun);
 
             this.Module = function.Module;
-            this._helpFile = helpFile;
-
+            _helpFile = helpFile;
         } // FunctionInfo ctor
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace System.Management.Automation
         internal FunctionInfo(string name, ScriptBlock function, ScopedItemOptions options, ExecutionContext context, string helpFile)
             : this(name, function, context, helpFile)
         {
-            this._options = options;
+            _options = options;
         } // FunctionInfo ctor
 
         /// <summary>
@@ -154,12 +154,12 @@ namespace System.Management.Automation
 
         private void CopyFieldsFromOther(FunctionInfo other)
         {
-            this.verb = other.verb;
-            this.noun = other.noun;
-            this._scriptBlock = other._scriptBlock;
-            this._description = other._description;
-            this._options = other._options;
-            this._helpFile = other._helpFile;
+            _verb = other._verb;
+            _noun = other._noun;
+            _scriptBlock = other._scriptBlock;
+            _description = other._description;
+            _options = other._options;
+            _helpFile = other._helpFile;
         }
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace System.Management.Automation
             CopyFieldsFromOther(other);
 
             // Get the verb and noun from the name
-            CmdletInfo.SplitCmdletName(name, out verb, out noun);
+            CmdletInfo.SplitCmdletName(name, out _verb, out _noun);
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace System.Management.Automation
         /// </summary>
         internal override CommandInfo CreateGetCommandCopy(object[] arguments)
         {
-            FunctionInfo copy = new FunctionInfo(this) {IsGetCommandCopy = true, Arguments = arguments};
+            FunctionInfo copy = new FunctionInfo(this) { IsGetCommandCopy = true, Arguments = arguments };
             return copy;
         }
 
@@ -188,8 +188,8 @@ namespace System.Management.Automation
 
         internal override HelpCategory HelpCategory
         {
-            get { return HelpCategory.Function;  }
-        } 
+            get { return HelpCategory.Function; }
+        }
 
         /// <summary>
         /// Gets the ScriptBlock which is the implementation of the function
@@ -285,10 +285,10 @@ namespace System.Management.Automation
                 throw e;
             }
 
-            this._scriptBlock = newFunction;
+            _scriptBlock = newFunction;
 
             this.Module = newFunction.Module;
-            this._commandMetadata = null;
+            _commandMetadata = null;
             this._parameterSets = null;
             this.ExternalCommandMetadata = null;
 
@@ -297,7 +297,7 @@ namespace System.Management.Automation
                 this.Options = options;
             }
 
-            this._helpFile = helpFile;
+            _helpFile = helpFile;
         }
 
         /// <summary>
@@ -438,10 +438,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return verb;
+                return _verb;
             }
         } // Verb
-        private string verb = String.Empty;
+        private string _verb = String.Empty;
 
         /// <summary>
         /// Gets the noun of the function.
@@ -450,10 +450,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return noun;
+                return _noun;
             }
         } // Noun
-        private string noun = String.Empty;
+        private string _noun = String.Empty;
 
         /// <summary>
         /// Gets the help file path for the function.
@@ -508,13 +508,14 @@ namespace System.Management.Automation
         /// </summary>
         override internal CommandMetadata CommandMetadata
         {
-            get {
+            get
+            {
                 return _commandMetadata ??
                        (_commandMetadata =
                         new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
             }
         }
-        CommandMetadata _commandMetadata;
+        private CommandMetadata _commandMetadata;
 
         /// <summary>
         /// The output type(s) is specified in the script block
@@ -524,5 +525,4 @@ namespace System.Management.Automation
             get { return ScriptBlock.OutputType; }
         }
     } // FunctionInfo
-
 } // namespace System.Management.Automation

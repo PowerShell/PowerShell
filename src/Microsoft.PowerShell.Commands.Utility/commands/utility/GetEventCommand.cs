@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Collections.Generic;
 using System.Management.Automation;
@@ -24,19 +25,19 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return sourceIdentifier;
+                return _sourceIdentifier;
             }
             set
             {
-                sourceIdentifier = value;
+                _sourceIdentifier = value;
 
-                if(value != null)
+                if (value != null)
                 {
-                    matchPattern = WildcardPattern.Get(value, WildcardOptions.IgnoreCase);
+                    _matchPattern = WildcardPattern.Get(value, WildcardOptions.IgnoreCase);
                 }
             }
         }
-        private string sourceIdentifier = null;
+        private string _sourceIdentifier = null;
 
         /// <summary>
         /// An identifier for this event subscription
@@ -47,19 +48,19 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return eventId;
+                return _eventId;
             }
             set
             {
-                eventId = value;
+                _eventId = value;
             }
         }
-        private int eventId = -1;
-       
+        private int _eventId = -1;
+
 
         #endregion parameters
 
-        WildcardPattern matchPattern;
+        private WildcardPattern _matchPattern;
 
         /// <summary>
         /// Get the requested events
@@ -76,47 +77,47 @@ namespace Microsoft.PowerShell.Commands
                 eventArgsCollection = new List<PSEventArgs>(Events.ReceivedEvents);
             }
 
-            foreach(PSEventArgs eventArg in eventArgsCollection)
+            foreach (PSEventArgs eventArg in eventArgsCollection)
             {
                 // If they specified a event identifier and we don't match, continue
-                if((sourceIdentifier != null) &&
-                   (! matchPattern.IsMatch(eventArg.SourceIdentifier)))
+                if ((_sourceIdentifier != null) &&
+                   (!_matchPattern.IsMatch(eventArg.SourceIdentifier)))
                 {
                     continue;
                 }
 
                 // If they specified an event identifier and we don't match, continue
-                if((eventId >= 0) &&
-                    (eventArg.EventIdentifier != eventId))
+                if ((_eventId >= 0) &&
+                    (eventArg.EventIdentifier != _eventId))
                 {
                     continue;
                 }
-               
+
                 WriteObject(eventArg);
                 foundMatch = true;
             }
 
             // Generate an error if we couldn't find the subscription identifier,
             // and no globbing was done.
-            if(! foundMatch)
+            if (!foundMatch)
             {
-                bool lookingForSource = (sourceIdentifier != null) &&
-                    (! WildcardPattern.ContainsWildcardCharacters(sourceIdentifier));
-                bool lookingForId = (eventId >= 0);
-                
-                if(lookingForSource || lookingForId)
+                bool lookingForSource = (_sourceIdentifier != null) &&
+                    (!WildcardPattern.ContainsWildcardCharacters(_sourceIdentifier));
+                bool lookingForId = (_eventId >= 0);
+
+                if (lookingForSource || lookingForId)
                 {
                     object identifier = null;
                     string error = null;
 
-                    if(lookingForSource)
+                    if (lookingForSource)
                     {
-                        identifier = sourceIdentifier;
+                        identifier = _sourceIdentifier;
                         error = EventingStrings.SourceIdentifierNotFound;
                     }
-                    else if(lookingForId)
+                    else if (lookingForId)
                     {
-                        identifier = eventId;
+                        identifier = _eventId;
                         error = EventingStrings.EventIdentifierNotFound;
                     }
 
@@ -128,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
 
                     WriteError(errorRecord);
                 }
-             }
+            }
         }
     }
 }

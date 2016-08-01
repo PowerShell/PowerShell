@@ -82,11 +82,11 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-        
+
         #endregion Virtual Method Overrides
 
         #region Helper Methods
-        
+
         private RestReturnType CheckReturnType(HttpResponseMessage response)
         {
             if (null == response) { throw new ArgumentNullException("response"); }

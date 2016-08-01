@@ -53,7 +53,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initiate an instance of PSConsoleLoadException.
         /// </summary>
-        public PSConsoleLoadException () : base()
+        public PSConsoleLoadException() : base()
         {
         }
 
@@ -174,7 +174,7 @@ namespace System.Management.Automation.Runspaces
 
             base.GetObjectData(info, context);
 
-            info.AddValue("ConsoleFileName", this._consoleFileName);
+            info.AddValue("ConsoleFileName", _consoleFileName);
         }
 
         #endregion Serialization

@@ -1,7 +1,8 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
-﻿using System;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal const string AttribOutputBufferingMode = "OutputBufferingMode";
         internal static System.Management.Automation.Runspaces.OutputBufferingMode? DefaultOutputBufferingMode = System.Management.Automation.Runspaces.OutputBufferingMode.Block;
-        private System.Management.Automation.Runspaces.OutputBufferingMode? outputBufferingMode = null;
+        private System.Management.Automation.Runspaces.OutputBufferingMode? _outputBufferingMode = null;
 
         private const string AttribProcessIdleTimeout = "ProcessIdleTimeoutSec";
         internal static readonly int? DefaultProcessIdleTimeout_ForPSRemoting = 0; // in seconds
@@ -39,34 +40,33 @@ namespace Microsoft.PowerShell.Commands
 
         private const string AttribMaxConcurrentUsers = "MaxConcurrentUsers";
         internal static readonly int? DefaultMaxConcurrentUsers = int.MaxValue;
-        private int? maxConcurrentUsers = null;
+        private int? _maxConcurrentUsers = null;
 
         private const string AttribMaxProcessesPerSession = "MaxProcessesPerShell";
         internal static readonly int? DefaultMaxProcessesPerSession = int.MaxValue;
-        private int? maxProcessesPerSession = null;
+        private int? _maxProcessesPerSession = null;
 
         private const string AttribMaxMemoryPerSessionMB = "MaxMemoryPerShellMB";
         internal static readonly int? DefaultMaxMemoryPerSessionMB = int.MaxValue;
-        private int? maxMemoryPerSessionMB = null;
+        private int? _maxMemoryPerSessionMB = null;
 
         private const string AttribMaxSessions = "MaxShells";
         internal static readonly int? DefaultMaxSessions = int.MaxValue;
-        private int? maxSessions = null;
+        private int? _maxSessions = null;
 
         private const string AttribMaxSessionsPerUser = "MaxShellsPerUser";
         internal static readonly int? DefaultMaxSessionsPerUser = int.MaxValue;
-        private int? maxSessionsPerUser = null;
+        private int? _maxSessionsPerUser = null;
 
         private const string AttribMaxConcurrentCommandsPerSession = "MaxConcurrentCommandsPerShell";
         internal static readonly int? DefaultMaxConcurrentCommandsPerSession = int.MaxValue;
-        private int? maxConcurrentCommandsPerSession = null;
+        private int? _maxConcurrentCommandsPerSession = null;
 
         /// <summary>
         /// Constructor that instantiates with default values
         /// </summary>
         internal WSManConfigurationOption()
         {
-
         }
 
         /// <summary>
@@ -76,15 +76,15 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="keepAssigned"></param>
         protected internal override void LoadFromDefaults(PSSessionType sessionType, bool keepAssigned)
         {
-            if (!keepAssigned || !outputBufferingMode.HasValue)
+            if (!keepAssigned || !_outputBufferingMode.HasValue)
             {
-                outputBufferingMode = DefaultOutputBufferingMode;
+                _outputBufferingMode = DefaultOutputBufferingMode;
             }
             if (!keepAssigned || !_processIdleTimeoutSec.HasValue)
             {
-                _processIdleTimeoutSec 
-                    = sessionType == PSSessionType.Workflow 
-                    ? DefaultProcessIdleTimeout_ForWorkflow 
+                _processIdleTimeoutSec
+                    = sessionType == PSSessionType.Workflow
+                    ? DefaultProcessIdleTimeout_ForWorkflow
                     : DefaultProcessIdleTimeout_ForPSRemoting;
             }
             if (!keepAssigned || !_maxIdleTimeoutSec.HasValue)
@@ -95,29 +95,29 @@ namespace Microsoft.PowerShell.Commands
             {
                 _idleTimeoutSec = DefaultIdleTimeout;
             }
-            if (!keepAssigned || !maxConcurrentUsers.HasValue)
+            if (!keepAssigned || !_maxConcurrentUsers.HasValue)
             {
-                maxConcurrentUsers = DefaultMaxConcurrentUsers;
+                _maxConcurrentUsers = DefaultMaxConcurrentUsers;
             }
-            if (!keepAssigned || !maxProcessesPerSession.HasValue)
+            if (!keepAssigned || !_maxProcessesPerSession.HasValue)
             {
-                maxProcessesPerSession = DefaultMaxProcessesPerSession;
+                _maxProcessesPerSession = DefaultMaxProcessesPerSession;
             }
-            if (!keepAssigned || !maxMemoryPerSessionMB.HasValue)
+            if (!keepAssigned || !_maxMemoryPerSessionMB.HasValue)
             {
-                maxMemoryPerSessionMB = DefaultMaxMemoryPerSessionMB;
+                _maxMemoryPerSessionMB = DefaultMaxMemoryPerSessionMB;
             }
-            if (!keepAssigned || !maxSessions.HasValue)
+            if (!keepAssigned || !_maxSessions.HasValue)
             {
-                maxSessions = DefaultMaxSessions;
+                _maxSessions = DefaultMaxSessions;
             }
-            if (!keepAssigned || !maxSessionsPerUser.HasValue)
+            if (!keepAssigned || !_maxSessionsPerUser.HasValue)
             {
-                maxSessionsPerUser = DefaultMaxSessionsPerUser;
+                _maxSessionsPerUser = DefaultMaxSessionsPerUser;
             }
-            if (!keepAssigned || !maxConcurrentCommandsPerSession.HasValue)
+            if (!keepAssigned || !_maxConcurrentCommandsPerSession.HasValue)
             {
-                maxConcurrentCommandsPerSession = DefaultMaxConcurrentCommandsPerSession;
+                _maxConcurrentCommandsPerSession = DefaultMaxConcurrentCommandsPerSession;
             }
         }
 
@@ -158,11 +158,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return maxSessions;
+                return _maxSessions;
             }
             internal set
             {
-                maxSessions = value;
+                _maxSessions = value;
             }
         }
 
@@ -173,11 +173,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return maxConcurrentCommandsPerSession;
+                return _maxConcurrentCommandsPerSession;
             }
             internal set
             {
-                maxConcurrentCommandsPerSession = value;
+                _maxConcurrentCommandsPerSession = value;
             }
         }
 
@@ -188,11 +188,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return maxSessionsPerUser;
+                return _maxSessionsPerUser;
             }
             internal set
             {
-                maxSessionsPerUser = value;
+                _maxSessionsPerUser = value;
             }
         }
 
@@ -203,11 +203,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return maxMemoryPerSessionMB;
+                return _maxMemoryPerSessionMB;
             }
             internal set
             {
-                maxMemoryPerSessionMB = value;
+                _maxMemoryPerSessionMB = value;
             }
         }
 
@@ -218,11 +218,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return maxProcessesPerSession;
+                return _maxProcessesPerSession;
             }
             internal set
             {
-                maxProcessesPerSession = value;
+                _maxProcessesPerSession = value;
             }
         }
 
@@ -233,11 +233,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return maxConcurrentUsers;
+                return _maxConcurrentUsers;
             }
             internal set
             {
-                maxConcurrentUsers = value;
+                _maxConcurrentUsers = value;
             }
         }
 
@@ -263,11 +263,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return outputBufferingMode;
+                return _outputBufferingMode;
             }
             internal set
             {
-                outputBufferingMode = value;
+                _outputBufferingMode = value;
             }
         }
 
@@ -279,30 +279,30 @@ namespace Microsoft.PowerShell.Commands
             {
                 quotas[AttribIdleTimeout] = (1000 * _idleTimeoutSec.Value).ToString(CultureInfo.InvariantCulture);
             }
-            if (maxConcurrentUsers.HasValue)
+            if (_maxConcurrentUsers.HasValue)
             {
-                quotas[AttribMaxConcurrentUsers] = maxConcurrentUsers.Value.ToString(CultureInfo.InvariantCulture);
+                quotas[AttribMaxConcurrentUsers] = _maxConcurrentUsers.Value.ToString(CultureInfo.InvariantCulture);
             }
 
-            if (maxProcessesPerSession.HasValue)
+            if (_maxProcessesPerSession.HasValue)
             {
-                quotas[AttribMaxProcessesPerSession] = maxProcessesPerSession.Value.ToString(CultureInfo.InvariantCulture);
+                quotas[AttribMaxProcessesPerSession] = _maxProcessesPerSession.Value.ToString(CultureInfo.InvariantCulture);
             }
-            if (maxMemoryPerSessionMB.HasValue)
+            if (_maxMemoryPerSessionMB.HasValue)
             {
-                quotas[AttribMaxMemoryPerSessionMB] = maxMemoryPerSessionMB.Value.ToString(CultureInfo.InvariantCulture);
+                quotas[AttribMaxMemoryPerSessionMB] = _maxMemoryPerSessionMB.Value.ToString(CultureInfo.InvariantCulture);
             }
-            if (maxSessionsPerUser.HasValue)
+            if (_maxSessionsPerUser.HasValue)
             {
-                quotas[AttribMaxSessionsPerUser] = maxSessionsPerUser.Value.ToString(CultureInfo.InvariantCulture);
+                quotas[AttribMaxSessionsPerUser] = _maxSessionsPerUser.Value.ToString(CultureInfo.InvariantCulture);
             }
-            if (maxConcurrentCommandsPerSession.HasValue)
+            if (_maxConcurrentCommandsPerSession.HasValue)
             {
-                quotas[AttribMaxConcurrentCommandsPerSession] = maxConcurrentCommandsPerSession.Value.ToString(CultureInfo.InvariantCulture);
+                quotas[AttribMaxConcurrentCommandsPerSession] = _maxConcurrentCommandsPerSession.Value.ToString(CultureInfo.InvariantCulture);
             }
-            if (maxSessions.HasValue)
+            if (_maxSessions.HasValue)
             {
-                quotas[AttribMaxSessions] = maxSessions.Value.ToString(CultureInfo.InvariantCulture);
+                quotas[AttribMaxSessions] = _maxSessions.Value.ToString(CultureInfo.InvariantCulture);
             }
             if (_maxIdleTimeoutSec.HasValue)
             {
@@ -323,35 +323,35 @@ namespace Microsoft.PowerShell.Commands
             {
                 sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribIdleTimeout, 1000 * _idleTimeoutSec));
             }
-            if (maxConcurrentUsers.HasValue)
+            if (_maxConcurrentUsers.HasValue)
             {
-                sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribMaxConcurrentUsers, maxConcurrentUsers));
+                sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribMaxConcurrentUsers, _maxConcurrentUsers));
             }
 
-            if (maxProcessesPerSession.HasValue)
+            if (_maxProcessesPerSession.HasValue)
             {
-                sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribMaxProcessesPerSession, maxProcessesPerSession));
+                sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribMaxProcessesPerSession, _maxProcessesPerSession));
             }
-            if (maxMemoryPerSessionMB.HasValue)
+            if (_maxMemoryPerSessionMB.HasValue)
             {
-                sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribMaxMemoryPerSessionMB, maxMemoryPerSessionMB));
+                sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribMaxMemoryPerSessionMB, _maxMemoryPerSessionMB));
             }
-            if (maxSessionsPerUser.HasValue)
+            if (_maxSessionsPerUser.HasValue)
             {
-                sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribMaxSessionsPerUser, maxSessionsPerUser));
+                sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribMaxSessionsPerUser, _maxSessionsPerUser));
             }
-            if (maxConcurrentCommandsPerSession.HasValue)
+            if (_maxConcurrentCommandsPerSession.HasValue)
             {
-                sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribMaxConcurrentCommandsPerSession, maxConcurrentCommandsPerSession));
+                sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribMaxConcurrentCommandsPerSession, _maxConcurrentCommandsPerSession));
             }
-            if (maxSessions.HasValue)
+            if (_maxSessions.HasValue)
             {
-                sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribMaxSessions, maxSessions));
+                sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribMaxSessions, _maxSessions));
             }
             if (_maxIdleTimeoutSec.HasValue)
             {
                 // Special case max int value for unbounded default.
-                sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribMaxIdleTimeout, 
+                sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribMaxIdleTimeout,
                     (_maxIdleTimeoutSec == int.MaxValue) ? _maxIdleTimeoutSec : (1000 * _maxIdleTimeoutSec)));
             }
 
@@ -367,9 +367,9 @@ namespace Microsoft.PowerShell.Commands
         internal override string ConstructOptionsAsXmlAttributes()
         {
             StringBuilder sb = new StringBuilder();
-            if (outputBufferingMode.HasValue)
+            if (_outputBufferingMode.HasValue)
             {
-                sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribOutputBufferingMode, outputBufferingMode.ToString()));
+                sb.Append(string.Format(CultureInfo.InvariantCulture, Token, AttribOutputBufferingMode, _outputBufferingMode.ToString()));
             }
 
             if (_processIdleTimeoutSec.HasValue)
@@ -387,9 +387,9 @@ namespace Microsoft.PowerShell.Commands
         internal override Hashtable ConstructOptionsAsHashtable()
         {
             Hashtable table = new Hashtable();
-            if (outputBufferingMode.HasValue)
+            if (_outputBufferingMode.HasValue)
             {
-                table[AttribOutputBufferingMode] = outputBufferingMode.ToString();
+                table[AttribOutputBufferingMode] = _outputBufferingMode.ToString();
             }
 
             if (_processIdleTimeoutSec.HasValue)
@@ -408,7 +408,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(WSManConfigurationOption))]
     public sealed class NewPSTransportOptionCommand : PSCmdlet
     {
-        private WSManConfigurationOption option = new WSManConfigurationOption();
+        private WSManConfigurationOption _option = new WSManConfigurationOption();
 
         /// <summary>
         /// MaxIdleTimeoutSec
@@ -418,11 +418,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return option.MaxIdleTimeoutSec;
+                return _option.MaxIdleTimeoutSec;
             }
             set
             {
-                option.MaxIdleTimeoutSec = value;
+                _option.MaxIdleTimeoutSec = value;
             }
         }
 
@@ -434,11 +434,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return option.ProcessIdleTimeoutSec;
+                return _option.ProcessIdleTimeoutSec;
             }
             set
             {
-                option.ProcessIdleTimeoutSec = value;
+                _option.ProcessIdleTimeoutSec = value;
             }
         }
 
@@ -450,11 +450,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return option.MaxSessions;
+                return _option.MaxSessions;
             }
             set
             {
-                option.MaxSessions = value;
+                _option.MaxSessions = value;
             }
         }
 
@@ -466,11 +466,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return option.MaxConcurrentCommandsPerSession;
+                return _option.MaxConcurrentCommandsPerSession;
             }
             set
             {
-                option.MaxConcurrentCommandsPerSession = value;
+                _option.MaxConcurrentCommandsPerSession = value;
             }
         }
 
@@ -482,11 +482,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return option.MaxSessionsPerUser;
+                return _option.MaxSessionsPerUser;
             }
             set
             {
-                option.MaxSessionsPerUser = value;
+                _option.MaxSessionsPerUser = value;
             }
         }
 
@@ -498,11 +498,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return option.MaxMemoryPerSessionMB;
+                return _option.MaxMemoryPerSessionMB;
             }
             set
             {
-                option.MaxMemoryPerSessionMB = value;
+                _option.MaxMemoryPerSessionMB = value;
             }
         }
 
@@ -514,11 +514,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return option.MaxProcessesPerSession;
+                return _option.MaxProcessesPerSession;
             }
             set
             {
-                option.MaxProcessesPerSession = value;
+                _option.MaxProcessesPerSession = value;
             }
         }
 
@@ -530,11 +530,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return option.MaxConcurrentUsers;
+                return _option.MaxConcurrentUsers;
             }
             set
             {
-                option.MaxConcurrentUsers = value;
+                _option.MaxConcurrentUsers = value;
             }
         }
 
@@ -546,11 +546,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return option.IdleTimeoutSec;
+                return _option.IdleTimeoutSec;
             }
             set
             {
-                option.IdleTimeoutSec = value;
+                _option.IdleTimeoutSec = value;
             }
         }
 
@@ -562,11 +562,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return option.OutputBufferingMode;
+                return _option.OutputBufferingMode;
             }
             set
             {
-                option.OutputBufferingMode = value;
+                _option.OutputBufferingMode = value;
             }
         }
 
@@ -575,7 +575,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            this.WriteObject(option);
+            this.WriteObject(_option);
         }
     }
 }

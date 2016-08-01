@@ -13,17 +13,17 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     internal class CimCmdletDefinitionContext
     {
         internal CimCmdletDefinitionContext(
-            string cmdletizationClassName, 
-            string cmdletizationClassVersion, 
-            Version cmdletizationModuleVersion, 
-            bool supportsShouldProcess, 
+            string cmdletizationClassName,
+            string cmdletizationClassVersion,
+            Version cmdletizationModuleVersion,
+            bool supportsShouldProcess,
             IDictionary<string, string> privateData)
         {
             this.CmdletizationClassName = cmdletizationClassName;
             this.CmdletizationClassVersion = cmdletizationClassVersion;
             this.CmdletizationModuleVersion = cmdletizationModuleVersion;
             this.SupportsShouldProcess = supportsShouldProcess;
-            this._privateData = privateData;
+            _privateData = privateData;
         }
 
         public string CmdletizationClassName { get; private set; }
@@ -42,15 +42,15 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 {
                     bool newValue = false;
                     string queryLanguage;
-                    if (this._privateData != null &&
-                        this._privateData.TryGetValue(QueryLanguageKey, out queryLanguage) &&
+                    if (_privateData != null &&
+                        _privateData.TryGetValue(QueryLanguageKey, out queryLanguage) &&
                         queryLanguage.Equals("None", StringComparison.OrdinalIgnoreCase))
                     {
                         newValue = true;
                     }
-                    this._useEnumerateInstancesInsteadOfWql = newValue;
+                    _useEnumerateInstancesInsteadOfWql = newValue;
                 }
-                return this._useEnumerateInstancesInsteadOfWql.Value;
+                return _useEnumerateInstancesInsteadOfWql.Value;
             }
         }
 
@@ -68,10 +68,10 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         public int DefaultThrottleLimit
         {
-            get 
-            { 
+            get
+            {
                 string defaultThrottleLimitString;
-                if (!this._privateData.TryGetValue("DefaultThrottleLimit", out defaultThrottleLimitString))
+                if (!_privateData.TryGetValue("DefaultThrottleLimit", out defaultThrottleLimitString))
                 {
                     return FallbackDefaultThrottleLimit;
                 }
@@ -88,19 +88,19 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         public bool ExposeCimNamespaceParameter
         {
-            get { return this._privateData.ContainsKey("CimNamespaceParameter"); }
+            get { return _privateData.ContainsKey("CimNamespaceParameter"); }
         }
 
         public bool ClientSideWriteVerbose
         {
-            get { return this._privateData.ContainsKey("ClientSideWriteVerbose"); }
+            get { return _privateData.ContainsKey("ClientSideWriteVerbose"); }
         }
 
         public bool ClientSideShouldProcess
         {
             get
             {
-                return this._privateData.ContainsKey("ClientSideShouldProcess");
+                return _privateData.ContainsKey("ClientSideShouldProcess");
             }
         }
 
@@ -114,22 +114,22 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 {
                     string newResourceUriString;
                     Uri newResourceUri;
-                    if (this._privateData != null &&
-                        this._privateData.TryGetValue("ResourceUri", out newResourceUriString) &&
+                    if (_privateData != null &&
+                        _privateData.TryGetValue("ResourceUri", out newResourceUriString) &&
                         Uri.TryCreate(newResourceUriString, UriKind.RelativeOrAbsolute, out newResourceUri))
                     {
-                        this._resourceUri = newResourceUri;
+                        _resourceUri = newResourceUri;
                     }
 
-                    this._resourceUriHasBeenCalculated = true;
+                    _resourceUriHasBeenCalculated = true;
                 }
-                return this._resourceUri;
+                return _resourceUri;
             }
         }
 
         public bool SkipTestConnection
         {
-            get { return this._privateData.ContainsKey("SkipTestConnection"); }
+            get { return _privateData.ContainsKey("SkipTestConnection"); }
         }
 
         private CimOperationFlags? _schemaConformanceLevel;
@@ -142,8 +142,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     CimOperationFlags newSchemaConformanceLevel = 0;
 
                     string schemaConformanceFromCdxml;
-                    if (this._privateData != null &&
-                        this._privateData.TryGetValue("TypeInformation", out schemaConformanceFromCdxml))
+                    if (_privateData != null &&
+                        _privateData.TryGetValue("TypeInformation", out schemaConformanceFromCdxml))
                     {
                         if (schemaConformanceFromCdxml.Equals("Basic", StringComparison.OrdinalIgnoreCase))
                         {

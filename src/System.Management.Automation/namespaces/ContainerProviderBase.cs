@@ -309,8 +309,8 @@ namespace System.Management.Automation.Provider
             Context = context;
             return RenameItemDynamicParameters(path, newName);
         } // RenameItemDynamicParameters
-        
-        
+
+
         /// <summary>
         /// Internal wrapper for the New protected method. It is called instead
         /// of the protected method that is overridden by derived classes so that the
@@ -389,7 +389,7 @@ namespace System.Management.Automation.Provider
             Context = context;
             return NewItemDynamicParameters(path, type, newItemValue);
         } // NewItemDynamicParameters
-        
+
         /// <summary>
         /// Internal wrapper for the Remove protected method. It is called instead
         /// of the protected method that is overridden by derived classes so that the
@@ -455,7 +455,7 @@ namespace System.Management.Automation.Provider
             Context = context;
             return RemoveItemDynamicParameters(path, recurse);
         } // RemoveItemDynamicParameters
-        
+
 
         /// <summary>
         /// Internal wrapper for the HasChildItems protected method. It is called instead
@@ -568,7 +568,7 @@ namespace System.Management.Automation.Provider
             Context = context;
             return CopyItemDynamicParameters(path, destination, recurse);
         } // CopyItemDynamicParameters
-        
+
         #endregion Internal members
 
         #region Protected methods
@@ -999,8 +999,8 @@ namespace System.Management.Automation.Provider
         /// The default implemenation returns null. (no additional parameters)
         /// </returns>
         protected virtual object NewItemDynamicParameters(
-            string path, 
-            string itemTypeName, 
+            string path,
+            string itemTypeName,
             object newItemValue)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
@@ -1209,8 +1209,8 @@ namespace System.Management.Automation.Provider
         /// The default implemenation returns null. (no additional parameters)
         /// </returns>
         protected virtual object CopyItemDynamicParameters(
-            string path, 
-            string destination, 
+            string path,
+            string destination,
             bool recurse)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
@@ -1220,10 +1220,8 @@ namespace System.Management.Automation.Provider
         } // CopyItemDynamicParameters
 
         #endregion Protected members
-
     } // ContainerCmdletProvider
 
     #endregion ContainerCmdletProvider
-        
 } // namespace System.Management.Automation
 

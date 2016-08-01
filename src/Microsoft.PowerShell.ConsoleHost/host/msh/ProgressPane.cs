@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell
     /// progress updates are shown. 
     /// 
     ///</summary>
-    
+
     internal
     class ProgressPane
     {
@@ -34,17 +34,17 @@ namespace Microsoft.PowerShell
         /// An implementation of the PSHostRawUserInterface with which the pane will be shown and hidden.
         /// 
         /// </param>
-        
+
         internal
         ProgressPane(ConsoleHostUserInterface ui)
         {
             if (ui == null) throw new ArgumentNullException("ui");
-            this.ui = ui;
-            this.rawui = ui.RawUI;
+            _ui = ui;
+            _rawui = ui.RawUI;
         }
 
-        
-        
+
+
         /// <summary>
         /// 
         /// Indicates whether the pane is visible on the screen buffer or not.
@@ -55,14 +55,14 @@ namespace Microsoft.PowerShell
         /// true if the pane is visible, false if not.
         /// 
         ///</value>
-        
+
         internal
         bool
         IsShowing
         {
-            get 
+            get
             {
-                return (savedRegion != null);
+                return (_savedRegion != null);
             }
         }
 
@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell
         /// that it can be restored again.
         /// 
         /// </summary>
-        
+
         internal
         void
         Show()
@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell
             {
                 // Get temporary reference to the progress region since it can be 
                 // changed at any time by a call to WriteProgress.
-                BufferCell[,] tempProgressRegion = progressRegion;
+                BufferCell[,] tempProgressRegion = _progressRegion;
                 if (tempProgressRegion == null)
                 {
                     return;
@@ -93,40 +93,40 @@ namespace Microsoft.PowerShell
 
                 int rows = tempProgressRegion.GetLength(0);
                 int cols = tempProgressRegion.GetLength(1);
-                location = rawui.WindowPosition;
+                _location = _rawui.WindowPosition;
 
                 // We have to show the progress pane in the first column, as the screen buffer at any point might contain
                 // a CJK double-cell characters, which makes it impractical to try to find a position where the pane would
                 // not slice a character.  Column 0 is the only place where we know for sure we can place the pane.
 
-                location.X = 0;
-                location.Y = Math.Min(location.Y + 2, bufSize.Height);
+                _location.X = 0;
+                _location.Y = Math.Min(_location.Y + 2, _bufSize.Height);
 
 #if UNIX
                 // replace the saved region in the screen buffer with our progress display
-                location = rawui.CursorPosition;
+                _location = _rawui.CursorPosition;
 
                 //set the cursor position back to the beginning of the region to overwrite write-progress
                 //if the cursor is at the bottom, back it up to overwrite the previous write progress
-                if (location.Y >= rawui.BufferSize.Height - rows)
+                if (_location.Y >= _rawui.BufferSize.Height - rows)
                 {
                     Console.Out.Write('\n');
-                    if (location.Y >= rows)
+                    if (_location.Y >= rows)
                     {
-                        location.Y -= rows;
+                        _location.Y -= rows;
                     }
                 }
 
-                rawui.CursorPosition = location;
+                _rawui.CursorPosition = _location;
 #else
                 // Save off the current contents of the screen buffer in the region that we will occupy
-                savedRegion =
-                    rawui.GetBufferContents(
-                        new Rectangle(location.X, location.Y, location.X + cols - 1, location.Y + rows - 1));
+                _savedRegion =
+                    _rawui.GetBufferContents(
+                        new Rectangle(_location.X, _location.Y, _location.X + cols - 1, _location.Y + rows - 1));
 #endif
 
                 // replace the saved region in the screen buffer with our progress display
-                rawui.SetBufferContents(location, tempProgressRegion);
+                _rawui.SetBufferContents(_location, tempProgressRegion);
             }
         }
 
@@ -150,8 +150,8 @@ namespace Microsoft.PowerShell
                 // detecting a change would be at least as expensive as chucking the savedRegion and rebuilding it.  And it would
                 // be very complicated.
 
-                rawui.SetBufferContents(location, savedRegion);
-                savedRegion = null;
+                _rawui.SetBufferContents(_location, _savedRegion);
+                _savedRegion = null;
             }
         }
 
@@ -167,41 +167,41 @@ namespace Microsoft.PowerShell
         /// A PendingProgress instance that represents the outstanding activities that should be shown.
         /// 
         /// </param>
-        
+
         internal
         void
         Show(PendingProgress pendingProgress)
         {
             Dbg.Assert(pendingProgress != null, "pendingProgress may not be null");
 
-            bufSize = rawui.BufferSize;
+            _bufSize = _rawui.BufferSize;
 
             // In order to keep from slicing any CJK double-cell characters that might be present in the screen buffer, 
             // we use the full width of the buffer.
 
-            int maxWidth = bufSize.Width;
-            int maxHeight = Math.Max(5, rawui.WindowSize.Height / 3); 
+            int maxWidth = _bufSize.Width;
+            int maxHeight = Math.Max(5, _rawui.WindowSize.Height / 3);
 
-            string[] contents = pendingProgress.Render(maxWidth, maxHeight, rawui);
+            string[] contents = pendingProgress.Render(maxWidth, maxHeight, _rawui);
             if (contents == null)
             {
                 // There's nothing to show.
 
                 Hide();
-                progressRegion = null;
+                _progressRegion = null;
                 return;
             }
 
             // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...
 
-            BufferCell[,] newRegion = rawui.NewBufferCellArray(contents, ui.ProgressForegroundColor, ui.ProgressBackgroundColor);
+            BufferCell[,] newRegion = _rawui.NewBufferCellArray(contents, _ui.ProgressForegroundColor, _ui.ProgressBackgroundColor);
             Dbg.Assert(newRegion != null, "NewBufferCellArray has failed!");
 
-            if (progressRegion == null)
+            if (_progressRegion == null)
             {
                 // we've never shown this pane before.
 
-                progressRegion = newRegion;
+                _progressRegion = newRegion;
                 Show();
             }
             else
@@ -216,11 +216,11 @@ namespace Microsoft.PowerShell
                 // would usually result in detection of a change, so why bother?
 
                 bool sizeChanged =
-                        (newRegion.GetLength(0) != progressRegion.GetLength(0))
-                    ||  (newRegion.GetLength(1) != progressRegion.GetLength(1))
+                        (newRegion.GetLength(0) != _progressRegion.GetLength(0))
+                    || (newRegion.GetLength(1) != _progressRegion.GetLength(1))
                     ? true : false;
 
-                progressRegion = newRegion;
+                _progressRegion = newRegion;
 
                 if (sizeChanged)
                 {
@@ -232,19 +232,19 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    rawui.SetBufferContents(location, progressRegion);
+                    _rawui.SetBufferContents(_location, _progressRegion);
                 }
             }
         }
 
 
 
-        private Coordinates location = new Coordinates(0, 0);
-        private Size bufSize;
-        private BufferCell[,] savedRegion;
-        private BufferCell[,] progressRegion;
-        private PSHostRawUserInterface rawui;
-        private ConsoleHostUserInterface ui;
+        private Coordinates _location = new Coordinates(0, 0);
+        private Size _bufSize;
+        private BufferCell[,] _savedRegion;
+        private BufferCell[,] _progressRegion;
+        private PSHostRawUserInterface _rawui;
+        private ConsoleHostUserInterface _ui;
     }
 }   // namespace 
 

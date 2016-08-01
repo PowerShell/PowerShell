@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Text;
 using System.Collections;
@@ -21,7 +22,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal const string ellipses = "...";
 
-        internal static string PSObjectIsOfExactType (Collection<string> typeNames)
+        internal static string PSObjectIsOfExactType(Collection<string> typeNames)
         {
             if (typeNames.Count != 0)
                 return typeNames[0];
@@ -117,7 +118,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="target">shell object to process</param>
         /// <param name="expressionFactory">expression factory to create MshExpression</param>
         /// <returns>resolved MshExpression; null if no match was found</returns>
-        internal static MshExpression GetDisplayNameExpression (PSObject target, MshExpressionFactory expressionFactory)
+        internal static MshExpression GetDisplayNameExpression(PSObject target, MshExpressionFactory expressionFactory)
         {
             // first try to get the expression from the object (types.ps1xml data)
             MshExpression expressionFromObject = GetDefaultNameExpression(target);
@@ -135,7 +136,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // go over the patterns, looking for the first match
             foreach (string pattern in knownPatterns)
             {
-                MshExpression ex = new MshExpression (pattern);
+                MshExpression ex = new MshExpression(pattern);
                 List<MshExpression> exprList = ex.ResolveNames(target);
 
                 while ((exprList.Count > 0) && (
@@ -172,8 +173,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return null;
 
             // evaluate the expression
-            List<MshExpressionResult> resList = ex.GetValues (target);
-            
+            List<MshExpressionResult> resList = ex.GetValues(target);
+
             if (resList.Count == 0 || resList[0].Exception != null)
             {
                 // no results or the retrieval on the first one failed
@@ -215,11 +216,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return PSObjectHelper.AsPSObject(x).ToString();
             }
         }
-        
+
         private static string GetObjectName(object x, MshExpressionFactory expressionFactory)
         {
             string objName;
-            
+
             // check if the underlying object is of primitive type
             // if so just return its value
             if (x is PSObject &&
@@ -245,7 +246,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else
                 {
-
                     MshExpressionResult r = PSObjectHelper.GetDisplayName(PSObjectHelper.AsPSObject(x), expressionFactory);
                     if ((r != null) && (r.Exception == null))
                     {
@@ -368,15 +368,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     formatErrorObject.sourceObject = so;
                     formatErrorObject.exception = e;
                 }
-                return "";                
+                return "";
             }
         }
 
-        private static readonly PSObject emptyPSObject = new PSObject("");
+        private static readonly PSObject s_emptyPSObject = new PSObject("");
 
         internal static PSObject AsPSObject(object obj)
         {
-            return (obj == null) ? emptyPSObject : PSObject.AsPSObject (obj);
+            return (obj == null) ? s_emptyPSObject : PSObject.AsPSObject(obj);
         }
 
         /// <summary>
@@ -388,11 +388,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="formatErrorObject">formatting error object, if present</param>
         /// <param name="expressionFactory">expression factory to create MshExpression</param>
         /// <returns>string representation</returns>
-        internal static string FormatField (FieldFormattingDirective directive, object val, int enumerationLimit,
+        internal static string FormatField(FieldFormattingDirective directive, object val, int enumerationLimit,
             StringFormatError formatErrorObject, MshExpressionFactory expressionFactory)
         {
             PSObject so = PSObjectHelper.AsPSObject(val);
-            if (directive != null && !string.IsNullOrEmpty (directive.formatString))
+            if (directive != null && !string.IsNullOrEmpty(directive.formatString))
             {
                 // we have a formatting directive, apply it 
                 // NOTE: with a format directive, we do not make any attempt
@@ -401,14 +401,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     // use some heuristics to determine if we have "composite formatting"
                     // 2004/11/16-JonN This is heuristic but should be safe enough
-                    if (directive.formatString.Contains ("{0") || directive.formatString.Contains ("}"))
+                    if (directive.formatString.Contains("{0") || directive.formatString.Contains("}"))
                     {
                         // we do have it, just use it
-                        return String.Format (CultureInfo.CurrentCulture, directive.formatString, so);
+                        return String.Format(CultureInfo.CurrentCulture, directive.formatString, so);
                     }
                     // we fall back to the PSObject's IFormattable.ToString()
                     // pass a null IFormatProvider
-                    return so.ToString (directive.formatString, null);
+                    return so.ToString(directive.formatString, null);
                 }
                 catch (Exception e) // 2004/11/17-JonN This covers exceptions thrown in
                                     // String.Format and PSObject.ToString().
@@ -429,7 +429,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we do not have a formatting directive or we failed the formatting (fallback)
             // but we did not report as an error;
             // this call would deal with IEnumerable if the object implements it
-            return PSObjectHelper.SmartToString (so, expressionFactory, enumerationLimit, formatErrorObject);
+            return PSObjectHelper.SmartToString(so, expressionFactory, enumerationLimit, formatErrorObject);
         }
 
         private static PSMemberSet MaskDeserializedAndGetStandardMembers(PSObject so)
@@ -480,7 +480,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="so">shell object to process</param>
         /// <returns>resolved expression; empty list if not found</returns>
-        internal static List<MshExpression> GetDefaultPropertySet (PSObject so)
+        internal static List<MshExpression> GetDefaultPropertySet(PSObject so)
         {
             List<MshExpression> retVal = GetDefaultPropertySet(so.PSStandardMembers);
             if (retVal.Count == 0)
@@ -511,7 +511,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            return null; 
+            return null;
         }
 
         private static MshExpression GetDefaultNameExpression(PSObject so)
@@ -536,17 +536,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="expressionFactory">expression factory to create MshExpression</param>
         /// <param name="result"> not null if an error condition arose</param>
         /// <returns>formatted string</returns>
-        internal static string GetExpressionDisplayValue (
-            PSObject so, 
+        internal static string GetExpressionDisplayValue(
+            PSObject so,
             int enumerationLimit,
             MshExpression ex,
-            FieldFormattingDirective directive, 
-            StringFormatError formatErrorObject, 
+            FieldFormattingDirective directive,
+            StringFormatError formatErrorObject,
             MshExpressionFactory expressionFactory,
             out MshExpressionResult result)
         {
             result = null;
-            List<MshExpressionResult> resList = ex.GetValues (so);
+            List<MshExpressionResult> resList = ex.GetValues(so);
 
             if (resList.Count == 0)
             {
@@ -585,8 +585,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 catch (ArgumentException)
                 {
-                   // ignore any exceptions thrown retrieving the *ComputerName properties
-                   // from the object
+                    // ignore any exceptions thrown retrieving the *ComputerName properties
+                    // from the object
                 }
                 catch (ExtendedTypeSystemException)
                 {
@@ -616,7 +616,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal Exception exception;
     }
 
-    internal delegate ScriptBlock CreateScriptBlockFromString (string scriptBlockString);
+    internal delegate ScriptBlock CreateScriptBlockFromString(string scriptBlockString);
 
     /// <summary>
     /// helper class to create MshExpression's from format.ps1xml data structures
@@ -624,7 +624,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class MshExpressionFactory
     {
         /// <exception cref="ParseException"></exception>
-        internal void VerifyScriptBlockText (string scriptText)
+        internal void VerifyScriptBlockText(string scriptText)
         {
             ScriptBlock.Create(scriptText);
         }
@@ -683,10 +683,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     sb.LanguageMode = PSLanguageMode.FullLanguage;
                 }
 
-                MshExpression ex = new MshExpression (sb);
+                MshExpression ex = new MshExpression(sb);
 
-                _expressionCache.Add (et, ex);
-                
+                _expressionCache.Add(et, ex);
+
                 return ex;
             }
 

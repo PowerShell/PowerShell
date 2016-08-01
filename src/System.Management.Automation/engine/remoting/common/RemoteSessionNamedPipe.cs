@@ -88,7 +88,7 @@ namespace System.Management.Automation.Remoting
             {
                 throw new PSArgumentNullException("proc");
             }
-            
+
             if (string.IsNullOrEmpty(appDomainName))
             {
                 appDomainName = DefaultAppDomainName;
@@ -329,7 +329,7 @@ namespace System.Management.Automation.Remoting
         private const int _namedPipeBufferSizeForRemoting = 32768;
 
         // Singleton server.
-        private static object SyncObject;
+        private static object s_syncObject;
         internal static RemoteSessionNamedPipeServer IPCNamedPipeServer;
         internal static bool IPCNamedPipeServerEnabled;
 
@@ -530,7 +530,7 @@ namespace System.Management.Automation.Remoting
 
         static RemoteSessionNamedPipeServer()
         {
-            SyncObject = new object();
+            s_syncObject = new object();
 
             // All PowerShell instances will start with the named pipe
             // and listner created and running.
@@ -575,8 +575,8 @@ namespace System.Management.Automation.Remoting
             }
 
             if (_serverPipeStream != null)
-            {        
-                try { _serverPipeStream.Dispose(); } 
+            {
+                try { _serverPipeStream.Dispose(); }
                 catch (ObjectDisposedException) { }
             }
         }
@@ -621,7 +621,7 @@ namespace System.Management.Automation.Remoting
         #region Private Methods
 
         private static CommonSecurityDescriptor GetServerPipeSecurity()
-        {  
+        {
             // Built-in Admin SID
             SecurityIdentifier adminSID = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
             DiscretionaryAcl dacl = new DiscretionaryAcl(false, false, 1);
@@ -687,7 +687,7 @@ namespace System.Management.Automation.Remoting
             {
                 // Begin listening for a client connect.
                 this.WaitForConnection();
-                
+
                 try
                 {
                     userName = WindowsIdentity.GetCurrent().Name;
@@ -837,7 +837,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal static void CreateIPCNamedPipeServerSingleton()
         {
-            lock (SyncObject)
+            lock (s_syncObject)
             {
                 if (!IPCNamedPipeServerEnabled) { return; }
 
@@ -975,7 +975,7 @@ namespace System.Management.Automation.Remoting
         {
             if (_streamReader != null)
             {
-                try { _streamReader.Dispose(); } 
+                try { _streamReader.Dispose(); }
                 catch (ObjectDisposedException) { }
                 _streamReader = null;
             }
@@ -989,7 +989,7 @@ namespace System.Management.Automation.Remoting
 
             if (_clientPipeStream != null)
             {
-                try { _clientPipeStream.Dispose(); } 
+                try { _clientPipeStream.Dispose(); }
                 catch (ObjectDisposedException) { }
             }
         }
@@ -1033,7 +1033,7 @@ namespace System.Management.Automation.Remoting
         { }
 
         protected virtual NamedPipeClientStream DoConnect(int timeout)
-        { 
+        {
             return null;
         }
 
@@ -1074,7 +1074,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="procId">Target process Id for pipe.</param>
         /// <param name="appDomainName">AppDomain name or null for default AppDomain</param>
         public RemoteSessionNamedPipeClient(
-            int procId, string appDomainName) : 
+            int procId, string appDomainName) :
             this(NamedPipeUtils.CreateProcessPipeName(procId, appDomainName))
         { }
 
@@ -1095,7 +1095,7 @@ namespace System.Management.Automation.Remoting
             // Defer creating the .Net NamedPipeClientStream object until we connect.
             // _clientPipeStream == null.
         }
-        
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -1132,14 +1132,14 @@ namespace System.Management.Automation.Remoting
         #endregion
 
         #region Protected Methods
-        
+
         protected override NamedPipeClientStream DoConnect(int timeout)
         {
             // Repeatedly attempt connection to pipe until timeout expires.
             int startTime = Environment.TickCount;
             int elapsedTime = 0;
             _connecting = true;
-        
+
             do
             {
                 // Wait in 100 mSec increments.
@@ -1151,7 +1151,6 @@ namespace System.Management.Automation.Remoting
 
                 _connecting = false;
                 return OpenNamedPipe();
-
             } while (_connecting && (elapsedTime < timeout));
 
             _connecting = false;
@@ -1187,7 +1186,7 @@ namespace System.Management.Automation.Remoting
             {
                 throw new System.ComponentModel.Win32Exception(lastError);
             }
-            
+
             try
             {
                 return new NamedPipeClientStream(
@@ -1223,8 +1222,8 @@ namespace System.Management.Automation.Remoting
         /// <param name="appDomainName">AppDomain name or null for default AppDomain</param>
         /// <param name="containerObRoot">Container OB root.</param>
         public ContainerSessionNamedPipeClient(
-            int procId, 
-            string appDomainName, 
+            int procId,
+            string appDomainName,
             string containerObRoot)
         {
             if (String.IsNullOrEmpty(containerObRoot))
@@ -1242,7 +1241,7 @@ namespace System.Management.Automation.Remoting
         #endregion
 
         #region Protected Methods
-        
+
         /// <summary>
         /// Helper method to open a named pipe via native APIs and return in
         /// .Net NamedPipeClientStream wrapper object.
@@ -1259,7 +1258,7 @@ namespace System.Management.Automation.Remoting
             int startTime = Environment.TickCount;
             int elapsedTime = 0;
             SafePipeHandle pipeHandle = null;
-            
+
             do
             {
                 // Get handle to pipe.
@@ -1292,7 +1291,7 @@ namespace System.Management.Automation.Remoting
                     break;
                 }
             } while (elapsedTime < timeout);
-            
+
             try
             {
                 return new NamedPipeClientStream(

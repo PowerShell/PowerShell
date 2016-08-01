@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Text;
 using System.Management.Automation;
@@ -9,8 +10,6 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
 {
- 
-
     /// <summary>
     /// implementation for the out-string command
     /// </summary>
@@ -18,8 +17,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(string))]
     public class OutStringCommand : FrontEndCommandBase
     {
-        
-#region Command Line Parameters
+        #region Command Line Parameters
         /// <summary>
         /// optional, non positional parameter to specify the
         /// streaming behavior
@@ -29,66 +27,66 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter Stream
         {
-            get { return stream; }
-            set { stream = value; }
+            get { return _stream; }
+            set { _stream = value; }
         }
 
-        private bool stream;
+        private bool _stream;
 
         /// <summary>
         /// optional, number of columns to use when writing to device
         /// </summary>
-        [ValidateRangeAttribute (2, int.MaxValue)]
+        [ValidateRangeAttribute(2, int.MaxValue)]
         [Parameter]
         public int Width
         {
-            get { return (width != null) ? width.Value : 0; }
-            set { width = value; }
+            get { return (_width != null) ? _width.Value : 0; }
+            set { _width = value; }
         }
 
-        private Nullable<int> width = null;
-#endregion
+        private Nullable<int> _width = null;
+        #endregion
 
         /// <summary>
         /// set inner command
         /// </summary>
-        public OutStringCommand ()
+        public OutStringCommand()
         {
-            this.implementation = new OutputManagerInner ();
+            this.implementation = new OutputManagerInner();
         }
 
         /// <summary>
         /// read command line parameters
         /// </summary>
-        protected override void BeginProcessing ()
+        protected override void BeginProcessing()
         {
             // set up the LineOutput interface
             OutputManagerInner outInner = (OutputManagerInner)this.implementation;
 
-            outInner.LineOutput = InstantiateLineOutputInterface ();
+            outInner.LineOutput = InstantiateLineOutputInterface();
 
             // finally call the base class for general hookup
-            base.BeginProcessing ();
+            base.BeginProcessing();
         }
 
         /// <summary>
         /// one time initialization: acquire a screen host interface
         /// by creating one on top of a stream
         /// </summary>
-        private LineOutput InstantiateLineOutputInterface ()
+        private LineOutput InstantiateLineOutputInterface()
         {
             // set up the streaming text writer
-            StreamingTextWriter.WriteLineCallback callback = new StreamingTextWriter.WriteLineCallback (this.OnWriteLine);
+            StreamingTextWriter.WriteLineCallback callback = new StreamingTextWriter.WriteLineCallback(this.OnWriteLine);
 
-            this.writer = new StreamingTextWriter (callback, Host.CurrentCulture);
+            _writer = new StreamingTextWriter(callback, Host.CurrentCulture);
 
             // compute the # of columns available
             int computedWidth = 120;
 
-            if (this.width != null)
+            if (_width != null)
             {
                 // use the value from the command line
-                computedWidth = this.width.Value;
+                computedWidth = _width.Value;
             }
             else
             {
@@ -110,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // use it to create and initialize the Line Output writer
-            TextWriterLineOutput twlo = new TextWriterLineOutput (this.writer, computedWidth);
+            TextWriterLineOutput twlo = new TextWriterLineOutput(_writer, computedWidth);
 
             // finally have the LineOutput interface extracted
             return (LineOutput)twlo;
@@ -121,48 +119,47 @@ namespace Microsoft.PowerShell.Commands
         /// the output stream
         /// </summary>
         /// <param name="s"></param>
-        private void OnWriteLine (string s)
+        private void OnWriteLine(string s)
         {
-            if (this.stream)
-                this.WriteObject (s);
+            if (_stream)
+                this.WriteObject(s);
             else
-                this.buffer.AppendLine (s);
+                _buffer.AppendLine(s);
         }
 
         /// <summary>
         /// execution entry point
         /// </summary>
-        protected override void ProcessRecord ()
+        protected override void ProcessRecord()
         {
-            base.ProcessRecord ();
-            this.writer.Flush ();
+            base.ProcessRecord();
+            _writer.Flush();
         }
 
         /// <summary>
         /// execution entry point
         /// </summary>
-        protected override void EndProcessing ()
+        protected override void EndProcessing()
         {
-            base.EndProcessing ();
+            base.EndProcessing();
 
             //close the writer
-            this.writer.Flush ();
-            this.writer.Dispose();
-            
-            if (!this.stream)
-                this.WriteObject (this.buffer.ToString ());
+            _writer.Flush();
+            _writer.Dispose();
+
+            if (!_stream)
+                this.WriteObject(_buffer.ToString());
         }
 
         /// <summary>
         /// writer used by the LineOutput
         /// </summary>
-        private StreamingTextWriter writer = null;
+        private StreamingTextWriter _writer = null;
 
         /// <summary>
         ///  buffer used when buffering until the end
         /// </summary>
-        private StringBuilder buffer = new StringBuilder ();
-
+        private StringBuilder _buffer = new StringBuilder();
     }
 }
 

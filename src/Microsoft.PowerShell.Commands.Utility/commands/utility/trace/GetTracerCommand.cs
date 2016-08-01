@@ -21,12 +21,12 @@ namespace Microsoft.PowerShell.Commands
         /// which trace switch to get.
         /// </summary>
         /// <value></value>
-        [Parameter (Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Name
         {
-            get 
-            { 
-                return names; 
+            get
+            {
+                return _names;
             }
 
             set
@@ -36,10 +36,10 @@ namespace Microsoft.PowerShell.Commands
                     value = new string[] { "*" };
                 }
 
-                names = value;
+                _names = value;
             }
         } // TraceSource
-        private string[] names = new string[] { "*" };
+        private string[] _names = new string[] { "*" };
 
         #endregion Parameters
 
@@ -48,11 +48,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the PSTraceSource for the specified category
         /// </summary>
-        protected override void ProcessRecord ()
+        protected override void ProcessRecord()
         {
-            var sources = GetMatchingTraceSource(names, true);
+            var sources = GetMatchingTraceSource(_names, true);
             var result = sources.OrderBy(source => source.Name);
-            WriteObject (result, true);
+            WriteObject(result, true);
         } // ProcessRecord
 
         #endregion Cmdlet code

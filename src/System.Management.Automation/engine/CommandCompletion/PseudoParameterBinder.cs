@@ -354,7 +354,7 @@ namespace System.Management.Automation.Language
             if ((desiredParameters != null) && (desiredParameters.Length > 0))
             {
                 bool possiblyHadDesiredParameter = false;
-                foreach(CommandParameterAst commandParameter in commandAst.CommandElements.OfType<CommandParameterAst>())
+                foreach (CommandParameterAst commandParameter in commandAst.CommandElements.OfType<CommandParameterAst>())
                 {
                     string actualParameterName = commandParameter.ParameterName;
 
@@ -388,20 +388,20 @@ namespace System.Management.Automation.Language
             PseudoBindingInfo pseudoBinding = null;
             if (Runspace.DefaultRunspace == null)
             {
-                lock (bindCommandlLock)
+                lock (s_bindCommandlLock)
                 {
-                    if (bindCommandPowerShell == null)
+                    if (s_bindCommandPowerShell == null)
                     {
                         // Create a mini runspace by remove the types and formats
                         InitialSessionState minimalState = InitialSessionState.CreateDefault2();
                         minimalState.Types.Clear();
                         minimalState.Formats.Clear();
 
-                        bindCommandPowerShell = PowerShell.Create(minimalState);
+                        s_bindCommandPowerShell = PowerShell.Create(minimalState);
                     }
 
                     // Handle static binding from a non-PowerShell / C# application
-                    Runspace.DefaultRunspace = bindCommandPowerShell.Runspace;
+                    Runspace.DefaultRunspace = s_bindCommandPowerShell.Runspace;
                     // Static binding always does argument binding (not argument or parameter completion).
                     pseudoBinding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, null, PseudoParameterBinder.BindingType.ArgumentBinding);
                     Runspace.DefaultRunspace = null;
@@ -415,8 +415,8 @@ namespace System.Management.Automation.Language
 
             return new StaticBindingResult(commandAst, pseudoBinding);
         }
-        static Object bindCommandlLock = new Object();
-        static PowerShell bindCommandPowerShell = null;
+        private static Object s_bindCommandlLock = new Object();
+        private static PowerShell s_bindCommandPowerShell = null;
     }
 
     /// <summary>
@@ -426,8 +426,8 @@ namespace System.Management.Automation.Language
     {
         internal StaticBindingResult(CommandAst commandAst, PseudoBindingInfo bindingInfo)
         {
-            boundParameters = new Dictionary<string, ParameterBindingResult>(StringComparer.OrdinalIgnoreCase);
-            bindingExceptions = new Dictionary<string, StaticBindingError>(StringComparer.OrdinalIgnoreCase);
+            _boundParameters = new Dictionary<string, ParameterBindingResult>(StringComparer.OrdinalIgnoreCase);
+            _bindingExceptions = new Dictionary<string, StaticBindingError>(StringComparer.OrdinalIgnoreCase);
 
             if (bindingInfo == null)
             {
@@ -441,7 +441,7 @@ namespace System.Management.Automation.Language
 
         private void CreateBindingResultForSuccessfulBind(CommandAst commandAst, PseudoBindingInfo bindingInfo)
         {
-            this.bindingInfo = bindingInfo;
+            _bindingInfo = bindingInfo;
 
             // Check if there is exactly one parameter set valid. In that case,
             // ValidParameterSetFlags is exactly a power of two. Otherwise,
@@ -459,9 +459,9 @@ namespace System.Management.Automation.Language
                 (bindingInfo.ValidParameterSetsFlags &
                         (bindingInfo.ValidParameterSetsFlags - 1)) == 0;
 
-            if(parameterSetSpecified &&
-                (! remainingParameterSetIncludesDefault) &&
-                (! onlyOneRemainingParameterSet))
+            if (parameterSetSpecified &&
+                (!remainingParameterSetIncludesDefault) &&
+                (!onlyOneRemainingParameterSet))
             {
                 ParameterBindingException bindingException =
                     new ParameterBindingException(
@@ -473,7 +473,7 @@ namespace System.Management.Automation.Language
                         null,
                         ParameterBinderStrings.AmbiguousParameterSet,
                         "AmbiguousParameterSet");
-                bindingExceptions.Add(commandAst.CommandElements[0].Extent.Text,
+                _bindingExceptions.Add(commandAst.CommandElements[0].Extent.Text,
                     new StaticBindingError(commandAst.CommandElements[0], bindingException));
             }
 
@@ -501,7 +501,7 @@ namespace System.Management.Automation.Language
                             null,
                             ParameterBinderStrings.NamedParameterNotFound,
                             "NamedParameterNotFound");
-                    bindingExceptions.Add(parameterNotFound.ParameterName, new StaticBindingError(parameterNotFound, bindingException));
+                    _bindingExceptions.Add(parameterNotFound.ParameterName, new StaticBindingError(parameterNotFound, bindingException));
                 }
             }
 
@@ -511,7 +511,7 @@ namespace System.Management.Automation.Language
                 foreach (CommandParameterAst ambiguousParameter in bindingInfo.AmbiguousParameters)
                 {
                     ParameterBindingException bindingException = bindingInfo.BindingExceptions[ambiguousParameter];
-                    bindingExceptions.Add(ambiguousParameter.ParameterName, new StaticBindingError(ambiguousParameter, bindingException));
+                    _bindingExceptions.Add(ambiguousParameter.ParameterName, new StaticBindingError(ambiguousParameter, bindingException));
                 }
             }
 
@@ -532,7 +532,7 @@ namespace System.Management.Automation.Language
                             null,
                             ParameterBinderStrings.PositionalParameterNotFound,
                             "PositionalParameterNotFound");
-                    bindingExceptions.Add(argument.Argument.Extent.Text, new StaticBindingError(argument.Argument, bindingException));
+                    _bindingExceptions.Add(argument.Argument.Extent.Text, new StaticBindingError(argument.Argument, bindingException));
                 }
             }
 
@@ -558,7 +558,7 @@ namespace System.Management.Automation.Language
                     if (argumentAstArrayPair != null)
                     {
                         List<ExpressionAst> arguments = new List<ExpressionAst>();
-                        foreach(ExpressionAst expression in argumentAstArrayPair.Argument)
+                        foreach (ExpressionAst expression in argumentAstArrayPair.Argument)
                         {
                             ArrayLiteralAst expressionArray = expression as ArrayLiteralAst;
                             if (expressionArray != null)
@@ -595,7 +595,7 @@ namespace System.Management.Automation.Language
                     // We got a parameter and a value
                     if ((value != null) || (constantValue != null))
                     {
-                        boundParameters.Add(item.Key, new ParameterBindingResult(parameter, value, constantValue));
+                        _boundParameters.Add(item.Key, new ParameterBindingResult(parameter, value, constantValue));
                     }
                     else
                     {
@@ -623,7 +623,7 @@ namespace System.Management.Automation.Language
                                     ParameterBinderStrings.MissingArgument,
                                     "MissingArgument");
 
-                            bindingExceptions.Add(commandAst.CommandElements[0].Extent.Text,
+                            _bindingExceptions.Add(commandAst.CommandElements[0].Extent.Text,
                                 new StaticBindingError(commandAst.CommandElements[0], bindingException));
                         }
                     }
@@ -649,12 +649,12 @@ namespace System.Management.Automation.Language
                     ParameterBinderStrings.ParameterAlreadyBound,
                     "ParameterAlreadyBound");
             // if the duplicated Parameter Name appears more than twice, we will ignore as we already have similar bindingException.
-            if (!bindingExceptions.ContainsKey(duplicateParameter.ParameterName))
+            if (!_bindingExceptions.ContainsKey(duplicateParameter.ParameterName))
             {
-                bindingExceptions.Add(duplicateParameter.ParameterName, new StaticBindingError(duplicateParameter, bindingException));
+                _bindingExceptions.Add(duplicateParameter.ParameterName, new StaticBindingError(duplicateParameter, bindingException));
             }
         }
-        PseudoBindingInfo bindingInfo = null;
+        private PseudoBindingInfo _bindingInfo = null;
 
         private void CreateBindingResultForSyntacticBind(CommandAst commandAst)
         {
@@ -732,13 +732,13 @@ namespace System.Management.Automation.Language
 
         private void AddBoundParameter(CommandParameterAst parameter, string parameterName, ParameterBindingResult bindingResult)
         {
-            if (boundParameters.ContainsKey(parameterName))
+            if (_boundParameters.ContainsKey(parameterName))
             {
                 AddDuplicateParameterBindingException(parameter);
             }
             else
             {
-                boundParameters.Add(parameterName, bindingResult);
+                _boundParameters.Add(parameterName, bindingResult);
             }
         }
 
@@ -759,18 +759,18 @@ namespace System.Management.Automation.Language
         /// </summary>
         public Dictionary<string, ParameterBindingResult> BoundParameters
         {
-            get { return boundParameters; }
+            get { return _boundParameters; }
         }
-        private Dictionary<string, ParameterBindingResult> boundParameters;
+        private Dictionary<string, ParameterBindingResult> _boundParameters;
 
         /// <summary>
         /// 
         /// </summary>
         public Dictionary<string, StaticBindingError> BindingExceptions
         {
-            get { return bindingExceptions; }
+            get { return _bindingExceptions; }
         }
-        private Dictionary<string, StaticBindingError> bindingExceptions;
+        private Dictionary<string, StaticBindingError> _bindingExceptions;
     }
 
     /// <summary>
@@ -799,26 +799,26 @@ namespace System.Management.Automation.Language
         /// </summary>
         public Object ConstantValue
         {
-            get { return constantValue; }
+            get { return _constantValue; }
             internal set
             {
                 if (value != null)
                 {
-                    this.constantValue = value;
+                    _constantValue = value;
                 }
             }
         }
-        private object constantValue;
+        private object _constantValue;
 
         /// <summary>
         /// 
         /// </summary>
         public CommandElementAst Value
         {
-            get { return this.value; }
+            get { return _value; }
             internal set
             {
-                this.value = value;
+                _value = value;
 
                 ConstantExpressionAst constantValueAst = value as ConstantExpressionAst;
                 if (constantValueAst != null)
@@ -827,7 +827,7 @@ namespace System.Management.Automation.Language
                 }
             }
         }
-        private CommandElementAst value;
+        private CommandElementAst _value;
     }
 
     /// <summary>
@@ -914,20 +914,20 @@ namespace System.Management.Automation.Language
             Collection<AstParameterArgumentPair> duplicateParameters,
             Collection<AstParameterArgumentPair> unboundArguments)
         {
-            this._commandInfo = commandInfo;
-            this._infoType = PseudoBindingInfoType.PseudoBindingSucceed;
-            this._validParameterSetsFlags = validParameterSetsFlags;
-            this._defaultParameterSetFlag = defaultParameterSetFalg;
-            this._boundParameters = boundParameters;
-            this._unboundParameters = unboundParameters;
-            this._boundArguments = boundArguments;
-            this._boundPositionalParameter = boundPositionalParameter;
-            this._allParsedArguments = allParsedArguments;
-            this._parametersNotFound = parametersNotFound;
-            this._ambiguousParameters = ambiguousParameters;
-            this._bindingExceptions = bindingExceptions;
-            this._duplicateParameters = duplicateParameters;
-            this._unboundArguments = unboundArguments;
+            _commandInfo = commandInfo;
+            _infoType = PseudoBindingInfoType.PseudoBindingSucceed;
+            _validParameterSetsFlags = validParameterSetsFlags;
+            _defaultParameterSetFlag = defaultParameterSetFalg;
+            _boundParameters = boundParameters;
+            _unboundParameters = unboundParameters;
+            _boundArguments = boundArguments;
+            _boundPositionalParameter = boundPositionalParameter;
+            _allParsedArguments = allParsedArguments;
+            _parametersNotFound = parametersNotFound;
+            _ambiguousParameters = ambiguousParameters;
+            _bindingExceptions = bindingExceptions;
+            _duplicateParameters = duplicateParameters;
+            _unboundArguments = unboundArguments;
         }
 
         /// <summary>
@@ -943,11 +943,11 @@ namespace System.Management.Automation.Language
             Collection<AstParameterArgumentPair> allParsedArguments,
             List<MergedCompiledCommandParameter> unboundParameters)
         {
-            this._commandInfo = commandInfo;
-            this._infoType = PseudoBindingInfoType.PseudoBindingFail;
-            this._defaultParameterSetFlag = defaultParameterSetFlag;
-            this._allParsedArguments = allParsedArguments;
-            this._unboundParameters = unboundParameters;
+            _commandInfo = commandInfo;
+            _infoType = PseudoBindingInfoType.PseudoBindingFail;
+            _defaultParameterSetFlag = defaultParameterSetFlag;
+            _allParsedArguments = allParsedArguments;
+            _unboundParameters = unboundParameters;
         }
 
         internal string CommandName
@@ -1061,7 +1061,7 @@ namespace System.Management.Automation.Language
             /// </summary>
             ParameterCompletion
         }
-        
+
         /// <summary>
         /// Get the parameter binding metadata
         /// </summary>
@@ -1262,7 +1262,7 @@ namespace System.Management.Automation.Language
         private Dictionary<CommandParameterAst, ParameterBindingException> _bindingExceptions;
 
         // A corresponding list is also kept in WorkflowJobConverter.cs.
-        List<string> ignoredWorkflowParameters = null;
+        private List<string> _ignoredWorkflowParameters = null;
 
         /// <summary>
         /// Initialize collection/dictionary members when it's necessary
@@ -1270,8 +1270,8 @@ namespace System.Management.Automation.Language
         private void InitializeMembers()
         {
             List<string> supportedCommonParameters = new List<string>() { "Verbose", "Debug", "ErrorAction", "WarningAction", "InformationAction" };
-            ignoredWorkflowParameters = new List<string>(Cmdlet.CommonParameters.Concat<string>(Cmdlet.OptionalCommonParameters));
-            ignoredWorkflowParameters.RemoveAll(item => supportedCommonParameters.Contains(item, StringComparer.OrdinalIgnoreCase));
+            _ignoredWorkflowParameters = new List<string>(Cmdlet.CommonParameters.Concat<string>(Cmdlet.OptionalCommonParameters));
+            _ignoredWorkflowParameters.RemoveAll(item => supportedCommonParameters.Contains(item, StringComparer.OrdinalIgnoreCase));
 
             // Initializing binding realted members
             _function = false;
@@ -1343,7 +1343,7 @@ namespace System.Management.Automation.Language
             var scriptProcessor = processor as ScriptCommandProcessorBase;
             bool implementsDynamicParameters = commandProcessor != null &&
                                                commandProcessor.CommandInfo.ImplementsDynamicParameters;
-            
+
             var argumentsToGetDynamicParameters = implementsDynamicParameters
                                                       ? new List<object>(_commandElements.Count)
                                                       : null;
@@ -1481,7 +1481,7 @@ namespace System.Management.Automation.Language
                             {
                                 Type parameterType = GetActualActivityParameterType(pair.Value);
                                 var runtimeDefinedParameter = new RuntimeDefinedParameter(pair.Key, parameterType, attrCollection);
-                                var compiledCommandParameter = new CompiledCommandParameter(runtimeDefinedParameter, false) {IsInAllSets = true};
+                                var compiledCommandParameter = new CompiledCommandParameter(runtimeDefinedParameter, false) { IsInAllSets = true };
                                 var mergedCompiledCommandParameter = new MergedCompiledCommandParameter(compiledCommandParameter, ParameterBinderAssociation.DeclaredFormalParameters);
                                 parametersToAdd.Add(mergedCompiledCommandParameter);
                             }
@@ -1503,7 +1503,7 @@ namespace System.Management.Automation.Language
                         // Remove common parameters that are supported by all commands, but not
                         // by workflows
                         bool fixedReadOnly = false;
-                        foreach (var ignored in ignoredWorkflowParameters)
+                        foreach (var ignored in _ignoredWorkflowParameters)
                         {
                             if (_bindableParameters.BindableParameters.ContainsKey(ignored))
                             {
@@ -1797,7 +1797,7 @@ namespace System.Management.Automation.Language
                                 // Otherwise, skip the next argument
                                 index++;
                                 _parametersNotFound.Add(argument.Parameter);
-                                continue;                               
+                                continue;
                             }
                         }
                     }

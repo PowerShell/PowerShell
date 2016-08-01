@@ -23,12 +23,12 @@ namespace System.Management.Automation
             ExecutionContext context)
         {
             Diagnostics.Assert(context != null, "caller to verify context is not null");
-            this._context = context;
+            _context = context;
 
             Diagnostics.Assert(className != null, "caller to verify className is not null");
-            this._className = className;
-            this._useWildCards = useWildCards;
-            this.moduleInfoCache = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
+            _className = className;
+            _useWildCards = useWildCards;
+            _moduleInfoCache = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
         }
 
         #region private properties
@@ -36,11 +36,11 @@ namespace System.Management.Automation
         private string _className = null;
         private ExecutionContext _context = null;
         private PSClassInfo _currentMatch = null;
-        private IEnumerator<PSClassInfo> matchingClass = null;
-        private Collection<PSClassInfo> matchingClassList = null;
+        private IEnumerator<PSClassInfo> _matchingClass = null;
+        private Collection<PSClassInfo> _matchingClassList = null;
         private bool _useWildCards = false;
-        private Dictionary<string, PSModuleInfo> moduleInfoCache = null;
-        private object lockObject = new Object();
+        private Dictionary<string, PSModuleInfo> _moduleInfoCache = null;
+        private object _lockObject = new Object();
 
         #endregion
 
@@ -52,7 +52,7 @@ namespace System.Management.Automation
         public void Reset()
         {
             _currentMatch = null;
-            matchingClass = null;
+            _matchingClass = null;
         }
 
         /// <summary>
@@ -132,23 +132,23 @@ namespace System.Management.Automation
             PSClassInfo returnValue = null;
             WildcardPattern classNameMatcher = WildcardPattern.Get(_className, WildcardOptions.IgnoreCase);
 
-            if (matchingClassList == null)
+            if (_matchingClassList == null)
             {
-                matchingClassList = new Collection<PSClassInfo>();
+                _matchingClassList = new Collection<PSClassInfo>();
 
                 if (FindTypeByModulePath(classNameMatcher))
-                    matchingClass = matchingClassList.GetEnumerator();
+                    _matchingClass = _matchingClassList.GetEnumerator();
                 else
                     return null;
             }
 
-            if (!matchingClass.MoveNext())
+            if (!_matchingClass.MoveNext())
             {
-                matchingClass = null;
+                _matchingClass = null;
             }
             else
             {
-                returnValue = matchingClass.Current;
+                returnValue = _matchingClass.Current;
             }
 
             return returnValue;
@@ -175,7 +175,7 @@ namespace System.Management.Automation
                             var classInfo = CachedItemToPSClassInfo(classNameMatcher, modulePath);
                             if (classInfo != null)
                             {
-                                matchingClassList.Add(classInfo);
+                                _matchingClassList.Add(classInfo);
                                 matchFound = true;
                             }
                         }
@@ -189,7 +189,7 @@ namespace System.Management.Automation
                                 var classInfo = CachedItemToPSClassInfo(classNameMatcher, modulePath);
                                 if (classInfo != null)
                                 {
-                                    matchingClassList.Add(classInfo);
+                                    _matchingClassList.Add(classInfo);
                                     matchFound = true;
                                 }
                             }
@@ -209,7 +209,7 @@ namespace System.Management.Automation
         /// <param name="modulePath">Path to the module where the class is defined.</param>
         /// <returns>Converted PSClassInfo object.</returns>
         private PSClassInfo CachedItemToPSClassInfo(WildcardPattern classNameMatcher, string modulePath)
-        {              
+        {
             foreach (var module in GetPSModuleInfo(modulePath))
             {
                 var exportedTypes = module.GetExportedTypeDefinitions();
@@ -249,12 +249,12 @@ namespace System.Management.Automation
         {
             PSModuleInfo moduleInfo = null;
 
-            lock(lockObject)
+            lock (_lockObject)
             {
-                moduleInfoCache.TryGetValue(modulePath, out moduleInfo);
+                _moduleInfoCache.TryGetValue(modulePath, out moduleInfo);
             }
 
-            if(moduleInfo != null)
+            if (moduleInfo != null)
             {
                 var returnValue = new Collection<PSModuleInfo>();
                 returnValue.Add(moduleInfo);
@@ -277,11 +277,11 @@ namespace System.Management.Automation
                     .AddParameter("Debug", false)
                     .Invoke<PSModuleInfo>();
 
-            lock (lockObject)
+            lock (_lockObject)
             {
                 foreach (var module in modules)
                 {
-                    moduleInfoCache.Add(module.Path, module);
+                    _moduleInfoCache.Add(module.Path, module);
                 }
             }
 
@@ -326,6 +326,5 @@ namespace System.Management.Automation
         }
 
         #endregion
-
     }
 }

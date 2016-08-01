@@ -35,10 +35,10 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_disposed == false)
             {
-                if (resourceReader != null)
+                if (_resourceReader != null)
                 {
-                    resourceReader.Dispose();
-                    resourceReader = null;
+                    _resourceReader.Dispose();
+                    _resourceReader = null;
                 }
                 GC.SuppressFinalize(this);
             }
@@ -48,17 +48,17 @@ namespace Microsoft.PowerShell.Commands
         #endregion IDisposable Members
 
         #region Cmdlet Methods
-        
+
         /// <summary>
         /// Disposes the resource reader.
         /// </summary>
         /// 
         protected override void EndProcessing()
         {
-            if (resourceReader != null)
+            if (_resourceReader != null)
             {
-                resourceReader.Dispose();
-                resourceReader = null;
+                _resourceReader.Dispose();
+                _resourceReader = null;
             }
         }
 
@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands
                 // return an empty list
                 return listToReturn;
             }
-            
+
             WildcardPattern matcher = WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase);
             // We are doing WildCard search
             foreach (PSSnapInInfo psSnapIn in searchList)
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
                 // See if the assembly-qualified names match and return the existing PSSnapInInfo
                 // if they do.
                 string loadedSnapInAssemblyName = loadedPSSnapInInfo.AssemblyName;
-                if (string.Equals(loadedPSSnapInInfo.Name, psSnapInInfo.Name, StringComparison.OrdinalIgnoreCase) && 
+                if (string.Equals(loadedPSSnapInInfo.Name, psSnapInInfo.Name, StringComparison.OrdinalIgnoreCase) &&
                     !string.IsNullOrEmpty(loadedSnapInAssemblyName)
                     && string.Equals(loadedSnapInAssemblyName, psSnapInInfo.AssemblyName, System.StringComparison.OrdinalIgnoreCase))
                 {
@@ -176,7 +176,6 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         protected internal Collection<PSSnapInInfo> GetSnapIns(string pattern)
         {
-
             // If RunspaceConfiguration is not null, then return the list that it has
             if (Runspace != null)
             {
@@ -251,14 +250,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (resourceReader == null)
+                if (_resourceReader == null)
                 {
-                    resourceReader = RegistryStringResourceIndirect.GetResourceIndirectReader();
+                    _resourceReader = RegistryStringResourceIndirect.GetResourceIndirectReader();
                 }
-                return resourceReader;
+                return _resourceReader;
             }
         }
-        private RegistryStringResourceIndirect resourceReader;
+        private RegistryStringResourceIndirect _resourceReader;
         #endregion
     }
 
@@ -271,8 +270,8 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "PSSnapin", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113281")]
     [OutputType(typeof(PSSnapInInfo))]
-    public sealed class AddPSSnapinCommand : PSSnapInCommandBase    
-    {        
+    public sealed class AddPSSnapinCommand : PSSnapInCommandBase
+    {
         #region Parameters
 
         /// <summary>
@@ -350,7 +349,7 @@ namespace Microsoft.PowerShell.Commands
                         if (listToSearch == null)
                         {
                             // cache snapin registry information...
-                            
+
                             // For 3.0 PowerShell, we still use "1" as the registry version key for 
                             // Snapin and Custom shell lookup/discovery.
                             // For 3.0 PowerShell, we use "3" as the registry version key only for Engine
@@ -434,7 +433,7 @@ namespace Microsoft.PowerShell.Commands
             // bind the cmdlets from the snapins...
             if (Context.RunspaceConfiguration == null)
             {
-                Collection<PSSnapInInfo> loadedSnapins =  base.GetSnapIns(null);
+                Collection<PSSnapInInfo> loadedSnapins = base.GetSnapIns(null);
                 InitialSessionState iss = InitialSessionState.Create();
                 bool isAtleastOneSnapinLoaded = false;
                 foreach (string snapIn in snapInList)
@@ -526,9 +525,9 @@ namespace Microsoft.PowerShell.Commands
 
                 if (exception != null)
                 {
-                    WriteNonTerminatingError(psSnapIn, 
-                        "AddPSSnapInRead", 
-                        exception, 
+                    WriteNonTerminatingError(psSnapIn,
+                        "AddPSSnapInRead",
+                        exception,
                         ErrorCategory.InvalidArgument);
                 }
             }
@@ -693,7 +692,6 @@ namespace Microsoft.PowerShell.Commands
                                 WriteNonTerminatingError(psSnapIn, "RemovePSSnapIn", exception, ErrorCategory.InvalidArgument);
                             }
                         }
-
                     } // ShouldContinue
                 }
             }
@@ -718,7 +716,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Name(s) of PSSnapIn(s).
         /// </summary>
-        [Parameter(Position = 0, Mandatory = false)]           
+        [Parameter(Position = 0, Mandatory = false)]
         public string[] Name
         {
             get
@@ -731,7 +729,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private string[] _pssnapins;
-        
+
         /// <summary>
         /// Property that determines whether to get all pssnapins that are currently
         /// registered ( in registry ).
@@ -764,7 +762,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-
             if (_pssnapins != null)
             {
                 foreach (string psSnapIn in _pssnapins)
@@ -851,8 +848,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
-
-
     }
 
     #endregion

@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.IO;
 using System.Text;
@@ -16,28 +17,28 @@ using System.Security.Permissions;
 
 namespace Microsoft.PowerShell.Commands
 {
-	/// <summary>
-	/// This subclass of TraceListener allows for the trace output
-	/// coming from a System.Management.Automation.TraceSwitch
-	/// to be passed to the Msh host's RawUI methods.
-	/// </summary>
-	/// 
+    /// <summary>
+    /// This subclass of TraceListener allows for the trace output
+    /// coming from a System.Management.Automation.TraceSwitch
+    /// to be passed to the Msh host's RawUI methods.
+    /// </summary>
+    /// 
     /// <remarks>
     /// This trace listener cannot be specified in the app.config file.
     /// It must be added through the add-tracelistener cmdlet.
     /// </remarks>
     /// 
-	internal class PSHostTraceListener 
+    internal class PSHostTraceListener
         : System.Diagnostics.TraceListener
-	{
+    {
         #region TraceListener constructors and disposer
 
         /// <summary>
         /// Default constructor used if no.
         /// </summary>
-        internal PSHostTraceListener (PSCmdlet cmdlet)
+        internal PSHostTraceListener(PSCmdlet cmdlet)
             : base("")
-		{
+        {
             if (cmdlet == null)
             {
                 throw new PSArgumentNullException("cmdlet");
@@ -47,8 +48,8 @@ namespace Microsoft.PowerShell.Commands
                 cmdlet.Host.UI is InternalHostUserInterface,
                 "The internal host must be available to trace");
 
-            this.ui = cmdlet.Host.UI as InternalHostUserInterface;
-		}
+            _ui = cmdlet.Host.UI as InternalHostUserInterface;
+        }
 
         ~PSHostTraceListener()
         {
@@ -73,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
 #else
             try
             {
-                if (disposing) 
+                if (disposing)
                 {
                     this.Close();
                 }
@@ -83,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
                 base.Dispose(disposing);
             }
 #endif
-        }                
+        }
 
 #if !CORECLR
         /// <summary>
@@ -112,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
-                cachedWrite.Append(output);
+                _cachedWrite.Append(output);
             }
             catch (Exception e)
             {
@@ -121,7 +122,7 @@ namespace Microsoft.PowerShell.Commands
                 // We don't want tracing to bring down the process.
             }
         }
-        private StringBuilder cachedWrite = new StringBuilder();
+        private StringBuilder _cachedWrite = new StringBuilder();
 
         /// <summary>
         /// Sends the given output string to the host for processing
@@ -134,10 +135,10 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
-                cachedWrite.Append(output);
+                _cachedWrite.Append(output);
 
-                ui.WriteDebugLine(cachedWrite.ToString());
-                cachedWrite.Remove(0, cachedWrite.Length);
+                _ui.WriteDebugLine(_cachedWrite.ToString());
+                _cachedWrite.Remove(0, _cachedWrite.Length);
             }
             catch (Exception e)
             {
@@ -150,7 +151,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The host interface to write the debug line to.
         /// </summary>
-        private InternalHostUserInterface ui;
-
+        private InternalHostUserInterface _ui;
     } // class PSHostTraceListener
 } // namespace System.Management.Automation

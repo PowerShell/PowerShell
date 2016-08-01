@@ -174,9 +174,9 @@ namespace System.Management.Automation
             prop.SetValue(property.baseObject, setValue);
         }
 
-       
-        
-  
+
+
+
 
         /// <summary>
         /// Returns true if the property is settable
@@ -226,7 +226,7 @@ namespace System.Management.Automation
             return prop.ToString();
         }
 
-       
+
         #region Methods
 
 
@@ -249,7 +249,7 @@ namespace System.Management.Automation
         /// <param name="method">the return of GetMethodData</param>
         /// <returns></returns>
         protected override Collection<String> MethodDefinitions(PSMethod method)
-        {            
+        {
             ComMethod commethod = (ComMethod)method.adapterData;
             return commethod.MethodDefinitions();
         }
@@ -300,7 +300,6 @@ namespace System.Management.Automation
         {
             ComProperty prop = (ComProperty)property.adapterData;
             return prop.GetValue(property.baseObject, arguments);
-
         }
 
         /// <summary>
@@ -333,10 +332,10 @@ namespace System.Management.Automation
         protected override Collection<String> ParameterizedPropertyDefinitions(PSParameterizedProperty property)
         {
             ComProperty prop = (ComProperty)property.adapterData;
-            Collection<string> returnValue = new Collection<string> {prop.GetDefinition()};
+            Collection<string> returnValue = new Collection<string> { prop.GetDefinition() };
             return returnValue;
         }
 
         #endregion parameterized property
     }
-} 
+}

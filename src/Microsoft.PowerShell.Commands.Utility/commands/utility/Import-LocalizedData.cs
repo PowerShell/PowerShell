@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Globalization;
 using System.IO;
@@ -112,12 +113,12 @@ namespace Microsoft.PowerShell.Commands
             }
             set
             {
-                setSupportedCommand = true;
+                _setSupportedCommand = true;
                 _commandsAllowed = value;
             }
         }
         private string[] _commandsAllowed = new string[] { "ConvertFrom-StringData" };
-        private bool setSupportedCommand = false;
+        private bool _setSupportedCommand = false;
 
         #endregion Parameters
 
@@ -149,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
             // Prevent additional commands in ConstrainedLanguage mode
             if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
-                if (setSupportedCommand)
+                if (_setSupportedCommand)
                 {
                     NotSupportedException nse =
                         PSTraceSource.NewNotSupportedException(
@@ -276,8 +277,8 @@ namespace Microsoft.PowerShell.Commands
 
             fileName = Path.GetFileNameWithoutExtension(fileName);
 
-            CultureInfo culture = null; 
-            if(_uiculture == null)
+            CultureInfo culture = null;
+            if (_uiculture == null)
             {
                 culture = CultureInfo.CurrentUICulture;
             }

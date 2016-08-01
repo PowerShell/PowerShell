@@ -16,8 +16,8 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal class FormatXmlWriter
     {
-        private XmlWriter writer;
-        private bool exportScriptBlock;
+        private XmlWriter _writer;
+        private bool _exportScriptBlock;
 
         private FormatXmlWriter() { }
 
@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="writeScriptBlock">true - to export scriptblocks</param>
         /// <param name="noclobber">true - do not overwrite the file</param>
         /// <param name="isLiteralPath">true - bypass wildcard expansion on the file name</param>
-        internal static void WriteToPs1Xml(PSCmdlet cmdlet, List<ExtendedTypeDefinition> typeDefinitions, 
+        internal static void WriteToPs1Xml(PSCmdlet cmdlet, List<ExtendedTypeDefinition> typeDefinitions,
             string filepath, bool force, bool noclobber, bool writeScriptBlock, bool isLiteralPath)
         {
             StreamWriter streamWriter;
@@ -46,8 +46,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     var writer = new FormatXmlWriter
                     {
-                        writer = xmlWriter,
-                        exportScriptBlock = writeScriptBlock
+                        _writer = xmlWriter,
+                        _exportScriptBlock = writeScriptBlock
                     };
                     writer.WriteToXml(typeDefinitions);
                 }
@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static void WriteToXml(XmlWriter writer, IEnumerable<ExtendedTypeDefinition> typeDefinitions, bool writeScriptBlock)
         {
-            var formatXmlWriter = new FormatXmlWriter {exportScriptBlock = writeScriptBlock, writer = writer};
+            var formatXmlWriter = new FormatXmlWriter { _exportScriptBlock = writeScriptBlock, _writer = writer };
             formatXmlWriter.WriteToXml(typeDefinitions);
         }
 
@@ -89,173 +89,173 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            writer.WriteStartElement("Configuration");
+            _writer.WriteStartElement("Configuration");
 
-            writer.WriteStartElement("ViewDefinitions");
-            foreach(var pair in formatdefs)
+            _writer.WriteStartElement("ViewDefinitions");
+            foreach (var pair in formatdefs)
             {
                 Guid id = pair.Key;
                 FormatViewDefinition formatdef = pair.Value;
 
-                writer.WriteStartElement("View");
-                writer.WriteElementString("Name", formatdef.Name);
-                writer.WriteStartElement("ViewSelectedBy");
+                _writer.WriteStartElement("View");
+                _writer.WriteElementString("Name", formatdef.Name);
+                _writer.WriteStartElement("ViewSelectedBy");
                 foreach (ExtendedTypeDefinition definition in views[id])
                 {
-                    writer.WriteElementString("TypeName", definition.TypeName);
+                    _writer.WriteElementString("TypeName", definition.TypeName);
                 }
-                writer.WriteEndElement(/*</ViewSelectedBy>*/);
+                _writer.WriteEndElement(/*</ViewSelectedBy>*/);
 
                 var groupBy = formatdef.Control.GroupBy;
                 if (groupBy != null)
                 {
-                    writer.WriteStartElement("GroupBy");
+                    _writer.WriteStartElement("GroupBy");
                     WriteDisplayEntry(groupBy.Expression);
                     if (!string.IsNullOrEmpty(groupBy.Label))
                     {
-                        writer.WriteElementString("Label", groupBy.Label);
+                        _writer.WriteElementString("Label", groupBy.Label);
                     }
                     if (groupBy.CustomControl != null)
                     {
                         WriteCustomControl(groupBy.CustomControl);
                     }
-                    writer.WriteEndElement(/*</GroupBy>*/);
+                    _writer.WriteEndElement(/*</GroupBy>*/);
                 }
                 if (formatdef.Control.OutOfBand)
                 {
-                    writer.WriteElementString("OutOfBand", "");
+                    _writer.WriteElementString("OutOfBand", "");
                 }
 
                 formatdef.Control.WriteToXml(this);
-                writer.WriteEndElement(/*</View>*/);
+                _writer.WriteEndElement(/*</View>*/);
             }
-            writer.WriteEndElement(/*</ViewDefinitions>*/);
+            _writer.WriteEndElement(/*</ViewDefinitions>*/);
 
-            writer.WriteEndElement(/*</Configuration>*/);
+            _writer.WriteEndElement(/*</Configuration>*/);
         }
 
         internal void WriteTableControl(TableControl tableControl)
         {
-            writer.WriteStartElement("TableControl");
+            _writer.WriteStartElement("TableControl");
             if (tableControl.AutoSize)
             {
-                writer.WriteElementString("AutoSize", "");
+                _writer.WriteElementString("AutoSize", "");
             }
             if (tableControl.HideTableHeaders)
             {
-                writer.WriteElementString("HideTableHeaders", "");
+                _writer.WriteElementString("HideTableHeaders", "");
             }
 
-            writer.WriteStartElement("TableHeaders");
+            _writer.WriteStartElement("TableHeaders");
             foreach (TableControlColumnHeader columnheader in tableControl.Headers)
             {
-                writer.WriteStartElement("TableColumnHeader");
+                _writer.WriteStartElement("TableColumnHeader");
                 if (!string.IsNullOrEmpty(columnheader.Label))
                 {
-                    writer.WriteElementString("Label", columnheader.Label);
+                    _writer.WriteElementString("Label", columnheader.Label);
                 }
                 if (columnheader.Width > 0)
                 {
-                    writer.WriteElementString("Width", columnheader.Width.ToString(CultureInfo.InvariantCulture));
+                    _writer.WriteElementString("Width", columnheader.Width.ToString(CultureInfo.InvariantCulture));
                 }
                 if (columnheader.Alignment != Alignment.Undefined)
                 {
-                    writer.WriteElementString("Alignment", columnheader.Alignment.ToString());
+                    _writer.WriteElementString("Alignment", columnheader.Alignment.ToString());
                 }
-                writer.WriteEndElement(/*</TableColumnHeader>*/);
+                _writer.WriteEndElement(/*</TableColumnHeader>*/);
             }
-            writer.WriteEndElement(/*</TableHeaders>*/);
+            _writer.WriteEndElement(/*</TableHeaders>*/);
 
-            writer.WriteStartElement("TableRowEntries");
+            _writer.WriteStartElement("TableRowEntries");
             foreach (TableControlRow row in tableControl.Rows)
             {
-                writer.WriteStartElement("TableRowEntry");
+                _writer.WriteStartElement("TableRowEntry");
                 if (row.Wrap)
                 {
-                    writer.WriteStartElement("Wrap");
-                    writer.WriteEndElement(/*</Wrap>*/);
+                    _writer.WriteStartElement("Wrap");
+                    _writer.WriteEndElement(/*</Wrap>*/);
                 }
                 if (row.SelectedBy != null)
                 {
                     WriteEntrySelectedBy(row.SelectedBy);
                 }
-                writer.WriteStartElement("TableColumnItems");
+                _writer.WriteStartElement("TableColumnItems");
                 foreach (TableControlColumn coldefn in row.Columns)
                 {
-                    writer.WriteStartElement("TableColumnItem");
+                    _writer.WriteStartElement("TableColumnItem");
                     if (coldefn.Alignment != Alignment.Undefined)
                     {
-                        writer.WriteElementString("Alignment", coldefn.Alignment.ToString());
+                        _writer.WriteElementString("Alignment", coldefn.Alignment.ToString());
                     }
                     if (!string.IsNullOrEmpty(coldefn.FormatString))
                     {
-                        writer.WriteElementString("FormatString", coldefn.FormatString);
+                        _writer.WriteElementString("FormatString", coldefn.FormatString);
                     }
                     WriteDisplayEntry(coldefn.DisplayEntry);
-                    writer.WriteEndElement(/*</TableColumnItem>*/);
+                    _writer.WriteEndElement(/*</TableColumnItem>*/);
                 }
 
-                writer.WriteEndElement(/*<TableColumnItems>*/);
-                writer.WriteEndElement(/*<TableRowEntry>*/);
+                _writer.WriteEndElement(/*<TableColumnItems>*/);
+                _writer.WriteEndElement(/*<TableRowEntry>*/);
             }
-            writer.WriteEndElement(/*</TableRowEntries>*/);
+            _writer.WriteEndElement(/*</TableRowEntries>*/);
 
-            writer.WriteEndElement(/*</TableControl>*/);
+            _writer.WriteEndElement(/*</TableControl>*/);
         }
 
         internal void WriteListControl(ListControl listControl)
         {
-            writer.WriteStartElement("ListControl");
-            writer.WriteStartElement("ListEntries");
+            _writer.WriteStartElement("ListControl");
+            _writer.WriteStartElement("ListEntries");
 
             // write the list entry's one by one
             foreach (ListControlEntry entry in listControl.Entries)
             {
-                writer.WriteStartElement("ListEntry");
+                _writer.WriteStartElement("ListEntry");
 
                 // write entry selected by if available
                 WriteEntrySelectedBy(entry.EntrySelectedBy);
 
                 if (entry.Items.Count > 0)
                 {
-                    writer.WriteStartElement("ListItems");
+                    _writer.WriteStartElement("ListItems");
 
                     // write the list items
                     foreach (ListControlEntryItem item in entry.Items)
                     {
-                        writer.WriteStartElement("ListItem");
+                        _writer.WriteStartElement("ListItem");
 
                         if (!string.IsNullOrEmpty(item.Label))
                         {
-                            writer.WriteElementString("Label", item.Label);
+                            _writer.WriteElementString("Label", item.Label);
                         }
 
                         if (!string.IsNullOrEmpty(item.FormatString))
                         {
-                            writer.WriteElementString("FormatString", item.FormatString);
+                            _writer.WriteElementString("FormatString", item.FormatString);
                         }
 
                         if (item.ItemSelectionCondition != null)
                         {
-                            writer.WriteStartElement("ItemSelectionCondition");
+                            _writer.WriteStartElement("ItemSelectionCondition");
                             WriteDisplayEntry(item.ItemSelectionCondition);
-                            writer.WriteEndElement(/*</ItemSelectionCondition>*/);
+                            _writer.WriteEndElement(/*</ItemSelectionCondition>*/);
                         }
 
                         // write the entry
                         WriteDisplayEntry(item.DisplayEntry);
 
-                        writer.WriteEndElement(/*</ListItem>*/);
+                        _writer.WriteEndElement(/*</ListItem>*/);
                     }
 
-                    writer.WriteEndElement(/*</ListItems>*/);
+                    _writer.WriteEndElement(/*</ListItems>*/);
                 }
 
-                writer.WriteEndElement(/*</ListEntry>*/);
+                _writer.WriteEndElement(/*</ListEntry>*/);
             }
 
-            writer.WriteEndElement(/*</ListEntries>*/);
-            writer.WriteEndElement(/*</ListControl>*/);
+            _writer.WriteEndElement(/*</ListEntries>*/);
+            _writer.WriteEndElement(/*</ListControl>*/);
         }
 
         private void WriteEntrySelectedBy(EntrySelectedBy entrySelectedBy)
@@ -264,97 +264,97 @@ namespace Microsoft.PowerShell.Commands
                 ((entrySelectedBy.TypeNames != null && entrySelectedBy.TypeNames.Count > 0) ||
                  (entrySelectedBy.SelectionCondition != null && entrySelectedBy.SelectionCondition.Count > 0)))
             {
-                writer.WriteStartElement("EntrySelectedBy");
+                _writer.WriteStartElement("EntrySelectedBy");
 
                 if (entrySelectedBy.TypeNames != null)
                 {
                     foreach (string typename in entrySelectedBy.TypeNames)
                     {
-                        writer.WriteElementString("TypeName", typename);
+                        _writer.WriteElementString("TypeName", typename);
                     }
                 }
                 if (entrySelectedBy.SelectionCondition != null)
                 {
                     foreach (var condition in entrySelectedBy.SelectionCondition)
                     {
-                        writer.WriteStartElement("SelectionCondition");
+                        _writer.WriteStartElement("SelectionCondition");
                         WriteDisplayEntry(condition);
-                        writer.WriteEndElement(/*</SelectionCondition>*/);
+                        _writer.WriteEndElement(/*</SelectionCondition>*/);
                     }
                 }
-                writer.WriteEndElement(/*</EntrySelectedBy>*/);
+                _writer.WriteEndElement(/*</EntrySelectedBy>*/);
             }
         }
 
         internal void WriteWideControl(WideControl wideControl)
         {
-            writer.WriteStartElement("WideControl");
+            _writer.WriteStartElement("WideControl");
 
             if (wideControl.Columns > 0)
             {
-                writer.WriteElementString("ColumnNumber", wideControl.Columns.ToString(CultureInfo.InvariantCulture));
+                _writer.WriteElementString("ColumnNumber", wideControl.Columns.ToString(CultureInfo.InvariantCulture));
             }
 
             if (wideControl.AutoSize)
             {
-                writer.WriteElementString("AutoSize", "");
+                _writer.WriteElementString("AutoSize", "");
             }
 
-            writer.WriteStartElement("WideEntries");
+            _writer.WriteStartElement("WideEntries");
             foreach (WideControlEntryItem entry in wideControl.Entries)
             {
-                writer.WriteStartElement("WideEntry");
+                _writer.WriteStartElement("WideEntry");
 
                 WriteEntrySelectedBy(entry.EntrySelectedBy);
 
-                writer.WriteStartElement("WideItem");
+                _writer.WriteStartElement("WideItem");
                 WriteDisplayEntry(entry.DisplayEntry);
                 if (!string.IsNullOrEmpty(entry.FormatString))
                 {
-                    writer.WriteElementString("FormatString", entry.FormatString);
+                    _writer.WriteElementString("FormatString", entry.FormatString);
                 }
-                writer.WriteEndElement(/*</WideItem>*/);
-                
-                writer.WriteEndElement(/*</WideEntry>*/);
+                _writer.WriteEndElement(/*</WideItem>*/);
+
+                _writer.WriteEndElement(/*</WideEntry>*/);
             }
-            writer.WriteEndElement(/*</WideEntries>*/);
-            
-            writer.WriteEndElement(/*</WideControl>*/);
+            _writer.WriteEndElement(/*</WideEntries>*/);
+
+            _writer.WriteEndElement(/*</WideControl>*/);
         }
 
         internal void WriteDisplayEntry(DisplayEntry displayEntry)
         {
             if (displayEntry.ValueType == DisplayEntryValueType.Property)
             {
-                writer.WriteElementString("PropertyName", displayEntry.Value);
+                _writer.WriteElementString("PropertyName", displayEntry.Value);
             }
             else if (displayEntry.ValueType == DisplayEntryValueType.ScriptBlock)
             {
-                writer.WriteStartElement("ScriptBlock");
-                writer.WriteValue(exportScriptBlock ? displayEntry.Value : ";");
-                writer.WriteEndElement(/*</ScriptBlock>*/);
+                _writer.WriteStartElement("ScriptBlock");
+                _writer.WriteValue(_exportScriptBlock ? displayEntry.Value : ";");
+                _writer.WriteEndElement(/*</ScriptBlock>*/);
             }
         }
 
         internal void WriteCustomControl(CustomControl customControl)
         {
-            writer.WriteStartElement("CustomControl");
+            _writer.WriteStartElement("CustomControl");
 
-            writer.WriteStartElement("CustomEntries");
+            _writer.WriteStartElement("CustomEntries");
             foreach (var entry in customControl.Entries)
             {
-                writer.WriteStartElement("CustomEntry");
+                _writer.WriteStartElement("CustomEntry");
                 WriteEntrySelectedBy(entry.SelectedBy);
-                writer.WriteStartElement("CustomItem");
+                _writer.WriteStartElement("CustomItem");
                 foreach (var item in entry.CustomItems)
                 {
                     WriteCustomItem(item);
                 }
-                writer.WriteEndElement(/*</CustomItem>*/);
-                writer.WriteEndElement(/*</CustomEntry>*/);
+                _writer.WriteEndElement(/*</CustomItem>*/);
+                _writer.WriteEndElement(/*</CustomEntry>*/);
             }
-            writer.WriteEndElement(/*</CustomEntries>*/);
-            writer.WriteEndElement(/*</CustomControl>*/);
+            _writer.WriteEndElement(/*</CustomEntries>*/);
+            _writer.WriteEndElement(/*</CustomControl>*/);
         }
 
         internal void WriteCustomItem(CustomItemBase item)
@@ -364,7 +364,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 for (int i = 0; i < newline.Count; i++)
                 {
-                    writer.WriteElementString("NewLine", "");
+                    _writer.WriteElementString("NewLine", "");
                 }
                 return;
             }
@@ -372,24 +372,24 @@ namespace Microsoft.PowerShell.Commands
             var text = item as CustomItemText;
             if (text != null)
             {
-                writer.WriteElementString("Text", text.Text);
+                _writer.WriteElementString("Text", text.Text);
                 return;
             }
 
             var expr = item as CustomItemExpression;
             if (expr != null)
             {
-                writer.WriteStartElement("ExpressionBinding");
+                _writer.WriteStartElement("ExpressionBinding");
                 if (expr.EnumerateCollection)
                 {
-                    writer.WriteElementString("EnumerateCollection", "");
+                    _writer.WriteElementString("EnumerateCollection", "");
                 }
 
                 if (expr.ItemSelectionCondition != null)
                 {
-                    writer.WriteStartElement("ItemSelectionCondition");
+                    _writer.WriteStartElement("ItemSelectionCondition");
                     WriteDisplayEntry(expr.ItemSelectionCondition);
-                    writer.WriteEndElement(/*</ItemSelectionCondition>*/);
+                    _writer.WriteEndElement(/*</ItemSelectionCondition>*/);
                 }
 
                 if (expr.Expression != null)
@@ -402,28 +402,28 @@ namespace Microsoft.PowerShell.Commands
                     WriteCustomControl(expr.CustomControl);
                 }
 
-                writer.WriteEndElement(/*</ExpressionBinding>*/);
+                _writer.WriteEndElement(/*</ExpressionBinding>*/);
                 return;
             }
 
-            var frame = (CustomItemFrame) item;
-            writer.WriteStartElement("Frame");
+            var frame = (CustomItemFrame)item;
+            _writer.WriteStartElement("Frame");
             if (frame.LeftIndent != 0)
-                writer.WriteElementString("LeftIndent", frame.LeftIndent.ToString(CultureInfo.InvariantCulture));
+                _writer.WriteElementString("LeftIndent", frame.LeftIndent.ToString(CultureInfo.InvariantCulture));
             if (frame.RightIndent != 0)
-                writer.WriteElementString("RightIndent", frame.RightIndent.ToString(CultureInfo.InvariantCulture));
+                _writer.WriteElementString("RightIndent", frame.RightIndent.ToString(CultureInfo.InvariantCulture));
             if (frame.FirstLineHanging != 0)
-                writer.WriteElementString("FirstLineHanging", frame.FirstLineHanging.ToString(CultureInfo.InvariantCulture));
+                _writer.WriteElementString("FirstLineHanging", frame.FirstLineHanging.ToString(CultureInfo.InvariantCulture));
             if (frame.FirstLineIndent != 0)
-                writer.WriteElementString("FirstLineIndent", frame.FirstLineIndent.ToString(CultureInfo.InvariantCulture));
+                _writer.WriteElementString("FirstLineIndent", frame.FirstLineIndent.ToString(CultureInfo.InvariantCulture));
 
-            writer.WriteStartElement("CustomItem");
+            _writer.WriteStartElement("CustomItem");
             foreach (var frameItem in frame.CustomItems)
             {
                 WriteCustomItem(frameItem);
             }
-            writer.WriteEndElement(/*</CustomItem>*/);
-            writer.WriteEndElement(/*</Frame>*/);
+            _writer.WriteEndElement(/*</CustomItem>*/);
+            _writer.WriteEndElement(/*</Frame>*/);
         }
     }
 }

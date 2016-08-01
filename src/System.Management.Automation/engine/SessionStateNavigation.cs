@@ -1,10 +1,11 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 #pragma warning disable 56500
@@ -17,7 +18,7 @@ namespace System.Management.Automation
     internal sealed partial class SessionStateInternal
     {
         #region NavigationCmdletProvider accessors
-        
+
         #region GetParentPath
 
         /// <summary>
@@ -66,7 +67,6 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return result;
-                
         } //GetParentPath
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace System.Management.Automation
         /// The path to the parent object
         /// </returns>
         internal string GetParentPath(
-            string path, 
+            string path,
             string root,
             CmdletProviderContext context,
             bool useDefaultProvider)
@@ -430,9 +430,9 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal string GetParentPath(
-            CmdletProvider providerInstance, 
-            string path, 
-            string root, 
+            CmdletProvider providerInstance,
+            string path,
+            string root,
             CmdletProviderContext context)
         {
             // All parameters should have been validated by caller
@@ -453,7 +453,7 @@ namespace System.Management.Automation
                 "Caller should validate context before calling this method");
 
 
-            NavigationCmdletProvider navigationCmdletProvider = 
+            NavigationCmdletProvider navigationCmdletProvider =
                 GetNavigationProviderInstance(providerInstance, false);
 
             string result = null;
@@ -477,7 +477,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "GetParentPathProviderException",
                     SessionStateStrings.GetParentPathProviderException,
                     navigationCmdletProvider.ProviderInfo,
@@ -488,7 +488,7 @@ namespace System.Management.Automation
         } // GetParentPath
 
         #endregion GetParentPath
-        
+
         #region NormalizeRelativePath
 
         /// <summary>
@@ -539,7 +539,6 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return result;
-                
         } //NormalizeRelativePath
 
         /// <summary>
@@ -581,7 +580,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal string NormalizeRelativePath(
-            string path, 
+            string path,
             string basePath,
             CmdletProviderContext context)
         {
@@ -680,13 +679,13 @@ namespace System.Management.Automation
 
                         // 1. Test for the drive root ending with a path separator.
                         bool driveRootEndsWithPathSeparator = IsPathSeparator(drive.Root[drive.Root.Length - 1]);
-                            
+
 
                         // 2. Test for the path starting with the drive root followed by a path separator
                         int indexAfterDriveRoot = drive.Root.Length;
                         bool pathStartsWithDriveRootAndPathSeparator = indexAfterDriveRoot < path.Length && IsPathSeparator(path[indexAfterDriveRoot]);
 
-                                        
+
                         // 3. Test for the drive root exactly matching the path.
                         //    Since we know the path starts with the drive root then they are equal if the lengths are equal.
                         bool pathEqualsDriveRoot = drive.Root.Length == path.Length;
@@ -757,9 +756,9 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal string NormalizeRelativePath(
-            ProviderInfo provider, 
-            string path, 
-            string basePath, 
+            ProviderInfo provider,
+            string path,
+            string basePath,
             CmdletProviderContext context)
         {
             // All parameters should have been validated by caller
@@ -783,7 +782,6 @@ namespace System.Management.Automation
             NavigationCmdletProvider navigationCmdletProvider = providerInstance as NavigationCmdletProvider;
             if (navigationCmdletProvider != null)
             {
-            
                 try
                 {
                     path = navigationCmdletProvider.NormalizeRelativePath(path, basePath, context);
@@ -803,7 +801,7 @@ namespace System.Management.Automation
                 catch (Exception e) // Catch-all OK, 3rd party callout.
                 {
                     CommandProcessorBase.CheckForSevereException(e);
-                    throw NewProviderInvocationException (
+                    throw NewProviderInvocationException(
                         "NormalizeRelativePathProviderException",
                     SessionStateStrings.NormalizeRelativePathProviderException,
                         navigationCmdletProvider.ProviderInfo,
@@ -822,7 +820,7 @@ namespace System.Management.Automation
 
             return path;
         } // NormalizeRelativePath
-        
+
         #endregion NormalizeRelativePath
 
         #region MakePath
@@ -864,7 +862,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal string MakePath(
-            string parent, 
+            string parent,
             string child)
         {
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
@@ -913,7 +911,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal string MakePath(
-            string parent, 
+            string parent,
             string child,
             CmdletProviderContext context)
         {
@@ -1073,9 +1071,9 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal string MakePath(
-            CmdletProvider providerInstance, 
-            string parent, 
-            string child, 
+            CmdletProvider providerInstance,
+            string parent,
+            string child,
             CmdletProviderContext context)
         {
             // All parameters should have been validated by caller
@@ -1186,7 +1184,6 @@ namespace System.Management.Automation
             context.ThrowFirstErrorOrDoNothing();
 
             return result;
-                
         } // GetChildName
 
         /// <summary>
@@ -1255,7 +1252,7 @@ namespace System.Management.Automation
         /// The leaf element in the path.
         /// </returns>
         internal string GetChildName(
-            string path, 
+            string path,
             CmdletProviderContext context,
             bool useDefaultProvider)
         {
@@ -1336,8 +1333,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private string GetChildName(
-            ProviderInfo provider, 
-            string path, 
+            ProviderInfo provider,
+            string path,
             CmdletProviderContext context)
         {
             // All parameters should have been validated by caller
@@ -1393,8 +1390,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private string GetChildName(
-            CmdletProvider providerInstance, 
-            string path, 
+            CmdletProvider providerInstance,
+            string path,
             CmdletProviderContext context,
             bool acceptNonContainerProviders
             )
@@ -1411,7 +1408,7 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 context != null,
                 "Caller should validate context before calling this method");
-            
+
             string result = null;
 
             NavigationCmdletProvider navigationCmdletProvider =
@@ -1439,7 +1436,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "GetChildNameProviderException",
                     SessionStateStrings.GetChildNameProviderException,
                     navigationCmdletProvider.ProviderInfo,
@@ -1450,7 +1447,7 @@ namespace System.Management.Automation
         } // GetChildName
 
         #endregion GetChildName
-        
+
         #region MoveItem
 
         /// <summary>
@@ -1592,21 +1589,21 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
 
-            Collection<PathInfo> providerDestinationPaths = 
+            Collection<PathInfo> providerDestinationPaths =
                 Globber.GetGlobbedMonadPathsFromMonadPath(
-                    destination, 
+                    destination,
                     true,
                     context,
                     out providerInstance);
-           
+
             if (providerDestinationPaths.Count > 1)
             {
-                ArgumentException argException = 
+                ArgumentException argException =
                     PSTraceSource.NewArgumentException(
                         "destination",
                         SessionStateStrings.MoveItemOneDestination);
 
-                context.WriteError (new ErrorRecord (argException, argException.GetType().FullName, ErrorCategory.InvalidArgument, destination));
+                context.WriteError(new ErrorRecord(argException, argException.GetType().FullName, ErrorCategory.InvalidArgument, destination));
             }
             else
             {
@@ -1729,8 +1726,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private void MoveItemPrivate(
-            CmdletProvider providerInstance, 
-            string path, 
+            CmdletProvider providerInstance,
+            string path,
             string destination,
             CmdletProviderContext context)
         {
@@ -1748,7 +1745,7 @@ namespace System.Management.Automation
                 "Caller should validate context before calling this method");
 
 
-            NavigationCmdletProvider navigationCmdletProvider = 
+            NavigationCmdletProvider navigationCmdletProvider =
                 GetNavigationProviderInstance(providerInstance, false);
 
             try
@@ -1770,7 +1767,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "MoveItemProviderException",
                     SessionStateStrings.MoveItemProviderException,
                     navigationCmdletProvider.ProviderInfo,
@@ -1823,7 +1820,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal object MoveItemDynamicParameters(
-            string path, 
+            string path,
             string destination,
             CmdletProviderContext context)
         {
@@ -1897,7 +1894,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private object MoveItemDynamicParameters(
-            CmdletProvider providerInstance, 
+            CmdletProvider providerInstance,
             string path,
             string destination,
             CmdletProviderContext context)
@@ -1916,7 +1913,7 @@ namespace System.Management.Automation
                 "Caller should validate context before calling this method");
 
 
-            NavigationCmdletProvider navigationCmdletProvider = 
+            NavigationCmdletProvider navigationCmdletProvider =
                 GetNavigationProviderInstance(providerInstance, false);
 
             object result = null;
@@ -1944,7 +1941,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "MoveItemDynamicParametersProviderException",
                     SessionStateStrings.MoveItemDynamicParametersProviderException,
                     navigationCmdletProvider.ProviderInfo,
@@ -1958,7 +1955,6 @@ namespace System.Management.Automation
 
         #endregion NavigationCmdletProvider accessors
     }           // SessionStateInternal class
-
 }
 
 #pragma warning restore 56500

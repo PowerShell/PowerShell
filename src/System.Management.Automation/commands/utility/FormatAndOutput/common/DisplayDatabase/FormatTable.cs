@@ -32,7 +32,7 @@ namespace System.Management.Automation.Runspaces
     [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "FormatTable")]
     public class FormatTableLoadException : RuntimeException
     {
-        private Collection<string> errors;
+        private Collection<string> _errors;
 
         #region Constructors
 
@@ -82,7 +82,7 @@ namespace System.Management.Automation.Runspaces
         internal FormatTableLoadException(ConcurrentBag<string> loadErrors) :
             base(StringUtil.Format(FormatAndOutXmlLoadingStrings.FormatTableLoadErrors))
         {
-            errors = new Collection<string>(loadErrors.ToArray());
+            _errors = new Collection<string>(loadErrors.ToArray());
             SetDefaultErrorRecord();
         }
 
@@ -102,11 +102,11 @@ namespace System.Management.Automation.Runspaces
             int errorCount = info.GetInt32("ErrorCount");
             if (errorCount > 0)
             {
-                errors = new Collection<string>();
+                _errors = new Collection<string>();
                 for (int index = 0; index < errorCount; index++)
                 {
                     string key = string.Format(CultureInfo.InvariantCulture, "Error{0}", index);
-                    errors.Add(info.GetString(key));
+                    _errors.Add(info.GetString(key));
                 }
             }
         }
@@ -128,15 +128,15 @@ namespace System.Management.Automation.Runspaces
 
             base.GetObjectData(info, context);
             // If there are simple fields, serialize them with info.AddValue
-            if (null != errors)
+            if (null != _errors)
             {
-                int errorCount = errors.Count;
+                int errorCount = _errors.Count;
                 info.AddValue("ErrorCount", errorCount);
 
                 for (int index = 0; index < errorCount; index++)
                 {
                     string key = string.Format(CultureInfo.InvariantCulture, "Error{0}", index);
-                    info.AddValue(key, errors[index]);
+                    info.AddValue(key, _errors[index]);
                 }
             }
         }
@@ -157,12 +157,12 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                return errors;
+                return _errors;
             }
         }
     }
 
-     /// <summary>
+    /// <summary>
     /// A class that keeps the information from format.ps1xml files in a cache table
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "FormatTable")]
@@ -170,7 +170,7 @@ namespace System.Management.Automation.Runspaces
     {
         #region Private Data
 
-        private TypeInfoDataBaseManager formatDBMgr;
+        private TypeInfoDataBaseManager _formatDBMgr;
 
         #endregion
 
@@ -181,7 +181,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal FormatTable()
         {
-            formatDBMgr = new TypeInfoDataBaseManager();
+            _formatDBMgr = new TypeInfoDataBaseManager();
         }
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (formatData == null)
                 throw PSTraceSource.NewArgumentNullException("formatData");
-            formatDBMgr.AddFormatData(formatData, false);
+            _formatDBMgr.AddFormatData(formatData, false);
         }
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (formatData == null)
                 throw PSTraceSource.NewArgumentNullException("formatData");
-            formatDBMgr.AddFormatData(formatData, true);
+            _formatDBMgr.AddFormatData(formatData, true);
         }
 
         /// <summary>
@@ -265,7 +265,7 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentNullException("formatFiles");
             }
 
-            formatDBMgr = new TypeInfoDataBaseManager(formatFiles, true, authorizationManager, host);
+            _formatDBMgr = new TypeInfoDataBaseManager(formatFiles, true, authorizationManager, host);
         }
 
         #endregion
@@ -274,7 +274,7 @@ namespace System.Management.Automation.Runspaces
 
         internal TypeInfoDataBaseManager FormatDBManager
         {
-            get { return formatDBMgr; }
+            get { return _formatDBMgr; }
         }
 
 
@@ -289,7 +289,7 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         internal void Add(string formatFile, bool shouldPrepend)
         {
-            formatDBMgr.Add(formatFile, shouldPrepend);
+            _formatDBMgr.Add(formatFile, shouldPrepend);
         }
 
         /// <summary>
@@ -299,7 +299,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="formatFile"></param>
         internal void Remove(string formatFile)
         {
-            formatDBMgr.Remove(formatFile);
+            _formatDBMgr.Remove(formatFile);
         }
 
         #endregion

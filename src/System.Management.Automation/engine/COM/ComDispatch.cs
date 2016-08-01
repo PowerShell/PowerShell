@@ -20,14 +20,14 @@ namespace System.Management.Automation
 
         [PreserveSig]
         int GetTypeInfo(int iTInfo, int lcid, out COM.ITypeInfo ppTInfo);
-        
+
         void GetIDsOfNames(
             [MarshalAs(UnmanagedType.LPStruct)] Guid iid,
             [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr)] string[] rgszNames,
             int cNames,
             int lcid,
             [Out, MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.I4)] int[] rgDispId);
-        
+
         void Invoke(
             int dispIdMember,
             [MarshalAs(UnmanagedType.LPStruct)] Guid iid,
@@ -38,4 +38,4 @@ namespace System.Management.Automation
             out ComInvoker.EXCEPINFO pExcepInfo,
             out uint puArgErr);
     }
-} 
+}

@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Cancellation token source
         /// </summary>
-        private CancellationTokenSource cancelToken = null;
+        private CancellationTokenSource _cancelToken = null;
 
         private HttpMethod GetHttpMethod(WebRequestMethod method)
         {
@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Uri requestUri = PrepareUri(uri);
             HttpMethod httpMethod = GetHttpMethod(Method);
-            
+
             // create the base WebRequest object
             var request = new HttpRequestMessage(httpMethod, requestUri);
 
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Commands
 
             return (request);
         }
-        
+
         internal virtual void FillRequestStream(HttpRequestMessage request)
         {
             if (null == request) { throw new ArgumentNullException("request"); }
@@ -300,11 +300,11 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request)
         {
-            if (client == null)  { throw new ArgumentNullException("client"); }
+            if (client == null) { throw new ArgumentNullException("client"); }
             if (request == null) { throw new ArgumentNullException("request"); }
 
-            cancelToken = new CancellationTokenSource();
-            return client.SendAsync(request,  HttpCompletionOption.ResponseHeadersRead, cancelToken.Token).GetAwaiter().GetResult();
+            _cancelToken = new CancellationTokenSource();
+            return client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
         }
 
         internal virtual void UpdateSession(HttpResponseMessage response)
@@ -342,7 +342,7 @@ namespace Microsoft.PowerShell.Commands
                         request.RequestUri,
                         requestContentLength);
                     WriteVerbose(reqVerboseMsg);
-                    
+
                     HttpResponseMessage response = GetResponse(client, request);
                     response.EnsureSuccessStatusCode();
 
@@ -394,16 +394,16 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void StopProcessing()
         {
-            if (cancelToken != null)
+            if (_cancelToken != null)
             {
-                cancelToken.Cancel();
+                _cancelToken.Cancel();
             }
         }
 
         #endregion Overrides
 
         #region Helper Methods
-        
+
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
         /// </summary>
@@ -535,7 +535,7 @@ namespace Microsoft.PowerShell.Commands
 
         }
 
-#endregion Helper Methods
+        #endregion Helper Methods
     }
 }
 #endif

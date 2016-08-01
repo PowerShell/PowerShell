@@ -125,7 +125,7 @@ namespace System.Management.Automation
         /// <returns> constructed object </returns>
         public ParseException(string message,
                         Exception innerException)
-                : base (message, innerException)
+                : base(message, innerException)
         {
             base.SetErrorId(errorIdString);
             base.SetErrorCategory(ErrorCategory.ParserError);
@@ -136,7 +136,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="errors">The collection of error messages.</param>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors",
-            Justification="ErrorRecord is not overridden in classes deriving from ParseException")]
+            Justification = "ErrorRecord is not overridden in classes deriving from ParseException")]
         public ParseException(Language.ParseError[] errors)
         {
             if ((errors == null) || (errors.Length == 0))
@@ -267,7 +267,7 @@ namespace System.Management.Automation
         /// <returns> constructed object </returns>
         public IncompleteParseException(string message,
                         Exception innerException)
-                : base (message, innerException)
+                : base(message, innerException)
         {
             // Error category is set in base constructor
             base.SetErrorId(errorIdString);

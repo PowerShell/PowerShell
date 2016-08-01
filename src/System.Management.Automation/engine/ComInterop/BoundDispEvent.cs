@@ -16,13 +16,16 @@ using System.Security;
 using System.Security.Permissions;
 //using Microsoft.Scripting.Utils;
 
-namespace System.Management.Automation.ComInterop {
-    internal sealed class BoundDispEvent : DynamicObject {
+namespace System.Management.Automation.ComInterop
+{
+    internal sealed class BoundDispEvent : DynamicObject
+    {
         private object _rcw;
         private Guid _sourceIid;
         private int _dispid;
 
-        internal BoundDispEvent(object rcw, Guid sourceIid, int dispid) {
+        internal BoundDispEvent(object rcw, Guid sourceIid, int dispid)
+        {
             _rcw = rcw;
             _sourceIid = sourceIid;
             _dispid = dispid;
@@ -35,13 +38,16 @@ namespace System.Management.Automation.ComInterop {
         /// <param name="handler">The handler for the operation.</param>
         /// <param name="result">The result of the operation.</param>
         /// <returns>true if the operation is complete, false if the call site should determine behavior.</returns>
-        public override bool TryBinaryOperation(BinaryOperationBinder binder, object handler, out object result) {
-            if (binder.Operation == ExpressionType.AddAssign) {
+        public override bool TryBinaryOperation(BinaryOperationBinder binder, object handler, out object result)
+        {
+            if (binder.Operation == ExpressionType.AddAssign)
+            {
                 result = InPlaceAdd(handler);
                 return true;
             }
 
-            if (binder.Operation == ExpressionType.SubtractAssign) {
+            if (binder.Operation == ExpressionType.SubtractAssign)
+            {
                 result = InPlaceSubtract(handler);
                 return true;
             }
@@ -50,16 +56,20 @@ namespace System.Management.Automation.ComInterop {
             return false;
         }
 
-        private static void VerifyHandler(object handler) {
-            if (handler is Delegate && handler.GetType() != typeof(Delegate)) {
+        private static void VerifyHandler(object handler)
+        {
+            if (handler is Delegate && handler.GetType() != typeof(Delegate))
+            {
                 return; // delegate
             }
 
-            if (handler is IDynamicMetaObjectProvider) {
+            if (handler is IDynamicMetaObjectProvider)
+            {
                 return; // IDMOP
             }
 
-            if (handler is DispCallable) {
+            if (handler is DispCallable)
+            {
                 return;
             }
 
@@ -71,7 +81,8 @@ namespace System.Management.Automation.ComInterop {
         /// </summary>
         /// <param name="handler">The handler to be added.</param>
         /// <returns>The original event with handler added.</returns>
-        private object InPlaceAdd(object handler) {
+        private object InPlaceAdd(object handler)
+        {
             VerifyHandler(handler);
 
             ComEventSink comEventSink = ComEventSink.FromRuntimeCallableWrapper(_rcw, _sourceIid, true);
@@ -84,11 +95,13 @@ namespace System.Management.Automation.ComInterop {
         /// </summary>
         /// <param name="handler">The handler to be removed.</param>
         /// <returns>The original event with handler removed.</returns>
-        private object InPlaceSubtract(object handler) {
+        private object InPlaceSubtract(object handler)
+        {
             VerifyHandler(handler);
 
             ComEventSink comEventSink = ComEventSink.FromRuntimeCallableWrapper(_rcw, _sourceIid, false);
-            if (comEventSink != null) {
+            if (comEventSink != null)
+            {
                 comEventSink.RemoveHandler(_dispid, handler);
             }
 

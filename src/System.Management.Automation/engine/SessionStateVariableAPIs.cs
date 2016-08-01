@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 #pragma warning disable 56500
@@ -131,7 +132,6 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-
                 throw PSTraceSource.NewArgumentNullException("name");
             }
 
@@ -143,7 +143,7 @@ namespace System.Management.Automation
 
             return resultItem;
         } // GetVariableValue
-        
+
 
         /// <summary>
         /// Get a variable out of session state. This interface supports
@@ -267,7 +267,7 @@ namespace System.Management.Automation
             }
             else
             {
-                result = GetVariableValueFromProvider(variablePath, out context, out scope, currentScope.ScopeOrigin);
+                result = GetVariableValueFromProvider(variablePath, out context, out scope, _currentScope.ScopeOrigin);
             }
 
             return result;
@@ -1222,7 +1222,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal object SetVariable(
-            VariablePath variablePath, 
+            VariablePath variablePath,
             object newValue,
             bool asValue,
             CommandOrigin origin)
@@ -1310,11 +1310,11 @@ namespace System.Management.Automation
 
                 if (variablePath.IsLocal || variablePath.IsUnscopedVariable)
                 {
-                    scope = currentScope;
+                    scope = _currentScope;
                 }
                 else if (variablePath.IsScript)
                 {
-                    scope = currentScope.ScriptScope;
+                    scope = _currentScope.ScriptScope;
                 }
                 else if (variablePath.IsGlobal)
                 {
@@ -1322,7 +1322,7 @@ namespace System.Management.Automation
                 }
                 else if (variablePath.IsPrivate)
                 {
-                    scope = currentScope;
+                    scope = _currentScope;
                 }
 
                 PSVariable varResult =
@@ -1638,7 +1638,7 @@ namespace System.Management.Automation
                     force,
                     this);
         } // NewVariable
-        
+
         /// <summary>
         /// Creates a new variable in the specified scope
         /// </summary>
@@ -1740,7 +1740,7 @@ namespace System.Management.Automation
             RemoveVariable(name, false);
         }
 
-         /// <summary>
+        /// <summary>
         /// Removes a variable from the variable table.
         /// </summary>
         /// 
@@ -2060,14 +2060,14 @@ namespace System.Management.Automation
         internal IDictionary<string, PSVariable> GetVariableTable()
         {
             SessionStateScopeEnumerator scopeEnumerator =
-                new SessionStateScopeEnumerator(currentScope);
+                new SessionStateScopeEnumerator(_currentScope);
 
             Dictionary<string, PSVariable> result =
                 new Dictionary<string, PSVariable>(StringComparer.OrdinalIgnoreCase);
 
             foreach (SessionStateScope scope in scopeEnumerator)
             {
-                GetScopeVariableTable(scope, result, includePrivate: scope == currentScope);
+                GetScopeVariableTable(scope, result, includePrivate: scope == _currentScope);
             }
 
             return result;
@@ -2143,7 +2143,6 @@ namespace System.Management.Automation
 
         #endregion variables
     }           // SessionStateInternal class
-
 }
 
 #pragma warning restore 56500

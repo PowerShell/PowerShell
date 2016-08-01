@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using Dbg=System.Management.Automation.Diagnostics;
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
@@ -17,8 +17,8 @@ namespace System.Management.Automation
     /// </summary>
     internal class CommandPathSearch : IEnumerable<String>, IEnumerator<String>
     {
-        [TraceSource("CommandSearch","CommandSearch")]
-        private static PSTraceSource tracer = PSTraceSource.GetTracer ("CommandSearch", "CommandSearch");
+        [TraceSource("CommandSearch", "CommandSearch")]
+        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("CommandSearch", "CommandSearch");
 
         /// <summary>
         /// Constructs a command searching enumerator that resolves the location
@@ -58,36 +58,36 @@ namespace System.Management.Automation
                 // The old code would enumerate the file system many more times, once per possible extension.
                 if (Platform.IsWindows)
                 {
-                    commandPatterns = new [] { commandName + ".*" };
+                    commandPatterns = new[] { commandName + ".*" };
                 }
                 else
                 {
                     // Porting note: on non-Windows platforms, we want to always allow just 'commandName'
                     // as an acceptable command name. However, we also want to allow commands to be
                     // called with the .ps1 extension, so that 'script.ps1' can be called by 'script'.
-                    commandPatterns = new [] { commandName + ".ps1", commandName };
+                    commandPatterns = new[] { commandName + ".ps1", commandName };
                 }
-                this.postProcessEnumeratedFiles = CheckAgainstAcceptableCommandNames;
-                this.acceptableCommandNames = acceptableCommandNames;
+                _postProcessEnumeratedFiles = CheckAgainstAcceptableCommandNames;
+                _acceptableCommandNames = acceptableCommandNames;
             }
             else
             {
-                commandPatterns = new [] { commandName };
-                postProcessEnumeratedFiles = JustCheckExtensions;
+                commandPatterns = new[] { commandName };
+                _postProcessEnumeratedFiles = JustCheckExtensions;
             }
 
             Init(commandPatterns, lookupPaths, context);
-            this.orderedPathExt = CommandDiscovery.PathExtensionsWithPs1Prepended;
+            _orderedPathExt = CommandDiscovery.PathExtensionsWithPs1Prepended;
         }
 
         private void Init(IEnumerable<string> commandPatterns, IEnumerable<string> searchPath, ExecutionContext context)
         {
             // Note, discovery must be set before resolving the current directory
 
-            this._context = context;
-            this.patterns = commandPatterns;
+            _context = context;
+            _patterns = commandPatterns;
 
-            this.lookupPaths = new LookupPathCollection(searchPath);
+            _lookupPaths = new LookupPathCollection(searchPath);
             ResolveCurrentDirectoryInLookupPaths();
 
             this.Reset();
@@ -119,14 +119,14 @@ namespace System.Management.Automation
 
             // Loop through the relative paths and resolve them
 
-            foreach (int index in this.lookupPaths.IndexOfRelativePath())
+            foreach (int index in _lookupPaths.IndexOfRelativePath())
             {
                 string resolvedDirectory = null;
                 string resolvedPath = null;
 
                 CommandDiscovery.discoveryTracer.WriteLine(
                     "Lookup directory \"{0}\" appears to be a relative path. Attempting resolution...",
-                    lookupPaths[index]);
+                    _lookupPaths[index]);
 
                 if (isCurrentDriveValid)
                 {
@@ -135,21 +135,21 @@ namespace System.Management.Automation
                         ProviderInfo provider;
                         resolvedPath =
                             pathResolver.GetProviderPath(
-                                lookupPaths[index],
+                                _lookupPaths[index],
                                 out provider);
                     }
                     catch (ProviderInvocationException providerInvocationException)
                     {
                         CommandDiscovery.discoveryTracer.WriteLine(
                             "The relative path '{0}', could not be resolved because the provider threw an exception: '{1}'",
-                            lookupPaths[index],
+                            _lookupPaths[index],
                             providerInvocationException.Message);
                     }
                     catch (InvalidOperationException)
                     {
                         CommandDiscovery.discoveryTracer.WriteLine(
                             "The relative path '{0}', could not resolve a home directory for the provider",
-                            lookupPaths[index]);
+                            _lookupPaths[index]);
                     }
 
 
@@ -167,7 +167,7 @@ namespace System.Management.Automation
                     {
                         CommandDiscovery.discoveryTracer.WriteLine(
                             "The relative path was not a file system path. {0}",
-                            lookupPaths[index]);
+                            _lookupPaths[index]);
                     }
                 }
                 else
@@ -184,7 +184,7 @@ namespace System.Management.Automation
 
                 if (resolvedDirectory != null)
                 {
-                    int existingIndex = lookupPaths.IndexOf(resolvedDirectory);
+                    int existingIndex = _lookupPaths.IndexOf(resolvedDirectory);
 
                     if (existingIndex != -1)
                     {
@@ -194,7 +194,7 @@ namespace System.Management.Automation
                             // so remove the explicit path.
 
                             indexesToRemove.Add(removalListCount++, existingIndex);
-                            lookupPaths[index] = resolvedDirectory;
+                            _lookupPaths[index] = resolvedDirectory;
                         }
                         else
                         {
@@ -208,7 +208,7 @@ namespace System.Management.Automation
                     {
                         // Change the relative path to the resolved path.
 
-                        lookupPaths[index] = resolvedDirectory;
+                        _lookupPaths[index] = resolvedDirectory;
                     }
                 }
                 else
@@ -227,7 +227,7 @@ namespace System.Management.Automation
             for (int removeIndex = indexesToRemove.Count; removeIndex > 0; --removeIndex)
             {
                 int indexToRemove = indexesToRemove[removeIndex - 1];
-                lookupPaths.RemoveAt(indexToRemove);
+                _lookupPaths.RemoveAt(indexToRemove);
             }
         } // ResolveCurrentDirectoryInLookupPaths
 
@@ -269,23 +269,23 @@ namespace System.Management.Automation
         {
             bool result = false;
 
-            if (justReset)
+            if (_justReset)
             {
-                justReset = false;
+                _justReset = false;
 
-                if (!patternEnumerator.MoveNext())
+                if (!_patternEnumerator.MoveNext())
                 {
-                    tracer.TraceError("No patterns were specified");
+                    s_tracer.TraceError("No patterns were specified");
                     return false;
                 }
 
-                if (!lookupPathsEnumerator.MoveNext())
+                if (!_lookupPathsEnumerator.MoveNext())
                 {
-                    tracer.TraceError("No lookup paths were specified");
+                    s_tracer.TraceError("No lookup paths were specified");
                     return false;
                 }
 
-                GetNewDirectoryResults(patternEnumerator.Current, lookupPathsEnumerator.Current);
+                GetNewDirectoryResults(_patternEnumerator.Current, _lookupPathsEnumerator.Current);
             }
 
             do // while lookupPathsEnumerator is valid
@@ -294,26 +294,26 @@ namespace System.Management.Automation
                 {
                     // Try moving to the next path in the current results
 
-                    if (!currentDirectoryResultsEnumerator.MoveNext())
+                    if (!_currentDirectoryResultsEnumerator.MoveNext())
                     {
-                        tracer.WriteLine("Current directory results are invalid");
+                        s_tracer.WriteLine("Current directory results are invalid");
 
                         // Since a path was not found in the current result,
                         // advance the pattern and try again
 
-                        if (!patternEnumerator.MoveNext())
+                        if (!_patternEnumerator.MoveNext())
                         {
-                            tracer.WriteLine("Current patterns exhausted in current directory: {0}", lookupPathsEnumerator.Current);
+                            s_tracer.WriteLine("Current patterns exhausted in current directory: {0}", _lookupPathsEnumerator.Current);
                             break;
                         }
 
                         // Get the results of the next pattern
 
-                        GetNewDirectoryResults(patternEnumerator.Current, lookupPathsEnumerator.Current);
+                        GetNewDirectoryResults(_patternEnumerator.Current, _lookupPathsEnumerator.Current);
                     }
                     else
                     {
-                        tracer.WriteLine("Next path found: {0}", currentDirectoryResultsEnumerator.Current);
+                        s_tracer.WriteLine("Next path found: {0}", _currentDirectoryResultsEnumerator.Current);
                         result = true;
                         break;
                     }
@@ -329,24 +329,23 @@ namespace System.Management.Automation
                 // Since the path was not found in the current results, and all patterns were exhausted,
                 // advance the path and continue
 
-                if (!lookupPathsEnumerator.MoveNext())
+                if (!_lookupPathsEnumerator.MoveNext())
                 {
-                    tracer.WriteLine("All lookup paths exhausted, no more matches can be found");
+                    s_tracer.WriteLine("All lookup paths exhausted, no more matches can be found");
                     break;
                 }
 
                 // Reset the pattern enumerator and get new results using the new lookup path
 
-                patternEnumerator = patterns.GetEnumerator();
+                _patternEnumerator = _patterns.GetEnumerator();
 
-                if (!patternEnumerator.MoveNext())
+                if (!_patternEnumerator.MoveNext())
                 {
-                    tracer.WriteLine("All patterns exhausted, no more matches can be found");
+                    s_tracer.WriteLine("All patterns exhausted, no more matches can be found");
                     break;
                 }
 
-                GetNewDirectoryResults(patternEnumerator.Current, lookupPathsEnumerator.Current);
-
+                GetNewDirectoryResults(_patternEnumerator.Current, _lookupPathsEnumerator.Current);
             } while (true);
 
             return result;
@@ -357,11 +356,11 @@ namespace System.Management.Automation
         /// </summary>
         public void Reset()
         {
-            lookupPathsEnumerator = lookupPaths.GetEnumerator();
-            patternEnumerator = patterns.GetEnumerator();
-            currentDirectoryResults = Utils.EmptyArray<string>();
-            currentDirectoryResultsEnumerator = currentDirectoryResults.GetEnumerator();
-            justReset = true;
+            _lookupPathsEnumerator = _lookupPaths.GetEnumerator();
+            _patternEnumerator = _patterns.GetEnumerator();
+            _currentDirectoryResults = Utils.EmptyArray<string>();
+            _currentDirectoryResultsEnumerator = _currentDirectoryResults.GetEnumerator();
+            _justReset = true;
         } // Reset
 
         /// <summary>
@@ -376,14 +375,14 @@ namespace System.Management.Automation
         /// 
         string IEnumerator<string>.Current
         {
-            get 
-            { 
-                if (currentDirectoryResults == null)
+            get
+            {
+                if (_currentDirectoryResults == null)
                 {
                     throw PSTraceSource.NewInvalidOperationException();
                 }
 
-                return currentDirectoryResultsEnumerator.Current; 
+                return _currentDirectoryResultsEnumerator.Current;
             }
         } // Current
 
@@ -391,7 +390,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return ((IEnumerator<string>) this).Current;
+                return ((IEnumerator<string>)this).Current;
             }
         }
 
@@ -439,8 +438,8 @@ namespace System.Management.Automation
                     {
                         var matchingFiles = Directory.EnumerateFiles(directory, pattern);
 
-                        result = this.postProcessEnumeratedFiles != null
-                            ? this.postProcessEnumeratedFiles(matchingFiles.ToArray())
+                        result = _postProcessEnumeratedFiles != null
+                            ? _postProcessEnumeratedFiles(matchingFiles.ToArray())
                             : matchingFiles;
                     }
                 }
@@ -465,8 +464,8 @@ namespace System.Management.Automation
                 // accessible
             }
 
-            currentDirectoryResults = result ?? Utils.EmptyArray<string>();
-            currentDirectoryResultsEnumerator = currentDirectoryResults.GetEnumerator();
+            _currentDirectoryResults = result ?? Utils.EmptyArray<string>();
+            _currentDirectoryResultsEnumerator = _currentDirectoryResults.GetEnumerator();
         } // GetMatchingPathsInDirectory
 
         private IEnumerable<string> CheckAgainstAcceptableCommandNames(string[] fileNames)
@@ -481,7 +480,7 @@ namespace System.Management.Automation
             Collection<string> result = null;
             if (baseNames.Length > 0)
             {
-                foreach (var name in acceptableCommandNames)
+                foreach (var name in _acceptableCommandNames)
                 {
                     for (int i = 0; i < baseNames.Length; i++)
                     {
@@ -508,7 +507,7 @@ namespace System.Management.Automation
             // Porting note: allow files with executable bit on non-Windows platforms
 
             Collection<string> result = null;
-            foreach (var allowedExt in orderedPathExt)
+            foreach (var allowedExt in _orderedPathExt)
             {
                 foreach (var fileName in fileNames)
                 {
@@ -529,33 +528,33 @@ namespace System.Management.Automation
         /// The directory paths in which to look for commands.
         /// This is derived from the PATH environment variable
         /// </summary>
-        private LookupPathCollection lookupPaths;
+        private LookupPathCollection _lookupPaths;
 
         /// <summary>
         /// The enumerator for the lookup paths
         /// </summary>
-        private IEnumerator<string> lookupPathsEnumerator;
+        private IEnumerator<string> _lookupPathsEnumerator;
 
         /// <summary>
         /// The list of results matching the pattern in the current
         /// path lookup directory. Resets to null.
         /// </summary>
-        private IEnumerable<string> currentDirectoryResults;
+        private IEnumerable<string> _currentDirectoryResults;
 
         /// <summary>
         /// The enumerator for the list of results
         /// </summary>
-        private IEnumerator<string> currentDirectoryResultsEnumerator;
+        private IEnumerator<string> _currentDirectoryResultsEnumerator;
 
         /// <summary>
         /// The command name to search for
         /// </summary>
-        private IEnumerable<string> patterns;
+        private IEnumerable<string> _patterns;
 
         /// <summary>
         /// The enumerator for the patterns
         /// </summary>
-        private IEnumerator<string> patternEnumerator;
+        private IEnumerator<string> _patternEnumerator;
 
         /// <summary>
         /// A reference to the execution context for this runspace
@@ -566,18 +565,17 @@ namespace System.Management.Automation
         /// When reset is called, this gets set to true. Once MoveNext
         /// is called, this gets set to false.
         /// </summary>
-        private bool justReset;
+        private bool _justReset;
 
         /// <summary>
         /// If not null, called with the enumerated files for futher processing
         /// </summary>
-        private Func<string[], IEnumerable<string>> postProcessEnumeratedFiles;
+        private Func<string[], IEnumerable<string>> _postProcessEnumeratedFiles;
 
-        private string[] orderedPathExt;
-        private Collection<string> acceptableCommandNames;
+        private string[] _orderedPathExt;
+        private Collection<string> _acceptableCommandNames;
 
         #endregion private members
-
     } // CommandSearch
 }
 

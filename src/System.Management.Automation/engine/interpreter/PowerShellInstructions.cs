@@ -17,8 +17,9 @@ using System;
 using System.Diagnostics;
 using System.Management.Automation.Language;
 
-namespace System.Management.Automation.Interpreter {
-    class UpdatePositionInstruction : Instruction
+namespace System.Management.Automation.Interpreter
+{
+    internal class UpdatePositionInstruction : Instruction
     {
         private readonly int _sequencePoint;
         private readonly bool _checkBreakpoints;

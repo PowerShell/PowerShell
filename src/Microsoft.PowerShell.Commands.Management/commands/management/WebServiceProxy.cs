@@ -25,12 +25,11 @@ using Dbg = System.Management.Automation;
 using System.Runtime.InteropServices;
 using System.Resources;
 using Microsoft.Win32;
-using System.Text.RegularExpressions; 
+using System.Text.RegularExpressions;
 
 
 namespace Microsoft.PowerShell.Commands
 {
-
     #region New-WebServiceProxy
 
     /// <summary>
@@ -129,23 +128,23 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Cache for storing URIs.
         /// </summary>
-        private static Dictionary<Uri, string> UriCache = new Dictionary<Uri, string>();
+        private static Dictionary<Uri, string> s_uriCache = new Dictionary<Uri, string>();
 
         /// <summary>
         /// Cache for storing sourcecodehashes.
         /// </summary>
-        private static Dictionary<int, object> srccodeCache = new Dictionary<int, object>();
+        private static Dictionary<int, object> s_srccodeCache = new Dictionary<int, object>();
 
         /// <summary>
         /// holds the hash code of the source generated.
         /// </summary>
-        private int sourceHash;
+        private int _sourceHash;
         /// <summary>
         /// Random class
         /// </summary>
 
-        private object cachelock = new object();
-        private static Random rnd = new Random();
+        private object _cachelock = new object();
+        private static Random s_rnd = new Random();
         /// <summary>
         /// BeginProcessing code
         /// </summary>
@@ -169,16 +168,16 @@ namespace Microsoft.PowerShell.Commands
                 er.ErrorDetails = new ErrorDetails(WebServiceResources.NotSupported);
                 ThrowTerminatingError(er);
             }
-           
+
             int sourceCache = 0;
 
-            lock (UriCache)
+            lock (s_uriCache)
             {
-                if (UriCache.ContainsKey(_uri))
+                if (s_uriCache.ContainsKey(_uri))
                 {
                     //if uri is present in the cache                
                     string ns;
-                    UriCache.TryGetValue(_uri, out  ns);
+                    s_uriCache.TryGetValue(_uri, out ns);
                     string[] data = ns.Split('|');
                     if (string.IsNullOrEmpty(_namespace))
                     {
@@ -230,25 +229,25 @@ namespace Microsoft.PowerShell.Commands
 
             //disposing the entries in a cache
             //Adding to Cache
-            lock (UriCache)
+            lock (s_uriCache)
             {
-                UriCache.Remove(_uri);
+                s_uriCache.Remove(_uri);
             }
             if (sourceCache > 0)
             {
-                lock (cachelock)
+                lock (_cachelock)
                 {
-                    srccodeCache.Remove(sourceCache);
+                    s_srccodeCache.Remove(sourceCache);
                 }
             }
-            string key = string.Join("|", new string[] { _namespace, _class, sourceHash.ToString(System.Globalization.CultureInfo.InvariantCulture) });
-            lock (UriCache)
+            string key = string.Join("|", new string[] { _namespace, _class, _sourceHash.ToString(System.Globalization.CultureInfo.InvariantCulture) });
+            lock (s_uriCache)
             {
-                UriCache.Add(_uri, key);
+                s_uriCache.Add(_uri, key);
             }
-            lock (cachelock)
+            lock (_cachelock)
             {
-                srccodeCache.Add(sourceHash, instance);
+                s_srccodeCache.Add(_sourceHash, instance);
             }
 
             WriteObject(instance, true);
@@ -258,8 +257,8 @@ namespace Microsoft.PowerShell.Commands
 
         #region private
 
-        private static ulong sequenceNumber = 1;
-        private static object sequenceNumberLock = new object();
+        private static ulong s_sequenceNumber = 1;
+        private static object s_sequenceNumberLock = new object();
 
         /// <summary>
         /// Generates a random name
@@ -267,7 +266,6 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>string </returns>
         private string GenerateRandomName()
         {
-
             string rndname = null;
             string givenuri = _uri.ToString();
             for (int i = 0; i < givenuri.Length; i++)
@@ -284,9 +282,9 @@ namespace Microsoft.PowerShell.Commands
             }
 
             string sequenceString;
-            lock (sequenceNumberLock)
+            lock (s_sequenceNumberLock)
             {
-                sequenceString = (sequenceNumber++).ToString(CultureInfo.InvariantCulture);
+                sequenceString = (s_sequenceNumber++).ToString(CultureInfo.InvariantCulture);
             }
 
             if (rndname.Length > 30)
@@ -294,7 +292,6 @@ namespace Microsoft.PowerShell.Commands
                 return (sequenceString + rndname.Substring(rndname.Length - 30));
             }
             return (sequenceString + rndname);
-
         }
 
         /// <summary>
@@ -380,14 +377,14 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(er);
             }
             //generate the hashcode of the CodeCompileUnit            
-            sourceHash = codegenerator.ToString().GetHashCode();
+            _sourceHash = codegenerator.ToString().GetHashCode();
 
             //if the sourcehash matches the hashcode in the cache,the proxy hasnt changed and so
             // return the instance of th eproxy in the cache
-            if (srccodeCache.ContainsKey(sourceHash))
+            if (s_srccodeCache.ContainsKey(_sourceHash))
             {
                 object obj;
-                srccodeCache.TryGetValue(sourceHash, out obj);
+                s_srccodeCache.TryGetValue(_sourceHash, out obj);
                 WriteObject(obj, true);
                 return null;
             }
@@ -421,7 +418,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return results.CompiledAssembly;
-
         }
 
         /// <summary>
@@ -458,22 +454,20 @@ namespace Microsoft.PowerShell.Commands
                 Object[] obj = type.GetCustomAttributes(typeof(WebServiceBindingAttribute), false);
                 if (obj.Length > 0)
                 {
-                     proxyType = type;
-                     break;
-                }               
+                    proxyType = type;
+                    break;
+                }
                 if (proxyType != null) break;
             }
 
             System.Management.Automation.Diagnostics.Assert(
-                proxyType != null, 
+                proxyType != null,
                 "Proxy class should always get generated unless there were some errors earlier (in that case we shouldn't get here)");
 
             return assembly.CreateInstance(proxyType.ToString());
         }
 
         #endregion
-
     }//end class
     #endregion
-
 }//Microsoft.Powershell.commands

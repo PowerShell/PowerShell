@@ -28,10 +28,10 @@ namespace System.Management.Automation.Remoting
     internal class HyperVSocketEndPoint : EndPoint
     {
         #region Members
-        
-        private System.Net.Sockets.AddressFamily m_AddressFamily;
-        private Guid m_VmId;
-        private Guid m_ServiceId;
+
+        private System.Net.Sockets.AddressFamily _addressFamily;
+        private Guid _vmId;
+        private Guid _serviceId;
 
         public const System.Net.Sockets.AddressFamily AF_HYPERV = (System.Net.Sockets.AddressFamily)34;
         public const int HYPERV_SOCK_ADDR_SIZE = 36;
@@ -41,29 +41,29 @@ namespace System.Management.Automation.Remoting
         #region Constructor
 
         public HyperVSocketEndPoint(System.Net.Sockets.AddressFamily AddrFamily,
-                                   Guid  VmId,
-                                   Guid  ServiceId)
+                                   Guid VmId,
+                                   Guid ServiceId)
         {
-            m_AddressFamily = AddrFamily;
-            m_VmId = VmId;
-            m_ServiceId = ServiceId;
+            _addressFamily = AddrFamily;
+            _vmId = VmId;
+            _serviceId = ServiceId;
         }
 
         public override System.Net.Sockets.AddressFamily AddressFamily
         {
-            get { return m_AddressFamily;  }
+            get { return _addressFamily; }
         }
 
         public Guid VmId
         {
-            get { return m_VmId; }
-            set { m_VmId = value; }
+            get { return _vmId; }
+            set { _vmId = value; }
         }
-        
+
         public Guid ServiceId
         {
-            get { return m_ServiceId; }
-            set { m_VmId = value; }
+            get { return _serviceId; }
+            set { _vmId = value; }
         }
 
         #endregion
@@ -73,22 +73,22 @@ namespace System.Management.Automation.Remoting
         public override EndPoint Create(SocketAddress SockAddr)
         {
             if (SockAddr == null ||
-                SockAddr.Family != AF_HYPERV || 
+                SockAddr.Family != AF_HYPERV ||
                 SockAddr.Size != 34)
             {
                 return null;
             }
-        
+
             HyperVSocketEndPoint endpoint = new HyperVSocketEndPoint(SockAddr.Family, Guid.Empty, Guid.Empty);
-        
+
             string sockAddress = SockAddr.ToString();
 
             endpoint.VmId = new Guid(sockAddress.Substring(4, 16));
             endpoint.ServiceId = new Guid(sockAddress.Substring(20, 16));
-        
+
             return endpoint;
         }
-        
+
         public override bool Equals(Object obj)
         {
             HyperVSocketEndPoint endpoint = (HyperVSocketEndPoint)obj;
@@ -97,47 +97,47 @@ namespace System.Management.Automation.Remoting
             {
                 return false;
             }
-        
-            if ((m_AddressFamily == endpoint.AddressFamily) &&
-                (m_VmId == endpoint.VmId) &&
-                (m_ServiceId == endpoint.ServiceId))
+
+            if ((_addressFamily == endpoint.AddressFamily) &&
+                (_vmId == endpoint.VmId) &&
+                (_serviceId == endpoint.ServiceId))
             {
                 return true;
             }
-        
+
             return false;
         }
-        
+
         public override int GetHashCode()
         {
             return Serialize().GetHashCode();
         }
-        
+
         public override SocketAddress Serialize()
         {
-            SocketAddress sockAddress = new SocketAddress((System.Net.Sockets.AddressFamily)m_AddressFamily, HYPERV_SOCK_ADDR_SIZE);
-            
-            byte[] vmId = m_VmId.ToByteArray();
-            byte[] serviceId = m_ServiceId.ToByteArray();
+            SocketAddress sockAddress = new SocketAddress((System.Net.Sockets.AddressFamily)_addressFamily, HYPERV_SOCK_ADDR_SIZE);
+
+            byte[] vmId = _vmId.ToByteArray();
+            byte[] serviceId = _serviceId.ToByteArray();
 
             sockAddress[2] = (byte)0;
-        
+
             for (int i = 0; i < vmId.Length; i++)
             {
                 sockAddress[i + 4] = vmId[i];
             }
-        
+
             for (int i = 0; i < serviceId.Length; i++)
             {
                 sockAddress[i + 4 + vmId.Length] = serviceId[i];
             }
-        
+
             return sockAddress;
         }
-    
+
         public override string ToString()
         {
-            return m_VmId.ToString() + m_ServiceId.ToString();
+            return _vmId.ToString() + _serviceId.ToString();
         }
 
         #endregion
@@ -212,7 +212,7 @@ namespace System.Management.Automation.Remoting
             int bytesRead;
             */
             _syncObject = new object();
-            
+
             Exception ex = null;
 
             try
@@ -265,15 +265,15 @@ namespace System.Management.Automation.Remoting
                 // TODO: remove below 6 lines of code when .NET supports Hyper-V socket duplication
                 Guid serviceId = new Guid("a5201c21-2770-4c11-a68e-f182edb29220"); // HV_GUID_VM_SESSION_SERVICE_ID_2
                 HyperVSocketEndPoint endpoint = new HyperVSocketEndPoint(HyperVSocketEndPoint.AF_HYPERV, Guid.Empty, serviceId);
-                
+
                 Socket listenSocket = new Socket(endpoint.AddressFamily, SocketType.Stream, (System.Net.Sockets.ProtocolType)1);
                 listenSocket.Bind(endpoint);
-                
+
                 listenSocket.Listen(1);
                 _socket = listenSocket.Accept();
 
                 _networkStream = new NetworkStream(_socket, true);
-           
+
                 // Create reader/writer streams.
                 _streamReader = new StreamReader(_networkStream);
                 _streamWriter = new StreamWriter(_networkStream);
@@ -286,8 +286,8 @@ namespace System.Management.Automation.Remoting
                 // explicitly close listenSocket here for safe.
                 //
                 if (listenSocket != null)
-                {        
-                    try { listenSocket.Dispose(); } 
+                {
+                    try { listenSocket.Dispose(); }
                     catch (ObjectDisposedException) { }
                 }
             }
@@ -296,11 +296,11 @@ namespace System.Management.Automation.Remoting
                 CommandProcessorBase.CheckForSevereException(e);
                 ex = e;
             }
-            
+
             if (ex != null)
             {
                 Dbg.Assert(false, "Unexpected error in RemoteSessionHyperVSocketServer.");
-            
+
                 // Unexpected error.
                 string errorMessage = !string.IsNullOrEmpty(ex.Message) ? ex.Message : string.Empty;
                 _tracer.WriteMessage("RemoteSessionHyperVSocketServer", "RemoteSessionHyperVSocketServer", Guid.Empty,
@@ -311,7 +311,7 @@ namespace System.Management.Automation.Remoting
                     ex,
                     PSRemotingErrorId.RemoteSessionHyperVSocketServerConstructorFailure.ToString(),
                     ErrorCategory.InvalidOperation,
-                    null);                
+                    null);
             }
         }
 
@@ -329,7 +329,7 @@ namespace System.Management.Automation.Remoting
                 if (_disposed) { return; }
                 _disposed = true;
             }
-            
+
             if (_streamReader != null)
             {
                 try { _streamReader.Dispose(); }
@@ -345,14 +345,14 @@ namespace System.Management.Automation.Remoting
             }
 
             if (_networkStream != null)
-            {        
-                try { _networkStream.Dispose(); } 
+            {
+                try { _networkStream.Dispose(); }
                 catch (ObjectDisposedException) { }
             }
 
             if (_socket != null)
-            {        
-                try { _socket.Dispose(); } 
+            {
+                try { _socket.Dispose(); }
                 catch (ObjectDisposedException) { }
             }
         }
@@ -373,7 +373,7 @@ namespace System.Management.Automation.Remoting
         private bool _disposed;
         private PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
 
-        private static ManualResetEvent connectDone = 
+        private static ManualResetEvent s_connectDone =
                 new ManualResetEvent(false);
 
         #endregion
@@ -445,7 +445,7 @@ namespace System.Management.Automation.Remoting
             bool isContainer = false)
         {
             Guid serviceId;
-            
+
             _syncObject = new object();
 
             if (isFirstConnection)
@@ -474,7 +474,7 @@ namespace System.Management.Automation.Remoting
 
                 try
                 {
-                    _socket.SetSocketOption((System.Net.Sockets.SocketOptionLevel)HV_PROTOCOL_RAW, 
+                    _socket.SetSocketOption((System.Net.Sockets.SocketOptionLevel)HV_PROTOCOL_RAW,
                                             (System.Net.Sockets.SocketOptionName)HVSOCKET_CONTAINER_PASSTHRU,
                                             (byte[])value);
                 }
@@ -500,7 +500,7 @@ namespace System.Management.Automation.Remoting
                 if (_disposed) { return; }
                 _disposed = true;
             }
-        
+
             if (_streamReader != null)
             {
                 try { _streamReader.Dispose(); }
@@ -516,14 +516,14 @@ namespace System.Management.Automation.Remoting
             }
 
             if (_networkStream != null)
-            {        
-                try { _networkStream.Dispose(); } 
+            {
+                try { _networkStream.Dispose(); }
                 catch (ObjectDisposedException) { }
             }
 
             if (_socket != null)
-            {        
-                try { _socket.Dispose(); } 
+            {
+                try { _socket.Dispose(); }
                 catch (ObjectDisposedException) { }
             }
         }
@@ -558,9 +558,9 @@ namespace System.Management.Automation.Remoting
                         PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.InvalidUsername));
                 }
             }
-            
+
             _socket.Connect(_endPoint);
-            
+
             if (_socket.Connected)
             {
                 _tracer.WriteMessage("RemoteSessionHyperVSocketClient", "Connect", Guid.Empty,
@@ -590,7 +590,7 @@ namespace System.Management.Automation.Remoting
                     //
                     _socket.Send(domain);
                     _socket.Receive(response);
-                    
+
                     _socket.Send(userName);
                     _socket.Receive(response);
 
@@ -608,7 +608,7 @@ namespace System.Management.Automation.Remoting
                     {
                         _socket.Send(Encoding.ASCII.GetBytes("NONEMPTYPW"));
                         _socket.Receive(response);
-                    
+
                         _socket.Send(password);
                         _socket.Receive(response);
                         responseString = Encoding.ASCII.GetString(response);
@@ -620,7 +620,7 @@ namespace System.Management.Automation.Remoting
                     // - "PASS": credentail is valid, but PowerShell Direct in VM does not support configuration (Server 2016 TP4 and before)
                     // - "CONF": credentail is valid, and PowerShell Direct in VM supports configuration (Server 2016 TP5 and later)
                     //
-    
+
                     //
                     // Credential is invalid.
                     //
@@ -646,7 +646,7 @@ namespace System.Management.Automation.Remoting
                             _socket.Send(Encoding.ASCII.GetBytes("NONEMPTYCF"));
                             _socket.Receive(response);
 
-                            Byte[] configName = Encoding.Unicode.GetBytes(configurationName);                        
+                            Byte[] configName = Encoding.Unicode.GetBytes(configurationName);
                             _socket.Send(configName);
                         }
                     }
@@ -655,7 +655,7 @@ namespace System.Management.Automation.Remoting
                         _socket.Send(response);
                     }
                 }
-                
+
                 _streamReader = new StreamReader(_networkStream);
                 _streamWriter = new StreamWriter(_networkStream);
                 _streamWriter.AutoFlush = true;
@@ -664,7 +664,7 @@ namespace System.Management.Automation.Remoting
             }
             else
             {
-                _tracer.WriteMessage("RemoteSessionHyperVSocketClient", "Connect", Guid.Empty, 
+                _tracer.WriteMessage("RemoteSessionHyperVSocketClient", "Connect", Guid.Empty,
                     "Client unable to connect.");
 
                 result = false;
@@ -676,7 +676,7 @@ namespace System.Management.Automation.Remoting
         public void Close()
         {
             _networkStream.Dispose();
-            _socket.Dispose();                
+            _socket.Dispose();
         }
 
         #endregion

@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -39,7 +40,7 @@ namespace System.Management.Automation
         /// We need it to avoid calling lookups inside dynamic assemblies with PS Types, so we exclude it from GetAssemblies().
         /// We use this convention for names to achive it.
         /// </summary>
-        internal static readonly char FIRST_CHAR_PSASSEMBLY_MARK = (char) 0x29f9;
+        internal static readonly char FIRST_CHAR_PSASSEMBLY_MARK = (char)0x29f9;
 
         #region Type
 
@@ -207,7 +208,7 @@ namespace System.Management.Automation
             bool deleteOld)
         {
 #if CORECLR
-            Marshal.StructureToPtr<T>( structure, ptr, deleteOld );
+            Marshal.StructureToPtr<T>(structure, ptr, deleteOld);
 #else
             Marshal.StructureToPtr(structure, ptr, deleteOld);
 #endif
@@ -374,38 +375,38 @@ namespace System.Management.Automation
         /// </summary>
         internal static Encoding GetDefaultEncoding()
         {
-            if (_defaultEncoding == null)
+            if (s_defaultEncoding == null)
             {
 #if CORECLR     // Encoding.Default is not in CoreCLR
                 // As suggested by CoreCLR team (tarekms), use latin1 (ISO-8859-1, CodePage 28591) as the default encoding.
                 // We will revisit this if it causes any failures when running tests on Core PS.
-                _defaultEncoding = Encoding.GetEncoding(28591);
+                s_defaultEncoding = Encoding.GetEncoding(28591);
 #else
-                _defaultEncoding = Encoding.Default;
+                s_defaultEncoding = Encoding.Default;
 #endif
             }
-            return _defaultEncoding;
+            return s_defaultEncoding;
         }
-        private static volatile Encoding _defaultEncoding;
+        private static volatile Encoding s_defaultEncoding;
 
         /// <summary>
         /// Facade for getting OEM encoding
         /// </summary>
         internal static Encoding GetOEMEncoding()
         {
-            if (_oemEncoding == null)
+            if (s_oemEncoding == null)
             {
 #if CORECLR     // The OEM code page '437' is not supported by CoreCLR.
                 // Use the default encoding (ISO-8859-1, CodePage 28591) as the OEM encoding in OneCore powershell.
-                _oemEncoding = GetDefaultEncoding();
+                s_oemEncoding = GetDefaultEncoding();
 #else
                 uint oemCp = NativeMethods.GetOEMCP();
-                _oemEncoding = Encoding.GetEncoding((int)oemCp);
+                s_oemEncoding = Encoding.GetEncoding((int)oemCp);
 #endif   
             }
-            return _oemEncoding;
+            return s_oemEncoding;
         }
-        private static volatile Encoding _oemEncoding;
+        private static volatile Encoding s_oemEncoding;
 
         #endregion Encoding
 
@@ -656,7 +657,7 @@ namespace System.Management.Automation
         internal static void SetProfileOptimizationRoot(string directoryPath)
         {
 #if CORECLR
-            PSAssemblyLoadContext.SetProfileOptimizationRootImpl(directoryPath); 
+            PSAssemblyLoadContext.SetProfileOptimizationRootImpl(directoryPath);
 #else
             System.Runtime.ProfileOptimization.SetProfileRoot(directoryPath);
 #endif
@@ -669,7 +670,7 @@ namespace System.Management.Automation
         internal static void StartProfileOptimization(string profile)
         {
 #if CORECLR
-            PSAssemblyLoadContext.StartProfileOptimizationImpl(profile); 
+            PSAssemblyLoadContext.StartProfileOptimizationImpl(profile);
 #else
             System.Runtime.ProfileOptimization.StartProfile(profile);
 #endif

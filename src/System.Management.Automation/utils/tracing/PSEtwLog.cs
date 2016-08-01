@@ -270,14 +270,14 @@ namespace System.Management.Automation.Tracing
             provider.SetActivityIdForCurrentThread(newActivityId);
         }
 
-        static internal void ReplaceActivityIdForCurrentThread(Guid newActivityId, 
+        static internal void ReplaceActivityIdForCurrentThread(Guid newActivityId,
             PSEventId eventForOperationalChannel, PSEventId eventForAnalyticChannel, PSKeyword keyword, PSTask task)
         {
-             // set the new activity id
+            // set the new activity id
             provider.SetActivityIdForCurrentThread(newActivityId);
 
             // Once the activity id is set, write the transfer event
-            WriteTransferEvent(newActivityId, eventForOperationalChannel, eventForAnalyticChannel, keyword, task);   
+            WriteTransferEvent(newActivityId, eventForOperationalChannel, eventForAnalyticChannel, keyword, task);
         }
 
         /// <summary>
@@ -294,7 +294,7 @@ namespace System.Management.Automation.Tracing
         static internal void WriteTransferEvent(Guid relatedActivityId, PSEventId eventForOperationalChannel,
                             PSEventId eventForAnalyticChannel, PSKeyword keyword, PSTask task)
         {
-            provider.WriteEvent(eventForOperationalChannel, PSChannel.Operational, PSOpcode.Method,PSLevel.Informational, task,
+            provider.WriteEvent(eventForOperationalChannel, PSChannel.Operational, PSOpcode.Method, PSLevel.Informational, task,
                 PSKeyword.UseAlwaysOperational);
 
             provider.WriteEvent(eventForAnalyticChannel, PSChannel.Analytic, PSOpcode.Method, PSLevel.Informational, task,

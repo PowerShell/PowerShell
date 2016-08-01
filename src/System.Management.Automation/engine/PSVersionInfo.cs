@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Diagnostics;
 using System.Reflection;
 using System.Collections;
@@ -20,7 +21,7 @@ namespace System.Management.Automation
         internal const string PSVersionName = "PSVersion";
         internal const string SerializationVersionName = "SerializationVersion";
         internal const string WSManStackVersionName = "WSManStackVersion";
-        static private Hashtable _psVersionTable = null;
+        static private Hashtable s_psVersionTable = null;
 
         /// <summary>
         /// A constant to track current PowerShell Version.
@@ -33,13 +34,13 @@ namespace System.Management.Automation
         /// For each later relase of PowerShell, this constant needs to 
         /// be updated to reflect the right version. 
         /// </remarks>
-        static Version _psV1Version  = new Version(1, 0);
-        static Version _psV2Version  = new Version(2, 0);
-        static Version _psV3Version  = new Version(3, 0);
-        static Version _psV4Version  = new Version(4, 0);
-        static Version _psV5Version  = new Version(5, 0);
-        static Version _psV51Version = new Version(5, 1, NTVerpVars.PRODUCTBUILD, NTVerpVars.PRODUCTBUILD_QFE);
-        static SemanticVersion _psV6Version = new SemanticVersion(6, 0, 0, "alpha");
+        private static Version s_psV1Version = new Version(1, 0);
+        private static Version s_psV2Version = new Version(2, 0);
+        private static Version s_psV3Version = new Version(3, 0);
+        private static Version s_psV4Version = new Version(4, 0);
+        private static Version s_psV5Version = new Version(5, 0);
+        private static Version s_psV51Version = new Version(5, 1, NTVerpVars.PRODUCTBUILD, NTVerpVars.PRODUCTBUILD_QFE);
+        private static SemanticVersion s_psV6Version = new SemanticVersion(6, 0, 0, "alpha");
 
         /// <summary>
         /// A constant to track current PowerShell Edition
@@ -58,26 +59,26 @@ namespace System.Management.Automation
         // Static Constructor.
         static PSVersionInfo()
         {
-            _psVersionTable = new Hashtable(StringComparer.OrdinalIgnoreCase);
+            s_psVersionTable = new Hashtable(StringComparer.OrdinalIgnoreCase);
 
-            _psVersionTable[PSVersionInfo.PSVersionName] = _psV6Version;
-            _psVersionTable["PSEdition"] = PSEditionValue;
-            _psVersionTable["BuildVersion"] = GetBuildVersion();
-            _psVersionTable["GitCommitId"] = GetCommitInfo();
-            _psVersionTable["PSCompatibleVersions"] = new Version[] { _psV1Version, _psV2Version, _psV3Version, _psV4Version, _psV5Version, _psV51Version, _psV6Version };
-            _psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
-            _psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
-            _psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
+            s_psVersionTable[PSVersionInfo.PSVersionName] = s_psV6Version;
+            s_psVersionTable["PSEdition"] = PSEditionValue;
+            s_psVersionTable["BuildVersion"] = GetBuildVersion();
+            s_psVersionTable["GitCommitId"] = GetCommitInfo();
+            s_psVersionTable["PSCompatibleVersions"] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version };
+            s_psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
+            s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
+            s_psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
 #if CORECLR
-            _psVersionTable["CLRVersion"] = null;
+            s_psVersionTable["CLRVersion"] = null;
 #else
-            _psVersionTable["CLRVersion"] = Environment.Version;
+            s_psVersionTable["CLRVersion"] = Environment.Version;
 #endif
         }
 
         static internal Hashtable GetPSVersionTable()
         {
-            return _psVersionTable;
+            return s_psVersionTable;
         }
 
         static internal Version GetBuildVersion()
@@ -90,11 +91,13 @@ namespace System.Management.Automation
         // Get the commit id from the powershell.version file. If the powershell.version file doesn't exist, use the string "N/A"
         static internal string GetCommitInfo()
         {
-            try {
+            try
+            {
                 string assemblyPath = IO.Path.GetDirectoryName(typeof(PSVersionInfo).GetTypeInfo().Assembly.Location);
-                return (IO.File.ReadAllLines(IO.Path.Combine(assemblyPath,"powershell.version"))[0]);
+                return (IO.File.ReadAllLines(IO.Path.Combine(assemblyPath, "powershell.version"))[0]);
             }
-            catch (Exception e){
+            catch (Exception e)
+            {
                 return e.Message;
             }
         }
@@ -143,7 +146,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (SemanticVersion) GetPSVersionTable()[PSVersionInfo.PSVersionName];
+                return (SemanticVersion)GetPSVersionTable()[PSVersionInfo.PSVersionName];
             }
         }
 
@@ -151,7 +154,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (Version) GetPSVersionTable()["CLRVersion"];
+                return (Version)GetPSVersionTable()["CLRVersion"];
             }
         }
 
@@ -159,7 +162,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (Version) GetPSVersionTable()["BuildVersion"];
+                return (Version)GetPSVersionTable()["BuildVersion"];
             }
         }
 
@@ -167,7 +170,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (Version[]) GetPSVersionTable()["PSCompatibleVersions"];
+                return (Version[])GetPSVersionTable()["PSCompatibleVersions"];
             }
         }
 
@@ -183,7 +186,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (Version) GetPSVersionTable()["SerializationVersion"];
+                return (Version)GetPSVersionTable()["SerializationVersion"];
             }
         }
 
@@ -250,29 +253,29 @@ namespace System.Management.Automation
 
         static internal bool IsValidPSVersion(Version version)
         {
-            if (version.Major == _psV6Version.Major)
+            if (version.Major == s_psV6Version.Major)
             {
-                return version.Minor == _psV6Version.Minor;
+                return version.Minor == s_psV6Version.Minor;
             }
-            if (version.Major == _psV5Version.Major)
+            if (version.Major == s_psV5Version.Major)
             {
-                return (version.Minor == _psV5Version.Minor || version.Minor == _psV51Version.Minor);
+                return (version.Minor == s_psV5Version.Minor || version.Minor == s_psV51Version.Minor);
             }
-            if (version.Major == _psV4Version.Major)
+            if (version.Major == s_psV4Version.Major)
             {
-                return (version.Minor == _psV4Version.Minor);
+                return (version.Minor == s_psV4Version.Minor);
             }
-            else if (version.Major == _psV3Version.Major)
+            else if (version.Major == s_psV3Version.Major)
             {
-                return version.Minor == _psV3Version.Minor;
+                return version.Minor == s_psV3Version.Minor;
             }
-            else if (version.Major == _psV2Version.Major)
+            else if (version.Major == s_psV2Version.Major)
             {
-                return version.Minor == _psV2Version.Minor;
+                return version.Minor == s_psV2Version.Minor;
             }
-            else if (version.Major == _psV1Version.Major)
+            else if (version.Major == s_psV1Version.Major)
             {
-                return version.Minor == _psV1Version.Minor;
+                return version.Minor == s_psV1Version.Minor;
             }
 
             return false;
@@ -280,26 +283,25 @@ namespace System.Management.Automation
 
         static internal Version PSV4Version
         {
-            get { return _psV4Version; }
+            get { return s_psV4Version; }
         }
 
         static internal Version PSV5Version
         {
-            get { return _psV5Version; }
+            get { return s_psV5Version; }
         }
 
         static internal Version PSV51Version
         {
-            get { return _psV51Version; }
+            get { return s_psV51Version; }
         }
 
         static internal SemanticVersion PSV6Version
         {
-            get { return _psV6Version; }
+            get { return s_psV6Version; }
         }
 
         #endregion
-
     }
 
     /// <summary>
@@ -371,8 +373,8 @@ namespace System.Management.Automation
             Patch = patch;
             Label = null;
         }
-        
-        const string LabelPropertyName = "PSSemanticVersionLabel";
+
+        private const string LabelPropertyName = "PSSemanticVersionLabel";
 
         /// <summary>
         /// Construct a <see cref="SemanticVersion"/> from a <see cref="Version"/>,
@@ -636,7 +638,8 @@ namespace System.Management.Automation
         /// </summary>
         public static bool operator ==(SemanticVersion v1, SemanticVersion v2)
         {
-            if (object.ReferenceEquals(v1, null)) {
+            if (object.ReferenceEquals(v1, null))
+            {
                 return object.ReferenceEquals(v2, null);
             }
 
@@ -656,7 +659,7 @@ namespace System.Management.Automation
         /// </summary>
         public static bool operator <(SemanticVersion v1, SemanticVersion v2)
         {
-            if ((object) v1 == null) throw PSTraceSource.NewArgumentException(nameof(v1));
+            if ((object)v1 == null) throw PSTraceSource.NewArgumentException(nameof(v1));
             return (v1.CompareTo(v2) < 0);
         }
 
@@ -665,7 +668,7 @@ namespace System.Management.Automation
         /// </summary>
         public static bool operator <=(SemanticVersion v1, SemanticVersion v2)
         {
-            if ((object) v1 == null) throw PSTraceSource.NewArgumentException(nameof(v1));
+            if ((object)v1 == null) throw PSTraceSource.NewArgumentException(nameof(v1));
             return (v1.CompareTo(v2) <= 0);
         }
 
@@ -686,10 +689,10 @@ namespace System.Management.Automation
         }
 
         internal enum ParseFailureKind
-        { 
-            ArgumentException, 
-            ArgumentOutOfRangeException, 
-            FormatException 
+        {
+            ArgumentException,
+            ArgumentOutOfRangeException,
+            FormatException
         }
 
         internal struct VersionResult

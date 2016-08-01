@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
         /// gets or sets the Header property
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public Dictionary<string,string> Headers { get; set; }
+        public Dictionary<string, string> Headers { get; set; }
 
 #if CORECLR
         /// <summary>
@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
         /// gets or sets the RedirectMax property
         /// </summary>
         public int MaximumRedirection { get; set; }
-        
+
         /// <summary>
         /// Construct a new instance of a WebRequestSession object.
         /// </summary>

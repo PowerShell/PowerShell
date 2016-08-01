@@ -11,22 +11,21 @@ using Microsoft.Management.Infrastructure;
 
 namespace System.Management.Automation.Runspaces
 {
-
     /// <summary>
     /// Defines a Command object which can be added to <see cref="Pipeline"/> object
     /// for invocation.
     /// </summary>
-    public sealed class Command 
+    public sealed class Command
     {
         #region constructors
-        
+
         /// <summary>
         /// Initializes a new instance of Command class using specified command parameter.
         /// </summary>
         /// <param name="command">Name of the command or script contents </param>
         /// <exception cref="ArgumentNullException">command is null</exception>
-        public Command (string command)
-            :this(command,false,null)
+        public Command(string command)
+            : this(command, false, null)
         {
         }
 
@@ -36,8 +35,8 @@ namespace System.Management.Automation.Runspaces
         /// <param name="command">The command name or script contents</param>
         /// <param name="isScript">True if this command represents a script, otherwise; false.</param>
         /// <exception cref="ArgumentNullException">command is null</exception>
-        public Command (string command, bool isScript)
-            :this(command,isScript,null)
+        public Command(string command, bool isScript)
+            : this(command, isScript, null)
         {
         }
 
@@ -53,7 +52,7 @@ namespace System.Management.Automation.Runspaces
             IsEndOfStatement = false;
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException ("command");
+                throw PSTraceSource.NewArgumentNullException("command");
             }
 
             _command = command;
@@ -84,7 +83,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         internal Command(CommandInfo commandInfo)
-            :this(commandInfo, false)
+            : this(commandInfo, false)
         {
         }
 
@@ -100,7 +99,7 @@ namespace System.Management.Automation.Runspaces
         /// Copy constructor for clone operations
         /// </summary>
         /// <param name="command">The source <see cref="Command"/> instance.</param>
-        internal Command (Command command)
+        internal Command(Command command)
         {
             _isScript = command._isScript;
             _useLocalScope = command._useLocalScope;
@@ -113,7 +112,7 @@ namespace System.Management.Automation.Runspaces
 
             foreach (CommandParameter param in command.Parameters)
             {
-                Parameters.Add (new CommandParameter (param.Name, param.Value));
+                Parameters.Add(new CommandParameter(param.Name, param.Value));
             }
         }
 
@@ -199,14 +198,14 @@ namespace System.Management.Automation.Runspaces
         #endregion Properties
 
         #region Methods
-        
+
         /// <summary>
         /// Creates a new <see cref="Command"/> that is a copy of the current instance.
         /// </summary>
         /// <returns>A new <see cref="Command"/> that is a copy of this instance.</returns>
-        internal Command Clone ()
+        internal Command Clone()
         {
-            return new Command (this);
+            return new Command(this);
         }
 
         /// <summary>
@@ -221,7 +220,7 @@ namespace System.Management.Automation.Runspaces
         #endregion Methods
 
         #region Merge
-        
+
         private PipelineResultTypes _mergeUnclaimedPreviousCommandResults =
             PipelineResultTypes.None;
         /// <summary>
@@ -257,7 +256,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     throw PSTraceSource.NewNotSupportedException();
                 }
-                
+
                 _mergeUnclaimedPreviousCommandResults = value;
             }
         }
@@ -380,7 +379,6 @@ namespace System.Management.Automation.Runspaces
             {
                 _mergeInstructions[(int)MergeType.Information] = toResult;
             }
-
         }
 
         /// <summary>
@@ -490,7 +488,7 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 ScriptBlock scriptBlock = executionContext.Engine.ParseScriptBlock(CommandText, addToHistory);
-                if(origin == Automation.CommandOrigin.Internal)
+                if (origin == Automation.CommandOrigin.Internal)
                 {
                     scriptBlock.LanguageMode = PSLanguageMode.FullLanguage;
                 }
@@ -499,19 +497,19 @@ namespace System.Management.Automation.Runspaces
                 // constructions...
                 switch (scriptBlock.LanguageMode)
                 {
-                case PSLanguageMode.RestrictedLanguage:
-                    scriptBlock.CheckRestrictedLanguage(null, null, false);
-                    break;
-                case PSLanguageMode.FullLanguage:
-                    // Interactive script commands are permitted in this mode.
-                    break;
-                case PSLanguageMode.ConstrainedLanguage:
-                    // Constrained Language is checked at runtime.
-                    break;
-                default:
-                    // This should never happen...
-                    Diagnostics.Assert(false, "Invalid langage mode was set when building a ScriptCommandProcessor");
-                    throw new InvalidOperationException("Invalid langage mode was set when building a ScriptCommandProcessor");
+                    case PSLanguageMode.RestrictedLanguage:
+                        scriptBlock.CheckRestrictedLanguage(null, null, false);
+                        break;
+                    case PSLanguageMode.FullLanguage:
+                        // Interactive script commands are permitted in this mode.
+                        break;
+                    case PSLanguageMode.ConstrainedLanguage:
+                        // Constrained Language is checked at runtime.
+                        break;
+                    default:
+                        // This should never happen...
+                        Diagnostics.Assert(false, "Invalid langage mode was set when building a ScriptCommandProcessor");
+                        throw new InvalidOperationException("Invalid langage mode was set when building a ScriptCommandProcessor");
                 }
 
                 if (scriptBlock.UsesCmdletBinding)
@@ -531,7 +529,7 @@ namespace System.Management.Automation.Runspaces
             else
             {
                 // RestrictedLanguage / NoLanguage do not support dot-sourcing when CommandOrigin is Runspace
-                if (( _useLocalScope.HasValue ) && ( !_useLocalScope.Value ))
+                if ((_useLocalScope.HasValue) && (!_useLocalScope.Value))
                 {
                     switch (executionContext.LanguageMode)
                     {
@@ -569,8 +567,8 @@ namespace System.Management.Automation.Runspaces
             if (commandProcessorBase.IsHelpRequested(out helpTarget, out helpCategory))
             {
                 commandProcessorBase = CommandProcessorBase.CreateGetHelpCommandProcessor(
-                    executionContext, 
-                    helpTarget, 
+                    executionContext,
+                    helpTarget,
                     helpCategory);
             }
 
@@ -585,12 +583,12 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// The collection of paramters that have been added.
         /// </summary>
-        private readonly CommandParameterCollection _parameters = new CommandParameterCollection ();
+        private readonly CommandParameterCollection _parameters = new CommandParameterCollection();
 
         /// <summary>
         /// The command string passed in at ctor time.
         /// </summary>
-        private readonly string          _command = string.Empty;
+        private readonly string _command = string.Empty;
 
         /// <summary>
         /// The command info passed in at ctor time.
@@ -600,8 +598,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Does this instance represent a script?
         /// </summary>
-        private readonly bool            _isScript;
-        
+        private readonly bool _isScript;
+
         /// <summary>
         /// This is used for script commands (i.e. _isScript is true). If 
         /// _useLocalScope is true, script is run in LocalScope.  If
@@ -610,7 +608,7 @@ namespace System.Management.Automation.Runspaces
         /// property is bool, not bool? (from V1), so it should probably
         /// be deprecated, at least for internal use.
         /// </summary>
-        private bool?           _useLocalScope;
+        private bool? _useLocalScope;
 
         #endregion Private fields
 
@@ -780,12 +778,12 @@ namespace System.Management.Automation.Runspaces
         internal CimInstance ToCimInstance()
         {
             CimInstance c = InternalMISerializer.CreateCimInstance("PS_Command");
-            CimProperty commandTextProperty = InternalMISerializer.CreateCimProperty("CommandText", 
-                                                                                     this.CommandText, 
+            CimProperty commandTextProperty = InternalMISerializer.CreateCimProperty("CommandText",
+                                                                                     this.CommandText,
                                                                                      Microsoft.Management.Infrastructure.CimType.String);
             c.CimInstanceProperties.Add(commandTextProperty);
-            CimProperty isScriptProperty = InternalMISerializer.CreateCimProperty("IsScript", 
-                                                                                  this.IsScript, 
+            CimProperty isScriptProperty = InternalMISerializer.CreateCimProperty("IsScript",
+                                                                                  this.IsScript,
                                                                                   Microsoft.Management.Infrastructure.CimType.Boolean);
             c.CimInstanceProperties.Add(isScriptProperty);
 
@@ -799,7 +797,7 @@ namespace System.Management.Automation.Runspaces
 
                 if (parameterInstances.Count > 0)
                 {
-                    CimProperty parametersProperty = InternalMISerializer.CreateCimProperty("Parameters", 
+                    CimProperty parametersProperty = InternalMISerializer.CreateCimProperty("Parameters",
                                                                                             parameterInstances.ToArray(),
                                                                                             Microsoft.Management.Infrastructure.CimType.ReferenceArray);
                     c.CimInstanceProperties.Add(parametersProperty);
@@ -874,17 +872,17 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Make the default constructor internal
         /// </summary>
-        internal CommandCollection ()
+        internal CommandCollection()
         {
         }
-        
+
         /// <summary>
         /// Adds a new command for given string
         /// </summary>
         /// <exception cref="System.ArgumentNullException">
         /// command is null.
         /// </exception>
-        public void Add (string command)
+        public void Add(string command)
         {
             if (String.Equals(command, "out-default", StringComparison.OrdinalIgnoreCase))
             {
@@ -908,9 +906,9 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="System.ArgumentNullException">
         /// scriptContents is null.
         /// </exception>
-        public void AddScript (string scriptContents)
+        public void AddScript(string scriptContents)
         {
-            this.Add (new Command (scriptContents, true));
+            this.Add(new Command(scriptContents, true));
         }
 
         /// <summary>
@@ -921,9 +919,9 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="System.ArgumentNullException">
         /// scriptContents is null.
         /// </exception>
-        public void AddScript (string scriptContents, bool useLocalScope)
+        public void AddScript(string scriptContents, bool useLocalScope)
         {
-            this.Add (new Command (scriptContents, true, useLocalScope));
+            this.Add(new Command(scriptContents, true, useLocalScope));
         }
 
         /// <summary>

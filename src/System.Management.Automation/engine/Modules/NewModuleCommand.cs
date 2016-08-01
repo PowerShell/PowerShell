@@ -10,6 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 //
 // Now define the set of commands for manipulating modules.
 //
+
 namespace Microsoft.PowerShell.Commands
 {
     #region New-Module
@@ -211,5 +212,4 @@ namespace Microsoft.PowerShell.Commands
     }
 
     #endregion
-   
 } // Microsoft.PowerShell.Commands

@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
                 else
                 {
-                    this.ErrorMessageGenerator = 
+                    this.ErrorMessageGenerator =
                         (queryDescription, className) => GetErrorMessageForNotFound_ForEquality(this.PropertyName, this.PropertyValue, className);
                 }
             }
@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                         }
                         else
                         {
-                            return new[] {new NotFoundError()};
+                            return new[] { new NotFoundError() };
                         }
 
                     case BehaviorOnNoMatch.SilentlyContinue:
@@ -151,10 +151,10 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private abstract class CimInstancePropertyBasedFilter : CimInstanceFilterBase
         {
             private readonly List<PropertyValueFilter> _propertyValueFilters = new List<PropertyValueFilter>();
-            protected IEnumerable<PropertyValueFilter> PropertyValueFilters { get { return this._propertyValueFilters; } }
+            protected IEnumerable<PropertyValueFilter> PropertyValueFilters { get { return _propertyValueFilters; } }
             protected void AddPropertyValueFilter(PropertyValueFilter propertyValueFilter)
             {
-                this._propertyValueFilters.Add(propertyValueFilter);
+                _propertyValueFilters.Add(propertyValueFilter);
             }
 
             protected override bool IsMatchCore(CimInstance cimInstance)
@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
                 foreach (object allowedPropertyValue in allowedPropertyValues)
                 {
-                    PropertyValueFilter filter = 
+                    PropertyValueFilter filter =
                         new PropertyValueRegularFilter(
                             propertyName,
                             allowedPropertyValue,
@@ -332,37 +332,37 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             protected PropertyValueFilter(string propertyName, object expectedPropertyValue, BehaviorOnNoMatch behaviorOnNoMatch)
             {
-                this.propertyName = propertyName;
-                this._behaviorOnNoMatch = behaviorOnNoMatch;
-                this._originalExpectedPropertyValue = expectedPropertyValue;
-                this._cimTypedExpectedPropertyValue = CimValueConverter.ConvertFromDotNetToCim(expectedPropertyValue);
+                _propertyName = propertyName;
+                _behaviorOnNoMatch = behaviorOnNoMatch;
+                _originalExpectedPropertyValue = expectedPropertyValue;
+                _cimTypedExpectedPropertyValue = CimValueConverter.ConvertFromDotNetToCim(expectedPropertyValue);
             }
 
             public BehaviorOnNoMatch BehaviorOnNoMatch
             {
                 get
                 {
-                    if (this._behaviorOnNoMatch == BehaviorOnNoMatch.Default)
+                    if (_behaviorOnNoMatch == BehaviorOnNoMatch.Default)
                     {
-                        this._behaviorOnNoMatch = this.GetDefaultBehaviorWhenNoMatchesFound(this.CimTypedExpectedPropertyValue);
+                        _behaviorOnNoMatch = this.GetDefaultBehaviorWhenNoMatchesFound(this.CimTypedExpectedPropertyValue);
                     }
-                    return this._behaviorOnNoMatch;
+                    return _behaviorOnNoMatch;
                 }
             }
             protected abstract BehaviorOnNoMatch GetDefaultBehaviorWhenNoMatchesFound(object cimTypedExpectedPropertyValue);
             private BehaviorOnNoMatch _behaviorOnNoMatch;
 
-            public string PropertyName { get { return this.propertyName; } }
-            private readonly string propertyName;
+            public string PropertyName { get { return _propertyName; } }
+            private readonly string _propertyName;
 
-            public object CimTypedExpectedPropertyValue { get { return this._cimTypedExpectedPropertyValue; } }
+            public object CimTypedExpectedPropertyValue { get { return _cimTypedExpectedPropertyValue; } }
             private readonly object _cimTypedExpectedPropertyValue;
 
-            public object OriginalExpectedPropertyValue { get { return this._originalExpectedPropertyValue; } }
+            public object OriginalExpectedPropertyValue { get { return _originalExpectedPropertyValue; } }
             private readonly object _originalExpectedPropertyValue;
 
-            public bool HadMatch { get { return this.hadMatch; } }
-            private bool hadMatch;
+            public bool HadMatch { get { return _hadMatch; } }
+            private bool _hadMatch;
 
             public bool IsMatch(CimInstance o)
             {
@@ -371,7 +371,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     return false;
                 }
 
-                CimProperty propertyInfo = o.CimInstanceProperties[propertyName];
+                CimProperty propertyInfo = o.CimInstanceProperties[_propertyName];
                 if (propertyInfo == null)
                 {
                     return false;
@@ -380,7 +380,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
                 if (_cimTypedExpectedPropertyValue == null)
                 {
-                    hadMatch = hadMatch || (actualPropertyValue == null);
+                    _hadMatch = _hadMatch || (actualPropertyValue == null);
                     return actualPropertyValue == null;
                 }
 
@@ -391,7 +391,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 Dbg.Assert(IsSameType(actualPropertyValue, _cimTypedExpectedPropertyValue), "Types of actual vs expected property value should always match");
 
                 bool isMatch = this.IsMatchingValue(actualPropertyValue);
-                hadMatch = hadMatch || isMatch;
+                _hadMatch = _hadMatch || isMatch;
                 return isMatch;
             }
 
@@ -409,7 +409,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     var errorMessage = string.Format(
                         CultureInfo.InvariantCulture,
                         CmdletizationResources.CimJob_MismatchedTypeOfPropertyReturnedByQuery,
-                        propertyName,
+                        _propertyName,
                         actualPropertyValue.GetType().FullName,
                         expectedPropertyValue.GetType().FullName);
                     throw CimJobException.CreateWithoutJobContext(
@@ -448,12 +448,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             public PropertyValueRegularFilter(string propertyName, object expectedPropertyValue, bool wildcardsEnabled, BehaviorOnNoMatch behaviorOnNoMatch)
                 : base(propertyName, expectedPropertyValue, behaviorOnNoMatch)
             {
-                this._wildcardsEnabled = wildcardsEnabled;
+                _wildcardsEnabled = wildcardsEnabled;
             }
 
             protected override BehaviorOnNoMatch GetDefaultBehaviorWhenNoMatchesFound(object cimTypedExpectedPropertyValue)
             {
-                if (!this._wildcardsEnabled)
+                if (!_wildcardsEnabled)
                 {
                     return BehaviorOnNoMatch.ReportErrors;
                 }
@@ -473,7 +473,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             internal NotFoundError GetGranularNotFoundError()
             {
-                return new NotFoundError(this.PropertyName, this.OriginalExpectedPropertyValue, this._wildcardsEnabled);
+                return new NotFoundError(this.PropertyName, this.OriginalExpectedPropertyValue, _wildcardsEnabled);
             }
 
             protected override bool IsMatchingValue(object actualPropertyValue)
@@ -487,7 +487,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     return NonWildcardEqual(this.PropertyName, actualPropertyValue, this.CimTypedExpectedPropertyValue);
                 }
             }
-            
+
             private static bool NonWildcardEqual(string propertyName, object actualPropertyValue, object expectedPropertyValue)
             {
                 // perform .NET-based, case-insensitive equality test for 1) characters and 2) strings
@@ -626,7 +626,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             lock (_myLock)
             {
                 _numberOfResultsFromMi++;
-                
+
                 if (_filters.All(f => f.IsMatch(result)))
                 {
                     _numberOfMatchingResults++;
@@ -641,22 +641,22 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal IEnumerable<NotFoundError> GenerateNotFoundErrors()
         {
-            if (this._filters.Count > 1)
+            if (_filters.Count > 1)
             {
-                if (this._numberOfMatchingResults > 0)
+                if (_numberOfMatchingResults > 0)
                 {
                     return Enumerable.Empty<NotFoundError>();
                 }
 
-                if (this._filters.All(f => !f.ShouldReportErrorOnNoMatches_IfMultipleFilters()))
+                if (_filters.All(f => !f.ShouldReportErrorOnNoMatches_IfMultipleFilters()))
                 {
                     return Enumerable.Empty<NotFoundError>();
                 }
 
-                return new[] {new NotFoundError()};
+                return new[] { new NotFoundError() };
             }
 
-            CimInstanceFilterBase filter = this._filters.SingleOrDefault();
+            CimInstanceFilterBase filter = _filters.SingleOrDefault();
             if (filter != null)
             {
                 return filter.GetNotFoundErrors_IfThisIsTheOnlyFilter();
@@ -671,27 +671,27 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         public override void FilterByProperty(string propertyName, IEnumerable allowedPropertyValues, bool wildcardsEnabled, BehaviorOnNoMatch behaviorOnNoMatch)
         {
-            this._filters.Add(new CimInstanceRegularFilter(propertyName, allowedPropertyValues, wildcardsEnabled, behaviorOnNoMatch));
+            _filters.Add(new CimInstanceRegularFilter(propertyName, allowedPropertyValues, wildcardsEnabled, behaviorOnNoMatch));
         }
 
         public override void ExcludeByProperty(string propertyName, IEnumerable excludedPropertyValues, bool wildcardsEnabled, BehaviorOnNoMatch behaviorOnNoMatch)
         {
-            this._filters.Add(new CimInstanceExcludeFilter(propertyName, excludedPropertyValues, wildcardsEnabled, behaviorOnNoMatch));
+            _filters.Add(new CimInstanceExcludeFilter(propertyName, excludedPropertyValues, wildcardsEnabled, behaviorOnNoMatch));
         }
 
         public override void FilterByMinPropertyValue(string propertyName, object minPropertyValue, BehaviorOnNoMatch behaviorOnNoMatch)
         {
-            this._filters.Add(new CimInstanceMinFilter(propertyName, minPropertyValue, behaviorOnNoMatch));
+            _filters.Add(new CimInstanceMinFilter(propertyName, minPropertyValue, behaviorOnNoMatch));
         }
 
         public override void FilterByMaxPropertyValue(string propertyName, object maxPropertyValue, BehaviorOnNoMatch behaviorOnNoMatch)
         {
-            this._filters.Add(new CimInstanceMaxFilter(propertyName, maxPropertyValue, behaviorOnNoMatch));
+            _filters.Add(new CimInstanceMaxFilter(propertyName, maxPropertyValue, behaviorOnNoMatch));
         }
 
         public override void FilterByAssociatedInstance(object associatedInstance, string associationName, string sourceRole, string resultRole, BehaviorOnNoMatch behaviorOnNoMatch)
         {
-            this._filters.Add(new CimInstanceAssociationFilter(behaviorOnNoMatch));
+            _filters.Add(new CimInstanceAssociationFilter(behaviorOnNoMatch));
         }
 
         #endregion

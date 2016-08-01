@@ -1,7 +1,8 @@
 ﻿/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
-using System;                          
+
+using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -210,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(
                     new ErrorRecord(
                         new RuntimeException(
-                            StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessCannotConnectToProcess, 
+                            StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessCannotConnectToProcess,
                                               msgAppDomainName, procId, errorMessage),
                             e.InnerException),
                         "EnterPSHostProcessCannotConnectToProcess",
@@ -643,7 +644,7 @@ namespace Microsoft.PowerShell.Commands
         }
 #endif
 
-#endregion
+        #endregion
 
         #region Constructors
 

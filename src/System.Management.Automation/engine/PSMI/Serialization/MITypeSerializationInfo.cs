@@ -26,7 +26,6 @@ using System.Management.Automation.Remoting;
 
 namespace System.Management.Automation
 {
-
     /// <summary>
     /// A delegate for serializing known type
     /// </summary>
@@ -62,7 +61,7 @@ namespace System.Management.Automation
         /// For some .NET types (Guid, Decimal, etc.), there are no equivalent Cim Types. So, we serialize them as string
         /// <param name="cimClassName">The CimClass name whose instance needs to be created for this type</param>
         internal MITypeSerializationInfo(Type type, MITypeSerializerDelegate serializer,
-                                         Microsoft.Management.Infrastructure.CimType cimType, string cimClassName):this(type, serializer, cimClassName)
+                                         Microsoft.Management.Infrastructure.CimType cimType, string cimClassName) : this(type, serializer, cimClassName)
         {
             _cimType = cimType;
         }

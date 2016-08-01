@@ -1,10 +1,11 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 #pragma warning disable 56500
@@ -62,7 +63,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal Collection<PSObject> GetProperty(
-            string[] paths, 
+            string[] paths,
             Collection<string> providerSpecificPickList,
             bool literalPath)
         {
@@ -202,8 +203,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private void GetPropertyPrivate(
-            CmdletProvider providerInstance, 
-            string path, 
+            CmdletProvider providerInstance,
+            string path,
             Collection<string> providerSpecificPickList,
             CmdletProviderContext context)
         {
@@ -243,7 +244,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "GetPropertyProviderException",
                     SessionStateStrings.GetPropertyProviderException,
                     providerInstance.ProviderInfo,
@@ -296,7 +297,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal object GetPropertyDynamicParameters(
-            string path, 
+            string path,
             Collection<string> providerSpecificPickList,
             CmdletProviderContext context)
         {
@@ -370,7 +371,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private object GetPropertyDynamicParameters(
-            CmdletProvider providerInstance, 
+            CmdletProvider providerInstance,
             string path,
             Collection<string> providerSpecificPickList,
             CmdletProviderContext context)
@@ -412,7 +413,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "GetPropertyDynamicParametersProviderException",
                     SessionStateStrings.GetPropertyDynamicParametersProviderException,
                     providerInstance.ProviderInfo,
@@ -619,8 +620,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private void SetPropertyPrivate(
-            CmdletProvider providerInstance, 
-            string path, 
+            CmdletProvider providerInstance,
+            string path,
             PSObject property,
             CmdletProviderContext context)
         {
@@ -664,14 +665,13 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "SetPropertyProviderException",
                     SessionStateStrings.SetPropertyProviderException,
                     providerInstance.ProviderInfo,
                     path,
                     e);
             }
-
         } // SetPropertyPrivate
 
         /// <summary>
@@ -718,7 +718,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal object SetPropertyDynamicParameters(
-            string path, 
+            string path,
             PSObject propertyValue,
             CmdletProviderContext context)
         {
@@ -792,7 +792,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private object SetPropertyDynamicParameters(
-            CmdletProvider providerInstance, 
+            CmdletProvider providerInstance,
             string path,
             PSObject propertyValue,
             CmdletProviderContext context)
@@ -835,7 +835,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "SetPropertyDynamicParametersProviderException",
                     SessionStateStrings.SetPropertyDynamicParametersProviderException,
                     providerInstance.ProviderInfo,
@@ -891,7 +891,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal void ClearProperty(
-            string[] paths, 
+            string[] paths,
             Collection<string> propertyToClear,
             bool force,
             bool literalPath)
@@ -1030,8 +1030,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private void ClearPropertyPrivate(
-            CmdletProvider providerInstance, 
-            string path, 
+            CmdletProvider providerInstance,
+            string path,
             Collection<string> propertyToClear,
             CmdletProviderContext context)
         {
@@ -1075,7 +1075,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "ClearPropertyProviderException",
                     SessionStateStrings.ClearPropertyProviderException,
                     providerInstance.ProviderInfo,
@@ -1128,7 +1128,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal object ClearPropertyDynamicParameters(
-            string path, 
+            string path,
             Collection<string> propertyToClear,
             CmdletProviderContext context)
         {
@@ -1202,7 +1202,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private object ClearPropertyDynamicParameters(
-            CmdletProvider providerInstance, 
+            CmdletProvider providerInstance,
             string path,
             Collection<string> propertyToClear,
             CmdletProviderContext context)
@@ -1245,7 +1245,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "ClearPropertyDynamicParametersProviderException",
                     SessionStateStrings.ClearPropertyDynamicParametersProviderException,
                     providerInstance.ProviderInfo,

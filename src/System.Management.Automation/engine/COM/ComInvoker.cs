@@ -22,9 +22,9 @@ namespace System.Management.Automation
         // See https://msdn.microsoft.com/en-us/library/windows/desktop/ms221242(v=vs.85).aspx for details.
         private const int DISPID_PROPERTYPUT = -3;
         // Alias of GUID_NULL. It's a GUID set to all zero
-        private static readonly Guid IID_NULL = new Guid();
+        private static readonly Guid s_IID_NULL = new Guid();
         // Size of the Variant struct
-        private static readonly int VariantSize = ClrFacade.SizeOf<Variant>();
+        private static readonly int s_variantSize = ClrFacade.SizeOf<Variant>();
 
         /// <summary>
         /// Make a by-Ref VARIANT value based on the passed-in VARIANT argument
@@ -43,7 +43,7 @@ namespace System.Management.Automation
                     // These cannot combine with VT_BYREF. Should try passing as a variant reference
                     // We follow the code in ComBinder to handle 'VT_EMPTY' and 'VT_NULL'
                     destVariant->_typeUnion._unionTypes._byref = new IntPtr(srcVariant);
-                    destVariant->_typeUnion._vt = (ushort) VarEnum.VT_VARIANT | (ushort) VarEnum.VT_BYREF;
+                    destVariant->_typeUnion._vt = (ushort)VarEnum.VT_VARIANT | (ushort)VarEnum.VT_BYREF;
                     return;
 
                 case VarEnum.VT_RECORD:
@@ -78,18 +78,18 @@ namespace System.Management.Automation
         /// <returns>Pointer to the array</returns>
         private static unsafe IntPtr NewVariantArray(int length)
         {
-            IntPtr variantArray = Marshal.AllocCoTaskMem(VariantSize * length);
+            IntPtr variantArray = Marshal.AllocCoTaskMem(s_variantSize * length);
 
             for (int i = 0; i < length; i++)
             {
-                IntPtr currentVarPtr = variantArray + VariantSize * i;
+                IntPtr currentVarPtr = variantArray + s_variantSize * i;
                 var currentVar = (Variant*)currentVarPtr;
                 currentVar->_typeUnion._vt = (ushort)VarEnum.VT_EMPTY;
             }
 
             return variantArray;
         }
-        
+
         /// <summary>
         /// Generate the ByRef array indicating whether the corresponding argument is by-reference.
         /// </summary>
@@ -138,7 +138,7 @@ namespace System.Management.Automation
         internal static object Invoke(IDispatch target, int dispId, object[] args, bool[] byRef, COM.INVOKEKIND invokeKind)
         {
             Diagnostics.Assert(target != null, "Caller makes sure an IDispatch object passed in.");
-            Diagnostics.Assert(args == null || byRef == null || args.Length == byRef.Length, 
+            Diagnostics.Assert(args == null || byRef == null || args.Length == byRef.Length,
                 "If 'args' and 'byRef' are not null, then they should be one-on-one mapping.");
 
             int argCount = args != null ? args.Length : 0;
@@ -157,7 +157,7 @@ namespace System.Management.Automation
                     {
                         // !! The arguments should be in REVERSED order!!
                         int actualIndex = argCount - i - 1;
-                        IntPtr varArgPtr = variantArgArray + VariantSize * actualIndex;
+                        IntPtr varArgPtr = variantArgArray + s_variantSize * actualIndex;
 
                         // If need to pass by ref, create a by-ref variant 
                         if (byRef != null && byRef[i])
@@ -169,7 +169,7 @@ namespace System.Management.Automation
                             }
 
                             // Create a VARIANT that the by-ref VARIANT points to
-                            IntPtr tmpVarPtr = tmpVariants + VariantSize * refIndex;
+                            IntPtr tmpVarPtr = tmpVariants + s_variantSize * refIndex;
                             Marshal.GetNativeVariantForObject(args[i], tmpVarPtr);
 
                             // Create the by-ref VARIANT
@@ -212,7 +212,7 @@ namespace System.Management.Automation
                     // 'puArgErr' is set when IDispatch.Invoke fails with error code 'DISP_E_PARAMNOTFOUND' and 'DISP_E_TYPEMISMATCH'.
                     // Appropriate exceptions will be thrown in such cases, but FullCLR doesn't use 'puArgErr' in the exception handling, so we also ignore it.
                     uint puArgErrNotUsed = 0;
-                    target.Invoke(dispId, IID_NULL, LCID_DEFAULT, invokeKind, paramArray, out result, out info, out puArgErrNotUsed);
+                    target.Invoke(dispId, s_IID_NULL, LCID_DEFAULT, invokeKind, paramArray, out result, out info, out puArgErrNotUsed);
                 }
                 catch (Exception innerException)
                 {
@@ -229,7 +229,7 @@ namespace System.Management.Automation
                         // Use EXCEPINFO.scode or EXCEPINFO.wCode as HR to construct the correct exception.
                         int code = info.scode != 0 ? info.scode : info.wCode;
                         innerException = Marshal.GetExceptionForHR(code, IntPtr.Zero) ?? innerException;
-                        
+
                         // Get the richer error description if it's available.
                         if (info.bstrDescription != IntPtr.Zero)
                         {
@@ -265,7 +265,7 @@ namespace System.Management.Automation
                         // If need to pass by ref, back propagate 
                         if (byRef != null && byRef[i])
                         {
-                            args[i] = Marshal.GetObjectForNativeVariant(variantArgArray + VariantSize * actualIndex);
+                            args[i] = Marshal.GetObjectForNativeVariant(variantArgArray + s_variantSize * actualIndex);
                         }
                     }
                 }
@@ -279,7 +279,7 @@ namespace System.Management.Automation
                 {
                     for (int i = 0; i < argCount; i++)
                     {
-                        VariantClear(variantArgArray + VariantSize * i);
+                        VariantClear(variantArgArray + s_variantSize * i);
                     }
                     Marshal.FreeCoTaskMem(variantArgArray);
                 }
@@ -295,7 +295,7 @@ namespace System.Management.Automation
                 {
                     for (int i = 0; i < refCount; i++)
                     {
-                        VariantClear(tmpVariants + VariantSize * i);
+                        VariantClear(tmpVariants + s_variantSize * i);
                     }
                     Marshal.FreeCoTaskMem(tmpVariants);
                 }

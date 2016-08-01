@@ -4,10 +4,10 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 #if !SILVERLIGHT // ComObject
 
-namespace System.Management.Automation.ComInterop {
-
-    internal static class ComHresults {
-    
+namespace System.Management.Automation.ComInterop
+{
+    internal static class ComHresults
+    {
         internal const int S_OK = 0;
 
         internal const int CONNECT_E_NOCONNECTION = unchecked((int)0x80040200);

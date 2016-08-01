@@ -7,7 +7,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
@@ -23,7 +23,7 @@ namespace System.Management.Automation
     /// a member of their derived <see cref="PSDriveInfo"/> class and use it when
     /// the provider is invoked.
     /// </remarks>
-    public class PSDriveInfo : IComparable 
+    public class PSDriveInfo : IComparable
     {
         /// <summary>
         /// An instance of the PSTraceSource class used for trace output
@@ -31,10 +31,10 @@ namespace System.Management.Automation
         /// This is the same category as the SessionState tracer class.
         /// </summary>
         [Dbg.TraceSourceAttribute(
-             "PSDriveInfo", 
+             "PSDriveInfo",
              "The namespace navigation tracer")]
-        private static Dbg.PSTraceSource tracer =
-            Dbg.PSTraceSource.GetTracer ("PSDriveInfo",
+        private static Dbg.PSTraceSource s_tracer =
+            Dbg.PSTraceSource.GetTracer("PSDriveInfo",
              "The namespace navigation tracer");
 
         /// <summary>
@@ -44,11 +44,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return currentWorkingDirectory;
+                return _currentWorkingDirectory;
             }
             set
             {
-                currentWorkingDirectory = value;
+                _currentWorkingDirectory = value;
             }
         } // CurrentLocation
 
@@ -57,7 +57,7 @@ namespace System.Management.Automation
         /// The current working directory for the virtual drive
         /// as a relative path from Root
         /// </summary>
-        private string currentWorkingDirectory;
+        private string _currentWorkingDirectory;
 
         /// <summary>
         /// Gets the name of the drive
@@ -66,14 +66,14 @@ namespace System.Management.Automation
         {
             get
             {
-                return name;
+                return _name;
             }
         }
 
         /// <summary>
         /// The name of the virtual drive
         /// </summary>
-        private string name;
+        private string _name;
 
         /// <summary>
         /// Gets the name of the provider that root path 
@@ -83,7 +83,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return provider;
+                return _provider;
             }
         }
 
@@ -91,7 +91,7 @@ namespace System.Management.Automation
         /// The provider information for the provider that implements
         /// the functionality for the drive.
         /// </summary>
-        private ProviderInfo provider;
+        private ProviderInfo _provider;
 
         /// <summary>
         /// Gets the root path of the drive.
@@ -100,11 +100,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return root;
+                return _root;
             }
             internal set
             {
-                root = value;
+                _root = value;
             }
         }
 
@@ -138,21 +138,20 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("path");
             }
 
-            if (!driveBeingCreated)
+            if (!_driveBeingCreated)
             {
                 NotSupportedException e =
                     PSTraceSource.NewNotSupportedException();
                 throw e;
-
             }
 
-            this.root = path;
+            _root = path;
         } // SetRoot
 
         /// <summary>
         /// The root of the virtual drive
         /// </summary>
-        private string root;
+        private string _root;
 
         /// <summary>
         /// Gets or sets the description for the drive.
@@ -161,19 +160,19 @@ namespace System.Management.Automation
         {
             get
             {
-                return description;
+                return _description;
             }
 
             set
             {
-                description = value;
+                _description = value;
             }
         }
 
         /// <summary>
         /// The description for this virtual drive
         /// </summary>
-        private string description;
+        private string _description;
 
         /// <summary>
         /// When supported by provider this specifies a maximum drive size.
@@ -191,14 +190,14 @@ namespace System.Management.Automation
         {
             get
             {
-                return credentials;
+                return _credentials;
             }
         }
 
         /// <summary>
         /// The user name to use with this drive.
         /// </summary>
-        private PSCredential credentials = PSCredential.Empty;
+        private PSCredential _credentials = PSCredential.Empty;
 
         /// <summary>
         /// Determines if the root of the drive can
@@ -216,7 +215,7 @@ namespace System.Management.Automation
         {
             set
             {
-                driveBeingCreated = value;
+                _driveBeingCreated = value;
             } // set
         } // DriveBeingCreated
 
@@ -225,7 +224,7 @@ namespace System.Management.Automation
         /// the drive root to be changed through the SetRoot
         /// method.
         /// </summary>
-        private bool driveBeingCreated;
+        private bool _driveBeingCreated;
 
 
         /// <summary>
@@ -237,15 +236,15 @@ namespace System.Management.Automation
         {
             get
             {
-                return isAutoMounted;
+                return _isAutoMounted;
             }
 
             set
             {
-                isAutoMounted = value;
+                _isAutoMounted = value;
             }
         }
-        private bool isAutoMounted;
+        private bool _isAutoMounted;
 
         /// <summary>
         /// True if the drive was automounted by the system,
@@ -256,15 +255,15 @@ namespace System.Management.Automation
         {
             get
             {
-                return isAutoMountedManuallyRemoved;
+                return _isAutoMountedManuallyRemoved;
             }
 
             set
             {
-                isAutoMountedManuallyRemoved = value;
+                _isAutoMountedManuallyRemoved = value;
             }
         }
-        private bool isAutoMountedManuallyRemoved;
+        private bool _isAutoMountedManuallyRemoved;
 
         /// <summary>
         /// Gets or sets the Persist Switch parameter.
@@ -273,19 +272,19 @@ namespace System.Management.Automation
         /// </summary>
         internal bool Persist
         {
-            get { return persist; }
+            get { return _persist; }
         }
-        private bool persist = false;
+        private bool _persist = false;
 
         /// <summary>
         /// Get or sets the value indicating if the created drive is a network drive.
         /// </summary>
         internal bool IsNetworkDrive
         {
-            get { return isNetworkDrive; }
-            set { isNetworkDrive = value; }
+            get { return _isNetworkDrive; }
+            set { _isNetworkDrive = value; }
         }
-        private bool isNetworkDrive = false;
+        private bool _isNetworkDrive = false;
 
         /// <summary>
         /// Gets or sets the UNC path of the drive. This property would be populated only
@@ -294,10 +293,10 @@ namespace System.Management.Automation
         /// </summary>
         public string DisplayRoot
         {
-            get { return displayRoot; }
-            internal set { displayRoot = value; }
+            get { return _displayRoot; }
+            internal set { _displayRoot = value; }
         }
-        private string displayRoot = null;
+        private string _displayRoot = null;
 
         /// <summary>
         /// Gets or sets if the drive-root relative paths on this drive are separated by a
@@ -376,20 +375,20 @@ namespace System.Management.Automation
         {
             if (driveInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException ("driveInfo");
+                throw PSTraceSource.NewArgumentNullException("driveInfo");
             }
 
-            this.name = driveInfo.Name;
-            this.provider = driveInfo.Provider;
-            this.credentials = driveInfo.Credential;
-            this.currentWorkingDirectory = driveInfo.CurrentLocation;
-            this.description = driveInfo.Description;
+            _name = driveInfo.Name;
+            _provider = driveInfo.Provider;
+            _credentials = driveInfo.Credential;
+            _currentWorkingDirectory = driveInfo.CurrentLocation;
+            _description = driveInfo.Description;
             this.MaximumSize = driveInfo.MaximumSize;
-            this.driveBeingCreated = driveInfo.driveBeingCreated;
-            this.hidden = driveInfo.hidden;
-            this.isAutoMounted = driveInfo.isAutoMounted;
-            this.root = driveInfo.root;
-            this.persist = driveInfo.Persist;
+            _driveBeingCreated = driveInfo._driveBeingCreated;
+            _hidden = driveInfo._hidden;
+            _isAutoMounted = driveInfo._isAutoMounted;
+            _root = driveInfo._root;
+            _persist = driveInfo.Persist;
             this.Trace();
         }
 
@@ -452,23 +451,23 @@ namespace System.Management.Automation
 
             // Copy the parameters to the local members
 
-            this.name = name;
-            this.provider = provider;
-            this.root = root;
-            this.description = description;
+            _name = name;
+            _provider = provider;
+            _root = root;
+            _description = description;
 
             if (credential != null)
             {
-                this.credentials = credential;
+                _credentials = credential;
             }
 
             // Set the current working directory to the empty
             // string since it is relative to the root.
 
-            this.currentWorkingDirectory = String.Empty;
+            _currentWorkingDirectory = String.Empty;
 
             Dbg.Diagnostics.Assert(
-                this.currentWorkingDirectory != null,
+                _currentWorkingDirectory != null,
                 "The currentWorkingDirectory cannot be null");
 
             // Trace out the fields
@@ -521,7 +520,7 @@ namespace System.Management.Automation
             PSCredential credential, string displayRoot)
             : this(name, provider, root, description, credential)
         {
-            this.displayRoot = displayRoot;
+            _displayRoot = displayRoot;
         }
 
         /// <summary>
@@ -570,7 +569,7 @@ namespace System.Management.Automation
             bool persist)
             : this(name, provider, root, description, credential)
         {
-            this.persist = persist;
+            _persist = persist;
         }
 
         #endregion ctor
@@ -601,19 +600,19 @@ namespace System.Management.Automation
         {
             get
             {
-                return hidden;
+                return _hidden;
             } //get
 
             set
             {
-                hidden = value;
+                _hidden = value;
             } // set
         }  // Hidden
 
         /// <summary>
         /// Determines if the drive should be hidden from the user.
         /// </summary>
-        private bool hidden;
+        private bool _hidden;
 
         /// <summary>
         /// Sets the name of the drive to a new name.
@@ -641,7 +640,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("newName");
             }
 
-            name = newName;
+            _name = newName;
         } // SetName
 
         /// <summary>
@@ -671,7 +670,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("newProvider");
             }
 
-            provider = newProvider;
+            _provider = newProvider;
         } // SetProvider
 
         /// <summary>
@@ -679,40 +678,40 @@ namespace System.Management.Automation
         /// </summary>
         internal void Trace()
         {
-            tracer.WriteLine(
+            s_tracer.WriteLine(
                 "A drive was found:");
 
             if (Name != null)
             {
-                tracer.WriteLine(
-                    "\tName: {0}", 
+                s_tracer.WriteLine(
+                    "\tName: {0}",
                     Name);
             }
 
             if (Provider != null)
             {
-                tracer.WriteLine(
-                    "\tProvider: {0}", 
+                s_tracer.WriteLine(
+                    "\tProvider: {0}",
                     Provider);
             }
 
             if (Root != null)
             {
-                tracer.WriteLine(
+                s_tracer.WriteLine(
                     "\tRoot: {0}",
                     Root);
             }
 
             if (CurrentLocation != null)
             {
-                tracer.WriteLine(
+                s_tracer.WriteLine(
                     "\tCWD: {0}",
                     CurrentLocation);
             }
 
             if (Description != null)
             {
-                tracer.WriteLine(
+                s_tracer.WriteLine(
                     "\tDescription: {0}",
                     Description);
             }
@@ -734,16 +733,16 @@ namespace System.Management.Automation
         /// </returns>
         public int CompareTo(PSDriveInfo drive)
         {
-            #pragma warning disable 56506
+#pragma warning disable 56506
 
-            if(drive == null)
+            if (drive == null)
             {
                 throw PSTraceSource.NewArgumentNullException("drive");
             }
 
             return String.Compare(Name, drive.Name, StringComparison.CurrentCultureIgnoreCase);
 
-            #pragma warning restore 56506
+#pragma warning restore 56506
         }
 
         /// <summary>
@@ -768,7 +767,7 @@ namespace System.Management.Automation
 
             if (drive == null)
             {
-                ArgumentException e = 
+                ArgumentException e =
                     PSTraceSource.NewArgumentException(
                         "obj",
                         SessionStateStrings.OnlyAbleToComparePSDriveInfo);
@@ -982,9 +981,9 @@ namespace System.Management.Automation
         /// <returns>The result of base.GetHashCode()</returns>
         /// <!-- Override the base GetHashCode because the compiler complains
         /// if you don't when you implement operator== and operator!= -->
-        public override int GetHashCode ()
+        public override int GetHashCode()
         {
-            return base.GetHashCode ();
+            return base.GetHashCode();
         }
 
         private PSNoteProperty _noteProperty;

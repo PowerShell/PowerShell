@@ -1,10 +1,11 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 #pragma warning disable 56500
@@ -129,7 +130,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal void GetItem(
-            string[] paths, 
+            string[] paths,
             CmdletProviderContext context)
         {
             if (paths == null)
@@ -191,8 +192,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private void GetItemPrivate(
-            CmdletProvider providerInstance, 
-            string path, 
+            CmdletProvider providerInstance,
+            string path,
             CmdletProviderContext context)
         {
             // All parameters should have been validated by caller
@@ -209,12 +210,12 @@ namespace System.Management.Automation
                 "Caller should validate context before calling this method");
 
 
-            ItemCmdletProvider itemCmdletProvider = 
+            ItemCmdletProvider itemCmdletProvider =
                 GetItemProviderInstance(providerInstance);
 
             try
             {
-                itemCmdletProvider.GetItem (path, context);
+                itemCmdletProvider.GetItem(path, context);
             }
             catch (LoopFlowException)
             {
@@ -231,7 +232,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "GetItemProviderException",
                     SessionStateStrings.GetItemProviderException,
                     itemCmdletProvider.ProviderInfo,
@@ -347,8 +348,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private object GetItemDynamicParameters(
-            CmdletProvider providerInstance, 
-            string path, 
+            CmdletProvider providerInstance,
+            string path,
             CmdletProviderContext context)
         {
             // All parameters should have been validated by caller
@@ -365,7 +366,7 @@ namespace System.Management.Automation
                 "Caller should validate context before calling this method");
 
 
-            ItemCmdletProvider itemCmdletProvider = 
+            ItemCmdletProvider itemCmdletProvider =
                 GetItemProviderInstance(providerInstance);
 
             object result = null;
@@ -388,7 +389,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "GetItemDynamicParametersProviderException",
                     SessionStateStrings.GetItemDynamicParametersProviderException,
                     itemCmdletProvider.ProviderInfo,
@@ -582,8 +583,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private void SetItem(
-            CmdletProvider providerInstance, 
-            string path, 
+            CmdletProvider providerInstance,
+            string path,
             object value,
             CmdletProviderContext context)
         {
@@ -601,7 +602,7 @@ namespace System.Management.Automation
                 "Caller should validate context before calling this method");
 
 
-            ItemCmdletProvider itemCmdletProvider = 
+            ItemCmdletProvider itemCmdletProvider =
                 GetItemProviderInstance(providerInstance);
 
             try
@@ -623,7 +624,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "SetItemProviderException",
                     SessionStateStrings.SetItemProviderException,
                     itemCmdletProvider.ProviderInfo,
@@ -747,8 +748,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private object SetItemDynamicParameters(
-            CmdletProvider providerInstance, 
-            string path, 
+            CmdletProvider providerInstance,
+            string path,
             object value,
             CmdletProviderContext context)
         {
@@ -766,7 +767,7 @@ namespace System.Management.Automation
                 "Caller should validate context before calling this method");
 
 
-            ItemCmdletProvider itemCmdletProvider = 
+            ItemCmdletProvider itemCmdletProvider =
                 GetItemProviderInstance(providerInstance);
 
             object result = null;
@@ -789,7 +790,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "SetItemDynamicParametersProviderException",
                     SessionStateStrings.SetItemDynamicParametersProviderException,
                     itemCmdletProvider.ProviderInfo,
@@ -976,8 +977,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private void ClearItemPrivate(
-            CmdletProvider providerInstance, 
-            string path, 
+            CmdletProvider providerInstance,
+            string path,
             CmdletProviderContext context)
         {
             // All parameters should have been validated by caller
@@ -994,7 +995,7 @@ namespace System.Management.Automation
                 "Caller should validate context before calling this method");
 
 
-            ItemCmdletProvider itemCmdletProvider = 
+            ItemCmdletProvider itemCmdletProvider =
                 GetItemProviderInstance(providerInstance);
 
             try
@@ -1016,7 +1017,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "ClearItemProviderException",
                     SessionStateStrings.ClearItemProviderException,
                     itemCmdletProvider.ProviderInfo,
@@ -1132,8 +1133,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private object ClearItemDynamicParameters(
-            CmdletProvider providerInstance, 
-            string path, 
+            CmdletProvider providerInstance,
+            string path,
             CmdletProviderContext context)
         {
             // All parameters should have been validated by caller
@@ -1150,7 +1151,7 @@ namespace System.Management.Automation
                 "Caller should validate context before calling this method");
 
 
-            ItemCmdletProvider itemCmdletProvider = 
+            ItemCmdletProvider itemCmdletProvider =
                 GetItemProviderInstance(providerInstance);
 
             object result = null;
@@ -1173,7 +1174,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "ClearItemProviderException",
                     SessionStateStrings.ClearItemProviderException,
                     itemCmdletProvider.ProviderInfo,
@@ -1347,8 +1348,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private void InvokeDefaultActionPrivate(
-            CmdletProvider providerInstance, 
-            string path, 
+            CmdletProvider providerInstance,
+            string path,
             CmdletProviderContext context)
         {
             // All parameters should have been validated by caller
@@ -1365,7 +1366,7 @@ namespace System.Management.Automation
                 "Caller should validate context before calling this method");
 
 
-            ItemCmdletProvider itemCmdletProvider = 
+            ItemCmdletProvider itemCmdletProvider =
                 GetItemProviderInstance(providerInstance);
 
             try
@@ -1387,7 +1388,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "InvokeDefaultActionProviderException",
                     SessionStateStrings.InvokeDefaultActionProviderException,
                     itemCmdletProvider.ProviderInfo,
@@ -1503,8 +1504,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private object InvokeDefaultActionDynamicParameters(
-            CmdletProvider providerInstance, 
-            string path, 
+            CmdletProvider providerInstance,
+            string path,
             CmdletProviderContext context)
         {
             // All parameters should have been validated by caller
@@ -1521,7 +1522,7 @@ namespace System.Management.Automation
                 "Caller should validate context before calling this method");
 
 
-            ItemCmdletProvider itemCmdletProvider = 
+            ItemCmdletProvider itemCmdletProvider =
                 GetItemProviderInstance(providerInstance);
 
             object result = null;
@@ -1544,7 +1545,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "InvokeDefaultActionDynamicParametersProviderException",
                     SessionStateStrings.InvokeDefaultActionDynamicParametersProviderException,
                     itemCmdletProvider.ProviderInfo,
@@ -1553,7 +1554,7 @@ namespace System.Management.Automation
             }
             return result;
         } // InvokeDefaultActionDynamicParameters
-        
+
         #endregion InvokeDefaultAction
 
         #endregion ItemCmdletProvider accessors

@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public static class TelemetryAPI
     {
-#region Public API
+        #region Public API
 
         /// <summary>
         /// Public API to expose Telemetry in PowerShell
@@ -38,12 +38,12 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             TelemetryWrapper.TraceMessage(message, arguments);
         }
 
-#endregion
+        #endregion
 
-        static int anyPowerShellSessionOpen;
-        static DateTime sessionStartTime;
+        private static int s_anyPowerShellSessionOpen;
+        private static DateTime s_sessionStartTime;
 
-        enum HostIsInteractive
+        private enum HostIsInteractive
         {
             Unknown,
             Iteractive,
@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         {
             // Avoid reporting startup more than once, except if we report "exited" and
             // another runspace gets opened.
-            if (Interlocked.CompareExchange(ref anyPowerShellSessionOpen, 1, 0) == 1)
+            if (Interlocked.CompareExchange(ref s_anyPowerShellSessionOpen, 1, 0) == 1)
                 return;
 
             bool is32Bit;
@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
                     ProcessName = hostName,
                 });
             }
-            sessionStartTime = DateTime.Now;
+            s_sessionStartTime = DateTime.Now;
         }
 
         /// <summary>
@@ -104,15 +104,15 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             TelemetryWrapper.TraceMessage("PSHostStop", new
             {
                 InteractiveCommandCount = ihptd != null ? ihptd.InteractiveCommandCount : 0,
-                TabCompletionTimes = tabCompletionTimes,
-                TabCompletionCounts = tabCompletionCounts,
-                TabCompletionResultCounts = tabCompletionResultCounts,
-                SessionTime = (DateTime.Now - sessionStartTime).TotalMilliseconds
+                TabCompletionTimes = s_tabCompletionTimes,
+                TabCompletionCounts = s_tabCompletionCounts,
+                TabCompletionResultCounts = s_tabCompletionResultCounts,
+                SessionTime = (DateTime.Now - s_sessionStartTime).TotalMilliseconds
             });
 
             // In case a host opens another runspace, we will want another PSHostStart event,
             // so reset our flag here to allow that event to fire.
-            anyPowerShellSessionOpen = 0;
+            s_anyPowerShellSessionOpen = 0;
         }
 
         /// <summary>
@@ -138,24 +138,25 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         }
 
 
-        private static long[] tabCompletionTimes = new long[(int)CompletionResultType.DynamicKeyword + 1];
-        private static int[] tabCompletionCounts = new int[(int)CompletionResultType.DynamicKeyword + 1];
-        private static int[] tabCompletionResultCounts = new int[(int)CompletionResultType.DynamicKeyword + 1];
+        private static long[] s_tabCompletionTimes = new long[(int)CompletionResultType.DynamicKeyword + 1];
+        private static int[] s_tabCompletionCounts = new int[(int)CompletionResultType.DynamicKeyword + 1];
+        private static int[] s_tabCompletionResultCounts = new int[(int)CompletionResultType.DynamicKeyword + 1];
         internal static void ReportTabCompletionTelemetry(long elapsedMilliseconds, int count, CompletionResultType completionResultType)
         {
             // We'll collect some general statistics.
             int idx = (int)completionResultType;
             if (idx >= 0 && idx <= (int)CompletionResultType.DynamicKeyword)
             {
-                tabCompletionTimes[idx] += elapsedMilliseconds;
-                tabCompletionCounts[idx]++;
-                tabCompletionResultCounts[idx] += count;
+                s_tabCompletionTimes[idx] += elapsedMilliseconds;
+                s_tabCompletionCounts[idx]++;
+                s_tabCompletionResultCounts[idx] += count;
             }
 
             // Also write an event for any slow tab completion (> 250ms).
             if (elapsedMilliseconds > 250)
             {
-                TelemetryWrapper.TraceMessage("PSSlowTabCompletion", new {
+                TelemetryWrapper.TraceMessage("PSSlowTabCompletion", new
+                {
                     Time = elapsedMilliseconds,
                     Count = count,
                     Type = completionResultType,
@@ -206,7 +207,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             });
         }
 
-        enum RemoteSessionType
+        private enum RemoteSessionType
         {
             Unknown,
             LocalProcess,
@@ -215,7 +216,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             ContainerRemote
         }
 
-        enum RemoteConfigurationType
+        private enum RemoteConfigurationType
         {
             Unknown,
             PSDefault,
@@ -310,7 +311,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             }
         }
 
-        enum ScriptFileType
+        private enum ScriptFileType
         {
             None = 0,
             Ps1 = 1,
@@ -319,7 +320,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             Other = 4,
         }
 
-        private static readonly int promptHashCode = "prompt".GetHashCode();
+        private static readonly int s_promptHashCode = "prompt".GetHashCode();
 
         /// <summary>
         /// Report some telemetry about the scripts that are run
@@ -337,7 +338,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
 
                 // Ignore 'prompt' so we don't generate an event for every 'prompt' that is invoked.
                 // (We really should only create 'prompt' once, but we don't.
-                if (hash == promptHashCode)
+                if (hash == s_promptHashCode)
                     return;
 
                 var visitor = new ScriptBlockTelemetry();
@@ -370,41 +371,41 @@ namespace Microsoft.PowerShell.Telemetry.Internal
 
                 TelemetryWrapper.TraceMessage("PSScriptDetails", new
                 {
-                    Hash                         = hash,
-                    IsDotSourced                 = dotSourced,
-                    ScriptFileType               = scriptFileType,
-                    Length                       = text.Length,
-                    LineCount                    = extent.EndLineNumber - extent.StartLineNumber,
-                    CompileTimeInMS              = compileTimeInMS,
-                    StatementCount               = visitor.StatementCount,
-                    CountOfCommands              = visitor.CountOfCommands,
-                    CountOfDotSourcedCommands    = visitor.CountOfDotSourcedCommands,
-                    MaxArrayLength               = visitor.MaxArraySize,
-                    ArrayLiteralCount            = visitor.ArrayLiteralCount,
-                    ArrayLiteralCumulativeSize   = visitor.ArrayLiteralCumulativeSize,
-                    MaxStringLength              = visitor.MaxStringSize,
-                    StringLiteralCount           = visitor.StringLiteralCount,
-                    StringLiteralCumulativeSize  = visitor.StringLiteralCumulativeSize,
-                    MaxPipelineDepth             = visitor.MaxPipelineDepth,
-                    PipelineCount                = visitor.PipelineCount,
-                    FunctionCount                = visitor.FunctionCount,
-                    ScriptBlockCount             = visitor.ScriptBlockCount,
-                    ClassCount                   = visitor.ClassCount,
-                    EnumCount                    = visitor.EnumCount,
-                    CommandsCalled               = visitor.CommandsCalled,
+                    Hash = hash,
+                    IsDotSourced = dotSourced,
+                    ScriptFileType = scriptFileType,
+                    Length = text.Length,
+                    LineCount = extent.EndLineNumber - extent.StartLineNumber,
+                    CompileTimeInMS = compileTimeInMS,
+                    StatementCount = visitor.StatementCount,
+                    CountOfCommands = visitor.CountOfCommands,
+                    CountOfDotSourcedCommands = visitor.CountOfDotSourcedCommands,
+                    MaxArrayLength = visitor.MaxArraySize,
+                    ArrayLiteralCount = visitor.ArrayLiteralCount,
+                    ArrayLiteralCumulativeSize = visitor.ArrayLiteralCumulativeSize,
+                    MaxStringLength = visitor.MaxStringSize,
+                    StringLiteralCount = visitor.StringLiteralCount,
+                    StringLiteralCumulativeSize = visitor.StringLiteralCumulativeSize,
+                    MaxPipelineDepth = visitor.MaxPipelineDepth,
+                    PipelineCount = visitor.PipelineCount,
+                    FunctionCount = visitor.FunctionCount,
+                    ScriptBlockCount = visitor.ScriptBlockCount,
+                    ClassCount = visitor.ClassCount,
+                    EnumCount = visitor.EnumCount,
+                    CommandsCalled = visitor.CommandsCalled,
                 });
             });
         }
     }
 
-    class ScriptBlockTelemetry : AstVisitor2
+    internal class ScriptBlockTelemetry : AstVisitor2
     {
         internal ScriptBlockTelemetry()
         {
             CommandsCalled = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         }
 
-        internal Dictionary<string, int> CommandsCalled { get; private set; } 
+        internal Dictionary<string, int> CommandsCalled { get; private set; }
         internal int CountOfCommands { get; private set; }
         internal int CountOfDotSourcedCommands { get; private set; }
 

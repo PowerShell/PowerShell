@@ -6,7 +6,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 #pragma warning disable 56506
 
 using System;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -16,7 +16,6 @@ using System.Security;
 
 namespace Microsoft.PowerShell.Commands
 {
-
     /// <summary>
     /// This is the base class for all the providers that produce a view
     /// on session state data (Variables, Aliases, and Functions)
@@ -29,10 +28,10 @@ namespace Microsoft.PowerShell.Commands
         /// An instance of the PSTraceSource class used for trace output
         /// </summary>
         [Dbg.TraceSourceAttribute(
-             "SessionStateProvider", 
+             "SessionStateProvider",
              "Providers that produce a view of session state data.")]
-        private readonly static Dbg.PSTraceSource tracer =
-            Dbg.PSTraceSource.GetTracer ("SessionStateProvider",
+        private readonly static Dbg.PSTraceSource s_tracer =
+            Dbg.PSTraceSource.GetTracer("SessionStateProvider",
              "Providers that produce a view of session state data.");
 
         #endregion tracer
@@ -114,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
         /// the Value property of a DictionaryEntry
         /// </remarks>
         /// 
-        internal virtual object GetValueOfItem (object item)
+        internal virtual object GetValueOfItem(object item)
         {
             Dbg.Diagnostics.Assert(
                 item != null,
@@ -165,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
         /// method.
         /// </remarks>
         /// 
-        protected override void GetItem(string name) 
+        protected override void GetItem(string name)
         {
             bool isContainer = false;
             object item = null;
@@ -211,12 +210,12 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         /// 
         protected override void SetItem(
-            string name, 
-            object value) 
+            string name,
+            object value)
         {
             if (String.IsNullOrEmpty(name))
             {
-                WriteError (new ErrorRecord (
+                WriteError(new ErrorRecord(
                     PSTraceSource.NewArgumentNullException("name"),
                     "SetItemNullName",
                     ErrorCategory.InvalidArgument,
@@ -264,7 +263,7 @@ namespace Microsoft.PowerShell.Commands
         /// 
         /// </summary>
         /// <param name="path"></param>
-        protected override void ClearItem (string path)
+        protected override void ClearItem(string path)
         {
             if (String.IsNullOrEmpty(path))
             {
@@ -281,12 +280,12 @@ namespace Microsoft.PowerShell.Commands
                 // Confirm the clear item with the user
 
                 string action = SessionStateProviderBaseStrings.ClearItemAction;
-                
+
                 string resourceTemplate = SessionStateProviderBaseStrings.ClearItemResourceTemplate;
 
-                string resource = 
+                string resource =
                     String.Format(
-                        Host.CurrentCulture, 
+                        Host.CurrentCulture,
                         resourceTemplate,
                         path);
 
@@ -327,7 +326,7 @@ namespace Microsoft.PowerShell.Commands
         /// Ignored.
         /// </param>
         ///
-        protected override void GetChildItems (string path, bool recurse)
+        protected override void GetChildItems(string path, bool recurse)
         {
             CommandOrigin origin = this.Context.Origin;
             if (String.IsNullOrEmpty(path))
@@ -340,11 +339,11 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (SecurityException e)
                 {
-                    WriteError (
-                        new ErrorRecord (
-                            e, 
-                            "GetTableSecurityException", 
-                            ErrorCategory.ReadError, 
+                    WriteError(
+                        new ErrorRecord(
+                            e,
+                            "GetTableSecurityException",
+                            ErrorCategory.ReadError,
                             path));
                     return;
                 }
@@ -356,7 +355,7 @@ namespace Microsoft.PowerShell.Commands
                     sortedEntries.Add(entry);
                 }
                 sortedEntries.Sort(
-                    delegate(DictionaryEntry left, DictionaryEntry right)
+                    delegate (DictionaryEntry left, DictionaryEntry right)
                     {
                         string leftKey = (string)left.Key;
                         string rightKey = (string)right.Key;
@@ -398,7 +397,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 object item = null;
-                
+
                 try
                 {
                     item = GetSessionStateItem(path);
@@ -445,7 +444,7 @@ namespace Microsoft.PowerShell.Commands
         /// Ignored.
         /// </param>
         ///
-        protected override void GetChildNames (string path, ReturnContainers returnContainers)
+        protected override void GetChildNames(string path, ReturnContainers returnContainers)
         {
             CommandOrigin origin = this.Context.Origin;
             if (String.IsNullOrEmpty(path))
@@ -458,11 +457,11 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (SecurityException e)
                 {
-                    WriteError (
-                        new ErrorRecord (
-                            e, 
-                            "GetChildNamesSecurityException", 
-                            ErrorCategory.ReadError, 
+                    WriteError(
+                        new ErrorRecord(
+                            e,
+                            "GetChildNamesSecurityException",
+                            ErrorCategory.ReadError,
                             path));
                     return;
                 }
@@ -502,7 +501,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 object item = null;
-                
+
                 try
                 {
                     item = GetSessionStateItem(path);
@@ -540,7 +539,7 @@ namespace Microsoft.PowerShell.Commands
         /// True if path is empty or null, false otherwise.
         /// </returns>
         ///
-        protected override bool HasChildItems (string path)
+        protected override bool HasChildItems(string path)
         {
             bool result = false;
 
@@ -562,7 +561,6 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.ReadError,
                             path));
                 }
-
             }
 
             return result;
@@ -581,7 +579,7 @@ namespace Microsoft.PowerShell.Commands
         /// True if the item exists, false otherwise.
         /// </returns>
         ///
-        protected override bool ItemExists (string path)
+        protected override bool ItemExists(string path)
         {
             bool result = false;
 
@@ -592,7 +590,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 object item = null;
-                
+
                 try
                 {
                     item = GetSessionStateItem(path);
@@ -633,9 +631,9 @@ namespace Microsoft.PowerShell.Commands
         /// . ( ) :
         /// </remarks>
         /// 
-        protected override bool IsValidPath (string path)
+        protected override bool IsValidPath(string path)
         {
-            return !String.IsNullOrEmpty (path);
+            return !String.IsNullOrEmpty(path);
         }
 
         /// <summary>
@@ -650,13 +648,13 @@ namespace Microsoft.PowerShell.Commands
         /// Ignored.
         /// </param>
         ///
-        protected override void RemoveItem (string path, bool recurse)
+        protected override void RemoveItem(string path, bool recurse)
         {
             if (String.IsNullOrEmpty(path))
             {
                 Exception e =
-                    PSTraceSource.NewArgumentException ("path");
-                WriteError (new ErrorRecord (
+                    PSTraceSource.NewArgumentException("path");
+                WriteError(new ErrorRecord(
                     e,
                     "RemoveItemNullPath",
                     ErrorCategory.InvalidArgument,
@@ -667,12 +665,12 @@ namespace Microsoft.PowerShell.Commands
                 // Confirm the remove item with the user
 
                 string action = SessionStateProviderBaseStrings.RemoveItemAction;
-                
+
                 string resourceTemplate = SessionStateProviderBaseStrings.RemoveItemResourceTemplate;
 
-                string resource = 
+                string resource =
                     String.Format(
-                        Host.CurrentCulture, 
+                        Host.CurrentCulture,
                         resourceTemplate,
                         path);
 
@@ -728,13 +726,13 @@ namespace Microsoft.PowerShell.Commands
         /// The value of the new item.
         /// </param>
         ///
-        protected override void NewItem (string path, string type, object newItem)
+        protected override void NewItem(string path, string type, object newItem)
         {
             if (String.IsNullOrEmpty(path))
             {
                 Exception e =
                     PSTraceSource.NewArgumentException("path");
-                WriteError (new ErrorRecord (
+                WriteError(new ErrorRecord(
                     e,
                     "NewItemNullPath",
                     ErrorCategory.InvalidArgument,
@@ -765,8 +763,8 @@ namespace Microsoft.PowerShell.Commands
                         SessionStateStrings.NewItemAlreadyExists,
                         path);
 
-                WriteError (
-                    new ErrorRecord (
+                WriteError(
+                    new ErrorRecord(
                         e.ErrorRecord,
                         e));
                 return;
@@ -776,12 +774,12 @@ namespace Microsoft.PowerShell.Commands
                 // Confirm the new item with the user
 
                 string action = SessionStateProviderBaseStrings.NewItemAction;
-                
+
                 string resourceTemplate = SessionStateProviderBaseStrings.NewItemResourceTemplate;
 
-                string resource = 
+                string resource =
                     String.Format(
-                        Host.CurrentCulture, 
+                        Host.CurrentCulture,
                         resourceTemplate,
                         path,
                         type,
@@ -810,7 +808,7 @@ namespace Microsoft.PowerShell.Commands
         /// Ignored.
         /// </param>
         ///
-        protected override void CopyItem (string path, string copyPath, bool recurse)
+        protected override void CopyItem(string path, string copyPath, bool recurse)
         {
             if (String.IsNullOrEmpty(path))
             {
@@ -835,7 +833,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             object item = null;
-            
+
             try
             {
                 item = GetSessionStateItem(path);
@@ -856,12 +854,12 @@ namespace Microsoft.PowerShell.Commands
                 // Confirm the new item with the user
 
                 string action = SessionStateProviderBaseStrings.CopyItemAction;
-                
+
                 string resourceTemplate = SessionStateProviderBaseStrings.CopyItemResourceTemplate;
 
-                string resource = 
+                string resource =
                     String.Format(
-                        Host.CurrentCulture, 
+                        Host.CurrentCulture,
                         resourceTemplate,
                         path,
                         copyPath);
@@ -905,7 +903,6 @@ namespace Microsoft.PowerShell.Commands
                         e));
                 return;
             }
-
         } // CopyItem
 
         /// <summary>
@@ -935,7 +932,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             object item = null;
-            
+
             try
             {
                 item = GetSessionStateItem(name);
@@ -962,8 +959,8 @@ namespace Microsoft.PowerShell.Commands
                             SessionStateStrings.NewItemAlreadyExists,
                             newName);
 
-                    WriteError (
-                        new ErrorRecord (
+                    WriteError(
+                        new ErrorRecord(
                             e.ErrorRecord,
                             e));
                     return;
@@ -1055,7 +1052,6 @@ namespace Microsoft.PowerShell.Commands
                         e));
                 return;
             }
-
         } // RenameItem
 
         #endregion ContainerCmdletProvider overrides
@@ -1110,7 +1106,7 @@ namespace Microsoft.PowerShell.Commands
         /// This exception is always thrown.
         /// </exception>
         /// 
-        public void ClearContent(string path) 
+        public void ClearContent(string path)
         {
             throw
                 PSTraceSource.NewNotSupportedException(
@@ -1190,12 +1186,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentNullException("provider");
             }
-            this.path = path;
-            this.provider = provider;
+            _path = path;
+            _provider = provider;
         }
 
-        private string path;
-        private SessionStateProviderBase provider;
+        private string _path;
+        private SessionStateProviderBase _provider;
 
         /// <summary>
         /// Reads the content from the item
@@ -1218,13 +1214,13 @@ namespace Microsoft.PowerShell.Commands
         {
             IList result = null;
 
-            if (!contentRead)
+            if (!_contentRead)
             {
-                object item = provider.GetSessionStateItem(path);
+                object item = _provider.GetSessionStateItem(_path);
 
                 if (item != null)
                 {
-                    object getItemValueResult = provider.GetValueOfItem(item);
+                    object getItemValueResult = _provider.GetValueOfItem(item);
 
                     if (getItemValueResult != null)
                     {
@@ -1234,13 +1230,13 @@ namespace Microsoft.PowerShell.Commands
                             result = new object[] { getItemValueResult };
                         }
                     }
-                    contentRead = true;
+                    _contentRead = true;
                 }
             }
 
             return result;
         }
-        bool contentRead;
+        private bool _contentRead;
 
         /// <summary>
         /// Writes content to the item.
@@ -1261,7 +1257,7 @@ namespace Microsoft.PowerShell.Commands
         /// 
         public IList Write(IList content)
         {
-            if(content == null)
+            if (content == null)
             {
                 throw PSTraceSource.NewArgumentNullException("content");
             }
@@ -1273,7 +1269,7 @@ namespace Microsoft.PowerShell.Commands
                 valueToSet = content[0];
             }
 
-            provider.SetSessionStateItem(path, valueToSet, false);
+            _provider.SetSessionStateItem(_path, valueToSet, false);
 
             return content;
         }
@@ -1307,7 +1303,7 @@ namespace Microsoft.PowerShell.Commands
         /// close their reader so do nothing.
         /// </summary>
         /// 
-        public void Close() {}
+        public void Close() { }
 
         /// <summary>
         /// Closes the reader. None of the derived providers need to

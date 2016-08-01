@@ -27,23 +27,23 @@ namespace Microsoft.PowerShell.Commands
         /// 
         /// </summary>
         /// <value></value>
-        
+
         [Parameter(
-            Position = 0, 
-            Mandatory = true, 
-            HelpMessageBaseName = HelpMessageBaseName, 
+            Position = 0,
+            Mandatory = true,
+            HelpMessageBaseName = HelpMessageBaseName,
             HelpMessageResourceId = "ActivityParameterHelpMessage")]
-        public 
-        string 
+        public
+        string
         Activity
         {
             get
             {
-                return activity;
+                return _activity;
             }
             set
             {
-                activity = value;
+                _activity = value;
             }
         }
 
@@ -54,23 +54,23 @@ namespace Microsoft.PowerShell.Commands
         /// 
         /// </summary>
         /// <value></value>
-        
+
         [Parameter(
-            Position = 1, 
+            Position = 1,
             HelpMessageBaseName = HelpMessageBaseName,
             HelpMessageResourceId = "StatusParameterHelpMessage")]
         [ValidateNotNullOrEmpty]
-        public 
+        public
         string
         Status
         {
             get
             {
-                return status;
+                return _status;
             }
             set
             {
-                status = value;
+                _status = value;
             }
         }
 
@@ -91,11 +91,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return activityId;
+                return _activityId;
             }
             set
             {
-                activityId = value;
+                _activityId = value;
             }
         }
 
@@ -116,11 +116,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return percentComplete;
+                return _percentComplete;
             }
             set
             {
-                percentComplete = value;
+                _percentComplete = value;
             }
         }
 
@@ -141,11 +141,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return secondsRemaining;
+                return _secondsRemaining;
             }
             set
             {
-                secondsRemaining = value;
+                _secondsRemaining = value;
             }
         }
 
@@ -165,11 +165,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return currentOperation;
+                return _currentOperation;
             }
             set
             {
-                currentOperation = value;
+                _currentOperation = value;
             }
         }
 
@@ -190,11 +190,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return parentId;
+                return _parentId;
             }
             set
             {
-                parentId = value;
+                _parentId = value;
             }
         }
 
@@ -239,11 +239,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return sourceId;
+                return _sourceId;
             }
             set
             {
-                sourceId = value;
+                _sourceId = value;
             }
         }
 
@@ -271,14 +271,14 @@ namespace Microsoft.PowerShell.Commands
 
 
 
-        private int activityId = 0;
-        private string activity;
-        private string status = WriteProgressResourceStrings.Processing;
-        private int percentComplete = -1;
-        private int secondsRemaining = -1;
-        private string currentOperation;
-        private int parentId = -1;
-        private int sourceId;
+        private int _activityId = 0;
+        private string _activity;
+        private string _status = WriteProgressResourceStrings.Processing;
+        private int _percentComplete = -1;
+        private int _secondsRemaining = -1;
+        private string _currentOperation;
+        private int _parentId = -1;
+        private int _sourceId;
         private bool _completed;
 
 

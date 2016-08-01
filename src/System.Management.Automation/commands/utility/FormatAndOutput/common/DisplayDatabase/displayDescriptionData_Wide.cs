@@ -12,7 +12,7 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     #region Wide View Definitions
- 
+
     /// <summary>
     /// in line definition of a wide control
     /// </summary>
@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// optional list of list entry definition overrides. It can be empty if there are no overrides
         /// </summary>
-        internal List<WideControlEntryDefinition> optionalEntryList = new List<WideControlEntryDefinition> ();
+        internal List<WideControlEntryDefinition> optionalEntryList = new List<WideControlEntryDefinition>();
     }
 
     /// <summary>
@@ -53,10 +53,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         ///     * PropertyToken
         ///     * NOTHING (provide an empty cell)
         /// </summary>
-        internal List<FormatToken> formatTokenList = new List<FormatToken> ();
+        internal List<FormatToken> formatTokenList = new List<FormatToken>();
     }
 
-     #endregion
+    #endregion
 }
 
 namespace System.Management.Automation
@@ -78,7 +78,7 @@ namespace System.Management.Automation
         /// <summary>Create a default WideControl</summary>
         public static WideControlBuilder Create(bool outOfBand = false, bool autoSize = false, uint columns = 0)
         {
-            var control = new WideControl {OutOfBand = false, AutoSize = autoSize, Columns = columns};
+            var control = new WideControl { OutOfBand = false, AutoSize = autoSize, Columns = columns };
             return new WideControlBuilder(control);
         }
 
@@ -188,13 +188,13 @@ namespace System.Management.Automation
             get
             {
                 if (EntrySelectedBy == null)
-                    EntrySelectedBy = new EntrySelectedBy {TypeNames = new List<string>()};
+                    EntrySelectedBy = new EntrySelectedBy { TypeNames = new List<string>() };
                 return EntrySelectedBy.TypeNames;
             }
         }
 
         /// <summary>List of typenames and/or a script block which select this entry.</summary>
-        public EntrySelectedBy EntrySelectedBy { get; internal set; } 
+        public EntrySelectedBy EntrySelectedBy { get; internal set; }
 
         /// <summary>Format string to apply</summary>
         public string FormatString { get; internal set; }

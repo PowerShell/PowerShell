@@ -4,6 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 #pragma warning disable 1634, 1691
 #pragma warning disable 56506
+
 using System;
 using System.IO;
 using System.Collections;
@@ -31,7 +32,7 @@ namespace System.Management.Automation.Runspaces
 #else
     public
 #endif
-    abstract class RunspaceConfigurationEntry	
+    abstract class RunspaceConfigurationEntry
     {
         /// <summary>
         /// Initiate an instance of runspace configuration entry. 
@@ -159,10 +160,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="typeData">TypeData instance</param>
         /// <param name="isRemove">Specify the operation with the typedata</param>
-        public TypeConfigurationEntry(TypeData typeData, bool isRemove) 
+        public TypeConfigurationEntry(TypeData typeData, bool isRemove)
             : base("*")
         {
-            if(typeData == null)
+            if (typeData == null)
             {
                 throw PSTraceSource.NewArgumentException("typeData");
             }
@@ -400,10 +401,8 @@ namespace System.Management.Automation.Runspaces
             {
                 _helpFileName = helpFileName;
             }
+        }
 
-
-        } 
-        
         private Type _type;
 
         /// <summary>

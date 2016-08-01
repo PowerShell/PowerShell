@@ -6,8 +6,8 @@ using System;
 using System.Management.Automation;
 using System.Management.Automation.Language;
 
-namespace System.Management.Automation.ComInterop {
-
+namespace System.Management.Automation.ComInterop
+{
     #region Generated Com Exception Factory
 
     // *** BEGIN GENERATED CODE ***
@@ -17,15 +17,18 @@ namespace System.Management.Automation.ComInterop {
     ///    Strongly-typed and parameterized string factory.
     /// </summary>
 
-    internal static partial class Strings {
-        private static string FormatString(string format, params object[] args) {
+    internal static partial class Strings
+    {
+        private static string FormatString(string format, params object[] args)
+        {
             return string.Format(System.Globalization.CultureInfo.CurrentCulture, format, args);
         }
 
         /// <summary>
         /// A string like  "Unexpected VarEnum {0}."
         /// </summary>
-        internal static string UnexpectedVarEnum(object p0) {
+        internal static string UnexpectedVarEnum(object p0)
+        {
             return FormatString(ParserStrings.UnexpectedVarEnum, p0);
         }
 
@@ -40,104 +43,118 @@ namespace System.Management.Automation.ComInterop {
         /// <summary>
         /// A string like  "Error while invoking {0}."
         /// </summary>
-        internal static string DispMemberNotFound(object p0) {
+        internal static string DispMemberNotFound(object p0)
+        {
             return FormatString(ParserStrings.DispMemberNotFound, p0);
         }
 
         /// <summary>
         /// A string like  "Error while invoking {0}. Named arguments are not supported."
         /// </summary>
-        internal static string DispNoNamedArgs(object p0) {
+        internal static string DispNoNamedArgs(object p0)
+        {
             return FormatString(ParserStrings.DispNoNamedArgs, p0);
         }
 
         /// <summary>
         /// A string like  "Error while invoking {0}."
         /// </summary>
-        internal static string DispOverflow(object p0) {
+        internal static string DispOverflow(object p0)
+        {
             return FormatString(ParserStrings.DispOverflow, p0);
         }
 
         /// <summary>
         /// A string like  "Exception setting "{0}": "Cannot convert the "{1}" value of type "{2}" to type "{3}"."
         /// </summary>
-        internal static string DispTypeMismatch(object method, string value, string originalTypeName, string destinationTypeName) {
+        internal static string DispTypeMismatch(object method, string value, string originalTypeName, string destinationTypeName)
+        {
             return FormatString(ParserStrings.DispTypeMismatch, method, value, originalTypeName, destinationTypeName);
         }
 
         /// <summary>
         /// A string like  "Error while invoking {0}. A required parameter was omitted."
         /// </summary>
-        internal static string DispParamNotOptional(object p0) {
+        internal static string DispParamNotOptional(object p0)
+        {
             return FormatString(ParserStrings.DispParamNotOptional, p0);
         }
 
         /// <summary>
         /// A string like  "IDispatch::GetIDsOfNames behaved unexpectedly for {0}."
         /// </summary>
-        internal static string GetIDsOfNamesInvalid(object p0) {
+        internal static string GetIDsOfNamesInvalid(object p0)
+        {
             return FormatString(ParserStrings.GetIDsOfNamesInvalid, p0);
         }
 
         /// <summary>
         /// A string like  "Could not get dispatch ID for {0} (error: {1})."
         /// </summary>
-        internal static string CouldNotGetDispId(object p0, object p1) {
+        internal static string CouldNotGetDispId(object p0, object p1)
+        {
             return FormatString(ParserStrings.CouldNotGetDispId, p0, p1);
         }
 
         /// <summary>
         /// A string like  "There are valid conversions from {0} to {1}."
         /// </summary>
-        internal static string AmbiguousConversion(object p0, object p1) {
+        internal static string AmbiguousConversion(object p0, object p1)
+        {
             return FormatString(ParserStrings.AmbiguousConversion, p0, p1);
         }
 
         /// <summary>
         /// A string like  "Variant.GetAccessor cannot handle {0}."
         /// </summary>
-        internal static string VariantGetAccessorNYI(object p0) {
+        internal static string VariantGetAccessorNYI(object p0)
+        {
             return FormatString(ParserStrings.VariantGetAccessorNYI, p0);
         }
-
     }
     /// <summary>
     ///    Strongly-typed and parameterized exception factory.
     /// </summary>
 
-    internal static partial class Error {
+    internal static partial class Error
+    {
         /// <summary>
         /// ArgumentException with message like "COM object does not support events."
         /// </summary>
-        internal static Exception COMObjectDoesNotSupportEvents() {
+        internal static Exception COMObjectDoesNotSupportEvents()
+        {
             return new ArgumentException(ParserStrings.COMObjectDoesNotSupportEvents);
         }
 
         /// <summary>
         /// ArgumentException with message like "COM object does not support specified source interface."
         /// </summary>
-        internal static Exception COMObjectDoesNotSupportSourceInterface() {
+        internal static Exception COMObjectDoesNotSupportSourceInterface()
+        {
             return new ArgumentException(ParserStrings.COMObjectDoesNotSupportSourceInterface);
         }
 
         /// <summary>
         /// InvalidOperationException with message like "Marshal.SetComObjectData failed."
         /// </summary>
-        internal static Exception SetComObjectDataFailed() {
+        internal static Exception SetComObjectDataFailed()
+        {
             return new InvalidOperationException(ParserStrings.SetComObjectDataFailed);
         }
 
         /// <summary>
         /// InvalidOperationException with message like "This method exists only to keep the compiler happy."
         /// </summary>
-        internal static Exception MethodShouldNotBeCalled() {
+        internal static Exception MethodShouldNotBeCalled()
+        {
             return new InvalidOperationException(ParserStrings.MethodShouldNotBeCalled);
         }
 
         /// <summary>
         /// InvalidOperationException with message like "Unexpected VarEnum {0}."
         /// </summary>
-        internal static Exception UnexpectedVarEnum(object p0) {
+        internal static Exception UnexpectedVarEnum(object p0)
+        {
             return new InvalidOperationException(Strings.UnexpectedVarEnum(p0));
         }
 
@@ -152,92 +169,102 @@ namespace System.Management.Automation.ComInterop {
         /// <summary>
         /// MissingMemberException with message like "Error while invoking {0}."
         /// </summary>
-        internal static Exception DispMemberNotFound(object p0) {
+        internal static Exception DispMemberNotFound(object p0)
+        {
             return new MissingMemberException(Strings.DispMemberNotFound(p0));
         }
 
         /// <summary>
         /// ArgumentException with message like "Error while invoking {0}. Named arguments are not supported."
         /// </summary>
-        internal static Exception DispNoNamedArgs(object p0) {
+        internal static Exception DispNoNamedArgs(object p0)
+        {
             return new ArgumentException(Strings.DispNoNamedArgs(p0));
         }
 
         /// <summary>
         /// OverflowException with message like "Error while invoking {0}."
         /// </summary>
-        internal static Exception DispOverflow(object p0) {
+        internal static Exception DispOverflow(object p0)
+        {
             return new OverflowException(Strings.DispOverflow(p0));
         }
 
         /// <summary>
         /// ArgumentException with message like "Could not convert argument {0} for call to {1}."
         /// </summary>
-        internal static Exception DispTypeMismatch(object method, string value, string originalTypeName, string destinationTypeName) {
+        internal static Exception DispTypeMismatch(object method, string value, string originalTypeName, string destinationTypeName)
+        {
             return new ArgumentException(Strings.DispTypeMismatch(method, value, originalTypeName, destinationTypeName));
         }
 
         /// <summary>
         /// ArgumentException with message like "Error while invoking {0}. A required parameter was omitted."
         /// </summary>
-        internal static Exception DispParamNotOptional(object p0) {
+        internal static Exception DispParamNotOptional(object p0)
+        {
             return new ArgumentException(Strings.DispParamNotOptional(p0));
         }
 
         /// <summary>
         /// InvalidOperationException with message like "ResolveComReference.CannotRetrieveTypeInformation."
         /// </summary>
-        internal static Exception CannotRetrieveTypeInformation() {
+        internal static Exception CannotRetrieveTypeInformation()
+        {
             return new InvalidOperationException(ParserStrings.CannotRetrieveTypeInformation);
         }
 
         /// <summary>
         /// ArgumentException with message like "IDispatch::GetIDsOfNames behaved unexpectedly for {0}."
         /// </summary>
-        internal static Exception GetIDsOfNamesInvalid(object p0) {
+        internal static Exception GetIDsOfNamesInvalid(object p0)
+        {
             return new ArgumentException(Strings.GetIDsOfNamesInvalid(p0));
         }
 
         /// <summary>
         /// InvalidOperationException with message like "Attempting to wrap an unsupported enum type."
         /// </summary>
-        internal static Exception UnsupportedEnumType() {
+        internal static Exception UnsupportedEnumType()
+        {
             return new InvalidOperationException(ParserStrings.UnsupportedEnumType);
         }
 
         /// <summary>
         /// InvalidOperationException with message like "Attempting to pass an event handler of an unsupported type."
         /// </summary>
-        internal static Exception UnsupportedHandlerType() {
+        internal static Exception UnsupportedHandlerType()
+        {
             return new InvalidOperationException(ParserStrings.UnsupportedHandlerType);
         }
 
         /// <summary>
         /// MissingMemberException with message like "Could not get dispatch ID for {0} (error: {1})."
         /// </summary>
-        internal static Exception CouldNotGetDispId(object p0, object p1) {
+        internal static Exception CouldNotGetDispId(object p0, object p1)
+        {
             return new MissingMemberException(Strings.CouldNotGetDispId(p0, p1));
         }
 
         /// <summary>
         /// System.Reflection.AmbiguousMatchException with message like "There are valid conversions from {0} to {1}."
         /// </summary>
-        internal static Exception AmbiguousConversion(object p0, object p1) {
+        internal static Exception AmbiguousConversion(object p0, object p1)
+        {
             return new System.Reflection.AmbiguousMatchException(Strings.AmbiguousConversion(p0, p1));
         }
 
         /// <summary>
         /// NotImplementedException with message like "Variant.GetAccessor cannot handle {0}."
         /// </summary>
-        internal static Exception VariantGetAccessorNYI(object p0) {
+        internal static Exception VariantGetAccessorNYI(object p0)
+        {
             return new NotImplementedException(Strings.VariantGetAccessorNYI(p0));
         }
-
     }
 
     // *** END GENERATED CODE ***
 
     #endregion
-
 }
 

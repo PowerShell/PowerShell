@@ -1,8 +1,8 @@
 //-----------------------------------------------------------------------
-// <copyright file="ShowCommandModuleInfo.cs" company="Microsoft">
 //     Copyright © Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+
 namespace Microsoft.PowerShell.Commands.ShowCommandExtension
 {
     using System;
@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
     using System.Globalization;
     using System.Linq;
     using System.Management.Automation;
-    
+
     /// <summary>
     /// Implements a facade around PSModuleInfo and its deserialized counterpart
     /// </summary>
@@ -32,10 +32,10 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
             {
                 throw new ArgumentNullException("other");
             }
-            
+
             this.Name = other.Name;
         }
-        
+
         /// <summary>
         /// Creates an instance of the ShowCommandModuleInfo class based on a PSObject object
         /// </summary>
@@ -49,10 +49,10 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
             {
                 throw new ArgumentNullException("other");
             }
-            
+
             this.Name = other.Members["Name"].Value as string;
         }
-        
+
         /// <summary>
         /// Gets the name of this module
         /// </summary>

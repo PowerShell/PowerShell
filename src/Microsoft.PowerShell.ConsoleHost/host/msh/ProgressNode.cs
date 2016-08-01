@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell
     /// outstanding activities received by the host, and rendering them in the console.
     /// 
     /// </summary>
-    
+
     internal
     class
     ProgressNode : ProgressRecord
@@ -31,14 +31,14 @@ namespace Microsoft.PowerShell
         /// Indicates the various layouts for rendering a particular node.  Each style is progressively less terse.
         /// 
         /// </summary>
-        
+
         internal
         enum
         RenderStyle
         {
             Invisible = 0,
             Minimal = 1,
-            Compact = 2, 
+            Compact = 2,
 
             /// <summary>
             /// Allocate only one line for displaying the StatusDescription or the CurrentOperation, 
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell
         /// Constructs an instance from a ProgressRecord.
         /// 
         /// </summary>
-        
+
         internal
         ProgressNode(Int64 sourceId, ProgressRecord record)
             :
@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell
         /// Indicate if the full StatusDescription and CurrentOperation should be displayed.
         /// 
         /// </param>
-    
+
         private
         void
         RenderFull(ArrayList strCollection, int indentation, int maxWidth, PSHostRawUserInterface rawUI, bool isFullPlus)
@@ -258,7 +258,6 @@ namespace Microsoft.PowerShell
                 {
                     oldDescription = StringUtil.Format(" {0}{1}", indent, oldDescription.Substring(newDescription.Length));
                 }
-
             } while (isFullPlus);
         }
 
@@ -323,8 +322,8 @@ namespace Microsoft.PowerShell
                 StringUtil.TruncateToBufferCellWidth(
                     rawUI,
                     StringUtil.Format(
-                        " {0}{1}{2}{3} ", 
-                        indent, 
+                        " {0}{1}{2}{3} ",
+                        indent,
                         percent,
                         secRemain,
                         StatusDescription),
@@ -397,20 +396,20 @@ namespace Microsoft.PowerShell
                         " {0}{1} {2}{3}{4} ",
                         indent,
                         Activity,
-                        percent, 
+                        percent,
                         secRemain,
                         StatusDescription),
                     maxWidth));
         }
 
-        
-        
+
+
         /// <summary>
         /// 
         /// The nodes that have this node as their parent.
         /// 
         /// </summary>
-        
+
         internal
         ArrayList
         Children;
@@ -429,7 +428,7 @@ namespace Microsoft.PowerShell
         /// order to fit as many nodes as possible in the available space. The oldest nodes are compressed or skipped first.
         /// 
         /// </summary>
-        
+
         internal
         int
         Age;
@@ -441,7 +440,7 @@ namespace Microsoft.PowerShell
         /// The style in which this node should be rendered.
         /// 
         /// </summary>
-        
+
         internal
         RenderStyle
         Style = RenderStyle.FullPlus;
@@ -569,10 +568,10 @@ namespace Microsoft.PowerShell
             get
             {
                 // Since the fields of this instance could have been changed, we compute this on-the-fly. 
-            
+
                 // NTRAID#Windows OS Bugs-1062104-2004/12/15-sburns we assume 1 line for each field.  If we ever need to
                 // word-wrap text fields, then this calculation will need updating.
-                
+
                 // Start with 1 for the Activity, and 1 for the Status.
 
                 int lines = 2;
@@ -585,7 +584,6 @@ namespace Microsoft.PowerShell
             }
         }
     }
-
 }   // namespace 
 
 

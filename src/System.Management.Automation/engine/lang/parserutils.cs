@@ -111,7 +111,7 @@ namespace System.Management.Automation
     {
         internal LoopFlowException(string label)
         {
-            this.Label = label ?? "";            
+            this.Label = label ?? "";
         }
 
         internal LoopFlowException(SerializationInfo info, StreamingContext context)
@@ -125,9 +125,9 @@ namespace System.Management.Automation
         /// Label, indicates nested loop level affected by exception.
         /// No label means most nested loop is affected.
         /// </summary>
-        public string Label 
-        { 
-            get; 
+        public string Label
+        {
+            get;
             internal set;
         }
 
@@ -289,7 +289,7 @@ namespace System.Management.Automation
         /// Ignores unescaped whitespace and comments marked with #.
         /// Valid only with RegexMatch.
         /// </summary>
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId="Whitespace")]
+        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Whitespace")]
         IgnorePatternWhitespace = 0x08,
         /// <summary>
         /// Regex multiline mode, which recognizes the start and end of lines,
@@ -336,25 +336,25 @@ namespace System.Management.Automation
             // Cache for ints and chars to avoid overhead of boxing every time...
             for (int i = 0; i < (_MaxCache - _MinCache); i++)
             {
-                _integerCache[i] = (object)(i + _MinCache);
+                s_integerCache[i] = (object)(i + _MinCache);
             }
 
             for (char ch = (char)0; ch < 255; ch++)
             {
-                _chars[ch] = new string(ch, 1);
+                s_chars[ch] = new string(ch, 1);
             }
         }
 
         private const int _MinCache = -100;
         private const int _MaxCache = 1000;
-        private static readonly object[] _integerCache = new object[_MaxCache - _MinCache];
-        private static readonly string[] _chars = new string[255];
+        private static readonly object[] s_integerCache = new object[_MaxCache - _MinCache];
+        private static readonly string[] s_chars = new string[255];
         internal static readonly object _TrueObject = (object)true;
         internal static readonly object _FalseObject = (object)false;
 
         internal static string CharToString(char ch)
         {
-            if (ch < 255) return _chars[ch];
+            if (ch < 255) return s_chars[ch];
             return new string(ch, 1);
         }
 
@@ -372,7 +372,7 @@ namespace System.Management.Automation
         {
             if (value < _MaxCache && value >= _MinCache)
             {
-                return _integerCache[value - _MinCache];
+                return s_integerCache[value - _MinCache];
             }
             return (object)value;
         }
@@ -542,12 +542,12 @@ namespace System.Management.Automation
         private static RegexOptions parseRegexOptions(SplitOptions options)
         {
             int[][] map = {
-            	new int[] { (int)SplitOptions.CultureInvariant, (int)RegexOptions.CultureInvariant },
-            	new int[] { (int)SplitOptions.IgnorePatternWhitespace, (int)RegexOptions.IgnorePatternWhitespace },
-            	new int[] { (int)SplitOptions.Multiline, (int)RegexOptions.Multiline },
-            	new int[] { (int)SplitOptions.Singleline, (int)RegexOptions.Singleline },
-            	new int[] { (int)SplitOptions.IgnoreCase, (int)RegexOptions.IgnoreCase },
-            	new int[] { (int)SplitOptions.ExplicitCapture, (int)RegexOptions.ExplicitCapture },
+                new int[] { (int)SplitOptions.CultureInvariant, (int)RegexOptions.CultureInvariant },
+                new int[] { (int)SplitOptions.IgnorePatternWhitespace, (int)RegexOptions.IgnorePatternWhitespace },
+                new int[] { (int)SplitOptions.Multiline, (int)RegexOptions.Multiline },
+                new int[] { (int)SplitOptions.Singleline, (int)RegexOptions.Singleline },
+                new int[] { (int)SplitOptions.IgnoreCase, (int)RegexOptions.IgnoreCase },
+                new int[] { (int)SplitOptions.ExplicitCapture, (int)RegexOptions.ExplicitCapture },
             };
 
             RegexOptions result = RegexOptions.None;
@@ -604,7 +604,7 @@ namespace System.Management.Automation
             else
             {
                 // The first argument to split is always required.
-                throw InterpreterError.NewInterpreterException(rval, typeof(RuntimeException), errorPosition, 
+                throw InterpreterError.NewInterpreterException(rval, typeof(RuntimeException), errorPosition,
                     "BadOperatorArgument", ParserStrings.BadOperatorArgument, "-split", rval);
             }
             if (args.Length >= 2)
@@ -660,12 +660,12 @@ namespace System.Management.Automation
                 for (int strIndex = 0; strIndex < item.Length; strIndex++)
                 {
                     object isDelimChar = predicate.DoInvokeReturnAsIs(
-                        useLocalScope:         true,
+                        useLocalScope: true,
                         errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
-                        dollarUnder:           CharToString(item[strIndex]),
-                        input:                 AutomationNull.Value,
-                        scriptThis:            AutomationNull.Value,
-                        args:                  new object[] {item, strIndex});
+                        dollarUnder: CharToString(item[strIndex]),
+                        input: AutomationNull.Value,
+                        scriptThis: AutomationNull.Value,
+                        args: new object[] { item, strIndex });
                     if (LanguagePrimitives.IsTrue(isDelimChar))
                     {
                         split.Add(buf.ToString());
@@ -1204,7 +1204,6 @@ namespace System.Management.Automation
             }
 
             return resultList.ToArray();
-   
         }
 
         /// <summary>
@@ -1218,24 +1217,24 @@ namespace System.Management.Automation
             if (options != RegexOptions.IgnoreCase)
                 return new Regex(patternString, options);
 
-            lock (_regexCache)
+            lock (s_regexCache)
             {
                 Regex result;
-                if (_regexCache.TryGetValue(patternString, out result))
+                if (s_regexCache.TryGetValue(patternString, out result))
                 {
                     return result;
                 }
                 else
                 {
-                    if (_regexCache.Count > MaxRegexCache)
-                        _regexCache.Clear();
+                    if (s_regexCache.Count > MaxRegexCache)
+                        s_regexCache.Clear();
                     Regex re = new Regex(patternString, RegexOptions.IgnoreCase);
-                    _regexCache.Add(patternString, re);
+                    s_regexCache.Add(patternString, re);
                     return re;
                 }
             }
         }
-        private static Dictionary<string, Regex> _regexCache = new Dictionary<string, Regex>();
+        private static Dictionary<string, Regex> s_regexCache = new Dictionary<string, Regex>();
         private const int MaxRegexCache = 1000;
 
         /// <summary>
@@ -1351,15 +1350,15 @@ namespace System.Management.Automation
         /// <exception cref="FlowControlException">Internal exception from a flow control statement</exception>        
         /// <returns></returns>
         internal static object CallMethod(
-            IScriptExtent errorPosition, 
-            object target, 
-            string methodName, 
+            IScriptExtent errorPosition,
+            object target,
+            string methodName,
             PSMethodInvocationConstraints invocationConstraints,
-            object[] paramArray, 
-            bool callStatic, 
+            object[] paramArray,
+            bool callStatic,
             object valueToSet)
         {
-            Dbg.Assert(methodName != null, "methodName was null");  
+            Dbg.Assert(methodName != null, "methodName was null");
 
             PSMethodInfo targetMethod = null;
             object targetBase = null;
@@ -1447,7 +1446,6 @@ namespace System.Management.Automation
                     {
                         return targetMethod.Invoke(paramArray);
                     }
-
                 }
             }
             catch (MethodInvocationException mie)
@@ -1489,14 +1487,16 @@ namespace System.Management.Automation
     /// This is a simple enumerator class that just enumerates of a range of numbers. It's used in enumerating
     /// elements when the range operator .. is used.
     /// </summary>
-    internal class RangeEnumerator :IEnumerator
+    internal class RangeEnumerator : IEnumerator
     {
         private int _lowerBound;
-        internal int LowerBound {
+        internal int LowerBound
+        {
             get { return _lowerBound; }
         }
         private int _upperBound;
-        internal int UpperBound {
+        internal int UpperBound
+        {
             get { return _upperBound; }
         }
 
@@ -1506,13 +1506,14 @@ namespace System.Management.Automation
             get { return _current; }
         }
 
-        internal int CurrentValue {
+        internal int CurrentValue
+        {
             get { return _current; }
         }
 
-        private int increment = 1;
+        private int _increment = 1;
 
-        private bool firstElement = true;
+        private bool _firstElement = true;
 
         public RangeEnumerator(int lowerBound, int upperBound)
         {
@@ -1520,29 +1521,28 @@ namespace System.Management.Automation
             _current = _lowerBound;
             _upperBound = upperBound;
             if (lowerBound > upperBound)
-                increment = -1;
+                _increment = -1;
         }
 
         public void Reset()
         {
             _current = _lowerBound;
-            firstElement = true;
+            _firstElement = true;
         }
 
         public bool MoveNext()
         {
-            if (firstElement)
+            if (_firstElement)
             {
-                firstElement = false;
+                _firstElement = false;
                 return true;
             }
             if (_current == _upperBound)
                 return false;
 
-            _current += increment;
+            _current += _increment;
             return true;
         }
-
     }
     #endregion RangeEnumerator
 
@@ -1616,7 +1616,6 @@ namespace System.Management.Automation
                 }
                 else
                 {
-
                     rte = NewInterpreterExceptionByMessage(exceptionType, errorPosition, message, resourceIdAndErrorId, innerException);
                 }
             }

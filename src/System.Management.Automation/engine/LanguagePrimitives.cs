@@ -249,45 +249,45 @@ namespace System.Management.Automation
     /// </remarks>
     internal enum ConversionRank
     {
-        None              = 0x0000,
+        None = 0x0000,
         UnrelatedArraysS2A = 0x0007,
-        UnrelatedArrays   = 0x000F,
-        ToStringS2A       = 0x0017,
-        ToString          = 0x001F,
-        CustomS2A         = 0x0027,
-        Custom            = 0x002F,
-        IConvertibleS2A   = 0x0037,
-        IConvertible      = 0x003F,
-        ImplicitCastS2A   = 0x0047,
-        ImplicitCast      = 0x004F,
-        ExplicitCastS2A   = 0x0057,
-        ExplicitCast      = 0x005F,
-        ConstructorS2A    = 0x0067,
-        Constructor       = 0x006F,
-        Create            = 0x0073,
-        ParseS2A          = 0x0077,
-        Parse             = 0x007F,
-        PSObjectS2A       = 0x0087,
-        PSObject          = 0x008F,
-        LanguageS2A       = 0x0097,
-        Language          = 0x009F,
-        NullToValue       = 0x00AF,
-        NullToRef         = 0x00BF,
-        NumericExplicitS2A  = 0x00C7,
-        NumericExplicit     = 0x00CF,
+        UnrelatedArrays = 0x000F,
+        ToStringS2A = 0x0017,
+        ToString = 0x001F,
+        CustomS2A = 0x0027,
+        Custom = 0x002F,
+        IConvertibleS2A = 0x0037,
+        IConvertible = 0x003F,
+        ImplicitCastS2A = 0x0047,
+        ImplicitCast = 0x004F,
+        ExplicitCastS2A = 0x0057,
+        ExplicitCast = 0x005F,
+        ConstructorS2A = 0x0067,
+        Constructor = 0x006F,
+        Create = 0x0073,
+        ParseS2A = 0x0077,
+        Parse = 0x007F,
+        PSObjectS2A = 0x0087,
+        PSObject = 0x008F,
+        LanguageS2A = 0x0097,
+        Language = 0x009F,
+        NullToValue = 0x00AF,
+        NullToRef = 0x00BF,
+        NumericExplicitS2A = 0x00C7,
+        NumericExplicit = 0x00CF,
         NumericExplicit1S2A = 0x00D7,
-        NumericExplicit1    = 0x00DF,
-        NumericStringS2A    = 0x00E7,
-        NumericString       = 0x00EF,
-        NumericImplicitS2A  = 0x00F7,
-        NumericImplicit     = 0x00FF,
-        AssignableS2A     = 0x0107,
-        Assignable        = 0x010F,
-        IdentityS2A       = 0x0117,
+        NumericExplicit1 = 0x00DF,
+        NumericStringS2A = 0x00E7,
+        NumericString = 0x00EF,
+        NumericImplicitS2A = 0x00F7,
+        NumericImplicit = 0x00FF,
+        AssignableS2A = 0x0107,
+        Assignable = 0x010F,
+        IdentityS2A = 0x0117,
         StringToCharArray = 0x011A,
-        Identity          = 0x011F,
+        Identity = 0x011F,
 
-        ValueDependent    = 0xFFF7,
+        ValueDependent = 0xFFF7,
     }
 
     /// <summary>
@@ -297,7 +297,7 @@ namespace System.Management.Automation
     public static class LanguagePrimitives
     {
         [TraceSource("ETS", "Extended Type System")]
-        static private PSTraceSource tracer = PSTraceSource.GetTracer("ETS", "Extended Type System");
+        static private PSTraceSource s_tracer = PSTraceSource.GetTracer("ETS", "Extended Type System");
 
         internal delegate void MemberNotFoundError(PSObject pso, DictionaryEntry property, Type resultType);
 
@@ -333,21 +333,21 @@ namespace System.Management.Automation
 
         internal static void UpdateTypeConvertFromTypeTable(string typeName)
         {
-            lock (converterCache)
+            lock (s_converterCache)
             {
-                var toRemove = converterCache.Keys.Where(
+                var toRemove = s_converterCache.Keys.Where(
                     conv => string.Equals(conv.to.FullName, typeName, StringComparison.OrdinalIgnoreCase) ||
                             string.Equals(conv.from.FullName, typeName, StringComparison.OrdinalIgnoreCase)).ToArray();
                 foreach (var k in toRemove)
                 {
-                    converterCache.Remove(k);
+                    s_converterCache.Remove(k);
                 }
 
                 // Note we do not clear possibleTypeConverter even when removing.
                 //
                 // The conversion cache and the possibleTypeConverter cache are process wide, but
                 // the type table used for any specific conversion is runspace specific.
-                possibleTypeConverter[typeName] = true;
+                s_possibleTypeConverter[typeName] = true;
             }
         }
 
@@ -360,9 +360,9 @@ namespace System.Management.Automation
         /// </summary>
         private class EnumerableTWrapper : IEnumerable
         {
-            object _enumerable;
-            Type _enumerableType;
-            DynamicMethod _getEnumerator;
+            private object _enumerable;
+            private Type _enumerableType;
+            private DynamicMethod _getEnumerator;
 
             internal EnumerableTWrapper(object enumerable, Type enumerableType)
             {
@@ -408,33 +408,33 @@ namespace System.Management.Automation
             return null;
         }
 
-        delegate IEnumerable GetEnumerableDelegate(object obj);
-        static Dictionary<Type, GetEnumerableDelegate> getEnumerableCache = new Dictionary<Type, GetEnumerableDelegate>(32);
+        private delegate IEnumerable GetEnumerableDelegate(object obj);
+        private static Dictionary<Type, GetEnumerableDelegate> s_getEnumerableCache = new Dictionary<Type, GetEnumerableDelegate>(32);
 
-        static GetEnumerableDelegate GetOrCalculateEnumerable(Type type)
+        private static GetEnumerableDelegate GetOrCalculateEnumerable(Type type)
         {
             GetEnumerableDelegate getEnumerable = null;
-            lock (getEnumerableCache)
+            lock (s_getEnumerableCache)
             {
-                if (!getEnumerableCache.TryGetValue(type, out getEnumerable))
+                if (!s_getEnumerableCache.TryGetValue(type, out getEnumerable))
                 {
                     getEnumerable = CalculateGetEnumerable(type);
-                    getEnumerableCache.Add(type, getEnumerable);
+                    s_getEnumerableCache.Add(type, getEnumerable);
                 }
             }
             return getEnumerable;
         }
 
-        static void InitializeGetEnumerableCache()
+        private static void InitializeGetEnumerableCache()
         {
-            lock (getEnumerableCache)
+            lock (s_getEnumerableCache)
             {
                 // PowerShell doesn't treat strings as enumerables so just return null.
                 // we also want to return null on common numeric types very quickly
-                getEnumerableCache.Clear();
-                getEnumerableCache.Add(typeof(string), LanguagePrimitives.ReturnNullEnumerable);
-                getEnumerableCache.Add(typeof(int), LanguagePrimitives.ReturnNullEnumerable);
-                getEnumerableCache.Add(typeof(double), LanguagePrimitives.ReturnNullEnumerable);
+                s_getEnumerableCache.Clear();
+                s_getEnumerableCache.Add(typeof(string), LanguagePrimitives.ReturnNullEnumerable);
+                s_getEnumerableCache.Add(typeof(int), LanguagePrimitives.ReturnNullEnumerable);
+                s_getEnumerableCache.Add(typeof(double), LanguagePrimitives.ReturnNullEnumerable);
             }
         }
 
@@ -476,19 +476,19 @@ namespace System.Management.Automation
             return getEnumerable(obj);
         }
 
-        static IEnumerable ReturnNullEnumerable(object obj)
+        private static IEnumerable ReturnNullEnumerable(object obj)
         {
             return null;
         }
 
 #if !CORECLR
-        static IEnumerable DataTableEnumerable(object obj)
+        private static IEnumerable DataTableEnumerable(object obj)
         {
             return (((DataTable)obj).Rows);
         }
 #endif
 
-        static IEnumerable TypicalEnumerable(object obj)
+        private static IEnumerable TypicalEnumerable(object obj)
         {
             IEnumerable e = (IEnumerable)obj;
             try
@@ -522,7 +522,7 @@ namespace System.Management.Automation
             }
         }
 
-        static GetEnumerableDelegate CalculateGetEnumerable(Type objectType)
+        private static GetEnumerableDelegate CalculateGetEnumerable(Type objectType)
         {
 #if !CORECLR
             if (typeof(DataTable).IsAssignableFrom(objectType))
@@ -543,7 +543,7 @@ namespace System.Management.Automation
         }
 
 
-        private static readonly CallSite<Func<CallSite, object, IEnumerator>> _getEnumeratorSite =
+        private static readonly CallSite<Func<CallSite, object, IEnumerator>> s_getEnumeratorSite =
             CallSite<Func<CallSite, object, IEnumerator>>.Create(PSEnumerableBinder.Get());
 
         /// <summary>
@@ -556,7 +556,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "Since V1 code is already shipped, excluding this message for backward compatibility reasons.")]
         public static IEnumerator GetEnumerator(object obj)
         {
-            var result = _getEnumeratorSite.Target.Invoke(_getEnumeratorSite, obj);
+            var result = s_getEnumeratorSite.Target.Invoke(s_getEnumeratorSite, obj);
             return (result is EnumerableOps.NonEnumerableObjectEnumerator) ? null : result;
         }
 
@@ -930,31 +930,31 @@ namespace System.Management.Automation
         {
             switch (objectArray.Count)
             {
-            // a zero length array is false, so condition is false
-            case 0:
-                return false;
+                // a zero length array is false, so condition is false
+                case 0:
+                    return false;
 
-            // if the result is an array of length 1, treat it as a scalar...
-            case 1:
-                // A possible implementation would be just 
-                // return IsTrue(objectArray[0]);
-                // but since we don't want this to recurse indefinately
-                // we explicitly check the case where it would recurse
-                // and deal with it.
-                IList firstElement = objectArray[0] as IList;
+                // if the result is an array of length 1, treat it as a scalar...
+                case 1:
+                    // A possible implementation would be just 
+                    // return IsTrue(objectArray[0]);
+                    // but since we don't want this to recurse indefinately
+                    // we explicitly check the case where it would recurse
+                    // and deal with it.
+                    IList firstElement = objectArray[0] as IList;
 
-                if (firstElement == null)
-                {
-                    return IsTrue(objectArray[0]);
-                }
+                    if (firstElement == null)
+                    {
+                        return IsTrue(objectArray[0]);
+                    }
 
-                if (firstElement.Count < 1) return false;
+                    if (firstElement.Count < 1) return false;
 
-                // the first element is an array with more than zero elements
-                return true;
+                    // the first element is an array with more than zero elements
+                    return true;
 
-            default:
-                return true;
+                default:
+                    return true;
             }
         }
 
@@ -1126,18 +1126,18 @@ namespace System.Management.Automation
         [Flags]
         private enum TypeCodeTraits
         {
-            None                 = 0x00,
-            SignedInteger        = 0x01,
-            UnsignedInteger      = 0x02,
-            Floating             = 0x04,
-            CimIntrinsicType     = 0x08,
-            Decimal              = 0x10,
+            None = 0x00,
+            SignedInteger = 0x01,
+            UnsignedInteger = 0x02,
+            Floating = 0x04,
+            CimIntrinsicType = 0x08,
+            Decimal = 0x10,
 
-            Integer              = SignedInteger | UnsignedInteger,
-            Numeric              = Integer | Floating | Decimal,
+            Integer = SignedInteger | UnsignedInteger,
+            Numeric = Integer | Floating | Decimal,
         }
 
-        private static readonly TypeCodeTraits[] typeCodeTraits = new TypeCodeTraits[]
+        private static readonly TypeCodeTraits[] s_typeCodeTraits = new TypeCodeTraits[]
         {
             /* Empty    =  0 */ TypeCodeTraits.None,
             /* Object   =  1 */ TypeCodeTraits.None,
@@ -1167,7 +1167,7 @@ namespace System.Management.Automation
         /// <returns>true if type is a signed integer, false otherwise</returns>
         internal static bool IsSignedInteger(TypeCode typeCode)
         {
-            return (typeCodeTraits[(int)typeCode] & TypeCodeTraits.SignedInteger) != 0;
+            return (s_typeCodeTraits[(int)typeCode] & TypeCodeTraits.SignedInteger) != 0;
         }
 
         /// <summary>
@@ -1177,7 +1177,7 @@ namespace System.Management.Automation
         /// <returns>true if type is an unsigned integer, false otherwise</returns>
         internal static bool IsUnsignedInteger(TypeCode typeCode)
         {
-            return (typeCodeTraits[(int)typeCode] & TypeCodeTraits.UnsignedInteger) != 0;
+            return (s_typeCodeTraits[(int)typeCode] & TypeCodeTraits.UnsignedInteger) != 0;
         }
 
         /// <summary>
@@ -1187,7 +1187,7 @@ namespace System.Management.Automation
         /// <returns>true if type is integer, false otherwise</returns>
         internal static bool IsInteger(TypeCode typeCode)
         {
-            return (typeCodeTraits[(int)typeCode] & TypeCodeTraits.Integer) != 0;
+            return (s_typeCodeTraits[(int)typeCode] & TypeCodeTraits.Integer) != 0;
         }
 
         /// <summary>
@@ -1197,7 +1197,7 @@ namespace System.Management.Automation
         /// <returns>true if type is floating point, false otherwise</returns>
         internal static bool IsFloating(TypeCode typeCode)
         {
-            return (typeCodeTraits[(int)typeCode] & TypeCodeTraits.Floating) != 0;
+            return (s_typeCodeTraits[(int)typeCode] & TypeCodeTraits.Floating) != 0;
         }
 
         /// <summary>
@@ -1207,7 +1207,7 @@ namespace System.Management.Automation
         /// <returns>true if type is integer or floating point, false otherwise</returns>
         internal static bool IsNumeric(TypeCode typeCode)
         {
-            return (typeCodeTraits[(int)typeCode] & TypeCodeTraits.Numeric) != 0;
+            return (s_typeCodeTraits[(int)typeCode] & TypeCodeTraits.Numeric) != 0;
         }
 
         /// <summary>
@@ -1217,7 +1217,7 @@ namespace System.Management.Automation
         /// <returns>true if type is CIM intrinsic type, false otherwise</returns>
         internal static bool IsCimIntrinsicScalarType(TypeCode typeCode)
         {
-            return (typeCodeTraits[(int)typeCode] & TypeCodeTraits.CimIntrinsicType) != 0;
+            return (s_typeCodeTraits[(int)typeCode] & TypeCodeTraits.CimIntrinsicType) != 0;
         }
 
         internal static bool IsCimIntrinsicScalarType(Type type)
@@ -1370,18 +1370,18 @@ namespace System.Management.Automation
             ExecutionContext ecFromTLS = LocalPipeline.GetExecutionContextFromTLS();
             if (ecFromTLS != null)
             {
-                tracer.WriteLine("ecFromTLS != null");
+                s_tracer.WriteLine("ecFromTLS != null");
                 typesXmlConverter = ecFromTLS.TypeTable.GetTypeConverter(type.FullName);
             }
             if ((typesXmlConverter == null) && (backupTypeTable != null))
             {
-                tracer.WriteLine("Using provided TypeTable to get the type converter");
+                s_tracer.WriteLine("Using provided TypeTable to get the type converter");
                 typesXmlConverter = backupTypeTable.GetTypeConverter(type.FullName);
             }
 
             if (typesXmlConverter != null)
             {
-                tracer.WriteLine("typesXmlConverter != null");
+                s_tracer.WriteLine("typesXmlConverter != null");
                 return typesXmlConverter;
             }
 
@@ -1460,7 +1460,7 @@ namespace System.Management.Automation
             }
 
             string mappedType;
-            if (nameMap.TryGetValue(typeName, out mappedType))
+            if (s_nameMap.TryGetValue(typeName, out mappedType))
             {
                 return ('[' + mappedType + ']');
             }
@@ -1481,7 +1481,7 @@ namespace System.Management.Automation
         // CIM name string to .NET namestring mapping table
         // (Considered using the MI routines but they didn't do quite the right thing.
         //
-        static Dictionary<string, string> nameMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
+        private static Dictionary<string, string> s_nameMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
             { "SInt8",          "SByte" },
             { "UInt8",          "Byte" },
             { "SInt16",         "Int16" },
@@ -1494,7 +1494,7 @@ namespace System.Management.Automation
             { "Real64",         "double" },
             { "Boolean",        "bool" },
             { "String",         "string" },
-            { "DateTime",       "DateTime" }, 
+            { "DateTime",       "DateTime" },
             { "Reference",      "CimInstance" },
             { "Char16",         "char" },
             { "Instance",       "CimInstance" },
@@ -1652,7 +1652,7 @@ namespace System.Management.Automation
         /// <returns>converted value.</returns>
         public static object ConvertPSObjectToType(PSObject valueToConvert, Type resultType, bool recursion, IFormatProvider formatProvider, bool ignoreUnknownMembers)
         {
-            if(valueToConvert != null)
+            if (valueToConvert != null)
             {
                 ConstructorInfo toConstructor = resultType.GetConstructor(PSTypeExtensions.EmptyTypes);
                 ConvertViaNoArgumentConstructor noArgumentConstructorConverter = new ConvertViaNoArgumentConstructor(toConstructor, resultType);
@@ -1673,7 +1673,7 @@ namespace System.Management.Automation
             {
                 return (T)valueToConvert;
             }
-            return (T) ConvertTo(valueToConvert, typeof(T), true, CultureInfo.InvariantCulture, null);
+            return (T)ConvertTo(valueToConvert, typeof(T), true, CultureInfo.InvariantCulture, null);
         }
 
         /// <summary>
@@ -1780,7 +1780,7 @@ namespace System.Management.Automation
 
         internal class EnumSingleTypeConverter : PSTypeConverter
         {
-            class EnumHashEntry
+            private class EnumHashEntry
             {
                 internal EnumHashEntry(String[] names, Array values, UInt64 allValues, bool hasNegativeValue, bool hasFlagsAttribute)
                 {
@@ -1800,22 +1800,22 @@ namespace System.Management.Automation
 
             // This static is thread safe based on the lock in GetEnumHashEntry
             // It can be shared by Runspaces in different MiniShells
-            static readonly Dictionary<Type, EnumHashEntry> enumTable = new Dictionary<Type, EnumHashEntry>();
-            const int maxEnumTableSize = 100;
+            private static readonly Dictionary<Type, EnumHashEntry> s_enumTable = new Dictionary<Type, EnumHashEntry>();
+            private const int maxEnumTableSize = 100;
 
             private static EnumHashEntry GetEnumHashEntry(Type enumType)
             {
-                lock (enumTable)
+                lock (s_enumTable)
                 {
                     EnumHashEntry returnValue;
-                    if (enumTable.TryGetValue(enumType, out returnValue))
+                    if (s_enumTable.TryGetValue(enumType, out returnValue))
                     {
                         return returnValue;
                     }
 
-                    if (enumTable.Count == maxEnumTableSize)
+                    if (s_enumTable.Count == maxEnumTableSize)
                     {
-                        enumTable.Clear();
+                        s_enumTable.Clear();
                     }
                     UInt64 allValues = 0;
                     bool hasNegativeValue = false;
@@ -1852,7 +1852,7 @@ namespace System.Management.Automation
                     bool hasFlagsAttribute = enumType.GetTypeInfo().GetCustomAttributes(typeof(FlagsAttribute), false).Any();
 
                     returnValue = new EnumHashEntry(Enum.GetNames(enumType), values, allValues, hasNegativeValue, hasFlagsAttribute);
-                    enumTable.Add(enumType, returnValue);
+                    s_enumTable.Add(enumType, returnValue);
                     return returnValue;
                 }
             }
@@ -1910,7 +1910,6 @@ namespace System.Management.Automation
 
                     if (enumHashEntry.hasFlagsAttribute)
                     {
-
                         // This expression will result in a "1 bit" for bits that are
                         // set in enumValueInt64 but not set in enumHashEntry.allValues, 
                         // and a "0 bit" otherwise. Any "bit 1" in the result, indicates this is not defined.
@@ -1925,7 +1924,6 @@ namespace System.Management.Automation
                         else
                             isDefined = false;
                     }
-
                 } while (false);
 
                 return isDefined;
@@ -2554,7 +2552,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
-                tracer.WriteLine("No converter found in original type.");
+                s_tracer.WriteLine("No converter found in original type.");
 
                 // now ConvertFrom for the destination type
                 valueConverter = GetConverter(resultType, backupTypeTable);
@@ -2715,7 +2713,7 @@ namespace System.Management.Automation
             typeConversion.WriteLine("Returning CimSession.Create(value to convert).");
             try
             {
-                return Microsoft.Management.Infrastructure.CimSession.Create((string) valueToConvert);
+                return Microsoft.Management.Infrastructure.CimSession.Create((string)valueToConvert);
             }
             catch (Microsoft.Management.Infrastructure.CimException cimException)
             {
@@ -2742,7 +2740,7 @@ namespace System.Management.Automation
                 {
                     throw exception;
                 }
-                
+
                 throw new PSInvalidCastException("InvalidCastFromStringToType", exception,
                     ExtendedTypeSystem.InvalidCastException,
                     valueToConvert.ToString(), ObjectToTypeNameString(valueToConvert), resultType.ToString());
@@ -3087,7 +3085,7 @@ namespace System.Management.Automation
             return ((Decimal)valueToConvert) != default(Decimal);
         }
 
-        static PSConverter<bool> CreateNumericToBoolConverter(Type fromType)
+        private static PSConverter<bool> CreateNumericToBoolConverter(Type fromType)
         {
             Diagnostics.Assert(LanguagePrimitives.IsNumeric(fromType.GetTypeCode()), "Can only convert numeric types");
 
@@ -3455,7 +3453,7 @@ namespace System.Management.Automation
             }
 
             EnumSingleTypeConverter.ThrowForUndefinedEnum("EnumParseUndefined", result, valueToConvert, resultType);
-            tracer.WriteLine("returning \"{0}\" from conversion to Enum.", result);
+            s_tracer.WriteLine("returning \"{0}\" from conversion to Enum.", result);
             return result;
         }
 
@@ -3640,7 +3638,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        array = (Array) valueToConvert;
+                        array = (Array)valueToConvert;
                         listSize = array.Length;
                     }
 
@@ -3709,12 +3707,12 @@ namespace System.Management.Automation
 
         private class ConvertViaNoArgumentConstructor
         {
-            private readonly Func<object> constructor;
+            private readonly Func<object> _constructor;
 
             internal ConvertViaNoArgumentConstructor(ConstructorInfo constructor, Type type)
             {
                 var newExpr = (constructor != null) ? Expression.New(constructor) : Expression.New(type);
-                this.constructor = Expression.Lambda<Func<object>>(newExpr.Cast(typeof(object))).Compile();
+                _constructor = Expression.Lambda<Func<object>>(newExpr.Cast(typeof(object))).Compile();
             }
 
             internal object Convert(object valueToConvert,
@@ -3724,7 +3722,6 @@ namespace System.Management.Automation
                                     IFormatProvider formatProvider,
                                     TypeTable backupTable)
             {
-
                 return Convert(valueToConvert, resultType, recursion, originalValueToConvert, formatProvider, backupTable, false);
             }
 
@@ -3742,7 +3739,7 @@ namespace System.Management.Automation
 
                     if ((ecFromTLS == null) || (ecFromTLS != null && ecFromTLS.LanguageMode == PSLanguageMode.FullLanguage))
                     {
-                        result = constructor();
+                        result = _constructor();
                         var psobject = valueToConvert as PSObject;
                         if (psobject != null)
                         {
@@ -4085,7 +4082,7 @@ namespace System.Management.Automation
                 if (!(other is ConversionTypePair))
                     return false;
 
-                var ctp = (ConversionTypePair) other;
+                var ctp = (ConversionTypePair)other;
                 return this.from == ctp.from && this.to == ctp.to;
             }
         }
@@ -4114,44 +4111,44 @@ namespace System.Management.Automation
 
         internal class ConversionData<T> : ConversionData
         {
-            private readonly PSConverter<T> converter;
-            private readonly ConversionRank rank;
+            private readonly PSConverter<T> _converter;
+            private readonly ConversionRank _rank;
 
             public ConversionData(PSConverter<T> converter, ConversionRank rank)
             {
-                this.converter = converter;
-                this.rank = rank;
+                _converter = converter;
+                _rank = rank;
             }
 
             public object Converter
             {
-                get { return converter; }
+                get { return _converter; }
             }
 
             public ConversionRank Rank
             {
-                get { return rank; }
+                get { return _rank; }
             }
 
             public object Invoke(object valueToConvert, Type resultType, bool recurse, PSObject originalValueToConvert, IFormatProvider formatProvider, TypeTable backupTable)
             {
-                return converter.Invoke(valueToConvert, resultType, recurse, originalValueToConvert, formatProvider, backupTable);
+                return _converter.Invoke(valueToConvert, resultType, recurse, originalValueToConvert, formatProvider, backupTable);
             }
         }
 
-        static Dictionary<ConversionTypePair, ConversionData> converterCache
+        private static Dictionary<ConversionTypePair, ConversionData> s_converterCache
             = new Dictionary<ConversionTypePair, ConversionData>(256);
 
         private static ConversionData CacheConversion<T>(Type fromType, Type toType, PSConverter<T> converter, ConversionRank rank)
         {
             ConversionTypePair pair = new ConversionTypePair(fromType, toType);
             ConversionData data = null;
-            lock (converterCache)
+            lock (s_converterCache)
             {
-                if (!converterCache.TryGetValue(pair, out data))
+                if (!s_converterCache.TryGetValue(pair, out data))
                 {
                     data = new ConversionData<T>(converter, rank);
-                    converterCache.Add(pair, data);
+                    s_converterCache.Add(pair, data);
                 }
                 else
                 {
@@ -4164,10 +4161,10 @@ namespace System.Management.Automation
 
         private static ConversionData GetConversionData(Type fromType, Type toType)
         {
-            lock (converterCache)
+            lock (s_converterCache)
             {
                 ConversionData result = null;
-                converterCache.TryGetValue(new ConversionTypePair(fromType, toType), out result);
+                s_converterCache.TryGetValue(new ConversionTypePair(fromType, toType), out result);
                 return result;
             }
         }
@@ -4177,31 +4174,31 @@ namespace System.Management.Automation
             return FigureConversion(fromType, toType).Rank;
         }
 
-        static Type[] NumericTypes = new Type[] {
+        private static Type[] s_numericTypes = new Type[] {
             typeof(Int16), typeof(Int32), typeof(Int64),
             typeof(UInt16), typeof(UInt32), typeof(UInt64),
             typeof(SByte), typeof(Byte),
             typeof(Single), typeof(Double), typeof(Decimal)
         };
 
-        static Type[] IntegerTypes = new Type[] {
+        private static Type[] s_integerTypes = new Type[] {
             typeof(Int16), typeof(Int32), typeof(Int64),
             typeof(UInt16), typeof(UInt32), typeof(UInt64),
             typeof(SByte), typeof(Byte)
         };
 
         // Do not reorder the elements of these arrays, we depend on them being ordered by increasing size.
-        static Type[] SignedIntegerTypes = new Type[] { typeof(SByte), typeof(Int16), typeof(Int32), typeof(Int64) };
-        static Type[] UnsignedIntegerTypes = new Type[] { typeof(Byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) };
+        private static Type[] s_signedIntegerTypes = new Type[] { typeof(SByte), typeof(Int16), typeof(Int32), typeof(Int64) };
+        private static Type[] s_unsignedIntegerTypes = new Type[] { typeof(Byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) };
 
-        static Type[] RealTypes = new Type[] { typeof(Single), typeof(Double), typeof(Decimal) };
+        private static Type[] s_realTypes = new Type[] { typeof(Single), typeof(Double), typeof(Decimal) };
 
 
         static internal void RebuildConversionCache()
         {
-            lock (converterCache)
+            lock (s_converterCache)
             {
-                converterCache.Clear();
+                s_converterCache.Clear();
 
                 Type typeofString = typeof(string);
                 Type typeofNull = typeof(Null);
@@ -4210,7 +4207,7 @@ namespace System.Management.Automation
                 Type typeofDecimal = typeof(Decimal);
                 Type typeofBool = typeof(bool);
                 Type typeofChar = typeof(char);
-                foreach (Type type in LanguagePrimitives.NumericTypes)
+                foreach (Type type in LanguagePrimitives.s_numericTypes)
                 {
                     CacheConversion<string>(type, typeofString, LanguagePrimitives.ConvertNumericToString, ConversionRank.NumericString);
                     CacheConversion<object>(type, typeofChar, LanguagePrimitives.ConvertIConvertible, ConversionRank.NumericString);
@@ -4229,52 +4226,52 @@ namespace System.Management.Automation
                 CacheConversion<bool>(typeof(Double), typeofBool, ConvertDoubleToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(Decimal), typeofBool, ConvertDecimalToBool, ConversionRank.Language);
 
-                for (int i = 0; i < LanguagePrimitives.UnsignedIntegerTypes.Length; i++)
+                for (int i = 0; i < LanguagePrimitives.s_unsignedIntegerTypes.Length; i++)
                 {
                     // Identical types are an identity conversion.
-                    CacheConversion<object>(UnsignedIntegerTypes[i], UnsignedIntegerTypes[i],
+                    CacheConversion<object>(s_unsignedIntegerTypes[i], s_unsignedIntegerTypes[i],
                                             LanguagePrimitives.ConvertAssignableFrom, ConversionRank.Identity);
-                    CacheConversion<object>(SignedIntegerTypes[i], SignedIntegerTypes[i],
+                    CacheConversion<object>(s_signedIntegerTypes[i], s_signedIntegerTypes[i],
                                             LanguagePrimitives.ConvertAssignableFrom, ConversionRank.Identity);
 
                     // Unsigned to signed same size is explicit
-                    CacheConversion<object>(UnsignedIntegerTypes[i], SignedIntegerTypes[i],
+                    CacheConversion<object>(s_unsignedIntegerTypes[i], s_signedIntegerTypes[i],
                                             LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit);
                     // Signed to unsigned same size is explicit, but better than the reverse (because it is "more specific")
-                    CacheConversion<object>(SignedIntegerTypes[i], UnsignedIntegerTypes[i],
+                    CacheConversion<object>(s_signedIntegerTypes[i], s_unsignedIntegerTypes[i],
                                             LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit1);
 
-                    for (int j = i+1; j < LanguagePrimitives.UnsignedIntegerTypes.Length; j++)
+                    for (int j = i + 1; j < LanguagePrimitives.s_unsignedIntegerTypes.Length; j++)
                     {
                         // Conversions where the sign doesn't change, but the size is bigger, is implicit
-                        CacheConversion<object>(UnsignedIntegerTypes[i], UnsignedIntegerTypes[j],
+                        CacheConversion<object>(s_unsignedIntegerTypes[i], s_unsignedIntegerTypes[j],
                                                 LanguagePrimitives.ConvertNumeric, ConversionRank.NumericImplicit);
-                        CacheConversion<object>(SignedIntegerTypes[i], SignedIntegerTypes[j],
+                        CacheConversion<object>(s_signedIntegerTypes[i], s_signedIntegerTypes[j],
                                                 LanguagePrimitives.ConvertNumeric, ConversionRank.NumericImplicit);
 
                         // Conversion from smaller unsigned to bigger signed is implicit
-                        CacheConversion<object>(UnsignedIntegerTypes[i], SignedIntegerTypes[j],
+                        CacheConversion<object>(s_unsignedIntegerTypes[i], s_signedIntegerTypes[j],
                                                 LanguagePrimitives.ConvertNumeric, ConversionRank.NumericImplicit);
                         // Conversion from smaller signed to bigger unsigned is the "better" explicit conversion
-                        CacheConversion<object>(SignedIntegerTypes[i], UnsignedIntegerTypes[j],
+                        CacheConversion<object>(s_signedIntegerTypes[i], s_unsignedIntegerTypes[j],
                                                 LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit1);
 
                         // Conversion to a smaller type is explicit
-                        CacheConversion<object>(UnsignedIntegerTypes[j], UnsignedIntegerTypes[i],
+                        CacheConversion<object>(s_unsignedIntegerTypes[j], s_unsignedIntegerTypes[i],
                                                 LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit);
-                        CacheConversion<object>(SignedIntegerTypes[j], SignedIntegerTypes[i],
+                        CacheConversion<object>(s_signedIntegerTypes[j], s_signedIntegerTypes[i],
                                                 LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit);
-                        CacheConversion<object>(UnsignedIntegerTypes[j], SignedIntegerTypes[i],
+                        CacheConversion<object>(s_unsignedIntegerTypes[j], s_signedIntegerTypes[i],
                                                 LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit);
-                        CacheConversion<object>(SignedIntegerTypes[j], UnsignedIntegerTypes[i],
+                        CacheConversion<object>(s_signedIntegerTypes[j], s_unsignedIntegerTypes[i],
                                                 LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit);
                     }
                 }
-                foreach (Type integerType in IntegerTypes)
+                foreach (Type integerType in s_integerTypes)
                 {
                     CacheConversion<object>(typeofString, integerType, LanguagePrimitives.ConvertStringToInteger, ConversionRank.NumericString);
 
-                    foreach (Type realType in RealTypes)
+                    foreach (Type realType in s_realTypes)
                     {
                         CacheConversion<object>(integerType, realType, LanguagePrimitives.ConvertNumeric, ConversionRank.NumericImplicit);
                         CacheConversion<object>(realType, integerType, LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit);
@@ -4291,7 +4288,7 @@ namespace System.Management.Automation
                 CacheConversion<Regex>(typeofString, typeof(Regex), LanguagePrimitives.ConvertStringToRegex, ConversionRank.Language);
                 CacheConversion<char[]>(typeofString, typeof(char[]), LanguagePrimitives.ConvertStringToCharArray, ConversionRank.StringToCharArray);
                 CacheConversion<Type>(typeofString, typeof(Type), LanguagePrimitives.ConvertStringToType, ConversionRank.Language);
-                CacheConversion<Uri>(typeofString, typeof (Uri), LanguagePrimitives.ConvertStringToUri, ConversionRank.Language);
+                CacheConversion<Uri>(typeofString, typeof(Uri), LanguagePrimitives.ConvertStringToUri, ConversionRank.Language);
                 CacheConversion<object>(typeofString, typeofDecimal, LanguagePrimitives.ConvertStringToDecimal, ConversionRank.NumericString);
                 CacheConversion<object>(typeofString, typeofFloat, LanguagePrimitives.ConvertStringToReal, ConversionRank.NumericString);
                 CacheConversion<object>(typeofString, typeofDouble, LanguagePrimitives.ConvertStringToReal, ConversionRank.NumericString);
@@ -4482,7 +4479,6 @@ namespace System.Management.Automation
 
             if (pso != null && pso.Properties != null)
             {
-
                 foreach (PSPropertyInfo p in pso.Properties)
                 {
                     if (first == false)
@@ -4902,9 +4898,9 @@ namespace System.Management.Automation
                 ConstructorInfo resultConstructor = null;
 
                 if (toTypeInfo.IsGenericType && !toTypeInfo.ContainsGenericParameters &&
-                    (typeof (IList).IsAssignableFrom(toType) ||
-                     typeof (ICollection).IsAssignableFrom(toType) ||
-                     typeof (IEnumerable).IsAssignableFrom(toType)))
+                    (typeof(IList).IsAssignableFrom(toType) ||
+                     typeof(ICollection).IsAssignableFrom(toType) ||
+                     typeof(IEnumerable).IsAssignableFrom(toType)))
                 {
                     Type[] argTypes = toType.GetGenericArguments();
                     if (argTypes.Length != 1)
@@ -4916,16 +4912,16 @@ namespace System.Management.Automation
                     }
                     elementType = argTypes[0];
 
-                    if (typeof (Array) == fromType || typeof (object[]) == fromType ||
+                    if (typeof(Array) == fromType || typeof(object[]) == fromType ||
                         elementType.IsAssignableFrom(fromType) ||
                         // WinBlue: 423899 : To support scenario like [list[int]]"4"
                         (FigureConversion(fromType, elementType) != null))
                     {
                         isScalar = elementType.IsAssignableFrom(fromType);
                         ConstructorInfo[] ctors = toType.GetConstructors();
-                        Type iEnumerableClosedType = typeof (IEnumerable<>).MakeGenericType(elementType);
-                        Type iCollectionClosedType = typeof (ICollection<>).MakeGenericType(elementType);
-                        Type iListClosedType = typeof (IList<>).MakeGenericType(elementType);
+                        Type iEnumerableClosedType = typeof(IEnumerable<>).MakeGenericType(elementType);
+                        Type iCollectionClosedType = typeof(ICollection<>).MakeGenericType(elementType);
+                        Type iListClosedType = typeof(IList<>).MakeGenericType(elementType);
 
                         foreach (var ctor in ctors)
                         {
@@ -4952,9 +4948,9 @@ namespace System.Management.Automation
 
                     try
                     {
-                        Type listClosedType = typeof (List<>).MakeGenericType(elementType);
-                        ConstructorInfo listCtor = listClosedType.GetConstructor(new Type[] {typeof (int)});
-                        converter.ListCtorLambda = CreateCtorLambdaClosure<int, IList>(listCtor, typeof (int), false);
+                        Type listClosedType = typeof(List<>).MakeGenericType(elementType);
+                        ConstructorInfo listCtor = listClosedType.GetConstructor(new Type[] { typeof(int) });
+                        converter.ListCtorLambda = CreateCtorLambdaClosure<int, IList>(listCtor, typeof(int), false);
 
                         ParameterInfo[] targetParams = resultConstructor.GetParameters();
                         Type targetParamType = targetParams[0].ParameterType;
@@ -4982,11 +4978,11 @@ namespace System.Management.Automation
                     return null;
                 }
             }
-            catch(ArgumentException ae)
+            catch (ArgumentException ae)
             {
                 typeConversion.WriteLine("Exception finding IEnumerable conversion: \"{0}\".", ae.Message);
             }
-            catch(InvalidOperationException ie)
+            catch (InvalidOperationException ie)
             {
                 typeConversion.WriteLine("Exception finding IEnumerable conversion: \"{0}\".", ie.Message);
             }
@@ -5000,12 +4996,12 @@ namespace System.Management.Automation
 
         private static Func<T1, T2> CreateCtorLambdaClosure<T1, T2>(ConstructorInfo ctor, Type realParamType, bool useExplicitConversion)
         {
-            ParameterExpression paramExpr = Expression.Parameter(typeof (T1), "args");
+            ParameterExpression paramExpr = Expression.Parameter(typeof(T1), "args");
             Expression castParamExpr = useExplicitConversion
                 ? (Expression)Expression.Call(CachedReflectionInfo.Convert_ChangeType, paramExpr, Expression.Constant(realParamType, typeof(Type)))
                 : Expression.Convert(paramExpr, realParamType);
             NewExpression ctorExpr = Expression.New(ctor, castParamExpr.Cast(realParamType));
-            return Expression.Lambda<Func<T1, T2>>(ctorExpr.Cast(typeof (T2)), paramExpr).Compile();
+            return Expression.Lambda<Func<T1, T2>>(ctorExpr.Cast(typeof(T2)), paramExpr).Compile();
         }
 
         internal static PSConverter<object> FigureConstructorConversion(Type fromType, Type toType)
@@ -5097,12 +5093,12 @@ namespace System.Management.Automation
                 return null;
             }
 
-	        if (toType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Length == 0 &&
-	            toType.GetFields(BindingFlags.Public | BindingFlags.Instance).Length == 0)
-	        {
-				// fromType is PSObject, toType has no properties/fields to set, so conversion should fail.
-		        return null;
-	        }
+            if (toType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Length == 0 &&
+                toType.GetFields(BindingFlags.Public | BindingFlags.Instance).Length == 0)
+            {
+                // fromType is PSObject, toType has no properties/fields to set, so conversion should fail.
+                return null;
+            }
 
             typeConversion.WriteLine("Found Constructor.");
 
@@ -5156,9 +5152,9 @@ namespace System.Management.Automation
 
         private static bool TypeConverterPossiblyExists(Type type)
         {
-            lock (possibleTypeConverter)
+            lock (s_possibleTypeConverter)
             {
-                if (possibleTypeConverter.ContainsKey(type.FullName))
+                if (s_possibleTypeConverter.ContainsKey(type.FullName))
                 {
                     return true;
                 }
@@ -5174,7 +5170,7 @@ namespace System.Management.Automation
             return false;
         }
 
-        private static Dictionary<string, bool> possibleTypeConverter = new Dictionary<string, bool>(16);
+        private static Dictionary<string, bool> s_possibleTypeConverter = new Dictionary<string, bool>(16);
 
         // This is the internal dummy type used when an IDictionary is converted to a pscustomobject
         // PS C:\> $ps = [pscustomobject]@{a=10;b=5}
@@ -5410,7 +5406,7 @@ namespace System.Management.Automation
         }
 
 #if !CORECLR // AppDomain Not In CoreCLR
-        static Assembly AssemblyResolveHelper(object sender, ResolveEventArgs args)
+        private static Assembly AssemblyResolveHelper(object sender, ResolveEventArgs args)
         {
             // Dynamic assemblies don't get resolved properly by the CLR, so we
             // resolve them ourselves by looking through the loaded assemblies.

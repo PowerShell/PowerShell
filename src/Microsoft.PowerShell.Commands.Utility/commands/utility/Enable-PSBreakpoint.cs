@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Diagnostics;
 using System.Management.Automation;
@@ -151,5 +152,4 @@ namespace Microsoft.PowerShell.Commands
             }
         }
     }
-
 }

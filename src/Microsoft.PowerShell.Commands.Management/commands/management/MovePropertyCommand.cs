@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
@@ -10,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command to move a property on an item to another item
     /// </summary>
-    [Cmdlet (VerbsCommon.Move, "ItemProperty", SupportsShouldProcess = true, DefaultParameterSetName = "Path", SupportsTransactions = true,
+    [Cmdlet(VerbsCommon.Move, "ItemProperty", SupportsShouldProcess = true, DefaultParameterSetName = "Path", SupportsTransactions = true,
         HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113351")]
     public class MoveItemPropertyCommand : PassThroughItemPropertyCommandBase
     {
@@ -19,8 +20,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the path parameter to the command
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "Path", 
-                   Mandatory = true, ValueFromPipeline=true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 0, ParameterSetName = "Path",
+                   Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
             get
@@ -64,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return property;
+                return _property;
             } // get
 
             set
@@ -73,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     value = new string[0];
                 }
-                property = value;
+                _property = value;
             }
         } // Property
 
@@ -86,15 +87,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return destination;
+                return _destination;
             } // get
 
             set
             {
-                destination = value;
+                _destination = value;
             }
         } // Destination
-            
+
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
         /// that require dynamic parameters should override this method and return the
@@ -129,20 +130,20 @@ namespace Microsoft.PowerShell.Commands
                 propertyName,
                 context);
         } // GetDynamicParameters
-        
+
         #endregion Parameters
 
         #region parameter data
-        
+
         /// <summary>
         /// The property to be created.
         /// </summary>
-        private string[] property = new string[0];
+        private string[] _property = new string[0];
 
         /// <summary>
         /// The destination path of the item to copy the property to.
         /// </summary>
-        private string destination;
+        private string _destination;
 
         #endregion parameter data
 
@@ -151,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Creates the property on the item
         /// </summary>
-        protected override void ProcessRecord ()
+        protected override void ProcessRecord()
         {
             foreach (string path in Path)
             {
@@ -193,7 +194,6 @@ namespace Microsoft.PowerShell.Commands
                                 pathNotFound));
                         continue;
                     }
-
                 }
             }
         } // ProcessRecord
@@ -201,5 +201,4 @@ namespace Microsoft.PowerShell.Commands
 
 
     } // MoveItemPropertyCommand
-
 } // namespace Microsoft.PowerShell.Commands

@@ -15,7 +15,7 @@ using System.Management.Automation.Internal;
 namespace System.Management.Automation.Tracing
 {
     //pragma warning disable 16001,16003
-    #region Constants
+#region Constants
 
     /// <summary>
     /// Defines enumerations for event ids
@@ -29,7 +29,7 @@ namespace System.Management.Automation.Tracing
         /// None. (Should not be used)
         /// </summary>
         None = 0,
-    
+
         /// <summary>
         /// HostNameResolve
         /// </summary>
@@ -279,7 +279,7 @@ namespace System.Management.Automation.Tracing
         /// SerializerWorkflowLoadSuccess
         /// </summary>
         SerializerWorkflowLoadSuccess = 0x7001,
-        
+
         /// <summary>
         /// SerializerWorkflowLoadFailure
         /// </summary>
@@ -366,12 +366,12 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Writing a simple trace message from code
         /// </summary>
-        TraceMessage=0xB005,
+        TraceMessage = 0xB005,
 
         /// <summary>
         /// Trace the WSManConnectionInfo used for this connection
         /// </summary>
-        TraceWSManConnectionInfo=0xB006,
+        TraceWSManConnectionInfo = 0xB006,
 
         /// <summary>
         /// Writing a simple trace message from code with 2
@@ -384,7 +384,6 @@ namespace System.Management.Automation.Tracing
         /// strings
         /// </summary>
         TraceMessageGuid = 0xC002,
-    
     }
 
     /// <summary>
@@ -464,7 +463,7 @@ namespace System.Management.Automation.Tracing
         /// None.  (Should not be used)
         /// </summary>
         None = 0,
-    
+
         /// <summary>
         /// Open
         /// </summary>
@@ -620,9 +619,9 @@ namespace System.Management.Automation.Tracing
     /// <summary>
     /// Defines Keywords.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028")]    
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028")]
     [Flags]
-    public enum PowerShellTraceKeywords : ulong 
+    public enum PowerShellTraceKeywords : ulong
     {
         /// <summary>
         /// None
@@ -690,7 +689,7 @@ namespace System.Management.Automation.Tracing
         UseAlwaysAnalytic = 0x4000000000000000,
     }
 
-    #endregion
+#endregion
 
     /// <summary>
     /// BaseChannelWriter is the abstract base class defines event specific methods that are used to write a trace.
@@ -699,12 +698,14 @@ namespace System.Management.Automation.Tracing
     public abstract class BaseChannelWriter : IDisposable
     {
         private bool disposed;
-    
+
         /// <summary>
         /// Dispose method
         /// </summary>
-        public virtual void Dispose() {
-            if (!disposed) {
+        public virtual void Dispose()
+        {
+            if (!disposed)
+            {
                 GC.SuppressFinalize(this);
                 disposed = true;
             }
@@ -770,16 +771,16 @@ namespace System.Management.Automation.Tracing
         /// 
         /// </summary>
         public virtual PowerShellTraceKeywords Keywords
-        {         
+        {
             get
             {
-                return PowerShellTraceKeywords.None; 
+                return PowerShellTraceKeywords.None;
             }
             set
             {
                 PowerShellTraceKeywords powerShellTraceKeywords = value;
             }
-        }       
+        }
     }
 
     /// <summary>
@@ -802,7 +803,7 @@ namespace System.Management.Automation.Tracing
                 return nullWriter;
             }
         }
-        
+
         private NullWriter()
         {
         }
@@ -821,7 +822,7 @@ namespace System.Management.Automation.Tracing
          * Making the provider static to reduce the number of buffers needed to 1.
          * */
         private static readonly EventProvider _provider = new EventProvider(new Guid("A0C1853B-5C40-4b15-8766-3CF1C58F985A"));
-        
+
         private bool disposed;
         private PowerShellTraceKeywords _keywords;
 
@@ -851,7 +852,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         public override void Dispose()
         {
-            if (!disposed) 
+            if (!disposed)
             {
                 GC.SuppressFinalize(this);
                 disposed = true;
@@ -861,8 +862,8 @@ namespace System.Management.Automation.Tracing
         private bool Trace(PowerShellTraceEvent traceEvent, PowerShellTraceLevel level, PowerShellTraceOperationCode operationCode,
             PowerShellTraceTask task, params object[] args)
         {
-            EventDescriptor ed = new EventDescriptor((int) traceEvent, 1, (byte) _traceChannel, (byte) level,
-                                                     (byte) operationCode, (int) task, (long) _keywords);
+            EventDescriptor ed = new EventDescriptor((int)traceEvent, 1, (byte)_traceChannel, (byte)level,
+                                                     (byte)operationCode, (int)task, (long)_keywords);
 
             /*
              * Not using locks because the _provider is thread safe itself.
@@ -956,7 +957,7 @@ namespace System.Management.Automation.Tracing
         private readonly BaseChannelWriter operationsChannel;
 
         private bool disposed;
-        
+
         /// <summary>
         /// Consturctor
         /// </summary>
@@ -987,7 +988,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         public void Dispose()
         {
-            if (!disposed) 
+            if (!disposed)
             {
                 disposed = true;
                 GC.SuppressFinalize(this);
@@ -1037,18 +1038,20 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         public bool TraceErrorRecord(ErrorRecord errorRecord)
         {
-            if (errorRecord != null) 
+            if (errorRecord != null)
             {
                 Exception exception = errorRecord.Exception;
                 string innerException = "None";
-                if (exception.InnerException != null) {
+                if (exception.InnerException != null)
+                {
                     innerException = exception.InnerException.Message;
                 }
 
                 ErrorCategoryInfo cinfo = errorRecord.CategoryInfo;
                 string message = "None";
 
-                if (errorRecord.ErrorDetails != null) {
+                if (errorRecord.ErrorDetails != null)
+                {
                     message = errorRecord.ErrorDetails.Message;
                 }
                 return debugChannel.TraceError(PowerShellTraceEvent.ErrorRecord,
@@ -1057,8 +1060,8 @@ namespace System.Management.Automation.Tracing
                                                cinfo.Category.ToString(), cinfo.Reason, cinfo.TargetName,
                                                errorRecord.FullyQualifiedErrorId,
                                                exception.Message, exception.StackTrace, innerException);
-            } 
-            else 
+            }
+            else
             {
                 return debugChannel.TraceError(PowerShellTraceEvent.ErrorRecord,
                                                PowerShellTraceOperationCode.Exception, PowerShellTraceTask.None,
@@ -1071,9 +1074,11 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         public bool TraceException(Exception exception)
         {
-            if (exception != null) {
+            if (exception != null)
+            {
                 string innerException = "None";
-                if (exception.InnerException != null) {
+                if (exception.InnerException != null)
+                {
                     innerException = exception.InnerException.Message;
                 }
 
@@ -1083,7 +1088,6 @@ namespace System.Management.Automation.Tracing
             }
             else
             {
-
                 return debugChannel.TraceError(PowerShellTraceEvent.Exception,
                                                PowerShellTraceOperationCode.Exception, PowerShellTraceTask.None,
                                            "NULL exception");
@@ -1112,7 +1116,7 @@ namespace System.Management.Automation.Tracing
                                                job.Location, job.JobStateInfo.State.ToString(),
                                                job.Command);
             }
-            else 
+            else
             {
                 return debugChannel.TraceDebug(PowerShellTraceEvent.Job,
                                                PowerShellTraceOperationCode.Method, PowerShellTraceTask.None,
@@ -1129,7 +1133,7 @@ namespace System.Management.Automation.Tracing
         {
             return debugChannel.TraceInformational(PowerShellTraceEvent.TraceMessage,
                                             PowerShellTraceOperationCode.None,
-                                            PowerShellTraceTask.None, message);                               
+                                            PowerShellTraceTask.None, message);
         }
 
         /// <summary>
@@ -1142,8 +1146,7 @@ namespace System.Management.Automation.Tracing
         {
             return debugChannel.TraceInformational(PowerShellTraceEvent.TraceMessage2,
                                             PowerShellTraceOperationCode.None,
-                                            PowerShellTraceTask.None, message1, message2);                               
-            
+                                            PowerShellTraceTask.None, message1, message2);
         }
 
         /// <summary>
@@ -1156,8 +1159,7 @@ namespace System.Management.Automation.Tracing
         {
             return debugChannel.TraceInformational(PowerShellTraceEvent.TraceMessageGuid,
                                             PowerShellTraceOperationCode.None,
-                                            PowerShellTraceTask.None, message, instanceId);                               
-            
+                                            PowerShellTraceTask.None, message, instanceId);
         }
 
 
@@ -1197,7 +1199,7 @@ namespace System.Management.Automation.Tracing
         {
             StringBuilder sb = new StringBuilder();
 
-            if(job != null)
+            if (job != null)
             {
                 try
                 {
@@ -1210,7 +1212,7 @@ namespace System.Management.Automation.Tracing
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e); 
+                    CommandProcessorBase.CheckForSevereException(e);
                     // Exception in 3rd party code should never cause a crash due to tracing. The
                     // Implementation of the property getters could throw.
                     TraceException(e);

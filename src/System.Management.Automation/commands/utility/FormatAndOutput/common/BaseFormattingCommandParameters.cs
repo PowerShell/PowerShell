@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +12,6 @@ using System.ComponentModel;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
-   
     #region Formatting Command Line Parameters
 
     /// <summary>
@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// MshParameter collection, as specified by metadata
         /// the list can be empty of no data is specified
         /// </summary>
-        internal List<MshParameter> mshParameterList = new List<MshParameter> ();
+        internal List<MshParameter> mshParameterList = new List<MshParameter>();
 
         /// <summary>
         /// name of the group by property, it can be null
@@ -111,23 +111,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// <summary>
     /// specialized class for the "expression" property
     /// </summary>
-    class ExpressionEntryDefinition : HashtableEntryDefinition
+    internal class ExpressionEntryDefinition : HashtableEntryDefinition
     {
-        internal ExpressionEntryDefinition () : this(false)
+        internal ExpressionEntryDefinition() : this(false)
         {
         }
 
-        internal ExpressionEntryDefinition (bool noGlobbing) : base(FormatParameterDefinitionKeys.ExpressionEntryKey, 
-                                    new Type[] {typeof(string), typeof(ScriptBlock)}, true)
+        internal ExpressionEntryDefinition(bool noGlobbing) : base(FormatParameterDefinitionKeys.ExpressionEntryKey,
+                                    new Type[] { typeof(string), typeof(ScriptBlock) }, true)
         {
-            this._noGlobbing = noGlobbing;
+            _noGlobbing = noGlobbing;
         }
 
-        internal override Hashtable CreateHashtableFromSingleType (object val)
+        internal override Hashtable CreateHashtableFromSingleType(object val)
         {
-            Hashtable hash = new Hashtable ();
+            Hashtable hash = new Hashtable();
 
-            hash.Add (FormatParameterDefinitionKeys.ExpressionEntryKey, val);
+            hash.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, val);
             return hash;
         }
 
@@ -162,13 +162,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 #endif
 
-        internal override object Verify (object val,
+        internal override object Verify(object val,
                                         TerminatingErrorContext invocationContext,
                                         bool originalParameterWasHashTable)
         {
             if (val == null)
             {
-                throw PSTraceSource.NewArgumentNullException ("val");
+                throw PSTraceSource.NewArgumentNullException("val");
             }
 
             // need to check the type:
@@ -176,32 +176,32 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ScriptBlock sb = val as ScriptBlock;
             if (sb != null)
             {
-                MshExpression ex = new MshExpression (sb);
+                MshExpression ex = new MshExpression(sb);
                 return ex;
             }
 
             string s = val as string;
             if (s != null)
             {
-                if (string.IsNullOrEmpty (s))
+                if (string.IsNullOrEmpty(s))
                 {
-                    ProcessEmptyStringError (originalParameterWasHashTable, invocationContext);
+                    ProcessEmptyStringError(originalParameterWasHashTable, invocationContext);
                 }
-                MshExpression ex = new MshExpression (s);
+                MshExpression ex = new MshExpression(s);
                 if (_noGlobbing)
                 {
                     if (ex.HasWildCardCharacters)
-                        ProcessGlobbingCharactersError (originalParameterWasHashTable, s, invocationContext);
+                        ProcessGlobbingCharactersError(originalParameterWasHashTable, s, invocationContext);
                 }
                 return ex;
             }
-            PSTraceSource.NewArgumentException ("val");
+            PSTraceSource.NewArgumentException("val");
             return null;
         }
 
         #region Error Processing
 
-        private void ProcessEmptyStringError (bool originalParameterWasHashTable, 
+        private void ProcessEmptyStringError(bool originalParameterWasHashTable,
                                                 TerminatingErrorContext invocationContext)
         {
             string msg;
@@ -218,10 +218,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 errorID = "ExpressionEmptyString2";
             }
 
-            ParameterProcessor.ThrowParameterBindingException (invocationContext, errorID, msg);
+            ParameterProcessor.ThrowParameterBindingException(invocationContext, errorID, msg);
         }
 
-        private void ProcessGlobbingCharactersError (bool originalParameterWasHashTable, string expression, TerminatingErrorContext invocationContext)
+        private void ProcessGlobbingCharactersError(bool originalParameterWasHashTable, string expression, TerminatingErrorContext invocationContext)
         {
             string msg;
             string errorID;
@@ -238,7 +238,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 errorID = "ExpressionGlobbing2";
             }
 
-            ParameterProcessor.ThrowParameterBindingException (invocationContext, errorID, msg);
+            ParameterProcessor.ThrowParameterBindingException(invocationContext, errorID, msg);
         }
 
         #endregion
@@ -246,32 +246,32 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool _noGlobbing;
     }
 
-    class AligmentEntryDefinition : HashtableEntryDefinition
+    internal class AligmentEntryDefinition : HashtableEntryDefinition
     {
-        internal AligmentEntryDefinition () : base(FormatParameterDefinitionKeys.AligmentEntryKey, 
-                                    new Type[] {typeof(string)})
+        internal AligmentEntryDefinition() : base(FormatParameterDefinitionKeys.AligmentEntryKey,
+                                    new Type[] { typeof(string) })
         {
         }
 
-        internal override object Verify (object val,
+        internal override object Verify(object val,
                                         TerminatingErrorContext invocationContext,
                                         bool originalParameterWasHashTable)
         {
             if (!originalParameterWasHashTable)
             {
                 // this should never happen
-                throw PSTraceSource.NewInvalidOperationException ();
+                throw PSTraceSource.NewInvalidOperationException();
             }
 
             // it is a string, need to check for partial match in a case insensitive way
             // and normalize
             string s = val as string;
 
-            if (!string.IsNullOrEmpty (s))
+            if (!string.IsNullOrEmpty(s))
             {
-                for (int k = 0; k < legalValues.Length; k++)
+                for (int k = 0; k < s_legalValues.Length; k++)
                 {
-                    if (CommandParameterDefinition.FindPartialMatch (s, legalValues[k]))
+                    if (CommandParameterDefinition.FindPartialMatch(s, s_legalValues[k]))
                     {
                         if (k == 0)
                             return TextAlignment.Left;
@@ -285,125 +285,123 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // nothing found, we have an illegal value
-            ProcessIllegalValue (s, invocationContext);
+            ProcessIllegalValue(s, invocationContext);
             return null;
         }
 
         #region Error Processing
 
-        private void ProcessIllegalValue (string s, TerminatingErrorContext invocationContext)
+        private void ProcessIllegalValue(string s, TerminatingErrorContext invocationContext)
         {
             string msg = StringUtil.Format(FormatAndOut_MshParameter.IllegalAlignmentValueError,
                 s,
                 this.KeyName,
-                ParameterProcessor.CatenateStringArray (legalValues)
+                ParameterProcessor.CatenateStringArray(s_legalValues)
                 );
-            ParameterProcessor.ThrowParameterBindingException (invocationContext, "AlignmentIllegalValue", msg);
+            ParameterProcessor.ThrowParameterBindingException(invocationContext, "AlignmentIllegalValue", msg);
         }
 
         #endregion
 
-        private readonly static string[] legalValues = new string[] { LeftAlign, CenterAlign, RightAlign };
+        private readonly static string[] s_legalValues = new string[] { LeftAlign, CenterAlign, RightAlign };
 
         private const string LeftAlign = "left";
         private const string CenterAlign = "center";
         private const string RightAlign = "right";
     }
 
-    class WidthEntryDefinition : HashtableEntryDefinition
+    internal class WidthEntryDefinition : HashtableEntryDefinition
     {
-        internal WidthEntryDefinition () : base(FormatParameterDefinitionKeys.WidthEntryKey, 
-                                    new Type[] {typeof(int)})
+        internal WidthEntryDefinition() : base(FormatParameterDefinitionKeys.WidthEntryKey,
+                                    new Type[] { typeof(int) })
         {
         }
 
-        internal override object Verify (object val,
+        internal override object Verify(object val,
                                         TerminatingErrorContext invocationContext,
                                         bool originalParameterWasHashTable)
         {
             if (!originalParameterWasHashTable)
             {
                 // this should never happen
-                throw PSTraceSource.NewInvalidOperationException ();
+                throw PSTraceSource.NewInvalidOperationException();
             }
 
             // it's an int, just check range, no need to change it
-            VerifyRange ((int)val, invocationContext);
+            VerifyRange((int)val, invocationContext);
             return null;
         }
 
-        private void VerifyRange (int width, TerminatingErrorContext invocationContext)
+        private void VerifyRange(int width, TerminatingErrorContext invocationContext)
         {
             if (width <= 0)
             {
                 string msg = StringUtil.Format(FormatAndOut_MshParameter.OutOfRangeWidthValueError,
-                    width, 
+                    width,
                     this.KeyName
                     );
-                ParameterProcessor.ThrowParameterBindingException (invocationContext, "WidthOutOfRange", msg);
+                ParameterProcessor.ThrowParameterBindingException(invocationContext, "WidthOutOfRange", msg);
             }
         }
     }
 
-    class LabelEntryDefinition : HashtableEntryDefinition
+    internal class LabelEntryDefinition : HashtableEntryDefinition
     {
-        internal LabelEntryDefinition () : base(FormatParameterDefinitionKeys.LabelEntryKey, new string[] {NameEntryDefinition.NameEntryKey} ,new Type[] {typeof(string)}, false)
+        internal LabelEntryDefinition() : base(FormatParameterDefinitionKeys.LabelEntryKey, new string[] { NameEntryDefinition.NameEntryKey }, new Type[] { typeof(string) }, false)
         {
         }
     }
 
-    class FormatStringDefinition : HashtableEntryDefinition
+    internal class FormatStringDefinition : HashtableEntryDefinition
     {
-        internal FormatStringDefinition ()  : base(FormatParameterDefinitionKeys.FormatStringEntryKey, 
-                                    new Type[] {typeof(string)})
+        internal FormatStringDefinition() : base(FormatParameterDefinitionKeys.FormatStringEntryKey,
+                                    new Type[] { typeof(string) })
         {
         }
 
-        internal override object Verify (object val,
+        internal override object Verify(object val,
                                         TerminatingErrorContext invocationContext,
                                         bool originalParameterWasHashTable)
         {
             if (!originalParameterWasHashTable)
             {
                 // this should never happen
-                throw PSTraceSource.NewInvalidOperationException ();
+                throw PSTraceSource.NewInvalidOperationException();
             }
 
             string s = val as string;
-            if (string.IsNullOrEmpty (s))
+            if (string.IsNullOrEmpty(s))
             {
                 string msg = StringUtil.Format(FormatAndOut_MshParameter.EmptyFormatStringValueError,
                     this.KeyName
                     );
 
-                ParameterProcessor.ThrowParameterBindingException (invocationContext, "FormatStringEmpty", msg);
+                ParameterProcessor.ThrowParameterBindingException(invocationContext, "FormatStringEmpty", msg);
             }
 
             // we expect a string and we build a field formatting directive
-            FieldFormattingDirective directive = new FieldFormattingDirective ();
+            FieldFormattingDirective directive = new FieldFormattingDirective();
             directive.formatString = s;
             return directive;
         }
-
-
     }
 
-    class BooleanEntryDefinition : HashtableEntryDefinition
+    internal class BooleanEntryDefinition : HashtableEntryDefinition
     {
-        internal BooleanEntryDefinition (string entryKey)  : base(entryKey, null)
+        internal BooleanEntryDefinition(string entryKey) : base(entryKey, null)
         {
         }
 
-        internal override object Verify (object val,
+        internal override object Verify(object val,
                                         TerminatingErrorContext invocationContext,
                                         bool originalParameterWasHashTable)
         {
             if (!originalParameterWasHashTable)
             {
                 // this should never happen
-                throw PSTraceSource.NewInvalidOperationException ();
+                throw PSTraceSource.NewInvalidOperationException();
             }
-            return LanguagePrimitives.IsTrue (val);
+            return LanguagePrimitives.IsTrue(val);
         }
     }
 
@@ -434,40 +432,40 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal class FormatGroupByParameterDefinition : CommandParameterDefinition
     {
-        protected override void SetEntries ()
+        protected override void SetEntries()
         {
-            this.hashEntries.Add (new ExpressionEntryDefinition ());
-            this.hashEntries.Add (new FormatStringDefinition ());
-            this.hashEntries.Add (new LabelEntryDefinition ());
+            this.hashEntries.Add(new ExpressionEntryDefinition());
+            this.hashEntries.Add(new FormatStringDefinition());
+            this.hashEntries.Add(new LabelEntryDefinition());
         }
     }
 
     internal class FormatParameterDefinitionBase : CommandParameterDefinition
     {
-        protected override void SetEntries ()
+        protected override void SetEntries()
         {
-            this.hashEntries.Add (new ExpressionEntryDefinition ());
-            this.hashEntries.Add (new FormatStringDefinition ());
+            this.hashEntries.Add(new ExpressionEntryDefinition());
+            this.hashEntries.Add(new FormatStringDefinition());
         }
     }
 
     internal class FormatTableParameterDefinition : FormatParameterDefinitionBase
     {
-        protected override void SetEntries ()
+        protected override void SetEntries()
         {
-            base.SetEntries ();
-            this.hashEntries.Add (new WidthEntryDefinition ());
-            this.hashEntries.Add (new AligmentEntryDefinition ());
-            this.hashEntries.Add (new LabelEntryDefinition ());
+            base.SetEntries();
+            this.hashEntries.Add(new WidthEntryDefinition());
+            this.hashEntries.Add(new AligmentEntryDefinition());
+            this.hashEntries.Add(new LabelEntryDefinition());
         }
     }
 
     internal class FormatListParameterDefinition : FormatParameterDefinitionBase
     {
-        protected override void SetEntries ()
+        protected override void SetEntries()
         {
-            base.SetEntries ();
-            this.hashEntries.Add (new LabelEntryDefinition ());
+            base.SetEntries();
+            this.hashEntries.Add(new LabelEntryDefinition());
         }
     }
 
@@ -478,13 +476,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal class FormatObjectParameterDefinition : CommandParameterDefinition
     {
-        protected override void SetEntries ()
+        protected override void SetEntries()
         {
-            this.hashEntries.Add (new ExpressionEntryDefinition ());
-            this.hashEntries.Add (new HashtableEntryDefinition (FormatParameterDefinitionKeys.DepthEntryKey, new Type[] { typeof(int) }));
+            this.hashEntries.Add(new ExpressionEntryDefinition());
+            this.hashEntries.Add(new HashtableEntryDefinition(FormatParameterDefinitionKeys.DepthEntryKey, new Type[] { typeof(int) }));
         }
     }
     #endregion
-
 }
 

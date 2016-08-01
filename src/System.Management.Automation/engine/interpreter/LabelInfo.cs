@@ -27,13 +27,14 @@ using System.Text;
 using System.Reflection.Emit;
 using System.Diagnostics;
 
-namespace System.Management.Automation.Interpreter {
-
+namespace System.Management.Automation.Interpreter
+{
     /// <summary>
     /// Contains compiler state corresponding to a LabelTarget
     /// See also LabelScopeInfo.
     /// </summary>
-    internal sealed class LabelInfo {
+    internal sealed class LabelInfo
+    {
         // The tree node representing this label
         private readonly LabelTarget _node;
 
@@ -54,28 +55,35 @@ namespace System.Management.Automation.Interpreter {
         // LabelTarget can only be defined in one place
         private bool _acrossBlockJump;
 
-        internal LabelInfo(LabelTarget node) {
+        internal LabelInfo(LabelTarget node)
+        {
             _node = node;
         }
 
-        internal BranchLabel GetLabel(LightCompiler compiler) {
+        internal BranchLabel GetLabel(LightCompiler compiler)
+        {
             EnsureLabel(compiler);
             return _label;
         }
 
-        internal void Reference(LabelScopeInfo block) {
+        internal void Reference(LabelScopeInfo block)
+        {
             _references.Add(block);
-            if (HasDefinitions) {
+            if (HasDefinitions)
+            {
                 ValidateJump(block);
             }
         }
 
-        internal void Define(LabelScopeInfo block) {
+        internal void Define(LabelScopeInfo block)
+        {
             // Prevent the label from being shadowed, which enforces cleaner
             // trees. Also we depend on this for simplicity (keeping only one
             // active IL Label per LabelInfo)
-            for (LabelScopeInfo j = block; j != null; j = j.Parent) {
-                if (j.ContainsTarget(_node)) {
+            for (LabelScopeInfo j = block; j != null; j = j.Parent)
+            {
+                if (j.ContainsTarget(_node))
+                {
                     throw new InvalidOperationException(String.Format(CultureInfo.InvariantCulture, "Label target already defined: {0}", _node.Name));
                 }
             }
@@ -84,15 +92,20 @@ namespace System.Management.Automation.Interpreter {
             block.AddLabelInfo(_node, this);
 
             // Once defined, validate all jumps
-            if (HasDefinitions && !HasMultipleDefinitions) {
-                foreach (var r in _references) {
+            if (HasDefinitions && !HasMultipleDefinitions)
+            {
+                foreach (var r in _references)
+                {
                     ValidateJump(r);
                 }
-            } else {
+            }
+            else
+            {
                 // Was just redefined, if we had any across block jumps, they're
                 // now invalid
-                if (_acrossBlockJump) {
-                    throw new InvalidOperationException("Ambiguous jump");                    
+                if (_acrossBlockJump)
+                {
+                    throw new InvalidOperationException("Ambiguous jump");
                 }
                 // For local jumps, we need a new IL label
                 // This is okay because:
@@ -102,21 +115,26 @@ namespace System.Management.Automation.Interpreter {
             }
         }
 
-        private void ValidateJump(LabelScopeInfo reference) {
+        private void ValidateJump(LabelScopeInfo reference)
+        {
             // look for a simple jump out
-            for (LabelScopeInfo j = reference; j != null; j = j.Parent) {
-                if (DefinedIn(j)) {
+            for (LabelScopeInfo j = reference; j != null; j = j.Parent)
+            {
+                if (DefinedIn(j))
+                {
                     // found it, jump is valid!
                     return;
                 }
-                if (j.Kind == LabelScopeKind.Filter) {
+                if (j.Kind == LabelScopeKind.Filter)
+                {
                     break;
                 }
             }
 
             _acrossBlockJump = true;
 
-            if (HasMultipleDefinitions) {
+            if (HasMultipleDefinitions)
+            {
                 throw new InvalidOperationException(String.Format(CultureInfo.InvariantCulture, "Ambiguous jump {0}", _node.Name));
             }
 
@@ -125,92 +143,122 @@ namespace System.Management.Automation.Interpreter {
             LabelScopeInfo common = CommonNode(def, reference, b => b.Parent);
 
             // Validate that we aren't jumping across a finally
-            for (LabelScopeInfo j = reference; j != common; j = j.Parent) {
-                if (j.Kind == LabelScopeKind.Filter) {
+            for (LabelScopeInfo j = reference; j != common; j = j.Parent)
+            {
+                if (j.Kind == LabelScopeKind.Filter)
+                {
                     throw new InvalidOperationException("Control cannot leave filter test");
                 }
             }
 
             // Valdiate that we aren't jumping into a catch or an expression
-            for (LabelScopeInfo j = def; j != common; j = j.Parent) {
-                if (!j.CanJumpInto) {
-                    if (j.Kind == LabelScopeKind.Expression) {
+            for (LabelScopeInfo j = def; j != common; j = j.Parent)
+            {
+                if (!j.CanJumpInto)
+                {
+                    if (j.Kind == LabelScopeKind.Expression)
+                    {
                         throw new InvalidOperationException("Control cannot enter an expression");
-                    } else {
+                    }
+                    else
+                    {
                         throw new InvalidOperationException("Control cannot enter try");
                     }
                 }
             }
         }
 
-        internal void ValidateFinish() {
+        internal void ValidateFinish()
+        {
             // Make sure that if this label was jumped to, it is also defined
-            if (_references.Count > 0 && !HasDefinitions) {
+            if (_references.Count > 0 && !HasDefinitions)
+            {
                 throw new InvalidOperationException("label target undefined");
             }
         }
 
-        private void EnsureLabel(LightCompiler compiler) {
-            if (_label == null) {
+        private void EnsureLabel(LightCompiler compiler)
+        {
+            if (_label == null)
+            {
                 _label = compiler.Instructions.MakeLabel();
             }
-        }        
+        }
 
-        private bool DefinedIn(LabelScopeInfo scope) {
-            if (_definitions == scope) {
+        private bool DefinedIn(LabelScopeInfo scope)
+        {
+            if (_definitions == scope)
+            {
                 return true;
             }
 
             HashSet<LabelScopeInfo> definitions = _definitions as HashSet<LabelScopeInfo>;
-            if (definitions != null) {
+            if (definitions != null)
+            {
                 return definitions.Contains(scope);
             }
             return false;
         }
 
-        private bool HasDefinitions {
-            get {
+        private bool HasDefinitions
+        {
+            get
+            {
                 return _definitions != null;
             }
         }
 
-        private LabelScopeInfo FirstDefinition() {
+        private LabelScopeInfo FirstDefinition()
+        {
             LabelScopeInfo scope = _definitions as LabelScopeInfo;
-            if (scope != null) {
+            if (scope != null)
+            {
                 return scope;
             }
             return ((HashSet<LabelScopeInfo>)_definitions).First();
         }
 
-        private void AddDefinition(LabelScopeInfo scope) {
-            if (_definitions == null) {
+        private void AddDefinition(LabelScopeInfo scope)
+        {
+            if (_definitions == null)
+            {
                 _definitions = scope;
-            } else {
+            }
+            else
+            {
                 HashSet<LabelScopeInfo> set = _definitions as HashSet<LabelScopeInfo>;
-                if(set == null) {
+                if (set == null)
+                {
                     _definitions = set = new HashSet<LabelScopeInfo>() { (LabelScopeInfo)_definitions };
                 }
                 set.Add(scope);
             }
         }
 
-        private bool HasMultipleDefinitions {
-            get {
+        private bool HasMultipleDefinitions
+        {
+            get
+            {
                 return _definitions is HashSet<LabelScopeInfo>;
             }
         }
 
-        internal static T CommonNode<T>(T first, T second, Func<T, T> parent) where T : class {
+        internal static T CommonNode<T>(T first, T second, Func<T, T> parent) where T : class
+        {
             var cmp = EqualityComparer<T>.Default;
-            if (cmp.Equals(first, second)) {
+            if (cmp.Equals(first, second))
+            {
                 return first;
             }
             var set = new HashSet<T>(cmp);
-            for (T t = first; t != null; t = parent(t)) {
+            for (T t = first; t != null; t = parent(t))
+            {
                 set.Add(t);
             }
-            for (T t = second; t != null; t = parent(t)) {
-                if (set.Contains(t)) {
+            for (T t = second; t != null; t = parent(t))
+            {
+                if (set.Contains(t))
+                {
                     return t;
                 }
             }
@@ -218,7 +266,8 @@ namespace System.Management.Automation.Interpreter {
         }
     }
 
-    internal enum LabelScopeKind {
+    internal enum LabelScopeKind
+    {
         // any "statement like" node that can be jumped into
         Statement,
 
@@ -250,12 +299,14 @@ namespace System.Management.Automation.Interpreter {
     // well as creating them for the first expression we can't jump into. The
     // "Kind" property indicates what kind of scope this is.
     //
-    internal sealed class LabelScopeInfo {
-        private HybridReferenceDictionary<LabelTarget, LabelInfo> Labels; // lazily allocated, we typically use this only once every 6th-7th block
+    internal sealed class LabelScopeInfo
+    {
+        private HybridReferenceDictionary<LabelTarget, LabelInfo> _labels; // lazily allocated, we typically use this only once every 6th-7th block
         internal readonly LabelScopeKind Kind;
         internal readonly LabelScopeInfo Parent;
 
-        internal LabelScopeInfo(LabelScopeInfo parent, LabelScopeKind kind) {
+        internal LabelScopeInfo(LabelScopeInfo parent, LabelScopeKind kind)
+        {
             Parent = parent;
             Kind = kind;
         }
@@ -263,9 +314,12 @@ namespace System.Management.Automation.Interpreter {
         /// <summary>
         /// Returns true if we can jump into this node
         /// </summary>
-        internal bool CanJumpInto {
-            get {
-                switch (Kind) {
+        internal bool CanJumpInto
+        {
+            get
+            {
+                switch (Kind)
+                {
                     case LabelScopeKind.Block:
                     case LabelScopeKind.Statement:
                     case LabelScopeKind.Switch:
@@ -277,31 +331,37 @@ namespace System.Management.Automation.Interpreter {
         }
 
 
-        internal bool ContainsTarget(LabelTarget target) {
-            if (Labels == null) {
+        internal bool ContainsTarget(LabelTarget target)
+        {
+            if (_labels == null)
+            {
                 return false;
             }
 
-            return Labels.ContainsKey(target);
+            return _labels.ContainsKey(target);
         }
 
-        internal bool TryGetLabelInfo(LabelTarget target, out LabelInfo info) {
-            if (Labels == null) {
+        internal bool TryGetLabelInfo(LabelTarget target, out LabelInfo info)
+        {
+            if (_labels == null)
+            {
                 info = null;
                 return false;
             }
 
-            return Labels.TryGetValue(target, out info);
+            return _labels.TryGetValue(target, out info);
         }
 
-        internal void AddLabelInfo(LabelTarget target, LabelInfo info) {
+        internal void AddLabelInfo(LabelTarget target, LabelInfo info)
+        {
             Debug.Assert(CanJumpInto);
 
-            if (Labels == null) {
-                Labels = new HybridReferenceDictionary<LabelTarget, LabelInfo>();
+            if (_labels == null)
+            {
+                _labels = new HybridReferenceDictionary<LabelTarget, LabelInfo>();
             }
 
-            Labels[target] = info;
+            _labels[target] = info;
         }
     }
 }

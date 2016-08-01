@@ -1,13 +1,4 @@
-// ==++==
-// 
-//   Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
-// ==--==
-/*============================================================
-**
-** Class: UnsafeNativeMethods
-**
-============================================================*/
+
 
 namespace System.Diagnostics.Eventing
 {
@@ -16,13 +7,13 @@ namespace System.Diagnostics.Eventing
     using System.Security;
     using System.Text;
     using System.Diagnostics.Eventing.Reader;
-    
+
     internal static class UnsafeNativeMethods
     {
         private const string FormatMessageDllName = "api-ms-win-core-localization-l1-2-0.dll";
         private const string EventProviderDllName = "api-ms-win-eventing-provider-l1-1-0.dll";
         private const string WEVTAPI = "wevtapi.dll";
-        private static readonly IntPtr NULL = IntPtr.Zero;
+        private static readonly IntPtr s_NULL = IntPtr.Zero;
 
         // WinError.h codes:
 
@@ -67,7 +58,7 @@ namespace System.Diagnostics.Eventing
         // The event size is larger than the allowed maximum (64k - header).
         internal const int ERROR_ARITHMETIC_OVERFLOW = 0x216;  // 534
         internal const int ERROR_RESOURCE_LANG_NOT_FOUND = 0x717;  // 1815
-        
+
         // Event log specific codes:
 
         internal const int ERROR_EVT_MESSAGE_NOT_FOUND = 15027;
@@ -101,7 +92,7 @@ namespace System.Diagnostics.Eventing
             StringBuilder sb = new StringBuilder(512);
             int result = UnsafeNativeMethods.FormatMessage(FORMAT_MESSAGE_IGNORE_INSERTS |
                 FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ARGUMENT_ARRAY,
-                UnsafeNativeMethods.NULL, errorCode, 0, sb, sb.Capacity, UnsafeNativeMethods.NULL);
+                UnsafeNativeMethods.s_NULL, errorCode, 0, sb, sb.Capacity, UnsafeNativeMethods.s_NULL);
             if (result != 0)
             {
                 // result is the # of characters copied to the StringBuilder on NT,

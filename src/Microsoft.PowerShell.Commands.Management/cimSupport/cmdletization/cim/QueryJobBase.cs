@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                             return;
                         }
 
-                        if (!this._cimQuery.IsMatchingResult(item))
+                        if (!_cimQuery.IsMatchingResult(item))
                         {
                             return;
                         }
@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             this.ExceptionSafeWrapper(
                     delegate
                     {
-                        foreach (ClientSideQuery.NotFoundError notFoundError in this._cimQuery.GenerateNotFoundErrors())
+                        foreach (ClientSideQuery.NotFoundError notFoundError in _cimQuery.GenerateNotFoundErrors())
                         {
                             string errorId = "CmdletizationQuery_NotFound";
                             if (!string.IsNullOrEmpty(notFoundError.PropertyName))
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal override CimCustomOptionsDictionary CalculateJobSpecificCustomOptions()
         {
-            return CimCustomOptionsDictionary.Create(this._cimQuery.queryOptions);
+            return CimCustomOptionsDictionary.Create(_cimQuery.queryOptions);
         }
     }
 }

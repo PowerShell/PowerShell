@@ -1,6 +1,5 @@
 #if !UNIX
 //-----------------------------------------------------------------------
-// <copyright file="EtwActivityReverterMethodInvoker.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -12,14 +11,14 @@ namespace System.Management.Automation.Tracing
     internal class EtwActivityReverterMethodInvoker :
         IMethodInvoker
     {
-        #region Instance Data
+#region Instance Data
 
         private readonly IEtwEventCorrelator _eventCorrelator;
         private readonly Func<Guid, Delegate, object[], object> _invoker;
 
-        #endregion
+#endregion
 
-        #region Creation/Cleanup
+#region Creation/Cleanup
 
         public EtwActivityReverterMethodInvoker(IEtwEventCorrelator eventCorrelator)
         {
@@ -32,9 +31,9 @@ namespace System.Management.Automation.Tracing
             _invoker = DoInvoke;
         }
 
-        #endregion
+#endregion
 
-        #region Instsance Access
+#region Instsance Access
 
         public Delegate Invoker
         {
@@ -54,9 +53,9 @@ namespace System.Management.Automation.Tracing
             return retInvokerArgs;
         }
 
-        #endregion
+#endregion
 
-        #region Instance Utilities
+#region Instance Utilities
 
         private object DoInvoke(Guid relatedActivityId, Delegate method, object[] methodArgs)
         {
@@ -66,7 +65,7 @@ namespace System.Management.Automation.Tracing
             }
         }
 
-        #endregion
+#endregion
     }
 }
 

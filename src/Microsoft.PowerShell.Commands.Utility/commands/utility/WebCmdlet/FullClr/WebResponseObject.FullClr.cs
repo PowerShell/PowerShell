@@ -48,7 +48,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="response"></param>
         public WebResponseObject(WebResponse response)
-            : this(response, null) { }
+            : this(response, null)
+        { }
 
         /// <summary>
         /// Constructor for WebResponseObject with contentStream
@@ -105,7 +106,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 int initialCapacity = (int)Math.Min(contentLength, StreamHelper.DefaultReadBuffer);
                 _rawContentStream = new WebResponseContentMemoryStream(st, initialCapacity, null);
-
             }
             // set the position of the content stream to the beginning
             _rawContentStream.Position = 0;

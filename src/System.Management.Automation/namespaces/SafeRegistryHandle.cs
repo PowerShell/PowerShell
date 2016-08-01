@@ -1,16 +1,10 @@
-// ==++==
-// 
-//   Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
-// ==--==
+
 //
 // NOTE: A vast majority of this code was copied from BCL in
-// ndp\clr\src\BCL\Microsoft\Win32\SafeHandles\SafeRegistryHandle.cs.
 // Namespace: Microsoft.Win32.SafeHandles
 //
 /*============================================================
 **
-** Class:  SafeRegistryHandle 
 **
 **
 ** A wrapper for registry handles
@@ -35,18 +29,18 @@ using System.Security.Permissions;
 
 namespace Microsoft.PowerShell.Commands.Internal
 {
-
-    internal sealed class SafeRegistryHandle : SafeHandleZeroOrMinusOneIsInvalid {
-
+    internal sealed class SafeRegistryHandle : SafeHandleZeroOrMinusOneIsInvalid
+    {
         // Note: Officially -1 is the recommended invalid handle value for
         // registry keys, but we'll also get back 0 as an invalid handle from
         // RegOpenKeyEx.
 
-        [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode=true)]
-        internal SafeRegistryHandle() : base(true) {}
+        [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+        internal SafeRegistryHandle() : base(true) { }
 
-        [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode=true)]
-        internal SafeRegistryHandle(IntPtr preexistingHandle, bool ownsHandle) : base(ownsHandle) {
+        [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+        internal SafeRegistryHandle(IntPtr preexistingHandle, bool ownsHandle) : base(ownsHandle)
+        {
             SetHandle(preexistingHandle);
         }
 
@@ -55,7 +49,7 @@ namespace Microsoft.PowerShell.Commands.Internal
          ResourceExposure(ResourceScope.None),
          ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         internal static extern int RegCloseKey(IntPtr hKey);
-    
+
         override protected bool ReleaseHandle()
         {
 #if UNIX

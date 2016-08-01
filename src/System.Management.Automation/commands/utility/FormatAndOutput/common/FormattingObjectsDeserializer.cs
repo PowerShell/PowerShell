@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Reflection;
 using System.Collections;
@@ -24,12 +25,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         private const string TabExpansionString = "    ";
 
-        internal FormatObjectDeserializer (TerminatingErrorContext errorContext)
+        internal FormatObjectDeserializer(TerminatingErrorContext errorContext)
         {
             TerminatingErrorContext = errorContext;
         }
 
-        internal bool IsFormatInfoData (PSObject so)
+        internal bool IsFormatInfoData(PSObject so)
         {
             var fid = PSObject.Base(so) as FormatInfoData;
             if (fid != null)
@@ -44,7 +45,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // we have an unexpected type (CLSID not matching): this should never happen
-                ProcessUnknownInvalidClassId (fid.ClassId2e4f51ef21dd47e99d3c952918aff9cd, so, "FormatObjectDeserializerDeserializeInvalidClassId");
+                ProcessUnknownInvalidClassId(fid.ClassId2e4f51ef21dd47e99d3c952918aff9cd, so, "FormatObjectDeserializerDeserializeInvalidClassId");
                 return false;
             }
 
@@ -56,7 +57,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return false;
             }
-            string classId = GetProperty (so, FormatInfoData.classidProperty) as string;
+            string classId = GetProperty(so, FormatInfoData.classidProperty) as string;
 
             if (classId == null)
             {
@@ -65,17 +66,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // it's one of ours, get the right class and deserialize it accordingly
-            if (IsClass (classId, FormatStartData.CLSID) ||
-                IsClass (classId, FormatEndData.CLSID) ||
-                IsClass (classId, GroupStartData.CLSID) ||
-                IsClass (classId, GroupEndData.CLSID) ||
-                IsClass (classId, FormatEntryData.CLSID))
+            if (IsClass(classId, FormatStartData.CLSID) ||
+                IsClass(classId, FormatEndData.CLSID) ||
+                IsClass(classId, GroupStartData.CLSID) ||
+                IsClass(classId, GroupEndData.CLSID) ||
+                IsClass(classId, FormatEntryData.CLSID))
             {
                 return true;
             }
 
             // we have an unknown type (CLSID not matching): this should never happen
-            ProcessUnknownInvalidClassId (classId, so, "FormatObjectDeserializerIsFormatInfoDataInvalidClassId");
+            ProcessUnknownInvalidClassId(classId, so, "FormatObjectDeserializerIsFormatInfoDataInvalidClassId");
             return false;
         }
 
@@ -87,7 +88,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="so">object to deserialize</param>
         /// <returns>deserialized object or null</returns>
-        internal object Deserialize (PSObject so)
+        internal object Deserialize(PSObject so)
         {
             var fid = PSObject.Base(so) as FormatInfoData;
             if (fid != null)
@@ -102,7 +103,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // we have an unexpected type (CLSID not matching): this should never happen
-                ProcessUnknownInvalidClassId (fid.ClassId2e4f51ef21dd47e99d3c952918aff9cd, so, "FormatObjectDeserializerDeserializeInvalidClassId");
+                ProcessUnknownInvalidClassId(fid.ClassId2e4f51ef21dd47e99d3c952918aff9cd, so, "FormatObjectDeserializerDeserializeInvalidClassId");
                 return null;
             }
 
@@ -114,7 +115,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return so;
             }
 
-            string classId = GetProperty (so, FormatInfoData.classidProperty) as string;
+            string classId = GetProperty(so, FormatInfoData.classidProperty) as string;
 
             if (classId == null)
             {
@@ -124,38 +125,38 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // it's one of ours, get the right class and deserialize it accordingly
-            if (IsClass (classId, FormatStartData.CLSID) ||
-                IsClass (classId, FormatEndData.CLSID) ||
-                IsClass (classId, GroupStartData.CLSID) ||
-                IsClass (classId, GroupEndData.CLSID) ||
-                IsClass (classId, FormatEntryData.CLSID))
+            if (IsClass(classId, FormatStartData.CLSID) ||
+                IsClass(classId, FormatEndData.CLSID) ||
+                IsClass(classId, GroupStartData.CLSID) ||
+                IsClass(classId, GroupEndData.CLSID) ||
+                IsClass(classId, FormatEntryData.CLSID))
             {
-                return DeserializeObject (so);
+                return DeserializeObject(so);
             }
 
             // we have an unknown type (CLSID not matching): this should never happen
-            ProcessUnknownInvalidClassId (classId, so, "FormatObjectDeserializerDeserializeInvalidClassId");
+            ProcessUnknownInvalidClassId(classId, so, "FormatObjectDeserializerDeserializeInvalidClassId");
             return null;
         }
 
-        private void ProcessUnknownInvalidClassId (string classId, object obj, string errorId)
+        private void ProcessUnknownInvalidClassId(string classId, object obj, string errorId)
         {
             string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_ClassIdInvalid, classId);
 
-            ErrorRecord errorRecord = new ErrorRecord (
+            ErrorRecord errorRecord = new ErrorRecord(
                                             PSTraceSource.NewArgumentException("classId"),
                                             errorId,
                                             ErrorCategory.InvalidData,
                                             obj);
 
-            errorRecord.ErrorDetails = new ErrorDetails (msg);
-            this.TerminatingErrorContext.ThrowTerminatingError (errorRecord);
+            errorRecord.ErrorDetails = new ErrorDetails(msg);
+            this.TerminatingErrorContext.ThrowTerminatingError(errorRecord);
         }
 
-    #region Helper Methods
-        private static bool IsClass (string x, string y)
+        #region Helper Methods
+        private static bool IsClass(string x, string y)
         {
-            return string.Compare (x,y, StringComparison.OrdinalIgnoreCase) == 0;
+            return string.Compare(x, y, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
 #if _UNUSED
@@ -192,10 +193,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return retVal;
         }
 #endif
-  
-#endregion
 
-        internal static object GetProperty (PSObject so, string name)
+        #endregion
+
+        internal static object GetProperty(PSObject so, string name)
         {
             PSMemberInfo member = so.Properties[name];
             if (member == null)
@@ -208,9 +209,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         // returns null on error
-        internal FormatInfoData DeserializeMemberObject (PSObject so, string property)
+        internal FormatInfoData DeserializeMemberObject(PSObject so, string property)
         {
-            object memberRaw = GetProperty (so, property);
+            object memberRaw = GetProperty(so, property);
             if (memberRaw == null)
                 return null;
             if (so == memberRaw)
@@ -226,32 +227,32 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 errorRecord.ErrorDetails = new ErrorDetails(msg);
                 this.TerminatingErrorContext.ThrowTerminatingError(errorRecord);
             }
-            return DeserializeObject (PSObject.AsPSObject(memberRaw));
+            return DeserializeObject(PSObject.AsPSObject(memberRaw));
         }
-        internal FormatInfoData DeserializeMandatoryMemberObject (PSObject so, string property)
+        internal FormatInfoData DeserializeMandatoryMemberObject(PSObject so, string property)
         {
             FormatInfoData fid = DeserializeMemberObject(so, property);
-            VerifyDataNotNull (fid, property);
+            VerifyDataNotNull(fid, property);
             return fid;
         }
-        private object DeserializeMemberVariable (PSObject so, string property, System.Type t, bool cannotBeNull)
+        private object DeserializeMemberVariable(PSObject so, string property, System.Type t, bool cannotBeNull)
         {
-            object objRaw = GetProperty (so, property);
+            object objRaw = GetProperty(so, property);
             if (cannotBeNull)
-                VerifyDataNotNull (objRaw, property);
+                VerifyDataNotNull(objRaw, property);
 
-            if (objRaw != null && t != objRaw.GetType ())
+            if (objRaw != null && t != objRaw.GetType())
             {
                 string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_InvalidPropertyType, t.Name, property);
 
-                ErrorRecord errorRecord = new ErrorRecord (
+                ErrorRecord errorRecord = new ErrorRecord(
                                 PSTraceSource.NewArgumentException("property"),
                                 "FormatObjectDeserializerInvalidPropertyType",
                                 ErrorCategory.InvalidData,
                                 so);
 
-                errorRecord.ErrorDetails = new ErrorDetails (msg);
-                this.TerminatingErrorContext.ThrowTerminatingError (errorRecord);
+                errorRecord.ErrorDetails = new ErrorDetails(msg);
+                this.TerminatingErrorContext.ThrowTerminatingError(errorRecord);
             }
             return objRaw;
         }
@@ -262,9 +263,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="so">object whose the property belogs to</param>
         /// <param name="property">name of the string property</param>
         /// <returns>string out of the MsObject</returns>
-        internal string DeserializeStringMemberVariableRaw (PSObject so, string property)
+        internal string DeserializeStringMemberVariableRaw(PSObject so, string property)
         {
-            return (string)DeserializeMemberVariable (so, property, typeof(string), false /* cannotBeNull */);
+            return (string)DeserializeMemberVariable(so, property, typeof(string), false /* cannotBeNull */);
         }
 
         /// <summary>
@@ -273,23 +274,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="so">object whose the property belogs to</param>
         /// <param name="property">name of the string property</param>
         /// <returns>string out of the MsObject</returns>
-        internal string DeserializeStringMemberVariable (PSObject so, string property)
+        internal string DeserializeStringMemberVariable(PSObject so, string property)
         {
-            string val = (string)DeserializeMemberVariable (so, property, typeof(string), false /* cannotBeNull */);
+            string val = (string)DeserializeMemberVariable(so, property, typeof(string), false /* cannotBeNull */);
 
             // expand TAB's
-            if (string.IsNullOrEmpty (val))
+            if (string.IsNullOrEmpty(val))
                 return val;
-            return val.Replace ("\t", TabExpansionString);
+            return val.Replace("\t", TabExpansionString);
         }
-        
-        internal int DeserializeIntMemberVariable (PSObject so, string property)
+
+        internal int DeserializeIntMemberVariable(PSObject so, string property)
         {
-            return (int)DeserializeMemberVariable (so, property, typeof(int), true /* cannotBeNull */);
+            return (int)DeserializeMemberVariable(so, property, typeof(int), true /* cannotBeNull */);
         }
-        internal bool DeserializeBoolMemberVariable (PSObject so, string property)
+        internal bool DeserializeBoolMemberVariable(PSObject so, string property)
         {
-            return (bool)DeserializeMemberVariable (so, property, typeof(bool), true /* cannotBeNull */);
+            return (bool)DeserializeMemberVariable(so, property, typeof(bool), true /* cannotBeNull */);
         }
 
         internal WriteStreamType DeserializeWriteStreamTypeMemberVariable(PSObject so)
@@ -321,38 +322,38 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         // returns null on error
-        internal FormatInfoData DeserializeObject (PSObject so)
+        internal FormatInfoData DeserializeObject(PSObject so)
         {
-            FormatInfoData fid = FormatInfoDataClassFactory.CreateInstance (so, this);
+            FormatInfoData fid = FormatInfoDataClassFactory.CreateInstance(so, this);
 
             if (fid != null)
-                fid.Deserialize (so, this);
+                fid.Deserialize(so, this);
             return fid;
         }
-        
-        internal void VerifyDataNotNull (object obj, string name)
+
+        internal void VerifyDataNotNull(object obj, string name)
         {
             if (obj != null)
                 return;
 
             string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_NullDataMember, name);
 
-            ErrorRecord errorRecord = new ErrorRecord (
-                                            new ArgumentException (),
+            ErrorRecord errorRecord = new ErrorRecord(
+                                            new ArgumentException(),
                                             "FormatObjectDeserializerNullDataMember",
                                             ErrorCategory.InvalidData,
                                             null);
 
-            errorRecord.ErrorDetails = new ErrorDetails (msg);
-            this.TerminatingErrorContext.ThrowTerminatingError (errorRecord);
+            errorRecord.ErrorDetails = new ErrorDetails(msg);
+            this.TerminatingErrorContext.ThrowTerminatingError(errorRecord);
         }
     }
 
     internal static class FormatInfoDataClassFactory
     {
-        static FormatInfoDataClassFactory ()
+        static FormatInfoDataClassFactory()
         {
-            constructors = new Dictionary<string, Func<FormatInfoData>>
+            s_constructors = new Dictionary<string, Func<FormatInfoData>>
             {
                 {FormatStartData.CLSID,       () => new FormatStartData()},
                 {FormatEndData.CLSID,         () => new FormatEndData()},
@@ -383,11 +384,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         // returns null on error
-        internal static FormatInfoData CreateInstance (PSObject so, FormatObjectDeserializer deserializer)
+        internal static FormatInfoData CreateInstance(PSObject so, FormatObjectDeserializer deserializer)
         {
             if (so == null)
             {
-                throw PSTraceSource.NewArgumentNullException ("so");
+                throw PSTraceSource.NewArgumentNullException("so");
             }
 
             // look for the property that defines the type of object
@@ -396,25 +397,25 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_InvalidClassidProperty);
 
-                ErrorRecord errorRecord = new ErrorRecord (
+                ErrorRecord errorRecord = new ErrorRecord(
                                                 PSTraceSource.NewArgumentException("classid"),
                                                 "FormatObjectDeserializerInvalidClassidProperty",
                                                 ErrorCategory.InvalidData,
                                                 so);
 
-                errorRecord.ErrorDetails = new ErrorDetails (msg);
-                deserializer.TerminatingErrorContext.ThrowTerminatingError (errorRecord);
+                errorRecord.ErrorDetails = new ErrorDetails(msg);
+                deserializer.TerminatingErrorContext.ThrowTerminatingError(errorRecord);
             }
-            FormatInfoData fid = CreateInstance (classId, deserializer);
+            FormatInfoData fid = CreateInstance(classId, deserializer);
             return fid;
         }
 
 
         // returns null on failure
-        private static FormatInfoData CreateInstance (string clsid, FormatObjectDeserializer deserializer)
+        private static FormatInfoData CreateInstance(string clsid, FormatObjectDeserializer deserializer)
         {
             Func<FormatInfoData> ctor;
-            if (!constructors.TryGetValue(clsid, out ctor))
+            if (!s_constructors.TryGetValue(clsid, out ctor))
             {
                 CreateInstanceError(PSTraceSource.NewArgumentException("clsid"), clsid, deserializer);
                 return null;
@@ -476,56 +477,56 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             deserializer.TerminatingErrorContext.ThrowTerminatingError(errorRecord);
         }
 
-        private static readonly Dictionary<string, Func<FormatInfoData>> constructors;
+        private static readonly Dictionary<string, Func<FormatInfoData>> s_constructors;
     }
 
 
 
     internal static class FormatInfoDataListDeserializer<T> where T : FormatInfoData
     {
-        private static void ReadListHelper (IEnumerable en, List<T> lst, FormatObjectDeserializer deserializer)
+        private static void ReadListHelper(IEnumerable en, List<T> lst, FormatObjectDeserializer deserializer)
         {
-            deserializer.VerifyDataNotNull (en, "enumerable");
+            deserializer.VerifyDataNotNull(en, "enumerable");
             foreach (object obj in en)
             {
                 FormatInfoData fid = deserializer.DeserializeObject(PSObjectHelper.AsPSObject(obj));
                 T entry = fid as T;
-                deserializer.VerifyDataNotNull (entry, "entry");
-                lst.Add (entry);
+                deserializer.VerifyDataNotNull(entry, "entry");
+                lst.Add(entry);
             }
         }
-        internal static void ReadList (PSObject so, string property, List<T> lst, FormatObjectDeserializer deserializer)
+        internal static void ReadList(PSObject so, string property, List<T> lst, FormatObjectDeserializer deserializer)
         {
             if (lst == null)
             {
-                throw PSTraceSource.NewArgumentNullException ("lst");
+                throw PSTraceSource.NewArgumentNullException("lst");
             }
             object memberRaw = FormatObjectDeserializer.GetProperty(so, property);
-            ReadListHelper (PSObjectHelper.GetEnumerable(memberRaw), lst, deserializer);
+            ReadListHelper(PSObjectHelper.GetEnumerable(memberRaw), lst, deserializer);
         }
     }
 
- 
-#region Formatting Objects Deserializer
+
+    #region Formatting Objects Deserializer
 
     internal abstract partial class FormatInfoData
     {
-        internal virtual void Deserialize (PSObject so, FormatObjectDeserializer deserializer) { }
+        internal virtual void Deserialize(PSObject so, FormatObjectDeserializer deserializer) { }
     }
 
     internal abstract partial class ControlInfoData : PacketInfoData
     {
-        internal override void Deserialize (PSObject so, FormatObjectDeserializer deserializer)
+        internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
-            base.Deserialize (so, deserializer);
+            base.Deserialize(so, deserializer);
             //optional
-            this.groupingEntry = (GroupingEntry)deserializer.DeserializeMemberObject (so, "groupingEntry");
+            this.groupingEntry = (GroupingEntry)deserializer.DeserializeMemberObject(so, "groupingEntry");
         }
     }
 
     internal abstract partial class StartData : ControlInfoData
     {
-        internal override void Deserialize (PSObject so, FormatObjectDeserializer deserializer)
+        internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
             base.Deserialize(so, deserializer);
             this.shapeInfo = (ShapeInfo)deserializer.DeserializeMemberObject(so, "shapeInfo");
@@ -534,32 +535,32 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal sealed partial class AutosizeInfo : FormatInfoData
     {
-        internal override void Deserialize (PSObject so, FormatObjectDeserializer deserializer)
+        internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
-            base.Deserialize (so, deserializer);
-            this.objectCount = deserializer.DeserializeIntMemberVariable (so, "objectCount");
+            base.Deserialize(so, deserializer);
+            this.objectCount = deserializer.DeserializeIntMemberVariable(so, "objectCount");
         }
     }
 
     internal sealed partial class FormatStartData : StartData
     {
-        internal override void Deserialize (PSObject so, FormatObjectDeserializer deserializer)
+        internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
-            base.Deserialize (so, deserializer);
+            base.Deserialize(so, deserializer);
             // for the base class the shapeInfo is optional, but it's mandatory for this class
-            deserializer.VerifyDataNotNull (this.shapeInfo, "shapeInfo");
-            this.pageHeaderEntry = (PageHeaderEntry)deserializer.DeserializeMemberObject (so, "pageHeaderEntry");
+            deserializer.VerifyDataNotNull(this.shapeInfo, "shapeInfo");
+            this.pageHeaderEntry = (PageHeaderEntry)deserializer.DeserializeMemberObject(so, "pageHeaderEntry");
             this.pageFooterEntry = (PageFooterEntry)deserializer.DeserializeMemberObject(so, "pageFooterEntry");
             this.autosizeInfo = (AutosizeInfo)deserializer.DeserializeMemberObject(so, "autosizeInfo");
         }
     }
     internal sealed partial class FormatEntryData : PacketInfoData
     {
-        internal override void Deserialize (PSObject so, FormatObjectDeserializer deserializer)
+        internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
-            base.Deserialize (so, deserializer);
-            this.formatEntryInfo = (FormatEntryInfo)deserializer.DeserializeMandatoryMemberObject (so, "formatEntryInfo");
-            this.outOfBand = deserializer.DeserializeBoolMemberVariable (so, "outOfBand");
+            base.Deserialize(so, deserializer);
+            this.formatEntryInfo = (FormatEntryInfo)deserializer.DeserializeMandatoryMemberObject(so, "formatEntryInfo");
+            this.outOfBand = deserializer.DeserializeBoolMemberVariable(so, "outOfBand");
             this.writeStream = deserializer.DeserializeWriteStreamTypeMemberVariable(so);
             this.isHelpObject = so.IsHelpObject;
         }
@@ -567,131 +568,130 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal sealed partial class WideViewHeaderInfo : ShapeInfo
     {
-        internal override void Deserialize (PSObject so, FormatObjectDeserializer deserializer)
+        internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
-            base.Deserialize (so, deserializer);
+            base.Deserialize(so, deserializer);
 
-            this.columns = deserializer.DeserializeIntMemberVariable (so, "columns");
+            this.columns = deserializer.DeserializeIntMemberVariable(so, "columns");
         }
     }
 
     internal sealed partial class TableHeaderInfo : ShapeInfo
     {
-        internal override void Deserialize (PSObject so, FormatObjectDeserializer deserializer)
+        internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
-            base.Deserialize (so, deserializer);
-            this.hideHeader = deserializer.DeserializeBoolMemberVariable (so, "hideHeader");
-            FormatInfoDataListDeserializer<TableColumnInfo>.ReadList (so, "tableColumnInfoList", this.tableColumnInfoList, deserializer);
+            base.Deserialize(so, deserializer);
+            this.hideHeader = deserializer.DeserializeBoolMemberVariable(so, "hideHeader");
+            FormatInfoDataListDeserializer<TableColumnInfo>.ReadList(so, "tableColumnInfoList", this.tableColumnInfoList, deserializer);
         }
     }
 
     internal sealed partial class TableColumnInfo : FormatInfoData
     {
-        internal override void Deserialize (PSObject so, FormatObjectDeserializer deserializer)
+        internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
-            base.Deserialize (so, deserializer);
-            this.width = deserializer.DeserializeIntMemberVariable (so, "width");
-            this.alignment = deserializer.DeserializeIntMemberVariable (so, "alignment");
-            this.label = deserializer.DeserializeStringMemberVariable (so, "label");
-            this.propertyName = deserializer.DeserializeStringMemberVariable (so, "propertyName");
+            base.Deserialize(so, deserializer);
+            this.width = deserializer.DeserializeIntMemberVariable(so, "width");
+            this.alignment = deserializer.DeserializeIntMemberVariable(so, "alignment");
+            this.label = deserializer.DeserializeStringMemberVariable(so, "label");
+            this.propertyName = deserializer.DeserializeStringMemberVariable(so, "propertyName");
         }
     }
 
     internal sealed partial class RawTextFormatEntry : FormatEntryInfo
     {
-        internal override void Deserialize (PSObject so, FormatObjectDeserializer deserializer)
+        internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
-            base.Deserialize (so, deserializer);
-            this.text = deserializer.DeserializeStringMemberVariableRaw (so, "text");
+            base.Deserialize(so, deserializer);
+            this.text = deserializer.DeserializeStringMemberVariableRaw(so, "text");
         }
     }
 
     internal abstract partial class FreeFormatEntry : FormatEntryInfo
     {
-        internal override void Deserialize (PSObject so, FormatObjectDeserializer deserializer)
+        internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
-            base.Deserialize (so, deserializer);
-            FormatInfoDataListDeserializer<FormatValue>.ReadList (so, "formatValueList", this.formatValueList, deserializer);
+            base.Deserialize(so, deserializer);
+            FormatInfoDataListDeserializer<FormatValue>.ReadList(so, "formatValueList", this.formatValueList, deserializer);
         }
     }
 
     internal sealed partial class ListViewEntry : FormatEntryInfo
     {
-        internal override void Deserialize (PSObject so, FormatObjectDeserializer deserializer)
+        internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
-            base.Deserialize (so, deserializer);
-            FormatInfoDataListDeserializer<ListViewField>.ReadList (so, "listViewFieldList", this.listViewFieldList, deserializer);
+            base.Deserialize(so, deserializer);
+            FormatInfoDataListDeserializer<ListViewField>.ReadList(so, "listViewFieldList", this.listViewFieldList, deserializer);
         }
     }
 
     internal sealed partial class ListViewField : FormatInfoData
     {
-        internal override void Deserialize (PSObject so, FormatObjectDeserializer deserializer)
+        internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
-            base.Deserialize (so, deserializer);
-            this.label = deserializer.DeserializeStringMemberVariable (so, "label");
-            this.propertyName = deserializer.DeserializeStringMemberVariable (so, "propertyName");
-            this.formatPropertyField = (FormatPropertyField)deserializer.DeserializeMandatoryMemberObject (so, "formatPropertyField");
+            base.Deserialize(so, deserializer);
+            this.label = deserializer.DeserializeStringMemberVariable(so, "label");
+            this.propertyName = deserializer.DeserializeStringMemberVariable(so, "propertyName");
+            this.formatPropertyField = (FormatPropertyField)deserializer.DeserializeMandatoryMemberObject(so, "formatPropertyField");
         }
     }
 
     internal sealed partial class TableRowEntry : FormatEntryInfo
     {
-        internal override void Deserialize (PSObject so, FormatObjectDeserializer deserializer)
+        internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
-            base.Deserialize (so, deserializer);
-            FormatInfoDataListDeserializer<FormatPropertyField>.ReadList (so, "formatPropertyFieldList", this.formatPropertyFieldList, deserializer);
-            this.multiLine = deserializer.DeserializeBoolMemberVariable (so, "multiLine");
+            base.Deserialize(so, deserializer);
+            FormatInfoDataListDeserializer<FormatPropertyField>.ReadList(so, "formatPropertyFieldList", this.formatPropertyFieldList, deserializer);
+            this.multiLine = deserializer.DeserializeBoolMemberVariable(so, "multiLine");
         }
     }
 
     internal sealed partial class WideViewEntry : FormatEntryInfo
     {
-        internal override void Deserialize (PSObject so, FormatObjectDeserializer deserializer)
+        internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
-            base.Deserialize (so, deserializer);
-            this.formatPropertyField = (FormatPropertyField)deserializer.DeserializeMandatoryMemberObject (so, "formatPropertyField");
+            base.Deserialize(so, deserializer);
+            this.formatPropertyField = (FormatPropertyField)deserializer.DeserializeMandatoryMemberObject(so, "formatPropertyField");
         }
     }
-    
+
     internal sealed partial class FormatTextField : FormatValue
     {
-        internal override void Deserialize (PSObject so, FormatObjectDeserializer deserializer)
+        internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
-            base.Deserialize (so, deserializer);
-            this.text = deserializer.DeserializeStringMemberVariable (so, "text");
+            base.Deserialize(so, deserializer);
+            this.text = deserializer.DeserializeStringMemberVariable(so, "text");
         }
     }
 
     internal sealed partial class FormatPropertyField : FormatValue
     {
-        internal override void Deserialize (PSObject so, FormatObjectDeserializer deserializer)
+        internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
-            base.Deserialize (so, deserializer);
-            this.propertyValue = deserializer.DeserializeStringMemberVariable (so, "propertyValue");
+            base.Deserialize(so, deserializer);
+            this.propertyValue = deserializer.DeserializeStringMemberVariable(so, "propertyValue");
             this.alignment = deserializer.DeserializeIntMemberVariable(so, "alignment");
         }
     }
     internal sealed partial class FormatEntry : FormatValue
     {
-        internal override void Deserialize (PSObject so, FormatObjectDeserializer deserializer)
+        internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
-            base.Deserialize (so, deserializer);
-            FormatInfoDataListDeserializer<FormatValue>.ReadList (so, "formatValueList", this.formatValueList, deserializer);
+            base.Deserialize(so, deserializer);
+            FormatInfoDataListDeserializer<FormatValue>.ReadList(so, "formatValueList", this.formatValueList, deserializer);
             this.frameInfo = (FrameInfo)deserializer.DeserializeMemberObject(so, "frameInfo");
         }
     }
     internal sealed partial class FrameInfo : FormatInfoData
     {
-        internal override void Deserialize (PSObject so, FormatObjectDeserializer deserializer)
+        internal override void Deserialize(PSObject so, FormatObjectDeserializer deserializer)
         {
-            base.Deserialize (so, deserializer);
-            this.leftIndentation = deserializer.DeserializeIntMemberVariable (so, "leftIndentation");
-            this.rightIndentation = deserializer.DeserializeIntMemberVariable (so, "rightIndentation");
-            this.firstLine = deserializer.DeserializeIntMemberVariable (so, "firstLine");
+            base.Deserialize(so, deserializer);
+            this.leftIndentation = deserializer.DeserializeIntMemberVariable(so, "leftIndentation");
+            this.rightIndentation = deserializer.DeserializeIntMemberVariable(so, "rightIndentation");
+            this.firstLine = deserializer.DeserializeIntMemberVariable(so, "firstLine");
         }
     }
-#endregion
-
+    #endregion
 }
 

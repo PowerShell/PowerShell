@@ -28,7 +28,6 @@ using Environment = System.Management.Automation.Environment;
 //
 namespace Microsoft.PowerShell.Commands
 {
-
     #region New-ModuleManifest
     /// <summary>
     /// Cmdlet to create a new module manifest file.
@@ -46,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _path; }
             set { _path = value; }
         }
-        string _path;
+        private string _path;
 
         /// <summary>
         /// Sets the list of files to load by default...
@@ -59,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _nestedModules; }
             set { _nestedModules = value; }
         }
-        object[] _nestedModules;
+        private object[] _nestedModules;
 
         /// <summary>
         /// Set the GUID in the manifest file
@@ -70,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _guid; }
             set { _guid = value; }
         }
-        Guid _guid = Guid.NewGuid();
+        private Guid _guid = Guid.NewGuid();
 
         /// <summary>
         /// Set the author string in the manifest
@@ -82,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _author; }
             set { _author = value; }
         }
-        string _author;
+        private string _author;
 
         /// <summary>
         /// Set the company name in the manifest
@@ -94,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _companyName; }
             set { _companyName = value; }
         }
-        string _companyName = "";
+        private string _companyName = "";
 
         /// <summary>
         /// Set the copyright string in the module manifest
@@ -106,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _copyright; }
             set { _copyright = value; }
         }
-        string _copyright;
+        private string _copyright;
 
         /// <summary>
         /// Set the module version...
@@ -119,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _rootModule; }
             set { _rootModule = value; }
         }
-        string _rootModule = null;
+        private string _rootModule = null;
 
         /// <summary>
         /// Set the module version...
@@ -131,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _moduleVersion; }
             set { _moduleVersion = value; }
         }
-        Version _moduleVersion = new Version(1, 0);
+        private Version _moduleVersion = new Version(1, 0);
 
         /// <summary>
         /// Set the module description
@@ -143,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _description; }
             set { _description = value; }
         }
-        string _description;
+        private string _description;
 
         /// <summary>
         /// Set the ProcessorArchitecture required by this module
@@ -165,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _powerShellVersion; }
             set { _powerShellVersion = value; }
         }
-        Version _powerShellVersion = null;
+        private Version _powerShellVersion = null;
 
         /// <summary>
         /// Set the CLR version required by the module.
@@ -176,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _ClrVersion; }
             set { _ClrVersion = value; }
         }
-        Version _ClrVersion = null;
+        private Version _ClrVersion = null;
 
         /// <summary>
         /// Set the version of .NET Framework required by the module.
@@ -187,7 +186,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _DotNetFrameworkVersion; }
             set { _DotNetFrameworkVersion = value; }
         }
-        Version _DotNetFrameworkVersion = null;
+        private Version _DotNetFrameworkVersion = null;
 
         /// <summary>
         /// Set the name of PowerShell host required by the module.
@@ -198,7 +197,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _PowerShellHostName; }
             set { _PowerShellHostName = value; }
         }
-        string _PowerShellHostName = null;
+        private string _PowerShellHostName = null;
 
         /// <summary>
         /// Set the version of PowerShell host required by the module.
@@ -209,7 +208,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _PowerShellHostVersion; }
             set { _PowerShellHostVersion = value; }
         }
-        Version _PowerShellHostVersion = null;
+        private Version _PowerShellHostVersion = null;
 
         /// <summary>
         /// Sets the list of Dependencies for the module
@@ -223,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _requiredModules; }
             set { _requiredModules = value; }
         }
-        object[] _requiredModules;
+        private object[] _requiredModules;
 
         /// <summary>
         /// Sets the list of types files for the module
@@ -237,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _types; }
             set { _types = value; }
         }
-        string[] _types;
+        private string[] _types;
 
         /// <summary>
         /// Sets the list of formats files for the module
@@ -251,7 +250,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _formats; }
             set { _formats = value; }
         }
-        string[] _formats;
+        private string[] _formats;
 
         /// <summary>
         /// Sets the list of ps1 scripts to run in the session state of the import-module invocation.
@@ -265,7 +264,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _scripts; }
             set { _scripts = value; }
         }
-        string[] _scripts;
+        private string[] _scripts;
 
         /// <summary>
         /// Set the list of assemblies to load for this module.
@@ -293,7 +292,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _miscFiles; }
             set { _miscFiles = value; }
         }
-        string[] _miscFiles;
+        private string[] _miscFiles;
 
         /// <summary>
         /// List of other modules included with this module. 
@@ -309,7 +308,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _moduleList; }
             set { _moduleList = value; }
         }
-        object[] _moduleList;
+        private object[] _moduleList;
 
         /// <summary>
         /// Specify any functions to export from this manifest.
@@ -323,7 +322,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _exportedFunctions; }
             set { _exportedFunctions = value; }
         }
-        string[] _exportedFunctions;
+        private string[] _exportedFunctions;
 
         /// <summary>
         /// Specify any aliases to export from this manifest.
@@ -337,7 +336,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _exportedAliases; }
             set { _exportedAliases = value; }
         }
-        string[] _exportedAliases;
+        private string[] _exportedAliases;
 
         /// <summary>
         /// Specify any variables to export from this manifest.
@@ -351,7 +350,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _exportedVariables; }
             set { _exportedVariables = value; }
         }
-        string[] _exportedVariables = new string[] { "*" };
+        private string[] _exportedVariables = new string[] { "*" };
 
         /// <summary>
         /// Specify any cmdlets to export from this manifest.
@@ -365,7 +364,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _exportedCmdlets; }
             set { _exportedCmdlets = value; }
         }
-        string[] _exportedCmdlets;
+        private string[] _exportedCmdlets;
 
         /// <summary>
         /// Specify any dsc resources to export from this manifest.
@@ -379,7 +378,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _dscResourcesToExport; }
             set { _dscResourcesToExport = value; }
         }
-        string[] _dscResourcesToExport;
+        private string[] _dscResourcesToExport;
 
         /// <summary>
         /// Specify compatible PSEditions of this module.
@@ -394,7 +393,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _compatiblePSEditions; }
             set { _compatiblePSEditions = value; }
         }
-        string[] _compatiblePSEditions;
+        private string[] _compatiblePSEditions;
 
         /// <summary>
         /// Specify any module-specific private data here.
@@ -406,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _privateData; }
             set { _privateData = value; }
         }
-        object _privateData;
+        private object _privateData;
 
         /// <summary>
         /// Specify any Tags.
@@ -456,7 +455,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _helpInfoUri; }
             set { _helpInfoUri = value; }
         }
-        string _helpInfoUri;
+        private string _helpInfoUri;
 
         /// <summary>
         /// This parameter causes the module manifest string to be to the output stream...
@@ -479,7 +478,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _defaultCommandPrefix; }
             set { _defaultCommandPrefix = value; }
         }
-        string _defaultCommandPrefix;
+        private string _defaultCommandPrefix;
 
         private string _indent = "";
 
@@ -488,7 +487,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="name">The string to quote</param>
         /// <returns>The quoted string</returns>
-        string QuoteName(object name)
+        private string QuoteName(object name)
         {
             if (name == null)
                 return "''";
@@ -502,7 +501,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="names">The list to quote</param>
         /// <param name="streamWriter">Streamwriter to get end of line character from</param>
         /// <returns>The quoted list</returns>
-        string QuoteNames(IEnumerable names, StreamWriter streamWriter)
+        private string QuoteNames(IEnumerable names, StreamWriter streamWriter)
         {
             if (names == null)
                 return "@()";
@@ -575,7 +574,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="moduleSpecs">The list to quote</param>
         /// <param name="streamWriter">Streamwriter to get end of line character from</param>
         /// <returns>The quoted list</returns>
-        string QuoteModules(IEnumerable moduleSpecs, StreamWriter streamWriter)
+        private string QuoteModules(IEnumerable moduleSpecs, StreamWriter streamWriter)
         {
             StringBuilder result = new StringBuilder();
             result.Append("@(");
@@ -660,7 +659,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="names">The list to quote</param>
         /// <param name="streamWriter">Streamwriter to get end of line character from</param>
         /// <returns>The quoted list</returns>
-        string QuoteFiles(IEnumerable names, StreamWriter streamWriter)
+        private string QuoteFiles(IEnumerable names, StreamWriter streamWriter)
         {
             List<string> resolvedPaths = new List<string>();
 
@@ -769,7 +768,6 @@ namespace Microsoft.PowerShell.Commands
             SessionState sessionState = Context.SessionState;
             try
             {
-
                 Collection<string> filePaths =
                     sessionState.Path.GetResolvedProviderPathFromPSPath(filePath, out provider);
 
@@ -812,19 +810,19 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="value">The formatted manifest fragment</param>
         /// <param name="streamWriter">Streamwriter to get end of line character from</param>
         /// <returns></returns>
-        string ManifestFragment(string key, string resourceString, string value, StreamWriter streamWriter)
+        private string ManifestFragment(string key, string resourceString, string value, StreamWriter streamWriter)
         {
             return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}{3:19} = {4}{2}{2}",
                 _indent, resourceString, streamWriter.NewLine, key, value);
         }
 
-        string ManifestFragmentForNonSpecifiedManifestMember(string key, string resourceString, string value, StreamWriter streamWriter)
+        private string ManifestFragmentForNonSpecifiedManifestMember(string key, string resourceString, string value, StreamWriter streamWriter)
         {
             return string.Format(CultureInfo.InvariantCulture, "{0}# {1}{2}{0}# {3:19} = {4}{2}{2}",
                 _indent, resourceString, streamWriter.NewLine, key, value);
         }
 
-        string ManifestComment(string insert, StreamWriter streamWriter)
+        private string ManifestComment(string insert, StreamWriter streamWriter)
         {
             // Prefix a non-empty string with a space for formatting reasons...
             if (!string.IsNullOrEmpty(insert))
@@ -876,11 +874,11 @@ namespace Microsoft.PowerShell.Commands
             if (_rootModule != null || _nestedModules != null || _requiredModules != null)
             {
                 if (_exportedFunctions == null)
-                    _exportedFunctions = new string[] {"*"};
+                    _exportedFunctions = new string[] { "*" };
                 if (_exportedAliases == null)
-                    _exportedAliases = new string[] {"*"};
+                    _exportedAliases = new string[] { "*" };
                 if (_exportedCmdlets == null)
-                    _exportedCmdlets = new string[] {"*"};
+                    _exportedCmdlets = new string[] { "*" };
             }
 
             ValidateUriParamterValue(ProjectUri, "ProjectUri");
@@ -1124,7 +1122,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                result.Append("} "); 
+                result.Append("} ");
                 result.Append(ManifestComment(StringUtil.Format(Modules.EndOfManifestHashTable, "PrivateData"), streamWriter));
 
                 _indent = "";
@@ -1147,7 +1145,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
     }
-    
-    #endregion
 
+    #endregion
 } // Microsoft.PowerShell.Commands

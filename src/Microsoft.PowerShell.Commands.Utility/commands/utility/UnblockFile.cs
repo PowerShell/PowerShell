@@ -29,11 +29,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return paths;
+                return _paths;
             }
             set
             {
-                paths = value;
+                _paths = value;
             }
         }
 
@@ -47,15 +47,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return paths;
+                return _paths;
             }
             set
             {
-                paths = value;
+                _paths = value;
             }
         }
 
-        private string[] paths;
+        private string[] _paths;
 
         /// <summary>
         /// Generate the type(s)
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (String.Equals(this.ParameterSetName, "ByLiteralPath", StringComparison.OrdinalIgnoreCase))
             {
-                foreach (string path in paths)
+                foreach (string path in _paths)
                 {
                     string newPath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(path);
 
@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // Resolve paths
-                foreach (string path in paths)
+                foreach (string path in _paths)
                 {
                     try
                     {

@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -155,7 +156,7 @@ namespace System.Management.Automation.Remoting
             // Process the response.
             object returnValue = remoteHostResponse.SimulateExecution();
             Dbg.Assert(returnValue is T, "Expected returnValue is T");
-            return (T) remoteHostResponse.SimulateExecution();
+            return (T)remoteHostResponse.SimulateExecution();
         }
     }
 }

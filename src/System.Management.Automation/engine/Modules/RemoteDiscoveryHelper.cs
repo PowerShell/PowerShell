@@ -110,9 +110,9 @@ namespace System.Management.Automation
         private static EventHandler<DataAddedEventArgs> GetStreamForwarder<T>(Action<T> forwardingAction, bool swallowInvalidOperationExceptions = false)
         {
             // TODO/FIXME: ETW event for extended semantics streams
-            return delegate(object sender, DataAddedEventArgs eventArgs)
+            return delegate (object sender, DataAddedEventArgs eventArgs)
                        {
-                           var psDataCollection = (PSDataCollection<T>) sender;
+                           var psDataCollection = (PSDataCollection<T>)sender;
                            foreach (T t in psDataCollection.ReadAll())
                            {
                                try
@@ -131,25 +131,25 @@ namespace System.Management.Automation
         }
 
         // This is a static field (instead of a constant) to make it possible to set through tests (and/or by customers if needed for a workaround)
-        private static readonly int BlockingCollectionCapacity = 1000;
+        private static readonly int s_blockingCollectionCapacity = 1000;
 
         private static IEnumerable<PSObject> InvokeTopLevelPowerShell(
-            PowerShell powerShell, 
-            CancellationToken cancellationToken, 
+            PowerShell powerShell,
+            CancellationToken cancellationToken,
             PSCmdlet cmdlet,
             PSInvocationSettings invocationSettings,
             string errorMessageTemplate)
         {
-            using (var mergedOutput = new BlockingCollection<Func<PSCmdlet, IEnumerable<PSObject>>>(BlockingCollectionCapacity))
+            using (var mergedOutput = new BlockingCollection<Func<PSCmdlet, IEnumerable<PSObject>>>(s_blockingCollectionCapacity))
             {
                 var asyncOutput = new PSDataCollection<PSObject>();
                 EventHandler<DataAddedEventArgs> outputHandler = GetStreamForwarder<PSObject>(
-                    output => mergedOutput.Add(_ => new[] {output}),
+                    output => mergedOutput.Add(_ => new[] { output }),
                     swallowInvalidOperationExceptions: true);
 
                 EventHandler<DataAddedEventArgs> errorHandler = GetStreamForwarder<ErrorRecord>(
                     errorRecord => mergedOutput.Add(
-                        delegate(PSCmdlet c)
+                        delegate (PSCmdlet c)
                         {
                             errorRecord = GetErrorRecordForRemotePipelineInvocation(errorRecord, errorMessageTemplate);
                             HandleErrorFromPipeline(c, errorRecord, powerShell);
@@ -159,7 +159,7 @@ namespace System.Management.Automation
 
                 EventHandler<DataAddedEventArgs> warningHandler = GetStreamForwarder<WarningRecord>(
                     warningRecord => mergedOutput.Add(
-                        delegate(PSCmdlet c)
+                        delegate (PSCmdlet c)
                         {
                             c.WriteWarning(warningRecord.Message);
                             return Enumerable.Empty<PSObject>();
@@ -168,7 +168,7 @@ namespace System.Management.Automation
 
                 EventHandler<DataAddedEventArgs> verboseHandler = GetStreamForwarder<VerboseRecord>(
                     verboseRecord => mergedOutput.Add(
-                        delegate(PSCmdlet c)
+                        delegate (PSCmdlet c)
                         {
                             c.WriteVerbose(verboseRecord.Message);
                             return Enumerable.Empty<PSObject>();
@@ -177,7 +177,7 @@ namespace System.Management.Automation
 
                 EventHandler<DataAddedEventArgs> debugHandler = GetStreamForwarder<DebugRecord>(
                     debugRecord => mergedOutput.Add(
-                        delegate(PSCmdlet c)
+                        delegate (PSCmdlet c)
                         {
                             c.WriteDebug(debugRecord.Message);
                             return Enumerable.Empty<PSObject>();
@@ -186,7 +186,7 @@ namespace System.Management.Automation
 
                 EventHandler<DataAddedEventArgs> informationHandler = GetStreamForwarder<InformationRecord>(
                     informationRecord => mergedOutput.Add(
-                        delegate(PSCmdlet c)
+                        delegate (PSCmdlet c)
                         {
                             c.WriteInformation(informationRecord);
                             return Enumerable.Empty<PSObject>();
@@ -214,7 +214,7 @@ namespace System.Management.Automation
                                       {
                                           mergedOutput.CompleteAdding();
                                       }
-                                      catch (InvalidOperationException) 
+                                      catch (InvalidOperationException)
                                       // ignore exceptions thrown because mergedOutput.CompleteAdding was called
                                       {
                                       }
@@ -253,14 +253,14 @@ namespace System.Management.Automation
         }
 
         private static IEnumerable<PSObject> InvokeNestedPowerShell(
-            PowerShell powerShell, 
-            CancellationToken cancellationToken, 
+            PowerShell powerShell,
+            CancellationToken cancellationToken,
             PSCmdlet cmdlet,
             PSInvocationSettings invocationSettings,
             string errorMessageTemplate)
         {
             EventHandler<DataAddedEventArgs> errorHandler = GetStreamForwarder<ErrorRecord>(
-                delegate(ErrorRecord errorRecord)
+                delegate (ErrorRecord errorRecord)
                 {
                     errorRecord = GetErrorRecordForRemotePipelineInvocation(errorRecord, errorMessageTemplate);
                     HandleErrorFromPipeline(cmdlet, errorRecord, powerShell);
@@ -405,46 +405,46 @@ namespace System.Management.Automation
                 exceptionHandler(e);
             }
             if (enumerator != null)
-            using (enumerator)
-            {
-                bool gotResults = false;
-                do
+                using (enumerator)
                 {
-                    try
+                    bool gotResults = false;
+                    do
                     {
-                        gotResults = false;
-                        gotResults = enumerator.MoveNext();
-                    }
-                    catch (Exception e)
-                    {
-                        exceptionHandler(e);
-                    }
-
-                    if (gotResults)
-                    {
-                        T currentItem = default(T);
-                        bool gotCurrentItem = false;
                         try
                         {
-                            currentItem = enumerator.Current;
-                            gotCurrentItem = true;
+                            gotResults = false;
+                            gotResults = enumerator.MoveNext();
                         }
                         catch (Exception e)
                         {
                             exceptionHandler(e);
                         }
 
-                        if (gotCurrentItem)
+                        if (gotResults)
                         {
-                            yield return currentItem;
+                            T currentItem = default(T);
+                            bool gotCurrentItem = false;
+                            try
+                            {
+                                currentItem = enumerator.Current;
+                                gotCurrentItem = true;
+                            }
+                            catch (Exception e)
+                            {
+                                exceptionHandler(e);
+                            }
+
+                            if (gotCurrentItem)
+                            {
+                                yield return currentItem;
+                            }
+                            else
+                            {
+                                yield break;
+                            }
                         }
-                        else
-                        {
-                            yield break;
-                        }
-                    }
-                } while (gotResults);
-            }
+                    } while (gotResults);
+                }
         }
 
         private static void HandleErrorFromPipeline(Cmdlet cmdlet, ErrorRecord errorRecord, PowerShell powerShell)
@@ -462,8 +462,8 @@ namespace System.Management.Automation
         }
 
         internal static IEnumerable<PSObject> InvokePowerShell(
-            PowerShell powerShell, 
-            CancellationToken cancellationToken, 
+            PowerShell powerShell,
+            CancellationToken cancellationToken,
             PSCmdlet cmdlet,
             string errorMessageTemplate)
         {
@@ -473,16 +473,16 @@ namespace System.Management.Automation
             CopyParameterFromCmdletToPowerShell(cmdlet, powerShell, "Verbose");
             CopyParameterFromCmdletToPowerShell(cmdlet, powerShell, "Debug");
 
-            var invocationSettings = new PSInvocationSettings {Host = cmdlet.Host};
+            var invocationSettings = new PSInvocationSettings { Host = cmdlet.Host };
 
             // TODO/FIXME: ETW events for the output stream
-            IEnumerable<PSObject> outputStream = powerShell.IsNested 
-                ? InvokeNestedPowerShell(powerShell, cancellationToken, cmdlet, invocationSettings, errorMessageTemplate) 
+            IEnumerable<PSObject> outputStream = powerShell.IsNested
+                ? InvokeNestedPowerShell(powerShell, cancellationToken, cmdlet, invocationSettings, errorMessageTemplate)
                 : InvokeTopLevelPowerShell(powerShell, cancellationToken, cmdlet, invocationSettings, errorMessageTemplate);
 
             return EnumerateWithCatch(
                 outputStream,
-                delegate(Exception exception)
+                delegate (Exception exception)
                 {
                     ErrorRecord errorRecord = GetErrorRecordForRemotePipelineInvocation(exception, errorMessageTemplate);
                     HandleErrorFromPipeline(cmdlet, errorRecord, powerShell);
@@ -509,12 +509,12 @@ namespace System.Management.Automation
             object propertyValue = cimProperty.Value;
             if (propertyValue is T)
             {
-                return (T) propertyValue;
+                return (T)propertyValue;
             }
 
             if (propertyValue is string)
             {
-                string stringValue = (string) propertyValue;
+                string stringValue = (string)propertyValue;
                 try
                 {
                     if (typeof(T) == typeof(bool))
@@ -533,7 +533,7 @@ namespace System.Management.Automation
                         {
                             Array.Reverse(lengthBytes);
                         }
-                        return (T) (object)(lengthBytes.Concat(contentBytes).ToArray()); 
+                        return (T)(object)(lengthBytes.Concat(contentBytes).ToArray());
                     }
                 }
                 catch (Exception)
@@ -614,17 +614,17 @@ namespace System.Management.Automation
             {
                 Dbg.Assert(baseObject != null, "Caller should make sure baseObject != null");
                 Dbg.Assert(
-                    baseObject.CimSystemProperties.ClassName.Equals(DiscoveryProviderModuleClass, StringComparison.OrdinalIgnoreCase), 
+                    baseObject.CimSystemProperties.ClassName.Equals(DiscoveryProviderModuleClass, StringComparison.OrdinalIgnoreCase),
                     "Caller should make sure baseObject is an instance of the right CIM class");
 
-                this._baseObject = baseObject;
+                _baseObject = baseObject;
             }
 
             public string ModuleName
             {
                 get
                 {
-                    var rawModuleName = GetPropertyValue<string>(this._baseObject, "ModuleName", string.Empty);
+                    var rawModuleName = GetPropertyValue<string>(_baseObject, "ModuleName", string.Empty);
                     return Path.GetFileName(rawModuleName);
                 }
             }
@@ -639,8 +639,8 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    UInt16 moduleTypeInt = GetPropertyValue<UInt16>(this._baseObject, "ModuleType", 0);
-                    DiscoveredModuleType moduleType = (DiscoveredModuleType) moduleTypeInt;
+                    UInt16 moduleTypeInt = GetPropertyValue<UInt16>(_baseObject, "ModuleType", 0);
+                    DiscoveredModuleType moduleType = (DiscoveredModuleType)moduleTypeInt;
                     bool isPsCimModule = (moduleType == DiscoveredModuleType.Cim);
                     return isPsCimModule;
                 }
@@ -650,21 +650,21 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    byte[] rawFileData = GetPropertyValue<byte[]>(this._baseObject, "moduleManifestFileData", Utils.EmptyArray<byte>());
+                    byte[] rawFileData = GetPropertyValue<byte[]>(_baseObject, "moduleManifestFileData", Utils.EmptyArray<byte>());
                     return new CimModuleManifestFile(this.ModuleName + ".psd1", rawFileData);
                 }
             }
 
             public IEnumerable<CimModuleFile> ModuleFiles
             {
-                get { return this._moduleFiles; }
+                get { return _moduleFiles; }
             }
 
             internal void FetchAllModuleFiles(CimSession cimSession, string cimNamespace, CimOperationOptions operationOptions)
             {
                 IEnumerable<CimInstance> associatedInstances = cimSession.EnumerateAssociatedInstances(
                     cimNamespace,
-                    this._baseObject,
+                    _baseObject,
                     DiscoveryProviderAssociationClass,
                     DiscoveryProviderFileClass,
                     "Antecedent",
@@ -672,7 +672,7 @@ namespace System.Management.Automation
                     operationOptions);
 
                 IEnumerable<CimModuleFile> associatedFiles = associatedInstances.Select(i => new CimModuleImplementationFile(i));
-                this._moduleFiles = associatedFiles.ToList();
+                _moduleFiles = associatedFiles.ToList();
             }
 
             private List<CimModuleFile> _moduleFiles;
@@ -684,19 +684,19 @@ namespace System.Management.Automation
                     Dbg.Assert(fileName != null, "Caller should make sure fileName != null");
                     Dbg.Assert(rawFileData != null, "Caller should make sure rawFileData != null");
 
-                    this._fileName = fileName;
-                    this._rawFileData = rawFileData;
+                    _fileName = fileName;
+                    _rawFileData = rawFileData;
                 }
 
                 public override string FileName
                 {
-                    get { return this._fileName; }
+                    get { return _fileName; }
                 }
                 private readonly string _fileName;
 
                 internal override byte[] RawFileDataCore
                 {
-                    get { return this._rawFileData; }
+                    get { return _rawFileData; }
                 }
                 private readonly byte[] _rawFileData;
             }
@@ -709,38 +709,38 @@ namespace System.Management.Automation
                 {
                     Dbg.Assert(baseObject != null, "Caller should make sure baseObject != null");
                     Dbg.Assert(
-                        baseObject.CimSystemProperties.ClassName.Equals(DiscoveryProviderFileClass, StringComparison.OrdinalIgnoreCase), 
+                        baseObject.CimSystemProperties.ClassName.Equals(DiscoveryProviderFileClass, StringComparison.OrdinalIgnoreCase),
                         "Caller should make sure baseObject is an instance of the right CIM class");
 
-                    this._baseObject = baseObject;
+                    _baseObject = baseObject;
                 }
 
                 public override string FileName
                 {
                     get
                     {
-                        string rawFileName = GetPropertyValue<string>(this._baseObject, "FileName", string.Empty);
+                        string rawFileName = GetPropertyValue<string>(_baseObject, "FileName", string.Empty);
                         return Path.GetFileName(rawFileName);
                     }
                 }
 
-                internal override byte[]  RawFileDataCore
+                internal override byte[] RawFileDataCore
                 {
-                    get { return GetPropertyValue<byte[]>(this._baseObject, "FileData", Utils.EmptyArray<byte>()); }
+                    get { return GetPropertyValue<byte[]>(_baseObject, "FileData", Utils.EmptyArray<byte>()); }
                 }
             }
         }
 
         internal static IEnumerable<CimModule> GetCimModules(
-            CimSession cimSession, 
-            Uri resourceUri, 
-            string cimNamespace, 
-            IEnumerable<string> moduleNamePatterns, 
-            bool onlyManifests, 
-            Cmdlet cmdlet, 
+            CimSession cimSession,
+            Uri resourceUri,
+            string cimNamespace,
+            IEnumerable<string> moduleNamePatterns,
+            bool onlyManifests,
+            Cmdlet cmdlet,
             CancellationToken cancellationToken)
         {
-            moduleNamePatterns = moduleNamePatterns ?? new[] {"*"};
+            moduleNamePatterns = moduleNamePatterns ?? new[] { "*" };
             HashSet<string> alreadyEmittedNamesOfCimModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             IEnumerable<CimModule> remoteModules = moduleNamePatterns
@@ -757,12 +757,12 @@ namespace System.Management.Automation
         }
 
         private static IEnumerable<CimModule> GetCimModules(
-            CimSession cimSession, 
-            Uri resourceUri, 
-            string cimNamespace, 
-            string moduleNamePattern, 
-            bool onlyManifests, 
-            Cmdlet cmdlet, 
+            CimSession cimSession,
+            Uri resourceUri,
+            string cimNamespace,
+            string moduleNamePattern,
+            bool onlyManifests,
+            Cmdlet cmdlet,
             CancellationToken cancellationToken)
         {
             Dbg.Assert(cimSession != null, "Caller should verify cimSession != null");
@@ -797,7 +797,7 @@ namespace System.Management.Automation
             if (!onlyManifests)
             {
                 cimModules = cimModules.Select(
-                    delegate(CimModule cimModule)
+                    delegate (CimModule cimModule)
                     {
                         cimModule.FetchAllModuleFiles(cimSession, cimNamespace, options);
                         return cimModule;
@@ -806,7 +806,7 @@ namespace System.Management.Automation
 
             return EnumerateWithCatch(
                 cimModules,
-                delegate(Exception exception)
+                delegate (Exception exception)
                 {
                     ErrorRecord errorRecord = GetErrorRecordForRemoteDiscoveryProvider(exception);
                     if (!cmdlet.MyInvocation.ExpectingInput)
@@ -827,7 +827,7 @@ namespace System.Management.Automation
             return RewriteManifest(originalManifest, null, null, null);
         }
 
-        private static readonly string[] ManifestEntriesToKeepAsString = new[] {
+        private static readonly string[] s_manifestEntriesToKeepAsString = new[] {
             "GUID",
             "Author",
             "CompanyName",
@@ -836,16 +836,16 @@ namespace System.Management.Automation
             "Description",
             "HelpInfoURI",
         };
-        private static readonly string[] ManifestEntriesToKeepAsStringArray = new[] {
+        private static readonly string[] s_manifestEntriesToKeepAsStringArray = new[] {
             "FunctionsToExport",
             "VariablesToExport",
             "AliasesToExport",
             "CmdletsToExport",
         };
         internal static Hashtable RewriteManifest(
-            Hashtable originalManifest, 
-            IEnumerable<string> nestedModules, 
-            IEnumerable<string> typesToProcess, 
+            Hashtable originalManifest,
+            IEnumerable<string> nestedModules,
+            IEnumerable<string> typesToProcess,
             IEnumerable<string> formatsToProcess)
         {
             nestedModules = nestedModules ?? Utils.EmptyArray<string>();
@@ -860,14 +860,14 @@ namespace System.Management.Automation
 
             foreach (DictionaryEntry entry in originalManifest)
             {
-                if (ManifestEntriesToKeepAsString.Contains(entry.Key as string, StringComparer.OrdinalIgnoreCase))
+                if (s_manifestEntriesToKeepAsString.Contains(entry.Key as string, StringComparer.OrdinalIgnoreCase))
                 {
-                    var value = (string) LanguagePrimitives.ConvertTo(entry.Value, typeof (string), CultureInfo.InvariantCulture);
+                    var value = (string)LanguagePrimitives.ConvertTo(entry.Value, typeof(string), CultureInfo.InvariantCulture);
                     newManifest[entry.Key] = value;
                 }
-                else if (ManifestEntriesToKeepAsStringArray.Contains(entry.Key as string, StringComparer.OrdinalIgnoreCase))
+                else if (s_manifestEntriesToKeepAsStringArray.Contains(entry.Key as string, StringComparer.OrdinalIgnoreCase))
                 {
-                    var values = (string[]) LanguagePrimitives.ConvertTo(entry.Value, typeof (string[]), CultureInfo.InvariantCulture);
+                    var values = (string[])LanguagePrimitives.ConvertTo(entry.Value, typeof(string[]), CultureInfo.InvariantCulture);
                     newManifest[entry.Key] = values;
                 }
             }
@@ -964,10 +964,10 @@ namespace System.Management.Automation
         }
 
         internal static CimSession CreateCimSession(
-            string computerName, 
-            PSCredential credential, 
-            string authentication, 
-            CancellationToken cancellationToken, 
+            string computerName,
+            PSCredential credential,
+            string authentication,
+            CancellationToken cancellationToken,
             PSCmdlet cmdlet)
         {
             var sessionOptions = new CimSessionOptions();
@@ -1046,10 +1046,10 @@ namespace System.Management.Automation
 
         static private void AssociatePSModuleInfoWithSession(PSModuleInfo moduleInfo, object weaklyTypedSession)
         {
-            _moduleInfoToSession.Add(moduleInfo, weaklyTypedSession);
+            s_moduleInfoToSession.Add(moduleInfo, weaklyTypedSession);
         }
 
-        private static readonly ConditionalWeakTable<PSModuleInfo, object> _moduleInfoToSession = new ConditionalWeakTable<PSModuleInfo, object>();
+        private static readonly ConditionalWeakTable<PSModuleInfo, object> s_moduleInfoToSession = new ConditionalWeakTable<PSModuleInfo, object>();
 
         internal static void DispatchModuleInfoProcessing(
             PSModuleInfo moduleInfo,
@@ -1058,7 +1058,7 @@ namespace System.Management.Automation
             Action<PSSession> psSessionAction)
         {
             object weaklyTypeSession;
-            if (!_moduleInfoToSession.TryGetValue(moduleInfo, out weaklyTypeSession))
+            if (!s_moduleInfoToSession.TryGetValue(moduleInfo, out weaklyTypeSession))
             {
                 localAction();
                 return;

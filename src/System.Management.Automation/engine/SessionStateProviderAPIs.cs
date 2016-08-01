@@ -1,13 +1,14 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
 using System.Management.Automation.Runspaces;
 using System.Text;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 #pragma warning disable 56500
@@ -121,7 +122,6 @@ namespace System.Management.Automation
                             providerConfig.PSSnapIn,
                             null
             );
-
         }
 
         private ProviderInfo AddProvider(Type implementingType, string name, string helpFileName, PSSnapInInfo psSnapIn, PSModuleInfo module)
@@ -223,7 +223,7 @@ namespace System.Management.Automation
                 drive != null,
                 "drive should have been validated by the caller");
 
-            DriveCmdletProvider namespaceProvider = 
+            DriveCmdletProvider namespaceProvider =
                 GetDriveProviderInstance(drive.Provider);
 
             return ValidateDriveWithProvider(namespaceProvider, drive, context, resolvePathIfPossible);
@@ -402,7 +402,7 @@ namespace System.Management.Automation
 
             return possibleMatches.ToString();
         }
-        
+
         /// <summary>
         /// Gets an instance of an DriveCmdletProvider given the provider ID.
         /// </summary>
@@ -435,7 +435,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("providerId");
             }
 
-            DriveCmdletProvider driveCmdletProvider = 
+            DriveCmdletProvider driveCmdletProvider =
                 GetProviderInstance(providerId) as DriveCmdletProvider;
 
             if (driveCmdletProvider == null)
@@ -526,7 +526,7 @@ namespace System.Management.Automation
 
             return driveCmdletProvider;
         } // GetDriveProviderInstance
-        
+
         /// <summary>
         /// Gets an instance of an ItemCmdletProvider given the provider ID.
         /// </summary>
@@ -559,7 +559,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("providerId");
             }
 
-            ItemCmdletProvider itemCmdletProvider = 
+            ItemCmdletProvider itemCmdletProvider =
                 GetProviderInstance(providerId) as ItemCmdletProvider;
 
             if (itemCmdletProvider == null)
@@ -683,7 +683,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("providerId");
             }
 
-            ContainerCmdletProvider containerCmdletProvider = 
+            ContainerCmdletProvider containerCmdletProvider =
                 GetProviderInstance(providerId) as ContainerCmdletProvider;
 
             if (containerCmdletProvider == null)
@@ -851,7 +851,7 @@ namespace System.Management.Automation
             NavigationCmdletProvider navigationCmdletProvider =
                 providerInstance as NavigationCmdletProvider;
 
-            if ((navigationCmdletProvider == null) && (! acceptNonContainerProviders))
+            if ((navigationCmdletProvider == null) && (!acceptNonContainerProviders))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(SessionStateStrings.NavigationCmdletProvider_NotSupported);
@@ -881,7 +881,7 @@ namespace System.Management.Automation
         internal bool IsProviderLoaded(string name)
         {
             bool result = false;
-            
+
             if (String.IsNullOrEmpty(name))
             {
                 throw PSTraceSource.NewArgumentException("name");
@@ -923,7 +923,7 @@ namespace System.Management.Automation
         /// could not be found.
         /// </exception>
         /// 
-        internal Collection<ProviderInfo> GetProvider(string name) 
+        internal Collection<ProviderInfo> GetProvider(string name)
         {
             if (String.IsNullOrEmpty(name))
             {
@@ -1013,7 +1013,7 @@ namespace System.Management.Automation
             // Get the provider from the providers container
 
             List<ProviderInfo> matchingProviders = null;
-            
+
             if (!Providers.TryGetValue(providerName.ShortName, out matchingProviders))
             {
                 // If the provider was not found, we may need to auto-mount it.
@@ -1041,7 +1041,7 @@ namespace System.Management.Automation
                     if (String.Equals(
                             provider.PSSnapInName,
                             providerName.PSSnapInName,
-                           StringComparison.OrdinalIgnoreCase)  ||
+                           StringComparison.OrdinalIgnoreCase) ||
                         String.Equals(
                             provider.ModuleName,
                             providerName.PSSnapInName,
@@ -1050,7 +1050,6 @@ namespace System.Management.Automation
                         result.Add(provider);
                     }
                 }
-
             }
             else
             {
@@ -1061,7 +1060,7 @@ namespace System.Management.Automation
             }
             return result;
         } // GetProvider
-        
+
         /// <summary>
         /// Gets all the CoreCommandProviders
         /// </summary>
@@ -1104,7 +1103,7 @@ namespace System.Management.Automation
         #endregion GetProvider
 
         #region NewProvider
-        
+
         /// <summary>
         /// Initializes a provider by loading the assembly, creating an instance of the
         /// provider, calling its start method followed by the InitializeDefaultDrives method. The
@@ -1143,8 +1142,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal void InitializeProvider(
-            Provider.CmdletProvider providerInstance, 
-            ProviderInfo provider, 
+            Provider.CmdletProvider providerInstance,
+            ProviderInfo provider,
             CmdletProviderContext context)
         {
             if (provider == null)
@@ -1161,7 +1160,7 @@ namespace System.Management.Automation
             // that it needs.
 
             List<PSDriveInfo> newDrives = new List<PSDriveInfo>();
-            DriveCmdletProvider driveProvider = 
+            DriveCmdletProvider driveProvider =
                 GetDriveProviderInstance(providerInstance);
 
             if (driveProvider != null)
@@ -1198,11 +1197,11 @@ namespace System.Management.Automation
                             String.Empty,
                             e);
 
-                    context.WriteError (
-                        new ErrorRecord (
-                            providerException, 
+                    context.WriteError(
+                        new ErrorRecord(
+                            providerException,
                             "InitializeDefaultDrivesException",
-                            ErrorCategory.InvalidOperation, 
+                            ErrorCategory.InvalidOperation,
                             provider));
                 }
             }
@@ -1236,13 +1235,11 @@ namespace System.Management.Automation
 
                             _globalScope.NewDrive(validatedNewDrive);
                         }
-
                     }
                     catch (SessionStateException exception)
                     {
-                        context.WriteError (exception.ErrorRecord);
+                        context.WriteError(exception.ErrorRecord);
                     }
-
                 } // foreach (drive in newDrives)
             }
         } // InitializeProvider
@@ -1307,7 +1304,7 @@ namespace System.Management.Automation
             // Make sure we are able to create an instance of the provider.
             // Note, this will also set the friendly name if the user didn't
             // specify one.
-            
+
             Provider.CmdletProvider providerInstance = provider.CreateInstance();
 
             // Now call start to let the provider initialize itself
@@ -1342,7 +1339,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-call OK, 3rd party callout
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw 
+                throw
                     NewProviderInvocationException(
                         "ProviderStartException",
                         SessionStateStrings.ProviderStartException,
@@ -1437,7 +1434,7 @@ namespace System.Management.Automation
                 initializeProviderError = true;
                 throw;
             }
-            finally 
+            finally
             {
                 if (initializeProviderError)
                 {
@@ -1631,8 +1628,8 @@ namespace System.Management.Automation
         /// </remarks>
         /// 
         internal void RemoveProvider(
-            string providerName, 
-            bool force, 
+            string providerName,
+            bool force,
             CmdletProviderContext context)
         {
             if (context == null)
@@ -1642,7 +1639,7 @@ namespace System.Management.Automation
 
             if (String.IsNullOrEmpty(providerName))
             {
-                throw PSTraceSource.NewArgumentException ("providerName");
+                throw PSTraceSource.NewArgumentException("providerName");
             }
 
             bool errors = false;
@@ -1741,7 +1738,6 @@ namespace System.Management.Automation
                         throw;
                     }
                 }
-
             }
             catch (LoopFlowException)
             {
@@ -1759,11 +1755,11 @@ namespace System.Management.Automation
             {
                 CommandProcessorBase.CheckForSevereException(e);
                 errors = true;
-                context.WriteError (
-                    new ErrorRecord (
-                        e, 
-                        "RemoveProviderUnexpectedException", 
-                        ErrorCategory.InvalidArgument, 
+                context.WriteError(
+                    new ErrorRecord(
+                        e,
+                        "RemoveProviderUnexpectedException",
+                        ErrorCategory.InvalidArgument,
                         providerName));
             }
             finally
@@ -1786,7 +1782,6 @@ namespace System.Management.Automation
                    // Now make sure no relationship reference this provider
                     relationships.ProcessRelationshipsOnCmdletProviderRemoval (providerName);
 #endif
-
                 }
             }
         } // RemoveProvider
@@ -1839,9 +1834,7 @@ namespace System.Management.Automation
                 return count;
             }
         } // ProviderCount
-
     } // SessionStateInternal class
-
 }
 
 #pragma warning restore 56500

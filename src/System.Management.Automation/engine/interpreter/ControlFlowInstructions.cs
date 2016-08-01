@@ -24,10 +24,12 @@ using System.Management.Automation.Language;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace System.Management.Automation.Interpreter {
+namespace System.Management.Automation.Interpreter
+{
     using LoopFunc = Func<object[], StrongBox<object>[], InterpretedFrame, int>;
 
-    internal abstract class OffsetInstruction : Instruction {
+    internal abstract class OffsetInstruction : Instruction
+    {
         internal const int Unknown = Int32.MinValue;
         internal const int CacheSize = 32;
 
@@ -37,48 +39,59 @@ namespace System.Management.Automation.Interpreter {
         public int Offset { get { return _offset; } }
         public abstract Instruction[] Cache { get; }
 
-        public Instruction Fixup(int offset) {
+        public Instruction Fixup(int offset)
+        {
             Debug.Assert(_offset == Unknown && offset != Unknown);
             _offset = offset;
 
             var cache = Cache;
-            if (cache != null && offset >= 0 && offset < cache.Length) {
+            if (cache != null && offset >= 0 && offset < cache.Length)
+            {
                 return cache[offset] ?? (cache[offset] = this);
             }
 
             return this;
         }
 
-        public override string ToDebugString(int instructionIndex, object cookie, Func<int, int> labelIndexer, IList<object> objects) {
+        public override string ToDebugString(int instructionIndex, object cookie, Func<int, int> labelIndexer, IList<object> objects)
+        {
             return ToString() + (_offset != Unknown ? " -> " + (instructionIndex + _offset) : "");
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return InstructionName + (_offset == Unknown ? "(?)" : "(" + _offset + ")");
         }
     }
 
-    internal sealed class BranchFalseInstruction : OffsetInstruction {
-        private static Instruction[] _cache;
+    internal sealed class BranchFalseInstruction : OffsetInstruction
+    {
+        private static Instruction[] s_cache;
 
-        public override Instruction[] Cache {
-            get {
-                if (_cache == null) {
-                    _cache = new Instruction[CacheSize];
+        public override Instruction[] Cache
+        {
+            get
+            {
+                if (s_cache == null)
+                {
+                    s_cache = new Instruction[CacheSize];
                 }
-                return _cache;
+                return s_cache;
             }
         }
 
-        internal BranchFalseInstruction() {
+        internal BranchFalseInstruction()
+        {
         }
 
         public override int ConsumedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame) {
+        public override int Run(InterpretedFrame frame)
+        {
             Debug.Assert(_offset != Unknown);
 
-            if (!(bool)frame.Pop()) {
+            if (!(bool)frame.Pop())
+            {
                 return _offset;
             }
 
@@ -86,27 +99,34 @@ namespace System.Management.Automation.Interpreter {
         }
     }
 
-    internal sealed class BranchTrueInstruction : OffsetInstruction {
-        private static Instruction[] _cache;
+    internal sealed class BranchTrueInstruction : OffsetInstruction
+    {
+        private static Instruction[] s_cache;
 
-        public override Instruction[] Cache {
-            get {
-                if (_cache == null) {
-                    _cache = new Instruction[CacheSize];
+        public override Instruction[] Cache
+        {
+            get
+            {
+                if (s_cache == null)
+                {
+                    s_cache = new Instruction[CacheSize];
                 }
-                return _cache;
+                return s_cache;
             }
         }
 
-        internal BranchTrueInstruction() {
+        internal BranchTrueInstruction()
+        {
         }
 
         public override int ConsumedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame) {
+        public override int Run(InterpretedFrame frame)
+        {
             Debug.Assert(_offset != Unknown);
 
-            if ((bool)frame.Pop()) {
+            if ((bool)frame.Pop())
+            {
                 return _offset;
             }
 
@@ -114,28 +134,35 @@ namespace System.Management.Automation.Interpreter {
         }
     }
 
-    internal sealed class CoalescingBranchInstruction : OffsetInstruction {
-        private static Instruction[] _cache;
+    internal sealed class CoalescingBranchInstruction : OffsetInstruction
+    {
+        private static Instruction[] s_cache;
 
-        public override Instruction[] Cache {
-            get {
-                if (_cache == null) {
-                    _cache = new Instruction[CacheSize];
+        public override Instruction[] Cache
+        {
+            get
+            {
+                if (s_cache == null)
+                {
+                    s_cache = new Instruction[CacheSize];
                 }
-                return _cache;
+                return s_cache;
             }
         }
 
-        internal CoalescingBranchInstruction() {
+        internal CoalescingBranchInstruction()
+        {
         }
 
         public override int ConsumedStack { get { return 1; } }
         public override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame) {
+        public override int Run(InterpretedFrame frame)
+        {
             Debug.Assert(_offset != Unknown);
 
-            if (frame.Peek() != null) {
+            if (frame.Peek() != null)
+            {
                 return _offset;
             }
 
@@ -143,15 +170,19 @@ namespace System.Management.Automation.Interpreter {
         }
     }
 
-    internal class BranchInstruction : OffsetInstruction {
-        private static Instruction[][][] _caches;
+    internal class BranchInstruction : OffsetInstruction
+    {
+        private static Instruction[][][] s_caches;
 
-        public override Instruction[] Cache {
-            get {
-                if (_caches == null) {
-                    _caches = new Instruction[2][][] { new Instruction[2][], new Instruction[2][] };
+        public override Instruction[] Cache
+        {
+            get
+            {
+                if (s_caches == null)
+                {
+                    s_caches = new Instruction[2][][] { new Instruction[2][], new Instruction[2][] };
                 }
-                return _caches[ConsumedStack][ProducedStack] ?? (_caches[ConsumedStack][ProducedStack] = new Instruction[CacheSize]);
+                return s_caches[ConsumedStack][ProducedStack] ?? (s_caches[ConsumedStack][ProducedStack] = new Instruction[CacheSize]);
             }
         }
 
@@ -159,50 +190,60 @@ namespace System.Management.Automation.Interpreter {
         internal readonly bool _hasValue;
 
         internal BranchInstruction()
-            : this(false, false) {
+            : this(false, false)
+        {
         }
 
-        public BranchInstruction(bool hasResult, bool hasValue) {
+        public BranchInstruction(bool hasResult, bool hasValue)
+        {
             _hasResult = hasResult;
             _hasValue = hasValue;
         }
 
-        public override int ConsumedStack {
+        public override int ConsumedStack
+        {
             get { return _hasValue ? 1 : 0; }
         }
 
-        public override int ProducedStack {
+        public override int ProducedStack
+        {
             get { return _hasResult ? 1 : 0; }
         }
 
-        public override int Run(InterpretedFrame frame) {
+        public override int Run(InterpretedFrame frame)
+        {
             Debug.Assert(_offset != Unknown);
 
             return _offset;
         }
     }
 
-    internal abstract class IndexedBranchInstruction : Instruction {
+    internal abstract class IndexedBranchInstruction : Instruction
+    {
         protected const int CacheSize = 32;
 
         internal readonly int _labelIndex;
 
-        public IndexedBranchInstruction(int labelIndex) {
+        public IndexedBranchInstruction(int labelIndex)
+        {
             _labelIndex = labelIndex;
         }
 
-        public RuntimeLabel GetLabel(InterpretedFrame frame) {
+        public RuntimeLabel GetLabel(InterpretedFrame frame)
+        {
             Debug.Assert(_labelIndex != UnknownInstrIndex);
             return frame.Interpreter._labels[_labelIndex];
         }
 
-        public override string ToDebugString(int instructionIndex, object cookie, Func<int, int> labelIndexer, IList<object> objects) {
+        public override string ToDebugString(int instructionIndex, object cookie, Func<int, int> labelIndexer, IList<object> objects)
+        {
             Debug.Assert(_labelIndex != UnknownInstrIndex);
             int targetIndex = labelIndexer(_labelIndex);
             return ToString() + (targetIndex != BranchLabel.UnknownIndex ? " -> " + targetIndex : "");
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             Debug.Assert(_labelIndex != UnknownInstrIndex);
             return InstructionName + "[" + _labelIndex + "]";
         }
@@ -232,9 +273,10 @@ namespace System.Management.Automation.Interpreter {
     /// Goto also needs to rethrow ThreadAbortException iff it jumps out of a catch handler and 
     /// the current thread is in "abort requested" state.
     /// </summary>
-    internal sealed class GotoInstruction : IndexedBranchInstruction {
+    internal sealed class GotoInstruction : IndexedBranchInstruction
+    {
         private const int Variants = 4;
-        private static readonly GotoInstruction[] Cache = new GotoInstruction[Variants * CacheSize];
+        private static readonly GotoInstruction[] s_cache = new GotoInstruction[Variants * CacheSize];
 
         private readonly bool _hasResult;
 
@@ -249,29 +291,35 @@ namespace System.Management.Automation.Interpreter {
         public override int ConsumedContinuations { get { return 0; } }
         public override int ProducedContinuations { get { return 0; } }
 
-        public override int ConsumedStack {
+        public override int ConsumedStack
+        {
             get { return _hasValue ? 1 : 0; }
         }
 
-        public override int ProducedStack {
+        public override int ProducedStack
+        {
             get { return _hasResult ? 1 : 0; }
         }
 
         private GotoInstruction(int targetIndex, bool hasResult, bool hasValue)
-            : base(targetIndex) {
+            : base(targetIndex)
+        {
             _hasResult = hasResult;
             _hasValue = hasValue;
         }
 
-        internal static GotoInstruction Create(int labelIndex, bool hasResult, bool hasValue) {
-            if (labelIndex < CacheSize) {
+        internal static GotoInstruction Create(int labelIndex, bool hasResult, bool hasValue)
+        {
+            if (labelIndex < CacheSize)
+            {
                 var index = Variants * labelIndex | (hasResult ? 2 : 0) | (hasValue ? 1 : 0);
-                return Cache[index] ?? (Cache[index] = new GotoInstruction(labelIndex, hasResult, hasValue));
+                return s_cache[index] ?? (s_cache[index] = new GotoInstruction(labelIndex, hasResult, hasValue));
             }
             return new GotoInstruction(labelIndex, hasResult, hasValue);
         }
 
-        public override int Run(InterpretedFrame frame) {
+        public override int Run(InterpretedFrame frame)
+        {
             // Are we jumping out of catch/finally while aborting the current thread?
             Interpreter.AbortThreadIfRequested(frame, _labelIndex);
 
@@ -280,12 +328,13 @@ namespace System.Management.Automation.Interpreter {
         }
     }
 
-    internal sealed class EnterTryCatchFinallyInstruction : IndexedBranchInstruction {
-
+    internal sealed class EnterTryCatchFinallyInstruction : IndexedBranchInstruction
+    {
         private readonly bool _hasFinally = false;
         private TryCatchFinallyHandler _tryHandler;
 
-        internal void SetTryHandler(TryCatchFinallyHandler tryHandler) {
+        internal void SetTryHandler(TryCatchFinallyHandler tryHandler)
+        {
             Debug.Assert(_tryHandler == null && tryHandler != null, "the tryHandler can be set only once");
             _tryHandler = tryHandler;
         }
@@ -293,21 +342,26 @@ namespace System.Management.Automation.Interpreter {
         public override int ProducedContinuations { get { return _hasFinally ? 1 : 0; } }
 
         private EnterTryCatchFinallyInstruction(int targetIndex, bool hasFinally)
-            : base(targetIndex) {
+            : base(targetIndex)
+        {
             _hasFinally = hasFinally;
         }
 
-        internal static EnterTryCatchFinallyInstruction CreateTryFinally(int labelIndex) {
+        internal static EnterTryCatchFinallyInstruction CreateTryFinally(int labelIndex)
+        {
             return new EnterTryCatchFinallyInstruction(labelIndex, true);
         }
-        internal static EnterTryCatchFinallyInstruction CreateTryCatch() {
+        internal static EnterTryCatchFinallyInstruction CreateTryCatch()
+        {
             return new EnterTryCatchFinallyInstruction(UnknownInstrIndex, false);
         }
 
-        public override int Run(InterpretedFrame frame) {
+        public override int Run(InterpretedFrame frame)
+        {
             Debug.Assert(_tryHandler != null, "the tryHandler must be set already");
 
-            if (_hasFinally) {
+            if (_hasFinally)
+            {
                 // Push finally. 
                 frame.PushContinuation(_labelIndex);
             }
@@ -316,24 +370,31 @@ namespace System.Management.Automation.Interpreter {
 
             // Start to run the try/catch/finally blocks
             var instructions = frame.Interpreter.Instructions.Instructions;
-            try {
+            try
+            {
                 // run the try block
                 int index = frame.InstructionIndex;
-                while (index >= _tryHandler.TryStartIndex && index < _tryHandler.TryEndIndex) {
+                while (index >= _tryHandler.TryStartIndex && index < _tryHandler.TryEndIndex)
+                {
                     index += instructions[index].Run(frame);
                     frame.InstructionIndex = index;
                 }
 
                 // we finish the try block and is about to jump out of the try/catch blocks
-                if (index == _tryHandler.GotoEndTargetIndex) {
+                if (index == _tryHandler.GotoEndTargetIndex)
+                {
                     // run the 'Goto' that jumps out of the try/catch/finally blocks
                     Debug.Assert(instructions[index] is GotoInstruction, "should be the 'Goto' instruction that jumpes out the try/catch/finally");
                     frame.InstructionIndex += instructions[index].Run(frame);
                 }
-            } catch (RethrowException) {
+            }
+            catch (RethrowException)
+            {
                 // a rethrow instruction in the try handler gets to run
                 throw;
-            } catch (Exception exception) {
+            }
+            catch (Exception exception)
+            {
                 frame.SaveTraceToException(exception);
                 // rethrow if there is no catch blocks defined for this try block
                 if (!_tryHandler.IsCatchBlockExist) { throw; }
@@ -345,33 +406,41 @@ namespace System.Management.Automation.Interpreter {
 #if !CORECLR // Thread.Abort and ThreadAbortException are not in CoreCLR.
                 // stay in the current catch so that ThreadAbortException is not rethrown by CLR:
                 var abort = exception as ThreadAbortException;
-                if (abort != null) {
+                if (abort != null)
+                {
                     Interpreter.AnyAbortException = abort;
                     frame.CurrentAbortHandler = exHandler;
                 }
 #endif
                 bool rethrow = false;
-                try {
+                try
+                {
                     // run the catch block
                     int index = frame.InstructionIndex;
-                    while (index >= exHandler.HandlerStartIndex && index < exHandler.HandlerEndIndex) {
+                    while (index >= exHandler.HandlerStartIndex && index < exHandler.HandlerEndIndex)
+                    {
                         index += instructions[index].Run(frame);
                         frame.InstructionIndex = index;
                     }
 
                     // we finish the catch block and is about to jump out of the try/catch blocks
-                    if (index == _tryHandler.GotoEndTargetIndex) {
+                    if (index == _tryHandler.GotoEndTargetIndex)
+                    {
                         // run the 'Goto' that jumps out of the try/catch/finally blocks
                         Debug.Assert(instructions[index] is GotoInstruction, "should be the 'Goto' instruction that jumpes out the try/catch/finally");
                         frame.InstructionIndex += instructions[index].Run(frame);
                     }
-                } catch (RethrowException) {
+                }
+                catch (RethrowException)
+                {
                     // a rethrow instruction in a catch block gets to run
                     rethrow = true;
                 }
 
                 if (rethrow) { throw; }
-            } finally {
+            }
+            finally
+            {
                 if (_tryHandler.IsFinallyBlockExist)
                 {
                     // We get to the finally block in two paths:
@@ -388,7 +457,8 @@ namespace System.Management.Automation.Interpreter {
                     // run the finally block
                     // we cannot jump out of the finally block, and we cannot have an immediate rethrow in it
                     int index = frame.InstructionIndex = _tryHandler.FinallyStartIndex;
-                    while (index >= _tryHandler.FinallyStartIndex && index < _tryHandler.FinallyEndIndex) {
+                    while (index >= _tryHandler.FinallyStartIndex && index < _tryHandler.FinallyEndIndex)
+                    {
                         index += instructions[index].Run(frame);
                         frame.InstructionIndex = index;
                     }
@@ -412,28 +482,34 @@ namespace System.Management.Automation.Interpreter {
     /// <summary>
     /// The first instruction of finally block.
     /// </summary>
-    internal sealed class EnterFinallyInstruction : IndexedBranchInstruction {
-        private readonly static EnterFinallyInstruction[] Cache = new EnterFinallyInstruction[CacheSize];
+    internal sealed class EnterFinallyInstruction : IndexedBranchInstruction
+    {
+        private readonly static EnterFinallyInstruction[] s_cache = new EnterFinallyInstruction[CacheSize];
 
         public override int ProducedStack { get { return 2; } }
         public override int ConsumedContinuations { get { return 1; } }
 
-        private EnterFinallyInstruction(int labelIndex) 
-            : base (labelIndex) {
+        private EnterFinallyInstruction(int labelIndex)
+            : base(labelIndex)
+        {
         }
 
-        internal static EnterFinallyInstruction Create(int labelIndex) {
-            if (labelIndex < CacheSize) {
-                return Cache[labelIndex] ?? (Cache[labelIndex] = new EnterFinallyInstruction(labelIndex));
+        internal static EnterFinallyInstruction Create(int labelIndex)
+        {
+            if (labelIndex < CacheSize)
+            {
+                return s_cache[labelIndex] ?? (s_cache[labelIndex] = new EnterFinallyInstruction(labelIndex));
             }
             return new EnterFinallyInstruction(labelIndex);
         }
 
-        public override int Run(InterpretedFrame frame) {
+        public override int Run(InterpretedFrame frame)
+        {
             // If _pendingContinuation == -1 then we were getting into the finally block because an exception was thrown
             //      in this case we need to set the stack depth
             // Else we were getting into this finnaly block from a 'Goto' jump, and the stack depth is alreayd set properly
-            if (!frame.IsJumpHappened()) {
+            if (!frame.IsJumpHappened())
+            {
                 frame.SetStackDepth(GetLabel(frame).StackDepth);
             }
 
@@ -446,15 +522,18 @@ namespace System.Management.Automation.Interpreter {
     /// <summary>
     /// The last instruction of finally block.
     /// </summary>
-    internal sealed class LeaveFinallyInstruction : Instruction {
+    internal sealed class LeaveFinallyInstruction : Instruction
+    {
         internal static readonly Instruction Instance = new LeaveFinallyInstruction();
 
         public override int ConsumedStack { get { return 2; } }
-        
-        private LeaveFinallyInstruction() {
+
+        private LeaveFinallyInstruction()
+        {
         }
 
-        public override int Run(InterpretedFrame frame) {
+        public override int Run(InterpretedFrame frame)
+        {
             frame.PopPendingContinuation();
 
             // If _pendingContinuation == -1 then we were getting into the finally block because an exception was thrown
@@ -466,14 +545,16 @@ namespace System.Management.Automation.Interpreter {
     }
 
     // no-op: we need this just to balance the stack depth.
-    internal sealed class EnterExceptionHandlerInstruction : Instruction {
+    internal sealed class EnterExceptionHandlerInstruction : Instruction
+    {
         internal static readonly EnterExceptionHandlerInstruction Void = new EnterExceptionHandlerInstruction(false);
         internal static readonly EnterExceptionHandlerInstruction NonVoid = new EnterExceptionHandlerInstruction(true);
 
         // True if try-expression is non-void.
         private readonly bool _hasValue;
 
-        private EnterExceptionHandlerInstruction(bool hasValue) {
+        private EnterExceptionHandlerInstruction(bool hasValue)
+        {
             _hasValue = hasValue;
         }
 
@@ -489,7 +570,8 @@ namespace System.Management.Automation.Interpreter {
         // Fault handlers: The value is kept on stack during fault handler evaluation.
         public override int ProducedStack { get { return 1; } }
 
-        public override int Run(InterpretedFrame frame) {
+        public override int Run(InterpretedFrame frame)
+        {
             // nop (the exception value is pushed by the interpreter in HandleCatch)
             return 1;
         }
@@ -498,34 +580,41 @@ namespace System.Management.Automation.Interpreter {
     /// <summary>
     /// The last instruction of a catch exception handler.
     /// </summary>
-    internal sealed class LeaveExceptionHandlerInstruction : IndexedBranchInstruction {
-        private static LeaveExceptionHandlerInstruction[] Cache = new LeaveExceptionHandlerInstruction[2 * CacheSize];
+    internal sealed class LeaveExceptionHandlerInstruction : IndexedBranchInstruction
+    {
+        private static LeaveExceptionHandlerInstruction[] s_cache = new LeaveExceptionHandlerInstruction[2 * CacheSize];
 
         private readonly bool _hasValue;
 
         // The catch block yields a value if the body is non-void. This value is left on the stack. 
-        public override int ConsumedStack {
+        public override int ConsumedStack
+        {
             get { return _hasValue ? 1 : 0; }
         }
 
-        public override int ProducedStack {
+        public override int ProducedStack
+        {
             get { return _hasValue ? 1 : 0; }
         }
 
         private LeaveExceptionHandlerInstruction(int labelIndex, bool hasValue)
-            : base(labelIndex) {
+            : base(labelIndex)
+        {
             _hasValue = hasValue;
         }
 
-        internal static LeaveExceptionHandlerInstruction Create(int labelIndex, bool hasValue) {
-            if (labelIndex < CacheSize) {
+        internal static LeaveExceptionHandlerInstruction Create(int labelIndex, bool hasValue)
+        {
+            if (labelIndex < CacheSize)
+            {
                 int index = (2 * labelIndex) | (hasValue ? 1 : 0);
-                return Cache[index] ?? (Cache[index] = new LeaveExceptionHandlerInstruction(labelIndex, hasValue));
+                return s_cache[index] ?? (s_cache[index] = new LeaveExceptionHandlerInstruction(labelIndex, hasValue));
             }
             return new LeaveExceptionHandlerInstruction(labelIndex, hasValue);
         }
 
-        public override int Run(InterpretedFrame frame) {
+        public override int Run(InterpretedFrame frame)
+        {
             // CLR rethrows ThreadAbortException when leaving catch handler if abort is requested on the current thread.
             Interpreter.AbortThreadIfRequested(frame, _labelIndex);
             return GetLabel(frame).Index - frame.InstructionIndex;
@@ -535,7 +624,8 @@ namespace System.Management.Automation.Interpreter {
     /// <summary>
     /// The last instruction of a fault exception handler.
     /// </summary>
-    internal sealed class LeaveFaultInstruction : Instruction {
+    internal sealed class LeaveFaultInstruction : Instruction
+    {
         internal static readonly Instruction NonVoid = new LeaveFaultInstruction(true);
         internal static readonly Instruction Void = new LeaveFaultInstruction(false);
 
@@ -545,20 +635,24 @@ namespace System.Management.Automation.Interpreter {
         // We compile the body of a fault block as void.
         // However, we keep the exception object that was pushed upon entering the fault block on the stack during execution of the block
         // and pop it at the end.
-        public override int ConsumedStack {
+        public override int ConsumedStack
+        {
             get { return 1; }
         }
 
         // While emitting instructions a non-void try-fault expression is expected to produce a value. 
-        public override int ProducedStack {
+        public override int ProducedStack
+        {
             get { return _hasValue ? 1 : 0; }
         }
 
-        private LeaveFaultInstruction(bool hasValue) {
+        private LeaveFaultInstruction(bool hasValue)
+        {
             _hasValue = hasValue;
         }
 
-        public override int Run(InterpretedFrame frame) {
+        public override int Run(InterpretedFrame frame)
+        {
             // TODO: ThreadAbortException ?
 
             object exception = frame.Pop();
@@ -569,7 +663,8 @@ namespace System.Management.Automation.Interpreter {
     }
 
 
-    internal sealed class ThrowInstruction : Instruction {
+    internal sealed class ThrowInstruction : Instruction
+    {
         internal static readonly ThrowInstruction Throw = new ThrowInstruction(true, false);
         internal static readonly ThrowInstruction VoidThrow = new ThrowInstruction(false, false);
         internal static readonly ThrowInstruction Rethrow = new ThrowInstruction(true, true);
@@ -577,24 +672,30 @@ namespace System.Management.Automation.Interpreter {
 
         private readonly bool _hasResult, _rethrow;
 
-        private ThrowInstruction(bool hasResult, bool isRethrow) {
+        private ThrowInstruction(bool hasResult, bool isRethrow)
+        {
             _hasResult = hasResult;
             _rethrow = isRethrow;
         }
 
-        public override int ProducedStack {
+        public override int ProducedStack
+        {
             get { return _hasResult ? 1 : 0; }
         }
 
-        public override int ConsumedStack {
-            get {
-                return 1; 
+        public override int ConsumedStack
+        {
+            get
+            {
+                return 1;
             }
         }
 
-        public override int Run(InterpretedFrame frame) {
+        public override int Run(InterpretedFrame frame)
+        {
             var ex = (Exception)frame.Pop();
-            if (_rethrow) {
+            if (_rethrow)
+            {
                 // ExceptionHandler handler;
                 // return frame.Interpreter.GotoHandler(frame, ex, out handler);
                 throw new RethrowException();
@@ -603,10 +704,12 @@ namespace System.Management.Automation.Interpreter {
         }
     }
 
-    internal sealed class SwitchInstruction : Instruction {
+    internal sealed class SwitchInstruction : Instruction
+    {
         private readonly Dictionary<int, int> _cases;
 
-        internal SwitchInstruction(Dictionary<int, int> cases) {
+        internal SwitchInstruction(Dictionary<int, int> cases)
+        {
             Assert.NotNull(cases);
             _cases = cases;
         }
@@ -614,33 +717,38 @@ namespace System.Management.Automation.Interpreter {
         public override int ConsumedStack { get { return 1; } }
         public override int ProducedStack { get { return 0; } }
 
-        public override int Run(InterpretedFrame frame) {
+        public override int Run(InterpretedFrame frame)
+        {
             int target;
             return _cases.TryGetValue((int)frame.Pop(), out target) ? target : 1;
         }
     }
 
-    internal sealed class EnterLoopInstruction : Instruction {
+    internal sealed class EnterLoopInstruction : Instruction
+    {
         private readonly int _instructionIndex;
         private Dictionary<ParameterExpression, LocalVariable> _variables;
         private Dictionary<ParameterExpression, LocalVariable> _closureVariables;
         private PowerShellLoopExpression _loop;
         private int _loopEnd;
         private int _compilationThreshold;
-    
-        internal EnterLoopInstruction(PowerShellLoopExpression loop, LocalVariables locals, int compilationThreshold, int instructionIndex) {
+
+        internal EnterLoopInstruction(PowerShellLoopExpression loop, LocalVariables locals, int compilationThreshold, int instructionIndex)
+        {
             _loop = loop;
             _variables = locals.CopyLocals();
             _closureVariables = locals.ClosureVariables;
             _compilationThreshold = compilationThreshold;
             _instructionIndex = instructionIndex;
         }
-    
-        internal void FinishLoop(int loopEnd) {
+
+        internal void FinishLoop(int loopEnd)
+        {
             _loopEnd = loopEnd;
         }
-    
-        public override int Run(InterpretedFrame frame) {
+
+        public override int Run(InterpretedFrame frame)
+        {
             // Don't lock here, it's a frequently hit path.
             //
             // There could be multiple threads racing, but that is okay.
@@ -652,40 +760,49 @@ namespace System.Management.Automation.Interpreter {
             // The second we explicitly guard against inside of Compile().
             // 
             // We can't miss 0. The first thread that writes -1 must have read 0 and hence start compilation.
-            if (unchecked(_compilationThreshold--) == 0) {
-                if (frame.Interpreter.CompileSynchronously) {
+            if (unchecked(_compilationThreshold--) == 0)
+            {
+                if (frame.Interpreter.CompileSynchronously)
+                {
                     Compile(frame);
-                } else {
+                }
+                else
+                {
                     // Kick off the compile on another thread so this one can keep going
                     ThreadPool.QueueUserWorkItem(Compile, frame);
                 }
             }
             return 1;
         }
-    
-        private bool Compiled {
+
+        private bool Compiled
+        {
             get { return _loop == null; }
         }
-    
-        private void Compile(object frameObj) {
-            if (Compiled) {
+
+        private void Compile(object frameObj)
+        {
+            if (Compiled)
+            {
                 return;
             }
-    
-            lock (this) {
-                if (Compiled) {
+
+            lock (this)
+            {
+                if (Compiled)
+                {
                     return;
                 }
-    
+
                 //PerfTrack.NoteEvent(PerfTrack.Categories.Compiler, "Interpreted loop compiled");
-    
+
                 InterpretedFrame frame = (InterpretedFrame)frameObj;
                 var compiler = new LoopCompiler(_loop, frame.Interpreter.LabelMapping, _variables, _closureVariables, _instructionIndex, _loopEnd);
                 var instructions = frame.Interpreter.Instructions.Instructions;
-    
+
                 // replace this instruction with an optimized one:
                 instructions[_instructionIndex] = new CompiledLoopInstruction(compiler.CreateDelegate());
-    
+
                 // invalidate this instruction, some threads may still hold on it:
                 _loop = null;
                 _variables = null;
@@ -694,15 +811,18 @@ namespace System.Management.Automation.Interpreter {
         }
     }
 
-    internal sealed class CompiledLoopInstruction : Instruction {
+    internal sealed class CompiledLoopInstruction : Instruction
+    {
         private readonly LoopFunc _compiledLoop;
 
-        public CompiledLoopInstruction(LoopFunc compiledLoop) {
+        public CompiledLoopInstruction(LoopFunc compiledLoop)
+        {
             Assert.NotNull(compiledLoop);
             _compiledLoop = compiledLoop;
         }
 
-        public override int Run(InterpretedFrame frame) {
+        public override int Run(InterpretedFrame frame)
+        {
             return _compiledLoop(frame.Data, frame.Closure, frame);
         }
     }

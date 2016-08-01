@@ -29,10 +29,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter Unique
         {
-            get { return unique; }
-            set { unique = value; }
+            get { return _unique; }
+            set { _unique = value; }
         }
-        private bool unique;
+        private bool _unique;
         #endregion
 
 
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
             }
             orderByProperty.OrderMatrix.Sort(orderByProperty.Comparer);
 
-            if (unique)
+            if (_unique)
             {
                 RemoveDuplicates(orderByProperty);
             }
@@ -85,5 +85,5 @@ namespace Microsoft.PowerShell.Commands
             }
         }
     }
-}  
+}
 

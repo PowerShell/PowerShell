@@ -16,7 +16,7 @@ namespace System.Management.Automation
     /// The type of items that the derived class returns.
     /// </typeparam>
     /// 
-    internal abstract class ScopedItemSearcher<T>  : IEnumerator<T>, IEnumerable<T>
+    internal abstract class ScopedItemSearcher<T> : IEnumerator<T>, IEnumerable<T>
     {
         #region ctor
 
@@ -38,7 +38,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal ScopedItemSearcher(
-            SessionStateInternal sessionState, 
+            SessionStateInternal sessionState,
             VariablePath lookupPath)
         {
             if (sessionState == null)
@@ -52,7 +52,7 @@ namespace System.Management.Automation
             }
 
             this.sessionState = sessionState;
-            this.lookupPath = lookupPath;
+            _lookupPath = lookupPath;
             InitializeScopeEnumerator();
         }
 
@@ -91,27 +91,27 @@ namespace System.Management.Automation
         {
             bool result = true;
 
-            if (!isInitialized)
+            if (!_isInitialized)
             {
                 InitializeScopeEnumerator();
             }
 
             // Enumerate the scopes until a matching scoped item is found
 
-            while (scopeEnumerable.MoveNext())
+            while (_scopeEnumerable.MoveNext())
             {
                 T newCurrentItem;
 
-                if (TryGetNewScopeItem(((IEnumerator<SessionStateScope>)scopeEnumerable).Current, out newCurrentItem))
+                if (TryGetNewScopeItem(((IEnumerator<SessionStateScope>)_scopeEnumerable).Current, out newCurrentItem))
                 {
-                    currentScope = ((IEnumerator<SessionStateScope>)scopeEnumerable).Current;
-                    current = newCurrentItem;
+                    _currentScope = ((IEnumerator<SessionStateScope>)_scopeEnumerable).Current;
+                    _current = newCurrentItem;
                     result = true;
                     break;
                 }
                 result = false;
 
-                if (isSingleScopeLookup)
+                if (_isSingleScopeLookup)
                 {
                     break;
                 }
@@ -129,7 +129,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return current;
+                return _current;
             }
         }
 
@@ -138,7 +138,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return current;
+                return _current;
             }
         }
 
@@ -152,10 +152,10 @@ namespace System.Management.Automation
 
         public void Dispose()
         {
-            current = default(T);
-            scopeEnumerable.Dispose();
-            scopeEnumerable = null;
-            isInitialized = false;
+            _current = default(T);
+            _scopeEnumerable.Dispose();
+            _scopeEnumerable = null;
+            _isInitialized = false;
             GC.SuppressFinalize(this);
         }
 
@@ -181,8 +181,8 @@ namespace System.Management.Automation
         /// </returns>
         /// 
         protected abstract bool GetScopeItem(
-            SessionStateScope scope, 
-            VariablePath name, 
+            SessionStateScope scope,
+            VariablePath name,
             out T newCurrentItem);
 
         #endregion IEnumerable/IEnumerator members
@@ -193,10 +193,10 @@ namespace System.Management.Automation
         /// 
         internal SessionStateScope CurrentLookupScope
         {
-            get { return currentScope; }
+            get { return _currentScope; }
         }
 
-        private SessionStateScope currentScope;
+        private SessionStateScope _currentScope;
 
         /// <summary>
         /// Gets the scope in which the search begins.
@@ -204,9 +204,9 @@ namespace System.Management.Automation
         /// 
         internal SessionStateScope InitialScope
         {
-            get { return initialScope; }
+            get { return _initialScope; }
         }
-        private SessionStateScope initialScope;
+        private SessionStateScope _initialScope;
 
         #region private members
 
@@ -216,7 +216,7 @@ namespace System.Management.Automation
         {
             bool result = GetScopeItem(
                 lookupScope,
-                lookupPath,
+                _lookupPath,
                 out newCurrentItem);
 
             return result;
@@ -227,37 +227,37 @@ namespace System.Management.Automation
             // Define the lookup scope and if we have to do single
             // level or dynamic lookup based on the lookup variable
 
-            initialScope = sessionState.CurrentScope;
+            _initialScope = sessionState.CurrentScope;
 
-            if (lookupPath.IsGlobal)
+            if (_lookupPath.IsGlobal)
             {
-                initialScope = sessionState.GlobalScope;
-                isSingleScopeLookup = true;
+                _initialScope = sessionState.GlobalScope;
+                _isSingleScopeLookup = true;
             }
-            else if (lookupPath.IsLocal ||
-                     lookupPath.IsPrivate)
+            else if (_lookupPath.IsLocal ||
+                     _lookupPath.IsPrivate)
             {
-                initialScope = sessionState.CurrentScope;
-                isSingleScopeLookup = true;
+                _initialScope = sessionState.CurrentScope;
+                _isSingleScopeLookup = true;
             }
-            else if (lookupPath.IsScript)
+            else if (_lookupPath.IsScript)
             {
-                initialScope = sessionState.ScriptScope;
-                isSingleScopeLookup = true;
+                _initialScope = sessionState.ScriptScope;
+                _isSingleScopeLookup = true;
             }
 
-            scopeEnumerable =
-                 new SessionStateScopeEnumerator(initialScope);
+            _scopeEnumerable =
+                 new SessionStateScopeEnumerator(_initialScope);
 
-            isInitialized = true;
+            _isInitialized = true;
         }
 
-        private T current;
+        private T _current;
         protected SessionStateInternal sessionState;
-        private VariablePath lookupPath;
-        private SessionStateScopeEnumerator scopeEnumerable;
-        private bool isSingleScopeLookup;
-        private bool isInitialized;
+        private VariablePath _lookupPath;
+        private SessionStateScopeEnumerator _scopeEnumerable;
+        private bool _isSingleScopeLookup;
+        private bool _isInitialized;
 
         #endregion private members
     } // class ScopedItemSearcher
@@ -271,7 +271,7 @@ namespace System.Management.Automation
         public VariableScopeItemSearcher(
             SessionStateInternal sessionState,
             VariablePath lookupPath,
-            CommandOrigin origin) : base (sessionState, lookupPath)
+            CommandOrigin origin) : base(sessionState, lookupPath)
         {
             _origin = origin;
         }
@@ -300,8 +300,8 @@ namespace System.Management.Automation
         /// </returns>
         /// 
         protected override bool GetScopeItem(
-            SessionStateScope scope, 
-            VariablePath name, 
+            SessionStateScope scope,
+            VariablePath name,
             out PSVariable variable)
         {
             Diagnostics.Assert(!(name is FunctionLookupPath),
@@ -333,7 +333,7 @@ namespace System.Management.Automation
     {
         public AliasScopeItemSearcher(
             SessionStateInternal sessionState,
-            VariablePath lookupPath) : base (sessionState, lookupPath)
+            VariablePath lookupPath) : base(sessionState, lookupPath)
         {
         }
 
@@ -359,8 +359,8 @@ namespace System.Management.Automation
         /// </returns>
         /// 
         protected override bool GetScopeItem(
-            SessionStateScope scope, 
-            VariablePath name, 
+            SessionStateScope scope,
+            VariablePath name,
             out AliasInfo alias)
         {
             Diagnostics.Assert(!(name is FunctionLookupPath),
@@ -392,7 +392,7 @@ namespace System.Management.Automation
         public FunctionScopeItemSearcher(
             SessionStateInternal sessionState,
             VariablePath lookupPath,
-            CommandOrigin origin) : base (sessionState, lookupPath)
+            CommandOrigin origin) : base(sessionState, lookupPath)
         {
             _origin = origin;
         }
@@ -422,8 +422,8 @@ namespace System.Management.Automation
         /// </returns>
         /// 
         protected override bool GetScopeItem(
-            SessionStateScope scope, 
-            VariablePath path, 
+            SessionStateScope scope,
+            VariablePath path,
             out FunctionInfo script)
         {
             Diagnostics.Assert(path is FunctionLookupPath,
@@ -431,9 +431,9 @@ namespace System.Management.Automation
 
             bool result = true;
 
-            name = path.IsFunction ? path.UnqualifiedPath : path.QualifiedName;
+            _name = path.IsFunction ? path.UnqualifiedPath : path.QualifiedName;
 
-            script = scope.GetFunction(name);
+            script = scope.GetFunction(_name);
 
 
             if (script != null)
@@ -473,9 +473,9 @@ namespace System.Management.Automation
 
         internal string Name
         {
-            get { return name; }
+            get { return _name; }
         }
-        private string name = String.Empty;
+        private string _name = String.Empty;
     } // FunctionScopeItemSearcher
 
     /// <summary>
@@ -485,7 +485,7 @@ namespace System.Management.Automation
     {
         public DriveScopeItemSearcher(
             SessionStateInternal sessionState,
-            VariablePath lookupPath) : base (sessionState, lookupPath)
+            VariablePath lookupPath) : base(sessionState, lookupPath)
         {
         }
 
@@ -511,8 +511,8 @@ namespace System.Management.Automation
         /// </returns>
         /// 
         protected override bool GetScopeItem(
-            SessionStateScope scope, 
-            VariablePath name, 
+            SessionStateScope scope,
+            VariablePath name,
             out PSDriveInfo drive)
         {
             Diagnostics.Assert(!(name is FunctionLookupPath),

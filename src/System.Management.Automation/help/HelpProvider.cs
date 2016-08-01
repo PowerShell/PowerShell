@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.IO;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -49,7 +50,7 @@ namespace System.Management.Automation
         /// </summary>
         internal HelpProvider(HelpSystem helpSystem)
         {
-            this._helpSystem = helpSystem;
+            _helpSystem = helpSystem;
         }
 
         private HelpSystem _helpSystem;
@@ -255,7 +256,7 @@ namespace System.Management.Automation
         /// <returns>true if supported,false otherwise.</returns>
         internal bool AreSnapInsSupported()
         {
-            RunspaceConfigForSingleShell runspace = this._helpSystem.ExecutionContext.RunspaceConfiguration as RunspaceConfigForSingleShell;
+            RunspaceConfigForSingleShell runspace = _helpSystem.ExecutionContext.RunspaceConfiguration as RunspaceConfigForSingleShell;
 
             return (null == runspace ? false : true);
         }
@@ -268,15 +269,15 @@ namespace System.Management.Automation
         internal Collection<string> GetSearchPaths()
         {
             Collection<String> searchPaths = this.HelpSystem.GetSearchPaths();
-            
+
             Diagnostics.Assert(searchPaths != null,
                 "HelpSystem returned an null search path");
-            
+
             searchPaths.Add(GetDefaultShellSearchPath());
 
             return searchPaths;
         }
-        
+
         #endregion
     }
 }

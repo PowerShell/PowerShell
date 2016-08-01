@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using System.Diagnostics;
@@ -13,11 +14,11 @@ namespace System.Management.Automation
     /// </summary>
     internal sealed class NativeCommand : InternalCommand
     {
-        private NativeCommandProcessor myCommandProcessor;
+        private NativeCommandProcessor _myCommandProcessor;
         internal NativeCommandProcessor MyCommandProcessor
         {
-            get { return myCommandProcessor; }
-            set { myCommandProcessor = value; }
+            get { return _myCommandProcessor; }
+            set { _myCommandProcessor = value; }
         }
 
         /// <summary>
@@ -27,8 +28,8 @@ namespace System.Management.Automation
         {
             try
             {
-                if (myCommandProcessor != null)
-                    myCommandProcessor.StopProcessing();
+                if (_myCommandProcessor != null)
+                    _myCommandProcessor.StopProcessing();
             }
             catch (Exception e)
             {

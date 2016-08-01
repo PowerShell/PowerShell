@@ -11,7 +11,7 @@ namespace System.Management.Automation
     /// default providers
     /// </summary>
     ///
-    internal static class DriveNames 
+    internal static class DriveNames
     {
         /// <summary>
         /// The default VariableProvider drive name
@@ -32,6 +32,5 @@ namespace System.Management.Automation
         /// The default FunctionProvider drive name
         /// </summary>
         internal const string FunctionDrive = "Function";
-
     }
 }

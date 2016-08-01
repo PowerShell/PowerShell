@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
@@ -11,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command to clear the value of a property of an item at a specified path
     /// </summary>
-    [Cmdlet (VerbsCommon.Clear, "ItemProperty", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
+    [Cmdlet(VerbsCommon.Clear, "ItemProperty", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
         HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113284")]
     public class ClearItemPropertyCommand : PassThroughItemPropertyCommandBase
     {
@@ -21,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the path parameter to the command
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
-                   Mandatory = true, ValueFromPipeline=true, ValueFromPipelineByPropertyName = true)]
+                   Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
             get
@@ -59,17 +60,17 @@ namespace Microsoft.PowerShell.Commands
         /// The properties to clear from the item
         /// </summary>
         ///
-        [Parameter(Position=1, Mandatory=true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string Name
         {
             get
             {
-                return property;
+                return _property;
             } // get
 
             set
             {
-                property = value;
+                _property = value;
             }
         } // Name
 
@@ -91,16 +92,15 @@ namespace Microsoft.PowerShell.Commands
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             Collection<string> propertyCollection = new Collection<string>();
-            propertyCollection.Add(property);
+            propertyCollection.Add(_property);
 
             if (Path != null && Path.Length > 0)
             {
-
                 // Go ahead and let any exception terminate the pipeline.
 
                 return InvokeProvider.Property.ClearPropertyDynamicParameters(
-                    Path[0], 
-                    propertyCollection, 
+                    Path[0],
+                    propertyCollection,
                     context);
             }
             return InvokeProvider.Property.ClearPropertyDynamicParameters(
@@ -112,11 +112,11 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameters
 
         #region parameter data
-        
+
         /// <summary>
         /// The properties to be cleared.
         /// </summary>
-        private string property;
+        private string _property;
 
         #endregion parameter data
 
@@ -125,21 +125,21 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Clears the properties of an item at the specified path
         /// </summary>
-        protected override void ProcessRecord ()
+        protected override void ProcessRecord()
         {
             CmdletProviderContext currentContext = CmdletProviderContext;
             currentContext.PassThru = PassThru;
 
             Collection<string> propertyCollection = new Collection<string>();
-            propertyCollection.Add(property);
+            propertyCollection.Add(_property);
 
             foreach (string path in Path)
             {
                 try
                 {
                     InvokeProvider.Property.Clear(
-                        path, 
-                        propertyCollection, 
+                        path,
+                        propertyCollection,
                         currentContext);
                 }
                 catch (PSNotSupportedException notSupported)
@@ -176,5 +176,4 @@ namespace Microsoft.PowerShell.Commands
 
 
     } // ClearItemPropertyCommand
-
 } // namespace Microsoft.PowerShell.Commands

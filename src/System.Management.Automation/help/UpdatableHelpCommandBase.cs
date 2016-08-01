@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Linq;
 using System.Management.Automation;
@@ -31,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         internal bool _stopping;
 
         internal int activityId;
-        private Dictionary<string, UpdatableHelpExceptionContext> exceptions;
+        private Dictionary<string, UpdatableHelpExceptionContext> _exceptions;
 
         #region Parameters
 
@@ -49,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
                 if (_language != null)
                 {
                     result = new CultureInfo[_language.Length];
-                    for(int index = 0; index < _language.Length; index++)
+                    for (int index = 0; index < _language.Length; index++)
                     {
                         result[index] = new CultureInfo(_language[index]);
                     }
@@ -60,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null) return;
                 _language = new string[value.Length];
-                for(int index = 0; index < value.Length; index++)
+                for (int index = 0; index < value.Length; index++)
                 {
                     _language[index] = value[index].Name;
                 }
@@ -143,7 +144,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Constructor
 
-        private static Dictionary<string, string> metadataCache;
+        private static Dictionary<string, string> s_metadataCache;
 
         /// <summary>
         /// Static constructor
@@ -154,17 +155,17 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         static UpdatableHelpCommandBase()
         {
-            metadataCache = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            s_metadataCache = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             // TODO: assign real TechNet addresses
 
-            metadataCache.Add("Microsoft.PowerShell.Diagnostics", "http://go.microsoft.com/fwlink/?linkid=390783");
-            metadataCache.Add("Microsoft.PowerShell.Core", "http://go.microsoft.com/fwlink/?linkid=390782");
-            metadataCache.Add("Microsoft.PowerShell.Utility", "http://go.microsoft.com/fwlink/?linkid=390787");
-            metadataCache.Add("Microsoft.PowerShell.Host", "http://go.microsoft.com/fwlink/?linkid=390784");
-            metadataCache.Add("Microsoft.PowerShell.Management", " http://go.microsoft.com/fwlink/?linkid=390785");
-            metadataCache.Add("Microsoft.PowerShell.Security", " http://go.microsoft.com/fwlink/?linkid=390786");
-            metadataCache.Add("Microsoft.WSMan.Management", "http://go.microsoft.com/fwlink/?linkid=390788");
+            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "http://go.microsoft.com/fwlink/?linkid=390783");
+            s_metadataCache.Add("Microsoft.PowerShell.Core", "http://go.microsoft.com/fwlink/?linkid=390782");
+            s_metadataCache.Add("Microsoft.PowerShell.Utility", "http://go.microsoft.com/fwlink/?linkid=390787");
+            s_metadataCache.Add("Microsoft.PowerShell.Host", "http://go.microsoft.com/fwlink/?linkid=390784");
+            s_metadataCache.Add("Microsoft.PowerShell.Management", " http://go.microsoft.com/fwlink/?linkid=390785");
+            s_metadataCache.Add("Microsoft.PowerShell.Security", " http://go.microsoft.com/fwlink/?linkid=390786");
+            s_metadataCache.Add("Microsoft.WSMan.Management", "http://go.microsoft.com/fwlink/?linkid=390788");
         }
 
         /// <summary>
@@ -175,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>true if system module, false if not</returns>
         internal static bool IsSystemModule(string module)
         {
-            return metadataCache.ContainsKey(module);
+            return s_metadataCache.ContainsKey(module);
         }
 
         /// <summary>
@@ -186,7 +187,7 @@ namespace Microsoft.PowerShell.Commands
         {
             _commandType = commandType;
             _helpSystem = new UpdatableHelpSystem(this, _useDefaultCredentials);
-            exceptions = new Dictionary<string, UpdatableHelpExceptionContext>();
+            _exceptions = new Dictionary<string, UpdatableHelpExceptionContext>();
             _helpSystem.OnProgressChanged += new EventHandler<UpdatableHelpProgressEventArgs>(HandleProgressChanged);
 
             Random rand = new Random();
@@ -208,7 +209,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!helpModules.ContainsKey(keyTuple))
                 {
                     helpModules.Add(keyTuple, new UpdatableHelpModuleInfo(module.Name, module.Guid,
-                        Utils.GetApplicationBase(context.ShellID), metadataCache[module.Name]));
+                        Utils.GetApplicationBase(context.ShellID), s_metadataCache[module.Name]));
                 }
 
                 return;
@@ -282,8 +283,8 @@ namespace Microsoft.PowerShell.Commands
             // Match wildcards
             WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
             IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(new string[1] { moduleNamePattern }, wildcardOptions);
-            
-            foreach (KeyValuePair<string, string> name in metadataCache)
+
+            foreach (KeyValuePair<string, string> name in s_metadataCache)
             {
                 if (SessionStateUtilities.MatchesAnyWildcardPattern(name.Key, patternList, true))
                 {
@@ -304,7 +305,7 @@ namespace Microsoft.PowerShell.Commands
                                         WriteDebug(StringUtil.Format("Found engine module: {0}, {1}.", module.Name, module.Guid));
 
                                         helpModules.Add(keyTuple, new UpdatableHelpModuleInfo(module.Name,
-                                            module.Guid, Utils.GetApplicationBase(context.ShellID), metadataCache[module.Name]));
+                                            module.Guid, Utils.GetApplicationBase(context.ShellID), s_metadataCache[module.Name]));
                                     }
                                 }
                             }
@@ -341,13 +342,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            foreach (UpdatableHelpExceptionContext exception in exceptions.Values)
+            foreach (UpdatableHelpExceptionContext exception in _exceptions.Values)
             {
                 UpdatableHelpExceptionContext e = exception;
 
                 if ((exception.Exception.FullyQualifiedErrorId == "HelpCultureNotSupported") &&
                     ((exception.Cultures != null && exception.Cultures.Count > 1) ||
-                    (exception.Modules != null && exception.Modules.Count > 1) ))
+                    (exception.Modules != null && exception.Modules.Count > 1)))
                 {
                     // Win8: 744749 Rewriting the error message only in the case where either
                     // multiple cultures or multiple modules are involved.
@@ -366,8 +367,8 @@ namespace Microsoft.PowerShell.Commands
                 context.Severity = "Error";
 
                 PSEtwLog.LogOperationalError(PSEventId.Pipeline_Detail, PSOpcode.Exception, PSTask.ExecutePipeline,
-                    context, e.GetExceptionMessage(_commandType));                 
-            }            
+                    context, e.GetExceptionMessage(_commandType));
+            }
         }
 
         /// <summary>
@@ -479,7 +480,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (this is UpdateHelpCommand && !Directory.Exists(module.ModuleBase))
             {
-                ProcessException(module.ModuleName, null, 
+                ProcessException(module.ModuleName, null,
                     new UpdatableHelpSystemException("ModuleBaseMustExist",
                         StringUtil.Format(HelpDisplayStrings.ModuleBaseMustExist),
                         ErrorCategory.InvalidOperation, null, null));
@@ -605,9 +606,9 @@ namespace Microsoft.PowerShell.Commands
         {
             Dictionary<Tuple<string, Version>, UpdatableHelpModuleInfo> modules = GetModuleInfo(Context, pattern, fullyQualifiedName, noErrors);
 
-            if (modules.Count == 0 && exceptions.Count == 0 && !noErrors)
+            if (modules.Count == 0 && _exceptions.Count == 0 && !noErrors)
             {
-                var errorMessage = fullyQualifiedName != null ? StringUtil.Format(HelpDisplayStrings.ModuleNotFoundWithFullyQualifiedName, fullyQualifiedName) 
+                var errorMessage = fullyQualifiedName != null ? StringUtil.Format(HelpDisplayStrings.ModuleNotFoundWithFullyQualifiedName, fullyQualifiedName)
                                                               : StringUtil.Format(HelpDisplayStrings.CannotMatchModulePattern, pattern);
 
                 ErrorRecord errorRecord = new ErrorRecord(new Exception(errorMessage),
@@ -647,7 +648,7 @@ namespace Microsoft.PowerShell.Commands
                     StringUtil.Format(HelpDisplayStrings.HelpCultureNotSupported,
                     culture.Name, newHelpInfo.GetSupportedCultures()), ErrorCategory.InvalidOperation, null, null);
             }
-           
+
             // Version check
             if (!force && currentHelpInfo != null && !currentHelpInfo.IsNewerVersion(newHelpInfo, culture))
             {
@@ -669,7 +670,7 @@ namespace Microsoft.PowerShell.Commands
         internal bool CheckOncePerDayPerModule(string moduleName, string path, string filename, DateTime time, bool force)
         {
             // Update if -Force is specified
-            if(force)
+            if (force)
             {
                 return true;
             }
@@ -720,7 +721,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!Directory.Exists(newPath))
                 {
                     throw new UpdatableHelpSystemException("PathMustBeValidContainers",
-                        StringUtil.Format(HelpDisplayStrings.PathMustBeValidContainers, path), ErrorCategory.InvalidArgument, 
+                        StringUtil.Format(HelpDisplayStrings.PathMustBeValidContainers, path), ErrorCategory.InvalidArgument,
                         null, new ItemNotFoundException());
                 }
 
@@ -839,7 +840,7 @@ namespace Microsoft.PowerShell.Commands
                 except = (UpdatableHelpSystemException)e;
             }
 #if !CORECLR
-            else if(e is WebException)
+            else if (e is WebException)
             {
                 except = new UpdatableHelpSystemException("UnableToConnect",
                     StringUtil.Format(HelpDisplayStrings.UnableToConnect), ErrorCategory.InvalidOperation, null, e);
@@ -856,16 +857,16 @@ namespace Microsoft.PowerShell.Commands
                     e.Message, ErrorCategory.InvalidOperation, null, e);
             }
 
-            if (!exceptions.ContainsKey(except.FullyQualifiedErrorId))
+            if (!_exceptions.ContainsKey(except.FullyQualifiedErrorId))
             {
-                exceptions.Add(except.FullyQualifiedErrorId, new UpdatableHelpExceptionContext(except));
+                _exceptions.Add(except.FullyQualifiedErrorId, new UpdatableHelpExceptionContext(except));
             }
 
-            exceptions[except.FullyQualifiedErrorId].Modules.Add(moduleName);
+            _exceptions[except.FullyQualifiedErrorId].Modules.Add(moduleName);
 
             if (culture != null)
             {
-                exceptions[except.FullyQualifiedErrorId].Cultures.Add(culture);
+                _exceptions[except.FullyQualifiedErrorId].Cultures.Add(culture);
             }
         }
 

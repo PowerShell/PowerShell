@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Management.Automation;
@@ -17,9 +18,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// constructor to set the inner command
         /// </summary>
-        public FormatListCommand ()
+        public FormatListCommand()
         {
-            this.implementation = new InnerFormatShapeCommand (FormatShape.List);
+            this.implementation = new InnerFormatShapeCommand(FormatShape.List);
         }
     }
 }

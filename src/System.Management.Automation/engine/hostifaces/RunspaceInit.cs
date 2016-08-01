@@ -30,10 +30,9 @@ namespace System.Management.Automation.Runspaces
     /// Runspace class for local runspace
     /// </summary>
 
-    internal sealed partial 
+    internal sealed partial
     class LocalRunspace : RunspaceBase
     {
-
         /// <summary>
         /// initialize default values of preference vars
         /// </summary>

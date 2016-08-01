@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     {
         #region Getting tracker for a given cmdlet invocation
 
-        private static readonly ConditionalWeakTable<InvocationInfo, TerminatingErrorTracker> InvocationToTracker =
+        private static readonly ConditionalWeakTable<InvocationInfo, TerminatingErrorTracker> s_invocationToTracker =
             new ConditionalWeakTable<InvocationInfo, TerminatingErrorTracker>();
 
         private static int GetNumberOfSessions(InvocationInfo invocationInfo)
@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             object cimSessionArgument;
             if (invocationInfo.BoundParameters.TryGetValue("CimSession", out cimSessionArgument))
             {
-                IList cimSessionArgumentAsList = (IList) cimSessionArgument;
+                IList cimSessionArgumentAsList = (IList)cimSessionArgument;
                 return cimSessionArgumentAsList.Count;
             }
             // else - either CimSession=localhost OR CimSession is based on CimInstance->CimSession affinity
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                         .Distinct()
                         .Count();
                     maxNumberOfSessionsIndicatedByCimInstanceArguments = Math.Max(
-                        maxNumberOfSessionsIndicatedByCimInstanceArguments, 
+                        maxNumberOfSessionsIndicatedByCimInstanceArguments,
                         numberOfSessionsAssociatedWithArgument);
                 }
             }
@@ -68,17 +68,17 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal static TerminatingErrorTracker GetTracker(InvocationInfo invocationInfo, bool isStaticCmdlet)
         {
-            var tracker = InvocationToTracker.GetValue(
+            var tracker = s_invocationToTracker.GetValue(
                 invocationInfo,
                 _ => new TerminatingErrorTracker(GetNumberOfSessions(invocationInfo)));
 
             return tracker;
         }
-        
+
         internal static TerminatingErrorTracker GetTracker(InvocationInfo invocationInfo)
         {
             TerminatingErrorTracker tracker;
-            bool foundTracker = InvocationToTracker.TryGetValue(invocationInfo, out tracker);
+            bool foundTracker = s_invocationToTracker.TryGetValue(invocationInfo, out tracker);
             Dbg.Assert(foundTracker, "The other overload of GetTracker should always be called first");
             return tracker;
         }
@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private TerminatingErrorTracker(int numberOfSessions)
         {
-            this._numberOfSessions = numberOfSessions;
+            _numberOfSessions = numberOfSessions;
         }
 
         #region Tracking session's "connectivity" status
@@ -101,13 +101,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal void MarkSessionAsConnected(CimSession connectedSession)
         {
-            this._sessionToIsConnected.TryAdd(connectedSession, true);
+            _sessionToIsConnected.TryAdd(connectedSession, true);
         }
 
         internal bool DidSessionAlreadyPassedConnectivityTest(CimSession session)
         {
             bool alreadyPassedConnectivityTest = false;
-            if (this._sessionToIsConnected.TryGetValue(session, out alreadyPassedConnectivityTest))
+            if (_sessionToIsConnected.TryGetValue(session, out alreadyPassedConnectivityTest))
             {
                 return alreadyPassedConnectivityTest;
             }
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         internal Exception GetExceptionIfBrokenSession(
-            CimSession potentiallyBrokenSession, 
+            CimSession potentiallyBrokenSession,
             bool skipTestConnection,
             out bool sessionWasAlreadyTerminated)
         {
@@ -167,11 +167,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal void MarkSessionAsTerminated(CimSession terminatedSession, out bool sessionWasAlreadyTerminated)
         {
             bool closureSafeSessionWasAlreadyTerminated = false;
-            this._sessionToIsTerminated.AddOrUpdate(
+            _sessionToIsTerminated.AddOrUpdate(
                 key: terminatedSession,
                 addValue: true,
                 updateValueFactory:
-                    delegate(CimSession key, bool isTerminatedValueInDictionary)
+                    delegate (CimSession key, bool isTerminatedValueInDictionary)
                         {
                             closureSafeSessionWasAlreadyTerminated = isTerminatedValueInDictionary;
                             return true;
@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal bool IsSessionTerminated(CimSession session)
         {
-            bool isTerminated = this._sessionToIsTerminated.GetOrAdd(session, false);
+            bool isTerminated = _sessionToIsTerminated.GetOrAdd(session, false);
             return isTerminated;
         }
 
@@ -196,8 +196,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             object lockObject = new object();
             Func<Cmdlet, bool> action = delegate (Cmdlet cmdlet)
                                                 {
-                                                    this._numberOfReportedSessionTerminatingErrors++;
-                                                    if (this._numberOfReportedSessionTerminatingErrors >= this._numberOfSessions)
+                                                    _numberOfReportedSessionTerminatingErrors++;
+                                                    if (_numberOfReportedSessionTerminatingErrors >= _numberOfSessions)
                                                     {
                                                         cmdlet.ThrowTerminatingError(errorRecord);
                                                     }
@@ -210,11 +210,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                                                 };
 
             return new CmdletMethodInvoker<bool>
-                       {
-                           Action = action,
-                           Finished = manualResetEventSlim, // not really needed here, but required by CmdletMethodInvoker
-                           SyncObject = lockObject, // not really needed here, but required by CmdletMethodInvoker
-                       };
+            {
+                Action = action,
+                Finished = manualResetEventSlim, // not really needed here, but required by CmdletMethodInvoker
+                SyncObject = lockObject, // not really needed here, but required by CmdletMethodInvoker
+            };
         }
 
         #endregion

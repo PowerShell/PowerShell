@@ -178,14 +178,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return typename;
+                return _typename;
             }
             set
             {
-                typename = value;
+                _typename = value;
             }
         }
-        private string typename;
+        private string _typename;
 
         /// <summary>
         /// The source code of this method / member
@@ -248,14 +248,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return usingNamespace;
+                return _usingNamespace;
             }
             set
             {
-                usingNamespace = value;
+                _usingNamespace = value;
             }
         }
-        private string[] usingNamespace = Utils.EmptyArray<string>();
+        private string[] _usingNamespace = Utils.EmptyArray<string>();
 
 
 
@@ -489,7 +489,7 @@ namespace Microsoft.PowerShell.Commands
         }
         internal bool referencedAssembliesSpecified = false;
         internal string[] referencedAssemblies = Utils.EmptyArray<string>();
-        
+
         /// <summary>
         /// The path to the output assembly
         /// </summary>
@@ -698,7 +698,6 @@ namespace Microsoft.PowerShell.Commands
                         "    {{\n" +
                         "    {1}\n" +
                         "    }}\n";
-
             }
             return null;
         }
@@ -939,7 +938,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
 #if CORECLR
-  
+
     /// <summary>
     /// Adds a new type to the Application Domain. 
     /// This version is based on CodeAnalysis (Roslyn).
@@ -948,8 +947,8 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(Type))]
     public sealed class AddTypeCommand : AddTypeCommandBase
     {
-        private static Dictionary<string, int> sourceCache = new Dictionary<string, int>();
-            
+        private static Dictionary<string, int> s_sourceCache = new Dictionary<string, int>();
+
         /// <summary>
         /// Generate the type(s)
         /// </summary>
@@ -1025,9 +1024,9 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (var type in assembly.GetTypes())
             {
-                if (sourceCache.ContainsKey(type.FullName))
+                if (s_sourceCache.ContainsKey(type.FullName))
                 {
-                    if (sourceCache[type.FullName] != sourceCode.GetHashCode())
+                    if (s_sourceCache[type.FullName] != sourceCode.GetHashCode())
                     {
                         ErrorRecord errorRecord = new ErrorRecord(
                                 new Exception(
@@ -1042,12 +1041,12 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    sourceCache[type.FullName] = sourceCode.GetHashCode();
+                    s_sourceCache[type.FullName] = sourceCode.GetHashCode();
                 }
             }
         }
 
-        private static string FrameworkFolder = System.IO.Path.GetDirectoryName(typeof(object).GetTypeInfo().Assembly.Location);
+        private static string s_frameworkFolder = System.IO.Path.GetDirectoryName(typeof(object).GetTypeInfo().Assembly.Location);
 
         // there are two different assemblies: framework contract and framework implementation.
         // Version 1.1.1 of Microsoft.CodeAnalysis doesn't provide a good way to handle contract separetely from implementation.
@@ -1056,40 +1055,40 @@ namespace Microsoft.PowerShell.Commands
         // (i.e. System.Management.Automation), so we need the contract one.
         // 2) We have to provide implementation assembly explicitly, Roslyn doesn't have a way to figure out implementation by itself.
         // So we are adding both.
-        private static PortableExecutableReference ObjectImplementationAssemblyReference =
+        private static PortableExecutableReference s_objectImplementationAssemblyReference =
             MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location);
 
-         private static PortableExecutableReference MscorlibAssemblyReference =
-            MetadataReference.CreateFromFile(Assembly.Load(new AssemblyName("mscorlib")).Location);
+        private static PortableExecutableReference s_mscorlibAssemblyReference =
+           MetadataReference.CreateFromFile(Assembly.Load(new AssemblyName("mscorlib")).Location);
 
         // This assembly should be System.Runtime.dll
-        private static PortableExecutableReference SystemRuntimeAssemblyReference =
+        private static PortableExecutableReference s_systemRuntimeAssemblyReference =
             MetadataReference.CreateFromFile(ClrFacade.GetAssemblies(typeof(object).FullName).First().Location);
 
         // SecureString is defined in a separate assembly.
         // This fact is an implementation detail and should not require the user to specify one more assembly, 
         // if they want to use SecureString in Add-Type -TypeDefinition.
         // So this assembly should be in the default assemblies list to provide the best experience.
-        private static PortableExecutableReference SecureStringAssemblyReference =
+        private static PortableExecutableReference s_secureStringAssemblyReference =
             MetadataReference.CreateFromFile(typeof(System.Security.SecureString).GetTypeInfo().Assembly.Location);
 
 
         // These assemlbies are always automatically added to ReferencedAssemblies.
-        private static PortableExecutableReference[] autoReferencedAssemblies = new PortableExecutableReference[]
+        private static PortableExecutableReference[] s_autoReferencedAssemblies = new PortableExecutableReference[]
         {
-            MscorlibAssemblyReference,
-            SystemRuntimeAssemblyReference,
-            SecureStringAssemblyReference,
-            ObjectImplementationAssemblyReference
+            s_mscorlibAssemblyReference,
+            s_systemRuntimeAssemblyReference,
+            s_secureStringAssemblyReference,
+            s_objectImplementationAssemblyReference
         };
 
         // These assemlbies are used, when ReferencedAssemblies parameter is not specified.
-        private static PortableExecutableReference[] defaultAssemblies = new PortableExecutableReference[]
+        private static PortableExecutableReference[] s_defaultAssemblies = new PortableExecutableReference[]
         {
-            MscorlibAssemblyReference,
-            SystemRuntimeAssemblyReference,
-            SecureStringAssemblyReference,
-            ObjectImplementationAssemblyReference,
+            s_mscorlibAssemblyReference,
+            s_systemRuntimeAssemblyReference,
+            s_secureStringAssemblyReference,
+            s_objectImplementationAssemblyReference,
             MetadataReference.CreateFromFile(typeof(PSObject).GetTypeInfo().Assembly.Location)
         };
 
@@ -1126,7 +1125,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // lookup in framework folders and the current folder
-            string frameworkPossiblePath = System.IO.Path.Combine(FrameworkFolder, referencedAssembly);
+            string frameworkPossiblePath = System.IO.Path.Combine(s_frameworkFolder, referencedAssembly);
             if (File.Exists(frameworkPossiblePath))
             {
                 return frameworkPossiblePath;
@@ -1227,11 +1226,11 @@ namespace Microsoft.PowerShell.Commands
             }
 
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source, parseOptions);
-            var references = defaultAssemblies;
+            var references = s_defaultAssemblies;
             if (referencedAssembliesSpecified)
             {
                 var tempReferences = ReferencedAssemblies.Select(a => MetadataReference.CreateFromFile(ResolveReferencedAssembly(a))).ToList();
-                tempReferences.AddRange(autoReferencedAssemblies);
+                tempReferences.AddRange(s_autoReferencedAssemblies);
 
                 references = tempReferences.ToArray();
             }
@@ -1447,7 +1446,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "FromMember")]
         [Parameter(ParameterSetName = "FromPath")]
         [Parameter(ParameterSetName = "FromLiteralPath")]
-        [Alias("CP")]            
+        [Alias("CP")]
         public CompilerParameters CompilerParameters
         {
             get
@@ -1469,7 +1468,7 @@ namespace Microsoft.PowerShell.Commands
             base.EndProcessing();
 
             // Generate an error if they've specified a language AND a CodeDomProvider
-            if(providerSpecified && languageSpecified)
+            if (providerSpecified && languageSpecified)
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new Exception(
@@ -1552,11 +1551,11 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
             }
-            
+
             List<Type> generatedTypes = new List<Type>();
 
             // We want to compile from a source representation
-            if(! loadAssembly)
+            if (!loadAssembly)
             {
                 CompileAssemblyFromSource(generatedTypes);
             }
@@ -1567,7 +1566,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Pass the type along if they supplied the PassThru parameter
-            if(PassThru)
+            if (PassThru)
             {
                 WriteObject(generatedTypes, true);
             }
@@ -1584,12 +1583,12 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Load the source if they want to load from a file
-            if(String.Equals(ParameterSetName, "FromPath", StringComparison.OrdinalIgnoreCase) ||
+            if (String.Equals(ParameterSetName, "FromPath", StringComparison.OrdinalIgnoreCase) ||
                 String.Equals(ParameterSetName, "FromLiteralPath", StringComparison.OrdinalIgnoreCase)
                 )
             {
                 sourceCode = "";
-                foreach(string file in paths)
+                foreach (string file in paths)
                 {
                     sourceCode += System.IO.File.ReadAllText(file) + "\n";
                 }
@@ -1659,14 +1658,13 @@ namespace Microsoft.PowerShell.Commands
                     {
                         compilerParameters = new CompilerParameters();
 
-			            // Turn off debug information and turn on compiler optimizations by default.
+                        // Turn off debug information and turn on compiler optimizations by default.
                         compilerParameters.IncludeDebugInformation = false;
-                        if (Language == Language.CSharp || Language == Language.VisualBasic || Language==Language.CSharpVersion2 || Language==Language.CSharpVersion3)
+                        if (Language == Language.CSharp || Language == Language.VisualBasic || Language == Language.CSharpVersion2 || Language == Language.CSharpVersion3)
                         {
-
                             compilerParameters.CompilerOptions = "/optimize+";
                         }
-            
+
                         compilerParameters.ReferencedAssemblies.AddRange(defaultAssemblies.ToArray());
 
                         foreach (string referencedAssembly in referencedAssemblies)
@@ -1709,7 +1707,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        compilerParameters.TreatWarningsAsErrors = !((bool) ignoreWarnings);
+                        compilerParameters.TreatWarningsAsErrors = !((bool)ignoreWarnings);
 
                         if (String.IsNullOrEmpty(outputAssembly))
                         {
@@ -1753,8 +1751,8 @@ namespace Microsoft.PowerShell.Commands
                         {
                             compilerResults = provider.CompileAssemblyFromFile(compilerParameters, paths);
                         }
-                            // Otherwise, this is code generated. Use the
-                            // source code
+                        // Otherwise, this is code generated. Use the
+                        // source code
                         else
                         {
                             compilerResults = provider.CompileAssemblyFromSource(compilerParameters, sourceCode);
@@ -1794,7 +1792,7 @@ namespace Microsoft.PowerShell.Commands
                         HandleCompilerErrors(GetErrors(compilerResults.Errors));
                         return;
                     }
-                    
+
                     // Only return / load the types if they aren't
                     // storing it to disk. PassThru overrides this.
                     if (PassThru || String.IsNullOrEmpty(outputAssembly))
@@ -1876,7 +1874,7 @@ namespace Microsoft.PowerShell.Commands
 
                         // Suppress the "defines no public members" for
                         // cmdlets as they are so common
-                        if (typeof (System.Management.Automation.Cmdlet).IsAssignableFrom(generatedType))
+                        if (typeof(System.Management.Automation.Cmdlet).IsAssignableFrom(generatedType))
                         {
                             foundPublicMember = true;
                             continue;
@@ -1934,7 +1932,7 @@ namespace Microsoft.PowerShell.Commands
             return result.ToArray();
         }
 
-        [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId="System.Reflection.Assembly.LoadFrom")]
+        [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFrom")]
         private void LoadAssemblyFromPathOrName(List<Type> generatedTypes)
         {
             // Load the source if they want to load from a file
@@ -1942,13 +1940,13 @@ namespace Microsoft.PowerShell.Commands
                 String.Equals(ParameterSetName, "FromLiteralPath", StringComparison.OrdinalIgnoreCase)
                 )
             {
-                foreach(string path in paths)
+                foreach (string path in paths)
                 {
                     generatedTypes.AddRange(ClrFacade.LoadFrom(path).GetTypes());
                 }
             }
             // Load the assembly by name
-            else if(String.Equals(ParameterSetName, "FromAssemblyName", StringComparison.OrdinalIgnoreCase))
+            else if (String.Equals(ParameterSetName, "FromAssemblyName", StringComparison.OrdinalIgnoreCase))
             {
                 bool caughtError = false;
 
@@ -2005,26 +2003,26 @@ namespace Microsoft.PowerShell.Commands
             // to use it. So here, we do it all through reflection.
 
             // Go through the constructors
-            foreach(ConstructorInfo constructor in typeof(CSharpCodeProvider).GetConstructors())
+            foreach (ConstructorInfo constructor in typeof(CSharpCodeProvider).GetConstructors())
             {
                 // Look for the one that takes a single parameter
                 ParameterInfo[] constructorParameters = constructor.GetParameters();
-                if(constructorParameters.Length == 1)
+                if (constructorParameters.Length == 1)
                 {
                     // Ensure this is the one that takes a dictionary
-                    Dictionary<string,string> providerParameters = new Dictionary<string,string>();
+                    Dictionary<string, string> providerParameters = new Dictionary<string, string>();
                     providerParameters["CompilerVersion"] = "v3.5";
 
-                    if(constructorParameters[0].ParameterType.IsAssignableFrom(providerParameters.GetType()))
+                    if (constructorParameters[0].ParameterType.IsAssignableFrom(providerParameters.GetType()))
                     {
                         // If so, create the compiler and break
-                        csc = (CodeDomProvider) constructor.Invoke(new object[] { providerParameters });
+                        csc = (CodeDomProvider)constructor.Invoke(new object[] { providerParameters });
                         break;
                     }
                 }
             }
 
-            if(csc == null)
+            if (csc == null)
             {
                 throw new NotSupportedException(
                     string.Format(CultureInfo.InvariantCulture, AddTypeStrings.SpecialNetVersionRequired, Language.CSharpVersion3.ToString(), "3.5"));
@@ -2068,7 +2066,7 @@ namespace Microsoft.PowerShell.Commands
             // So we'll try from the short name.
             catch (System.IO.FileNotFoundException) { }
 
-            if(loadedAssembly != null)
+            if (loadedAssembly != null)
                 return loadedAssembly;
 
             // Next, try an exact match
@@ -2087,12 +2085,12 @@ namespace Microsoft.PowerShell.Commands
             string matchedStrongName = null;
 
             WildcardPattern pattern = WildcardPattern.Get(assemblyName, WildcardOptions.IgnoreCase);
-            foreach(string strongNameShortcut in StrongNames.Value.Keys)
+            foreach (string strongNameShortcut in StrongNames.Value.Keys)
             {
                 if (pattern.IsMatch(strongNameShortcut))
                 {
                     // If we've already found a matching type, throw an error.
-                    if(matchedStrongName != null)
+                    if (matchedStrongName != null)
                     {
                         ErrorRecord errorRecord = new ErrorRecord(
                             new Exception(
@@ -2113,7 +2111,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Return NULL if we couldn't find one. The caller generates an error here.
-            if(matchedStrongName == null)
+            if (matchedStrongName == null)
                 return null;
 
             // Otherwise, load the assembly.
@@ -2885,6 +2883,5 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 #endif // if !CORECLR
-
 }
 

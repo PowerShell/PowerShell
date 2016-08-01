@@ -14,26 +14,31 @@ using System.Collections.Generic;
 using System.Dynamic;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
 
-namespace System.Management.Automation.ComInterop {
-
-    internal class ComTypeClassDesc : ComTypeDesc, IDynamicMetaObjectProvider {
+namespace System.Management.Automation.ComInterop
+{
+    internal class ComTypeClassDesc : ComTypeDesc, IDynamicMetaObjectProvider
+    {
         private LinkedList<string> _itfs; // implemented interfaces
         private LinkedList<string> _sourceItfs; // source interfaces supported by this coclass
         private Type _typeObj;
-        
-        public object CreateInstance() {
-            if (_typeObj == null) {
+
+        public object CreateInstance()
+        {
+            if (_typeObj == null)
+            {
                 _typeObj = System.Type.GetTypeFromCLSID(Guid);
             }
             return System.Activator.CreateInstance(System.Type.GetTypeFromCLSID(Guid));
         }
 
         internal ComTypeClassDesc(ComTypes.ITypeInfo typeInfo, ComTypeLibDesc typeLibDesc) :
-            base(typeInfo, ComType.Class, typeLibDesc) {
+            base(typeInfo, ComType.Class, typeLibDesc)
+        {
             ComTypes.TYPEATTR typeAttr = ComRuntimeHelpers.GetTypeAttrForTypeInfo(typeInfo);
             Guid = typeAttr.guid;
 
-            for (int i = 0; i < typeAttr.cImplTypes; i++) {
+            for (int i = 0; i < typeAttr.cImplTypes; i++)
+            {
                 int hRefType;
                 typeInfo.GetRefTypeOfImplType(i, out hRefType);
                 ComTypes.ITypeInfo currentTypeInfo;
@@ -47,23 +52,30 @@ namespace System.Management.Automation.ComInterop {
             }
         }
 
-        private void AddInterface(ComTypes.ITypeInfo itfTypeInfo, bool isSourceItf) {
+        private void AddInterface(ComTypes.ITypeInfo itfTypeInfo, bool isSourceItf)
+        {
             string itfName = ComRuntimeHelpers.GetNameOfType(itfTypeInfo);
 
-            if (isSourceItf) {
-                if (_sourceItfs == null) {
+            if (isSourceItf)
+            {
+                if (_sourceItfs == null)
+                {
                     _sourceItfs = new LinkedList<string>();
                 }
                 _sourceItfs.AddLast(itfName);
-            } else {
-                if (_itfs == null) {
+            }
+            else
+            {
+                if (_itfs == null)
+                {
                     _itfs = new LinkedList<string>();
                 }
                 _itfs.AddLast(itfName);
             }
         }
 
-        internal bool Implements(string itfName, bool isSourceItf) {
+        internal bool Implements(string itfName, bool isSourceItf)
+        {
             if (isSourceItf)
                 return _sourceItfs.Contains(itfName);
             else
@@ -72,7 +84,8 @@ namespace System.Management.Automation.ComInterop {
 
         #region IDynamicMetaObjectProvider Members
 
-        public DynamicMetaObject GetMetaObject(Expression parameter) {
+        public DynamicMetaObject GetMetaObject(Expression parameter)
+        {
             return new ComClassMetaObject(parameter, this);
         }
 

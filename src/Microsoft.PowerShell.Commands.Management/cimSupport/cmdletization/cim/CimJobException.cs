@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 throw new ArgumentNullException("info");
             }
 
-            this.errorRecord = (ErrorRecord)info.GetValue("errorRecord", typeof (ErrorRecord));
+            _errorRecord = (ErrorRecord)info.GetValue("errorRecord", typeof(ErrorRecord));
         }
 
         /// <summary>
@@ -79,14 +79,14 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
 
             base.GetObjectData(info, context);
-            info.AddValue("errorRecord", this.errorRecord);
+            info.AddValue("errorRecord", _errorRecord);
         }
 
         #endregion
 
         internal static CimJobException CreateFromCimException(
-            string jobDescription, 
-            CimJobContext jobContext, 
+            string jobDescription,
+            CimJobContext jobContext,
             CimException cimException)
         {
             Dbg.Assert(!string.IsNullOrEmpty(jobDescription), "Caller should verify jobDescription != null");
@@ -100,8 +100,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         internal static CimJobException CreateFromAnyException(
-            string jobDescription, 
-            CimJobContext jobContext, 
+            string jobDescription,
+            CimJobContext jobContext,
             Exception inner)
         {
             Dbg.Assert(!string.IsNullOrEmpty(jobDescription), "Caller should verify jobDescription != null");
@@ -114,13 +114,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 return CreateFromCimException(jobDescription, jobContext, cimException);
             }
 
-            string message = BuildErrorMessage(jobDescription, jobContext, inner.Message); 
+            string message = BuildErrorMessage(jobDescription, jobContext, inner.Message);
             CimJobException cimJobException = new CimJobException(message, inner);
             var containsErrorRecord = inner as IContainsErrorRecord;
             if (containsErrorRecord != null)
             {
                 cimJobException.InitializeErrorRecord(
-                    jobContext, 
+                    jobContext,
                     errorId: "CimJob_" + containsErrorRecord.ErrorRecord.FullyQualifiedErrorId,
                     errorCategory: containsErrorRecord.ErrorRecord.CategoryInfo.Category);
             }
@@ -201,10 +201,10 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private void InitializeErrorRecordCore(CimJobContext jobContext, Exception exception, string errorId, ErrorCategory errorCategory)
         {
             ErrorRecord coreErrorRecord = new ErrorRecord(
-                exception:     exception, 
-                errorId:       errorId, 
-                errorCategory: errorCategory, 
-                targetObject:  jobContext != null ? jobContext.TargetObject : null);
+                exception: exception,
+                errorId: errorId,
+                errorCategory: errorCategory,
+                targetObject: jobContext != null ? jobContext.TargetObject : null);
 
             if (jobContext != null)
             {
@@ -212,40 +212,40 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     jobContext.Session.ComputerName,
                     Guid.Empty);
 
-                this.errorRecord = new System.Management.Automation.Runspaces.RemotingErrorRecord(
+                _errorRecord = new System.Management.Automation.Runspaces.RemotingErrorRecord(
                     coreErrorRecord,
                     originInfo);
 
-                errorRecord.SetInvocationInfo(jobContext.CmdletInvocationInfo);
-                errorRecord.PreserveInvocationInfoOnce = true;
+                _errorRecord.SetInvocationInfo(jobContext.CmdletInvocationInfo);
+                _errorRecord.PreserveInvocationInfoOnce = true;
             }
             else
             {
-                this.errorRecord = coreErrorRecord;
+                _errorRecord = coreErrorRecord;
             }
         }
 
         private void InitializeErrorRecord(CimJobContext jobContext, string errorId, ErrorCategory errorCategory)
         {
             InitializeErrorRecordCore(
-                jobContext:    jobContext,
-                exception:     this,
-                errorId:       errorId,
+                jobContext: jobContext,
+                exception: this,
+                errorId: errorId,
                 errorCategory: errorCategory);
         }
 
         private void InitializeErrorRecord(CimJobContext jobContext, CimException cimException)
         {
             InitializeErrorRecordCore(
-                jobContext:    jobContext,
-                exception:     cimException,
-                errorId:       cimException.MessageId ?? "MiClientApiError_" + cimException.NativeErrorCode,
+                jobContext: jobContext,
+                exception: cimException,
+                errorId: cimException.MessageId ?? "MiClientApiError_" + cimException.NativeErrorCode,
                 errorCategory: ConvertCimExceptionToErrorCategory(cimException));
 
             if (cimException.ErrorData != null)
             {
-                errorRecord.CategoryInfo.TargetName = cimException.ErrorSource;
-                errorRecord.CategoryInfo.TargetType = jobContext != null ? jobContext.CmdletizationClassName : null;
+                _errorRecord.CategoryInfo.TargetName = cimException.ErrorSource;
+                _errorRecord.CategoryInfo.TargetType = jobContext != null ? jobContext.CmdletizationClassName : null;
             }
         }
 
@@ -273,57 +273,57 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 case NativeErrorCode.Ok:
                     return ErrorCategory.NotSpecified;
                 case NativeErrorCode.Failed:
-                    return  ErrorCategory.NotSpecified;;
+                    return ErrorCategory.NotSpecified; ;
                 case NativeErrorCode.AccessDenied:
-                    return  ErrorCategory.PermissionDenied;;
+                    return ErrorCategory.PermissionDenied; ;
                 case NativeErrorCode.InvalidNamespace:
-                    return  ErrorCategory.MetadataError;;
+                    return ErrorCategory.MetadataError; ;
                 case NativeErrorCode.InvalidParameter:
-                    return  ErrorCategory.InvalidArgument;;
+                    return ErrorCategory.InvalidArgument; ;
                 case NativeErrorCode.InvalidClass:
-                    return  ErrorCategory.MetadataError;;
+                    return ErrorCategory.MetadataError; ;
                 case NativeErrorCode.NotFound:
-                    return  ErrorCategory.ObjectNotFound;;
+                    return ErrorCategory.ObjectNotFound; ;
                 case NativeErrorCode.NotSupported:
-                    return  ErrorCategory.NotImplemented;;
+                    return ErrorCategory.NotImplemented; ;
                 case NativeErrorCode.ClassHasChildren:
-                    return  ErrorCategory.MetadataError;;
+                    return ErrorCategory.MetadataError; ;
                 case NativeErrorCode.ClassHasInstances:
-                    return  ErrorCategory.MetadataError;;
+                    return ErrorCategory.MetadataError; ;
                 case NativeErrorCode.InvalidSuperClass:
-                    return  ErrorCategory.MetadataError;;
+                    return ErrorCategory.MetadataError; ;
                 case NativeErrorCode.AlreadyExists:
-                    return  ErrorCategory.ResourceExists;;
+                    return ErrorCategory.ResourceExists; ;
                 case NativeErrorCode.NoSuchProperty:
-                    return  ErrorCategory.MetadataError;;
+                    return ErrorCategory.MetadataError; ;
                 case NativeErrorCode.TypeMismatch:
-                    return  ErrorCategory.InvalidType;;
+                    return ErrorCategory.InvalidType; ;
                 case NativeErrorCode.QueryLanguageNotSupported:
-                    return  ErrorCategory.NotImplemented;;
+                    return ErrorCategory.NotImplemented; ;
                 case NativeErrorCode.InvalidQuery:
-                    return  ErrorCategory.InvalidArgument;;
+                    return ErrorCategory.InvalidArgument; ;
                 case NativeErrorCode.MethodNotAvailable:
-                    return  ErrorCategory.MetadataError;;
+                    return ErrorCategory.MetadataError; ;
                 case NativeErrorCode.MethodNotFound:
-                    return  ErrorCategory.MetadataError;;
+                    return ErrorCategory.MetadataError; ;
                 case NativeErrorCode.NamespaceNotEmpty:
-                    return  ErrorCategory.MetadataError;;
+                    return ErrorCategory.MetadataError; ;
                 case NativeErrorCode.InvalidEnumerationContext:
-                    return  ErrorCategory.MetadataError;;
+                    return ErrorCategory.MetadataError; ;
                 case NativeErrorCode.InvalidOperationTimeout:
-                    return  ErrorCategory.InvalidArgument;;
+                    return ErrorCategory.InvalidArgument; ;
                 case NativeErrorCode.PullHasBeenAbandoned:
-                    return  ErrorCategory.OperationStopped;;
+                    return ErrorCategory.OperationStopped; ;
                 case NativeErrorCode.PullCannotBeAbandoned:
-                    return  ErrorCategory.CloseError;;
+                    return ErrorCategory.CloseError; ;
                 case NativeErrorCode.FilteredEnumerationNotSupported:
-                    return  ErrorCategory.NotImplemented;;
+                    return ErrorCategory.NotImplemented; ;
                 case NativeErrorCode.ContinuationOnErrorNotSupported:
-                    return  ErrorCategory.NotImplemented;;
+                    return ErrorCategory.NotImplemented; ;
                 case NativeErrorCode.ServerLimitsExceeded:
-                    return  ErrorCategory.ResourceBusy;;
+                    return ErrorCategory.ResourceBusy; ;
                 case NativeErrorCode.ServerIsShuttingDown:
-                    return  ErrorCategory.ResourceUnavailable;;
+                    return ErrorCategory.ResourceUnavailable; ;
                 default:
                     return ErrorCategory.NotSpecified;
             }
@@ -356,13 +356,14 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// </summary>
         public ErrorRecord ErrorRecord
         {
-            get { return this.errorRecord; }
+            get { return _errorRecord; }
         }
-        private ErrorRecord errorRecord;
+        private ErrorRecord _errorRecord;
 
         internal bool IsTerminatingError
         {
-            get { 
+            get
+            {
                 var cimException = this.InnerException as CimException;
                 if ((cimException == null) || (cimException.ErrorData == null))
                 {

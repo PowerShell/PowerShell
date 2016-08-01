@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Management.Automation.Language;
 using Microsoft.Management.Infrastructure;
 
@@ -27,8 +28,8 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="ArgumentException">
         /// Name length is zero after trimming whitespace.
         /// </exception>
-        public CommandParameter (string name)
-            : this (name, null)
+        public CommandParameter(string name)
+            : this(name, null)
         {
             if (name == null)
             {
@@ -96,11 +97,11 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// The parameter name
         /// </summary>
-        private string  _name;
+        private string _name;
         /// <summary>
         /// The parameter value.
         /// </summary>
-        private object  _value;
+        private object _value;
 
         #endregion Private Fields
 
@@ -122,7 +123,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     name = name + " ";
                 }
-                
+
                 Diagnostics.Assert(name != null, "'name' variable should be initialized at this point");
                 Diagnostics.Assert(name[0].IsDash(), "first character in parameter name must be a dash");
                 Diagnostics.Assert(name.Trim().Length != 0, "Parameter name has to have some non-whitespace characters in it");
@@ -150,7 +151,7 @@ namespace System.Management.Automation.Runspaces
             string name = publicParameter.Name;
             object value = publicParameter.Value;
 
-            Debug.Assert( (name == null) || (name.Trim().Length != 0), "Parameter name has to null or have some non-whitespace characters in it");
+            Debug.Assert((name == null) || (name.Trim().Length != 0), "Parameter name has to null or have some non-whitespace characters in it");
 
             if (name == null)
             {
@@ -259,21 +260,21 @@ namespace System.Management.Automation.Runspaces
         internal CimInstance ToCimInstance()
         {
             CimInstance c = InternalMISerializer.CreateCimInstance("PS_Parameter");
-            CimProperty nameProperty = InternalMISerializer.CreateCimProperty("Name", this.Name, 
+            CimProperty nameProperty = InternalMISerializer.CreateCimProperty("Name", this.Name,
                                                                                 Microsoft.Management.Infrastructure.CimType.String);
             c.CimInstanceProperties.Add(nameProperty);
             Microsoft.Management.Infrastructure.CimType cimType = CimConverter.GetCimType(this.Value.GetType());
             CimProperty valueProperty;
             if (cimType == Microsoft.Management.Infrastructure.CimType.Unknown)
             {
-                valueProperty = InternalMISerializer.CreateCimProperty("Value", (object) PSMISerializer.Serialize(this.Value), 
+                valueProperty = InternalMISerializer.CreateCimProperty("Value", (object)PSMISerializer.Serialize(this.Value),
                                                                                 Microsoft.Management.Infrastructure.CimType.Instance);
             }
             else
             {
                 valueProperty = InternalMISerializer.CreateCimProperty("Value", this.Value, cimType);
             }
-            
+
             c.CimInstanceProperties.Add(valueProperty);
             return c;
         }
@@ -292,7 +293,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a new empty instance of this collection type
         /// </summary>
-        public CommandParameterCollection ()
+        public CommandParameterCollection()
         {
         }
 
@@ -306,9 +307,9 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="ArgumentException">
         /// Name length is zero after trimming whitespace.
         /// </exception>
-        public void Add (string name)
+        public void Add(string name)
         {
-            Add (new CommandParameter (name));
+            Add(new CommandParameter(name));
         }
 
         /// <summary>
@@ -322,9 +323,9 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="ArgumentException">
         /// Name is non null and name length is zero after trimming whitespace.
         /// </exception>
-        public void Add (string name, object value)
+        public void Add(string name, object value)
         {
-            Add (new CommandParameter (name, value));
+            Add(new CommandParameter(name, value));
         }
     }
 }

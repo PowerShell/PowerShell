@@ -31,13 +31,13 @@ using Microsoft.PowerShell.CoreClr.Stubs;
 namespace System.Management.Automation.Runspaces
 {
     // ReSharper disable RedundantCast
-    class TypesPs1xmlReader
+    internal class TypesPs1xmlReader
     {
         public TypesPs1xmlReader(LoadContext context)
         {
-            this._context = context;
-            this._reader = context.reader;
-            this._readerLineInfo = (IXmlLineInfo)context.reader;
+            _context = context;
+            _reader = context.reader;
+            _readerLineInfo = (IXmlLineInfo)context.reader;
             InitIDs();
         }
 
@@ -47,16 +47,18 @@ namespace System.Management.Automation.Runspaces
 
         #region Helpers
 
-        string ReadElementString(string nodeName)
+        private string ReadElementString(string nodeName)
         {
             // This code is based on XmlReader.ReadElementString, which is not available in CoreCLR.
             string result = string.Empty;
- 
-            if (_reader.MoveToContent() != XmlNodeType.Element) {
+
+            if (_reader.MoveToContent() != XmlNodeType.Element)
+            {
                 _context.AddError(_readerLineInfo.LineNumber, TypesXmlStrings.NodeShouldHaveInnerText, nodeName);
                 return null;
             }
-            if (!_reader.IsEmptyElement) {
+            if (!_reader.IsEmptyElement)
+            {
                 _reader.Read();
                 while (_reader.NodeType == XmlNodeType.Text)
                 {
@@ -66,14 +68,16 @@ namespace System.Management.Automation.Runspaces
                         break;
                     }
                 }
-                if (_reader.NodeType != XmlNodeType.EndElement) {
+                if (_reader.NodeType != XmlNodeType.EndElement)
+                {
                     _context.AddError(_readerLineInfo.LineNumber, TypesXmlStrings.NodeShouldHaveInnerText, nodeName);
                     return null;
                 }
                 result = result.Trim();
                 _reader.Read();
             }
-            else {
+            else
+            {
                 _reader.Read();
             }
             if (string.IsNullOrWhiteSpace(result))
@@ -84,7 +88,7 @@ namespace System.Management.Automation.Runspaces
             return result;
         }
 
-        bool? ReadIsHiddenAttribute()
+        private bool? ReadIsHiddenAttribute()
         {
             bool? isHidden = default(bool?);
 
@@ -100,7 +104,7 @@ namespace System.Management.Automation.Runspaces
             return isHidden;
         }
 
-        void ReadIsHiddenAttributeNotSupported(string node)
+        private void ReadIsHiddenAttributeNotSupported(string node)
         {
             if (ReadIsHiddenAttribute().HasValue)
             {
@@ -118,7 +122,7 @@ namespace System.Management.Automation.Runspaces
                 _reader.ReadEndElement();
         }
 
-        void UnknownNode(string node, string expectedNodes)
+        private void UnknownNode(string node, string expectedNodes)
         {
             if (_reader.NodeType == XmlNodeType.Text)
             {
@@ -147,17 +151,17 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        void NotMoreThanOnce(string node, string parent)
+        private void NotMoreThanOnce(string node, string parent)
         {
             _context.AddError(_readerLineInfo.LineNumber, TypesXmlStrings.NotMoreThanOnceOne, node, parent);
         }
 
-        void NodeNotFound(int lineNumber, string node, string parent)
+        private void NodeNotFound(int lineNumber, string node, string parent)
         {
             _context.AddError(lineNumber, TypesXmlStrings.NodeNotFoundOnce, node, parent);
         }
 
-        ScriptBlock GetScriptBlock(string text, int initialLine)
+        private ScriptBlock GetScriptBlock(string text, int initialLine)
         {
             if (text == null)
                 return null;
@@ -186,7 +190,7 @@ namespace System.Management.Automation.Runspaces
             return scriptBlock;
         }
 
-        Type ResolveType(string typeName, int line)
+        private Type ResolveType(string typeName, int line)
         {
             Exception exception;
             var type = TypeResolver.ResolveType(typeName, out exception);
@@ -201,7 +205,7 @@ namespace System.Management.Automation.Runspaces
             return type;
         }
 
-        bool ToBoolean(string value)
+        private bool ToBoolean(string value)
         {
             value = value.Trim();
             if (string.Equals(value, "true", StringComparison.OrdinalIgnoreCase))
@@ -212,10 +216,10 @@ namespace System.Management.Automation.Runspaces
             return false;
         }
 
-        T Converter<T>(object value, string name)
+        private T Converter<T>(object value, string name)
         {
             T result;
-            
+
             if (!LanguagePrimitives.TryConvertTo(value, out result))
             {
                 _context.AddError(TypesXmlStrings.ErrorConvertingNote, name, typeof(T));
@@ -224,7 +228,7 @@ namespace System.Management.Automation.Runspaces
             return result;
         }
 
-        bool BoolConverter(object value, string name)
+        private bool BoolConverter(object value, string name)
         {
             var s = value as string;
             if (s != null)
@@ -233,7 +237,7 @@ namespace System.Management.Automation.Runspaces
             return Converter<bool>(value, name);
         }
 
-        void CheckStandardNote<T>(TypeMemberData member, TypeData typeData, Action<TypeData, T> setter, Func<object, string, T> converter)
+        private void CheckStandardNote<T>(TypeMemberData member, TypeData typeData, Action<TypeData, T> setter, Func<object, string, T> converter)
         {
             var note = member as NotePropertyData;
             if (note != null)
@@ -255,7 +259,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        bool CheckStandardPropertySet(TypeMemberData member, TypeData typeData, Action<TypeData, PropertySetData> setter)
+        private bool CheckStandardPropertySet(TypeMemberData member, TypeData typeData, Action<TypeData, PropertySetData> setter)
         {
             var propertySet = member as PropertySetData;
             if (propertySet != null)
@@ -283,7 +287,7 @@ namespace System.Management.Automation.Runspaces
 
             if (result == null)
                 NodeNotFound(0, _idTypes, "Document");
-                
+
             return result;
         }
 
@@ -427,7 +431,7 @@ namespace System.Management.Automation.Runspaces
                     }
                     else if (m.Name.Equals(TypeTable.DefaultKeyPropertySet, StringComparison.OrdinalIgnoreCase))
                     {
-                        if (!CheckStandardPropertySet(m, typeData, (t,p) => t.DefaultKeyPropertySet = p))
+                        if (!CheckStandardPropertySet(m, typeData, (t, p) => t.DefaultKeyPropertySet = p))
                         {
                             _context.AddError(TypesXmlStrings.MemberShouldHaveType, TypeTable.DefaultKeyPropertySet, _idPropertySet);
                         }
@@ -531,7 +535,7 @@ namespace System.Management.Automation.Runspaces
             return ResolveType(typeName, typeLineNumber);
         }
 
-        Collection<TypeMemberData> Read_Members(out MemberSetData standardMembers)
+        private Collection<TypeMemberData> Read_Members(out MemberSetData standardMembers)
         {
             var errorCount = _context.errors.Count;
 
@@ -1106,7 +1110,7 @@ namespace System.Management.Automation.Runspaces
                         }
                         else if ((object)_reader.LocalName == (object)_idSetScriptBlock)
                         {
-                            if (setScriptBlock != null) NotMoreThanOnce(_idSetScriptBlock, _idScriptProperty); 
+                            if (setScriptBlock != null) NotMoreThanOnce(_idSetScriptBlock, _idScriptProperty);
                             setterInitialLine = _readerLineInfo.LineNumber;
                             setScriptBlock = ReadElementString(_idSetScriptBlock);
                         }
@@ -1171,17 +1175,17 @@ namespace System.Management.Automation.Runspaces
                     {
                         if ((object)_reader.LocalName == (object)_idName)
                         {
-                            if (name != null) NotMoreThanOnce(_idName, _idAliasProperty); 
+                            if (name != null) NotMoreThanOnce(_idName, _idAliasProperty);
                             name = ReadElementString(_idAliasProperty);
                         }
                         else if ((object)_reader.LocalName == (object)_idReferencedMemberName)
                         {
-                            if (referencedMemberName != null) NotMoreThanOnce(_idReferencedMemberName, _idAliasProperty); 
+                            if (referencedMemberName != null) NotMoreThanOnce(_idReferencedMemberName, _idAliasProperty);
                             referencedMemberName = ReadElementString(_idReferencedMemberName);
                         }
                         else if ((object)_reader.LocalName == (object)_idTypeName)
                         {
-                            if (typeName != null) NotMoreThanOnce(_idTypeName, _idAliasProperty); 
+                            if (typeName != null) NotMoreThanOnce(_idTypeName, _idAliasProperty);
                             typeLineNumber = _readerLineInfo.LineNumber;
                             typeName = ReadElementString(_idTypeName);
                         }
@@ -1304,35 +1308,36 @@ namespace System.Management.Automation.Runspaces
             };
         }
 
-        string _idTypeName;
-        string _idSetCodeReference;
-        string _idScriptMethod;
-        string _idValue;
-        string _idScriptProperty;
-        string _idIsHidden;
-        string _idScript;
-        string _idCodeMethod;
-        string _idMemberSet;
-        string _idCodeProperty;
-        string _idMembers;
-        string _idName;
-        string _idGetCodeReference;
-        string _idMethodName;
-        string _idInheritMembers;
-        string _idNoteProperty;
-        string _idTypeAdapter;
-        string _idSetScriptBlock;
-        string _idPropertySet;
-        string _idTypeConverter;
-        string _idAliasProperty;
-        string _idType;
-        string _idCodeReference;
-        string _idTypes;
-        string _idReferencedProperties;
-        string _idGetScriptBlock;
-        string _idReferencedMemberName;
+        private string _idTypeName;
+        private string _idSetCodeReference;
+        private string _idScriptMethod;
+        private string _idValue;
+        private string _idScriptProperty;
+        private string _idIsHidden;
+        private string _idScript;
+        private string _idCodeMethod;
+        private string _idMemberSet;
+        private string _idCodeProperty;
+        private string _idMembers;
+        private string _idName;
+        private string _idGetCodeReference;
+        private string _idMethodName;
+        private string _idInheritMembers;
+        private string _idNoteProperty;
+        private string _idTypeAdapter;
+        private string _idSetScriptBlock;
+        private string _idPropertySet;
+        private string _idTypeConverter;
+        private string _idAliasProperty;
+        private string _idType;
+        private string _idCodeReference;
+        private string _idTypes;
+        private string _idReferencedProperties;
+        private string _idGetScriptBlock;
+        private string _idReferencedMemberName;
 
-        protected void InitIDs() {
+        protected void InitIDs()
+        {
             var xmlNameTable = _reader.NameTable;
             _idTypeName = xmlNameTable.Add("TypeName");
             _idSetCodeReference = xmlNameTable.Add("SetCodeReference");
@@ -1402,7 +1407,7 @@ namespace System.Management.Automation.Runspaces
             base.RemoveItem(index);
             UpdateKey();
         }
-        
+
         internal string Key { get; private set; }
         internal bool IsReadOnly { get { return ((ICollection<string>)this).IsReadOnly; } }
 
@@ -1446,20 +1451,20 @@ namespace System.Management.Automation.Runspaces
 
         internal static readonly ConsolidatedString Empty = new ConsolidatedString(Utils.EmptyArray<string>());
 
-        internal static IEqualityComparer<ConsolidatedString> EqualityComparer = new ConsolidatedStringEqualityComparer(); 
+        internal static IEqualityComparer<ConsolidatedString> EqualityComparer = new ConsolidatedStringEqualityComparer();
 
-		private class ConsolidatedStringEqualityComparer : IEqualityComparer<ConsolidatedString>
-		{
-			bool IEqualityComparer<ConsolidatedString>.Equals(ConsolidatedString x, ConsolidatedString y)
-			{
-				return x.Key.Equals(y.Key, StringComparison.Ordinal);
-			}
+        private class ConsolidatedStringEqualityComparer : IEqualityComparer<ConsolidatedString>
+        {
+            bool IEqualityComparer<ConsolidatedString>.Equals(ConsolidatedString x, ConsolidatedString y)
+            {
+                return x.Key.Equals(y.Key, StringComparison.Ordinal);
+            }
 
-			int IEqualityComparer<ConsolidatedString>.GetHashCode(ConsolidatedString obj)
-			{
-				return obj.Key.GetHashCode();
-			}
-		}
+            int IEqualityComparer<ConsolidatedString>.GetHashCode(ConsolidatedString obj)
+            {
+                return obj.Key.GetHashCode();
+            }
+        }
     }
 
     internal class LoadContext
@@ -1469,7 +1474,7 @@ namespace System.Management.Automation.Runspaces
         internal string fileName;
         internal string PSSnapinName;
         internal bool isFullyTrusted;
-        
+
         internal LoadContext(string PSSnapinName, string fileName, ConcurrentBag<string> errors)
         {
             this.reader = null;
@@ -1497,7 +1502,7 @@ namespace System.Management.Automation.Runspaces
         internal void AddError(int errorLineNumber, string resourceString, params object[] formatArguments)
         {
             string errorMsg = StringUtil.Format(resourceString, formatArguments);
-            string errorLine = StringUtil.Format(TypesXmlStrings.FileLineError, 
+            string errorLine = StringUtil.Format(TypesXmlStrings.FileLineError,
                             this.PSSnapinName, this.fileName, errorLineNumber, errorMsg);
             this.errors.Add(errorLine);
         }
@@ -1505,7 +1510,7 @@ namespace System.Management.Automation.Runspaces
         internal void AddError(string typeName, int errorLineNumber, string resourceString, params object[] formatArguments)
         {
             string errorMsg = StringUtil.Format(resourceString, formatArguments);
-            string errorLine = StringUtil.Format(TypesXmlStrings.FileLineTypeError, 
+            string errorLine = StringUtil.Format(TypesXmlStrings.FileLineTypeError,
                             this.PSSnapinName, this.fileName, errorLineNumber, typeName, errorMsg);
             this.errors.Add(errorLine);
         }
@@ -1518,7 +1523,7 @@ namespace System.Management.Automation.Runspaces
     [Serializable]
     public class TypeTableLoadException : RuntimeException
     {
-        private Collection<string> errors;
+        private Collection<string> _errors;
 
         #region Constructors
 
@@ -1568,9 +1573,9 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         internal TypeTableLoadException(ConcurrentBag<string> loadErrors)
             : base(TypesXmlStrings.TypeTableLoadErrors)
-                    
+
         {
-            errors = new Collection<string>(loadErrors.ToArray());
+            _errors = new Collection<string>(loadErrors.ToArray());
             SetDefaultErrorRecord();
         }
 
@@ -1590,11 +1595,11 @@ namespace System.Management.Automation.Runspaces
             int errorCount = info.GetInt32("ErrorCount");
             if (errorCount > 0)
             {
-                errors = new Collection<string>();
+                _errors = new Collection<string>();
                 for (int index = 0; index < errorCount; index++)
                 {
                     string key = string.Format(CultureInfo.InvariantCulture, "Error{0}", index);
-                    errors.Add(info.GetString(key));
+                    _errors.Add(info.GetString(key));
                 }
             }
         }
@@ -1617,15 +1622,15 @@ namespace System.Management.Automation.Runspaces
             base.GetObjectData(info, context);
 
             // If there are simple fields, serialize them with info.AddValue
-            if (null != errors)
+            if (null != _errors)
             {
-                int errorCount = errors.Count;
+                int errorCount = _errors.Count;
                 info.AddValue("ErrorCount", errorCount);
 
-                for(int index = 0; index < errorCount; index++)
+                for (int index = 0; index < errorCount; index++)
                 {
                     string key = string.Format(CultureInfo.InvariantCulture, "Error{0}", index);
-                    info.AddValue(key, errors[index]);
+                    info.AddValue(key, _errors[index]);
                 }
             }
         }
@@ -1646,7 +1651,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                return errors;
+                return _errors;
             }
         }
     }
@@ -1686,7 +1691,7 @@ namespace System.Management.Automation.Runspaces
 
         internal TypeData(string typeName, bool typesXml) : this()
         {
-            this.fromTypesXmlFile = typesXml;  
+            this.fromTypesXmlFile = typesXml;
             this.TypeName = typeName;
         }
 
@@ -1742,14 +1747,14 @@ namespace System.Management.Automation.Runspaces
             set
             {
                 _serializationMethod = value;
-                if(_serializationMethod == null)
+                if (_serializationMethod == null)
                 {
                     StandardMembers.Remove(TypeTable.SerializationMethodNode);
                     return;
                 }
 
                 TypeMemberData typeMemberData;
-                if(StandardMembers.TryGetValue(TypeTable.SerializationMethodNode, out typeMemberData))
+                if (StandardMembers.TryGetValue(TypeTable.SerializationMethodNode, out typeMemberData))
                 {
                     ((NotePropertyData)typeMemberData).Value = _serializationMethod;
                 }
@@ -1770,14 +1775,14 @@ namespace System.Management.Automation.Runspaces
             set
             {
                 _targetTypeForDeserialization = value;
-                if(_targetTypeForDeserialization == null)
+                if (_targetTypeForDeserialization == null)
                 {
                     StandardMembers.Remove(TypeTable.TargetTypeForDeserialization);
                     return;
                 }
 
                 TypeMemberData typeMemberData;
-                if(StandardMembers.TryGetValue(TypeTable.TargetTypeForDeserialization, out typeMemberData))
+                if (StandardMembers.TryGetValue(TypeTable.TargetTypeForDeserialization, out typeMemberData))
                 {
                     ((NotePropertyData)typeMemberData).Value = _targetTypeForDeserialization;
                 }
@@ -1800,7 +1805,7 @@ namespace System.Management.Automation.Runspaces
                 _serializationDepth = value;
 
                 TypeMemberData typeMemberData;
-                if(StandardMembers.TryGetValue(TypeTable.SerializationDepth, out typeMemberData))
+                if (StandardMembers.TryGetValue(TypeTable.SerializationDepth, out typeMemberData))
                 {
                     ((NotePropertyData)typeMemberData).Value = _serializationDepth;
                 }
@@ -1821,7 +1826,7 @@ namespace System.Management.Automation.Runspaces
             set
             {
                 _defaultDisplayProperty = value;
-                if(_defaultDisplayProperty == null)
+                if (_defaultDisplayProperty == null)
                 {
                     StandardMembers.Remove(TypeTable.DefaultDisplayProperty);
                     return;
@@ -1913,7 +1918,7 @@ namespace System.Management.Automation.Runspaces
             get { return _stringSerializationSourceProperty; }
             set
             {
-                if(value == null)
+                if (value == null)
                 {
                     // If we set the standard member via StringSerializationSource, we
                     // don't want to remove it, so only remove the member if our previous
@@ -1950,7 +1955,7 @@ namespace System.Management.Automation.Runspaces
             set
             {
                 _defaultDisplayPropertySet = value;
-                if(_defaultDisplayPropertySet != null)
+                if (_defaultDisplayPropertySet != null)
                 {
                     _defaultDisplayPropertySet.Name = TypeTable.DefaultDisplayPropertySet;
                 }
@@ -1966,7 +1971,7 @@ namespace System.Management.Automation.Runspaces
             set
             {
                 _defaultKeyPropertySet = value;
-                if(_defaultKeyPropertySet != null)
+                if (_defaultKeyPropertySet != null)
                 {
                     _defaultKeyPropertySet.Name = TypeTable.DefaultKeyPropertySet;
                 }
@@ -1982,14 +1987,14 @@ namespace System.Management.Automation.Runspaces
             set
             {
                 _propertySerializationSet = value;
-                if(_propertySerializationSet != null)
+                if (_propertySerializationSet != null)
                 {
                     _propertySerializationSet.Name = TypeTable.PropertySerializationSet;
                 }
             }
         }
 
-        
+
         // They are of NoteProperty
         private string _serializationMethod;
         private Type _targetTypeForDeserialization;
@@ -2009,7 +2014,7 @@ namespace System.Management.Automation.Runspaces
         private PropertySetData _propertySerializationSet;
 
         #endregion StandardMember
-        
+
         /// <summary>
         /// Return a TypeData that is a copy of this one
         /// </summary>
@@ -2017,7 +2022,7 @@ namespace System.Management.Automation.Runspaces
         public TypeData Copy()
         {
             TypeData newTypeData = new TypeData(this.TypeName);
-            
+
             foreach (KeyValuePair<string, TypeMemberData> entry in this.Members)
             {
                 newTypeData.Members.Add(entry.Key, entry.Value.Copy());
@@ -2143,7 +2148,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         internal override TypeMemberData Copy()
         {
-            NotePropertyData newNote = new NotePropertyData(this.Name, this.Value) {IsHidden = this.IsHidden};
+            NotePropertyData newNote = new NotePropertyData(this.Name, this.Value) { IsHidden = this.IsHidden };
             return newNote;
         }
 
@@ -2501,7 +2506,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// The members of the MemberSet
         /// </summary>
-        public Collection<TypeMemberData> Members { get; private set; } 
+        public Collection<TypeMemberData> Members { get; private set; }
 
         /// <summary>
         /// Set true if the member is supposed to be hidden
@@ -2564,41 +2569,41 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Table from type name list into PSMemberInfoInternalCollection
         /// </summary>
-        private readonly ConcurrentDictionary<string, PSMemberInfoInternalCollection<PSMemberInfo>> consolidatedMembers =
+        private readonly ConcurrentDictionary<string, PSMemberInfoInternalCollection<PSMemberInfo>> _consolidatedMembers =
             new ConcurrentDictionary<string, PSMemberInfoInternalCollection<PSMemberInfo>>(
                 /*concurrency*/1, /*capacity*/256, StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Table from type name list into Collection of strings
         /// </summary>
-        private readonly ConcurrentDictionary<string, Collection<string>> consolidatedSpecificProperties =
+        private readonly ConcurrentDictionary<string, Collection<string>> _consolidatedSpecificProperties =
             new ConcurrentDictionary<string, Collection<string>>(
                 /*concurrency*/1, /*capacity*/10, StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Table from type name into PSMemberInfoInternalCollection
         /// </summary>
-        private readonly ConcurrentDictionary<string, PSMemberInfoInternalCollection<PSMemberInfo>> extendedMembers =
+        private readonly ConcurrentDictionary<string, PSMemberInfoInternalCollection<PSMemberInfo>> _extendedMembers =
             new ConcurrentDictionary<string, PSMemberInfoInternalCollection<PSMemberInfo>>(
                 /*concurrency*/3, /*capacity*/300, StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// points to a Hashtable from type name to type converter
         /// </summary>
-        private readonly ConcurrentDictionary<string, object> typeConverters
+        private readonly ConcurrentDictionary<string, object> _typeConverters
             = new ConcurrentDictionary<string, object>(
                 /*concurrency*/1, /*capacity*/5, StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// points to a Hashtable from type name to type adapter 
         /// </summary>
-        private readonly ConcurrentDictionary<string, PSObject.AdapterSet> typeAdapters =
+        private readonly ConcurrentDictionary<string, PSObject.AdapterSet> _typeAdapters =
             new ConcurrentDictionary<string, PSObject.AdapterSet>(
                 /*concurrency*/1, /*capacity*/5, StringComparer.OrdinalIgnoreCase);
 
         // this is used to throw errors when updating a shared TypeTable.
         internal readonly bool isShared;
-        private List<string> typeFileList;
+        private List<string> _typeFileList;
 
         // This holds all the type information that is in the typetable 
         // Holds file name if types file was used to update the types
@@ -2611,7 +2616,7 @@ namespace System.Management.Automation.Runspaces
 
         internal const bool defaultInheritPropertySerializationSet = true;
 
-        static readonly string[] standardMembers = new string[] {
+        private static readonly string[] s_standardMembers = new string[] {
             DefaultDisplayProperty,
             DefaultDisplayPropertySet,
             DefaultKeyPropertySet,
@@ -2666,7 +2671,7 @@ namespace System.Management.Automation.Runspaces
                     noteAsMemberInfo = member;
                 }
             }
-            
+
             if (noteAsMemberInfo == null)
             {
                 return true;
@@ -2773,9 +2778,9 @@ namespace System.Management.Automation.Runspaces
             {
                 bool found = false;
                 string memberName = members[i].Name;
-                for (int j = 0; j < standardMembers.Length; j++)
+                for (int j = 0; j < s_standardMembers.Length; j++)
                 {
-                    if (String.Equals(memberName, standardMembers[j], StringComparison.OrdinalIgnoreCase))
+                    if (String.Equals(memberName, s_standardMembers[j], StringComparison.OrdinalIgnoreCase))
                     {
                         found = true;
                         break;
@@ -2865,12 +2870,12 @@ namespace System.Management.Automation.Runspaces
             }
 
             PSMemberInfo otherMember;
-            if (!GetCheckMemberType(errors, typeName, members, 
+            if (!GetCheckMemberType(errors, typeName, members,
                 DefaultDisplayPropertySet, typeof(PSPropertySet), out otherMember))
             {
                 members.Remove(DefaultDisplayPropertySet);
             }
-            if (!GetCheckMemberType(errors, typeName, members, 
+            if (!GetCheckMemberType(errors, typeName, members,
                 DefaultKeyPropertySet, typeof(PSPropertySet), out otherMember))
             {
                 members.Remove(DefaultKeyPropertySet);
@@ -2963,7 +2968,7 @@ namespace System.Management.Automation.Runspaces
         internal static void ProcessNoteData(ConcurrentBag<string> errors, string typeName, NotePropertyData nodeData, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
             // value could be null
-            PSNoteProperty note = new PSNoteProperty(nodeData.Name, nodeData.Value) {IsHidden = nodeData.IsHidden};
+            PSNoteProperty note = new PSNoteProperty(nodeData.Name, nodeData.Value) { IsHidden = nodeData.IsHidden };
             AddMember(errors, typeName, note, membersCollection, isOverride);
         }
 
@@ -3026,7 +3031,7 @@ namespace System.Management.Automation.Runspaces
 
         internal static void ProcessScriptMethodData(ConcurrentBag<string> errors, string typeName, ScriptMethodData scriptMethodData, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
-            if(scriptMethodData.Script == null)
+            if (scriptMethodData.Script == null)
             {
                 AddError(errors, typeName, TypesXmlStrings.TypeDataShouldHaveValue, "ScriptMethodData", "Script");
                 return;
@@ -3038,7 +3043,7 @@ namespace System.Management.Automation.Runspaces
 
         internal static void ProcessCodeMethodData(ConcurrentBag<string> errors, string typeName, CodeMethodData codeMethodData, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
-            if(codeMethodData.CodeReference == null)
+            if (codeMethodData.CodeReference == null)
             {
                 AddError(errors, typeName, TypesXmlStrings.TypeDataShouldHaveValue, "CodeMethodData", "CodeReference");
                 return;
@@ -3059,7 +3064,7 @@ namespace System.Management.Automation.Runspaces
 
         internal static void ProcessPropertySetData(ConcurrentBag<string> errors, string typeName, PropertySetData propertySetData, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
-            if(propertySetData.ReferencedProperties == null || propertySetData.ReferencedProperties.Count == 0)
+            if (propertySetData.ReferencedProperties == null || propertySetData.ReferencedProperties.Count == 0)
             {
                 AddError(errors, typeName, TypesXmlStrings.TypeDataShouldHaveValue, "PropertySetData", "ReferencedProperties");
                 return;
@@ -3077,7 +3082,7 @@ namespace System.Management.Automation.Runspaces
                 referencedProperties.Add(name);
             }
 
-            if(referencedProperties.Count == 0)
+            if (referencedProperties.Count == 0)
             {
                 return;
             }
@@ -3112,7 +3117,7 @@ namespace System.Management.Automation.Runspaces
                 var memberSetMembers = new PSMemberInfoInternalCollection<PSMemberInfo>();
 
                 ProcessMembersData(errors, typeName, standardMembers, memberSetMembers, false);
-                foreach(PropertySetData propertySet in propertySets)
+                foreach (PropertySetData propertySet in propertySets)
                 {
                     ProcessPropertySetData(errors, typeName, propertySet, memberSetMembers, false);
                 }
@@ -3164,7 +3169,7 @@ namespace System.Management.Automation.Runspaces
                 // into the original member collection. Replace the old StandardMembers with the new one
                 foreach (PSMemberInfo member in existingMembers)
                 {
-                    if(oldMembersCopy[member.name] == null)
+                    if (oldMembersCopy[member.name] == null)
                     {
                         oldMembersCopy.Add(member);
                     }
@@ -3199,7 +3204,7 @@ namespace System.Management.Automation.Runspaces
                 propertySets.Add(typeData.PropertySerializationSet);
             }
 
-            if(typeData.Members.Count == 0 && typeData.StandardMembers.Count == 0 
+            if (typeData.Members.Count == 0 && typeData.StandardMembers.Count == 0
                 && typeData.TypeConverter == null && typeData.TypeAdapter == null
                 && propertySets.Count == 0 && !typeData.fromTypesXmlFile)
             {
@@ -3207,10 +3212,10 @@ namespace System.Management.Automation.Runspaces
                 return;
             }
 
-            if(typeData.Members.Count > 0)
+            if (typeData.Members.Count > 0)
             {
                 PSMemberInfoInternalCollection<PSMemberInfo> typeMembers
-                    = extendedMembers.GetOrAdd(typeName, k => new PSMemberInfoInternalCollection<PSMemberInfo>());
+                    = _extendedMembers.GetOrAdd(typeName, k => new PSMemberInfoInternalCollection<PSMemberInfo>());
 
                 ProcessMembersData(errors, typeName, typeData.Members.Values, typeMembers, typeData.IsOverride);
 
@@ -3220,15 +3225,15 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            if(typeData.StandardMembers.Count > 0 || propertySets.Count > 0)
+            if (typeData.StandardMembers.Count > 0 || propertySets.Count > 0)
             {
                 PSMemberInfoInternalCollection<PSMemberInfo> typeMembers
-                    = extendedMembers.GetOrAdd(typeName, k => new PSMemberInfoInternalCollection<PSMemberInfo>());
+                    = _extendedMembers.GetOrAdd(typeName, k => new PSMemberInfoInternalCollection<PSMemberInfo>());
 
                 ProcessStandardMembers(errors, typeName, typeData.StandardMembers.Values, propertySets, typeMembers, typeData.IsOverride);
             }
 
-            if(typeData.TypeConverter != null)
+            if (typeData.TypeConverter != null)
             {
                 object instance = null;
                 if (CreateInstance(errors, typeName, typeData.TypeConverter, TypesXmlStrings.UnableToInstantiateTypeConverter, out instance))
@@ -3243,9 +3248,9 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
 
-                if (instance != null && !typeConverters.TryAdd(typeName, instance))
+                if (instance != null && !_typeConverters.TryAdd(typeName, instance))
                 {
-                    if(!typeData.IsOverride)
+                    if (!typeData.IsOverride)
                     {
                         AddError(errors, typeName, TypesXmlStrings.TypeConverterAlreadyPresent);
                     }
@@ -3253,7 +3258,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            if(typeData.TypeAdapter != null)
+            if (typeData.TypeAdapter != null)
             {
                 object instance;
                 PSObject.AdapterSet adapterSet = null;
@@ -3279,9 +3284,9 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
 
-                if (adapterSet != null && !typeAdapters.TryAdd(typeName, adapterSet))
+                if (adapterSet != null && !_typeAdapters.TryAdd(typeName, adapterSet))
                 {
-                    if(!typeData.IsOverride)
+                    if (!typeData.IsOverride)
                     {
                         AddError(errors, typeName, TypesXmlStrings.TypeAdapterAlreadyPresent);
                     }
@@ -3305,7 +3310,7 @@ namespace System.Management.Automation.Runspaces
             // We always remove the whole type
             bool typeExist = false;
             PSMemberInfoInternalCollection<PSMemberInfo> memberCollection;
-            if (extendedMembers.TryRemove(typeName, out memberCollection))
+            if (_extendedMembers.TryRemove(typeName, out memberCollection))
             {
                 typeExist = true;
                 foreach (var m in memberCollection)
@@ -3316,14 +3321,14 @@ namespace System.Management.Automation.Runspaces
             }
 
             object unused1;
-            if (typeConverters.TryRemove(typeName, out unused1))
+            if (_typeConverters.TryRemove(typeName, out unused1))
             {
                 typeExist = true;
                 LanguagePrimitives.UpdateTypeConvertFromTypeTable(typeName);
             }
 
             PSObject.AdapterSet unused2;
-            if (typeAdapters.TryRemove(typeName, out unused2))
+            if (_typeAdapters.TryRemove(typeName, out unused2))
             {
                 typeExist = true;
             }
@@ -3364,7 +3369,7 @@ namespace System.Management.Automation.Runspaces
 
         private void Update(ConcurrentBag<string> errors, TypeData typeData, bool isRemove)
         {
-            if(!isRemove)
+            if (!isRemove)
             {
                 ProcessTypeDataToAdd(errors, typeData);
             }
@@ -3384,7 +3389,7 @@ namespace System.Management.Automation.Runspaces
         {
             // Rather than set these members every time we process the standard members, do it
             // just once at startup.
-            foreach (var sm in standardMembers)
+            foreach (var sm in s_standardMembers)
             {
                 PSGetMemberBinder.TypeTableMemberAdded(sm);
             }
@@ -3401,7 +3406,7 @@ namespace System.Management.Automation.Runspaces
         internal TypeTable(bool isShared)
         {
             this.isShared = isShared;
-            typeFileList = new List<string>();
+            _typeFileList = new List<string>();
         }
 
         /// <summary>
@@ -3480,8 +3485,8 @@ namespace System.Management.Automation.Runspaces
             }
 
             isShared = true;
-            
-            typeFileList = new List<string>();
+
+            _typeFileList = new List<string>();
             ConcurrentBag<string> errors = new ConcurrentBag<string>();
             foreach (string typefile in typeFiles)
             {
@@ -3492,7 +3497,7 @@ namespace System.Management.Automation.Runspaces
 
                 bool unused;
                 Initialize(string.Empty, typefile, errors, authorizationManager, host, out unused);
-                typeFileList.Add(typefile);
+                _typeFileList.Add(typefile);
             }
 
             if (errors.Count > 0)
@@ -3516,13 +3521,13 @@ namespace System.Management.Automation.Runspaces
             {
                 return new Collection<String>();
             }
-            Collection<String> result = consolidatedSpecificProperties.GetOrAdd(types.Key, key =>
+            Collection<String> result = _consolidatedSpecificProperties.GetOrAdd(types.Key, key =>
             {
                 var retValueTable = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 foreach (string type in types)
                 {
                     PSMemberInfoInternalCollection<PSMemberInfo> typeMembers;
-                    if (!extendedMembers.TryGetValue(type, out typeMembers))
+                    if (!_extendedMembers.TryGetValue(type, out typeMembers))
                         continue;
                     PSMemberSet settings = typeMembers[PSStandardMembers] as PSMemberSet;
                     if (settings == null)
@@ -3534,7 +3539,7 @@ namespace System.Management.Automation.Runspaces
                     {
                         retValueTable.Add(reference);
                     }
-                    bool inherit = (bool) PSObject.GetNoteSettingValue(settings, InheritPropertySerializationSet,
+                    bool inherit = (bool)PSObject.GetNoteSettingValue(settings, InheritPropertySerializationSet,
                         defaultInheritPropertySerializationSet, typeof(bool), false, null);
                     if (!inherit)
                     {
@@ -3559,7 +3564,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         internal PSMemberInfoInternalCollection<T> GetMembers<T>(ConsolidatedString types) where T : PSMemberInfo
         {
-            return PSObject.TransformMemberInfoCollection<PSMemberInfo,T>(GetMembers(types));
+            return PSObject.TransformMemberInfoCollection<PSMemberInfo, T>(GetMembers(types));
         }
 
 
@@ -3569,13 +3574,13 @@ namespace System.Management.Automation.Runspaces
             {
                 return new PSMemberInfoInternalCollection<PSMemberInfo>();
             }
-            PSMemberInfoInternalCollection<PSMemberInfo> result = consolidatedMembers.GetOrAdd(types.Key, k =>
+            PSMemberInfoInternalCollection<PSMemberInfo> result = _consolidatedMembers.GetOrAdd(types.Key, k =>
             {
                 var retValue = new PSMemberInfoInternalCollection<PSMemberInfo>();
                 for (int i = types.Count - 1; i >= 0; i--)
                 {
                     PSMemberInfoInternalCollection<PSMemberInfo> typeMembers;
-                    if (!extendedMembers.TryGetValue(types[i], out typeMembers))
+                    if (!_extendedMembers.TryGetValue(types[i], out typeMembers))
                     {
                         continue;
                     }
@@ -3606,7 +3611,7 @@ namespace System.Management.Automation.Runspaces
                         {
                             if (currentMemberAsMemberSet.Members[typeMemberAsMemberSetMember.Name] == null)
                             {
-                                ((PSMemberInfoIntegratingCollection<PSMemberInfo>) currentMemberAsMemberSet.Members)
+                                ((PSMemberInfoIntegratingCollection<PSMemberInfo>)currentMemberAsMemberSet.Members)
                                     .AddToTypesXmlCache(typeMemberAsMemberSetMember, false);
                                 continue;
                             }
@@ -3636,7 +3641,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             object result;
-            typeConverters.TryGetValue(typeName, out result);
+            _typeConverters.TryGetValue(typeName, out result);
             return result;
         }
 
@@ -3664,7 +3669,7 @@ namespace System.Management.Automation.Runspaces
              */
 #if true
             PSObject.AdapterSet result;
-            typeAdapters.TryGetValue(type.FullName, out result);
+            _typeAdapters.TryGetValue(type.FullName, out result);
             return result;
 #else
             foreach (PSObject.AdapterSet adapterSet in this.typeAdapters.Values)
@@ -3726,7 +3731,7 @@ namespace System.Management.Automation.Runspaces
             var memberSet = member as PSMemberSet;
             if (memberSet != null)
             {
-                if(memberSet.Name.Equals(PSStandardMembers, StringComparison.OrdinalIgnoreCase))
+                if (memberSet.Name.Equals(PSStandardMembers, StringComparison.OrdinalIgnoreCase))
                 {
                     return null;
                 }
@@ -3762,7 +3767,7 @@ namespace System.Management.Automation.Runspaces
             var memberSet = member as PSMemberSet;
             if (memberSet != null)
             {
-                if(memberSet.Name.Equals(PSStandardMembers, StringComparison.OrdinalIgnoreCase))
+                if (memberSet.Name.Equals(PSStandardMembers, StringComparison.OrdinalIgnoreCase))
                 {
                     LoadStandardMembersToTypeData(memberSet, typeData);
                 }
@@ -3789,31 +3794,31 @@ namespace System.Management.Automation.Runspaces
             {
                 PSMemberInfo standardMember = member.Copy();
                 var memberName = standardMember.Name;
-                if(memberName.Equals(SerializationMethodNode, StringComparison.OrdinalIgnoreCase))
+                if (memberName.Equals(SerializationMethodNode, StringComparison.OrdinalIgnoreCase))
                 {
                     typeData.SerializationMethod = GetParameterType<string>(((PSNoteProperty)standardMember).Value);
                 }
-                else if(memberName.Equals(TargetTypeForDeserialization, StringComparison.OrdinalIgnoreCase))
+                else if (memberName.Equals(TargetTypeForDeserialization, StringComparison.OrdinalIgnoreCase))
                 {
                     // Value property of the TargetTypeForDeserialization member is guaranteed to be of System.Type
                     typeData.TargetTypeForDeserialization = GetParameterType<Type>(((PSNoteProperty)standardMember).Value);
                 }
-                else if(memberName.Equals(SerializationDepth, StringComparison.OrdinalIgnoreCase))
+                else if (memberName.Equals(SerializationDepth, StringComparison.OrdinalIgnoreCase))
                 {
                     // Value property of the SerializationDepth member is guaranteed to be of type int
                     typeData.SerializationDepth = GetParameterType<uint>(((PSNoteProperty)standardMember).Value);
                 }
-                else if(memberName.Equals(DefaultDisplayProperty, StringComparison.OrdinalIgnoreCase))
+                else if (memberName.Equals(DefaultDisplayProperty, StringComparison.OrdinalIgnoreCase))
                 {
                     // Value property of the DefaultDisplayProperty is guaranteed to be of type string
                     typeData.DefaultDisplayProperty = GetParameterType<string>(((PSNoteProperty)standardMember).Value);
                 }
-                else if(memberName.Equals(InheritPropertySerializationSet, StringComparison.OrdinalIgnoreCase))
+                else if (memberName.Equals(InheritPropertySerializationSet, StringComparison.OrdinalIgnoreCase))
                 {
                     // Value property of the InheritPropertySerializationSet is guaranteed to be of type bool
                     typeData.InheritPropertySerializationSet = GetParameterType<bool>(((PSNoteProperty)standardMember).Value);
                 }
-                else if(memberName.Equals(StringSerializationSource, StringComparison.OrdinalIgnoreCase))
+                else if (memberName.Equals(StringSerializationSource, StringComparison.OrdinalIgnoreCase))
                 {
                     var aliasProperty = standardMember as PSAliasProperty;
                     if (aliasProperty != null)
@@ -3825,17 +3830,17 @@ namespace System.Management.Automation.Runspaces
                         typeData.StringSerializationSourceProperty = GetTypeMemberDataFromPSMemberInfo(standardMember);
                     }
                 }
-                else if(memberName.Equals(DefaultDisplayPropertySet, StringComparison.OrdinalIgnoreCase))
+                else if (memberName.Equals(DefaultDisplayPropertySet, StringComparison.OrdinalIgnoreCase))
                 {
                     typeData.DefaultDisplayPropertySet =
                         new PropertySetData(((PSPropertySet)standardMember).ReferencedPropertyNames);
                 }
-                else if(memberName.Equals(DefaultKeyPropertySet, StringComparison.OrdinalIgnoreCase))
+                else if (memberName.Equals(DefaultKeyPropertySet, StringComparison.OrdinalIgnoreCase))
                 {
                     typeData.DefaultKeyPropertySet =
                         new PropertySetData(((PSPropertySet)standardMember).ReferencedPropertyNames);
                 }
-                else if(memberName.Equals(PropertySerializationSet, StringComparison.OrdinalIgnoreCase))
+                else if (memberName.Equals(PropertySerializationSet, StringComparison.OrdinalIgnoreCase))
                 {
                     typeData.PropertySerializationSet =
                         new PropertySetData(((PSPropertySet)standardMember).ReferencedPropertyNames);
@@ -3850,7 +3855,7 @@ namespace System.Management.Automation.Runspaces
         internal Dictionary<string, TypeData> GetAllTypeData()
         {
             Dictionary<string, TypeData> allTypes = new Dictionary<string, TypeData>();
-            foreach (string typeName in extendedMembers.Keys)
+            foreach (string typeName in _extendedMembers.Keys)
             {
                 if (allTypes.ContainsKey(typeName))
                 {
@@ -3870,7 +3875,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            foreach (string typeName in typeConverters.Keys)
+            foreach (string typeName in _typeConverters.Keys)
             {
                 if (allTypes.ContainsKey(typeName))
                 {
@@ -3889,7 +3894,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            foreach (string typeName in typeAdapters.Keys)
+            foreach (string typeName in _typeAdapters.Keys)
             {
                 if (allTypes.ContainsKey(typeName))
                 {
@@ -3913,7 +3918,7 @@ namespace System.Management.Automation.Runspaces
             string typeName = typeData.TypeName;
 
             PSMemberInfoInternalCollection<PSMemberInfo> typeMembers;
-            if (extendedMembers.TryGetValue(typeName, out typeMembers))
+            if (_extendedMembers.TryGetValue(typeName, out typeMembers))
             {
                 Dbg.Assert(typeMembers != null, "members should not be null");
                 foreach (PSMemberInfo member in typeMembers)
@@ -3933,7 +3938,7 @@ namespace System.Management.Automation.Runspaces
             string typeName = typeData.TypeName;
 
             object converterResult;
-            if (typeConverters.TryGetValue(typeName, out converterResult))
+            if (_typeConverters.TryGetValue(typeName, out converterResult))
             {
                 Dbg.Assert(converterResult != null, "converter should not be null");
                 typeData.TypeConverter = converterResult.GetType();
@@ -3949,7 +3954,7 @@ namespace System.Management.Automation.Runspaces
             string typeName = typeData.TypeName;
 
             PSObject.AdapterSet adapterResult;
-            if (typeAdapters.TryGetValue(typeName, out adapterResult))
+            if (_typeAdapters.TryGetValue(typeName, out adapterResult))
             {
                 Dbg.Assert(adapterResult != null, "adapter should not be null");
                 typeData.TypeAdapter = ((ThirdPartyAdapter)(adapterResult.OriginalAdapter)).ExternalAdapterType;
@@ -3978,7 +3983,7 @@ namespace System.Management.Automation.Runspaces
             // 2. Shallow copy the 'typesInfo'
 
             // copy the type members
-            foreach (var pair in this.extendedMembers)
+            foreach (var pair in _extendedMembers)
             {
                 var resultMembers = new PSMemberInfoInternalCollection<PSMemberInfo>();
                 foreach (var member in pair.Value)
@@ -3986,19 +3991,19 @@ namespace System.Management.Automation.Runspaces
                     resultMembers.Add(member.Copy());
                 }
 
-                result.extendedMembers.TryAdd(pair.Key, resultMembers);
+                result._extendedMembers.TryAdd(pair.Key, resultMembers);
             }
 
             // copy the type adapter members
-            foreach (var pair in this.typeAdapters)
+            foreach (var pair in _typeAdapters)
             {
-                result.typeAdapters.TryAdd(pair.Key, pair.Value);
+                result._typeAdapters.TryAdd(pair.Key, pair.Value);
             }
 
             // copy the type converters
-            foreach (var pair in this.typeConverters)
+            foreach (var pair in _typeConverters)
             {
-                result.typeConverters.TryAdd(pair.Key, pair.Value);
+                result._typeConverters.TryAdd(pair.Key, pair.Value);
             }
 
             result.typesInfo.Add(this.typesInfo);
@@ -4011,24 +4016,24 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal void Clear()
         {
-            foreach (var conv in typeConverters.Keys)
+            foreach (var conv in _typeConverters.Keys)
             {
                 LanguagePrimitives.UpdateTypeConvertFromTypeTable(conv);
             }
-            typeConverters.Clear();
+            _typeConverters.Clear();
 
-            foreach (var ml in extendedMembers.Values)
+            foreach (var ml in _extendedMembers.Values)
             {
                 foreach (var m in ml)
                 {
                     PSGetMemberBinder.TypeTableMemberPossiblyUpdated(m.Name);
                 }
             }
-            extendedMembers.Clear();
+            _extendedMembers.Clear();
 
             StandardMembersUpdated();
 
-            typeAdapters.Clear();
+            _typeAdapters.Clear();
             typesInfo.Clear();
 
             ClearConsolidatedMembers();
@@ -4036,13 +4041,13 @@ namespace System.Management.Automation.Runspaces
 
         internal void ClearConsolidatedMembers()
         {
-            consolidatedMembers.Clear();
-            consolidatedSpecificProperties.Clear();
+            _consolidatedMembers.Clear();
+            _consolidatedSpecificProperties.Clear();
         }
 
         private static void StandardMembersUpdated()
         {
-            foreach (var sm in standardMembers)
+            foreach (var sm in s_standardMembers)
             {
                 PSGetMemberBinder.TypeTableMemberPossiblyUpdated(sm);
             }
@@ -4065,9 +4070,9 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         /// <param name="failToLoadFile">Indicate if the file failed to be loaded</param>
         internal void Initialize(
-            string snapinName, 
+            string snapinName,
             string fileToLoad,
-            ConcurrentBag<string> errors, 
+            ConcurrentBag<string> errors,
             AuthorizationManager authorizationManager,
             PSHost host,
             out bool failToLoadFile)
@@ -4127,7 +4132,7 @@ namespace System.Management.Automation.Runspaces
                 string errorMsg = StringUtil.Format(TypesXmlStrings.Exception, e.Message);
                 string errorLine = StringUtil.Format(TypesXmlStrings.FileError, moduleName, fileToLoad, errorMsg);
                 errors.Add(errorLine);
-                
+
                 failToLoadFile = true;
                 return null;
             }
@@ -4199,9 +4204,9 @@ namespace System.Management.Automation.Runspaces
         /// <param name="typeFile"></param>
         internal void Remove(string typeFile)
         {
-            lock (typeFileList)
+            lock (_typeFileList)
             {
-                typeFileList.Remove(typeFile);
+                _typeFileList.Remove(typeFile);
                 typesInfo.Remove(typeFile, null);
             }
         }
@@ -4275,7 +4280,7 @@ namespace System.Management.Automation.Runspaces
         /// been created outside of the Runspace.
         /// </exception>
         internal void Update(
-            Collection<PSSnapInTypeAndFormatErrors> psSnapinTypes, 
+            Collection<PSSnapInTypeAndFormatErrors> psSnapinTypes,
             AuthorizationManager authorizationManager,
             PSHost host
             )
@@ -4322,9 +4327,9 @@ namespace System.Management.Automation.Runspaces
         /// been created outside of the Runspace.
         /// </exception>
         internal void Update(
-            string filePath, 
+            string filePath,
             ConcurrentBag<string> errors,
-            bool clearTable, 
+            bool clearTable,
             AuthorizationManager authorizationManager,
             PSHost host,
             out bool failToLoadFile)
@@ -4368,7 +4373,7 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewInvalidOperationException(TypesXmlStrings.SharedTypeTableCannotBeUpdated);
             }
 
-            var etwEnabled = RunspaceEventSource.Log.IsEnabled(); 
+            var etwEnabled = RunspaceEventSource.Log.IsEnabled();
             if (etwEnabled) RunspaceEventSource.Log.ProcessTypeFileStart(filePath);
 
             if (!ProcessIsBuiltIn(filePath, errors, out failToLoadFile))
@@ -4434,16 +4439,16 @@ namespace System.Management.Automation.Runspaces
         /// <param name="errors"></param>
         /// <param name="isRemove"></param>
         internal void Update(
-            TypeData type, 
+            TypeData type,
             ConcurrentBag<string> errors,
             bool isRemove)
         {
             if (type == null)
                 throw new ArgumentNullException("type");
-            if(errors == null)
+            if (errors == null)
                 throw new ArgumentNullException("errors");
 
-            if(isShared)
+            if (isShared)
             {
                 throw PSTraceSource.NewInvalidOperationException(TypesXmlStrings.SharedTypeTableCannotBeUpdated);
             }

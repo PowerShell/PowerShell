@@ -115,18 +115,18 @@ namespace System.Management.Automation.Language
         /// </summary>
         public static IScriptPosition EmptyPosition
         {
-            get { return emptyPosition; }
+            get { return s_emptyPosition; }
         }
-        private readonly static IScriptPosition emptyPosition = new EmptyScriptPosition();
+        private readonly static IScriptPosition s_emptyPosition = new EmptyScriptPosition();
 
         /// <summary>
         /// Return a unique extent repesenting an empty or missing extent.
         /// </summary>
         public static IScriptExtent EmptyExtent
         {
-            get { return emptyExtent; }
+            get { return s_emptyExtent; }
         }
-        private static readonly IScriptExtent emptyExtent = new EmptyScriptExtent();
+        private static readonly IScriptExtent s_emptyExtent = new EmptyScriptExtent();
 
         /// <summary>
         /// Return a message that looks like:
@@ -277,11 +277,11 @@ namespace System.Management.Automation.Language
             {
                 return start;
             }
-            if (start == emptyExtent)
+            if (start == s_emptyExtent)
             {
                 return end;
             }
-            if (end == emptyExtent)
+            if (end == s_emptyExtent)
             {
                 return start;
             }
@@ -378,8 +378,8 @@ namespace System.Management.Automation.Language
 
         internal PositionHelper(string filename, string scriptText)
         {
-            this._filename = filename;
-            this._scriptText = scriptText;
+            _filename = filename;
+            _scriptText = scriptText;
         }
 
         internal string ScriptText
@@ -432,7 +432,7 @@ namespace System.Management.Automation.Language
         internal InternalScriptPosition(PositionHelper _positionHelper, int offset)
         {
             this._positionHelper = _positionHelper;
-            this._offset = offset;
+            _offset = offset;
         }
 
         public string File { get { return _positionHelper.File; } }
@@ -443,7 +443,7 @@ namespace System.Management.Automation.Language
 
         internal InternalScriptPosition CloneWithNewOffset(int offset)
         {
-            return new InternalScriptPosition(_positionHelper, offset);    
+            return new InternalScriptPosition(_positionHelper, offset);
         }
 
         public string GetFullScript()
@@ -461,8 +461,8 @@ namespace System.Management.Automation.Language
         internal InternalScriptExtent(PositionHelper _positionHelper, int startOffset, int endOffset)
         {
             this._positionHelper = _positionHelper;
-            this._startOffset = startOffset;
-            this._endOffset = endOffset;
+            _startOffset = startOffset;
+            _endOffset = endOffset;
         }
 
         public string File
@@ -602,20 +602,20 @@ namespace System.Management.Automation.Language
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public ScriptPosition(string scriptName, int scriptLineNumber, int offsetInLine, string line)
         {
-            this._scriptName = scriptName;
-            this._scriptLineNumber = scriptLineNumber;
-            this._offsetInLine = offsetInLine;
+            _scriptName = scriptName;
+            _scriptLineNumber = scriptLineNumber;
+            _offsetInLine = offsetInLine;
 
             if (string.IsNullOrEmpty(line))
             {
-                this._line = String.Empty;
+                _line = String.Empty;
             }
             else
             {
-                this._line = line;
+                _line = line;
             }
         }
-        
+
         /// <summary>
         /// Creates a new script position, which represents a point in a script
         /// </summary>
@@ -633,7 +633,7 @@ namespace System.Management.Automation.Language
             string fullScript) :
             this(scriptName, scriptLineNumber, offsetInLine, line)
         {
-            this._fullScript = fullScript;
+            _fullScript = fullScript;
         }
 
         /// <summary>
@@ -677,7 +677,6 @@ namespace System.Management.Automation.Language
 
         private ScriptExtent()
         {
-            
         }
 
         /// <summary>
@@ -685,8 +684,8 @@ namespace System.Management.Automation.Language
         /// </summary>
         public ScriptExtent(ScriptPosition startPosition, ScriptPosition endPosition)
         {
-            this._startPosition = startPosition;
-            this._endPosition = endPosition;
+            _startPosition = startPosition;
+            _endPosition = endPosition;
         }
 
         /// <summary>
@@ -776,7 +775,7 @@ namespace System.Management.Automation.Language
             int endLineNumber = RemotingDecoder.GetPropertyValue<int>(serializedScriptExtent, "ScriptExtent_EndLineNumber");
             int endColumnNumber = RemotingDecoder.GetPropertyValue<int>(serializedScriptExtent, "ScriptExtent_EndColumnNumber");
 
-            ScriptPosition startPosition = new ScriptPosition(file, startLineNumber, startColumnNumber, null );
+            ScriptPosition startPosition = new ScriptPosition(file, startLineNumber, startColumnNumber, null);
             ScriptPosition endPosition = new ScriptPosition(file, endLineNumber, endColumnNumber, null);
 
             _startPosition = startPosition;

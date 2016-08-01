@@ -51,7 +51,7 @@ namespace System.Management.Automation
     {
         internal CompiledScriptBlockData(IParameterMetadataProvider ast, bool isFilter)
         {
-            this._ast = ast;
+            _ast = ast;
             this.IsFilter = isFilter;
             this.Id = Guid.NewGuid();
         }
@@ -59,7 +59,7 @@ namespace System.Management.Automation
         internal CompiledScriptBlockData(string scriptText, bool isProductCode)
         {
             this.IsProductCode = isProductCode;
-            this._scriptText = scriptText;
+            _scriptText = scriptText;
             this.Id = Guid.NewGuid();
         }
 
@@ -114,7 +114,7 @@ namespace System.Management.Automation
                     {
                         if (attribute is CmdletBindingAttribute)
                         {
-                            cmdletBindingAttribute = cmdletBindingAttribute ?? (CmdletBindingAttribute) attribute;
+                            cmdletBindingAttribute = cmdletBindingAttribute ?? (CmdletBindingAttribute)attribute;
                         }
                         else if (attribute is DebuggerHiddenAttribute)
                         {
@@ -211,7 +211,7 @@ namespace System.Management.Automation
             if (AmsiUtils.ScanContent(scriptExtent.Text, scriptExtent.File) == AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_DETECTED)
             {
                 var parseError = new ParseError(scriptExtent, "ScriptContainedMaliciousContent", ParserStrings.ScriptContainedMaliciousContent);
-                throw new ParseException(new [] {parseError});
+                throw new ParseException(new[] { parseError });
             }
 
             if (ScriptBlock.CheckSuspiciousContent(scriptBlockAst) != null)
@@ -282,7 +282,8 @@ namespace System.Management.Automation
             return scriptBlockAst != null && scriptBlockAst.IsConfiguration;
         }
 
-        internal bool HasSuspiciousContent {
+        internal bool HasSuspiciousContent
+        {
             get
             {
                 Diagnostics.Assert(_compiledOptimized || _compiledUnoptimized, "HasSuspiciousContent is not set correctly before being compiled");
@@ -413,7 +414,7 @@ namespace System.Management.Automation
 
         private ScriptBlock(CompiledScriptBlockData scriptBlockData)
         {
-            this._scriptBlockData = scriptBlockData;
+            _scriptBlockData = scriptBlockData;
 
             // LanguageMode is a nullable PSLanguageMode enumeration because script blocks
             // need to inherit the language mode from the context in which they are executing.
@@ -439,7 +440,7 @@ namespace System.Management.Automation
         {
         }
 
-        private static readonly ConcurrentDictionary<Tuple<string, string>, ScriptBlock> _cachedScripts =
+        private static readonly ConcurrentDictionary<Tuple<string, string>, ScriptBlock> s_cachedScripts =
             new ConcurrentDictionary<Tuple<string, string>, ScriptBlock>();
         internal static ScriptBlock TryGetCachedScriptBlock(string fileName, string fileContents)
         {
@@ -450,7 +451,7 @@ namespace System.Management.Automation
 
             ScriptBlock scriptBlock;
             var key = Tuple.Create(fileName, fileContents);
-            if (_cachedScripts.TryGetValue(key, out scriptBlock))
+            if (s_cachedScripts.TryGetValue(key, out scriptBlock))
             {
                 Diagnostics.Assert(scriptBlock.SessionStateInternal == null,
                                    "A cached scriptblock should not have it's session state bound, that causes a memory leak.");
@@ -461,7 +462,7 @@ namespace System.Management.Automation
 
         private static bool IsDynamicKeyword(Ast ast)
         {
-            var cmdAst = ast as CommandAst; 
+            var cmdAst = ast as CommandAst;
             return (cmdAst != null && cmdAst.DefiningKeyword != null);
         }
 
@@ -488,18 +489,18 @@ namespace System.Management.Automation
             //
 
             // using is always a top-level statements in scriptBlock, we don't need to search in child blocks.
-            if (scriptBlock.Ast.Find(ast => IsUsingTypes(ast), false) != null || 
+            if (scriptBlock.Ast.Find(ast => IsUsingTypes(ast), false) != null ||
                 scriptBlock.Ast.Find(ast => IsDynamicKeyword(ast), true) != null)
             {
                 return;
             }
 
-            if (_cachedScripts.Count > 1024)
+            if (s_cachedScripts.Count > 1024)
             {
-                _cachedScripts.Clear();
+                s_cachedScripts.Clear();
             }
             var key = Tuple.Create(fileName, fileContents);
-            _cachedScripts.TryAdd(key, scriptBlock);
+            s_cachedScripts.TryAdd(key, scriptBlock);
         }
 
         /// <summary>
@@ -507,7 +508,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static void ClearScriptBlockCache()
         {
-            _cachedScripts.Clear();
+            s_cachedScripts.Clear();
         }
 
         internal static ScriptBlock EmptyScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock("", isProductCode: true);
@@ -1195,7 +1196,7 @@ namespace System.Management.Automation
             }
 
             optimized = _scriptBlockData.Compile(optimized);
-            
+
             if (optimized)
             {
                 switch (clauseToInvoke)
@@ -1296,7 +1297,7 @@ namespace System.Management.Automation
                 "Software\\Policies\\Microsoft\\Windows\\EventLog", "ProtectedEventLogging", Utils.RegLocalMachine);
             if (protectedEventLoggingSettings != null)
             {
-                lock (syncObject)
+                lock (s_syncObject)
                 {
                     // Populates the encryptionRecipients list from the Group Policy, if possible. If not possible,
                     // does all appropriate logging and encryptionRecipients is 'null'. 'CouldLog' being false
@@ -1309,12 +1310,12 @@ namespace System.Management.Automation
 
                     // If we have recipients to encrypt to, then do so. Otherwise, we'll just log the plain text
                     // version.
-                    if (encryptionRecipients != null)
+                    if (s_encryptionRecipients != null)
                     {
                         ExecutionContext executionContext = LocalPipeline.GetExecutionContextFromTLS();
                         ErrorRecord error = null;
                         byte[] contentBytes = System.Text.Encoding.UTF8.GetBytes(textToLog);
-                        string encodedContent = CmsUtils.Encrypt(contentBytes, encryptionRecipients, executionContext.SessionState, out error);
+                        string encodedContent = CmsUtils.Encrypt(contentBytes, s_encryptionRecipients, executionContext.SessionState, out error);
 
                         // Can't cache the reporting of encryption errors, as they are likely content-based.
                         if (error != null)
@@ -1399,14 +1400,14 @@ namespace System.Management.Automation
                         ResetCertificateCacheIfNeeded(fullCertificateContent);
 
                         // If we have valid recipients, no need for further analysis.
-                        if (encryptionRecipients != null)
+                        if (s_encryptionRecipients != null)
                         {
                             return true;
                         }
 
                         // If we've already verified all of the properties of the cert we care about (even if it
                         // didn't result in a valid cert), return now.
-                        if (hasProcessedCertificate)
+                        if (s_hasProcessedCertificate)
                         {
                             return true;
                         }
@@ -1414,7 +1415,7 @@ namespace System.Management.Automation
                         // Resolve the certificate to a recipient
                         CmsMessageRecipient recipient = new CmsMessageRecipient(fullCertificateContent);
                         recipient.Resolve(sessionState, ResolutionPurpose.Encryption, out error);
-                        hasProcessedCertificate = true;
+                        s_hasProcessedCertificate = true;
 
                         // If there's an error that we haven't already reported, report it in the event log.
                         // We only do this once, as the error will always be the same for a given certificate.
@@ -1433,7 +1434,7 @@ namespace System.Management.Automation
                         }
 
                         // Now, save the certificate. We'll be comfortable using this one from now on.
-                        encryptionRecipients = new CmsMessageRecipient[] { recipient };
+                        s_encryptionRecipients = new CmsMessageRecipient[] { recipient };
 
                         // Check if the certificate has a private key, and report a warning if so.
                         // We only do this once, as the error will always be the same for a given certificate.
@@ -1462,19 +1463,19 @@ namespace System.Management.Automation
             return true;
         }
 
-        private static object syncObject = new Object();
-        private static string lastSeenCertificate = String.Empty;
-        private static bool hasProcessedCertificate = false;
-        private static CmsMessageRecipient[] encryptionRecipients = null;
+        private static object s_syncObject = new Object();
+        private static string s_lastSeenCertificate = String.Empty;
+        private static bool s_hasProcessedCertificate = false;
+        private static CmsMessageRecipient[] s_encryptionRecipients = null;
 
         // Reset any static caches if the certificate has changed
         private static void ResetCertificateCacheIfNeeded(string certificate)
         {
-            if (!String.Equals(lastSeenCertificate, certificate, StringComparison.Ordinal))
+            if (!String.Equals(s_lastSeenCertificate, certificate, StringComparison.Ordinal))
             {
-                hasProcessedCertificate = false;
-                lastSeenCertificate = certificate;
-                encryptionRecipients = null;
+                s_hasProcessedCertificate = false;
+                s_lastSeenCertificate = certificate;
+                s_encryptionRecipients = null;
             }
         }
 
@@ -1528,7 +1529,7 @@ namespace System.Management.Automation
             {
                 if (foundSignature == null)
                 {
-                    if (signatures.Contains(element))
+                    if (s_signatures.Contains(element))
                     {
                         foundSignature = element;
                         loopState.Break();
@@ -1550,7 +1551,7 @@ namespace System.Management.Automation
                     return (!ast.HasSuspiciousContent) && (ast.Parent.HasSuspiciousContent);
                 }, true);
 
-                if(foundAst != null)
+                if (foundAst != null)
                 {
                     return foundAst.Parent.Extent.Text;
                 }
@@ -1564,7 +1565,7 @@ namespace System.Management.Automation
         }
 
         // Extract tokens of a-z A-Z and dash
-        static IEnumerable<string> TokenizeWordElements(string scriptBlockText)
+        private static IEnumerable<string> TokenizeWordElements(string scriptBlockText)
         {
             StringBuilder currentElement = new StringBuilder(100);
 
@@ -1614,8 +1615,7 @@ namespace System.Management.Automation
         }
 
         // Regular string signatures that can be detected with just string comparison.
-        private static HashSet<string> signatures = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
-
+        private static HashSet<string> s_signatures = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
             // Calling Add-Type
             "Add-Type", "DllImport",
 
@@ -1643,7 +1643,7 @@ namespace System.Management.Automation
             // Suspicious Win32 API calls
             "OpenProcess", "VirtualAlloc", "VirtualFree", "WriteProcessMemory", "CreateUserThread", "CloseHandle",
             "GetDelegateForFunctionPointer", "kernel32", "CreateThread", "memcpy", "LoadLibrary", "GetModuleHandle",
-            "GetProcAddress", "VirtualProtect", "FreeLibrary", "ReadProcessMemory", "CreateRemoteThread", 
+            "GetProcAddress", "VirtualProtect", "FreeLibrary", "ReadProcessMemory", "CreateRemoteThread",
             "AdjustTokenPrivileges", "WriteByte", "WriteInt32", "OpenThreadToken", "PtrToString",
             "FreeHGlobal", "ZeroFreeGlobalAllocUnicode", "OpenProcessToken", "GetTokenInformation", "SetThreadToken",
             "ImpersonateLoggedOnUser", "RevertToSelf", "GetLogonSessionData", "CreateProcessWithToken",
@@ -1665,8 +1665,8 @@ namespace System.Management.Automation
             "ScriptBlockLogging", "LogPipelineExecutionDetails", "ProtectedEventLogging",
         };
 
-	    internal static bool ScriptBlockLoggingExplicitlyDisabled()
-	    {
+        internal static bool ScriptBlockLoggingExplicitlyDisabled()
+        {
             // Verify they haven't explicitly turned off script block logging.
             Dictionary<string, object> groupPolicySettings = Utils.GetGroupPolicySetting("ScriptBlockLogging", Utils.RegLocalMachineThenCurrentUser);
             if (groupPolicySettings != null)
@@ -1683,8 +1683,8 @@ namespace System.Management.Automation
                 }
             }
 
-		    return false;
-	    }
+            return false;
+        }
 
         internal static void LogScriptBlockStart(ScriptBlock scriptBlock, Guid runspaceId)
         {
@@ -1743,14 +1743,14 @@ namespace System.Management.Automation
     [Serializable]
     internal class ScriptBlockSerializationHelper : ISerializable, IObjectReference
     {
-        private readonly string scriptText;
+        private readonly string _scriptText;
 
         private ScriptBlockSerializationHelper(SerializationInfo info, StreamingContext context)
         {
             if (info == null) throw new ArgumentNullException("info");
 
-            scriptText = info.GetValue("ScriptText", typeof(string)) as string;
-            if (scriptText == null)
+            _scriptText = info.GetValue("ScriptText", typeof(string)) as string;
+            if (_scriptText == null)
             {
                 throw PSTraceSource.NewArgumentNullException("info");
             }
@@ -1763,7 +1763,7 @@ namespace System.Management.Automation
         /// <returns>A script block that corresponds to the version deserialized</returns>
         public Object GetRealObject(StreamingContext context)
         {
-            return ScriptBlock.Create(scriptText);
+            return ScriptBlock.Create(_scriptText);
         }
 
         /// <summary>
@@ -1792,14 +1792,14 @@ namespace System.Management.Automation
 
         public PSScriptCmdlet(ScriptBlock scriptBlock, bool useNewScope, bool fromScriptFile, ExecutionContext context)
         {
-            this._scriptBlock = scriptBlock;
-            this._useLocalScope = useNewScope;
-            this._fromScriptFile = fromScriptFile;
-            this._runOptimized = _scriptBlock.Compile(optimized: context._debuggingMode > 0 ? false : useNewScope);
-            this._localsTuple = _scriptBlock.MakeLocalsTuple(_runOptimized);
+            _scriptBlock = scriptBlock;
+            _useLocalScope = useNewScope;
+            _fromScriptFile = fromScriptFile;
+            _runOptimized = _scriptBlock.Compile(optimized: context._debuggingMode > 0 ? false : useNewScope);
+            _localsTuple = _scriptBlock.MakeLocalsTuple(_runOptimized);
             _localsTuple.SetAutomaticVariable(AutomaticVariable.PSCmdlet, this, context);
             _scriptBlock.SetPSScriptRootAndPSCommandPath(_localsTuple, context);
-            this._functionContext = new FunctionContext
+            _functionContext = new FunctionContext
             {
                 _localsTuple = _localsTuple,
                 _scriptBlock = _scriptBlock,
@@ -1809,7 +1809,7 @@ namespace System.Management.Automation
                 _debuggerStepThrough = _scriptBlock.DebuggerStepThrough,
                 _executionContext = context,
             };
-            this._rethrowExitException = context.ScriptCommandProcessorShouldRethrowExit;
+            _rethrowExitException = context.ScriptCommandProcessorShouldRethrowExit;
             context.ScriptCommandProcessorShouldRethrowExit = false;
         }
 
@@ -1818,11 +1818,11 @@ namespace System.Management.Automation
             // commandRuntime and the execution context are set here and in GetDynamicParameters.  GetDynamicParameters isn't
             // called unless the scriptblock has a dynamicparam block, so we must set these values in both places.  It'd
             // be cleaner to set in the constructor, but neither the commandRuntime nor the context are set when being constructed.
-            this._commandRuntime = (MshCommandRuntime)commandRuntime;
+            _commandRuntime = (MshCommandRuntime)commandRuntime;
 
             // We don't set the output pipe until after GetDynamicParameters because dynamic parameters aren't written to the
             // command processors pipe, but once we enter begin, we will write to the default pipe.
-            this._functionContext._outputPipe = _commandRuntime.OutputPipe;
+            _functionContext._outputPipe = _commandRuntime.OutputPipe;
 
             SetPreferenceVariables();
 
@@ -1871,7 +1871,7 @@ namespace System.Management.Automation
 
         private void EnterScope()
         {
-            this._commandRuntime.SetVariableListsInPipe();
+            _commandRuntime.SetVariableListsInPipe();
 
             if (!_useLocalScope)
             {
@@ -1881,7 +1881,7 @@ namespace System.Management.Automation
 
         private void ExitScope()
         {
-            this._commandRuntime.RemoveVariableListsInPipe();
+            _commandRuntime.RemoveVariableListsInPipe();
 
             if (!_useLocalScope)
             {
@@ -1897,11 +1897,11 @@ namespace System.Management.Automation
             // change the language mode.
             PSLanguageMode? oldLanguageMode = null;
             PSLanguageMode? newLanguageMode = null;
-            if ((this._scriptBlock.LanguageMode.HasValue) &&
-                (this._scriptBlock.LanguageMode != Context.LanguageMode))
+            if ((_scriptBlock.LanguageMode.HasValue) &&
+                (_scriptBlock.LanguageMode != Context.LanguageMode))
             {
                 oldLanguageMode = Context.LanguageMode;
-                newLanguageMode = this._scriptBlock.LanguageMode;
+                newLanguageMode = _scriptBlock.LanguageMode;
             }
 
             try
@@ -1957,12 +1957,12 @@ namespace System.Management.Automation
             }
             catch (ExitException ee)
             {
-                if (!this._fromScriptFile || _rethrowExitException)
+                if (!_fromScriptFile || _rethrowExitException)
                 {
                     throw;
                 }
 
-                this._exitWasCalled = true;
+                _exitWasCalled = true;
 
                 int exitCode = (int)ee.Argument;
                 this.Context.SetVariable(SpecialVariables.LastExitCodeVarPath, exitCode);
@@ -1991,7 +1991,7 @@ namespace System.Management.Automation
 
         public object GetDynamicParameters()
         {
-            this._commandRuntime = (MshCommandRuntime)commandRuntime;
+            _commandRuntime = (MshCommandRuntime)commandRuntime;
 
             if (_scriptBlock.HasDynamicParameters)
             {
@@ -2020,41 +2020,40 @@ namespace System.Management.Automation
             _localsTuple.SetAutomaticVariable(AutomaticVariable.PSBoundParameters,
                                               commandLineParameters.GetValueToBindToPSBoundParameters(), this.Context);
             _localsTuple.SetAutomaticVariable(AutomaticVariable.MyInvocation, MyInvocation, this.Context);
-
         }
 
         private void SetPreferenceVariables()
         {
-            if (this._commandRuntime.IsDebugFlagSet)
+            if (_commandRuntime.IsDebugFlagSet)
             {
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.Debug,
-                                                   this._commandRuntime.Debug ? ActionPreference.Inquire : ActionPreference.SilentlyContinue);
+                                                   _commandRuntime.Debug ? ActionPreference.Inquire : ActionPreference.SilentlyContinue);
             }
-            if (this._commandRuntime.IsVerboseFlagSet)
+            if (_commandRuntime.IsVerboseFlagSet)
             {
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.Verbose,
-                                                   this._commandRuntime.Verbose ? ActionPreference.Continue : ActionPreference.SilentlyContinue);
+                                                   _commandRuntime.Verbose ? ActionPreference.Continue : ActionPreference.SilentlyContinue);
             }
-            if (this._commandRuntime.IsErrorActionSet)
+            if (_commandRuntime.IsErrorActionSet)
             {
-                _localsTuple.SetPreferenceVariable(PreferenceVariable.Error, this._commandRuntime.ErrorAction);
+                _localsTuple.SetPreferenceVariable(PreferenceVariable.Error, _commandRuntime.ErrorAction);
             }
-            if (this._commandRuntime.IsWarningActionSet)
+            if (_commandRuntime.IsWarningActionSet)
             {
-                _localsTuple.SetPreferenceVariable(PreferenceVariable.Warning, this._commandRuntime.WarningPreference);
+                _localsTuple.SetPreferenceVariable(PreferenceVariable.Warning, _commandRuntime.WarningPreference);
             }
-            if (this._commandRuntime.IsInformationActionSet)
+            if (_commandRuntime.IsInformationActionSet)
             {
-                _localsTuple.SetPreferenceVariable(PreferenceVariable.Information, this._commandRuntime.InformationPreference);
+                _localsTuple.SetPreferenceVariable(PreferenceVariable.Information, _commandRuntime.InformationPreference);
             }
-            if (this._commandRuntime.IsWhatIfFlagSet)
+            if (_commandRuntime.IsWhatIfFlagSet)
             {
-                _localsTuple.SetPreferenceVariable(PreferenceVariable.WhatIf, this._commandRuntime.WhatIf);
+                _localsTuple.SetPreferenceVariable(PreferenceVariable.WhatIf, _commandRuntime.WhatIf);
             }
-            if (this._commandRuntime.IsConfirmFlagSet)
+            if (_commandRuntime.IsConfirmFlagSet)
             {
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.Confirm,
-                                                   this._commandRuntime.Confirm ? ConfirmImpact.Low : ConfirmImpact.None);
+                                                   _commandRuntime.Confirm ? ConfirmImpact.Low : ConfirmImpact.None);
             }
         }
 
@@ -2099,6 +2098,5 @@ namespace System.Management.Automation
         }
 
         #endregion IDispose
-
     }
 }

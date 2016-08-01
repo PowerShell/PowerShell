@@ -41,11 +41,11 @@ namespace System.Management.Automation
             PathIntrinsics pathIntrinsics)
         {
             Dbg.Assert(null != executionContext, "ExecutionContext cannot be null.");
-            this._requestedPath = requestedPath;
-            this._executionContext = executionContext;
-            this._pathIntrinsics = pathIntrinsics;
+            _requestedPath = requestedPath;
+            _executionContext = executionContext;
+            _pathIntrinsics = pathIntrinsics;
         }
-        
+
         /// <summary>
         /// Get provider specific help info.
         /// </summary>
@@ -111,7 +111,7 @@ namespace System.Management.Automation
             {
                 throw new ItemNotFoundException(_requestedPath, "PathNotFound", SessionStateStrings.PathNotFound);
             }
-            
+
             // ok we have path and valid provider that supplys content..intialize the provider
             // and get the help content for the path.
             cmdletProvider.Start(providerInfo, cmdletProviderContext);

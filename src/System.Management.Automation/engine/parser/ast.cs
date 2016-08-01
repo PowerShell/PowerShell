@@ -73,7 +73,6 @@ namespace System.Management.Automation.Language
         Tuple<string, string> GetWithInputHandlingForInvokeCommandWithUsingExpression(Tuple<List<VariableExpressionAst>, string> usingVariablesTuple);
 
         #endregion Remoting/Invoke Command
-
     }
 
     /// <summary>
@@ -197,7 +196,7 @@ namespace System.Management.Automation.Language
             try
             {
                 ExecutionContext context = null;
-                if(System.Management.Automation.Runspaces.Runspace.DefaultRunspace != null)
+                if (System.Management.Automation.Runspaces.Runspace.DefaultRunspace != null)
                 {
                     context = System.Management.Automation.Runspaces.Runspace.DefaultRunspace.ExecutionContext;
                 }
@@ -770,13 +769,13 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class ScriptBlockAst : Ast, IParameterMetadataProvider
     {
-        private static readonly ReadOnlyCollection<AttributeAst> EmptyAttributeList =
+        private static readonly ReadOnlyCollection<AttributeAst> s_emptyAttributeList =
             Utils.EmptyReadOnlyCollection<AttributeAst>();
-        private static readonly ReadOnlyCollection<UsingStatementAst> EmptyUsingStatementList =
+        private static readonly ReadOnlyCollection<UsingStatementAst> s_emptyUsingStatementList =
             Utils.EmptyReadOnlyCollection<UsingStatementAst>();
 
         internal bool HadErrors { get; set; }
-        internal bool IsConfiguration { get; private set; }        
+        internal bool IsConfiguration { get; private set; }
         internal bool PostParseChecksPerformed { get; set; }
 
         /// <summary>
@@ -813,7 +812,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                this.Attributes = EmptyAttributeList;
+                this.Attributes = s_emptyAttributeList;
             }
 
             if (paramBlock != null)
@@ -1021,7 +1020,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                this.Attributes = EmptyAttributeList;
+                this.Attributes = s_emptyAttributeList;
             }
 
             if (statements == null)
@@ -1056,7 +1055,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                this.UsingStatements = EmptyUsingStatementList;
+                this.UsingStatements = s_emptyUsingStatementList;
             }
         }
 
@@ -1178,10 +1177,10 @@ namespace System.Management.Automation.Language
 
             var scriptBlockAst = new ScriptBlockAst(this.Extent, newUsingStatements, newAttributes, newParamBlock, newBeginBlock, newProcessBlock,
                                                     newEndBlock, newDynamicParamBlock)
-                {
-                    IsConfiguration = this.IsConfiguration,
-                    ScriptRequirements = this.ScriptRequirements
-                };
+            {
+                IsConfiguration = this.IsConfiguration,
+                ScriptRequirements = this.ScriptRequirements
+            };
             return scriptBlockAst;
         }
 
@@ -1201,9 +1200,9 @@ namespace System.Management.Automation.Language
 
         internal string ToStringForSerialization(Tuple<List<VariableExpressionAst>, string> usingVariablesTuple, int initialStartOffset, int initialEndOffset)
         {
-            Diagnostics.Assert(usingVariablesTuple.Item1 != null && usingVariablesTuple.Item1.Count > 0 && !string.IsNullOrEmpty(usingVariablesTuple.Item2), 
+            Diagnostics.Assert(usingVariablesTuple.Item1 != null && usingVariablesTuple.Item1.Count > 0 && !string.IsNullOrEmpty(usingVariablesTuple.Item2),
                                "Caller makes sure the value passed in is not null or empty");
-            Diagnostics.Assert(initialStartOffset < initialEndOffset && initialStartOffset >= this.Extent.StartOffset && initialEndOffset <= this.Extent.EndOffset, 
+            Diagnostics.Assert(initialStartOffset < initialEndOffset && initialStartOffset >= this.Extent.StartOffset && initialEndOffset <= this.Extent.EndOffset,
                                "Caller makes sure the section is within the ScriptBlockAst");
 
             List<VariableExpressionAst> usingVars = usingVariablesTuple.Item1; // A list of using variables
@@ -1405,7 +1404,7 @@ namespace System.Management.Automation.Language
                 var attributeAst = Attributes[index];
                 yield return Compiler.GetAttribute(attributeAst);
             }
-         
+
             if (ParamBlock != null)
             {
                 for (int index = 0; index < ParamBlock.Attributes.Count; index++)
@@ -1452,7 +1451,7 @@ namespace System.Management.Automation.Language
             return new Tuple<string, string>(paramText, scriptBlockText);
         }
 
-        string GetWithInputHandlingForInvokeCommandImpl(Tuple<List<VariableExpressionAst>, string> usingVariablesTuple)
+        private string GetWithInputHandlingForInvokeCommandImpl(Tuple<List<VariableExpressionAst>, string> usingVariablesTuple)
         {
             // do not add "$input |" to complex pipelines
             string unused1;
@@ -1569,9 +1568,9 @@ namespace System.Management.Automation.Language
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param")]
     public class ParamBlockAst : Ast
     {
-        private static readonly ReadOnlyCollection<AttributeAst> EmptyAttributeList =
+        private static readonly ReadOnlyCollection<AttributeAst> s_emptyAttributeList =
             Utils.EmptyReadOnlyCollection<AttributeAst>();
-        private static readonly ReadOnlyCollection<ParameterAst> EmptyParameterList =
+        private static readonly ReadOnlyCollection<ParameterAst> s_emptyParameterList =
             Utils.EmptyReadOnlyCollection<ParameterAst>();
 
         /// <summary>
@@ -1593,7 +1592,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                this.Attributes = EmptyAttributeList;
+                this.Attributes = s_emptyAttributeList;
             }
 
             if (parameters != null)
@@ -1603,7 +1602,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                this.Parameters = EmptyParameterList;
+                this.Parameters = s_emptyParameterList;
             }
         }
 
@@ -1807,8 +1806,8 @@ namespace System.Management.Automation.Language
                 // For explicitly named block, the Extent of the StatementBlockAst is not
                 // the same as the Extent of the NamedBlockAst. In this case, reconstruct
                 // the Extent of the StatementBlockAst from openExtent/closeExtent.
-                var openExtent = (InternalScriptExtent) this.OpenCurlyExtent;
-                var closeExtent = (InternalScriptExtent) this.CloseCurlyExtent;
+                var openExtent = (InternalScriptExtent)this.OpenCurlyExtent;
+                var closeExtent = (InternalScriptExtent)this.CloseCurlyExtent;
                 statementBlockExtent = new InternalScriptExtent(openExtent.PositionHelper, openExtent.StartOffset, closeExtent.EndOffset);
             }
 
@@ -1980,9 +1979,9 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class AttributeAst : AttributeBaseAst
     {
-        private static readonly ReadOnlyCollection<ExpressionAst> EmptyPositionalArguments =
+        private static readonly ReadOnlyCollection<ExpressionAst> s_emptyPositionalArguments =
             Utils.EmptyReadOnlyCollection<ExpressionAst>();
-        private static readonly ReadOnlyCollection<NamedAttributeArgumentAst> EmptyNamedAttributeArguments =
+        private static readonly ReadOnlyCollection<NamedAttributeArgumentAst> s_emptyNamedAttributeArguments =
             Utils.EmptyReadOnlyCollection<NamedAttributeArgumentAst>();
 
         /// <summary>
@@ -2008,7 +2007,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                this.PositionalArguments = EmptyPositionalArguments;
+                this.PositionalArguments = s_emptyPositionalArguments;
             }
 
             if (namedArguments != null)
@@ -2018,7 +2017,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                this.NamedArguments = EmptyNamedAttributeArguments;
+                this.NamedArguments = s_emptyNamedAttributeArguments;
             }
         }
 
@@ -2149,7 +2148,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class ParameterAst : Ast
     {
-        private static readonly ReadOnlyCollection<AttributeBaseAst> EmptyAttributeList =
+        private static readonly ReadOnlyCollection<AttributeBaseAst> s_emptyAttributeList =
             Utils.EmptyReadOnlyCollection<AttributeBaseAst>();
 
         /// <summary>
@@ -2180,7 +2179,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                this.Attributes = EmptyAttributeList;
+                this.Attributes = s_emptyAttributeList;
             }
             this.Name = name;
             SetParent(name);
@@ -2307,7 +2306,6 @@ namespace System.Management.Automation.Language
                 newParamText.Append(paramText.Substring(startOffset, astStartOffset - startOffset));
                 newParamText.Append(newVarName);
                 startOffset = astEndOffset;
-
             } while (orderedUsingVar.MoveNext());
 
             if (startOffset == 0)
@@ -2365,7 +2363,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class StatementBlockAst : Ast
     {
-        private static ReadOnlyCollection<StatementAst> emptyStatementCollection = Utils.EmptyReadOnlyCollection<StatementAst>();
+        private static ReadOnlyCollection<StatementAst> s_emptyStatementCollection = Utils.EmptyReadOnlyCollection<StatementAst>();
 
         /// <summary>
         /// Construct a statement block.
@@ -2388,7 +2386,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                this.Statements = emptyStatementCollection;
+                this.Statements = s_emptyStatementCollection;
             }
 
             if (traps != null && traps.Any())
@@ -2513,11 +2511,11 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class TypeDefinitionAst : StatementAst
     {
-        private static readonly ReadOnlyCollection<AttributeAst> EmptyAttributeList =
+        private static readonly ReadOnlyCollection<AttributeAst> s_emptyAttributeList =
             Utils.EmptyReadOnlyCollection<AttributeAst>();
-        private static readonly ReadOnlyCollection<MemberAst> EmptyMembersCollection =
+        private static readonly ReadOnlyCollection<MemberAst> s_emptyMembersCollection =
             Utils.EmptyReadOnlyCollection<MemberAst>();
-        private static readonly ReadOnlyCollection<TypeConstraintAst> EmptyBaseTypesCollection =
+        private static readonly ReadOnlyCollection<TypeConstraintAst> s_emptyBaseTypesCollection =
             Utils.EmptyReadOnlyCollection<TypeConstraintAst>();
 
         /// <summary>
@@ -2544,7 +2542,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                Attributes = EmptyAttributeList;
+                Attributes = s_emptyAttributeList;
             }
 
             if (members != null && members.Any())
@@ -2554,7 +2552,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                Members = EmptyMembersCollection;
+                Members = s_emptyMembersCollection;
             }
 
             if (baseTypes != null && baseTypes.Any())
@@ -2564,7 +2562,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                BaseTypes = EmptyBaseTypesCollection;
+                BaseTypes = s_emptyBaseTypesCollection;
             }
 
             this.Name = name;
@@ -3012,7 +3010,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class PropertyMemberAst : MemberAst
     {
-        private static readonly ReadOnlyCollection<AttributeAst> EmptyAttributeList =
+        private static readonly ReadOnlyCollection<AttributeAst> s_emptyAttributeList =
             Utils.EmptyReadOnlyCollection<AttributeAst>();
 
         /// <summary>
@@ -3052,7 +3050,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                this.Attributes = EmptyAttributeList;
+                this.Attributes = s_emptyAttributeList;
             }
             PropertyAttributes = propertyAttributes;
             InitialValue = initialValue;
@@ -3201,9 +3199,9 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class FunctionMemberAst : MemberAst, IParameterMetadataProvider
     {
-        private static readonly ReadOnlyCollection<AttributeAst> EmptyAttributeList =
+        private static readonly ReadOnlyCollection<AttributeAst> s_emptyAttributeList =
             Utils.EmptyReadOnlyCollection<AttributeAst>();
-        private static readonly ReadOnlyCollection<ParameterAst> EmptyParameterList =
+        private static readonly ReadOnlyCollection<ParameterAst> s_emptyParameterList =
             Utils.EmptyReadOnlyCollection<ParameterAst>();
 
         private readonly FunctionDefinitionAst _functionDefinitionAst;
@@ -3243,7 +3241,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                this.Attributes = EmptyAttributeList;
+                this.Attributes = s_emptyAttributeList;
             }
 
             _functionDefinitionAst = functionDefinitionAst;
@@ -3259,7 +3257,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The attributes specified on the method.  This property is never null.
         /// </summary>
-        public ReadOnlyCollection<AttributeAst> Attributes { get; private set; } 
+        public ReadOnlyCollection<AttributeAst> Attributes { get; private set; }
 
         /// <summary>
         /// The ast representing the return type for the method.  This property may be null if no return type was specified.
@@ -3269,8 +3267,9 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The parameters specified immediately after the function name.  This property is never null.
         /// </summary>
-        public ReadOnlyCollection<ParameterAst> Parameters {
-            get { return _functionDefinitionAst.Parameters ?? EmptyParameterList; }
+        public ReadOnlyCollection<ParameterAst> Parameters
+        {
+            get { return _functionDefinitionAst.Parameters ?? s_emptyParameterList; }
         }
 
         /// <summary>
@@ -3406,20 +3405,20 @@ namespace System.Management.Automation.Language
 
         RuntimeDefinedParameterDictionary IParameterMetadataProvider.GetParameterMetadata(bool automaticPositions, ref bool usesCmdletBinding)
         {
-            return ((IParameterMetadataProvider) _functionDefinitionAst).GetParameterMetadata(automaticPositions, ref usesCmdletBinding);
+            return ((IParameterMetadataProvider)_functionDefinitionAst).GetParameterMetadata(automaticPositions, ref usesCmdletBinding);
         }
 
         IEnumerable<Attribute> IParameterMetadataProvider.GetScriptBlockAttributes()
         {
-            return ((IParameterMetadataProvider) _functionDefinitionAst).GetScriptBlockAttributes();
+            return ((IParameterMetadataProvider)_functionDefinitionAst).GetScriptBlockAttributes();
         }
 
         bool IParameterMetadataProvider.UsesCmdletBinding()
         {
-            return ((IParameterMetadataProvider) _functionDefinitionAst).UsesCmdletBinding();
+            return ((IParameterMetadataProvider)_functionDefinitionAst).UsesCmdletBinding();
         }
 
-        PowerShell IParameterMetadataProvider.GetPowerShell(ExecutionContext context, Dictionary<string, object> variables, bool isTrustedInput, 
+        PowerShell IParameterMetadataProvider.GetPowerShell(ExecutionContext context, Dictionary<string, object> variables, bool isTrustedInput,
             bool filterNonUsingVariables, bool? createLocalScope, params object[] args)
         {
             // OK?  I think this isn't reachable
@@ -3840,7 +3839,7 @@ namespace System.Management.Automation.Language
         Tuple<string, string> IParameterMetadataProvider.GetWithInputHandlingForInvokeCommandWithUsingExpression(
             Tuple<List<VariableExpressionAst>, string> usingVariablesTuple)
         {
-            Tuple<string, string> result = 
+            Tuple<string, string> result =
                 ((IParameterMetadataProvider)Body).GetWithInputHandlingForInvokeCommandWithUsingExpression(usingVariablesTuple);
 
             if (Parameters == null)
@@ -3991,7 +3990,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class DataStatementAst : StatementAst
     {
-        private static readonly ExpressionAst[] EmptyCommandsAllowed = Utils.EmptyArray<ExpressionAst>();
+        private static readonly ExpressionAst[] s_emptyCommandsAllowed = Utils.EmptyArray<ExpressionAst>();
 
         /// <summary>
         /// Construct a data statement.
@@ -4028,7 +4027,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                this.CommandsAllowed = new ReadOnlyCollection<ExpressionAst>(EmptyCommandsAllowed);
+                this.CommandsAllowed = new ReadOnlyCollection<ExpressionAst>(s_emptyCommandsAllowed);
             }
             this.Body = body;
             SetParent(body);
@@ -4086,7 +4085,7 @@ namespace System.Management.Automation.Language
         #endregion Visitors
 
         #region Code Generation Details
-        
+
         private int _tupleIndex = VariableAnalysis.Unanalyzed;
         internal int TupleIndex
         {
@@ -4296,7 +4295,7 @@ namespace System.Management.Automation.Language
             if (this.ThrottleLimit != null)
             {
                 var newThrottleLimit = CopyElement(this.ThrottleLimit);
-                return new ForEachStatementAst(this.Extent, this.Label, this.Flags, newThrottleLimit, 
+                return new ForEachStatementAst(this.Extent, this.Label, this.Flags, newThrottleLimit,
                                                newVariable, newExpression, newBody);
             }
 
@@ -4633,7 +4632,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class SwitchStatementAst : LabeledStatementAst
     {
-        private static readonly SwitchClause[] EmptyClauseArray = Utils.EmptyArray<SwitchClause>();
+        private static readonly SwitchClause[] s_emptyClauseArray = Utils.EmptyArray<SwitchClause>();
 
         /// <summary>
         /// Construct a switch statement.
@@ -4670,7 +4669,7 @@ namespace System.Management.Automation.Language
 
             this.Flags = flags;
             this.Clauses = new ReadOnlyCollection<SwitchClause>(
-                (clauses != null && clauses.Any()) ? clauses.ToArray() : EmptyClauseArray);
+                (clauses != null && clauses.Any()) ? clauses.ToArray() : s_emptyClauseArray);
             SetParents(Clauses);
             if (@default != null)
             {
@@ -4703,7 +4702,7 @@ namespace System.Management.Automation.Language
         {
             var newCondition = CopyElement(this.Condition);
             var newDefault = CopyElement(this.Default);
-            
+
             List<SwitchClause> newClauses = null;
             if (this.Clauses.Count > 0)
             {
@@ -4779,7 +4778,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class CatchClauseAst : Ast
     {
-        private readonly static ReadOnlyCollection<TypeConstraintAst> EmptyCatchTypes =
+        private readonly static ReadOnlyCollection<TypeConstraintAst> s_emptyCatchTypes =
             Utils.EmptyReadOnlyCollection<TypeConstraintAst>();
 
         /// <summary>
@@ -4806,7 +4805,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                this.CatchTypes = EmptyCatchTypes;
+                this.CatchTypes = s_emptyCatchTypes;
             }
 
             this.Body = body;
@@ -4876,7 +4875,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class TryStatementAst : StatementAst
     {
-        private readonly static ReadOnlyCollection<CatchClauseAst> EmptyCatchClauses =
+        private readonly static ReadOnlyCollection<CatchClauseAst> s_emptyCatchClauses =
             Utils.EmptyReadOnlyCollection<CatchClauseAst>();
 
         /// <summary>
@@ -4921,7 +4920,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                this.CatchClauses = EmptyCatchClauses;
+                this.CatchClauses = s_emptyCatchClauses;
             }
 
             if (@finally != null)
@@ -5709,10 +5708,10 @@ namespace System.Management.Automation.Language
     /// </summary>
     public abstract class CommandBaseAst : StatementAst
     {
-        private static readonly ReadOnlyCollection<RedirectionAst> EmptyRedirections =
+        private static readonly ReadOnlyCollection<RedirectionAst> s_emptyRedirections =
             Utils.EmptyReadOnlyCollection<RedirectionAst>();
 
-        internal const int MaxRedirections = (int) RedirectionStream.Information + 1;
+        internal const int MaxRedirections = (int)RedirectionStream.Information + 1;
 
         /// <summary>
         /// Initialize the common fields of a command.
@@ -5732,7 +5731,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                this.Redirections = EmptyRedirections;
+                this.Redirections = s_emptyRedirections;
             }
         }
 
@@ -5828,9 +5827,9 @@ namespace System.Management.Automation.Language
             var newCommandElements = CopyElements(this.CommandElements);
             var newRedirections = CopyElements(this.Redirections);
             return new CommandAst(this.Extent, newCommandElements, this.InvocationOperator, newRedirections)
-                {
-                    DefiningKeyword = this.DefiningKeyword
-                };
+            {
+                DefiningKeyword = this.DefiningKeyword
+            };
         }
 
         internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
@@ -6380,26 +6379,26 @@ namespace System.Management.Automation.Language
             return Left.GetInferredType(context);
         }
 
-		/// <summary>
-		/// Return all of the expressions assigned by the assignment statement.  Typically
-		/// it's just a variable expression, but if <see cref="Left"/> is an <see cref="ArrayLiteralAst"/>,
-		/// then all of the elements are assigned.
-		/// </summary>
-		/// <returns>All of the expressions assigned by the assignment statement.</returns>
-	    public IEnumerable<ExpressionAst> GetAssignmentTargets()
-	    {
-		    var arrayExpression = Left as ArrayLiteralAst;
-		    if (arrayExpression != null)
-		    {
-			    foreach (var element in arrayExpression.Elements)
-			    {
-				    yield return element;
-			    }
-			    yield break;
-		    }
+        /// <summary>
+        /// Return all of the expressions assigned by the assignment statement.  Typically
+        /// it's just a variable expression, but if <see cref="Left"/> is an <see cref="ArrayLiteralAst"/>,
+        /// then all of the elements are assigned.
+        /// </summary>
+        /// <returns>All of the expressions assigned by the assignment statement.</returns>
+        public IEnumerable<ExpressionAst> GetAssignmentTargets()
+        {
+            var arrayExpression = Left as ArrayLiteralAst;
+            if (arrayExpression != null)
+            {
+                foreach (var element in arrayExpression.Elements)
+                {
+                    yield return element;
+                }
+                yield break;
+            }
 
-			yield return Left;
-	    }
+            yield return Left;
+        }
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -6615,7 +6614,7 @@ namespace System.Management.Automation.Language
             var resourceBody = (from stm in bodyStatements where !IsImportCommand(stm, resourceModulePairsToImport) select (StatementAst)stm.Copy()).ToList();
 
             cea.Add(new CommandParameterAst(PositionUtilities.EmptyExtent, "ResourceModuleTuplesToImport", new ConstantExpressionAst(PositionUtilities.EmptyExtent, resourceModulePairsToImport), PositionUtilities.EmptyExtent));
-            
+
             var scriptBlockBody = new ScriptBlockAst(Body.Extent,
                 CustomAttributes == null ? null : CustomAttributes.Select(att => (AttributeAst)att.Copy()).ToList(),
                 null,
@@ -6714,7 +6713,6 @@ namespace System.Management.Automation.Language
             SetParent(returnPipelineAst);
 
             return returnPipelineAst;
-
         }
 
         #endregion
@@ -6754,7 +6752,7 @@ namespace System.Management.Automation.Language
                 if ((paramName.Length <= nameParam.Length) && (paramName.Equals(nameParam.Substring(0, paramName.Length), StringComparison.OrdinalIgnoreCase)))
                 {
                     resourceNames = paramValue;
-                }                       
+                }
                 // Since both parameters -ModuleName and -ModuleVersion has same start string i.e. Module so we will try to resolve it to -ModuleName
                 // if user specifies like -Module 
                 if ((paramName.Length <= moduleNameParam.Length) && (paramName.Equals(moduleNameParam.Substring(0, paramName.Length), StringComparison.OrdinalIgnoreCase)))
@@ -6767,7 +6765,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            string[] resourceNamesTyped = new [] {"*"};
+            string[] resourceNamesTyped = new[] { "*" };
             ModuleSpecification[] moduleNamesTyped = null;
             Version moduleVersionTyped = null;
 
@@ -6837,9 +6835,9 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                if (_configurationBuildInParameters == null)
+                if (s_configurationBuildInParameters == null)
                 {
-                    _configurationBuildInParameters = new List<ParameterAst>();
+                    s_configurationBuildInParameters = new List<ParameterAst>();
 
                     Token[] tokens;
                     ParseError[] errors;
@@ -6848,57 +6846,55 @@ namespace System.Management.Automation.Language
                     {
                         foreach (var parameterAst in sba.ParamBlock.Parameters)
                         {
-                            _configurationBuildInParameters.Add((ParameterAst)parameterAst.Copy());
+                            s_configurationBuildInParameters.Add((ParameterAst)parameterAst.Copy());
                         }
                     }
-
                 }
-                return _configurationBuildInParameters;
+                return s_configurationBuildInParameters;
             }
         }
-        private static List<ParameterAst> _configurationBuildInParameters;
+        private static List<ParameterAst> s_configurationBuildInParameters;
         private static IEnumerable<AttributeAst> ConfigurationBuildInParameterAttribAsts
         {
             get
             {
-                if (_configurationBuildInParameterAttrAsts == null)
+                if (s_configurationBuildInParameterAttrAsts == null)
                 {
-                    _configurationBuildInParameterAttrAsts = new List<AttributeAst>();
+                    s_configurationBuildInParameterAttrAsts = new List<AttributeAst>();
 
                     Token[] tokens;
                     ParseError[] errors;
                     var sba = Parser.ParseInput(ConfigurationBuildInParametersStr, out tokens, out errors);
                     if (sba != null)
                     {
-                        if (_configurationBuildInParameters == null)
+                        if (s_configurationBuildInParameters == null)
                         {
-                            _configurationBuildInParameters = new List<ParameterAst>();
+                            s_configurationBuildInParameters = new List<ParameterAst>();
 
                             foreach (var parameterAst in sba.ParamBlock.Parameters)
                             {
-                                _configurationBuildInParameters.Add((ParameterAst)parameterAst.Copy());
+                                s_configurationBuildInParameters.Add((ParameterAst)parameterAst.Copy());
                             }
                         }
 
                         foreach (var attribAst in sba.ParamBlock.Attributes)
                         {
-                            _configurationBuildInParameterAttrAsts.Add((AttributeAst)attribAst.Copy());
+                            s_configurationBuildInParameterAttrAsts.Add((AttributeAst)attribAst.Copy());
                         }
                     }
-
                 }
-                return _configurationBuildInParameterAttrAsts;
+                return s_configurationBuildInParameterAttrAsts;
             }
         }
-        private static List<AttributeAst> _configurationBuildInParameterAttrAsts;
+        private static List<AttributeAst> s_configurationBuildInParameterAttrAsts;
 
         private static IEnumerable<StatementAst> ConfigurationExtraParameterStatements
         {
             get
             {
-                if (_configurationExtraParameterStatements == null)
+                if (s_configurationExtraParameterStatements == null)
                 {
-                    _configurationExtraParameterStatements = new List<StatementAst>();
+                    s_configurationExtraParameterStatements = new List<StatementAst>();
                     Token[] tokens;
                     ParseError[] errors;
                     var sba = Parser.ParseInput(@"
@@ -6913,15 +6909,14 @@ namespace System.Management.Automation.Language
                     {
                         foreach (var statementAst in sba.EndBlock.Statements)
                         {
-                            _configurationExtraParameterStatements.Add((StatementAst)statementAst.Copy());
+                            s_configurationExtraParameterStatements.Add((StatementAst)statementAst.Copy());
                         }
                     }
-
                 }
-                return _configurationExtraParameterStatements;
+                return s_configurationExtraParameterStatements;
             }
         }
-        private static List<StatementAst> _configurationExtraParameterStatements;
+        private static List<StatementAst> s_configurationExtraParameterStatements;
         #endregion
 
     }
@@ -7110,7 +7105,7 @@ namespace System.Management.Automation.Language
                             FunctionName.Extent,
                             "InstanceName",
                             InstanceName,
-                            FunctionName.Extent));     
+                            FunctionName.Extent));
                 }
 
                 //
@@ -7153,7 +7148,7 @@ namespace System.Management.Automation.Language
                         // Construct the real parameters if Hashtable is valid
                         foreach (var keyValueTuple in hashtable.KeyValuePairs)
                         {
-                            var propName = (StringConstantExpressionAst) keyValueTuple.Item1;
+                            var propName = (StringConstantExpressionAst)keyValueTuple.Item1;
                             ExpressionAst propValue = new SubExpressionAst(
                                 FunctionName.Extent,
                                 new StatementBlockAst(
@@ -7194,7 +7189,7 @@ namespace System.Management.Automation.Language
                         FunctionName.Extent,
                         new TypeName(
                             FunctionName.Extent,
-                            typeof (System.Management.Automation.Language.DynamicKeyword).FullName)),
+                            typeof(System.Management.Automation.Language.DynamicKeyword).FullName)),
                     new StringConstantExpressionAst(
                         FunctionName.Extent,
                         "GetKeyword",
@@ -7712,7 +7707,7 @@ namespace System.Management.Automation.Language
 
         #region Code Generation Details
 
-        ISupportsAssignment GetActualAssignableAst()
+        private ISupportsAssignment GetActualAssignableAst()
         {
             ExpressionAst child = this;
             var childAttributeAst = child as AttributedExpressionAst;
@@ -7726,7 +7721,7 @@ namespace System.Management.Automation.Language
             return (ISupportsAssignment)child;
         }
 
-        List<AttributeBaseAst> GetAttributes()
+        private List<AttributeBaseAst> GetAttributes()
         {
             var attributes = new List<AttributeBaseAst>();
             var childAttributeAst = this;
@@ -8271,10 +8266,10 @@ namespace System.Management.Automation.Language
         /// <param name="arguments">The arguments to pass to the ctor.</param>
         public BaseCtorInvokeMemberExpressionAst(IScriptExtent baseKeywordExtent, IScriptExtent baseCallExtent, IEnumerable<ExpressionAst> arguments)
             : base(
-                baseCallExtent, 
-                new VariableExpressionAst(baseKeywordExtent, "this", false), 
-                new StringConstantExpressionAst(baseKeywordExtent, ".ctor", StringConstantType.BareWord), 
-                arguments, 
+                baseCallExtent,
+                new VariableExpressionAst(baseKeywordExtent, "this", false),
+                new StringConstantExpressionAst(baseKeywordExtent, ".ctor", StringConstantType.BareWord),
+                arguments,
                 @static: false)
         {
         }
@@ -8651,7 +8646,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentException("genericArguments");
             }
 
-            this._extent = extent;
+            _extent = extent;
             this.TypeName = genericTypeName;
             this.GenericArguments = new ReadOnlyCollection<ITypeName>(genericArguments.ToArray());
 
@@ -8854,7 +8849,6 @@ namespace System.Management.Automation.Language
                     type = genericTypeInfo.MakeGenericType((from arg in GenericArguments select arg.GetReflectionType()).ToArray());
                     Interlocked.CompareExchange(ref _cachedType, type, null);
                 }
-
             }
             return type;
         }
@@ -8942,7 +8936,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentException("rank");
             }
 
-            this._extent = extent;
+            _extent = extent;
             this.Rank = rank;
             this.ElementType = elementType;
         }
@@ -9133,7 +9127,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentNullException("type");
             }
 
-            this._type = type;
+            _type = type;
         }
 
         /// <summary>
@@ -9274,7 +9268,7 @@ namespace System.Management.Automation.Language
 
         #endregion Visitors
     }
-   
+
     /// <summary>
     /// The ast representing a variable reference, either normal references, e.g. <c>$true</c>, or splatted references
     /// <c>@PSBoundParameters</c>.
@@ -9587,7 +9581,7 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    ok = ! this.Splatted
+                    ok = !this.Splatted
                          && this.IsConstantVariable();
                 }
             }
@@ -9616,7 +9610,7 @@ namespace System.Management.Automation.Language
             {
                 string[] variableParameters = new string[] { "PV", "PipelineVariable", "OV", "OutVariable" };
                 StaticBindingResult bindingResult = StaticParameterBinder.BindCommand(commandAst, false, variableParameters);
-                
+
                 if (bindingResult != null)
                 {
                     ParameterBindingResult parameterBindingResult;
@@ -9625,7 +9619,7 @@ namespace System.Management.Automation.Language
                     {
                         if (bindingResult.BoundParameters.TryGetValue(commandVariableParameter, out parameterBindingResult))
                         {
-                            if(String.Equals(VariablePath.UnqualifiedPath, (string)parameterBindingResult.ConstantValue, StringComparison.OrdinalIgnoreCase))
+                            if (String.Equals(VariablePath.UnqualifiedPath, (string)parameterBindingResult.ConstantValue, StringComparison.OrdinalIgnoreCase))
                             {
                                 return true;
                             }
@@ -10037,9 +10031,9 @@ namespace System.Management.Automation.Language
         /// the nested tokens.  This method is internal mainly so we can avoid validating <paramref name="formatString"/>.
         /// </summary>
         internal ExpandableStringExpressionAst(Token token, string value, string formatString, IEnumerable<ExpressionAst> nestedExpressions)
-            : this(token.Extent, value, formatString, 
+            : this(token.Extent, value, formatString,
                    StringConstantExpressionAst
-                        .MapTokenKindToStringContantKind(token), 
+                        .MapTokenKindToStringContantKind(token),
                    nestedExpressions)
         {
         }
@@ -10291,7 +10285,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class HashtableAst : ExpressionAst
     {
-        private static readonly ReadOnlyCollection<KeyValuePair> EmptyKeyValuePairs = Utils.EmptyReadOnlyCollection<KeyValuePair>();
+        private static readonly ReadOnlyCollection<KeyValuePair> s_emptyKeyValuePairs = Utils.EmptyReadOnlyCollection<KeyValuePair>();
 
         /// <summary>
         /// Construct a hash literal ast.
@@ -10312,7 +10306,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                this.KeyValuePairs = EmptyKeyValuePairs;
+                this.KeyValuePairs = s_emptyKeyValuePairs;
             }
         }
 
@@ -10590,7 +10584,6 @@ namespace System.Management.Automation.Language
                 action = SubExpression.InternalVisit(visitor);
             return visitor.CheckForPostAction(this, action);
         }
-
 
         #endregion Visitors
     }

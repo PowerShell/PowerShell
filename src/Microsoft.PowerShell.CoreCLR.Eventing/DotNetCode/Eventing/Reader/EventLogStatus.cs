@@ -1,11 +1,6 @@
-// ==++==
-// 
-//   Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
-// ==--==
+
 /*============================================================
 **
-** Class: EventLogStatus
 **
 ** Purpose: 
 ** This public class describes the status of a particular
@@ -17,8 +12,8 @@
 ** of those logs is.
 ============================================================*/
 
-namespace System.Diagnostics.Eventing.Reader{
-
+namespace System.Diagnostics.Eventing.Reader
+{
     /// <summary>
     /// Describes the status of a particular log with respect to 
     /// an instantiated EventLogReader.  Since it is possible to 
@@ -27,21 +22,25 @@ namespace System.Diagnostics.Eventing.Reader{
     /// errors in attaching to those logs, this class allows the 
     /// user to determine exactly what the status of those logs is.
     /// </summary>
-    public sealed class EventLogStatus {
-        private string channelName;
-        private int win32ErrorCode;
+    public sealed class EventLogStatus
+    {
+        private string _channelName;
+        private int _win32ErrorCode;
 
-        internal EventLogStatus(string channelName, int win32ErrorCode) {
-            this.channelName = channelName;
-            this.win32ErrorCode = win32ErrorCode;
+        internal EventLogStatus(string channelName, int win32ErrorCode)
+        {
+            _channelName = channelName;
+            _win32ErrorCode = win32ErrorCode;
         }
 
-        public string LogName {
-            get { return this.channelName; }
+        public string LogName
+        {
+            get { return _channelName; }
         }
 
-        public int StatusCode {
-            get { return this.win32ErrorCode; }
+        public int StatusCode
+        {
+            get { return _win32ErrorCode; }
         }
     }
 }

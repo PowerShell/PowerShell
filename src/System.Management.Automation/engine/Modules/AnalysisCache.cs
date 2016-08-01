@@ -31,10 +31,10 @@ namespace System.Management.Automation
     /// </summary>
     internal class AnalysisCache
     {
-        private static AnalysisCacheData cacheData = AnalysisCacheData.Get();
+        private static AnalysisCacheData s_cacheData = AnalysisCacheData.Get();
 
         // This dictionary shouldn't see much use, so low concurrency and capacity
-        private static ConcurrentDictionary<string, string> modulesBeingAnalyzed =
+        private static ConcurrentDictionary<string, string> s_modulesBeingAnalyzed =
             new ConcurrentDictionary<string, string>( /*concurrency*/1, /*capacity*/2, StringComparer.OrdinalIgnoreCase);
 
         internal static char[] InvalidCommandNameCharacters = new[]
@@ -85,7 +85,7 @@ namespace System.Management.Automation
 
             if (result != null)
             {
-                cacheData.QueueSerialization();
+                s_cacheData.QueueSerialization();
                 ModuleIntrinsics.Tracer.WriteLine("Returning {0} exported commands.", result.Count);
             }
             else
@@ -143,7 +143,7 @@ namespace System.Management.Automation
                             TypesAnalyzed = false,
                             Types = new ConcurrentDictionary<string, TypeAttributes>(1, 8, StringComparer.OrdinalIgnoreCase)
                         };
-                        cacheData.Entries[modulePath] = moduleCacheEntry;
+                        s_cacheData.Entries[modulePath] = moduleCacheEntry;
                     }
                     else
                     {
@@ -304,7 +304,7 @@ namespace System.Management.Automation
                 StringComparer.OrdinalIgnoreCase);
 
             // Add any directly discovered exports
-            foreach(var command in scriptAnalysis.DiscoveredExports)
+            foreach (var command in scriptAnalysis.DiscoveredExports)
             {
                 if (SessionStateUtilities.MatchesAnyWildcardPattern(command, scriptAnalysisPatterns, true))
                 {
@@ -316,14 +316,14 @@ namespace System.Management.Automation
             }
 
             // Add the discovered aliases
-            foreach(var pair in scriptAnalysis.DiscoveredAliases)
+            foreach (var pair in scriptAnalysis.DiscoveredAliases)
             {
                 var commandName = pair.Key;
                 // These are already filtered
                 if (commandName.IndexOfAny(InvalidCommandNameCharacters) < 0)
                 {
                     result.AddOrUpdate(commandName, CommandTypes.Alias,
-                        (_,existingCommandType) => existingCommandType | CommandTypes.Alias);
+                        (_, existingCommandType) => existingCommandType | CommandTypes.Alias);
                 }
             }
 
@@ -338,7 +338,7 @@ namespace System.Management.Automation
                     {
                         var command = Path.GetFileNameWithoutExtension(item);
                         result.AddOrUpdate(command, CommandTypes.ExternalScript,
-                            (_,existingCommandType) => existingCommandType | CommandTypes.ExternalScript);
+                            (_, existingCommandType) => existingCommandType | CommandTypes.ExternalScript);
                     }
                 }
                 catch (UnauthorizedAccessException)
@@ -362,7 +362,7 @@ namespace System.Management.Automation
                 TypesAnalyzed = true,
                 Types = exportedClasses
             };
-            cacheData.Entries[modulePath] = moduleCacheEntry;
+            s_cacheData.Entries[modulePath] = moduleCacheEntry;
 
             return result;
         }
@@ -387,7 +387,7 @@ namespace System.Management.Automation
             try
             {
                 // If we're already analyzing this module, let the recursion bottom out.
-                if (!modulesBeingAnalyzed.TryAdd(modulePath, modulePath))
+                if (!s_modulesBeingAnalyzed.TryAdd(modulePath, modulePath))
                 {
                     ModuleIntrinsics.Tracer.WriteLine("{0} is already being analyzed. Exiting.", modulePath);
                     return null;
@@ -413,7 +413,7 @@ namespace System.Management.Automation
             finally
             {
                 ModuleIntrinsics.Tracer.WriteLine("Finished analysis: {0}", modulePath);
-                modulesBeingAnalyzed.TryRemove(modulePath, out modulePath);
+                s_modulesBeingAnalyzed.TryRemove(modulePath, out modulePath);
             }
 
             return null;
@@ -454,7 +454,7 @@ namespace System.Management.Automation
 
             return null;
         }
-                
+
         internal static void CacheModuleExports(PSModuleInfo module, ExecutionContext context)
         {
             ModuleIntrinsics.Tracer.WriteLine("Requested caching for {0}", module.Name);
@@ -526,7 +526,7 @@ namespace System.Management.Automation
                     TypesAnalyzed = true,
                     Types = exportedClasses
                 };
-                moduleCacheEntry = cacheData.Entries.GetOrAdd(module.Path, moduleCacheEntry);
+                moduleCacheEntry = s_cacheData.Entries.GetOrAdd(module.Path, moduleCacheEntry);
             }
 
             // We need to update the cache
@@ -543,7 +543,7 @@ namespace System.Management.Automation
                 moduleCacheEntry.Types.AddOrUpdate(className, pair.Value.TypeAttributes, (k, t) => t);
             }
 
-            cacheData.QueueSerialization();
+            s_cacheData.QueueSerialization();
         }
 
         private static void CallGetModuleDashList(ExecutionContext context, string modulePath)
@@ -585,7 +585,7 @@ namespace System.Management.Automation
                 lastWriteTime = DateTime.MinValue;
             }
 
-            if (cacheData.Entries.TryGetValue(modulePath, out moduleCacheEntry))
+            if (s_cacheData.Entries.TryGetValue(modulePath, out moduleCacheEntry))
             {
                 if (lastWriteTime == moduleCacheEntry.LastWriteTime)
                 {
@@ -595,7 +595,7 @@ namespace System.Management.Automation
                 ModuleIntrinsics.Tracer.WriteLine("{0}: cache entry out of date, cached on {1}, last updated on {2}",
                     modulePath, moduleCacheEntry.LastWriteTime, lastWriteTime);
 
-                cacheData.Entries.TryRemove(modulePath, out moduleCacheEntry);
+                s_cacheData.Entries.TryRemove(modulePath, out moduleCacheEntry);
             }
 
             moduleCacheEntry = null;
@@ -605,7 +605,7 @@ namespace System.Management.Automation
 
     internal class AnalysisCacheData
     {
-        static byte[] GetHeader()
+        private static byte[] GetHeader()
         {
             return new byte[]
             {
@@ -616,10 +616,10 @@ namespace System.Management.Automation
 
         // The last time the index was maintained.
         public DateTime LastReadTime { get; set; }
-        
+
         public ConcurrentDictionary<string, ModuleCacheEntry> Entries { get; set; }
 
-        int _saveCacheToDiskQueued;
+        private int _saveCacheToDiskQueued;
 
         public void QueueSerialization()
         {
@@ -645,7 +645,7 @@ namespace System.Management.Automation
                         await Task.Delay(3000);
                         counter2 = _saveCacheToDiskQueued;
                     } while (counter1 != counter2);
-                    Serialize(cacheStoreLocation);
+                    Serialize(s_cacheStoreLocation);
                 });
             }
         }
@@ -677,13 +677,13 @@ namespace System.Management.Automation
         private static unsafe void Write(int val, byte[] bytes, FileStream stream)
         {
             Diagnostics.Assert(bytes.Length >= 4, "Must pass a large enough byte array");
-            fixed (byte* b = bytes) *((int*) b) = val;
+            fixed (byte* b = bytes) *((int*)b) = val;
             stream.Write(bytes, 0, 4);
         }
         private static unsafe void Write(long val, byte[] bytes, FileStream stream)
         {
             Diagnostics.Assert(bytes.Length >= 8, "Must pass a large enough byte array");
-            fixed (byte* b = bytes) *((long*) b) = val;
+            fixed (byte* b = bytes) *((long*)b) = val;
             stream.Write(bytes, 0, 8);
         }
 
@@ -798,7 +798,7 @@ namespace System.Management.Automation
                         foreach (var command in commandPairs)
                         {
                             Write(command.Key, bytes, stream);
-                            Write((int) command.Value, bytes, stream);
+                            Write((int)command.Value, bytes, stream);
                         }
 
                         // Types
@@ -808,7 +808,7 @@ namespace System.Management.Automation
                         foreach (var type in typePairs)
                         {
                             Write(type.Key, bytes, stream);
-                            Write((int) type.Value, bytes, stream);
+                            Write((int)type.Value, bytes, stream);
                         }
                     }
                 }
@@ -833,8 +833,8 @@ namespace System.Management.Automation
             Diagnostics.Assert(bytes.Length >= 8, "Must pass a large enough byte array");
             if (stream.Read(bytes, 0, 8) != 8)
                 throw new Exception(TruncatedErrorMessage);
-            fixed (byte* b = bytes) 
-                return *(long*) b;
+            fixed (byte* b = bytes)
+                return *(long*)b;
         }
 
         private static unsafe int ReadInt(FileStream stream, byte[] bytes)
@@ -842,14 +842,14 @@ namespace System.Management.Automation
             Diagnostics.Assert(bytes.Length >= 4, "Must pass a large enough byte array");
             if (stream.Read(bytes, 0, 4) != 4)
                 throw new Exception(TruncatedErrorMessage);
-            fixed (byte* b = bytes) 
-                return *(int*) b;
+            fixed (byte* b = bytes)
+                return *(int*)b;
         }
 
         private static string ReadString(FileStream stream, ref byte[] bytes)
         {
             int length = ReadInt(stream, bytes);
-            if (length > 10*1024)
+            if (length > 10 * 1024)
                 throw new Exception(PossibleCorruptionErrorMessage);
             if (length > bytes.Length)
                 bytes = new byte[length];
@@ -880,7 +880,7 @@ namespace System.Management.Automation
         {
             using (var stream = File.OpenRead(filename))
             {
-                var result = new AnalysisCacheData {LastReadTime = DateTime.Now};
+                var result = new AnalysisCacheData { LastReadTime = DateTime.Now };
 
                 var bytes = new byte[1024];
 
@@ -891,7 +891,7 @@ namespace System.Management.Automation
 
                 // int      ( 4 bytes) -> count of entries
                 int entries = ReadInt(stream, bytes);
-                if (entries > 20*1024)
+                if (entries > 20 * 1024)
                     throw new Exception(PossibleCorruptionErrorMessage);
 
                 result.Entries = new ConcurrentDictionary<string, ModuleCacheEntry>(/*concurrency*/3, entries, StringComparer.OrdinalIgnoreCase);
@@ -908,7 +908,7 @@ namespace System.Management.Automation
 
                     //   int      ( 4 bytes) -> count of commands
                     var countItems = ReadInt(stream, bytes);
-                    if (countItems > 20*1024)
+                    if (countItems > 20 * 1024)
                         throw new Exception(PossibleCorruptionErrorMessage);
 
                     var commands = new ConcurrentDictionary<string, CommandTypes>(/*concurrency*/3, countItems, StringComparer.OrdinalIgnoreCase);
@@ -936,7 +936,7 @@ namespace System.Management.Automation
                     bool typesAnalyzed = countItems != -1;
                     if (!typesAnalyzed)
                         countItems = 0;
-                    if (countItems > 20*1024)
+                    if (countItems > 20 * 1024)
                         throw new Exception(PossibleCorruptionErrorMessage);
 
                     var types = new ConcurrentDictionary<string, TypeAttributes>(1, countItems, StringComparer.OrdinalIgnoreCase);
@@ -987,15 +987,15 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    if (Utils.NativeFileExists(cacheStoreLocation))
+                    if (Utils.NativeFileExists(s_cacheStoreLocation))
                     {
-                        return Deserialize(cacheStoreLocation);
+                        return Deserialize(s_cacheStoreLocation);
                     }
                 }
                 catch (Exception e)
                 {
                     ModuleIntrinsics.Tracer.WriteLine("Exception checking module analysis cache: " + e.Message);
-                    if ((object)e.Message == (object)TruncatedErrorMessage 
+                    if ((object)e.Message == (object)TruncatedErrorMessage
                         || (object)e.Message == (object)InvalidSignatureErrorMessage
                         || (object)e.Message == (object)PossibleCorruptionErrorMessage)
                     {
@@ -1021,11 +1021,11 @@ namespace System.Management.Automation
         {
         }
 
-        private static readonly string cacheStoreLocation;
+        private static readonly string s_cacheStoreLocation;
 
         static AnalysisCacheData()
         {
-            cacheStoreLocation = 
+            s_cacheStoreLocation =
                 Environment.GetEnvironmentVariable("PSModuleAnalysisCachePath") ??
                 (Platform.IsWindows
                  ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -1043,5 +1043,4 @@ namespace System.Management.Automation
         public ConcurrentDictionary<string, CommandTypes> Commands;
         public ConcurrentDictionary<string, TypeAttributes> Types;
     }
-
 } // System.Management.Automation

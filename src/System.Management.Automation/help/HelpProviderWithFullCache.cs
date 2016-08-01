@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Collections.Generic;
 
 namespace System.Management.Automation
@@ -71,7 +72,7 @@ namespace System.Management.Automation
             // If the current invocation is a singleshell based
             // then we have to constantly update the cache as
             // snapins might get added / removed.
-	        if (!this.CacheFullyLoaded || AreSnapInsSupported())
+            if (!this.CacheFullyLoaded || AreSnapInsSupported())
             {
                 LoadCache();
             }

@@ -20,11 +20,11 @@ namespace System.Management.Automation
         /// <param name="searchPaths"></param>
         /// <param name="searchMode"></param>
         private MUIFileSearcher(string target, Collection<String> searchPaths, SearchMode searchMode)
-	{
+        {
             _target = target;
             _searchPaths = searchPaths;
             _searchMode = searchMode;
-	}
+        }
 
         /// <summary>
         /// A constructor to make searchMode optional.
@@ -38,7 +38,7 @@ namespace System.Management.Automation
 
         #region Basic Properties
 
-        private string _target = null; 
+        private string _target = null;
 
         /// <summary>
         /// Search target. It can be 
@@ -130,7 +130,7 @@ namespace System.Management.Automation
             {
                 SearchForFiles(pattern, directory);
 
-                if(this.SearchMode == SearchMode.First && this.Result.Count > 0)
+                if (this.SearchMode == SearchMode.First && this.Result.Count > 0)
                 {
                     return;
                 }
@@ -272,7 +272,7 @@ namespace System.Management.Automation
 
             // step 3: locate the file in the default PowerShell installation directory.
             string defaultPSPath = GetMshDefaultInstallationPath();
-            if (defaultPSPath != null && 
+            if (defaultPSPath != null &&
                 !result.Contains(defaultPSPath) &&
                 Directory.Exists(defaultPSPath))
             {
@@ -302,8 +302,8 @@ namespace System.Management.Automation
             // returnValue can be null.
             return returnValue;
         }
-       
-        #endregion 
+
+        #endregion
 
         #region Static API's
 

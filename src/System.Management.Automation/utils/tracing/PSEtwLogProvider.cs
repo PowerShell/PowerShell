@@ -18,27 +18,27 @@ namespace System.Management.Automation.Tracing
         private static readonly string PowerShellEventProviderGuid = "A0C1853B-5C40-4b15-8766-3CF1C58F985A";
         private static EventDescriptor _xferEventDescriptor = new EventDescriptor(0x1f05, 0x1, 0x11, 0x5, 0x14, 0x0, (long)0x4000000000000000);
 
-        static class Strings
+        private static class Strings
         {
             // The strings are stored in a different class to defer loading the resources until as late
             // as possible, e.g. if logging is never on, these strings won't be loaded.
-            internal static readonly string LogContextSeverity        = EtwLoggingStrings.LogContextSeverity;
-            internal static readonly string LogContextHostName        = EtwLoggingStrings.LogContextHostName;
-            internal static readonly string LogContextHostVersion     = EtwLoggingStrings.LogContextHostVersion;
-            internal static readonly string LogContextHostId          = EtwLoggingStrings.LogContextHostId;
+            internal static readonly string LogContextSeverity = EtwLoggingStrings.LogContextSeverity;
+            internal static readonly string LogContextHostName = EtwLoggingStrings.LogContextHostName;
+            internal static readonly string LogContextHostVersion = EtwLoggingStrings.LogContextHostVersion;
+            internal static readonly string LogContextHostId = EtwLoggingStrings.LogContextHostId;
             internal static readonly string LogContextHostApplication = EtwLoggingStrings.LogContextHostApplication;
-            internal static readonly string LogContextEngineVersion   = EtwLoggingStrings.LogContextEngineVersion;
-            internal static readonly string LogContextRunspaceId      = EtwLoggingStrings.LogContextRunspaceId;
-            internal static readonly string LogContextPipelineId      = EtwLoggingStrings.LogContextPipelineId;
-            internal static readonly string LogContextCommandName     = EtwLoggingStrings.LogContextCommandName;
-            internal static readonly string LogContextCommandType     = EtwLoggingStrings.LogContextCommandType;
-            internal static readonly string LogContextScriptName      = EtwLoggingStrings.LogContextScriptName;
-            internal static readonly string LogContextCommandPath     = EtwLoggingStrings.LogContextCommandPath;
-            internal static readonly string LogContextSequenceNumber  = EtwLoggingStrings.LogContextSequenceNumber;
-            internal static readonly string LogContextUser            = EtwLoggingStrings.LogContextUser;
-            internal static readonly string LogContextConnectedUser   = EtwLoggingStrings.LogContextConnectedUser;
-            internal static readonly string LogContextTime            = EtwLoggingStrings.LogContextTime;
-            internal static readonly string LogContextShellId         = EtwLoggingStrings.LogContextShellId;
+            internal static readonly string LogContextEngineVersion = EtwLoggingStrings.LogContextEngineVersion;
+            internal static readonly string LogContextRunspaceId = EtwLoggingStrings.LogContextRunspaceId;
+            internal static readonly string LogContextPipelineId = EtwLoggingStrings.LogContextPipelineId;
+            internal static readonly string LogContextCommandName = EtwLoggingStrings.LogContextCommandName;
+            internal static readonly string LogContextCommandType = EtwLoggingStrings.LogContextCommandType;
+            internal static readonly string LogContextScriptName = EtwLoggingStrings.LogContextScriptName;
+            internal static readonly string LogContextCommandPath = EtwLoggingStrings.LogContextCommandPath;
+            internal static readonly string LogContextSequenceNumber = EtwLoggingStrings.LogContextSequenceNumber;
+            internal static readonly string LogContextUser = EtwLoggingStrings.LogContextUser;
+            internal static readonly string LogContextConnectedUser = EtwLoggingStrings.LogContextConnectedUser;
+            internal static readonly string LogContextTime = EtwLoggingStrings.LogContextTime;
+            internal static readonly string LogContextShellId = EtwLoggingStrings.LogContextShellId;
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace System.Management.Automation.Tracing
         /// </remarks>
         internal bool IsEnabled(PSLevel level, PSKeyword keywords)
         {
-            return etwProvider.IsEnabled((byte) level, (long) keywords);
+            return etwProvider.IsEnabled((byte)level, (long)keywords);
         }
 
         /// <summary>
@@ -444,7 +444,7 @@ namespace System.Management.Automation.Tracing
 
             etwProvider.WriteEvent(ref desc, args);
         }
-        
+
         /// <summary>
         /// Writes an activity transfer event
         /// </summary>

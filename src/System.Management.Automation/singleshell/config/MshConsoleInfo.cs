@@ -12,7 +12,6 @@ using System.Collections.Generic;
 
 namespace System.Management.Automation.Runspaces
 {
-
     /// <summary>
     /// Class that understands Monad Console File Format. The format for the console
     /// file is applied/read by this class only.
@@ -57,7 +56,7 @@ namespace System.Management.Automation.Runspaces
 
         #region Data
 
-        private readonly string monadVersion;
+        private readonly string _monadVersion;
 
         /// <summary>
         /// MonadVersion from the console file
@@ -66,11 +65,11 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                return monadVersion;
+                return _monadVersion;
             }
         }
 
-        private readonly Collection<string> mshsnapins;
+        private readonly Collection<string> _mshsnapins;
 
         /// <summary>
         /// List of MshSnapin IDs from the console file
@@ -79,7 +78,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                return mshsnapins;
+                return _mshsnapins;
             }
         }
 
@@ -89,17 +88,17 @@ namespace System.Management.Automation.Runspaces
 
         private PSConsoleFileElement(string version)
         {
-            monadVersion = version;
+            _monadVersion = version;
             // Dont make collections null...
             // making them null, wont be good for foreach statements
-            mshsnapins = new Collection<string>();
+            _mshsnapins = new Collection<string>();
         }
 
         #endregion
 
         #region tracer
 
-        static private readonly PSTraceSource _mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
+        static private readonly PSTraceSource s_mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
         #endregion
 
         #region Static Methods
@@ -120,13 +119,13 @@ namespace System.Management.Automation.Runspaces
         {
             Diagnostics.Assert(path != null, "Filename should not be null");
 
-            _mshsnapinTracer.WriteLine("Saving console info to file {0}.", path);
+            s_mshsnapinTracer.WriteLine("Saving console info to file {0}.", path);
 
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
             settings.Encoding = Encoding.UTF8;
 
-            using(Stream stream = new FileStream(path, FileMode.OpenOrCreate))
+            using (Stream stream = new FileStream(path, FileMode.OpenOrCreate))
             {
                 // Generate xml for the consoleinfo object.
                 using (XmlWriter writer = XmlWriter.Create(stream, settings))
@@ -153,7 +152,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            _mshsnapinTracer.WriteLine("Saving console info succeeded.");
+            s_mshsnapinTracer.WriteLine("Saving console info succeeded.");
         }
 
         /// <summary>
@@ -173,26 +172,26 @@ namespace System.Management.Automation.Runspaces
         {
             Diagnostics.Assert(path != null, "Filename should not be null");
 
-            _mshsnapinTracer.WriteLine("Loading console info from file {0}.", path);
+            s_mshsnapinTracer.WriteLine("Loading console info from file {0}.", path);
 
             XmlDocument doc = InternalDeserializer.LoadUnsafeXmlDocument(
-                new FileInfo(path), 
+                new FileInfo(path),
                 false, /* ignore whitespace, comments, etc. */
                 null); /* default maxCharactersInDocument */
 
             // Validate content
             if (doc[MSHCONSOLEFILE] == null)
             {
-                _mshsnapinTracer.TraceError("Console file {0} doesn't contain tag {1}.", path, MSHCONSOLEFILE);
+                s_mshsnapinTracer.TraceError("Console file {0} doesn't contain tag {1}.", path, MSHCONSOLEFILE);
 
                 throw new XmlException(
                     StringUtil.Format(ConsoleInfoErrorStrings.MonadConsoleNotFound, path));
             }
 
-            if ( (doc[MSHCONSOLEFILE][PSVERSION] == null) || 
-                 (string.IsNullOrEmpty(doc[MSHCONSOLEFILE][PSVERSION].InnerText)) )
+            if ((doc[MSHCONSOLEFILE][PSVERSION] == null) ||
+                 (string.IsNullOrEmpty(doc[MSHCONSOLEFILE][PSVERSION].InnerText)))
             {
-                _mshsnapinTracer.TraceError("Console file {0} doesn't contain tag {1}.", path, PSVERSION);
+                s_mshsnapinTracer.TraceError("Console file {0} doesn't contain tag {1}.", path, PSVERSION);
 
                 throw new XmlException(
                     StringUtil.Format(ConsoleInfoErrorStrings.MonadVersionNotFound, path));
@@ -200,25 +199,24 @@ namespace System.Management.Automation.Runspaces
 
             // This will never be null..
             XmlElement xmlElement = (XmlElement)doc[MSHCONSOLEFILE];
-            
+
             if (xmlElement.HasAttribute(CSCHEMAVERSION))
             {
                 if (!xmlElement.GetAttribute(CSCHEMAVERSION).Equals(CSCHEMAVERSIONNUMBER, StringComparison.OrdinalIgnoreCase))
                 {
-
                     string resourceTemplate =
                             StringUtil.Format(ConsoleInfoErrorStrings.BadConsoleVersion, path);
                     string message = string.Format(CultureInfo.CurrentCulture,
                         resourceTemplate, CSCHEMAVERSIONNUMBER);
 
-                    _mshsnapinTracer.TraceError(message);
+                    s_mshsnapinTracer.TraceError(message);
 
                     throw new XmlException(message);
                 }
             }
             else
             {
-                _mshsnapinTracer.TraceError("Console file {0} doesn't contain tag schema version.", path);
+                s_mshsnapinTracer.TraceError("Console file {0} doesn't contain tag schema version.", path);
 
                 throw new XmlException(
                         StringUtil.Format(ConsoleInfoErrorStrings.BadConsoleVersion, path));
@@ -230,7 +228,7 @@ namespace System.Management.Automation.Runspaces
 
             // Construct PSConsoleFileElement as we seem to have valid data
             PSConsoleFileElement consoleFileElement = new PSConsoleFileElement(xmlElement.InnerText.Trim());
-            
+
             bool isPSSnapInsProcessed = false;
             bool isPSVersionProcessed = false;
 
@@ -254,7 +252,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     if (isPSVersionProcessed)
                     {
-                        _mshsnapinTracer.TraceError("Console file {0} contains more than one  msh versions", path);
+                        s_mshsnapinTracer.TraceError("Console file {0} contains more than one  msh versions", path);
 
                         throw new XmlException(StringUtil.Format(ConsoleInfoErrorStrings.MultipleMshSnapinsElementNotSupported, PSVERSION));
                     }
@@ -265,7 +263,7 @@ namespace System.Management.Automation.Runspaces
 
                 if (xmlElement.Name != SNAPINS)
                 {
-                    _mshsnapinTracer.TraceError("Tag {0} is not supported in console file", xmlElement.Name);
+                    s_mshsnapinTracer.TraceError("Tag {0} is not supported in console file", xmlElement.Name);
 
                     throw new XmlException(StringUtil.Format(ConsoleInfoErrorStrings.BadXMLElementFound, xmlElement.Name, MSHCONSOLEFILE, PSVERSION, SNAPINS));
                 }
@@ -274,11 +272,11 @@ namespace System.Management.Automation.Runspaces
                 // PSSnapIns elements
                 if (isPSSnapInsProcessed)
                 {
-                    _mshsnapinTracer.TraceError("Console file {0} contains more than one mshsnapin lists", path);
+                    s_mshsnapinTracer.TraceError("Console file {0} contains more than one mshsnapin lists", path);
 
                     throw new XmlException(StringUtil.Format(ConsoleInfoErrorStrings.MultipleMshSnapinsElementNotSupported, SNAPINS));
                 }
-                
+
                 // We are about to process mshsnapins element..so we should not 
                 // process some more mshsnapins elements..this boolean keeps track
                 // of this.
@@ -302,17 +300,17 @@ namespace System.Management.Automation.Runspaces
                         throw new XmlException(ConsoleInfoErrorStrings.IDNotFound);
                     }
 
-                    consoleFileElement.mshsnapins.Add(id);
+                    consoleFileElement._mshsnapins.Add(id);
 
-                    _mshsnapinTracer.WriteLine("Found in mshsnapin {0} in console file {1}", id, path);
+                    s_mshsnapinTracer.WriteLine("Found in mshsnapin {0} in console file {1}", id, path);
                 }
             }
 
             return consoleFileElement;
         }
-        
+
         #endregion
-    }  
+    }
 
     /// <summary>
     /// Class that manages(reads/writes) Monad Console files and constructs objects
@@ -333,22 +331,22 @@ namespace System.Management.Automation.Runspaces
         #region Private Data
 
         // Monad Version that this console file depends on.
-        private readonly Version psVersion;
+        private readonly Version _psVersion;
         // MshSnapins that are not shipped with monad.
-        private readonly Collection<PSSnapInInfo> externalPSSnapIns;
+        private readonly Collection<PSSnapInInfo> _externalPSSnapIns;
         // Monad specific mshsnapins
-        private Collection<PSSnapInInfo> defaultPSSnapIns;
+        private Collection<PSSnapInInfo> _defaultPSSnapIns;
         // An internal representation that tells whether a console file is modified.
-        private bool isDirty;
+        private bool _isDirty;
         // A string that stores fileName of the current consoleinfo object
-        private string fileName;
+        private string _fileName;
 
         #endregion
 
         #region Class specific data
 
-        static private readonly PSTraceSource _mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
-        
+        static private readonly PSTraceSource s_mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
+
         #endregion
 
         #region Properties
@@ -360,7 +358,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                return psVersion;
+                return _psVersion;
             }
         }
 
@@ -371,10 +369,10 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                Diagnostics.Assert(psVersion != null,
+                Diagnostics.Assert(_psVersion != null,
                     "PSVersion is null");
 
-                return psVersion.Major.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                return _psVersion.Major.ToString(System.Globalization.CultureInfo.InvariantCulture);
             }
         }
 
@@ -405,9 +403,9 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 // externalPSSnapIns is never null
-                Diagnostics.Assert(externalPSSnapIns != null, "externalPSSnapIns is null");
+                Diagnostics.Assert(_externalPSSnapIns != null, "externalPSSnapIns is null");
 
-                return externalPSSnapIns;
+                return _externalPSSnapIns;
             }
         }
 
@@ -422,7 +420,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                return isDirty;
+                return _isDirty;
             }
         }
 
@@ -440,27 +438,27 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                return fileName;
+                return _fileName;
             }
         }
 
         #endregion
 
         #region Constructors
-        
+
         /// <summary>
         /// Construct a MshConsoleInfo object for the Monad version specified.
         /// </summary>
         /// <param name="version">Monad Version.</param>
         private MshConsoleInfo(Version version)
         {
-            psVersion = version;
-            isDirty = false;
-            fileName = null;
+            _psVersion = version;
+            _isDirty = false;
+            _fileName = null;
 
             // Intialize list of mshsnapins..
-            defaultPSSnapIns = new Collection<PSSnapInInfo>();
-            externalPSSnapIns = new Collection<PSSnapInInfo>();
+            _defaultPSSnapIns = new Collection<PSSnapInInfo>();
+            _externalPSSnapIns = new Collection<PSSnapInInfo>();
         }
 
         #endregion
@@ -485,14 +483,14 @@ namespace System.Management.Automation.Runspaces
             MshConsoleInfo consoleInfo = new MshConsoleInfo(PSVersionInfo.PSVersion);
             try
             {
-                consoleInfo.defaultPSSnapIns = PSSnapInReader.ReadEnginePSSnapIns(); 
+                consoleInfo._defaultPSSnapIns = PSSnapInReader.ReadEnginePSSnapIns();
             }
             catch (PSArgumentException ae)
             {
                 string message = ConsoleInfoErrorStrings.CannotLoadDefaults;
                 // If we were unalbe to load default mshsnapins throw PSSnapInException
 
-                _mshsnapinTracer.TraceError(message);
+                s_mshsnapinTracer.TraceError(message);
 
                 throw new PSSnapInException(message, ae);
             }
@@ -501,12 +499,12 @@ namespace System.Management.Automation.Runspaces
                 string message = ConsoleInfoErrorStrings.CannotLoadDefaults;
                 // If we were unalbe to load default mshsnapins throw PSSnapInException
 
-                _mshsnapinTracer.TraceError(message);
+                s_mshsnapinTracer.TraceError(message);
 
                 throw new PSSnapInException(message, se);
             }
 
-            return consoleInfo;                               
+            return consoleInfo;
         }
 
         /// <summary>
@@ -539,19 +537,19 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         static internal MshConsoleInfo CreateFromConsoleFile(string fileName, out PSConsoleLoadException cle)
         {
-            _mshsnapinTracer.WriteLine("Creating console info from file {0}", fileName);
+            s_mshsnapinTracer.WriteLine("Creating console info from file {0}", fileName);
 
             // Construct default mshsnapins                
             MshConsoleInfo consoleInfo = CreateDefaultConfiguration();
-            
+
             // Check whether the filename specified is an absolute path.
-            string absolutePath = Path.GetFullPath(fileName); 
-            consoleInfo.fileName = absolutePath;
+            string absolutePath = Path.GetFullPath(fileName);
+            consoleInfo._fileName = absolutePath;
 
             // Construct externalPSSnapIns by loading file.
             consoleInfo.Load(absolutePath, out cle);
 
-            _mshsnapinTracer.WriteLine("Console info created successfully");
+            s_mshsnapinTracer.WriteLine("Console info created successfully");
 
             return consoleInfo;
         }
@@ -589,21 +587,21 @@ namespace System.Management.Automation.Runspaces
 
             if (!Path.IsPathRooted(absolutePath))
             {
-                absolutePath = Path.GetFullPath(fileName);
+                absolutePath = Path.GetFullPath(_fileName);
             }
 
             // Ignore case when looking for file extension.
             if (!absolutePath.EndsWith(StringLiterals.PowerShellConsoleFileExtension, StringComparison.OrdinalIgnoreCase))
             {
-                _mshsnapinTracer.TraceError("Console file {0} doesn't have the right extension {1}.", path, StringLiterals.PowerShellConsoleFileExtension);
+                s_mshsnapinTracer.TraceError("Console file {0} doesn't have the right extension {1}.", path, StringLiterals.PowerShellConsoleFileExtension);
                 throw PSTraceSource.NewArgumentException("absolutePath", ConsoleInfoErrorStrings.BadConsoleExtension);
             }
 
             //ConsoleFileElement will write to file
-            PSConsoleFileElement.WriteToFile(absolutePath, this.PSVersion, this.ExternalPSSnapIns );
+            PSConsoleFileElement.WriteToFile(absolutePath, this.PSVersion, this.ExternalPSSnapIns);
             //update the console file variable
-            fileName = absolutePath;
-            isDirty = false;
+            _fileName = absolutePath;
+            _isDirty = false;
         }
 
         /// <summary>
@@ -615,13 +613,13 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         internal void Save()
         {
-            if (null == fileName)
+            if (null == _fileName)
             {
                 throw PSTraceSource.NewInvalidOperationException(ConsoleInfoErrorStrings.SaveDefaultError);
             }
 
-            PSConsoleFileElement.WriteToFile(fileName, this.PSVersion, this.ExternalPSSnapIns);
-            isDirty = false;
+            PSConsoleFileElement.WriteToFile(_fileName, this.PSVersion, this.ExternalPSSnapIns);
+            _isDirty = false;
         }
 
         /// <summary>
@@ -650,16 +648,16 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Check whether the mshsnapin is already present in defaultmshsnapins/externalMshSnapins
-            if (IsDefaultPSSnapIn(mshSnapInID, defaultPSSnapIns))
+            if (IsDefaultPSSnapIn(mshSnapInID, _defaultPSSnapIns))
             {
-                _mshsnapinTracer.TraceError("MshSnapin {0} can't be added since it is a default mshsnapin", mshSnapInID);
+                s_mshsnapinTracer.TraceError("MshSnapin {0} can't be added since it is a default mshsnapin", mshSnapInID);
 
                 throw PSTraceSource.NewArgumentException("mshSnapInID", ConsoleInfoErrorStrings.CannotLoadDefault);
             }
 
             if (IsActiveExternalPSSnapIn(mshSnapInID))
             {
-                _mshsnapinTracer.TraceError("MshSnapin {0} is already loaded.", mshSnapInID);
+                s_mshsnapinTracer.TraceError("MshSnapin {0} is already loaded.", mshSnapInID);
 
                 throw PSTraceSource.NewArgumentException("mshSnapInID", ConsoleInfoErrorStrings.PSSnapInAlreadyExists, mshSnapInID);
             }
@@ -669,20 +667,20 @@ namespace System.Management.Automation.Runspaces
 
             if (!Utils.IsPSVersionSupported(newPSSnapIn.PSVersion.ToString()))
             {
-                _mshsnapinTracer.TraceError("MshSnapin {0} and current monad engine's versions don't match.", mshSnapInID);
+                s_mshsnapinTracer.TraceError("MshSnapin {0} and current monad engine's versions don't match.", mshSnapInID);
 
                 throw PSTraceSource.NewArgumentException("mshSnapInID",
                                                          ConsoleInfoErrorStrings.AddPSSnapInBadMonadVersion,
                                                          newPSSnapIn.PSVersion.ToString(),
-                                                         psVersion.ToString());
+                                                         _psVersion.ToString());
             }
 
             // new mshsnapin will never be null
             //if this is a valid new mshsnapin,add this to external mshsnapins
-            externalPSSnapIns.Add(newPSSnapIn);
-            _mshsnapinTracer.WriteLine("MshSnapin {0} successfully added to consoleinfo list.", mshSnapInID);
+            _externalPSSnapIns.Add(newPSSnapIn);
+            s_mshsnapinTracer.WriteLine("MshSnapin {0} successfully added to consoleinfo list.", mshSnapInID);
             //Set IsDirty to true
-            isDirty = true;
+            _isDirty = true;
 
             return newPSSnapIn;
         }
@@ -706,7 +704,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (string.IsNullOrEmpty(mshSnapInID))
             {
-                PSTraceSource.NewArgumentNullException("mshSnapInID");                   
+                PSTraceSource.NewArgumentNullException("mshSnapInID");
             }
 
             // Monad has specific restrictions on the mshsnapinid like
@@ -715,26 +713,26 @@ namespace System.Management.Automation.Runspaces
 
             PSSnapInInfo removedPSSnapIn = null;
             // Check external mshsnapins
-            foreach (PSSnapInInfo mshSnapIn in externalPSSnapIns)
+            foreach (PSSnapInInfo mshSnapIn in _externalPSSnapIns)
             {
                 if (string.Equals(mshSnapInID, mshSnapIn.Name, System.StringComparison.OrdinalIgnoreCase))
                 {
                     // We found the mshsnapin..remove from the list and break
                     removedPSSnapIn = mshSnapIn;
-                    externalPSSnapIns.Remove(mshSnapIn);
+                    _externalPSSnapIns.Remove(mshSnapIn);
 
                     // The state of console file is changing..so set
                     // dirty flag.
-                    isDirty = true;
+                    _isDirty = true;
                     break;
                 }
             }
 
             if (removedPSSnapIn == null)
             {
-                if (IsDefaultPSSnapIn(mshSnapInID, defaultPSSnapIns))
+                if (IsDefaultPSSnapIn(mshSnapInID, _defaultPSSnapIns))
                 {
-                    _mshsnapinTracer.WriteLine("MshSnapin {0} can't be removed since it is a default mshsnapin.", mshSnapInID);
+                    s_mshsnapinTracer.WriteLine("MshSnapin {0} can't be removed since it is a default mshsnapin.", mshSnapInID);
 
                     throw PSTraceSource.NewArgumentException("mshSnapInID", ConsoleInfoErrorStrings.CannotRemoveDefault, mshSnapInID);
                 }
@@ -789,8 +787,8 @@ namespace System.Management.Automation.Runspaces
 
             // If there is nothing to search..
             if (listToSearch == null)
-                return listToReturn;            
-            
+                return listToReturn;
+
             if (!doWildCardSearch)
             {
                 // We are not doing wildcard search..
@@ -856,7 +854,7 @@ namespace System.Management.Automation.Runspaces
             // Intialize the out parameter..
             cle = null;
 
-            _mshsnapinTracer.WriteLine("Load mshsnapins from console file {0}", path);
+            s_mshsnapinTracer.WriteLine("Load mshsnapins from console file {0}", path);
 
             if (string.IsNullOrEmpty(path))
             {
@@ -866,30 +864,30 @@ namespace System.Management.Automation.Runspaces
             // Check whether the path is an absolute path
             if (!Path.IsPathRooted(path))
             {
-                _mshsnapinTracer.TraceError("Console file {0} needs to be a absolute path.", path);
+                s_mshsnapinTracer.TraceError("Console file {0} needs to be a absolute path.", path);
 
                 throw PSTraceSource.NewArgumentException("path", ConsoleInfoErrorStrings.PathNotAbsolute, path);
             }
 
             if (!path.EndsWith(StringLiterals.PowerShellConsoleFileExtension, StringComparison.OrdinalIgnoreCase))
             {
-                _mshsnapinTracer.TraceError("Console file {0} needs to have {1} extension.", path, StringLiterals.PowerShellConsoleFileExtension);
+                s_mshsnapinTracer.TraceError("Console file {0} needs to have {1} extension.", path, StringLiterals.PowerShellConsoleFileExtension);
 
-                throw PSTraceSource.NewArgumentException("path", ConsoleInfoErrorStrings.BadConsoleExtension);                    
+                throw PSTraceSource.NewArgumentException("path", ConsoleInfoErrorStrings.BadConsoleExtension);
             }
 
             PSConsoleFileElement consoleFileElement;
 
             // exceptions are thrown to the caller
             consoleFileElement = PSConsoleFileElement.CreateFromFile(path);
-           
+
             // consoleFileElement will never be null..
             if (!Utils.IsPSVersionSupported(consoleFileElement.MonadVersion))
             {
-                _mshsnapinTracer.TraceError("Console version {0} is not supported in current monad session.", consoleFileElement.MonadVersion);
+                s_mshsnapinTracer.TraceError("Console version {0} is not supported in current monad session.", consoleFileElement.MonadVersion);
 
                 throw PSTraceSource.NewArgumentException("PSVersion", ConsoleInfoErrorStrings.BadMonadVersion, consoleFileElement.MonadVersion,
-                    psVersion.ToString());
+                    _psVersion.ToString());
             }
 
             // Create a store for exceptions
@@ -902,7 +900,7 @@ namespace System.Management.Automation.Runspaces
                     this.AddPSSnapIn(mshsnapin);
                 }
                 catch (PSArgumentException ae)
-                {                            
+                {
                     PSSnapInException sle = new PSSnapInException(mshsnapin, ae.Message, ae);
 
                     // Eat ArgumentException and continue..
@@ -926,9 +924,9 @@ namespace System.Management.Automation.Runspaces
 
             // We are able to load console file and currently monad engine
             // can service this. So mark the isdirty flag.
-            isDirty = false;
+            _isDirty = false;
 
-            return this.externalPSSnapIns;
+            return _externalPSSnapIns;
         }
 
         /// <summary>
@@ -959,7 +957,7 @@ namespace System.Management.Automation.Runspaces
         private bool IsActiveExternalPSSnapIn(string mshSnapInID)
         {
             // Check whether the mshsnapin is present in externalmshsnapins.
-            foreach (PSSnapInInfo mshSnapIn in externalPSSnapIns)
+            foreach (PSSnapInInfo mshSnapIn in _externalPSSnapIns)
             {
                 if (string.Equals(mshSnapInID, mshSnapIn.Name, System.StringComparison.OrdinalIgnoreCase))
                 {
@@ -978,15 +976,15 @@ namespace System.Management.Automation.Runspaces
         private Collection<PSSnapInInfo> MergeDefaultExternalMshSnapins()
         {
             //Default mshsnapins should never be null
-            Diagnostics.Assert(defaultPSSnapIns != null, "Default MshSnapins for the current console is empty");
+            Diagnostics.Assert(_defaultPSSnapIns != null, "Default MshSnapins for the current console is empty");
             Collection<PSSnapInInfo> mshSnapIns = new Collection<PSSnapInInfo>();
 
-            foreach (PSSnapInInfo mshSnapIn in defaultPSSnapIns)
+            foreach (PSSnapInInfo mshSnapIn in _defaultPSSnapIns)
             {
                 mshSnapIns.Add(mshSnapIn);
             }
 
-            foreach (PSSnapInInfo mshSnapIn in externalPSSnapIns)
+            foreach (PSSnapInInfo mshSnapIn in _externalPSSnapIns)
             {
                 mshSnapIns.Add(mshSnapIn);
             }
@@ -994,5 +992,5 @@ namespace System.Management.Automation.Runspaces
             return mshSnapIns;
         }
         #endregion
-    }   
+    }
 }

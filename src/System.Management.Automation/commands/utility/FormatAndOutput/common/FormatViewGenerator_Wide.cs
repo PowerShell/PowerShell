@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,18 +12,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     internal sealed class WideViewGenerator : ViewGenerator
     {
-        internal override void Initialize(TerminatingErrorContext errorContext, MshExpressionFactory expressionFactory, 
+        internal override void Initialize(TerminatingErrorContext errorContext, MshExpressionFactory expressionFactory,
                                 PSObject so, TypeInfoDataBase db, FormattingCommandLineParameters parameters)
         {
-            base.Initialize (errorContext, expressionFactory, so, db, parameters);
+            base.Initialize(errorContext, expressionFactory, so, db, parameters);
             this.inputParameters = parameters;
         }
 
-        internal override FormatStartData GenerateStartData (PSObject so)
+        internal override FormatStartData GenerateStartData(PSObject so)
         {
-            FormatStartData startFormat = base.GenerateStartData (so);
+            FormatStartData startFormat = base.GenerateStartData(so);
 
-            WideViewHeaderInfo wideViewHeaderInfo = new WideViewHeaderInfo ();
+            WideViewHeaderInfo wideViewHeaderInfo = new WideViewHeaderInfo();
             startFormat.shapeInfo = wideViewHeaderInfo;
 
 
@@ -62,14 +63,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        internal override FormatEntryData GeneratePayload (PSObject so, int enumerationLimit)
+        internal override FormatEntryData GeneratePayload(PSObject so, int enumerationLimit)
         {
-            FormatEntryData fed = new FormatEntryData ();
+            FormatEntryData fed = new FormatEntryData();
 
             if (this.dataBaseInfo.view != null)
-                fed.formatEntryInfo = GenerateWideViewEntryFromDataBaseInfo (so, enumerationLimit);
+                fed.formatEntryInfo = GenerateWideViewEntryFromDataBaseInfo(so, enumerationLimit);
             else
-                fed.formatEntryInfo = GenerateWideViewEntryFromProperties (so, enumerationLimit);
+                fed.formatEntryInfo = GenerateWideViewEntryFromProperties(so, enumerationLimit);
 
             return fed;
         }
@@ -79,24 +80,24 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             WideControlBody wideBody = (WideControlBody)this.dataBaseInfo.view.mainControl;
 
             WideControlEntryDefinition activeWideControlEntryDefinition =
-                    GetActiveWideControlEntryDefinition (wideBody, so);
+                    GetActiveWideControlEntryDefinition(wideBody, so);
 
-            WideViewEntry wve = new WideViewEntry ();
-            wve.formatPropertyField = GenerateFormatPropertyField (activeWideControlEntryDefinition.formatTokenList, so, enumerationLimit);
+            WideViewEntry wve = new WideViewEntry();
+            wve.formatPropertyField = GenerateFormatPropertyField(activeWideControlEntryDefinition.formatTokenList, so, enumerationLimit);
 
             //wve.aligment = activeWideViewEntryDefinition.alignment;
-            
+
             return wve;
         }
 
-        private WideControlEntryDefinition GetActiveWideControlEntryDefinition (WideControlBody wideBody, PSObject so)
+        private WideControlEntryDefinition GetActiveWideControlEntryDefinition(WideControlBody wideBody, PSObject so)
         {
             // see if we have an override that matches
             var typeNames = so.InternalTypeNames;
-            TypeMatch match = new TypeMatch (expressionFactory, this.dataBaseInfo.db, typeNames);
+            TypeMatch match = new TypeMatch(expressionFactory, this.dataBaseInfo.db, typeNames);
             foreach (WideControlEntryDefinition x in wideBody.optionalEntryList)
             {
-                if (match.PerfectMatch (new TypeMatchItem (x, x.appliesTo)))
+                if (match.PerfectMatch(new TypeMatchItem(x, x.appliesTo)))
                 {
                     return x;
                 }
@@ -129,16 +130,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        private WideViewEntry GenerateWideViewEntryFromProperties (PSObject so, int enumerationLimit)
+        private WideViewEntry GenerateWideViewEntryFromProperties(PSObject so, int enumerationLimit)
         {
             // compute active properties every time
             if (this.activeAssociationList == null)
             {
-                SetUpActiveProperty (so);
+                SetUpActiveProperty(so);
             }
 
-            WideViewEntry wve = new WideViewEntry ();
-            FormatPropertyField fpf = new FormatPropertyField ();
+            WideViewEntry wve = new WideViewEntry();
+            FormatPropertyField fpf = new FormatPropertyField();
 
             wve.formatPropertyField = fpf;
             if (this.activeAssociationList.Count > 0)
@@ -148,17 +149,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 FieldFormattingDirective directive = null;
                 if (a.OriginatingParameter != null)
                 {
-                    directive = a.OriginatingParameter.GetEntry (FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
+                    directive = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
                 }
 
-                fpf.propertyValue = this.GetExpressionDisplayValue (so, enumerationLimit, a.ResolvedExpression, directive);
+                fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, a.ResolvedExpression, directive);
             }
 
             this.activeAssociationList = null;
             return wve;
         }
 
-        private void SetUpActiveProperty (PSObject so)
+        private void SetUpActiveProperty(PSObject so)
         {
             List<MshParameter> rawMshParameterList = null;
 
@@ -168,22 +169,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // check if we received properties from the command line
             if (rawMshParameterList != null && rawMshParameterList.Count > 0)
             {
-                this.activeAssociationList = AssociationManager.ExpandParameters (rawMshParameterList, so);
+                this.activeAssociationList = AssociationManager.ExpandParameters(rawMshParameterList, so);
                 return;
             }
 
             // we did not get any properties:
             //try to get the display property of the object
-            MshExpression displayNameExpression = PSObjectHelper.GetDisplayNameExpression (so, this.expressionFactory);
+            MshExpression displayNameExpression = PSObjectHelper.GetDisplayNameExpression(so, this.expressionFactory);
             if (displayNameExpression != null)
             {
-                this.activeAssociationList = new List<MshResolvedExpressionParameterAssociation> ();
-                this.activeAssociationList.Add (new MshResolvedExpressionParameterAssociation (null, displayNameExpression));
+                this.activeAssociationList = new List<MshResolvedExpressionParameterAssociation>();
+                this.activeAssociationList.Add(new MshResolvedExpressionParameterAssociation(null, displayNameExpression));
                 return;
             }
 
             // try to get the default property set (we will use the first property)
-            this.activeAssociationList = AssociationManager.ExpandDefaultPropertySet (so, this.expressionFactory);
+            this.activeAssociationList = AssociationManager.ExpandDefaultPropertySet(so, this.expressionFactory);
             if (this.activeAssociationList.Count > 0)
             {
                 // we got a valid set of properties from the default property set
@@ -192,7 +193,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // we failed to get anything from the default property set
             // just get all the properties
-            this.activeAssociationList = AssociationManager.ExpandAll (so);
+            this.activeAssociationList = AssociationManager.ExpandAll(so);
         }
     }
 }

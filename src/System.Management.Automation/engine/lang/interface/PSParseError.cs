@@ -3,13 +3,13 @@
 
     Project:     PowerShell
 
-    File:        PSParseError.cs
 
     Contents:    PowerShell error interface for syntax editors 
 
     Classes:     System.Management.Automation.PSParseError
 
 --********************************************************************/
+
 using System;
 using System.Text;
 using System.Text.RegularExpressions;

@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Runtime.Serialization;
 using System.Management.Automation.Internal;
@@ -14,13 +15,12 @@ using Microsoft.PowerShell.CoreClr.Stubs;
 
 namespace System.Management.Automation
 {
-
     /// <summary>
     /// Defines the exception thrown for all Extended type system related errors
     /// </summary>
     [Serializable]
     public class ExtendedTypeSystemException : RuntimeException
-    {   
+    {
         #region ctor
         /// <summary>
         /// Initializes a new instance of ExtendedTypeSystemException with the message set 
@@ -55,8 +55,8 @@ namespace System.Management.Automation
         /// <param name="resourceString">Resource string </param>
         /// <param name="arguments">Arguments to the resource string</param>
         internal ExtendedTypeSystemException(string errorId, Exception innerException, string resourceString,
-            params object[] arguments) : 
-            base(StringUtil.Format(resourceString, arguments),innerException)
+            params object[] arguments) :
+            base(StringUtil.Format(resourceString, arguments), innerException)
         {
             SetErrorId(errorId);
         }
@@ -75,7 +75,7 @@ namespace System.Management.Automation
         #endregion Serialization
 
         #endregion ctor
-   
+
     } // ExtendedTypeSystemException
 
 
@@ -124,8 +124,8 @@ namespace System.Management.Automation
         /// <param name="innerException">The inner exception</param>
         /// <param name="resourceString">Resource String</param>
         /// <param name="arguments">Arguments to the resource string</param>
-        internal MethodException(string errorId, Exception innerException, 
-            string resourceString, params object[] arguments) : 
+        internal MethodException(string errorId, Exception innerException,
+            string resourceString, params object[] arguments) :
             base(errorId, innerException, resourceString, arguments)
         {
         }
@@ -190,8 +190,8 @@ namespace System.Management.Automation
         /// <param name="innerException">The inner exception</param>
         /// <param name="resourceString">Resource String</param>
         /// <param name="arguments">Arguments to the resource string</param>
-        internal MethodInvocationException(string errorId, Exception innerException, 
-            string resourceString, params object[] arguments) : 
+        internal MethodInvocationException(string errorId, Exception innerException,
+            string resourceString, params object[] arguments) :
             base(errorId, innerException, resourceString, arguments)
         {
         }
@@ -254,8 +254,8 @@ namespace System.Management.Automation
         /// <param name="innerException">The inner exception</param>
         /// <param name="resourceString">Resource String</param>
         /// <param name="arguments">Arguments to the resource string</param>
-        internal GetValueException(string errorId, Exception innerException, 
-            string resourceString, params object[] arguments) : 
+        internal GetValueException(string errorId, Exception innerException,
+            string resourceString, params object[] arguments) :
             base(errorId, innerException, resourceString, arguments)
         {
         }
@@ -384,8 +384,8 @@ namespace System.Management.Automation
         /// <param name="innerException">The inner exception</param>
         /// <param name="resourceString">Resource String</param>
         /// <param name="arguments">Arguments to the resource string</param>
-        internal GetValueInvocationException(string errorId, Exception innerException, 
-            string resourceString, params object[] arguments) : 
+        internal GetValueInvocationException(string errorId, Exception innerException,
+            string resourceString, params object[] arguments) :
             base(errorId, innerException, resourceString, arguments)
         {
         }
@@ -446,8 +446,8 @@ namespace System.Management.Automation
         /// <param name="innerException">The inner exception</param>
         /// <param name="resourceString">Resource String</param>
         /// <param name="arguments">Arguments to the resource string</param>
-        internal SetValueException(string errorId, Exception innerException, 
-            string resourceString, params object[] arguments) : 
+        internal SetValueException(string errorId, Exception innerException,
+            string resourceString, params object[] arguments) :
             base(errorId, innerException, resourceString, arguments)
         {
         }
@@ -508,8 +508,8 @@ namespace System.Management.Automation
         /// <param name="innerException">The inner exception</param>
         /// <param name="resourceString">Resource String</param>
         /// <param name="arguments">Arguments to the resource string</param>
-        internal SetValueInvocationException(string errorId, Exception innerException, 
-            string resourceString, params object[] arguments) : 
+        internal SetValueInvocationException(string errorId, Exception innerException,
+            string resourceString, params object[] arguments) :
             base(errorId, innerException, resourceString, arguments)
         {
         }
@@ -554,16 +554,16 @@ namespace System.Management.Automation
             }
 
             base.GetObjectData(info, context);
-            info.AddValue("ErrorId", this.errorId);
+            info.AddValue("ErrorId", _errorId);
         }
         /// <summary>
         /// Initializes a new instance of PSInvalidCastException with serialization parameters
         /// </summary>
         /// <param name="info"> serialization information </param>
         /// <param name="context"> streaming context </param>
-        protected PSInvalidCastException(SerializationInfo info, StreamingContext context): base(info,context)
+        protected PSInvalidCastException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            this.errorId = info.GetString("ErrorId");
+            _errorId = info.GetString("ErrorId");
         }
 #endif
         #endregion Serialization
@@ -572,30 +572,34 @@ namespace System.Management.Automation
         /// Initializes a new instance of PSInvalidCastException with the message set 
         /// to typeof(PSInvalidCastException).FullName
         /// </summary>
-        public PSInvalidCastException(): base(typeof(PSInvalidCastException).FullName) {
+        public PSInvalidCastException() : base(typeof(PSInvalidCastException).FullName)
+        {
         }
         /// <summary>
         /// Initializes a new instance of PSInvalidCastException setting the message
         /// </summary>
         /// <param name="message">the exception's message</param>
-        public PSInvalidCastException(string message):base(message) {
+        public PSInvalidCastException(string message) : base(message)
+        {
         }
         /// <summary>
         /// Initializes a new instance of PSInvalidCastException setting the message and innerException
         /// </summary>
         /// <param name="message">the exception's message</param>
         /// <param name="innerException">the exceptions's inner exception</param>
-        public PSInvalidCastException(string message, Exception innerException):base(message,innerException) {
+        public PSInvalidCastException(string message, Exception innerException) : base(message, innerException)
+        {
         }
 
         internal PSInvalidCastException(string errorId, string message, Exception innerException)
             : base(message, innerException)
         {
-            this.errorId = errorId;
+            _errorId = errorId;
         }
 
         internal PSInvalidCastException(string errorId, Exception innerException, string resourceString, params object[] arguments)
-            : this(errorId, StringUtil.Format(resourceString, arguments), innerException) {
+            : this(errorId, StringUtil.Format(resourceString, arguments), innerException)
+        {
         }
 
         /// <summary>
@@ -605,21 +609,20 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == this.errorRecord)
+                if (null == _errorRecord)
                 {
-                    this.errorRecord = new ErrorRecord(
+                    _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
-                        this.errorId,
+                        _errorId,
                         ErrorCategory.InvalidArgument,
                         null);
                 }
-                return this.errorRecord;
+                return _errorRecord;
             }
         }
-        private ErrorRecord errorRecord;
-        private string errorId = "PSInvalidCastException";
+        private ErrorRecord _errorRecord;
+        private string _errorId = "PSInvalidCastException";
     }
-
 }
 
 

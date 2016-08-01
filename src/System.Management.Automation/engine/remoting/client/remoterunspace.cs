@@ -29,7 +29,7 @@ namespace System.Management.Automation
     internal class RemoteRunspace : Runspace, IDisposable
     {
         #region Private Members
-        
+
         private RunspacePool _runspacePool;
         private ArrayList _runningPipelines = new ArrayList();
         private object _syncRoot = new object();
@@ -46,8 +46,8 @@ namespace System.Management.Automation
 
         // the following two variables have been added for supporting
         // the Invoke-Command | Invoke-Command scenario
-        private InvokeCommandCommand currentInvokeCommand = null;
-        private long currentLocalPipelineId = 0;
+        private InvokeCommandCommand _currentInvokeCommand = null;
+        private long _currentLocalPipelineId = 0;
 
         /// <summary>
         /// This is queue of all the state change event which have occured for
@@ -99,7 +99,7 @@ namespace System.Management.Automation
             }
         }
 
-        bool _shouldCloseOnPop = false;
+        private bool _shouldCloseOnPop = false;
 
         /// <summary>
         /// Temporary place to remember whether to close this runspace on pop or not.
@@ -163,8 +163,8 @@ namespace System.Management.Automation
         {
             // The RemoteRunspace object can only be constructed this way with a RunspacePool that
             // is in the disconnected state.
-            if ( (runspacePool.RunspacePoolStateInfo.State != RunspacePoolState.Disconnected) ||
-                 !(runspacePool.ConnectionInfo is WSManConnectionInfo) )
+            if ((runspacePool.RunspacePoolStateInfo.State != RunspacePoolState.Disconnected) ||
+                 !(runspacePool.ConnectionInfo is WSManConnectionInfo))
             {
                 throw PSTraceSource.NewInvalidOperationException(RunspaceStrings.InvalidRunspacePool);
             }
@@ -188,14 +188,14 @@ namespace System.Management.Automation
             // Normal Availability for a disconnected runspace is "None", which means it can be connected.
             // However, we can also have disconnected runspace objects that are *not* avaialable for 
             // connection and in this case the Availability is set to "Busy".
-            this._runspaceAvailability = _runspacePool.RemoteRunspacePoolInternal.AvailableForConnection ?
+            _runspaceAvailability = _runspacePool.RemoteRunspacePoolInternal.AvailableForConnection ?
                 Runspaces.RunspaceAvailability.None : Runspaces.RunspaceAvailability.Busy;
 
             SetEventHandlers();
 
             PSEtwLog.SetActivityIdForCurrentThread(this.InstanceId);
             PSEtwLog.LogOperationalVerbose(PSEventId.RunspaceConstructor, PSOpcode.Constructor,
-                        PSTask.CreateRunspace, PSKeyword.UseAlwaysOperational, 
+                        PSTask.CreateRunspace, PSKeyword.UseAlwaysOperational,
                         this.InstanceId.ToString());
         }
 
@@ -219,10 +219,10 @@ namespace System.Management.Automation
             _runspacePool.ForwardEvent +=
                 new EventHandler<PSEventArgs>(HandleRunspacePoolForwardEvent);
 
-            _runspacePool.RemoteRunspacePoolInternal.SessionCreateCompleted += 
+            _runspacePool.RemoteRunspacePoolInternal.SessionCreateCompleted +=
                 new EventHandler<CreateCompleteEventArgs>(HandleSessionCreateCompleted);
         }
-        
+
         #endregion Constructors
 
         #region Properties
@@ -239,14 +239,11 @@ namespace System.Management.Automation
         {
             get
             {
-
 #pragma warning disable 56503
 
                 throw PSTraceSource.NewNotImplementedException();
 
 #pragma warning restore 56503
-
-
             }
         }
 
@@ -258,14 +255,11 @@ namespace System.Management.Automation
         {
             get
             {
-
 #pragma warning disable 56503
 
                 throw PSTraceSource.NewNotImplementedException();
 
 #pragma warning restore 56503
-
-
             }
         }
 
@@ -334,26 +328,26 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.createThreadOptions;
+                return _createThreadOptions;
             }
 
             set
             {
                 lock (_syncRoot)
                 {
-                    if (value != this.createThreadOptions)
+                    if (value != _createThreadOptions)
                     {
                         if (this.RunspaceStateInfo.State != RunspaceState.BeforeOpen)
                         {
                             throw new InvalidRunspaceStateException(StringUtil.Format(RunspaceStrings.ChangePropertyAfterOpen));
                         }
 
-                        this.createThreadOptions = value;
+                        _createThreadOptions = value;
                     }
                 }
             }
         }
-        private PSThreadOptions createThreadOptions = PSThreadOptions.Default;
+        private PSThreadOptions _createThreadOptions = PSThreadOptions.Default;
 
         /// <summary>
         /// Gets the current availability of the Runspace
@@ -515,8 +509,8 @@ namespace System.Management.Automation
         /// </summary>
         internal string PSSessionName
         {
-            get { return this._runspacePool.RemoteRunspacePoolInternal.Name; }
-            set { this._runspacePool.RemoteRunspacePoolInternal.Name = value; }
+            get { return _runspacePool.RemoteRunspacePoolInternal.Name; }
+            set { _runspacePool.RemoteRunspacePoolInternal.Name = value; }
         }
 
         /// <summary>
@@ -524,10 +518,10 @@ namespace System.Management.Automation
         /// </summary>
         internal int PSSessionId
         {
-            get { return this.id; }
-            set { this.id = value; }
+            get { return _id; }
+            set { _id = value; }
         }
-        private int id = -1;
+        private int _id = -1;
 
         /// <summary>
         /// Returns true if Runspace supports disconnect.
@@ -555,7 +549,7 @@ namespace System.Management.Automation
                 return _remoteDebugger;
             }
         }
-        
+
         #endregion Properties
 
         #region Open
@@ -613,10 +607,9 @@ namespace System.Management.Automation
         /// </summary>
         public override void CloseAsync()
         {
-
             try
             {
-                _runspacePool.BeginClose(null,null);
+                _runspacePool.BeginClose(null, null);
             }
             catch (InvalidRunspacePoolStateException e)
             {
@@ -632,10 +625,9 @@ namespace System.Management.Automation
         /// </remarks>
         public override void Close()
         {
-
             try
             {
-                IAsyncResult result = _runspacePool.BeginClose(null,null);
+                IAsyncResult result = _runspacePool.BeginClose(null, null);
 
                 WaitForFinishofPipelines();
 
@@ -1013,7 +1005,7 @@ namespace System.Management.Automation
             {
                 ContainerConnectionInfo containerConnectionInfo = _connectionInfo as ContainerConnectionInfo;
 
-                if ((containerConnectionInfo != null) && 
+                if ((containerConnectionInfo != null) &&
                     (containerConnectionInfo.ContainerProc.RuntimeId == Guid.Empty))
                 {
                     returnCaps |= RunspaceCapability.NamedPipeTransport;
@@ -1167,7 +1159,7 @@ namespace System.Management.Automation
 
             lock (_syncRoot)
             {
-                if (_bypassRunspaceStateCheck == false && 
+                if (_bypassRunspaceStateCheck == false &&
                     _runspaceStateInfo.State != RunspaceState.Opened &&
                     _runspaceStateInfo.State != RunspaceState.Disconnected) // Disconnected runspaces can have running pipelines.
                 {
@@ -1255,12 +1247,12 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal override SessionStateProxy GetSessionStateProxy()
         {
-            if(sessionStateProxy == null)
-                sessionStateProxy = new RemoteSessionStateProxy(this);
+            if (_sessionStateProxy == null)
+                _sessionStateProxy = new RemoteSessionStateProxy(this);
 
-            return sessionStateProxy;
+            return _sessionStateProxy;
         }
-        private RemoteSessionStateProxy sessionStateProxy = null;
+        private RemoteSessionStateProxy _sessionStateProxy = null;
 
         #endregion SessionState Proxy
 
@@ -1615,11 +1607,11 @@ namespace System.Management.Automation
         {
             ClientMethodExecutor.Dispatch(
                 _runspacePool.RemoteRunspacePoolInternal.DataStructureHandler.TransportManager,
-                _runspacePool.RemoteRunspacePoolInternal.Host, 
+                _runspacePool.RemoteRunspacePoolInternal.Host,
                 null,       /* error stream */
                 null,       /* method executor stream */
                 false,      /* is method stream enabled */
-                _runspacePool.RemoteRunspacePoolInternal, 
+                _runspacePool.RemoteRunspacePoolInternal,
                 Guid.Empty, /* powershell id */
                 eventArgs.Data);
         }
@@ -1672,9 +1664,9 @@ namespace System.Management.Automation
             // Update connectionInfo with updated information from the transport.
             if (eventArgs != null)
             {
-                this._connectionInfo.IdleTimeout = eventArgs.ConnectionInfo.IdleTimeout;
-                this._connectionInfo.MaxIdleTimeout = eventArgs.ConnectionInfo.MaxIdleTimeout;
-                WSManConnectionInfo wsmanConnectionInfo = this._connectionInfo as WSManConnectionInfo;
+                _connectionInfo.IdleTimeout = eventArgs.ConnectionInfo.IdleTimeout;
+                _connectionInfo.MaxIdleTimeout = eventArgs.ConnectionInfo.MaxIdleTimeout;
+                WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
                 if (wsmanConnectionInfo != null)
                 {
                     wsmanConnectionInfo.OutputBufferingMode =
@@ -1688,7 +1680,7 @@ namespace System.Management.Automation
         /// </summary>
         private void UpdateDisconnectExpiresOn()
         {
-            WSManConnectionInfo wsmanConnectionInfo = this._runspacePool.RemoteRunspacePoolInternal.ConnectionInfo as WSManConnectionInfo;
+            WSManConnectionInfo wsmanConnectionInfo = _runspacePool.RemoteRunspacePoolInternal.ConnectionInfo as WSManConnectionInfo;
             if (wsmanConnectionInfo != null)
             {
                 this.DisconnectedOn = wsmanConnectionInfo.DisconnectedOn;
@@ -1718,7 +1710,7 @@ namespace System.Management.Automation
             // return true, when one invoke-command is running as a
             // job and another invoke-command is entered at the
             // console prompt
-            if (currentLocalPipelineId != localPipelineId && currentLocalPipelineId != 0)
+            if (_currentLocalPipelineId != localPipelineId && _currentLocalPipelineId != 0)
             {
                 return false;
             }
@@ -1728,14 +1720,14 @@ namespace System.Management.Automation
                 // this invoke command is running may be
                 // running in the same pipeline as another
                 // invoke command
-                if (currentInvokeCommand == null)
+                if (_currentInvokeCommand == null)
                 {
                     // this is the first invoke-command, just
                     // set the reference
                     SetCurrentInvokeCommand(invokeCommand, localPipelineId);
                     return false;
                 }
-                else if (currentInvokeCommand.Equals(invokeCommand))
+                else if (_currentInvokeCommand.Equals(invokeCommand))
                 {
                     // the currently active invoke command is the one
                     // specified
@@ -1763,8 +1755,8 @@ namespace System.Management.Automation
             Dbg.Assert(invokeCommand != null, "InvokeCommand instance cannot be null, use ClearInvokeCommand() method to reset current command");
             Dbg.Assert(localPipelineId != 0, "Local pipeline id needs to be supplied - cannot be 0");
 
-            currentInvokeCommand = invokeCommand;
-            currentLocalPipelineId = localPipelineId;
+            _currentInvokeCommand = invokeCommand;
+            _currentLocalPipelineId = localPipelineId;
         }
 
         /// <summary>
@@ -1773,8 +1765,8 @@ namespace System.Management.Automation
         /// </summary>
         internal void ClearInvokeCommand()
         {
-            currentLocalPipelineId = 0;
-            currentInvokeCommand = null;
+            _currentLocalPipelineId = 0;
+            _currentInvokeCommand = null;
         }
 
         /// <summary>
@@ -1786,7 +1778,7 @@ namespace System.Management.Automation
         {
             System.Management.Automation.Remoting.Client.NamedPipeClientSessionTransportManager transportManager =
                 _runspacePool.RemoteRunspacePoolInternal.DataStructureHandler.TransportManager as System.Management.Automation.Remoting.Client.NamedPipeClientSessionTransportManager;
-            
+
             if (transportManager != null)
             {
                 transportManager.AbortConnect();
@@ -1866,8 +1858,8 @@ namespace System.Management.Automation
         private bool _detachCommand;
 
         // Impersonation flow
-        WindowsIdentity _identityToPersonate;
-        bool _identityPersonationChecked;
+        private WindowsIdentity _identityToPersonate;
+        private bool _identityPersonationChecked;
 
         /// <summary>
         /// RemoteDebuggerStopEvent
@@ -2178,7 +2170,7 @@ namespace System.Management.Automation
         /// </summary>
         public override bool IsActive
         {
-	        get { return _isActive; }
+            get { return _isActive; }
         }
 
         /// <summary>
@@ -2259,7 +2251,7 @@ namespace System.Management.Automation
         {
             _runspace.RemoteDebuggerStop -= HandleForwardedDebuggerStopEvent;
             _runspace.RemoteDebuggerBreakpointUpdated -= HandleForwardedDebuggerBreakpointUpdatedEvent;
-            
+
             if (_identityToPersonate != null)
             {
                 _identityToPersonate.Dispose();
@@ -2306,8 +2298,8 @@ namespace System.Management.Automation
         /// <param name="unhandledBreakpointMode">UnhandledBreakpointMode</param>
         /// <param name="serverPSVersion">Server PowerShell version</param>
         internal void SetClientDebugInfo(
-            DebugModes? debugMode, 
-            bool inBreakpoint, 
+            DebugModes? debugMode,
+            bool inBreakpoint,
             int breakpointCount,
             bool breakAll,
             UnhandledBreakpointProcessingMode unhandledBreakpointMode,
@@ -2421,7 +2413,6 @@ namespace System.Management.Automation
 
         private void ProcessDebuggerStopEvent(DebuggerStopEventArgs args)
         {
-
             // It is possible to get a stop event raise request while
             // debugger is already in stop mode (after remote runspace debugger
             // reconnect).  In this case ignore the request.
@@ -2439,7 +2430,7 @@ namespace System.Management.Automation
                     ProcessDebuggerStopEventProc,
                     args);
             }
-            
+
             if (!invokedOnBlockedThread)
             {
 #if CORECLR
@@ -2488,7 +2479,7 @@ namespace System.Management.Automation
                             }
                         }
                     }
-                    else 
+                    else
                     {
                         // If no debugger is subscribed to the DebuggerStop event then we 
                         // allow the server side script execution to remain blocked in debug
@@ -2568,7 +2559,7 @@ namespace System.Management.Automation
             {
                 throw new InvalidRunspaceStateException();
             }
-            
+
             if (!_identityPersonationChecked)
             {
                 _identityPersonationChecked = true;
@@ -2587,8 +2578,8 @@ namespace System.Management.Automation
         private void SetRemoteDebug(bool remoteDebug, RunspaceAvailability? availability)
         {
             if (_runspace.RunspaceStateInfo.State != RunspaceState.Opened)
-            { 
-                return; 
+            {
+                return;
             }
 
             if (IsRemoteDebug != remoteDebug)
@@ -2650,16 +2641,16 @@ namespace System.Management.Automation
 
     internal class RemoteSessionStateProxy : SessionStateProxy
     {
-        RemoteRunspace _runspace;
+        private RemoteRunspace _runspace;
         internal RemoteSessionStateProxy(RemoteRunspace runspace)
         {
             Dbg.Assert(runspace != null, "Caller should validate the parameter");
             _runspace = runspace;
         }
 
-        private Exception isInNoLangugeModeException = null;
-        private Exception getVariableCommandNotFoundException = null;
-        private Exception setVariableCommandNotFoundException = null;
+        private Exception _isInNoLangugeModeException = null;
+        private Exception _getVariableCommandNotFoundException = null;
+        private Exception _setVariableCommandNotFoundException = null;
 
         /// <summary>
         /// Set a variable in session state.
@@ -2693,8 +2684,8 @@ namespace System.Management.Automation
 
             // Verify the runspace has the Set-Variable command. For performance, throw if we got an error
             // before.
-            if (setVariableCommandNotFoundException != null)
-                throw setVariableCommandNotFoundException;
+            if (_setVariableCommandNotFoundException != null)
+                throw _setVariableCommandNotFoundException;
 
             // Since these are implemented as pipelines, we don't need to do our own
             // locking of sessionStateCallInProgress like we do with local runspaces.
@@ -2712,15 +2703,15 @@ namespace System.Management.Automation
             {
                 if (String.Equals("CommandNotFoundException", e.ErrorRecord.FullyQualifiedErrorId, StringComparison.OrdinalIgnoreCase))
                 {
-                    setVariableCommandNotFoundException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
-                    throw setVariableCommandNotFoundException;
+                    _setVariableCommandNotFoundException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
+                    throw _setVariableCommandNotFoundException;
                 }
                 else throw;
             }
             if (remotePipeline.Error.Count > 0)
             {
                 // Don't cache these errors, as they are related to the actual variable being set.
-                ErrorRecord error = (ErrorRecord) remotePipeline.Error.Read();
+                ErrorRecord error = (ErrorRecord)remotePipeline.Error.Read();
                 throw new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, error.Exception);
             }
         }
@@ -2757,8 +2748,8 @@ namespace System.Management.Automation
 
             // Verify the runspace has the Get-Variable command. For performance, throw if we got an error
             // before.
-            if (getVariableCommandNotFoundException != null)
-                throw getVariableCommandNotFoundException;
+            if (_getVariableCommandNotFoundException != null)
+                throw _getVariableCommandNotFoundException;
 
             // Since these are implemented as pipelines, we don't need to do our own
             // locking of sessionStateCallInProgress like we do with local runspaces.
@@ -2776,8 +2767,8 @@ namespace System.Management.Automation
             {
                 if (String.Equals("CommandNotFoundException", e.ErrorRecord.FullyQualifiedErrorId, StringComparison.OrdinalIgnoreCase))
                 {
-                    getVariableCommandNotFoundException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
-                    throw getVariableCommandNotFoundException;
+                    _getVariableCommandNotFoundException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
+                    throw _getVariableCommandNotFoundException;
                 }
                 else throw;
             }
@@ -2818,8 +2809,8 @@ namespace System.Management.Automation
             {
                 // Verify the runspace has is not in NoLanguage mode. For performance, throw if we got an error
                 // before.
-                if (isInNoLangugeModeException != null)
-                    throw isInNoLangugeModeException;
+                if (_isInNoLangugeModeException != null)
+                    throw _isInNoLangugeModeException;
 
                 // Since these are implemented as pipelines, we don't need to do our own
                 // locking of sessionStateCallInProgress like we do with local runspaces.
@@ -2838,8 +2829,8 @@ namespace System.Management.Automation
                 {
                     if (e.ErrorRecord.CategoryInfo.Category == ErrorCategory.ParserError)
                     {
-                        isInNoLangugeModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
-                        throw isInNoLangugeModeException;
+                        _isInNoLangugeModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
+                        throw _isInNoLangugeModeException;
                     }
                     else throw;
                 }
@@ -2865,8 +2856,8 @@ namespace System.Management.Automation
             {
                 // Verify the runspace has is not in NoLanguage mode. For performance, throw if we got an error
                 // before.
-                if (isInNoLangugeModeException != null)
-                    throw isInNoLangugeModeException;
+                if (_isInNoLangugeModeException != null)
+                    throw _isInNoLangugeModeException;
 
                 // Since these are implemented as pipelines, we don't need to do our own
                 // locking of sessionStateCallInProgress like we do with local runspaces.
@@ -2885,8 +2876,8 @@ namespace System.Management.Automation
                 {
                     if (e.ErrorRecord.CategoryInfo.Category == ErrorCategory.ParserError)
                     {
-                        isInNoLangugeModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
-                        throw isInNoLangugeModeException;
+                        _isInNoLangugeModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
+                        throw _isInNoLangugeModeException;
                     }
                     else throw;
                 }
@@ -2931,7 +2922,7 @@ namespace System.Management.Automation
             {
                 // Verify the runspace has is not in NoLanguage mode. For performance, return our
                 // cached value if we got an error before.
-                if (isInNoLangugeModeException != null)
+                if (_isInNoLangugeModeException != null)
                     return PSLanguageMode.NoLanguage;
 
                 // Since these are implemented as pipelines, we don't need to do our own
@@ -2949,13 +2940,13 @@ namespace System.Management.Automation
                 {
                     if (e.ErrorRecord.CategoryInfo.Category == ErrorCategory.ParserError)
                     {
-                        isInNoLangugeModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
+                        _isInNoLangugeModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
                         return PSLanguageMode.NoLanguage;
                     }
                     else throw;
                 }
 
-                return (PSLanguageMode) LanguagePrimitives.ConvertTo(result[0], typeof(PSLanguageMode), CultureInfo.InvariantCulture);
+                return (PSLanguageMode)LanguagePrimitives.ConvertTo(result[0], typeof(PSLanguageMode), CultureInfo.InvariantCulture);
             }
             set
             {

@@ -29,8 +29,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns an instance of the PSHost implementation for this environment.
         /// </summary>
-        PSHost Host { get; }						
-    #region Write
+        PSHost Host { get; }
+        #region Write
         /// <summary>
         /// Display debug information
         /// </summary>
@@ -182,9 +182,9 @@ namespace System.Management.Automation
         /// <seealso cref="System.Management.Automation.ICommandRuntime.WriteProgress(ProgressRecord)"/>
         void WriteCommandDetail(string text);
 
-    #endregion Write
+        #endregion Write
 
-    #region Should
+        #region Should
         /// <summary>
         /// Called by the cmdlet to confirm the operation with the user.  Cmdlets which make changes
         /// (e.g. delete files, stop services etc.) should call ShouldProcess
@@ -222,7 +222,7 @@ namespace System.Management.Automation
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string,string, out ShouldProcessReason)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string,ref bool,ref bool)"/>
-	    bool ShouldProcess( string target );
+        bool ShouldProcess(string target);
 
         /// <summary>
         /// Called by a cmdlet to confirm the operation with the user.  Cmdlets which make changes
@@ -268,7 +268,7 @@ namespace System.Management.Automation
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string,string, out ShouldProcessReason)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string,ref bool,ref bool)"/>
-	    bool ShouldProcess( string target, string action );
+        bool ShouldProcess(string target, string action);
 
         /// <summary>
         /// Called by a cmdlet to confirm the operation with the user.  Cmdlets which make changes
@@ -322,7 +322,7 @@ namespace System.Management.Automation
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string,string, out ShouldProcessReason)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string,ref bool,ref bool)"/>
-	    bool ShouldProcess( string verboseDescription, string verboseWarning, string caption );
+        bool ShouldProcess(string verboseDescription, string verboseWarning, string caption);
 
         /// <summary>
         /// Called by a cmdlet to confirm the operation with the user.  Cmdlets which make changes
@@ -439,7 +439,7 @@ namespace System.Management.Automation
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string,string)"/>
-	    bool ShouldContinue( string query, string caption );
+        bool ShouldContinue(string query, string caption);
 
         /// <summary>
         /// Called to confirm an operation or grouping of operations with the user.
@@ -504,25 +504,25 @@ namespace System.Management.Automation
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string,string)"/>
-	    bool ShouldContinue( string query, string caption, ref bool yesToAll, ref bool noToAll );
+        bool ShouldContinue(string query, string caption, ref bool yesToAll, ref bool noToAll);
 
-    #endregion Should
+        #endregion Should
 
-   #region Transaction Support
-    /// <summary>
-    /// Returns true if a transaction is available and active.
-    /// </summary>
+        #region Transaction Support
+        /// <summary>
+        /// Returns true if a transaction is available and active.
+        /// </summary>
         bool TransactionAvailable();
 
-    /// <summary>
-    /// Gets an object that surfaces the current PowerShell transaction.
-    /// When this object is disposed, PowerShell resets the active transaction
-    /// </summary>
+        /// <summary>
+        /// Gets an object that surfaces the current PowerShell transaction.
+        /// When this object is disposed, PowerShell resets the active transaction
+        /// </summary>
         PSTransactionContext CurrentPSTransaction { get; }
-    #endregion Transaction Support
+        #endregion Transaction Support
 
 
-    #region Misc
+        #region Misc
         #region ThrowTerminatingError
         /// <summary>
         /// This interface will be called to route fatal errors from a cmdlet.
@@ -555,7 +555,7 @@ namespace System.Management.Automation
         /// </remarks>
         void ThrowTerminatingError(ErrorRecord errorRecord);
         #endregion ThrowTerminatingError
-    #endregion misc
+        #endregion misc
 
     }
 

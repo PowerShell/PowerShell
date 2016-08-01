@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Management.Automation;
 using System.Management;
@@ -30,8 +31,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "object")]
         public ManagementObject InputObject
         {
-            get { return this.inputObject; }
-            set { this.inputObject = value; }
+            get { return _inputObject; }
+            set { _inputObject = value; }
         }
         /// <summary>
         /// The WMI Path to use
@@ -39,8 +40,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "path", Mandatory = true)]
         public string Path
         {
-            get { return this.path; }
-            set { this.path = value; }
+            get { return _path; }
+            set { _path = value; }
         }
         /// <summary>
         /// The WMI class to use
@@ -48,8 +49,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "class")]
         public string Class
         {
-            get { return this.className; }
-            set { this.className = value; }
+            get { return _className; }
+            set { _className = value; }
         }
         /// <summary>
         /// The property name /value pair
@@ -61,28 +62,28 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public Hashtable Arguments
         {
-            get { return this.propertyBag; }
-            set { this.propertyBag = value; }
+            get { return _propertyBag; }
+            set { _propertyBag = value; }
         }
 
         /// <summary>
         /// The Flag to use
         /// </summary>
         [Parameter]
-        public  PutType PutType
+        public PutType PutType
         {
-            get { return this.putType; }
-            set { this.putType = value; flagSpecified = true;}
+            get { return _putType; }
+            set { _putType = value; flagSpecified = true; }
         }
 
         #endregion Parameters
         #region parameter data
         internal bool flagSpecified = false;
-        private string path = null;
-        private string className = null;
-        private ManagementObject inputObject = null;
-        private Hashtable propertyBag = null;
-        private PutType putType = PutType.None;
+        private string _path = null;
+        private string _className = null;
+        private ManagementObject _inputObject = null;
+        private Hashtable _propertyBag = null;
+        private PutType _putType = PutType.None;
 
         #endregion parameter data
 
@@ -92,12 +93,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if( this.AsJob )
+            if (this.AsJob)
             {
                 RunAsJob("Set-WMIInstance");
                 return;
             }
-            if (inputObject != null)
+            if (_inputObject != null)
             {
                 object result = null;
                 ManagementObject mObj = null;
@@ -105,10 +106,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     PutOptions pOptions = new PutOptions();
                     mObj = SetWmiInstanceGetPipelineObject();
-                    pOptions.Type = putType;
-                    if( mObj != null)
+                    pOptions.Type = _putType;
+                    if (mObj != null)
                     {
-                        if (!ShouldProcess(mObj.Path.Path.ToString()) )
+                        if (!ShouldProcess(mObj.Path.Path.ToString()))
                         {
                             return;
                         }
@@ -139,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
                 //If Class is specified only CreateOnly flag is supported
                 mPath = this.SetWmiInstanceBuildManagementPath();
                 //If server name is specified loop through it.
-                if( mPath != null)
+                if (mPath != null)
                 {
                     if (!(mPath.Server == "." && serverNameSpecified))
                     {
@@ -155,12 +156,12 @@ namespace Microsoft.PowerShell.Commands
                     result = null;
                     try
                     {
-                        mObject = this.SetWmiInstanceGetObject(mPath,name);
+                        mObject = this.SetWmiInstanceGetObject(mPath, name);
                         PutOptions pOptions = new PutOptions();
-                        pOptions.Type = putType;
-                        if( mObject != null)
+                        pOptions.Type = _putType;
+                        if (mObject != null)
                         {
-                            if (!ShouldProcess(mObject.Path.Path.ToString()) )
+                            if (!ShouldProcess(mObject.Path.Path.ToString()))
                             {
                                 continue;
                             }

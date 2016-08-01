@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     {
         internal CimJobContext(
             CimCmdletInvocationContext cmdletInvocationContext,
-            CimSession session, 
+            CimSession session,
             object targetObject)
         {
             this.CmdletInvocationContext = cmdletInvocationContext;

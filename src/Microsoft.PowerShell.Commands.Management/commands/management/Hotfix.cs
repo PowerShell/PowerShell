@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -28,7 +29,6 @@ using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
-
     #region Get-HotFix
 
     /// <summary>
@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies the HotFixID. Unique identifier associated with a particular update.
         /// </summary>
-        [Parameter(Position = 0,ParameterSetName="Default")]
+        [Parameter(Position = 0, ParameterSetName = "Default")]
         [ValidateNotNullOrEmpty]
         [Alias("HFID")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -111,10 +111,10 @@ namespace Microsoft.PowerShell.Commands
 
         #region Overrides
 
-        
-        private ManagementObjectSearcher searchProcess;
 
-        private bool inputContainsWildcard = false;
+        private ManagementObjectSearcher _searchProcess;
+
+        private bool _inputContainsWildcard = false;
         /// <summary>
         /// Get the List of HotFixes installed on the Local Machine.
         /// </summary>
@@ -145,8 +145,8 @@ namespace Microsoft.PowerShell.Commands
                     QueryString.Append("Select * from Win32_QuickFixEngineering");
                     foundRecord = true;
                 }
-                searchProcess = new ManagementObjectSearcher(scope, new ObjectQuery(QueryString.ToString()));
-                foreach (ManagementObject obj in searchProcess.Get())
+                _searchProcess = new ManagementObjectSearcher(scope, new ObjectQuery(QueryString.ToString()));
+                foreach (ManagementObject obj in _searchProcess.Get())
                 {
                     if (_description != null)
                     {
@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        inputContainsWildcard = true;
+                        _inputContainsWildcard = true;
                     }
 
                     // try to translate the SID to a more friendly username
@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         catch (SystemException e) // thrown by SecurityIdentifier.constr
                         {
-                            CommandsCommon.CheckForSevereException(this, e); 
+                            CommandsCommon.CheckForSevereException(this, e);
                         }
                         //catch (ArgumentException) // thrown (indirectly) by SecurityIdentifier.constr (on XP only?)
                         //{ catch not needed - this is already caught as SystemException
@@ -189,12 +189,12 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(obj);
                     foundRecord = true;
                 }
-                if (!foundRecord && !inputContainsWildcard)
+                if (!foundRecord && !_inputContainsWildcard)
                 {
                     Exception Ex = new ArgumentException(StringUtil.Format(HotFixResources.NoEntriesFound, computer));
                     WriteError(new ErrorRecord(Ex, "GetHotFixNoEntriesFound", ErrorCategory.ObjectNotFound, null));
                 }
-                if (searchProcess != null)
+                if (_searchProcess != null)
                 {
                     this.Dispose();
                 }
@@ -206,10 +206,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void StopProcessing()
         {
-            if (searchProcess != null)
+            if (_searchProcess != null)
             {
-                searchProcess.Dispose();
-            }       
+                _searchProcess.Dispose();
+            }
         }
         #endregion Overrides
 
@@ -228,12 +228,12 @@ namespace Microsoft.PowerShell.Commands
                     }
                     if (WildcardPattern.ContainsWildcardCharacters(desc))
                     {
-                        inputContainsWildcard = true;
+                        _inputContainsWildcard = true;
                     }
                 }
             }
             catch (Exception e)
-            { 
+            {
                 CommandsCommon.CheckForSevereException(this, e);
                 return false;
             }
@@ -263,16 +263,14 @@ namespace Microsoft.PowerShell.Commands
         {
             if (disposing)
             {
-                if (searchProcess != null)
+                if (_searchProcess != null)
                 {
-                    searchProcess.Dispose();
+                    _searchProcess.Dispose();
                 }
             }
         }
 
         #endregion "IDisposable Members"
-
     }//end class
     #endregion
-
 }//Microsoft.Powershell.commands

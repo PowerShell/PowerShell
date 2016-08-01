@@ -24,7 +24,8 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="response"></param>
         /// <param name="executionContext"></param>
         internal HtmlWebResponseObject(WebResponse response, ExecutionContext executionContext)
-            : this(response, null, executionContext) { }
+            : this(response, null, executionContext)
+        { }
 
         /// <summary>
         /// Constructor for HtmlWebResponseObject with memory stream

@@ -129,10 +129,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(0, Int32.MaxValue)]
         public virtual int MaximumRedirection
         {
-            get { return maximumRedirection; }
-            set { maximumRedirection = value; }
+            get { return _maximumRedirection; }
+            set { _maximumRedirection = value; }
         }
-        private int maximumRedirection = -1;
+        private int _maximumRedirection = -1;
 
         #endregion
 
@@ -144,10 +144,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public virtual WebRequestMethod Method
         {
-            get { return method; }
-            set { method = value; }
+            get { return _method; }
+            set { _method = value; }
         }
-        private WebRequestMethod method = WebRequestMethod.Default;
+        private WebRequestMethod _method = WebRequestMethod.Default;
 
         #endregion
 
@@ -433,7 +433,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-        
+
         #endregion Virtual Methods
 
         #region Helper Properties
@@ -559,7 +559,7 @@ namespace Microsoft.PowerShell.Commands
 
             return uri;
         }
-        
+
         private Uri CheckProtocol(Uri uri)
         {
             if (null == uri) { throw new ArgumentNullException("uri"); }

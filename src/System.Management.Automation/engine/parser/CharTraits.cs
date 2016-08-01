@@ -25,40 +25,39 @@ namespace System.Management.Automation.Language
         internal const char QuoteDoubleLeft = (char)0x201c; // left double quotation mark
         internal const char QuoteDoubleRight = (char)0x201d; // right double quotation mark
         internal const char QuoteLowDoubleLeft = (char)0x201E; // low double left quote used in german.
-
     }
 
     [Flags]
     internal enum CharTraits
     {
-        None             = 0x0000,
+        None = 0x0000,
 
         // For identifiers, is the character a letter?
-        IdentifierStart  = 0x0002,
+        IdentifierStart = 0x0002,
 
         // The character is a valid first character of a multiplier
-        MultiplierStart  = 0x0004,
+        MultiplierStart = 0x0004,
 
         // The character is a valid type suffix for numeric literals
-        TypeSuffix       = 0x0008,
+        TypeSuffix = 0x0008,
 
         // The character is a whitespace character
-        Whitespace       = 0x0010,
+        Whitespace = 0x0010,
 
         // The character terminates a line.
-        Newline          = 0x0020,
+        Newline = 0x0020,
 
         // The character is a hexadecimal digit.
-        HexDigit         = 0x0040,
+        HexDigit = 0x0040,
 
         // The character is a decimal digit.
-        Digit            = 0x0080,
+        Digit = 0x0080,
 
         // The character is allowed as the first character in an unbraced variable name.
-        VarNameFirst     = 0x0100,
+        VarNameFirst = 0x0100,
 
         // The character is not part of the token being scanned.
-        ForceStartNewToken  = 0x0200,
+        ForceStartNewToken = 0x0200,
 
         // The character is not part of the token being scanned, when the token is known to be part of an assembly name.
         ForceStartNewAssemblyNameSpecToken = 0x0400,
@@ -71,10 +70,10 @@ namespace System.Management.Automation.Language
     {
         static CharExtensions()
         {
-            Diagnostics.Assert(_traits.Length == 128, "Extention methods rely on this table size.");
+            Diagnostics.Assert(s_traits.Length == 128, "Extention methods rely on this table size.");
         }
 
-        private static readonly CharTraits[] _traits = new CharTraits[]
+        private static readonly CharTraits[] s_traits = new CharTraits[]
         {
 /*      0x0 */ CharTraits.ForceStartNewToken | CharTraits.ForceStartNewAssemblyNameSpecToken,
 /*      0x1 */ CharTraits.None,
@@ -212,7 +211,7 @@ namespace System.Management.Automation.Language
         {
             if (c < 128)
             {
-                return (_traits[c] & CharTraits.Whitespace) != 0;
+                return (s_traits[c] & CharTraits.Whitespace) != 0;
             }
 
             if (c <= 256)
@@ -229,9 +228,9 @@ namespace System.Management.Automation.Language
         internal static bool IsDash(this char c)
         {
             return (c == '-'
-                ||  c == SpecialChars.EnDash
-                ||  c == SpecialChars.EmDash
-                ||  c == SpecialChars.HorizontalBar);
+                || c == SpecialChars.EnDash
+                || c == SpecialChars.EmDash
+                || c == SpecialChars.HorizontalBar);
         }
 
         // Return true if the character is any of the normal or special
@@ -239,10 +238,10 @@ namespace System.Management.Automation.Language
         internal static bool IsSingleQuote(this char c)
         {
             return (c == '\''
-                ||  c == SpecialChars.QuoteSingleLeft
-                ||  c == SpecialChars.QuoteSingleRight
-                ||  c == SpecialChars.QuoteSingleBase
-                ||  c == SpecialChars.QuoteReversed);
+                || c == SpecialChars.QuoteSingleLeft
+                || c == SpecialChars.QuoteSingleRight
+                || c == SpecialChars.QuoteSingleBase
+                || c == SpecialChars.QuoteReversed);
         }
 
         // Return true if the character is any of the normal or special
@@ -250,9 +249,9 @@ namespace System.Management.Automation.Language
         internal static bool IsDoubleQuote(this char c)
         {
             return (c == '"'
-                ||  c == SpecialChars.QuoteDoubleLeft
-                ||  c == SpecialChars.QuoteDoubleRight
-                ||  c == SpecialChars.QuoteLowDoubleLeft);
+                || c == SpecialChars.QuoteDoubleLeft
+                || c == SpecialChars.QuoteDoubleRight
+                || c == SpecialChars.QuoteLowDoubleLeft);
         }
 
         // Return true if the character can be the first character of
@@ -261,7 +260,7 @@ namespace System.Management.Automation.Language
         {
             if (c < 128)
             {
-                return (_traits[c] & CharTraits.VarNameFirst) != 0;
+                return (s_traits[c] & CharTraits.VarNameFirst) != 0;
             }
             return char.IsLetterOrDigit(c);
         }
@@ -272,7 +271,7 @@ namespace System.Management.Automation.Language
         {
             if (c < 128)
             {
-                return (_traits[c] & CharTraits.IdentifierStart) != 0;
+                return (s_traits[c] & CharTraits.IdentifierStart) != 0;
             }
             return char.IsLetter(c);
         }
@@ -283,7 +282,7 @@ namespace System.Management.Automation.Language
         {
             if (c < 128)
             {
-                return (_traits[c] & (CharTraits.IdentifierStart | CharTraits.Digit)) != 0;
+                return (s_traits[c] & (CharTraits.IdentifierStart | CharTraits.Digit)) != 0;
             }
             return char.IsLetterOrDigit(c);
         }
@@ -293,7 +292,7 @@ namespace System.Management.Automation.Language
         {
             if (c < 128)
             {
-                return (_traits[c] & CharTraits.HexDigit) != 0;
+                return (s_traits[c] & CharTraits.HexDigit) != 0;
             }
             return false;
         }
@@ -303,7 +302,7 @@ namespace System.Management.Automation.Language
         {
             if (c < 128)
             {
-                return (_traits[c] & CharTraits.Digit) != 0;
+                return (s_traits[c] & CharTraits.Digit) != 0;
             }
             return false;
         }
@@ -313,7 +312,7 @@ namespace System.Management.Automation.Language
         {
             if (c < 128)
             {
-                return (_traits[c] & CharTraits.TypeSuffix) != 0;
+                return (s_traits[c] & CharTraits.TypeSuffix) != 0;
             }
             return false;
         }
@@ -323,7 +322,7 @@ namespace System.Management.Automation.Language
         {
             if (c < 128)
             {
-                return (_traits[c] & CharTraits.MultiplierStart) != 0;
+                return (s_traits[c] & CharTraits.MultiplierStart) != 0;
             }
             return false;
         }
@@ -336,7 +335,7 @@ namespace System.Management.Automation.Language
         {
             if (c < 128)
             {
-                return (_traits[c] & CharTraits.ForceStartNewToken) != 0;
+                return (s_traits[c] & CharTraits.ForceStartNewToken) != 0;
             }
 
             return c.IsWhitespace();
@@ -348,7 +347,7 @@ namespace System.Management.Automation.Language
         {
             if (c < 128)
             {
-                return (_traits[c] & CharTraits.ForceStartNewTokenAfterNumber) != 0;
+                return (s_traits[c] & CharTraits.ForceStartNewTokenAfterNumber) != 0;
             }
 
             return c.IsDash();
@@ -360,7 +359,7 @@ namespace System.Management.Automation.Language
         {
             if (c < 128)
             {
-                return (_traits[c] & CharTraits.ForceStartNewAssemblyNameSpecToken) != 0;
+                return (s_traits[c] & CharTraits.ForceStartNewAssemblyNameSpecToken) != 0;
             }
 
             return c.IsWhitespace();

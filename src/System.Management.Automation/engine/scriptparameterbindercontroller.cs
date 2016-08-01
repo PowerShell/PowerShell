@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -169,7 +170,7 @@ namespace System.Management.Automation
                 // the parameter might be a positional argument 
 
                 MergedCompiledCommandParameter parameter =
-                    BindableParameters.GetMatchingParameter (
+                    BindableParameters.GetMatchingParameter(
                         argument.ParameterName,
                         false, true,
                         new InvocationInfo(this.InvocationInfo.MyCommand, argument.ParameterExtent));
@@ -184,7 +185,7 @@ namespace System.Management.Automation
 
                     if (BoundParameters.ContainsKey(parameter.Parameter.Name))
                     {
-                        ParameterBindingException bindingException = 
+                        ParameterBindingException bindingException =
                             new ParameterBindingException(
                                 ErrorCategory.InvalidArgument,
                                 this.InvocationInfo,
@@ -226,7 +227,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// An array containing the values that were bound to $args.
         /// </remarks>
-        void HandleRemainingArguments(Collection<CommandParameterInternal> arguments)
+        private void HandleRemainingArguments(Collection<CommandParameterInternal> arguments)
         {
             List<object> args = new List<object>();
 
@@ -288,7 +289,8 @@ namespace System.Management.Automation
                     if (parameterText.Properties[NotePropertyNameForSplattingParametersInArgs] == null)
                     {
                         var noteProperty = new PSNoteProperty(NotePropertyNameForSplattingParametersInArgs,
-                                                              parameter.ParameterName) {IsHidden = true};
+                                                              parameter.ParameterName)
+                        { IsHidden = true };
                         parameterText.Properties.Add(noteProperty);
                     }
                     args.Add(parameterText);

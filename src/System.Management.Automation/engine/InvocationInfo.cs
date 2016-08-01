@@ -24,11 +24,11 @@ namespace System.Management.Automation
         /// Contructor for InvocationInfo object when the associated command object is present. 
         /// </summary>
         /// <param name="command"></param>
-        internal InvocationInfo (InternalCommand command)
+        internal InvocationInfo(InternalCommand command)
             : this(command.CommandInfo,
                    command.InvocationExtent ?? PositionUtilities.EmptyExtent)
         {
-            this._commandOrigin = command.CommandOrigin;
+            _commandOrigin = command.CommandOrigin;
         }
 
         /// <summary>
@@ -67,9 +67,9 @@ namespace System.Management.Automation
         /// 
         internal InvocationInfo(CommandInfo commandInfo, IScriptExtent scriptPosition, ExecutionContext context)
         {
-            this._commandInfo = commandInfo;
-            this._commandOrigin = CommandOrigin.Internal;
-            this._scriptPosition = scriptPosition;
+            _commandInfo = commandInfo;
+            _commandOrigin = CommandOrigin.Internal;
+            _scriptPosition = scriptPosition;
 
             ExecutionContext contextToUse = null;
             if ((commandInfo != null) && (commandInfo.Context != null))
@@ -82,7 +82,7 @@ namespace System.Management.Automation
             }
 
             // Populate the history ID of this command
-            if(contextToUse != null)
+            if (contextToUse != null)
             {
                 Runspaces.LocalRunspace localRunspace = contextToUse.CurrentRunspace as Runspaces.LocalRunspace;
                 if (localRunspace != null && localRunspace.History != null)
@@ -97,13 +97,13 @@ namespace System.Management.Automation
         /// </summary>
         internal InvocationInfo(PSObject psObject)
         {
-            this._commandOrigin = (CommandOrigin)SerializationUtilities.GetPsObjectPropertyBaseObject(psObject, "InvocationInfo_CommandOrigin");
-            this._expectingInput = (bool)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_ExpectingInput");
-            this._invocationName = (string)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_InvocationName");
-            this._historyId = (long)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_HistoryId");
-            this._pipelineLength = (int)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_PipelineLength");
-            this._pipelinePosition = (int)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_PipelinePosition");
-            
+            _commandOrigin = (CommandOrigin)SerializationUtilities.GetPsObjectPropertyBaseObject(psObject, "InvocationInfo_CommandOrigin");
+            _expectingInput = (bool)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_ExpectingInput");
+            _invocationName = (string)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_InvocationName");
+            _historyId = (long)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_HistoryId");
+            _pipelineLength = (int)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_PipelineLength");
+            _pipelinePosition = (int)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_PipelinePosition");
+
             string scriptName = (string)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_ScriptName");
             int scriptLineNumber = (int)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_ScriptLineNumber");
             int offsetInLine = (int)SerializationUtilities.GetPropertyValue(psObject, "InvocationInfo_OffsetInLine");
@@ -120,9 +120,9 @@ namespace System.Management.Automation
             {
                 scriptEndPosition = scriptPosition;
             }
-            this._scriptPosition = new ScriptExtent(scriptPosition, scriptEndPosition);
+            _scriptPosition = new ScriptExtent(scriptPosition, scriptEndPosition);
 
-            this._commandInfo = RemoteCommandInfo.FromPSObjectForRemoting(psObject);
+            _commandInfo = RemoteCommandInfo.FromPSObjectForRemoting(psObject);
 
             //
             // Arrays are de-serialized as ArrayList so we need to convert the deserialized 
@@ -131,11 +131,11 @@ namespace System.Management.Automation
             var list = (ArrayList)SerializationUtilities.GetPsObjectPropertyBaseObject(psObject, "InvocationInfo_PipelineIterationInfo");
             if (list != null)
             {
-                this._pipelineIterationInfo = (int[])list.ToArray(typeof(Int32));
+                _pipelineIterationInfo = (int[])list.ToArray(typeof(Int32));
             }
             else
             {
-                this._pipelineIterationInfo = Utils.EmptyArray<int>();
+                _pipelineIterationInfo = Utils.EmptyArray<int>();
             }
 
             //
@@ -154,20 +154,20 @@ namespace System.Management.Automation
                 }
             }
 
-            this._boundParameters = dictionary;
+            _boundParameters = dictionary;
 
             //
             // The unbound parameters are de-serialized as an ArrayList, which we need to convert to a List
             //
             var unboundArguments = (ArrayList)SerializationUtilities.GetPsObjectPropertyBaseObject(psObject, "InvocationInfo_UnboundArguments");
 
-            this._unboundArguments = new List<object>();
+            _unboundArguments = new List<object>();
 
             if (unboundArguments != null)
             {
                 foreach (object o in unboundArguments)
                 {
-                    this._unboundArguments.Add(o);
+                    _unboundArguments.Add(o);
                 }
             }
 
@@ -196,7 +196,7 @@ namespace System.Management.Automation
         private CommandOrigin _commandOrigin;
         private Dictionary<string, object> _boundParameters;
         private List<object> _unboundArguments;
-        
+
         #endregion Internal or Private
 
         #region Public Members
@@ -205,16 +205,16 @@ namespace System.Management.Automation
         /// Provide basic information about the command
         /// </summary>
         /// <value>may be null</value>
-        public CommandInfo MyCommand 
+        public CommandInfo MyCommand
         {
-            get { return this._commandInfo; }
+            get { return _commandInfo; }
         }
 
         /// <summary>
         /// This member provides a dictionary of the parameters that were bound for this
         /// script or command.
         /// </summary>
-        public Dictionary<string, object> BoundParameters 
+        public Dictionary<string, object> BoundParameters
         {
             get
             {
@@ -387,8 +387,8 @@ namespace System.Management.Automation
         /// </summary>
         public CommandOrigin CommandOrigin
         {
-            get { return this._commandOrigin; }
-            internal set { this._commandOrigin = value; }
+            get { return _commandOrigin; }
+            internal set { _commandOrigin = value; }
         }
 
         /// <summary>
@@ -399,7 +399,7 @@ namespace System.Management.Automation
             get { return _displayScriptPosition; }
             set { _displayScriptPosition = value; }
         }
-        IScriptExtent _displayScriptPosition;
+        private IScriptExtent _displayScriptPosition;
 
         /// <summary>
         /// Create
@@ -445,7 +445,7 @@ namespace System.Management.Automation
         /// </summary>
         internal string GetFullScript()
         {
-            return (ScriptPosition != null) && (ScriptPosition.StartScriptPosition != null) ? 
+            return (ScriptPosition != null) && (ScriptPosition.StartScriptPosition != null) ?
                 ScriptPosition.StartScriptPosition.GetFullScript() : null;
         }
 
@@ -498,7 +498,7 @@ namespace System.Management.Automation
             }
             else
             {
-                RemotingEncoder.AddNoteProperty(psObject, "SerializeExtent", () => false);                
+                RemotingEncoder.AddNoteProperty(psObject, "SerializeExtent", () => false);
             }
 
             RemoteCommandInfo.ToPSObjectForRemoting(this.MyCommand, psObject);
@@ -525,7 +525,7 @@ namespace System.Management.Automation
         /// <summary>
         /// A string representing the definition of the command.
         /// </summary>
-        public override string Definition { get {  return this.definition; } }
+        public override string Definition { get { return _definition; } }
 
         /// <summary>
         /// Creates a RemoteCommandInfo from an instance serialized as a PSObject by ToPSObjectForRemoting.
@@ -542,7 +542,7 @@ namespace System.Management.Automation
                 string name = RemotingDecoder.GetPropertyValue<string>(psObject, "CommandInfo_Name");
 
                 commandInfo = new RemoteCommandInfo(name, type);
-                commandInfo.definition = RemotingDecoder.GetPropertyValue<string>(psObject, "CommandInfo_Definition");
+                commandInfo._definition = RemotingDecoder.GetPropertyValue<string>(psObject, "CommandInfo_Definition");
                 commandInfo.Visibility = RemotingDecoder.GetPropertyValue<SessionStateEntryVisibility>(psObject, "CommandInfo_Visibility");
             }
             return commandInfo;
@@ -575,7 +575,7 @@ namespace System.Management.Automation
             get { return null; }
         }
 
-        private string definition;
+        private string _definition;
     }
 }
 

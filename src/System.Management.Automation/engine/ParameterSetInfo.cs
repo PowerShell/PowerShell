@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -50,9 +51,9 @@ namespace System.Management.Automation
         /// If <paramref name="parameterMetadata"/> is null.
         /// </exception>
         /// 
-        internal CommandParameterSetInfo (
-            string name, 
-            bool isDefaultParameterSet, 
+        internal CommandParameterSetInfo(
+            string name,
+            bool isDefaultParameterSet,
             uint parameterSetFlag,
             MergedCommandParameterMetadata parameterMetadata)
         {
@@ -114,7 +115,7 @@ namespace System.Management.Automation
 
             GenerateParametersInDisplayOrder(isCapabilityWorkflow,
                                  parameter => AppendFormatCommandParameterInfo(parameter, ref result),
-                                 delegate(string str)
+                                 delegate (string str)
                                      {
                                          if (result.Length > 0)
                                          {
@@ -127,7 +128,7 @@ namespace System.Management.Automation
 
             return result.ToString();
         }
-        
+
         /// <summary>
         /// GenerateParameters parameters in display order 
         /// ie., Postional followed by
@@ -145,7 +146,7 @@ namespace System.Management.Automation
         /// <param name="parameterAction"></param>
         /// <param name="commonParameterAction"></param>
         /// <returns></returns>
-        internal void GenerateParametersInDisplayOrder(bool isCapabilityWorkflow, 
+        internal void GenerateParametersInDisplayOrder(bool isCapabilityWorkflow,
             Action<CommandParameterInfo> parameterAction,
             Action<string> commonParameterAction)
         {
@@ -178,8 +179,8 @@ namespace System.Management.Automation
 
                     if (parameter.Position >= sortedPositionalParameters.Count)
                     {
-                        for (int fillerIndex = sortedPositionalParameters.Count; 
-                             fillerIndex <= parameter.Position; 
+                        for (int fillerIndex = sortedPositionalParameters.Count;
+                             fillerIndex <= parameter.Position;
                              ++fillerIndex)
                         {
                             sortedPositionalParameters.Add(null);
@@ -364,12 +365,12 @@ namespace System.Management.Automation
 
         private void Initialize(MergedCommandParameterMetadata parameterMetadata, uint parameterSetFlag)
         {
-            Diagnostics.Assert (
+            Diagnostics.Assert(
                 parameterMetadata != null,
                 "The parameterMetadata should never be null");
 
             Collection<CommandParameterInfo> processedParameters =
-                new Collection<CommandParameterInfo> ();
+                new Collection<CommandParameterInfo>();
 
             // Get the parameters in the parameter set
             Collection<MergedCompiledCommandParameter> compiledParameters =
@@ -384,11 +385,10 @@ namespace System.Management.Automation
                 }
             }
 
-            Parameters = new ReadOnlyCollection<CommandParameterInfo> (processedParameters);
+            Parameters = new ReadOnlyCollection<CommandParameterInfo>(processedParameters);
         }
 
         #endregion private members
-     } // class CommandParameterSetInfo
-
+    } // class CommandParameterSetInfo
 } // namespace System.Management.Automation
 

@@ -6,8 +6,10 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
 
-namespace System.Management.Automation.ComInterop {
-    internal class ComEventDesc {
+namespace System.Management.Automation.ComInterop
+{
+    internal class ComEventDesc
+    {
         internal Guid sourceIID;
         internal int dispid;
     };

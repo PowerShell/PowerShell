@@ -25,7 +25,7 @@ namespace System.Management.Automation.Remoting.Server
         protected object _syncObject = new object();
         protected string _initialCommand;
         protected ManualResetEvent allcmdsClosedEvent;
-        
+
         // Thread impersonation.
         protected WindowsIdentity _windowsIdentityToImpersonate;
 
@@ -415,7 +415,7 @@ namespace System.Management.Automation.Remoting.Server
     {
         #region Private Data
 
-        private static OutOfProcessMediator SingletonInstance;
+        private static OutOfProcessMediator s_singletonInstance;
 
         #endregion
 
@@ -461,20 +461,20 @@ namespace System.Management.Automation.Remoting.Server
         {
             lock (SyncObject)
             {
-                if (null != SingletonInstance)
+                if (null != s_singletonInstance)
                 {
                     Dbg.Assert(false, "Run should not be called multiple times");
                     return;
                 }
 
-                SingletonInstance = new OutOfProcessMediator();
+                s_singletonInstance = new OutOfProcessMediator();
             }
 
 #if !CORECLR // AppDomain is not available in CoreCLR
             // Setup unhandled exception to log events
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
 #endif
-            SingletonInstance.Start(initialCommand);
+            s_singletonInstance.Start(initialCommand);
         }
 
         #endregion
@@ -484,7 +484,7 @@ namespace System.Management.Automation.Remoting.Server
     {
         #region Private Data
 
-        private static NamedPipeProcessMediator SingletonInstance;
+        private static NamedPipeProcessMediator s_singletonInstance;
 
         private readonly RemoteSessionNamedPipeServer _namedPipeServer;
 
@@ -517,7 +517,7 @@ namespace System.Management.Automation.Remoting.Server
             originalStdIn = namedPipeServer.TextReader;
             originalStdOut = new OutOfProcessTextWriter(namedPipeServer.TextWriter);
             originalStdErr = new NamedPipeErrorTextWriter(namedPipeServer.TextWriter);
-            
+
             // Flow impersonation if requested.
             WindowsIdentity currentIdentity = null;
             try
@@ -539,20 +539,20 @@ namespace System.Management.Automation.Remoting.Server
         {
             lock (SyncObject)
             {
-                if (SingletonInstance != null && !SingletonInstance.IsDisposed)
+                if (s_singletonInstance != null && !s_singletonInstance.IsDisposed)
                 {
                     Dbg.Assert(false, "Run should not be called multiple times, unless the singleton was disposed.");
                     return;
                 }
 
-                SingletonInstance = new NamedPipeProcessMediator(namedPipeServer);
+                s_singletonInstance = new NamedPipeProcessMediator(namedPipeServer);
             }
-            
-#if !CORECLR 
+
+#if !CORECLR
             // AppDomain is not available in CoreCLR
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
 #endif
-            SingletonInstance.Start(initialCommand, namedPipeServer.ConfigurationName);
+            s_singletonInstance.Start(initialCommand, namedPipeServer.ConfigurationName);
         }
 
         #endregion
@@ -578,7 +578,7 @@ namespace System.Management.Automation.Remoting.Server
         #region Constructors
 
         internal NamedPipeErrorTextWriter(
-            TextWriter textWriter) : base (textWriter)
+            TextWriter textWriter) : base(textWriter)
         { }
 
         #endregion
@@ -598,7 +598,7 @@ namespace System.Management.Automation.Remoting.Server
     {
         #region Private Data
 
-        private static HyperVSocketMediator Instance;
+        private static HyperVSocketMediator s_instance;
 
         private readonly RemoteSessionHyperVSocketServer _hypervSocketServer;
 
@@ -635,7 +635,7 @@ namespace System.Management.Automation.Remoting.Server
         {
             lock (SyncObject)
             {
-                Instance = new HyperVSocketMediator();
+                s_instance = new HyperVSocketMediator();
             }
 
 #if !CORECLR 
@@ -643,7 +643,7 @@ namespace System.Management.Automation.Remoting.Server
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
 #endif
 
-            Instance.Start(initialCommand, configurationName);
+            s_instance.Start(initialCommand, configurationName);
         }
 
         #endregion

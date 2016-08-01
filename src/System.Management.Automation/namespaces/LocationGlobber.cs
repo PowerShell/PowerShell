@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -28,7 +29,7 @@ namespace System.Management.Automation
         [Dbg.TraceSourceAttribute(
              "LocationGlobber",
              "The location globber converts PowerShell paths with glob characters to zero or more paths.")]
-        private static Dbg.PSTraceSource tracer =
+        private static Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("LocationGlobber",
              "The location globber converts PowerShell paths with glob characters to zero or more paths.");
 
@@ -38,7 +39,7 @@ namespace System.Management.Automation
         [Dbg.TraceSourceAttribute(
              "PathResolution",
              "Traces the path resolution algorithm.")]
-        private static Dbg.PSTraceSource pathResolutionTracer =
+        private static Dbg.PSTraceSource s_pathResolutionTracer =
             Dbg.PSTraceSource.GetTracer(
                 "PathResolution",
                 "Traces the path resolution algorithm.",
@@ -67,7 +68,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("sessionState");
             }
 
-            this.sessionState = sessionState;
+            _sessionState = sessionState;
         } // LocationGlobber(SessionState)
 
         #endregion Constructor
@@ -131,7 +132,7 @@ namespace System.Management.Automation
             out CmdletProvider providerInstance)
         {
             CmdletProviderContext context =
-                new CmdletProviderContext(sessionState.Internal.ExecutionContext);
+                new CmdletProviderContext(_sessionState.Internal.ExecutionContext);
 
             return GetGlobbedMonadPathsFromMonadPath(path, allowNonexistingPaths, context, out providerInstance);
         } // GetGlobbedMonadPathsFromMonadPath
@@ -214,7 +215,7 @@ namespace System.Management.Automation
 
             Collection<PathInfo> result;
 
-            using (pathResolutionTracer.TraceScope("Resolving MSH path \"{0}\" to MSH path", path))
+            using (s_pathResolutionTracer.TraceScope("Resolving MSH path \"{0}\" to MSH path", path))
             {
                 TraceFilters(context);
 
@@ -222,7 +223,7 @@ namespace System.Management.Automation
 
                 if (IsHomePath(path))
                 {
-                    using (pathResolutionTracer.TraceScope("Resolving HOME relative path."))
+                    using (s_pathResolutionTracer.TraceScope("Resolving HOME relative path."))
                     {
                         path = GetHomeRelativePath(path);
                     }
@@ -268,7 +269,7 @@ namespace System.Management.Automation
                             "PathNotFound",
                             SessionStateStrings.PathNotFound);
 
-                    pathResolutionTracer.TraceError("Item does not exist: {0}", path);
+                    s_pathResolutionTracer.TraceError("Item does not exist: {0}", path);
 
                     throw pathNotFound;
                 }
@@ -285,7 +286,7 @@ namespace System.Management.Automation
             )
         {
             // Check the provider capabilities before globbing
-            providerInstance = sessionState.Internal.GetProviderInstance(providerId);
+            providerInstance = _sessionState.Internal.GetProviderInstance(providerId);
             ContainerCmdletProvider containerCmdletProvider = providerInstance as ContainerCmdletProvider;
             ItemCmdletProvider itemProvider = providerInstance as ItemCmdletProvider;
 
@@ -298,7 +299,7 @@ namespace System.Management.Automation
                         ProviderCapabilities.ExpandWildcards,
                         providerInstance.ProviderInfo))
                 {
-                    pathResolutionTracer.WriteLine("Wildcard matching is being performed by the provider.");
+                    s_pathResolutionTracer.WriteLine("Wildcard matching is being performed by the provider.");
 
                     // Only do the expansion if the path actually contains wildcard
                     // characters.
@@ -314,7 +315,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    pathResolutionTracer.WriteLine("Wildcard matching is being performed by the engine.");
+                    s_pathResolutionTracer.WriteLine("Wildcard matching is being performed by the engine.");
 
                     if (containerCmdletProvider != null)
                     {
@@ -341,7 +342,7 @@ namespace System.Management.Automation
             {
                 if (itemProvider != null)
                 {
-                    if (allowNonexistingPaths|| itemProvider.ItemExists(providerPath, context))
+                    if (allowNonexistingPaths || itemProvider.ItemExists(providerPath, context))
                     {
                         stringResult.Add(providerPath);
                     }
@@ -365,7 +366,7 @@ namespace System.Management.Automation
                         "PathNotFound",
                         SessionStateStrings.PathNotFound);
 
-                pathResolutionTracer.TraceError("Item does not exist: {0}", providerPath);
+                s_pathResolutionTracer.TraceError("Item does not exist: {0}", providerPath);
                 throw pathNotFound;
             }
 
@@ -393,18 +394,18 @@ namespace System.Management.Automation
 
             if (isProviderDirectPath)
             {
-                pathResolutionTracer.WriteLine("Path is PROVIDER-DIRECT");
+                s_pathResolutionTracer.WriteLine("Path is PROVIDER-DIRECT");
                 providerPath = path;
-                providerId = sessionState.Path.CurrentLocation.Provider.Name;
+                providerId = _sessionState.Path.CurrentLocation.Provider.Name;
             }
             else if (isProviderQualifiedPath)
             {
-                pathResolutionTracer.WriteLine("Path is PROVIDER-QUALIFIED");
+                s_pathResolutionTracer.WriteLine("Path is PROVIDER-QUALIFIED");
                 providerPath = ParseProviderPath(path, out providerId);
             }
 
-            pathResolutionTracer.WriteLine("PROVIDER-INTERNAL path: {0}", providerPath);
-            pathResolutionTracer.WriteLine("Provider: {0}", providerId);
+            s_pathResolutionTracer.WriteLine("PROVIDER-INTERNAL path: {0}", providerPath);
+            s_pathResolutionTracer.WriteLine("Provider: {0}", providerId);
 
             Collection<string> stringResult = ResolveProviderPathFromProviderPath(
                 providerPath,
@@ -444,8 +445,8 @@ namespace System.Management.Automation
                             escapedPath);
                 }
 
-                result.Add(new PathInfo(drive, providerInstance.ProviderInfo, constructedProviderPath, sessionState));
-                pathResolutionTracer.WriteLine("RESOLVED PATH: {0}", constructedProviderPath);
+                result.Add(new PathInfo(drive, providerInstance.ProviderInfo, constructedProviderPath, _sessionState));
+                s_pathResolutionTracer.WriteLine("RESOLVED PATH: {0}", constructedProviderPath);
             }
 
             return result;
@@ -462,7 +463,7 @@ namespace System.Management.Automation
 
             Collection<PathInfo> result = new Collection<PathInfo>();
 
-            pathResolutionTracer.WriteLine("Path is DRIVE-QUALIFIED");
+            s_pathResolutionTracer.WriteLine("Path is DRIVE-QUALIFIED");
 
             string relativePath = GetDriveRootRelativePathFromPSPath(path, context, true, out drive, out providerInstance);
 
@@ -475,14 +476,14 @@ namespace System.Management.Automation
                 "There should always be a way to generate a provider path for a " +
                 "given path");
 
-            pathResolutionTracer.WriteLine("DRIVE-RELATIVE path: {0}", relativePath);
-            pathResolutionTracer.WriteLine("Drive: {0}", drive.Name);
-            pathResolutionTracer.WriteLine("Provider: {0}", drive.Provider);
+            s_pathResolutionTracer.WriteLine("DRIVE-RELATIVE path: {0}", relativePath);
+            s_pathResolutionTracer.WriteLine("Drive: {0}", drive.Name);
+            s_pathResolutionTracer.WriteLine("Provider: {0}", drive.Provider);
 
             // Associate the drive with the context
 
             context.Drive = drive;
-            providerInstance = sessionState.Internal.GetContainerProviderInstance(drive.Provider);
+            providerInstance = _sessionState.Internal.GetContainerProviderInstance(drive.Provider);
             ContainerCmdletProvider containerCmdletProvider = providerInstance as ContainerCmdletProvider;
             ItemCmdletProvider itemProvider = providerInstance as ItemCmdletProvider;
 
@@ -501,18 +502,18 @@ namespace System.Management.Automation
                 userPath = GetDriveQualifiedPath(relativePath, drive);
                 itemPath = GetProviderPath(path, context);
             }
-            pathResolutionTracer.WriteLine("PROVIDER path: {0}", itemPath);
+            s_pathResolutionTracer.WriteLine("PROVIDER path: {0}", itemPath);
 
             Collection<string> stringResult = new Collection<string>();
 
-            if (! context.SuppressWildcardExpansion)
+            if (!context.SuppressWildcardExpansion)
             {
                 // See if the provider will expand the wildcard
                 if (CmdletProviderManagementIntrinsics.CheckProviderCapabilities(
                         ProviderCapabilities.ExpandWildcards,
                         provider))
                 {
-                    pathResolutionTracer.WriteLine("Wildcard matching is being performed by the provider.");
+                    s_pathResolutionTracer.WriteLine("Wildcard matching is being performed by the provider.");
 
                     // Only do the expansion if the path actually contains wildcard
                     // characters.
@@ -532,7 +533,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    pathResolutionTracer.WriteLine("Wildcard matching is being performed by the engine.");
+                    s_pathResolutionTracer.WriteLine("Wildcard matching is being performed by the engine.");
 
                     // Now perform the globbing
                     stringResult =
@@ -573,7 +574,7 @@ namespace System.Management.Automation
                         "PathNotFound",
                         SessionStateStrings.PathNotFound);
 
-                pathResolutionTracer.TraceError("Item does not exist: {0}", path);
+                s_pathResolutionTracer.TraceError("Item does not exist: {0}", path);
                 throw pathNotFound;
             }
 
@@ -610,9 +611,9 @@ namespace System.Management.Automation
                                 expandedPath,
                                 drive);
                 }
-                
-                result.Add(new PathInfo(drive, provider, userPath, sessionState));
-                pathResolutionTracer.WriteLine("RESOLVED PATH: {0}", userPath);
+
+                result.Add(new PathInfo(drive, provider, userPath, _sessionState));
+                s_pathResolutionTracer.WriteLine("RESOLVED PATH: {0}", userPath);
             }
 
             return result;
@@ -704,7 +705,7 @@ namespace System.Management.Automation
             }
 
             CmdletProviderContext context =
-                new CmdletProviderContext(sessionState.Internal.ExecutionContext);
+                new CmdletProviderContext(_sessionState.Internal.ExecutionContext);
 
             return GetGlobbedProviderPathsFromMonadPath(path, allowNonexistingPaths, context, out provider, out providerInstance);
         } // GetGlobbedProviderPathsFromMonadPath
@@ -799,7 +800,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("context");
             }
 
-            using (pathResolutionTracer.TraceScope("Resolving MSH path \"{0}\" to PROVIDER-INTERNAL path", path))
+            using (s_pathResolutionTracer.TraceScope("Resolving MSH path \"{0}\" to PROVIDER-INTERNAL path", path))
             {
                 TraceFilters(context);
 
@@ -815,9 +816,9 @@ namespace System.Management.Automation
                 if (providerPath == null)
                 {
                     providerInstance = null;
-                    tracer.WriteLine("provider returned a null path so return an empty array");
+                    s_tracer.WriteLine("provider returned a null path so return an empty array");
 
-                    pathResolutionTracer.WriteLine("Provider '{0}' returned null", provider);
+                    s_pathResolutionTracer.WriteLine("Provider '{0}' returned null", provider);
                     return new Collection<string>();
                 }
 
@@ -920,7 +921,7 @@ namespace System.Management.Automation
             }
 
             CmdletProviderContext context =
-                new CmdletProviderContext(sessionState.Internal.ExecutionContext);
+                new CmdletProviderContext(_sessionState.Internal.ExecutionContext);
 
             Collection<string> results =
                 GetGlobbedProviderPathsFromProviderPath(
@@ -1027,7 +1028,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("context");
             }
 
-            using (pathResolutionTracer.TraceScope("Resolving PROVIDER-INTERNAL path \"{0}\" to PROVIDER-INTERNAL path", path))
+            using (s_pathResolutionTracer.TraceScope("Resolving PROVIDER-INTERNAL path \"{0}\" to PROVIDER-INTERNAL path", path))
             {
                 TraceFilters(context);
 
@@ -1166,7 +1167,7 @@ namespace System.Management.Automation
             }
 
             CmdletProviderContext context =
-                new CmdletProviderContext(sessionState.Internal.ExecutionContext);
+                new CmdletProviderContext(_sessionState.Internal.ExecutionContext);
 
             PSDriveInfo drive = null;
             provider = null;
@@ -1362,7 +1363,7 @@ namespace System.Management.Automation
             // First check to see if the path starts with a ~ (home)
             if (IsHomePath(path))
             {
-                using (pathResolutionTracer.TraceScope("Resolving HOME relative path."))
+                using (s_pathResolutionTracer.TraceScope("Resolving HOME relative path."))
                 {
                     path = GetHomeRelativePath(path);
                 }
@@ -1371,34 +1372,34 @@ namespace System.Management.Automation
             // Now check to see if it is a provider-direct path (starts with // or \\)
             if (IsProviderDirectPath(path))
             {
-                pathResolutionTracer.WriteLine("Path is PROVIDER-DIRECT");
+                s_pathResolutionTracer.WriteLine("Path is PROVIDER-DIRECT");
 
                 // just return the path directly using the current provider
 
                 result = path;
                 drive = null;
-                provider = sessionState.Path.CurrentLocation.Provider;
+                provider = _sessionState.Path.CurrentLocation.Provider;
 
-                pathResolutionTracer.WriteLine("PROVIDER-INTERNAL path: {0}", result);
-                pathResolutionTracer.WriteLine("Provider: {0}", provider);
+                s_pathResolutionTracer.WriteLine("PROVIDER-INTERNAL path: {0}", result);
+                s_pathResolutionTracer.WriteLine("Provider: {0}", provider);
             }
             else if (IsProviderQualifiedPath(path))
             {
-                pathResolutionTracer.WriteLine("Path is PROVIDER-QUALIFIED");
+                s_pathResolutionTracer.WriteLine("Path is PROVIDER-QUALIFIED");
 
                 string providerId = null;
                 result = ParseProviderPath(path, out providerId);
                 drive = null;
 
                 // Get the provider info
-                provider = sessionState.Internal.GetSingleProvider(providerId);
+                provider = _sessionState.Internal.GetSingleProvider(providerId);
 
-                pathResolutionTracer.WriteLine("PROVIDER-INTERNAL path: {0}", result);
-                pathResolutionTracer.WriteLine("Provider: {0}", provider);
+                s_pathResolutionTracer.WriteLine("PROVIDER-INTERNAL path: {0}", result);
+                s_pathResolutionTracer.WriteLine("Provider: {0}", provider);
             }
             else
             {
-                pathResolutionTracer.WriteLine("Path is DRIVE-QUALIFIED");
+                s_pathResolutionTracer.WriteLine("Path is DRIVE-QUALIFIED");
 
                 CmdletProvider providerInstance = null;
                 string relativePath = GetDriveRootRelativePathFromPSPath(path, context, false, out drive, out providerInstance);
@@ -1412,9 +1413,9 @@ namespace System.Management.Automation
                     "There should always be a way to generate a provider path for a " +
                     "given path");
 
-                pathResolutionTracer.WriteLine("DRIVE-RELATIVE path: {0}", relativePath);
-                pathResolutionTracer.WriteLine("Drive: {0}", drive.Name);
-                pathResolutionTracer.WriteLine("Provider: {0}", drive.Provider);
+                s_pathResolutionTracer.WriteLine("DRIVE-RELATIVE path: {0}", relativePath);
+                s_pathResolutionTracer.WriteLine("Drive: {0}", drive.Name);
+                s_pathResolutionTracer.WriteLine("Provider: {0}", drive.Provider);
 
                 // Associate the drive with the context
 
@@ -1429,10 +1430,9 @@ namespace System.Management.Automation
                     result = GetProviderSpecificPath(drive, relativePath, context);
                 }
                 provider = drive.Provider;
-
             }
 
-            pathResolutionTracer.WriteLine("RESOLVED PATH: {0}", result);
+            s_pathResolutionTracer.WriteLine("RESOLVED PATH: {0}", result);
 
             // If this is a private provider, don't allow access to it directly from the runspace.
             if ((provider != null) &&
@@ -1447,7 +1447,7 @@ namespace System.Management.Automation
                         (sessionStateProvider.Visibility == SessionStateEntryVisibility.Private) &&
                         (context.MyInvocation.CommandOrigin == CommandOrigin.Runspace))
                     {
-                        pathResolutionTracer.WriteLine("Provider is private: {0}", provider.Name);
+                        s_pathResolutionTracer.WriteLine("Provider is private: {0}", provider.Name);
 
                         throw new ProviderNotFoundException(
                             provider.Name,
@@ -1562,9 +1562,8 @@ namespace System.Management.Automation
 
                     providerId = path.Substring(0, index);
 
-                    tracer.WriteLine("providerId = {0}", providerId);
+                    s_tracer.WriteLine("providerId = {0}", providerId);
                 }
-
             } while (false);
 
             return result;
@@ -1674,11 +1673,9 @@ namespace System.Management.Automation
 
                     result = true;
                 }
-
             } while (false);
 
             return result;
-
         } // IsAbsolutePath
 
         /// <summary>
@@ -1710,15 +1707,15 @@ namespace System.Management.Automation
             bool result = false;
 
 
-            if (sessionState.Drive.Current != null)
+            if (_sessionState.Drive.Current != null)
             {
-                driveName = sessionState.Drive.Current.Name;
+                driveName = _sessionState.Drive.Current.Name;
             }
             else
             {
                 driveName = null;
             }
-            
+
             do
             {
                 if (path.Length == 0)
@@ -1770,7 +1767,6 @@ namespace System.Management.Automation
 
                     result = true;
                 }
-
             } while (false);
 
 #if DEBUG
@@ -1781,14 +1777,13 @@ namespace System.Management.Automation
                     "The drive name should always have a value, " +
                     "the default is the current working drive");
 
-                tracer.WriteLine(
+                s_tracer.WriteLine(
                     "driveName = {0}",
                     driveName);
             }
 #endif
 
             return result;
-
         } // IsAbsolutePath
 
         #endregion Path manipulation
@@ -1800,7 +1795,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The instance of session state on which this globber acts.
         /// </summary>
-        private SessionState sessionState;
+        private SessionState _sessionState;
 
         /// <summary>
         /// Removs the back tick "`" from any of the glob characters in the path.
@@ -1820,14 +1815,14 @@ namespace System.Management.Automation
         /// 
         private static string RemoveGlobEscaping(string path)
         {
-                if (path == null)
-                {
-                    throw PSTraceSource.NewArgumentNullException("path");
-                }
+            if (path == null)
+            {
+                throw PSTraceSource.NewArgumentNullException("path");
+            }
 
-                string result = WildcardPattern.Unescape(path);
+            string result = WildcardPattern.Unescape(path);
 
-                return result;
+            return result;
         } // RemoveGlobEscaping
 
         #region Path manipulation methods
@@ -1884,9 +1879,9 @@ namespace System.Management.Automation
                     StringLiterals.Global,
                     StringComparison.OrdinalIgnoreCase) == 0)
             {
-                tracer.WriteLine("match found: {0}", StringLiterals.Global);
+                s_tracer.WriteLine("match found: {0}", StringLiterals.Global);
                 result = true;
-                scope = sessionState.Internal.GlobalScope;
+                scope = _sessionState.Internal.GlobalScope;
             } // globalScope
 
             // Is it the local scope?
@@ -1896,9 +1891,9 @@ namespace System.Management.Automation
                         StringLiterals.Local,
                         StringComparison.OrdinalIgnoreCase) == 0)
             {
-                tracer.WriteLine("match found: {0}", driveName);
+                s_tracer.WriteLine("match found: {0}", driveName);
                 result = true;
-                scope = sessionState.Internal.CurrentScope;
+                scope = _sessionState.Internal.CurrentScope;
             } // currentScope
             else
             {
@@ -1998,9 +1993,9 @@ namespace System.Management.Automation
             workingDriveForPath = null;
             string driveName = null;
 
-            if (sessionState.Drive.Current != null)
+            if (_sessionState.Drive.Current != null)
             {
-                driveName = sessionState.Drive.Current.Name;
+                driveName = _sessionState.Drive.Current.Name;
             }
 
             // Check to see if the path is relative or absolute
@@ -2012,7 +2007,7 @@ namespace System.Management.Automation
                     driveName != null,
                     "IsAbsolutePath should be returning the drive name");
 
-                tracer.WriteLine(
+                s_tracer.WriteLine(
                     "Drive Name: {0}",
                     driveName);
 
@@ -2021,21 +2016,21 @@ namespace System.Management.Automation
                 // name does not exist. Just let the exception propogate out.
                 try
                 {
-                    workingDriveForPath = sessionState.Drive.Get(driveName);
+                    workingDriveForPath = _sessionState.Drive.Get(driveName);
                 }
-                catch(DriveNotFoundException)
+                catch (DriveNotFoundException)
                 {
                     // Check to see if it is a path relative to the
                     // current drive's root. This is true when a drive root
                     // appears to be a drive (like HTTP://). The drive will not
                     // actually exist, but this is not an absolute path.
 
-                    if (sessionState.Drive.Current == null)
+                    if (_sessionState.Drive.Current == null)
                     {
                         throw;
                     }
 
-                    string normalizedRoot = sessionState.Drive.Current.Root.Replace(
+                    string normalizedRoot = _sessionState.Drive.Current.Root.Replace(
                         StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
 
                     if (normalizedRoot.IndexOf(":", StringComparison.CurrentCulture) >= 0)
@@ -2047,7 +2042,7 @@ namespace System.Management.Automation
                             path = path.Substring(normalizedRoot.Length);
                             path = path.TrimStart(StringLiterals.DefaultPathSeparator);
                             path = StringLiterals.DefaultPathSeparator + path;
-                            workingDriveForPath = sessionState.Drive.Current;
+                            workingDriveForPath = _sessionState.Drive.Current;
                         }
                     }
 
@@ -2079,7 +2074,7 @@ namespace System.Management.Automation
             else
             {
                 // it's a relative path, so the working drive is the current drive
-                workingDriveForPath = sessionState.Drive.Current;
+                workingDriveForPath = _sessionState.Drive.Current;
             }
 
             if (workingDriveForPath == null)
@@ -2090,7 +2085,7 @@ namespace System.Management.Automation
                         "PathNotFound",
                         SessionStateStrings.PathNotFound);
 
-                pathResolutionTracer.TraceError("Item does not exist: {0}", path);
+                s_pathResolutionTracer.TraceError("Item does not exist: {0}", path);
 
                 throw pathNotFound;
             }
@@ -2098,7 +2093,7 @@ namespace System.Management.Automation
             try
             {
                 providerInstance =
-                    sessionState.Internal.GetContainerProviderInstance(workingDriveForPath.Provider);
+                    _sessionState.Internal.GetContainerProviderInstance(workingDriveForPath.Provider);
 
                 // Add the drive info to the context so that downstream methods
                 // have access to it.
@@ -2122,7 +2117,6 @@ namespace System.Management.Automation
                 providerInstance = null;
                 return "";
             }
-
         } // GetDriveRootRelativePathFromPSPath
 
         private string GetDriveRootRelativePathFromProviderPath(
@@ -2133,8 +2127,8 @@ namespace System.Management.Automation
         {
             string childPath = "";
 
-            CmdletProvider providerInstance = 
-                sessionState.Internal.GetContainerProviderInstance(drive.Provider);
+            CmdletProvider providerInstance =
+                _sessionState.Internal.GetContainerProviderInstance(drive.Provider);
             NavigationCmdletProvider navigationProvider = providerInstance as NavigationCmdletProvider;
 
             // Normalize the paths
@@ -2146,12 +2140,12 @@ namespace System.Management.Automation
 
             // Keep on lopping off children until the the remaining path
             // is the drive root.
-            while((! String.IsNullOrEmpty(providerPath)) &&
-                (! providerPath.Equals(driveRoot, StringComparison.OrdinalIgnoreCase)))
+            while ((!String.IsNullOrEmpty(providerPath)) &&
+                (!providerPath.Equals(driveRoot, StringComparison.OrdinalIgnoreCase)))
             {
                 if (!String.IsNullOrEmpty(childPath))
                 {
-                    childPath = sessionState.Internal.MakePath(
+                    childPath = _sessionState.Internal.MakePath(
                         providerInstance,
                         navigationProvider.GetChildName(providerPath, context),
                         childPath,
@@ -2162,7 +2156,7 @@ namespace System.Management.Automation
                     childPath = navigationProvider.GetChildName(providerPath, context);
                 }
 
-                providerPath = sessionState.Internal.GetParentPath(
+                providerPath = _sessionState.Internal.GetParentPath(
                     providerInstance,
                     providerPath,
                     drive.Root,
@@ -2292,7 +2286,7 @@ namespace System.Management.Automation
 
                 path = path.Substring(1);
 
-                tracer.WriteLine(
+                s_tracer.WriteLine(
                     "path = {0}",
                     path);
             }
@@ -2327,14 +2321,14 @@ namespace System.Management.Automation
                             // Use the provider to get the current path
 
                             driveRootRelativeWorkingPath =
-                                sessionState.Internal.GetParentPath(
+                                _sessionState.Internal.GetParentPath(
                                     providerInstance,
                                     driveRootRelativeWorkingPath,
                                     drive.Root,
                                     context);
                         }
 
-                        tracer.WriteLine(
+                        s_tracer.WriteLine(
                             "Parent path = {0}",
                             driveRootRelativeWorkingPath);
 
@@ -2345,7 +2339,7 @@ namespace System.Management.Automation
                             path.Substring(
                             parentDirSymbolLength);
 
-                        tracer.WriteLine(
+                        s_tracer.WriteLine(
                             "path = {0}",
                             path);
 
@@ -2364,7 +2358,7 @@ namespace System.Management.Automation
                             path = path.Substring(1);
                         }
 
-                        tracer.WriteLine(
+                        s_tracer.WriteLine(
                             "path = {0}",
                             path);
 
@@ -2390,7 +2384,6 @@ namespace System.Management.Automation
                         processedSomething = true;
                         path = String.Empty;
                         break;
-
                     }
 
                     if (path.StartsWith(currentDirRelativeSymbolBackslash, StringComparison.Ordinal) ||
@@ -2398,7 +2391,7 @@ namespace System.Management.Automation
                     {
                         path = path.Substring(currentDirRelativeSymbolBackslash.Length);
                         processedSomething = true;
-                        tracer.WriteLine(
+                        s_tracer.WriteLine(
                             "path = {0}",
                             path);
 
@@ -2431,7 +2424,7 @@ namespace System.Management.Automation
             if (!String.IsNullOrEmpty(path))
             {
                 driveRootRelativeWorkingPath =
-                    sessionState.Internal.MakePath(
+                    _sessionState.Internal.MakePath(
                         providerInstance,
                         driveRootRelativeWorkingPath,
                         path,
@@ -2441,7 +2434,7 @@ namespace System.Management.Automation
             NavigationCmdletProvider navigationProvider = providerInstance as NavigationCmdletProvider;
             if (navigationProvider != null)
             {
-                string rootedPath = sessionState.Internal.MakePath(context.Drive.Root, driveRootRelativeWorkingPath, context);
+                string rootedPath = _sessionState.Internal.MakePath(context.Drive.Root, driveRootRelativeWorkingPath, context);
                 string normalizedRelativePath = navigationProvider.ContractRelativePath(rootedPath, context.Drive.Root, false, context);
 
                 if (!String.IsNullOrEmpty(normalizedRelativePath))
@@ -2455,7 +2448,7 @@ namespace System.Management.Automation
                     driveRootRelativeWorkingPath = "";
             }
 
-            tracer.WriteLine(
+            s_tracer.WriteLine(
                 "result = {0}",
                 driveRootRelativeWorkingPath);
 
@@ -2527,7 +2520,7 @@ namespace System.Management.Automation
             // Trace the inputs
 
             drive.Trace();
-            tracer.WriteLine(
+            s_tracer.WriteLine(
                 "workingPath = {0}",
                 workingPath);
 
@@ -2536,7 +2529,7 @@ namespace System.Management.Automation
             try
             {
                 result =
-                    sessionState.Internal.MakePath(
+                    _sessionState.Internal.MakePath(
                         drive.Provider,
                         result,
                         workingPath,
@@ -2757,18 +2750,18 @@ namespace System.Management.Automation
             if (context != null)
             {
                 bool includePresent = context.Include != null && context.Include.Count > 0;
-                pathResolutionTracer.WriteLine("INCLUDE filter present: {0}", includePresent);
+                s_pathResolutionTracer.WriteLine("INCLUDE filter present: {0}", includePresent);
 
                 bool excludePresent = context.Exclude != null && context.Exclude.Count > 0;
-                pathResolutionTracer.WriteLine("EXCLUDE filter present: {0}", excludePresent);
+                s_pathResolutionTracer.WriteLine("EXCLUDE filter present: {0}", excludePresent);
 
                 contextContainsIncludeExclude = includePresent || excludePresent;
 
                 contextContainsNoGlob = context.SuppressWildcardExpansion;
-                pathResolutionTracer.WriteLine("NOGLOB parameter present: {0}", contextContainsNoGlob);
+                s_pathResolutionTracer.WriteLine("NOGLOB parameter present: {0}", contextContainsNoGlob);
             }
 
-            pathResolutionTracer.WriteLine("Path contains wildcard characters: {0}", pathContainsGlobCharacters);
+            s_pathResolutionTracer.WriteLine("Path contains wildcard characters: {0}", pathContainsGlobCharacters);
 
             return (pathContainsGlobCharacters || contextContainsIncludeExclude) && (!contextContainsNoGlob);
         } // ShouldPerformGlobbing
@@ -2888,13 +2881,13 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("drive");
             }
-            tracer.WriteLine("path = {0}", path);
+            s_tracer.WriteLine("path = {0}", path);
 
             NavigationCmdletProvider navigationProvider = provider as NavigationCmdletProvider;
 
             Collection<string> result = new Collection<string>();
 
-            using (pathResolutionTracer.TraceScope("EXPANDING WILDCARDS"))
+            using (s_pathResolutionTracer.TraceScope("EXPANDING WILDCARDS"))
             {
                 if (ShouldPerformGlobbing(path, context))
                 {
@@ -2910,7 +2903,7 @@ namespace System.Management.Automation
 
                     Stack<String> leafElements = new Stack<String>();
 
-                    using (pathResolutionTracer.TraceScope("Tokenizing path"))
+                    using (s_pathResolutionTracer.TraceScope("Tokenizing path"))
                     {
                         // If the path contains glob characters then iterate through pulling the
                         // leaf elements off and pushing them on to the leafElements stack until
@@ -2938,9 +2931,9 @@ namespace System.Management.Automation
                                 break;
                             }
 
-                            tracer.WriteLine("Pushing leaf element: {0}", leafElement);
+                            s_tracer.WriteLine("Pushing leaf element: {0}", leafElement);
 
-                            pathResolutionTracer.WriteLine("Leaf element: {0}", leafElement);
+                            s_pathResolutionTracer.WriteLine("Leaf element: {0}", leafElement);
 
                             // Push the leaf element onto the leaf element stack for future use
 
@@ -2983,12 +2976,12 @@ namespace System.Management.Automation
                                 path = String.Empty;
                             }
 
-                            tracer.WriteLine("New path: {0}", path);
+                            s_tracer.WriteLine("New path: {0}", path);
 
-                            pathResolutionTracer.WriteLine("Parent path: {0}", path);
+                            s_pathResolutionTracer.WriteLine("Parent path: {0}", path);
                         }
 
-                        tracer.WriteLine("Base container path: {0}", path);
+                        s_tracer.WriteLine("Base container path: {0}", path);
 
                         // If no glob elements were found there must be an include and/or
                         // exclude specified. Use the parent path to iterate over to 
@@ -3014,10 +3007,10 @@ namespace System.Management.Automation
 
                             leafElements.Push(leafElement);
 
-                            pathResolutionTracer.WriteLine("Leaf element: {0}", leafElement);
+                            s_pathResolutionTracer.WriteLine("Leaf element: {0}", leafElement);
                         }
 
-                        pathResolutionTracer.WriteLine("Root path of resolution: {0}", path);
+                        s_pathResolutionTracer.WriteLine("Root path of resolution: {0}", path);
                     }
 
                     // Once the container path with no glob characters are found store it
@@ -3058,7 +3051,7 @@ namespace System.Management.Automation
 
                         if (leafElements.Count > 0)
                         {
-                            using (pathResolutionTracer.TraceScope("Checking matches to ensure they are containers"))
+                            using (s_pathResolutionTracer.TraceScope("Checking matches to ensure they are containers"))
                             {
                                 int index = 0;
 
@@ -3076,17 +3069,17 @@ namespace System.Management.Automation
                                     // Check to see if the matching item is a container
 
                                     if (navigationProvider != null &&
-                                        !sessionState.Internal.IsItemContainer(
+                                        !_sessionState.Internal.IsItemContainer(
                                             resolvedPath,
                                             context))
                                     {
                                         // If not, remove it from the collection
 
-                                        tracer.WriteLine(
+                                        s_tracer.WriteLine(
                                             "Removing {0} because it is not a container",
                                             dirs[index]);
 
-                                        pathResolutionTracer.WriteLine("{0} is not a container", dirs[index]);
+                                        s_pathResolutionTracer.WriteLine("{0} is not a container", dirs[index]);
                                         dirs.RemoveAt(index);
                                     }
                                     else if (navigationProvider == null)
@@ -3100,7 +3093,7 @@ namespace System.Management.Automation
                                     }
                                     else
                                     {
-                                        pathResolutionTracer.WriteLine("{0} is a container", dirs[index]);
+                                        s_pathResolutionTracer.WriteLine("{0} is a container", dirs[index]);
 
                                         // If so, leave it and move on to the next one
 
@@ -3118,7 +3111,7 @@ namespace System.Management.Automation
 
                     foreach (string dir in dirs)
                     {
-                        pathResolutionTracer.WriteLine("RESOLVED PATH: {0}", dir);
+                        s_pathResolutionTracer.WriteLine("RESOLVED PATH: {0}", dir);
                         result.Add(dir);
                     }
 
@@ -3167,10 +3160,10 @@ namespace System.Management.Automation
                             unescapedPath);
 
                     // Since we didn't do globbing, be sure the path exists
-                    if (allowNonexistingPaths || 
+                    if (allowNonexistingPaths ||
                         provider.ItemExists(GetProviderPath(resolvedPath, context), context))
                     {
-                        pathResolutionTracer.WriteLine("RESOLVED PATH: {0}", resolvedPath);
+                        s_pathResolutionTracer.WriteLine("RESOLVED PATH: {0}", resolvedPath);
                         result.Add(resolvedPath);
                     }
                     else
@@ -3181,7 +3174,7 @@ namespace System.Management.Automation
                                 "PathNotFound",
                                 SessionStateStrings.PathNotFound);
 
-                        pathResolutionTracer.TraceError("Item does not exist: {0}", path);
+                        s_pathResolutionTracer.TraceError("Item does not exist: {0}", path);
 
                         throw pathNotFound;
                     }
@@ -3654,7 +3647,7 @@ namespace System.Management.Automation
 
                 foreach (string dir in currentDirs)
                 {
-                    using (pathResolutionTracer.TraceScope("Expanding wildcards for items under '{0}'", dir))
+                    using (s_pathResolutionTracer.TraceScope("Expanding wildcards for items under '{0}'", dir))
                     {
                         // Make sure to obey StopProcessing
                         if (context.Stopping)
@@ -3678,8 +3671,8 @@ namespace System.Management.Automation
 
                         if (childNamesObjectArray == null)
                         {
-                            tracer.TraceError("GetChildNames returned a null array");
-                            pathResolutionTracer.WriteLine("No child names returned for '{0}'", dir);
+                            s_tracer.TraceError("GetChildNames returned a null array");
+                            s_pathResolutionTracer.WriteLine("No child names returned for '{0}'", dir);
                             continue;
                         }
 
@@ -3710,7 +3703,7 @@ namespace System.Management.Automation
                                     string parentPath = RemoveMshQualifier(mshQualifiedParentPath, drive);
 
                                     childPath =
-                                        sessionState.Internal.
+                                        _sessionState.Internal.
                                             MakePath(
                                                 parentPath,
                                                 child,
@@ -3719,7 +3712,7 @@ namespace System.Management.Automation
                                     childPath = GetMshQualifiedPath(childPath, drive);
                                 }
 
-                                tracer.WriteLine("Adding child path to dirs {0}", childPath);
+                                s_tracer.WriteLine("Adding child path to dirs {0}", childPath);
 
                                 // -- If there are more leafElements, the current childPath will be treated as a container path later,
                                 //    we should escape the childPath in case the actual childPath contains wildcard characters such as '[' or ']'.
@@ -3734,7 +3727,7 @@ namespace System.Management.Automation
             } // if (StringContainsGlobCharacters(leafElement))
             else
             {
-                tracer.WriteLine(
+                s_tracer.WriteLine(
                     "LeafElement does not contain any glob characters so do a MakePath");
 
                 // Loop through the current dirs and add the leafElement to each of 
@@ -3742,7 +3735,7 @@ namespace System.Management.Automation
 
                 foreach (string dir in currentDirs)
                 {
-                    using (pathResolutionTracer.TraceScope("Expanding intermediate containers under '{0}'", dir))
+                    using (s_pathResolutionTracer.TraceScope("Expanding intermediate containers under '{0}'", dir))
                     {
                         // Make sure to obey StopProcessing
                         if (context.Stopping)
@@ -3762,7 +3755,7 @@ namespace System.Management.Automation
                             string parentPath = RemoveMshQualifier(resolvedPath, drive);
 
                             childPath =
-                                sessionState.Internal.
+                                _sessionState.Internal.
                                     MakePath(
                                         parentPath,
                                         backslashEscapedLeafElement,
@@ -3772,21 +3765,19 @@ namespace System.Management.Automation
                         }
 
 
-                        if (sessionState.Internal.ItemExists(childPath, context))
+                        if (_sessionState.Internal.ItemExists(childPath, context))
                         {
-                            tracer.WriteLine("Adding child path to dirs {0}", childPath);
-                            pathResolutionTracer.WriteLine("Valid intermediate container: {0}", childPath);
+                            s_tracer.WriteLine("Adding child path to dirs {0}", childPath);
+                            s_pathResolutionTracer.WriteLine("Valid intermediate container: {0}", childPath);
 
                             newDirs.Add(childPath);
                         }
                     }
                 } // foreach (dir in currentDirs)
-
             } // if (StringContainsGlobCharacters(leafElement))
 
 
             return newDirs;
-
         } // GenerateNewPSPathsWithGlobLeaf
 
         /// <summary>
@@ -3889,13 +3880,13 @@ namespace System.Management.Automation
 
             if (changedPathOrFilter)
             {
-                if (tracer.IsEnabled)
+                if (s_tracer.IsEnabled)
                 {
-                    tracer.WriteLine("Provider converted path and filter.");
-                    tracer.WriteLine("Original path: {0}", path);
-                    tracer.WriteLine("Converted path: {0}", convertedPath);
-                    tracer.WriteLine("Original filter: {0}", context.Filter);
-                    tracer.WriteLine("Converted filter: {0}", convertedFilter);
+                    s_tracer.WriteLine("Provider converted path and filter.");
+                    s_tracer.WriteLine("Original path: {0}", path);
+                    s_tracer.WriteLine("Converted path: {0}", convertedPath);
+                    s_tracer.WriteLine("Original filter: {0}", context.Filter);
+                    s_tracer.WriteLine("Converted filter: {0}", convertedFilter);
                 }
 
                 path = convertedPath;
@@ -3904,11 +3895,11 @@ namespace System.Management.Automation
 
             NavigationCmdletProvider navigationProvider = provider as NavigationCmdletProvider;
 
-            tracer.WriteLine("path = {0}", path);
+            s_tracer.WriteLine("path = {0}", path);
 
             Collection<string> result = new Collection<string>();
 
-            using (pathResolutionTracer.TraceScope("EXPANDING WILDCARDS"))
+            using (s_pathResolutionTracer.TraceScope("EXPANDING WILDCARDS"))
             {
                 if (ShouldPerformGlobbing(path, context))
                 {
@@ -3924,7 +3915,7 @@ namespace System.Management.Automation
 
                     Stack<String> leafElements = new Stack<String>();
 
-                    using (pathResolutionTracer.TraceScope("Tokenizing path"))
+                    using (s_pathResolutionTracer.TraceScope("Tokenizing path"))
                     {
                         // If the path contains glob characters then iterate through pulling the
                         // leaf elements off and pushing them on to the leafElements stack until
@@ -3952,9 +3943,9 @@ namespace System.Management.Automation
                                 break;
                             }
 
-                            tracer.WriteLine("Pushing leaf element: {0}", leafElement);
+                            s_tracer.WriteLine("Pushing leaf element: {0}", leafElement);
 
-                            pathResolutionTracer.WriteLine("Leaf element: {0}", leafElement);
+                            s_pathResolutionTracer.WriteLine("Leaf element: {0}", leafElement);
 
                             // Push the leaf element onto the leaf element stack for future use
 
@@ -4011,11 +4002,11 @@ namespace System.Management.Automation
                                 path = String.Empty;
                             }
 
-                            tracer.WriteLine("New path: {0}", path);
-                            pathResolutionTracer.WriteLine("Parent path: {0}", path);
+                            s_tracer.WriteLine("New path: {0}", path);
+                            s_pathResolutionTracer.WriteLine("Parent path: {0}", path);
                         }
 
-                        tracer.WriteLine("Base container path: {0}", path);
+                        s_tracer.WriteLine("Base container path: {0}", path);
 
                         // If no glob elements were found there must be an include and/or
                         // exclude specified. Use the parent path to iterate over to 
@@ -4039,10 +4030,10 @@ namespace System.Management.Automation
                                 path = String.Empty;
                             }
                             leafElements.Push(leafElement);
-                            pathResolutionTracer.WriteLine("Leaf element: {0}", leafElement);
+                            s_pathResolutionTracer.WriteLine("Leaf element: {0}", leafElement);
                         }
 
-                        pathResolutionTracer.WriteLine("Root path of resolution: {0}", path);
+                        s_pathResolutionTracer.WriteLine("Root path of resolution: {0}", path);
                     }
                     // Once the container path with no glob characters are found store it
                     // so that it's children can be iterated over.
@@ -4081,7 +4072,7 @@ namespace System.Management.Automation
 
                         if (leafElements.Count > 0)
                         {
-                            using (pathResolutionTracer.TraceScope("Checking matches to ensure they are containers"))
+                            using (s_pathResolutionTracer.TraceScope("Checking matches to ensure they are containers"))
                             {
                                 int index = 0;
 
@@ -4102,11 +4093,11 @@ namespace System.Management.Automation
                                     {
                                         // If not, remove it from the collection
 
-                                        tracer.WriteLine(
+                                        s_tracer.WriteLine(
                                             "Removing {0} because it is not a container",
                                             dirs[index]);
 
-                                        pathResolutionTracer.WriteLine("{0} is not a container", dirs[index]);
+                                        s_pathResolutionTracer.WriteLine("{0} is not a container", dirs[index]);
                                         dirs.RemoveAt(index);
                                     }
                                     else if (navigationProvider == null)
@@ -4120,7 +4111,7 @@ namespace System.Management.Automation
                                     }
                                     else
                                     {
-                                        pathResolutionTracer.WriteLine("{0} is a container", dirs[index]);
+                                        s_pathResolutionTracer.WriteLine("{0} is a container", dirs[index]);
 
                                         // If so, leave it and move on to the next one
 
@@ -4138,7 +4129,7 @@ namespace System.Management.Automation
 
                     foreach (string dir in dirs)
                     {
-                        pathResolutionTracer.WriteLine("RESOLVED PATH: {0}", dir);
+                        s_pathResolutionTracer.WriteLine("RESOLVED PATH: {0}", dir);
                         result.Add(dir);
                     }
 
@@ -4154,7 +4145,7 @@ namespace System.Management.Automation
                     if (allowNonexistingPaths ||
                         provider.ItemExists(unescapedPath, context))
                     {
-                        pathResolutionTracer.WriteLine("RESOLVED PATH: {0}", unescapedPath);
+                        s_pathResolutionTracer.WriteLine("RESOLVED PATH: {0}", unescapedPath);
                         result.Add(unescapedPath);
                     }
                     else
@@ -4165,7 +4156,7 @@ namespace System.Management.Automation
                                 "PathNotFound",
                                 SessionStateStrings.PathNotFound);
 
-                        pathResolutionTracer.TraceError("Item does not exist: {0}", path);
+                        s_pathResolutionTracer.TraceError("Item does not exist: {0}", path);
 
                         throw pathNotFound;
                     }
@@ -4301,7 +4292,7 @@ namespace System.Management.Automation
 
                 foreach (string dir in currentDirs)
                 {
-                    using (pathResolutionTracer.TraceScope("Expanding wildcards for items under '{0}'", dir))
+                    using (s_pathResolutionTracer.TraceScope("Expanding wildcards for items under '{0}'", dir))
                     {
                         // Make sure to obey StopProcessing
                         if (context.Stopping)
@@ -4316,9 +4307,9 @@ namespace System.Management.Automation
 
                         if (childNamesObjectArray == null)
                         {
-                            tracer.TraceError("GetChildNames returned a null array");
+                            s_tracer.TraceError("GetChildNames returned a null array");
 
-                            pathResolutionTracer.WriteLine("No child names returned for '{0}'", dir);
+                            s_pathResolutionTracer.WriteLine("No child names returned for '{0}'", dir);
                             continue;
                         }
 
@@ -4347,7 +4338,7 @@ namespace System.Management.Automation
                                             context);
                                 }
 
-                                tracer.WriteLine("Adding child path to dirs {0}", childPath);
+                                s_tracer.WriteLine("Adding child path to dirs {0}", childPath);
 
                                 newDirs.Add(childPath);
                             }
@@ -4357,7 +4348,7 @@ namespace System.Management.Automation
             } // if (StringContainsGlobCharacters(leafElement))
             else
             {
-                tracer.WriteLine(
+                s_tracer.WriteLine(
                     "LeafElement does not contain any glob characters so do a MakePath");
 
                 // Loop through the current dirs and add the leafElement to each of 
@@ -4365,7 +4356,7 @@ namespace System.Management.Automation
 
                 foreach (string dir in currentDirs)
                 {
-                    using (pathResolutionTracer.TraceScope("Expanding intermediate containers under '{0}'", dir))
+                    using (s_pathResolutionTracer.TraceScope("Expanding intermediate containers under '{0}'", dir))
                     {
                         // Make sure to obey StopProcessing
                         if (context.Stopping)
@@ -4392,11 +4383,11 @@ namespace System.Management.Automation
 
                         if (provider.ItemExists(childPath, context))
                         {
-                            tracer.WriteLine("Adding child path to dirs {0}", childPath);
+                            s_tracer.WriteLine("Adding child path to dirs {0}", childPath);
 
                             newDirs.Add(childPath);
 
-                            pathResolutionTracer.WriteLine("Valid intermediate container: {0}", childPath);
+                            s_pathResolutionTracer.WriteLine("Valid intermediate container: {0}", childPath);
                         }
                     }
                 } // foreach (dir in currentDirs)
@@ -4404,7 +4395,6 @@ namespace System.Management.Automation
 
 
             return newDirs;
-
         } // GenerateNewPathsWithGlobLeaf
 
         /// <summary>
@@ -4514,13 +4504,13 @@ namespace System.Management.Automation
 
             if (changedPathOrFilter)
             {
-                if (tracer.IsEnabled)
+                if (s_tracer.IsEnabled)
                 {
-                    tracer.WriteLine("Provider converted path and filter.");
-                    tracer.WriteLine("Original path: {0}", leafElement);
-                    tracer.WriteLine("Converted path: {0}", convertedPath);
-                    tracer.WriteLine("Original filter: {0}", context.Filter);
-                    tracer.WriteLine("Converted filter: {0}", convertedFilter);
+                    s_tracer.WriteLine("Provider converted path and filter.");
+                    s_tracer.WriteLine("Original path: {0}", leafElement);
+                    s_tracer.WriteLine("Converted path: {0}", convertedPath);
+                    s_tracer.WriteLine("Original filter: {0}", context.Filter);
+                    s_tracer.WriteLine("Converted filter: {0}", convertedFilter);
                 }
 
                 leafElement = convertedPath;
@@ -4584,7 +4574,6 @@ namespace System.Management.Automation
                     }
                     else
                     {
-
                         // If there were no results from globbing but no
                         // exception was thrown, that means there was filtering.
                         // So return an empty collection and let the caller deal
@@ -4684,7 +4673,7 @@ namespace System.Management.Automation
                 object baseObject = childObject.BaseObject;
                 if (baseObject is PSCustomObject)
                 {
-                    tracer.TraceError("GetChildNames returned a null object");
+                    s_tracer.TraceError("GetChildNames returned a null object");
                     break;
                 }
 
@@ -4692,18 +4681,18 @@ namespace System.Management.Automation
 
                 if (childName == null)
                 {
-                    tracer.TraceError("GetChildNames returned an object that wasn't a string");
+                    s_tracer.TraceError("GetChildNames returned an object that wasn't a string");
                     break;
                 }
 
-                pathResolutionTracer.WriteLine("Name returned from provider: {0}", childName);
+                s_pathResolutionTracer.WriteLine("Name returned from provider: {0}", childName);
 
                 // Check the glob expression
 
                 // First see if the child matches the glob expression
                 bool isGlobbed = WildcardPattern.ContainsWildcardCharacters(stringMatcher.Pattern);
                 bool isChildMatch = stringMatcher.IsMatch(childName);
-                tracer.WriteLine("isChildMatch = {0}", isChildMatch);
+                s_tracer.WriteLine("isChildMatch = {0}", isChildMatch);
 
                 bool isIncludeSpecified = (includeMatcher.Count > 0);
                 bool isExcludeSpecified = (excludeMatcher.Count > 0);
@@ -4713,18 +4702,18 @@ namespace System.Management.Automation
                         includeMatcher,
                         true);
 
-                tracer.WriteLine("isIncludeMatch = {0}", isIncludeMatch);
+                s_tracer.WriteLine("isIncludeMatch = {0}", isIncludeMatch);
 
                 // Check if the child name matches, or the include matches
                 if (isChildMatch || (isGlobbed && isIncludeSpecified && isIncludeMatch))
                 {
-                    pathResolutionTracer.WriteLine("Path wildcard match: {0}", childName);
+                    s_pathResolutionTracer.WriteLine("Path wildcard match: {0}", childName);
                     result = true;
 
                     // See if it should not be included
-                    if (isIncludeSpecified && ! isIncludeMatch)
+                    if (isIncludeSpecified && !isIncludeMatch)
                     {
-                        pathResolutionTracer.WriteLine("Not included match: {0}", childName);
+                        s_pathResolutionTracer.WriteLine("Not included match: {0}", childName);
                         result = false;
                     }
 
@@ -4732,17 +4721,17 @@ namespace System.Management.Automation
                     if (isExcludeSpecified &&
                         SessionStateUtilities.MatchesAnyWildcardPattern(childName, excludeMatcher, false))
                     {
-                        pathResolutionTracer.WriteLine("Excluded match: {0}", childName);
+                        s_pathResolutionTracer.WriteLine("Excluded match: {0}", childName);
                         result = false;
                     }
                 }
                 else
                 {
-                    pathResolutionTracer.WriteLine("NOT path wildcard match: {0}", childName);
+                    s_pathResolutionTracer.WriteLine("NOT path wildcard match: {0}", childName);
                 }
             } while (false);
 
-            tracer.WriteLine("result = {0}; childName = {1}", result, childName);
+            s_tracer.WriteLine("result = {0}; childName = {1}", result, childName);
             return result;
         } //IsChildNameAMatch
 
@@ -4842,13 +4831,12 @@ namespace System.Management.Automation
                 }
             } // for ()
 
-            tracer.WriteLine(
+            s_tracer.WriteLine(
                 "Original path: {0} Converted to: {1}",
                 path,
                 result.ToString());
 
             return result.ToString();
-
         } // ConvertMshEscapeToRegexEscape
 
         /// <summary>
@@ -4979,9 +4967,9 @@ namespace System.Management.Automation
 
             string result = path;
 
-            if (IsHomePath(path) && sessionState.Drive.Current != null)
+            if (IsHomePath(path) && _sessionState.Drive.Current != null)
             {
-                ProviderInfo provider = sessionState.Drive.Current.Provider;
+                ProviderInfo provider = _sessionState.Drive.Current.Provider;
 
                 if (IsProviderQualifiedPath(path))
                 {
@@ -4996,7 +4984,7 @@ namespace System.Management.Automation
 
                         string providerName = path.Substring(0, index);
 
-                        provider = sessionState.Internal.GetSingleProvider(providerName);
+                        provider = _sessionState.Internal.GetSingleProvider(providerName);
                         path = path.Substring(index + StringLiterals.ProviderPathSeparator.Length);
                     }
                 } // IsProviderPath
@@ -5023,10 +5011,10 @@ namespace System.Management.Automation
                         provider.Home.Length > 0)
                     {
                         CmdletProviderContext context =
-                            new CmdletProviderContext(sessionState.Internal.ExecutionContext);
+                            new CmdletProviderContext(_sessionState.Internal.ExecutionContext);
 
-                        pathResolutionTracer.WriteLine("Getting home path for provider: {0}", provider.Name);
-                        pathResolutionTracer.WriteLine("Provider HOME path: {0}", provider.Home);
+                        s_pathResolutionTracer.WriteLine("Getting home path for provider: {0}", provider.Name);
+                        s_pathResolutionTracer.WriteLine("Provider HOME path: {0}", provider.Home);
 
                         if (String.IsNullOrEmpty(path))
                         {
@@ -5034,10 +5022,10 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            path = sessionState.Internal.MakePath(provider, provider.Home, path, context);
+                            path = _sessionState.Internal.MakePath(provider, provider.Home, path, context);
                         }
 
-                        pathResolutionTracer.WriteLine("HOME relative path: {0}", path);
+                        s_pathResolutionTracer.WriteLine("HOME relative path: {0}", path);
                     }
                     else
                     {
@@ -5046,7 +5034,7 @@ namespace System.Management.Automation
                                 SessionStateStrings.HomePathNotSet,
                                 provider.Name);
 
-                        pathResolutionTracer.TraceError("HOME path not set for provider: {0}", provider.Name);
+                        s_pathResolutionTracer.TraceError("HOME path not set for provider: {0}", provider.Name);
                         throw e;
                     }
                 }
@@ -5058,10 +5046,10 @@ namespace System.Management.Automation
 
         private static void TraceFilters(CmdletProviderContext context)
         {
-            if ((pathResolutionTracer.Options & PSTraceSourceOptions.WriteLine) != 0)
+            if ((s_pathResolutionTracer.Options & PSTraceSourceOptions.WriteLine) != 0)
             {
                 // Trace the filter
-                pathResolutionTracer.WriteLine("Filter: {0}", context.Filter ?? String.Empty);
+                s_pathResolutionTracer.WriteLine("Filter: {0}", context.Filter ?? String.Empty);
 
                 if (context.Include != null)
                 {
@@ -5071,7 +5059,7 @@ namespace System.Management.Automation
                     {
                         includeString.AppendFormat("{0} ", includeFilter);
                     }
-                    pathResolutionTracer.WriteLine("Include: {0}", includeString.ToString());
+                    s_pathResolutionTracer.WriteLine("Include: {0}", includeString.ToString());
                 }
 
                 if (context.Exclude != null)
@@ -5082,7 +5070,7 @@ namespace System.Management.Automation
                     {
                         excludeString.AppendFormat("{0} ", excludeFilter);
                     }
-                    pathResolutionTracer.WriteLine("Exclude: {0}", excludeString.ToString());
+                    s_pathResolutionTracer.WriteLine("Exclude: {0}", excludeString.ToString());
                 }
             }
         }

@@ -1,11 +1,6 @@
-// ==++==
-// 
-//   Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
-// ==--==
+
 /*============================================================
 **
-** Class: EventPropertyContext
 **
 ** Purpose: 
 ** This public abstract class defines the methods / properties
@@ -14,13 +9,17 @@
 ** 
 ============================================================*/
 
-namespace System.Diagnostics.Eventing.Reader {
-    public abstract class EventPropertyContext : IDisposable {
-        public void Dispose() {
+namespace System.Diagnostics.Eventing.Reader
+{
+    public abstract class EventPropertyContext : IDisposable
+    {
+        public void Dispose()
+        {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        protected virtual void Dispose(bool disposing) {
+        protected virtual void Dispose(bool disposing)
+        {
         }
     }
 }

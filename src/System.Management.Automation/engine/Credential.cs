@@ -7,7 +7,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Security;
-using SafeString=System.String;
+using SafeString = System.String;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
@@ -44,7 +44,7 @@ namespace System.Management.Automation
         /// </summary>
         Default = Generic | Domain
     }
-    
+
     /// <summary>
     /// Defines the options available when prompting for credentials.  Used
     /// by PromptForCredential calls.
@@ -56,12 +56,12 @@ namespace System.Management.Automation
         /// Validates the username, but not its existence
         /// or correctness.
         /// </summary>
-        Default                     = ValidateUserNameSyntax,
+        Default = ValidateUserNameSyntax,
 
         /// <summary>
         /// Performs no validation.
         /// </summary>
-        None                        = 0,
+        None = 0,
 
         /// <summary>
         /// Validates the username, but not its existence.
@@ -88,7 +88,7 @@ namespace System.Management.Automation
     /// <param name="iv">symmetric encryption initialization vector.</param>
     /// <returns></returns>
     public delegate bool GetSymmetricEncryptionKey(StreamingContext context, out byte[] key, out byte[] iv);
-    
+
     /// <summary>
     /// Offers a centralized way to manage usernames, passwords, and
     /// credentials.
@@ -103,14 +103,14 @@ namespace System.Management.Automation
         {
             get
             {
-                return _delegate;
+                return s_delegate;
             }
             set
             {
-                _delegate = value;
+                s_delegate = value;
             }
         }
-        private static GetSymmetricEncryptionKey _delegate = null;
+        private static GetSymmetricEncryptionKey s_delegate = null;
 
         /// <summary>
         /// GetObjectData
@@ -129,7 +129,7 @@ namespace System.Management.Automation
             {
                 byte[] key;
                 byte[] iv;
-                if (_delegate != null && _delegate(context, out key, out iv))
+                if (s_delegate != null && s_delegate(context, out key, out iv))
                 {
                     safePassword = SecureStringHelper.Encrypt(_password, key, iv).EncryptedData;
                 }
@@ -161,7 +161,7 @@ namespace System.Management.Automation
                 return;
 
             _userName = (string)info.GetValue("UserName", typeof(string));
-            
+
             // deserialize to secure string
             SafeString safePassword = (SafeString)info.GetValue("Password", typeof(SafeString));
             if (safePassword == SafeString.Empty)
@@ -172,7 +172,7 @@ namespace System.Management.Automation
             {
                 byte[] key;
                 byte[] iv;
-                if (_delegate != null && _delegate(context, out key, out iv))
+                if (s_delegate != null && s_delegate(context, out key, out iv))
                 {
                     _password = SecureStringHelper.Decrypt(safePassword, key, iv);
                 }
@@ -315,16 +315,16 @@ namespace System.Management.Automation
         /// </returns>
         public static explicit operator NetworkCredential(PSCredential credential)
         {
-            #pragma warning disable 56506
+#pragma warning disable 56506
 
-            if(credential == null)
+            if (credential == null)
             {
                 throw PSTraceSource.NewArgumentNullException("credential");
             }
 
-            return credential.GetNetworkCredential(); 
+            return credential.GetNetworkCredential();
 
-            #pragma warning restore 56506
+#pragma warning restore 56506
         }
 
         /// <summary>
@@ -335,11 +335,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return empty;
+                return s_empty;
             }
         }
 
-        private static readonly PSCredential empty = new PSCredential();
+        private static readonly PSCredential s_empty = new PSCredential();
 
         /// <summary>
         /// Parse a string that represents a fully qualified username
@@ -368,7 +368,7 @@ namespace System.Management.Automation
                 //See bug NTRAID#Windows OS Bugs-1106386-2005/03/25-hiteshr
                 throw PSTraceSource.NewArgumentException("UserName", Credential.InvalidUserNameFormat);
             }
-                               
+
             return true;
         }
 
@@ -395,7 +395,7 @@ namespace System.Management.Automation
 
             if ((i = input.IndexOf('\\')) >= 0)
             {
-                user   = input.Substring(i+1);
+                user = input.Substring(i + 1);
                 domain = input.Substring(0, i);
                 return;
             }
@@ -412,7 +412,7 @@ namespace System.Management.Automation
             // Username = foo@bar.com, Domain = bar.com
             //
             // We need to keep the behaviour in this case.
-            
+
             i = input.LastIndexOf('@');
 
             if (
@@ -423,12 +423,12 @@ namespace System.Management.Automation
                 )
             )
             {
-                domain = input.Substring(i+1);
-                user   = input.Substring(0, i);
+                domain = input.Substring(i + 1);
+                user = input.Substring(0, i);
             }
             else
             {
-                user   = input;
+                user = input;
                 domain = "";
             }
         }

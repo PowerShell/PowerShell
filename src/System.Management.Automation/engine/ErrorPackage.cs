@@ -13,7 +13,7 @@ using System.Text;
 using System.Resources;
 using System.Runtime.Serialization;
 using System.Reflection;
-using Dbg=System.Management.Automation.Diagnostics;
+using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Language;
 
 #if CORECLR
@@ -220,10 +220,10 @@ namespace System.Management.Automation
     public class ErrorCategoryInfo
     {
         #region ctor
-        internal ErrorCategoryInfo (ErrorRecord errorRecord)
+        internal ErrorCategoryInfo(ErrorRecord errorRecord)
         {
             if (null == errorRecord)
-                throw new ArgumentNullException ("errorRecord");
+                throw new ArgumentNullException("errorRecord");
             _errorRecord = errorRecord;
         }
         #endregion ctor
@@ -367,7 +367,7 @@ namespace System.Management.Automation
                 _errorRecord._targetTypeOverride = value;
             }
         }
-        
+
         #endregion Properties
 
         #region Methods
@@ -508,7 +508,7 @@ namespace System.Management.Automation
             }
             string first = original.Substring(0, 15);
             string last = original.Substring(original.Length - 15, 15);
-            return 
+            return
                 string.Format(uiCultureInfo, ErrorPackage.Ellipsize, first, last);
         }
         #endregion Private
@@ -531,7 +531,7 @@ namespace System.Management.Automation
     /// </remarks>
     [Serializable]
     public class ErrorDetails : ISerializable
-	{
+    {
         #region Constructor
         /// <summary>
         /// Creates an instance of ErrorDetails specifying a Message.
@@ -595,7 +595,7 @@ namespace System.Management.Automation
             string resourceId,
             params object[] args)
         {
-            _message = BuildMessage (cmdlet, baseName, resourceId, args);
+            _message = BuildMessage(cmdlet, baseName, resourceId, args);
         }
         /// <summary>
         /// Creates an instance of ErrorDetails specifying a Message.
@@ -648,7 +648,7 @@ namespace System.Management.Automation
             string resourceId,
             params object[] args)
         {
-            _message = BuildMessage (resourceSupplier, baseName, resourceId, args);
+            _message = BuildMessage(resourceSupplier, baseName, resourceId, args);
         }
         /// <summary>
         /// Creates an instance of ErrorDetails specifying a Message.
@@ -689,12 +689,12 @@ namespace System.Management.Automation
             string resourceId,
             params object[] args)
         {
-            _message = BuildMessage (assembly, baseName, resourceId, args);
+            _message = BuildMessage(assembly, baseName, resourceId, args);
         }
         #endregion UseResourceId
 
         // deep-copy constructor
-        internal ErrorDetails (ErrorDetails errorDetails)
+        internal ErrorDetails(ErrorDetails errorDetails)
         {
             _message = errorDetails._message;
             _recommendedAction = errorDetails._recommendedAction;
@@ -713,8 +713,8 @@ namespace System.Management.Automation
         protected ErrorDetails(SerializationInfo info,
                                StreamingContext context)
         {
-            _message = info.GetString ("ErrorDetails_Message");
-            _recommendedAction = info.GetString (
+            _message = info.GetString("ErrorDetails_Message");
+            _recommendedAction = info.GetString(
                 "ErrorDetails_RecommendedAction");
         }
 
@@ -758,7 +758,7 @@ namespace System.Management.Automation
         /// </remarks>
         public string Message
         {
-            get { return ErrorRecord.NotNull (_message); }
+            get { return ErrorRecord.NotNull(_message); }
         }
         private string _message = "";
 
@@ -774,7 +774,7 @@ namespace System.Management.Automation
         /// </remarks>
         public string RecommendedAction
         {
-            get { return ErrorRecord.NotNull (_recommendedAction); }
+            get { return ErrorRecord.NotNull(_recommendedAction); }
             set
             {
                 _recommendedAction = value;
@@ -967,7 +967,6 @@ namespace System.Management.Automation
 
         private ErrorRecord()
         {
-            
         }
 
         /// <summary>
@@ -998,7 +997,7 @@ namespace System.Management.Automation
             object targetObject)
         {
             if (null == exception)
-                throw PSTraceSource.NewArgumentNullException ("exception");
+                throw PSTraceSource.NewArgumentNullException("exception");
 
             if (errorId == null)
                 errorId = "";
@@ -1068,7 +1067,7 @@ namespace System.Management.Automation
         #endregion Serialization
 
 
-        
+
         #region Remoting
 
         /// <summary>
@@ -1188,21 +1187,21 @@ namespace System.Management.Automation
 
         private void ToPSObjectForRemoting(PSObject dest, bool serializeExtInfo)
         {
-            RemotingEncoder.AddNoteProperty<Exception>(dest, "Exception", delegate() { return Exception; });
-            RemotingEncoder.AddNoteProperty<object>(dest, "TargetObject", delegate() { return TargetObject; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "FullyQualifiedErrorId", delegate() { return FullyQualifiedErrorId; });
-            RemotingEncoder.AddNoteProperty<InvocationInfo>(dest, "InvocationInfo", delegate() { return InvocationInfo; });
-            RemotingEncoder.AddNoteProperty<int>(dest, "ErrorCategory_Category", delegate() { return (int)CategoryInfo.Category; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Activity", delegate() { return CategoryInfo.Activity; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Reason", delegate() { return CategoryInfo.Reason; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_TargetName", delegate() { return CategoryInfo.TargetName; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_TargetType", delegate() { return CategoryInfo.TargetType; });
-            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Message", delegate() { return CategoryInfo.GetMessage(CultureInfo.CurrentCulture); });
+            RemotingEncoder.AddNoteProperty<Exception>(dest, "Exception", delegate () { return Exception; });
+            RemotingEncoder.AddNoteProperty<object>(dest, "TargetObject", delegate () { return TargetObject; });
+            RemotingEncoder.AddNoteProperty<string>(dest, "FullyQualifiedErrorId", delegate () { return FullyQualifiedErrorId; });
+            RemotingEncoder.AddNoteProperty<InvocationInfo>(dest, "InvocationInfo", delegate () { return InvocationInfo; });
+            RemotingEncoder.AddNoteProperty<int>(dest, "ErrorCategory_Category", delegate () { return (int)CategoryInfo.Category; });
+            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Activity", delegate () { return CategoryInfo.Activity; });
+            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Reason", delegate () { return CategoryInfo.Reason; });
+            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_TargetName", delegate () { return CategoryInfo.TargetName; });
+            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_TargetType", delegate () { return CategoryInfo.TargetType; });
+            RemotingEncoder.AddNoteProperty<string>(dest, "ErrorCategory_Message", delegate () { return CategoryInfo.GetMessage(CultureInfo.CurrentCulture); });
 
             if (ErrorDetails != null)
             {
-                RemotingEncoder.AddNoteProperty<string>(dest, "ErrorDetails_Message", delegate() { return ErrorDetails.Message; });
-                RemotingEncoder.AddNoteProperty<string>(dest, "ErrorDetails_RecommendedAction", delegate() { return ErrorDetails.RecommendedAction; });
+                RemotingEncoder.AddNoteProperty<string>(dest, "ErrorDetails_Message", delegate () { return ErrorDetails.Message; });
+                RemotingEncoder.AddNoteProperty<string>(dest, "ErrorDetails_RecommendedAction", delegate () { return ErrorDetails.RecommendedAction; });
             }
 
             if (!serializeExtInfo || this.InvocationInfo == null)
@@ -1213,12 +1212,12 @@ namespace System.Management.Automation
             {
                 RemotingEncoder.AddNoteProperty(dest, "SerializeExtendedInfo", () => true);
                 this.InvocationInfo.ToPSObjectForRemoting(dest);
-                RemotingEncoder.AddNoteProperty<object>(dest, "PipelineIterationInfo", delegate() { return PipelineIterationInfo; });
+                RemotingEncoder.AddNoteProperty<object>(dest, "PipelineIterationInfo", delegate () { return PipelineIterationInfo; });
             }
 
             if (!string.IsNullOrEmpty(this.ScriptStackTrace))
             {
-                RemotingEncoder.AddNoteProperty(dest, "ErrorDetails_ScriptStackTrace", delegate() { return this.ScriptStackTrace; });
+                RemotingEncoder.AddNoteProperty(dest, "ErrorDetails_ScriptStackTrace", delegate () { return this.ScriptStackTrace; });
             }
         }
 
@@ -1253,7 +1252,7 @@ namespace System.Management.Automation
                 return null;
             }
         }
-        
+
         /// <summary>
         /// Create an ErrorRecord object from serialized ErrorRecord. 
         /// serializedErrorRecord PSObject is in the format returned 
@@ -1323,8 +1322,8 @@ namespace System.Management.Automation
 
             //Get InvocationInfo (optional property)
             PSObject invocationInfo = Microsoft.PowerShell.DeserializingTypeConverter.GetPropertyValue<PSObject>(
-                serializedErrorRecord, 
-                "InvocationInfo", 
+                serializedErrorRecord,
+                "InvocationInfo",
                 Microsoft.PowerShell.DeserializingTypeConverter.RehydrationFlags.MissingPropertyOk);
 
             //Get Error Detail (these note properties are optional, so can't right now use RemotingDecoder...)
@@ -1360,16 +1359,16 @@ namespace System.Management.Automation
             //
             // Get the InvocationInfo
             //
-            serializeExtendedInfo = RemotingDecoder.GetPropertyValue<bool>(serializedErrorRecord, "SerializeExtendedInfo");
+            _serializeExtendedInfo = RemotingDecoder.GetPropertyValue<bool>(serializedErrorRecord, "SerializeExtendedInfo");
 
-            if (serializeExtendedInfo)
+            if (_serializeExtendedInfo)
             {
                 _invocationInfo = new InvocationInfo(serializedErrorRecord);
 
                 ArrayList iterationInfo = RemotingDecoder.GetPropertyValue<ArrayList>(serializedErrorRecord, "PipelineIterationInfo");
                 if (null != iterationInfo)
                 {
-                    pipelineIterationInfo = new ReadOnlyCollection<int>((int[])iterationInfo.ToArray(typeof(Int32)));
+                    _pipelineIterationInfo = new ReadOnlyCollection<int>((int[])iterationInfo.ToArray(typeof(Int32)));
                 }
             }
             else
@@ -1379,7 +1378,7 @@ namespace System.Management.Automation
         }
 
         #endregion Remoting
-        
+
         /// <summary>
         /// Copy constructor, for use when a new wrapper exception wraps an
         /// exception which already has an ErrorRecord
@@ -1395,7 +1394,7 @@ namespace System.Management.Automation
         {
             if (errorRecord == null)
             {
-                throw new PSArgumentNullException("errorRecord");    
+                throw new PSArgumentNullException("errorRecord");
             }
 
             if (null != replaceParentContainsErrorRecordException
@@ -1415,7 +1414,7 @@ namespace System.Management.Automation
             _targetNameOverride = errorRecord._targetNameOverride;
             _targetTypeOverride = errorRecord._targetTypeOverride;
             if (null != errorRecord.ErrorDetails)
-                _errorDetails = new ErrorDetails (errorRecord.ErrorDetails);
+                _errorDetails = new ErrorDetails(errorRecord.ErrorDetails);
             SetInvocationInfo(errorRecord._invocationInfo);
             _scriptStackTrace = errorRecord._scriptStackTrace;
             _serializedFullyQualifiedErrorId = errorRecord._serializedFullyQualifiedErrorId;
@@ -1451,7 +1450,7 @@ namespace System.Management.Automation
         {
             get
             {
-                Diagnostics.Assert (null != _error, "_error is null");
+                Diagnostics.Assert(null != _error, "_error is null");
                 return _error;
             }
         }
@@ -1479,9 +1478,10 @@ namespace System.Management.Automation
         /// <value>never null</value>
         public ErrorCategoryInfo CategoryInfo
         {
-            get {
+            get
+            {
                 if (null == _categoryInfo)
-                    _categoryInfo = new ErrorCategoryInfo (this);
+                    _categoryInfo = new ErrorCategoryInfo(this);
                 return _categoryInfo;
             }
         }
@@ -1501,16 +1501,16 @@ namespace System.Management.Automation
         public string FullyQualifiedErrorId
         {
             get
-            {   
+            {
                 if (_serializedFullyQualifiedErrorId != null)
                     return _serializedFullyQualifiedErrorId;
-                
-                string typeName = GetInvocationTypeName ();
+
+                string typeName = GetInvocationTypeName();
                 string delimiter =
-                    (   String.IsNullOrEmpty (typeName)
-                     || String.IsNullOrEmpty (_errorId))
+                    (String.IsNullOrEmpty(typeName)
+                     || String.IsNullOrEmpty(_errorId))
                         ? "" : ",";
-                return NotNull (_errorId) + delimiter + NotNull (typeName);
+                return NotNull(_errorId) + delimiter + NotNull(typeName);
             }
         }
 
@@ -1541,7 +1541,7 @@ namespace System.Management.Automation
         }
         private InvocationInfo _invocationInfo /* = null */;
 
-        internal void SetInvocationInfo (InvocationInfo invocationInfo)
+        internal void SetInvocationInfo(InvocationInfo invocationInfo)
         {
             // Save the DisplayScriptPosition, if set
             IScriptExtent savedDisplayScriptPosition = null;
@@ -1549,7 +1549,7 @@ namespace System.Management.Automation
             {
                 savedDisplayScriptPosition = _invocationInfo.DisplayScriptPosition;
             }
-            
+
             // Assign the invocationInfo
             if (invocationInfo != null)
             {
@@ -1568,7 +1568,7 @@ namespace System.Management.Automation
             {
                 _invocationInfo.DisplayScriptPosition = savedDisplayScriptPosition;
             }
-            
+
             LockScriptStackTrace();
 
             //
@@ -1578,17 +1578,17 @@ namespace System.Management.Automation
             {
                 int[] snapshot = (int[])invocationInfo.PipelineIterationInfo.Clone();
 
-                this.pipelineIterationInfo = new ReadOnlyCollection<int>(snapshot);
+                _pipelineIterationInfo = new ReadOnlyCollection<int>(snapshot);
             }
         }
 
         // 2005/07/14-913791 "write-error output is confusing and misleading"
         internal bool PreserveInvocationInfoOnce
         {
-            get { return preserveInvocationInfoOnce; }
-            set { preserveInvocationInfoOnce = value; }
+            get { return _preserveInvocationInfoOnce; }
+            set { _preserveInvocationInfoOnce = value; }
         }
-        private bool preserveInvocationInfoOnce /* = false */;
+        private bool _preserveInvocationInfoOnce /* = false */;
 
         /// <summary>
         /// The script stack trace for the error.
@@ -1633,10 +1633,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.pipelineIterationInfo;
+                return _pipelineIterationInfo;
             }
         }
-        private ReadOnlyCollection<int> pipelineIterationInfo = Utils.EmptyReadOnlyCollection<int>();
+        private ReadOnlyCollection<int> _pipelineIterationInfo = Utils.EmptyReadOnlyCollection<int>();
 
         /// <summary>
         /// Whether to serizalize the InvocationInfo during remote calls
@@ -1645,14 +1645,14 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.serializeExtendedInfo;
+                return _serializeExtendedInfo;
             }
             set
             {
-                this.serializeExtendedInfo = value;
+                _serializeExtendedInfo = value;
             }
         }
-        private bool serializeExtendedInfo = false;
+        private bool _serializeExtendedInfo = false;
 
         #endregion Public Properties
 
@@ -1667,12 +1667,12 @@ namespace System.Management.Automation
         internal string _targetTypeOverride;
         #endregion Exposed by ErrorCategoryInfo
 
-        internal static string NotNull (string s)
+        internal static string NotNull(string s)
         {
             return (null != s) ? s : "";
         }
 
-        private string GetInvocationTypeName ()
+        private string GetInvocationTypeName()
         {
             InvocationInfo invocationInfo = this.InvocationInfo;
             if (null == invocationInfo)
@@ -1698,20 +1698,20 @@ namespace System.Management.Automation
         /// <returns>developer-readable identifier</returns>
         public override string ToString()
         {
-            if (   null != ErrorDetails
-                && !String.IsNullOrEmpty (ErrorDetails.Message))
+            if (null != ErrorDetails
+                && !String.IsNullOrEmpty(ErrorDetails.Message))
             {
                 return ErrorDetails.Message;
             }
             if (null != Exception)
             {
-                if (!String.IsNullOrEmpty (Exception.Message))
+                if (!String.IsNullOrEmpty(Exception.Message))
                 {
                     return Exception.Message;
                 }
                 return Exception.ToString();
             }
-            return base.ToString ();
+            return base.ToString();
         }
         #endregion ToString
 
@@ -1835,8 +1835,8 @@ namespace System.Management.Automation
         /// <param name="baseName">the base resource name</param>
         /// <param name="resourceId">the resource id</param>
         /// <returns>the error message template string corresponding to baseName and resourceId</returns>
-        string GetResourceString (string baseName, string resourceId);
+        string GetResourceString(string baseName, string resourceId);
     }
 } // namespace System.Management.Automation
 
- #pragma warning restore 56506
+#pragma warning restore 56506

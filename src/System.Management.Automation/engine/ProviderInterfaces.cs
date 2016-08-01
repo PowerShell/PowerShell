@@ -1,11 +1,12 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
@@ -46,7 +47,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("sessionState");
             }
 
-            this.sessionState = sessionState;
+            _sessionState = sessionState;
         } // CmdletProviderManagementIntrinsics internal
 
         #endregion Constructors
@@ -77,12 +78,12 @@ namespace System.Management.Automation
         public Collection<ProviderInfo> Get(string name)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetProvider(name);
+            return _sessionState.GetProvider(name);
         } // Get
 
         /// <summary>
@@ -113,24 +114,24 @@ namespace System.Management.Automation
         public ProviderInfo GetOne(string name)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetSingleProvider(name);
+            return _sessionState.GetSingleProvider(name);
         } // Get
-        
+
         /// <summary>
         /// Gets all the Cmdlet Providers that are loaded.
         /// </summary>
         public IEnumerable<ProviderInfo> GetAll()
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
-            return sessionState.ProviderList;
+            return _sessionState.ProviderList;
         } // GetAll
 
         #endregion Public methods
@@ -170,7 +171,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return sessionState.ProviderCount;
+                return _sessionState.ProviderCount;
             }
         } // Count
 
@@ -178,7 +179,7 @@ namespace System.Management.Automation
 
         #region private data
 
-        private SessionStateInternal sessionState;
+        private SessionStateInternal _sessionState;
 
         #endregion private data
     } // ProviderIntrinsics

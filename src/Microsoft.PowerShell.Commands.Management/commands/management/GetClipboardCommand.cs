@@ -54,15 +54,15 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public TextDataFormat TextFormatType
         {
-            get { return textFormat; }
+            get { return _textFormat; }
             set
             {
-                isTextFormatTypeSet = true;
-                textFormat = value;
+                _isTextFormatTypeSet = true;
+                _textFormat = value;
             }
         }
-        private TextDataFormat textFormat = TextDataFormat.UnicodeText;
-        private bool isTextFormatTypeSet = false;
+        private TextDataFormat _textFormat = TextDataFormat.UnicodeText;
+        private bool _isTextFormatTypeSet = false;
 
         /// <summary>  
         /// Property that sets raw parameter. This will allow clipboard return text or file list as one string.
@@ -70,15 +70,15 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter Raw
         {
-            get { return raw; }
+            get { return _raw; }
             set
             {
-                isRawSet = true;
-                raw = value;
+                _isRawSet = true;
+                _raw = value;
             }
         }
-        private bool raw;
-        private bool isRawSet = false;
+        private bool _raw;
+        private bool _isRawSet = false;
 
         /// <summary>
         /// This method implements the ProcessRecord method for Get-Clipboard command
@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             // TextFormatType should only combine with Text.
-            if (Format != ClipboardFormat.Text && isTextFormatTypeSet)
+            if (Format != ClipboardFormat.Text && _isTextFormatTypeSet)
             {
                 ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(
                     String.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidTypeCombine)),
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Raw should only combine with Text or FileDropList.
-            if (Format != ClipboardFormat.Text && Format != ClipboardFormat.FileDropList && isRawSet)
+            if (Format != ClipboardFormat.Text && Format != ClipboardFormat.FileDropList && _isRawSet)
             {
                 ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(
                     String.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidRawCombine)),
@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (Format == ClipboardFormat.Text)
             {
-                this.WriteObject(GetClipboardContentAsText(textFormat), true);
+                this.WriteObject(GetClipboardContentAsText(_textFormat), true);
             }
             else if (Format == ClipboardFormat.Image)
             {
@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (Format == ClipboardFormat.FileDropList)
             {
-                if (raw)
+                if (_raw)
                 {
                     this.WriteObject(Clipboard.GetFileDropList(), true);
                 }
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
 
             // TextFormat default value is Text, by default it is same as Clipboard.GetText()
             string textContent = Clipboard.GetText(textFormat);
-            if (raw)
+            if (_raw)
             {
                 result.Add(textContent);
             }
@@ -159,7 +159,6 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private List<PSObject> GetClipboardContentAsFileList()
         {
-
             if (!Clipboard.ContainsFileDropList())
             {
                 return null;

@@ -23,10 +23,10 @@ namespace System.Management.Automation
         /// </remarks>
         internal InformationalRecord(string message)
         {
-            this.message = message;
-            this.invocationInfo = null;
-            this.pipelineIterationInfo = null;
-            this.serializeExtendedInfo = false;
+            _message = message;
+            _invocationInfo = null;
+            _pipelineIterationInfo = null;
+            _serializeExtendedInfo = false;
         }
 
         /// <summary>
@@ -34,20 +34,20 @@ namespace System.Management.Automation
         /// </summary>
         internal InformationalRecord(PSObject serializedObject)
         {
-            this.message = (string) SerializationUtilities.GetPropertyValue(serializedObject, "InformationalRecord_Message");
-            this.serializeExtendedInfo = (bool)SerializationUtilities.GetPropertyValue(serializedObject, "InformationalRecord_SerializeInvocationInfo");
+            _message = (string)SerializationUtilities.GetPropertyValue(serializedObject, "InformationalRecord_Message");
+            _serializeExtendedInfo = (bool)SerializationUtilities.GetPropertyValue(serializedObject, "InformationalRecord_SerializeInvocationInfo");
 
-            if (this.serializeExtendedInfo)
+            if (_serializeExtendedInfo)
             {
-                this.invocationInfo = new InvocationInfo(serializedObject);
+                _invocationInfo = new InvocationInfo(serializedObject);
 
-                ArrayList pipelineIterationInfo= (ArrayList)SerializationUtilities.GetPsObjectPropertyBaseObject(serializedObject, "InformationalRecord_PipelineIterationInfo");
+                ArrayList pipelineIterationInfo = (ArrayList)SerializationUtilities.GetPsObjectPropertyBaseObject(serializedObject, "InformationalRecord_PipelineIterationInfo");
 
-                this.pipelineIterationInfo = new ReadOnlyCollection<int>((int[])pipelineIterationInfo.ToArray(typeof(int)));
+                _pipelineIterationInfo = new ReadOnlyCollection<int>((int[])pipelineIterationInfo.ToArray(typeof(int)));
             }
             else
             {
-                this.invocationInfo = null;
+                _invocationInfo = null;
             }
         }
 
@@ -58,9 +58,9 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.message;
+                return _message;
             }
-            set { message = value;}
+            set { _message = value; }
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.invocationInfo;
+                return _invocationInfo;
             }
         }
 
@@ -87,7 +87,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.pipelineIterationInfo;
+                return _pipelineIterationInfo;
             }
         }
 
@@ -96,7 +96,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void SetInvocationInfo(InvocationInfo invocationInfo)
         {
-            this.invocationInfo = invocationInfo;
+            _invocationInfo = invocationInfo;
 
             //
             // Copy a snapshot of the PipelineIterationInfo from the InvocationInfo to this InformationalRecord
@@ -105,7 +105,7 @@ namespace System.Management.Automation
             {
                 int[] snapshot = (int[])invocationInfo.PipelineIterationInfo.Clone();
 
-                this.pipelineIterationInfo = new ReadOnlyCollection<int>(snapshot);
+                _pipelineIterationInfo = new ReadOnlyCollection<int>(snapshot);
             }
         }
 
@@ -116,11 +116,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.serializeExtendedInfo;
+                return _serializeExtendedInfo;
             }
             set
             {
-                this.serializeExtendedInfo = value;
+                _serializeExtendedInfo = value;
             }
         }
 
@@ -144,23 +144,23 @@ namespace System.Management.Automation
             // The invocation info may be null if the record was created via WriteVerbose/Warning/DebugLine instead of WriteVerbose/Warning/Debug, in that case
             // we set InformationalRecord_SerializeInvocationInfo to false.
             //
-            if (!this.SerializeExtendedInfo || this.invocationInfo == null)
+            if (!this.SerializeExtendedInfo || _invocationInfo == null)
             {
                 RemotingEncoder.AddNoteProperty(psObject, "InformationalRecord_SerializeInvocationInfo", () => false);
             }
             else
             {
                 RemotingEncoder.AddNoteProperty(psObject, "InformationalRecord_SerializeInvocationInfo", () => true);
-                this.invocationInfo.ToPSObjectForRemoting(psObject);
+                _invocationInfo.ToPSObjectForRemoting(psObject);
                 RemotingEncoder.AddNoteProperty<object>(psObject, "InformationalRecord_PipelineIterationInfo", () => this.PipelineIterationInfo);
             }
         }
 
         [DataMember()]
-        private string message;
-        private InvocationInfo invocationInfo;
-        private ReadOnlyCollection<int> pipelineIterationInfo;
-        private bool serializeExtendedInfo;
+        private string _message;
+        private InvocationInfo _invocationInfo;
+        private ReadOnlyCollection<int> _pipelineIterationInfo;
+        private bool _serializeExtendedInfo;
     }
 
     /// <summary>

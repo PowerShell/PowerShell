@@ -1,11 +1,6 @@
-// ==++==
-// 
-//   Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
-// ==--==
+
 /*============================================================
 **
-** File: winmeta.cs
 **
 ** Purpose: 
 ** Contains eventing constants defined by the Windows 
@@ -15,11 +10,13 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace System.Diagnostics.Eventing.Reader {
+namespace System.Diagnostics.Eventing.Reader
+{
     /// <summary>
     /// WindowsEventLevel
     /// </summary>
-    public enum StandardEventLevel {
+    public enum StandardEventLevel
+    {
         /// <summary>
         /// Log always
         /// </summary>
@@ -48,7 +45,8 @@ namespace System.Diagnostics.Eventing.Reader {
     /// <summary>
     /// WindowsEventTask
     /// </summary>
-    public enum StandardEventTask {
+    public enum StandardEventTask
+    {
         /// <summary>
         /// Undefined task
         /// </summary>
@@ -58,8 +56,9 @@ namespace System.Diagnostics.Eventing.Reader {
     /// <summary>
     /// EventOpcode
     /// </summary>
-    [SuppressMessage("Microsoft.Naming","CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId="Opcode", Justification="matell: Shipped public in 3.5, breaking change to fix now.")]
-    public enum StandardEventOpcode {
+    [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Opcode", Justification = "matell: Shipped public in 3.5, breaking change to fix now.")]
+    public enum StandardEventOpcode
+    {
         /// <summary>
         /// An informational event
         /// </summary>
@@ -110,7 +109,8 @@ namespace System.Diagnostics.Eventing.Reader {
     /// EventOpcode
     /// </summary>
     [Flags]
-    public enum StandardEventKeywords : long {
+    public enum StandardEventKeywords : long
+    {
         /// <summary>
         /// Wild card value
         /// </summary>

@@ -90,7 +90,6 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal static Encoding GetEncodingFromEnum(TextEncodingType type)
         {
-
             Encoding encoding = Encoding.ASCII;
 
             switch (type)
@@ -127,7 +126,6 @@ namespace Microsoft.PowerShell.Commands
 
             return encoding;
         }
-
     } // class UtilityCommon
     /// <summary>
     /// abc
@@ -173,7 +171,6 @@ namespace Microsoft.PowerShell.Commands
         /// ASCII encoding.
         /// </summary>
         Ascii,
-
     }
 
     /// <summary>
@@ -229,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
         public ByteCollection(UInt32 offset, Byte[] value, string path)
         {
             this.Offset = offset;
-            this.initialOffSet = offset;
+            _initialOffSet = offset;
             this.Bytes = value;
             this.Path = path;
         }
@@ -242,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
         public ByteCollection(UInt32 offset, Byte[] value)
         {
             this.Offset = offset;
-            this.initialOffSet = offset;
+            _initialOffSet = offset;
             this.Bytes = value;
         }
 
@@ -259,7 +256,7 @@ namespace Microsoft.PowerShell.Commands
         /// The Offset address to be used while displaying the bytes in the collection.
         /// </summary>
         public UInt32 Offset { get; private set; }
-        private UInt32 initialOffSet = 0;
+        private UInt32 _initialOffSet = 0;
 
         /// <summary>
         /// Underlying bytes stored in the collection.
@@ -288,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // ToString() in invoked thrice by the F&O for the same content. 
                 // Hence making sure that Offset is not getting incremented thrice for the same bytes being displayed.
-                Offset = initialOffSet;
+                Offset = _initialOffSet;
 
                 nextLine.AppendFormat("{0:X2}   ", CultureInfo.InvariantCulture.TextInfo.ToUpper(Convert.ToString(Offset, 16)).PadLeft(8, '0'));
                 foreach (Byte currentByte in Bytes)
@@ -344,6 +341,5 @@ namespace Microsoft.PowerShell.Commands
             return result.ToString();
         }
     }
-
 } // namespace Microsoft.PowerShell.Commands
 

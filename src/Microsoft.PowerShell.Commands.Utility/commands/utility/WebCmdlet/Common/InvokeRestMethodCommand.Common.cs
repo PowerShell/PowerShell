@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
 
             return xrs;
         }
-        
+
         private bool TryConvertToXml(string xml, out object doc, ref Exception exRef)
         {
             try
@@ -176,15 +176,15 @@ namespace Microsoft.PowerShell.Commands
         {
             internal BufferingStreamReader(Stream baseStream)
             {
-                this.baseStream = baseStream;
-                streamBuffer = new MemoryStream();
-                this.length = long.MaxValue;
-                copyBuffer = new byte[4096];
+                _baseStream = baseStream;
+                _streamBuffer = new MemoryStream();
+                _length = long.MaxValue;
+                _copyBuffer = new byte[4096];
             }
 
-            private Stream baseStream;
-            private MemoryStream streamBuffer;
-            private byte[] copyBuffer;
+            private Stream _baseStream;
+            private MemoryStream _streamBuffer;
+            private byte[] _copyBuffer;
 
             public override bool CanRead
             {
@@ -203,19 +203,19 @@ namespace Microsoft.PowerShell.Commands
 
             public override void Flush()
             {
-                streamBuffer.SetLength(0);
+                _streamBuffer.SetLength(0);
             }
 
             public override long Length
             {
-                get { return this.length; }
+                get { return _length; }
             }
-            private long length;
+            private long _length;
 
             public override long Position
             {
-                get { return streamBuffer.Position; }
-                set { streamBuffer.Position = value; }
+                get { return _streamBuffer.Position; }
+                set { _streamBuffer.Position = value; }
             }
 
             public override int Read(byte[] buffer, int offset, int count)
@@ -224,24 +224,24 @@ namespace Microsoft.PowerShell.Commands
                 bool consumedStream = false;
                 int totalCount = count;
                 while ((!consumedStream) &&
-                    ((Position + totalCount) > streamBuffer.Length))
+                    ((Position + totalCount) > _streamBuffer.Length))
                 {
                     // If we don't have enough data to fill this from memory, cache more.
                     // We try to read 4096 bytes from base stream every time, so at most we 
                     // may cache 4095 bytes more than what is required by the Read operation.
-                    int bytesRead = baseStream.Read(copyBuffer, 0, copyBuffer.Length);
+                    int bytesRead = _baseStream.Read(_copyBuffer, 0, _copyBuffer.Length);
 
-                    if (streamBuffer.Position < streamBuffer.Length)
+                    if (_streamBuffer.Position < _streamBuffer.Length)
                     {
                         // Win8: 651902 no need to -1 here as Position refers to the place
                         // where we can start writing from.
-                        streamBuffer.Position = streamBuffer.Length;
+                        _streamBuffer.Position = _streamBuffer.Length;
                     }
 
-                    streamBuffer.Write(copyBuffer, 0, bytesRead);
+                    _streamBuffer.Write(_copyBuffer, 0, bytesRead);
 
                     totalCount -= bytesRead;
-                    if (bytesRead < copyBuffer.Length)
+                    if (bytesRead < _copyBuffer.Length)
                     {
                         consumedStream = true;
                     }
@@ -249,10 +249,10 @@ namespace Microsoft.PowerShell.Commands
 
                 // Reset our backing store to its official position, as reading
                 // for the CopyTo updates the position.
-                streamBuffer.Seek(previousPosition, SeekOrigin.Begin);
+                _streamBuffer.Seek(previousPosition, SeekOrigin.Begin);
 
                 // Read from the backing store into the requested buffer.
-                int read = streamBuffer.Read(buffer, offset, count);
+                int read = _streamBuffer.Read(buffer, offset, count);
 
                 if (read < count)
                 {
@@ -264,12 +264,12 @@ namespace Microsoft.PowerShell.Commands
 
             public override long Seek(long offset, SeekOrigin origin)
             {
-                return streamBuffer.Seek(offset, origin);
+                return _streamBuffer.Seek(offset, origin);
             }
 
             public override void SetLength(long value)
             {
-                this.length = value;
+                _length = value;
             }
 
             public override void Write(byte[] buffer, int offset, int count)

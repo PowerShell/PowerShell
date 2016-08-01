@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
@@ -12,12 +13,12 @@ namespace Microsoft.PowerShell.Commands
     /// A command to resolve MSH paths containing glob characters to
     /// MSH paths that match the glob strings.
     /// </summary>
-    [Cmdlet (VerbsDiagnostic.Resolve, "Path", DefaultParameterSetName = "Path", SupportsTransactions = true,
+    [Cmdlet(VerbsDiagnostic.Resolve, "Path", DefaultParameterSetName = "Path", SupportsTransactions = true,
         HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113384")]
     public class ResolvePathCommand : CoreCommandWithCredentialsBase
     {
         #region Parameters
-        
+
         /// <summary>
         /// Gets or sets the path parameter to the command
         /// </summary>
@@ -27,12 +28,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return paths;
+                return _paths;
             } // get
 
             set
             {
-                paths = value;
+                _paths = value;
             } // set
         } // Path
 
@@ -46,13 +47,13 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return paths;
+                return _paths;
             } // get
 
             set
             {
                 base.SuppressWildcardExpansion = true;
-                paths = value;
+                _paths = value;
             } // set
         } // LiteralPath
 
@@ -65,25 +66,25 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return relative;
+                return _relative;
             } // get
 
             set
             {
-                relative = value;
+                _relative = value;
             } // set
         } // Relative
-        private SwitchParameter relative;
+        private SwitchParameter _relative;
 
 
         #endregion Parameters
 
         #region parameter data
-        
+
         /// <summary>
         /// The path to resolve
         /// </summary>
-        private string[] paths;
+        private string[] _paths;
 
         #endregion parameter data
 
@@ -93,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         /// Resolves the path containing glob characters to the MSH paths that it
         /// represents.
         /// </summary>
-        protected override void ProcessRecord ()
+        protected override void ProcessRecord()
         {
             foreach (string path in Path)
             {
@@ -102,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     result = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);
 
-                    if (relative)
+                    if (_relative)
                     {
                         foreach (PathInfo currentPath in result)
                         {
@@ -149,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                if (!relative)
+                if (!_relative)
                 {
                     WriteObject(result, true);
                 }
@@ -159,6 +160,5 @@ namespace Microsoft.PowerShell.Commands
 
 
     } // ResolvePathCommand
-
 } // namespace Microsoft.PowerShell.Commands
 

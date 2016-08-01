@@ -17,26 +17,26 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// it manages the formatting protocol and it writes to a generic
     /// screen host
     /// </summary>
-    class OutCommandInner : ImplementationCommandBase
+    internal class OutCommandInner : ImplementationCommandBase
     {
         #region tracer
-        [TraceSource ("format_out_OutCommandInner", "OutCommandInner")]
-        internal static PSTraceSource tracer = PSTraceSource.GetTracer ("format_out_OutCommandInner", "OutCommandInner");
+        [TraceSource("format_out_OutCommandInner", "OutCommandInner")]
+        internal static PSTraceSource tracer = PSTraceSource.GetTracer("format_out_OutCommandInner", "OutCommandInner");
         #endregion tracer
 
         internal override void BeginProcessing()
         {
-            base.BeginProcessing ();
+            base.BeginProcessing();
 
-            this.formatObjectDeserializer = new FormatObjectDeserializer (this.TerminatingErrorContext);
+            _formatObjectDeserializer = new FormatObjectDeserializer(this.TerminatingErrorContext);
 
             // hook up the event handlers for the context manager object
-            this.ctxManager.contextCreation = new FormatMessagesContextManager.FormatContextCreationCallback (this.CreateOutputContext);
-            this.ctxManager.fs = new FormatMessagesContextManager.FormatStartCallback (this.ProcessFormatStart);
-            this.ctxManager.fe = new FormatMessagesContextManager.FormatEndCallback (this.ProcessFormatEnd);
-            this.ctxManager.gs = new FormatMessagesContextManager.GroupStartCallback (this.ProcessGroupStart);
-            this.ctxManager.ge = new FormatMessagesContextManager.GroupEndCallback (this.ProcessGroupEnd);
-            this.ctxManager.payload = new FormatMessagesContextManager.PayloadCallback (this.ProcessPayload);
+            _ctxManager.contextCreation = new FormatMessagesContextManager.FormatContextCreationCallback(this.CreateOutputContext);
+            _ctxManager.fs = new FormatMessagesContextManager.FormatStartCallback(this.ProcessFormatStart);
+            _ctxManager.fe = new FormatMessagesContextManager.FormatEndCallback(this.ProcessFormatEnd);
+            _ctxManager.gs = new FormatMessagesContextManager.GroupStartCallback(this.ProcessGroupStart);
+            _ctxManager.ge = new FormatMessagesContextManager.GroupEndCallback(this.ProcessGroupEnd);
+            _ctxManager.payload = new FormatMessagesContextManager.PayloadCallback(this.ProcessPayload);
         }
 
         /// <summary>
@@ -47,17 +47,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         internal override void ProcessRecord()
         {
-            PSObject so = this.ReadObject ();
+            PSObject so = this.ReadObject();
 
             if (so == null || so == AutomationNull.Value)
                 return;
 
             // try to process the object
-            if (ProcessObject (so))
+            if (ProcessObject(so))
                 return;
 
             // send to the formatter for preprocessing
-            Array results = ApplyFormatting (so);
+            Array results = ApplyFormatting(so);
 
             if (results != null)
             {
@@ -72,13 +72,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        internal override void EndProcessing ()
+        internal override void EndProcessing()
         {
-            base.EndProcessing ();
-            if (this.command != null)
+            base.EndProcessing();
+            if (_command != null)
             {
                 // shut down the command processor, if we ever used it
-                Array results = this.command.ShutDown ();
+                Array results = _command.ShutDown();
 
                 if (results != null)
                 {
@@ -93,29 +93,29 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // we need to notify the interface implementor that
                 // we are about to do the playback
-                LineOutput.DoPlayBackCall playBackCall = new LineOutput.DoPlayBackCall (this.DrainCache);
+                LineOutput.DoPlayBackCall playBackCall = new LineOutput.DoPlayBackCall(this.DrainCache);
 
-                this.LineOutput.ExecuteBufferPlayBack (playBackCall);
+                this.LineOutput.ExecuteBufferPlayBack(playBackCall);
             }
             else
             {
                 // we drain the cache ourselves
-                DrainCache ();
+                DrainCache();
             }
         }
 
         private void DrainCache()
         {
-            if (this.cache != null)
+            if (_cache != null)
             {
                 // drain the cache, since we are shutting down
-                List<PacketInfoData> unprocessedObjects = this.cache.Drain ();
+                List<PacketInfoData> unprocessedObjects = _cache.Drain();
 
                 if (unprocessedObjects != null)
                 {
                     foreach (object obj in unprocessedObjects)
                     {
-                        ctxManager.Process (obj);
+                        _ctxManager.Process(obj);
                     }
                 }
             }
@@ -124,18 +124,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private bool ProcessObject(PSObject so)
         {
-            object o = this.formatObjectDeserializer.Deserialize (so);
+            object o = _formatObjectDeserializer.Deserialize(so);
 
             //Console.WriteLine("OutCommandInner.Execute() retrieved object {0}, of type {1}", o.ToString(), o.GetType());
             if (NeedsPreprocessing(o))
             {
                 return false;
             }
-            
+
             // instantiate the cache if not done yet
-            if (this.cache == null)
+            if (_cache == null)
             {
-                this.cache = new FormattedObjectsCache(this.LineOutput.RequiresBuffering);
+                _cache = new FormattedObjectsCache(this.LineOutput.RequiresBuffering);
             }
 
             // no need for formatting, just process the object
@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (formatStart.autosizeInfo != null)
                 {
                     FormattedObjectsCache.ProcessCachedGroupNotification callBack = new FormattedObjectsCache.ProcessCachedGroupNotification(ProcessCachedGroup);
-                    this.cache.EnableGroupCaching(callBack, formatStart.autosizeInfo.objectCount);
+                    _cache.EnableGroupCaching(callBack, formatStart.autosizeInfo.objectCount);
                 }
                 else
                 {
@@ -159,28 +159,28 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         (headerInfo.tableColumnInfoList[0].width == 0))
                     {
                         FormattedObjectsCache.ProcessCachedGroupNotification callBack = new FormattedObjectsCache.ProcessCachedGroupNotification(ProcessCachedGroup);
-                        this.cache.EnableGroupCaching(callBack, TimeSpan.FromMilliseconds(300));
+                        _cache.EnableGroupCaching(callBack, TimeSpan.FromMilliseconds(300));
                     }
                 }
             }
 
             //Console.WriteLine("OutCommandInner.Execute() calling ctxManager.Process({0})",o.ToString());
-            List<PacketInfoData> info = this.cache.Add((PacketInfoData)o);
+            List<PacketInfoData> info = _cache.Add((PacketInfoData)o);
 
             if (info != null)
             {
                 for (int k = 0; k < info.Count; k++)
-                    ctxManager.Process(info[k]);
+                    _ctxManager.Process(info[k]);
             }
             return true;
         }
-     
+
         /// <summary>
         /// helper to return what shape we have to use to format the output
         /// </summary>
         private FormatShape ActiveFormattingShape
         {
-            get 
+            get
             {
                 // we assume that the format context
                 // contains the information
@@ -206,13 +206,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        protected override void InternalDispose ()
+        protected override void InternalDispose()
         {
-            base.InternalDispose ();
-            if (this.command != null)
+            base.InternalDispose();
+            if (_command != null)
             {
-                this.command.Dispose ();
-                this.command = null;
+                _command.Dispose();
+                _command = null;
             }
         }
 
@@ -220,36 +220,36 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// enum describing the state for the output finite state machine
         /// </summary>
-        private enum FormattingState 
-        { 
+        private enum FormattingState
+        {
             /// <summary>
             /// we are in the clear state: no formatting in process
             /// </summary>
-            Reset, 
-            
+            Reset,
+
             /// <summary>
             /// we received a Format Start message, but we are not inside a group
             /// </summary>
-            Formatting, 
-            
+            Formatting,
+
             /// <summary>
             /// we are inside a group because we received a Group Start
             /// </summary>
-            InsideGroup 
+            InsideGroup
         }
 
         /// <summary>
         /// toggle to signal if we are in a formatting sequence
         /// </summary>
-        private FormattingState currentFormattingState = FormattingState.Reset;
+        private FormattingState _currentFormattingState = FormattingState.Reset;
 
 
         /// <summary>
         /// instance of a command wrapper to execute the 
         /// default formatter when needed
         /// </summary>
-        private CommandWrapper command;
- 
+        private CommandWrapper _command;
+
 
         /// <summary>
         /// enumeration to drive the preprocessing stage
@@ -279,7 +279,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // when encountering FormatStartDate out of sequemce,
                 // pretend that the previous formatting directives were properly closed
-                if (this.currentFormattingState == FormattingState.InsideGroup)
+                if (_currentFormattingState == FormattingState.InsideGroup)
                 {
                     this.EndProcessing();
                     this.BeginProcessing();
@@ -287,7 +287,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 // we got a Fs message, we enter a sequence
                 ValidateCurrentFormattingState(FormattingState.Reset, o);
-                this.currentFormattingState = FormattingState.Formatting;
+                _currentFormattingState = FormattingState.Formatting;
 
                 return false;
             }
@@ -295,21 +295,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // we got a Fe message, we exit a sequence
                 ValidateCurrentFormattingState(FormattingState.Formatting, o);
-                this.currentFormattingState = FormattingState.Reset;
+                _currentFormattingState = FormattingState.Reset;
 
                 return false;
             }
             else if (o is GroupStartData)
             {
                 ValidateCurrentFormattingState(FormattingState.Formatting, o);
-                this.currentFormattingState = FormattingState.InsideGroup;
+                _currentFormattingState = FormattingState.InsideGroup;
 
                 return false;
             }
             else if (o is GroupEndData)
             {
                 ValidateCurrentFormattingState(FormattingState.InsideGroup, o);
-                this.currentFormattingState = FormattingState.Formatting;
+                _currentFormattingState = FormattingState.Formatting;
 
                 return false;
             }
@@ -321,7 +321,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void ValidateCurrentFormattingState(FormattingState expectedFormattingState, object obj)
         {
             // chec if we are in the expected formatting state
-            if (this.currentFormattingState != expectedFormattingState)
+            if (_currentFormattingState != expectedFormattingState)
             {
                 // we are not in the expected state, some message is out of sequence,
                 // need to abort the command
@@ -351,13 +351,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 string msg = StringUtil.Format(FormatAndOut_out_xxx.OutLineOutput_OutOfSequencePacket,
                     obj.GetType().FullName, violatingCommand);
 
-                ErrorRecord errorRecord = new ErrorRecord (
+                ErrorRecord errorRecord = new ErrorRecord(
                                                 new InvalidOperationException(),
                                                 "ConsoleLineOutputOutOfSequencePacket",
                                                 ErrorCategory.InvalidData,
                                                 null);
 
-                errorRecord.ErrorDetails = new ErrorDetails (msg);
+                errorRecord.ErrorDetails = new ErrorDetails(msg);
                 this.TerminatingErrorContext.ThrowTerminatingError(errorRecord);
             }
         }
@@ -367,15 +367,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="o">object to be preprocessed</param>
         /// <returns>array of objects returned by the preprocessing step</returns>
-        private Array ApplyFormatting (object o)
+        private Array ApplyFormatting(object o)
         {
-            if (this.command == null)
+            if (_command == null)
             {
-                this.command = new CommandWrapper ();
-                this.command.Initialize(this.OuterCmdlet().Context, "format-default", typeof(FormatDefaultCommand));
+                _command = new CommandWrapper();
+                _command.Initialize(this.OuterCmdlet().Context, "format-default", typeof(FormatDefaultCommand));
             }
 
-            return this.command.Process (o);
+            return _command.Process(o);
         }
 
         /// <summary>
@@ -407,35 +407,35 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     case FormatShape.Table:
                         {
-                            goc = new TableOutputContext (this, parentContext, gsd);
+                            goc = new TableOutputContext(this, parentContext, gsd);
                             break;
                         }
 
                     case FormatShape.List:
                         {
-                            goc = new ListOutputContext (this, parentContext, gsd);
+                            goc = new ListOutputContext(this, parentContext, gsd);
                             break;
                         }
 
                     case FormatShape.Wide:
                         {
-                            goc = new WideOutputContext (this, parentContext, gsd);
+                            goc = new WideOutputContext(this, parentContext, gsd);
                             break;
                         }
 
                     case FormatShape.Complex:
                         {
-                            goc = new ComplexOutputContext (this, parentContext, gsd);
+                            goc = new ComplexOutputContext(this, parentContext, gsd);
                             break;
                         }
 
                     default:
                         {
-                            Diagnostics.Assert (false, "Invalid shape. This should never happen");
+                            Diagnostics.Assert(false, "Invalid shape. This should never happen");
                         }
                         break;
                 }
-                goc.Initialize ();
+                goc.Initialize();
                 return goc;
             }
 
@@ -449,7 +449,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void ProcessFormatStart(FormatMessagesContextManager.OutputContext c)
         {
             // we just add an empty line to the display
-            this.LineOutput.WriteLine ("");
+            this.LineOutput.WriteLine("");
         }
 
         /// <summary>
@@ -461,7 +461,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             //Console.WriteLine("ProcessFormatEnd");
             // we just add an empty line to the display
-            this.LineOutput.WriteLine ("");
+            this.LineOutput.WriteLine("");
         }
 
         /// <summary>
@@ -476,15 +476,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (goc.Data.groupingEntry != null)
             {
-                this.lo.WriteLine ("");
+                _lo.WriteLine("");
 
-                ComplexWriter writer = new ComplexWriter ();
-                writer.Initialize (this.lo, this.lo.ColumnNumber);
-                writer.WriteObject (goc.Data.groupingEntry.formatValueList);
+                ComplexWriter writer = new ComplexWriter();
+                writer.Initialize(_lo, _lo.ColumnNumber);
+                writer.WriteObject(goc.Data.groupingEntry.formatValueList);
 
-                this.LineOutput.WriteLine ("");
+                this.LineOutput.WriteLine("");
             }
-            goc.GroupStart ();
+            goc.GroupStart();
         }
 
         /// <summary>
@@ -497,8 +497,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             //Console.WriteLine("ProcessGroupEnd");
             GroupOutputContext goc = (GroupOutputContext)c;
 
-            goc.GroupEnd ();
-            this.LineOutput.WriteLine ("");
+            goc.GroupEnd();
+            this.LineOutput.WriteLine("");
         }
 
         /// <summary>
@@ -511,17 +511,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we assume FormatEntryData as a standard wrapper
             if (fed == null)
             {
-                PSTraceSource.NewArgumentNullException ("fed");
+                PSTraceSource.NewArgumentNullException("fed");
             }
             if (fed.formatEntryInfo == null)
             {
-                PSTraceSource.NewArgumentNullException ("fed.formatEntryInfo");
+                PSTraceSource.NewArgumentNullException("fed.formatEntryInfo");
             }
 
-            WriteStreamType oldWSState = this.lo.WriteStream;
+            WriteStreamType oldWSState = _lo.WriteStream;
             try
             {
-                this.lo.WriteStream = fed.writeStream;
+                _lo.WriteStream = fed.writeStream;
 
                 if (c == null)
                 {
@@ -536,11 +536,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             finally
             {
-                this.lo.WriteStream = oldWSState;
+                _lo.WriteStream = oldWSState;
             }
         }
 
-        private void ProcessOutOfBandPayload (FormatEntryData fed)
+        private void ProcessOutOfBandPayload(FormatEntryData fed)
         {
             // try if it is raw text
             RawTextFormatEntry rte = fed.formatEntryInfo as RawTextFormatEntry;
@@ -550,13 +550,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     ComplexWriter complexWriter = new ComplexWriter();
 
-                    complexWriter.Initialize(this.lo, this.lo.ColumnNumber);
+                    complexWriter.Initialize(_lo, _lo.ColumnNumber);
                     complexWriter.WriteString(rte.text);
                 }
                 else
                 {
-                    this.lo.WriteLine(rte.text);
-
+                    _lo.WriteLine(rte.text);
                 }
 
                 return;
@@ -566,10 +565,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ComplexViewEntry cve = fed.formatEntryInfo as ComplexViewEntry;
             if (cve != null && cve.formatValueList != null)
             {
-                ComplexWriter complexWriter = new ComplexWriter ();
+                ComplexWriter complexWriter = new ComplexWriter();
 
-                complexWriter.Initialize (this.lo, this.lo.ColumnNumber);
-                complexWriter.WriteObject (cve.formatValueList);
+                complexWriter.Initialize(_lo, _lo.ColumnNumber);
+                complexWriter.WriteObject(cve.formatValueList);
 
                 return;
             }
@@ -577,16 +576,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ListViewEntry lve = fed.formatEntryInfo as ListViewEntry;
             if (lve != null && lve.listViewFieldList != null)
             {
-                ListWriter listWriter = new ListWriter ();
+                ListWriter listWriter = new ListWriter();
 
-                this.lo.WriteLine ("");
+                _lo.WriteLine("");
 
-                string[] properties = ListOutputContext.GetProperties (lve);
-                listWriter.Initialize (properties, this.lo.ColumnNumber, this.lo.DisplayCells);
-                string[] values = ListOutputContext.GetValues (lve);
-                listWriter.WriteProperties (values, this.lo);
-                
-                this.lo.WriteLine ("");
+                string[] properties = ListOutputContext.GetProperties(lve);
+                listWriter.Initialize(properties, _lo.ColumnNumber, _lo.DisplayCells);
+                string[] values = ListOutputContext.GetValues(lve);
+                listWriter.WriteProperties(values, _lo);
+
+                _lo.WriteLine("");
 
                 return;
             }
@@ -595,12 +594,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// the screen host associated with this outputter
         /// </summary>
-        private LineOutput lo = null;
+        private LineOutput _lo = null;
 
         internal LineOutput LineOutput
         {
-            set { this.lo = value; }
-            get { return this.lo; }
+            set { _lo = value; }
+            get { return _lo; }
         }
 
         private ShapeInfo ShapeInfoOnFormatContext
@@ -615,7 +614,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return foc.Data.shapeInfo;
             }
         }
-      
+
 
         /// <summary>
         /// retrieve the active FormatOutputContext on the stack
@@ -625,7 +624,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                for (FormatMessagesContextManager.OutputContext oc = ctxManager.ActiveOutputContext; oc != null; oc = oc.ParentContext)
+                for (FormatMessagesContextManager.OutputContext oc = _ctxManager.ActiveOutputContext; oc != null; oc = oc.ParentContext)
                 {
                     FormatOutputContext foc = oc as FormatOutputContext;
 
@@ -641,9 +640,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// context manager instance to guide the message traversal
         /// </summary>
-        private FormatMessagesContextManager ctxManager = new FormatMessagesContextManager();
+        private FormatMessagesContextManager _ctxManager = new FormatMessagesContextManager();
 
-        private FormattedObjectsCache cache = null;
+        private FormattedObjectsCache _cache = null;
 
         /// <summary>
         /// handler for processing the caching notification and responsible for 
@@ -651,15 +650,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="formatStartData"></param>
         /// <param name="objects"></param>
-        private void ProcessCachedGroup (FormatStartData formatStartData, List<PacketInfoData> objects)
+        private void ProcessCachedGroup(FormatStartData formatStartData, List<PacketInfoData> objects)
         {
-            this.formattingHint = null;
+            _formattingHint = null;
 
             TableHeaderInfo thi = formatStartData.shapeInfo as TableHeaderInfo;
 
             if (thi != null)
             {
-                ProcessCachedGroupOnTable (thi, objects);
+                ProcessCachedGroupOnTable(thi, objects);
                 return;
             }
 
@@ -667,12 +666,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (wvhi != null)
             {
-                ProcessCachedGroupOnWide (wvhi, objects);
+                ProcessCachedGroupOnWide(wvhi, objects);
                 return;
             }
         }
 
-        private void ProcessCachedGroupOnTable (TableHeaderInfo thi, List<PacketInfoData> objects)
+        private void ProcessCachedGroupOnTable(TableHeaderInfo thi, List<PacketInfoData> objects)
         {
             if (thi.tableColumnInfoList.Count == 0)
                 return;
@@ -683,13 +682,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 string label = thi.tableColumnInfoList[k].label;
 
-                if (string.IsNullOrEmpty (label))
+                if (string.IsNullOrEmpty(label))
                     label = thi.tableColumnInfoList[k].propertyName;
 
                 if (string.IsNullOrEmpty(label))
                     widths[k] = 0;
                 else
-                    widths[k] = this.lo.DisplayCells.Length(label);
+                    widths[k] = _lo.DisplayCells.Length(label);
             }
 
             int cellCount; // scratch variable
@@ -705,7 +704,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 foreach (FormatPropertyField fpf in tre.formatPropertyFieldList)
                 {
-                    cellCount = this.lo.DisplayCells.Length(fpf.propertyValue);
+                    cellCount = _lo.DisplayCells.Length(fpf.propertyValue);
                     if (widths[kk] < cellCount)
                         widths[kk] = cellCount;
 
@@ -713,13 +712,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            TableFormattingHint hint = new TableFormattingHint ();
+            TableFormattingHint hint = new TableFormattingHint();
 
             hint.columnWidths = widths;
-            this.formattingHint = hint;
+            _formattingHint = hint;
         }
 
-        private void ProcessCachedGroupOnWide (WideViewHeaderInfo wvhi, List<PacketInfoData> objects)
+        private void ProcessCachedGroupOnWide(WideViewHeaderInfo wvhi, List<PacketInfoData> objects)
         {
             if (wvhi.columns != 0)
             {
@@ -740,24 +739,24 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 WideViewEntry wve = fed.formatEntryInfo as WideViewEntry;
                 FormatPropertyField fpf = wve.formatPropertyField as FormatPropertyField;
 
-                if (!string.IsNullOrEmpty (fpf.propertyValue))
+                if (!string.IsNullOrEmpty(fpf.propertyValue))
                 {
-                    cellCount = this.lo.DisplayCells.Length(fpf.propertyValue);
+                    cellCount = _lo.DisplayCells.Length(fpf.propertyValue);
                     if (cellCount > maxLen)
                         maxLen = cellCount;
                 }
             }
 
-            WideFormattingHint hint = new WideFormattingHint ();
+            WideFormattingHint hint = new WideFormattingHint();
 
             hint.maxWidth = maxLen;
-            this.formattingHint = hint;
+            _formattingHint = hint;
         }
 
         /// <summary>
         /// base class for all the formatting hints
         /// </summary>
-        private abstract class FormattingHint 
+        private abstract class FormattingHint
         {
         }
 
@@ -766,7 +765,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         private sealed class TableFormattingHint : FormattingHint
         {
-            internal int [] columnWidths = null;
+            internal int[] columnWidths = null;
         }
 
         /// <summary>
@@ -780,7 +779,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// variable holding the autosize hint (set by the caching code and reset by the hint consumer
         /// </summary>
-        private FormattingHint formattingHint = null;
+        private FormattingHint _formattingHint = null;
 
         /// <summary>
         /// helper for consuming the formatting hint
@@ -788,12 +787,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns></returns>
         private FormattingHint RetrieveFormattingHint()
         {
-            FormattingHint fh = this.formattingHint;
-            this.formattingHint = null;
+            FormattingHint fh = _formattingHint;
+            _formattingHint = null;
             return fh;
         }
 
-        private FormatObjectDeserializer formatObjectDeserializer;
+        private FormatObjectDeserializer _formatObjectDeserializer;
 
 
         /// <summary>
@@ -806,21 +805,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// </summary>
             /// <param name="parentContext">parent context in the stack</param>
             /// <param name="formatData">format data to put in the context</param>
-            internal FormatOutputContext (FormatMessagesContextManager.OutputContext parentContext, FormatStartData formatData)
+            internal FormatOutputContext(FormatMessagesContextManager.OutputContext parentContext, FormatStartData formatData)
                 : base(parentContext)
             {
-                this.formatData = formatData;
+                _formatData = formatData;
             }
 
             /// <summary>
             /// retrieve the format data in the context
             /// </summary>
-            internal FormatStartData Data { get { return this.formatData; } }
+            internal FormatStartData Data { get { return _formatData; } }
 
             /// <summary>
             /// the active formatting message, as obtained from the stream
             /// </summary>
-            private FormatStartData formatData = null;
+            private FormatStartData _formatData = null;
         }
 
         /// <summary>
@@ -832,60 +831,59 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// construct a context to push on the stack
             /// </summary>
             internal GroupOutputContext(OutCommandInner cmd,
-                                    FormatMessagesContextManager.OutputContext parentContext, 
-                                    GroupStartData formatData) 
+                                    FormatMessagesContextManager.OutputContext parentContext,
+                                    GroupStartData formatData)
                 : base(parentContext)
             {
-                this.cmd = cmd;
-                this.formatData = formatData;
+                _cmd = cmd;
+                _formatData = formatData;
             }
 
             /// <summary>
             /// called at creation time, overrides will initialize here, e.g.
             /// column widths, etc.
             /// </summary>
-            internal virtual void Initialize () { }
+            internal virtual void Initialize() { }
 
             /// <summary>
             /// called when a group of data is started, overrided will do
             /// things such as headers, etc...
             /// </summary>
-            internal virtual void GroupStart () { }
+            internal virtual void GroupStart() { }
 
             /// <summary>
             /// called when the end of a group is reached, overrides will do
             /// things such as group footers
             /// </summary>
-            internal virtual void GroupEnd () { }
+            internal virtual void GroupEnd() { }
 
             /// <summary>
             /// called when there is an entry to process, overrides will do
             /// things such as writing a row in a table
             /// </summary>
             /// <param name="fed">FormatEntryData to process</param>
-            internal virtual void ProcessPayload (FormatEntryData fed) { }
+            internal virtual void ProcessPayload(FormatEntryData fed) { }
 
             /// <summary>
             /// retrieve the format data in the context
             /// </summary>
-            internal GroupStartData Data { get { return this.formatData; } }
+            internal GroupStartData Data { get { return _formatData; } }
 
 
             protected OutCommandInner InnerCommand
             {
-                get { return this.cmd; } 
+                get { return _cmd; }
             }
 
             /// <summary>
             /// OutCommandInner reference, for accessing context data
             /// </summary>
-            private OutCommandInner cmd;
+            private OutCommandInner _cmd;
 
             /// <summary>
             /// the active formatting message, as obtained from the stream
             /// </summary>
-            private GroupStartData formatData = null;
-
+            private GroupStartData _formatData = null;
         }
 
         private class TableOutputContextBase : GroupOutputContext
@@ -897,8 +895,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <param name="parentContext">parent context in the stack</param>
             /// <param name="formatData">format data to put in the context</param>
             internal TableOutputContextBase(OutCommandInner cmd,
-                FormatMessagesContextManager.OutputContext parentContext, 
-                GroupStartData formatData) 
+                FormatMessagesContextManager.OutputContext parentContext,
+                GroupStartData formatData)
                 : base(cmd, parentContext, formatData)
             {
             }
@@ -906,14 +904,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// Get the table writer for this context
             /// </summary>
-            protected TableWriter Writer { get { return this.tableWriter; } }
+            protected TableWriter Writer { get { return _tableWriter; } }
 
             /// <summary>
             /// helper class to properly write a table using text output
             /// </summary>
-            private TableWriter tableWriter = new TableWriter();
-
-
+            private TableWriter _tableWriter = new TableWriter();
         }
 
         private sealed class TableOutputContext : TableOutputContextBase
@@ -924,9 +920,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <param name="cmd">reference to the OutCommandInner instance who owns this instance</param>
             /// <param name="parentContext">parent context in the stack</param>
             /// <param name="formatData">format data to put in the context</param>
-            internal TableOutputContext (OutCommandInner cmd,
-                FormatMessagesContextManager.OutputContext parentContext, 
-                GroupStartData formatData) 
+            internal TableOutputContext(OutCommandInner cmd,
+                FormatMessagesContextManager.OutputContext parentContext,
+                GroupStartData formatData)
                 : base(cmd, parentContext, formatData)
             {
             }
@@ -934,9 +930,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// initialize column widths
             /// </summary>
-            internal override void Initialize ()
+            internal override void Initialize()
             {
-                TableFormattingHint tableHint = this.InnerCommand.RetrieveFormattingHint () as TableFormattingHint;
+                TableFormattingHint tableHint = this.InnerCommand.RetrieveFormattingHint() as TableFormattingHint;
                 int[] columnWidthsHint = null;
 
                 if (tableHint != null)
@@ -944,14 +940,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     columnWidthsHint = tableHint.columnWidths;
                 }
 
-                int columsOnTheScreen = this.InnerCommand.lo.ColumnNumber;
+                int columsOnTheScreen = this.InnerCommand._lo.ColumnNumber;
 
                 int columns = this.CurrentTableHeaderInfo.tableColumnInfoList.Count;
                 if (columns == 0)
                 {
                     return;
                 }
-                
+
                 // create arrays for widths and alignment
                 int[] columnWidths = new int[columns];
                 int[] alignment = new int[columns];
@@ -963,13 +959,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     alignment[k] = tci.alignment;
                     k++;
                 }
-                this.Writer.Initialize (0, columsOnTheScreen, columnWidths, alignment, this.CurrentTableHeaderInfo.hideHeader);
+                this.Writer.Initialize(0, columsOnTheScreen, columnWidths, alignment, this.CurrentTableHeaderInfo.hideHeader);
             }
 
             /// <summary>
             /// write the headers
             /// </summary>
-            internal override void GroupStart ()
+            internal override void GroupStart()
             {
                 int columns = this.CurrentTableHeaderInfo.tableColumnInfoList.Count;
 
@@ -984,14 +980,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     properties[k++] = (tci.label != null) ? tci.label : tci.propertyName;
                 }
-                this.Writer.GenerateHeader(properties ,this.InnerCommand.lo);
+                this.Writer.GenerateHeader(properties, this.InnerCommand._lo);
             }
 
             /// <summary>
             /// write a row into the table
             /// </summary>
             /// <param name="fed">FormatEntryData to process</param>
-            internal override void ProcessPayload (FormatEntryData fed)
+            internal override void ProcessPayload(FormatEntryData fed)
             {
                 int headerColumns = this.CurrentTableHeaderInfo.tableColumnInfoList.Count;
 
@@ -1007,7 +1003,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 int[] alignment = new int[headerColumns];
 
                 int fieldCount = tre.formatPropertyFieldList.Count;
-                
+
                 for (int k = 0; k < headerColumns; k++)
                 {
                     if (k < fieldCount)
@@ -1021,8 +1017,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         alignment[k] = TextAlignment.Left; // hard coded default
                     }
                 }
-                this.Writer.GenerateRow (values, this.InnerCommand.lo, tre.multiLine, alignment, InnerCommand.lo.DisplayCells);
-           }
+                this.Writer.GenerateRow(values, this.InnerCommand._lo, tre.multiLine, alignment, InnerCommand._lo.DisplayCells);
+            }
 
             private TableHeaderInfo CurrentTableHeaderInfo
             {
@@ -1031,7 +1027,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return (TableHeaderInfo)this.InnerCommand.ShapeInfoOnFormatContext;
                 }
             }
-
         }
 
         private sealed class ListOutputContext : GroupOutputContext
@@ -1042,9 +1037,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <param name="cmd">reference to the OutCommandInner instance who owns this instance</param>
             /// <param name="parentContext">parent context in the stack</param>
             /// <param name="formatData">format data to put in the context</param>
-            internal ListOutputContext (OutCommandInner cmd,
-                FormatMessagesContextManager.OutputContext parentContext, 
-                GroupStartData formatData) 
+            internal ListOutputContext(OutCommandInner cmd,
+                FormatMessagesContextManager.OutputContext parentContext,
+                GroupStartData formatData)
                 : base(cmd, parentContext, formatData)
             {
             }
@@ -1052,42 +1047,42 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// initialize column widths
             /// </summary>
-            internal override void Initialize ()
+            internal override void Initialize()
             {
             }
 
-            private void InternalInitialize (ListViewEntry lve)
+            private void InternalInitialize(ListViewEntry lve)
             {
-                this.properties = GetProperties (lve);
-                this.listWriter.Initialize (this.properties, this.InnerCommand.lo.ColumnNumber, InnerCommand.lo.DisplayCells);
+                _properties = GetProperties(lve);
+                _listWriter.Initialize(_properties, this.InnerCommand._lo.ColumnNumber, InnerCommand._lo.DisplayCells);
             }
 
-            internal static string[] GetProperties (ListViewEntry lve)
+            internal static string[] GetProperties(ListViewEntry lve)
             {
-                StringCollection props = new StringCollection ();
+                StringCollection props = new StringCollection();
                 foreach (ListViewField lvf in lve.listViewFieldList)
                 {
-                    props.Add ((lvf.label != null) ? lvf.label : lvf.propertyName);
+                    props.Add((lvf.label != null) ? lvf.label : lvf.propertyName);
                 }
                 if (props.Count == 0)
                     return null;
                 string[] retVal = new string[props.Count];
-                props.CopyTo (retVal, 0);
+                props.CopyTo(retVal, 0);
                 return retVal;
             }
 
-            internal static string[] GetValues (ListViewEntry lve)
+            internal static string[] GetValues(ListViewEntry lve)
             {
-                StringCollection vals = new StringCollection ();
+                StringCollection vals = new StringCollection();
 
                 foreach (ListViewField lvf in lve.listViewFieldList)
                 {
-                    vals.Add (lvf.formatPropertyField.propertyValue);
+                    vals.Add(lvf.formatPropertyField.propertyValue);
                 }
                 if (vals.Count == 0)
                     return null;
                 string[] retVal = new string[vals.Count];
-                vals.CopyTo (retVal, 0);
+                vals.CopyTo(retVal, 0);
                 return retVal;
             }
 
@@ -1095,33 +1090,33 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// write the headers
             /// </summary>
-            internal override void GroupStart ()
+            internal override void GroupStart()
             {
-                this.InnerCommand.lo.WriteLine("");
+                this.InnerCommand._lo.WriteLine("");
             }
 
             /// <summary>
             /// write a row into the list
             /// </summary>
             /// <param name="fed">FormatEntryData to process</param>
-            internal override void ProcessPayload (FormatEntryData fed)
+            internal override void ProcessPayload(FormatEntryData fed)
             {
                 ListViewEntry lve = fed.formatEntryInfo as ListViewEntry;
-                InternalInitialize (lve);
-                string[] values = GetValues (lve);
-                this.listWriter.WriteProperties(values, this.InnerCommand.lo);
-                this.InnerCommand.lo.WriteLine("");
+                InternalInitialize(lve);
+                string[] values = GetValues(lve);
+                _listWriter.WriteProperties(values, this.InnerCommand._lo);
+                this.InnerCommand._lo.WriteLine("");
             }
 
             /// <summary>
             /// property list currently active
             /// </summary>
-            private string[] properties = null;
+            private string[] _properties = null;
 
             /// <summary>
             /// writer to do the actual formatting
             /// </summary>
-            private ListWriter listWriter = new ListWriter();
+            private ListWriter _listWriter = new ListWriter();
         }
 
         private sealed class WideOutputContext : TableOutputContextBase
@@ -1132,30 +1127,30 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <param name="cmd">reference to the OutCommandInner instance who owns this instance</param>
             /// <param name="parentContext">parent context in the stack</param>
             /// <param name="formatData">format data to put in the context</param>
-            internal WideOutputContext (OutCommandInner cmd,
-                FormatMessagesContextManager.OutputContext parentContext, 
-                GroupStartData formatData) 
+            internal WideOutputContext(OutCommandInner cmd,
+                FormatMessagesContextManager.OutputContext parentContext,
+                GroupStartData formatData)
                 : base(cmd, parentContext, formatData)
             {
             }
 
-            private StringValuesBuffer buffer = null;
+            private StringValuesBuffer _buffer = null;
 
             /// <summary>
             /// initialize column widths
             /// </summary>
-            internal override void Initialize ()
+            internal override void Initialize()
             {
                 // set the hard wider default, to be used if no other info is available
                 int itemsPerRow = 2;
 
                 // get the header info and the wiew hint
-                WideFormattingHint hint = this.InnerCommand.RetrieveFormattingHint () as WideFormattingHint;
+                WideFormattingHint hint = this.InnerCommand.RetrieveFormattingHint() as WideFormattingHint;
 
                 // give a preference to the hint, if there
                 if (hint != null && hint.maxWidth > 0)
                 {
-                    itemsPerRow = TableWriter.ComputeWideViewBestItemsPerRowFit(hint.maxWidth, this.InnerCommand.lo.ColumnNumber);
+                    itemsPerRow = TableWriter.ComputeWideViewBestItemsPerRowFit(hint.maxWidth, this.InnerCommand._lo.ColumnNumber);
                 }
                 else if (this.CurrentWideHeaderInfo.columns > 0)
                 {
@@ -1163,7 +1158,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // create a buffer object to hold partial rows
-                buffer = new StringValuesBuffer(itemsPerRow);
+                _buffer = new StringValuesBuffer(itemsPerRow);
 
                 // initialize the writer
                 int[] columnWidths = new int[itemsPerRow];
@@ -1175,22 +1170,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     alignment[k] = TextAlignment.Left;
                 }
 
-                this.Writer.Initialize (0, this.InnerCommand.lo.ColumnNumber, columnWidths, alignment, false);
+                this.Writer.Initialize(0, this.InnerCommand._lo.ColumnNumber, columnWidths, alignment, false);
             }
 
             /// <summary>
             /// write the headers
             /// </summary>
-            internal override void GroupStart ()
+            internal override void GroupStart()
             {
-                this.InnerCommand.lo.WriteLine("");
+                this.InnerCommand._lo.WriteLine("");
             }
 
             /// <summary>
             /// called when the end of a group is reached, flush the
             /// write buffer
             /// </summary>
-            internal override void GroupEnd () 
+            internal override void GroupEnd()
             {
                 WriteStringBuffer();
             }
@@ -1199,14 +1194,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// write a row into the table
             /// </summary>
             /// <param name="fed">FormatEntryData to process</param>
-            internal override void ProcessPayload (FormatEntryData fed)
+            internal override void ProcessPayload(FormatEntryData fed)
             {
                 WideViewEntry wve = fed.formatEntryInfo as WideViewEntry;
                 FormatPropertyField fpf = wve.formatPropertyField as FormatPropertyField;
-                buffer.Add (fpf.propertyValue);
-                if (buffer.IsFull)
+                _buffer.Add(fpf.propertyValue);
+                if (_buffer.IsFull)
                 {
-                    WriteStringBuffer ();
+                    WriteStringBuffer();
                 }
             }
 
@@ -1220,21 +1215,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             private void WriteStringBuffer()
             {
-                if (buffer.IsEmpty)
+                if (_buffer.IsEmpty)
                 {
                     return;
                 }
-            
-                string[] values = new string[buffer.Lenght];
-                for (int k=0; k< values.Length; k++)
+
+                string[] values = new string[_buffer.Lenght];
+                for (int k = 0; k < values.Length; k++)
                 {
-                    if (k < buffer.CurrentCount)
-                        values[k] = buffer[k];
+                    if (k < _buffer.CurrentCount)
+                        values[k] = _buffer[k];
                     else
                         values[k] = "";
                 }
-                this.Writer.GenerateRow(values, this.InnerCommand.lo, false, null, InnerCommand.lo.DisplayCells);
-                buffer.Reset();
+                this.Writer.GenerateRow(values, this.InnerCommand._lo, false, null, InnerCommand._lo.DisplayCells);
+                _buffer.Reset();
             }
 
 
@@ -1248,27 +1243,27 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 /// construct the buffer
                 /// </summary>
                 /// <param name="size">number of entries to cache</param>
-                internal StringValuesBuffer (int size)
+                internal StringValuesBuffer(int size)
                 {
-                    arr = new string[size];
+                    _arr = new string[size];
                     Reset();
                 }
                 /// <summary>
                 /// get the size of the buffer
                 /// </summary>
-                internal int Lenght { get { return arr.Length; } }
+                internal int Lenght { get { return _arr.Length; } }
 
                 /// <summary>
                 /// get the current number of entries in the buffer
                 /// </summary>
-                internal int CurrentCount { get { return lastEmptySpot; } }
+                internal int CurrentCount { get { return _lastEmptySpot; } }
 
                 /// <summary>
                 /// check if the buffer is full
                 /// </summary>
                 internal bool IsFull
                 {
-                    get { return lastEmptySpot == arr.Length; }
+                    get { return _lastEmptySpot == _arr.Length; }
                 }
 
                 /// <summary>
@@ -1276,35 +1271,35 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 /// </summary>
                 internal bool IsEmpty
                 {
-                    get { return lastEmptySpot == 0; }
+                    get { return _lastEmptySpot == 0; }
                 }
 
                 /// <summary>
                 /// indexer to access the k-th item in the buffer
                 /// </summary>
-                internal string this[int k] { get { return arr[k]; } }
+                internal string this[int k] { get { return _arr[k]; } }
 
                 /// <summary>
                 /// add an item to the buffer
                 /// </summary>
                 /// <param name="s">string to add</param>
-                internal void Add (string s)
+                internal void Add(string s)
                 {
-                    arr[lastEmptySpot++] = s;
+                    _arr[_lastEmptySpot++] = s;
                 }
 
                 /// <summary>
                 /// reset the buffer
                 /// </summary>
-                internal void Reset ()
+                internal void Reset()
                 {
-                    lastEmptySpot = 0;
-                    for(int k=0; k<arr.Length; k++)
-                        arr[k]  = null;
+                    _lastEmptySpot = 0;
+                    for (int k = 0; k < _arr.Length; k++)
+                        _arr[k] = null;
                 }
 
-                private string[] arr;
-                private int lastEmptySpot;
+                private string[] _arr;
+                private int _lastEmptySpot;
             }
         }
 
@@ -1316,17 +1311,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <param name="cmd">reference to the OutCommandInner instance who owns this instance</param>
             /// <param name="parentContext">parent context in the stack</param>
             /// <param name="formatData">format data to put in the context</param>
-            internal ComplexOutputContext (OutCommandInner cmd,
-                FormatMessagesContextManager.OutputContext parentContext, 
-                GroupStartData formatData) 
+            internal ComplexOutputContext(OutCommandInner cmd,
+                FormatMessagesContextManager.OutputContext parentContext,
+                GroupStartData formatData)
                 : base(cmd, parentContext, formatData)
             {
             }
 
-            internal override void Initialize ()
+            internal override void Initialize()
             {
-                this.writer.Initialize (this.InnerCommand.lo, 
-                                    this.InnerCommand.lo.ColumnNumber);
+                _writer.Initialize(this.InnerCommand._lo,
+                                    this.InnerCommand._lo.ColumnNumber);
             }
 
 
@@ -1334,19 +1329,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// write a row into the list
             /// </summary>
             /// <param name="fed">FormatEntryData to process</param>
-            internal override void ProcessPayload (FormatEntryData fed)
+            internal override void ProcessPayload(FormatEntryData fed)
             {
                 ComplexViewEntry cve = fed.formatEntryInfo as ComplexViewEntry;
-                if (cve == null || cve.formatValueList == null) 
+                if (cve == null || cve.formatValueList == null)
                     return;
-                this.writer.WriteObject (cve.formatValueList);
+                _writer.WriteObject(cve.formatValueList);
             }
 
-            ComplexWriter writer = new ComplexWriter();
-
+            private ComplexWriter _writer = new ComplexWriter();
         }
-    
-    }       
-
+    }
 }
 

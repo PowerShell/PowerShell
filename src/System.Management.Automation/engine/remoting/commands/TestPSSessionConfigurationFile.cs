@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Remoting;
@@ -28,10 +29,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0, ValueFromPipelineByPropertyName = true)]
         public string Path
         {
-            get { return path; }
-            set { path = value; }
+            get { return _path; }
+            set { _path = value; }
         }
-        string path;
+        private string _path;
 
         #endregion
 
@@ -49,20 +50,20 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (this.Context.EngineSessionState.IsProviderLoaded(Context.ProviderNames.FileSystem))
                 {
-                    filePaths = SessionState.Path.GetResolvedProviderPathFromPSPath(path, out provider);
+                    filePaths = SessionState.Path.GetResolvedProviderPathFromPSPath(_path, out provider);
                 }
                 else
                 {
                     filePaths = new Collection<string>();
-                    filePaths.Add(path);
+                    filePaths.Add(_path);
                 }
             }
             catch (ItemNotFoundException)
             {
-                string message = StringUtil.Format(RemotingErrorIdStrings.PSSessionConfigurationFileNotFound, path);
+                string message = StringUtil.Format(RemotingErrorIdStrings.PSSessionConfigurationFileNotFound, _path);
                 FileNotFoundException fnf = new FileNotFoundException(message);
                 ErrorRecord er = new ErrorRecord(fnf, "PSSessionConfigurationFileNotFound",
-                    ErrorCategory.ResourceUnavailable, path);
+                    ErrorCategory.ResourceUnavailable, _path);
                 WriteError(er);
                 return;
             }
@@ -71,17 +72,17 @@ namespace Microsoft.PowerShell.Commands
             if (!provider.NameEquals(this.Context.ProviderNames.FileSystem))
             {
                 // "The current provider ({0}) cannot open a file"
-                throw InterpreterError.NewInterpreterException(path, typeof(RuntimeException),
+                throw InterpreterError.NewInterpreterException(_path, typeof(RuntimeException),
                     null, "FileOpenError", ParserStrings.FileOpenError, provider.FullName);
             }
 
             // Make sure at least one file was found...
             if (filePaths == null || filePaths.Count < 1)
             {
-                string message = StringUtil.Format(RemotingErrorIdStrings.PSSessionConfigurationFileNotFound, path);
+                string message = StringUtil.Format(RemotingErrorIdStrings.PSSessionConfigurationFileNotFound, _path);
                 FileNotFoundException fnf = new FileNotFoundException(message);
                 ErrorRecord er = new ErrorRecord(fnf, "PSSessionConfigurationFileNotFound",
-                    ErrorCategory.ResourceUnavailable, path);
+                    ErrorCategory.ResourceUnavailable, _path);
                 WriteError(er);
                 return;
             }
@@ -130,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
                 string message = StringUtil.Format(RemotingErrorIdStrings.InvalidPSSessionConfigurationFilePath, filePath);
                 InvalidOperationException ioe = new InvalidOperationException(message);
                 ErrorRecord er = new ErrorRecord(ioe, "InvalidPSSessionConfigurationFilePath",
-                    ErrorCategory.InvalidArgument, path);
+                    ErrorCategory.InvalidArgument, _path);
                 ThrowTerminatingError(er);
             }
         }

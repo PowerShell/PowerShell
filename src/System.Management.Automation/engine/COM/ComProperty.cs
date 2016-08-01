@@ -16,16 +16,16 @@ namespace System.Management.Automation
     /// </summary>
     internal class ComProperty
     {
-        private bool hasSetter = false;
-        private bool hasSetterByRef = false;
-        private bool hasGetter = false;
-        private int dispId;
-        private int setterIndex;
-        private int setterByRefIndex;
-        private int getterIndex;
-        private COM.ITypeInfo typeInfo;
-        private string name;
-        private bool isparameterizied = false;
+        private bool _hasSetter = false;
+        private bool _hasSetterByRef = false;
+        private bool _hasGetter = false;
+        private int _dispId;
+        private int _setterIndex;
+        private int _setterByRefIndex;
+        private int _getterIndex;
+        private COM.ITypeInfo _typeInfo;
+        private string _name;
+        private bool _isparameterizied = false;
 
 
         /// <summary>
@@ -35,8 +35,8 @@ namespace System.Management.Automation
         /// <param name="name">name of the property being created.</param>
         internal ComProperty(COM.ITypeInfo typeinfo, string name)
         {
-            this.typeInfo = typeinfo;
-            this.name = name;
+            _typeInfo = typeinfo;
+            _name = name;
         }
 
         /// <summary>
@@ -46,11 +46,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return name;
+                return _name;
             }
         }
 
-        private Type cachedType;
+        private Type _cachedType;
 
         /// <summary>
         ///  Defines the type of the property.
@@ -59,40 +59,40 @@ namespace System.Management.Automation
         {
             get
             {
-                this.cachedType = null;
+                _cachedType = null;
 
-                if (this.cachedType == null)
+                if (_cachedType == null)
                 {
                     IntPtr pFuncDesc = IntPtr.Zero;
 
                     try
                     {
-                        this.typeInfo.GetFuncDesc(GetFuncDescIndex(), out pFuncDesc);
+                        _typeInfo.GetFuncDesc(GetFuncDescIndex(), out pFuncDesc);
                         COM.FUNCDESC funcdesc = ClrFacade.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
 
-                        if (this.hasGetter)
+                        if (_hasGetter)
                         {
                             // use the return type of the getter
-                            this.cachedType = ComUtil.GetTypeFromTypeDesc(funcdesc.elemdescFunc.tdesc);
+                            _cachedType = ComUtil.GetTypeFromTypeDesc(funcdesc.elemdescFunc.tdesc);
                         }
                         else
                         {
                             // use the type of the first argument to the setter
                             ParameterInformation[] parameterInformation = ComUtil.GetParameterInformation(funcdesc, false);
                             Diagnostics.Assert(parameterInformation.Length == 1, "Invalid number of parameters in a property setter");
-                            this.cachedType = parameterInformation[0].parameterType;
+                            _cachedType = parameterInformation[0].parameterType;
                         }
                     }
                     finally
                     {
                         if (pFuncDesc != IntPtr.Zero)
                         {
-                            typeInfo.ReleaseFuncDesc(pFuncDesc);
+                            _typeInfo.ReleaseFuncDesc(pFuncDesc);
                         }
                     }
                 }
 
-                return this.cachedType;
+                return _cachedType;
             }
         }
 
@@ -101,18 +101,18 @@ namespace System.Management.Automation
         /// </summary>
         private int GetFuncDescIndex()
         {
-            if (this.hasGetter)
+            if (_hasGetter)
             {
-                return this.getterIndex;
+                return _getterIndex;
             }
-            else if (this.hasSetter)
+            else if (_hasSetter)
             {
-                return this.setterIndex;
+                return _setterIndex;
             }
             else
             {
-                Diagnostics.Assert(this.hasSetterByRef, "Invalid property setter type");
-                return this.setterByRefIndex;
+                Diagnostics.Assert(_hasSetterByRef, "Invalid property setter type");
+                return _setterByRefIndex;
             }
         }
 
@@ -123,7 +123,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return isparameterizied;
+                return _isparameterizied;
             }
         }
 
@@ -147,7 +147,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return hasSetter | hasSetterByRef;
+                return _hasSetter | _hasSetterByRef;
             }
         }
 
@@ -158,7 +158,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return hasGetter;
+                return _hasGetter;
             }
         }
 
@@ -172,14 +172,13 @@ namespace System.Management.Automation
         {
             try
             {
-                return ComInvoker.Invoke(target as IDispatch, dispId, null, null, COM.INVOKEKIND.INVOKE_PROPERTYGET);
+                return ComInvoker.Invoke(target as IDispatch, _dispId, null, null, COM.INVOKEKIND.INVOKE_PROPERTYGET);
             }
             catch (TargetInvocationException te)
             {
-
                 //First check if this is a severe exception.
                 CommandProcessorBase.CheckForSevereException(te.InnerException);
-                
+
                 var innerCom = te.InnerException as COMException;
                 if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
                 {
@@ -194,7 +193,7 @@ namespace System.Management.Automation
                 }
             }
 
-           return null;
+            return null;
         }
 
         /// <summary>
@@ -208,8 +207,8 @@ namespace System.Management.Automation
             try
             {
                 object[] newarguments;
-                var getterCollection = new Collection<int> {this.getterIndex};
-                var methods = ComUtil.GetMethodInformationArray(this.typeInfo, getterCollection, false);
+                var getterCollection = new Collection<int> { _getterIndex };
+                var methods = ComUtil.GetMethodInformationArray(_typeInfo, getterCollection, false);
                 var bestMethod = (ComMethodInformation)Adapter.GetBestMethodAndArguments(Name, methods, arguments, out newarguments);
 
                 object returnValue = ComInvoker.Invoke(target as IDispatch,
@@ -256,16 +255,16 @@ namespace System.Management.Automation
             object[] propValue = new object[1];
             setValue = Adapter.PropertySetAndMethodArgumentConvertTo(setValue, this.Type, CultureInfo.InvariantCulture);
             propValue[0] = setValue;
-            
+
             try
             {
-                ComInvoker.Invoke(target as IDispatch, dispId, propValue, null, COM.INVOKEKIND.INVOKE_PROPERTYPUT);
+                ComInvoker.Invoke(target as IDispatch, _dispId, propValue, null, COM.INVOKEKIND.INVOKE_PROPERTYPUT);
             }
             catch (TargetInvocationException te)
             {
                 //First check if this is a severe exception.
                 CommandProcessorBase.CheckForSevereException(te.InnerException);
-                
+
                 var innerCom = te.InnerException as COMException;
                 if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
                 {
@@ -290,8 +289,8 @@ namespace System.Management.Automation
         internal void SetValue(Object target, Object setValue, Object[] arguments)
         {
             object[] newarguments;
-            var setterCollection = new Collection<int> { hasSetterByRef ? setterByRefIndex : setterIndex };
-            var methods = ComUtil.GetMethodInformationArray(this.typeInfo, setterCollection, true);
+            var setterCollection = new Collection<int> { _hasSetterByRef ? _setterByRefIndex : _setterIndex };
+            var methods = ComUtil.GetMethodInformationArray(_typeInfo, setterCollection, true);
             var bestMethod = (ComMethodInformation)Adapter.GetBestMethodAndArguments(Name, methods, arguments, out newarguments);
 
             var finalArguments = new object[newarguments.Length + 1];
@@ -316,7 +315,7 @@ namespace System.Management.Automation
             {
                 //First check if this is a severe exception.
                 CommandProcessorBase.CheckForSevereException(te.InnerException);
-              
+
                 var innerCom = te.InnerException as COMException;
                 if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
                 {
@@ -340,35 +339,35 @@ namespace System.Management.Automation
         /// <param name="index">index of function descriptor in type information</param>
         internal void UpdateFuncDesc(COM.FUNCDESC desc, int index)
         {
-            dispId = desc.memid;
+            _dispId = desc.memid;
             switch (desc.invkind)
             {
                 case COM.INVOKEKIND.INVOKE_PROPERTYGET:
-                    hasGetter = true;
-                    getterIndex = index;
+                    _hasGetter = true;
+                    _getterIndex = index;
 
                     if (desc.cParams > 0)
                     {
-                        isparameterizied = true;
+                        _isparameterizied = true;
                     }
                     break;
 
                 case COM.INVOKEKIND.INVOKE_PROPERTYPUT:
-                    hasSetter = true;
-                    setterIndex = index;
+                    _hasSetter = true;
+                    _setterIndex = index;
 
                     if (desc.cParams > 1)
                     {
-                        isparameterizied = true;
+                        _isparameterizied = true;
                     }
                     break;
 
                 case COM.INVOKEKIND.INVOKE_PROPERTYPUTREF:
-                    setterByRefIndex = index;
-                    hasSetterByRef = true;
+                    _setterByRefIndex = index;
+                    _hasSetterByRef = true;
                     if (desc.cParams > 1)
                     {
-                        isparameterizied = true;
+                        _isparameterizied = true;
                     }
                     break;
             }
@@ -380,16 +379,16 @@ namespace System.Management.Automation
 
             try
             {
-                this.typeInfo.GetFuncDesc(GetFuncDescIndex(), out pFuncDesc);
+                _typeInfo.GetFuncDesc(GetFuncDescIndex(), out pFuncDesc);
                 COM.FUNCDESC funcdesc = ClrFacade.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
 
-                return ComUtil.GetMethodSignatureFromFuncDesc(typeInfo, funcdesc, !this.hasGetter);
+                return ComUtil.GetMethodSignatureFromFuncDesc(_typeInfo, funcdesc, !_hasGetter);
             }
             finally
             {
                 if (pFuncDesc != IntPtr.Zero)
                 {
-                    typeInfo.ReleaseFuncDesc(pFuncDesc);
+                    _typeInfo.ReleaseFuncDesc(pFuncDesc);
                 }
             }
         }
@@ -398,27 +397,26 @@ namespace System.Management.Automation
         /// Returns the property signature string
         /// </summary>
         /// <returns>property signature</returns>
-        public override string  ToString()
+        public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
             builder.Append(this.GetDefinition());
             builder.Append(" ");
-            if (hasGetter)
+            if (_hasGetter)
             {
                 builder.Append("{get} ");
             }
-            if (hasSetter)
+            if (_hasSetter)
             {
                 builder.Append("{set} ");
             }
 
-            if (hasSetterByRef)
+            if (_hasSetterByRef)
             {
                 builder.Append("{set by ref}");
             }
 
             return builder.ToString();
         }
-  
     }
 }

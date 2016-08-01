@@ -15,13 +15,13 @@ namespace System.Management.Automation.Internal
     /// NativeMethods.  This allows us to generate code coverage
     /// data specific to architecture sensitive code.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple=false)]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     internal class ArchitectureSensitiveAttribute : Attribute
     {
         /// <summary>
         /// Constructor for the ArchitectureSensitiveAttribute class.
         /// </summary>
-        internal ArchitectureSensitiveAttribute ()
+        internal ArchitectureSensitiveAttribute()
         {
         }
     }

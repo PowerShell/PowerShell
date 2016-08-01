@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell
         /// outstanding progress activity state.
         /// 
         /// </summary>
-        
+
         internal
         void
         ResetProgress()
@@ -32,14 +32,14 @@ namespace Microsoft.PowerShell
             // destroy the data structures representing outstanding progress records
             // take down and destroy the progress display
 
-            if (progPane != null)
+            if (_progPane != null)
             {
-                Dbg.Assert(pendingProgress != null, "How can you have a progress pane and no backing data structure?");
+                Dbg.Assert(_pendingProgress != null, "How can you have a progress pane and no backing data structure?");
 
-                progPane.Hide();
-                progPane = null;
+                _progPane.Hide();
+                _progPane = null;
             }
-            pendingProgress = null;
+            _pendingProgress = null;
         }
 
 
@@ -57,35 +57,35 @@ namespace Microsoft.PowerShell
         {
             Dbg.Assert(record != null, "record should not be null");
 
-            if (pendingProgress == null)
+            if (_pendingProgress == null)
             {
-                Dbg.Assert(progPane == null, "If there is no data struct, there shouldn't be a pane, either.");
+                Dbg.Assert(_progPane == null, "If there is no data struct, there shouldn't be a pane, either.");
 
-                pendingProgress = new PendingProgress();
+                _pendingProgress = new PendingProgress();
             }
 
-            pendingProgress.Update(sourceId, record);
+            _pendingProgress.Update(sourceId, record);
 
-            if (progPane == null)
+            if (_progPane == null)
             {
                 // This is the first time we've received a progress record.  Create a pane to show it, and 
                 // then show it.
 
-                progPane = new ProgressPane(this);
+                _progPane = new ProgressPane(this);
             }
-            progPane.Show(pendingProgress);
+            _progPane.Show(_pendingProgress);
         }
 
 
-        
+
 
         private
         void
         PreWrite()
         {
-            if (progPane != null)
+            if (_progPane != null)
             {
-                progPane.Hide();
+                _progPane.Hide();
             }
         }
 
@@ -95,32 +95,31 @@ namespace Microsoft.PowerShell
         void
         PostWrite()
         {
-            if (progPane != null)
+            if (_progPane != null)
             {
-                progPane.Show();
+                _progPane.Show();
             }
         }
 
-        
-        
+
+
         private
         void
         PostWrite(string value)
         {
             PostWrite();
 
-            if (parent.IsTranscribing)
+            if (_parent.IsTranscribing)
             {
                 try
                 {
-                    parent.WriteToTranscript(value);
+                    _parent.WriteToTranscript(value);
                 }
                 catch (Exception e)
                 {
                     ConsoleHost.CheckForSevereException(e);
-                    parent.IsTranscribing = false;
+                    _parent.IsTranscribing = false;
                 }
-
             }
         }
 
@@ -130,9 +129,9 @@ namespace Microsoft.PowerShell
         void
         PreRead()
         {
-            if (progPane != null)
+            if (_progPane != null)
             {
-                progPane.Hide();
+                _progPane.Hide();
             }
         }
 
@@ -142,9 +141,9 @@ namespace Microsoft.PowerShell
         void
         PostRead()
         {
-            if (progPane != null)
+            if (_progPane != null)
             {
-                progPane.Show();
+                _progPane.Show();
             }
         }
 
@@ -156,29 +155,26 @@ namespace Microsoft.PowerShell
         {
             PostRead();
 
-            if (parent.IsTranscribing)
+            if (_parent.IsTranscribing)
             {
                 try
                 {
                     // Reads always terminate with the enter key, so add that.
-                	parent.WriteToTranscript(value + Crlf);
+                    _parent.WriteToTranscript(value + Crlf);
                 }
                 catch (Exception e)
                 {
                     ConsoleHost.CheckForSevereException(e);
-                    parent.IsTranscribing = false;
+                    _parent.IsTranscribing = false;
                 }
             }
         }
 
-       
-        
-        private ProgressPane progPane = null;
-        private PendingProgress pendingProgress = null;
+
+
+        private ProgressPane _progPane = null;
+        private PendingProgress _pendingProgress = null;
     }
-
-
-
 }   // namespace 
 
 

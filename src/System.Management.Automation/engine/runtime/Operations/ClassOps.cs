@@ -17,6 +17,7 @@ using System.Threading;
 //
 // Because they are called from other assemblies, we have to make them public. 
 // We put them in Internal namespace to emphasise that despite the fact that they are public, it's not part of API contract.
+
 namespace System.Management.Automation.Internal
 {
     /// <summary>
@@ -159,7 +160,6 @@ namespace System.Management.Automation.Internal
             var engineIntrinsics = executionContext == null ? null : executionContext.EngineIntrinsics;
             foreach (var validateAttribute in validateAttributes)
             {
-
                 validateAttribute.InternalValidate(value, engineIntrinsics);
             }
         }
@@ -202,7 +202,7 @@ namespace System.Management.Automation.Internal
         /// A cache for the DynamicMethod objects that call to base method non-virtually.
         /// The cache can clean up the outdated WeakReference entries by itself.
         /// </summary>
-        private static readonly ConditionalWeakTable<MethodInfo, DynamicMethod> NonVirtualCallCache =
+        private static readonly ConditionalWeakTable<MethodInfo, DynamicMethod> s_nonVirtualCallCache =
             new ConditionalWeakTable<MethodInfo, DynamicMethod>();
 
         /// <summary>
@@ -213,7 +213,7 @@ namespace System.Management.Automation.Internal
         /// <param name="args">arguments for invocation</param>
         private static object CallMethodNonVirtuallyImpl(object target, MethodInfo mi, object[] args)
         {
-            DynamicMethod dm = NonVirtualCallCache.GetValue(mi, CreateDynamicMethod);
+            DynamicMethod dm = s_nonVirtualCallCache.GetValue(mi, CreateDynamicMethod);
 
             // The target object will be passed to the hidden parameter 'this' of the instance method 
             var newArgs = new List<object>(args.Length + 1) { target };

@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -37,7 +38,6 @@ using Microsoft.PowerShell.CoreClr.Stubs;
 
 namespace System.Management.Automation
 {
-
     /// <summary>
     /// Wraps an object providing alternate views of the available members 
     /// and ways to extend them. Members can be methods, properties, 
@@ -51,7 +51,7 @@ namespace System.Management.Automation
     [TypeDescriptionProvider(typeof(PSObjectTypeDescriptionProvider))]
 #endif
     [Serializable]
-    public class PSObject: IFormattable, IComparable, ISerializable, IDynamicMetaObjectProvider
+    public class PSObject : IFormattable, IComparable, ISerializable, IDynamicMetaObjectProvider
     {
         #region constructors
 
@@ -134,12 +134,12 @@ namespace System.Management.Automation
                 PSObject.memberResolution.WriteLine("Serialized adapted member: {0}.", adaptedMember == null ? "not found" : adaptedMember.Name);
                 return adaptedMember;
             }
-            T retValue = msjObj.InternalAdapter.BaseGetMember<T>(msjObj.immediateBaseObject, name);
+            T retValue = msjObj.InternalAdapter.BaseGetMember<T>(msjObj._immediateBaseObject, name);
             PSObject.memberResolution.WriteLine("Adapted member: {0}.", retValue == null ? "not found" : retValue.Name);
             return retValue;
         }
 
-        internal static PSMemberInfoInternalCollection<U> TransformMemberInfoCollection<T, U>(PSMemberInfoCollection<T> source) where T: PSMemberInfo where U: PSMemberInfo
+        internal static PSMemberInfoInternalCollection<U> TransformMemberInfoCollection<T, U>(PSMemberInfoCollection<T> source) where T : PSMemberInfo where U : PSMemberInfo
         {
             if (typeof(T) == typeof(U))
             {
@@ -170,7 +170,7 @@ namespace System.Management.Automation
                 PSObject.memberResolution.WriteLine("Serialized adapted members: {0}.", msjObj.adaptedMembers.Count);
                 return TransformMemberInfoCollection<PSPropertyInfo, T>(msjObj.adaptedMembers);
             }
-            PSMemberInfoInternalCollection<T> retValue = msjObj.InternalAdapter.BaseGetMembers<T>(msjObj.immediateBaseObject);
+            PSMemberInfoInternalCollection<T> retValue = msjObj.InternalAdapter.BaseGetMembers<T>(msjObj._immediateBaseObject);
             PSObject.memberResolution.WriteLine("Adapted members: {0}.", retValue.VisibleCount);
             return retValue;
         }
@@ -180,7 +180,7 @@ namespace System.Management.Automation
             // Don't lookup dotnet members if the object doesn't insist.
             if (null != msjObj.InternalAdapterSet.DotNetAdapter)
             {
-                PSMemberInfoInternalCollection<T> retValue = msjObj.InternalAdapterSet.DotNetAdapter.BaseGetMembers<T>(msjObj.immediateBaseObject);
+                PSMemberInfoInternalCollection<T> retValue = msjObj.InternalAdapterSet.DotNetAdapter.BaseGetMembers<T>(msjObj._immediateBaseObject);
                 PSObject.memberResolution.WriteLine("DotNet members: {0}.", retValue.VisibleCount);
                 return retValue;
             }
@@ -193,7 +193,7 @@ namespace System.Management.Automation
             // Don't lookup dotnet member if the object doesn't insist.
             if (null != msjObj.InternalAdapterSet.DotNetAdapter)
             {
-                T retValue = msjObj.InternalAdapterSet.DotNetAdapter.BaseGetMember<T>(msjObj.immediateBaseObject, name);
+                T retValue = msjObj.InternalAdapterSet.DotNetAdapter.BaseGetMember<T>(msjObj._immediateBaseObject, name);
                 PSObject.memberResolution.WriteLine("DotNet member: {0}.", retValue == null ? "not found" : retValue.Name);
                 return retValue;
             }
@@ -201,9 +201,9 @@ namespace System.Management.Automation
             return null;
         }
 
-        static Collection<CollectionEntry<PSMemberInfo>> memberCollection = GetMemberCollection(PSMemberViewTypes.All);
-        static Collection<CollectionEntry<PSMethodInfo>> methodCollection = GetMethodCollection();
-        static Collection<CollectionEntry<PSPropertyInfo>> propertyCollection = GetPropertyCollection(PSMemberViewTypes.All);
+        private static Collection<CollectionEntry<PSMemberInfo>> s_memberCollection = GetMemberCollection(PSMemberViewTypes.All);
+        private static Collection<CollectionEntry<PSMethodInfo>> s_methodCollection = GetMethodCollection();
+        private static Collection<CollectionEntry<PSPropertyInfo>> s_propertyCollection = GetPropertyCollection(PSMemberViewTypes.All);
 
         /// <summary>
         /// A collection of delegates to get Extended/Adapated/Dotnet members based on the 
@@ -246,11 +246,11 @@ namespace System.Management.Automation
                 else
                 {
                     returnValue.Add(new CollectionEntry<PSMemberInfo>(
-                        delegate(PSObject msjObj)
+                        delegate (PSObject msjObj)
                         {
                             return TypeTableGetMembersDelegate<PSMemberInfo>(msjObj, backupTypeTable);
                         },
-                        delegate(PSObject msjObj, string name)
+                        delegate (PSObject msjObj, string name)
                         {
                             return TypeTableGetMemberDelegate<PSMemberInfo>(msjObj, backupTypeTable, name);
                         },
@@ -334,11 +334,11 @@ namespace System.Management.Automation
                 else
                 {
                     returnValue.Add(new CollectionEntry<PSPropertyInfo>(
-                        delegate(PSObject msjObj)
+                        delegate (PSObject msjObj)
                         {
                             return TypeTableGetMembersDelegate<PSPropertyInfo>(msjObj, backupTypeTable);
                         },
-                        delegate(PSObject msjObj, string name)
+                        delegate (PSObject msjObj, string name)
                         {
                             return TypeTableGetMemberDelegate<PSPropertyInfo>(msjObj, backupTypeTable, name);
                         },
@@ -370,20 +370,20 @@ namespace System.Management.Automation
                 this.immediateBaseObjectIsEmpty = true;
             }
 
-            this.immediateBaseObject = obj;
+            _immediateBaseObject = obj;
             var context = LocalPipeline.GetExecutionContextFromTLS();
             _typeTable = context != null ? context.TypeTableWeakReference : null;
         }
 
         internal static readonly DotNetAdapter dotNetInstanceAdapter = new DotNetAdapter();
-        private static readonly DotNetAdapter baseAdapterForAdaptedObjects = new BaseDotNetAdapterForAdaptedObjects();
+        private static readonly DotNetAdapter s_baseAdapterForAdaptedObjects = new BaseDotNetAdapterForAdaptedObjects();
         internal static readonly DotNetAdapter dotNetStaticAdapter = new DotNetAdapter(true);
 
-        private static readonly AdapterSet dotNetInstanceAdapterSet = new AdapterSet(dotNetInstanceAdapter, null);
-        private static readonly AdapterSet mshMemberSetAdapter = new AdapterSet(new PSMemberSetAdapter(), null);
-        private static readonly AdapterSet mshObjectAdapter = new AdapterSet(new PSObjectAdapter(), null);
-        private static PSObject.AdapterSet cimInstanceAdapter =
-            new PSObject.AdapterSet(new ThirdPartyAdapter(typeof (Microsoft.Management.Infrastructure.CimInstance),
+        private static readonly AdapterSet s_dotNetInstanceAdapterSet = new AdapterSet(dotNetInstanceAdapter, null);
+        private static readonly AdapterSet s_mshMemberSetAdapter = new AdapterSet(new PSMemberSetAdapter(), null);
+        private static readonly AdapterSet s_mshObjectAdapter = new AdapterSet(new PSObjectAdapter(), null);
+        private static PSObject.AdapterSet s_cimInstanceAdapter =
+            new PSObject.AdapterSet(new ThirdPartyAdapter(typeof(Microsoft.Management.Infrastructure.CimInstance),
                                                           new Microsoft.PowerShell.Cim.CimInstanceAdapter()),
                                     PSObject.dotNetInstanceAdapter);
 
@@ -391,41 +391,41 @@ namespace System.Management.Automation
         private static readonly AdapterSet managementObjectAdapter = new AdapterSet(new ManagementObjectAdapter(), dotNetInstanceAdapter);
         private static readonly AdapterSet managementClassAdapter = new AdapterSet(new ManagementClassApdapter(), dotNetInstanceAdapter);
         private static readonly AdapterSet directoryEntryAdapter = new AdapterSet(new DirectoryEntryAdapter(), dotNetInstanceAdapter);
-        private static readonly AdapterSet dataRowViewAdapter = new AdapterSet(new DataRowViewAdapter(), baseAdapterForAdaptedObjects);
-        private static readonly AdapterSet dataRowAdapter = new AdapterSet(new DataRowAdapter(), baseAdapterForAdaptedObjects);
+        private static readonly AdapterSet dataRowViewAdapter = new AdapterSet(new DataRowViewAdapter(), s_baseAdapterForAdaptedObjects);
+        private static readonly AdapterSet dataRowAdapter = new AdapterSet(new DataRowAdapter(), s_baseAdapterForAdaptedObjects);
 #endif
-        private static readonly AdapterSet xmlNodeAdapter = new AdapterSet(new XmlNodeAdapter(), baseAdapterForAdaptedObjects);
+        private static readonly AdapterSet s_xmlNodeAdapter = new AdapterSet(new XmlNodeAdapter(), s_baseAdapterForAdaptedObjects);
 
         #region Adapter Mappings
 
-        private static readonly ConcurrentDictionary<Type, AdapterSet> _adapterMapping = new ConcurrentDictionary<Type, AdapterSet>();
-        private static readonly List<Func<object, AdapterSet>> _adapterSetMappers = new List<Func<object, AdapterSet>>
+        private static readonly ConcurrentDictionary<Type, AdapterSet> s_adapterMapping = new ConcurrentDictionary<Type, AdapterSet>();
+        private static readonly List<Func<object, AdapterSet>> s_adapterSetMappers = new List<Func<object, AdapterSet>>
                                                                                     {
                                                                                         MappedInternalAdapterSet
                                                                                     };
 
         internal static void RegisterAdapterMapping(Func<object, AdapterSet> mapper)
         {
-            lock (_adapterSetMappers)
+            lock (s_adapterSetMappers)
             {
-                _adapterSetMappers.Add(mapper);
+                s_adapterSetMappers.Add(mapper);
             }
         }
 
         private static AdapterSet MappedInternalAdapterSet(object obj)
         {
-            if (obj is PSMemberSet) { return PSObject.mshMemberSetAdapter; }
-            if (obj is PSObject) { return PSObject.mshObjectAdapter; }
-            if (obj is CimInstance)          { return PSObject.cimInstanceAdapter; }
+            if (obj is PSMemberSet) { return PSObject.s_mshMemberSetAdapter; }
+            if (obj is PSObject) { return PSObject.s_mshObjectAdapter; }
+            if (obj is CimInstance) { return PSObject.s_cimInstanceAdapter; }
 
 #if !CORECLR // WMIv1/ADSI/DataRow/DataRowView Adapters Not Supported On CSS
-            if (obj is ManagementClass)      { return PSObject.managementClassAdapter; }
+            if (obj is ManagementClass) { return PSObject.managementClassAdapter; }
             if (obj is ManagementBaseObject) { return PSObject.managementObjectAdapter; }
-            if (obj is DirectoryEntry)       { return PSObject.directoryEntryAdapter; }
-            if (obj is DataRowView)          { return PSObject.dataRowViewAdapter; }
-            if (obj is DataRow)              { return PSObject.dataRowAdapter; }
+            if (obj is DirectoryEntry) { return PSObject.directoryEntryAdapter; }
+            if (obj is DataRowView) { return PSObject.dataRowViewAdapter; }
+            if (obj is DataRow) { return PSObject.dataRowAdapter; }
 #endif
-            if (obj is XmlNode) { return PSObject.xmlNodeAdapter; }
+            if (obj is XmlNode) { return PSObject.s_xmlNodeAdapter; }
             return null;
         }
 
@@ -450,14 +450,14 @@ namespace System.Management.Automation
             }
 
             AdapterSet result;
-            if (_adapterMapping.TryGetValue(objectType, out result))
+            if (s_adapterMapping.TryGetValue(objectType, out result))
             {
                 return result;
             }
 
-            lock (_adapterSetMappers)
+            lock (s_adapterSetMappers)
             {
-                foreach (var mapper in _adapterSetMappers)
+                foreach (var mapper in s_adapterSetMappers)
                 {
                     result = mapper(obj);
                     if (result != null)
@@ -475,7 +475,7 @@ namespace System.Management.Automation
                     // All WinRT types would contain the TypeAttributes flag being set to WindowsRunTime.
                     if (WinRTHelper.IsWinRTType(objectType))
                     {
-                        result = PSObject.dotNetInstanceAdapterSet;
+                        result = PSObject.s_dotNetInstanceAdapterSet;
                     }
 
                     // We are not using IsAssignableFrom because we want to avoid
@@ -491,23 +491,23 @@ namespace System.Management.Automation
                         ComTypeInfo info = ComTypeInfo.GetDispatchTypeInfo(obj);
                         return info != null
                                    ? new AdapterSet(new ComAdapter(info), dotNetInstanceAdapter)
-                                   : PSObject.dotNetInstanceAdapterSet;
+                                   : PSObject.s_dotNetInstanceAdapterSet;
                     }
                     else
                     {
                         ComTypeInfo info = ComTypeInfo.GetDispatchTypeInfo(obj);
                         result = info != null
                                    ? new AdapterSet(new DotNetAdapterWithComTypeName(info), null)
-                                   : PSObject.dotNetInstanceAdapterSet;
+                                   : PSObject.s_dotNetInstanceAdapterSet;
                     }
                 }
                 else
                 {
-                    result = PSObject.dotNetInstanceAdapterSet;
+                    result = PSObject.s_dotNetInstanceAdapterSet;
                 }
             }
 
-            var existingOrNew = _adapterMapping.GetOrAdd(objectType, result);
+            var existingOrNew = s_adapterMapping.GetOrAdd(objectType, result);
             Diagnostics.Assert(existingOrNew == result, "There is a logic error in caching adapter sets.");
 
             return result;
@@ -517,7 +517,7 @@ namespace System.Management.Automation
 
         internal static AdapterSet CreateThirdPartyAdapterSet(Type adaptedType, PSPropertyAdapter adapter)
         {
-            return new AdapterSet(new ThirdPartyAdapter(adaptedType, adapter), baseAdapterForAdaptedObjects);
+            return new AdapterSet(new ThirdPartyAdapter(adaptedType, adapter), s_baseAdapterForAdaptedObjects);
         }
 
         #endregion private to the constructors
@@ -536,7 +536,7 @@ namespace System.Management.Automation
         /// <param name="obj">object we are wrapping</param>
         /// <exception cref="ArgumentNullException">if <paramref name="obj"/> is null</exception>
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "This is shipped as part of V1. Retaining this for backward compatibility.")]
-        public PSObject (object obj)
+        public PSObject(object obj)
         {
             if (obj == null)
             {
@@ -580,7 +580,7 @@ namespace System.Management.Automation
         #region fields
 
         #region instance fields
-        private object lockObject = new Object();
+        private object _lockObject = new Object();
 
         /// <summary>
         /// If this is non-null return this string as the ToString() for this wrapped object.
@@ -591,7 +591,7 @@ namespace System.Management.Automation
         /// This is the main field in the class representing
         /// the System.Object we are encapsulating
         /// </summary>
-        private object immediateBaseObject;
+        private object _immediateBaseObject;
 
 
         private WeakReference<TypeTable> _typeTable;
@@ -639,21 +639,21 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == adapterSet)
+                if (null == _adapterSet)
                 {
-                    lock (lockObject)
+                    lock (_lockObject)
                     {
-                        if (null == adapterSet)
+                        if (null == _adapterSet)
                         {
-                            adapterSet = GetMappedAdapter(immediateBaseObject, GetTypeTable());
+                            _adapterSet = GetMappedAdapter(_immediateBaseObject, GetTypeTable());
                         }
                     }
                 }
 
-                return adapterSet;
+                return _adapterSet;
             }
         }
-        private AdapterSet adapterSet;
+        private AdapterSet _adapterSet;
 
         internal bool hasGeneratedReservedMembers;
 
@@ -663,21 +663,21 @@ namespace System.Management.Automation
             {
                 if (_instanceMembers == null)
                 {
-                    lock (lockObject)
+                    lock (_lockObject)
                     {
                         if (_instanceMembers == null)
                         {
                             _instanceMembers =
-                                _instanceMembersResurrectionTable.GetValue(
+                                s_instanceMembersResurrectionTable.GetValue(
                                     GetKeyForResurrectionTables(this),
                                     _ => new PSMemberInfoInternalCollection<PSMemberInfo>());
-                        }        
+                        }
                     }
                 }
 
                 return _instanceMembers;
             }
-            set 
+            set
             {
                 _instanceMembers = value;
             }
@@ -693,7 +693,7 @@ namespace System.Management.Automation
                 {
                     if (psobj._instanceMembers == null)
                     {
-                        _instanceMembersResurrectionTable.TryGetValue(GetKeyForResurrectionTables(psobj),
+                        s_instanceMembersResurrectionTable.TryGetValue(GetKeyForResurrectionTables(psobj),
                                                                         out psobj._instanceMembers);
                     }
                 }
@@ -701,7 +701,7 @@ namespace System.Management.Automation
             }
             else if (obj != null)
             {
-                _instanceMembersResurrectionTable.TryGetValue(GetKeyForResurrectionTables(obj), out instanceMembers);
+                s_instanceMembersResurrectionTable.TryGetValue(GetKeyForResurrectionTables(obj), out instanceMembers);
             }
             else
             {
@@ -711,7 +711,7 @@ namespace System.Management.Automation
             return instanceMembers != null && instanceMembers.Count > 0;
         }
 
-        private static readonly ConditionalWeakTable<object, PSMemberInfoInternalCollection<PSMemberInfo>> _instanceMembersResurrectionTable =
+        private static readonly ConditionalWeakTable<object, PSMemberInfoInternalCollection<PSMemberInfo>> s_instanceMembersResurrectionTable =
             new ConditionalWeakTable<object, PSMemberInfoInternalCollection<PSMemberInfo>>();
 
         /// <summary>
@@ -741,7 +741,7 @@ namespace System.Management.Automation
 
         #endregion instance fields
 
-        
+
         #endregion fields
 
         #region properties
@@ -753,14 +753,14 @@ namespace System.Management.Automation
         {
             get
             {
-                if(_members == null)
+                if (_members == null)
                 {
-                    lock(lockObject)
+                    lock (_lockObject)
                     {
-                        if(_members == null)
+                        if (_members == null)
                         {
-                            _members = new PSMemberInfoIntegratingCollection<PSMemberInfo>(this, memberCollection);
-                        }        
+                            _members = new PSMemberInfoIntegratingCollection<PSMemberInfo>(this, s_memberCollection);
+                        }
                     }
                 }
 
@@ -776,15 +776,14 @@ namespace System.Management.Automation
         {
             get
             {
-                if(_properties == null)
+                if (_properties == null)
                 {
-                    lock(lockObject)
+                    lock (_lockObject)
                     {
-                        if(_properties == null)
+                        if (_properties == null)
                         {
-                            _properties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(this,propertyCollection);
-
-                        }        
+                            _properties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(this, s_propertyCollection);
+                        }
                     }
                 }
 
@@ -800,14 +799,14 @@ namespace System.Management.Automation
         {
             get
             {
-                if(_methods == null)
+                if (_methods == null)
                 {
-                    lock(lockObject)
+                    lock (_lockObject)
                     {
-                        if(_methods == null)
+                        if (_methods == null)
                         {
-                            _methods = new PSMemberInfoIntegratingCollection<PSMethodInfo>(this, methodCollection);
-                        }        
+                            _methods = new PSMemberInfoIntegratingCollection<PSMethodInfo>(this, s_methodCollection);
+                        }
                     }
                 }
 
@@ -826,7 +825,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.immediateBaseObject;
+                return _immediateBaseObject;
             }
         }
 
@@ -843,7 +842,7 @@ namespace System.Management.Automation
                 PSObject mshObj = this;
                 do
                 {
-                    returnValue = mshObj.immediateBaseObject;
+                    returnValue = mshObj._immediateBaseObject;
                     mshObj = returnValue as PSObject;
                 } while (mshObj != null);
 
@@ -861,12 +860,12 @@ namespace System.Management.Automation
                 var result = InternalTypeNames;
                 if (result.IsReadOnly)
                 {
-                    lock (lockObject)
+                    lock (_lockObject)
                     {
                         // Check again after acquiring the lock to ensure some other thread didn't make the copy.
                         if (result.IsReadOnly)
                         {
-                            _typeNames = _typeNamesResurrectionTable.GetValue(
+                            _typeNames = s_typeNamesResurrectionTable.GetValue(
                                             GetKeyForResurrectionTables(this),
                                             _ => new ConsolidatedString(_typeNames));
 
@@ -886,13 +885,13 @@ namespace System.Management.Automation
         {
             get
             {
-                if(_typeNames == null)
+                if (_typeNames == null)
                 {
-                    lock(lockObject)
+                    lock (_lockObject)
                     {
-                        if(_typeNames == null)
+                        if (_typeNames == null)
                         {
-                            if (!_typeNamesResurrectionTable.TryGetValue(GetKeyForResurrectionTables(this), out _typeNames))
+                            if (!s_typeNamesResurrectionTable.TryGetValue(GetKeyForResurrectionTables(this), out _typeNames))
                             {
                                 // We don't cache this typename in the resurrection table because it's cached in the psobject,
                                 // and the assumption is we'll usually get the value directly from the PSObject, so it's not
@@ -900,7 +899,7 @@ namespace System.Management.Automation
                                 //
                                 // If we hand out the typename to a client that could change it (through the public property
                                 // TypeNames), then we'll need to store the copy in the resurrection table.
-                                _typeNames = InternalAdapter.BaseGetTypeNameHierarchy(immediateBaseObject);
+                                _typeNames = InternalAdapter.BaseGetTypeNameHierarchy(_immediateBaseObject);
                             }
                         }
                     }
@@ -932,11 +931,11 @@ namespace System.Management.Automation
 
         internal static bool HasInstanceTypeName(object obj, out ConsolidatedString result)
         {
-            return _typeNamesResurrectionTable.TryGetValue(GetKeyForResurrectionTables(obj), out result);
+            return s_typeNamesResurrectionTable.TryGetValue(GetKeyForResurrectionTables(obj), out result);
         }
 
         private ConsolidatedString _typeNames;
-        private static readonly ConditionalWeakTable<object, ConsolidatedString> _typeNamesResurrectionTable = new ConditionalWeakTable<object, ConsolidatedString>();
+        private static readonly ConditionalWeakTable<object, ConsolidatedString> s_typeNamesResurrectionTable = new ConditionalWeakTable<object, ConsolidatedString>();
 
         #endregion properties
 
@@ -1009,7 +1008,7 @@ namespace System.Management.Automation
             object returnValue = null;
             do
             {
-                returnValue = mshObj.immediateBaseObject;
+                returnValue = mshObj._immediateBaseObject;
                 mshObj = returnValue as PSObject;
             } while ((mshObj != null) && (!mshObj.immediateBaseObjectIsEmpty));
 
@@ -1180,7 +1179,7 @@ namespace System.Management.Automation
 
                 // Don't evaluate script properties during a ToString() operation.
                 Object propertyValue = null;
-                if(property is PSScriptProperty)
+                if (property is PSScriptProperty)
                 {
                     propertyValue = property.GetType().FullName;
                 }
@@ -1283,20 +1282,20 @@ namespace System.Management.Automation
                     case TypeCode.UInt64:
                         return obj.ToString();
                     case TypeCode.DateTime:
-                        DateTime dt = (DateTime) obj;
+                        DateTime dt = (DateTime)obj;
                         return dt.ToString(formatProvider);
                     case TypeCode.Decimal:
-                        Decimal dec = (Decimal) obj;
+                        Decimal dec = (Decimal)obj;
                         return dec.ToString(formatProvider);
                     case TypeCode.Double:
-                        double dbl = (double) obj;
+                        double dbl = (double)obj;
                         return dbl.ToString(formatProvider);
 
                     case TypeCode.Single:
-                        float sgl = (float) obj;
+                        float sgl = (float)obj;
                         return sgl.ToString(formatProvider);
                 }
-                    
+
                 #region recurse
                 if (recurse)
                 {
@@ -1355,7 +1354,7 @@ namespace System.Management.Automation
                         ExtendedTypeSystem.ToStringException, e.Message);
                 }
                 #endregion object ToString
-            } 
+            }
             #endregion plain object
 
             #region PSObject
@@ -1471,7 +1470,7 @@ namespace System.Management.Automation
 
             // Since we don't have a brokered ToString and the enumerations were not necessary or failed
             // we try the BaseObject's ToString
-            object baseObject = mshObj.immediateBaseObject;
+            object baseObject = mshObj._immediateBaseObject;
             IFormattable msjObjFormattable = baseObject as IFormattable;
             try
             {
@@ -1512,13 +1511,13 @@ namespace System.Management.Automation
         /// <exception cref="ExtendedTypeSystemException">if an exception was thrown by the BaseObject's ToString</exception>
         public override string ToString()
         {
-                //If ToString value from deserialization is available,
-                //simply return it.
-                if (toStringFromDeserialization != null)
-                {
-                    return toStringFromDeserialization;
-                }
-                return PSObject.ToString(null, this, null, null, null, true, false);
+            //If ToString value from deserialization is available,
+            //simply return it.
+            if (_toStringFromDeserialization != null)
+            {
+                return _toStringFromDeserialization;
+            }
+            return PSObject.ToString(null, this, null, null, null, true, false);
         }
 
         /// <summary>
@@ -1530,15 +1529,15 @@ namespace System.Management.Automation
         /// <param name="formatProvider">repassed to baseObject's IFormatable if present</param>
         /// <returns>the string representation for baseObject</returns>
         /// <exception cref="ExtendedTypeSystemException">if an exception was thrown by the BaseObject's ToString</exception>
-        public string ToString (string format, IFormatProvider formatProvider)
+        public string ToString(string format, IFormatProvider formatProvider)
         {
-                //If ToString value from deserialization is available,
-                //simply return it.
-                if (toStringFromDeserialization != null)
-                {
-                    return toStringFromDeserialization;
-                }
-                return PSObject.ToString(null, this, null, format, formatProvider, true, false);
+            //If ToString value from deserialization is available,
+            //simply return it.
+            if (_toStringFromDeserialization != null)
+            {
+                return _toStringFromDeserialization;
+            }
+            return PSObject.ToString(null, this, null, format, formatProvider, true, false);
         }
 
         private string PrivateToString()
@@ -1546,9 +1545,9 @@ namespace System.Management.Automation
             string result;
             try
             {
-                 result = this.ToString();
+                result = this.ToString();
             }
-            catch(ExtendedTypeSystemException)
+            catch (ExtendedTypeSystemException)
             {
                 result = this.BaseObject.GetType().FullName;
             }
@@ -1570,12 +1569,12 @@ namespace System.Management.Automation
 
             if (this.BaseObject is PSCustomObject)
             {
-                returnValue.immediateBaseObject = PSCustomObject.SelfInstance;
+                returnValue._immediateBaseObject = PSCustomObject.SelfInstance;
                 returnValue.immediateBaseObjectIsEmpty = true;
             }
             else
             {
-                returnValue.immediateBaseObject = this.immediateBaseObject;
+                returnValue._immediateBaseObject = _immediateBaseObject;
                 returnValue.immediateBaseObjectIsEmpty = false;
             }
 
@@ -1585,21 +1584,21 @@ namespace System.Management.Automation
             // especially on a PSCustomObject - e.g. to a help object where we want to force a different view.
             returnValue._typeNames = null;
 
-            returnValue._members = new PSMemberInfoIntegratingCollection<PSMemberInfo>(returnValue, memberCollection);
-            returnValue._properties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(returnValue, propertyCollection);
-            returnValue._methods = new PSMemberInfoIntegratingCollection<PSMethodInfo>(returnValue, methodCollection);
+            returnValue._members = new PSMemberInfoIntegratingCollection<PSMemberInfo>(returnValue, s_memberCollection);
+            returnValue._properties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(returnValue, s_propertyCollection);
+            returnValue._methods = new PSMemberInfoIntegratingCollection<PSMethodInfo>(returnValue, s_methodCollection);
 
-            returnValue.adapterSet = GetMappedAdapter(returnValue.immediateBaseObject, returnValue.GetTypeTable());
+            returnValue._adapterSet = GetMappedAdapter(returnValue._immediateBaseObject, returnValue.GetTypeTable());
 
-            ICloneable cloneableBase = returnValue.immediateBaseObject as ICloneable;
+            ICloneable cloneableBase = returnValue._immediateBaseObject as ICloneable;
             if (cloneableBase != null)
             {
-                returnValue.immediateBaseObject = cloneableBase.Clone();
+                returnValue._immediateBaseObject = cloneableBase.Clone();
             }
 
-            if (returnValue.immediateBaseObject is ValueType)
+            if (returnValue._immediateBaseObject is ValueType)
             {
-                returnValue.immediateBaseObject = CopyValueType(returnValue.immediateBaseObject);
+                returnValue._immediateBaseObject = CopyValueType(returnValue._immediateBaseObject);
             }
 
 
@@ -1791,7 +1790,7 @@ namespace System.Management.Automation
         internal const string PSTypeNames = "pstypenames";
 
         #endregion public const strings
-   
+
         #region serialization
 
         /// <summary>
@@ -1844,8 +1843,8 @@ namespace System.Management.Automation
         /// PSObject to be used while replicating the owner for PSMemeberSet
         /// </param>
         /// <returns></returns>
-        internal static object GetNoteSettingValue(PSMemberSet settings, string noteName, 
-            object defaultValue, Type expectedType, 
+        internal static object GetNoteSettingValue(PSMemberSet settings, string noteName,
+            object defaultValue, Type expectedType,
             bool shouldReplicateInstance, PSObject ownerObject)
         {
             if (settings == null)
@@ -1879,7 +1878,7 @@ namespace System.Management.Automation
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
             if (null != typeTable)
             {
-                PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(this, 
+                PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(this,
                     typeTable, TypeTable.PSStandardMembers);
                 result = (int)GetNoteSettingValue(standardMemberSet, TypeTable.SerializationDepth, 0, typeof(int), true, this);
             }
@@ -1916,7 +1915,7 @@ namespace System.Management.Automation
             TypeTable typeTable = backupTypeTable != null ? backupTypeTable : this.GetTypeTable();
             if (null != typeTable)
             {
-                PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(this, 
+                PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(this,
                     typeTable, TypeTable.PSStandardMembers);
                 result = (SerializationMethod)GetNoteSettingValue(standardMemberSet,
                         TypeTable.SerializationMethodNode, TypeTable.defaultSerializationMethod, typeof(SerializationMethod), true, this);
@@ -1930,11 +1929,11 @@ namespace System.Management.Automation
             get
             {
                 PSMemberSet retVal = null;
-                
+
                 retVal = TypeTableGetMemberDelegate<PSMemberSet>(this, TypeTable.PSStandardMembers);
                 if (retVal != null)
                 {
-                    retVal = (PSMemberSet) retVal.Copy();
+                    retVal = (PSMemberSet)retVal.Copy();
                     retVal.ReplicateInstance(this);
                     return retVal;
                 }
@@ -1956,9 +1955,9 @@ namespace System.Management.Automation
                 if (null != standardMemberSet)
                 {
                     standardMemberSet.ReplicateInstance(this);
-                    PSMemberInfoIntegratingCollection<PSMemberInfo> members = 
+                    PSMemberInfoIntegratingCollection<PSMemberInfo> members =
                         new PSMemberInfoIntegratingCollection<PSMemberInfo>(
-                            standardMemberSet, 
+                            standardMemberSet,
                             GetMemberCollection(PSMemberViewTypes.All, backupTypeTable));
                     result = members[memberName];
                 }
@@ -2015,16 +2014,15 @@ namespace System.Management.Automation
             return new Collection<string>(new List<string>());
         }
 
-        internal bool ShouldSerializeAdapter ()
+        internal bool ShouldSerializeAdapter()
         {
             if (this.isDeserialized)
             {
                 return this.adaptedMembers != null;
             }
             return !this.immediateBaseObjectIsEmpty;
-
         }
-        internal bool ShouldSerializeBase ()
+        internal bool ShouldSerializeBase()
         {
             if (this.isDeserialized)
             {
@@ -2037,17 +2035,17 @@ namespace System.Management.Automation
             return (this.InternalAdapter.GetType() != typeof(DotNetAdapter));
         }
 
-        internal PSMemberInfoInternalCollection<PSPropertyInfo> GetAdaptedProperties ()
+        internal PSMemberInfoInternalCollection<PSPropertyInfo> GetAdaptedProperties()
         {
-            return GetProperties (this.adaptedMembers, this.InternalAdapter);
+            return GetProperties(this.adaptedMembers, this.InternalAdapter);
         }
 
-        internal PSMemberInfoInternalCollection<PSPropertyInfo> GetBaseProperties ()
+        internal PSMemberInfoInternalCollection<PSPropertyInfo> GetBaseProperties()
         {
             return GetProperties(this.clrMembers, dotNetInstanceAdapter);
         }
 
-        private PSMemberInfoInternalCollection<PSPropertyInfo> GetProperties (PSMemberInfoInternalCollection<PSPropertyInfo> serializedMembers, Adapter particularAdapter)
+        private PSMemberInfoInternalCollection<PSPropertyInfo> GetProperties(PSMemberInfoInternalCollection<PSPropertyInfo> serializedMembers, Adapter particularAdapter)
         {
             if (this.isDeserialized)
             {
@@ -2055,7 +2053,7 @@ namespace System.Management.Automation
             }
             PSMemberInfoInternalCollection<PSPropertyInfo> returnValue = new PSMemberInfoInternalCollection<PSPropertyInfo>();
 
-            foreach (PSPropertyInfo member in particularAdapter.BaseGetMembers<PSPropertyInfo>(this.immediateBaseObject))
+            foreach (PSPropertyInfo member in particularAdapter.BaseGetMembers<PSPropertyInfo>(_immediateBaseObject))
             {
                 returnValue.Add(member);
             }
@@ -2077,9 +2075,9 @@ namespace System.Management.Automation
                 target.clrMembers = source.clrMembers;
             }
 
-            if (target.toStringFromDeserialization == null)
+            if (target._toStringFromDeserialization == null)
             {
-                target.toStringFromDeserialization = source.toStringFromDeserialization;
+                target._toStringFromDeserialization = source._toStringFromDeserialization;
                 target.TokenText = source.TokenText;
             }
         }
@@ -2095,8 +2093,8 @@ namespace System.Management.Automation
             Diagnostics.Assert(this.immediateBaseObjectIsEmpty, "BaseObject should be PSCustomObject for deserialized objects");
             Diagnostics.Assert(value != null, "known objects are never null");
             this.immediateBaseObjectIsEmpty = false;
-            immediateBaseObject = value;
-            adapterSet = GetMappedAdapter(immediateBaseObject, GetTypeTable());
+            _immediateBaseObject = value;
+            _adapterSet = GetMappedAdapter(_immediateBaseObject, GetTypeTable());
             if (overrideTypeInfo)
             {
                 this.InternalTypeNames = this.InternalAdapter.BaseGetTypeNameHierarchy(value);
@@ -2104,7 +2102,7 @@ namespace System.Management.Automation
         }
 
         //This is toString value set on deserialization
-        private string toStringFromDeserialization = null;
+        private string _toStringFromDeserialization = null;
 
         internal bool preserveToString = false;
         internal bool preserveToStringSet = false;
@@ -2124,7 +2122,7 @@ namespace System.Management.Automation
                 }
 
                 preserveToString = false;
- 
+
                 return preserveToString;
             }
         }
@@ -2136,11 +2134,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return toStringFromDeserialization;
+                return _toStringFromDeserialization;
             }
             set
             {
-                toStringFromDeserialization = value;
+                _toStringFromDeserialization = value;
             }
         }
 
@@ -2171,9 +2169,9 @@ namespace System.Management.Automation
             #region Private Data
 
             // orginal adapter like Xml, ManagementClass, DirectoryEntry etc.
-            private Adapter originalAdapter;
+            private Adapter _originalAdapter;
             // .net adapter
-            private DotNetAdapter ultimatedotNetAdapter;
+            private DotNetAdapter _ultimatedotNetAdapter;
 
             #endregion
 
@@ -2183,15 +2181,15 @@ namespace System.Management.Automation
             /// This property can be accessed only internally and hence
             /// no checks are performed on input.
             /// </summary>
-            internal Adapter OriginalAdapter 
-            { 
-                get { return originalAdapter; }
-                set { originalAdapter = value; }
+            internal Adapter OriginalAdapter
+            {
+                get { return _originalAdapter; }
+                set { _originalAdapter = value; }
             }
 
-            internal DotNetAdapter DotNetAdapter 
-            { 
-                get { return ultimatedotNetAdapter; } 
+            internal DotNetAdapter DotNetAdapter
+            {
+                get { return _ultimatedotNetAdapter; }
             }
 
             #endregion
@@ -2200,8 +2198,8 @@ namespace System.Management.Automation
 
             internal AdapterSet(Adapter adapter, DotNetAdapter dotnetAdapter)
             {
-                originalAdapter = adapter;
-                ultimatedotNetAdapter = dotnetAdapter;
+                _originalAdapter = adapter;
+                _ultimatedotNetAdapter = dotnetAdapter;
             }
 
             #endregion
@@ -2216,7 +2214,7 @@ namespace System.Management.Automation
             {
             }
 
-            new PSObject Value { get { return (PSObject)base.Value; } }
+            private new PSObject Value { get { return (PSObject)base.Value; } }
 
             private DynamicMetaObject GetUnwrappedObject()
             {
@@ -2378,10 +2376,10 @@ namespace System.Management.Automation
 
         internal bool IsHelpObject
         {
-            get { return isHelpObject; }
-            set { isHelpObject = value; }
+            get { return _isHelpObject; }
+            set { _isHelpObject = value; }
         }
-        private bool isHelpObject = false;
+        private bool _isHelpObject = false;
 
         #endregion
     }

@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell
             /// <summary>
             /// Overflow error
             /// </summary>
-            Overflow 
+            Overflow
         }
 
 
@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell
 
             // we lock here so that multiple threads won't interleave the various reads and writes here.
 
-            lock (instanceLock)
+            lock (_instanceLock)
             {
                 Dictionary<string, PSObject> results = new Dictionary<string, PSObject>();
 
@@ -173,13 +173,13 @@ namespace Microsoft.PowerShell
                     // defense in depth.
                     if (string.IsNullOrEmpty(desc.ParameterAssemblyFullName))
                     {
-                        string paramName = 
+                        string paramName =
                             string.Format(CultureInfo.InvariantCulture, "descriptions[{0}].AssemblyFullName", descIndex);
                         throw PSTraceSource.NewArgumentException(paramName, ConsoleHostUserInterfaceStrings.NullOrEmptyErrorTemplate, paramName);
                     }
 
                     Type fieldType = InternalHostUserInterface.GetFieldType(desc);
-                    if(fieldType == null)
+                    if (fieldType == null)
                     {
                         if (InternalHostUserInterface.IsSecuritySensitiveType(desc.ParameterTypeName))
                         {
@@ -229,9 +229,9 @@ namespace Microsoft.PowerShell
                                 string.Format(CultureInfo.InvariantCulture, "{0}]: ", inputList.Count));
                             Boolean inputListEnd = false;
                             Object convertedObj = null;
-                            string inputString = PromptForSingleItem(elementType, fieldPromptList.ToString(), fieldPrompt, caption, message, 
+                            string inputString = PromptForSingleItem(elementType, fieldPromptList.ToString(), fieldPrompt, caption, message,
                                 desc, fieldEchoOnPrompt, true, out inputListEnd, out cancelInput, out convertedObj);
-                            
+
                             if (cancelInput || inputListEnd)
                             {
                                 break;
@@ -255,7 +255,6 @@ namespace Microsoft.PowerShell
                             {
                                 inputPSObject = PSObject.AsPSObject(inputList);
                             }
-                            
                         }
                     }
                     else
@@ -275,7 +274,7 @@ namespace Microsoft.PowerShell
                     }
                     if (cancelInput)
                     {
-                        tracer.WriteLine("Prompt canceled");
+                        s_tracer.WriteLine("Prompt canceled");
                         WriteLineToConsole();
                         results.Clear();
                         break;
@@ -287,10 +286,10 @@ namespace Microsoft.PowerShell
         }
 
         private string PromptForSingleItem(Type fieldType,
-            string printFieldPrompt, 
+            string printFieldPrompt,
             string fieldPrompt,
-            string caption, 
-            string message, 
+            string caption,
+            string message,
             FieldDescription desc,
             bool fieldEchoOnPrompt,
             bool listInput,
@@ -412,7 +411,7 @@ namespace Microsoft.PowerShell
                 else
                 if (rawInputString.StartsWith(PromptCommandPrefix, StringComparison.CurrentCulture))
                 {
-                        processedInputString = PromptCommandMode(rawInputString, desc, out inputDone);
+                    processedInputString = PromptCommandMode(rawInputString, desc, out inputDone);
                 }
                 else
                 {
@@ -506,10 +505,10 @@ namespace Microsoft.PowerShell
         /// <param name="desc"></param>
         /// <param name="inputDone"></param>
         /// <returns></returns>
-        
+
         private string PromptCommandMode(string input, FieldDescription desc, out bool inputDone)
         {
-            Dbg.Assert(input != null && input.StartsWith(PromptCommandPrefix,StringComparison.OrdinalIgnoreCase),
+            Dbg.Assert(input != null && input.StartsWith(PromptCommandPrefix, StringComparison.OrdinalIgnoreCase),
                 string.Format(CultureInfo.InvariantCulture, "input should start with {0}", PromptCommandPrefix));
             Dbg.Assert(desc != null, "desc should never be null when PromptCommandMode is called");
             string command = input.Substring(1);
@@ -527,7 +526,7 @@ namespace Microsoft.PowerShell
                     {
                         string noHelpErrMsg =
                             StringUtil.Format(ConsoleHostUserInterfaceStrings.PromptNoHelpAvailableErrorTemplate, desc.Name);
-                        tracer.TraceWarning(noHelpErrMsg);
+                        s_tracer.TraceWarning(noHelpErrMsg);
                         WriteLineToConsole(WrapToCurrentWindowWidth(noHelpErrMsg));
                     }
                     else
@@ -559,7 +558,6 @@ namespace Microsoft.PowerShell
                 inputDone = false;
                 return null;
             }
-        
         }
 
         private void ReportUnrecognizedPromptCommand(string command)
@@ -571,8 +569,5 @@ namespace Microsoft.PowerShell
         // Prefix for command mode in Prompt
         private const string PromptCommandPrefix = "!";
     }
-
-
-
 }   // namespace 
 

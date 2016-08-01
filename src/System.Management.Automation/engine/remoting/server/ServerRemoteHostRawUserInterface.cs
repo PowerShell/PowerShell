@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -66,7 +67,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (this.HostDefaultData.HasValue(HostDefaultDataId.ForegroundColor))
                 {
-                    return (ConsoleColor) this.HostDefaultData.GetValue(HostDefaultDataId.ForegroundColor);
+                    return (ConsoleColor)this.HostDefaultData.GetValue(HostDefaultDataId.ForegroundColor);
                 }
                 else
                 {
@@ -90,7 +91,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (this.HostDefaultData.HasValue(HostDefaultDataId.BackgroundColor))
                 {
-                    return (ConsoleColor) this.HostDefaultData.GetValue(HostDefaultDataId.BackgroundColor);
+                    return (ConsoleColor)this.HostDefaultData.GetValue(HostDefaultDataId.BackgroundColor);
                 }
                 else
                 {
@@ -114,7 +115,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (this.HostDefaultData.HasValue(HostDefaultDataId.CursorPosition))
                 {
-                    return (Coordinates) this.HostDefaultData.GetValue(HostDefaultDataId.CursorPosition);
+                    return (Coordinates)this.HostDefaultData.GetValue(HostDefaultDataId.CursorPosition);
                 }
                 else
                 {
@@ -138,7 +139,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (this.HostDefaultData.HasValue(HostDefaultDataId.WindowPosition))
                 {
-                    return (Coordinates) this.HostDefaultData.GetValue(HostDefaultDataId.WindowPosition);
+                    return (Coordinates)this.HostDefaultData.GetValue(HostDefaultDataId.WindowPosition);
                 }
                 else
                 {
@@ -162,7 +163,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (this.HostDefaultData.HasValue(HostDefaultDataId.CursorSize))
                 {
-                    return (int) this.HostDefaultData.GetValue(HostDefaultDataId.CursorSize);
+                    return (int)this.HostDefaultData.GetValue(HostDefaultDataId.CursorSize);
                 }
                 else
                 {
@@ -186,7 +187,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (this.HostDefaultData.HasValue(HostDefaultDataId.BufferSize))
                 {
-                    return (Size) this.HostDefaultData.GetValue(HostDefaultDataId.BufferSize);
+                    return (Size)this.HostDefaultData.GetValue(HostDefaultDataId.BufferSize);
                 }
                 else
                 {
@@ -210,7 +211,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (this.HostDefaultData.HasValue(HostDefaultDataId.WindowSize))
                 {
-                    return (Size) this.HostDefaultData.GetValue(HostDefaultDataId.WindowSize);
+                    return (Size)this.HostDefaultData.GetValue(HostDefaultDataId.WindowSize);
                 }
                 else
                 {
@@ -234,7 +235,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (this.HostDefaultData.HasValue(HostDefaultDataId.WindowTitle))
                 {
-                    return (string) this.HostDefaultData.GetValue(HostDefaultDataId.WindowTitle);
+                    return (string)this.HostDefaultData.GetValue(HostDefaultDataId.WindowTitle);
                 }
                 else
                 {
@@ -258,7 +259,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (this.HostDefaultData.HasValue(HostDefaultDataId.MaxWindowSize))
                 {
-                    return (Size) this.HostDefaultData.GetValue(HostDefaultDataId.MaxWindowSize);
+                    return (Size)this.HostDefaultData.GetValue(HostDefaultDataId.MaxWindowSize);
                 }
                 else
                 {
@@ -276,7 +277,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (this.HostDefaultData.HasValue(HostDefaultDataId.MaxPhysicalWindowSize))
                 {
-                    return (Size) this.HostDefaultData.GetValue(HostDefaultDataId.MaxPhysicalWindowSize);
+                    return (Size)this.HostDefaultData.GetValue(HostDefaultDataId.MaxPhysicalWindowSize);
                 }
                 else
                 {

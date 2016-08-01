@@ -10,7 +10,7 @@ namespace System.Management.Automation
     /// <summary>
     /// class which has list of job objects currently active in the system.
     /// </summary>
-    public abstract class Repository<T> where T: class
+    public abstract class Repository<T> where T : class
     {
         #region Public Methods
 
@@ -22,19 +22,19 @@ namespace System.Management.Automation
         {
             if (item == null)
             {
-                throw new ArgumentNullException(identifier);
+                throw new ArgumentNullException(_identifier);
             }
-            lock (syncObject)
+            lock (_syncObject)
             {
                 Guid instanceId = GetKey(item);
 
-                if (!repository.ContainsKey(instanceId))
+                if (!_repository.ContainsKey(instanceId))
                 {
-                    repository.Add(instanceId, item);
+                    _repository.Add(instanceId, item);
                 }
                 else
                 {
-                    throw new ArgumentException(identifier);
+                    throw new ArgumentException(_identifier);
                 }
             }
         }
@@ -47,13 +47,13 @@ namespace System.Management.Automation
         {
             if (item == null)
             {
-                throw new ArgumentNullException(identifier);
+                throw new ArgumentNullException(_identifier);
             }
-            lock (syncObject)
+            lock (_syncObject)
             {
                 Guid instanceId = GetKey(item);
 
-                if (!repository.Remove(instanceId))
+                if (!_repository.Remove(instanceId))
                 {
                     String message =
                         PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ItemNotFoundInRepository,
@@ -63,7 +63,7 @@ namespace System.Management.Automation
                 }
             }
         }
-     
+
         /// <summary>
         /// 
         /// </summary>
@@ -88,7 +88,7 @@ namespace System.Management.Automation
         /// </summary>
         protected Repository(string identifier)
         {
-            this.identifier = identifier;
+            _identifier = identifier;
         }
 
         /// <summary>
@@ -98,9 +98,9 @@ namespace System.Management.Automation
         {
             get
             {
-                lock (syncObject)
+                lock (_syncObject)
                 {
-                    return new List<T>(repository.Values);
+                    return new List<T>(_repository.Values);
                 }
             }
         }
@@ -112,10 +112,10 @@ namespace System.Management.Automation
         /// <returns></returns>
         public T GetItem(Guid instanceId)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
                 T result;
-                repository.TryGetValue(instanceId, out result);
+                _repository.TryGetValue(instanceId, out result);
                 return result;
             }
         }
@@ -125,16 +125,16 @@ namespace System.Management.Automation
         /// </summary>
         internal Dictionary<Guid, T> Dictionary
         {
-            get { return this.repository; }
+            get { return _repository; }
         }
 
         #endregion Private Methods
 
         #region Private Members
 
-        private Dictionary<Guid, T> repository = new Dictionary<Guid, T>();
-        private object syncObject = new object();      // object for synchronization
-        private string identifier;
+        private Dictionary<Guid, T> _repository = new Dictionary<Guid, T>();
+        private object _syncObject = new object();      // object for synchronization
+        private string _identifier;
 
         #endregion Private Members
     }

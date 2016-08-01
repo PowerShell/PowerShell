@@ -1,6 +1,7 @@
 ﻿/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace System.Management.Automation
             // Add special minimum disambiguation cases here for certain enum types.
             // The current implementation assumes that special names in each type can be 
             // differentiated by their first letter.
-            specialDisambiguateCases.Add(
+            s_specialDisambiguateCases.Add(
                 typeof(System.IO.FileAttributes),
                 new string[] { "Directory", "ReadOnly", "System" });
         }
@@ -44,7 +45,7 @@ namespace System.Management.Automation
         {
             // Get all enum names in the given enum type
             string[] enumNames = Enum.GetNames(enumType);
-            
+
             // Get all names that matches the given prefix.
             List<string> namesWithMatchingPrefix = new List<string>();
             foreach (string name in enumNames)
@@ -79,7 +80,7 @@ namespace System.Management.Automation
                 }
                 // test for special cases match
                 string[] minDisambiguateNames;
-                if (specialDisambiguateCases.TryGetValue(enumType, out minDisambiguateNames))
+                if (s_specialDisambiguateCases.TryGetValue(enumType, out minDisambiguateNames))
                 {
                     foreach (string tName in minDisambiguateNames)
                     {
@@ -125,6 +126,6 @@ namespace System.Management.Automation
             return returnValue.ToString();
         }
 
-        static private Dictionary<Type, string[]> specialDisambiguateCases = new Dictionary<Type,string[]>();
+        static private Dictionary<Type, string[]> s_specialDisambiguateCases = new Dictionary<Type, string[]>();
     }
 }

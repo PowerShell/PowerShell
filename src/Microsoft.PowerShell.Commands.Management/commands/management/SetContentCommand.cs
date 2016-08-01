@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -12,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command to set the content of an item at a specified path
     /// </summary>
-    [Cmdlet (VerbsCommon.Set, "Content", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
+    [Cmdlet(VerbsCommon.Set, "Content", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
         HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113392")]
     public class SetContentCommand : WriteContentCommandBase
     {
@@ -43,7 +44,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     InvokeProvider.Content.Clear(path, context);
                     context.ThrowFirstErrorOrDoNothing(true);
-
                 }
                 catch (PSNotSupportedException)
                 {
@@ -72,7 +72,6 @@ namespace Microsoft.PowerShell.Commands
                     //If the item is not found then there is nothing to clear so ignore this exception.
                     continue;
                 }
-
             }
         } // BeforeOpenStreams
 
@@ -98,6 +97,5 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion protected members
     } // SetContentCommand
-
 } // namespace Microsoft.PowerShell.Commands
 

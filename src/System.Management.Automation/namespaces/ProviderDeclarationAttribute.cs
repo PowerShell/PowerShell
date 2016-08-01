@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 
 
@@ -48,19 +49,19 @@ namespace System.Management.Automation.Provider
                 throw PSTraceSource.NewArgumentNullException("providerName");
             }
 
-            if (providerName.IndexOfAny(illegalCharacters) != -1)
+            if (providerName.IndexOfAny(_illegalCharacters) != -1)
             {
                 throw PSTraceSource.NewArgumentException(
                     "providerName",
-                    SessionStateStrings.ProviderNameNotValid, 
+                    SessionStateStrings.ProviderNameNotValid,
                     providerName);
             }
 
-            this.provider = providerName;
-            this.providerCapabilities = providerCapabilities;
+            _provider = providerName;
+            _providerCapabilities = providerCapabilities;
         } // constructor
 
-        private char[] illegalCharacters = new char[] { ':', '\\', '[', ']', '?', '*' };
+        private char[] _illegalCharacters = new char[] { ':', '\\', '[', ']', '?', '*' };
 
         /// <summary>
         /// Gets the name of the provider.
@@ -69,7 +70,7 @@ namespace System.Management.Automation.Provider
         {
             get
             {
-                return provider;
+                return _provider;
             }
         } // Provider
 
@@ -81,17 +82,16 @@ namespace System.Management.Automation.Provider
         {
             get
             {
-                return providerCapabilities;
+                return _providerCapabilities;
             }
         } // FriendlyName
 
         #region private data
 
-        private string provider = String.Empty;
-        private ProviderCapabilities providerCapabilities = ProviderCapabilities.None;
+        private string _provider = String.Empty;
+        private ProviderCapabilities _providerCapabilities = ProviderCapabilities.None;
 
         #endregion private data
-
     } // class CmdletProviderAttribute
 
     /// <summary>
@@ -180,5 +180,4 @@ namespace System.Management.Automation.Provider
         /// </summary>
         Transactions = 0x40,
     } // ProviderCapabilities
-
 } // namespace System.Management.Automation

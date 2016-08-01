@@ -14,17 +14,17 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// </summary>
     internal class InstanceMethodInvocationJob : ExtrinsicMethodInvocationJob
     {
-        private readonly CimInstance targetInstance;
+        private readonly CimInstance _targetInstance;
 
         internal InstanceMethodInvocationJob(CimJobContext jobContext, bool passThru, CimInstance targetInstance, MethodInvocationInfo methodInvocationInfo)
                 : base(
-                    jobContext, 
-                    passThru, 
+                    jobContext,
+                    passThru,
                     targetInstance.ToString(),
                     methodInvocationInfo)
         {
             Dbg.Assert(targetInstance != null, "Caller should verify targetInstance != null");
-            this.targetInstance = targetInstance;
+            _targetInstance = targetInstance;
         }
 
         internal override IObservable<CimMethodResultBase> GetCimOperation()
@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             IObservable<CimMethodResultBase> observable = this.JobContext.Session.InvokeMethodAsync(
                 this.JobContext.Namespace,
-                this.targetInstance,
+                _targetInstance,
                 this.MethodName,
                 methodParameters,
                 operationOptions);
@@ -50,14 +50,14 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal override object PassThruObject
         {
-            get { return this.targetInstance; }
+            get { return _targetInstance; }
         }
 
         internal override CimCustomOptionsDictionary CalculateJobSpecificCustomOptions()
         {
             return CimCustomOptionsDictionary.MergeOptions(
                 base.CalculateJobSpecificCustomOptions(),
-                this.targetInstance);
+                _targetInstance);
         }
     }
 }

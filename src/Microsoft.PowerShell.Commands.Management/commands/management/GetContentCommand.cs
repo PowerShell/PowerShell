@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
     public class GetContentCommand : ContentCommandBase
     {
         #region Parameters
-        
+
         /// <summary>
         /// The number of content items to retrieve per block.
         /// By default this value is 1 which means read one block
@@ -33,12 +34,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return readCount;
+                return _readCount;
             } // get
 
             set
             {
-                readCount = value;
+                _readCount = value;
             }
         } // ReadCount
 
@@ -53,12 +54,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return totalCount;
+                return _totalCount;
             } // get
 
             set
             {
-                totalCount = value;
+                _totalCount = value;
                 _totalCountSpecified = true;
             }
         } // TotalCount
@@ -80,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
         }
         private int _backCount = -1;
         private bool _tailSpecified = false;
-        
+
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
         /// that require dynamic parameters should override this method and return the
@@ -104,20 +105,20 @@ namespace Microsoft.PowerShell.Commands
             }
             return InvokeProvider.Content.GetContentReaderDynamicParameters(".", context);
         } // GetDynamicParameters
-        
+
         #endregion Parameters
 
         #region parameter data
-        
+
         /// <summary>
         /// The number of content items to retrieve per block.
         /// </summary>
-        private long readCount = 1;
+        private long _readCount = 1;
 
         /// <summary>
         /// The number of content items to retrieve.
         /// </summary>
-        private long totalCount = -1;
+        private long _totalCount = -1;
 
         #endregion parameter data
 
@@ -126,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the content of an item at the specified path
         /// </summary>
-        protected override void ProcessRecord ()
+        protected override void ProcessRecord()
         {
             // TotalCount and Tail should not be specified at the same time.
             // Throw out terminating error if this is the case.
@@ -211,7 +212,7 @@ namespace Microsoft.PowerShell.Commands
                             continue;
                         }
                     }
-                    
+
                     if (TotalCount != 0)
                     {
                         IList results = null;
@@ -272,10 +273,8 @@ namespace Microsoft.PowerShell.Commands
                                     WriteContentObject(results, countRead, holder.PathInfo, currentContext);
                                 }
                             }
-                            
                         } while (results != null && results.Count > 0 && ((TotalCount < 0) || countRead < TotalCount));
                     }
-
                 } // foreach holder in contentStreams
             }
             finally
@@ -350,7 +349,6 @@ namespace Microsoft.PowerShell.Commands
                         tailResultQueue.Enqueue(entry);
                     }
                 }
-
             } while (results != null && results.Count > 0);
 
             if (tailResultQueue.Count > 0)
@@ -445,6 +443,5 @@ namespace Microsoft.PowerShell.Commands
         #endregion Command code
 
     } // GetContentCommand
-
 } // namespace Microsoft.PowerShell.Commands
 

@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         /// PUT method
         /// </summary>
         Put,
-        
+
         /// <summary>
         /// DELETE method
         /// </summary>

@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
         /// gets or protected sets the Content property
         /// </summary>
         public new string Content { get; private set; }
-        
+
         private WebCmdletElementCollection _inputFields;
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
                     EnsureHtmlParser();
 
                     List<PSObject> parsedFields = new List<PSObject>();
-                    MatchCollection fieldMatch = _inputFieldRegex.Matches(Content);
+                    MatchCollection fieldMatch = s_inputFieldRegex.Matches(Content);
                     foreach (Match field in fieldMatch)
                     {
                         parsedFields.Add(CreateHtmlObject(field.Value, "INPUT"));
@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
                     EnsureHtmlParser();
 
                     List<PSObject> parsedLinks = new List<PSObject>();
-                    MatchCollection linkMatch = _linkRegex.Matches(Content);
+                    MatchCollection linkMatch = s_linkRegex.Matches(Content);
                     foreach (Match link in linkMatch)
                     {
                         parsedLinks.Add(CreateHtmlObject(link.Value, "A"));
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
                     EnsureHtmlParser();
 
                     List<PSObject> parsedImages = new List<PSObject>();
-                    MatchCollection imageMatch = _imageRegex.Matches(Content);
+                    MatchCollection imageMatch = s_imageRegex.Matches(Content);
                     foreach (Match image in imageMatch)
                     {
                         parsedImages.Add(CreateHtmlObject(image.Value, "IMG"));
@@ -110,12 +110,12 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Fields
 
-        private static Regex _tagRegex;
-        private static Regex _attribsRegex;
-        private static Regex _attribNameValueRegex;
-        private static Regex _inputFieldRegex;
-        private static Regex _linkRegex;
-        private static Regex _imageRegex;
+        private static Regex s_tagRegex;
+        private static Regex s_attribsRegex;
+        private static Regex s_attribNameValueRegex;
+        private static Regex s_inputFieldRegex;
+        private static Regex s_linkRegex;
+        private static Regex s_imageRegex;
 
         #endregion Private Fields
 
@@ -123,40 +123,39 @@ namespace Microsoft.PowerShell.Commands
 
         private void EnsureHtmlParser()
         {
-
-            if (_tagRegex == null)
+            if (s_tagRegex == null)
             {
-                _tagRegex = new Regex(@"<\w+((\s+[^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>",
+                s_tagRegex = new Regex(@"<\w+((\s+[^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)+\s*|\s*)/?>",
                     RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
             }
 
-            if (_attribsRegex == null)
+            if (s_attribsRegex == null)
             {
-                _attribsRegex = new Regex(@"(?<=\s+)([^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)",
+                s_attribsRegex = new Regex(@"(?<=\s+)([^""'>/=\s\p{Cc}]+(\s*=\s*(?:"".*?""|'.*?'|[^'"">\s]+))?)",
                     RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
             }
 
-            if (_attribNameValueRegex == null)
+            if (s_attribNameValueRegex == null)
             {
-                _attribNameValueRegex = new Regex(@"([^""'>/=\s\p{Cc}]+)(?:\s*=\s*(?:""(.*?)""|'(.*?)'|([^'"">\s]+)))?",
+                s_attribNameValueRegex = new Regex(@"([^""'>/=\s\p{Cc}]+)(?:\s*=\s*(?:""(.*?)""|'(.*?)'|([^'"">\s]+)))?",
                     RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
             }
 
-            if (_inputFieldRegex == null)
+            if (s_inputFieldRegex == null)
             {
-                _inputFieldRegex = new Regex(@"<input\s+[^>]*(/>|>.*?</input>)",
+                s_inputFieldRegex = new Regex(@"<input\s+[^>]*(/>|>.*?</input>)",
                     RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
             }
 
-            if (_linkRegex == null)
+            if (s_linkRegex == null)
             {
-                _linkRegex = new Regex(@"<a\s+[^>]*(/>|>.*?</a>)",
+                s_linkRegex = new Regex(@"<a\s+[^>]*(/>|>.*?</a>)",
                     RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
             }
 
-            if (_imageRegex == null)
+            if (s_imageRegex == null)
             {
-                _imageRegex = new Regex(@"<img\s+[^>]*>",
+                s_imageRegex = new Regex(@"<img\s+[^>]*>",
                     RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
             }
         }
@@ -172,7 +171,7 @@ namespace Microsoft.PowerShell.Commands
 
             return elementObject;
         }
-        
+
         private void ParseAttributes(string outerHtml, PSObject elementObject)
         {
             // We might get an empty input for a directive from the HTML file
@@ -180,16 +179,16 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Extract just the opening tag of the HTML element (omitting the closing tag and any contents, 
                 // including contained HTML elements)
-                var match = _tagRegex.Match(outerHtml);
+                var match = s_tagRegex.Match(outerHtml);
 
                 // Extract all the attribute specifications within the HTML element opening tag
-                var attribMatches = _attribsRegex.Matches(match.Value);
+                var attribMatches = s_attribsRegex.Matches(match.Value);
 
                 foreach (Match attribMatch in attribMatches)
                 {
                     // Extract the name and value for this attribute (allowing for variations like single/double/no
                     // quotes, and no value at all)
-                    var nvMatches = _attribNameValueRegex.Match(attribMatch.Value);
+                    var nvMatches = s_attribNameValueRegex.Match(attribMatch.Value);
                     Debug.Assert(nvMatches.Groups.Count == 5);
 
                     // Name is always captured by group #1

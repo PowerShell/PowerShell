@@ -25,7 +25,7 @@ namespace System.Management.Automation.Runspaces.Internal
     internal class RemoteRunspacePoolInternal : RunspacePoolInternal, IDisposable
     {
         #region Constructor
-              
+
         /// <summary>
         /// Constructor which creates a RunspacePool using the
         /// supplied <paramref name="connectionInfo"/>, <paramref name="minRunspaces"/> 
@@ -74,18 +74,18 @@ namespace System.Management.Automation.Runspaces.Internal
             }
 
             PSEtwLog.LogOperationalVerbose(PSEventId.RunspacePoolConstructor,
-                    PSOpcode.Constructor, PSTask.CreateRunspace, 
+                    PSOpcode.Constructor, PSTask.CreateRunspace,
                     PSKeyword.UseAlwaysOperational,
-                    instanceId.ToString(), 
-                    minPoolSz.ToString(CultureInfo.InvariantCulture), 
+                    instanceId.ToString(),
+                    minPoolSz.ToString(CultureInfo.InvariantCulture),
                     maxPoolSz.ToString(CultureInfo.InvariantCulture));
 
-            this.connectionInfo = connectionInfo.InternalCopy();
+            _connectionInfo = connectionInfo.InternalCopy();
 
             this.host = host;
-            this.applicationArguments = applicationArguments;
-            this.availableForConnection = false;
-            dispatchTable = new DispatchTable<object>();
+            _applicationArguments = applicationArguments;
+            _availableForConnection = false;
+            _dispatchTable = new DispatchTable<object>();
             _runningPowerShells = new System.Collections.Concurrent.ConcurrentStack<PowerShell>();
 
             if (!string.IsNullOrEmpty(name))
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (connectionInfo is WSManConnectionInfo)
             {
-                this.connectionInfo = connectionInfo.InternalCopy();
+                _connectionInfo = connectionInfo.InternalCopy();
             }
             else
             {
@@ -147,10 +147,10 @@ namespace System.Management.Automation.Runspaces.Internal
                     minPoolSz.ToString(CultureInfo.InvariantCulture),
                     maxPoolSz.ToString(CultureInfo.InvariantCulture));
 
-            this.connectCommands = connectCommands;
+            _connectCommands = connectCommands;
             this.Name = name;
             this.host = host;
-            this.dispatchTable = new DispatchTable<object>();
+            _dispatchTable = new DispatchTable<object>();
             _runningPowerShells = new System.Collections.Concurrent.ConcurrentStack<PowerShell>();
 
             // Create this object in the disconnected state.
@@ -158,7 +158,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             CreateDSHandler(typeTable);
 
-            this.availableForConnection = isDisconnected;
+            _availableForConnection = isDisconnected;
         }
 
         /// <summary>
@@ -166,34 +166,34 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         private void CreateDSHandler(TypeTable typeTable)
         {
-            dataStructureHandler = new ClientRunspacePoolDataStructureHandler(this, typeTable);
+            _dataStructureHandler = new ClientRunspacePoolDataStructureHandler(this, typeTable);
 
             // register for events from the data structure handler
-            dataStructureHandler.RemoteHostCallReceived +=
+            _dataStructureHandler.RemoteHostCallReceived +=
                 new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleRemoteHostCalls);
-            dataStructureHandler.StateInfoReceived +=
+            _dataStructureHandler.StateInfoReceived +=
                 new EventHandler<RemoteDataEventArgs<RunspacePoolStateInfo>>(HandleStateInfoReceived);
-            dataStructureHandler.RSPoolInitInfoReceived +=
+            _dataStructureHandler.RSPoolInitInfoReceived +=
                 new EventHandler<RemoteDataEventArgs<RunspacePoolInitInfo>>(HandleInitInfoReceived);
-            dataStructureHandler.ApplicationPrivateDataReceived +=
+            _dataStructureHandler.ApplicationPrivateDataReceived +=
                 new EventHandler<RemoteDataEventArgs<PSPrimitiveDictionary>>(HandleApplicationPrivateDataReceived);
-            dataStructureHandler.SessionClosing +=
+            _dataStructureHandler.SessionClosing +=
                 new EventHandler<RemoteDataEventArgs<Exception>>(HandleSessionClosing);
-            dataStructureHandler.SessionClosed +=
+            _dataStructureHandler.SessionClosed +=
                 new EventHandler<RemoteDataEventArgs<Exception>>(HandleSessionClosed);
-            dataStructureHandler.SetMaxMinRunspacesResponseRecieved +=
+            _dataStructureHandler.SetMaxMinRunspacesResponseRecieved +=
                 new EventHandler<RemoteDataEventArgs<PSObject>>(HandleResponseReceived);
-            dataStructureHandler.URIRedirectionReported +=
+            _dataStructureHandler.URIRedirectionReported +=
                 new EventHandler<RemoteDataEventArgs<Uri>>(HandleURIDirectionReported);
-            dataStructureHandler.PSEventArgsReceived +=
+            _dataStructureHandler.PSEventArgsReceived +=
                 new EventHandler<RemoteDataEventArgs<PSEventArgs>>(HandlePSEventArgsReceived);
-            dataStructureHandler.SessionDisconnected +=
+            _dataStructureHandler.SessionDisconnected +=
                 new EventHandler<RemoteDataEventArgs<Exception>>(HandleSessionDisconnected);
-            dataStructureHandler.SessionReconnected +=
+            _dataStructureHandler.SessionReconnected +=
                 new EventHandler<RemoteDataEventArgs<Exception>>(HandleSessionReconnected);
-            dataStructureHandler.SessionRCDisconnecting += 
+            _dataStructureHandler.SessionRCDisconnecting +=
                 new EventHandler<RemoteDataEventArgs<Exception>>(HandleSessionRCDisconnecting);
-            dataStructureHandler.SessionCreateCompleted += 
+            _dataStructureHandler.SessionCreateCompleted +=
                 new EventHandler<CreateCompleteEventArgs>(HandleSessionCreateCompleted);
         }
 
@@ -208,7 +208,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             get
             {
-                return connectionInfo;
+                return _connectionInfo;
             }
         }
 
@@ -220,7 +220,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             get
             {
-                return dataStructureHandler;
+                return _dataStructureHandler;
             }
         }
 
@@ -230,8 +230,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         internal ConnectCommandInfo[] ConnectCommands
         {
-            get { return this.connectCommands; }
-            set { this.connectCommands = value; }
+            get { return _connectCommands; }
+            set { _connectCommands = value; }
         }
 
         /// <summary>
@@ -239,17 +239,17 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         internal string Name
         {
-            get { return this.friendlyName; }
+            get { return _friendlyName; }
 
             set
             {
                 if (value == null)
                 {
-                    this.friendlyName = string.Empty;
+                    _friendlyName = string.Empty;
                 }
                 else
                 {
-                    this.friendlyName = value;
+                    _friendlyName = value;
                 }
             }
         }
@@ -259,7 +259,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         internal bool AvailableForConnection
         {
-            get { return this.availableForConnection; }
+            get { return _availableForConnection; }
         }
 
         /// <summary>
@@ -269,7 +269,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             get
             {
-                return (dataStructureHandler != null) ? dataStructureHandler.MaxRetryConnectionTime : 0;
+                return (_dataStructureHandler != null) ? _dataStructureHandler.MaxRetryConnectionTime : 0;
             }
         }
 
@@ -334,7 +334,7 @@ namespace System.Management.Automation.Runspaces.Internal
             lock (syncObject)
             {
                 callId = DispatchTable.CreateNewCallId();
-                dataStructureHandler.SendResetRunspaceStateToServer(callId);
+                _dataStructureHandler.SendResetRunspaceStateToServer(callId);
             }
 
             // This call blocks until the response is received.
@@ -386,7 +386,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 // they were called in the client
                 callId = DispatchTable.CreateNewCallId();
 
-                dataStructureHandler.SendSetMaxRunspacesToServer(maxRunspaces, callId);
+                _dataStructureHandler.SendSetMaxRunspacesToServer(maxRunspaces, callId);
             } // lock ...
 
             // this call blocks until the response is received
@@ -426,8 +426,8 @@ namespace System.Management.Automation.Runspaces.Internal
 
             lock (syncObject)
             {
-                if ((minRunspaces < 1) || (minRunspaces > maxPoolSz) || (minRunspaces == minPoolSz) 
-                    || stateInfo.State == RunspacePoolState.Closed || stateInfo.State == RunspacePoolState.Closing || 
+                if ((minRunspaces < 1) || (minRunspaces > maxPoolSz) || (minRunspaces == minPoolSz)
+                    || stateInfo.State == RunspacePoolState.Closed || stateInfo.State == RunspacePoolState.Closing ||
                     stateInfo.State == RunspacePoolState.Broken)
                 {
                     return false;
@@ -436,7 +436,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 // if the runspace pool is not opened as yet, or is in Disconnected state.
                 // just change the value locally. No need to 
                 // send a message
-                if (stateInfo.State == RunspacePoolState.BeforeOpen || 
+                if (stateInfo.State == RunspacePoolState.BeforeOpen ||
                     stateInfo.State == RunspacePoolState.Disconnected)
                 {
                     minPoolSz = minRunspaces;
@@ -449,8 +449,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 // they were called in the client
                 callId = DispatchTable.CreateNewCallId();
 
-                dataStructureHandler.SendSetMinRunspacesToServer(minRunspaces, callId);
-
+                _dataStructureHandler.SendSetMinRunspacesToServer(minRunspaces, callId);
             } // lock ...
 
             // this call blocks until the response is received
@@ -501,14 +500,14 @@ namespace System.Management.Automation.Runspaces.Internal
                     return maxPoolSz;
                 }
 
-                dataStructureHandler.SendGetAvailableRunspacesToServer(callId);
+                _dataStructureHandler.SendGetAvailableRunspacesToServer(callId);
             } // lock ...
 
             // this call blocks until the response is received
-            object response = dispatchTable.GetResponse(callId, 0);
+            object response = _dispatchTable.GetResponse(callId, 0);
             availableRunspaces = (int)response;
 
-            return availableRunspaces;            
+            return availableRunspaces;
         }
 
         /// <summary>
@@ -530,7 +529,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             bool raiseEvents = false;
 
-            lock(syncObject)
+            lock (syncObject)
             {
                 minPoolSz = eventArgs.Data.MinRunspaces;
                 maxPoolSz = eventArgs.Data.MaxRunspaces;
@@ -558,7 +557,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         /// <param name="eventArgs">argument describing this event</param>
         /// <param name="sender">sender of this event</param>
-        internal void HandleStateInfoReceived(object sender, 
+        internal void HandleStateInfoReceived(object sender,
             RemoteDataEventArgs<RunspacePoolStateInfo> eventArgs)
         {
             RunspacePoolStateInfo newStateInfo = eventArgs.Data;
@@ -598,7 +597,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     }
 
                     if (stateInfo.State == RunspacePoolState.Opening
-                     || stateInfo.State == RunspacePoolState.Opened 
+                     || stateInfo.State == RunspacePoolState.Opened
                      || stateInfo.State == RunspacePoolState.Closing)
                     {
                         doClose = true;
@@ -611,10 +610,10 @@ namespace System.Management.Automation.Runspaces.Internal
                     // if closeAsyncResult is null, BeginClose is not called. That means
                     // we are getting close event from server, in this case release the
                     // local resources
-                    if (null == closeAsyncResult)
+                    if (null == _closeAsyncResult)
                     {
                         // Close the local resources.
-                        dataStructureHandler.CloseRunspacePoolAsync();
+                        _dataStructureHandler.CloseRunspacePoolAsync();
                     }
 
                     // Delay notifying upper layers of finished state change event
@@ -647,10 +646,10 @@ namespace System.Management.Automation.Runspaces.Internal
                 else
                 {
                     RemoteHostResponse remoteHostResponse = hostCall.ExecuteNonVoidMethod(host);
-                    dataStructureHandler.SendHostResponseToServer(remoteHostResponse);
+                    _dataStructureHandler.SendHostResponseToServer(remoteHostResponse);
                 }
             }
-        }        
+        }
 
         internal PSHost Host
         {
@@ -667,11 +666,11 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             get
             {
-                return applicationArguments;
+                return _applicationArguments;
             }
         }
 
-        private PSPrimitiveDictionary applicationArguments;
+        private PSPrimitiveDictionary _applicationArguments;
 
         /// <summary>
         /// Private data to be used by applications built on top of PowerShell.  
@@ -681,29 +680,29 @@ namespace System.Management.Automation.Runspaces.Internal
         /// - unless the runspace is disconnected and data hasn't been received in which case it returns null immediately.
         /// </summary>
         internal override PSPrimitiveDictionary GetApplicationPrivateData()
-        { 
+        {
             if (this.RunspacePoolStateInfo.State == RunspacePoolState.Disconnected &&
-                !this.applicationPrivateDataReceived.WaitOne(0)) 
+                !_applicationPrivateDataReceived.WaitOne(0))
             {
                 // Runspace pool was disconnected before application data was returned.  Application
                 // data cannot be returned with the runspace pool disconnected so return null.
                 return null;
             }
 
-            return this.applicationPrivateData;
+            return _applicationPrivateData;
         }
 
         internal void SetApplicationPrivateData(PSPrimitiveDictionary applicationPrivateData)
         {
             lock (this.syncObject)
             {
-                if (this.applicationPrivateDataReceived.WaitOne(0))
+                if (_applicationPrivateDataReceived.WaitOne(0))
                 {
                     return; // ignore server's attempt to set application private data if it has already been set
                 }
 
-                this.applicationPrivateData = applicationPrivateData;
-                this.applicationPrivateDataReceived.Set();
+                _applicationPrivateData = applicationPrivateData;
+                _applicationPrivateDataReceived.Set();
 
                 foreach (Runspace runspace in this.runspaceList)
                 {
@@ -714,14 +713,14 @@ namespace System.Management.Automation.Runspaces.Internal
 
         internal override void PropagateApplicationPrivateData(Runspace runspace)
         {
-            if (this.applicationPrivateDataReceived.WaitOne(0))
+            if (_applicationPrivateDataReceived.WaitOne(0))
             {
                 runspace.SetApplicationPrivateData(this.GetApplicationPrivateData());
             }
         }
 
-        private PSPrimitiveDictionary applicationPrivateData;
-        private ManualResetEvent applicationPrivateDataReceived = new ManualResetEvent(false);
+        private PSPrimitiveDictionary _applicationPrivateData;
+        private ManualResetEvent _applicationPrivateDataReceived = new ManualResetEvent(false);
 
         /// <summary>
         /// This event is raised, when a host call is for a remote runspace
@@ -745,7 +744,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="shell"></param>
         internal void CreatePowerShellOnServerAndInvoke(ClientRemotePowerShell shell)
         {
-            dataStructureHandler.CreatePowerShellOnServerAndInvoke(shell);
+            _dataStructureHandler.CreatePowerShellOnServerAndInvoke(shell);
 
             // send any input that may be available
             if (!shell.NoInput)
@@ -761,7 +760,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="psDSHandler">ClientPowerShellDataStructureHandler for PowerShell.</param>
         internal void AddRemotePowerShellDSHandler(Guid psShellInstanceId, ClientPowerShellDataStructureHandler psDSHandler)
         {
-            this.dataStructureHandler.AddRemotePowerShellDSHandler(psShellInstanceId, psDSHandler);
+            _dataStructureHandler.AddRemotePowerShellDSHandler(psShellInstanceId, psDSHandler);
         }
 
         /// <summary>
@@ -772,12 +771,12 @@ namespace System.Management.Automation.Runspaces.Internal
             get
             {
                 Version remoteProtocolVersionDeclaredByServer = PSRemotingProtocolVersion;
-                if (remoteProtocolVersionDeclaredByServer != null && dataStructureHandler != null)
+                if (remoteProtocolVersionDeclaredByServer != null && _dataStructureHandler != null)
                 {
                     // Disconnect/Connect support is currently only provided by the WSMan transport
                     // that is running PSRP protocol version 2.2 and greater.
                     return (remoteProtocolVersionDeclaredByServer >= RemotingConstants.ProtocolVersionWin8RTM &&
-                            dataStructureHandler.EndpointSupportsDisconnect);
+                            _dataStructureHandler.EndpointSupportsDisconnect);
                 }
 
                 return false;
@@ -885,7 +884,7 @@ namespace System.Management.Automation.Runspaces.Internal
             PSEtwLog.LogOperationalVerbose(PSEventId.RunspacePoolOpen, PSOpcode.Open,
                             PSTask.CreateRunspace, PSKeyword.UseAlwaysOperational);
 
-            TelemetryAPI.ReportRemoteSessionCreated(connectionInfo);
+            TelemetryAPI.ReportRemoteSessionCreated(_connectionInfo);
 
             lock (syncObject)
             {
@@ -902,12 +901,12 @@ namespace System.Management.Automation.Runspaces.Internal
             RunspacePoolAsyncResult asyncResult = new RunspacePoolAsyncResult(
                     instanceId, callback, asyncState, true);
 
-            openAsyncResult = asyncResult;
-            
+            _openAsyncResult = asyncResult;
+
 
             // send a message using the data structure handler to open the RunspacePool
             // on the remote server
-            dataStructureHandler.CreateRunspacePoolAndOpenAsync();
+            _dataStructureHandler.CreateRunspacePoolAndOpenAsync();
 
             return asyncResult;
         }
@@ -979,15 +978,15 @@ namespace System.Management.Automation.Runspaces.Internal
                     copyState = stateInfo = new RunspacePoolStateInfo(RunspacePoolState.Closed, null);
                     raiseEvents = true;
                     skipClosing = true;
-                    closeAsyncResult = null;
+                    _closeAsyncResult = null;
                     asyncResult = new RunspacePoolAsyncResult(instanceId, callback, asyncState, false);
                 }
                 else if (stateInfo.State == RunspacePoolState.Opened ||
                          stateInfo.State == RunspacePoolState.Opening)
                 {
                     copyState = stateInfo = new RunspacePoolStateInfo(RunspacePoolState.Closing, null);
-                    closeAsyncResult = new RunspacePoolAsyncResult(instanceId, callback, asyncState, false);
-                    asyncResult = closeAsyncResult;
+                    _closeAsyncResult = new RunspacePoolAsyncResult(instanceId, callback, asyncState, false);
+                    asyncResult = _closeAsyncResult;
                     raiseEvents = true;
                 }
                 else if (stateInfo.State == RunspacePoolState.Disconnected ||
@@ -996,12 +995,12 @@ namespace System.Management.Automation.Runspaces.Internal
                 {
                     // Continue with closing so the PSRP layer is aware that the client side session is
                     // being closed.  This will result in a broken session on the client.
-                    closeAsyncResult = new RunspacePoolAsyncResult(instanceId, callback, asyncState, false);
-                    asyncResult = closeAsyncResult;
+                    _closeAsyncResult = new RunspacePoolAsyncResult(instanceId, callback, asyncState, false);
+                    asyncResult = _closeAsyncResult;
                 }
                 else if (stateInfo.State == RunspacePoolState.Closing)
                 {
-                    return closeAsyncResult;
+                    return _closeAsyncResult;
                 }
             }
 
@@ -1017,7 +1016,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
                 // send a message using the data structure handler to close the RunspacePool
                 // on the remote server
-                dataStructureHandler.CloseRunspacePoolAsync();
+                _dataStructureHandler.CloseRunspacePoolAsync();
             }
             else
             {
@@ -1076,8 +1075,8 @@ namespace System.Management.Automation.Runspaces.Internal
                 RunspacePoolAsyncResult asyncResult = new RunspacePoolAsyncResult(
                     instanceId, callback, state, false);
 
-                disconnectAsyncResult = asyncResult;
-                dataStructureHandler.DisconnectPoolAsync();
+                _disconnectAsyncResult = asyncResult;
+                _dataStructureHandler.DisconnectPoolAsync();
 
                 // Return local reference to async object since the class member can
                 // be asynchronously nulled if the session closes suddenly.
@@ -1111,7 +1110,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
                 throw PSTraceSource.NewArgumentException("asyncResult",
-                                                         RunspacePoolStrings.AsyncResultNotOwned, 
+                                                         RunspacePoolStrings.AsyncResultNotOwned,
                                                          "IAsyncResult",
                                                          "BeginOpen");
             }
@@ -1171,19 +1170,19 @@ namespace System.Management.Automation.Runspaces.Internal
                 RunspacePoolAsyncResult ret = new RunspacePoolAsyncResult(
                     instanceId, callback, state, false);
 
-                if (this.canReconnect)
+                if (_canReconnect)
                 {
                     // This indicates a reconnect scenario where this object instance was previously
                     // disconnected.
-                    reconnectAsyncResult = ret;
-                    dataStructureHandler.ReconnectPoolAsync();
+                    _reconnectAsyncResult = ret;
+                    _dataStructureHandler.ReconnectPoolAsync();
                 }
                 else
                 {
                     // This indicates a reconstruction scenario where this object was created
                     // in the disconnect state and is being connected for the first time.
-                    openAsyncResult = ret;
-                    dataStructureHandler.ConnectPoolAsync();
+                    _openAsyncResult = ret;
+                    _dataStructureHandler.ConnectPoolAsync();
                 }
 
                 if (raiseEvents)
@@ -1369,7 +1368,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 // At this point we don't know if the runspace pool we want to connect to has just one runspace
                 // (a RemoteRunspace/PSSession) or multiple runspaces in its pool.  We do have an array of 
                 // running command information which will indicate a runspace pool if the count is gt one.
-                RunspacePool runspacePool = new RunspacePool(isDisconnected, shellId, strName, 
+                RunspacePool runspacePool = new RunspacePool(isDisconnected, shellId, strName,
                     connectCmdInfos.ToArray(), wsmanConnectionInfo, host, typeTable);
                 discRunspacePools.Add(runspacePool);
             }
@@ -1389,7 +1388,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         private static void UpdateWSManConnectionInfo(
-            WSManConnectionInfo wsmanConnectionInfo, 
+            WSManConnectionInfo wsmanConnectionInfo,
             PSObject rsInfoObject)
         {
             PSPropertyInfo pspIdleTimeOut = rsInfoObject.Properties["IdleTimeOut"];
@@ -1495,8 +1494,8 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         private static void ComputeDisconnectedOnExpiresOn(
-            PSObject rsInfoObject, 
-            out DateTime? disconnectedOn, 
+            PSObject rsInfoObject,
+            out DateTime? disconnectedOn,
             out DateTime? expiresOn)
         {
             PSPropertyInfo pspIdleTimeOut = rsInfoObject.Properties["IdleTimeOut"];
@@ -1588,7 +1587,7 @@ namespace System.Management.Automation.Runspaces.Internal
             stateInfo = newStateInfo;
 
             // Update the availableForConnection variable based on state change.
-            this.availableForConnection = (stateInfo.State == RunspacePoolState.Disconnected ||
+            _availableForConnection = (stateInfo.State == RunspacePoolState.Disconnected ||
                                            stateInfo.State == RunspacePoolState.Opened);
 
             if (raiseEvents)
@@ -1613,7 +1612,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 // Set boolean indicating this object has previous connection state and so 
                 // can be reconnected as opposed to the alternative where the connection 
                 // state has to be reconstructed then connected.
-                this.canReconnect = true;
+                _canReconnect = true;
             }
 
             // Do state change work outside of lock.
@@ -1626,10 +1625,10 @@ namespace System.Management.Automation.Runspaces.Internal
 
         private void SetDisconnectAsCompleted()
         {
-            if (disconnectAsyncResult != null && !disconnectAsyncResult.IsCompleted)
+            if (_disconnectAsyncResult != null && !_disconnectAsyncResult.IsCompleted)
             {
-                disconnectAsyncResult.SetAsCompleted(stateInfo.Reason);
-                disconnectAsyncResult = null;
+                _disconnectAsyncResult.SetAsCompleted(stateInfo.Reason);
+                _disconnectAsyncResult = null;
             }
         }
 
@@ -1657,10 +1656,10 @@ namespace System.Management.Automation.Runspaces.Internal
 
         private void SetReconnectAsCompleted()
         {
-            if (reconnectAsyncResult != null && !reconnectAsyncResult.IsCompleted)
+            if (_reconnectAsyncResult != null && !_reconnectAsyncResult.IsCompleted)
             {
-                reconnectAsyncResult.SetAsCompleted(stateInfo.Reason);
-                reconnectAsyncResult = null;
+                _reconnectAsyncResult.SetAsCompleted(stateInfo.Reason);
+                _reconnectAsyncResult = null;
             }
         }
 
@@ -1673,7 +1672,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             // just capture the reason for closing here..handle the session closed event
             // to change state appropriately.
-            closingReason = eventArgs.Data;                
+            _closingReason = eventArgs.Data;
         }
 
         /// <summary>
@@ -1685,7 +1684,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (eventArgs.Data != null)
             {
-                closingReason = eventArgs.Data;
+                _closingReason = eventArgs.Data;
             }
 
             // Set state under lock.
@@ -1704,11 +1703,11 @@ namespace System.Management.Automation.Runspaces.Internal
                     case RunspacePoolState.Connecting:
                         // Since RunspacePool is not in closing state, this close is
                         // happening because of data structure handler error. Set the state to broken.
-                        SetRunspacePoolState(new RunspacePoolStateInfo(RunspacePoolState.Broken, closingReason));
+                        SetRunspacePoolState(new RunspacePoolStateInfo(RunspacePoolState.Broken, _closingReason));
                         break;
 
                     case RunspacePoolState.Closing:
-                        SetRunspacePoolState(new RunspacePoolStateInfo(RunspacePoolState.Closed, closingReason));
+                        SetRunspacePoolState(new RunspacePoolStateInfo(RunspacePoolState.Closed, _closingReason));
                         break;
                 }
 
@@ -1741,8 +1740,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         private void SetOpenAsCompleted()
         {
-            RunspacePoolAsyncResult tempOpenAsyncResult = openAsyncResult;
-            openAsyncResult = null;
+            RunspacePoolAsyncResult tempOpenAsyncResult = _openAsyncResult;
+            _openAsyncResult = null;
             if (tempOpenAsyncResult != null && !tempOpenAsyncResult.IsCompleted)
             {
                 tempOpenAsyncResult.SetAsCompleted(stateInfo.Reason);
@@ -1757,10 +1756,10 @@ namespace System.Management.Automation.Runspaces.Internal
             // abort all pending calls.
             DispatchTable.AbortAllCalls();
 
-            if (closeAsyncResult != null)
+            if (_closeAsyncResult != null)
             {
-                closeAsyncResult.SetAsCompleted(stateInfo.Reason);
-                closeAsyncResult = null;
+                _closeAsyncResult.SetAsCompleted(stateInfo.Reason);
+                _closeAsyncResult = null;
             }
 
             // Ensure that openAsyncResult is completed and that
@@ -1772,7 +1771,7 @@ namespace System.Management.Automation.Runspaces.Internal
             // Ensure private application data wait is released.
             try
             {
-                this.applicationPrivateDataReceived.Set();
+                _applicationPrivateDataReceived.Set();
             }
             catch (ObjectDisposedException) { }
         }
@@ -1789,7 +1788,7 @@ namespace System.Management.Automation.Runspaces.Internal
             PSObject data = eventArgs.Data;
             object response = RemotingDecoder.GetPropertyValue<object>(data, RemoteDataNameStrings.RunspacePoolOperationResponse);
             long callId = RemotingDecoder.GetPropertyValue<long>(data, RemoteDataNameStrings.CallId);
-            dispatchTable.SetResponse(callId, response);
+            _dispatchTable.SetResponse(callId, response);
         }
 
         /// <summary>
@@ -1800,7 +1799,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="eventArgs"></param>
         private void HandleURIDirectionReported(object sender, RemoteDataEventArgs<Uri> eventArgs)
         {
-            WSManConnectionInfo wsmanConnectionInfo = connectionInfo as WSManConnectionInfo;
+            WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
             if (null != wsmanConnectionInfo)
             {
                 wsmanConnectionInfo.ConnectionUri = eventArgs.Data;
@@ -1845,9 +1844,9 @@ namespace System.Management.Automation.Runspaces.Internal
             // Update connectionInfo with updated information from the transport.
             if (eventArgs != null)
             {
-                this.connectionInfo.IdleTimeout = eventArgs.ConnectionInfo.IdleTimeout;
-                this.connectionInfo.MaxIdleTimeout = eventArgs.ConnectionInfo.MaxIdleTimeout;
-                WSManConnectionInfo wsmanConnectionInfo = this.connectionInfo as WSManConnectionInfo;
+                _connectionInfo.IdleTimeout = eventArgs.ConnectionInfo.IdleTimeout;
+                _connectionInfo.MaxIdleTimeout = eventArgs.ConnectionInfo.MaxIdleTimeout;
+                WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
                 if (wsmanConnectionInfo != null)
                 {
                     wsmanConnectionInfo.OutputBufferingMode =
@@ -1862,7 +1861,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private void ResetDisconnectedOnExpiresOn()
         {
             // Reset DisconnectedOn/ExpiresOn
-            WSManConnectionInfo wsManConnectionInfo = this.connectionInfo as WSManConnectionInfo;
+            WSManConnectionInfo wsManConnectionInfo = _connectionInfo as WSManConnectionInfo;
             if (wsManConnectionInfo != null)
             {
                 wsManConnectionInfo.NullDisconnectedExpiresOn();
@@ -1872,7 +1871,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private void UpdateDisconnectedExpiresOn()
         {
             // Set DisconnectedOn/ExpiresOn for disconnected session.
-            WSManConnectionInfo wsManConnectionInfo = this.connectionInfo as WSManConnectionInfo;
+            WSManConnectionInfo wsManConnectionInfo = _connectionInfo as WSManConnectionInfo;
             if (wsManConnectionInfo != null)
             {
                 wsManConnectionInfo.SetDisconnectedExpiresOnToNow();
@@ -1892,7 +1891,7 @@ namespace System.Management.Automation.Runspaces.Internal
             // Wait for private application data to arrive from server.
             try
             {
-                this.applicationPrivateDataReceived.WaitOne();
+                _applicationPrivateDataReceived.WaitOne();
             }
             catch (ObjectDisposedException) { }
 
@@ -1914,32 +1913,32 @@ namespace System.Management.Automation.Runspaces.Internal
 
         #region Private Members
 
-        private RunspaceConnectionInfo connectionInfo;     // connection info with which this 
+        private RunspaceConnectionInfo _connectionInfo;     // connection info with which this 
         // runspace is created
-        private ClientRunspacePoolDataStructureHandler dataStructureHandler;    // runspace pool data structure handler for all
+        private ClientRunspacePoolDataStructureHandler _dataStructureHandler;    // runspace pool data structure handler for all
         // data structure handler handling
-        private RunspacePoolAsyncResult openAsyncResult;// async result object generated on
+        private RunspacePoolAsyncResult _openAsyncResult;// async result object generated on
         // CoreOpen
-        private RunspacePoolAsyncResult closeAsyncResult; // async result object generated by
+        private RunspacePoolAsyncResult _closeAsyncResult; // async result object generated by
         // BeginClose
-        private Exception closingReason;                       // reason for a Closing state transition
-        private RunspacePoolAsyncResult disconnectAsyncResult; // async result object generated on CoreDisconnect
-        private RunspacePoolAsyncResult reconnectAsyncResult;  // async result object generated on CoreReconnect
-        private bool isDisposed;
-        private DispatchTable<object> dispatchTable;
+        private Exception _closingReason;                       // reason for a Closing state transition
+        private RunspacePoolAsyncResult _disconnectAsyncResult; // async result object generated on CoreDisconnect
+        private RunspacePoolAsyncResult _reconnectAsyncResult;  // async result object generated on CoreReconnect
+        private bool _isDisposed;
+        private DispatchTable<object> _dispatchTable;
 
         private DispatchTable<Object> DispatchTable
         {
             get
             {
-                return dispatchTable;
+                return _dispatchTable;
             }
         }
 
-        private ConnectCommandInfo[] connectCommands = null;
-        private bool canReconnect;
-        private string friendlyName = string.Empty;
-        private bool availableForConnection;
+        private ConnectCommandInfo[] _connectCommands = null;
+        private bool _canReconnect;
+        private string _friendlyName = string.Empty;
+        private bool _availableForConnection;
 
         private System.Collections.Concurrent.ConcurrentStack<PowerShell> _runningPowerShells;
 
@@ -1965,11 +1964,11 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             // dispose the base class before disposing dataStructure handler.
             base.Dispose(disposing);
-            if (!isDisposed)
+            if (!_isDisposed)
             {
-                isDisposed = true;
-                dataStructureHandler.Dispose(disposing);
-                applicationPrivateDataReceived.Dispose();
+                _isDisposed = true;
+                _dataStructureHandler.Dispose(disposing);
+                _applicationPrivateDataReceived.Dispose();
             }
         }
 
@@ -1983,15 +1982,15 @@ namespace System.Management.Automation.Runspaces.Internal
     /// </summary>
     internal class ConnectCommandInfo
     {
-        private Guid cmdId = Guid.Empty;
-        private string cmdStr = String.Empty;
+        private Guid _cmdId = Guid.Empty;
+        private string _cmdStr = String.Empty;
 
         /// <summary>
         /// Remote command instance Id.
         /// </summary>
         public Guid CommandId
         {
-            get { return this.cmdId; }
+            get { return _cmdId; }
         }
 
         /// <summary>
@@ -1999,7 +1998,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         public string Command
         {
-            get { return this.cmdStr; }
+            get { return _cmdStr; }
         }
 
         /// <summary>
@@ -2009,8 +2008,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="cmdStr">Command string.</param>
         public ConnectCommandInfo(Guid cmdId, string cmdStr)
         {
-            this.cmdId = cmdId;
-            this.cmdStr = cmdStr;
+            _cmdId = cmdId;
+            _cmdStr = cmdStr;
         }
     }
 
@@ -2222,5 +2221,5 @@ namespace System.Management.Automation.Runspaces.Internal
         }
     }
 
-#endregion
+    #endregion
 }

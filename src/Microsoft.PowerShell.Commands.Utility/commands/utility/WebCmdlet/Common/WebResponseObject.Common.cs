@@ -18,9 +18,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// gets or protected sets the Content property
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]        
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public byte[] Content { get; protected set; }
-        
+
         /// <summary>
         /// gets the StatusCode property
         /// </summary>
@@ -41,11 +41,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// gets the RawContentStream property
         /// </summary>
-        public MemoryStream RawContentStream 
+        public MemoryStream RawContentStream
         {
             get { return (_rawContentStream); }
         }
-        
+
         /// <summary>
         /// gets the RawContentLength property
         /// </summary>
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
         public string RawContent { get; protected set; }
 
         #endregion Properties
-        
+
         #region Methods
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
 
             return new string(stringContent);
         }
-    
+
         #endregion Methods
     }
 }

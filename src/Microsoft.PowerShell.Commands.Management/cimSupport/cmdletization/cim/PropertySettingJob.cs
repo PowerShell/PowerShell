@@ -14,8 +14,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     {
         internal PropertySettingJob(CimJobContext jobContext, bool passThru, CimInstance objectToModify, MethodInvocationInfo methodInvocationInfo)
                 : base(
-                    jobContext, 
-                    passThru, 
+                    jobContext,
+                    passThru,
                     objectToModify.ToString(),
                     methodInvocationInfo)
         {

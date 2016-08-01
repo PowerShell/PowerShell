@@ -19,7 +19,7 @@ namespace System.Management.Automation
     /// and the parameter binder(s). It holds the state of the arguments and parameters.
     /// </summary>
     [DebuggerDisplay("InvocationInfo = {InvocationInfo}")]
-    internal abstract class ParameterBinderController 
+    internal abstract class ParameterBinderController
     {
         #region ctor
 
@@ -44,10 +44,10 @@ namespace System.Management.Automation
             Diagnostics.Assert(context != null, "call to verify context is not null.");
 
             this.DefaultParameterBinder = parameterBinder;
-            this._context = context;
-            this._invocationInfo = invocationInfo;
+            _context = context;
+            _invocationInfo = invocationInfo;
         }
-        
+
         #endregion ctor
 
         #region internal_members
@@ -106,7 +106,7 @@ namespace System.Management.Automation
         private readonly Dictionary<string, MergedCompiledCommandParameter> _boundParameters =
             new Dictionary<string, MergedCompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
 
-        internal CommandLineParameters CommandLineParameters 
+        internal CommandLineParameters CommandLineParameters
         {
             get { return this.DefaultParameterBinder.CommandLineParameters; }
         }
@@ -171,7 +171,7 @@ namespace System.Management.Automation
         /// The name of the argument matches more than one parameter.
         /// </exception>
         /// 
-        internal void ReparseUnboundArguments ()
+        internal void ReparseUnboundArguments()
         {
             Collection<CommandParameterInternal> result = new Collection<CommandParameterInternal>();
 
@@ -215,7 +215,7 @@ namespace System.Management.Automation
 
                 if (IsSwitchAndSetValue(parameterName, argument, matchingParameter.Parameter))
                 {
-                    result.Add (argument);
+                    result.Add(argument);
                     continue;
                 }
 
@@ -235,8 +235,8 @@ namespace System.Management.Automation
                         // an argument value for that parameter or a parameter itself.
 
                         MergedCompiledCommandParameter nextMatchingParameter =
-                            _bindableParameters.GetMatchingParameter (
-                                nextArgument.ParameterName, 
+                            _bindableParameters.GetMatchingParameter(
+                                nextArgument.ParameterName,
                                 false,
                                 true,
                                 new InvocationInfo(this.InvocationInfo.MyCommand, nextArgument.ParameterExtent));
@@ -265,7 +265,7 @@ namespace System.Management.Automation
                         ++index;
                         argument.ParameterName = matchingParameter.Parameter.Name;
                         argument.SetArgumentValue(nextArgument.ArgumentExtent, nextArgument.ParameterText);
-                        result.Add (argument);
+                        result.Add(argument);
                         continue;
                     }
 
@@ -275,15 +275,15 @@ namespace System.Management.Automation
                     ++index;
                     argument.ParameterName = matchingParameter.Parameter.Name;
                     argument.SetArgumentValue(nextArgument.ArgumentExtent, nextArgument.ArgumentValue);
-                    result.Add (argument);
+                    result.Add(argument);
                 }
                 else
                 {
                     // It is an error to have a argument that is a parameter name
                     // but doesn't have a value
 
-                    ParameterBindingException exception = 
-                        new ParameterBindingException (
+                    ParameterBindingException exception =
+                        new ParameterBindingException(
                             ErrorCategory.InvalidArgument,
                             this.InvocationInfo,
                             GetParameterErrorExtent(argument),
@@ -418,7 +418,7 @@ namespace System.Management.Automation
                 }
             }
         }
-        
+
         /// <summary>
         /// Bind the argument to the specified parameter
         /// </summary>
@@ -456,7 +456,7 @@ namespace System.Management.Automation
 
             MergedCompiledCommandParameter matchingParameter =
                 BindableParameters.GetMatchingParameter(
-                    argument.ParameterName, 
+                    argument.ParameterName,
                     (flags & ParameterBindingFlags.ThrowOnParameterNotFound) != 0,
                     true,
                     new InvocationInfo(this.InvocationInfo.MyCommand, argument.ParameterExtent));
@@ -468,7 +468,7 @@ namespace System.Management.Automation
 
                 if (BoundParameters.ContainsKey(matchingParameter.Parameter.Name))
                 {
-                    ParameterBindingException bindingException = 
+                    ParameterBindingException bindingException =
                         new ParameterBindingException(
                             ErrorCategory.InvalidArgument,
                             this.InvocationInfo,
@@ -545,7 +545,7 @@ namespace System.Management.Automation
         /// 
         internal virtual bool BindParameter(
             uint parameterSets,
-            CommandParameterInternal argument, 
+            CommandParameterInternal argument,
             MergedCompiledCommandParameter parameter,
             ParameterBindingFlags flags)
         {
@@ -554,9 +554,9 @@ namespace System.Management.Automation
             switch (parameter.BinderAssociation)
             {
                 case ParameterBinderAssociation.DeclaredFormalParameters:
-                    result = 
+                    result =
                         this.DefaultParameterBinder.BindParameter(
-                            argument, 
+                            argument,
                             parameter.Parameter,
                             flags);
                     break;
@@ -651,7 +651,7 @@ namespace System.Management.Automation
                     // The parameter set declaration is ambiguous so
                     // throw an exception.
 
-                    ParameterBindingException bindingException  =
+                    ParameterBindingException bindingException =
                         new ParameterBindingException(
                             ErrorCategory.InvalidArgument,
                             this.InvocationInfo,
@@ -684,8 +684,8 @@ namespace System.Management.Automation
                         }
 
                         CommandParameterInternal argument = GetNextPositionalArgument(
-                            unboundArgumentsCollection, 
-                            result, 
+                            unboundArgumentsCollection,
+                            result,
                             ref unboundArgumentsIndex);
 
                         if (argument == null)
@@ -883,7 +883,6 @@ namespace System.Management.Automation
                                 bindableArgument,
                                 parameter.Parameter,
                                 flags);
-
                     }
                     catch (ParameterBindingArgumentTransformationException pbex)
                     {
@@ -915,7 +914,7 @@ namespace System.Management.Automation
 
                     if (parameterBindingExceptionToThrown != null)
                     {
-                        if(!DefaultParameterBindingInUse)
+                        if (!DefaultParameterBindingInUse)
                         {
                             throw parameterBindingExceptionToThrown;
                         }
@@ -971,7 +970,7 @@ namespace System.Management.Automation
                     pbex,
                     resourceString,
                     oldMsg, defaultParamsGetBound);
-            
+
             throw newBindingException;
         }
 
@@ -1158,7 +1157,7 @@ namespace System.Management.Automation
         {
             get { return _parametersBoundThroughPipelineInput; }
         }
-        private readonly Collection<MergedCompiledCommandParameter> _parametersBoundThroughPipelineInput = 
+        private readonly Collection<MergedCompiledCommandParameter> _parametersBoundThroughPipelineInput =
             new Collection<MergedCompiledCommandParameter>();
 
         /// <summary>
@@ -1251,7 +1250,6 @@ namespace System.Management.Automation
             //Diagnostics.Assert(result != PositionUtilities.EmptyExtent, "We are missing a valid position somewhere");
             return result;
         }
-
 
         #endregion internal_members
     }

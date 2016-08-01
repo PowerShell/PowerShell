@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 namespace Microsoft.PowerShell.Commands
 {
     using System;
@@ -37,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         Multiple
     }
-	
+
     /// <summary>
     /// Implementation for the Out-GridView command
     /// </summary>
@@ -48,10 +49,10 @@ namespace Microsoft.PowerShell.Commands
 
         private const string DataNotQualifiedForGridView = "DataNotQualifiedForGridView";
         private const string RemotingNotSupported = "RemotingNotSupported";
-        private TypeInfoDataBase typeInfoDataBase;
-        private MshExpressionFactory expressionFactory;
-        private OutWindowProxy windowProxy;
-        private GridHeader gridHeader;
+        private TypeInfoDataBase _typeInfoDataBase;
+        private MshExpressionFactory _expressionFactory;
+        private OutWindowProxy _windowProxy;
+        private GridHeader _gridHeader;
 
         #endregion Properties
 
@@ -71,13 +72,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameter specifies the current pipeline object 
         /// </summary>
-        [Parameter (ValueFromPipeline = true)]
+        [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject
         {
-            get { return this.inputObject;  }
-            set { this.inputObject = value; }
+            get { return _inputObject; }
+            set { _inputObject = value; }
         }
-        private PSObject inputObject = AutomationNull.Value;
+        private PSObject _inputObject = AutomationNull.Value;
 
         /// <summary>
         /// Gets/sets the title of the Out-GridView window.
@@ -86,15 +87,15 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string Title
         {
-            get { return title;  }
+            get { return title; }
             set { title = value; }
         }
         internal string title;
-        
-		/// <summary>
+
+        /// <summary>
         /// Field used for the Block parameter.
         /// </summary>
-        private SwitchParameter wait;
+        private SwitchParameter _wait;
 
         /// <summary>
         /// Get or sets a value indicating whether the cmdlet should wait for the window to be closed
@@ -102,14 +103,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Wait")]
         public SwitchParameter Wait
         {
-            get { return this.wait; }
-            set { this.wait = value; }
+            get { return _wait; }
+            set { _wait = value; }
         }
 
         /// <summary>
         /// Field used for the OutputMode parameter.
         /// </summary>
-        private OutputModeOption outputMode;
+        private OutputModeOption _outputMode;
 
         /// <summary>
         /// Get or sets a value indicating whether the selected items should be written to the pipeline
@@ -118,8 +119,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "OutputMode")]
         public OutputModeOption OutputMode
         {
-            set { this.outputMode = value; }
-            get { return outputMode; }
+            set { _outputMode = value; }
+            get { return _outputMode; }
         }
 
         /// <summary>
@@ -130,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter PassThru
         {
             set { this.OutputMode = value.IsPresent ? OutputModeOption.Multiple : OutputModeOption.None; }
-            get { return this.outputMode == OutputModeOption.Multiple ? new SwitchParameter(true) : new SwitchParameter(false); }
+            get { return _outputMode == OutputModeOption.Multiple ? new SwitchParameter(true) : new SwitchParameter(false); }
         }
 
         #endregion Input Parameters
@@ -143,21 +144,21 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             // Set up the ExpressionFactory
-            this.expressionFactory = new MshExpressionFactory();
+            _expressionFactory = new MshExpressionFactory();
 
             // If the value of the Title parameter is valid, use it as a window's title.
-            if(this.title != null)
+            if (this.title != null)
             {
-                this.windowProxy = new OutWindowProxy(this.title, this.outputMode, this);
+                _windowProxy = new OutWindowProxy(this.title, _outputMode, this);
             }
             else
             {
                 // Using the command line as a title.
-                this.windowProxy = new OutWindowProxy(this.MyInvocation.Line, this.outputMode, this);
+                _windowProxy = new OutWindowProxy(this.MyInvocation.Line, _outputMode, this);
             }
 
             // Load the Type info database.
-            this.typeInfoDataBase = this.Context.FormatDBManager.GetTypeInfoDataBase();
+            _typeInfoDataBase = this.Context.FormatDBManager.GetTypeInfoDataBase();
         }
 
         /// <summary>
@@ -167,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
         {
             base.EndProcessing();
 
-            if (this.windowProxy == null)
+            if (_windowProxy == null)
             {
                 return;
             }
@@ -176,11 +177,11 @@ namespace Microsoft.PowerShell.Commands
             // The pipeline will be blocked while we don't return
             if (this.Wait || this.OutputMode != OutputModeOption.None)
             {
-                this.windowProxy.BlockUntillClosed();
+                _windowProxy.BlockUntillClosed();
             }
-			
+
             // Output selected items to pipeline.
-            List<PSObject> selectedItems = this.windowProxy.GetSelectedItems();
+            List<PSObject> selectedItems = _windowProxy.GetSelectedItems();
             if (this.OutputMode != OutputModeOption.None && selectedItems != null)
             {
                 foreach (PSObject selectedItem in selectedItems)
@@ -206,23 +207,23 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (this.inputObject == null || this.inputObject == AutomationNull.Value)
+            if (_inputObject == null || _inputObject == AutomationNull.Value)
             {
                 return;
             }
 
-            IDictionary dictionary = this.inputObject.BaseObject as IDictionary;
-            if(dictionary != null)
+            IDictionary dictionary = _inputObject.BaseObject as IDictionary;
+            if (dictionary != null)
             {
                 // Dictionaries should be enumerated through because the pipeline does not enumerate through them. 
-                foreach(DictionaryEntry entry in dictionary)
+                foreach (DictionaryEntry entry in dictionary)
                 {
                     ProcessObject(PSObjectHelper.AsPSObject(entry));
                 }
             }
             else
             {
-                ProcessObject(this.inputObject);
+                ProcessObject(_inputObject);
             }
         }
 
@@ -233,7 +234,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (this.Wait || this.OutputMode != OutputModeOption.None)
             {
-                this.windowProxy.CloseWindow();
+                _windowProxy.CloseWindow();
             }
         }
 
@@ -245,10 +246,10 @@ namespace Microsoft.PowerShell.Commands
         {
             StringFormatError formatErrorObject = new StringFormatError();
             string smartToString = PSObjectHelper.SmartToString(liveObject,
-                                                                this.expressionFactory,
+                                                                _expressionFactory,
                                                                 InnerFormatShapeCommand.FormatEnumerationLimit(),
                                                                 formatErrorObject);
-            if(formatErrorObject.exception != null)
+            if (formatErrorObject.exception != null)
             {
                 // There was a formatting error that should be sent to the console.
                 this.WriteError(
@@ -273,10 +274,10 @@ namespace Microsoft.PowerShell.Commands
         private void ProcessObject(PSObject input)
         {
             // Make sure the OGV window is not closed.
-            if (this.windowProxy.IsWindowClosed())
+            if (_windowProxy.IsWindowClosed())
             {
                 LocalPipeline pipeline = (LocalPipeline)this.Context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            
+
                 if (pipeline != null && !pipeline.IsStopping)
                 {
                     // Stop the pipeline cleanly.
@@ -303,20 +304,20 @@ namespace Microsoft.PowerShell.Commands
                 this.ThrowTerminatingError(error);
             }
 
-            if(this.gridHeader == null)
+            if (_gridHeader == null)
             {
                 // Columns have not been added yet; Start the main window and add columns.
-                this.windowProxy.ShowWindow();
-                this.gridHeader = GridHeader.ConstructGridHeader(input, this);
+                _windowProxy.ShowWindow();
+                _gridHeader = GridHeader.ConstructGridHeader(input, this);
             }
             else
             {
-                this.gridHeader.ProcessInputObject(input);
+                _gridHeader.ProcessInputObject(input);
             }
-            
+
             // Some thread syncronization needed.
-            Exception exception = this.windowProxy.GetLastException();
-            if(exception != null) 
+            Exception exception = _windowProxy.GetLastException();
+            if (exception != null)
             {
                 ErrorRecord error = new ErrorRecord(
                     exception,
@@ -327,7 +328,7 @@ namespace Microsoft.PowerShell.Commands
                 this.ThrowTerminatingError(error);
             }
         }
-        
+
         #endregion Private Methods
 
         internal abstract class GridHeader
@@ -354,67 +355,67 @@ namespace Microsoft.PowerShell.Commands
 
         internal class ScalarTypeHeader : GridHeader
         {
-            private Type originalScalarType;
+            private Type _originalScalarType;
 
             internal ScalarTypeHeader(OutGridViewCommand parentCmd, PSObject input) : base(parentCmd)
             {
-                this.originalScalarType = input.BaseObject.GetType();
+                _originalScalarType = input.BaseObject.GetType();
 
                 // On scalar types the type name is used as a column name.
-                this.parentCmd.windowProxy.AddColumnsAndItem(input);
+                this.parentCmd._windowProxy.AddColumnsAndItem(input);
             }
 
             internal override void ProcessInputObject(PSObject input)
             {
-                if(!originalScalarType.Equals(input.BaseObject.GetType()))
+                if (!_originalScalarType.Equals(input.BaseObject.GetType()))
                 {
-                    parentCmd.gridHeader = new HeteroTypeHeader(base.parentCmd, input);
+                    parentCmd._gridHeader = new HeteroTypeHeader(base.parentCmd, input);
                 }
                 else
                 {
                     // Columns are already added; Add the input PSObject as an item to the underlying Management List.
-                    base.parentCmd.windowProxy.AddItem(input);
+                    base.parentCmd._windowProxy.AddItem(input);
                 }
             }
         }
 
         internal class NonscalarTypeHeader : GridHeader
         {
-            private AppliesTo appliesTo = null;
+            private AppliesTo _appliesTo = null;
 
             internal NonscalarTypeHeader(OutGridViewCommand parentCmd, PSObject input) : base(parentCmd)
             {
                 // Prepare a table view.
                 TableView tableView = new TableView();
-                tableView.Initialize(parentCmd.expressionFactory, parentCmd.typeInfoDataBase);
+                tableView.Initialize(parentCmd._expressionFactory, parentCmd._typeInfoDataBase);
 
                 // Request a view definition from the type database.
-                ViewDefinition viewDefinition = DisplayDataQuery.GetViewByShapeAndType(parentCmd.expressionFactory, parentCmd.typeInfoDataBase, FormatShape.Table, input.TypeNames, null);
-                if(viewDefinition != null)
+                ViewDefinition viewDefinition = DisplayDataQuery.GetViewByShapeAndType(parentCmd._expressionFactory, parentCmd._typeInfoDataBase, FormatShape.Table, input.TypeNames, null);
+                if (viewDefinition != null)
                 {
                     // Create a header using a view definition provided by the types database.
-                    parentCmd.windowProxy.AddColumnsAndItem(input, tableView, (TableControlBody)viewDefinition.mainControl);
+                    parentCmd._windowProxy.AddColumnsAndItem(input, tableView, (TableControlBody)viewDefinition.mainControl);
 
                     // Remember all type names and type groups the current view applies to.
-                    this.appliesTo = viewDefinition.appliesTo;
+                    _appliesTo = viewDefinition.appliesTo;
                 }
                 else
                 {
                     // Create a header using only the input object's properties.
-                    parentCmd.windowProxy.AddColumnsAndItem(input, tableView);
-                    this.appliesTo = new AppliesTo();
+                    parentCmd._windowProxy.AddColumnsAndItem(input, tableView);
+                    _appliesTo = new AppliesTo();
 
                     // Add all type names except for Object and MarshalByRefObject types because they are too generic.
                     // Leave the Object type name if it is the only type name.
                     int index = 0;
-                    foreach(string typeName in input.TypeNames)
+                    foreach (string typeName in input.TypeNames)
                     {
-                        if(index > 0 && (typeName.Equals(typeof(Object).FullName, StringComparison.OrdinalIgnoreCase) ||
+                        if (index > 0 && (typeName.Equals(typeof(Object).FullName, StringComparison.OrdinalIgnoreCase) ||
                             typeName.Equals(typeof(MarshalByRefObject).FullName, StringComparison.OrdinalIgnoreCase)))
                         {
                             break;
                         }
-                        this.appliesTo.AddAppliesToType(typeName);
+                        _appliesTo.AddAppliesToType(typeName);
                         index++;
                     }
                 }
@@ -423,22 +424,22 @@ namespace Microsoft.PowerShell.Commands
             internal override void ProcessInputObject(PSObject input)
             {
                 // Find out if the input has matching types in the this.appliesTo collection.
-                foreach(TypeOrGroupReference typeOrGroupRef in this.appliesTo.referenceList)
+                foreach (TypeOrGroupReference typeOrGroupRef in _appliesTo.referenceList)
                 {
-                    if(typeOrGroupRef is TypeReference)
+                    if (typeOrGroupRef is TypeReference)
                     {
                         // Add deserialization prefix.
                         string deserializedTypeName = typeOrGroupRef.name;
                         Deserializer.AddDeserializationPrefix(ref deserializedTypeName);
 
-                        for(int i = 0; i < input.TypeNames.Count; i++)
+                        for (int i = 0; i < input.TypeNames.Count; i++)
                         {
-                            if(typeOrGroupRef.name.Equals(input.TypeNames[i], StringComparison.OrdinalIgnoreCase)
+                            if (typeOrGroupRef.name.Equals(input.TypeNames[i], StringComparison.OrdinalIgnoreCase)
                                 || deserializedTypeName.Equals(input.TypeNames[i], StringComparison.OrdinalIgnoreCase))
                             {
                                 // Current view supports the input's Type;
                                 // Add the input PSObject as an item to the underlying Management List.
-                                base.parentCmd.windowProxy.AddItem(input);
+                                base.parentCmd._windowProxy.AddItem(input);
                                 return;
                             }
                         }
@@ -447,26 +448,26 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // Find out if the input's Type belongs to the current TypeGroup.
                         // TypeGroupReference has only a group's name, so use the database to get through all actual TypeGroup's.
-                        List<TypeGroupDefinition> typeGroupList = base.parentCmd.typeInfoDataBase.typeGroupSection.typeGroupDefinitionList;
-                        foreach(TypeGroupDefinition typeGroup in typeGroupList)
+                        List<TypeGroupDefinition> typeGroupList = base.parentCmd._typeInfoDataBase.typeGroupSection.typeGroupDefinitionList;
+                        foreach (TypeGroupDefinition typeGroup in typeGroupList)
                         {
-                            if(typeGroup.name.Equals(typeOrGroupRef.name, StringComparison.OrdinalIgnoreCase))
+                            if (typeGroup.name.Equals(typeOrGroupRef.name, StringComparison.OrdinalIgnoreCase))
                             {
                                 // A matching TypeGroup is found in the database.
                                 // Find out if the input's Type belongs to this TypeGroup.
-                                foreach(TypeReference typeRef in typeGroup.typeReferenceList)
+                                foreach (TypeReference typeRef in typeGroup.typeReferenceList)
                                 {
                                     // Add deserialization prefix.
                                     string deserializedTypeName = typeRef.name;
                                     Deserializer.AddDeserializationPrefix(ref deserializedTypeName);
 
-                                    if(input.TypeNames.Count > 0 
+                                    if (input.TypeNames.Count > 0
                                         && (typeRef.name.Equals(input.TypeNames[0], StringComparison.OrdinalIgnoreCase)
                                             || deserializedTypeName.Equals(input.TypeNames[0], StringComparison.OrdinalIgnoreCase)))
                                     {
                                         // Current view supports the input's Type;
                                         // Add the input PSObject as an item to the underlying Management List.
-                                        base.parentCmd.windowProxy.AddItem(input);
+                                        base.parentCmd._windowProxy.AddItem(input);
                                         return;
                                     }
                                 }
@@ -477,7 +478,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // The input's Type is not supported by the current view;
                 // Switch to the Hetero Type view.
-                parentCmd.gridHeader = new HeteroTypeHeader(base.parentCmd, input);
+                parentCmd._gridHeader = new HeteroTypeHeader(base.parentCmd, input);
             }
         }
 
@@ -486,12 +487,12 @@ namespace Microsoft.PowerShell.Commands
             internal HeteroTypeHeader(OutGridViewCommand parentCmd, PSObject input) : base(parentCmd)
             {
                 // Clear all existed columns and add Type and Value columns.
-                this.parentCmd.windowProxy.AddHeteroViewColumnsAndItem(input);
+                this.parentCmd._windowProxy.AddHeteroViewColumnsAndItem(input);
             }
 
             internal override void ProcessInputObject(PSObject input)
             {
-                this.parentCmd.windowProxy.AddHeteroViewItem(input);
+                this.parentCmd._windowProxy.AddHeteroViewItem(input);
             }
         }
 
@@ -503,10 +504,10 @@ namespace Microsoft.PowerShell.Commands
         {
             if (isDisposing)
             {
-                if (this.windowProxy != null)
+                if (_windowProxy != null)
                 {
-                    this.windowProxy.Dispose();
-                    this.windowProxy = null;
+                    _windowProxy.Dispose();
+                    _windowProxy = null;
                 }
             }
         }

@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = CommonRunspaceCommandBase.ProcessNameParameterSet)]
         [ValidateNotNullOrEmpty()]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Scope = "member", 
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Scope = "member",
             Target = "Microsoft.PowerShell.Commands.CommonRunspaceCommandBase.#AppDomainName")]
         public string[] AppDomainName
         {
@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!string.IsNullOrEmpty(currentAppDomainName))
                     {
-                        if(appDomainNames == null)
+                        if (appDomainNames == null)
                         {
                             appDomainNames = new List<string>();
                         }
@@ -360,7 +360,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if(this.ParameterSetName.Equals(CommonRunspaceCommandBase.ProcessNameParameterSet))
+            if (this.ParameterSetName.Equals(CommonRunspaceCommandBase.ProcessNameParameterSet))
             {
                 SetDebugPreferenceHelper(ProcessName, AppDomainName, true, "EnableRunspaceDebugCommandPersistDebugPreferenceFailure");
             }

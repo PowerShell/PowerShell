@@ -22,7 +22,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="response"></param>
         public BasicHtmlWebResponseObject(HttpResponseMessage response)
-            : this(response, null) { }
+            : this(response, null)
+        { }
 
         /// <summary>
         /// Constructor for HtmlWebResponseObject with memory stream

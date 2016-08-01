@@ -232,7 +232,7 @@ namespace System.Management.Automation.Runspaces
 
             lock (_syncObject)
             {
-                int i = 0; 
+                int i = 0;
                 foreach (T t in items)
                 {
                     RecordAdd(t);
@@ -422,7 +422,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         //object to use for locking
-        object _syncObject = new object();
+        private object _syncObject = new object();
 
         /// <summary>
         /// OnUpdate handler should lock the object itself. 

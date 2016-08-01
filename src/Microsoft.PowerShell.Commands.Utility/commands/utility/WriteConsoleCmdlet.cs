@@ -36,12 +36,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return objectToEcho;
+                return _objectToEcho;
             }
 
             set
             {
-                objectToEcho = value;
+                _objectToEcho = value;
             }
         }
 
@@ -57,11 +57,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return notAppendNewline;
+                return _notAppendNewline;
             }
             set
             {
-                notAppendNewline = value;
+                _notAppendNewline = value;
             }
         }
 
@@ -79,11 +79,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return separator;
+                return _separator;
             }
             set
             {
-                separator = value;
+                _separator = value;
             }
         }
 
@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string s = o as string;
                 IEnumerable enumerable = null;
-                if (s != null) 
+                if (s != null)
                 {
                     // strings are IEnumerable, so we special case them
                     if (s.Length > 0)
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             string result = ProcessObject(Object);
-            if(result == null)
+            if (result == null)
             {
                 result = "";
             }
@@ -175,9 +175,8 @@ namespace Microsoft.PowerShell.Commands
             this.Host.UI.TranscribeResult(result);
         }
 
-        private Boolean notAppendNewline = false;
-        private object objectToEcho = null;
-        private object separator = " ";
+        private Boolean _notAppendNewline = false;
+        private object _objectToEcho = null;
+        private object _separator = " ";
     }
-
 }   // namespace Microsoft.PowerShell.Commands

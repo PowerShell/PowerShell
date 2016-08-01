@@ -26,14 +26,18 @@ using System.Collections.Generic;
 
 //using Microsoft.Scripting.Math;
 
-namespace System.Management.Automation.Interpreter {
-    internal abstract class InstructionFactory {
+namespace System.Management.Automation.Interpreter
+{
+    internal abstract class InstructionFactory
+    {
         // TODO: weak table for types in a collectible assembly?
-        private static Dictionary<Type, InstructionFactory> _factories;
+        private static Dictionary<Type, InstructionFactory> s_factories;
 
-        internal static InstructionFactory GetFactory(Type type) {
-            if (_factories == null) {
-                _factories = new Dictionary<Type, InstructionFactory>() {
+        internal static InstructionFactory GetFactory(Type type)
+        {
+            if (s_factories == null)
+            {
+                s_factories = new Dictionary<Type, InstructionFactory>() {
                     { typeof(object), InstructionFactory<object>.Factory },
                     { typeof(bool), InstructionFactory<bool>.Factory },
                     { typeof(byte), InstructionFactory<byte>.Factory },
@@ -55,11 +59,13 @@ namespace System.Management.Automation.Interpreter {
                 };
             }
 
-            lock (_factories) {
+            lock (s_factories)
+            {
                 InstructionFactory factory;
-                if (!_factories.TryGetValue(type, out factory)) {
+                if (!s_factories.TryGetValue(type, out factory))
+                {
                     factory = (InstructionFactory)typeof(InstructionFactory<>).MakeGenericType(type).GetField("Factory").GetValue(null);
-                    _factories[type] = factory;
+                    s_factories[type] = factory;
                 }
                 return factory;
             }
@@ -74,7 +80,8 @@ namespace System.Management.Automation.Interpreter {
         internal protected abstract Instruction NewArrayInit(int elementCount);
     }
 
-    internal sealed class InstructionFactory<T> : InstructionFactory {
+    internal sealed class InstructionFactory<T> : InstructionFactory
+    {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
         public static readonly InstructionFactory Factory = new InstructionFactory<T>();
 
@@ -87,31 +94,38 @@ namespace System.Management.Automation.Interpreter {
 
         private InstructionFactory() { }
 
-        internal protected override Instruction GetArrayItem() {
+        internal protected override Instruction GetArrayItem()
+        {
             return _getArrayItem ?? (_getArrayItem = new GetArrayItemInstruction<T>());
         }
 
-        internal protected override Instruction SetArrayItem() {
+        internal protected override Instruction SetArrayItem()
+        {
             return _setArrayItem ?? (_setArrayItem = new SetArrayItemInstruction<T>());
         }
 
-        internal protected override Instruction TypeIs() {
+        internal protected override Instruction TypeIs()
+        {
             return _typeIs ?? (_typeIs = new TypeIsInstruction<T>());
         }
 
-        internal protected override Instruction TypeAs() {
+        internal protected override Instruction TypeAs()
+        {
             return _typeAs ?? (_typeAs = new TypeAsInstruction<T>());
         }
 
-        internal protected override Instruction DefaultValue() {
+        internal protected override Instruction DefaultValue()
+        {
             return _defaultValue ?? (_defaultValue = new DefaultValueInstruction<T>());
         }
 
-        internal protected override Instruction NewArray() {
+        internal protected override Instruction NewArray()
+        {
             return _newArray ?? (_newArray = new NewArrayInstruction<T>());
         }
 
-        internal protected override Instruction NewArrayInit(int elementCount) {
+        internal protected override Instruction NewArrayInit(int elementCount)
+        {
             return new NewArrayInitInstruction<T>(elementCount);
         }
     }

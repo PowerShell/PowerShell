@@ -12,7 +12,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
 {
-
     /// <summary>
     /// This class implements a Finite State Machine (FSM) to control the remote connection on the client side.
     /// There is a similar but not identical FSM on the server side for this connection.
@@ -37,7 +36,7 @@ namespace System.Management.Automation.Remoting
     internal class ClientRemoteSessionDSHandlerStateMachine
     {
         [TraceSourceAttribute("CRSessionFSM", "CRSessionFSM")]
-        static private PSTraceSource _trace = PSTraceSource.GetTracer("CRSessionFSM", "CRSessionFSM");
+        static private PSTraceSource s_trace = PSTraceSource.GetTracer("CRSessionFSM", "CRSessionFSM");
 
         /// <summary>
         /// Event handling matrix. It defines what action to take when an event occur.
@@ -51,15 +50,15 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private RemoteSessionState _state;
 
-        private Queue<RemoteSessionStateMachineEventArgs> processPendingEventsQueue
+        private Queue<RemoteSessionStateMachineEventArgs> _processPendingEventsQueue
             = new Queue<RemoteSessionStateMachineEventArgs>();
         // all events raised through the state machine
         // will be queued in this
-        private object syncObject = new object();
+        private object _syncObject = new object();
         // object for synchronizing access to the above
         // queue
 
-        private bool eventsInProcess = false;
+        private bool _eventsInProcess = false;
         // whether some thread is actively processing events
         // in a loop. If this is set then other threads
         // should simply add to the queue and not attempt
@@ -75,14 +74,14 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// indicates that the client has previously completed the session key exchange
         /// </summary>
-        private bool keyExchanged = false;
+        private bool _keyExchanged = false;
 
         /// <summary>
         /// this is to queue up a disconnect request when a key exchange is in process
         /// the session will be disconnect once the exchange is complete
         /// intermediate disconnect requests are tracked by this flag
         /// </summary>
-        private bool pendingDisconnect = false;
+        private bool _pendingDisconnect = false;
 
         /// <summary>
         /// processes events in the queue. If there are no 
@@ -97,14 +96,14 @@ namespace System.Management.Automation.Remoting
 
             do
             {
-                lock (syncObject)
+                lock (_syncObject)
                 {
-                    if (processPendingEventsQueue.Count == 0)
+                    if (_processPendingEventsQueue.Count == 0)
                     {
-		                eventsInProcess = false;
+                        _eventsInProcess = false;
                         break;
                     }
-                    eventArgs = processPendingEventsQueue.Dequeue();
+                    eventArgs = _processPendingEventsQueue.Dequeue();
                 }
 
                 try
@@ -124,8 +123,7 @@ namespace System.Management.Automation.Remoting
                 {
                     HandleFatalError(ex);
                 }
-
-            } while (eventsInProcess);
+            } while (_eventsInProcess);
         }
 
         private void HandleFatalError(Exception ex)
@@ -166,7 +164,7 @@ namespace System.Management.Automation.Remoting
         /// Unique identifier for this state machine. Used
         /// in tracing
         /// </summary>
-        private Guid id;
+        private Guid _id;
 
         /// <summary>
         /// Handler to be used in cases, where setting the state is the
@@ -245,10 +243,10 @@ namespace System.Management.Automation.Remoting
 
                 case RemoteSessionEvent.KeyReceived:
                     {
-                        Dbg.Assert(_state == RemoteSessionState.EstablishedAndKeySent, 
+                        Dbg.Assert(_state == RemoteSessionState.EstablishedAndKeySent,
                             "Key Receving can only be raised after reaching the Established state");
 
-                        if (_state == RemoteSessionState.EstablishedAndKeySent) 
+                        if (_state == RemoteSessionState.EstablishedAndKeySent)
                         {
                             Timer tmp = Interlocked.Exchange(ref _keyExchangeTimer, null);
                             if (tmp != null)
@@ -256,13 +254,13 @@ namespace System.Management.Automation.Remoting
                                 tmp.Dispose();
                             }
 
-                            keyExchanged = true;
+                            _keyExchanged = true;
                             SetState(RemoteSessionState.Established, eventArgs.Reason);
 
-                            if (pendingDisconnect)
+                            if (_pendingDisconnect)
                             {
                                 //session key exchange is complete, if there is a disconnect pending, process it now
-                                pendingDisconnect = false;
+                                _pendingDisconnect = false;
                                 DoDisconnect(sender, eventArgs);
                             }
                         }
@@ -274,7 +272,7 @@ namespace System.Management.Automation.Remoting
                         Dbg.Assert(_state >= RemoteSessionState.Established,
                             "Client can send a public key only after reaching the Established state");
 
-                        Dbg.Assert(keyExchanged == false, "Client should do key exchange only once");
+                        Dbg.Assert(_keyExchanged == false, "Client should do key exchange only once");
 
                         if (_state == RemoteSessionState.Established ||
                             _state == RemoteSessionState.EstablishedAndKeyRequested)
@@ -306,7 +304,6 @@ namespace System.Management.Automation.Remoting
                         {
                             SetState(RemoteSessionState.Disconnected, eventArgs.Reason); //set state to disconnected even TODO. Put some ETW event describing the disconnect process failure
                         }
-
                     }
                     break;
                 case RemoteSessionEvent.ReconnectCompleted:
@@ -341,7 +338,6 @@ namespace System.Management.Automation.Remoting
                 new PSRemotingDataStructureException(RemotingErrorIdStrings.ClientKeyExchangeFailed);
 
             RaiseEvent(new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.KeyReceiveFailed, exception));
-
         } // SetStateHandler
 
         /// <summary>
@@ -387,7 +383,7 @@ namespace System.Management.Automation.Remoting
         internal ClientRemoteSessionDSHandlerStateMachine()
         {
             _clientRemoteSessionStateChangeQueue = new Queue<RemoteSessionStateEventArgs>();
-            
+
             //Initialize the state machine event handling matrix
             _stateMachineHandle = new EventHandler<RemoteSessionStateMachineEventArgs>[(int)RemoteSessionState.MaxState, (int)RemoteSessionEvent.MaxEvent];
             for (int i = 0; i < _stateMachineHandle.GetLength(0); i++)
@@ -397,12 +393,12 @@ namespace System.Management.Automation.Remoting
                 _stateMachineHandle[i, (int)RemoteSessionEvent.Close] += DoClose;
                 _stateMachineHandle[i, (int)RemoteSessionEvent.CloseFailed] += SetStateHandler;
                 _stateMachineHandle[i, (int)RemoteSessionEvent.CloseCompleted] += SetStateHandler;
-               
+
                 _stateMachineHandle[i, (int)RemoteSessionEvent.NegotiationTimeout] += SetStateToClosedHandler;
 
                 _stateMachineHandle[i, (int)RemoteSessionEvent.SendFailed] += SetStateToClosedHandler;
 
-                _stateMachineHandle[i, (int)RemoteSessionEvent.ReceiveFailed] += SetStateToClosedHandler;                
+                _stateMachineHandle[i, (int)RemoteSessionEvent.ReceiveFailed] += SetStateToClosedHandler;
                 _stateMachineHandle[i, (int)RemoteSessionEvent.CreateSession] += DoCreateSession;
                 _stateMachineHandle[i, (int)RemoteSessionEvent.ConnectSession] += DoConnectSession;
             }
@@ -414,11 +410,11 @@ namespace System.Management.Automation.Remoting
             _stateMachineHandle[(int)RemoteSessionState.NegotiationSending, (int)RemoteSessionEvent.NegotiationSendCompleted] += SetStateHandler;
 
             _stateMachineHandle[(int)RemoteSessionState.NegotiationSendingOnConnect, (int)RemoteSessionEvent.NegotiationSendCompleted] += SetStateHandler;
-            
+
             _stateMachineHandle[(int)RemoteSessionState.NegotiationSent, (int)RemoteSessionEvent.NegotiationReceived] += SetStateHandler;
 
             _stateMachineHandle[(int)RemoteSessionState.NegotiationReceived, (int)RemoteSessionEvent.NegotiationCompleted] += SetStateHandler;
-         
+
             _stateMachineHandle[(int)RemoteSessionState.NegotiationReceived, (int)RemoteSessionEvent.NegotiationFailed] += SetStateToClosedHandler;
 
             _stateMachineHandle[(int)RemoteSessionState.Connecting, (int)RemoteSessionEvent.ConnectFailed] += SetStateHandler;
@@ -440,7 +436,7 @@ namespace System.Management.Automation.Remoting
             //Disconnect during key exchange process
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeySent, (int)RemoteSessionEvent.DisconnectStart] += DoDisconnectDuringKeyExchange;
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyRequested, (int)RemoteSessionEvent.DisconnectStart] += DoDisconnectDuringKeyExchange;
-            
+
             _stateMachineHandle[(int)RemoteSessionState.Established, (int)RemoteSessionEvent.KeyRequested] += SetStateHandler; //
             _stateMachineHandle[(int)RemoteSessionState.Established, (int)RemoteSessionEvent.KeySent] += SetStateHandler; //
             _stateMachineHandle[(int)RemoteSessionState.Established, (int)RemoteSessionEvent.KeySendFailed] += SetStateToClosedHandler; //
@@ -463,7 +459,7 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            id = Guid.NewGuid();
+            _id = Guid.NewGuid();
 
             // initialize the state to be Idle: this means it is ready to start connecting.
             SetState(RemoteSessionState.Idle, null);
@@ -512,25 +508,25 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         internal void RaiseEvent(RemoteSessionStateMachineEventArgs arg, bool clearQueuedEvents = false)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-                _trace.WriteLine("Event recieved : {0} for {1}", arg.StateEvent, id);
+                s_trace.WriteLine("Event recieved : {0} for {1}", arg.StateEvent, _id);
                 if (clearQueuedEvents)
                 {
-                    processPendingEventsQueue.Clear();
+                    _processPendingEventsQueue.Clear();
                 }
-                processPendingEventsQueue.Enqueue(arg);
+                _processPendingEventsQueue.Enqueue(arg);
 
-                if (!eventsInProcess)
+                if (!_eventsInProcess)
                 {
-                    eventsInProcess = true;
+                    _eventsInProcess = true;
                 }
                 else
                 {
                     return;
                 }
             }
-             
+
             ProcessEvents();
         }
 
@@ -554,14 +550,14 @@ namespace System.Management.Automation.Remoting
                 throw PSTraceSource.NewArgumentNullException("arg");
             }
 
-            EventHandler<RemoteSessionStateMachineEventArgs> handler = _stateMachineHandle[(int)State, (int)arg.StateEvent];                
+            EventHandler<RemoteSessionStateMachineEventArgs> handler = _stateMachineHandle[(int)State, (int)arg.StateEvent];
             if (handler != null)
             {
-                _trace.WriteLine("Before calling state machine event handler: state = {0}, event = {1}, id = {2}", State, arg.StateEvent, id);
+                s_trace.WriteLine("Before calling state machine event handler: state = {0}, event = {1}, id = {2}", State, arg.StateEvent, _id);
 
                 handler(this, arg);
 
-                _trace.WriteLine("After calling state machine event handler: state = {0}, event = {1}, id = {2}", State, arg.StateEvent, id);
+                s_trace.WriteLine("After calling state machine event handler: state = {0}, event = {1}, id = {2}", State, arg.StateEvent, _id);
             }
         }
 
@@ -599,7 +595,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoCreateSession(object sender, RemoteSessionStateMachineEventArgs arg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 Dbg.Assert(_state == RemoteSessionState.Idle,
                     "State needs to be idle to start connection");
@@ -634,11 +630,11 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoConnectSession(object sender, RemoteSessionStateMachineEventArgs arg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 Dbg.Assert(_state == RemoteSessionState.Idle,
                     "State needs to be idle to start connection");
-                
+
                 if (State == RemoteSessionState.Idle)
                 {
                     //We need to send negotiotion and connect algorithm related info 
@@ -681,7 +677,7 @@ namespace System.Management.Automation.Remoting
         private void DoDisconnectDuringKeyExchange(object sender, RemoteSessionStateMachineEventArgs arg)
         {
             //set flag to indicate Disconnect request queue up
-            pendingDisconnect = true;
+            _pendingDisconnect = true;
         }
 
         private void DoDisconnect(object sender, RemoteSessionStateMachineEventArgs arg)
@@ -719,7 +715,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoClose(object sender, RemoteSessionStateMachineEventArgs arg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 RemoteSessionState oldState = _state;
 
@@ -769,7 +765,7 @@ namespace System.Management.Automation.Remoting
             PSRemotingDataStructureException fatalError =
                 new PSRemotingDataStructureException(eventArgs.Reason, RemotingErrorIdStrings.FatalErrorCausingClose);
 
-            RemoteSessionStateMachineEventArgs closeEvent = 
+            RemoteSessionStateMachineEventArgs closeEvent =
                 new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close, fatalError);
 
             RaiseEvent(closeEvent);
@@ -792,11 +788,11 @@ namespace System.Management.Automation.Remoting
         private void SetState(RemoteSessionState newState, Exception reason)
         {
             RemoteSessionState oldState = _state;
-            
+
             if (newState != oldState)
             {
                 _state = newState;
-                _trace.WriteLine("state machine state transition: from state {0} to state {1}", oldState, _state);
+                s_trace.WriteLine("state machine state transition: from state {0} to state {1}", oldState, _state);
 
                 RemoteSessionStateInfo stateInfo = new RemoteSessionStateInfo(_state, reason);
                 RemoteSessionStateEventArgs sessionStateEventArg = new RemoteSessionStateEventArgs(stateInfo);

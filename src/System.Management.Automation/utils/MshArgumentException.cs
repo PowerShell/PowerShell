@@ -115,7 +115,7 @@ namespace System.Management.Automation
         /// <returns> constructed object </returns>
         public PSArgumentException(string message,
                                     Exception innerException)
-                : base (message, innerException)
+                : base(message, innerException)
         {
             _message = message;
         }
@@ -135,8 +135,8 @@ namespace System.Management.Automation
             {
                 if (null == _errorRecord)
                 {
-                    _errorRecord = new ErrorRecord (
-                        new ParentContainsErrorRecordException (this),
+                    _errorRecord = new ErrorRecord(
+                        new ParentContainsErrorRecordException(this),
                         _errorId,
                         ErrorCategory.InvalidArgument,
                         null);
@@ -146,7 +146,7 @@ namespace System.Management.Automation
         }
         private ErrorRecord _errorRecord;
         private string _errorId = "Argument";
-        
+
         /// <summary>
         /// see <see cref="System.Exception.Message"/>
         /// </summary>
