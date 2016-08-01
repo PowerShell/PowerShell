@@ -6,9 +6,6 @@ All packages are available on our GitHub [releases][] page.
 
 Once the package is installed, run `powershell` from a terminal.
 
-[releases]: https://github.com/PowerShell/PowerShell/releases/latest
-[xdg-bds]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
-
 [Ubuntu14.04]:./linux.md#ubuntu-1404
 [CentOS7.1]:./linux.md#centos-7
 [OSX10.11]:./linux.md#os-x-1011
@@ -73,3 +70,7 @@ The profiles respect PowerShell's per-host configuration, so the default host-sp
 On Linux and OS X, the [XDG Base Directory Specification][xdg-bds] is respected.
 
 > There is a symlink created from `/usr/bin/powershell` to `/opt/microsoft/powershell/powershell` to ensure `powershell` is in your path.
+
+
+[releases]: https://github.com/PowerShell/PowerShell/releases/latest
+[xdg-bds]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
