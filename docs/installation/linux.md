@@ -22,7 +22,7 @@ sudo apt-get install libunwind8 libicu52
 sudo dpkg -i powershell_6.0.0-alpha.7-1_amd64.deb
 ```
 
-> Please note that that Ubuntu 16.04 is not yet supported, but coming soon!
+> Please note that Ubuntu 16.04 is not yet supported, but coming soon!
 
 [Ubuntu 14.04]: http://releases.ubuntu.com/14.04/
 
