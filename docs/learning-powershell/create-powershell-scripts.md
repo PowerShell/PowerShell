@@ -9,7 +9,7 @@ This would begin by opening your favorite text editor and pasting in the followi
 $ipInfo = ifconfig | Select-String 'inet'
 $ipInfo = [regex]::matches($ipInfo,"addr:\b(?:\d{1,3}\.){3}\d{1,3}\b") | ForEach-Object value
 foreach ($ip in $ipInfo) {
-    $ip.replace('addr:','')
+    $ip.Replace('addr:','')
 }
 ```
 
@@ -48,7 +48,7 @@ $IP = if ($IsLinux -or $IsOSX) {
     $ipInfo = ifconfig | Select-String 'inet'
     $ipInfo = [regex]::matches($ipInfo,"addr:\b(?:\d{1,3}\.){3}\d{1,3}\b") | ForEach-Object value
     foreach ($ip in $ipInfo) {
-        $ip.replace('addr:','')
+        $ip.Replace('addr:','')
     }
 }
 else {
