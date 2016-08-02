@@ -1,7 +1,6 @@
 {
     "name": "Microsoft.PowerShell.Workflow.ServiceCore",
     "version": "1.0.0-*",
-    "authors": [ "OPS" ],
 
     "buildOptions": {
         "nowarn": [ "CS1570" ],
