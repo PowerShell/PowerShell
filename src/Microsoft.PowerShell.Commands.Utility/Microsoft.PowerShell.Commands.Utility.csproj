@@ -6,7 +6,7 @@
     <ProjectGuid>{5B134412-7EAF-4D60-9EED-CD200BDC5153}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoStandardLibraries>false</NoStandardLibraries>
-    <AssemblyName>ClassLibrary</AssemblyName>
+    <AssemblyName>Microsoft.PowerShell.Commands.Utility</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -242,6 +242,12 @@
     <EmbeddedResource Include="resources\WebCmdletStrings.resx" />
     <EmbeddedResource Include="resources\WriteErrorStrings.resx" />
     <EmbeddedResource Include="resources\WriteProgressResourceStrings.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj">
+      <Project>{1256d32a-be8d-4efe-9769-57be5663209e}</Project>
+      <Name>System.Management.Automation</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
