@@ -40,7 +40,7 @@ Msft Virtual Disk (scsi)  145GB     /dev/sdb
 ```
 
 Passing the variable down the pipeline to *Get-Member* reveals available methods and properties.
-This is because the value of *d$* is not just text output.
+This is because the value of *$d* is not just text output.
 The value is actually an array of .Net objects with methods and properties.
 The properties include Device, Friendly Name, and Total Size.
 
