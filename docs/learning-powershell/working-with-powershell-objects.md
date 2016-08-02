@@ -9,7 +9,7 @@ This is accomplished by parsing the output of an existing command, *parted -l* i
 
 ```PowerShell
 Function Get-DiskInfo {
-    $disks = sudo parted -l | Select-String "Disk /dev/sd*" -context 1,0
+    $disks = sudo parted -l | Select-String "Disk /dev/sd*" -Context 1,0
     $diskinfo = @()
     foreach ($disk in $disks) {
         $diskline1 = $disk.ToString().Split("`n")[0].ToString().Replace('  Model: ','')
