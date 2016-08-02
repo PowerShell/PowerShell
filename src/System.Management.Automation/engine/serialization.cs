@@ -6438,7 +6438,10 @@ namespace System.Management.Automation
             {
                 result = new PSPrimitiveDictionary();
             }
-            PSPrimitiveDictionary versionTable = new PSPrimitiveDictionary(PSVersionInfo.GetPSVersionTable());
+            PSPrimitiveDictionary versionTable = new PSPrimitiveDictionary(PSVersionInfo.GetPSVersionTableForDownLevel())
+            {
+                {"PSSemanticVersion", PSVersionInfo.PSVersion.ToString()}
+            };
             result.Add(PSVersionInfo.PSVersionTableName, versionTable);
 
             return result;
