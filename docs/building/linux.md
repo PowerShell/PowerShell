@@ -106,7 +106,7 @@ Start-PSBuild
 Congratulations! If everything went right, PowerShell is now built.
 The `Start-PSBuild` script will output the location of the executable:
 
-`./src/powershell/bin/Linux/netcoreapp1.0/ubuntu.14.04-x64/powershell`.
+`./src/powershell-unix/bin/Linux/netcoreapp1.0/ubuntu.14.04-x64/powershell`.
 
 You should now be running the `powershell` that you just built, if your run the above executable.
 You can run our cross-platform Pester tests with `Start-PSPester`, and our xUnit tests with `Start-PSxUnit`.
@@ -129,7 +129,7 @@ make test
 popd
 ```
 
-This library will be emitted in the `src/powershell` project, 
+This library will be emitted in the `src/powershell-unix` project,
 where `dotnet` consumes it as "content" and thus automatically deploys it.
 
 Build the managed projects
@@ -141,7 +141,7 @@ The `--configuration Linux` flag is necessary to ensure that the preprocessor de
 
 ```sh
 dotnet restore
-cd src/powershell
+cd src/powershell-unix
 dotnet build --configuration Linux
 ```
 
