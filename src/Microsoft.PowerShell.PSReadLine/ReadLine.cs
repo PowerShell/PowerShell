@@ -562,13 +562,53 @@ namespace Microsoft.PowerShell
                       
 #if LINUX // TODO: not necessary if ReadBufferLines worked, or if rendering worked on spans instead of complete lines
             string newPrompt = GetPrompt();
-            _consoleBuffer = ReadBufferLines(_initialY, Options.ExtraPromptLineCount + 2);
-           
+            //var text = ParseInput();
+            int statusLineCount = GetStatusLineCount();
+            Options.ExtraPromptLineCount = ConvertOffsetToCoordinates(text.Length).Y - _initialY + 1 + statusLineCount;
+            _consoleBuffer = ReadBufferLines(_initialY, Options.ExtraPromptLineCount); 
+            
             for (int i=0; i<newPrompt.Length; ++i)            
             {   
-                 _consoleBuffer[i].UnicodeChar = newPrompt[i];
+                _consoleBuffer[i].UnicodeChar = newPrompt[i];
             }
-#endif
+
+        /*
+            if (newPrompt.Length >= Console.BufferW var text = ParseInput();
+
+            int statusLineCount = GetStatusLineCount();idth)
+            {
+                if ( newPrompt.Length % Console.BufferWidth > 1)
+                {
+                    int recurseOpts = newPrompt.Length; 
+                    while (recurseOpts > Console.BufferWidth)
+                    {
+                        Options.ExtraPromptLineCount++; 
+                        recurseOpts =- Console.BufferWidth;
+                    }
+
+                    if (Options.ExtraPromptLineCount == 1 )
+                    {
+                        Options.ExtraPromptLineCount = 2;
+                    }
+                    _consoleBuffer = ReadBufferLines(_initialY, Options.ExtraPromptLineCount); 
+                }
+                for (int i=0; i<newPrompt.Length; ++i)            
+                {   
+                     _consoleBuffer[i].UnicodeChar = newPrompt[i];
+                }
+            }
+            
+            
+            else{
+                _consoleBuffer = ReadBufferLines(_initialY, 1); 
+
+                for (int i=0; i<newPrompt.Length; ++i)            
+                {   
+                    _consoleBuffer[i].UnicodeChar = newPrompt[i];
+                }
+            }
+            */
+#endif            
             _lastRenderTime = Stopwatch.StartNew();
 
             _killCommandCount = 0;
