@@ -3,14 +3,18 @@
 ## Terms
 
 * [**PowerShell Committee**](#powershell-committee): A committee of project owners who are responsible for design decisions, approving [RFCs][RFC-repo], and approving new maintainers/committee members 
+* **Project Leads**: Project Leads supports the PowerShell Committee, engineering teams, and community by communicating with other Microsoft teams and leadership as well as other companies to resolve disputes.  
+They also have optional votes on the PowerShell Committee when they choose to invoke them.
 * [**Repository maintainer**](#repository-maintainers): An individual responsible for merging pull requests (PRs) into `master` when all requirements are met (code review, tests, docs, and RFC approval as applicable).
 Repository Maintainers are the only people with write permissions into `master`.
 * [**Area experts**](#area-experts): People who are experts for specific components (e.g. PSReadline, the parser) or technologies (e.g. security, performance). 
 Area experts are responsible for code reviews, issue triage, and providing their expertise to others. 
+* **Corporation**: The Corporation owns the PowerShell repository and, under extreme circumstances, reserves the right to dissolve or reform the PowerShell Committee.
+The Corporation for PowerShell is Microsoft.
 * **Corporate Maintainer**: The Corporate Maintainer is an entity, person or set of persons, with the ability to veto decisions made by the PowerShell Committee or any other collaborators on the PowerShell project.
 This veto power will be used with restraint since it is intended that the community drive the project. 
-Under extreme circumstances the Corporate Maintainer also reserves the right to dissolve or reform the PowerShell Committee. 
-The Corporate Maintainer for PowerShell is Microsoft.
+The Corporate Maintainer is determined by the Corporation both initially and in continuation.
+The initial Corporate Maintainer for PowerShell is Jeffrey Snover.
 * [**RFC process**][RFC-repo]: The "review-for-comment" (RFC) process whereby design decisions get made. 
 
 ## PowerShell Committee
@@ -86,6 +90,14 @@ Repository Maintainers have [write access](https://help.github.com/articles/repo
 1. Merge pull requests to all branches *including* `master`.
 1. `git push` to all branches *including* `master`.
 1. Correctly assigning labels, milestones, and contributors to [issues](https://guides.github.com/features/issues/)
+
+### Current Repository Maintainers
+
+* Sergei Vorobev ([vors](https://github.com/vors))
+* Jason Shirk ([lzybkr](https://github.com/lzybkr))
+* Dongbo Wang ([daxian-dbw](https://github.com/daxian-dbw))
+* Travis Plunk ([TravisEz123](https://github.com/TravisEz123))
+* Mike Richmond ([mirichmo](https://github.com/mirichmo))
 
 ### Repository Maintainer Responsibilities
 
