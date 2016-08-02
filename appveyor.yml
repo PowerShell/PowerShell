@@ -93,7 +93,18 @@ on_finish:
         $artifacts.Add($zipFilePath)
         $artifacts.Add($zipFileFullPath)
 
-        Publish-NuGetFeed -OutputPath .\nuget-artifacts -VersionSuffix "b$($env:APPVEYOR_BUILD_NUMBER)"
+        if ($env:APPVEYOR_REPO_TAG_NAME)
+        {
+          # ignore the first part of semver, use the preview part
+          $preReleaseVersion = ($env:APPVEYOR_REPO_TAG_NAME).Split('-')[1]
+        }
+        else
+        {
+          $previewLabel = (git describe --abbrev=0).Split('-')[1]
+          $preReleaseVersion = "$previewLabel.$($env:APPVEYOR_BUILD_NUMBER)"
+        }
+
+        Publish-NuGetFeed -OutputPath .\nuget-artifacts -VersionSuffix $preReleaseVersion
 
         $artifacts += (ls .\nuget-artifacts | % {$_.FullName})
 
