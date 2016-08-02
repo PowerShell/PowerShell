@@ -2299,9 +2299,11 @@ namespace System.Management.Automation.Remoting.Client
         #region DllImports ClientAPI
 
 #if !UNIX
-        internal const string WSManApiDll = @"WsmSvc.dll";
+        internal const string WSManClientApiDll = @"WsmSvc.dll";
+        internal const string WSManProviderApiDll = @"WsmSvc.dll";
 #else
-        internal const string WSManApiDll = @"libpsrpomiprov";
+        internal const string WSManClientApiDll = @"libpsrpclient";
+        internal const string WSManProviderApiDll = @"libpsrpomiprov";
 #endif
 
         /// <summary>
@@ -2315,7 +2317,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </param>
         /// <returns>
         /// </returns>
-        [DllImport(WSManNativeApi.WSManApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManInitialize(int flags,
           [In, Out]  ref IntPtr wsManAPIHandle);
 
@@ -2329,7 +2331,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="wsManAPIHandle"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        [DllImport(WSManNativeApi.WSManApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManDeinitialize(IntPtr wsManAPIHandle, int flags);
 
         /// <summary>
@@ -2348,7 +2350,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </param>
         /// <param name="wsManSessionHandle"></param>
         /// <returns></returns>
-        [DllImport(WSManNativeApi.WSManApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManCreateSession(IntPtr wsManAPIHandle,
             [MarshalAs(UnmanagedType.LPWStr)]string connection,
             int flags,
@@ -2364,7 +2366,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         /// <param name="wsManSessionHandle"></param>
         /// <param name="flags"></param>
-        [DllImport(WSManNativeApi.WSManApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManCloseSession(IntPtr wsManSessionHandle,
             int flags);
 
@@ -2389,7 +2391,7 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
 
-        [DllImport(WSManNativeApi.WSManApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManSetSessionOption(IntPtr wsManSessionHandle,
             WSManSessionOption option,
             IntPtr data);
@@ -2404,7 +2406,7 @@ namespace System.Management.Automation.Remoting.Client
         /// An int (DWORD) data.
         /// </param>
         /// <returns></returns>
-        [DllImport(WSManNativeApi.WSManApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManGetSessionOptionAsDword(IntPtr wsManSessionHandle,
             WSManSessionOption option,
             out int value);
@@ -2460,7 +2462,7 @@ namespace System.Management.Automation.Remoting.Client
             return returnval;
         }
 
-        [DllImport(WSManNativeApi.WSManApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         private static extern int WSManGetSessionOptionAsString(IntPtr wsManSessionHandle,
             WSManSessionOption option,
             int optionLength,
@@ -2510,7 +2512,7 @@ namespace System.Management.Automation.Remoting.Client
                     openContent, asyncCallback, ref shellOperationHandle);
         }
 
-        [DllImport(WSManNativeApi.WSManApiDll, EntryPoint = "WSManCreateShellEx", SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, EntryPoint = "WSManCreateShellEx", SetLastError = false, CharSet = CharSet.Unicode)]
         private static extern void WSManCreateShellExInternal(IntPtr wsManSessionHandle,
             int flags,
             [MarshalAs(UnmanagedType.LPWStr)]string resourceUri,
@@ -2532,7 +2534,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="connectXml"></param>
         /// <param name="asyncCallback"></param>
         /// <param name="shellOperationHandle"></param>
-        [DllImport(WSManNativeApi.WSManApiDll, EntryPoint = "WSManConnectShell", SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, EntryPoint = "WSManConnectShell", SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManConnectShellEx(IntPtr wsManSessionHandle,
             int flags,
             [MarshalAs(UnmanagedType.LPWStr)]string resourceUri,
@@ -2550,7 +2552,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="flags"></param>
         /// <param name="disconnectInfo"></param>
         /// <param name="asyncCallback"></param>
-        [DllImport(WSManNativeApi.WSManApiDll, EntryPoint = "WSManDisconnectShell", SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, EntryPoint = "WSManDisconnectShell", SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManDisconnectShellEx(IntPtr wsManSessionHandle,
             int flags,
             IntPtr disconnectInfo,
@@ -2562,13 +2564,13 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="wsManSessionHandle"></param>
         /// <param name="flags"></param>
         /// <param name="asyncCallback"></param>
-        [DllImport(WSManNativeApi.WSManApiDll, EntryPoint = "WSManReconnectShell", SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, EntryPoint = "WSManReconnectShell", SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManReconnectShellEx(IntPtr wsManSessionHandle,
             int flags,
             IntPtr asyncCallback);
 
 
-        [DllImport(WSManNativeApi.WSManApiDll, EntryPoint = "WSManReconnectShellCommand", SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, EntryPoint = "WSManReconnectShellCommand", SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManReconnectShellCommandEx(IntPtr wsManCommandHandle,
             int flags,
             IntPtr asyncCallback);
@@ -2597,7 +2599,7 @@ namespace System.Management.Automation.Remoting.Client
         /// An out parameter referening a WSMan shell operation handle
         /// for this command.
         /// </param>
-        [DllImport(WSManNativeApi.WSManApiDll, EntryPoint = "WSManRunShellCommandEx", SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, EntryPoint = "WSManRunShellCommandEx", SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManRunShellCommandEx(IntPtr shellOperationHandle,
             int flags,
             [MarshalAs(UnmanagedType.LPWStr)]
@@ -2610,7 +2612,7 @@ namespace System.Management.Automation.Remoting.Client
             ref IntPtr commandOperationHandle);
 
 
-        [DllImport(WSManNativeApi.WSManApiDll, EntryPoint = "WSManConnectShellCommand", SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, EntryPoint = "WSManConnectShellCommand", SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManConnectShellCommandEx(IntPtr shellOperationHandle,
             int flags,
             [MarshalAs(UnmanagedType.LPWStr)]
@@ -2646,7 +2648,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="receiveOperationHandle">
         /// handle to use to cancel the operation.
         /// </param>
-        [DllImport(WSManNativeApi.WSManApiDll, EntryPoint = "WSManReceiveShellOutput", SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, EntryPoint = "WSManReceiveShellOutput", SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManReceiveShellOutputEx(IntPtr shellOperationHandle,
             IntPtr commandOperationHandle,
             int flags,
@@ -2685,7 +2687,7 @@ namespace System.Management.Automation.Remoting.Client
                     streamData, false, asyncCallback, ref sendOperationHandle);
         }
 
-        [DllImport(WSManNativeApi.WSManApiDll, EntryPoint = "WSManSendShellInput", SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, EntryPoint = "WSManSendShellInput", SetLastError = false, CharSet = CharSet.Unicode)]
         private static extern void WSManSendShellInputExInternal(IntPtr shellOperationHandle,
             IntPtr commandOperationHandle,
             int flags,
@@ -2710,7 +2712,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="asyncCallback">
         /// callback to notify when the operation completes.
         /// </param>
-        [DllImport(WSManNativeApi.WSManApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManCloseShell(IntPtr shellHandle,
             int flags,
             IntPtr asyncCallback);
@@ -2726,7 +2728,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="asyncCallback">
         /// callback to notify when the operation completes.
         /// </param>
-        [DllImport(WSManNativeApi.WSManApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManCloseCommand(IntPtr cmdHandle,
             int flags,
             IntPtr asyncCallback);
@@ -2742,7 +2744,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="code"></param>
         /// <param name="asyncCallback"></param>
         /// <param name="signalOperationHandle"></param>
-        [DllImport(WSManNativeApi.WSManApiDll, EntryPoint = "WSManSignalShell", SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, EntryPoint = "WSManSignalShell", SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManSignalShellEx(IntPtr shellOperationHandle,
             IntPtr cmdOperationHandle,
             int flags,
@@ -2761,7 +2763,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="operationHandle"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        [DllImport(WSManNativeApi.WSManApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManCloseOperation(IntPtr operationHandle, int flags);
 
         /// <summary>
@@ -2858,7 +2860,7 @@ namespace System.Management.Automation.Remoting.Client
         /// It cannot be NULL. If both "messageLength" and "message" parameters are 0, the function will return ERROR_INSUFFICIENT_BUFFER 
         /// and "messageLengthUsed" parameter will be set to the number of characters needed, including NULL terminator
         /// </param>
-        [DllImport(WSManNativeApi.WSManApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManGetErrorMessage(IntPtr wsManAPIHandle,
             int flags,
             string languageCode,
@@ -2879,7 +2881,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="flags">Specifies the options that are available for retrieval.</param>
         /// <param name="data">Specifies the result object (WSMAN_DATA).</param>
         /// <returns></returns>
-        [DllImport(WSManNativeApi.WSManApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManProviderApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManPluginGetOperationParameters(
             IntPtr requestDetails,
             int flags,
@@ -2895,7 +2897,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="errorCode">Reports any failure in the operation. Terminates on non-NO_ERROR status.</param>
         /// <param name="extendedInformation">XML document containing extra error information.</param>
         /// <returns></returns>
-        [DllImport(WSManNativeApi.WSManApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManProviderApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManPluginOperationComplete(
             IntPtr requestDetails,
             int flags,
@@ -2942,7 +2944,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="commandState">Specifies the state of the command. It must be set to a value specified by the plugin.</param>
         /// <param name="exitCode">Only set when the commandState is terminating.</param>
         /// <returns></returns>
-        [DllImport(WSManNativeApi.WSManApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManProviderApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManPluginReceiveResult(
             IntPtr requestDetails,
             int flags,
@@ -2961,7 +2963,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="flags"></param>
         /// <param name="context">Defines the value to pass into all future shell and command operations. Represents either the shell or the command.</param>
         /// <returns></returns>
-        [DllImport(WSManNativeApi.WSManApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManProviderApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManPluginReportContext(
             IntPtr requestDetails,
             int flags,
@@ -2974,7 +2976,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="shutdownCallback">Callback to be executed on shutdown</param>
         /// <param name="shutdownContext"></param>
         /// <returns></returns>
-        [DllImport(WSManNativeApi.WSManApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(WSManNativeApi.WSManProviderApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManPluginRegisterShutdownCallback(
             IntPtr requestDetails,
             IntPtr shutdownCallback,
