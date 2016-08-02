@@ -9,14 +9,10 @@ using System.Linq.Expressions;
 #else
 using Microsoft.Scripting.Ast;
 #endif
-
-using System;
 using System.Dynamic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Management.Automation;
-using System.Management.Automation.Language;
 
 namespace System.Management.Automation.ComInterop
 {

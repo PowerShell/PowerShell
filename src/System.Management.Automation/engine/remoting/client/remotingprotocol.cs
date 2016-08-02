@@ -2,11 +2,6 @@
  * Copyright (c) Microsoft Corporation.  All rights reserved.
  * --********************************************************************/
 
-using System;
-using System.Management.Automation;
-using System.Management.Automation.Runspaces;
-
-using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Client;
 
 using Dbg = System.Management.Automation.Diagnostics;

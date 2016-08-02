@@ -2,11 +2,9 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Management.Automation;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.PowerShell;

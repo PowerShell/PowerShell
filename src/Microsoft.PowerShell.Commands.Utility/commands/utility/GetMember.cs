@@ -8,7 +8,6 @@ using System.Collections.Specialized;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Reflection;
-using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {

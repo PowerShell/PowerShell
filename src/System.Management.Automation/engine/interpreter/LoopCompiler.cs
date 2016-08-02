@@ -16,8 +16,6 @@
 #if !CLR2
 using System.Linq.Expressions;
 #endif
-
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management.Automation.Language;
@@ -27,7 +25,6 @@ namespace System.Management.Automation.Interpreter
 {
     using AstUtils = System.Management.Automation.Interpreter.Utils;
     using LoopFunc = Func<object[], StrongBox<object>[], InterpretedFrame, int>;
-    using System.Collections.ObjectModel;
 
     internal sealed class LoopCompiler : ExpressionVisitor
     {

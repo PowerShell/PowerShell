@@ -2,14 +2,10 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Management.Automation.Runspaces;
 using System.Text;
 using System.Diagnostics.Eventing;
-using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Internal;
 
 namespace System.Management.Automation.Tracing

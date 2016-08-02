@@ -16,7 +16,6 @@ using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Reflection;
-using System.Xml.Serialization;
 
 namespace System.Management.Automation
 {

@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System.Collections;
 using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics.CodeAnalysis;

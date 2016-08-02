@@ -14,7 +14,6 @@ using Regex = System.Text.RegularExpressions.Regex;
 
 using Dbg = System.Management.Automation.Diagnostics;
 using Microsoft.PowerShell.Commands;
-using Microsoft.PowerShell;
 
 namespace System.Management.Automation
 {

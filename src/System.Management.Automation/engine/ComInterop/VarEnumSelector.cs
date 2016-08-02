@@ -4,12 +4,10 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 #if !SILVERLIGHT // ComObject
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Management.Automation.ComInterop;
 
 namespace System.Management.Automation.ComInterop
 {

@@ -13,8 +13,6 @@
  *
  * ***************************************************************************/
 
-using System;
-
 namespace System.Management.Automation.Interpreter
 {
     internal sealed class NewArrayInitInstruction<TElement> : Instruction

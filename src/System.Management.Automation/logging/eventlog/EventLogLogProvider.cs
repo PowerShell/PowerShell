@@ -2,15 +2,10 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Management.Automation;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Resources;
-using Microsoft.Win32;
-using System.IO;
-using System.Reflection;
 using System.ComponentModel;
 using System.Globalization;
 using System.Text;

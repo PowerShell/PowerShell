@@ -5,11 +5,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Management.Automation;
-using System.Management.Automation.Host;
-
 using Dbg = System.Management.Automation.Diagnostics;
 
 

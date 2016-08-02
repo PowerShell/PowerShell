@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
-using System.Management.Automation.Runspaces;
 using Microsoft.PowerShell.Commands;
 using System.Linq;
 using System.Threading;

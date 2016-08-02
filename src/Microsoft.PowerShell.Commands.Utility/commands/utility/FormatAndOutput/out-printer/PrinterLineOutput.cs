@@ -3,8 +3,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
-using System.IO;
-using System.Text;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Printing;

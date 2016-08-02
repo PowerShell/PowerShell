@@ -4,8 +4,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 #pragma warning disable 1634, 1691
 
-using System;
-using System.Runtime.InteropServices;
 using System.Threading;
 using Dbg = System.Management.Automation;
 

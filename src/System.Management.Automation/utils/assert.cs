@@ -11,7 +11,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 // nor ASSERTIONS_TRACE is defined.
 #define DEBUG
 
-using System;
 using System.Diagnostics;
 using System.Text;
 

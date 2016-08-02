@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Provider;
-using System.Threading;
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands

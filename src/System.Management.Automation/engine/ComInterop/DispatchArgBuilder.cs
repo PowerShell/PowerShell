@@ -8,11 +8,7 @@ using System.Linq.Expressions;
 #else
 using Microsoft.Scripting.Ast;
 #endif
-
-using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
 
 namespace System.Management.Automation.ComInterop
 {

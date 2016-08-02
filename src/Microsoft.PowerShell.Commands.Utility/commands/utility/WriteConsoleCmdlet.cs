@@ -5,7 +5,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System;
 using System.Management.Automation;
 using System.Collections;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Microsoft.PowerShell.Commands

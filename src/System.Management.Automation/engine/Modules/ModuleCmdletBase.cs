@@ -18,9 +18,7 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 using Microsoft.PowerShell.Cmdletization;
-using Microsoft.Win32;
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Management.Automation.Language;
 
 #if CORECLR
 // Some APIs are missing from System.Environment. We use System.Management.Automation.Environment as a proxy type:

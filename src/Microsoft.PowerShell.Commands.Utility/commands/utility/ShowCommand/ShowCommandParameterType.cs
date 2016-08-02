@@ -8,12 +8,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
 {
     using System;
     using System.Collections;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.ComponentModel;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Globalization;
-    using System.Linq;
     using System.Management.Automation;
 
 

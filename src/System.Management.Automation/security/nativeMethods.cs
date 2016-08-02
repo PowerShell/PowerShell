@@ -10,12 +10,8 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Management.Automation.Internal;
-using Microsoft.Win32.SafeHandles;
-
 using DWORD = System.UInt32;
 using BOOL = System.UInt32;
-using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
-
 #if CORECLR
 // Use stub for ReliabilityContractAttribute
 using Microsoft.PowerShell.CoreClr.Stubs;

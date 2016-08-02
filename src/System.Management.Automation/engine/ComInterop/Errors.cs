@@ -2,10 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Management.Automation;
-using System.Management.Automation.Language;
-
 namespace System.Management.Automation.ComInterop
 {
     #region Generated Com Exception Factory

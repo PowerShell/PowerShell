@@ -7,7 +7,6 @@
 namespace System.Management.Automation.Tracing
 {
     using System;
-    using System.Diagnostics;
     using System.Diagnostics.Eventing;
 
     /// <summary>

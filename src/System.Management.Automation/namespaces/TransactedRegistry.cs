@@ -9,13 +9,9 @@ using BCLDebug = System.Diagnostics.Debug;
 
 namespace Microsoft.PowerShell.Commands.Internal
 {
-    using System;
     using System.Runtime.InteropServices;
     using System.Runtime.Versioning;
-    using Microsoft.Win32;
-    using System.Management.Automation;
     using System.Diagnostics.CodeAnalysis;
-    using System.Transactions;
 
 
     /**

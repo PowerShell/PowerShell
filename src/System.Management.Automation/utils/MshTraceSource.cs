@@ -3,7 +3,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 #define TRACE
 
-using System;
 using System.Reflection;
 using System.Management.Automation.Internal;
 

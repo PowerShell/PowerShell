@@ -5,7 +5,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System.Collections;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Management.Automation.Internal;
 
 /*

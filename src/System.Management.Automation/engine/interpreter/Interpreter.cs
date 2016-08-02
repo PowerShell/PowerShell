@@ -14,7 +14,6 @@
  * ***************************************************************************/
 
 #if !CLR2
-using System.Linq;
 using System.Linq.Expressions;
 #else
 using Microsoft.Scripting.Ast;
@@ -24,9 +23,6 @@ using Microsoft.Scripting.Ast;
 // Use stub for SpecialNameAttribute
 using Microsoft.PowerShell.CoreClr.Stubs;
 #endif
-
-using System;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 

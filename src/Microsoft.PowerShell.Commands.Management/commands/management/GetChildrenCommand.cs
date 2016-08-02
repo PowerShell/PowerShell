@@ -3,13 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Text;
 using System.Management.Automation;
-using System.Reflection;
-using System.Resources;
-using System.Threading;
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands

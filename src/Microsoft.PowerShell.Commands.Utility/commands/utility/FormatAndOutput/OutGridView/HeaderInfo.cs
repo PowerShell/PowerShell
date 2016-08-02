@@ -5,9 +5,7 @@
 namespace Microsoft.PowerShell.Commands
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Management.Automation;
 
     internal class HeaderInfo

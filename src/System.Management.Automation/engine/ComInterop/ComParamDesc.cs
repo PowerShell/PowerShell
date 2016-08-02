@@ -4,7 +4,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 #if !SILVERLIGHT // ComObject
 
-using System;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using Marshal = System.Runtime.InteropServices.Marshal;

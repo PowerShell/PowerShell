@@ -21,14 +21,8 @@ These methods are available on Windows Vista and later.
 
 using System;
 using System.Globalization;
-using System.Threading;
 using System.Runtime.InteropServices;
 using System.Text;
-using Microsoft.Win32;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-
-using System.Management.Automation;
 using Dbg = System.Management.Automation.Diagnostics;
 using WORD = System.UInt16;
 

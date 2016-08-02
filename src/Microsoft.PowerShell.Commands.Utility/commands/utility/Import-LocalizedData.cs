@@ -7,7 +7,6 @@ using System.Globalization;
 using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation;
-using System.Text;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.PowerShell.Commands

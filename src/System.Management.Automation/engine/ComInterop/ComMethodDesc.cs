@@ -4,13 +4,8 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 #if !SILVERLIGHT // ComObject
 
-using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices.ComTypes;
-using System.Text;
-using System.Globalization;
-using Marshal = System.Runtime.InteropServices.Marshal;
-using VarEnum = System.Runtime.InteropServices.VarEnum;
 
 namespace System.Management.Automation.ComInterop
 {

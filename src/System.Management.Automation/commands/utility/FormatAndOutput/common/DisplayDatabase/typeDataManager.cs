@@ -3,17 +3,10 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Xml;
-using System.Reflection;
 using System.IO;
-using System.Diagnostics;
-using System.Text;
-
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Host;

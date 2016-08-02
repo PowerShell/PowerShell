@@ -3,19 +3,13 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 
-using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Internal;
 using System.Collections.ObjectModel;
-using System.Collections;
 using System.Collections.Generic;
-using System.Net;
 using System.Management.Automation.Remoting;
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Reflection;
-using System.Net.Sockets;
 using System.Threading;
-using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Runspaces.Internal;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings

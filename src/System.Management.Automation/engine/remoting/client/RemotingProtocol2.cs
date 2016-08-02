@@ -2,14 +2,10 @@
  * Copyright (c) Microsoft Corporation.  All rights reserved.
  * --********************************************************************/
 
-using System;
 using System.Management.Automation.Tracing;
-using System.Security;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Threading;
-using System.Globalization;
-using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Runspaces.Internal;

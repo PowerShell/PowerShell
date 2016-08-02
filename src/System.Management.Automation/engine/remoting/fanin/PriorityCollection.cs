@@ -2,13 +2,7 @@
  * Copyright (c) Microsoft Corporation.  All rights reserved.
  * --********************************************************************/
 
-using System;
 using System.IO;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Globalization;
-
-using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Tracing;
 using Dbg = System.Management.Automation.Diagnostics;

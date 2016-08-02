@@ -4,11 +4,9 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 #pragma warning disable 1634, 1691
 
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
-using System.Threading;
 using Dbg = System.Management.Automation;
 
 

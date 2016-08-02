@@ -16,7 +16,6 @@ using System.Reflection;
 using System.Security;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.PowerShell.Commands.Internal.Format;
-using System.Threading.Tasks;
 
 namespace System.Management.Automation
 {

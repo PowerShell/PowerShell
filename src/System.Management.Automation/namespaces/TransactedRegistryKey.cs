@@ -52,28 +52,21 @@
 
 
 using BCLDebug = System.Diagnostics.Debug;
-using Win32Native = Microsoft.PowerShell.Commands.Internal.Win32Native;
 
 namespace Microsoft.PowerShell.Commands.Internal
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Security;
     using System.Security.AccessControl;
-    using System.Security.Principal;
     using System.Security.Permissions;
     using System.Text;
-    using System.Threading;
     using System.IO;
-    using System.Runtime.Remoting;
     using System.Runtime.InteropServices;
-    using Microsoft.Win32.SafeHandles;
     using Microsoft.Win32;
     using System.Runtime.Versioning;
     using System.Globalization;
     using System.Transactions;
-    using System.Management.Automation;
     using System.Diagnostics.CodeAnalysis;
 
 

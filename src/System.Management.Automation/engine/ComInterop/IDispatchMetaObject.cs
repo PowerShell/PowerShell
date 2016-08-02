@@ -8,11 +8,8 @@ using System.Linq.Expressions;
 #else
 using Microsoft.Scripting.Ast;
 #endif
-
-using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Dynamic;
 using System.Runtime.InteropServices.ComTypes;
 using System.Management.Automation.Language;

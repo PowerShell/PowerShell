@@ -6,17 +6,10 @@ namespace Microsoft.PowerShell.Commands
 {
     using System;
     using System.Collections;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Reflection;
     using System.Management.Automation;
     using System.Management.Automation.Host;
     using System.Management.Automation.Internal;
     using Microsoft.PowerShell.Commands.Internal.Format;
-    using System.IO;
-    using System.Diagnostics;
-    using System.Globalization;
-    using Microsoft.Win32;
 
     ///
     /// <summary>

@@ -12,7 +12,6 @@ using Microsoft.Scripting.Ast;
 
 using System.Dynamic;
 //using AstUtils = Microsoft.Scripting.Ast.Utils;
-using System.Management.Automation.Interpreter;
 using AstUtils = System.Management.Automation.Interpreter.Utils;
 
 namespace System.Management.Automation.ComInterop

@@ -3,18 +3,11 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System.Management.Automation.Tracing;
-using System.Management.Automation.Remoting.Server;
-using System.Globalization;
 using System.IO;
-using System.IO.Pipes;
 using System.Net;
-using System.Net.Security;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Security.AccessControl;
-using System.Security.Principal;
 using Dbg = System.Diagnostics.Debug;
 
 #if CORECLR

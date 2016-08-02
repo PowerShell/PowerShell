@@ -2,19 +2,8 @@
  * Copyright (c) Microsoft Corporation.  All rights reserved.
  * --********************************************************************/
 
-using System;
-using System.Security;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System.Threading;
-using System.Xml;
-using System.Text;
 using System.IO;
-
-using System.Management.Automation.Remoting;
-using System.Management.Automation.Internal;
 using Dbg = System.Management.Automation.Diagnostics;
-using Fragmentor = System.Management.Automation.Remoting.Fragmentor;
 
 namespace System.Management.Automation.Remoting
 {

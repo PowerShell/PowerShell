@@ -2,9 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-
-
 namespace System.Management.Automation.Provider
 {
     /// <summary>

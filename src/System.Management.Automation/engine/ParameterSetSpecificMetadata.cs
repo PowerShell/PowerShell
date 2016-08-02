@@ -2,10 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Management.Automation;
-
-
 namespace System.Management.Automation
 {
     internal class ParameterSetSpecificMetadata

@@ -10,7 +10,6 @@ namespace Microsoft.PowerShell.Commands
     using System.Collections.ObjectModel;
     using System.Globalization;
     using System.Management.Automation;
-    using System.Management.Automation.Internal;
     using System.Reflection;
     using System.Runtime.InteropServices;
     using System.Text;

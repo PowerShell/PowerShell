@@ -6,7 +6,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 // containing display and formatting information
 
 using System.Collections.Generic;
-using System.Xml;
 using Microsoft.PowerShell.Commands;
 using Microsoft.PowerShell.Commands.Internal.Format;
 

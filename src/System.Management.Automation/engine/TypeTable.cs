@@ -16,7 +16,6 @@ using System.Management.Automation.Language;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security;
-using System.Threading.Tasks;
 using System.Xml;
 using Dbg = System.Diagnostics.Debug;
 #if !CORECLR

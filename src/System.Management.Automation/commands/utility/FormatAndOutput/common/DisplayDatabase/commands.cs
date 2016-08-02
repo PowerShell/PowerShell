@@ -3,12 +3,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
-using System.IO;
-using System.Xml;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Management.Automation;
-
 using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands

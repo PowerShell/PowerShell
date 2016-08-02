@@ -2,10 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     #region Type Info Database

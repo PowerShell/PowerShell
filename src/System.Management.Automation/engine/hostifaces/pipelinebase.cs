@@ -5,8 +5,6 @@
 namespace System.Management.Automation.Runspaces
 {
     using System;
-    using System.IO;
-    using System.Globalization;
     using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;

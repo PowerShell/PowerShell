@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text;
 using System.Management.Automation.Host;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Management.Automation.Internal;
 

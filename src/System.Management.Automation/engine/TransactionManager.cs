@@ -4,7 +4,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Transactions;
 using System.Management.Automation.Internal;

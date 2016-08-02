@@ -2,14 +2,11 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System.Xml;
-using System.Data;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Collections.Specialized;
-using System.Management;
 using System.Globalization;
 using System.ComponentModel;
 using System.Management.Automation.Internal;

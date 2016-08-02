@@ -2,8 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System.Diagnostics.CodeAnalysis;
-
 namespace System.Management.Automation
 {
     /// <summary>

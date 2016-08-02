@@ -4,9 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
 using System.Diagnostics;
-using System.Collections;
 using System.Collections.Generic;
-using System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {

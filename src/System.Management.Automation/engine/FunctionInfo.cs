@@ -2,11 +2,8 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Text;
 using System.Management.Automation.Runspaces;
-using System.Collections.Generic;
-using System.Threading;
 using System.Collections.ObjectModel;
 
 namespace System.Management.Automation

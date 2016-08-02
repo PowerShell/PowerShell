@@ -3,7 +3,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System.Collections.Generic;
-using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;

@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System.IO;
 using System.Management.Automation.Runspaces;
 using System.Diagnostics.CodeAnalysis;
 

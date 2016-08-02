@@ -3,9 +3,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using Dbg = System.Management.Automation;
-using System.Reflection;
-using System.Collections;
-using System.Security;
 using System.Management.Automation.Host;
 
 namespace System.Management.Automation

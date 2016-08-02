@@ -9,13 +9,13 @@ using System.Net;
 using System.Security;
 using SafeString = System.String;
 using System.Runtime.Serialization;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.PowerShell;
 
 #if CORECLR
 // Use stubs for ISerializable related types
 using Microsoft.PowerShell.CoreClr.Stubs;
+using System.Runtime.InteropServices;
 #endif
 
 // FxCop suppressions for resource strings:

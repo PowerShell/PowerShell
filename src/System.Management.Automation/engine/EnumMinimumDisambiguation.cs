@@ -2,16 +2,9 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Text;
-using System.Reflection;
-using System.Resources;
-using System.Diagnostics;
 using Dbg = System.Management.Automation;
-using System.Globalization;
 
 namespace System.Management.Automation
 {

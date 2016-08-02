@@ -1,10 +1,6 @@
 #if !UNIX
-using System;
-using System.Collections;
 using System.Diagnostics.Eventing;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Management.Automation.Tracing;
 
 namespace System.Management.Automation.Tracing
 {

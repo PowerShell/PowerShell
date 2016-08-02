@@ -6,7 +6,6 @@ using System.IO;
 using System.Text;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Runspaces;
-using System.Threading;
 using Microsoft.PowerShell.Commands;
 using System.Collections.Generic;
 using System.Management.Automation.Language;

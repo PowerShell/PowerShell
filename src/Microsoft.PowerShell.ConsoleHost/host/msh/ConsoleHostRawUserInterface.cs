@@ -6,12 +6,9 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 
 using System;
-using System.Runtime.InteropServices;
-using System.Collections;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
-using System.Reflection;
 using System.ComponentModel;
 using System.Globalization;
 using System.Security.Principal;

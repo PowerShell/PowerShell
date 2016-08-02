@@ -2,17 +2,9 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.IO;
-using System.Resources;
-using System.Threading;
-using System.Reflection;
-using System.Runtime.Serialization;
 using System.Globalization;
 using System.Management.Automation.Internal;
 using System.Diagnostics.CodeAnalysis;

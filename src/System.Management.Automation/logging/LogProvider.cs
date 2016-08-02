@@ -2,11 +2,7 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Management.Automation;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Management.Automation.Runspaces;
 
 namespace System.Management.Automation
 {

@@ -4,9 +4,6 @@
 //-----------------------------------------------------------------------
 
 using System.Collections.Generic;
-using System;
-using System.Management.Automation;
-using System.IO;
 using System.Collections.ObjectModel;
 
 namespace System.Management.Automation

@@ -3,14 +3,12 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
-using System.Threading;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Remoting;
 
 using System.Management.Automation.Runspaces;
-using System.Management.Automation.Host;
 using System.Diagnostics.CodeAnalysis;
 
 using Dbg = System.Management.Automation.Diagnostics;

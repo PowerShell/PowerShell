@@ -14,8 +14,6 @@
  * ***************************************************************************/
 
 using System.Collections.Generic;
-using System;
-using System.Diagnostics;
 using System.Globalization;
 
 namespace System.Management.Automation.Interpreter

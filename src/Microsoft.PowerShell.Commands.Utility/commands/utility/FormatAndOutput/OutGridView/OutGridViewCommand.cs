@@ -7,16 +7,11 @@ namespace Microsoft.PowerShell.Commands
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Globalization;
-    using System.Reflection;
-    using System.Threading;
     using System.Management.Automation;
     using System.Management.Automation.Internal;
     using System.Management.Automation.Runspaces;
 
     using Microsoft.PowerShell.Commands.Internal.Format;
-    using Microsoft.Win32;
 
     /// <summary>
     /// Enum for SelectionMode parameter.

@@ -9,7 +9,6 @@ namespace System.Management.Automation
     using System.Collections.ObjectModel;
     using System.Collections.Generic;
     using System.Management.Automation.Runspaces;
-    using System.Management.Automation.Remoting;
     using System.Collections;
 
     /// <summary>

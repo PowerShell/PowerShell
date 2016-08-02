@@ -2,12 +2,10 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation.Language;
 using System.Runtime.Serialization;
-using System.Text;
 
 #if CORECLR
 // Use stub for SerializableAttribute and ISerializable related types.

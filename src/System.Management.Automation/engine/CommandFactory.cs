@@ -2,10 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Text.RegularExpressions;
-using System.Management.Automation;
-
 namespace System.Management.Automation
 {
     /// <summary>

@@ -3,9 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System.Management.Automation;
-using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
-using Microsoft.PowerShell;
 
 namespace Microsoft.PowerShell
 {

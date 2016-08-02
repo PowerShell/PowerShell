@@ -21,7 +21,6 @@ using System.Text;
 using System.Xml;
 using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Serialization;
-using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Remoting;

@@ -11,7 +11,6 @@ using System.Reflection.Emit;
 using Microsoft.PowerShell;
 using System.Threading;
 using System.Management.Automation.Internal;
-using System.Text;
 
 namespace System.Management.Automation.Language
 {

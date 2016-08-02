@@ -8,15 +8,9 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 #pragma warning disable 56523
 
 using Dbg = System.Management.Automation;
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.ComponentModel;
 using System.IO;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Provider;
 using System.Management.Automation.Security;
-using System.Management.Automation;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 #if CORECLR

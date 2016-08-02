@@ -23,7 +23,6 @@ using System.Management.Automation.Language;
 using Parser = System.Management.Automation.Language.Parser;
 using ScriptBlock = System.Management.Automation.ScriptBlock;
 using Token = System.Management.Automation.Language.Token;
-using System.Collections.ObjectModel;
 using Microsoft.PowerShell.Telemetry.Internal;
 
 #if CORECLR

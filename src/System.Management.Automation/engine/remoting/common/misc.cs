@@ -2,10 +2,6 @@
  * Copyright (c) Microsoft Corporation.  All rights reserved.
  * --********************************************************************/
 
-using System;
-using System.Security;
-using System.Threading;
-using System.Management.Automation;
 using System.Management.Automation.Remoting;
 using Dbg = System.Management.Automation.Diagnostics;
 

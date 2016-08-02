@@ -22,7 +22,6 @@ using System.Management.Automation.Remoting;
 using System.Management.Automation.Security;
 using System.Threading;
 using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
 using System.Management.Automation.Language;
 #if CORECLR
 using Microsoft.PowerShell.CoreClr.Stubs;

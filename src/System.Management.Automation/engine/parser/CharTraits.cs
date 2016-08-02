@@ -2,8 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System.Globalization;
-
 namespace System.Management.Automation.Language
 {
     internal static class SpecialChars

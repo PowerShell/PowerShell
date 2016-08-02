@@ -8,13 +8,10 @@
  * 
  */
 
-using System;
 using System.Management.Automation.Tracing;
-using System.Text;
 using System.IO;
 using System.Xml;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Threading;
 using System.Runtime.InteropServices;
@@ -26,8 +23,6 @@ using System.Security.Principal;
 
 // Don't expose the System.Management.Automation namespace here. This is transport layer
 // and it shouldn't know anything about the engine.
-using System.Management.Automation.Remoting;
-using System.Management.Automation.Remoting.Client;
 using System.Management.Automation.Remoting.Server;
 // TODO: this seems ugly...Remoting datatypes should be in remoting namespace
 using System.Management.Automation.Runspaces.Internal;
@@ -36,10 +31,6 @@ using PSRemotingCryptoHelper = System.Management.Automation.Internal.PSRemotingC
 using WSManConnectionInfo = System.Management.Automation.Runspaces.WSManConnectionInfo;
 using RunspaceConnectionInfo = System.Management.Automation.Runspaces.RunspaceConnectionInfo;
 using AuthenticationMechanism = System.Management.Automation.Runspaces.AuthenticationMechanism;
-using PowerShell = System.Management.Automation.PowerShell;
-using RunspacePool = System.Management.Automation.Runspaces.RunspacePool;
-using Runspace = System.Management.Automation.Runspaces.Runspace;
-using TypeTable = System.Management.Automation.Runspaces.TypeTable;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting.Client

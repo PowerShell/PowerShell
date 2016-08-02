@@ -13,7 +13,6 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
-using Microsoft.PowerShell.Commands.Internal;
 using System.Diagnostics.CodeAnalysis;
 using Dbg = System.Diagnostics.Debug;
 

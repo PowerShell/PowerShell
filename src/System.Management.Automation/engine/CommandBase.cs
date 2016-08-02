@@ -2,19 +2,11 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Collections;
 using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Management.Automation;
 using System.Management.Automation.Language;
-using System.Reflection;
-using System.Text;
 using System.Diagnostics;
-using System.Resources;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal.Host;
-using System.Threading;
 using System.Management.Automation.Internal;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Runspaces;

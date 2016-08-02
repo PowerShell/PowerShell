@@ -20,7 +20,6 @@ using System.Text;
 using System.Xml;
 using System.Xml.XPath;
 using Microsoft.Win32.SafeHandles;
-using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation;
 using System.Runtime.InteropServices;
 using System.Management.Automation.Runspaces;

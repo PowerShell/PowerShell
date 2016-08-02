@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 

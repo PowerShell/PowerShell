@@ -6,7 +6,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.Win32;
-using Shell32;
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;

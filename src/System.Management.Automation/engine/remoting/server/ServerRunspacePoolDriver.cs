@@ -14,10 +14,8 @@ using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Server;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Threading;
-using Microsoft.PowerShell;
 using System.Management.Automation.Security;
 using System.Diagnostics;
-using System.Collections.ObjectModel;
 using System.Security.Principal;
 
 namespace System.Management.Automation

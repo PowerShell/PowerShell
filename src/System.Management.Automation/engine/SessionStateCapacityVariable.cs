@@ -2,9 +2,7 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Diagnostics.CodeAnalysis; // for fxcop
-using System.Management.Automation;
 using System.Globalization;
 using Dbg = System.Management.Automation;
 
