@@ -184,4 +184,22 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             { [SemanticVersion]::new([Version]::new("1.2")) } | Should Throw # PSArgumentException
         }
     }
+
+    Context "Serialization" {
+        $testCases = @(
+            @{ expectedResult = "1.0.0"; semver = [SemanticVersion]::new(1, 0, 0) }
+            @{ expectedResult = "1.0.1"; semver = [SemanticVersion]::new(1, 0, 1) }
+            @{ expectedResult = "1.0.0-alpha"; semver = [SemanticVersion]::new(1, 0, 0, "alpha") }
+            @{ expectedResult = "1.0.0-beta"; semver = [SemanticVersion]::new(1, 0, 0, "beta") }
+        )
+        It "Can round trip" -TestCases $testCases {
+            param($semver, $expectedResult)
+
+            $ser = [PSSerializer]::Serialize($semver)
+            $des = [PSSerializer]::Deserialize($ser)
+
+            $des | Should BeOfType System.Management.Automation.SemanticVersion
+            $des.ToString() | Should Be $expectedResult
+        }
+    }
 }
