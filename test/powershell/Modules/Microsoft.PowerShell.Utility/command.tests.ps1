@@ -11,7 +11,7 @@
             if ( test-path $actualLogFile ) { Remove-Item $actualLogFile }
         }
         
-        It "LogicalOperationStack works" -pending:($IsCore) {
+        It "LogicalOperationStack works" -pending:($IsCoreCLR) {
             $keyword = "Trace_Command_ListenerOption_LogicalOperationStack_Foo"
             $stack = [System.Diagnostics.Trace]::CorrelationManager.LogicalOperationStack
             $stack.Push($keyword)
@@ -22,7 +22,7 @@
             $log.Count | Should BeGreaterThan 0
         } 
 
-        It "Callstack works" -pending:($IsCore) {
+        It "Callstack works" -pending:($IsCoreCLR) {
             Trace-Command -Name * -Expression {write-output Foo} -ListenerOption Callstack -FilePath $logfile
             $log = Get-Content $logfile | Where-Object {$_ -like "*Callstack=   * System.Environment.GetStackTrace(Exception e, Boolean needFileInfo)*"}
             $log.Count | Should BeGreaterThan 0

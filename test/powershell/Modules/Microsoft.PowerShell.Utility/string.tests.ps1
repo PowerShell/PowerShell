@@ -36,7 +36,7 @@
             (select-string -LiteralPath $fileNameWithDots "b").count | Should Be 2	    
         }
 
-        It "Network path" -skip:($IsCore) {
+        It "Network path" -skip:($IsCoreCLR) {
             (select-string -LiteralPath $fileNameAsNetworkPath "b").count | Should Be 2
         }
 

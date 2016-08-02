@@ -28,13 +28,13 @@
             $testcases += [TestData]::new('literalpath with relative paths', @{LiteralPath = $fileName.Name; XPath = 'Root'})
             $testcases += [TestData]::new('literalpath with absolute paths', @{LiteralPath = $fileName.FullName; XPath = 'Root'})
             $testcases += [TestData]::new('literalpath with path with dots', @{LiteralPath = $fileNameWithDots; XPath = 'Root'})
-            if ( ! $IsCore ) {
+            if ( ! $IsCoreCLR ) {
                 $testcases += [TestData]::new('literalpath with network path', @{LiteralPath = $fileNameAsNetworkPath; XPath = 'Root'})                                            
             }
             $testcases += [TestData]::new('path with relative paths', @{Path = $fileName.Name; XPath = 'Root'})
             $testcases += [TestData]::new('path with absolute paths', @{Path = $fileName.FullName; XPath = 'Root'})
             $testcases += [TestData]::new('path with path with dots', @{Path = $fileNameWithDots; XPath = 'Root'})
-            if ( ! $IsCore ) {
+            if ( ! $IsCoreCLR ) {
                 $testcases += [TestData]::new('path with network path', @{Path = $fileNameAsNetworkPath; XPath = 'Root'}) 
             }
         }

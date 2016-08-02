@@ -18,7 +18,7 @@
             )
         function Set-delimiter {
             param ( $delimiter )
-            if ( $IsCore ) {
+            if ( $IsCoreCLR ) {
                 $enCulture.TextInfo.ListSeparator = $delimiter
                 [System.Globalization.CultureInfo]::CurrentCulture = $enCulture
             }
@@ -28,7 +28,7 @@
         }
     }
     AfterEach {
-        if ( $IsCore ) {
+        if ( $IsCoreCLR ) {
             $enCulture.TextInfo.ListSeparator = $defaultDelimiter
             [System.Globalization.CultureInfo]::CurrentCulture = $enCulture
         }

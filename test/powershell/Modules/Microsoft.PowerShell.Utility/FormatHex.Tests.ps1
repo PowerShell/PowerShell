@@ -189,7 +189,7 @@ Describe "FormatHex" -tags "CI" {
         $result | Should Not BeNullOrEmpty
         $result.Count | should be 2
         $result[0].ToString() | Should be "00000000   54 68 69 73 20 69 73 20 61 20 62 69 74 20 6D 6F  This is a bit mo"
-        if ( $IsCore ) {
+        if ( $IsCoreCLR ) {
             $result[1].ToString() | Should be "00000010   72 65 20 74 65 78 74                             re text         "
         }
     }
@@ -199,7 +199,7 @@ Describe "FormatHex" -tags "CI" {
         $result = Get-Content $InputFile1 -Encoding Byte | Format-Hex
         $result | Should Not BeNullOrEmpty
         $result.GetType().Name | Should Be "ByteCollection"
-        if ( $IsCore ) {
+        if ( $IsCoreCLR ) {
             $result.ToString() | Should be    "00000000   48 65 6C 6C 6F 20 57 6F 72 6C 64                 Hello World     "
         }
     }

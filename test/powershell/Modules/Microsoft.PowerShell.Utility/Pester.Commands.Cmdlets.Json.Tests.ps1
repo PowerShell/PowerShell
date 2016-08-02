@@ -109,7 +109,7 @@ Describe "Json Tests" -Tags "Feature" {
             $response.d.Name.First | Should Match "Joel"
         }
 
-        It "Convert to Json using PSObject" -pending:($IsCore) {
+        It "Convert to Json using PSObject" -pending:($IsCoreCLR) {
             
             $response = ConvertFrom-Json '{"d":{"__type":"SimpleJsonObject","Name":{"First":"Joel","Last":"Wood"},"Greeting":"Hello"}}'
             
@@ -169,7 +169,7 @@ Describe "Json Tests" -Tags "Feature" {
             $response2 | Should Be $result3
         }
         
-        It "Convert to Json using hashtable" -pending:($IsCore) {
+        It "Convert to Json using hashtable" -pending:($IsCoreCLR) {
             
             $nameHash = @{First="Joe1";Last="Wood"}
             $dHash = @{Name=$nameHash; Greeting="Hello"}
@@ -365,7 +365,7 @@ Describe "Validate Json serialization" -Tags "CI" {
         $testCases = @(
             @{
                 TestInput = 0
-                ToJson = if ( $IsCore ) { '"\u0000"' } else { 'null' }
+                ToJson = if ( $IsCoreCLR ) { '"\u0000"' } else { 'null' }
                 FromJson = ''
              }
             @{
@@ -555,12 +555,12 @@ Describe "Validate Json serialization" -Tags "CI" {
              }
             @{
                 TestInput = 38
-                ToJson = if ( $IsCore ) { '"&"' } else { '"\u0026"' }
+                ToJson = if ( $IsCoreCLR ) { '"&"' } else { '"\u0026"' }
                 FromJson = '&'
              }
             @{
                 TestInput = 39
-                ToJson = if ( $IsCore ) { '"''"' } else { '"\u0027"' }
+                ToJson = if ( $IsCoreCLR ) { '"''"' } else { '"\u0027"' }
                 FromJson = "'"
              }
             @{
@@ -665,7 +665,7 @@ Describe "Validate Json serialization" -Tags "CI" {
              }
             @{
                 TestInput = 60
-                ToJson = if ( $IsCore ) { '"<"' } else { '"\u003c"' }
+                ToJson = if ( $IsCoreCLR ) { '"<"' } else { '"\u003c"' }
                 FromJson = '<'
              }
             @{
@@ -675,7 +675,7 @@ Describe "Validate Json serialization" -Tags "CI" {
              }
             @{
                 TestInput = 62
-                ToJson = if ( $IsCore ) { '">"' } else { '"\u003e"' }
+                ToJson = if ( $IsCoreCLR ) { '">"' } else { '"\u003e"' }
                 FromJson = '>'
              }
             @{

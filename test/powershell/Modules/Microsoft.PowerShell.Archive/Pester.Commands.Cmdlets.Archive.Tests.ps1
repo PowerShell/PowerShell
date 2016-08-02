@@ -8,11 +8,22 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
 
     AfterAll {
         $global:ProgressPreference = $_progressPreference
+        $env:PSMODULEPATH = $_modulePath 
     }
     BeforeAll {
+        # remove the archive module forcefully, to be sure we get the correct version
+        if ( Get-Module Microsoft.PowerShell.Archive. ) {
+            Remove-Module Microsoft.PowerShell.Archive -force
+        }
+        # Version comparisons should use a System.Version rather than SemanticVersion
+        $PSVersion = $PSVersionTable.PSVersion -as [Version]
         # Write-Progress not supported yet on Core
         $_progressPreference = $ProgressPreference
-        if ( $IsCore ) { $global:ProgressPreference = "SilentlyContinue" }
+        # we need to be sure that we get the correct archive module
+        $_modulePath = $env:PSMODULEPATH
+        $powershellexe = (get-process -pid $PID).MainModule.FileName
+        $env:PSMODULEPATH = join-path ([io.path]::GetDirectoryName($powershellexe)) Modules
+        if ( $IsCoreCLR ) { $global:ProgressPreference = "SilentlyContinue" }
         
         Setup -d SourceDir
         Setup -d SourceDir/ChildDir-1
@@ -37,7 +48,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
 
     function Add-CompressionAssemblies {
         Add-Type -AssemblyName System.IO.Compression
-        if (($psedition -eq "Core") -or $IsCore )
+        if (($psedition -eq "Core") -or $IsCoreCLR )
         {
             Add-Type -AssemblyName System.IO.Compression.ZipFile
         }
@@ -259,7 +270,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
         
         It "Validate errors from Compress-Archive when invalid path (non-existing path / non-filesystem path) is supplied for Path or LiteralPath parameters" {
             CompressArchiveInValidPathValidator "$TestDrive/InvalidPath" $TestDrive "$TestDrive/InvalidPath" "ArchiveCmdletPathNotFound,Compress-Archive"
-            if ( ! $IsCore ) {
+            if ( ! $IsCoreCLR ) {
                 CompressArchiveInValidPathValidator "HKLM:/SOFTWARE" $TestDrive "HKLM:/SOFTWARE" "PathNotFound,Compress-Archive"
             }
             CompressArchiveInValidPathValidator "$TestDrive" "$TestDrive/NonExistingDirectory/sample.zip" "$TestDrive/NonExistingDirectory/sample.zip" "ArchiveCmdletPathNotFound,Compress-Archive"
@@ -267,7 +278,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             $path = @("$TestDrive", "$TestDrive/InvalidPath")
             CompressArchiveInValidPathValidator $path $TestDrive "$TestDrive/InvalidPath" "ArchiveCmdletPathNotFound,Compress-Archive"
 
-            if ( ! $IsCore ) {
+            if ( ! $IsCoreCLR ) {
                 $path = @("$TestDrive", "HKLM:/SOFTWARE")
                 CompressArchiveInValidPathValidator $path $TestDrive "HKLM:/SOFTWARE" "PathNotFound,Compress-Archive"
             }
@@ -375,7 +386,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             $destinationPath | Should Exist
         }
         # This test requires a fix in PS5 to support reading paths with square bracket
-        It "Validate that Compress-Archive cmdlet can accept LiteralPath parameter with Special Characters" -skip:($PSVersionTable.psversion -lt "5.0") {
+        It "Validate that Compress-Archive cmdlet can accept LiteralPath parameter with Special Characters" -skip:($PSVersion -lt "5.0") {
             $sourcePath = "$TestDrive/SourceDir/ChildDir-1/Sample[]File.txt"
             "Some Random Content" | Out-File -LiteralPath $sourcePath
             $destinationPath = "$TestDrive/SampleSingleFileWithSpecialCharacters.zip"
@@ -430,7 +441,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             }
         }
         # This test requires a fix in PS5 to support reading paths with square bracket
-        It "Validate that Compress-Archive cmdlet can accept LiteralPath parameter for a directory with Special Characters in the directory name" -skip:($PSVersionTable.psversion -lt "5.0") {
+        It "Validate that Compress-Archive cmdlet can accept LiteralPath parameter for a directory with Special Characters in the directory name" -skip:($PSVersion -lt "5.0") {
             $sourcePath = "$TestDrive/Source[]Dir/ChildDir[]-1"
             New-Item $sourcePath -Type Directory | Out-Null
             "Some Random Content" | Out-File -LiteralPath "$sourcePath/Sample[]File.txt"
@@ -460,7 +471,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
                 # Remove-Item -LiteralPath $destinationPath -Force
             }
         }
-        It "Validate that Source Path can be at SystemDrive location" -skip:($IsCore) {
+        It "Validate that Source Path can be at SystemDrive location" -skip:($IsCoreCLR) {
             $sourcePath = "$env:SystemDrive/SourceDir"
             $destinationPath = "$TestDrive/SampleFromSystemDrive.zip"
             New-Item $sourcePath -Type Directory | Out-Null
@@ -678,7 +689,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             try { Expand-Archive -Path "$TestDrive/NonExistingArchive" -DestinationPath "$TestDrive/SourceDir"; throw "Expand-Archive did NOT throw expected error" }
             catch { $_.FullyQualifiedErrorId | Should Be "ArchiveCmdletPathNotFound,Expand-Archive" }
 
-            if ( ! $IsCore ) {
+            if ( ! $IsCoreCLR ) {
                 try { Expand-Archive -Path "HKLM:/SOFTWARE" -DestinationPath "$TestDrive/SourceDir"; throw "Expand-Archive did NOT throw expected error" }
                 catch { $_.FullyQualifiedErrorId | Should Be "PathNotFound,Expand-Archive" }
             }
@@ -686,7 +697,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             try { Expand-Archive -LiteralPath "$TestDrive/NonExistingArchive" -DestinationPath "$TestDrive/SourceDir"; throw "Expand-Archive did NOT throw expected error" }
             catch { $_.FullyQualifiedErrorId | Should Be "ArchiveCmdletPathNotFound,Expand-Archive" }
 
-            if ( ! $IsCore ) {
+            if ( ! $IsCoreCLR ) {
                 try { Expand-Archive -LiteralPath "HKLM:/SOFTWARE" -DestinationPath "$TestDrive/SourceDir"; throw "Expand-Archive did NOT throw expected error" }
                 catch { $_.FullyQualifiedErrorId | Should Be "PathNotFound,Expand-Archive" }
             }
