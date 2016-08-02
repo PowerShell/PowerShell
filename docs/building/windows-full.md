@@ -48,14 +48,11 @@ Build using our module
 Use `Start-PSBuild -FullCLR` from the `build.psm1`
 module.
 
-Because the `ConsoleHost` project (*not* the `Host` project) is a
-library and not an application (in the sense that .NET CLI does not
-emit a native executable using .NET Core's `corehost`), it targets the
-framework `netstandard1.6`, *not* `netcoreapp1.0`, and the build
-output will *not* have a runtime identifier in the path.
+The output location of `powershell.exe` will be
 
-Thus the output location of `powershell.exe` will be
-`./src/Microsoft.PowerShell.ConsoleHost/bin/Debug/net451/powershell.exe`
+```
+.\src\powershell-win-full\bin\Debug\net451\win10-x64\publish\powershell.exe
+```
 
 Build manually
 ==============
@@ -99,7 +96,7 @@ This command has a reasonable default to run `powershell.exe` from the build out
 If you are building an unusual configuration (i.e. not `Debug`), you can explicitly specify path to the bin directory
 
 ```powershell
-Start-DevPowerShell -FullCLR -binDir .\src\Microsoft.PowerShell.ConsoleHost\bin\Debug\net451
+Start-DevPowerShell -FullCLR -binDir .\src\powershell-win-full\bin\Debug\net451\win10-x64\publish
 ```
 
 Or more programmatically:
