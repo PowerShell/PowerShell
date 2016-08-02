@@ -239,18 +239,12 @@ File Headers
 
 The following file header is used for all PowerShell code.
 Please use it for new files.
-For more information, see [coding guidelines](../docs/coding-guidelines/coding-guidelines.md).
+For more information, see [coding guidelines](../docs/dev-process/coding-guidelines.md).
 
 ```C#
-// …  TODO TODO
-// Licensed to the PowerShell …. under one or more agreements.
+// The PowerShell licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 ```
-
-Licensing and Copyright
------------------------
-
-You can find more information about the PowerShell source license and copyright [here](../docs/community/legal-licensing.md).
 
 Contributor License Agreement (CLA)
 -----------------------------------
