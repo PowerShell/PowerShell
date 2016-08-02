@@ -1,9 +1,13 @@
-Because we are planning to continue to extend Pester to support remote/parallel execution, it's important to keep in mind the following when create tests:
+### Writing Pester Tests
+Note that this document does not replace the documents found in the [Pester](https://github.com/pester/pester "Pester") project. This is just
+some quick tips and suggestions for creating Pester tests for this project. The Pester community is vibrant and active, if you have questions
+about Pester or creating tests, the [Pester Wiki](https://github.com/pester/pester/wiki) has a lot of great information.
+
+When creating tests, keep the following in mind:
 * Tests should not be overly complicated and test too many things
 	* boil down your tests to their essence, test only what you need
 * Tests should be as simple as they can
 * Tests should generally not rely on any other test
-
 	
 Examples:
 Here's the simplest of tests
@@ -27,14 +31,28 @@ Describe "One is really one" {
     }
     It "1 is really an int" {
        $i = 1
-       $i.GetType().FullName | Should Be System.Int32
+       $i.GetType() | Should Be "int"
     }
 } 
 ```
-If you are checking for proper errors, do that in a try catch, and then check fully qualified error id
+alternatively, you could do the following:
+```
+Describe "One is really one" {
+    It "Compare 1 to 1" {
+       $a = 1
+       $a | Should be 1
+    }
+    It "1 is really an int" {
+       $i = 1
+       $i.GetType() | Should Be ([System.Int32])
+    }
+} 
+```
+
+If you are checking for proper errors, do that in a `try/catch`, and then check `FullyQualifiedErrorId`. Checking against `FullyQualifiedErrorId` is recommended because it does not change based on culture as an error message might.
 ```
 ...
-it "Error should be PathNotFound" {
+it "Get-Item on a nonexisting file should have error PathNotFound" {
     try
     {
         get-item "ThisFileCannotPossiblyExist" -ErrorAction Stop
@@ -42,8 +60,7 @@ it "Error should be PathNotFound" {
     }
     catch
     {
-        $_.FullyQualifiedErrorId | 
-        should be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+        $_.FullyQualifiedErrorId | should be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
     }
 }
 ```
@@ -51,12 +68,10 @@ it "Error should be PathNotFound" {
 Note that if get-item were to succeed, a different FullyQualifiedErrorId would be thrown and the test will fail because the FQErrorId is wrong. This is the suggested path because Pester wants to check the error message, which will likely not work here because of localized builds, but the FullyQualifiedErrorId is constant regardless of the locale.
 
 ### Describe/Context/It
-
-From an organizational standpoint, a Describe block roughly compares to a LITE3 Test Suite and an It block roughly compares to a LITE3 testcase. Unlike LITE3, individual tests are not prioritized (remember that a test name in Pester is really a descriptive sentence, rather than a name), but a Describe block (TestSuite) may be tagged with a string. 
-For creation of PowerShell tests, the Describe block is the level of granularity suggested and one of two tags should be used: "Inner" or "Outer". If the tag is not provided, tests in that describe block will be run any time tests are executed.
+For creation of PowerShell tests, the Describe block is the level of granularity suggested and one of three tags should be used: "CI", "Feature", or "Scenario". If the tag is not provided, tests in that describe block will be run any time tests are executed.
 
 #### Describe
-Creates a logical group of tests. All Mocks and TestDrive contents defined within a  Describe  block are scoped to that  Describe ; they will no longer be present when the  Describe  block exits. A  Describe  block may contain any number of  Context  and  It  blocks.
+Creates a logical group of tests. All Mocks and TestDrive contents defined within a Describe block are scoped to that Describe; they will no longer be present when the Describe block exits. A `Describe block may contain any number of Context and It blocks.
 
 #### Context
 Provides logical grouping of It blocks within a single Describe block. Any Mocks defined inside a Context are removed at the end of the Context scope, as are any files or folders added to the TestDrive during the Context block's execution. Any BeforeEach or AfterEach blocks defined inside a Context also only apply to tests within that Context .
@@ -92,16 +107,7 @@ Describe "Add-Footer" {
 When this test completes, the contents of the TestDrive PSDrive will be removed.
 
 #### Parameter Generation
-This is quite a bit different from LITE3, but still possible, see the following:
-
 ```
-Describe "A test" {
-function Test-Xor {
-    param ($a, $b, $ExpectedResult)
-	It ("Applies XOR to inputs {0} and {1}" -f $a, $b) {
-		$a -xor $b | Should be $ExpectedResult
-	}
-}
 
 $testCases = @(
     @{ a = 0; b = 1; ExpectedResult = 1 }
@@ -109,13 +115,16 @@ $testCases = @(
     @{ a = 1; b = 1; ExpectedResult = 0 }
     @{ a = 0; b = 0; ExpectedResult = 0 }
     )
-    foreach ($testCase in $testCases) {
-        Test-Xor @testCase
-    }
+
+Describe "A test" {
+	It "<a> -xor <b> should be <expectedresult>" -testcase $testcases {
+        param ($a, $b, $ExpectedResult)
+		$a -xor $b | Should be $ExpectedResult
+	}
 }
 ```
 
-You can construct the values to pass as parameters, including the expected value, and use that iteratively in a loop. Note the location of the `It` block
+You can also construct loops and pass values as parameters, including the expected value, but Pester does this for you.
 
 #### Mocking
 Mocks the behavior of an existing command with an alternate implementation. This creates new behavior for any existing command within the scope of a Describe or Context block. The function allows you to specify a script block that will become the command's new behavior.
@@ -128,7 +137,7 @@ Context "Get-Random is not random" {
         }
     }
 ```
-More information may be found here: https://github.com/pester/Pester/wiki/Mock
+More information may be found on the [wiki](https://github.com/pester/Pester/wiki/Mock)
 ### Free Code in a Describe block
 Code execution in Pester can be very subtle and can cause issues when executing test code. The execution of code which lays outside of the usual code blocks may not happen as you expect. Consider the following:
 ```
@@ -138,14 +147,14 @@ Describe it {
         Write-Host -for DarkRed "Before BeforeAll"
         BeforeAll { write-host -for Blue "In Context BeforeAll" }
         Write-Host -for DarkRed "After BeforeAll"
- 
+
         Write-Host -for DarkRed "Before AfterAll"
         AfterAll { Write-Host -for Blue "In Context AfterAll" }
         Write-Host -for DarkRed "After AfterAll"
- 
+
         BeforeEach { Write-Host -for Blue "In BeforeEach" }
         AfterEach { Write-Host -for Blue "In AfterEach" }
- 
+
         Write-Host -for DarkRed "Before It"
         It "should not be a surprise" {
             1 | should be 1
@@ -187,5 +196,6 @@ Passed: 1 Failed: 0 Skipped: 0 Pending: 0
 
 The DESCRIBE BeforeAll block is executed before any other code even though it was at the bottom of the Describe block, so if state is set elsewhere in the describe BLOCK, that state will not be visible (as the code will not yet been run). Notice, too, that the BEFOREALL block in Context is executed before any other code in that block.
 Generally, you should have code reside in one of the code block elements of `[Before|After][All|Each]`, especially if those block rely on state set by free code elsewhere in the block.
+
 
 

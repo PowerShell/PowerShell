@@ -1,7 +1,6 @@
 {
 	"name": "Microsoft.PackageManagement.MsiProvider",
 	"version": "1.0.0-*",
-	"authors": ["quoct"],
 
 	"buildOptions": {
 		"warningsAsErrors": true
