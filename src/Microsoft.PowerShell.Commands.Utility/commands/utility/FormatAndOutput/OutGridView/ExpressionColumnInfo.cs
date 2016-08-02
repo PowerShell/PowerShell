@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 namespace Microsoft.PowerShell.Commands
 {
     using System;
@@ -10,17 +11,17 @@ namespace Microsoft.PowerShell.Commands
 
     internal class ExpressionColumnInfo : ColumnInfo
     {
-        private MshExpression expression;
+        private MshExpression _expression;
 
         internal ExpressionColumnInfo(string staleObjectPropertyName, string displayName, MshExpression expression)
             : base(staleObjectPropertyName, displayName)
         {
-            this.expression = expression;
+            _expression = expression;
         }
 
         internal override Object GetValue(PSObject liveObject)
         {
-            List<MshExpressionResult> resList = expression.GetValues(liveObject);
+            List<MshExpressionResult> resList = _expression.GetValues(liveObject);
 
             if (resList.Count == 0)
             {

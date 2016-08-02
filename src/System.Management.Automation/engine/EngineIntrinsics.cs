@@ -1,10 +1,11 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Host;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
@@ -23,7 +24,7 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 false,
                 "This constructor should never be called. Only the constructor that takes an instance of ExecutionContext should be called.");
-        } 
+        }
 
         /// <summary>
         /// The internal constructor for this object. It should be the only one that gets called.
@@ -44,9 +45,9 @@ namespace System.Management.Automation
                 throw new ArgumentNullException("context");
             }
 
-            this._context = context;
-            this._host = context.EngineHostInterface;
-        } 
+            _context = context;
+            _host = context.EngineHostInterface;
+        }
 
         #endregion Constructors
 

@@ -1,11 +1,6 @@
-// ==++==
-// 
-//   Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
-// ==--==
+
 /*============================================================
 **
-** Class: EventLogQuery
 **
 ** Purpose: 
 ** This public class allows a user to define events of interest.
@@ -17,8 +12,8 @@
 **
 ============================================================*/
 
-namespace System.Diagnostics.Eventing.Reader {
-
+namespace System.Diagnostics.Eventing.Reader
+{
     /// <summary>
     /// Allows a user to define events of interest. An instance of this 
     /// class is passed to an EventReader to actually obtain the EventRecords.   
@@ -26,78 +21,95 @@ namespace System.Diagnostics.Eventing.Reader {
     /// interest, or it can contain query / xpath expressions that indicate exactly
     /// what characteristics events should have. 
     /// </summary>
-    public class EventLogQuery {
-
-        private string query;
-        private string path;
-        private EventLogSession session;
-        private PathType pathType;
-        private bool tolerateErrors = false;
-        private bool reverseDirection = false;
+    public class EventLogQuery
+    {
+        private string _query;
+        private string _path;
+        private EventLogSession _session;
+        private PathType _pathType;
+        private bool _tolerateErrors = false;
+        private bool _reverseDirection = false;
 
         public EventLogQuery(string path, PathType pathType)
-            : this(path, pathType, null) {
+            : this(path, pathType, null)
+        {
         }
 
-        public EventLogQuery(string path, PathType pathType, string query) {
+        public EventLogQuery(string path, PathType pathType, string query)
+        {
+            _session = EventLogSession.GlobalSession;
+            _path = path;   // can be null
+            _pathType = pathType;
 
-            this.session = EventLogSession.GlobalSession;
-            this.path = path;   // can be null
-            this.pathType = pathType;
-
-            if (query == null) {
+            if (query == null)
+            {
                 if (path == null)
                     throw new ArgumentNullException("path");
             }
-            else {
-                this.query = query;
+            else
+            {
+                _query = query;
             }
         }
 
-        public EventLogSession Session {
-            get {
-                return this.session;
+        public EventLogSession Session
+        {
+            get
+            {
+                return _session;
             }
-            set {
-                this.session = value;
-            }
-        }
-
-        public bool TolerateQueryErrors {
-            get {
-                return this.tolerateErrors;
-            }
-            set {
-                this.tolerateErrors = value;
+            set
+            {
+                _session = value;
             }
         }
 
-        public bool ReverseDirection {
-            get {
-                return this.reverseDirection;
+        public bool TolerateQueryErrors
+        {
+            get
+            {
+                return _tolerateErrors;
             }
-            set {
-                this.reverseDirection = value;
-            }
-        }
-
-        internal string Path {
-            get {
-                return this.path;
+            set
+            {
+                _tolerateErrors = value;
             }
         }
 
-        internal PathType ThePathType {
-            get {
-                return this.pathType;
+        public bool ReverseDirection
+        {
+            get
+            {
+                return _reverseDirection;
+            }
+            set
+            {
+                _reverseDirection = value;
             }
         }
 
-        internal string Query {
-            get {
-                return this.query;
+        internal string Path
+        {
+            get
+            {
+                return _path;
             }
         }
 
+        internal PathType ThePathType
+        {
+            get
+            {
+                return _pathType;
+            }
+        }
+
+        internal string Query
+        {
+            get
+            {
+                return _query;
+            }
+        }
     }
 }

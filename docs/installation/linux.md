@@ -1,25 +1,14 @@
 Package installation instructions
 =================================
 
-Supports Ubuntu 14.04, CentOS 7.1, and OS X 10.11.
+Supports [Ubuntu 14.04][Ubuntu14.04], [CentOS 7.1][CentOS7.1], and [OS X 10.11][OSX10.11].
 All packages are available on our GitHub [releases][] page.
 
-Once the package is installed, `powershell` will be in your path, ready to be launched from a terminal.
+Once the package is installed, run `powershell` from a terminal.
 
-* User profiles will be read from `~/.config/powershell/profile.ps1`.
-* User modules will be read from `~/.local/share/powershell/Modules`
-* PSReadLine history will be recorded to `~/.local/share/powershell/PSReadLine/ConsoleHost_history.txt`
-* System profiles will be read from `/opt/microsoft/powershell/profile.ps1`.
-* System modules will be read from `/opt/microsoft/powershell/Modules`
-
-The profiles respect PowerShell's per-host configuration, so the default host-specific profiles exists at `Microsoft.PowerShell_profile.ps1` in the same locations.
-
-On Linux and OS X, the [XDG Base Directory Specification][xdg-bds] is respected.
-
-> Note that to place PowerShell in your path, the packages create a symlink from `/usr/bin/powershell` to the `/opt/microsoft/powershell/powershell` executable.
-
-[releases]: https://github.com/PowerShell/PowerShell/releases/latest
-[xdg-bds]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+[Ubuntu14.04]:./linux.md#ubuntu-1404
+[CentOS7.1]:./linux.md#centos-7
+[OSX10.11]:./linux.md#os-x-1011
 
 Ubuntu 14.04
 ============
@@ -66,3 +55,22 @@ sudo installer -pkg powershell-6.0.0-alpha.7.pkg -target /
 > Note that because OS X is a derivation of BSD, instead of `/opt`, the prefix used is `/usr/local`.
 > Thus, `powershell` lives at `/usr/local/microsoft/powershell`, and the symlink is placed at `/usr/local/bin/powershell`.
 > This affects the system modules and profiles as well.
+
+Paths
+=====
+
+* User profiles will be read from `~/.config/powershell/profile.ps1`.
+* User modules will be read from `~/.local/share/powershell/Modules`
+* PSReadLine history will be recorded to `~/.local/share/powershell/PSReadLine/ConsoleHost_history.txt`
+* System profiles will be read from `/opt/microsoft/powershell/profile.ps1`.
+* System modules will be read from `/opt/microsoft/powershell/Modules`
+
+The profiles respect PowerShell's per-host configuration, so the default host-specific profiles exists at `Microsoft.PowerShell_profile.ps1` in the same locations.
+
+On Linux and OS X, the [XDG Base Directory Specification][xdg-bds] is respected.
+
+> There is a symlink created from `/usr/bin/powershell` to `/opt/microsoft/powershell/powershell` to ensure `powershell` is in your path.
+
+
+[releases]: https://github.com/PowerShell/PowerShell/releases/latest
+[xdg-bds]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html

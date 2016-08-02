@@ -88,7 +88,7 @@ namespace System.Management.Automation
     /// This class will handle the logic for direct invocation of script blocks. 
     /// 
     /// </remarks>
-    partial class ScriptBlock
+    public partial class ScriptBlock
     {
         /// <summary>
         /// Create a script block object based on a script string to be parsed immediately. 
@@ -411,7 +411,6 @@ namespace System.Management.Automation
                     string functionName = pair.Key as string;
                     if (string.IsNullOrWhiteSpace(functionName))
                     {
-
                         PSInvalidOperationException e = PSTraceSource.NewInvalidOperationException(
                             ParserStrings.EmptyFunctionNameInFunctionDefinitionDictionary);
 
@@ -506,12 +505,12 @@ namespace System.Management.Automation
         public object InvokeReturnAsIs(params object[] args)
         {
             return DoInvokeReturnAsIs(
-                    useLocalScope:         true,
+                    useLocalScope: true,
                     errorHandlingBehavior: ErrorHandlingBehavior.WriteToExternalErrorPipe,
-                    dollarUnder:           AutomationNull.Value,
-                    input:                 AutomationNull.Value,
-                    scriptThis:            AutomationNull.Value,
-                    args:                  args);
+                    dollarUnder: AutomationNull.Value,
+                    input: AutomationNull.Value,
+                    scriptThis: AutomationNull.Value,
+                    args: args);
         }
 
         internal T InvokeAsMemberFunctionT<T>(object instance, object[] args)
@@ -520,14 +519,14 @@ namespace System.Management.Automation
             Pipe pipe = new Pipe(result);
 
             InvokeWithPipe(useLocalScope: true,
-                                       errorHandlingBehavior:       ErrorHandlingBehavior.WriteToExternalErrorPipe,
-                                       dollarUnder:                 AutomationNull.Value,
-                                       input:                       AutomationNull.Value,
-                                       scriptThis:                  instance ?? AutomationNull.Value,
-                                       outputPipe:                  pipe,
-                                       invocationInfo:              null,
+                                       errorHandlingBehavior: ErrorHandlingBehavior.WriteToExternalErrorPipe,
+                                       dollarUnder: AutomationNull.Value,
+                                       input: AutomationNull.Value,
+                                       scriptThis: instance ?? AutomationNull.Value,
+                                       outputPipe: pipe,
+                                       invocationInfo: null,
                                        propagateAllExceptionsToTop: true,
-                                       args:                        args);
+                                       args: args);
             Diagnostics.Assert(result.Count == 1, "Code generation ensures we return the correct type");
             return (T)result[0];
         }
@@ -538,14 +537,14 @@ namespace System.Management.Automation
             Pipe pipe = new Pipe(result);
 
             InvokeWithPipe(useLocalScope: true,
-                                       errorHandlingBehavior:       ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                                       dollarUnder:                 AutomationNull.Value,
-                                       input:                       AutomationNull.Value,
-                                       scriptThis:                  instance ?? AutomationNull.Value,
-                                       outputPipe:                  pipe,
-                                       invocationInfo:              null,
+                                       errorHandlingBehavior: ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                                       dollarUnder: AutomationNull.Value,
+                                       input: AutomationNull.Value,
+                                       scriptThis: instance ?? AutomationNull.Value,
+                                       outputPipe: pipe,
+                                       invocationInfo: null,
                                        propagateAllExceptionsToTop: true,
-                                       args:                        args);
+                                       args: args);
             Diagnostics.Assert(result.Count == 0, "Code generation ensures we return the correct type");
         }
 
@@ -666,7 +665,7 @@ namespace System.Management.Automation
             Pipe outputPipe = ((MshCommandRuntime)contextCmdlet.CommandRuntime).OutputPipe;
             ExecutionContext context = GetContextFromTLS();
             var myInv = context.EngineSessionState.CurrentScope.GetAutomaticVariableValue(AutomaticVariable.MyInvocation);
-            InvocationInfo inInfo = myInv == AutomationNull.Value ? null : (InvocationInfo) myInv;
+            InvocationInfo inInfo = myInv == AutomationNull.Value ? null : (InvocationInfo)myInv;
             InvokeWithPipe(useLocalScope, errorHandlingBehavior, dollarUnder, input, scriptThis, outputPipe, inInfo, propagateAllExceptionsToTop: false, args: args);
         }
 
@@ -704,12 +703,12 @@ namespace System.Management.Automation
 
         #region Delegates
 
-        private static readonly ConditionalWeakTable<ScriptBlock, ConcurrentDictionary<Type, Delegate>> delegateTable =
+        private static readonly ConditionalWeakTable<ScriptBlock, ConcurrentDictionary<Type, Delegate>> s_delegateTable =
             new ConditionalWeakTable<ScriptBlock, ConcurrentDictionary<Type, Delegate>>();
 
         internal Delegate GetDelegate(Type delegateType)
         {
-            var instanceDelegateTable = delegateTable.GetOrCreateValue(this);
+            var instanceDelegateTable = s_delegateTable.GetOrCreateValue(this);
             return instanceDelegateTable.GetOrAdd(delegateType, CreateDelegate);
         }
 
@@ -777,14 +776,14 @@ namespace System.Management.Automation
             List<object> rawResult = new List<object>();
             Pipe outputPipe = new Pipe(rawResult);
             InvokeWithPipe(
-                useLocalScope:         true,
+                useLocalScope: true,
                 errorHandlingBehavior: ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                dollarUnder:           dollarUnder,
-                input:                 null,
-                scriptThis:            dollarThis,
-                outputPipe:            outputPipe,
-                invocationInfo:        null,
-                args:                  args);
+                dollarUnder: dollarUnder,
+                input: null,
+                scriptThis: dollarThis,
+                outputPipe: outputPipe,
+                invocationInfo: null,
+                args: args);
             return GetRawResult(rawResult);
         }
 
@@ -841,14 +840,14 @@ namespace System.Management.Automation
         {
             List<object> result = new List<object>();
             Pipe outputPipe = new Pipe(result);
-            InvokeWithPipe(useLocalScope:         true,
+            InvokeWithPipe(useLocalScope: true,
                            errorHandlingBehavior: ErrorHandlingBehavior.WriteToExternalErrorPipe,
-                           dollarUnder:           dollarUnder,
-                           input:                 input,
-                           scriptThis:            AutomationNull.Value,
-                           outputPipe:            outputPipe,
-                           invocationInfo:        null,
-                           args:                  args);
+                           dollarUnder: dollarUnder,
+                           input: input,
+                           scriptThis: AutomationNull.Value,
+                           outputPipe: outputPipe,
+                           invocationInfo: null,
+                           args: args);
             return GetWrappedResult(result);
         }
 
@@ -906,14 +905,14 @@ namespace System.Management.Automation
         {
             List<object> result = new List<object>();
             Pipe outputPipe = new Pipe(result);
-            InvokeWithPipe(useLocalScope:         useLocalScope,
+            InvokeWithPipe(useLocalScope: useLocalScope,
                            errorHandlingBehavior: errorHandlingBehavior,
-                           dollarUnder:           dollarUnder,
-                           input:                 input,
-                           scriptThis:            scriptThis,
-                           outputPipe:            outputPipe,
-                           invocationInfo:        null,
-                           args:                  args);
+                           dollarUnder: dollarUnder,
+                           input: input,
+                           scriptThis: scriptThis,
+                           outputPipe: outputPipe,
+                           invocationInfo: null,
+                           args: args);
             return GetRawResult(result);
         }
 
@@ -939,59 +938,57 @@ namespace System.Management.Automation
                 context = SessionStateInternal.ExecutionContext;
                 shouldGenerateEvent = true;
             }
-			else if (context == null)
-			{
-			    // This will throw.
-			    GetContextFromTLS();
-			}
-			else
-			{
-			    if (propagateAllExceptionsToTop)
-			    {
-			        oldPropagateExceptions = context.PropagateExceptionsToEnclosingStatementBlock;
-			        context.PropagateExceptionsToEnclosingStatementBlock = true;
-			    }
+            else if (context == null)
+            {
+                // This will throw.
+                GetContextFromTLS();
+            }
+            else
+            {
+                if (propagateAllExceptionsToTop)
+                {
+                    oldPropagateExceptions = context.PropagateExceptionsToEnclosingStatementBlock;
+                    context.PropagateExceptionsToEnclosingStatementBlock = true;
+                }
 
-			    try
-			    {
-
-			        var runspace = (RunspaceBase) context.CurrentRunspace;
-			        shouldGenerateEvent = !runspace.RunActionIfNoRunningPipelinesWithThreadCheck(() =>
-			            InvokeWithPipeImpl(useLocalScope, functionsToDefine, variablesToDefine, errorHandlingBehavior,
-			                dollarUnder, input, scriptThis, outputPipe, invocationInfo, args));
-
-			    }
-			    finally
-			    {
-			        if (propagateAllExceptionsToTop)
-			        {
-			            context.PropagateExceptionsToEnclosingStatementBlock = oldPropagateExceptions;
-			        }
-			    }
-			}
+                try
+                {
+                    var runspace = (RunspaceBase)context.CurrentRunspace;
+                    shouldGenerateEvent = !runspace.RunActionIfNoRunningPipelinesWithThreadCheck(() =>
+                        InvokeWithPipeImpl(useLocalScope, functionsToDefine, variablesToDefine, errorHandlingBehavior,
+                            dollarUnder, input, scriptThis, outputPipe, invocationInfo, args));
+                }
+                finally
+                {
+                    if (propagateAllExceptionsToTop)
+                    {
+                        context.PropagateExceptionsToEnclosingStatementBlock = oldPropagateExceptions;
+                    }
+                }
+            }
 
             if (shouldGenerateEvent)
             {
                 context.Events.SubscribeEvent(
-                        source:                                 null,
-                        eventName:                              PSEngineEvent.OnScriptBlockInvoke,
-                        sourceIdentifier:                       PSEngineEvent.OnScriptBlockInvoke,
-                        data:                                   null,
-                        handlerDelegate:                        new PSEventReceivedEventHandler(OnScriptBlockInvokeEventHandler),
-                        supportEvent:                           true,
-                        forwardEvent:                           false,
+                        source: null,
+                        eventName: PSEngineEvent.OnScriptBlockInvoke,
+                        sourceIdentifier: PSEngineEvent.OnScriptBlockInvoke,
+                        data: null,
+                        handlerDelegate: new PSEventReceivedEventHandler(OnScriptBlockInvokeEventHandler),
+                        supportEvent: true,
+                        forwardEvent: false,
                         shouldQueueAndProcessInExecutionThread: true,
-                        maxTriggerCount:                        1);
+                        maxTriggerCount: 1);
 
                 var scriptBlockInvocationEventArgs = new ScriptBlockInvocationEventArgs(
                     this, useLocalScope, errorHandlingBehavior, dollarUnder, input, scriptThis, outputPipe,
                     invocationInfo, args);
 
                 context.Events.GenerateEvent(
-                    sourceIdentifier:     PSEngineEvent.OnScriptBlockInvoke,
-                    sender:               null,
-                    args:                 new object[1] {scriptBlockInvocationEventArgs}, 
-                    extraData:            null,
+                    sourceIdentifier: PSEngineEvent.OnScriptBlockInvoke,
+                    sender: null,
+                    args: new object[1] { scriptBlockInvocationEventArgs },
+                    extraData: null,
                     processInCurrentThread: true,
                     waitForCompletionInCurrentThread: true);
 
@@ -1009,7 +1006,7 @@ namespace System.Management.Automation
         {
             var eventArgs = (object)args.SourceEventArgs as ScriptBlockInvocationEventArgs;
             Diagnostics.Assert(eventArgs != null, "Event Arguments to OnScriptBlockInvokeEventHandler should not be null");
-            
+
             try
             {
                 ScriptBlock sb = eventArgs.ScriptBlock;
@@ -1021,7 +1018,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal void SetPSScriptRootAndPSCommandPath (MutableTuple locals, ExecutionContext context)
+        internal void SetPSScriptRootAndPSCommandPath(MutableTuple locals, ExecutionContext context)
         {
             var psScriptRoot = string.Empty;
             var psCommandPath = string.Empty;
@@ -1334,7 +1331,6 @@ namespace System.Management.Automation
     /// </summary>
     internal sealed class ScriptBlockInvocationEventArgs : EventArgs
     {
-
         /// <summary>
         /// Constructs ScriptBlockInvocationEventArgs
         /// </summary>
@@ -1357,14 +1353,14 @@ namespace System.Management.Automation
         /// <param name="args">The arguments to this script.</param>
         /// <exception cref="ArgumentNullException">scriptBlock is null
         /// </exception>
-        internal ScriptBlockInvocationEventArgs(ScriptBlock scriptBlock, 
-                                                bool useLocalScope, 
-                                                ScriptBlock.ErrorHandlingBehavior errorHandlingBehavior, 
-                                                object dollarUnder, 
-                                                object input, 
-                                                object scriptThis, 
-                                                Pipe outputPipe, 
-                                                InvocationInfo invocationInfo, 
+        internal ScriptBlockInvocationEventArgs(ScriptBlock scriptBlock,
+                                                bool useLocalScope,
+                                                ScriptBlock.ErrorHandlingBehavior errorHandlingBehavior,
+                                                object dollarUnder,
+                                                object input,
+                                                object scriptThis,
+                                                Pipe outputPipe,
+                                                InvocationInfo invocationInfo,
                                                 object[] args)
         {
             if (scriptBlock == null)
@@ -1388,9 +1384,9 @@ namespace System.Management.Automation
         internal ScriptBlock.ErrorHandlingBehavior ErrorHandlingBehavior { get; set; }
         internal object DollarUnder { get; set; }
         internal object Input { get; set; }
-        internal object ScriptThis {get; set; }
+        internal object ScriptThis { get; set; }
         internal Pipe OutputPipe { get; set; }
-        internal InvocationInfo InvocationInfo {get; set; }
+        internal InvocationInfo InvocationInfo { get; set; }
         internal object[] Args { get; set; }
 
         /// <summary>

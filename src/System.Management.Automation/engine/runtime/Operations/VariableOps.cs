@@ -13,9 +13,9 @@ namespace System.Management.Automation
     using Dbg = Diagnostics;
     using System.Collections.ObjectModel;
 
-    static class VariableOps
+    internal static class VariableOps
     {
-        static object SetVariableValue(VariablePath variablePath, object value, ExecutionContext executionContext, AttributeBaseAst[] attributeAsts)
+        internal static object SetVariableValue(VariablePath variablePath, object value, ExecutionContext executionContext, AttributeBaseAst[] attributeAsts)
         {
             SessionStateInternal sessionState = executionContext.EngineSessionState;
             CommandOrigin origin = sessionState.CurrentScope.ScopeOrigin;
@@ -87,7 +87,7 @@ namespace System.Management.Automation
             return value;
         }
 
-        static bool ThrowStrictModeUndefinedVariable(ExecutionContext executionContext, VariableExpressionAst varAst)
+        private static bool ThrowStrictModeUndefinedVariable(ExecutionContext executionContext, VariableExpressionAst varAst)
         {
             // In some limited cases, the compiler knows we don't want an error, like when we're backing up
             // $foreach and $switch, which might not be set.  In that case, the ast passed is null.
@@ -118,7 +118,7 @@ namespace System.Management.Automation
             return false;
         }
 
-        static object GetAutomaticVariableValue(int tupleIndex, ExecutionContext executionContext, VariableExpressionAst varAst)
+        internal static object GetAutomaticVariableValue(int tupleIndex, ExecutionContext executionContext, VariableExpressionAst varAst)
         {
             Diagnostics.Assert(tupleIndex < SpecialVariables.AutomaticVariableTypes.Length, "caller to verify a valid tuple index is used");
 
@@ -171,13 +171,13 @@ namespace System.Management.Automation
             if (ThrowStrictModeUndefinedVariable(executionContext, varAst))
             {
                 throw InterpreterError.NewInterpreterException(variablePath.UserPath, typeof(RuntimeException),
-                    varAst.Extent, "VariableIsUndefined", ParserStrings.VariableIsUndefined, variablePath.UserPath);                
+                    varAst.Extent, "VariableIsUndefined", ParserStrings.VariableIsUndefined, variablePath.UserPath);
             }
 
             return null;
         }
 
-        static PSReference GetVariableAsRef(VariablePath variablePath, ExecutionContext executionContext, Type staticType)
+        internal static PSReference GetVariableAsRef(VariablePath variablePath, ExecutionContext executionContext, Type staticType)
         {
             Diagnostics.Assert(variablePath.IsVariable, "calller to verify varpath is a variable.");
 
@@ -212,7 +212,7 @@ namespace System.Management.Automation
             return PSReference.CreateInstance(var, staticType);
         }
 
-        static Collection<Attribute> GetAttributeCollection(AttributeBaseAst[] attributeAsts)
+        private static Collection<Attribute> GetAttributeCollection(AttributeBaseAst[] attributeAsts)
         {
             var result = new Collection<Attribute>();
             foreach (var attributeAst in attributeAsts)
@@ -222,7 +222,7 @@ namespace System.Management.Automation
             return result;
         }
 
-        static UsingResult GetUsingValueFromTuple(MutableTuple tuple, string usingExpressionKey, int index)
+        private static UsingResult GetUsingValueFromTuple(MutableTuple tuple, string usingExpressionKey, int index)
         {
             var boundParameters =
                 tuple.GetAutomaticVariable(AutomaticVariable.PSBoundParameters) as PSBoundParametersDictionary;
@@ -251,7 +251,7 @@ namespace System.Management.Automation
             public object Value { get; set; }
         }
 
-        static object GetUsingValue(MutableTuple tuple, string usingExpressionKey, int index, ExecutionContext context)
+        internal static object GetUsingValue(MutableTuple tuple, string usingExpressionKey, int index, ExecutionContext context)
         {
             UsingResult result = GetUsingValueFromTuple(tuple, usingExpressionKey, index);
             if (result != null)

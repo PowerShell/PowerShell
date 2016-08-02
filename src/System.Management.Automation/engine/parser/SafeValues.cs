@@ -35,9 +35,10 @@ using System.Management.Automation.Internal;
  *  o VisitHashtable may be safe if its components are safe
  *  
  */
+
 namespace System.Management.Automation.Language
 {
-    class IsSafeValueVisitor : ICustomAstVisitor
+    internal class IsSafeValueVisitor : ICustomAstVisitor
     {
         public static bool IsAstSafe(Ast ast, GetSafeValueVisitor.SafeValueContext safeValueContext)
         {
@@ -51,7 +52,7 @@ namespace System.Management.Automation.Language
 
         internal IsSafeValueVisitor(GetSafeValueVisitor.SafeValueContext safeValueContext)
         {
-            this._safeValueContext = safeValueContext;
+            _safeValueContext = safeValueContext;
         }
 
         // This is a check of the number of visits 
@@ -64,7 +65,7 @@ namespace System.Management.Automation.Language
         // what we can verify.
         private GetSafeValueVisitor.SafeValueContext _safeValueContext;
 
-        public object VisitErrorStatement(ErrorStatementAst errorStatementAst) {return false;}
+        public object VisitErrorStatement(ErrorStatementAst errorStatementAst) { return false; }
         public object VisitErrorExpression(ErrorExpressionAst errorExpressionAst) { return false; }
         public object VisitScriptBlock(ScriptBlockAst scriptBlockAst) { return false; }
         public object VisitParamBlock(ParamBlockAst paramBlockAst) { return false; }
@@ -111,7 +112,7 @@ namespace System.Management.Automation.Language
             foreach (var nestedExpression in expandableStringExpressionAst.NestedExpressions)
             {
                 _visitCount++;
-                if (! (bool)nestedExpression.Accept(this))
+                if (!(bool)nestedExpression.Accept(this))
                 {
                     isSafe = false;
                     break;
@@ -119,7 +120,7 @@ namespace System.Management.Automation.Language
             }
             return isSafe;
         }
- 
+
         public object VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
             bool isSafe = true;
@@ -157,7 +158,7 @@ namespace System.Management.Automation.Language
         public object VisitUnaryExpression(UnaryExpressionAst unaryExpressionAst)
         {
             bool unaryExpressionIsSafe = unaryExpressionAst.TokenKind.HasTrait(TokenFlags.CanConstantFold) &&
-                ! unaryExpressionAst.TokenKind.HasTrait(TokenFlags.DisallowedInRestrictedMode) &&
+                !unaryExpressionAst.TokenKind.HasTrait(TokenFlags.DisallowedInRestrictedMode) &&
                 (bool)unaryExpressionAst.Child.Accept(this);
             if (unaryExpressionIsSafe)
             {
@@ -271,7 +272,7 @@ namespace System.Management.Automation.Language
         {
             // Returning a ScriptBlock instance itself is OK, bad stuff only happens
             // when invoking one (which is blocked)
-            return true; 
+            return true;
         }
 
         public object VisitParenExpression(ParenExpressionAst parenExpressionAst)
@@ -285,7 +286,7 @@ namespace System.Management.Automation.Language
      * except in the case of handling the unary operator
      * ExecutionContext is provided to ensure we can resolve variables
      */
-    class GetSafeValueVisitor : ICustomAstVisitor
+    internal class GetSafeValueVisitor : ICustomAstVisitor
     {
         internal enum SafeValueContext
         {
@@ -299,7 +300,7 @@ namespace System.Management.Automation.Language
 
         public static object GetSafeValue(Ast ast, ExecutionContext context, SafeValueContext safeValueContext)
         {
-            _context = context;
+            s_context = context;
             if (IsSafeValueVisitor.IsAstSafe(ast, safeValueContext))
             {
                 return ast.Accept(new GetSafeValueVisitor());
@@ -312,7 +313,7 @@ namespace System.Management.Automation.Language
             throw PSTraceSource.NewArgumentException("ast");
         }
 
-        private static ExecutionContext _context;
+        private static ExecutionContext s_context;
 
         public object VisitErrorStatement(ErrorStatementAst errorStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
         public object VisitErrorExpression(ErrorExpressionAst errorExpressionAst) { throw PSTraceSource.NewArgumentException("ast"); }
@@ -378,7 +379,6 @@ namespace System.Management.Automation.Language
                     return null;
                 }
                 return offset >= 0 ? targetArray[offset] : targetArray[targetArray.Length + offset];
-
             }
             var targetHashtable = target as Hashtable;
             if (targetHashtable != null)
@@ -393,7 +393,7 @@ namespace System.Management.Automation.Language
         private object GetIndexedValueFromTarget(object target, object index)
         {
             var indexArray = index as object[];
-            return indexArray != null ? ((object[]) indexArray).Select(i => GetSingleValueFromTarget(target, i)).ToArray() : GetSingleValueFromTarget(target, index);
+            return indexArray != null ? ((object[])indexArray).Select(i => GetSingleValueFromTarget(target, i)).ToArray() : GetSingleValueFromTarget(target, index);
         }
 
         public object VisitIndexExpression(IndexExpressionAst indexExpressionAst)
@@ -414,9 +414,9 @@ namespace System.Management.Automation.Language
             object[] safeValues = new object[expandableStringExpressionAst.NestedExpressions.Count];
             // retrieve OFS, and if it doesn't exist set it to space
             string ofs = null;
-            if ( _context != null )
+            if (s_context != null)
             {
-                ofs = _context.SessionState.PSVariable.GetValue("OFS") as string;
+                ofs = s_context.SessionState.PSVariable.GetValue("OFS") as string;
             }
             if (ofs == null)
             {
@@ -527,9 +527,9 @@ namespace System.Management.Automation.Language
 
         public object VisitUnaryExpression(UnaryExpressionAst unaryExpressionAst)
         {
-            if ( _context != null )
+            if (s_context != null)
             {
-                return Compiler.GetExpressionValue(unaryExpressionAst, true, _context, null);
+                return Compiler.GetExpressionValue(unaryExpressionAst, true, s_context, null);
             }
             else
             {
@@ -541,9 +541,9 @@ namespace System.Management.Automation.Language
         {
             // at this point, we know we're safe because we checked both the type and the child, 
             // so now we can just call the compiler and indicate that it's trusted (at this point)
-            if ( _context != null )
+            if (s_context != null)
             {
-                return Compiler.GetExpressionValue(convertExpressionAst, true, _context, null);
+                return Compiler.GetExpressionValue(convertExpressionAst, true, s_context, null);
             }
             else
             {
@@ -599,9 +599,9 @@ namespace System.Management.Automation.Language
                 return Path.GetDirectoryName(scriptFileName);
             }
 
-            if (_context != null)
+            if (s_context != null)
             {
-                return VariableOps.GetVariableValue(variableExpressionAst.VariablePath, _context, variableExpressionAst);
+                return VariableOps.GetVariableValue(variableExpressionAst.VariablePath, s_context, variableExpressionAst);
             }
 
             throw PSTraceSource.NewArgumentException("ast");

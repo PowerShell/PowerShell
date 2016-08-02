@@ -44,7 +44,7 @@ using Microsoft.WSMan.Management;
 
 namespace Microsoft.PowerShell.Commands
 {
-    #region Test-Connection
+#region Test-Connection
 
     /// <summary>
     /// This cmdlet is used to test whether a particular host is reachable across an 
@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(@"System.Management.ManagementObject#root\cimv2\Win32_PingStatus")]
     public class TestConnectionCommand : PSCmdlet
     {
-        #region "Parameters"
+#region "Parameters"
 
         private const string RegularParameterSet = "Default";
         private const string QuietParameterSet = "Quiet";
@@ -300,8 +300,8 @@ namespace Microsoft.PowerShell.Commands
         }
         private bool quiet = false;
 
-        #endregion "parameters"
-        #region "Overrides"
+#endregion "parameters"
+#region "Overrides"
 
 #if !CORECLR
         ///// <summary>
@@ -391,7 +391,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-
             switch (_transportProtocol)
             {
 #if !CORECLR
@@ -404,7 +403,6 @@ namespace Microsoft.PowerShell.Commands
                     ProcessWSManProtocolForTestConnection();
                     break;
             }
-
         }
         /// <summary>
         /// to implement ^C
@@ -429,9 +427,9 @@ namespace Microsoft.PowerShell.Commands
             catch (ObjectDisposedException) { }
             catch (AggregateException) { }
         }
-        #endregion
+#endregion
 
-        #region "Private Methods "
+#region "Private Methods "
         private string QueryString(string[] machinenames, bool escaperequired, bool selectrequired)
         {
             StringBuilder FilterString = new StringBuilder();
@@ -529,7 +527,6 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-
                 if (statusCode != 0)
                 {
                     if (!quiet)
@@ -550,7 +547,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-
         }
 
 #if !CORECLR
@@ -595,10 +591,8 @@ namespace Microsoft.PowerShell.Commands
 
                             using (searcher = new ManagementObjectSearcher(scope, query, enumOptions))
                             {
-
                                 for (int j = 0; j <= count - 1; j++)
                                 {
-
                                     using (ManagementObjectCollection mobj = searcher.Get())
                                     {
                                         int mobjCount = 0;
@@ -649,7 +643,6 @@ namespace Microsoft.PowerShell.Commands
 #endif
         private void ProcessWSManProtocolForTestConnection()
         {
-
             if (asjob)
             {
                 // TODO:  Need job for MI.Net WSMan protocol
@@ -687,7 +680,6 @@ namespace Microsoft.PowerShell.Commands
                         {
                             for (int echoRequestCount = 0; echoRequestCount < count; echoRequestCount++)
                             {
-
                                 IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(
                                                                      ComputerWMIHelper.CimOperatingSystemNamespace,
                                                                      ComputerWMIHelper.CimQueryDialect,
@@ -732,12 +724,12 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        #endregion  "Private Methods "
+#endregion  "Private Methods "
     }
-    #endregion Test-Connection
+#endregion Test-Connection
 #if !CORECLR
 
-    #region Enable-ComputerRestore
+#region Enable-ComputerRestore
 
     /// <summary>
     /// Cmdlet for Enable-ComputerRestore
@@ -745,7 +737,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsLifecycle.Enable, "ComputerRestore", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135209")]
     public sealed class EnableComputerRestoreCommand : PSCmdlet, IDisposable
     {
-        #region Parameters
+#region Parameters
         /// <summary>
         /// Specifies the Drive on which the system restore will be enabled.
         /// The drive string should be of the form "C:\". 
@@ -763,10 +755,10 @@ namespace Microsoft.PowerShell.Commands
         }
         private string[] _drive;
 
-        #endregion Parameters
+#endregion Parameters
         private const string ErrorBase = "ComputerResources";
         private ManagementClass WMIClass;
-        #region "IDisposable Members"
+#region "IDisposable Members"
 
         /// <summary>
         /// Dispose Method
@@ -794,9 +786,9 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        #endregion "IDisposable Members"
+#endregion "IDisposable Members"
 
-        #region Overrides
+#region Overrides
 
         /// <summary>
         /// To Enable the Restore Point of the drives
@@ -824,7 +816,6 @@ namespace Microsoft.PowerShell.Commands
                 object[] input = { sysdrive };
                 try
                 {
-
                     retValue = Convert.ToInt32(WMIClass.InvokeMethod("Enable", input), System.Globalization.CultureInfo.CurrentCulture);
                     //if success (return value is 0 or if already enabled (error code is 1056 in XP and 0 in vista)
                     if ((retValue.Equals(0)) || (retValue.Equals(ComputerWMIHelper.ErrorCode_Service)))
@@ -838,9 +829,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             if (!drive.EndsWith("\\", StringComparison.CurrentCultureIgnoreCase))
                             {
-
                                 driveNew = String.Concat(drive, "\\");
-
                             }
                             else
                                 driveNew = drive;
@@ -871,7 +860,6 @@ namespace Microsoft.PowerShell.Commands
                                 WriteError(new ErrorRecord(Ex, "EnableComputerRestoreNotEnabled", ErrorCategory.InvalidOperation, null));
                                 continue;
                             }
-
                         }
                     }
                     else
@@ -879,7 +867,6 @@ namespace Microsoft.PowerShell.Commands
                         ArgumentException Ex = new ArgumentException(StringUtil.Format(ComputerResources.NotEnabled, sysdrive));
                         WriteError(new ErrorRecord(Ex, "EnableComputerRestoreNotEnabled", ErrorCategory.InvalidOperation, null));
                     }
-
                 }
                 catch (ManagementException e)
                 {
@@ -893,15 +880,11 @@ namespace Microsoft.PowerShell.Commands
                         ErrorRecord errorRecord = new ErrorRecord(e, "GetWMIManagementException", ErrorCategory.InvalidOperation, null);
                         WriteError(errorRecord);
                     }
-
-
                 }
                 catch (COMException e)
                 {
-
                     if (string.IsNullOrEmpty(e.Message))
                     {
-
                         Exception Ex = new ArgumentException(StringUtil.Format(ComputerResources.SystemRestoreServiceDisabled));
                         WriteError(new ErrorRecord(Ex, "ServiceDisabled", ErrorCategory.InvalidOperation, null));
                     }
@@ -917,8 +900,6 @@ namespace Microsoft.PowerShell.Commands
                 ArgumentException Ex = new ArgumentException(StringUtil.Format(ComputerResources.NoSystemDrive));
                 WriteError(new ErrorRecord(Ex, "EnableComputerNoSystemDrive", ErrorCategory.InvalidArgument, null));
             }
-
-
         }//end of BeginProcessing
 
         /// <summary>
@@ -932,12 +913,11 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        #endregion Overrides
-
+#endregion Overrides
     }//end of class
-    #endregion
+#endregion
 
-    #region Disable-ComputerRestore
+#region Disable-ComputerRestore
 
     /// <summary>
     /// This cmdlet is to Disable Computer Restore points.
@@ -945,7 +925,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsLifecycle.Disable, "ComputerRestore", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135207")]
     public sealed class DisableComputerRestoreCommand : PSCmdlet, IDisposable
     {
-        #region Parameters
+#region Parameters
         /// <summary>
         /// Specifies the Drive on which the system restore will be enabled.
         /// The drive string should be of the form "C:\". 
@@ -963,11 +943,11 @@ namespace Microsoft.PowerShell.Commands
         }
         private string[] _drive;
 
-        #endregion Parameters
+#endregion Parameters
 
         private ManagementClass WMIClass;
         private const string ErrorBase = "ComputerResources";
-        #region "IDisposable Members"
+#region "IDisposable Members"
 
         /// <summary>
         /// Dispose Method
@@ -995,9 +975,9 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        #endregion "IDisposable Members"
+#endregion "IDisposable Members"
 
-        #region Overrides
+#region Overrides
 
         /// <summary>
         /// To Disable the Restore Point of the drives
@@ -1024,9 +1004,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!drive.EndsWith("\\", StringComparison.CurrentCultureIgnoreCase))
                 {
-
                     driveNew = String.Concat(drive, "\\");
-
                 }
                 else
                     driveNew = drive;
@@ -1051,7 +1029,6 @@ namespace Microsoft.PowerShell.Commands
                             WriteError(er);
                             continue;
                         }
-
                     }
                     catch (ManagementException e)
                     {
@@ -1065,15 +1042,11 @@ namespace Microsoft.PowerShell.Commands
                             ErrorRecord errorRecord = new ErrorRecord(e, "GetWMIManagementException", ErrorCategory.InvalidOperation, null);
                             WriteError(errorRecord);
                         }
-
-
                     }
                     catch (COMException e)
                     {
-
                         if (string.IsNullOrEmpty(e.Message))
                         {
-
                             Exception Ex = new ArgumentException(StringUtil.Format(ComputerResources.SystemRestoreServiceDisabled));
                             WriteError(new ErrorRecord(Ex, "ServiceDisabled", ErrorCategory.InvalidOperation, null));
                         }
@@ -1098,14 +1071,11 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        #endregion Overrides
-
-
-
+#endregion Overrides
     }//end of class
-    #endregion Disable-ComputerRestore
+#endregion Disable-ComputerRestore
 
-    #region Checkpoint-Computer
+#region Checkpoint-Computer
 
     /// <summary>
     /// Creates the Restore Point for the Local computer 
@@ -1114,7 +1084,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsData.Checkpoint, "Computer", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135197")]
     public class CheckpointComputerCommand : PSCmdlet, IDisposable
     {
-        #region Parameters
+#region Parameters
 
         /// <summary>
         /// The description to be displayed so the user can easily identify a restore point. 
@@ -1165,9 +1135,9 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private string _restorepointtype = "APPLICATION_INSTALL";
-        #endregion Parameters
+#endregion Parameters
 
-        #region private
+#region private
 
         private DateTime lastTimeProgressWasWritten = DateTime.UtcNow;
         private int intRestorePoint = 0;
@@ -1267,7 +1237,7 @@ namespace Microsoft.PowerShell.Commands
 
                 //create restore point
                 ManagementBaseObject inParams = WMIClass.GetMethodParameters("CreateRestorePoint");
-                object[] param ={ _description, intRestorePoint, 100 }; // the event type will be always 100,Begin_System_Change
+                object[] param = { _description, intRestorePoint, 100 }; // the event type will be always 100,Begin_System_Change
                 ret = Convert.ToInt32(WMIClass.InvokeMethod("CreateRestorePoint", param), System.Globalization.CultureInfo.CurrentCulture);
             }
             catch (Exception ex)
@@ -1284,9 +1254,9 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        #endregion
+#endregion
 
-        #region "IDisposable Members"
+#region "IDisposable Members"
 
         /// <summary>
         /// Dispose Method
@@ -1298,7 +1268,7 @@ namespace Microsoft.PowerShell.Commands
             GC.SuppressFinalize(this);
         }
 
-        #endregion "IDisposable Members"
+#endregion "IDisposable Members"
 
         /// <summary>
         /// BeginProcessing method.
@@ -1376,7 +1346,6 @@ namespace Microsoft.PowerShell.Commands
                     throw exceptionfromnewthread;
                 }
             }
-
         }//End BeginProcessing()
 
         private bool CanCreateNewRestorePoint(DateTime startTime)
@@ -1401,7 +1370,7 @@ namespace Microsoft.PowerShell.Commands
                     if (key != null)
                     {
                         object value = key.GetValue(srFrequencyKeyName);
-                        if (value is int) { timeInterval = (int) value;  }
+                        if (value is int) { timeInterval = (int)value; }
                     }
                 }
 
@@ -1511,9 +1480,9 @@ namespace Microsoft.PowerShell.Commands
             return foundrestorepoint;
         }
     }
-    #endregion
+#endregion
 
-    #region Get-ComputerRestorePoint
+#region Get-ComputerRestorePoint
 
     /// <summary>
     /// This cmdlet is to Get Computer Restore points.
@@ -1522,7 +1491,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(@"System.Management.ManagementObject#root\default\SystemRestore")]
     public sealed class GetComputerRestorePointCommand : PSCmdlet, IDisposable
     {
-        #region Parameters
+#region Parameters
 
         /// <summary>
         /// This cmdlet is to get Computer Restore points.
@@ -1536,7 +1505,6 @@ namespace Microsoft.PowerShell.Commands
             get { return _restorepoint; }
             set
             {
-
                 _restorepoint = value;
             }
         }
@@ -1554,11 +1522,11 @@ namespace Microsoft.PowerShell.Commands
         }
         private SwitchParameter _laststatus;
 
-        #endregion
+#endregion
 
         private ManagementClass WMIClass;
 
-        #region "IDisposable Members"
+#region "IDisposable Members"
 
         /// <summary>
         /// Dispose Method
@@ -1586,9 +1554,9 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        #endregion "IDisposable Members"
+#endregion "IDisposable Members"
 
-        #region overrides
+#region overrides
         /// <summary>
         /// Gets the list of Computer Restore point.
         /// ID parameter id used to refer the sequence no. When given searched with particular 
@@ -1655,7 +1623,6 @@ namespace Microsoft.PowerShell.Commands
                                 WriteObject(obj);
                                 if (_restorepoint != null)
                                 {
-
                                     int sequenceNo = Convert.ToInt32(obj.Properties["SequenceNumber"].Value, System.Globalization.CultureInfo.CurrentCulture);
                                     sequenceList.Remove(sequenceNo);
                                 }
@@ -1669,7 +1636,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             foreach (int id in sequenceList.Keys)
                             {
-                                string message = StringUtil.Format(ComputerResources.NoResorePoint,id);
+                                string message = StringUtil.Format(ComputerResources.NoResorePoint, id);
                                 ArgumentException e = new ArgumentException(message);
                                 ErrorRecord errorrecord = new ErrorRecord(e, "NoResorePoint", ErrorCategory.InvalidArgument, null);
                                 WriteError(errorrecord);
@@ -1693,10 +1660,8 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (COMException e)
             {
-
                 if (string.IsNullOrEmpty(e.Message))
                 {
-
                     Exception Ex = new ArgumentException(StringUtil.Format(ComputerResources.SystemRestoreServiceDisabled));
                     WriteError(new ErrorRecord(Ex, "ServiceDisabled", ErrorCategory.InvalidOperation, null));
                 }
@@ -1719,15 +1684,14 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        #endregion overrides
-
+#endregion overrides
     }
 
-    #endregion
+#endregion
 
 #endif
 
-    #region Restart-Computer
+#region Restart-Computer
 
     /// <summary>
     /// This exception is thrown when the timeout expires before a computer finishes restarting
@@ -1764,7 +1728,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Construct a RestartComputerTimeoutException
         /// </summary>
-        public RestartComputerTimeoutException() : base() {}
+        public RestartComputerTimeoutException() : base() { }
 
         /// <summary>
         /// Constructs a RestartComputerTimeoutException
@@ -1773,7 +1737,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="message">
         /// The message used in the exception.
         /// </param>
-        public RestartComputerTimeoutException(string message) : base(message) {}
+        public RestartComputerTimeoutException(string message) : base(message) { }
 
         /// <summary>
         /// Constructs a RestartComputerTimeoutException
@@ -1786,9 +1750,9 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="innerException"> 
         /// An exception that led to this exception.
         /// </param>
-        public RestartComputerTimeoutException(string message, Exception innerException) : base(message, innerException) {}
+        public RestartComputerTimeoutException(string message, Exception innerException) : base(message, innerException) { }
 
-        #region Serialization
+#region Serialization
         /// <summary>
         /// Serialization constructor for class RestartComputerTimeoutException
         /// </summary>
@@ -1835,7 +1799,7 @@ namespace Microsoft.PowerShell.Commands
             info.AddValue("ComputerName", ComputerName);
             info.AddValue("Timeout", Timeout);
         }
-        #endregion Serialization
+#endregion Serialization
     }
 
     /// <summary>
@@ -1867,7 +1831,7 @@ namespace Microsoft.PowerShell.Commands
         HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135253", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class RestartComputerCommand : PSCmdlet, IDisposable
     {
-        #region "Parameters and PrivateData"
+#region "Parameters and PrivateData"
 
         private const string DefaultParameterSet = "DefaultSet";
         private const string AsJobParameterSet = "AsJobSet";
@@ -1932,7 +1896,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 _impersonation = value;
                 _isImpersonationSpecified = true;
-
             }
         }
         private ImpersonationLevel _impersonation = ImpersonationLevel.Impersonate;
@@ -2129,7 +2092,7 @@ $result
         /// <summary>
         /// The indicator to use when show progress
         /// </summary>
-        private string[] _indicator = {"|", "/", "-", "\\"};
+        private string[] _indicator = { "|", "/", "-", "\\" };
 
         /// <summary>
         /// The activity id
@@ -2176,9 +2139,9 @@ $result
         private const string WinrmConnectionTest = "WinRM";
         private const string PowerShellConnectionTest = "PowerShell";
 
-        #endregion "parameters and PrivateData"
+#endregion "parameters and PrivateData"
 
-        #region "IDisposable Members"
+#region "IDisposable Members"
 
         /// <summary>
         /// Dispose Method
@@ -2213,9 +2176,9 @@ $result
             }
         }
 
-        #endregion "IDisposable Members"
+#endregion "IDisposable Members"
 
-        #region "Private Methods"
+#region "Private Methods"
 
         /// <summary>
         /// Validate parameters for 'DefaultSet'
@@ -2450,7 +2413,6 @@ $result
                     CommandProcessorBase.CheckForSevereException(ex);
                     restartStageTestList.Add(computer);
                 }
-
             }
 
             return restartStageTestList;
@@ -2604,9 +2566,9 @@ $result
             }
         }
 
-        #endregion "Private Methods"
+#endregion "Private Methods"
 
-        #region "Internal Methods"
+#region "Internal Methods"
 
         internal static List<string> TestWmiConnectionUsingWsman(List<string> computerNames, List<string> nextTestList, CancellationToken token, PSCredential credential, string wsmanAuthentication, PSCmdlet cmdlet)
         {
@@ -2850,9 +2812,9 @@ $result
         }
 #endif
 
-        #endregion "Internal Methods"
+#endregion "Internal Methods"
 
-        #region "Overrides"
+#region "Overrides"
 
         /// <summary>
         /// BeginProcessing method.
@@ -2943,7 +2905,7 @@ $result
                 }
                 else
                 {
-                    _timeoutInMilliseconds = _timeout*1000;
+                    _timeoutInMilliseconds = _timeout * 1000;
                 }
 
                 // We don't support combined service types for now
@@ -3067,7 +3029,6 @@ $result
                     {
                         _waitOnComputers.Add(computer);
                     }
-
                 }//end foreach
 
                 if (_waitOnComputers.Count > 0)
@@ -3244,7 +3205,6 @@ $result
                                 }
                                 psTestList = TestPowerShell(psTestList, allDoneList, _powershell, this.Credential);
                             }
-
                         } while (false);
 
                         // if time is up or Ctrl+c is typed, break out
@@ -3329,14 +3289,12 @@ $result
             }
         }
 
-
-        #endregion "Overrides"
-
+#endregion "Overrides"
     }
 
-    #endregion Restart-Computer
+#endregion Restart-Computer
 
-    #region Stop-Computer
+#region Stop-Computer
 
     /// <summary>
     /// cmdlet to stop computer
@@ -3345,7 +3303,7 @@ $result
         HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135263", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public sealed class StopComputerCommand : PSCmdlet, IDisposable
     {
-        #region Private Members
+#region Private Members
 
 #if !CORECLR
         private ManagementObjectSearcher _searcher;
@@ -3353,9 +3311,9 @@ $result
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
         private TransportProtocol _transportProtocol = TransportProtocol.DCOM;
 
-        #endregion
+#endregion
 
-        #region "Parameters"
+#region "Parameters"
 
         /// <summary>
         /// parameter
@@ -3535,9 +3493,9 @@ $result
         }
         private SwitchParameter _force = false;
 
-        #endregion "parameters"
+#endregion "parameters"
 
-        #region "IDisposable Members"
+#region "IDisposable Members"
 
         /// <summary>
         /// Dispose Method
@@ -3551,9 +3509,9 @@ $result
             catch (ObjectDisposedException) { }
         }
 
-        #endregion "IDisposable Members"
+#endregion "IDisposable Members"
 
-        #region "Overrides"
+#region "Overrides"
 
         /// <summary>
         /// BeginProcessing
@@ -3675,9 +3633,9 @@ $result
             catch (AggregateException) { }
         }
 
-        #endregion "Overrides"
+#endregion "Overrides"
 
-        #region Private Methods
+#region Private Methods
 
 #if !CORECLR
         private void ProcessDCOMProtocol(object[] flags)
@@ -3815,14 +3773,14 @@ $result
             }
         }
 
-        #endregion
+#endregion
     }
 
-    #endregion
+#endregion
 
 #if !CORECLR // TODO:CORECLR Enable once moved to MI .Net
 
-    #region Restore-Computer
+#region Restore-Computer
 
     /// <summary>
     /// This cmdlet is to Restore Computer
@@ -3830,7 +3788,7 @@ $result
     [Cmdlet(VerbsData.Restore, "Computer", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135254")]
     public sealed class RestoreComputerCommand : PSCmdlet, IDisposable
     {
-        #region Parameters
+#region Parameters
         /// <summary>
         /// Restorepoint parameter
         /// </summary>        
@@ -3849,11 +3807,11 @@ $result
         }
         private int _restorepoint;
 
-        #endregion
+#endregion
 
         private ManagementClass WMIClass;
 
-        #region "IDisposable Members"
+#region "IDisposable Members"
 
         /// <summary>
         /// Dispose Method
@@ -3881,9 +3839,9 @@ $result
             }
         }
 
-        #endregion "IDisposable Members"
+#endregion "IDisposable Members"
 
-        #region overrides
+#region overrides
         /// <summary>
         /// Restores the computer with 
         /// </summary>
@@ -3897,7 +3855,6 @@ $result
 
             try
             {
-
                 ConnectionOptions conn = ComputerWMIHelper.GetConnectionOptions(AuthenticationLevel.Packet, ImpersonationLevel.Impersonate, null);
                 ManagementPath mPath = new ManagementPath();
                 mPath.Path = ComputerWMIHelper.WMI_Path_Default;
@@ -3950,7 +3907,6 @@ $result
                         }
                     }
                 }
-
             }
             catch (ManagementException e)
             {
@@ -3964,14 +3920,11 @@ $result
                     ErrorRecord errorRecord = new ErrorRecord(e, "GetWMIManagementException", ErrorCategory.InvalidOperation, null);
                     WriteError(errorRecord);
                 }
-
             }
             catch (COMException e)
             {
-
                 if (string.IsNullOrEmpty(e.Message))
                 {
-
                     Exception Ex = new ArgumentException(StringUtil.Format(ComputerResources.SystemRestoreServiceDisabled));
                     WriteError(new ErrorRecord(Ex, "ServiceDisabled", ErrorCategory.InvalidOperation, null));
                 }
@@ -3994,12 +3947,11 @@ $result
             }
         }
 
-        #endregion overrides
-
+#endregion overrides
     }
-    #endregion
+#endregion
 
-    #region Add-Computer
+#region Add-Computer
 
     /// <summary>
     /// Options for joining a computer to a domain
@@ -4064,7 +4016,7 @@ $result
     [OutputType(typeof(ComputerChangeInfo))]
     public class AddComputerCommand : PSCmdlet
     {
-        #region parameter
+#region parameter
 
         private const string DomainParameterSet = "Domain";
         private const string WorkgroupParameterSet = "Workgroup";
@@ -4080,7 +4032,7 @@ $result
             get { return _computerName; }
             set { _computerName = value; }
         }
-        private string[] _computerName ={ "localhost" };
+        private string[] _computerName = { "localhost" };
 
         /// <summary>
         /// The local admin credential to the target computer
@@ -4255,9 +4207,9 @@ $result
         private readonly string _shortLocalMachineName = Dns.GetHostName();
         private readonly string _fullLocalMachineName = Dns.GetHostEntry("").HostName;
 
-        #endregion parameter
+#endregion parameter
 
-        #region private
+#region private
 
         /// <summary>
         /// Unjoin the computer from its current domain
@@ -4751,9 +4703,9 @@ $result
             return targetComputer;
         }
 
-        #endregion private
+#endregion private
 
-        #region override
+#region override
 
         /// <summary>
         /// BeginProcessing method
@@ -4771,19 +4723,19 @@ $result
 
                 if ((_joinOptions & JoinOptions.AccountCreate) != 0)
                 {
-                    _joinDomainflags |= (int) JoinOptions.AccountCreate;
+                    _joinDomainflags |= (int)JoinOptions.AccountCreate;
                 }
                 if ((_joinOptions & JoinOptions.Win9XUpgrade) != 0)
                 {
-                    _joinDomainflags |= (int) JoinOptions.Win9XUpgrade;
+                    _joinDomainflags |= (int)JoinOptions.Win9XUpgrade;
                 }
                 if ((_joinOptions & JoinOptions.UnsecuredJoin) != 0)
                 {
-                    _joinDomainflags |= (int) JoinOptions.UnsecuredJoin;
+                    _joinDomainflags |= (int)JoinOptions.UnsecuredJoin;
                 }
                 if ((_joinOptions & JoinOptions.PasswordPass) != 0)
                 {
-                    _joinDomainflags |= (int) JoinOptions.PasswordPass;
+                    _joinDomainflags |= (int)JoinOptions.PasswordPass;
                 }
                 if ((_joinOptions & JoinOptions.DeferSPNSet) != 0)
                 {
@@ -4791,7 +4743,7 @@ $result
                 }
                 if ((_joinOptions & JoinOptions.JoinWithNewName) != 0)
                 {
-                    _joinDomainflags |= (int) JoinOptions.JoinWithNewName;
+                    _joinDomainflags |= (int)JoinOptions.JoinWithNewName;
                 }
                 if ((_joinOptions & JoinOptions.JoinReadOnly) != 0)
                 {
@@ -4799,7 +4751,7 @@ $result
                 }
                 if ((_joinOptions & JoinOptions.InstallInvoke) != 0)
                 {
-                    _joinDomainflags |= (int) JoinOptions.InstallInvoke;
+                    _joinDomainflags |= (int)JoinOptions.InstallInvoke;
                 }
 
                 if (_unsecure)
@@ -4887,7 +4839,6 @@ $result
                     _joinDomainflags = oldJoinDomainFlags;
                 }
             }
-
         }// end of ProcessRecord
 
         /// <summary>
@@ -4911,13 +4862,12 @@ $result
             DoAddComputerAction("localhost", _newNameForLocalHost, true, options, enumOptions, computerSystemQuery);
         }
 
-        #endregion override
-
+#endregion override
     }//End Class
 
-    #endregion Add-Computer
+#endregion Add-Computer
 
-    #region RemoveComputer
+#region RemoveComputer
 
     /// <summary>
     /// Removes the Specified Computer(s) from the relevant Domain or Work Group 
@@ -4928,7 +4878,7 @@ $result
     [OutputType(typeof(ComputerChangeInfo))]
     public class RemoveComputerCommand : PSCmdlet
     {
-        #region "Parameters and Private Data"
+#region "Parameters and Private Data"
 
         private const string LocalParameterSet = "Local";
         private const string RemoteParameterSet = "Remote";
@@ -5025,9 +4975,9 @@ $result
         private readonly string _shortLocalMachineName = Dns.GetHostName();
         private readonly string _fullLocalMachineName = Dns.GetHostEntry("").HostName;
 
-        #endregion "Parameters and Private Data"
+#endregion "Parameters and Private Data"
 
-        #region "Private Methods"
+#region "Private Methods"
 
         private void DoRemoveComputerAction(string computer, bool isLocalhost, ConnectionOptions options, EnumerationOptions enumOptions, ObjectQuery computerSystemQuery)
         {
@@ -5198,9 +5148,9 @@ $result
             return targetComputer;
         }
 
-        #endregion "Private Methods"
+#endregion "Private Methods"
 
-        #region "Override Methods"
+#region "Override Methods"
 
         /// <summary>
         /// ProcessRecord method.
@@ -5280,15 +5230,14 @@ $result
             DoRemoveComputerAction("localhost", true, options, enumOptions, computerSystemQuery);
         }
 
-        #endregion "Override Methods"
-
+#endregion "Override Methods"
     }//End Class
 
-    #endregion Remove-Computer
+#endregion Remove-Computer
 
 #endif
 
-    #region Rename-Computer
+#region Rename-Computer
 
     /// <summary>
     /// Renames a domain computer and its corresponding domain account or a 
@@ -5300,7 +5249,7 @@ $result
         HelpUri = "http://go.microsoft.com/fwlink/?LinkID=219990", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public class RenameComputerCommand : PSCmdlet
     {
-        #region Private Members
+#region Private Members
 
         private bool _containsLocalHost = false;
         private string _newNameForLocalHost = null;
@@ -5310,9 +5259,9 @@ $result
         private readonly string _shortLocalMachineName = Dns.GetHostName();
         private readonly string _fullLocalMachineName = Dns.GetHostEntryAsync("").Result.HostName;
 
-        #endregion
+#endregion
 
-        #region Parameters
+#region Parameters
 
         /// <summary>
         /// Target computers to rename
@@ -5448,9 +5397,9 @@ $result
         private string _protocol = ComputerWMIHelper.DcomProtocol;
 #endif
 
-        #endregion
+#endregion
 
-        #region "Private Methods"
+#region "Private Methods"
 
         /// <summary>
         /// Check to see if the target computer is the local machine
@@ -5562,7 +5511,7 @@ $result
                         // If the target computer is not in a domain, just use null for the UserName and Password
                         string dUserName = null;
                         string dPassword = null;
-                        if (((bool) cimInstance.CimInstanceProperties["PartOfDomain"].Value) && (DomainCredential != null))
+                        if (((bool)cimInstance.CimInstanceProperties["PartOfDomain"].Value) && (DomainCredential != null))
                         {
                             dUserName = DomainCredential.UserName;
                             dPassword = Utils.GetStringFromSecureString(DomainCredential.Password);
@@ -5785,9 +5734,9 @@ $result
         }
 #endif
 
-        #endregion "Private Methods"
+#endregion "Private Methods"
 
-        #region "Override Methods"
+#region "Override Methods"
 
         /// <summary>
         /// Begin Processing
@@ -5854,15 +5803,14 @@ $result
             DoRenameComputerAction("localhost", _newNameForLocalHost, true);
         }
 
-        #endregion "Override Methods"
-
+#endregion "Override Methods"
     }
 
-    #endregion Rename-Computer
+#endregion Rename-Computer
 
 #if !CORECLR
 
-    #region Test-ComputerSecureChannel
+#region Test-ComputerSecureChannel
 
 
     /// <summary>
@@ -5874,8 +5822,7 @@ $result
     [OutputType(typeof(Boolean))]
     public class TestComputerSecureChannelCommand : PSCmdlet
     {
-
-        #region Parameters
+#region Parameters
 
         /// <summary>
         /// Repair the secure channel between the local machine with the domain, if it's broken
@@ -5899,9 +5846,9 @@ $result
         private const uint NETLOGON_CONTROL_TC_QUERY = 6;
         private const uint NETLOGON_INFO_2 = 2;
 
-        #endregion Parameters
+#endregion Parameters
 
-        #region "Private Methods"
+#region "Private Methods"
 
         [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", Justification = "Return results are used in debug asserts.")]
         private bool VerifySecureChannel(string domain, string localMachineName)
@@ -5974,9 +5921,9 @@ $result
             return scInGoodState;
         }
 
-        #endregion "Private Methods"
+#endregion "Private Methods"
 
-        #region "Override Methods"
+#region "Override Methods"
 
         /// <summary>
         /// BeginProcessing method
@@ -6080,14 +6027,13 @@ $result
             WriteVerbose(verboseMsg);
         }
 
-        #endregion "Override Methods"
-
+#endregion "Override Methods"
     }//End Class
 
 
-    #endregion
+#endregion
 
-    #region Reset-ComputerMachinePassword
+#region Reset-ComputerMachinePassword
     /// <summary>
     /// Resets the computer machine password used to authenticate with DCs.
     /// </summary>
@@ -6096,7 +6042,7 @@ $result
              SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135252")]
     public class ResetComputerMachinePasswordCommand : PSCmdlet
     {
-        #region "Parameter and PrivateData"
+#region "Parameter and PrivateData"
 
         /// <summary>
         /// The following is the definition of the input parameter "Server".
@@ -6126,9 +6072,9 @@ $result
         private const int PasswordLength = 120;
         private const string SecretKey = "$MACHINE.ACC";
 
-        #endregion "Parameter and PrivateData"
+#endregion "Parameter and PrivateData"
 
-        #region "Private Methods"
+#region "Private Methods"
 
         /// <summary>
         /// Throw out terminating error for LSA function invocations
@@ -6144,9 +6090,9 @@ $result
             cmdlet.ThrowTerminatingError(error);
         }
 
-        #endregion "Private Methods"
+#endregion "Private Methods"
 
-        #region "Internal Methods"
+#region "Internal Methods"
 
         /// <summary>
         /// Reset machine account password
@@ -6340,9 +6286,9 @@ $result
             }
         }
 
-        #endregion "Internal Methods"
+#endregion "Internal Methods"
 
-        #region "Override Methods"
+#region "Override Methods"
 
         /// <summary>
         /// BeginProcessing method.
@@ -6426,13 +6372,12 @@ $result
             ResetMachineAccountPassword(domainName, localMachineName, Server, Credential, this);
         }
 
-        #endregion "Override Methods"
-
+#endregion "Override Methods"
     }//End Class
 
-    #endregion Reset-ComputerMachinePassword
+#endregion Reset-ComputerMachinePassword
 
-    #region SAMCmdletsHelper
+#region SAMCmdletsHelper
 
     /// <summary>
     /// the static class for calling the the NetJoinDomain function.
@@ -6586,7 +6531,7 @@ $result
             // Unicode strings max 32KB. The max value for MaximumLength should be ushort.MaxValue-1
             // because UnicodeEncoding.CharSize is 2. So the length of the string s should not be larger
             // than (ushort.MaxValue - 1)/UnicodeEncoding.CharSize - 1, which is 0x7ffe (32766)
-            ushort maxLength = (ushort.MaxValue - 1)/UnicodeEncoding.CharSize - 1;
+            ushort maxLength = (ushort.MaxValue - 1) / UnicodeEncoding.CharSize - 1;
             if (s.Length > maxLength)
                 throw new ArgumentException("String too long");
             lus.Buffer = Marshal.StringToHGlobalUni(s);
@@ -6646,11 +6591,11 @@ $result
         internal const int MaxMachineNameLength = 15;
     }
 
-    # endregion
+#endregion
 
 #endif
 
-    #region "Public API"
+#region "Public API"
     /// <summary>
     /// The object returned by SAM Computer cmdlets representing the status of the target machine.
     /// </summary>
@@ -6787,9 +6732,9 @@ $result
             return StringUtil.Format(MatchFormat, HasSucceeded, newcomputername, oldcomputername);
         }
     }
-    #endregion "Public API"
+#endregion "Public API"
 
-    #region Helper
+#region Helper
     /// <summary>
     /// Helper Class used by Stop-Computer,Restart-Computer and Test-Connection
     /// Also Contain constants used by System Restore related Cmdlets.
@@ -7025,9 +6970,7 @@ $result
             {
                 if (!drive.EndsWith("\\", StringComparison.CurrentCultureIgnoreCase))
                 {
-
                     driveApp = String.Concat(drive, "\\");
-
                 }
                 else
                     driveApp = drive;
@@ -7035,7 +6978,6 @@ $result
                     return true;
             }
             return false;
-
         }
 
         /// <summary>
@@ -7373,9 +7315,9 @@ $result
             return validatedComputerName;
         }
     }
-    #endregion Helper
+#endregion Helper
 
-    #region Internal Enums
+#region Internal Enums
 
     internal enum TransportProtocol
     {
@@ -7383,8 +7325,7 @@ $result
         WSMan = 2
     }
 
-    #endregion
-
+#endregion
 }//End namespace
 
 #endif

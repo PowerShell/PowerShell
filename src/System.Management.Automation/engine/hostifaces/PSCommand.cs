@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 
 namespace System.Management.Automation
 {
-
     /// <summary>
     /// Defines a PowerShell command / script object which can be used with 
     /// <see cref="PowerShell"/> object.
@@ -17,9 +16,9 @@ namespace System.Management.Automation
     {
         #region Private Fields
 
-        private PowerShell owner;
-        private CommandCollection commands;
-        private Command currentCommand;
+        private PowerShell _owner;
+        private CommandCollection _commands;
+        private Command _currentCommand;
 
         #endregion
 
@@ -39,13 +38,13 @@ namespace System.Management.Automation
         /// <param name="commandToClone"></param>
         internal PSCommand(PSCommand commandToClone)
         {
-            commands = new CommandCollection();
+            _commands = new CommandCollection();
             foreach (Command command in commandToClone.Commands)
             {
-                Command clone = command.Clone () ;
+                Command clone = command.Clone();
                 // Attach the cloned Command to this instance.
-                commands.Add(clone);
-                currentCommand = clone;
+                _commands.Add(clone);
+                _currentCommand = clone;
             }
         }
 
@@ -55,9 +54,9 @@ namespace System.Management.Automation
         /// <param name="command">Command object to use</param>
         internal PSCommand(Command command)
         {
-            currentCommand = command;
-            commands = new CommandCollection();
-            commands.Add(currentCommand);
+            _currentCommand = command;
+            _commands = new CommandCollection();
+            _commands.Add(_currentCommand);
         }
 
         #endregion
@@ -93,13 +92,13 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("cmdlet");
             }
-            if (owner != null)
+            if (_owner != null)
             {
-                owner.AssertChangesAreAccepted();
+                _owner.AssertChangesAreAccepted();
             }
 
-            currentCommand = new Command(command, false);
-            commands.Add(currentCommand);
+            _currentCommand = new Command(command, false);
+            _commands.Add(_currentCommand);
 
             return this;
         }
@@ -136,13 +135,13 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("cmdlet");
             }
-            if (owner != null)
+            if (_owner != null)
             {
-                owner.AssertChangesAreAccepted();
+                _owner.AssertChangesAreAccepted();
             }
 
-            currentCommand = new Command(cmdlet, false, useLocalScope);
-            commands.Add(currentCommand);
+            _currentCommand = new Command(cmdlet, false, useLocalScope);
+            _commands.Add(_currentCommand);
 
             return this;
         }
@@ -177,13 +176,13 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("script");
             }
-            if (owner != null)
+            if (_owner != null)
             {
-                owner.AssertChangesAreAccepted();
+                _owner.AssertChangesAreAccepted();
             }
 
-            currentCommand = new Command(script, true);
-            commands.Add(currentCommand);
+            _currentCommand = new Command(script, true);
+            _commands.Add(_currentCommand);
 
             return this;
         }
@@ -221,13 +220,13 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("script");
             }
-            if (owner != null)
+            if (_owner != null)
             {
-                owner.AssertChangesAreAccepted();
+                _owner.AssertChangesAreAccepted();
             }
 
-            currentCommand = new Command(script, true, useLocalScope);
-            commands.Add(currentCommand);
+            _currentCommand = new Command(script, true, useLocalScope);
+            _commands.Add(_currentCommand);
 
             return this;
         }
@@ -258,13 +257,13 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("command");
             }
-            if (owner != null)
+            if (_owner != null)
             {
-                owner.AssertChangesAreAccepted();
+                _owner.AssertChangesAreAccepted();
             }
 
-            currentCommand = command;
-            commands.Add(currentCommand);
+            _currentCommand = command;
+            _commands.Add(_currentCommand);
 
             return this;
         }
@@ -299,16 +298,16 @@ namespace System.Management.Automation
         /// </exception>
         public PSCommand AddParameter(string parameterName, object value)
         {
-            if (null == currentCommand)
+            if (null == _currentCommand)
             {
                 throw PSTraceSource.NewInvalidOperationException(PSCommandStrings.ParameterRequiresCommand,
-                                                                 new object[] {"PSCommand"});
+                                                                 new object[] { "PSCommand" });
             }
-            if (owner != null)
+            if (_owner != null)
             {
-                owner.AssertChangesAreAccepted();
+                _owner.AssertChangesAreAccepted();
             }
-            currentCommand.Parameters.Add(parameterName, value);
+            _currentCommand.Parameters.Add(parameterName, value);
             return this;
         }
 
@@ -339,16 +338,16 @@ namespace System.Management.Automation
         /// </exception>
         public PSCommand AddParameter(string parameterName)
         {
-            if (null == currentCommand)
+            if (null == _currentCommand)
             {
                 throw PSTraceSource.NewInvalidOperationException(PSCommandStrings.ParameterRequiresCommand,
-                                                                 new object[] {"PSCommand"});
+                                                                 new object[] { "PSCommand" });
             }
-            if (owner != null)
+            if (_owner != null)
             {
-                owner.AssertChangesAreAccepted();
+                _owner.AssertChangesAreAccepted();
             }
-            currentCommand.Parameters.Add(parameterName, true);
+            _currentCommand.Parameters.Add(parameterName, true);
             return this;
         }
 
@@ -380,16 +379,16 @@ namespace System.Management.Automation
         /// </remarks>
         public PSCommand AddArgument(object value)
         {
-            if (null == currentCommand)
+            if (null == _currentCommand)
             {
                 throw PSTraceSource.NewInvalidOperationException(PSCommandStrings.ParameterRequiresCommand,
-                                                                 new object[] {"PSCommand"});
+                                                                 new object[] { "PSCommand" });
             }
-            if (owner != null)
+            if (_owner != null)
             {
-                owner.AssertChangesAreAccepted();
+                _owner.AssertChangesAreAccepted();
             }
-            currentCommand.Parameters.Add(null, value);
+            _currentCommand.Parameters.Add(null, value);
             return this;
         }
 
@@ -413,12 +412,12 @@ namespace System.Management.Automation
         /// </returns>
         public PSCommand AddStatement()
         {
-            if (commands.Count == 0)
+            if (_commands.Count == 0)
             {
                 return this;
             }
 
-            commands[commands.Count - 1].IsEndOfStatement = true;
+            _commands[_commands.Count - 1].IsEndOfStatement = true;
             return this;
         }
 
@@ -434,7 +433,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return commands;
+                return _commands;
             }
         }
 
@@ -445,11 +444,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return owner;
+                return _owner;
             }
             set
             {
-                owner = value;
+                _owner = value;
             }
         }
 
@@ -458,8 +457,8 @@ namespace System.Management.Automation
         /// </summary>
         public void Clear()
         {
-            commands.Clear();
-            currentCommand = null;
+            _commands.Clear();
+            _currentCommand = null;
         }
 
         /// <summary>
@@ -498,12 +497,12 @@ namespace System.Management.Automation
         /// </exception>
         private void Initialize(string command, bool isScript, bool? useLocalScope)
         {
-            commands = new CommandCollection();
+            _commands = new CommandCollection();
 
             if (command != null)
             {
-                currentCommand = new Command(command, isScript, useLocalScope);
-                commands.Add(currentCommand);
+                _currentCommand = new Command(command, isScript, useLocalScope);
+                _commands.Add(_currentCommand);
             }
         }
 

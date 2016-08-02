@@ -14,40 +14,44 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace System.Management.Automation.ComInterop {
-
+namespace System.Management.Automation.ComInterop
+{
     /// <summary>
     /// VariantBuilder handles packaging of arguments into a Variant for a call to IDispatch.Invoke
     /// </summary>
-    internal class VariantBuilder {
-
+    internal class VariantBuilder
+    {
         private MemberExpression _variant;
         private readonly ArgBuilder _argBuilder;
         private readonly VarEnum _targetComType;
         internal ParameterExpression TempVariable { get; private set; }
 
-        internal VariantBuilder(VarEnum targetComType, ArgBuilder builder) {
+        internal VariantBuilder(VarEnum targetComType, ArgBuilder builder)
+        {
             _targetComType = targetComType;
             _argBuilder = builder;
         }
 
-        internal bool IsByRef {
+        internal bool IsByRef
+        {
             get { return (_targetComType & VarEnum.VT_BYREF) != 0; }
         }
 
-        internal Expression InitializeArgumentVariant(MemberExpression variant, Expression parameter) {
+        internal Expression InitializeArgumentVariant(MemberExpression variant, Expression parameter)
+        {
             //NOTE: we must remember our variant
             //the reason is that argument order does not map exactly to the order of variants for invoke
             //and when we are doing clean-up we must be sure we are cleaning the variant we have initialized.
 
             _variant = variant;
 
-            if (IsByRef) {
+            if (IsByRef)
+            {
                 // temp = argument
                 // paramVariants._elementN.SetAsByrefT(ref temp)
                 Debug.Assert(TempVariable == null);
                 var argExpr = _argBuilder.MarshalToRef(parameter);
-                
+
                 TempVariable = Expression.Variable(argExpr.Type, null);
                 return Expression.Block(
                     Expression.Assign(TempVariable, argExpr),
@@ -63,7 +67,8 @@ namespace System.Management.Automation.ComInterop {
 
             // we are forced to special case ConvertibleArgBuilder since it does not have 
             // a corresponding _targetComType.
-            if (_argBuilder is ConvertibleArgBuilder) {
+            if (_argBuilder is ConvertibleArgBuilder)
+            {
                 return Expression.Call(
                     variant,
                     typeof(Variant).GetMethod("SetAsIConvertible"),
@@ -76,7 +81,8 @@ namespace System.Management.Automation.ComInterop {
                (_targetComType == VarEnum.VT_UNKNOWN) ||
                (_targetComType == VarEnum.VT_VARIANT) ||
                (_targetComType == VarEnum.VT_RECORD) ||
-               (_targetComType == VarEnum.VT_ARRAY)){
+               (_targetComType == VarEnum.VT_ARRAY))
+            {
                 // paramVariants._elementN.AsT = (cast)argN
                 return Expression.Assign(
                     Expression.Property(
@@ -87,7 +93,8 @@ namespace System.Management.Automation.ComInterop {
                 );
             }
 
-            switch (_targetComType) {
+            switch (_targetComType)
+            {
                 case VarEnum.VT_EMPTY:
                     return null;
 
@@ -101,22 +108,32 @@ namespace System.Management.Automation.ComInterop {
             }
         }
 
-        private static Expression Release(Expression pUnk) {
+        private static Expression Release(Expression pUnk)
+        {
             return Expression.Call(typeof(UnsafeMethods).GetMethod("IUnknownReleaseNotZero"), pUnk);
         }
 
-        internal Expression Clear() {
-            if (IsByRef) {
-                if (_argBuilder is StringArgBuilder) {
+        internal Expression Clear()
+        {
+            if (IsByRef)
+            {
+                if (_argBuilder is StringArgBuilder)
+                {
                     Debug.Assert(TempVariable != null);
                     return Expression.Call(typeof(Marshal).GetMethod("FreeBSTR"), TempVariable);
-                } else if (_argBuilder is DispatchArgBuilder) {
+                }
+                else if (_argBuilder is DispatchArgBuilder)
+                {
                     Debug.Assert(TempVariable != null);
                     return Release(TempVariable);
-                } else if (_argBuilder is UnknownArgBuilder) {
+                }
+                else if (_argBuilder is UnknownArgBuilder)
+                {
                     Debug.Assert(TempVariable != null);
                     return Release(TempVariable);
-                } else if (_argBuilder is VariantArgBuilder) {
+                }
+                else if (_argBuilder is VariantArgBuilder)
+                {
                     Debug.Assert(TempVariable != null);
                     return Expression.Call(TempVariable, typeof(Variant).GetMethod("Clear"));
                 }
@@ -124,7 +141,8 @@ namespace System.Management.Automation.ComInterop {
             }
 
 
-            switch (_targetComType) {
+            switch (_targetComType)
+            {
                 case VarEnum.VT_EMPTY:
                 case VarEnum.VT_NULL:
                     return null;
@@ -144,8 +162,10 @@ namespace System.Management.Automation.ComInterop {
             }
         }
 
-        internal Expression UpdateFromReturn(Expression parameter) {
-            if (TempVariable == null) {
+        internal Expression UpdateFromReturn(Expression parameter)
+        {
+            if (TempVariable == null)
+            {
                 return null;
             }
             return Expression.Assign(

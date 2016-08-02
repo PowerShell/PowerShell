@@ -2,7 +2,7 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Security;
@@ -21,7 +21,7 @@ using Environment = System.Management.Automation.Environment;
 #endif
 
 namespace Microsoft.PowerShell
-{ 
+{
     /// <summary> 
     /// Defines the authorization policy that controls the way scripts
     /// (and other command types) are handled by Monad.  This authorization
@@ -72,10 +72,10 @@ namespace Microsoft.PowerShell
         #region constructor
 
         // execution policy that dictates what can run in msh
-        private ExecutionPolicy executionPolicy;
+        private ExecutionPolicy _executionPolicy;
 
         //shellId supplied by runspace configuration
-        private string shellId;
+        private string _shellId;
 
         /// <summary>
         /// Initializes a new instance of the PSAuthorizationManager
@@ -86,13 +86,13 @@ namespace Microsoft.PowerShell
         /// to.  For example, Microsoft.PowerShell
         /// </param>
         public PSAuthorizationManager(string shellId)
-            :base(shellId)
+            : base(shellId)
         {
             if (string.IsNullOrEmpty(shellId))
             {
                 throw PSTraceSource.NewArgumentNullException("shellId");
             }
-            this.shellId = shellId;
+            _shellId = shellId;
         }
 
         #endregion constructor
@@ -147,10 +147,10 @@ namespace Microsoft.PowerShell
                 return true;
 
             // Get the execution policy
-            executionPolicy = SecuritySupport.GetExecutionPolicy(shellId);
+            _executionPolicy = SecuritySupport.GetExecutionPolicy(_shellId);
 
             // See if they want to bypass the authorization manager
-            if (executionPolicy == ExecutionPolicy.Bypass)
+            if (_executionPolicy == ExecutionPolicy.Bypass)
                 return true;
 #if !CORECLR
             // Always check the SAFER APIs if code integrity isn't being handled system-wide through
@@ -193,7 +193,7 @@ namespace Microsoft.PowerShell
                 }
             }
 #endif
-            if (executionPolicy == ExecutionPolicy.Unrestricted)
+            if (_executionPolicy == ExecutionPolicy.Unrestricted)
             {
                 // We need to give the "Remote File" warning
                 // if the file originated from the internet
@@ -260,12 +260,12 @@ namespace Microsoft.PowerShell
             // Don't need to check the signature if the file is local
             // and we're in "RemoteSigned" mode
             else if ((IsLocalFile(fi.FullName)) &&
-                    (executionPolicy == ExecutionPolicy.RemoteSigned))
+                    (_executionPolicy == ExecutionPolicy.RemoteSigned))
             {
                 policyCheckPassed = true;
             }
-            else if ((executionPolicy == ExecutionPolicy.AllSigned) ||
-               (executionPolicy == ExecutionPolicy.RemoteSigned))
+            else if ((_executionPolicy == ExecutionPolicy.AllSigned) ||
+               (_executionPolicy == ExecutionPolicy.RemoteSigned))
             {
                 // if policy requires signature verification,
                 // make it so.
@@ -325,7 +325,7 @@ namespace Microsoft.PowerShell
 
                 // But accept mshxml files from publishers that we
                 // trust, or files in the system protected directories
-                bool reasonSet = false;                
+                bool reasonSet = false;
                 if (String.Equals(fi.Extension, ".ps1xml", StringComparison.OrdinalIgnoreCase))
                 {
                     string[] trustedDirectories = new string[]
@@ -333,13 +333,13 @@ namespace Microsoft.PowerShell
                           Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)
                         };
 
-                    foreach(string trustedDirectory in trustedDirectories)
+                    foreach (string trustedDirectory in trustedDirectories)
                     {
-                        if(fi.FullName.StartsWith(trustedDirectory, StringComparison.OrdinalIgnoreCase))
+                        if (fi.FullName.StartsWith(trustedDirectory, StringComparison.OrdinalIgnoreCase))
                             policyCheckPassed = true;
                     }
 
-                    if(! policyCheckPassed)
+                    if (!policyCheckPassed)
                     {
                         // Get the signature of the file.
                         Signature signature = GetSignatureWithEncodingRetry(path, script);
@@ -402,7 +402,7 @@ namespace Microsoft.PowerShell
                         policyCheckPassed = false;
                     }; break;
             }
-            
+
             return policyCheckPassed;
         }
 
@@ -432,10 +432,10 @@ namespace Microsoft.PowerShell
             X509Store trustedPublishers = new X509Store(StoreName.TrustedPublisher, StoreLocation.CurrentUser);
             trustedPublishers.Open(OpenFlags.ReadOnly);
 
-            foreach(X509Certificate2 trustedCertificate in trustedPublishers.Certificates)
+            foreach (X509Certificate2 trustedCertificate in trustedPublishers.Certificates)
             {
                 if (String.Equals(trustedCertificate.Thumbprint, thumbprint, StringComparison.OrdinalIgnoreCase))
-                    if(! IsUntrustedPublisher(signature, file)) return true;
+                    if (!IsUntrustedPublisher(signature, file)) return true;
             }
 
             return false;
@@ -451,7 +451,7 @@ namespace Microsoft.PowerShell
             X509Store trustedPublishers = new X509Store(StoreName.Disallowed, StoreLocation.CurrentUser);
             trustedPublishers.Open(OpenFlags.ReadOnly);
 
-            foreach(X509Certificate2 trustedCertificate in trustedPublishers.Certificates)
+            foreach (X509Certificate2 trustedCertificate in trustedPublishers.Certificates)
             {
                 if (String.Equals(trustedCertificate.Thumbprint, thumbprint, StringComparison.OrdinalIgnoreCase))
                     return true;
@@ -761,10 +761,10 @@ namespace Microsoft.PowerShell
             string alwaysRunHelp = Authenticode.Choice_AlwaysRun_Help;
 
 
-            choices.Add( new ChoiceDescription( neverRun,  neverRunHelp ));
-            choices.Add( new ChoiceDescription( doNotRun,  doNotRunHelp ));
-            choices.Add( new ChoiceDescription( runOnce,   runOnceHelp ));
-            choices.Add( new ChoiceDescription( alwaysRun, alwaysRunHelp ));
+            choices.Add(new ChoiceDescription(neverRun, neverRunHelp));
+            choices.Add(new ChoiceDescription(doNotRun, doNotRunHelp));
+            choices.Add(new ChoiceDescription(runOnce, runOnceHelp));
+            choices.Add(new ChoiceDescription(alwaysRun, alwaysRunHelp));
 
             return choices;
         }
@@ -788,6 +788,6 @@ namespace Microsoft.PowerShell
             return choices;
         }
     }
-}        
+}
 
 

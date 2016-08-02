@@ -16,7 +16,7 @@ namespace System.Management.Automation
     /// Auxilliary class to the execution of commands as needed by
     /// CommandCompletion
     /// </summary>
-    class CompletionExecutionHelper
+    internal class CompletionExecutionHelper
     {
         #region Constructors
 

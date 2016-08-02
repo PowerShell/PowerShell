@@ -1113,7 +1113,7 @@ namespace System.Management.Automation.Runspaces
 
             yield return new FormatViewDefinition("Breakpoint",
                 ListControl.Create()
-                    .StartEntry(entrySelectedByType: new[] {"System.Management.Automation.LineBreakpoint"})
+                    .StartEntry(entrySelectedByType: new[] { "System.Management.Automation.LineBreakpoint" })
                         .AddItemProperty(@"ID")
                         .AddItemProperty(@"Script")
                         .AddItemProperty(@"Line")
@@ -1122,7 +1122,7 @@ namespace System.Management.Automation.Runspaces
                         .AddItemProperty(@"HitCount")
                         .AddItemProperty(@"Action")
                     .EndEntry()
-                    .StartEntry(entrySelectedByType: new[] {"System.Management.Automation.VariableBreakpoint"})
+                    .StartEntry(entrySelectedByType: new[] { "System.Management.Automation.VariableBreakpoint" })
                         .AddItemProperty(@"ID")
                         .AddItemProperty(@"Variable")
                         .AddItemProperty(@"AccessMode")
@@ -1130,7 +1130,7 @@ namespace System.Management.Automation.Runspaces
                         .AddItemProperty(@"HitCount")
                         .AddItemProperty(@"Action")
                     .EndEntry()
-                    .StartEntry(entrySelectedByType: new[] {"System.Management.Automation.CommandBreakpoint"})
+                    .StartEntry(entrySelectedByType: new[] { "System.Management.Automation.CommandBreakpoint" })
                         .AddItemProperty(@"ID")
                         .AddItemProperty(@"Command")
                         .AddItemProperty(@"Enabled")

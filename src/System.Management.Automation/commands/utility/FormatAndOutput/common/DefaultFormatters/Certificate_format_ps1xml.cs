@@ -63,11 +63,11 @@ namespace System.Management.Automation.Runspaces
         {
             yield return new FormatViewDefinition("ThumbprintList",
                 ListControl.Create()
-                    .StartEntry(entrySelectedByType: new[] {"Microsoft.PowerShell.Commands.X509StoreLocation"})
+                    .StartEntry(entrySelectedByType: new[] { "Microsoft.PowerShell.Commands.X509StoreLocation" })
                         .AddItemProperty(@"Location")
                         .AddItemProperty(@"StoreNames")
                     .EndEntry()
-                    .StartEntry(entrySelectedByType: new[] {"System.Security.Cryptography.X509Certificates.X509Store"})
+                    .StartEntry(entrySelectedByType: new[] { "System.Security.Cryptography.X509Certificates.X509Store" })
                         .AddItemProperty(@"Name")
                     .EndEntry()
                     .StartEntry()
@@ -92,10 +92,10 @@ namespace System.Management.Automation.Runspaces
                     .StartEntry()
                         .AddItemProperty(@"PSPathPath")
                     .EndEntry()
-                    .StartEntry(entrySelectedByType: new[] {"Microsoft.PowerShell.Commands.X509StoreLocation"})
+                    .StartEntry(entrySelectedByType: new[] { "Microsoft.PowerShell.Commands.X509StoreLocation" })
                         .AddItemProperty(@"PSPathPath")
                     .EndEntry()
-                    .StartEntry(entrySelectedByType: new[] {"System.Security.Cryptography.X509Certificates.X509Store"})
+                    .StartEntry(entrySelectedByType: new[] { "System.Security.Cryptography.X509Certificates.X509Store" })
                         .AddItemProperty(@"PSPath")
                     .EndEntry()
                 .EndList());

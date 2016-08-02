@@ -50,7 +50,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="response"></param>
         public WebResponseObject(HttpResponseMessage response)
-            : this(response, null) { }
+            : this(response, null)
+        { }
 
         /// <summary>
         /// Constructor for WebResponseObject with contentStream

@@ -87,7 +87,7 @@ namespace System.Management.Automation.Language
                             // accelerator  for the common case, when we are not interested  in ambiguity exception.
                             return targetType;
                         }
-                        
+
                         // .NET has forward notation for types, when they declared in one assembly and implemented in another one.
                         // We want to support both scenarios:
                         // 1) When we pass assembly with declared forwarded type (CoreCLR)
@@ -293,7 +293,6 @@ namespace System.Management.Automation.Language
             if (context != null)
             {
                 currentScope = context.EngineSessionState.CurrentScope;
-                
             }
 
             // If this is TypeDefinition we should not cache anything in TypeCache.
@@ -448,13 +447,13 @@ namespace System.Management.Automation.Language
     /// </summary>
     internal class TypeResolutionState
     {
-        internal static readonly string[] systemNamespace = {"System"};
+        internal static readonly string[] systemNamespace = { "System" };
         internal static readonly Assembly[] emptyAssemblies = Utils.EmptyArray<Assembly>();
         internal static readonly TypeResolutionState UsingSystem = new TypeResolutionState();
 
         internal readonly string[] namespaces;
         internal readonly Assembly[] assemblies;
-        private readonly HashSet<string> typesDefined;
+        private readonly HashSet<string> _typesDefined;
         internal readonly int genericArgumentCount;
         internal readonly bool attribute;
 
@@ -471,32 +470,32 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         internal TypeResolutionState CloneWithAddTypesDefined(IEnumerable<string> types)
         {
-            var newTypesDefined = new HashSet<string>(this.typesDefined, StringComparer.OrdinalIgnoreCase);
+            var newTypesDefined = new HashSet<string>(_typesDefined, StringComparer.OrdinalIgnoreCase);
             foreach (var type in types)
             {
-                newTypesDefined.Add(type);    
+                newTypesDefined.Add(type);
             }
-            
+
             return new TypeResolutionState(this, newTypesDefined);
         }
 
         internal bool ContainsTypeDefined(string type)
         {
-            return this.typesDefined.Contains(type);
+            return _typesDefined.Contains(type);
         }
 
         internal TypeResolutionState(string[] namespaces, Assembly[] assemblies)
         {
             this.namespaces = namespaces ?? systemNamespace;
             this.assemblies = assemblies ?? emptyAssemblies;
-            this.typesDefined = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            _typesDefined = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         }
 
         internal TypeResolutionState(TypeResolutionState other, int genericArgumentCount, bool attribute)
         {
             this.namespaces = other.namespaces;
             this.assemblies = other.assemblies;
-            this.typesDefined = other.typesDefined;
+            _typesDefined = other._typesDefined;
             this.genericArgumentCount = genericArgumentCount;
             this.attribute = attribute;
         }
@@ -505,7 +504,7 @@ namespace System.Management.Automation.Language
         {
             this.namespaces = other.namespaces;
             this.assemblies = other.assemblies;
-            this.typesDefined = typesDefined;
+            _typesDefined = typesDefined;
             this.genericArgumentCount = other.genericArgumentCount;
             this.attribute = other.attribute;
         }
@@ -573,10 +572,10 @@ namespace System.Management.Automation.Language
                     return false;
             }
 
-            if (this.typesDefined.Count != other.typesDefined.Count)
+            if (_typesDefined.Count != other._typesDefined.Count)
                 return false;
 
-            return this.typesDefined.SetEquals(other.typesDefined);
+            return _typesDefined.SetEquals(other._typesDefined);
         }
 
         public override int GetHashCode()
@@ -591,7 +590,7 @@ namespace System.Management.Automation.Language
             {
                 result = Utils.CombineHashCodes(result, this.assemblies[i].GetHashCode());
             }
-            foreach (var t in typesDefined)
+            foreach (var t in _typesDefined)
             {
                 result = Utils.CombineHashCodes(result, t.GetHashCode());
             }
@@ -601,7 +600,7 @@ namespace System.Management.Automation.Language
 
     internal class TypeCache
     {
-        class KeyComparer : IEqualityComparer<Tuple<ITypeName, TypeResolutionState>>
+        private class KeyComparer : IEqualityComparer<Tuple<ITypeName, TypeResolutionState>>
         {
             public bool Equals(Tuple<ITypeName, TypeResolutionState> x,
                                Tuple<ITypeName, TypeResolutionState> y)
@@ -615,18 +614,18 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private static readonly ConcurrentDictionary<Tuple<ITypeName, TypeResolutionState>, Type> _cache = new ConcurrentDictionary<Tuple<ITypeName, TypeResolutionState>, Type>(new KeyComparer());
+        private static readonly ConcurrentDictionary<Tuple<ITypeName, TypeResolutionState>, Type> s_cache = new ConcurrentDictionary<Tuple<ITypeName, TypeResolutionState>, Type>(new KeyComparer());
 
         internal static Type Lookup(ITypeName typeName, TypeResolutionState typeResolutionState)
         {
             Type result;
-            _cache.TryGetValue(Tuple.Create(typeName, typeResolutionState), out result);
+            s_cache.TryGetValue(Tuple.Create(typeName, typeResolutionState), out result);
             return result;
         }
 
         internal static void Add(ITypeName typeName, TypeResolutionState typeResolutionState, Type type)
         {
-            _cache.GetOrAdd(Tuple.Create(typeName, typeResolutionState), type);
+            s_cache.GetOrAdd(Tuple.Create(typeName, typeResolutionState), type);
         }
     }
 }
@@ -761,11 +760,11 @@ namespace System.Management.Automation
 
         // users can add to user added accelerators (but not currently remove any.)  Keeping a seperate
         // list allows us to add removing in the future w/o worrying about breaking the builtins.
-        internal static Dictionary<string, Type> userTypeAccelerators = new Dictionary<string,Type>(64, StringComparer.OrdinalIgnoreCase);
+        internal static Dictionary<string, Type> userTypeAccelerators = new Dictionary<string, Type>(64, StringComparer.OrdinalIgnoreCase);
 
         // We expose this one publicly for programmatic access to our type accelerator table, but it is
         // otherwise unused (so changes to this dictionary don't affect internals.)
-        private static Dictionary<string, Type> allTypeAccelerators;
+        private static Dictionary<string, Type> s_allTypeAccelerators;
 
         static TypeAccelerators()
         {
@@ -783,19 +782,19 @@ namespace System.Management.Automation
 
             // Add additional utility types that are useful as type accelerators, but aren't
             // fundamentally "core language", or may be unsafe to expose to untrusted input.
-            builtinTypeAccelerators.Add("scriptblock",            typeof(ScriptBlock));
-            builtinTypeAccelerators.Add("psvariable",             typeof(PSVariable));
-            builtinTypeAccelerators.Add("type",                   typeof(Type));
-            builtinTypeAccelerators.Add("psmoduleinfo",           typeof(PSModuleInfo));
-            builtinTypeAccelerators.Add("powershell",             typeof(PowerShell));
-            builtinTypeAccelerators.Add("runspacefactory",        typeof(RunspaceFactory));
-            builtinTypeAccelerators.Add("runspace",               typeof(Runspace));
-            builtinTypeAccelerators.Add("initialsessionstate",    typeof(InitialSessionState));
-            builtinTypeAccelerators.Add("psscriptmethod",         typeof(PSScriptMethod));
-            builtinTypeAccelerators.Add("psscriptproperty",       typeof(PSScriptProperty));
-            builtinTypeAccelerators.Add("psnoteproperty",         typeof(PSNoteProperty));
-            builtinTypeAccelerators.Add("psaliasproperty",        typeof(PSAliasProperty));
-            builtinTypeAccelerators.Add("psvariableproperty",     typeof(PSVariableProperty));
+            builtinTypeAccelerators.Add("scriptblock", typeof(ScriptBlock));
+            builtinTypeAccelerators.Add("psvariable", typeof(PSVariable));
+            builtinTypeAccelerators.Add("type", typeof(Type));
+            builtinTypeAccelerators.Add("psmoduleinfo", typeof(PSModuleInfo));
+            builtinTypeAccelerators.Add("powershell", typeof(PowerShell));
+            builtinTypeAccelerators.Add("runspacefactory", typeof(RunspaceFactory));
+            builtinTypeAccelerators.Add("runspace", typeof(Runspace));
+            builtinTypeAccelerators.Add("initialsessionstate", typeof(InitialSessionState));
+            builtinTypeAccelerators.Add("psscriptmethod", typeof(PSScriptMethod));
+            builtinTypeAccelerators.Add("psscriptproperty", typeof(PSScriptProperty));
+            builtinTypeAccelerators.Add("psnoteproperty", typeof(PSNoteProperty));
+            builtinTypeAccelerators.Add("psaliasproperty", typeof(PSAliasProperty));
+            builtinTypeAccelerators.Add("psvariableproperty", typeof(PSVariableProperty));
         }
 
         internal static string FindBuiltinAccelerator(Type type)
@@ -818,9 +817,9 @@ namespace System.Management.Automation
         public static void Add(string typeName, Type type)
         {
             userTypeAccelerators[typeName] = type;
-            if (allTypeAccelerators != null)
+            if (s_allTypeAccelerators != null)
             {
-                allTypeAccelerators[typeName] = type;
+                s_allTypeAccelerators[typeName] = type;
             }
         }
 
@@ -832,9 +831,9 @@ namespace System.Management.Automation
         public static bool Remove(string typeName)
         {
             userTypeAccelerators.Remove(typeName);
-            if (allTypeAccelerators != null)
+            if (s_allTypeAccelerators != null)
             {
-                allTypeAccelerators.Remove(typeName);
+                s_allTypeAccelerators.Remove(typeName);
             }
             return true;
         }
@@ -854,13 +853,13 @@ namespace System.Management.Automation
         {
             get
             {
-                if (allTypeAccelerators == null)
+                if (s_allTypeAccelerators == null)
                 {
-                    allTypeAccelerators = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
-                    FillCache(allTypeAccelerators);
+                    s_allTypeAccelerators = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+                    FillCache(s_allTypeAccelerators);
                 }
 
-                return allTypeAccelerators;
+                return s_allTypeAccelerators;
             }
         }
 

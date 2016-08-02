@@ -43,7 +43,7 @@ using TypeTable = System.Management.Automation.Runspaces.TypeTable;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting.Client
-{  
+{
     /// <summary>
     /// WSMan TransportManager related utils
     /// </summary>
@@ -52,7 +52,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Static Data
 
         // Fully qualified error Id modifiers based on transport (WinRM) error codes.
-        private static Dictionary<int, string> _transportErrorCodeToFQEID = new Dictionary<int, string>()
+        private static Dictionary<int, string> s_transportErrorCodeToFQEID = new Dictionary<int, string>()
         {
             {WSManNativeApi.ERROR_WSMAN_ACCESS_DENIED, "AccessDenied"},
             {WSManNativeApi.ERROR_WSMAN_OUTOF_MEMORY, "ServerOutOfMemory"},
@@ -129,11 +129,11 @@ namespace System.Management.Automation.Remoting.Client
             params object[] resourceArgs)
         {
             PSRemotingTransportException e;
-            
+
             //For the first two special error conditions, it is remotely possible that the wsmanSessionTM is null when the failures are returned 
             //as part of command TM operations (could be returned becuase of RC retries under the hood)
             //Not worth to handle these cases seperately as there are very corner scenarios, but need to make sure wsmanSessionTM is not referenced
-           
+
 
             // Destination server is reporting that URI redirect is required for this user.
             if ((errorStruct.errorCode == WSManNativeApi.ERROR_WSMAN_REDIRECT_REQUESTED) && (wsmanSessionTM != null))
@@ -273,7 +273,7 @@ namespace System.Management.Automation.Remoting.Client
             string defaultFQEID)
         {
             string specificErrorId;
-            if (_transportErrorCodeToFQEID.TryGetValue(transportErrorCode, out specificErrorId))
+            if (s_transportErrorCodeToFQEID.TryGetValue(transportErrorCode, out specificErrorId))
             {
                 return specificErrorId + "," + defaultFQEID;
             }
@@ -296,7 +296,7 @@ namespace System.Management.Automation.Remoting.Client
     internal sealed class WSManClientSessionTransportManager : BaseClientSessionTransportManager
     {
         #region Consts
-     
+
         /// <summary>
         /// Max uri redirection count session variable.
         /// </summary>
@@ -339,55 +339,55 @@ namespace System.Management.Automation.Remoting.Client
         #region Private Data
         // operation handles are owned by WSMan
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
-        private IntPtr wsManSessionHandle;
+        private IntPtr _wsManSessionHandle;
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
-        private IntPtr wsManShellOperationHandle;
+        private IntPtr _wsManShellOperationHandle;
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
-        private IntPtr wsManRecieveOperationHandle;
+        private IntPtr _wsManRecieveOperationHandle;
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
-        private IntPtr wsManSendOperationHandle;
+        private IntPtr _wsManSendOperationHandle;
         // this is used with WSMan callbacks to represent a session transport manager.
-        private long sessionContextID;
+        private long _sessionContextID;
 
-        private WSManTransportManagerUtils.tmStartModes startMode = WSManTransportManagerUtils.tmStartModes.None;
+        private WSManTransportManagerUtils.tmStartModes _startMode = WSManTransportManagerUtils.tmStartModes.None;
 
-        private string sessionName;
+        private string _sessionName;
 
-        private bool supportsDisconnect;
+        private bool _supportsDisconnect;
 
         // callbacks
-        private PrioritySendDataCollection.OnDataAvailableCallback onDataAvailableToSendCallback;
+        private PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
 
         // instance callback handlers
-        private WSManNativeApi.WSManShellAsync createSessionCallback;
-        private WSManNativeApi.WSManShellAsync receivedFromRemote;
-        private WSManNativeApi.WSManShellAsync sendToRemoteCompleted;
-        private WSManNativeApi.WSManShellAsync disconnectSessionCompleted;
-        private WSManNativeApi.WSManShellAsync reconnectSessionCompleted;
-        private WSManNativeApi.WSManShellAsync connectSessionCallback;
+        private WSManNativeApi.WSManShellAsync _createSessionCallback;
+        private WSManNativeApi.WSManShellAsync _receivedFromRemote;
+        private WSManNativeApi.WSManShellAsync _sendToRemoteCompleted;
+        private WSManNativeApi.WSManShellAsync _disconnectSessionCompleted;
+        private WSManNativeApi.WSManShellAsync _reconnectSessionCompleted;
+        private WSManNativeApi.WSManShellAsync _connectSessionCallback;
         // TODO: This GCHandle is required as it seems WSMan is calling create callback
         // after we call Close. This seems wrong. Opened bug on WSMan to track this.
-        private GCHandle createSessionCallbackGCHandle;
-        private WSManNativeApi.WSManShellAsync closeSessionCompleted;
-        
+        private GCHandle _createSessionCallbackGCHandle;
+        private WSManNativeApi.WSManShellAsync _closeSessionCompleted;
+
         // used by WSManCreateShell call to send additional data (like negotiation)
         // during shell creation. This is an instance variable to allow for redirection.
-        private WSManNativeApi.WSManData_ManToUn openContent;
+        private WSManNativeApi.WSManData_ManToUn _openContent;
         // By default WSMan compresses data sent on the network..use this flag to not do
         // this.
-        private bool noCompression;
-        private bool noMachineProfile;
+        private bool _noCompression;
+        private bool _noMachineProfile;
 
         private WSManConnectionInfo _connectionInfo;
         private int _connectionRetryCount;
 
-        
+
         private const string resBaseName = "remotingerroridstrings";
 
         // Robust connections maximum retry time value in milliseconds.
-        private int maxRetryTime;
+        private int _maxRetryTime;
 
-        private WSManAPIDataCommon wsManApiData;
+        private WSManAPIDataCommon _wsManApiData;
 
         private void ProcessShellData(string data)
         {
@@ -404,15 +404,14 @@ namespace System.Management.Automation.Remoting.Client
                     {
                         if (reader.NodeType == XmlNodeType.Element)
                         {
-                            if (reader.LocalName.Equals("IdleTimeOut", StringComparison.OrdinalIgnoreCase) || 
+                            if (reader.LocalName.Equals("IdleTimeOut", StringComparison.OrdinalIgnoreCase) ||
                                 reader.LocalName.Equals("MaxIdleTimeOut", StringComparison.OrdinalIgnoreCase))
                             {
-
                                 bool settingIdleTimeout =
                                     !reader.LocalName.Equals("MaxIdleTimeOut", StringComparison.OrdinalIgnoreCase);
 
                                 string timeoutString = reader.ReadElementContentAsString();
-                                Dbg.Assert(timeoutString.Substring(0, 2).Equals("PT", StringComparison.OrdinalIgnoreCase), 
+                                Dbg.Assert(timeoutString.Substring(0, 2).Equals("PT", StringComparison.OrdinalIgnoreCase),
                                     "IdleTimeout is not in expected format");
 
                                 int decimalIndex = timeoutString.IndexOf('.');
@@ -463,25 +462,25 @@ namespace System.Management.Automation.Remoting.Client
         #endregion
 
         #region Static Data
-        
+
         // static callback delegate
-        private static WSManNativeApi.WSManShellAsyncCallback sessionCreateCallback;
-        private static WSManNativeApi.WSManShellAsyncCallback sessionCloseCallback;
-        private static WSManNativeApi.WSManShellAsyncCallback sessionReceiveCallback;
-        private static WSManNativeApi.WSManShellAsyncCallback sessionSendCallback;
-        private static WSManNativeApi.WSManShellAsyncCallback sessionDisconnectCallback;
-        private static WSManNativeApi.WSManShellAsyncCallback sessionReconnectCallback;
-        private static WSManNativeApi.WSManShellAsyncCallback sessionConnectCallback;
+        private static WSManNativeApi.WSManShellAsyncCallback s_sessionCreateCallback;
+        private static WSManNativeApi.WSManShellAsyncCallback s_sessionCloseCallback;
+        private static WSManNativeApi.WSManShellAsyncCallback s_sessionReceiveCallback;
+        private static WSManNativeApi.WSManShellAsyncCallback s_sessionSendCallback;
+        private static WSManNativeApi.WSManShellAsyncCallback s_sessionDisconnectCallback;
+        private static WSManNativeApi.WSManShellAsyncCallback s_sessionReconnectCallback;
+        private static WSManNativeApi.WSManShellAsyncCallback s_sessionConnectCallback;
 
         // This dictionary maintains active session transport managers to be used from various
         // callbacks.
-        private static Dictionary<long, WSManClientSessionTransportManager> SessionTMHandles =
-            new Dictionary<long,WSManClientSessionTransportManager>();
-        private static long SessionTMSeed;
+        private static Dictionary<long, WSManClientSessionTransportManager> s_sessionTMHandles =
+            new Dictionary<long, WSManClientSessionTransportManager>();
+        private static long s_sessionTMSeed;
         //generate unique session id
         private static long GetNextSessionTMHandleId()
         {
-            return System.Threading.Interlocked.Increment(ref SessionTMSeed);
+            return System.Threading.Interlocked.Increment(ref s_sessionTMSeed);
         }
 
         // we need a synchronized add and remove so that multiple threads
@@ -489,17 +488,17 @@ namespace System.Management.Automation.Remoting.Client
         private static void AddSessionTransportManager(long sessnTMId,
             WSManClientSessionTransportManager sessnTransportManager)
         {
-            lock (SessionTMHandles)
+            lock (s_sessionTMHandles)
             {
-                SessionTMHandles.Add(sessnTMId, sessnTransportManager);
+                s_sessionTMHandles.Add(sessnTMId, sessnTransportManager);
             }
         }
 
         private static void RemoveSessionTransportManager(long sessnTMId)
         {
-            lock (SessionTMHandles)
+            lock (s_sessionTMHandles)
             {
-                SessionTMHandles.Remove(sessnTMId);
+                s_sessionTMHandles.Remove(sessnTMId);
             }
         }
 
@@ -511,9 +510,9 @@ namespace System.Management.Automation.Remoting.Client
         {
             sessnTMId = operationContext.ToInt64();
             sessnTransportManager = null;
-            lock (SessionTMHandles)
+            lock (s_sessionTMHandles)
             {
-                return SessionTMHandles.TryGetValue(sessnTMId, out sessnTransportManager);
+                return s_sessionTMHandles.TryGetValue(sessnTMId, out sessnTransportManager);
             }
         }
 
@@ -521,8 +520,8 @@ namespace System.Management.Automation.Remoting.Client
 
         #region SHIM: Redirection delegates for test purposes
 
-        private static Delegate sessionSendRedirect = null;
-        private static Delegate protocolVersionRedirect = null;
+        private static Delegate s_sessionSendRedirect = null;
+        private static Delegate s_protocolVersionRedirect = null;
 
         #endregion
 
@@ -536,31 +535,31 @@ namespace System.Management.Automation.Remoting.Client
             // Initialize callback delegates
             WSManNativeApi.WSManShellCompletionFunction createDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnCreateSessionCallback);
-            sessionCreateCallback = new WSManNativeApi.WSManShellAsyncCallback(createDelegate);
+            s_sessionCreateCallback = new WSManNativeApi.WSManShellAsyncCallback(createDelegate);
 
             WSManNativeApi.WSManShellCompletionFunction closeDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnCloseSessionCompleted);
-            sessionCloseCallback = new WSManNativeApi.WSManShellAsyncCallback(closeDelegate);
+            s_sessionCloseCallback = new WSManNativeApi.WSManShellAsyncCallback(closeDelegate);
 
             WSManNativeApi.WSManShellCompletionFunction receiveDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnRemoteSessionDataReceived);
-            sessionReceiveCallback = new WSManNativeApi.WSManShellAsyncCallback(receiveDelegate);
+            s_sessionReceiveCallback = new WSManNativeApi.WSManShellAsyncCallback(receiveDelegate);
 
             WSManNativeApi.WSManShellCompletionFunction sendDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnRemoteSessionSendCompleted);
-            sessionSendCallback = new WSManNativeApi.WSManShellAsyncCallback(sendDelegate);
+            s_sessionSendCallback = new WSManNativeApi.WSManShellAsyncCallback(sendDelegate);
 
             WSManNativeApi.WSManShellCompletionFunction disconnectDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnRemoteSessionDisconnectCompleted);
-            sessionDisconnectCallback = new WSManNativeApi.WSManShellAsyncCallback(disconnectDelegate);
+            s_sessionDisconnectCallback = new WSManNativeApi.WSManShellAsyncCallback(disconnectDelegate);
 
             WSManNativeApi.WSManShellCompletionFunction reconnectDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnRemoteSessionReconnectCompleted);
-            sessionReconnectCallback = new WSManNativeApi.WSManShellAsyncCallback(reconnectDelegate);
+            s_sessionReconnectCallback = new WSManNativeApi.WSManShellAsyncCallback(reconnectDelegate);
 
             WSManNativeApi.WSManShellCompletionFunction connectDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnRemoteSessionConnectCallback);
-            sessionConnectCallback = new WSManNativeApi.WSManShellAsyncCallback(connectDelegate);
+            s_sessionConnectCallback = new WSManNativeApi.WSManShellAsyncCallback(connectDelegate);
         }
 
         /// <summary>
@@ -584,18 +583,18 @@ namespace System.Management.Automation.Remoting.Client
             PSRemotingCryptoHelper cryptoHelper, string sessionName) : base(runspacePoolInstanceId, cryptoHelper)
         {
             // Initialize WSMan instance
-            wsManApiData = new WSManAPIDataCommon();
-            if (wsManApiData.WSManAPIHandle == IntPtr.Zero)
+            _wsManApiData = new WSManAPIDataCommon();
+            if (_wsManApiData.WSManAPIHandle == IntPtr.Zero)
             {
                 throw new PSRemotingTransportException(
-                    StringUtil.Format(RemotingErrorIdStrings.WSManInitFailed, wsManApiData.ErrorCode));
+                    StringUtil.Format(RemotingErrorIdStrings.WSManInitFailed, _wsManApiData.ErrorCode));
             }
             Dbg.Assert(null != connectionInfo, "connectionInfo cannot be null");
 
             CryptoHelper = cryptoHelper;
             dataToBeSent.Fragmentor = base.Fragmentor;
-            this.sessionName = sessionName;
-            
+            _sessionName = sessionName;
+
             // session transport manager can recieve unlimited data..however each object is limited
             // by maxRecvdObjectSize. this is to allow clients to use a session for an unlimited time..
             // also the messages that can be sent to a session are limited and very controlled.
@@ -605,7 +604,7 @@ namespace System.Management.Automation.Remoting.Client
             ReceivedDataCollection.MaximumReceivedDataSize = null;
             ReceivedDataCollection.MaximumReceivedObjectSize = connectionInfo.MaximumReceivedObjectSize;
 
-            onDataAvailableToSendCallback =
+            _onDataAvailableToSendCallback =
                 new PrioritySendDataCollection.OnDataAvailableCallback(OnDataAvailableCallback);
 
             Initialize(connectionInfo.ConnectionUri, connectionInfo);
@@ -627,21 +626,21 @@ namespace System.Management.Automation.Remoting.Client
         /// </exception>
         internal void SetDefaultTimeOut(int milliseconds)
         {
-            Dbg.Assert(wsManSessionHandle != IntPtr.Zero, "Session handle cannot be null");
+            Dbg.Assert(_wsManSessionHandle != IntPtr.Zero, "Session handle cannot be null");
             using (tracer.TraceMethod("Setting Default timeout: {0} milliseconds", milliseconds))
             {
-                int result = WSManNativeApi.WSManSetSessionOption(wsManSessionHandle,
+                int result = WSManNativeApi.WSManSetSessionOption(_wsManSessionHandle,
                     WSManNativeApi.WSManSessionOption.WSMAN_OPTION_DEFAULT_OPERATION_TIMEOUTMS,
                     new WSManNativeApi.WSManDataDWord(milliseconds));
 
                 if (result != 0)
                 {
                     // Get the error message from WSMan
-                    string errorMessage = WSManNativeApi.WSManGetErrorMessage(wsManApiData.WSManAPIHandle, result);
+                    string errorMessage = WSManNativeApi.WSManGetErrorMessage(_wsManApiData.WSManAPIHandle, result);
 
                     PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
                     throw exception;
-                }                
+                }
             }
         }
 
@@ -655,17 +654,17 @@ namespace System.Management.Automation.Remoting.Client
         /// </exception>
         internal void SetConnectTimeOut(int milliseconds)
         {
-            Dbg.Assert(wsManSessionHandle != IntPtr.Zero, "Session handle cannot be null");
+            Dbg.Assert(_wsManSessionHandle != IntPtr.Zero, "Session handle cannot be null");
             using (tracer.TraceMethod("Setting CreateShell timeout: {0} milliseconds", milliseconds))
             {
-                int result = WSManNativeApi.WSManSetSessionOption(wsManSessionHandle,
+                int result = WSManNativeApi.WSManSetSessionOption(_wsManSessionHandle,
                     WSManNativeApi.WSManSessionOption.WSMAN_OPTION_TIMEOUTMS_CREATE_SHELL,
                     new WSManNativeApi.WSManDataDWord(milliseconds));
 
                 if (result != 0)
                 {
                     // Get the error message from WSMan
-                    string errorMessage = WSManNativeApi.WSManGetErrorMessage(wsManApiData.WSManAPIHandle, result);
+                    string errorMessage = WSManNativeApi.WSManGetErrorMessage(_wsManApiData.WSManAPIHandle, result);
 
                     PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
                     throw exception;
@@ -683,17 +682,17 @@ namespace System.Management.Automation.Remoting.Client
         /// </exception>
         internal void SetCloseTimeOut(int milliseconds)
         {
-            Dbg.Assert(wsManSessionHandle != IntPtr.Zero, "Session handle cannot be null");
+            Dbg.Assert(_wsManSessionHandle != IntPtr.Zero, "Session handle cannot be null");
             using (tracer.TraceMethod("Setting CloseShell timeout: {0} milliseconds", milliseconds))
             {
-                int result = WSManNativeApi.WSManSetSessionOption(wsManSessionHandle,
+                int result = WSManNativeApi.WSManSetSessionOption(_wsManSessionHandle,
                     WSManNativeApi.WSManSessionOption.WSMAN_OPTION_TIMEOUTMS_CLOSE_SHELL_OPERATION,
                     new WSManNativeApi.WSManDataDWord(milliseconds));
-                
+
                 if (result != 0)
                 {
                     // Get the error message from WSMan
-                    string errorMessage = WSManNativeApi.WSManGetErrorMessage(wsManApiData.WSManAPIHandle, result);
+                    string errorMessage = WSManNativeApi.WSManGetErrorMessage(_wsManApiData.WSManAPIHandle, result);
 
                     PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
                     throw exception;
@@ -711,17 +710,17 @@ namespace System.Management.Automation.Remoting.Client
         /// </exception>
         internal void SetSendTimeOut(int milliseconds)
         {
-            Dbg.Assert(wsManSessionHandle != IntPtr.Zero, "Session handle cannot be null");
+            Dbg.Assert(_wsManSessionHandle != IntPtr.Zero, "Session handle cannot be null");
             using (tracer.TraceMethod("Setting SendShellInput timeout: {0} milliseconds", milliseconds))
             {
-                int result = WSManNativeApi.WSManSetSessionOption(wsManSessionHandle,
+                int result = WSManNativeApi.WSManSetSessionOption(_wsManSessionHandle,
                     WSManNativeApi.WSManSessionOption.WSMAN_OPTION_TIMEOUTMS_SEND_SHELL_INPUT,
                     new WSManNativeApi.WSManDataDWord(milliseconds));
 
                 if (result != 0)
                 {
                     // Get the error message from WSMan
-                    string errorMessage = WSManNativeApi.WSManGetErrorMessage(wsManApiData.WSManAPIHandle, result);
+                    string errorMessage = WSManNativeApi.WSManGetErrorMessage(_wsManApiData.WSManAPIHandle, result);
 
                     PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
                     throw exception;
@@ -739,17 +738,17 @@ namespace System.Management.Automation.Remoting.Client
         /// </exception>
         internal void SetReceiveTimeOut(int milliseconds)
         {
-            Dbg.Assert(wsManSessionHandle != IntPtr.Zero, "Session handle cannot be null");
+            Dbg.Assert(_wsManSessionHandle != IntPtr.Zero, "Session handle cannot be null");
             using (tracer.TraceMethod("Setting ReceiveShellOutput timeout: {0} milliseconds", milliseconds))
             {
-                int result = WSManNativeApi.WSManSetSessionOption(wsManSessionHandle,
+                int result = WSManNativeApi.WSManSetSessionOption(_wsManSessionHandle,
                     WSManNativeApi.WSManSessionOption.WSMAN_OPTION_TIMEOUTMS_RECEIVE_SHELL_OUTPUT,
                     new WSManNativeApi.WSManDataDWord(milliseconds));
 
                 if (result != 0)
                 {
                     // Get the error message from WSMan
-                    string errorMessage = WSManNativeApi.WSManGetErrorMessage(wsManApiData.WSManAPIHandle, result);
+                    string errorMessage = WSManNativeApi.WSManGetErrorMessage(_wsManApiData.WSManAPIHandle, result);
 
                     PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
                     throw exception;
@@ -767,17 +766,17 @@ namespace System.Management.Automation.Remoting.Client
         /// </exception>
         internal void SetSignalTimeOut(int milliseconds)
         {
-            Dbg.Assert(wsManSessionHandle != IntPtr.Zero, "Session handle cannot be null");
+            Dbg.Assert(_wsManSessionHandle != IntPtr.Zero, "Session handle cannot be null");
             using (tracer.TraceMethod("Setting SignalShell timeout: {0} milliseconds", milliseconds))
             {
-                int result = WSManNativeApi.WSManSetSessionOption(wsManSessionHandle,
+                int result = WSManNativeApi.WSManSetSessionOption(_wsManSessionHandle,
                     WSManNativeApi.WSManSessionOption.WSMAN_OPTION_TIMEOUTMS_SIGNAL_SHELL,
                     new WSManNativeApi.WSManDataDWord(milliseconds));
 
                 if (result != 0)
                 {
                     // Get the error message from WSMan
-                    string errorMessage = WSManNativeApi.WSManGetErrorMessage(wsManApiData.WSManAPIHandle, result);
+                    string errorMessage = WSManNativeApi.WSManGetErrorMessage(_wsManApiData.WSManAPIHandle, result);
 
                     PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
                     throw exception;
@@ -795,13 +794,13 @@ namespace System.Management.Automation.Remoting.Client
         /// </exception>
         internal void SetWSManSessionOption(WSManNativeApi.WSManSessionOption option, int dwordData)
         {
-            int result = WSManNativeApi.WSManSetSessionOption(wsManSessionHandle,
+            int result = WSManNativeApi.WSManSetSessionOption(_wsManSessionHandle,
                 option, new WSManNativeApi.WSManDataDWord(dwordData));
 
             if (result != 0)
             {
                 // Get the error message from WSMan
-                string errorMessage = WSManNativeApi.WSManGetErrorMessage(wsManApiData.WSManAPIHandle, result);
+                string errorMessage = WSManNativeApi.WSManGetErrorMessage(_wsManApiData.WSManAPIHandle, result);
 
                 PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
                 throw exception;
@@ -820,13 +819,13 @@ namespace System.Management.Automation.Remoting.Client
         {
             using (WSManNativeApi.WSManData_ManToUn data = new WSManNativeApi.WSManData_ManToUn(stringData))
             {
-                int result = WSManNativeApi.WSManSetSessionOption(wsManSessionHandle,
+                int result = WSManNativeApi.WSManSetSessionOption(_wsManSessionHandle,
                       option, data);
 
                 if (result != 0)
                 {
                     // Get the error message from WSMan
-                    string errorMessage = WSManNativeApi.WSManGetErrorMessage(wsManApiData.WSManAPIHandle, result);
+                    string errorMessage = WSManNativeApi.WSManGetErrorMessage(_wsManApiData.WSManAPIHandle, result);
 
                     PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
                     throw exception;
@@ -840,12 +839,12 @@ namespace System.Management.Automation.Remoting.Client
 
         internal WSManAPIDataCommon WSManAPIData
         {
-            get { return wsManApiData; }
+            get { return _wsManApiData; }
         }
 
         internal bool SupportsDisconnect
         {
-            get { return supportsDisconnect; }
+            get { return _supportsDisconnect; }
         }
 
 
@@ -865,7 +864,7 @@ namespace System.Management.Automation.Remoting.Client
             //Add ETW traces
 
             // disconnect Callback
-            disconnectSessionCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(sessionContextID), sessionDisconnectCallback);
+            _disconnectSessionCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(_sessionContextID), s_sessionDisconnectCallback);
             try
             {
                 lock (syncObject)
@@ -883,10 +882,10 @@ namespace System.Management.Automation.Remoting.Client
                     flags |= (_connectionInfo.OutputBufferingMode == Runspaces.OutputBufferingMode.Drop) ?
                                     (int)WSManNativeApi.WSManShellFlag.WSMAN_FLAG_SERVER_BUFFERING_MODE_DROP : 0;
 
-                    WSManNativeApi.WSManDisconnectShellEx(wsManShellOperationHandle,
+                    WSManNativeApi.WSManDisconnectShellEx(_wsManShellOperationHandle,
                             flags,
                             disconnectInfo,
-                            disconnectSessionCompleted);
+                            _disconnectSessionCompleted);
                 }
             }
             finally
@@ -903,7 +902,7 @@ namespace System.Management.Automation.Remoting.Client
             //Add ETW traces
 
             // reconnect Callback
-            reconnectSessionCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(sessionContextID), sessionReconnectCallback);
+            _reconnectSessionCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(_sessionContextID), s_sessionReconnectCallback);
             lock (syncObject)
             {
                 if (isClosed)
@@ -919,11 +918,10 @@ namespace System.Management.Automation.Remoting.Client
                 flags |= (_connectionInfo.OutputBufferingMode == Runspaces.OutputBufferingMode.Drop) ?
                                 (int)WSManNativeApi.WSManShellFlag.WSMAN_FLAG_SERVER_BUFFERING_MODE_DROP : 0;
 
-                WSManNativeApi.WSManReconnectShellEx(wsManShellOperationHandle,
+                WSManNativeApi.WSManReconnectShellEx(_wsManShellOperationHandle,
                         flags,
-                        reconnectSessionCompleted);
+                        _reconnectSessionCompleted);
             }
-
         }
 
         /// <summary>
@@ -942,7 +940,7 @@ namespace System.Management.Automation.Remoting.Client
             ReceivedDataCollection.PrepareForStreamConnect();
             // additional content with connect shell call. Negotiation and connect related messages
             // should be included in payload
-            if (null == openContent)
+            if (null == _openContent)
             {
                 DataPriorityType additionalDataType;
                 byte[] additionalData = dataToBeSent.ReadOrRegisterCallback(null, out additionalDataType);
@@ -955,7 +953,7 @@ namespace System.Management.Automation.Remoting.Client
                         WSManNativeApi.PS_CONNECT_XML_TAG,
                         WSManNativeApi.PS_XML_NAMESPACE,
                         Convert.ToBase64String(additionalData));
-                    openContent = new WSManNativeApi.WSManData_ManToUn(base64EncodedDataInXml);
+                    _openContent = new WSManNativeApi.WSManData_ManToUn(base64EncodedDataInXml);
                 }
 
                 //THERE SHOULD BE NO ADDITIONAL DATA. If there is, it means we are not able to push all initial negotaion related data
@@ -968,18 +966,17 @@ namespace System.Management.Automation.Remoting.Client
                     Dbg.Assert(false, "Negotiation payload does not fit in ConnectShell");
                     return;
                 }
-
             }
 
             // Create and store context for this shell operation. This context is used from various callbacks
-            sessionContextID = GetNextSessionTMHandleId();
-            AddSessionTransportManager(sessionContextID, this);
+            _sessionContextID = GetNextSessionTMHandleId();
+            AddSessionTransportManager(_sessionContextID, this);
 
             //session is implicitly assumed to support disconnect
-            supportsDisconnect = true;
+            _supportsDisconnect = true;
 
             // Create Callback
-            connectSessionCallback = new WSManNativeApi.WSManShellAsync(new IntPtr(sessionContextID), sessionConnectCallback);
+            _connectSessionCallback = new WSManNativeApi.WSManShellAsync(new IntPtr(_sessionContextID), s_sessionConnectCallback);
             lock (syncObject)
             {
                 if (isClosed)
@@ -989,8 +986,8 @@ namespace System.Management.Automation.Remoting.Client
                     return;
                 }
 
-                Dbg.Assert(startMode == WSManTransportManagerUtils.tmStartModes.None, "startMode is not in expected state");
-                startMode = WSManTransportManagerUtils.tmStartModes.Connect;
+                Dbg.Assert(_startMode == WSManTransportManagerUtils.tmStartModes.None, "startMode is not in expected state");
+                _startMode = WSManTransportManagerUtils.tmStartModes.Connect;
 
                 int flags = 0;
                 flags |= (_connectionInfo.OutputBufferingMode == Runspaces.OutputBufferingMode.Block) ?
@@ -998,19 +995,19 @@ namespace System.Management.Automation.Remoting.Client
                 flags |= (_connectionInfo.OutputBufferingMode == Runspaces.OutputBufferingMode.Drop) ?
                                 (int)WSManNativeApi.WSManShellFlag.WSMAN_FLAG_SERVER_BUFFERING_MODE_DROP : 0;
 
-                WSManNativeApi.WSManConnectShellEx(wsManSessionHandle,
+                WSManNativeApi.WSManConnectShellEx(_wsManSessionHandle,
                     flags,
                     _connectionInfo.ShellUri,
                     RunspacePoolInstanceId.ToString().ToUpperInvariant(),  //wsman is case sensetive wrt shellId. so consistently using upper case
                     IntPtr.Zero,
-                    openContent,
-                    connectSessionCallback,
-                    ref wsManShellOperationHandle);
+                    _openContent,
+                    _connectSessionCallback,
+                    ref _wsManShellOperationHandle);
             }
 
-            if (wsManShellOperationHandle == IntPtr.Zero)
+            if (_wsManShellOperationHandle == IntPtr.Zero)
             {
-                TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(wsManApiData.WSManAPIHandle,
+                TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(_wsManApiData.WSManAPIHandle,
                     this,
                     new WSManNativeApi.WSManError(),
                     TransportMethodEnum.ConnectShellEx,
@@ -1043,13 +1040,13 @@ namespace System.Management.Automation.Remoting.Client
                     PSOpcode.Receive, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                     RunspacePoolInstanceId.ToString(), Guid.Empty.ToString());
 
-                receivedFromRemote = new WSManNativeApi.WSManShellAsync(new IntPtr(sessionContextID), sessionReceiveCallback);
-                WSManNativeApi.WSManReceiveShellOutputEx(wsManShellOperationHandle,
-                    IntPtr.Zero, 0, wsManApiData.OutputStreamSet, receivedFromRemote,
-                    ref wsManRecieveOperationHandle);
+                _receivedFromRemote = new WSManNativeApi.WSManShellAsync(new IntPtr(_sessionContextID), s_sessionReceiveCallback);
+                WSManNativeApi.WSManReceiveShellOutputEx(_wsManShellOperationHandle,
+                    IntPtr.Zero, 0, _wsManApiData.OutputStreamSet, _receivedFromRemote,
+                    ref _wsManRecieveOperationHandle);
             }
         }
-       
+
         /// <summary>
         /// Starts connecting to remote end asynchronously. This will result in a WSManCreateShellEx WSMan
         /// async call. By the time this call returns, we will have a valid handle, if the operation
@@ -1063,15 +1060,15 @@ namespace System.Management.Automation.Remoting.Client
         {
             Dbg.Assert(!isClosed, "object already disposed");
             Dbg.Assert(!String.IsNullOrEmpty(_connectionInfo.ShellUri), "shell uri cannot be null or empty.");
-            Dbg.Assert(wsManApiData != null, "WSManApiData should always be created before session creation.");
+            Dbg.Assert(_wsManApiData != null, "WSManApiData should always be created before session creation.");
 
-            List<WSManNativeApi.WSManOption> shellOptions = new List<WSManNativeApi.WSManOption>(wsManApiData.CommonOptionSet);
+            List<WSManNativeApi.WSManOption> shellOptions = new List<WSManNativeApi.WSManOption>(_wsManApiData.CommonOptionSet);
 
             #region SHIM: Redirection code for protocol version
-            
-            if (protocolVersionRedirect != null)
+
+            if (s_protocolVersionRedirect != null)
             {
-                string newProtocolVersion = (string)protocolVersionRedirect.DynamicInvoke();
+                string newProtocolVersion = (string)s_protocolVersionRedirect.DynamicInvoke();
                 shellOptions.Clear();
                 WSManNativeApi.WSManOption newPrtVOption = new WSManNativeApi.WSManOption();
                 newPrtVOption.name = RemoteDataNameStrings.PS_STARTUP_PROTOCOL_VERSION_NAME;
@@ -1090,15 +1087,15 @@ namespace System.Management.Automation.Remoting.Client
 
             // startup info           
             WSManNativeApi.WSManShellStartupInfo_ManToUn startupInfo =
-                new WSManNativeApi.WSManShellStartupInfo_ManToUn(wsManApiData.InputStreamSet,
-                wsManApiData.OutputStreamSet,
+                new WSManNativeApi.WSManShellStartupInfo_ManToUn(_wsManApiData.InputStreamSet,
+                _wsManApiData.OutputStreamSet,
                 uIdleTimeout,
-                sessionName);
+                _sessionName);
 
             // additional content with create shell call. Piggy back first fragement from
             // the dataToBeSent buffer.
-            if (null == openContent)
-            {   
+            if (null == _openContent)
+            {
                 DataPriorityType additionalDataType;
                 byte[] additionalData = dataToBeSent.ReadOrRegisterCallback(null, out additionalDataType);
 
@@ -1106,10 +1103,10 @@ namespace System.Management.Automation.Remoting.Client
 
                 bool sendContinue = true;
 
-                if (sessionSendRedirect != null)
+                if (s_sessionSendRedirect != null)
                 {
                     object[] arguments = new object[2] { null, additionalData };
-                    sendContinue = (bool)sessionSendRedirect.DynamicInvoke(arguments);
+                    sendContinue = (bool)s_sessionSendRedirect.DynamicInvoke(arguments);
                     additionalData = (byte[])arguments[0];
                 }
 
@@ -1126,21 +1123,21 @@ namespace System.Management.Automation.Remoting.Client
                         WSManNativeApi.PS_CREATION_XML_TAG,
                         WSManNativeApi.PS_XML_NAMESPACE,
                         Convert.ToBase64String(additionalData));
-                    openContent = new WSManNativeApi.WSManData_ManToUn(base64EncodedDataInXml);
+                    _openContent = new WSManNativeApi.WSManData_ManToUn(base64EncodedDataInXml);
                 }
             }
 
             // Create the session context information only once.  CreateAsync() can be called multiple
             // times by RetrySessionCreation for flaky networks.
-            if (sessionContextID == 0)
+            if (_sessionContextID == 0)
             {
                 // Create and store context for this shell operation. This context is used from various callbacks
-                sessionContextID = GetNextSessionTMHandleId();
-                AddSessionTransportManager(sessionContextID, this);
+                _sessionContextID = GetNextSessionTMHandleId();
+                AddSessionTransportManager(_sessionContextID, this);
 
                 // Create Callback
-                createSessionCallback = new WSManNativeApi.WSManShellAsync(new IntPtr(sessionContextID), sessionCreateCallback);
-                createSessionCallbackGCHandle = GCHandle.Alloc(createSessionCallback);
+                _createSessionCallback = new WSManNativeApi.WSManShellAsync(new IntPtr(_sessionContextID), s_sessionCreateCallback);
+                _createSessionCallbackGCHandle = GCHandle.Alloc(_createSessionCallback);
             }
 
             PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateShell, PSOpcode.Connect,
@@ -1158,10 +1155,10 @@ namespace System.Management.Automation.Remoting.Client
                         return;
                     }
 
-                    Dbg.Assert(startMode == WSManTransportManagerUtils.tmStartModes.None, "startMode is not in expected state");
-                    startMode = WSManTransportManagerUtils.tmStartModes.Create;
+                    Dbg.Assert(_startMode == WSManTransportManagerUtils.tmStartModes.None, "startMode is not in expected state");
+                    _startMode = WSManTransportManagerUtils.tmStartModes.Create;
 
-                    if (noMachineProfile)
+                    if (_noMachineProfile)
                     {
                         WSManNativeApi.WSManOption noProfile = new WSManNativeApi.WSManOption();
                         noProfile.name = WSManNativeApi.NoProfile;
@@ -1170,29 +1167,29 @@ namespace System.Management.Automation.Remoting.Client
                         shellOptions.Add(noProfile);
                     }
 
-                    int flags = noCompression ? (int)WSManNativeApi.WSManShellFlag.WSMAN_FLAG_NO_COMPRESSION : 0;
+                    int flags = _noCompression ? (int)WSManNativeApi.WSManShellFlag.WSMAN_FLAG_NO_COMPRESSION : 0;
                     flags |= (_connectionInfo.OutputBufferingMode == Runspaces.OutputBufferingMode.Block) ?
                                     (int)WSManNativeApi.WSManShellFlag.WSMAN_FLAG_SERVER_BUFFERING_MODE_BLOCK : 0;
-                    flags |= (_connectionInfo.OutputBufferingMode == Runspaces.OutputBufferingMode.Drop) ? 
+                    flags |= (_connectionInfo.OutputBufferingMode == Runspaces.OutputBufferingMode.Drop) ?
                                     (int)WSManNativeApi.WSManShellFlag.WSMAN_FLAG_SERVER_BUFFERING_MODE_DROP : 0;
 
                     using (WSManNativeApi.WSManOptionSet optionSet = new WSManNativeApi.WSManOptionSet(shellOptions.ToArray()))
                     {
-                        WSManNativeApi.WSManCreateShellEx(wsManSessionHandle,
+                        WSManNativeApi.WSManCreateShellEx(_wsManSessionHandle,
                             flags,
                             _connectionInfo.ShellUri,
                             RunspacePoolInstanceId.ToString().ToUpperInvariant(),
                             startupInfo,
                             optionSet,
-                            openContent,
-                            createSessionCallback,
-                            ref wsManShellOperationHandle);
+                            _openContent,
+                            _createSessionCallback,
+                            ref _wsManShellOperationHandle);
                     }
                 }
 
-                if (wsManShellOperationHandle == IntPtr.Zero)
+                if (_wsManShellOperationHandle == IntPtr.Zero)
                 {
-                    TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(wsManApiData.WSManAPIHandle,
+                    TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(_wsManApiData.WSManAPIHandle,
                         this,
                         new WSManNativeApi.WSManError(),
                         TransportMethodEnum.CreateShellEx,
@@ -1206,7 +1203,6 @@ namespace System.Management.Automation.Remoting.Client
             {
                 startupInfo.Dispose();
             }
-
         }
 
         /// <summary>
@@ -1223,15 +1219,15 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     return;
                 }
-                
-                if (startMode == WSManTransportManagerUtils.tmStartModes.None)
+
+                if (_startMode == WSManTransportManagerUtils.tmStartModes.None)
                 {
                     shouldRaiseCloseCompleted = true;
                 }
-                else if (startMode == WSManTransportManagerUtils.tmStartModes.Create ||
-                    startMode == WSManTransportManagerUtils.tmStartModes.Connect)
+                else if (_startMode == WSManTransportManagerUtils.tmStartModes.Create ||
+                    _startMode == WSManTransportManagerUtils.tmStartModes.Connect)
                 {
-                    if (IntPtr.Zero == wsManShellOperationHandle)
+                    if (IntPtr.Zero == _wsManShellOperationHandle)
                     {
                         shouldRaiseCloseCompleted = true;
                     }
@@ -1249,23 +1245,23 @@ namespace System.Management.Automation.Remoting.Client
 
             if (shouldRaiseCloseCompleted)
             {
-                try 
+                try
                 {
                     RaiseCloseCompleted();
                 }
                 finally
                 {
-                    RemoveSessionTransportManager(sessionContextID);
+                    RemoveSessionTransportManager(_sessionContextID);
                 }
                 return;
             }
 
             //TODO - On unexpected failures on a reconstructed session... we dont want to close server session
             PSEtwLog.LogAnalyticInformational(PSEventId.WSManCloseShell,
-                PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic, 
+                PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 RunspacePoolInstanceId.ToString());
-            closeSessionCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(sessionContextID), sessionCloseCallback);
-            WSManNativeApi.WSManCloseShell(wsManShellOperationHandle, 0, closeSessionCompleted);
+            _closeSessionCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(_sessionContextID), s_sessionCloseCallback);
+            WSManNativeApi.WSManCloseShell(_wsManShellOperationHandle, 0, _closeSessionCompleted);
         }
 
         /// <summary>
@@ -1280,20 +1276,20 @@ namespace System.Management.Automation.Remoting.Client
             if (serverProtocolVersion <= RemotingConstants.ProtocolVersionWin7RTM)
             {
                 int maxEnvSize;
-                WSManNativeApi.WSManGetSessionOptionAsDword(wsManSessionHandle,
+                WSManNativeApi.WSManGetSessionOptionAsDword(_wsManSessionHandle,
                     WSManNativeApi.WSManSessionOption.WSMAN_OPTION_MAX_ENVELOPE_SIZE_KB,
                     out maxEnvSize);
 
                 if (maxEnvSize == WSManNativeApi.WSMAN_DEFAULT_MAX_ENVELOPE_SIZE_KB_V3)
                 {
-                    int result = WSManNativeApi.WSManSetSessionOption(wsManSessionHandle,
+                    int result = WSManNativeApi.WSManSetSessionOption(_wsManSessionHandle,
                     WSManNativeApi.WSManSessionOption.WSMAN_OPTION_MAX_ENVELOPE_SIZE_KB,
                     new WSManNativeApi.WSManDataDWord(WSManNativeApi.WSMAN_DEFAULT_MAX_ENVELOPE_SIZE_KB_V2));
 
                     if (result != 0)
                     {
                         // Get the error message from WSMan
-                        string errorMessage = WSManNativeApi.WSManGetErrorMessage(wsManApiData.WSManAPIHandle, result);
+                        string errorMessage = WSManNativeApi.WSManGetErrorMessage(_wsManApiData.WSManAPIHandle, result);
 
                         PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
                         throw exception;
@@ -1301,7 +1297,7 @@ namespace System.Management.Automation.Remoting.Client
 
                     //retrieve the packet size again
                     int packetSize;
-                    WSManNativeApi.WSManGetSessionOptionAsDword(wsManSessionHandle,
+                    WSManNativeApi.WSManGetSessionOptionAsDword(_wsManSessionHandle,
                         WSManNativeApi.WSManSessionOption.WSMAN_OPTION_SHELL_MAX_DATA_SIZE_PER_MESSAGE_KB,
                         out packetSize);
                     // packet size returned is in KB. Convert this into bytes
@@ -1320,8 +1316,8 @@ namespace System.Management.Automation.Remoting.Client
         {
             Dbg.Assert(!isClosed, "Transport manager must not be closed while preparing for redirection.");
 
-            closeSessionCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(sessionContextID), sessionCloseCallback);
-            WSManNativeApi.WSManCloseShell(wsManShellOperationHandle, 0, closeSessionCompleted);
+            _closeSessionCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(_sessionContextID), s_sessionCloseCallback);
+            WSManNativeApi.WSManCloseShell(_wsManShellOperationHandle, 0, _closeSessionCompleted);
         }
 
         /// <summary>
@@ -1345,10 +1341,10 @@ namespace System.Management.Automation.Remoting.Client
                 RunspacePoolInstanceId.ToString(), newUri.ToString());
             Initialize(newUri, (WSManConnectionInfo)connectionInfo);
             //reset startmode
-            startMode = WSManTransportManagerUtils.tmStartModes.None;
+            _startMode = WSManTransportManagerUtils.tmStartModes.None;
             CreateAsync();
         }
-        
+
         /// <summary>
         /// Creates a command transport manager. This will create a new PrioritySendDataCollection which should be used to
         /// send data to the server.
@@ -1372,7 +1368,7 @@ namespace System.Management.Automation.Remoting.Client
             Dbg.Assert(null != wsmanConnectionInfo, "ConnectionInfo must be WSManConnectionInfo");
 
             WSManClientCommandTransportManager result = new
-                WSManClientCommandTransportManager(wsmanConnectionInfo, wsManShellOperationHandle, cmd, noInput, this);            
+                WSManClientCommandTransportManager(wsmanConnectionInfo, _wsManShellOperationHandle, cmd, noInput, this);
             return result;
         }
 
@@ -1392,8 +1388,8 @@ namespace System.Management.Automation.Remoting.Client
         {
             Dbg.Assert(null != connectionInfo, "connectionInfo cannot be null.");
 
-            this._connectionInfo = connectionInfo;
-            
+            _connectionInfo = connectionInfo;
+
             // this will generate: http://ComputerName:port/appname?PSVersion=<version>
             // PSVersion= pattern is needed to make Exchange compatible with PS V2 CTP3
             // release. Using the PSVersion= logic, Exchange R4 server will redirect
@@ -1427,7 +1423,7 @@ namespace System.Management.Automation.Remoting.Client
                     PSVersionInfo.PSVersion,
                     additionalUriSuffixString);
             }
-            else 
+            else
             {
                 // if there is already a query string, append using & .. see RFC 3986
                 connectionStr = string.Format(CultureInfo.InvariantCulture,
@@ -1470,7 +1466,7 @@ namespace System.Management.Automation.Remoting.Client
                 string userName = null;
                 System.Security.SecureString password = null;
 
-                switch(connectionInfo.ProxyAuthentication)
+                switch (connectionInfo.ProxyAuthentication)
                 {
                     case AuthenticationMechanism.Negotiate:
                         authMechanism = WSManNativeApi.WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_NEGOTIATE;
@@ -1498,13 +1494,13 @@ namespace System.Management.Automation.Remoting.Client
                 new WSManNativeApi.WSManProxyInfo(connectionInfo.ProxyAccessType, proxyAuthCredentials);
 
             int result = 0;
-            
+
             try
             {
-                result = WSManNativeApi.WSManCreateSession(wsManApiData.WSManAPIHandle, connectionStr, 0,
+                result = WSManNativeApi.WSManCreateSession(_wsManApiData.WSManAPIHandle, connectionStr, 0,
                      authCredentials.GetMarshalledObject(),
-                     (null == proxyInfo) ? IntPtr.Zero : (IntPtr) proxyInfo, 
-                     ref wsManSessionHandle);
+                     (null == proxyInfo) ? IntPtr.Zero : (IntPtr)proxyInfo,
+                     ref _wsManSessionHandle);
             }
             finally
             {
@@ -1528,7 +1524,7 @@ namespace System.Management.Automation.Remoting.Client
             if (result != 0)
             {
                 // Get the error message from WSMan
-                string errorMessage = WSManNativeApi.WSManGetErrorMessage(wsManApiData.WSManAPIHandle, result);
+                string errorMessage = WSManNativeApi.WSManGetErrorMessage(_wsManApiData.WSManAPIHandle, result);
 
                 PSInvalidOperationException exception = new PSInvalidOperationException(errorMessage);
                 throw exception;
@@ -1536,21 +1532,21 @@ namespace System.Management.Automation.Remoting.Client
 
             // set the packet size for this session
             int packetSize;
-            WSManNativeApi.WSManGetSessionOptionAsDword(wsManSessionHandle,
+            WSManNativeApi.WSManGetSessionOptionAsDword(_wsManSessionHandle,
                 WSManNativeApi.WSManSessionOption.WSMAN_OPTION_SHELL_MAX_DATA_SIZE_PER_MESSAGE_KB,
                 out packetSize);
             // packet size returned is in KB. Convert this into bytes..
             Fragmentor.FragmentSize = packetSize << 10;
 
             // Get robust connections maximum retries time.
-            WSManNativeApi.WSManGetSessionOptionAsDword(wsManSessionHandle,
+            WSManNativeApi.WSManGetSessionOptionAsDword(_wsManSessionHandle,
                 WSManNativeApi.WSManSessionOption.WSMAN_OPTION_MAX_RETRY_TIME,
-                out this.maxRetryTime);
+                out _maxRetryTime);
 
             this.dataToBeSent.Fragmentor = base.Fragmentor;
-            noCompression = !connectionInfo.UseCompression;
-            noMachineProfile = connectionInfo.NoMachineProfile;
-            
+            _noCompression = !connectionInfo.UseCompression;
+            _noMachineProfile = connectionInfo.NoMachineProfile;
+
             // set other WSMan session related defaults            
             if (isSSLSpecified)
             {
@@ -1567,7 +1563,7 @@ namespace System.Management.Automation.Remoting.Client
             // check if implicit credentials can be used for Negotiate
             if (connectionInfo.AllowImplicitCredentialForNegotiate)
             {
-                result = WSManNativeApi.WSManSetSessionOption(wsManSessionHandle,
+                result = WSManNativeApi.WSManSetSessionOption(_wsManSessionHandle,
                     WSManNativeApi.WSManSessionOption.WSMAN_OPTION_ALLOW_NEGOTIATE_IMPLICIT_CREDENTIALS,
                     new WSManNativeApi.WSManDataDWord(1));
             }
@@ -1631,7 +1627,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             EnqueueAndStartProcessingThread(null, eventArgs, null);
         }
-        
+
         /// <summary>
         /// Log the error message in the Crimson logger and raise error handler.
         /// </summary>
@@ -1686,17 +1682,17 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (shouldClearSend)
             {
-                if (null != sendToRemoteCompleted)
+                if (null != _sendToRemoteCompleted)
                 {
-                    sendToRemoteCompleted.Dispose();
-                    sendToRemoteCompleted = null;
+                    _sendToRemoteCompleted.Dispose();
+                    _sendToRemoteCompleted = null;
                 }
 
                 // For send..clear always
-                if (IntPtr.Zero != wsManSendOperationHandle)
+                if (IntPtr.Zero != _wsManSendOperationHandle)
                 {
-                    WSManNativeApi.WSManCloseOperation(wsManSendOperationHandle, 0);
-                    wsManSendOperationHandle = IntPtr.Zero;
+                    WSManNativeApi.WSManCloseOperation(_wsManSendOperationHandle, 0);
+                    _wsManSendOperationHandle = IntPtr.Zero;
                 }
             }
             else
@@ -1704,16 +1700,16 @@ namespace System.Management.Automation.Remoting.Client
                 // clearing for receive..Clear only when the end of operation is reached.
                 if (flags == (int)WSManNativeApi.WSManCallbackFlags.WSMAN_FLAG_CALLBACK_END_OF_OPERATION)
                 {
-                    if (IntPtr.Zero != wsManRecieveOperationHandle)
+                    if (IntPtr.Zero != _wsManRecieveOperationHandle)
                     {
-                        WSManNativeApi.WSManCloseOperation(wsManRecieveOperationHandle, 0);
-                        wsManRecieveOperationHandle = IntPtr.Zero;
+                        WSManNativeApi.WSManCloseOperation(_wsManRecieveOperationHandle, 0);
+                        _wsManRecieveOperationHandle = IntPtr.Zero;
                     }
 
-                    if (null != receivedFromRemote)
+                    if (null != _receivedFromRemote)
                     {
-                        receivedFromRemote.Dispose();
-                        receivedFromRemote = null;
+                        _receivedFromRemote.Dispose();
+                        _receivedFromRemote = null;
                     }
                 }
             }
@@ -1758,7 +1754,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         internal int MaxRetryConnectionTime
         {
-            get { return this.maxRetryTime; }
+            get { return _maxRetryTime; }
         }
 
         /// <summary>
@@ -1767,7 +1763,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         internal IntPtr SessionHandle
         {
-            get { return this.wsManSessionHandle;  }
+            get { return _wsManSessionHandle; }
         }
 
         /// <summary>
@@ -1775,7 +1771,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         internal WSManConnectionInfo ConnectionInfo
         {
-            get { return this._connectionInfo;  }
+            get { return _connectionInfo; }
         }
 
         /// <summary>
@@ -1837,7 +1833,7 @@ namespace System.Management.Automation.Remoting.Client
         private void StartCreateRetry(object state)
         {
             // Begin new session create attempt.
-            startMode = WSManTransportManagerUtils.tmStartModes.None;
+            _startMode = WSManTransportManagerUtils.tmStartModes.None;
             CreateAsync();
         }
 
@@ -1860,7 +1856,7 @@ namespace System.Management.Automation.Remoting.Client
             WSManClientSessionTransportManager sessionTM = null;
             if (!TryGetSessionTransportManager(operationContext, out sessionTM, out sessionTMHandle))
             {
-               // We dont have the session TM handle..just return.
+                // We dont have the session TM handle..just return.
                 tracer.WriteLine("Unable to find a transport manager for context {0}.", sessionTMHandle);
                 return;
             }
@@ -1881,7 +1877,7 @@ namespace System.Management.Automation.Remoting.Client
             // be called before WSManCreateShellEx returns. since we already validated the
             // shell context exists, safely assigning the shellOperationHandle to shell transport manager.
             // Remove this once WSMan fixes its code.
-            sessionTM.wsManShellOperationHandle = shellOperationHandle;
+            sessionTM._wsManShellOperationHandle = shellOperationHandle;
 
             lock (sessionTM.syncObject)
             {
@@ -1895,7 +1891,7 @@ namespace System.Management.Automation.Remoting.Client
             if (IntPtr.Zero != error)
             {
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
-                
+
                 if (errorStruct.errorCode != 0)
                 {
                     tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode, errorStruct.errorDetail);
@@ -1909,7 +1905,7 @@ namespace System.Management.Automation.Remoting.Client
                     }
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
-                        sessionTM.wsManApiData.WSManAPIHandle,
+                        sessionTM._wsManApiData.WSManAPIHandle,
                         sessionTM,
                         errorStruct,
                         TransportMethodEnum.CreateShellEx,
@@ -1922,15 +1918,15 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             //check if the session supports disconnect
-            sessionTM.supportsDisconnect = ((flags & (int)WSManNativeApi.WSManCallbackFlags.WSMAN_FLAG_CALLBACK_SHELL_SUPPORTS_DISCONNECT) != 0) ? true : false;
+            sessionTM._supportsDisconnect = ((flags & (int)WSManNativeApi.WSManCallbackFlags.WSMAN_FLAG_CALLBACK_SHELL_SUPPORTS_DISCONNECT) != 0) ? true : false;
 
             // openContent is used by redirection ie., while redirecting to 
             // a new machine.. this is not needed anymore as the connection
             // is successfully established.
-            if (null != sessionTM.openContent)
+            if (null != sessionTM._openContent)
             {
-                sessionTM.openContent.Dispose();
-                sessionTM.openContent = null;
+                sessionTM._openContent.Dispose();
+                sessionTM._openContent = null;
             }
 
             if (data != IntPtr.Zero)
@@ -1998,7 +1994,7 @@ namespace System.Management.Automation.Remoting.Client
                     tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode, errorStruct.errorDetail);
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
-                        sessionTM.wsManApiData.WSManAPIHandle,
+                        sessionTM._wsManApiData.WSManAPIHandle,
                         sessionTM,
                         errorStruct,
                         TransportMethodEnum.CloseShellOperationEx,
@@ -2035,10 +2031,10 @@ namespace System.Management.Automation.Remoting.Client
             //LOG ETW EVENTS
 
             // Dispose the OnDisconnect callback as it is not needed anymore
-            if (null != sessionTM.disconnectSessionCompleted)
+            if (null != sessionTM._disconnectSessionCompleted)
             {
-                sessionTM.disconnectSessionCompleted.Dispose();
-                sessionTM.disconnectSessionCompleted = null;
+                sessionTM._disconnectSessionCompleted.Dispose();
+                sessionTM._disconnectSessionCompleted = null;
             }
 
             if (IntPtr.Zero != error)
@@ -2050,7 +2046,7 @@ namespace System.Management.Automation.Remoting.Client
                     tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode, errorStruct.errorDetail);
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
-                        sessionTM.wsManApiData.WSManAPIHandle,
+                        sessionTM._wsManApiData.WSManAPIHandle,
                         sessionTM,
                         errorStruct,
                         TransportMethodEnum.DisconnectShellEx,
@@ -2077,7 +2073,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 //Log ETW traces                
             }
-            
+
             return;
         }
 
@@ -2103,10 +2099,10 @@ namespace System.Management.Automation.Remoting.Client
             //Add ETW events
 
             // Dispose the OnCreate callback as it is not needed anymore
-            if (null != sessionTM.reconnectSessionCompleted)
+            if (null != sessionTM._reconnectSessionCompleted)
             {
-                sessionTM.reconnectSessionCompleted.Dispose();
-                sessionTM.reconnectSessionCompleted = null;
+                sessionTM._reconnectSessionCompleted.Dispose();
+                sessionTM._reconnectSessionCompleted = null;
             }
 
             if (IntPtr.Zero != error)
@@ -2118,7 +2114,7 @@ namespace System.Management.Automation.Remoting.Client
                     tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode, errorStruct.errorDetail);
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
-                        sessionTM.wsManApiData.WSManAPIHandle,
+                        sessionTM._wsManApiData.WSManAPIHandle,
                         sessionTM,
                         errorStruct,
                         TransportMethodEnum.ReconnectShellEx,
@@ -2221,7 +2217,7 @@ namespace System.Management.Automation.Remoting.Client
                     tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode, errorStruct.errorDetail);
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
-                        sessionTM.wsManApiData.WSManAPIHandle,
+                        sessionTM._wsManApiData.WSManAPIHandle,
                         sessionTM,
                         errorStruct,
                         TransportMethodEnum.ConnectShellEx,
@@ -2234,10 +2230,10 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             //dispose openContent
-            if (null != sessionTM.openContent)
+            if (null != sessionTM._openContent)
             {
-                sessionTM.openContent.Dispose();
-                sessionTM.openContent = null;
+                sessionTM._openContent.Dispose();
+                sessionTM._openContent = null;
             }
 
             lock (sessionTM.syncObject)
@@ -2247,7 +2243,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     tracer.WriteLine("Client Session TM: Transport manager is closed. So returning");
                     return;
-                }                
+                }
             }
 
             //process returned Xml
@@ -2261,7 +2257,7 @@ namespace System.Management.Automation.Remoting.Client
 
             // Set up the data-to-send callback.
             sessionTM.SendOneItem();
-            
+
             // successfully made a connection. Now report this by raising the ConnectCompleted event.
             // Microsoft's PS 3.0 Server will return all negotiation related data in one shot in connect Data
             // Note that we are not starting to receive data yet. the DSHandlers above will do that when the session
@@ -2293,7 +2289,7 @@ namespace System.Management.Automation.Remoting.Client
                 PSOpcode.Connect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 sessionTM.RunspacePoolInstanceId.ToString(), Guid.Empty.ToString());
 
-            if (!shellOperationHandle.Equals(sessionTM.wsManShellOperationHandle))
+            if (!shellOperationHandle.Equals(sessionTM._wsManShellOperationHandle))
             {
                 // WSMan returned data from a wrong shell..notify the caller
                 // about the same.
@@ -2327,7 +2323,7 @@ namespace System.Management.Automation.Remoting.Client
                     tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode, errorStruct.errorDetail);
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
-                        sessionTM.wsManApiData.WSManAPIHandle,
+                        sessionTM._wsManApiData.WSManAPIHandle,
                         sessionTM,
                         errorStruct,
                         TransportMethodEnum.SendShellInputEx,
@@ -2341,7 +2337,7 @@ namespace System.Management.Automation.Remoting.Client
 
             // Send the next item, if available
             sessionTM.SendOneItem();
-        }        
+        }
 
         // WSMan will make sure this callback is synchronously called ie., if 1 callback
         // is active, the callback will not be called from a different thread.
@@ -2372,7 +2368,7 @@ namespace System.Management.Automation.Remoting.Client
                 return;
             }
 
-            if (!shellOperationHandle.Equals(sessionTM.wsManShellOperationHandle))
+            if (!shellOperationHandle.Equals(sessionTM._wsManShellOperationHandle))
             {
                 // WSMan returned data from a wrong shell..notify the caller
                 // about the same.
@@ -2394,7 +2390,7 @@ namespace System.Management.Automation.Remoting.Client
                     tracer.WriteLine("Got error with error code {0}. Message {1}", errorStruct.errorCode, errorStruct.errorDetail);
 
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
-                        sessionTM.wsManApiData.WSManAPIHandle,
+                        sessionTM._wsManApiData.WSManAPIHandle,
                         sessionTM,
                         errorStruct,
                         TransportMethodEnum.ReceiveShellOutputEx,
@@ -2411,10 +2407,10 @@ namespace System.Management.Automation.Remoting.Client
             {
                 tracer.WriteLine("Session Received Data : {0}", dataReceived.data.Length);
                 PSEtwLog.LogAnalyticInformational(
-                    PSEventId.WSManReceiveShellOutputExCallbackReceived, PSOpcode.Receive, PSTask.None, 
+                    PSEventId.WSManReceiveShellOutputExCallbackReceived, PSOpcode.Receive, PSTask.None,
                     PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
-                    sessionTM.RunspacePoolInstanceId.ToString(), 
-                    Guid.Empty.ToString(), 
+                    sessionTM.RunspacePoolInstanceId.ToString(),
+                    Guid.Empty.ToString(),
                     dataReceived.data.Length.ToString(CultureInfo.InvariantCulture));
                 sessionTM.ProcessRawData(dataReceived.data, dataReceived.stream);
             }
@@ -2428,7 +2424,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             DataPriorityType priorityType;
             // This will either return data or register callback but doesn't do both.
-            byte[] data = dataToBeSent.ReadOrRegisterCallback(onDataAvailableToSendCallback,
+            byte[] data = dataToBeSent.ReadOrRegisterCallback(_onDataAvailableToSendCallback,
                 out priorityType);
             if (null != data)
             {
@@ -2453,10 +2449,10 @@ namespace System.Management.Automation.Remoting.Client
 
             bool sendContinue = true;
 
-            if (sessionSendRedirect != null)
+            if (s_sessionSendRedirect != null)
             {
                 object[] arguments = new object[2] { null, package };
-                sendContinue = (bool)sessionSendRedirect.DynamicInvoke(arguments);
+                sendContinue = (bool)s_sessionSendRedirect.DynamicInvoke(arguments);
                 package = (byte[])arguments[0];
             }
 
@@ -2471,8 +2467,8 @@ namespace System.Management.Automation.Remoting.Client
                 PSEtwLog.LogAnalyticInformational(
                     PSEventId.WSManSendShellInputEx, PSOpcode.Send, PSTask.None,
                     PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
-                    RunspacePoolInstanceId.ToString(), 
-                    Guid.Empty.ToString(), 
+                    RunspacePoolInstanceId.ToString(),
+                    Guid.Empty.ToString(),
                     serializedContent.BufferLength.ToString(CultureInfo.InvariantCulture));
 
                 lock (syncObject)
@@ -2485,13 +2481,13 @@ namespace System.Management.Automation.Remoting.Client
                     }
 
                     // send callback
-                    sendToRemoteCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(sessionContextID), sessionSendCallback);
-                    WSManNativeApi.WSManSendShellInputEx(wsManShellOperationHandle, IntPtr.Zero, 0,
-                        priorityType == DataPriorityType.Default ? 
-                            WSManNativeApi.WSMAN_STREAM_ID_STDIN : WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE, 
-                        serializedContent, 
-                        sendToRemoteCompleted, 
-                        ref wsManSendOperationHandle);
+                    _sendToRemoteCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(_sessionContextID), s_sessionSendCallback);
+                    WSManNativeApi.WSManSendShellInputEx(_wsManShellOperationHandle, IntPtr.Zero, 0,
+                        priorityType == DataPriorityType.Default ?
+                            WSManNativeApi.WSMAN_STREAM_ID_STDIN : WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE,
+                        serializedContent,
+                        _sendToRemoteCompleted,
+                        ref _wsManSendOperationHandle);
                 }
             }
         }
@@ -2503,7 +2499,7 @@ namespace System.Management.Automation.Remoting.Client
         [SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed")]
         internal override void Dispose(bool isDisposing)
         {
-            tracer.WriteLine("Disposing session with session context: {0} Operation Context: {1}", sessionContextID, wsManShellOperationHandle);
+            tracer.WriteLine("Disposing session with session context: {0} Operation Context: {1}", _sessionContextID, _wsManShellOperationHandle);
 
             CloseSessionAndClearResources();
 
@@ -2512,10 +2508,10 @@ namespace System.Management.Automation.Remoting.Client
             // openContent is used by redirection ie., while redirecting to 
             // a new machine and hence this is cleared only when the session
             // is disposing.
-            if (isDisposing && (null != openContent))
+            if (isDisposing && (null != _openContent))
             {
-                openContent.Dispose();
-                openContent = null;
+                _openContent.Dispose();
+                _openContent = null;
             }
 
             base.Dispose(isDisposing);
@@ -2527,18 +2523,18 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         private void CloseSessionAndClearResources()
         {
-            tracer.WriteLine("Clearing session with session context: {0} Operation Context: {1}", sessionContextID, wsManShellOperationHandle);
+            tracer.WriteLine("Clearing session with session context: {0} Operation Context: {1}", _sessionContextID, _wsManShellOperationHandle);
 
             // Taking a copy of session handle as we should call WSManCloseSession only once and 
             // clear the original value. This will protect us if Dispose() is called twice.
-            IntPtr tempWSManSessionHandle = wsManSessionHandle;
-            wsManSessionHandle = IntPtr.Zero;
+            IntPtr tempWSManSessionHandle = _wsManSessionHandle;
+            _wsManSessionHandle = IntPtr.Zero;
             // Call WSManCloseSession on a different thread as Dispose can be called from one of
             // the WSMan callback threads. WSMan does not support closing a session in the callbacks.
             ThreadPool.QueueUserWorkItem(new WaitCallback(
                 // wsManSessionHandle is passed as parameter to allow the thread to be independent
                 // of the rest of the parent object.
-                delegate(object state)
+                delegate (object state)
                 {
                     IntPtr sessionHandle = (IntPtr)state;
                     if (sessionHandle != IntPtr.Zero)
@@ -2548,41 +2544,41 @@ namespace System.Management.Automation.Remoting.Client
                 }), tempWSManSessionHandle);
 
             // remove session context from session handles dictionary
-            RemoveSessionTransportManager(sessionContextID);
+            RemoveSessionTransportManager(_sessionContextID);
 
-            if (null != closeSessionCompleted)
+            if (null != _closeSessionCompleted)
             {
-                closeSessionCompleted.Dispose();
-                closeSessionCompleted = null;
+                _closeSessionCompleted.Dispose();
+                _closeSessionCompleted = null;
             }
 
             // Dispose the create session completed callback here, since it is 
             // used for periodic robust connection retry/auto-disconnect 
             // notifications while the shell is active.
-            if (null != createSessionCallback)
+            if (null != _createSessionCallback)
             {
-                createSessionCallbackGCHandle.Free();
-                createSessionCallback.Dispose();
-                createSessionCallback = null;
+                _createSessionCallbackGCHandle.Free();
+                _createSessionCallback.Dispose();
+                _createSessionCallback = null;
             }
 
             // Dispose the OnConnect callback if one present
-            if (null != connectSessionCallback)
+            if (null != _connectSessionCallback)
             {
-                connectSessionCallback.Dispose();
-                connectSessionCallback = null;
+                _connectSessionCallback.Dispose();
+                _connectSessionCallback = null;
             }
 
             // Reset the session context Id to zero so that a new one will be generated for 
             // any following redirected session.
-            sessionContextID = 0;
+            _sessionContextID = 0;
         }
 
         private void DisposeWSManAPIDataAsync()
         {
-            WSManAPIDataCommon tempWSManApiData = wsManApiData;
+            WSManAPIDataCommon tempWSManApiData = _wsManApiData;
             if (tempWSManApiData == null) { return; }
-            wsManApiData = null;
+            _wsManApiData = null;
 
             // Dispose and de-initialize the WSManAPIData instance object on separate worker thread to ensure 
             // it is not run on a WinRM thread (which will fail).
@@ -2605,15 +2601,15 @@ namespace System.Management.Automation.Remoting.Client
         internal class WSManAPIDataCommon : IDisposable
         {
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
-            private IntPtr handle;
+            private IntPtr _handle;
             // if any
-            private int errorCode;
-            private WSManNativeApi.WSManStreamIDSet_ManToUn inputStreamSet;
-            private WSManNativeApi.WSManStreamIDSet_ManToUn outputStreamSet;
-            private List<WSManNativeApi.WSManOption> commonOptionSet;
+            private int _errorCode;
+            private WSManNativeApi.WSManStreamIDSet_ManToUn _inputStreamSet;
+            private WSManNativeApi.WSManStreamIDSet_ManToUn _outputStreamSet;
+            private List<WSManNativeApi.WSManOption> _commonOptionSet;
             // Dispose
-            private bool isDisposed;
-            private object syncObject = new object();
+            private bool _isDisposed;
+            private object _syncObject = new object();
 #if !CORECLR
             private WindowsIdentity _identityToImpersonate;
 #endif
@@ -2630,17 +2626,17 @@ namespace System.Management.Automation.Remoting.Client
                     _identityToImpersonate : null;
 #endif
 
-                handle = IntPtr.Zero;
-                errorCode = WSManNativeApi.WSManInitialize(WSManNativeApi.WSMAN_FLAG_REQUESTED_API_VERSION_1_1, ref handle);
+                _handle = IntPtr.Zero;
+                _errorCode = WSManNativeApi.WSManInitialize(WSManNativeApi.WSMAN_FLAG_REQUESTED_API_VERSION_1_1, ref _handle);
 
                 // input / output streams common to all connections
-                inputStreamSet = new WSManNativeApi.WSManStreamIDSet_ManToUn(
-                    new string[] { 
-                        WSManNativeApi.WSMAN_STREAM_ID_STDIN, 
-                        WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE 
+                _inputStreamSet = new WSManNativeApi.WSManStreamIDSet_ManToUn(
+                    new string[] {
+                        WSManNativeApi.WSMAN_STREAM_ID_STDIN,
+                        WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE
                     });
-                outputStreamSet = new WSManNativeApi.WSManStreamIDSet_ManToUn(
-                    new string[] { WSManNativeApi.WSMAN_STREAM_ID_STDOUT} );
+                _outputStreamSet = new WSManNativeApi.WSManStreamIDSet_ManToUn(
+                    new string[] { WSManNativeApi.WSMAN_STREAM_ID_STDOUT });
 
 
                 // startup options common to all connections
@@ -2649,15 +2645,15 @@ namespace System.Management.Automation.Remoting.Client
                 protocolStartupOption.value = RemotingConstants.ProtocolVersion.ToString();
                 protocolStartupOption.mustComply = true;
 
-                commonOptionSet = new List<WSManNativeApi.WSManOption>();
-                commonOptionSet.Add(protocolStartupOption);
+                _commonOptionSet = new List<WSManNativeApi.WSManOption>();
+                _commonOptionSet.Add(protocolStartupOption);
             }
 
-            internal int ErrorCode { get { return errorCode; } }
-            internal WSManNativeApi.WSManStreamIDSet_ManToUn InputStreamSet { get { return inputStreamSet; } }
-            internal WSManNativeApi.WSManStreamIDSet_ManToUn OutputStreamSet { get { return outputStreamSet; } }
-            internal List<WSManNativeApi.WSManOption> CommonOptionSet { get { return commonOptionSet; } }
-            internal IntPtr WSManAPIHandle { get { return handle; } }
+            internal int ErrorCode { get { return _errorCode; } }
+            internal WSManNativeApi.WSManStreamIDSet_ManToUn InputStreamSet { get { return _inputStreamSet; } }
+            internal WSManNativeApi.WSManStreamIDSet_ManToUn OutputStreamSet { get { return _outputStreamSet; } }
+            internal List<WSManNativeApi.WSManOption> CommonOptionSet { get { return _commonOptionSet; } }
+            internal IntPtr WSManAPIHandle { get { return _handle; } }
 
             /// <summary>
             /// Dispose
@@ -2668,16 +2664,16 @@ namespace System.Management.Automation.Remoting.Client
             [SuppressMessage("Microsoft.Usage", "CA2216:Disposabletypesshoulddeclarefinalizer")]
             public void Dispose()
             {
-                lock (syncObject)
+                lock (_syncObject)
                 {
-                    if (isDisposed) { return; }
-                    isDisposed = true;
+                    if (_isDisposed) { return; }
+                    _isDisposed = true;
                 }
 
-                inputStreamSet.Dispose();
-                outputStreamSet.Dispose();
+                _inputStreamSet.Dispose();
+                _outputStreamSet.Dispose();
 
-                if (IntPtr.Zero != handle)
+                if (IntPtr.Zero != _handle)
                 {
 #if !CORECLR
                     // If we initialized with thread impersonation make sure de-initialize is run with same.
@@ -2686,11 +2682,11 @@ namespace System.Management.Automation.Remoting.Client
                     {
                         try
                         {
-                            _identityToImpersonate.Impersonate() ;
+                            _identityToImpersonate.Impersonate();
                         }
                         catch (ObjectDisposedException)
                         {
-                            handle = IntPtr.Zero;
+                            _handle = IntPtr.Zero;
                             return;
                         }
                     }
@@ -2698,8 +2694,8 @@ namespace System.Management.Automation.Remoting.Client
                     try
                     {
 #endif
-                        int result = WSManNativeApi.WSManDeinitialize(handle, 0);
-                        Dbg.Assert(result == 0, "WSManDeinitialize returned non-zero value");
+                    int result = WSManNativeApi.WSManDeinitialize(_handle, 0);
+                    Dbg.Assert(result == 0, "WSManDeinitialize returned non-zero value");
 #if !CORECLR
                     }
                     finally
@@ -2715,7 +2711,7 @@ namespace System.Management.Automation.Remoting.Client
                         }
                     }
 #endif
-                    handle = IntPtr.Zero;
+                    _handle = IntPtr.Zero;
                 }
             }
         }
@@ -2747,62 +2743,61 @@ namespace System.Management.Automation.Remoting.Client
         #region Private Data
 
         // operation handles
-        private IntPtr wsManShellOperationHandle;
+        private IntPtr _wsManShellOperationHandle;
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
-        private IntPtr wsManCmdOperationHandle;
+        private IntPtr _wsManCmdOperationHandle;
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
-        private IntPtr cmdSignalOperationHandle;
+        private IntPtr _cmdSignalOperationHandle;
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
-        private IntPtr wsManRecieveOperationHandle;
+        private IntPtr _wsManRecieveOperationHandle;
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
-        private IntPtr wsManSendOperationHandle;
+        private IntPtr _wsManSendOperationHandle;
         // this is used with WSMan callbacks to represent a command transport manager.
-        private long cmdContextId;
-        
-        private PrioritySendDataCollection.OnDataAvailableCallback onDataAvailableToSendCallback;
+        private long _cmdContextId;
+
+        private PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
 
         // should be integrated with receiveDataInitiated
-        private bool shouldStartReceivingData;
+        private bool _shouldStartReceivingData;
 
         // bools used to track and send stop signal only after Create is completed.
-        private bool isCreateCallbackReceived;
-        private bool isStopSignalPending;
-        private bool isDisconnectPending;
-        private bool isSendingInput;
-        private bool isDisconnectedOnInvoke;
+        private bool _isCreateCallbackReceived;
+        private bool _isStopSignalPending;
+        private bool _isDisconnectPending;
+        private bool _isSendingInput;
+        private bool _isDisconnectedOnInvoke;
 
         // callbacks
-        private WSManNativeApi.WSManShellAsync createCmdCompleted;
-        private WSManNativeApi.WSManShellAsync receivedFromRemote;
-        private WSManNativeApi.WSManShellAsync sendToRemoteCompleted;
-        private WSManNativeApi.WSManShellAsync reconnectCmdCompleted;
-        private WSManNativeApi.WSManShellAsync connectCmdCompleted;
+        private WSManNativeApi.WSManShellAsync _createCmdCompleted;
+        private WSManNativeApi.WSManShellAsync _receivedFromRemote;
+        private WSManNativeApi.WSManShellAsync _sendToRemoteCompleted;
+        private WSManNativeApi.WSManShellAsync _reconnectCmdCompleted;
+        private WSManNativeApi.WSManShellAsync _connectCmdCompleted;
         // TODO: This GCHandle is required as it seems WSMan is calling create callback
         // after we call Close. This seems wrong. Opened bug on WSMan to track this.
-        private GCHandle createCmdCompletedGCHandle;
-        private WSManNativeApi.WSManShellAsync closeCmdCompleted;
-        private WSManNativeApi.WSManShellAsync signalCmdCompleted;
+        private GCHandle _createCmdCompletedGCHandle;
+        private WSManNativeApi.WSManShellAsync _closeCmdCompleted;
+        private WSManNativeApi.WSManShellAsync _signalCmdCompleted;
         // this is the chunk that got delivered on onDataAvailableToSendCallback
         // will be sent during subsequent SendOneItem()
-        private SendDataChunk chunkToSend;
+        private SendDataChunk _chunkToSend;
 
-        private string cmdLine;
+        private string _cmdLine;
         private readonly WSManClientSessionTransportManager _sessnTm;
 
         private class SendDataChunk
         {
-
             public SendDataChunk(byte[] data, DataPriorityType type)
             {
-                this.data = data;
-                this.type = type;
+                _data = data;
+                _type = type;
             }
 
             public byte[] Data
             {
                 get
                 {
-                    return data;
+                    return _data;
                 }
             }
 
@@ -2810,12 +2805,12 @@ namespace System.Management.Automation.Remoting.Client
             {
                 get
                 {
-                    return type;
+                    return _type;
                 }
             }
-                 
-            private byte[] data;
-            private DataPriorityType type;
+
+            private byte[] _data;
+            private DataPriorityType _type;
         }
 
         #endregion
@@ -2823,44 +2818,44 @@ namespace System.Management.Automation.Remoting.Client
         #region Static Data
 
         // static callback delegate
-        private static WSManNativeApi.WSManShellAsyncCallback cmdCreateCallback;
-        private static WSManNativeApi.WSManShellAsyncCallback cmdCloseCallback;
-        private static WSManNativeApi.WSManShellAsyncCallback cmdReceiveCallback;
-        private static WSManNativeApi.WSManShellAsyncCallback cmdSendCallback;
-        private static WSManNativeApi.WSManShellAsyncCallback cmdSignalCallback;
-        private static WSManNativeApi.WSManShellAsyncCallback cmdReconnectCallback;
-        private static WSManNativeApi.WSManShellAsyncCallback cmdConnectCallback;
+        private static WSManNativeApi.WSManShellAsyncCallback s_cmdCreateCallback;
+        private static WSManNativeApi.WSManShellAsyncCallback s_cmdCloseCallback;
+        private static WSManNativeApi.WSManShellAsyncCallback s_cmdReceiveCallback;
+        private static WSManNativeApi.WSManShellAsyncCallback s_cmdSendCallback;
+        private static WSManNativeApi.WSManShellAsyncCallback s_cmdSignalCallback;
+        private static WSManNativeApi.WSManShellAsyncCallback s_cmdReconnectCallback;
+        private static WSManNativeApi.WSManShellAsyncCallback s_cmdConnectCallback;
 
         static WSManClientCommandTransportManager()
         {
             // Initialize callback delegates
             WSManNativeApi.WSManShellCompletionFunction createDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnCreateCmdCompleted);
-            cmdCreateCallback = new WSManNativeApi.WSManShellAsyncCallback(createDelegate);
+            s_cmdCreateCallback = new WSManNativeApi.WSManShellAsyncCallback(createDelegate);
 
             WSManNativeApi.WSManShellCompletionFunction closeDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnCloseCmdCompleted);
-            cmdCloseCallback = new WSManNativeApi.WSManShellAsyncCallback(closeDelegate);
+            s_cmdCloseCallback = new WSManNativeApi.WSManShellAsyncCallback(closeDelegate);
 
             WSManNativeApi.WSManShellCompletionFunction receiveDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnRemoteCmdDataReceived);
-            cmdReceiveCallback = new WSManNativeApi.WSManShellAsyncCallback(receiveDelegate);
+            s_cmdReceiveCallback = new WSManNativeApi.WSManShellAsyncCallback(receiveDelegate);
 
             WSManNativeApi.WSManShellCompletionFunction sendDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnRemoteCmdSendCompleted);
-            cmdSendCallback = new WSManNativeApi.WSManShellAsyncCallback(sendDelegate);
+            s_cmdSendCallback = new WSManNativeApi.WSManShellAsyncCallback(sendDelegate);
 
             WSManNativeApi.WSManShellCompletionFunction signalDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnRemoteCmdSignalCompleted);
-            cmdSignalCallback = new WSManNativeApi.WSManShellAsyncCallback(signalDelegate);
+            s_cmdSignalCallback = new WSManNativeApi.WSManShellAsyncCallback(signalDelegate);
 
             WSManNativeApi.WSManShellCompletionFunction reconnectDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnReconnectCmdCompleted);
-            cmdReconnectCallback = new WSManNativeApi.WSManShellAsyncCallback(reconnectDelegate);
+            s_cmdReconnectCallback = new WSManNativeApi.WSManShellAsyncCallback(reconnectDelegate);
 
             WSManNativeApi.WSManShellCompletionFunction connectDelegate =
                 new WSManNativeApi.WSManShellCompletionFunction(OnConnectCmdCompleted);
-            cmdConnectCallback = new WSManNativeApi.WSManShellAsyncCallback(connectDelegate);
+            s_cmdConnectCallback = new WSManNativeApi.WSManShellAsyncCallback(connectDelegate);
         }
 
         #endregion
@@ -2897,17 +2892,17 @@ namespace System.Management.Automation.Remoting.Client
             Dbg.Assert(IntPtr.Zero != wsManShellOperationHandle, "Shell operation handle cannot be IntPtr.Zero.");
             Dbg.Assert(null != connectionInfo, "connectionInfo cannot be null");
 
-            this.wsManShellOperationHandle = wsManShellOperationHandle;
-           
+            _wsManShellOperationHandle = wsManShellOperationHandle;
+
             // Apply quota limits.. allow for data to be unlimited..
             ReceivedDataCollection.MaximumReceivedDataSize = connectionInfo.MaximumReceivedDataSizePerCommand;
             ReceivedDataCollection.MaximumReceivedObjectSize = connectionInfo.MaximumReceivedObjectSize;
-            cmdLine = shell.PowerShell.Commands.Commands.GetCommandStringForHistory();
-            onDataAvailableToSendCallback =
+            _cmdLine = shell.PowerShell.Commands.Commands.GetCommandStringForHistory();
+            _onDataAvailableToSendCallback =
                 new PrioritySendDataCollection.OnDataAvailableCallback(OnDataAvailableCallback);
             _sessnTm = sessnTM;
             // Suspend queue on robust connections initiated event.
-            sessnTM.RobustConnectionsInitiated  += HandleRobustConnectionsIntiated;
+            sessnTM.RobustConnectionsInitiated += HandleRobustConnectionsIntiated;
 
             // Resume queue on robust connections completed event.
             sessnTM.RobustConnectionsCompleted += HandleRobusConnectionsCompleted;
@@ -2917,7 +2912,7 @@ namespace System.Management.Automation.Remoting.Client
 
         #region SHIM: Redirection delegate for command code send.
 
-        private static Delegate commandCodeSendRedirect = null;
+        private static Delegate s_commandCodeSendRedirect = null;
 
         #endregion
 
@@ -2949,12 +2944,12 @@ namespace System.Management.Automation.Remoting.Client
             serializedPipeline.Read();
 
             // create cmdContextId
-            cmdContextId = GetNextCmdTMHandleId();
-            AddCmdTransportManager(cmdContextId, this);
+            _cmdContextId = GetNextCmdTMHandleId();
+            AddCmdTransportManager(_cmdContextId, this);
 
             // Create Callback
-            connectCmdCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(cmdContextId), cmdConnectCallback);
-            reconnectCmdCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(cmdContextId), cmdReconnectCallback);
+            _connectCmdCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(_cmdContextId), s_cmdConnectCallback);
+            _reconnectCmdCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(_cmdContextId), s_cmdReconnectCallback);
             lock (syncObject)
             {
                 if (isClosed)
@@ -2964,16 +2959,16 @@ namespace System.Management.Automation.Remoting.Client
                     return;
                 }
 
-                WSManNativeApi.WSManConnectShellCommandEx(wsManShellOperationHandle,
+                WSManNativeApi.WSManConnectShellCommandEx(_wsManShellOperationHandle,
                     0,
                     PowershellInstanceId.ToString().ToUpperInvariant(),
                     IntPtr.Zero,
                     IntPtr.Zero,
-                    connectCmdCompleted,
-                    ref wsManCmdOperationHandle);
+                    _connectCmdCompleted,
+                    ref _wsManCmdOperationHandle);
             }
 
-            if (wsManCmdOperationHandle == IntPtr.Zero)
+            if (_wsManCmdOperationHandle == IntPtr.Zero)
             {
                 PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.RunShellCommandExFailed);
                 TransportErrorOccuredEventArgs eventargs =
@@ -2998,10 +2993,10 @@ namespace System.Management.Automation.Remoting.Client
 
                 bool sendContinue = true;
 
-                if (commandCodeSendRedirect != null)
+                if (s_commandCodeSendRedirect != null)
                 {
                     object[] arguments = new object[2] { null, cmdPart1 };
-                    sendContinue = (bool)commandCodeSendRedirect.DynamicInvoke(arguments);
+                    sendContinue = (bool)s_commandCodeSendRedirect.DynamicInvoke(arguments);
                     cmdPart1 = (byte[])arguments[0];
                 }
 
@@ -3013,16 +3008,16 @@ namespace System.Management.Automation.Remoting.Client
                 WSManNativeApi.WSManCommandArgSet argSet = new WSManNativeApi.WSManCommandArgSet(cmdPart1);
 
                 // create cmdContextId
-                cmdContextId = GetNextCmdTMHandleId();
-                AddCmdTransportManager(cmdContextId, this);
-                
+                _cmdContextId = GetNextCmdTMHandleId();
+                AddCmdTransportManager(_cmdContextId, this);
+
                 PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateCommand, PSOpcode.Connect,
                                 PSTask.CreateRunspace, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                                 RunspacePoolInstanceId.ToString(), powershellInstanceId.ToString());
-                
-                createCmdCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(cmdContextId), cmdCreateCallback);
-                createCmdCompletedGCHandle = GCHandle.Alloc(createCmdCompleted);
-                reconnectCmdCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(cmdContextId), cmdReconnectCallback);
+
+                _createCmdCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(_cmdContextId), s_cmdCreateCallback);
+                _createCmdCompletedGCHandle = GCHandle.Alloc(_createCmdCompleted);
+                _reconnectCmdCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(_cmdContextId), s_cmdReconnectCallback);
 
                 using (argSet)
                 {
@@ -3030,23 +3025,23 @@ namespace System.Management.Automation.Remoting.Client
                     {
                         if (!isClosed)
                         {
-                            WSManNativeApi.WSManRunShellCommandEx(wsManShellOperationHandle,
+                            WSManNativeApi.WSManRunShellCommandEx(_wsManShellOperationHandle,
                                 0,
                                 PowershellInstanceId.ToString().ToUpperInvariant(),
                                 // WSManRunsShellCommand doesn't accept empty string "".
-                                (cmdLine == null || cmdLine.Length==0)? " ": (cmdLine.Length <= 256? cmdLine : cmdLine.Substring(0, 255)),
+                                (_cmdLine == null || _cmdLine.Length == 0) ? " " : (_cmdLine.Length <= 256 ? _cmdLine : _cmdLine.Substring(0, 255)),
                                 argSet,
                                 IntPtr.Zero,
-                                createCmdCompleted,
-                                ref wsManCmdOperationHandle);
+                                _createCmdCompleted,
+                                ref _wsManCmdOperationHandle);
 
-                            tracer.WriteLine("Started cmd with command context : {0} Operation context: {1}", cmdContextId, wsManCmdOperationHandle);
+                            tracer.WriteLine("Started cmd with command context : {0} Operation context: {1}", _cmdContextId, _wsManCmdOperationHandle);
                         }
                     }
                 }
             }
 
-            if (wsManCmdOperationHandle == IntPtr.Zero)
+            if (_wsManCmdOperationHandle == IntPtr.Zero)
             {
                 PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.RunShellCommandExFailed);
                 TransportErrorOccuredEventArgs eventargs =
@@ -3069,7 +3064,7 @@ namespace System.Management.Automation.Remoting.Client
                     return;
                 }
 
-                WSManNativeApi.WSManReconnectShellCommandEx(wsManCmdOperationHandle, 0, reconnectCmdCompleted);                
+                WSManNativeApi.WSManReconnectShellCommandEx(_wsManCmdOperationHandle, 0, _reconnectCmdCompleted);
             }
         }
         /// <summary>
@@ -3087,22 +3082,22 @@ namespace System.Management.Automation.Remoting.Client
                 // WSMan API do not allow a signal/input/receive be sent until RunShellCommand is
                 // successfull (ie., callback is received)..so note that a signal is to be sent
                 // here and return.
-                if (!isCreateCallbackReceived)
+                if (!_isCreateCallbackReceived)
                 {
-                    isStopSignalPending = true;
+                    _isStopSignalPending = true;
                     return;
                 }
                 // we are about to send a signal..so clear pending bit.
-                isStopSignalPending = false;
+                _isStopSignalPending = false;
 
-                tracer.WriteLine("Sending stop signal with command context: {0} Operation Context {1}", cmdContextId, wsManCmdOperationHandle);
+                tracer.WriteLine("Sending stop signal with command context: {0} Operation Context {1}", _cmdContextId, _wsManCmdOperationHandle);
                 PSEtwLog.LogAnalyticInformational(PSEventId.WSManSignal,
                     PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                     RunspacePoolInstanceId.ToString(), powershellInstanceId.ToString(), StopSignal);
 
-                signalCmdCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(cmdContextId), cmdSignalCallback);
-                WSManNativeApi.WSManSignalShellEx(wsManShellOperationHandle, wsManCmdOperationHandle, 0,
-                    StopSignal, signalCmdCompleted, ref cmdSignalOperationHandle);
+                _signalCmdCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(_cmdContextId), s_cmdSignalCallback);
+                WSManNativeApi.WSManSignalShellEx(_wsManShellOperationHandle, _wsManCmdOperationHandle, 0,
+                    StopSignal, _signalCmdCompleted, ref _cmdSignalOperationHandle);
             }
         }
 
@@ -3111,7 +3106,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         internal override void CloseAsync()
         {
-            tracer.WriteLine("Closing command with command context: {0} Operation Context {1}", cmdContextId, wsManCmdOperationHandle);
+            tracer.WriteLine("Closing command with command context: {0} Operation Context {1}", _cmdContextId, _wsManCmdOperationHandle);
 
             bool shouldRaiseCloseCompleted = false;
             // then let other threads release the lock before we cleaning up the resources.
@@ -3128,23 +3123,23 @@ namespace System.Management.Automation.Remoting.Client
 
                 // There is no valid cmd operation handle..so just
                 // raise close completed.
-                if (IntPtr.Zero == wsManCmdOperationHandle)
+                if (IntPtr.Zero == _wsManCmdOperationHandle)
                 {
                     shouldRaiseCloseCompleted = true;
-                }                
+                }
             }
 
             base.CloseAsync();
 
             if (shouldRaiseCloseCompleted)
             {
-                try 
+                try
                 {
                     RaiseCloseCompleted();
                 }
                 finally
                 {
-                    RemoveCmdTransportManager(cmdContextId);
+                    RemoveCmdTransportManager(_cmdContextId);
                 }
                 return;
             }
@@ -3152,11 +3147,11 @@ namespace System.Management.Automation.Remoting.Client
             PSEtwLog.LogAnalyticInformational(PSEventId.WSManCloseCommand,
                 PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 RunspacePoolInstanceId.ToString(), powershellInstanceId.ToString());
-            closeCmdCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(cmdContextId), cmdCloseCallback);
-            Dbg.Assert((IntPtr)closeCmdCompleted != IntPtr.Zero, "closeCmdCompleted callback is null in cmdTM.CloseAsync()");
-            WSManNativeApi.WSManCloseCommand(wsManCmdOperationHandle, 0, closeCmdCompleted);
+            _closeCmdCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(_cmdContextId), s_cmdCloseCallback);
+            Dbg.Assert((IntPtr)_closeCmdCompleted != IntPtr.Zero, "closeCmdCompleted callback is null in cmdTM.CloseAsync()");
+            WSManNativeApi.WSManCloseCommand(_wsManCmdOperationHandle, 0, _closeCmdCompleted);
         }
-        
+
         /// <summary>
         /// Handle transport error - calls EnqueueAndStartProcessingThread to process transport exception
         /// in a different thread
@@ -3190,11 +3185,11 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             PSEtwLog.LogOperationalError(
-                PSEventId.TransportError, PSOpcode.Open, PSTask.None, 
+                PSEventId.TransportError, PSOpcode.Open, PSTask.None,
                 PSKeyword.UseAlwaysOperational,
-                RunspacePoolInstanceId.ToString(), 
+                RunspacePoolInstanceId.ToString(),
                 powershellInstanceId.ToString(),
-                eventArgs.Exception.ErrorCode.ToString(CultureInfo.InvariantCulture), 
+                eventArgs.Exception.ErrorCode.ToString(CultureInfo.InvariantCulture),
                 eventArgs.Exception.Message,
                 stackTrace);
 
@@ -3242,17 +3237,17 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (shouldClearSend)
             {
-                if (null != sendToRemoteCompleted)
+                if (null != _sendToRemoteCompleted)
                 {
-                    sendToRemoteCompleted.Dispose();
-                    sendToRemoteCompleted = null;
+                    _sendToRemoteCompleted.Dispose();
+                    _sendToRemoteCompleted = null;
                 }
 
                 // For send..clear always
-                if (IntPtr.Zero != wsManSendOperationHandle)
+                if (IntPtr.Zero != _wsManSendOperationHandle)
                 {
-                    WSManNativeApi.WSManCloseOperation(wsManSendOperationHandle, 0);
-                    wsManSendOperationHandle = IntPtr.Zero;
+                    WSManNativeApi.WSManCloseOperation(_wsManSendOperationHandle, 0);
+                    _wsManSendOperationHandle = IntPtr.Zero;
                 }
             }
             else
@@ -3260,16 +3255,16 @@ namespace System.Management.Automation.Remoting.Client
                 // clearing for receive..Clear only when the end of operation is reached.
                 if (flags == (int)WSManNativeApi.WSManCallbackFlags.WSMAN_FLAG_CALLBACK_END_OF_OPERATION)
                 {
-                    if (IntPtr.Zero != wsManRecieveOperationHandle)
+                    if (IntPtr.Zero != _wsManRecieveOperationHandle)
                     {
-                        WSManNativeApi.WSManCloseOperation(wsManRecieveOperationHandle, 0);
-                        wsManRecieveOperationHandle = IntPtr.Zero;
+                        WSManNativeApi.WSManCloseOperation(_wsManRecieveOperationHandle, 0);
+                        _wsManRecieveOperationHandle = IntPtr.Zero;
                     }
 
-                    if (null != receivedFromRemote)
+                    if (null != _receivedFromRemote)
                     {
-                        receivedFromRemote.Dispose();
-                        receivedFromRemote = null;
+                        _receivedFromRemote.Dispose();
+                        _receivedFromRemote = null;
                     }
                 }
             }
@@ -3280,15 +3275,15 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         internal override void PrepareForDisconnect()
         {
-            this.isDisconnectPending = true;
+            _isDisconnectPending = true;
 
             // If there is not input processing and the command has already been created
             // on the server then this object is ready for Disconnect now.
             // Otherwise let the sending input data call back handle it.
-            if (this.isClosed || this.isDisconnectedOnInvoke ||
-                (this.isCreateCallbackReceived &&
+            if (this.isClosed || _isDisconnectedOnInvoke ||
+                (_isCreateCallbackReceived &&
                  this.serializedPipeline.Length == 0 &&
-                 !this.isSendingInput))
+                 !_isSendingInput))
             {
                 RaiseReadyForDisconnect();
             }
@@ -3299,7 +3294,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         internal override void PrepareForConnect()
         {
-            this.isDisconnectPending = false;
+            _isDisconnectPending = false;
         }
 
         #endregion
@@ -3331,11 +3326,11 @@ namespace System.Management.Automation.Remoting.Client
                 cmdTM.RunspacePoolInstanceId.ToString(), cmdTM.powershellInstanceId.ToString());
 
             // dispose the cmdCompleted callback as it is not needed any more
-            if (null != cmdTM.createCmdCompleted)
+            if (null != cmdTM._createCmdCompleted)
             {
-                cmdTM.createCmdCompletedGCHandle.Free();
-                cmdTM.createCmdCompleted.Dispose();
-                cmdTM.createCmdCompleted = null;
+                cmdTM._createCmdCompletedGCHandle.Free();
+                cmdTM._createCmdCompleted.Dispose();
+                cmdTM._createCmdCompleted = null;
             }
 
             // TODO: 188098 wsManCmdOperationHandle should be populated by WSManRunShellCommandEx, 
@@ -3343,7 +3338,7 @@ namespace System.Management.Automation.Remoting.Client
             // be called before WSManRunShellCommandEx returns. since we already validated the
             // cmd context exists, safely assigning the commandOperationHandle to cmd transport manager.
             // Remove this once WSMan fixes its code.
-            cmdTM.wsManCmdOperationHandle = commandOperationHandle;           
+            cmdTM._wsManCmdOperationHandle = commandOperationHandle;
 
             if (IntPtr.Zero != error)
             {
@@ -3351,7 +3346,7 @@ namespace System.Management.Automation.Remoting.Client
                 if (errorStruct.errorCode != 0)
                 {
                     tracer.WriteLine("OnCreateCmdCompleted callback: WSMan reported an error: {0}", errorStruct.errorDetail);
-                    
+
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         cmdTM._sessnTm.WSManAPIData.WSManAPIHandle,
                         null,
@@ -3368,14 +3363,14 @@ namespace System.Management.Automation.Remoting.Client
             // Send remaing cmd / parameter fragments.
             lock (cmdTM.syncObject)
             {
-                cmdTM.isCreateCallbackReceived = true;
+                cmdTM._isCreateCallbackReceived = true;
 
                 // make sure the transport is not closed yet.
                 if (cmdTM.isClosed)
                 {
                     tracer.WriteLine("Client Session TM: Transport manager is closed. So returning");
 
-                    if (cmdTM.isDisconnectPending)
+                    if (cmdTM._isDisconnectPending)
                     {
                         cmdTM.RaiseReadyForDisconnect();
                     }
@@ -3385,7 +3380,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 // If a disconnect is pending at this point then we should not start
                 // receiving data or sending input and let the disconnect take place.
-                if (cmdTM.isDisconnectPending)
+                if (cmdTM._isDisconnectPending)
                 {
                     cmdTM.RaiseReadyForDisconnect();
                     return;
@@ -3393,7 +3388,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (cmdTM.serializedPipeline.Length == 0)
                 {
-                    cmdTM.shouldStartReceivingData = true;
+                    cmdTM._shouldStartReceivingData = true;
                 }
 
                 // Start sending data if any..and see if we can initiate a receive.
@@ -3401,7 +3396,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 // WSMan API does not allow a signal/input/receive be sent until RunShellCommand is
                 // successfull (ie., callback is received)
-                if (cmdTM.isStopSignalPending)
+                if (cmdTM._isStopSignalPending)
                 {
                     cmdTM.SendStopSignal();
                 }
@@ -3428,13 +3423,13 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // dispose the cmdCompleted callback as it is not needed any more
-            if (null != cmdTM.connectCmdCompleted)
+            if (null != cmdTM._connectCmdCompleted)
             {
-                cmdTM.connectCmdCompleted.Dispose();
-                cmdTM.connectCmdCompleted = null;
+                cmdTM._connectCmdCompleted.Dispose();
+                cmdTM._connectCmdCompleted = null;
             }
 
-            cmdTM.wsManCmdOperationHandle = commandOperationHandle;
+            cmdTM._wsManCmdOperationHandle = commandOperationHandle;
 
             if (IntPtr.Zero != error)
             {
@@ -3464,7 +3459,7 @@ namespace System.Management.Automation.Remoting.Client
                     tracer.WriteLine("Client Session TM: Transport manager is closed. So returning");
 
                     // Release disconnect pending, if any.
-                    if (cmdTM.isDisconnectPending)
+                    if (cmdTM._isDisconnectPending)
                     {
                         cmdTM.RaiseReadyForDisconnect();
                     }
@@ -3474,17 +3469,17 @@ namespace System.Management.Automation.Remoting.Client
 
                 // If a disconnect is pending at this point then we should not start
                 // receiving data or sending input and let the disconnect take place.
-                if (cmdTM.isDisconnectPending)
+                if (cmdTM._isDisconnectPending)
                 {
                     cmdTM.RaiseReadyForDisconnect();
                     return;
                 }
 
                 // Allow SendStopSignal.
-                cmdTM.isCreateCallbackReceived = true;
+                cmdTM._isCreateCallbackReceived = true;
 
                 // Send stop signal if it is pending.
-                if (cmdTM.isStopSignalPending)
+                if (cmdTM._isStopSignalPending)
                 {
                     cmdTM.SendStopSignal();
                 }
@@ -3516,12 +3511,12 @@ namespace System.Management.Automation.Remoting.Client
                 return;
             }
 
-            tracer.WriteLine("Close completed callback received for command: {0}", cmdTM.cmdContextId);
+            tracer.WriteLine("Close completed callback received for command: {0}", cmdTM._cmdContextId);
             PSEtwLog.LogAnalyticInformational(PSEventId.WSManCloseCommandCallbackReceived,
                 PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 cmdTM.RunspacePoolInstanceId.ToString(), cmdTM.powershellInstanceId.ToString());
 
-            if (cmdTM.isDisconnectPending)
+            if (cmdTM._isDisconnectPending)
             {
                 cmdTM.RaiseReadyForDisconnect();
             }
@@ -3548,15 +3543,15 @@ namespace System.Management.Automation.Remoting.Client
                 return;
             }
 
-            cmdTM.isSendingInput = false;
+            cmdTM._isSendingInput = false;
 
             // do the logging for this send
             PSEtwLog.LogAnalyticInformational(PSEventId.WSManSendShellInputExCallbackReceived,
                 PSOpcode.Connect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 cmdTM.RunspacePoolInstanceId.ToString(), cmdTM.powershellInstanceId.ToString());
 
-            if ((!shellOperationHandle.Equals(cmdTM.wsManShellOperationHandle)) ||
-                (!commandOperationHandle.Equals(cmdTM.wsManCmdOperationHandle)))
+            if ((!shellOperationHandle.Equals(cmdTM._wsManShellOperationHandle)) ||
+                (!commandOperationHandle.Equals(cmdTM._wsManCmdOperationHandle)))
             {
                 tracer.WriteLine("SendShellInputEx callback: ShellOperationHandles are not the same as the Send is initiated with");
                 // WSMan returned data from a wrong shell..notify the caller
@@ -3568,7 +3563,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 return;
             }
-            
+
             // release the resources related to send
             cmdTM.ClearReceiveOrSendResources(flags, true);
 
@@ -3577,7 +3572,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 tracer.WriteLine("Client Command TM: Transport manager is closed. So returning");
 
-                if (cmdTM.isDisconnectPending)
+                if (cmdTM._isDisconnectPending)
                 {
                     cmdTM.RaiseReadyForDisconnect();
                 }
@@ -3594,7 +3589,7 @@ namespace System.Management.Automation.Remoting.Client
                 if ((errorStruct.errorCode != 0) && (errorStruct.errorCode != 995))
                 {
                     tracer.WriteLine("CmdSend callback: WSMan reported an error: {0}", errorStruct.errorDetail);
-                    
+
                     TransportErrorOccuredEventArgs eventargs = WSManTransportManagerUtils.ConstructTransportErrorEventArgs(
                         cmdTM._sessnTm.WSManAPIData.WSManAPIHandle,
                         null,
@@ -3631,8 +3626,8 @@ namespace System.Management.Automation.Remoting.Client
                 return;
             }
 
-            if ((!shellOperationHandle.Equals(cmdTM.wsManShellOperationHandle)) ||
-                (!commandOperationHandle.Equals(cmdTM.wsManCmdOperationHandle)))
+            if ((!shellOperationHandle.Equals(cmdTM._wsManShellOperationHandle)) ||
+                (!commandOperationHandle.Equals(cmdTM._wsManCmdOperationHandle)))
             {
                 // WSMan returned data from a wrong shell..notify the caller
                 // about the same.
@@ -3675,9 +3670,9 @@ namespace System.Management.Automation.Remoting.Client
                 }
             }
 
-            if (flags == (int) WSManNativeApi.WSManCallbackFlags.WSMAN_FLAG_RECEIVE_DELAY_STREAM_REQUEST_PROCESSED)
+            if (flags == (int)WSManNativeApi.WSManCallbackFlags.WSMAN_FLAG_RECEIVE_DELAY_STREAM_REQUEST_PROCESSED)
             {
-                cmdTM.isDisconnectedOnInvoke = true;
+                cmdTM._isDisconnectedOnInvoke = true;
                 cmdTM.RaiseDelayStreamProcessedEvent();
                 return;
             }
@@ -3689,8 +3684,8 @@ namespace System.Management.Automation.Remoting.Client
                 PSEtwLog.LogAnalyticInformational(
                     PSEventId.WSManReceiveShellOutputExCallbackReceived, PSOpcode.Receive, PSTask.None,
                     PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
-                    cmdTM.RunspacePoolInstanceId.ToString(), 
-                    cmdTM.powershellInstanceId.ToString(), 
+                    cmdTM.RunspacePoolInstanceId.ToString(),
+                    cmdTM.powershellInstanceId.ToString(),
                     dataReceived.data.Length.ToString(CultureInfo.InvariantCulture));
                 cmdTM.ProcessRawData(dataReceived.data, dataReceived.stream);
             }
@@ -3713,8 +3708,8 @@ namespace System.Management.Automation.Remoting.Client
                 return;
             }
 
-            if ((!shellOperationHandle.Equals(cmdTM.wsManShellOperationHandle)) ||
-               (!commandOperationHandle.Equals(cmdTM.wsManCmdOperationHandle)))
+            if ((!shellOperationHandle.Equals(cmdTM._wsManShellOperationHandle)) ||
+               (!commandOperationHandle.Equals(cmdTM._wsManCmdOperationHandle)))
             {
                 // WSMan returned data from a wrong shell..notify the caller
                 // about the same.
@@ -3749,7 +3744,7 @@ namespace System.Management.Automation.Remoting.Client
 
             // The command may have been disconnected before all input was read or 
             // the returned command data started to be received.
-            cmdTM.shouldStartReceivingData = true;
+            cmdTM._shouldStartReceivingData = true;
             cmdTM.SendOneItem();
 
             cmdTM.RaiseReconnectCompleted();
@@ -3779,8 +3774,8 @@ namespace System.Management.Automation.Remoting.Client
                 PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 cmdTM.RunspacePoolInstanceId.ToString(), cmdTM.powershellInstanceId.ToString());
 
-            if ((!shellOperationHandle.Equals(cmdTM.wsManShellOperationHandle)) ||
-                (!commandOperationHandle.Equals(cmdTM.wsManCmdOperationHandle)))
+            if ((!shellOperationHandle.Equals(cmdTM._wsManShellOperationHandle)) ||
+                (!commandOperationHandle.Equals(cmdTM._wsManCmdOperationHandle)))
             {
                 // WSMan returned data from a wrong shell..notify the caller
                 // about the same.
@@ -3792,20 +3787,20 @@ namespace System.Management.Automation.Remoting.Client
 
                 return;
             }
-            
+
             // release the resources related to signal
-            if (IntPtr.Zero != cmdTM.cmdSignalOperationHandle)
+            if (IntPtr.Zero != cmdTM._cmdSignalOperationHandle)
             {
-                WSManNativeApi.WSManCloseOperation(cmdTM.cmdSignalOperationHandle, 0);
-                cmdTM.cmdSignalOperationHandle = IntPtr.Zero;
+                WSManNativeApi.WSManCloseOperation(cmdTM._cmdSignalOperationHandle, 0);
+                cmdTM._cmdSignalOperationHandle = IntPtr.Zero;
             }
 
-            if (null != cmdTM.signalCmdCompleted)
+            if (null != cmdTM._signalCmdCompleted)
             {
-                cmdTM.signalCmdCompleted.Dispose();
-                cmdTM.signalCmdCompleted = null;
+                cmdTM._signalCmdCompleted.Dispose();
+                cmdTM._signalCmdCompleted = null;
             }
-            
+
             // if the transport manager is already closed..ignore the errors and return            
             if (cmdTM.isClosed)
             {
@@ -3839,7 +3834,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             // If a disconnect is completing then do not send any more data.
             // Also raise the readyfordisconnect event.
-            if (this.isDisconnectPending)
+            if (_isDisconnectPending)
             {
                 RaiseReadyForDisconnect();
                 return;
@@ -3857,28 +3852,28 @@ namespace System.Management.Automation.Remoting.Client
                 // once command string + parameters are sent.
                 if (serializedPipeline.Length == 0)
                 {
-                    shouldStartReceivingData = true;
+                    _shouldStartReceivingData = true;
                 }
             }
-            else if (chunkToSend != null) // there is a pending chunk to be sent
+            else if (_chunkToSend != null) // there is a pending chunk to be sent
             {
-                data = chunkToSend.Data;
-                priorityType = chunkToSend.Type;
-                chunkToSend = null;
+                data = _chunkToSend.Data;
+                priorityType = _chunkToSend.Type;
+                _chunkToSend = null;
             }
             else
             {
                 // This will either return data or register callback but doesn't do both.
-                data = dataToBeSent.ReadOrRegisterCallback(onDataAvailableToSendCallback, out priorityType);
+                data = dataToBeSent.ReadOrRegisterCallback(_onDataAvailableToSendCallback, out priorityType);
             }
 
             if (null != data)
             {
-                this.isSendingInput = true;
+                _isSendingInput = true;
                 SendData(data, priorityType);
             }
 
-            if (shouldStartReceivingData)
+            if (_shouldStartReceivingData)
             {
                 StartReceivingData();
             }
@@ -3889,14 +3884,14 @@ namespace System.Management.Automation.Remoting.Client
             Dbg.Assert(null != data, "data cannot be null in the data available callback");
 
             tracer.WriteLine("Received data from dataToBeSent store.");
-            Dbg.Assert(chunkToSend == null, "data callback received while a chunk is pending to be sent");
-            chunkToSend = new SendDataChunk(data, priorityType);
+            Dbg.Assert(_chunkToSend == null, "data callback received while a chunk is pending to be sent");
+            _chunkToSend = new SendDataChunk(data, priorityType);
             SendOneItem();
         }
 
         #region SHIM: Redirection delegate for command data send.
 
-        private static Delegate commandSendRedirect = null;
+        private static Delegate s_commandSendRedirect = null;
 
         #endregion
 
@@ -3909,10 +3904,10 @@ namespace System.Management.Automation.Remoting.Client
 
             bool sendContinue = true;
 
-            if (commandSendRedirect != null)
+            if (s_commandSendRedirect != null)
             {
                 object[] arguments = new object[2] { null, package };
-                sendContinue = (bool)commandSendRedirect.DynamicInvoke(arguments);
+                sendContinue = (bool)s_commandSendRedirect.DynamicInvoke(arguments);
                 package = (byte[])arguments[0];
             }
 
@@ -3925,9 +3920,9 @@ namespace System.Management.Automation.Remoting.Client
                          new WSManNativeApi.WSManData_ManToUn(package))
             {
                 PSEtwLog.LogAnalyticInformational(
-                    PSEventId.WSManSendShellInputEx, PSOpcode.Send, PSTask.None, 
+                    PSEventId.WSManSendShellInputEx, PSOpcode.Send, PSTask.None,
                     PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
-                    RunspacePoolInstanceId.ToString(), 
+                    RunspacePoolInstanceId.ToString(),
                     powershellInstanceId.ToString(),
                     serializedContent.BufferLength.ToString(CultureInfo.InvariantCulture));
 
@@ -3941,13 +3936,13 @@ namespace System.Management.Automation.Remoting.Client
                     }
 
                     // send callback
-                    sendToRemoteCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(cmdContextId), cmdSendCallback);
-                    WSManNativeApi.WSManSendShellInputEx(wsManShellOperationHandle, wsManCmdOperationHandle, 0,
-                        priorityType == DataPriorityType.Default ? 
-                            WSManNativeApi.WSMAN_STREAM_ID_STDIN : WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE, 
-                        serializedContent, 
-                        sendToRemoteCompleted, 
-                        ref wsManSendOperationHandle);
+                    _sendToRemoteCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(_cmdContextId), s_cmdSendCallback);
+                    WSManNativeApi.WSManSendShellInputEx(_wsManShellOperationHandle, _wsManCmdOperationHandle, 0,
+                        priorityType == DataPriorityType.Default ?
+                            WSManNativeApi.WSMAN_STREAM_ID_STDIN : WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE,
+                        serializedContent,
+                        _sendToRemoteCompleted,
+                        ref _wsManSendOperationHandle);
                 }
             }
         }
@@ -3958,7 +3953,7 @@ namespace System.Management.Automation.Remoting.Client
                     PSOpcode.Receive, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                     RunspacePoolInstanceId.ToString(), powershellInstanceId.ToString());
             // We should call Receive only once.. WSMan will call the callback multiple times.
-            shouldStartReceivingData = false;
+            _shouldStartReceivingData = false;
             lock (syncObject)
             {
                 // make sure the transport is not closed.
@@ -3976,11 +3971,11 @@ namespace System.Management.Automation.Remoting.Client
 
                 receiveDataInitiated = true;
                 // recive callback
-                receivedFromRemote = new WSManNativeApi.WSManShellAsync(new IntPtr(cmdContextId), cmdReceiveCallback);
-                WSManNativeApi.WSManReceiveShellOutputEx(wsManShellOperationHandle,
-                    wsManCmdOperationHandle, startInDisconnectedMode ? (int) WSManNativeApi.WSManShellFlag.WSMAN_FLAG_RECEIVE_DELAY_OUTPUT_STREAM : 0,
+                _receivedFromRemote = new WSManNativeApi.WSManShellAsync(new IntPtr(_cmdContextId), s_cmdReceiveCallback);
+                WSManNativeApi.WSManReceiveShellOutputEx(_wsManShellOperationHandle,
+                    _wsManCmdOperationHandle, startInDisconnectedMode ? (int)WSManNativeApi.WSManShellFlag.WSMAN_FLAG_RECEIVE_DELAY_OUTPUT_STREAM : 0,
                    _sessnTm.WSManAPIData.OutputStreamSet,
-                   receivedFromRemote, ref wsManRecieveOperationHandle);
+                   _receivedFromRemote, ref _wsManRecieveOperationHandle);
             }
         }
 
@@ -3990,12 +3985,12 @@ namespace System.Management.Automation.Remoting.Client
 
         internal override void Dispose(bool isDisposing)
         {
-            tracer.WriteLine("Disposing command with command context: {0} Operation Context: {1}", cmdContextId, wsManCmdOperationHandle);
+            tracer.WriteLine("Disposing command with command context: {0} Operation Context: {1}", _cmdContextId, _wsManCmdOperationHandle);
             base.Dispose(isDisposing);
 
             // remove command context from cmd handles dictionary
-            RemoveCmdTransportManager(cmdContextId);
-            
+            RemoveCmdTransportManager(_cmdContextId);
+
             // unregister event handlers
             if (null != _sessnTm)
             {
@@ -4003,19 +3998,19 @@ namespace System.Management.Automation.Remoting.Client
                 _sessnTm.RobustConnectionsCompleted -= HandleRobusConnectionsCompleted;
             }
 
-            if (null != closeCmdCompleted)
+            if (null != _closeCmdCompleted)
             {
-                closeCmdCompleted.Dispose();
-                closeCmdCompleted = null;
+                _closeCmdCompleted.Dispose();
+                _closeCmdCompleted = null;
             }
 
-            if (null != reconnectCmdCompleted)
+            if (null != _reconnectCmdCompleted)
             {
-                reconnectCmdCompleted.Dispose();
-                reconnectCmdCompleted = null;
+                _reconnectCmdCompleted.Dispose();
+                _reconnectCmdCompleted = null;
             }
 
-            wsManCmdOperationHandle = IntPtr.Zero;
+            _wsManCmdOperationHandle = IntPtr.Zero;
         }
 
         #endregion
@@ -4024,14 +4019,14 @@ namespace System.Management.Automation.Remoting.Client
 
         // This dictionary maintains active command transport managers to be used from various
         // callbacks.
-        private static Dictionary<long, WSManClientCommandTransportManager> CmdTMHandles =
+        private static Dictionary<long, WSManClientCommandTransportManager> s_cmdTMHandles =
             new Dictionary<long, WSManClientCommandTransportManager>();
-        private static long CmdTMSeed;
+        private static long s_cmdTMSeed;
 
         //Generate command transport manager unique id
         private static long GetNextCmdTMHandleId()
         {
-            return System.Threading.Interlocked.Increment(ref CmdTMSeed);
+            return System.Threading.Interlocked.Increment(ref s_cmdTMSeed);
         }
 
         // we need a synchronized add and remove so that multiple threads
@@ -4039,17 +4034,17 @@ namespace System.Management.Automation.Remoting.Client
         private static void AddCmdTransportManager(long cmdTMId,
             WSManClientCommandTransportManager cmdTransportManager)
         {
-            lock (CmdTMHandles)
+            lock (s_cmdTMHandles)
             {
-                CmdTMHandles.Add(cmdTMId, cmdTransportManager);
+                s_cmdTMHandles.Add(cmdTMId, cmdTransportManager);
             }
         }
 
         private static void RemoveCmdTransportManager(long cmdTMId)
         {
-            lock (CmdTMHandles)
+            lock (s_cmdTMHandles)
             {
-                CmdTMHandles.Remove(cmdTMId);
+                s_cmdTMHandles.Remove(cmdTMId);
             }
         }
 
@@ -4061,9 +4056,9 @@ namespace System.Management.Automation.Remoting.Client
         {
             cmdTMId = operationContext.ToInt64();
             cmdTransportManager = null;
-            lock (CmdTMHandles)
+            lock (s_cmdTMHandles)
             {
-                return CmdTMHandles.TryGetValue(cmdTMId, out cmdTransportManager);
+                return s_cmdTMHandles.TryGetValue(cmdTMId, out cmdTransportManager);
             }
         }
 

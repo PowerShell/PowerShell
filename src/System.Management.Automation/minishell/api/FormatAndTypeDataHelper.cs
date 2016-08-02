@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.IO;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,52 +18,52 @@ namespace System.Management.Automation.Runspaces
     {
         public string psSnapinName;
         // only one of fullPath or formatTable or typeData or typeDefinition should be specified..
-        private string fullPath;
-        private FormatTable formatTable;
+        private string _fullPath;
+        private FormatTable _formatTable;
         // typeData and isRemove should be used together
-        private TypeData typeData;
-        private bool isRemove;
-        private ExtendedTypeDefinition typeDefinition;
-        private ConcurrentBag<string> errors;
+        private TypeData _typeData;
+        private bool _isRemove;
+        private ExtendedTypeDefinition _typeDefinition;
+        private ConcurrentBag<string> _errors;
 
         internal PSSnapInTypeAndFormatErrors(string psSnapinName, string fullPath)
         {
             this.psSnapinName = psSnapinName;
-            this.fullPath = fullPath;
-            this.errors = new ConcurrentBag<string>();
+            _fullPath = fullPath;
+            _errors = new ConcurrentBag<string>();
         }
 
         internal PSSnapInTypeAndFormatErrors(string psSnapinName, FormatTable formatTable)
         {
             this.psSnapinName = psSnapinName;
-            this.formatTable = formatTable;
-            this.errors = new ConcurrentBag<string>();
+            _formatTable = formatTable;
+            _errors = new ConcurrentBag<string>();
         }
 
         internal PSSnapInTypeAndFormatErrors(string psSnapinName, TypeData typeData, bool isRemove)
         {
             this.psSnapinName = psSnapinName;
-            this.typeData = typeData;
-            this.isRemove = isRemove;
-            this.errors = new ConcurrentBag<string>();
+            _typeData = typeData;
+            _isRemove = isRemove;
+            _errors = new ConcurrentBag<string>();
         }
 
         internal PSSnapInTypeAndFormatErrors(string psSnapinName, ExtendedTypeDefinition typeDefinition)
         {
             this.psSnapinName = psSnapinName;
-            this.typeDefinition = typeDefinition;
-            this.errors = new ConcurrentBag<string>();
+            _typeDefinition = typeDefinition;
+            _errors = new ConcurrentBag<string>();
         }
 
-        internal ExtendedTypeDefinition FormatData { get { return typeDefinition; } }
-        internal TypeData TypeData { get { return typeData; } }
-        internal bool IsRemove { get { return isRemove; } }
-        internal string FullPath { get { return fullPath; } }
-        internal FormatTable FormatTable { get { return formatTable; } }
-        internal ConcurrentBag<string> Errors 
-        { 
-            get { return errors; }
-            set { errors = value; }
+        internal ExtendedTypeDefinition FormatData { get { return _typeDefinition; } }
+        internal TypeData TypeData { get { return _typeData; } }
+        internal bool IsRemove { get { return _isRemove; } }
+        internal string FullPath { get { return _fullPath; } }
+        internal FormatTable FormatTable { get { return _formatTable; } }
+        internal ConcurrentBag<string> Errors
+        {
+            get { return _errors; }
+            set { _errors = value; }
         }
         internal string PSSnapinName { get { return psSnapinName; } }
         internal bool FailToLoadFile;
@@ -78,7 +79,7 @@ namespace System.Management.Automation.Runspaces
         internal const string ValidationException = "ValidationException";
 
         private static string GetBaseFolder(
-            RunspaceConfiguration runspaceConfiguration, 
+            RunspaceConfiguration runspaceConfiguration,
             Collection<string> independentErrors)
         {
             string returnValue = CommandDiscovery.GetShellPathFromRegistry(runspaceConfiguration.ShellId);
@@ -117,7 +118,7 @@ namespace System.Management.Automation.Runspaces
             HashSet<string> fullFileNameSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             int index = -1;
 
-            foreach (var configurationEntry in  configurationEntryCollection)
+            foreach (var configurationEntry in configurationEntryCollection)
             {
                 string fileName;
                 string psSnapinName = configurationEntry.PSSnapIn == null ? runspaceConfiguration.ShellId : configurationEntry.PSSnapIn.Name;
@@ -127,7 +128,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     fileName = typeEntry.FileName;
 
-                    if(fileName == null)
+                    if (fileName == null)
                     {
                         returnValue.Add(new PSSnapInTypeAndFormatErrors(psSnapinName, typeEntry.TypeData, typeEntry.IsRemove));
                         continue;
@@ -138,7 +139,7 @@ namespace System.Management.Automation.Runspaces
                     FormatConfigurationEntry formatEntry = (FormatConfigurationEntry)configurationEntry;
                     fileName = formatEntry.FileName;
 
-                    if(fileName == null)
+                    if (fileName == null)
                     {
                         returnValue.Add(new PSSnapInTypeAndFormatErrors(psSnapinName, formatEntry.FormatData));
                         continue;
@@ -156,18 +157,18 @@ namespace System.Management.Automation.Runspaces
                     }
                     continue;
                 }
-                
+
                 returnValue.Add(new PSSnapInTypeAndFormatErrors(psSnapinName, fullFileName));
             }
             return returnValue;
         }
 
         private static string GetAndCheckFullFileName(
-            string psSnapinName, 
-            HashSet<string> fullFileNameSet, 
-            string baseFolder, 
-            string baseFileName, 
-            Collection<string> independentErrors, 
+            string psSnapinName,
+            HashSet<string> fullFileNameSet,
+            string baseFolder,
+            string baseFileName,
+            Collection<string> independentErrors,
             ref bool needToRemoveEntry,
             bool checkFileExists)
         {
@@ -200,9 +201,9 @@ namespace System.Management.Automation.Runspaces
         }
 
         internal static void ThrowExceptionOnError(
-            string errorId, 
+            string errorId,
             Collection<string> independentErrors,
-            Collection<PSSnapInTypeAndFormatErrors> PSSnapinFilesCollection, 
+            Collection<PSSnapInTypeAndFormatErrors> PSSnapinFilesCollection,
             RunspaceConfigurationCategory category)
         {
             Collection<string> errors = new Collection<string>();
@@ -252,8 +253,8 @@ namespace System.Management.Automation.Runspaces
         }
 
         internal static void ThrowExceptionOnError(
-            string errorId, 
-            ConcurrentBag<string> errors, 
+            string errorId,
+            ConcurrentBag<string> errors,
             RunspaceConfigurationCategory category)
         {
             if (errors.Count == 0)

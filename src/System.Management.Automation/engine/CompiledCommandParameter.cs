@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -45,7 +46,7 @@ namespace System.Management.Automation
         {
             if (runtimeDefinedParameter == null)
             {
-                throw PSTraceSource.NewArgumentNullException ("runtimeDefinedParameter");
+                throw PSTraceSource.NewArgumentNullException("runtimeDefinedParameter");
             }
 
             this.Name = runtimeDefinedParameter.Name;
@@ -54,7 +55,7 @@ namespace System.Management.Automation
 
             this.CollectionTypeInformation = new ParameterCollectionTypeInformation(runtimeDefinedParameter.ParameterType);
 
-            this.CompiledAttributes = new Collection<Attribute> ();
+            this.CompiledAttributes = new Collection<Attribute>();
 
             this.ParameterSetData = new Dictionary<string, ParameterSetSpecificMetadata>(StringComparer.OrdinalIgnoreCase);
 
@@ -65,7 +66,7 @@ namespace System.Management.Automation
             // First, process attributes that aren't type conversions
             foreach (Attribute attribute in runtimeDefinedParameter.Attributes)
             {
-                if (! (attribute is ArgumentTypeConverterAttribute))
+                if (!(attribute is ArgumentTypeConverterAttribute))
                 {
                     ProcessAttribute(runtimeDefinedParameter.Name, attribute, ref validationAttributes, ref argTransformationAttributes, ref aliases);
                 }
@@ -688,7 +689,6 @@ namespace System.Management.Automation
                 // elementType remains null
                 return;
             }
-
         } // ctor
 
         /// <summary>

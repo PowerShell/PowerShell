@@ -13,7 +13,7 @@ namespace System.Management.Automation
 {
     using Dbg = Diagnostics;
 
-    static class StringOps
+    internal static class StringOps
     {
         internal static string Add(string lhs, string rhs)
         {

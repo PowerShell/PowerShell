@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Management.Automation;
 using System.Threading;
@@ -24,15 +25,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return sourceIdentifier;
+                return _sourceIdentifier;
             }
             set
             {
-                sourceIdentifier = value;
-                matchPattern = WildcardPattern.Get(value, WildcardOptions.IgnoreCase);
+                _sourceIdentifier = value;
+                _matchPattern = WildcardPattern.Get(value, WildcardOptions.IgnoreCase);
             }
         }
-        private string sourceIdentifier = null;
+        private string _sourceIdentifier = null;
 
         /// <summary>
         /// If timeout is specified, the cmdlet will only wait for this number of seconds.
@@ -45,21 +46,21 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return timeoutInSeconds;
+                return _timeoutInSeconds;
             }
             set
             {
-                timeoutInSeconds = value;
+                _timeoutInSeconds = value;
             }
         }
-        int timeoutInSeconds = -1; // -1: infinite, this default is to wait for as long as it takes.
+        private int _timeoutInSeconds = -1; // -1: infinite, this default is to wait for as long as it takes.
 
         #endregion parameters
 
-        AutoResetEvent eventArrived = new AutoResetEvent(false);
-        PSEventArgs receivedEvent = null;
-        Object receivedEventLock = new Object();
-        WildcardPattern matchPattern;
+        private AutoResetEvent _eventArrived = new AutoResetEvent(false);
+        private PSEventArgs _receivedEvent = null;
+        private Object _receivedEventLock = new Object();
+        private WildcardPattern _matchPattern;
 
         /// <summary>
         /// Wait for the event to arrive
@@ -67,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             DateTime startTime = DateTime.UtcNow;
-            
+
             // Subscribe to notification of events received
             Events.ReceivedEvents.PSEventReceived += ReceivedEvents_PSEventReceived;
             bool received = false;
@@ -76,17 +77,17 @@ namespace Microsoft.PowerShell.Commands
             ScanEventQueue();
 
             // And wait for our event handler (or Control-C processor) to give us control
-            PSLocalEventManager eventManager = (PSLocalEventManager) Events;
+            PSLocalEventManager eventManager = (PSLocalEventManager)Events;
 
             while (!received)
             {
-                if(timeoutInSeconds >= 0)
+                if (_timeoutInSeconds >= 0)
                 {
-                    if( (DateTime.UtcNow - startTime).TotalSeconds > timeoutInSeconds)
+                    if ((DateTime.UtcNow - startTime).TotalSeconds > _timeoutInSeconds)
                         break;
                 }
-                
-                received = eventArrived.WaitOne(200);
+
+                received = _eventArrived.WaitOne(200);
 
                 eventManager.ProcessPendingActions();
             }
@@ -94,9 +95,9 @@ namespace Microsoft.PowerShell.Commands
             // Unsubscribe, and write the event information we received
             Events.ReceivedEvents.PSEventReceived -= ReceivedEvents_PSEventReceived;
 
-            if(receivedEvent != null)
+            if (_receivedEvent != null)
             {
-                WriteObject(receivedEvent);
+                WriteObject(_receivedEvent);
             }
         }
 
@@ -105,13 +106,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void StopProcessing()
         {
-            eventArrived.Set();
+            _eventArrived.Set();
         }
 
         private void ReceivedEvents_PSEventReceived(Object sender, PSEventArgs e)
         {
             // If they want to wait on just any event
-            if(sourceIdentifier == null)
+            if (_sourceIdentifier == null)
             {
                 NotifyEvent(e);
             }
@@ -127,12 +128,12 @@ namespace Microsoft.PowerShell.Commands
         // break.
         private void ScanEventQueue()
         {
-            lock(Events.ReceivedEvents.SyncRoot)
+            lock (Events.ReceivedEvents.SyncRoot)
             {
-                foreach(PSEventArgs eventArg in Events.ReceivedEvents)
+                foreach (PSEventArgs eventArg in Events.ReceivedEvents)
                 {
                     // If they specified a subscription identifier and we don't match, continue
-                    if((matchPattern == null) || (matchPattern.IsMatch(eventArg.SourceIdentifier)))
+                    if ((_matchPattern == null) || (_matchPattern.IsMatch(eventArg.SourceIdentifier)))
                     {
                         NotifyEvent(eventArg);
                         return;
@@ -144,14 +145,14 @@ namespace Microsoft.PowerShell.Commands
         // Notify that an event has arrived
         private void NotifyEvent(PSEventArgs e)
         {
-            if (receivedEvent == null)
+            if (_receivedEvent == null)
             {
-                lock (receivedEventLock)
+                lock (_receivedEventLock)
                 {
-                    if (receivedEvent == null)
+                    if (_receivedEvent == null)
                     {
-                        receivedEvent = e;
-                        eventArrived.Set();
+                        _receivedEvent = e;
+                        _eventArrived.Set();
                     }
                 }
             }

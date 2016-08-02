@@ -14,15 +14,15 @@ using System.IO;
 
 namespace System.Management.Automation.Language
 {
-	enum ScopeType
-	{
-		Type,			// class or enum
-		Method,			// class method
-		Function,		// function
-		ScriptBlock		// script or anonymous script block
-	}
+    internal enum ScopeType
+    {
+        Type,           // class or enum
+        Method,         // class method
+        Function,       // function
+        ScriptBlock     // script or anonymous script block
+    }
 
-    class TypeLookupResult
+    internal class TypeLookupResult
     {
         public TypeLookupResult(TypeDefinitionAst type = null)
         {
@@ -38,10 +38,10 @@ namespace System.Management.Automation.Language
         }
     }
 
-    class Scope
+    internal class Scope
     {
         internal Ast _ast;
-	    internal ScopeType _scopeType;
+        internal ScopeType _scopeType;
         /// <summary>
         /// TypeTable maps namespace (currently it's module name) to the types under this namespace.
         /// For the types defined in the current namespace (module) we use CURRENT_NAMESPACE as a namespace.
@@ -51,8 +51,8 @@ namespace System.Management.Automation.Language
 
         internal Scope(IParameterMetadataProvider ast, ScopeType scopeType)
         {
-            _ast = (Ast) ast;
-	        _scopeType = scopeType;
+            _ast = (Ast)ast;
+            _scopeType = scopeType;
             _typeTable = new Dictionary<string, TypeLookupResult>(StringComparer.OrdinalIgnoreCase);
             _variableTable = new Dictionary<string, Ast>(StringComparer.OrdinalIgnoreCase);
         }
@@ -60,7 +60,7 @@ namespace System.Management.Automation.Language
         internal Scope(TypeDefinitionAst typeDefinition)
         {
             _ast = typeDefinition;
-	        _scopeType = ScopeType.Type;
+            _scopeType = ScopeType.Type;
             _typeTable = new Dictionary<string, TypeLookupResult>(StringComparer.OrdinalIgnoreCase);
             _variableTable = new Dictionary<string, Ast>(StringComparer.OrdinalIgnoreCase);
             foreach (var member in typeDefinition.Members)
@@ -154,7 +154,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    class SymbolTable
+    internal class SymbolTable
     {
         internal readonly List<Scope> _scopes;
         internal readonly Parser _parser;
@@ -259,32 +259,32 @@ namespace System.Management.Automation.Language
             return null;
         }
 
-	    public bool IsInMethodScope()
-	    {
-		    return _scopes[_scopes.Count - 1]._scopeType == ScopeType.Method;
-	    }
+        public bool IsInMethodScope()
+        {
+            return _scopes[_scopes.Count - 1]._scopeType == ScopeType.Method;
+        }
     }
 
-    class SymbolResolver : AstVisitor2, IAstPostVisitHandler
+    internal class SymbolResolver : AstVisitor2, IAstPostVisitHandler
     {
         private readonly SymbolResolvePostActionVisitor _symbolResolvePostActionVisitor;
         internal readonly SymbolTable _symbolTable;
         internal readonly Parser _parser;
         internal readonly TypeResolutionState _typeResolutionState;
 
-        [ThreadStatic] 
-        private static PowerShell _usingStatementResolvePowerShell;
+        [ThreadStatic]
+        private static PowerShell t_usingStatementResolvePowerShell;
 
         private static PowerShell UsingStatementResolvePowerShell
         {
             get
             {
                 // The goal is to re-use runspaces, because creating runspace is an expensive part in creating PowerShell instance.
-                if (_usingStatementResolvePowerShell == null)
+                if (t_usingStatementResolvePowerShell == null)
                 {
                     if (Runspace.DefaultRunspace != null)
                     {
-                        _usingStatementResolvePowerShell = PowerShell.Create(RunspaceMode.CurrentRunspace);
+                        t_usingStatementResolvePowerShell = PowerShell.Create(RunspaceMode.CurrentRunspace);
                     }
                     else
                     {
@@ -294,16 +294,16 @@ namespace System.Management.Automation.Language
                         var sessionStateProviderEntry = new SessionStateProviderEntry(FileSystemProvider.ProviderName, typeof(FileSystemProvider), null);
                         var snapin = PSSnapInReader.ReadEnginePSSnapIns().FirstOrDefault(snapIn => snapIn.Name.Equals("Microsoft.PowerShell.Core", StringComparison.OrdinalIgnoreCase));
                         sessionStateProviderEntry.SetPSSnapIn(snapin);
-                        iss.Providers.Add(sessionStateProviderEntry); 
-                        _usingStatementResolvePowerShell = PowerShell.Create(iss);
+                        iss.Providers.Add(sessionStateProviderEntry);
+                        t_usingStatementResolvePowerShell = PowerShell.Create(iss);
                     }
                 }
-                else if (Runspace.DefaultRunspace != null && _usingStatementResolvePowerShell.Runspace != Runspace.DefaultRunspace)
+                else if (Runspace.DefaultRunspace != null && t_usingStatementResolvePowerShell.Runspace != Runspace.DefaultRunspace)
                 {
-                    _usingStatementResolvePowerShell = PowerShell.Create(RunspaceMode.CurrentRunspace);
+                    t_usingStatementResolvePowerShell = PowerShell.Create(RunspaceMode.CurrentRunspace);
                 }
 
-                return _usingStatementResolvePowerShell;
+                return t_usingStatementResolvePowerShell;
             }
         }
 
@@ -312,7 +312,7 @@ namespace System.Management.Automation.Language
             _symbolTable = new SymbolTable(parser);
             _parser = parser;
             _typeResolutionState = typeResolutionState;
-            _symbolResolvePostActionVisitor = new SymbolResolvePostActionVisitor {_symbolResolver = this};
+            _symbolResolvePostActionVisitor = new SymbolResolvePostActionVisitor { _symbolResolver = this };
         }
 
         internal static void ResolveSymbols(Parser parser, ScriptBlockAst scriptBlockAst)
@@ -330,7 +330,7 @@ namespace System.Management.Automation.Language
             Diagnostics.Assert(resolver._symbolTable._scopes.Count == 0, "Somebody missed removing a scope");
         }
 
-	    public override AstVisitAction VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst)
+        public override AstVisitAction VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst)
         {
             _symbolTable.EnterScope(typeDefinitionAst);
             return AstVisitAction.Continue;
@@ -390,17 +390,17 @@ namespace System.Management.Automation.Language
                         var propertyMember = ast as PropertyMemberAst;
                         if (propertyMember != null)
                         {
-                           if (propertyMember.IsStatic)
-					        {
+                            if (propertyMember.IsStatic)
+                            {
                                 var typeAst = _symbolTable.GetCurrentTypeDefinitionAst();
                                 Diagnostics.Assert(typeAst != null, "Method scopes can exist only inside type definitions.");
                                 _parser.ReportError(variableExpressionAst.Extent, () => ParserStrings.MissingTypeInStaticPropertyAssignment,
                                     String.Format(CultureInfo.InvariantCulture, "[{0}]::", typeAst.Name), propertyMember.Name);
-					        }
-					        else
-					        {
+                            }
+                            else
+                            {
                                 _parser.ReportError(variableExpressionAst.Extent, () => ParserStrings.MissingThis, "$this.", propertyMember.Name);
-					        }
+                            }
                         }
                     }
                 }
@@ -439,7 +439,7 @@ namespace System.Management.Automation.Language
             exception = null;
             wildcardCharactersUsed = false;
             isConstant = true;
-            
+
             // fullyQualifiedName can be string or hashtable
             object fullyQualifiedName;
             if (usingStatementAst.ModuleSpecification != null)
@@ -608,7 +608,7 @@ namespace System.Management.Automation.Language
 
             if (classDefn != null && classDefn.IsAmbiguous())
             {
-                _parser.ReportError(typeName.Extent, () => ParserStrings.AmbiguousTypeReference, 
+                _parser.ReportError(typeName.Extent, () => ParserStrings.AmbiguousTypeReference,
                     typeName.Name,
                     GetModuleQualifiedName(classDefn.ExternalNamespaces[0], typeName.Name),
                     GetModuleQualifiedName(classDefn.ExternalNamespaces[1], typeName.Name));
@@ -617,7 +617,7 @@ namespace System.Management.Automation.Language
             {
                 typeName.SetTypeDefinition(classDefn.Type);
             }
-            else 
+            else
             {
                 Exception e;
                 TypeResolutionState trs = genericArgumentCount > 0 || isAttribute
@@ -687,7 +687,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    class SymbolResolvePostActionVisitor : DefaultCustomAstVisitor2
+    internal class SymbolResolvePostActionVisitor : DefaultCustomAstVisitor2
     {
         internal SymbolResolver _symbolResolver;
 

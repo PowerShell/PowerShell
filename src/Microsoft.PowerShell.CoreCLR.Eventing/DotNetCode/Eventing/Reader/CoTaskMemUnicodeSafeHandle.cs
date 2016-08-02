@@ -1,11 +1,6 @@
-// ==++==
-// 
-//   Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
-// ==--==
+
 /*============================================================
 **
-** Class: CoTaskMemUnicodeSafeHandle
 **
 ** Purpose: 
 ** This internal class is a SafeHandle implementation over a 
@@ -15,40 +10,47 @@
 
 using System.Runtime.InteropServices;
 
-namespace System.Diagnostics.Eventing.Reader {
-
+namespace System.Diagnostics.Eventing.Reader
+{
     //
     // Marked as SecurityCritical due to link demands from inherited
     // SafeHandle members.
     //
     [System.Security.SecurityCritical]
-    internal sealed class CoTaskMemUnicodeSafeHandle : SafeHandle {
-
+    internal sealed class CoTaskMemUnicodeSafeHandle : SafeHandle
+    {
         internal CoTaskMemUnicodeSafeHandle()
-            : base(IntPtr.Zero, true) {
+            : base(IntPtr.Zero, true)
+        {
         }
 
         internal CoTaskMemUnicodeSafeHandle(IntPtr handle, bool ownsHandle)
-            : base(IntPtr.Zero, ownsHandle) {
+            : base(IntPtr.Zero, ownsHandle)
+        {
             SetHandle(handle);
         }
 
-        internal void SetMemory(IntPtr handle) {
+        internal void SetMemory(IntPtr handle)
+        {
             SetHandle(handle);
         }
 
-        internal IntPtr GetMemory() {
+        internal IntPtr GetMemory()
+        {
             return handle;
         }
 
-        
-        public override bool IsInvalid {
-            get {
+
+        public override bool IsInvalid
+        {
+            get
+            {
                 return IsClosed || handle == IntPtr.Zero;
             }
         }
 
-        protected override bool ReleaseHandle() {
+        protected override bool ReleaseHandle()
+        {
             Marshal.ZeroFreeCoTaskMemUnicode(handle);
             handle = IntPtr.Zero;
             return true;
@@ -56,8 +58,10 @@ namespace System.Diagnostics.Eventing.Reader {
 
         // DONT compare CoTaskMemUnicodeSafeHandle with CoTaskMemUnicodeSafeHandle.Zero
         // use IsInvalid instead. Zero is provided where a NULL handle needed
-        public static CoTaskMemUnicodeSafeHandle Zero {
-            get {
+        public static CoTaskMemUnicodeSafeHandle Zero
+        {
+            get
+            {
                 return new CoTaskMemUnicodeSafeHandle();
             }
         }

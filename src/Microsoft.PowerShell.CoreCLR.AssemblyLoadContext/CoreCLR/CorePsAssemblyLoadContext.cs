@@ -46,7 +46,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static PowerShellAssemblyLoadContext InitializeSingleton(string basePaths, bool useResolvingHandlerOnly)
         {
-            lock (syncObj)
+            lock (s_syncObj)
             {
                 if (Instance != null)
                     throw new InvalidOperationException(SingletonAlreadyInitialized);
@@ -89,10 +89,10 @@ namespace System.Management.Automation
                 throw new ArgumentNullException("basePaths");
             }
 
-            this.basePaths = basePaths.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            for (int i = 0; i < this.basePaths.Length; i++)
+            _basePaths = basePaths.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < _basePaths.Length; i++)
             {
-                string basePath = this.basePaths[i];
+                string basePath = _basePaths[i];
                 if (!Directory.Exists(basePath))
                 {
                     string message = string.Format(
@@ -101,31 +101,31 @@ namespace System.Management.Automation
                         basePath);
                     throw new ArgumentException(message, "basePaths");
                 }
-                this.basePaths[i] = basePath.Trim();
+                _basePaths[i] = basePath.Trim();
             }
             #endregion Validation
 
             // FIRST: Add basePaths to probing paths
-            this.probingPaths = new List<string>(this.basePaths);
+            _probingPaths = new List<string>(_basePaths);
 
             // NEXT: Initialize the CoreCLR type catalog dictionary [OrdinalIgnoreCase]
-            coreClrTypeCatalog = InitializeTypeCatalog();
+            _coreClrTypeCatalog = InitializeTypeCatalog();
 
             // LAST: Handle useResolvingHandlerOnly flag
-            this.useResolvingHandlerOnly = useResolvingHandlerOnly;
-            this.activeLoadContext = useResolvingHandlerOnly ? Default : this;
+            _useResolvingHandlerOnly = useResolvingHandlerOnly;
+            _activeLoadContext = useResolvingHandlerOnly ? Default : this;
             if (useResolvingHandlerOnly)
             {
                 Default.Resolving += Resolve;
             }
             else
             {
-                var tempSet = new HashSet<string>(coreClrTypeCatalog.Values, StringComparer.OrdinalIgnoreCase);
-                tpaSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                var tempSet = new HashSet<string>(_coreClrTypeCatalog.Values, StringComparer.OrdinalIgnoreCase);
+                _tpaSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 foreach (string tpa in tempSet)
                 {
                     string shortName = tpa.Substring(0, tpa.IndexOf(','));
-                    tpaSet.Add(shortName);
+                    _tpaSet.Add(shortName);
                 }
             }
         }
@@ -133,23 +133,23 @@ namespace System.Management.Automation
         #endregion Constructor
 
         #region Fields
-        
-        private readonly bool useResolvingHandlerOnly;
-        private readonly AssemblyLoadContext activeLoadContext;
-        private readonly static object syncObj = new object();
-        private readonly string[] basePaths;
+
+        private readonly bool _useResolvingHandlerOnly;
+        private readonly AssemblyLoadContext _activeLoadContext;
+        private readonly static object s_syncObj = new object();
+        private readonly string[] _basePaths;
         // Initially, 'probingPaths' only contains psbase path. But every time we load an assembly through 'LoadFrom(string AssemblyPath)', we
         // add its parent path to 'probingPaths', so that we are able to support implicit loading of an assembly from the same place where the
         // requesting assembly is located.
         // We don't need to worry about removing any paths from 'probingPaths', because once an assembly is loaded, it won't be unloaded until
         // the current process exits, and thus the assembly itself and its parent folder cannot be deleted or renamed.
-        private readonly List<string> probingPaths;
+        private readonly List<string> _probingPaths;
         // CoreCLR type catalog dictionary
         //  - Key: namespace qualified type name (FullName)
         //  - Value: strong name of the TPA that contains the type represented by Key.
-        private readonly Dictionary<string, string> coreClrTypeCatalog;
-        private readonly HashSet<string> tpaSet;
-        private readonly string[] extensions = new string[] { ".ni.dll", ".dll" };
+        private readonly Dictionary<string, string> _coreClrTypeCatalog;
+        private readonly HashSet<string> _tpaSet;
+        private readonly string[] _extensions = new string[] { ".ni.dll", ".dll" };
 
         /// <summary>
         /// Assembly cache accross the AppDomain
@@ -165,7 +165,7 @@ namespace System.Management.Automation
         /// 
         /// Therefore, there is no need to use the full assembly name as the key. Short assembly name is sufficient.
         /// </remarks>
-        private static readonly ConcurrentDictionary<string, Assembly> AssemblyCache =
+        private static readonly ConcurrentDictionary<string, Assembly> s_assemblyCache =
             new ConcurrentDictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
 
         #endregion Fields
@@ -199,14 +199,14 @@ namespace System.Management.Automation
         /// </summary>
         protected override Assembly Load(AssemblyName assemblyName)
         {
-            if (useResolvingHandlerOnly)
+            if (_useResolvingHandlerOnly)
                 throw new NotSupportedException(UseResolvingEventHandlerOnly);
 
             // We let the default context load the assemblies included in the type catalog as there
             // appears to be a bug in .NET with method resolution with system libraries loaded by our
             // context and not the default. We use the short name because some packages have inconsistent
             // verions between reference and runtime assemblies.
-            if (tpaSet.Contains(assemblyName.Name))
+            if (_tpaSet.Contains(assemblyName.Name))
                 return null;
 
             return Resolve(this, assemblyName);
@@ -223,7 +223,7 @@ namespace System.Management.Automation
                 return asmLoaded;
 
             // Prepare to load the assembly
-            lock (syncObj)
+            lock (s_syncObj)
             {
                 // Probe the cache again in case it's already loaded
                 if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
@@ -235,13 +235,13 @@ namespace System.Management.Automation
                 string asmCultureName = assemblyName.CultureName ?? string.Empty;
                 string asmFilePath = null;
 
-                for (int i = 0; i < probingPaths.Count; i++)
+                for (int i = 0; i < _probingPaths.Count; i++)
                 {
-                    string probingPath = probingPaths[i];
+                    string probingPath = _probingPaths[i];
                     string asmCulturePath = Path.Combine(probingPath, asmCultureName);
-                    for (int k = 0; k < extensions.Length; k++)
+                    for (int k = 0; k < _extensions.Length; k++)
                     {
-                        string asmFileName = assemblyName.Name + extensions[k];
+                        string asmFileName = assemblyName.Name + _extensions[k];
                         asmFilePath = Path.Combine(asmCulturePath, asmFileName);
 
                         if (File.Exists(asmFilePath))
@@ -269,13 +269,13 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                asmLoaded = asmFilePath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase) 
-                                ? loadContext.LoadFromNativeImagePath(asmFilePath, null) 
+                asmLoaded = asmFilePath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase)
+                                ? loadContext.LoadFromNativeImagePath(asmFilePath, null)
                                 : loadContext.LoadFromAssemblyPath(asmFilePath);
                 if (asmLoaded != null)
                 {
                     // Add the loaded assembly to the cache
-                    AssemblyCache.TryAdd(assemblyName.Name, asmLoaded);
+                    s_assemblyCache.TryAdd(assemblyName.Name, asmLoaded);
                 }
             }
 
@@ -299,7 +299,7 @@ namespace System.Management.Automation
                 return asmLoaded;
 
             // Prepare to load the assembly
-            lock (syncObj)
+            lock (s_syncObj)
             {
                 // Probe the cache again in case it's already loaded
                 if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
@@ -307,18 +307,18 @@ namespace System.Management.Automation
 
                 // Load the assembly through 'LoadFromNativeImagePath' or 'LoadFromAssemblyPath'
                 asmLoaded = assemblyPath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase)
-                    ? activeLoadContext.LoadFromNativeImagePath(assemblyPath, null)
-                    : activeLoadContext.LoadFromAssemblyPath(assemblyPath);
+                    ? _activeLoadContext.LoadFromNativeImagePath(assemblyPath, null)
+                    : _activeLoadContext.LoadFromAssemblyPath(assemblyPath);
 
                 if (asmLoaded != null)
                 {
                     // Add the loaded assembly to the cache
-                    AssemblyCache.TryAdd(assemblyName.Name, asmLoaded);
+                    s_assemblyCache.TryAdd(assemblyName.Name, asmLoaded);
                     // Add its parent path to our probing paths
                     string parentPath = Path.GetDirectoryName(assemblyPath);
-                    if (!probingPaths.Contains(parentPath))
+                    if (!_probingPaths.Contains(parentPath))
                     {
-                        probingPaths.Add(parentPath);
+                        _probingPaths.Add(parentPath);
                     }
                 }
             }
@@ -344,18 +344,18 @@ namespace System.Management.Automation
                 return asmLoaded;
 
             // Prepare to load the assembly
-            lock (syncObj)
+            lock (s_syncObj)
             {
                 // Probe the cache again in case it's already loaded
                 if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
                     return asmLoaded;
 
                 // Load the assembly through 'LoadFromStream'
-                asmLoaded = activeLoadContext.LoadFromStream(assembly);
+                asmLoaded = _activeLoadContext.LoadFromStream(assembly);
                 if (asmLoaded != null)
                 {
                     // Add the loaded assembly to the cache
-                    AssemblyCache.TryAdd(assemblyName.Name, asmLoaded);
+                    s_assemblyCache.TryAdd(assemblyName.Name, asmLoaded);
                 }
             }
 
@@ -374,7 +374,7 @@ namespace System.Management.Automation
             if (!string.IsNullOrEmpty(namespaceQualifiedTypeName))
             {
                 string tpaStrongName;
-                if (coreClrTypeCatalog.TryGetValue(namespaceQualifiedTypeName, out tpaStrongName))
+                if (_coreClrTypeCatalog.TryGetValue(namespaceQualifiedTypeName, out tpaStrongName))
                 {
                     try
                     {
@@ -393,7 +393,7 @@ namespace System.Management.Automation
             }
 
             // Otherwise, we return all assemblies from the AssemblyCache
-            return AssemblyCache.Values;
+            return s_assemblyCache.Values;
         }
 
         /// <summary>
@@ -407,7 +407,7 @@ namespace System.Management.Automation
         internal bool TryAddAssemblyToCache(Assembly assembly)
         {
             AssemblyName asmName = assembly.GetName();
-            bool success = AssemblyCache.TryAdd(asmName.Name, assembly);
+            bool success = s_assemblyCache.TryAdd(asmName.Name, assembly);
             // Raise AssemblyLoad event
             if (success) { OnAssemblyLoaded(assembly); }
             return success;
@@ -434,20 +434,20 @@ namespace System.Management.Automation
             }
 
             // Construct the probing paths for searching the specified assembly file
-            string[] metadataProbingPaths = this.basePaths;
+            string[] metadataProbingPaths = _basePaths;
             if (useAdditionalSearchPath)
             {
                 var searchPaths = new List<string>() { additionalSearchPath };
-                searchPaths.AddRange(this.basePaths);
+                searchPaths.AddRange(_basePaths);
                 metadataProbingPaths = searchPaths.ToArray();
             }
 
             for (int i = 0; i < metadataProbingPaths.Length; i++)
             {
                 string metadataProbingPath = metadataProbingPaths[i];
-                for (int k = 0; k < extensions.Length; k++)
+                for (int k = 0; k < _extensions.Length; k++)
                 {
-                    string asmFileName = assemblyShortName + extensions[k];
+                    string asmFileName = assemblyShortName + _extensions[k];
                     string asmFilePath = Path.Combine(metadataProbingPath, asmFileName);
                     if (File.Exists(asmFilePath))
                     {
@@ -465,7 +465,7 @@ namespace System.Management.Automation
         /// </summary>
         internal IEnumerable<string> GetAvailableDotNetTypes()
         {
-            return coreClrTypeCatalog.Keys;
+            return _coreClrTypeCatalog.Keys;
         }
 
         /// <summary>
@@ -482,8 +482,8 @@ namespace System.Management.Automation
         /// </remarks>
         internal void SetProfileOptimizationRootImpl(string directoryPath)
         {
-            if (this.useResolvingHandlerOnly)
-                activeLoadContext.SetProfileOptimizationRoot(directoryPath);
+            if (_useResolvingHandlerOnly)
+                _activeLoadContext.SetProfileOptimizationRoot(directoryPath);
         }
 
         /// <summary>
@@ -500,8 +500,8 @@ namespace System.Management.Automation
         /// </remarks>
         internal void StartProfileOptimizationImpl(string profile)
         {
-            if (this.useResolvingHandlerOnly)
-                activeLoadContext.StartProfileOptimization(profile);
+            if (_useResolvingHandlerOnly)
+                _activeLoadContext.StartProfileOptimization(profile);
         }
 
         #endregion Protected_Internal_Methods
@@ -516,10 +516,12 @@ namespace System.Management.Automation
             Action<Assembly> assemblyLoadHandler = AssemblyLoad;
             if (assemblyLoaded != null && assemblyLoadHandler != null)
             {
-                try {
+                try
+                {
                     assemblyLoadHandler(assemblyLoaded);
                 }
-                catch {
+                catch
+                {
                     // Catch all exceptions, same behavior as AppDomain.AssemblyLoad
                 }
             }
@@ -539,7 +541,7 @@ namespace System.Management.Automation
             {
                 throw new ArgumentException(AbsolutePathRequired, parameterName);
             }
-            
+
             if (!File.Exists(assemblyPath))
             {
                 ThrowFileNotFoundException(
@@ -554,7 +556,7 @@ namespace System.Management.Automation
                     assemblyPath);
             }
         }
-        
+
         /// <summary>
         /// Get AssemblyName of an assembly stream
         /// </summary>
@@ -569,7 +571,7 @@ namespace System.Management.Automation
                 MetadataReader metadataReader = peReader.GetMetadataReader();
                 strongAssemblyName = AssemblyMetadataHelper.GetAssemblyStrongName(metadataReader);
             }
-            
+
             assembly.Seek(0, SeekOrigin.Begin);
             return new AssemblyName(strongAssemblyName);
         }
@@ -579,7 +581,7 @@ namespace System.Management.Automation
         /// </summary>
         private bool TryGetAssemblyFromCache(AssemblyName assemblyName, out Assembly asmLoaded)
         {
-            if (AssemblyCache.TryGetValue(assemblyName.Name, out asmLoaded))
+            if (s_assemblyCache.TryGetValue(assemblyName.Name, out asmLoaded))
             {
                 // Check if loaded assembly matches the request
                 if (IsAssemblyMatching(assemblyName, asmLoaded.GetName()))
@@ -687,7 +689,7 @@ namespace System.Management.Automation
     /// </summary>
     public class PowerShellAssemblyLoadContextInitializer
     {
-        private static object[] EmptyArray = new object[0];
+        private static object[] s_emptyArray = new object[0];
 
         /// <summary>
         /// Create a singleton of PowerShellAssemblyLoadContext.
@@ -798,7 +800,7 @@ namespace System.Management.Automation
             if (string.IsNullOrEmpty(entryMethodName))
                 throw new ArgumentNullException("entryMethodName");
 
-            args = args ?? EmptyArray;
+            args = args ?? s_emptyArray;
 
             var psLoadContext = PowerShellAssemblyLoadContext.InitializeSingleton(basePaths, useResolvingHandlerOnly: false);
             var entryAssembly = psLoadContext.LoadFromAssemblyName(entryAssemblyName);

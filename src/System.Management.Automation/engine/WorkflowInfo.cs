@@ -41,18 +41,18 @@ namespace System.Management.Automation
         /// If <paramref name="workflow"/> is null.
         /// </exception>
         public WorkflowInfo(string name, string definition, ScriptBlock workflow, string xamlDefinition, WorkflowInfo[] workflowsCalled)
-            : this(name, workflow, (ExecutionContext) null)
+            : this(name, workflow, (ExecutionContext)null)
         {
             if (string.IsNullOrEmpty(xamlDefinition))
             {
                 throw PSTraceSource.NewArgumentNullException("xamlDefinition");
             }
 
-            this._definition = definition;
+            _definition = definition;
             this.XamlDefinition = xamlDefinition;
             if (workflowsCalled != null)
             {
-                this._workflowsCalled = new ReadOnlyCollection<WorkflowInfo>(workflowsCalled);
+                _workflowsCalled = new ReadOnlyCollection<WorkflowInfo>(workflowsCalled);
             }
         }
 
@@ -197,7 +197,7 @@ namespace System.Management.Automation
         internal WorkflowInfo(string name, ScriptBlock workflow, ScopedItemOptions options, ExecutionContext context, string helpFile)
             : base(name, workflow, options, context, helpFile)
         {
-            SetCommandType( CommandTypes.Workflow );
+            SetCommandType(CommandTypes.Workflow);
         } // workflowInfo ctor
 
         /// <summary>
@@ -226,8 +226,8 @@ namespace System.Management.Automation
         {
             this.XamlDefinition = other.XamlDefinition;
             this.NestedXamlDefinition = other.NestedXamlDefinition;
-            this._workflowsCalled = other.WorkflowsCalled;
-            this._definition = other.Definition;
+            _workflowsCalled = other.WorkflowsCalled;
+            _definition = other.Definition;
         }
 
         /// <summary>
@@ -307,7 +307,6 @@ namespace System.Management.Automation
         internal override HelpCategory HelpCategory
         {
             get { return HelpCategory.Workflow; }
-        } 
-
+        }
     } // WorkflowInfo
 } // namespace System.Management.Automation

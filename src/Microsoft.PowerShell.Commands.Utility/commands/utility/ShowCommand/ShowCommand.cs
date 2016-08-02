@@ -1,8 +1,8 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ShowCommand.cs" company="Microsoft">
 //     Copyright © Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
+
 namespace Microsoft.PowerShell.Commands
 {
     using System;
@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     using System.Text;
     using System.Threading;
     using Microsoft.PowerShell.Commands.ShowCommandExtension;
-    
+
     /// <summary>
     /// Show-Command displays a GUI for a cmdlet, or for all cmdlets if no specific cmdlet is specified.
     /// </summary>
@@ -27,62 +27,62 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Set to true when ProcessRecord is reached, since it will allways open a window
         /// </summary>
-        private bool hasOpenedWindow;
+        private bool _hasOpenedWindow;
 
         /// <summary>
         /// Determines if the command should be sent to the pipeline as a string instead of run.
         /// </summary>
-        private bool passThrough;
+        private bool _passThrough;
 
         /// <summary>
         /// Uses ShowCommandProxy to invoke WPF GUI object. 
         /// </summary>
-        private ShowCommandProxy showCommandProxy;
+        private ShowCommandProxy _showCommandProxy;
 
         /// <summary>
         /// Data container for all cmdlets. This is populated when show-command is called with no command name.
         /// </summary>
-        private List<ShowCommandCommandInfo> commands;
+        private List<ShowCommandCommandInfo> _commands;
 
         /// <summary>
         /// List of modules that have been loaded indexed by module name
         /// </summary>
-        private Dictionary<string, ShowCommandModuleInfo> importedModules;
+        private Dictionary<string, ShowCommandModuleInfo> _importedModules;
 
         /// <summary>
         /// Record the EndProcessing error.
         /// </summary>
-        private PSDataCollection<ErrorRecord> errors = new PSDataCollection<ErrorRecord>();
+        private PSDataCollection<ErrorRecord> _errors = new PSDataCollection<ErrorRecord>();
 
         /// <summary>
         /// Field used for the CommandName parameter.
         /// </summary>
-        private string commandName;
+        private string _commandName;
 
         /// <summary>
         /// Field used for the Height parameter.
         /// </summary>
-        private double height;
+        private double _height;
 
         /// <summary>
         /// Field used for the Width parameter.
         /// </summary>
-        private double width;
+        private double _width;
 
         /// <summary>
         /// Field used for the NoCommonParameter parameter.
         /// </summary>
-        private SwitchParameter noCommonParameter;
+        private SwitchParameter _noCommonParameter;
 
         /// <summary>
         /// A value indicating errors should not cause a message window to be displayed
         /// </summary>
-        private SwitchParameter errorPopup;
+        private SwitchParameter _errorPopup;
 
         /// <summary>
         /// Object used for ShowCommand with a command name that holds the view model created for the command
         /// </summary>
-        private object commandViewModelObj;
+        private object _commandViewModelObj;
         #endregion
 
         /// <summary>
@@ -101,8 +101,8 @@ namespace Microsoft.PowerShell.Commands
         [Alias("CommandName")]
         public string Name
         {
-            get { return this.commandName; }
-            set { this.commandName = value; }
+            get { return _commandName; }
+            set { _commandName = value; }
         }
 
         /// <summary>
@@ -112,8 +112,8 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(300, Int32.MaxValue)]
         public double Height
         {
-            get { return this.height; }
-            set { this.height = value; }
+            get { return _height; }
+            set { _height = value; }
         }
 
         /// <summary>
@@ -123,8 +123,8 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(300, Int32.MaxValue)]
         public double Width
         {
-            get { return this.width; }
-            set { this.width = value; }
+            get { return _width; }
+            set { _width = value; }
         }
 
         /// <summary>
@@ -133,8 +133,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter NoCommonParameter
         {
-            get { return this.noCommonParameter; }
-            set { this.noCommonParameter = value; }
+            get { return _noCommonParameter; }
+            set { _noCommonParameter = value; }
         }
 
         /// <summary>
@@ -143,8 +143,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter ErrorPopup
         {
-            get { return this.errorPopup; }
-            set { this.errorPopup = value; }
+            get { return _errorPopup; }
+            set { _errorPopup = value; }
         }
 
         /// <summary>
@@ -155,12 +155,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return this.passThrough;
+                return _passThrough;
             }
 
             set
             {
-                this.passThrough = value;
+                _passThrough = value;
             }
         } // PassThru
         #endregion
@@ -172,26 +172,26 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="script">Script to execute</param>
         public void RunScript(string script)
         {
-            if (this.showCommandProxy == null || string.IsNullOrEmpty(script))
+            if (_showCommandProxy == null || string.IsNullOrEmpty(script))
             {
                 return;
             }
 
-            if (this.passThrough)
+            if (_passThrough)
             {
                 this.WriteObject(script);
                 return;
             }
 
-            if (this.errorPopup)
+            if (_errorPopup)
             {
                 this.RunScriptSilentlyAndWithErrorHookup(script);
                 return;
             }
 
-            if (this.showCommandProxy.HasHostWindow)
+            if (_showCommandProxy.HasHostWindow)
             {
-                if (!this.showCommandProxy.SetPendingISECommand(script))
+                if (!_showCommandProxy.SetPendingISECommand(script))
                 {
                     this.RunScriptSilentlyAndWithErrorHookup(script);
                 }
@@ -220,22 +220,22 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            this.showCommandProxy = new ShowCommandProxy(this);
+            _showCommandProxy = new ShowCommandProxy(this);
 
-            if (this.showCommandProxy.ScreenHeight < this.Height)
+            if (_showCommandProxy.ScreenHeight < this.Height)
             {
                 ErrorRecord error = new ErrorRecord(
-                                    new NotSupportedException(String.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Height", this.showCommandProxy.ScreenHeight)),
+                                    new NotSupportedException(String.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Height", _showCommandProxy.ScreenHeight)),
                                     "PARAMETER_DATA_ERROR",
                                     ErrorCategory.InvalidData,
                                     null);
                 this.ThrowTerminatingError(error);
             }
 
-            if (this.showCommandProxy.ScreenWidth < this.Width)
+            if (_showCommandProxy.ScreenWidth < this.Width)
             {
                 ErrorRecord error = new ErrorRecord(
-                                    new NotSupportedException(String.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Width", this.showCommandProxy.ScreenWidth)),
+                                    new NotSupportedException(String.Format(CultureInfo.CurrentUICulture, FormatAndOut_out_gridview.PropertyValidate, "Width", _showCommandProxy.ScreenWidth)),
                                     "PARAMETER_DATA_ERROR",
                                     ErrorCategory.InvalidData,
                                     null);
@@ -248,13 +248,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (this.commandName == null)
+            if (_commandName == null)
             {
-                this.hasOpenedWindow = this.CanProcessRecordForAllCommands();
+                _hasOpenedWindow = this.CanProcessRecordForAllCommands();
             }
             else
             {
-                this.hasOpenedWindow = this.CanProcessRecordForOneCommand();
+                _hasOpenedWindow = this.CanProcessRecordForOneCommand();
             }
         }
 
@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (!this.hasOpenedWindow)
+            if (!_hasOpenedWindow)
             {
                 return;
             }
@@ -272,31 +272,31 @@ namespace Microsoft.PowerShell.Commands
             // to work arround the console window gaining activation somewhere 
             // in the end of ProcessRecord, which causes the keyboard focus
             // (and use oif tab key to focus controls) to go away from the window
-            this.showCommandProxy.WindowLoaded.WaitOne();
-            this.showCommandProxy.ActivateWindow();
+            _showCommandProxy.WindowLoaded.WaitOne();
+            _showCommandProxy.ActivateWindow();
 
             this.WaitForWindowClosedOrHelpNeeded();
-            this.RunScript(this.showCommandProxy.GetScript());
+            this.RunScript(_showCommandProxy.GetScript());
 
-            if (this.errors.Count == 0 || !this.errorPopup)
+            if (_errors.Count == 0 || !_errorPopup)
             {
                 return;
             }
 
             StringBuilder errorString = new StringBuilder();
 
-            for (int i = 0; i < this.errors.Count; i++)
+            for (int i = 0; i < _errors.Count; i++)
             {
                 if (i != 0)
                 {
                     errorString.AppendLine();
                 }
 
-                ErrorRecord error = this.errors[i];
+                ErrorRecord error = _errors[i];
                 errorString.Append(error.Exception.Message);
             }
 
-            this.showCommandProxy.ShowErrorString(errorString.ToString());
+            _showCommandProxy.ShowErrorString(errorString.ToString());
         }
 
         /// <summary>
@@ -304,7 +304,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void StopProcessing()
         {
-            this.showCommandProxy.CloseWindow();
+            _showCommandProxy.CloseWindow();
         }
 
         #endregion
@@ -321,10 +321,10 @@ namespace Microsoft.PowerShell.Commands
             PSDataCollection<object> output = new PSDataCollection<object>();
 
             output.DataAdded += new EventHandler<DataAddedEventArgs>(this.Output_DataAdded);
-            this.errors.DataAdded += new EventHandler<DataAddedEventArgs>(this.Error_DataAdded);
+            _errors.DataAdded += new EventHandler<DataAddedEventArgs>(this.Error_DataAdded);
 
             PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
-            ps.Streams.Error = this.errors;
+            ps.Streams.Error = _errors;
 
             ps.Commands.AddScript(script);
 
@@ -340,8 +340,8 @@ namespace Microsoft.PowerShell.Commands
                 String.Format(
                     CultureInfo.CurrentUICulture,
                     FormatAndOut_out_gridview.CommandNotFound,
-                    this.commandName));
-            this.ThrowTerminatingError(new ErrorRecord(errorException, "NoCommand", ErrorCategory.InvalidOperation, this.commandName));
+                    _commandName));
+            this.ThrowTerminatingError(new ErrorRecord(errorException, "NoCommand", ErrorCategory.InvalidOperation, _commandName));
         }
 
         /// <summary>
@@ -353,9 +353,9 @@ namespace Microsoft.PowerShell.Commands
                 String.Format(
                     CultureInfo.CurrentUICulture,
                     FormatAndOut_out_gridview.MoreThanOneCommand,
-                    this.commandName,
+                    _commandName,
                     "Show-Command"));
-            this.ThrowTerminatingError(new ErrorRecord(errorException, "MoreThanOneCommand", ErrorCategory.InvalidOperation, this.commandName));
+            this.ThrowTerminatingError(new ErrorRecord(errorException, "MoreThanOneCommand", ErrorCategory.InvalidOperation, _commandName));
         }
 
         /// <summary>
@@ -367,7 +367,7 @@ namespace Microsoft.PowerShell.Commands
         {
             command = null;
             modules = null;
-            string commandText = this.showCommandProxy.GetShowCommandCommand(this.commandName, true);
+            string commandText = _showCommandProxy.GetShowCommandCommand(_commandName, true);
 
             Collection<PSObject> commandResults = this.InvokeCommand.InvokeScript(commandText);
 
@@ -393,7 +393,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (command.CommandType == CommandTypes.Alias)
             {
-                commandText = this.showCommandProxy.GetShowCommandCommand(command.Definition, false);
+                commandText = _showCommandProxy.GetShowCommandCommand(command.Definition, false);
                 commandResults = this.InvokeCommand.InvokeScript(commandText);
                 if (commandResults == null || commandResults.Count != 1)
                 {
@@ -404,7 +404,7 @@ namespace Microsoft.PowerShell.Commands
                 command = (CommandInfo)commandResults[0].BaseObject;
             }
 
-            modules = this.showCommandProxy.GetImportedModulesDictionary(moduleObjects);
+            modules = _showCommandProxy.GetImportedModulesDictionary(moduleObjects);
         }
 
         /// <summary>
@@ -414,17 +414,17 @@ namespace Microsoft.PowerShell.Commands
         private bool CanProcessRecordForOneCommand()
         {
             CommandInfo commandInfo;
-            this.GetCommandInfoAndModules(out commandInfo, out this.importedModules);
+            this.GetCommandInfoAndModules(out commandInfo, out _importedModules);
             Diagnostics.Assert(commandInfo != null, "GetCommandInfoAndModules would throw a termninating error/exception");
 
             try
             {
-                this.commandViewModelObj = this.showCommandProxy.GetCommandViewModel(new ShowCommandCommandInfo(commandInfo), this.noCommonParameter.ToBool(), this.importedModules, this.Name.IndexOf('\\') != -1);
-                this.showCommandProxy.ShowCommandWindow(this.commandViewModelObj, this.passThrough);
+                _commandViewModelObj = _showCommandProxy.GetCommandViewModel(new ShowCommandCommandInfo(commandInfo), _noCommonParameter.ToBool(), _importedModules, this.Name.IndexOf('\\') != -1);
+                _showCommandProxy.ShowCommandWindow(_commandViewModelObj, _passThrough);
             }
             catch (TargetInvocationException ti)
             {
-                this.WriteError(new ErrorRecord(ti.InnerException, "CannotProcessRecordForOneCommand", ErrorCategory.InvalidOperation, this.commandName));
+                this.WriteError(new ErrorRecord(ti.InnerException, "CannotProcessRecordForOneCommand", ErrorCategory.InvalidOperation, _commandName));
                 return false;
             }
 
@@ -437,18 +437,18 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>true if there was no exception processing this record</returns>
         private bool CanProcessRecordForAllCommands()
         {
-            Collection<PSObject> rawCommands = this.InvokeCommand.InvokeScript(this.showCommandProxy.GetShowAllModulesCommand());
-            
-            this.commands = this.showCommandProxy.GetCommandList((object[])rawCommands[0].BaseObject);
-            this.importedModules = this.showCommandProxy.GetImportedModulesDictionary((object[])rawCommands[1].BaseObject);
+            Collection<PSObject> rawCommands = this.InvokeCommand.InvokeScript(_showCommandProxy.GetShowAllModulesCommand());
+
+            _commands = _showCommandProxy.GetCommandList((object[])rawCommands[0].BaseObject);
+            _importedModules = _showCommandProxy.GetImportedModulesDictionary((object[])rawCommands[1].BaseObject);
 
             try
             {
-                this.showCommandProxy.ShowAllModulesWindow(this.importedModules, this.commands, this.noCommonParameter.ToBool(), this.passThrough);
+                _showCommandProxy.ShowAllModulesWindow(_importedModules, _commands, _noCommonParameter.ToBool(), _passThrough);
             }
             catch (TargetInvocationException ti)
             {
-                this.WriteError(new ErrorRecord(ti.InnerException, "CannotProcessRecordForAllCommands", ErrorCategory.InvalidOperation, this.commandName));
+                this.WriteError(new ErrorRecord(ti.InnerException, "CannotProcessRecordForAllCommands", ErrorCategory.InvalidOperation, _commandName));
                 return false;
             }
 
@@ -462,7 +462,7 @@ namespace Microsoft.PowerShell.Commands
         {
             do
             {
-                int which = WaitHandle.WaitAny(new WaitHandle[] { this.showCommandProxy.WindowClosed, this.showCommandProxy.HelpNeeded, this.showCommandProxy.ImportModuleNeeded });
+                int which = WaitHandle.WaitAny(new WaitHandle[] { _showCommandProxy.WindowClosed, _showCommandProxy.HelpNeeded, _showCommandProxy.ImportModuleNeeded });
 
                 if (which == 0)
                 {
@@ -471,13 +471,13 @@ namespace Microsoft.PowerShell.Commands
 
                 if (which == 1)
                 {
-                    Collection<PSObject> helpResults = this.InvokeCommand.InvokeScript(this.showCommandProxy.GetHelpCommand(this.showCommandProxy.CommandNeedingHelp));
-                    this.showCommandProxy.DisplayHelp(helpResults);
+                    Collection<PSObject> helpResults = this.InvokeCommand.InvokeScript(_showCommandProxy.GetHelpCommand(_showCommandProxy.CommandNeedingHelp));
+                    _showCommandProxy.DisplayHelp(helpResults);
                     continue;
                 }
 
                 Diagnostics.Assert(which == 2, "which is 0,1 or 2 and 0 and 1 have been eliminated in the ifs above");
-                string commandToRun = this.showCommandProxy.GetImportModuleCommand(this.showCommandProxy.ParentModuleNeedingImportModule);
+                string commandToRun = _showCommandProxy.GetImportModuleCommand(_showCommandProxy.ParentModuleNeedingImportModule);
                 Collection<PSObject> rawCommands;
                 try
                 {
@@ -485,15 +485,15 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (RuntimeException e)
                 {
-                    this.showCommandProxy.ImportModuleFailed(e);
+                    _showCommandProxy.ImportModuleFailed(e);
                     continue;
                 }
 
-                this.commands = this.showCommandProxy.GetCommandList((object[])rawCommands[0].BaseObject);
-                this.importedModules = this.showCommandProxy.GetImportedModulesDictionary((object[])rawCommands[1].BaseObject);
-                this.showCommandProxy.ImportModuleDone(this.importedModules, this.commands);
+                _commands = _showCommandProxy.GetCommandList((object[])rawCommands[0].BaseObject);
+                _importedModules = _showCommandProxy.GetImportedModulesDictionary((object[])rawCommands[1].BaseObject);
+                _showCommandProxy.ImportModuleDone(_importedModules, _commands);
                 continue;
-            } 
+            }
             while (true);
         }
 
@@ -525,10 +525,10 @@ namespace Microsoft.PowerShell.Commands
         {
             if (isDisposing)
             {
-                if (this.errors != null)
+                if (_errors != null)
                 {
-                    this.errors.Dispose();
-                    this.errors = null;
+                    _errors.Dispose();
+                    _errors = null;
                 }
             }
         }

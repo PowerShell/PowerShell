@@ -141,7 +141,7 @@ namespace System.Management.Automation.Remoting
 
             // Rehydrate the collection from the array list.
             ArrayList arrayList = SafelyGetBaseObject<ArrayList>(psObject);
-            IList collection = (IList) Activator.CreateInstance(collectionType);
+            IList collection = (IList)Activator.CreateInstance(collectionType);
             foreach (object element in arrayList)
             {
                 collection.Add(DecodeObject(element, elementType));
@@ -197,7 +197,7 @@ namespace System.Management.Automation.Remoting
 
             // Rehydrate the dictionary from the hashtable.
             Hashtable hashtable = SafelyGetBaseObject<Hashtable>(psObject);
-            IDictionary dictionary = (IDictionary) Activator.CreateInstance(dictionaryType);
+            IDictionary dictionary = (IDictionary)Activator.CreateInstance(dictionaryType);
             foreach (object key in hashtable.Keys)
             {
                 dictionary.Add(
@@ -232,7 +232,7 @@ namespace System.Management.Automation.Remoting
         {
             if (obj is PSObject)
             {
-                return (PSObject) obj;
+                return (PSObject)obj;
             }
             else
             {
@@ -325,7 +325,7 @@ namespace System.Management.Automation.Remoting
             if (obj is PSObject)
             {
                 // The "is" keyword takes care of PSObject and subclasses.
-                return EncodePSObject((PSObject) obj);
+                return EncodePSObject((PSObject)obj);
             }
             else if (obj is ProgressRecord)
             {
@@ -443,7 +443,7 @@ namespace System.Management.Automation.Remoting
                     cred = new PSCredential((String)objAsPSObject.Properties["UserName"].Value,
                                             (SecureString)objAsPSObject.Properties["Password"].Value);
                 }
-                catch(GetValueException)
+                catch (GetValueException)
                 {
                     cred = null;
                 }
@@ -557,7 +557,7 @@ namespace System.Management.Automation.Remoting
             // Rehydrate the array from the array list.
             ArrayList arrayList = SafelyGetBaseObject<ArrayList>(psObject);
             object[] objects = new object[arrayList.Count];
-            for (int i = 0 ; i < arrayList.Count ; ++i)
+            for (int i = 0; i < arrayList.Count; ++i)
             {
                 objects[i] = DecodeObjectWithType(arrayList[i]);
             }
@@ -605,7 +605,7 @@ namespace System.Management.Automation.Remoting
         private static bool ArrayIsZeroBased(Array array)
         {
             int rank = array.Rank;
-            for (int i = 0 ; i < rank ; ++i)
+            for (int i = 0; i < rank; ++i)
             {
                 if (array.GetLowerBound(i) != 0)
                 {
@@ -627,7 +627,7 @@ namespace System.Management.Automation.Remoting
             Type elementType = arrayType.GetElementType();
             int rank = array.Rank;
             int[] lengths = new int[rank];
-            for (int i = 0 ; i < rank ; ++i)
+            for (int i = 0; i < rank; ++i)
             {
                 lengths[i] = array.GetUpperBound(i) + 1;
             }
@@ -662,7 +662,7 @@ namespace System.Management.Automation.Remoting
             // Extract lengths from psObject.
             PSObject psObjectContainingLengths = SafelyGetPropertyValue<PSObject>(psObject, RemoteDataNameStrings.MethodArrayLengths);
             ArrayList lengthsArrayList = SafelyGetBaseObject<ArrayList>(psObjectContainingLengths);
-            int[] lengths = (int[]) lengthsArrayList.ToArray(typeof(int));
+            int[] lengths = (int[])lengthsArrayList.ToArray(typeof(int));
 
             // Reconstitute the array.
             Indexer indexer = new Indexer(lengths);
@@ -723,7 +723,7 @@ namespace System.Management.Automation.Remoting
 
             // Rehydrate the dictionary from the hashtable.
             Hashtable hashtable = SafelyGetBaseObject<Hashtable>(psObject);
-            IDictionary dictionary = (IDictionary) Activator.CreateInstance(dictionaryType);
+            IDictionary dictionary = (IDictionary)Activator.CreateInstance(dictionaryType);
             foreach (object key in hashtable.Keys)
             {
                 dictionary.Add(
@@ -744,7 +744,7 @@ namespace System.Management.Automation.Remoting
                 throw RemoteHostExceptions.NewDecodingFailedException();
             }
 
-            return (T) psObject.BaseObject;
+            return (T)psObject.BaseObject;
         }
 
         /// <summary>
@@ -754,7 +754,7 @@ namespace System.Management.Automation.Remoting
         {
             if (obj is T)
             {
-                return (T) obj;
+                return (T)obj;
             }
 
             throw RemoteHostExceptions.NewDecodingFailedException();
@@ -771,7 +771,7 @@ namespace System.Management.Automation.Remoting
                 throw RemoteHostExceptions.NewDecodingFailedException();
             }
 
-            return (T) propertyInfo.Value;
+            return (T)propertyInfo.Value;
         }
     }
 }

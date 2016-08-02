@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// type definition to include in export
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline=true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public ExtendedTypeDefinition[] InputObject
         {
@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Path of the XML file
         /// </summary>
-        [Parameter(ParameterSetName="ByPath", Mandatory = true)]
+        [Parameter(ParameterSetName = "ByPath", Mandatory = true)]
         [Alias("FilePath")]
         public String Path
         {
@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Literal path of the XML file
         /// </summary>
-        [Parameter(ParameterSetName="ByLiteralPath", Mandatory = true)]
+        [Parameter(ParameterSetName = "ByLiteralPath", Mandatory = true)]
         [Alias("PSPath")]
         public String LiteralPath
         {
@@ -68,11 +68,11 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _filepath = value;
-                isLiteralPath = true;
+                _isLiteralPath = true;
             }
         }
-        bool isLiteralPath = false;
-        
+        private bool _isLiteralPath = false;
+
         private List<ExtendedTypeDefinition> _typeDefinitions = new List<ExtendedTypeDefinition>();
 
         private bool _force;
@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            FormatXmlWriter.WriteToPs1Xml(this, _typeDefinitions, _filepath, _force, _noclobber, _includescriptblock, isLiteralPath);
+            FormatXmlWriter.WriteToPs1Xml(this, _typeDefinitions, _filepath, _force, _noclobber, _includescriptblock, _isLiteralPath);
         }
     }
 }

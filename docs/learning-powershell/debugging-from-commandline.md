@@ -23,7 +23,7 @@ Write-Host "$result Celsius"
 
  **1. Setting a Breakpoint on a Line**
 
-- Open a [PowerShell editor](learning-powershell.md#powershell-editor)
+- Open a [PowerShell editor](README.md#powershell-editor)
 - Save the above code snippet to a file. For example, "test.ps1"
 - Go to your command-line PowerShell
 - Clear existing breakpoints if any
@@ -54,7 +54,7 @@ At /home/jen/debug/test.ps1:5 char:1
 [DBG]: PS /home/jen/debug>>
 ```
 
-- The PowerShell prompt now has the prefix **[DBG]:** as you may noticed. This means
+- The PowerShell prompt now has the prefix **[DBG]:** as you may have noticed. This means
  we have entered into the debug mode. To watch the variables like $celsius, simply type **$celsius** as below.
 - To exit from the debugging, type **q**
 - To get help for the debugging commands, simply type **?**. The following is an example of debugging output.

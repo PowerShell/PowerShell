@@ -15,21 +15,25 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
-namespace System.Management.Automation.ComInterop {
-    internal class UnknownArgBuilder : SimpleArgBuilder {
+namespace System.Management.Automation.ComInterop
+{
+    internal class UnknownArgBuilder : SimpleArgBuilder
+    {
         private readonly bool _isWrapper;
 
         internal UnknownArgBuilder(Type parameterType)
-            : base(parameterType) {
-
+            : base(parameterType)
+        {
             _isWrapper = parameterType == typeof(UnknownWrapper);
         }
 
-        internal override Expression Marshal(Expression parameter) {
+        internal override Expression Marshal(Expression parameter)
+        {
             parameter = base.Marshal(parameter);
 
             // parameter.WrappedObject
-            if (_isWrapper) {
+            if (_isWrapper)
+            {
                 parameter = Expression.Property(
                     Helpers.Convert(parameter, typeof(UnknownWrapper)),
                     typeof(UnknownWrapper).GetProperty("WrappedObject")
@@ -39,7 +43,8 @@ namespace System.Management.Automation.ComInterop {
             return Helpers.Convert(parameter, typeof(object));
         }
 
-        internal override Expression MarshalToRef(Expression parameter) {
+        internal override Expression MarshalToRef(Expression parameter)
+        {
             parameter = Marshal(parameter);
 
             // parameter == null ? IntPtr.Zero : Marshal.GetIUnknownForObject(parameter);
@@ -54,7 +59,8 @@ namespace System.Management.Automation.ComInterop {
         }
 
 
-        internal override Expression UnmarshalFromRef(Expression value) {
+        internal override Expression UnmarshalFromRef(Expression value)
+        {
             // value == IntPtr.Zero ? null : Marshal.GetObjectForIUnknown(value);
             Expression unmarshal = Expression.Condition(
                 Expression.Equal(value, Expression.Constant(IntPtr.Zero)),
@@ -65,7 +71,8 @@ namespace System.Management.Automation.ComInterop {
                 )
             );
 
-            if (_isWrapper) {
+            if (_isWrapper)
+            {
                 unmarshal = Expression.New(
                     typeof(UnknownWrapper).GetConstructor(new Type[] { typeof(object) }),
                     unmarshal

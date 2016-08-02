@@ -26,28 +26,28 @@ namespace Microsoft.PowerShell.Commands
     public sealed class NewObjectCommand : PSCmdlet
     {
         #region parameters
-        private string typeName = null;
+        private string _typeName = null;
         /// <summary> the number</summary>
         [Parameter(ParameterSetName = netSetName, Mandatory = true, Position = 0)]
         public string TypeName
         {
-            get { return typeName; }
-            set { typeName = value; }
+            get { return _typeName; }
+            set { _typeName = value; }
         }
 
 
-        private string comObject = null;
-        private Guid comObjectClsId = Guid.Empty;
+        private string _comObject = null;
+        private Guid _comObjectClsId = Guid.Empty;
         /// <summary> the ProgID of the Com object</summary>
         [Parameter(ParameterSetName = "Com", Mandatory = true, Position = 0)]
         public string ComObject
         {
-            get { return comObject; }
-            set { comObject = value; }
+            get { return _comObject; }
+            set { _comObject = value; }
         }
 
 
-        private object[] arguments = null;
+        private object[] _arguments = null;
         /// <summary>
         /// The parameters for the constructor
         /// </summary>
@@ -56,11 +56,11 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Args")]
         public object[] ArgumentList
         {
-            get { return arguments; }
-            set { arguments = value; }
+            get { return _arguments; }
+            set { _arguments = value; }
         }
 
-        private SwitchParameter strict /* = false */;
+        private SwitchParameter _strict /* = false */;
 
         /// <summary>
         /// True if we should have an error when Com objects will use an interop assembly
@@ -68,12 +68,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Com")]
         public SwitchParameter Strict
         {
-            get { return strict; }
-            set { strict = value; }
+            get { return _strict; }
+            set { _strict = value; }
         }
 
         // Updated from Hashtable to IDictionary to support the work around ordered hashtables.
-        private IDictionary property;
+        private IDictionary _property;
         /// <summary>
         /// gets the properties to be set.
         /// </summary>
@@ -81,8 +81,8 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public IDictionary Property
         {
-            get { return property; }
-            set { property = value; }
+            get { return _property; }
+            set { _property = value; }
         }
         # endregion parameters
 
@@ -93,7 +93,6 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 result = DotNetAdapter.ConstructorInvokeDotNet(type, constructors, args);
-
             }
             catch (MethodException e)
             {
@@ -105,7 +104,6 @@ namespace Microsoft.PowerShell.Commands
             }
             // let other exceptions propagate
             return result;
-
         }
 
         private void CreateMemberNotFoundError(PSObject pso, DictionaryEntry property, Type resultType)
@@ -159,7 +157,7 @@ namespace Microsoft.PowerShell.Commands
                 object _newObject = null;
                 try
                 {
-                    type = LanguagePrimitives.ConvertTo(typeName, typeof(Type), CultureInfo.InvariantCulture) as Type;
+                    type = LanguagePrimitives.ConvertTo(_typeName, typeof(Type), CultureInfo.InvariantCulture) as Type;
                 }
                 catch (Exception e)
                 {
@@ -178,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
                         mshArgE = PSTraceSource.NewArgumentException(
                         "TypeName",
                         NewObjectStrings.TypeNotFound,
-                        typeName);
+                        _typeName);
                         ThrowTerminatingError(
                             new ErrorRecord(
                                 mshArgE,
@@ -207,13 +205,13 @@ namespace Microsoft.PowerShell.Commands
                         "CannotInstantiateWinRTType", ErrorCategory.InvalidOperation, null));
                 }
 
-                if (arguments == null || arguments.Length == 0)
+                if (_arguments == null || _arguments.Length == 0)
                 {
                     ConstructorInfo ci = type.GetConstructor(PSTypeExtensions.EmptyTypes);
                     if (ci != null && ci.IsPublic)
                     {
                         _newObject = CallConstructor(type, new ConstructorInfo[] { ci }, new object[] { });
-                        if (_newObject != null && property != null)
+                        if (_newObject != null && _property != null)
                         {
                             // The method invocation is disabled for "Hashtable to Object conversion" (Win8:649519), but we need to keep it enabled for New-Object for compatibility to PSv2
                             _newObject = LanguagePrimitives.SetObjectProperties(_newObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);
@@ -228,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
                         try
                         {
                             _newObject = Activator.CreateInstance(type);
-                            if (_newObject != null && property != null)
+                            if (_newObject != null && _property != null)
                             {
                                 // Win8:649519
                                 _newObject = LanguagePrimitives.SetObjectProperties(_newObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);
@@ -252,8 +250,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (ctorInfos.Length != 0)
                     {
-                        _newObject = CallConstructor(type, ctorInfos, arguments);
-                        if (_newObject != null && property != null)
+                        _newObject = CallConstructor(type, ctorInfos, _arguments);
+                        if (_newObject != null && _property != null)
                         {
                             // Win8:649519
                             _newObject = LanguagePrimitives.SetObjectProperties(_newObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);
@@ -261,11 +259,10 @@ namespace Microsoft.PowerShell.Commands
                         WriteObject(_newObject);
                         return;
                     }
-
                 }
 
                 mshArgE = PSTraceSource.NewArgumentException(
-                    "TypeName", NewObjectStrings.CannotFindAppropriateCtor, typeName);
+                    "TypeName", NewObjectStrings.CannotFindAppropriateCtor, _typeName);
                 ThrowTerminatingError(
                   new ErrorRecord(
                       mshArgE,
@@ -274,7 +271,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else // Parameterset -Com
             {
-                int result = NewObjectNativeMethods.CLSIDFromProgID(this.comObject, out comObjectClsId);
+                int result = NewObjectNativeMethods.CLSIDFromProgID(_comObject, out _comObjectClsId);
 
                 // If we're in ConstrainedLanguage, do additional restrictions
                 if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
@@ -285,7 +282,7 @@ namespace Microsoft.PowerShell.Commands
                     if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
                     {
                         if ((result >= 0) &&
-                            SystemPolicy.IsClassInApprovedList(comObjectClsId))
+                            SystemPolicy.IsClassInApprovedList(_comObjectClsId))
                         {
                             isAllowed = true;
                         }
@@ -315,14 +312,13 @@ namespace Microsoft.PowerShell.Commands
                          ErrorCategory.InvalidArgument, comObject));
                     }
                 }
-                if (comObject != null && property != null)
+                if (comObject != null && _property != null)
                 {
                     // Win8:649519
                     comObject = LanguagePrimitives.SetObjectProperties(comObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);
                 }
                 WriteObject(comObject);
             }
-
         }//protected override void BeginProcessing()
 
         #endregion Overrides
@@ -402,9 +398,9 @@ namespace Microsoft.PowerShell.Commands
             public Exception e;
         }
 
-        ComCreateInfo createInfo;
+        private ComCreateInfo createInfo;
 
-        void STAComCreateThreadProc(Object createstruct)
+        private void STAComCreateThreadProc(Object createstruct)
         {
             ComCreateInfo info = (ComCreateInfo)createstruct;
             try
@@ -412,19 +408,19 @@ namespace Microsoft.PowerShell.Commands
                 Type type = null;
                 PSArgumentException mshArgE = null;
 
-                type = Type.GetTypeFromCLSID(comObjectClsId);
+                type = Type.GetTypeFromCLSID(_comObjectClsId);
                 if (type == null)
                 {
                     mshArgE = PSTraceSource.NewArgumentException(
                         "ComObject",
                         NewObjectStrings.CannotLoadComObjectType,
-                        comObject);
+                        _comObject);
 
                     info.e = mshArgE;
                     info.success = false;
                     return;
                 }
-                info.objectCreated = SafeCreateInstance(type, arguments);
+                info.objectCreated = SafeCreateInstance(type, _arguments);
                 info.success = true;
             }
             catch (Exception e)
@@ -443,14 +439,14 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                type = Marshal.GetTypeFromCLSID(comObjectClsId);
+                type = Marshal.GetTypeFromCLSID(_comObjectClsId);
                 if (type == null)
                 {
-                    mshArgE = PSTraceSource.NewArgumentException("ComObject", NewObjectStrings.CannotLoadComObjectType, comObject);
+                    mshArgE = PSTraceSource.NewArgumentException("ComObject", NewObjectStrings.CannotLoadComObjectType, _comObject);
                     ThrowTerminatingError(
                         new ErrorRecord(mshArgE, "CannotLoadComObjectType", ErrorCategory.InvalidType, null));
                 }
-                return SafeCreateInstance(type, arguments);
+                return SafeCreateInstance(type, _arguments);
             }
             catch (COMException e)
             {

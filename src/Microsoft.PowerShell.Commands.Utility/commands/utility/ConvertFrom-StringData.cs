@@ -70,11 +70,11 @@ namespace Microsoft.PowerShell.Commands
                 string name = s.Substring(0, index);
                 name = name.Trim();
 
-                if(result.ContainsKey(name))
+                if (result.ContainsKey(name))
                 {
                     throw PSTraceSource.NewInvalidOperationException(
                         ConvertFromStringData.DataItemAlreadyDefined,
-                        line, 
+                        line,
                         name);
                 }
 

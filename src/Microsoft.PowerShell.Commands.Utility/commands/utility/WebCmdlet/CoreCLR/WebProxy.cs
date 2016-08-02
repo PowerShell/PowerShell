@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
         private ICredentials _credentials;
         private Uri _proxyAddress;
 
-        internal WebProxy (Uri address)
+        internal WebProxy(Uri address)
         {
             if (address == null)
             {
@@ -37,10 +37,12 @@ namespace Microsoft.PowerShell.Commands
 
         internal bool UseDefaultCredentials
         {
-            get {
+            get
+            {
                 return _credentials == CredentialCache.DefaultCredentials;
             }
-            set {
+            set
+            {
                 _credentials = value ? CredentialCache.DefaultCredentials : null;
             }
         }
@@ -51,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new ArgumentNullException("destination");
             }
-            
+
             if (destination.IsLoopback)
             {
                 return destination;

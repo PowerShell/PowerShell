@@ -81,22 +81,22 @@ namespace Microsoft.PowerShell.Commands
         /// If a parameter is not supplied then the file represented by $console 
         /// will be used for saving.
         /// </remarks>
-        [Parameter(Position = 0, Mandatory=false, ValueFromPipeline=true,
-                   ValueFromPipelineByPropertyName=true)]
+        [Parameter(Position = 0, Mandatory = false, ValueFromPipeline = true,
+                   ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath")]
         public string Path
         {
             get
             {
-                return fileName;
+                return _fileName;
             }
 
             set
             {
-                fileName = value;
+                _fileName = value;
             }
         }
-        private string fileName;
+        private string _fileName;
 
         /// <summary>
         /// Property that sets force parameter.  This will reset the read-only
@@ -107,14 +107,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return force;
+                return _force;
             }
             set
             {
-                force = value;
+                _force = value;
             }
         }
-        private bool force;
+        private bool _force;
 
         /// <summary>
         /// Property that prevents file overwrite.
@@ -125,14 +125,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return noclobber;
+                return _noclobber;
             }
             set
             {
-                noclobber = value;
+                _noclobber = value;
             }
         }
-        private bool noclobber;
+        private bool _noclobber;
 
         #endregion
 
@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (PSArgumentException mae)
             {
-                ThrowError(resolvedPath, 
+                ThrowError(resolvedPath,
                     "PathNotAbsolute", mae, ErrorCategory.InvalidArgument);
             }
             catch (PSArgumentNullException mane)
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowError(resolvedPath,
                     "InvalidCharacetersInPath", ae, ErrorCategory.InvalidArgument);
             }
-                            
+
             // looks like saving succeeded.
             // Now try changing $console
             Exception e = null;
@@ -295,9 +295,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 e = pin;
             }
-            
-            if ( e != null )
-            {                
+
+            if (e != null)
+            {
                 throw PSTraceSource.NewInvalidOperationException(e,
                         ConsoleInfoErrorStrings.ConsoleVariableCannotBeSet, resolvedPath);
             }
@@ -523,10 +523,10 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         private string GetFileName()
         {
-            if (!string.IsNullOrEmpty(fileName))
+            if (!string.IsNullOrEmpty(_fileName))
             {
                 // if user specified input..just return
-                return fileName;
+                return _fileName;
             }
             // no input is specified..
             // check whether $console is set
@@ -556,7 +556,7 @@ namespace Microsoft.PowerShell.Commands
                 return consoleValue;
             }
 
-            throw PSTraceSource.NewArgumentException("fileName", ConsoleInfoErrorStrings.ConsoleCannotbeConvertedToString);                   
+            throw PSTraceSource.NewArgumentException("fileName", ConsoleInfoErrorStrings.ConsoleCannotbeConvertedToString);
         }
 
         /// <summary>

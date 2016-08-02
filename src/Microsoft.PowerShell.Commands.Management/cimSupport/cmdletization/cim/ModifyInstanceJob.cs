@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             return CimCustomOptionsDictionary.MergeOptions(
                 base.CalculateJobSpecificCustomOptions(),
-                this._originalInstance);
+                _originalInstance);
         }
 
         protected override void Dispose(bool disposing)

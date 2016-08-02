@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace System.Management.Automation
         {
             this._dontUseScopeCommandOrigin = false;
             this.CommandInfo = new ScriptInfo(String.Empty, scriptBlock, context);
-            
+
             this._fromScriptFile = false;
 
             CommonInitialization(scriptBlock, context, useLocalScope, origin, sessionState);
@@ -98,7 +99,7 @@ namespace System.Management.Automation
             this._rethrowExitException = this.Context.ScriptCommandProcessorShouldRethrowExit;
             this._context.ScriptCommandProcessorShouldRethrowExit = false;
 
-            ScriptCommand scriptCommand = new ScriptCommand {CommandInfo = this.CommandInfo};
+            ScriptCommand scriptCommand = new ScriptCommand { CommandInfo = this.CommandInfo };
 
             this.Command = scriptCommand;
             // WinBlue: 219115             
@@ -142,7 +143,7 @@ namespace System.Management.Automation
                     {
                         Dictionary<Ast, Token[]> scriptBlockTokenCache = new Dictionary<Ast, Token[]>();
                         string unused;
-                        HelpInfo helpInfo = _scriptBlock.GetHelpInfo(context:Context, commandInfo:CommandInfo,
+                        HelpInfo helpInfo = _scriptBlock.GetHelpInfo(context: Context, commandInfo: CommandInfo,
                             dontSearchOnRemoteComputer: false, scriptBlockTokenCache: scriptBlockTokenCache, helpFile: out unused, helpUriFromDotLink: out unused);
                         if (helpInfo == null)
                         {
@@ -230,7 +231,7 @@ namespace System.Management.Automation
     /// current powershell session. 
     /// 
     /// </remarks>
-    internal sealed class DlrScriptCommandProcessor: ScriptCommandProcessorBase
+    internal sealed class DlrScriptCommandProcessor : ScriptCommandProcessorBase
     {
         private new ScriptBlock _scriptBlock;
         private readonly ArrayList _input = new ArrayList();
@@ -263,12 +264,12 @@ namespace System.Management.Automation
             Init();
         }
 
-        void Init()
+        private void Init()
         {
-            this._scriptBlock = base._scriptBlock;
-            this._obsoleteAttribute = this._scriptBlock.ObsoleteAttribute;
-            this._runOptimizedCode = _scriptBlock.Compile(optimized: _context._debuggingMode > 0 ? false : UseLocalScope);
-            this._localsTuple = _scriptBlock.MakeLocalsTuple(_runOptimizedCode);
+            _scriptBlock = base._scriptBlock;
+            _obsoleteAttribute = _scriptBlock.ObsoleteAttribute;
+            _runOptimizedCode = _scriptBlock.Compile(optimized: _context._debuggingMode > 0 ? false : UseLocalScope);
+            _localsTuple = _scriptBlock.MakeLocalsTuple(_runOptimizedCode);
         }
 
         /// <summary>
@@ -291,16 +292,16 @@ namespace System.Management.Automation
             _localsTuple.SetAutomaticVariable(AutomaticVariable.MyInvocation, this.Command.MyInvocation, _context);
             _scriptBlock.SetPSScriptRootAndPSCommandPath(_localsTuple, _context);
             _functionContext = new FunctionContext
-                               {
-                                   _executionContext = _context,
-                                   _outputPipe = commandRuntime.OutputPipe,
-                                   _localsTuple = _localsTuple,
-                                   _scriptBlock = _scriptBlock,
-                                   _file = _scriptBlock.File,
-                                   _debuggerHidden = _scriptBlock.DebuggerHidden,
-                                   _debuggerStepThrough = _scriptBlock.DebuggerStepThrough,
-                                   _sequencePoints = _scriptBlock.SequencePoints,
-                               };
+            {
+                _executionContext = _context,
+                _outputPipe = commandRuntime.OutputPipe,
+                _localsTuple = _localsTuple,
+                _scriptBlock = _scriptBlock,
+                _file = _scriptBlock.File,
+                _debuggerHidden = _scriptBlock.DebuggerHidden,
+                _debuggerStepThrough = _scriptBlock.DebuggerStepThrough,
+                _sequencePoints = _scriptBlock.SequencePoints,
+            };
         }
 
         /// <summary>
@@ -457,11 +458,11 @@ namespace System.Management.Automation
             // change the language mode.
             PSLanguageMode? oldLanguageMode = null;
             PSLanguageMode? newLanguageMode = null;
-            if ((this._scriptBlock.LanguageMode.HasValue) &&
-                (this._scriptBlock.LanguageMode != Context.LanguageMode))
+            if ((_scriptBlock.LanguageMode.HasValue) &&
+                (_scriptBlock.LanguageMode != Context.LanguageMode))
             {
                 oldLanguageMode = Context.LanguageMode;
-                newLanguageMode = this._scriptBlock.LanguageMode;
+                newLanguageMode = _scriptBlock.LanguageMode;
             }
 
             try

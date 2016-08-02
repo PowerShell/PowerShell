@@ -15,7 +15,8 @@ using System.Security;
 using System.Security.Permissions;
 //using Microsoft.Scripting.Utils;
 
-namespace System.Management.Automation.ComInterop {
+namespace System.Management.Automation.ComInterop
+{
     /// <summary>
     /// ComEventSinkProxy class is responsible for handling QIs for sourceIid 
     /// on instances of ComEventSink.
@@ -36,19 +37,21 @@ namespace System.Management.Automation.ComInterop {
     /// "I implement this interface" for event sinks only since the common 
     /// practice is to use IDistpach.Invoke when calling into event sinks). 
     /// </summary>
-    internal sealed class ComEventSinkProxy : RealProxy {
-
+    internal sealed class ComEventSinkProxy : RealProxy
+    {
         private Guid _sinkIid;
         private ComEventSink _sink;
-        private static readonly MethodInfo _methodInfoInvokeMember = typeof(ComEventSink).GetMethod("InvokeMember", BindingFlags.Instance | BindingFlags.Public);
-        
+        private static readonly MethodInfo s_methodInfoInvokeMember = typeof(ComEventSink).GetMethod("InvokeMember", BindingFlags.Instance | BindingFlags.Public);
+
         #region ctors
 
-        private ComEventSinkProxy() {
+        private ComEventSinkProxy()
+        {
         }
 
         public ComEventSinkProxy(ComEventSink sink, Guid sinkIid)
-            : base(typeof(ComEventSink)) {
+            : base(typeof(ComEventSink))
+        {
             _sink = sink;
             _sinkIid = sinkIid;
         }
@@ -57,9 +60,11 @@ namespace System.Management.Automation.ComInterop {
 
         #region Base Class Overrides
 
-        public override IntPtr SupportsInterface(ref Guid iid) {
+        public override IntPtr SupportsInterface(ref Guid iid)
+        {
             // if the iid is the sink iid, we ask the base class for an rcw to IDispatch
-            if (iid == _sinkIid) {
+            if (iid == _sinkIid)
+            {
                 IntPtr retVal = IntPtr.Zero;
                 retVal = Marshal.GetIDispatchForObject(_sink);
                 return retVal;
@@ -69,8 +74,8 @@ namespace System.Management.Automation.ComInterop {
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-        public override IMessage Invoke(IMessage msg) {
-
+        public override IMessage Invoke(IMessage msg)
+        {
             //Only know how to handle method calls (property and fields accessors count as methods)
             IMethodCallMessage methodCallMessage = msg as IMethodCallMessage;
             if (methodCallMessage == null)
@@ -86,10 +91,12 @@ namespace System.Management.Automation.ComInterop {
             // Since we don't use namedParameters in ComEventSink.InvokeMember - we simply ignore it here
             // and pass-in null.
             MethodInfo methodInfo = (MethodInfo)methodCallMessage.MethodBase;
-            if (methodInfo == _methodInfoInvokeMember) {
+            if (methodInfo == s_methodInfoInvokeMember)
+            {
                 object retVal = null;
 
-                try {
+                try
+                {
                     // InvokeMember(string name, BindingFlags bindingFlags, Binder binder, object target, object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] namedParameters)
                     retVal = ((IReflect)_sink).InvokeMember(
                         /*name*/                methodCallMessage.Args[0] as string,
@@ -100,7 +107,9 @@ namespace System.Management.Automation.ComInterop {
                         /*modifiers*/           methodCallMessage.Args[5] as ParameterModifier[],
                         /*culture*/             methodCallMessage.Args[6] as CultureInfo,
                         /*namedParameters*/     null);
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     return new ReturnMessage(ex.InnerException, methodCallMessage);
                 }
 

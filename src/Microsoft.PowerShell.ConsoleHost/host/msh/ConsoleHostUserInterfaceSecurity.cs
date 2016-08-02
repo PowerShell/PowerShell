@@ -41,19 +41,19 @@ namespace Microsoft.PowerShell
         /// 
         /// <returns> PSCredential object</returns>
         ///
-        
+
         public override PSCredential PromptForCredential(
-            string caption,   
+            string caption,
             string message,
             string userName,
-            string targetName )
+            string targetName)
         {
-            return PromptForCredential( caption,
+            return PromptForCredential(caption,
                                          message,
                                          userName,
                                          targetName,
                                          PSCredentialTypes.Default,
-                                         PSCredentialUIOptions.Default );
+                                         PSCredentialUIOptions.Default);
         }
 
         /// <summary>
@@ -73,16 +73,16 @@ namespace Microsoft.PowerShell
         /// 
         /// <returns> PSCredential object, or null if input was cancelled (or if reading from stdin and stdin at EOF)</returns>
         ///
-        
+
         public override PSCredential PromptForCredential(
-            string caption,   
+            string caption,
             string message,
-            string userName, 
+            string userName,
             string targetName,
             PSCredentialTypes allowedCredentialTypes,
-            PSCredentialUIOptions options )
+            PSCredentialUIOptions options)
         {
-            if (! PromptUsingConsole())
+            if (!PromptUsingConsole())
             {
                 IntPtr mainWindowHandle = GetMainWindowHandle();
                 return HostUtilities.CredUIPromptForCredential(caption, message, userName, targetName, allowedCredentialTypes, options, mainWindowHandle);
@@ -156,11 +156,11 @@ namespace Microsoft.PowerShell
 #else
             System.Diagnostics.Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();
             IntPtr mainWindowHandle = currentProcess.MainWindowHandle;
-            
-            while((mainWindowHandle == IntPtr.Zero) && (currentProcess != null))
+
+            while ((mainWindowHandle == IntPtr.Zero) && (currentProcess != null))
             {
                 currentProcess = PsUtils.GetParentProcess(currentProcess);
-                if(currentProcess != null)
+                if (currentProcess != null)
                 {
                     mainWindowHandle = currentProcess.MainWindowHandle;
                 }
@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell
             }
             catch (System.Security.SecurityException)
             {
-                tracer.TraceError("User doesn't have access to read CredUI registry key.");
+                s_tracer.TraceError("User doesn't have access to read CredUI registry key.");
                 return promptUsingConsole;
             }
 
@@ -206,24 +206,24 @@ namespace Microsoft.PowerShell
             }
             catch (System.Security.SecurityException e)
             {
-                tracer.TraceError("Could not read CredUI registry key: " + e.Message);
+                s_tracer.TraceError("Could not read CredUI registry key: " + e.Message);
                 if (key != null) { key.Dispose(); } // No RegistryKey.Close() on CoreCLR
                 return promptUsingConsole;
             }
             catch (InvalidCastException e)
             {
-                tracer.TraceError("Could not parse CredUI registry key: " + e.Message);
+                s_tracer.TraceError("Could not parse CredUI registry key: " + e.Message);
                 if (key != null) { key.Dispose(); } // No RegistryKey.Close() on CoreCLR
                 return promptUsingConsole;
             }
             catch (FormatException e)
             {
-                tracer.TraceError("Could not parse CredUI registry key: " + e.Message);
+                s_tracer.TraceError("Could not parse CredUI registry key: " + e.Message);
                 if (key != null) { key.Dispose(); } // No RegistryKey.Close() on CoreCLR
                 return promptUsingConsole;
             }
 
-            tracer.WriteLine("DetermineCredUIPolicy: policy == {0}", promptUsingConsole);
+            s_tracer.WriteLine("DetermineCredUIPolicy: policy == {0}", promptUsingConsole);
 
             if (key != null) { key.Dispose(); } // No RegistryKey.Close() on CoreCLR
             return promptUsingConsole;

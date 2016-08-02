@@ -49,9 +49,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// <summary>
     /// entry logged by the loader and made available to external consumers
     /// </summary>
-    internal class  XmlLoaderLoggerEntry
+    internal class XmlLoaderLoggerEntry
     {
-        internal enum EntryType {Error, Trace};
+        internal enum EntryType { Error, Trace };
 
         /// <summary>
         /// type of information being logged
@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal bool failToLoadFile = false;
     }
 
-   
+
     /// <summary>
     /// logger object used by the loader (class XmlLoaderBase) to write log entries.
     /// It logs to a memory buffer and (optionally) to a text file
@@ -89,34 +89,34 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #region tracer
         //PSS/end-user tracer 
         [TraceSource("FormatFileLoading", "Loading format files")]
-        private static PSTraceSource formatFileLoadingtracer = PSTraceSource.GetTracer("FormatFileLoading", "Loading format files", false);
+        private static PSTraceSource s_formatFileLoadingtracer = PSTraceSource.GetTracer("FormatFileLoading", "Loading format files", false);
 
         #endregion tracer
         /// <summary>
         /// log an entry
         /// </summary>
         /// <param name="entry">entry to log</param>
-        internal void LogEntry (XmlLoaderLoggerEntry entry)
+        internal void LogEntry(XmlLoaderLoggerEntry entry)
         {
             if (entry.entryType == XmlLoaderLoggerEntry.EntryType.Error)
-                this.hasErrors = true;
+                _hasErrors = true;
 
-            if (this.saveInMemory)
-                this.entries.Add (entry);
+            if (_saveInMemory)
+                _entries.Add(entry);
 
-            if ((formatFileLoadingtracer.Options | PSTraceSourceOptions.WriteLine) != 0)
-                WriteToTracer (entry);
+            if ((s_formatFileLoadingtracer.Options | PSTraceSourceOptions.WriteLine) != 0)
+                WriteToTracer(entry);
         }
 
         private void WriteToTracer(XmlLoaderLoggerEntry entry)
         {
             if (entry.entryType == XmlLoaderLoggerEntry.EntryType.Error)
             {
-                formatFileLoadingtracer.WriteLine("ERROR:\r\n FilePath: {0}\r\n XPath: {1}\r\n Message = {2}", entry.filePath, entry.xPath, entry.message);
+                s_formatFileLoadingtracer.WriteLine("ERROR:\r\n FilePath: {0}\r\n XPath: {1}\r\n Message = {2}", entry.filePath, entry.xPath, entry.message);
             }
             else if (entry.entryType == XmlLoaderLoggerEntry.EntryType.Trace)
             {
-                formatFileLoadingtracer.WriteLine("TRACE:\r\n FilePath: {0}\r\n XPath: {1}\r\n Message = {2}", entry.filePath, entry.xPath, entry.message);
+                s_formatFileLoadingtracer.WriteLine("TRACE:\r\n FilePath: {0}\r\n XPath: {1}\r\n Message = {2}", entry.filePath, entry.xPath, entry.message);
             }
         }
 
@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// IDisposable implementation
         /// </summary>
         /// <remarks>This method calls GC.SuppressFinalize</remarks>
-        public void Dispose ()
+        public void Dispose()
         {
             Dispose(true);
 
@@ -135,7 +135,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (disposing)
             {
-
             }
         }
 
@@ -143,7 +142,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                return this.entries;
+                return _entries;
             }
         }
 
@@ -151,24 +150,24 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                return this.hasErrors;
+                return _hasErrors;
             }
         }
 
         /// <summary>
         /// if true, log entries to memory
         /// </summary>
-        private bool saveInMemory = true;
+        private bool _saveInMemory = true;
 
-       /// <summary>
+        /// <summary>
         /// list of entries logged if saveInMemory is true
         /// </summary>
-        private List<XmlLoaderLoggerEntry> entries = new List<XmlLoaderLoggerEntry> ();
+        private List<XmlLoaderLoggerEntry> _entries = new List<XmlLoaderLoggerEntry>();
 
         /// <summary>
         /// true if we ever logged an error
         /// </summary>
-        private bool hasErrors = false;
+        private bool _hasErrors = false;
     }
 
 
@@ -180,7 +179,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         #region tracer
         [TraceSource("XmlLoaderBase", "XmlLoaderBase")]
-        private static PSTraceSource tracer = PSTraceSource.GetTracer("XmlLoaderBase", "XmlLoaderBase");
+        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("XmlLoaderBase", "XmlLoaderBase");
         #endregion tracer
 
         /// <summary>
@@ -188,9 +187,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         private sealed class XmlLoaderStackFrame : IDisposable
         {
-            internal XmlLoaderStackFrame (XmlLoaderBase loader, XmlNode n, int index)
+            internal XmlLoaderStackFrame(XmlLoaderBase loader, XmlNode n, int index)
             {
-                this.loader = loader;
+                _loader = loader;
                 this.node = n;
                 this.index = index;
             }
@@ -198,19 +197,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// IDisposable implementation
             /// </summary>
-            public void Dispose ()
+            public void Dispose()
             {
-                if (this.loader != null)
+                if (_loader != null)
                 {
-                    this.loader.RemoveStackFrame ();
-                    this.loader = null;
+                    _loader.RemoveStackFrame();
+                    _loader = null;
                 }
             }
 
             /// <summary>
             ///  back pointer to the loader, used to pop a stack frame
             /// </summary>
-            private XmlLoaderBase loader;
+            private XmlLoaderBase _loader;
 
             /// <summary>
             /// node the stack frame refers to
@@ -228,7 +227,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// IDisposable implementation
         /// </summary>
         /// <remarks>This method calls GC.SuppressFinalize</remarks>
-        public void Dispose ()
+        public void Dispose()
         {
             Dispose(true);
 
@@ -239,10 +238,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (disposing)
             {
-                if (this.logger != null)
+                if (_logger != null)
                 {
-                    this.logger.Dispose();
-                    this.logger = null;
+                    _logger.Dispose();
+                    _logger = null;
                 }
             }
         }
@@ -255,7 +254,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                return this.logger.LogEntries;
+                return _logger.LogEntries;
             }
         }
 
@@ -267,7 +266,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                return this.logger.HasErrors;
+                return _logger.HasErrors;
             }
         }
 
@@ -277,9 +276,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="n">node to push on the stack</param>
         /// <returns>object to dispose when exiting the frame</returns>
-        protected IDisposable StackFrame (XmlNode n)
+        protected IDisposable StackFrame(XmlNode n)
         {
-            return StackFrame (n, -1);
+            return StackFrame(n, -1);
         }
 
         /// <summary>
@@ -289,13 +288,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="n">node to push on the stack</param>
         /// <param name="index">index of the node of the same name in a collection</param>
         /// <returns>object to dispose when exiting the frame</returns>
-        protected IDisposable StackFrame (XmlNode n, int index)
+        protected IDisposable StackFrame(XmlNode n, int index)
         {
-            XmlLoaderStackFrame sf = new XmlLoaderStackFrame (this, n, index);
+            XmlLoaderStackFrame sf = new XmlLoaderStackFrame(this, n, index);
 
-            executionStack.Push (sf);
-            if (logStackActivity)
-                WriteStackLocation ("Enter");
+            _executionStack.Push(sf);
+            if (_logStackActivity)
+                WriteStackLocation("Enter");
             return sf;
         }
 
@@ -303,32 +302,32 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// called by the Dispose code of the XmlLoaderStackFrame object
         /// to pop a frame off the stack
         /// </summary>
-        private void RemoveStackFrame ()
+        private void RemoveStackFrame()
         {
-            if (logStackActivity)
-                WriteStackLocation ("Exit");
-            executionStack.Pop ();
+            if (_logStackActivity)
+                WriteStackLocation("Exit");
+            _executionStack.Pop();
         }
 
-        protected void ProcessUnknownNode (XmlNode n)
+        protected void ProcessUnknownNode(XmlNode n)
         {
             if (IsFilteredOutNode(n))
                 return;
 
-            ReportIllegalXmlNode (n);
+            ReportIllegalXmlNode(n);
         }
 
-        protected void ProcessUnknownAttribute (XmlAttribute a)
+        protected void ProcessUnknownAttribute(XmlAttribute a)
         {
-            ReportIllegalXmlAttribute (a);
+            ReportIllegalXmlAttribute(a);
         }
 
-        protected static bool IsFilteredOutNode (XmlNode n)
+        protected static bool IsFilteredOutNode(XmlNode n)
         {
             return (n is XmlComment || n is XmlWhitespace);
         }
 
-        protected bool VerifyNodeHasNoChildren (XmlNode n)
+        protected bool VerifyNodeHasNoChildren(XmlNode n)
         {
             if (n.ChildNodes.Count == 0)
                 return true;
@@ -343,20 +342,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return false;
         }
 
-        internal string GetMandatoryInnerText (XmlNode n)
+        internal string GetMandatoryInnerText(XmlNode n)
         {
-            if (String.IsNullOrEmpty (n.InnerText))
+            if (String.IsNullOrEmpty(n.InnerText))
             {
-                this.ReportEmptyNode (n);
+                this.ReportEmptyNode(n);
                 return null;
             }
 
             return n.InnerText;
         }
 
-        internal string GetMandatoryAttributeValue (XmlAttribute a)
+        internal string GetMandatoryAttributeValue(XmlAttribute a)
         {
-            if (String.IsNullOrEmpty (a.Value))
+            if (String.IsNullOrEmpty(a.Value))
             {
                 this.ReportEmptyAttribute(a);
                 return null;
@@ -374,15 +373,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="s">string to compare the node name to</param>
         /// <param name="allowAttributes">if true, accept the presence of attributes on the node</param>
         /// <returns>true if there is a match</returns>
-        private bool MatchNodeNameHelper (XmlNode n, string s, bool allowAttributes)
+        private bool MatchNodeNameHelper(XmlNode n, string s, bool allowAttributes)
         {
             bool match = false;
-            if (String.Equals (n.Name, s, StringComparison.Ordinal))
+            if (String.Equals(n.Name, s, StringComparison.Ordinal))
             {
                 // we have a case sensitive match
                 match = true;
             }
-            else if (String.Equals (n.Name, s, StringComparison.OrdinalIgnoreCase))
+            else if (String.Equals(n.Name, s, StringComparison.OrdinalIgnoreCase))
             {
                 // try a case insensitive match
                 // we differ only in case: flag this as an ERROR for the time being
@@ -407,24 +406,24 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return match;
         }
 
-        internal bool MatchNodeNameWithAttributes (XmlNode n, string s)
+        internal bool MatchNodeNameWithAttributes(XmlNode n, string s)
         {
-            return MatchNodeNameHelper (n, s, true);
+            return MatchNodeNameHelper(n, s, true);
         }
 
-        internal bool MatchNodeName (XmlNode n, string s)
+        internal bool MatchNodeName(XmlNode n, string s)
         {
-            return MatchNodeNameHelper (n, s, false);
+            return MatchNodeNameHelper(n, s, false);
         }
 
-        internal bool MatchAttributeName (XmlAttribute a, string s)
+        internal bool MatchAttributeName(XmlAttribute a, string s)
         {
-            if (String.Equals (a.Name, s, StringComparison.Ordinal))
+            if (String.Equals(a.Name, s, StringComparison.Ordinal))
             {
                 // we have a case sensitive match
                 return true;
             }
-            else if (String.Equals (a.Name, s, StringComparison.OrdinalIgnoreCase))
+            else if (String.Equals(a.Name, s, StringComparison.OrdinalIgnoreCase))
             {
                 // try a case insensitive match
                 // we differ only in case: flag this as an ERROR for the time being
@@ -437,37 +436,37 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return false;
         }
 
-        internal void ProcessDuplicateNode (XmlNode n)
+        internal void ProcessDuplicateNode(XmlNode n)
         {
             //Error at XPath {0} in file {1}: Duplicated node.
             ReportLogEntryHelper(StringUtil.Format(FormatAndOutXmlLoadingStrings.DuplicatedNode, ComputeCurrentXPath(), FilePath), XmlLoaderLoggerEntry.EntryType.Error);
         }
 
-        internal void ProcessDuplicateAlternateNode (string node1, string node2)
+        internal void ProcessDuplicateAlternateNode(string node1, string node2)
         {
             //Error at XPath {0} in file {1}: {2} and {3} are mutually exclusive.
             ReportLogEntryHelper(StringUtil.Format(FormatAndOutXmlLoadingStrings.MutuallyExclusiveNode, ComputeCurrentXPath(), FilePath, node1, node2), XmlLoaderLoggerEntry.EntryType.Error);
         }
 
-        internal void ProcessDuplicateAlternateNode (XmlNode n, string node1, string node2)
+        internal void ProcessDuplicateAlternateNode(XmlNode n, string node1, string node2)
         {
             //Error at XPath {0} in file {1}: {2}, {3} and {4} are mutually exclusive.
             ReportLogEntryHelper(StringUtil.Format(FormatAndOutXmlLoadingStrings.ThreeMutuallyExclusiveNode, ComputeCurrentXPath(), FilePath, n.Name, node1, node2), XmlLoaderLoggerEntry.EntryType.Error);
         }
 
-        private void ReportIllegalXmlNode (XmlNode n)
+        private void ReportIllegalXmlNode(XmlNode n)
         {
             //UnknownNode=Error at XPath {0} in file {1}: {2} is an unknown node.
             ReportLogEntryHelper(StringUtil.Format(FormatAndOutXmlLoadingStrings.UnknownNode, ComputeCurrentXPath(), FilePath, n.Name), XmlLoaderLoggerEntry.EntryType.Error);
         }
 
-        private void ReportIllegalXmlAttribute (XmlAttribute a)
+        private void ReportIllegalXmlAttribute(XmlAttribute a)
         {
             //Error at XPath {0} in file {1}: {2} is an unknown attribute.
             ReportLogEntryHelper(StringUtil.Format(FormatAndOutXmlLoadingStrings.UnknownAttribute, ComputeCurrentXPath(), FilePath, a.Name), XmlLoaderLoggerEntry.EntryType.Error);
         }
 
-        protected void ReportMissingAttribute (string name)
+        protected void ReportMissingAttribute(string name)
         {
             //Error at XPath {0} in file {1}: {2} is a missing attribute.
             ReportLogEntryHelper(StringUtil.Format(FormatAndOutXmlLoadingStrings.MissingAttribute, ComputeCurrentXPath(), FilePath, name), XmlLoaderLoggerEntry.EntryType.Error);
@@ -479,20 +478,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ReportLogEntryHelper(StringUtil.Format(FormatAndOutXmlLoadingStrings.MissingNode, ComputeCurrentXPath(), FilePath, name), XmlLoaderLoggerEntry.EntryType.Error);
         }
 
-        protected void ReportMissingNodes (string[] names)
+        protected void ReportMissingNodes(string[] names)
         {
             //Error at XPath {0} in file {1}: Missing Node from {2}.
             string namesString = string.Join(", ", names);
             ReportLogEntryHelper(StringUtil.Format(FormatAndOutXmlLoadingStrings.MissingNodeFromList, ComputeCurrentXPath(), FilePath, namesString), XmlLoaderLoggerEntry.EntryType.Error);
         }
 
-        protected void ReportEmptyNode (XmlNode n)
+        protected void ReportEmptyNode(XmlNode n)
         {
             //Error at XPath {0} in file {1}: {2} is an empty node.
             ReportLogEntryHelper(StringUtil.Format(FormatAndOutXmlLoadingStrings.EmptyNode, ComputeCurrentXPath(), FilePath, n.Name), XmlLoaderLoggerEntry.EntryType.Error);
         }
 
-        protected void ReportEmptyAttribute (XmlAttribute a)
+        protected void ReportEmptyAttribute(XmlAttribute a)
         {
             //EmptyAttribute=Error at XPath {0} in file {1}: {2} is an empty attribute.
             ReportLogEntryHelper(StringUtil.Format(FormatAndOutXmlLoadingStrings.EmptyAttribute, ComputeCurrentXPath(), FilePath, a.Name), XmlLoaderLoggerEntry.EntryType.Error);
@@ -504,20 +503,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="message">
         /// trace message, non-localized string is OK.
         /// </param>
-        protected void ReportTrace (string message)
+        protected void ReportTrace(string message)
         {
-            ReportLogEntryHelper (message, XmlLoaderLoggerEntry.EntryType.Trace);
+            ReportLogEntryHelper(message, XmlLoaderLoggerEntry.EntryType.Trace);
         }
 
-        protected void ReportError (string message)
+        protected void ReportError(string message)
         {
-            ReportLogEntryHelper (message, XmlLoaderLoggerEntry.EntryType.Error);
+            ReportLogEntryHelper(message, XmlLoaderLoggerEntry.EntryType.Error);
         }
 
-        private void ReportLogEntryHelper (string message, XmlLoaderLoggerEntry.EntryType entryType, bool failToLoadFile = false)
+        private void ReportLogEntryHelper(string message, XmlLoaderLoggerEntry.EntryType entryType, bool failToLoadFile = false)
         {
-            string currentPath = ComputeCurrentXPath ();
-            XmlLoaderLoggerEntry entry = new XmlLoaderLoggerEntry ();
+            string currentPath = ComputeCurrentXPath();
+            XmlLoaderLoggerEntry entry = new XmlLoaderLoggerEntry();
 
             entry.entryType = entryType;
             entry.filePath = this.FilePath;
@@ -530,31 +529,31 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 entry.failToLoadFile = true;
             }
 
-            this.logger.LogEntry (entry);
+            _logger.LogEntry(entry);
 
             if (entryType == XmlLoaderLoggerEntry.EntryType.Error)
             {
-                this.currentErrorCount++;
-                if (this.currentErrorCount >= this.maxNumberOfErrors)
+                _currentErrorCount++;
+                if (_currentErrorCount >= _maxNumberOfErrors)
                 {
                     // we have to log a last error and then bail
-                    if (this.maxNumberOfErrors > 1)
+                    if (_maxNumberOfErrors > 1)
                     {
-                        XmlLoaderLoggerEntry lastEntry = new XmlLoaderLoggerEntry ();
+                        XmlLoaderLoggerEntry lastEntry = new XmlLoaderLoggerEntry();
 
                         lastEntry.entryType = XmlLoaderLoggerEntry.EntryType.Error;
                         lastEntry.filePath = this.FilePath;
                         lastEntry.xPath = currentPath;
                         lastEntry.message = StringUtil.Format(FormatAndOutXmlLoadingStrings.TooManyErrors, FilePath);
-                        this.logger.LogEntry (lastEntry);
-                        this.currentErrorCount++;
+                        _logger.LogEntry(lastEntry);
+                        _currentErrorCount++;
                     }
 
                     // NOTE: this exception is an internal one, and it is caught
                     // internally by the calling code.
-                    TooManyErrorsException e = new TooManyErrorsException ();
+                    TooManyErrorsException e = new TooManyErrorsException();
 
-                    e.errorCount = this.currentErrorCount;
+                    e.errorCount = _currentErrorCount;
                     throw e;
                 }
             }
@@ -571,40 +570,40 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             entry.entryType = XmlLoaderLoggerEntry.EntryType.Error;
             entry.message = message;
-            this.logger.LogEntry(entry);
+            _logger.LogEntry(entry);
 
-            this.currentErrorCount++;
-            if (this.currentErrorCount >= this.maxNumberOfErrors)
+            _currentErrorCount++;
+            if (_currentErrorCount >= _maxNumberOfErrors)
             {
                 // we have to log a last error and then bail
-                if (this.maxNumberOfErrors > 1)
+                if (_maxNumberOfErrors > 1)
                 {
                     XmlLoaderLoggerEntry lastEntry = new XmlLoaderLoggerEntry();
 
                     lastEntry.entryType = XmlLoaderLoggerEntry.EntryType.Error;
                     lastEntry.message = StringUtil.Format(FormatAndOutXmlLoadingStrings.TooManyErrorsInFormattingData, typeName);
-                    this.logger.LogEntry(lastEntry);
-                    this.currentErrorCount++;
+                    _logger.LogEntry(lastEntry);
+                    _currentErrorCount++;
                 }
 
                 // NOTE: this exception is an internal one, and it is caught
                 // internally by the calling code.
                 TooManyErrorsException e = new TooManyErrorsException();
 
-                e.errorCount = this.currentErrorCount;
+                e.errorCount = _currentErrorCount;
                 throw e;
             }
         }
 
-        private void WriteStackLocation (string label)
+        private void WriteStackLocation(string label)
         {
-            ReportTrace (label);
+            ReportTrace(label);
         }
 
-        protected string ComputeCurrentXPath ()
+        protected string ComputeCurrentXPath()
         {
             StringBuilder path = new StringBuilder();
-            foreach (XmlLoaderStackFrame sf in this.executionStack)
+            foreach (XmlLoaderStackFrame sf in _executionStack)
             {
                 path.Insert(0, "/");
                 if (sf.index != -1)
@@ -620,8 +619,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return path.Length > 0 ? path.ToString() : null;
         }
 
-#region helpers for loading XML documents
- 
+        #region helpers for loading XML documents
+
         protected XmlDocument LoadXmlDocumentFromFileLoadingInfo(AuthorizationManager authorizationManager, PSHost host, out bool isFullyTrusted)
         {
             // get file contents
@@ -642,9 +641,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 catch (PSSecurityException reason)
                 {
-                    string errorMessage = StringUtil.Format(TypesXmlStrings.ValidationException, 
-                        string.Empty /* TODO/FIXME snapin */, 
-                        FilePath, 
+                    string errorMessage = StringUtil.Format(TypesXmlStrings.ValidationException,
+                        string.Empty /* TODO/FIXME snapin */,
+                        FilePath,
                         reason.Message);
                     ReportLogEntryHelper(errorMessage, XmlLoaderLoggerEntry.EntryType.Error, failToLoadFile: true);
                     return null;
@@ -655,7 +654,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             try
             {
                 XmlDocument doc = InternalDeserializer.LoadUnsafeXmlDocument(
-                    fileContents, 
+                    fileContents,
                     true, /* preserve whitespace, comments, etc. */
                     null); /* default maxCharacters */
                 this.ReportTrace("XmlDocument loaded OK");
@@ -674,7 +673,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-#endregion
+        #endregion
 
         /// <summary>
         /// file system path for the file we are loading from
@@ -684,36 +683,36 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                return loadingInfo.filePath;
+                return _loadingInfo.filePath;
             }
         }
 
 
-        protected void SetDatabaseLoadingInfo (XmlFileLoadInfo info)
+        protected void SetDatabaseLoadingInfo(XmlFileLoadInfo info)
         {
-            loadingInfo.fileDirectory = info.fileDirectory;
-            loadingInfo.filePath = info.filePath;
+            _loadingInfo.fileDirectory = info.fileDirectory;
+            _loadingInfo.filePath = info.filePath;
         }
         protected void SetLoadingInfoIsFullyTrusted(bool isFullyTrusted)
         {
-            loadingInfo.isFullyTrusted = isFullyTrusted;
+            _loadingInfo.isFullyTrusted = isFullyTrusted;
         }
         protected void SetLoadingInfoIsProductCode(bool isProductCode)
         {
-            loadingInfo.isProductCode = isProductCode;
+            _loadingInfo.isProductCode = isProductCode;
         }
 
-        private DatabaseLoadingInfo loadingInfo = new DatabaseLoadingInfo ();
+        private DatabaseLoadingInfo _loadingInfo = new DatabaseLoadingInfo();
 
         protected DatabaseLoadingInfo LoadingInfo
         {
             get
             {
-                DatabaseLoadingInfo info = new DatabaseLoadingInfo ();
-                info.filePath = loadingInfo.filePath;
-                info.fileDirectory = loadingInfo.fileDirectory;
-                info.isFullyTrusted = loadingInfo.isFullyTrusted;
-                info.isProductCode = loadingInfo.isProductCode;
+                DatabaseLoadingInfo info = new DatabaseLoadingInfo();
+                info.filePath = _loadingInfo.filePath;
+                info.fileDirectory = _loadingInfo.fileDirectory;
+                info.isFullyTrusted = _loadingInfo.isFullyTrusted;
+                info.isProductCode = _loadingInfo.isProductCode;
                 return info;
             }
         }
@@ -725,18 +724,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal bool VerifyStringResources
         {
-            get { return this.verifyStringResources; }
+            get { return _verifyStringResources; }
         }
-        private bool verifyStringResources = true;
+        private bool _verifyStringResources = true;
 
-        private int maxNumberOfErrors = 30;
+        private int _maxNumberOfErrors = 30;
 
-        private int currentErrorCount = 0;
+        private int _currentErrorCount = 0;
 
-        private bool logStackActivity = false;
+        private bool _logStackActivity = false;
 
-        private Stack<XmlLoaderStackFrame> executionStack = new Stack<XmlLoaderStackFrame>();
+        private Stack<XmlLoaderStackFrame> _executionStack = new Stack<XmlLoaderStackFrame>();
 
-        XmlLoaderLogger logger = new XmlLoaderLogger ();
+        private XmlLoaderLogger _logger = new XmlLoaderLogger();
     }
 }

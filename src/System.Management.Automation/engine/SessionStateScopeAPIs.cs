@@ -1,10 +1,11 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 #pragma warning disable 56500
@@ -22,7 +23,7 @@ namespace System.Management.Automation
         /// scope is implied or can be accessed using $local in
         /// the shell.
         /// </summary>
-        private SessionStateScope currentScope;
+        private SessionStateScope _currentScope;
 
         /// <summary>
         /// Given a scope identifier, returns the proper session state scope.
@@ -51,7 +52,7 @@ namespace System.Management.Automation
         /// 
         internal SessionStateScope GetScopeByID(string scopeID)
         {
-            SessionStateScope result = currentScope;
+            SessionStateScope result = _currentScope;
 
             if (!string.IsNullOrEmpty(scopeID))
             {
@@ -67,14 +68,14 @@ namespace System.Management.Automation
                             StringLiterals.Local,
                             StringComparison.OrdinalIgnoreCase))
                 {
-                    result = currentScope;
+                    result = _currentScope;
                 }
                 else if (String.Equals(
                             scopeID,
                             StringLiterals.Private,
                             StringComparison.OrdinalIgnoreCase))
                 {
-                    result = currentScope;
+                    result = _currentScope;
                 }
                 else if (String.Equals(
                             scopeID,
@@ -82,7 +83,7 @@ namespace System.Management.Automation
                             StringComparison.OrdinalIgnoreCase))
                 {
                     // Get the current script scope from the stack.
-                    result = currentScope.ScriptScope;
+                    result = _currentScope.ScriptScope;
                 }
                 else
                 {
@@ -98,7 +99,7 @@ namespace System.Management.Automation
                             throw PSTraceSource.NewArgumentOutOfRangeException("scopeID", scopeID);
                         }
 
-                        result = GetScopeByID(scopeNumericID) ?? currentScope;
+                        result = GetScopeByID(scopeNumericID) ?? _currentScope;
                     }
                     catch (FormatException)
                     {
@@ -108,7 +109,6 @@ namespace System.Management.Automation
                     {
                         throw PSTraceSource.NewArgumentOutOfRangeException("scopeID", scopeID);
                     }
-
                 }
             }
 
@@ -135,7 +135,7 @@ namespace System.Management.Automation
         /// 
         internal SessionStateScope GetScopeByID(int scopeID)
         {
-            SessionStateScope processingScope = currentScope;
+            SessionStateScope processingScope = _currentScope;
             int originalID = scopeID;
 
             while (scopeID > 0 && processingScope != null)
@@ -179,7 +179,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return currentScope;
+                return _currentScope;
             }
 
             set
@@ -188,40 +188,40 @@ namespace System.Management.Automation
                     value != null,
                     "A null scope should never be set");
 #if DEBUG
-                    // This code is ifdef'd for DEBUG because it may pose a significant
-                    // performance hit and is only really required to validate our internal
-                    // code. There is no way anyone outside the Monad codebase can cause
-                    // these error conditions to be hit.
+                // This code is ifdef'd for DEBUG because it may pose a significant
+                // performance hit and is only really required to validate our internal
+                // code. There is no way anyone outside the Monad codebase can cause
+                // these error conditions to be hit.
 
-                    // Need to make sure the new scope is in the global scope lineage
+                // Need to make sure the new scope is in the global scope lineage
 
-                    SessionStateScope scope = value;
-                    bool inGlobalScopeLineage = false;
+                SessionStateScope scope = value;
+                bool inGlobalScopeLineage = false;
 
-                    while (scope != null)
+                while (scope != null)
+                {
+                    if (scope == _globalScope)
                     {
-                        if (scope == _globalScope)
-                        {
-                            inGlobalScopeLineage = true;
-                            break;
-                        }
-                        scope = scope.Parent;
+                        inGlobalScopeLineage = true;
+                        break;
                     }
+                    scope = scope.Parent;
+                }
 
-                    Diagnostics.Assert(
-                        inGlobalScopeLineage,
-                        "The scope specified to be set in CurrentScope is not in the global scope lineage. All scopes must originate from the global scope.");
+                Diagnostics.Assert(
+                    inGlobalScopeLineage,
+                    "The scope specified to be set in CurrentScope is not in the global scope lineage. All scopes must originate from the global scope.");
 #endif
 
-                currentScope = value;
+                _currentScope = value;
             }
         } // CurrentScope
 
         /// <summary>
         /// Gets the session state current script scope.
         /// </summary>
-        internal SessionStateScope ScriptScope { get { return currentScope.ScriptScope; } }
-        
+        internal SessionStateScope ScriptScope { get { return _currentScope.ScriptScope; } }
+
         /// <summary>
         /// Creates a new scope in the scope tree and assigns the parent
         /// and child scopes appropriately.
@@ -239,12 +239,12 @@ namespace System.Management.Automation
         internal SessionStateScope NewScope(bool isScriptScope)
         {
             Diagnostics.Assert(
-                currentScope != null,
+                _currentScope != null,
                 "The currentScope should always be set.");
 
             // Create the new child scope.
 
-            SessionStateScope newScope = new SessionStateScope(currentScope);
+            SessionStateScope newScope = new SessionStateScope(_currentScope);
 
             if (isScriptScope)
             {
@@ -269,7 +269,7 @@ namespace System.Management.Automation
         internal void RemoveScope(SessionStateScope scope)
         {
             Diagnostics.Assert(
-                currentScope != null,
+                _currentScope != null,
                 "The currentScope should always be set.");
 
             if (scope == _globalScope)
@@ -328,13 +328,12 @@ namespace System.Management.Automation
             // If the scope being removed is the current scope,
             // then it must be removed from the tree.
 
-            if (scope == currentScope && currentScope.Parent != null)
+            if (scope == _currentScope && _currentScope.Parent != null)
             {
-                currentScope = currentScope.Parent;
+                _currentScope = _currentScope.Parent;
             }
             scope.Parent = null;
         } // RemoveScope
-
     } // SessionStateInternal class
 }
 

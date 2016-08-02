@@ -1,6 +1,7 @@
 ﻿/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -27,7 +28,7 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class JobManager
     {
-        private readonly PowerShellTraceSource Tracer = PowerShellTraceSourceFactory.GetTraceSource();
+        private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
 
         /// <summary>
         /// Collection of registered JobSourceAdapters.
@@ -40,15 +41,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Collection of job IDs that are valid for reuse.
         /// </summary>
-        private static readonly Dictionary<Guid, KeyValuePair<int, string>> JobIdsForReuse = new Dictionary<Guid, KeyValuePair<int, string>>();
+        private static readonly Dictionary<Guid, KeyValuePair<int, string>> s_jobIdsForReuse = new Dictionary<Guid, KeyValuePair<int, string>>();
 
-        private static readonly object SyncObject = new object();
+        private static readonly object s_syncObject = new object();
 
         /// <summary>
         /// Creates a JobManager instance.
         /// </summary>
         internal JobManager()
-        {            
+        {
         }
 
         /// <summary>
@@ -107,27 +108,27 @@ namespace System.Management.Automation
                 }
                 catch (MemberAccessException exception)
                 {
-                    Tracer.TraceException(exception);
+                    _tracer.TraceException(exception);
                     throw;
                 }
                 catch (TargetInvocationException exception)
                 {
-                    Tracer.TraceException(exception);
+                    _tracer.TraceException(exception);
                     throw;
                 }
                 catch (TargetParameterCountException exception)
                 {
-                    Tracer.TraceException(exception);
+                    _tracer.TraceException(exception);
                     throw;
                 }
                 catch (NotSupportedException exception)
                 {
-                    Tracer.TraceException(exception);
+                    _tracer.TraceException(exception);
                     throw;
                 }
                 catch (SecurityException exception)
                 {
-                    Tracer.TraceException(exception);
+                    _tracer.TraceException(exception);
                     throw;
                 }
             }
@@ -150,10 +151,10 @@ namespace System.Management.Automation
         /// <returns>Token for job creation.</returns>
         internal static JobIdentifier GetJobIdentifier(Guid instanceId, string typeName)
         {
-            lock (SyncObject)
+            lock (s_syncObject)
             {
                 KeyValuePair<int, string> keyValuePair;
-                if (JobIdsForReuse.TryGetValue(instanceId, out keyValuePair) && keyValuePair.Value.Equals(typeName))
+                if (s_jobIdsForReuse.TryGetValue(instanceId, out keyValuePair) && keyValuePair.Value.Equals(typeName))
                     return new JobIdentifier(keyValuePair.Key, instanceId);
                 return null;
             }
@@ -168,10 +169,10 @@ namespace System.Management.Automation
         /// <param name="typeName">The type name for the JobSourceAdapter implementation doing the save.</param>
         internal static void SaveJobId(Guid instanceId, int id, string typeName)
         {
-            lock (SyncObject)
+            lock (s_syncObject)
             {
-                if (JobIdsForReuse.ContainsKey(instanceId)) return;
-                JobIdsForReuse.Add(instanceId, new KeyValuePair<int, string>(id, typeName));
+                if (s_jobIdsForReuse.ContainsKey(instanceId)) return;
+                s_jobIdsForReuse.Add(instanceId, new KeyValuePair<int, string>(id, typeName));
             }
         }
 
@@ -209,7 +210,7 @@ namespace System.Management.Automation
                 // needs to be caught.
 
                 // sourceAdapter.NewJob returned unknown error.
-                Tracer.TraceException(exception);
+                _tracer.TraceException(exception);
                 CommandProcessorBase.CheckForSevereException(exception);
                 throw;
             }
@@ -232,7 +233,7 @@ namespace System.Management.Automation
             if (specification == null)
             {
                 throw new ArgumentNullException("specification");
-            }   
+            }
 
             if (specification.Definition == null)
             {
@@ -255,14 +256,14 @@ namespace System.Management.Automation
                 // needs to be caught.
 
                 // sourceAdapter.NewJob returned unknown error.
-                Tracer.TraceException(exception);
+                _tracer.TraceException(exception);
                 CommandProcessorBase.CheckForSevereException(exception);
                 throw;
             }
 #pragma warning restore 56500
 
             return newJob;
-        }        
+        }
 
         #endregion NewJob
 
@@ -298,7 +299,7 @@ namespace System.Management.Automation
                 // needs to be caught.
 
                 // sourceAdapter.NewJob returned unknown error.
-                Tracer.TraceException(exception);
+                _tracer.TraceException(exception);
                 CommandProcessorBase.CheckForSevereException(exception);
                 throw;
             }
@@ -431,8 +432,8 @@ namespace System.Management.Automation
         /// <exception cref="Exception">If cmdlet parameter is null, throws exception on error from
         /// JobSourceAdapter implementation.</exception>
         internal List<Job2> GetJobs(
-            Cmdlet cmdlet, 
-            bool writeErrorOnException, 
+            Cmdlet cmdlet,
+            bool writeErrorOnException,
             bool writeObject,
             string[] jobSourceAdapterTypes)
         {
@@ -454,10 +455,10 @@ namespace System.Management.Automation
         /// <exception cref="Exception">If cmdlet parameter is null, throws exception on error from
         /// JobSourceAdapter implementation.</exception>
         internal List<Job2> GetJobsByName(
-            string name, 
-            Cmdlet cmdlet, 
-            bool writeErrorOnException, 
-            bool writeObject, 
+            string name,
+            Cmdlet cmdlet,
+            bool writeErrorOnException,
+            bool writeObject,
             bool recurse,
             string[] jobSourceAdapterTypes)
         {
@@ -478,10 +479,10 @@ namespace System.Management.Automation
         /// <exception cref="Exception">If cmdlet parameter is null, throws exception on error from
         /// JobSourceAdapter implementation.</exception>
         internal List<Job2> GetJobsByCommand(
-            string command, 
-            Cmdlet cmdlet, 
-            bool writeErrorOnException, 
-            bool writeObject, 
+            string command,
+            Cmdlet cmdlet,
+            bool writeErrorOnException,
+            bool writeObject,
             bool recurse,
             string[] jobSourceAdapterTypes)
         {
@@ -502,10 +503,10 @@ namespace System.Management.Automation
         /// <exception cref="Exception">If cmdlet parameter is null, throws exception on error from
         /// JobSourceAdapter implementation.</exception>
         internal List<Job2> GetJobsByState(
-            JobState state, 
-            Cmdlet cmdlet, 
-            bool writeErrorOnException, 
-            bool writeObject, 
+            JobState state,
+            Cmdlet cmdlet,
+            bool writeErrorOnException,
+            bool writeObject,
             bool recurse,
             string[] jobSourceAdapterTypes)
         {
@@ -541,7 +542,7 @@ namespace System.Management.Automation
         {
             lock (_syncObject)
             {
-                foreach (JobSourceAdapter sourceAdapter in this._sourceAdapters.Values)
+                foreach (JobSourceAdapter sourceAdapter in _sourceAdapters.Values)
                 {
                     if (sourceAdapter.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                     {
@@ -568,11 +569,11 @@ namespace System.Management.Automation
         /// <exception cref="Exception">If cmdlet parameter is null, throws exception on error from
         /// JobSourceAdapter implementation.</exception>
         private List<Job2> GetFilteredJobs(
-            object filter, 
-            FilterType filterType, 
-            Cmdlet cmdlet, 
-            bool writeErrorOnException, 
-            bool writeObject, 
+            object filter,
+            FilterType filterType,
+            Cmdlet cmdlet,
+            bool writeErrorOnException,
+            bool writeObject,
             bool recurse,
             string[] jobSourceAdapterTypes)
         {
@@ -582,7 +583,7 @@ namespace System.Management.Automation
 
             lock (_syncObject)
             {
-                foreach (JobSourceAdapter sourceAdapter in this._sourceAdapters.Values)
+                foreach (JobSourceAdapter sourceAdapter in _sourceAdapters.Values)
                 {
                     List<Job2> jobs = null;
 
@@ -605,7 +606,7 @@ namespace System.Management.Automation
                         // needs to be caught.
 
                         // sourceAdapter.GetJobsByFilter() threw unknown exception.
-                        Tracer.TraceException(exception);
+                        _tracer.TraceException(exception);
                         CommandProcessorBase.CheckForSevereException(exception);
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterGetJobsError", sourceAdapter);
                     }
@@ -685,7 +686,7 @@ namespace System.Management.Automation
             switch (filterType)
             {
                 case FilterType.Command:
-                    
+
                     matches = sourceAdapter.GetJobsByCommand((string)filter, recurse);
                     break;
                 case FilterType.Filter:
@@ -772,7 +773,7 @@ namespace System.Management.Automation
                         // needs to be caught.
 
                         // sourceAdapter.GetJobByInstanceId threw unknown exception.
-                        Tracer.TraceException(exception);
+                        _tracer.TraceException(exception);
                         CommandProcessorBase.CheckForSevereException(exception);
 
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterGetJobByInstanceIdError", sourceAdapter);
@@ -810,7 +811,7 @@ namespace System.Management.Automation
             bool writeErrorOnException)
         {
             List<Job2> jobs = new List<Job2>();
-            WildcardPattern typeNamePattern = (definitionType != null) ? 
+            WildcardPattern typeNamePattern = (definitionType != null) ?
                 WildcardPattern.Get(definitionType, WildcardOptions.IgnoreCase) : null;
 
             lock (_syncObject)
@@ -847,7 +848,7 @@ namespace System.Management.Automation
                         // other cases the appropriate exception
                         // needs to be caught.
 
-                        Tracer.TraceException(exception);
+                        _tracer.TraceException(exception);
                         CommandProcessorBase.CheckForSevereException(exception);
 
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterGetJobByInstanceIdError", sourceAdapter);
@@ -862,7 +863,6 @@ namespace System.Management.Automation
         {
             try
             {
-
                 if (writeErrorOnException)
                 {
                     cmdlet.WriteError(new ErrorRecord(exception, identifier, ErrorCategory.OpenError, sourceAdapter));
@@ -877,7 +877,7 @@ namespace System.Management.Automation
                     cmdlet.WriteWarning(message);
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 // if this call is not made from a cmdlet thread or if
                 // the cmdlet is closed this will thrown an exception
@@ -895,7 +895,7 @@ namespace System.Management.Automation
             List<string> adapterNames = new List<string>();
             lock (_syncObject)
             {
-                foreach (JobSourceAdapter sourceAdapter in this._sourceAdapters.Values)
+                foreach (JobSourceAdapter sourceAdapter in _sourceAdapters.Values)
                 {
                     if (CheckTypeNames(sourceAdapter, adapterTypeNames))
                     {
@@ -954,7 +954,7 @@ namespace System.Management.Automation
                         // needs to be caught.
 
                         // sourceAdapter.GetJobByInstanceId() threw unknown exception.
-                        Tracer.TraceException(exception);
+                        _tracer.TraceException(exception);
                         CommandProcessorBase.CheckForSevereException(exception);
                         if (throwExceptions) throw;
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterGetJobError", sourceAdapter);
@@ -978,7 +978,7 @@ namespace System.Management.Automation
                         // needs to be caught.
                         // sourceAdapter.RemoveJob() threw unknown exception.
 
-                        Tracer.TraceException(exception);
+                        _tracer.TraceException(exception);
                         CommandProcessorBase.CheckForSevereException(exception);
                         if (throwExceptions) throw;
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterRemoveJobError", sourceAdapter);
@@ -1007,9 +1007,9 @@ namespace System.Management.Automation
 
         private void RemoveJobIdForReuseHelper(Hashtable duplicateDetector, Job job)
         {
-            lock (SyncObject)
+            lock (s_syncObject)
             {
-                JobIdsForReuse.Remove(job.InstanceId);
+                s_jobIdsForReuse.Remove(job.InstanceId);
             }
 
             foreach (Job child in job.ChildJobs)

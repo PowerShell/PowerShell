@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 namespace Microsoft.PowerShell.Commands
 {
     using System;
@@ -11,22 +12,22 @@ namespace Microsoft.PowerShell.Commands
 
     internal class OriginalColumnInfo : ColumnInfo
     {
-        private string liveObjectPropertyName;
-        private OutGridViewCommand parentCmdlet;
+        private string _liveObjectPropertyName;
+        private OutGridViewCommand _parentCmdlet;
 
         internal OriginalColumnInfo(string staleObjectPropertyName, string displayName, string liveObjectPropertyName, OutGridViewCommand parentCmdlet)
             : base(staleObjectPropertyName, displayName)
         {
-            this.liveObjectPropertyName = liveObjectPropertyName;
-            this.parentCmdlet = parentCmdlet;
+            _liveObjectPropertyName = liveObjectPropertyName;
+            _parentCmdlet = parentCmdlet;
         }
 
         internal override Object GetValue(PSObject liveObject)
         {
             try
             {
-                PSPropertyInfo propertyInfo = liveObject.Properties[this.liveObjectPropertyName];
-                if(propertyInfo == null)
+                PSPropertyInfo propertyInfo = liveObject.Properties[_liveObjectPropertyName];
+                if (propertyInfo == null)
                 {
                     return null;
                 }
@@ -36,11 +37,10 @@ namespace Microsoft.PowerShell.Commands
                 ICollection collectionValue = liveObjectValue as ICollection;
                 if (null != collectionValue)
                 {
-                    liveObjectValue = this.parentCmdlet.ConvertToString(PSObjectHelper.AsPSObject(propertyInfo.Value));
+                    liveObjectValue = _parentCmdlet.ConvertToString(PSObjectHelper.AsPSObject(propertyInfo.Value));
                 }
                 else
                 {
-
                     PSObject psObjectValue = liveObjectValue as PSObject;
                     if (psObjectValue != null)
                     {
@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
                         else
                         {
                             // Use the String type as default.
-                            liveObjectValue = this.parentCmdlet.ConvertToString(psObjectValue);
+                            liveObjectValue = _parentCmdlet.ConvertToString(psObjectValue);
                         }
                     }
                 }

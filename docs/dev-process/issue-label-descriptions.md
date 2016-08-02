@@ -1,10 +1,3 @@
-author:  Jason/Andy
-
-
-> meaning of label, assignees, etc.
-> triage process
-> requirements for resolving (timing), closing... 
-
 ## Long-living issue labels
 
 ### Feature areas
@@ -21,7 +14,7 @@ These labels describe what feature area of PowerShell that an issue addresses.
 * `Area-Language`: parser, language semantics
 * `Area-OMI`: omi
 * `Area-PackageManagement`: PackageManagement related issues
-* `Area-Performance`: a performance issue 
+* `Area-Performance`: a performance issue
 * `Area-Portability`: anything affecting script portability
 * `Area-PSReadline`: PSReadLine
 * `Area-SideBySide`: Side by side support

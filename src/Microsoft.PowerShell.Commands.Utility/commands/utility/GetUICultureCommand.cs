@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            WriteObject( Host.CurrentUICulture );
+            WriteObject(Host.CurrentUICulture);
         } // EndProcessing
     } // GetUICultureCommand
 } // Microsoft.PowerShell.Commands

@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -19,14 +20,14 @@ namespace System.Management.Automation
     {
         #region Private Data
 
-        private bool isMandatory;
-        private int position;
-        private bool valueFromPipeline;
-        private bool valueFromPipelineByPropertyName;
-        private bool valueFromRemainingArguments;
-        private string helpMessage;
-        private string helpMessageBaseName;
-        private string helpMessageResourceId;
+        private bool _isMandatory;
+        private int _position;
+        private bool _valueFromPipeline;
+        private bool _valueFromPipelineByPropertyName;
+        private bool _valueFromRemainingArguments;
+        private string _helpMessage;
+        private string _helpMessageBaseName;
+        private string _helpMessageResourceId;
 
         #endregion
 
@@ -53,14 +54,14 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("other");
             }
 
-            this.helpMessage = other.helpMessage;
-            this.helpMessageBaseName = other.helpMessageBaseName;
-            this.helpMessageResourceId = other.helpMessageResourceId;
-            this.isMandatory = other.isMandatory;
-            this.position = other.position;
-            this.valueFromPipeline = other.valueFromPipeline;
-            this.valueFromPipelineByPropertyName = other.valueFromPipelineByPropertyName;
-            this.valueFromRemainingArguments = other.valueFromRemainingArguments;
+            _helpMessage = other._helpMessage;
+            _helpMessageBaseName = other._helpMessageBaseName;
+            _helpMessageResourceId = other._helpMessageResourceId;
+            _isMandatory = other._isMandatory;
+            _position = other._position;
+            _valueFromPipeline = other._valueFromPipeline;
+            _valueFromPipelineByPropertyName = other._valueFromPipelineByPropertyName;
+            _valueFromRemainingArguments = other._valueFromRemainingArguments;
         }
 
         #endregion
@@ -75,12 +76,12 @@ namespace System.Management.Automation
         {
             get
             {
-                return isMandatory;
+                return _isMandatory;
             }
 
             set
             {
-                isMandatory = value;
+                _isMandatory = value;
             }
         }
 
@@ -93,11 +94,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return position;
+                return _position;
             }
             set
             {
-                position = value;
+                _position = value;
             }
         }
 
@@ -108,11 +109,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return valueFromPipeline;
+                return _valueFromPipeline;
             }
             set
             {
-                valueFromPipeline = value;
+                _valueFromPipeline = value;
             }
         }
 
@@ -124,11 +125,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return valueFromPipelineByPropertyName;
+                return _valueFromPipelineByPropertyName;
             }
             set
             {
-                valueFromPipelineByPropertyName = value;
+                _valueFromPipelineByPropertyName = value;
             }
         }
 
@@ -141,11 +142,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return valueFromRemainingArguments;
+                return _valueFromRemainingArguments;
             }
             set
             {
-                valueFromRemainingArguments = value;
+                _valueFromRemainingArguments = value;
             }
         }
 
@@ -156,11 +157,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return helpMessage;
+                return _helpMessage;
             }
             set
             {
-                helpMessage = value;
+                _helpMessage = value;
             }
         }
 
@@ -171,11 +172,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return helpMessageBaseName;
+                return _helpMessageBaseName;
             }
             set
             {
-                helpMessageBaseName = value;
+                _helpMessageBaseName = value;
             }
         }
 
@@ -186,13 +187,13 @@ namespace System.Management.Automation
         {
             get
             {
-                return helpMessageResourceId;
+                return _helpMessageResourceId;
             }
             set
             {
-                helpMessageResourceId = value;
+                _helpMessageResourceId = value;
             }
-        }       
+        }
 
         #endregion
 
@@ -204,16 +205,16 @@ namespace System.Management.Automation
         /// <param name="psMD"></param>
         internal void Initialize(ParameterSetSpecificMetadata psMD)
         {
-            isMandatory = psMD.IsMandatory;
-            position = psMD.Position;
-            valueFromPipeline = psMD.ValueFromPipeline;
-            valueFromPipelineByPropertyName = psMD.ValueFromPipelineByPropertyName;
-            valueFromRemainingArguments = psMD.ValueFromRemainingArguments;            
-            helpMessage = psMD.HelpMessage;
-            helpMessageBaseName = psMD.HelpMessageBaseName;
-            helpMessageResourceId = psMD.HelpMessageResourceId;
+            _isMandatory = psMD.IsMandatory;
+            _position = psMD.Position;
+            _valueFromPipeline = psMD.ValueFromPipeline;
+            _valueFromPipelineByPropertyName = psMD.ValueFromPipelineByPropertyName;
+            _valueFromRemainingArguments = psMD.ValueFromRemainingArguments;
+            _helpMessage = psMD.HelpMessage;
+            _helpMessageBaseName = psMD.HelpMessageBaseName;
+            _helpMessageResourceId = psMD.HelpMessageResourceId;
         }
-        
+
         /// <summary>
         /// Compares this instance with the supplied <paramref name="second"/>.
         /// </summary>
@@ -225,14 +226,14 @@ namespace System.Management.Automation
         /// </returns>
         internal bool Equals(ParameterSetMetadata second)
         {
-            if ((isMandatory != second.isMandatory) ||
-                (position != second.position) ||
-                (valueFromPipeline != second.valueFromPipeline) ||
-                (valueFromPipelineByPropertyName != second.valueFromPipelineByPropertyName) ||
-                (valueFromRemainingArguments != second.valueFromRemainingArguments) ||
-                (helpMessage != second.helpMessage) ||
-                (helpMessageBaseName != second.helpMessageBaseName) ||
-                (helpMessageResourceId != second.helpMessageResourceId))
+            if ((_isMandatory != second._isMandatory) ||
+                (_position != second._position) ||
+                (_valueFromPipeline != second._valueFromPipeline) ||
+                (_valueFromPipelineByPropertyName != second._valueFromPipelineByPropertyName) ||
+                (_valueFromRemainingArguments != second._valueFromRemainingArguments) ||
+                (_helpMessage != second._helpMessage) ||
+                (_helpMessageBaseName != second._helpMessageBaseName) ||
+                (_helpMessageResourceId != second._helpMessageResourceId))
             {
                 return false;
             }
@@ -306,43 +307,43 @@ namespace System.Management.Automation
             Text.StringBuilder result = new System.Text.StringBuilder();
             string prefix = "";
 
-            if (isMandatory)
+            if (_isMandatory)
             {
                 result.AppendFormat(CultureInfo.InvariantCulture, MandatoryFormat, prefix);
                 prefix = ", ";
             }
 
-            if (position != Int32.MinValue)
+            if (_position != Int32.MinValue)
             {
-                result.AppendFormat(CultureInfo.InvariantCulture, PositionFormat, prefix, position);
+                result.AppendFormat(CultureInfo.InvariantCulture, PositionFormat, prefix, _position);
                 prefix = ", ";
             }
 
-            if (valueFromPipeline)
+            if (_valueFromPipeline)
             {
                 result.AppendFormat(CultureInfo.InvariantCulture, ValueFromPipelineFormat, prefix);
                 prefix = ", ";
             }
 
-            if (valueFromPipelineByPropertyName)
+            if (_valueFromPipelineByPropertyName)
             {
                 result.AppendFormat(CultureInfo.InvariantCulture, ValueFromPipelineByPropertyNameFormat, prefix);
                 prefix = ", ";
             }
 
-            if (valueFromRemainingArguments)
+            if (_valueFromRemainingArguments)
             {
                 result.AppendFormat(CultureInfo.InvariantCulture, ValueFromRemainingArgumentsFormat, prefix);
                 prefix = ", ";
             }
 
-            if (!string.IsNullOrEmpty(helpMessage))
+            if (!string.IsNullOrEmpty(_helpMessage))
             {
                 result.AppendFormat(
                     CultureInfo.InvariantCulture,
-                    HelpMessageFormat, 
-                    prefix, 
-                    CodeGeneration.EscapeSingleQuotedStringContent(helpMessage));
+                    HelpMessageFormat,
+                    prefix,
+                    CodeGeneration.EscapeSingleQuotedStringContent(_helpMessage));
                 prefix = ", ";
             }
 
@@ -359,12 +360,12 @@ namespace System.Management.Automation
     {
         #region Private Data
 
-        private string name;
-        private Type parameterType;
-        private bool isDynamic;
-        private Dictionary<string, ParameterSetMetadata> parameterSets;
-        private Collection<string> aliases;
-        private Collection<Attribute> attributes;
+        private string _name;
+        private Type _parameterType;
+        private bool _isDynamic;
+        private Dictionary<string, ParameterSetMetadata> _parameterSets;
+        private Collection<string> _aliases;
+        private Collection<Attribute> _attributes;
 
         #endregion
 
@@ -403,12 +404,12 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("name");
             }
 
-            this.name = name;
-            this.parameterType = parameterType;
+            _name = name;
+            _parameterType = parameterType;
 
-            this.attributes = new Collection<Attribute>();
-            this.aliases = new Collection<string>();
-            this.parameterSets = new Dictionary<string, ParameterSetMetadata>();
+            _attributes = new Collection<Attribute>();
+            _aliases = new Collection<string>();
+            _parameterSets = new Dictionary<string, ParameterSetMetadata>();
         }
 
         /// <summary>
@@ -423,43 +424,43 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("other");
             }
 
-            this.isDynamic = other.isDynamic;
-            this.name = other.name;
-            this.parameterType = other.parameterType;
+            _isDynamic = other._isDynamic;
+            _name = other._name;
+            _parameterType = other._parameterType;
 
             // deep copy
-            this.aliases = new Collection<string>(new List<string>(other.aliases.Count));
-            foreach (string alias in other.aliases)
+            _aliases = new Collection<string>(new List<string>(other._aliases.Count));
+            foreach (string alias in other._aliases)
             {
-                this.aliases.Add(alias);
+                _aliases.Add(alias);
             }
 
             // deep copy of the collection, collection items (Attributes) copied by reference
-            if (other.attributes == null)
+            if (other._attributes == null)
             {
-                this.attributes = null;
+                _attributes = null;
             }
             else
             {
-                this.attributes = new Collection<Attribute>(new List<Attribute>(other.attributes.Count));
-                foreach (Attribute attribute in other.attributes)
+                _attributes = new Collection<Attribute>(new List<Attribute>(other._attributes.Count));
+                foreach (Attribute attribute in other._attributes)
                 {
-                    this.attributes.Add(attribute);
+                    _attributes.Add(attribute);
                 }
             }
 
             // deep copy
-            this.parameterSets = null;
-            if (other.parameterSets == null)
+            _parameterSets = null;
+            if (other._parameterSets == null)
             {
-                this.parameterSets = null;
+                _parameterSets = null;
             }
             else
             {
-                this.parameterSets = new Dictionary<string, ParameterSetMetadata>(other.parameterSets.Count);
-                foreach (KeyValuePair<string, ParameterSetMetadata> entry in other.parameterSets)
+                _parameterSets = new Dictionary<string, ParameterSetMetadata>(other._parameterSets.Count);
+                foreach (KeyValuePair<string, ParameterSetMetadata> entry in other._parameterSets)
                 {
-                    this.parameterSets.Add(entry.Key, new ParameterSetMetadata(entry.Value));
+                    _parameterSets.Add(entry.Key, new ParameterSetMetadata(entry.Value));
                 }
             }
         }
@@ -490,18 +491,18 @@ namespace System.Management.Automation
             Dictionary<string, ParameterSetMetadata> parameterSets,
             Type parameterType)
         {
-            this.aliases = aliases;
-            this.isDynamic = isDynamic;
-            this.name = name;
-            this.parameterSets = parameterSets;
-            this.parameterType = parameterType;
-            this.attributes = new Collection<Attribute>();
+            _aliases = aliases;
+            _isDynamic = isDynamic;
+            _name = name;
+            _parameterSets = parameterSets;
+            _parameterType = parameterType;
+            _attributes = new Collection<Attribute>();
         }
 
         #endregion
 
         #region Public Methods/Properties
-        
+
         /// <summary>
         /// Gets the name of the parameter
         /// </summary>
@@ -510,7 +511,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return name;
+                return _name;
             }
 
             set
@@ -520,7 +521,7 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentNullException("Name");
                 }
 
-                name = value;
+                _name = value;
             }
         }
 
@@ -531,12 +532,12 @@ namespace System.Management.Automation
         {
             get
             {
-                return parameterType;
+                return _parameterType;
             }
 
             set
             {
-                parameterType = value;
+                _parameterType = value;
             }
         }
 
@@ -547,26 +548,26 @@ namespace System.Management.Automation
         {
             get
             {
-                return parameterSets;
+                return _parameterSets;
             }
         }
 
         /// <summary>
         /// Specifies if the parameter is Dynamic
         /// </summary>
-        public bool IsDynamic 
+        public bool IsDynamic
         {
-            get { return isDynamic; }
-            set { isDynamic = value; }
+            get { return _isDynamic; }
+            set { _isDynamic = value; }
         }
         /// <summary>
         /// Specifies the alias names for this parameter
         /// </summary>
-        public Collection<string> Aliases 
+        public Collection<string> Aliases
         {
             get
             {
-                return aliases;
+                return _aliases;
             }
         }
 
@@ -577,26 +578,26 @@ namespace System.Management.Automation
         {
             get
             {
-                return attributes;
+                return _attributes;
             }
         }
 
         /// <summary>
         /// Specifies if the parameter is a SwitchParameter
         /// </summary>
-        public bool SwitchParameter 
+        public bool SwitchParameter
         {
             get
             {
-                if (parameterType != null)
+                if (_parameterType != null)
                 {
-                    return parameterType.Equals(typeof(SwitchParameter));
+                    return _parameterType.Equals(typeof(SwitchParameter));
                 }
 
                 return false;
             }
         }
-        
+
         /// <summary>
         /// Gets a dictionary of parameter metadata for the supplied <paramref name="type"/>.  
         /// </summary>
@@ -634,30 +635,30 @@ namespace System.Management.Automation
         /// <param name="compiledParameterMD"></param>
         internal void Initialize(CompiledCommandParameter compiledParameterMD)
         {
-            name = compiledParameterMD.Name;
-            parameterType = compiledParameterMD.Type;
-            isDynamic = compiledParameterMD.IsDynamic;
-            
+            _name = compiledParameterMD.Name;
+            _parameterType = compiledParameterMD.Type;
+            _isDynamic = compiledParameterMD.IsDynamic;
+
             // Create parameter set metadata
-            parameterSets = new Dictionary<string, ParameterSetMetadata>(StringComparer.OrdinalIgnoreCase);
+            _parameterSets = new Dictionary<string, ParameterSetMetadata>(StringComparer.OrdinalIgnoreCase);
             foreach (string key in compiledParameterMD.ParameterSetData.Keys)
             {
                 ParameterSetSpecificMetadata pMD = compiledParameterMD.ParameterSetData[key];
-                parameterSets.Add(key, new ParameterSetMetadata(pMD));
+                _parameterSets.Add(key, new ParameterSetMetadata(pMD));
             }
 
             // Create aliases for this parameter
-            aliases = new Collection<string>();
+            _aliases = new Collection<string>();
             foreach (string alias in compiledParameterMD.Aliases)
             {
-                aliases.Add(alias);
+                _aliases.Add(alias);
             }
 
             // Create attributes for this parameter
-            attributes = new Collection<Attribute>();
+            _attributes = new Collection<Attribute>();
             foreach (var attrib in compiledParameterMD.CompiledAttributes)
             {
-                attributes.Add(attrib);
+                _attributes.Add(attrib);
             }
         }
 
@@ -672,7 +673,7 @@ namespace System.Management.Automation
             Dbg.Assert(null != cmdParameterMetadata, "cmdParameterMetadata cannot be null");
 
             Dictionary<string, ParameterMetadata> result = new Dictionary<string, ParameterMetadata>(StringComparer.OrdinalIgnoreCase);
-            
+
             foreach (var keyValuePair in cmdParameterMetadata.BindableParameters)
             {
                 var key = keyValuePair.Key;
@@ -691,22 +692,22 @@ namespace System.Management.Automation
             {
                 // ConstrainedLanguage note - This conversion is analyzed, but actually invoked via regular conversion.
                 bool parameterAcceptsObjects =
-                    ((int) (LanguagePrimitives.FigureConversion(typeof (object), this.ParameterType).Rank)) >=
-                    (int) (ConversionRank.AssignableS2A);
+                    ((int)(LanguagePrimitives.FigureConversion(typeof(object), this.ParameterType).Rank)) >=
+                    (int)(ConversionRank.AssignableS2A);
                 if (dotNetType.Equals(typeof(object)))
                 {
                     return parameterAcceptsObjects;
                 }
                 if (parameterAcceptsObjects)
                 {
-                    return (psTypeName.Type != null) && (psTypeName.Type.Equals(typeof (object)));
+                    return (psTypeName.Type != null) && (psTypeName.Type.Equals(typeof(object)));
                 }
 
                 // ConstrainedLanguage note - This conversion is analyzed, but actually invoked via regular conversion.
                 var convertionData = LanguagePrimitives.FigureConversion(dotNetType, this.ParameterType);
                 if (convertionData != null)
                 {
-                    if ((int) (convertionData.Rank) >= (int) (ConversionRank.NumericImplicitS2A))
+                    if ((int)(convertionData.Rank) >= (int)(ConversionRank.NumericImplicitS2A))
                     {
                         return true;
                     }
@@ -779,9 +780,9 @@ namespace System.Management.Automation
         {
             Text.StringBuilder result = new System.Text.StringBuilder();
 
-            if (parameterSets != null && isProxyForCmdlet)
+            if (_parameterSets != null && isProxyForCmdlet)
             {
-                foreach (var pair in parameterSets)
+                foreach (var pair in _parameterSets)
                 {
                     string parameterSetName = pair.Key;
                     ParameterSetMetadata parameterSet = pair.Value;
@@ -795,7 +796,7 @@ namespace System.Management.Automation
                         {
                             result.AppendFormat(
                                 CultureInfo.InvariantCulture,
-                                ParameterSetNameFormat, 
+                                ParameterSetNameFormat,
                                 CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
                             separator = ", ";
                         }
@@ -809,12 +810,12 @@ namespace System.Management.Automation
                 }
             }
 
-            if ((aliases != null) && (aliases.Count > 0))
+            if ((_aliases != null) && (_aliases.Count > 0))
             {
                 Text.StringBuilder aliasesData = new System.Text.StringBuilder();
                 string comma = ""; // comma is not need for the first element
 
-                foreach (string alias in aliases)
+                foreach (string alias in _aliases)
                 {
                     aliasesData.AppendFormat(
                         CultureInfo.InvariantCulture,
@@ -827,9 +828,9 @@ namespace System.Management.Automation
                 result.AppendFormat(CultureInfo.InvariantCulture, AliasesFormat, prefix, aliasesData.ToString());
             }
 
-            if ((attributes != null) && (attributes.Count > 0))
+            if ((_attributes != null) && (_attributes.Count > 0))
             {
-                foreach (Attribute attrib in attributes)
+                foreach (Attribute attrib in _attributes)
                 {
                     string attribData = GetProxyAttributeData(attrib, prefix);
                     if (!string.IsNullOrEmpty(attribData))
@@ -843,14 +844,14 @@ namespace System.Management.Automation
             {
                 result.AppendFormat(CultureInfo.InvariantCulture, ParameterTypeFormat, prefix, "switch");
             }
-            else if (parameterType != null)
+            else if (_parameterType != null)
             {
-                result.AppendFormat(CultureInfo.InvariantCulture, ParameterTypeFormat, prefix, ToStringCodeMethods.Type(parameterType));
+                result.AppendFormat(CultureInfo.InvariantCulture, ParameterTypeFormat, prefix, ToStringCodeMethods.Type(_parameterType));
             }
 
             /* 1. CredentialAttribute needs to go after the type
              * 2. To avoid risk, I don't want to move other attributes to go here / after the type */
-            CredentialAttribute credentialAttrib = attributes.OfType<CredentialAttribute>().FirstOrDefault();
+            CredentialAttribute credentialAttrib = _attributes.OfType<CredentialAttribute>().FirstOrDefault();
             if (credentialAttrib != null)
             {
                 string attribData = string.Format(CultureInfo.InvariantCulture, CredentialAttributeFormat, prefix);
@@ -862,9 +863,9 @@ namespace System.Management.Automation
 
             result.AppendFormat(
                 CultureInfo.InvariantCulture,
-                ParameterNameFormat, 
+                ParameterNameFormat,
                 prefix,
-                CodeGeneration.EscapeVariableName(string.IsNullOrEmpty(paramNameOverride) ? name : paramNameOverride));
+                CodeGeneration.EscapeVariableName(string.IsNullOrEmpty(paramNameOverride) ? _name : paramNameOverride));
             return result.ToString();
         }
 
@@ -997,7 +998,7 @@ namespace System.Management.Automation
             {
                 Text.StringBuilder values = new System.Text.StringBuilder();
                 string comma = "";
-                foreach(string validValue in setAttrib.ValidValues)
+                foreach (string validValue in setAttrib.ValidValues)
                 {
                     values.AppendFormat(
                         CultureInfo.InvariantCulture,
@@ -1029,8 +1030,8 @@ namespace System.Management.Automation
             {
                 result = string.Format(
                     CultureInfo.InvariantCulture,
-                    PSTypeNameFormat, 
-                    prefix, 
+                    PSTypeNameFormat,
+                    prefix,
                     CodeGeneration.EscapeSingleQuotedStringContent(psTypeNameAttrib.PSTypeName));
                 return result;
             }
@@ -1111,7 +1112,7 @@ namespace System.Management.Automation
             }
 
             return new InternalParameterMetadata(runtimeDefinedParameters, processingDynamicParameters, checkNames);
-        } 
+        }
 
         /// <summary>
         /// Gets or constructs an instance of the InternalParameterMetadata for the specified type.
@@ -1151,13 +1152,13 @@ namespace System.Management.Automation
             }
 
             InternalParameterMetadata result;
-            if (context == null || !ParameterMetadataCache.TryGetValue(type.AssemblyQualifiedName, out result))
+            if (context == null || !s_parameterMetadataCache.TryGetValue(type.AssemblyQualifiedName, out result))
             {
                 result = new InternalParameterMetadata(type, processingDynamicParameters);
 
                 if (context != null)
                 {
-                    ParameterMetadataCache.TryAdd(type.AssemblyQualifiedName, result);
+                    s_parameterMetadataCache.TryAdd(type.AssemblyQualifiedName, result);
                 }
             }
             return result;
@@ -1230,8 +1231,8 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("type");
             }
 
-            this.type = type;
-            this.typeName = type.Name;
+            _type = type;
+            _typeName = type.Name;
 
             ConstructCompiledParametersUsingReflection(processingDynamicParameters);
         }
@@ -1246,10 +1247,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return typeName;
+                return _typeName;
             }
         }
-        private string typeName = String.Empty;
+        private string _typeName = String.Empty;
 
         /// <summary>
         /// Gets a dictionary of the compiled parameter metadata for this Type. 
@@ -1261,10 +1262,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return bindableParameters;
+                return _bindableParameters;
             }
         }
-        private Dictionary<string, CompiledCommandParameter> bindableParameters =
+        private Dictionary<string, CompiledCommandParameter> _bindableParameters =
             new Dictionary<string, CompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
@@ -1276,10 +1277,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return aliasedParameters;
+                return _aliasedParameters;
             }
         }
-        private Dictionary<string, CompiledCommandParameter> aliasedParameters =
+        private Dictionary<string, CompiledCommandParameter> _aliasedParameters =
             new Dictionary<string, CompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
@@ -1287,7 +1288,7 @@ namespace System.Management.Automation
         /// This member is null in all cases except when constructed with using reflection
         /// against the Type.
         /// </summary>
-        private Type type;
+        private Type _type;
 
         /// <summary>
         /// The flags used when reflecting against the object to create the metadata
@@ -1322,7 +1323,7 @@ namespace System.Management.Automation
             bool processingDynamicParameters,
             bool checkNames)
         {
-            Diagnostics.Assert (
+            Diagnostics.Assert(
                 runtimeDefinedParameters != null,
                 "This method should only be called when constructed with a valid runtime-defined parameter collection");
 
@@ -1356,15 +1357,15 @@ namespace System.Management.Automation
         private void ConstructCompiledParametersUsingReflection(bool processingDynamicParameters)
         {
             Diagnostics.Assert(
-                type != null,
+                _type != null,
                 "This method should only be called when constructed with the Type");
 
             // Get the property and field info
 
-            PropertyInfo[] properties = type.GetProperties(metaDataBindingFlags);
-            FieldInfo[] fields = type.GetFields(metaDataBindingFlags);
+            PropertyInfo[] properties = _type.GetProperties(metaDataBindingFlags);
+            FieldInfo[] fields = _type.GetFields(metaDataBindingFlags);
 
-            foreach(PropertyInfo property in properties)
+            foreach (PropertyInfo property in properties)
             {
                 // Check whether the property is a parameter
                 if (!IsMemberAParameter(property))
@@ -1375,7 +1376,7 @@ namespace System.Management.Automation
                 AddParameter(property, processingDynamicParameters);
             }
 
-            foreach(FieldInfo field in fields)
+            foreach (FieldInfo field in fields)
             {
                 // Check whether the field is a parameter
                 if (!IsMemberAParameter(field))
@@ -1417,7 +1418,7 @@ namespace System.Management.Automation
             do // false loop
             {
                 CompiledCommandParameter existingParameter;
-                if (!bindableParameters.TryGetValue(member.Name, out existingParameter))
+                if (!_bindableParameters.TryGetValue(member.Name, out existingParameter))
                 {
                     break;
                 }
@@ -1474,14 +1475,14 @@ namespace System.Management.Automation
                 CheckForReservedParameter(parameter.Name);
             }
 
-            bindableParameters.Add(parameter.Name, parameter);
+            _bindableParameters.Add(parameter.Name, parameter);
 
             // Now add entries in the parameter aliases collection for any aliases.
 
             foreach (string alias in parameter.Aliases)
             {
                 // NTRAID#Windows Out Of Band Releases-917356-JonN
-                if (aliasedParameters.ContainsKey(alias))
+                if (_aliasedParameters.ContainsKey(alias))
                 {
                     throw new MetadataException(
                             "AliasDeclaredMultipleTimes",
@@ -1489,19 +1490,19 @@ namespace System.Management.Automation
                             DiscoveryExceptions.AliasDeclaredMultipleTimes,
                             alias);
                 }
-                aliasedParameters.Add(alias, parameter);
+                _aliasedParameters.Add(alias, parameter);
             }
         }
 
         private void RemoveParameter(CompiledCommandParameter parameter)
         {
-            bindableParameters.Remove(parameter.Name);
+            _bindableParameters.Remove(parameter.Name);
 
             // Now add entries in the parameter aliases collection for any aliases.
 
             foreach (string alias in parameter.Aliases)
             {
-                aliasedParameters.Remove(alias);
+                _aliasedParameters.Remove(alias);
             }
         }
 
@@ -1537,19 +1538,19 @@ namespace System.Management.Automation
             catch (MetadataException metadataException)
             {
                 throw new MetadataException(
-                    "GetCustomAttributesMetadataException", 
-                    metadataException, 
+                    "GetCustomAttributesMetadataException",
+                    metadataException,
                     Metadata.MetadataMemberInitialization,
-                    member.Name, 
+                    member.Name,
                     metadataException.Message);
             }
             catch (ArgumentException argumentException)
             {
                 throw new MetadataException(
                     "GetCustomAttributesArgumentException",
-                    argumentException, 
+                    argumentException,
                     Metadata.MetadataMemberInitialization,
-                    member.Name, 
+                    member.Name,
                     argumentException.Message);
             }
 
@@ -1564,7 +1565,7 @@ namespace System.Management.Automation
         /// The cache of the type metadata. The key for the cache is the Type.FullName.
         /// Note, this is a case-sensitive dictionary because Type names are case sensitive.
         /// </summary>
-        private static System.Collections.Concurrent.ConcurrentDictionary<string, InternalParameterMetadata> ParameterMetadataCache =
+        private static System.Collections.Concurrent.ConcurrentDictionary<string, InternalParameterMetadata> s_parameterMetadataCache =
             new System.Collections.Concurrent.ConcurrentDictionary<string, InternalParameterMetadata>(StringComparer.Ordinal);
 
         #endregion Metadata cache

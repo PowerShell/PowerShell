@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Management.Automation.Internal;
 using System.Globalization;
 using System.Diagnostics;
@@ -89,7 +90,7 @@ namespace System.Management.Automation.Help
             {
                 return _unresolvedUri;
             }
-        }  
+        }
         private string _unresolvedUri;
 
         /// <summary>
@@ -136,7 +137,7 @@ namespace System.Management.Automation.Help
                 return true;
             }
 
-            return v1 > v2;;
+            return v1 > v2; ;
         }
 
         /// <summary>
@@ -150,7 +151,7 @@ namespace System.Management.Automation.Help
 
             foreach (CultureSpecificUpdatableHelp updatableHelpItem in _updatableHelpItems)
             {
-                if (String.Compare(updatableHelpItem.Culture.Name, culture.Name, 
+                if (String.Compare(updatableHelpItem.Culture.Name, culture.Name,
                     StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return true;

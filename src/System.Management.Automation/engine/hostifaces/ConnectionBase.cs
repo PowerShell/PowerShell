@@ -1,6 +1,7 @@
 /********************************************************************++
  * Copyright (c) Microsoft Corporation.  All rights reserved.
  * --********************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace System.Management.Automation.Runspaces
     internal abstract class RunspaceBase : Runspace
     {
         #region constructors
-        
+
         /// <summary>
         /// Construct an instance of an Runspace using a custom 
         /// implementation of PSHost.
@@ -42,14 +43,14 @@ namespace System.Management.Automation.Runspaces
         {
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException ("host");
+                throw PSTraceSource.NewArgumentNullException("host");
             }
             if (runspaceConfiguration == null)
             {
                 throw PSTraceSource.NewArgumentNullException("runspaceConfiguration");
             }
 
-            _host = host; 
+            _host = host;
             _runspaceConfiguration = runspaceConfiguration;
         }
 
@@ -67,7 +68,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="initialSessionState">
         /// configuration information for this runspace instance.
         /// </param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification="OK to call ThreadOptions")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "OK to call ThreadOptions")]
         protected RunspaceBase(PSHost host, InitialSessionState initialSessionState)
         {
             if (host == null)
@@ -147,7 +148,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        RunspaceConfiguration _runspaceConfiguration;
+        private RunspaceConfiguration _runspaceConfiguration;
         /// <summary>
         /// runspaceConfiguration information for this runspace
         /// </summary>
@@ -164,7 +165,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        InitialSessionState _initialSessionState;
+        private InitialSessionState _initialSessionState;
         /// <summary>
         /// runspaceConfiguration information for this runspace
         /// </summary>
@@ -175,7 +176,7 @@ namespace System.Management.Automation.Runspaces
                 return _initialSessionState;
             }
         }
-     
+
         #endregion constructors
 
         #region properties
@@ -193,7 +194,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private RunspaceStateInfo _runspaceStateInfo = new RunspaceStateInfo (RunspaceState.BeforeOpen);
+        private RunspaceStateInfo _runspaceStateInfo = new RunspaceStateInfo(RunspaceState.BeforeOpen);
 
         /// <summary>
         /// Retrieve information about current state of the runspace
@@ -237,10 +238,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override RunspaceConnectionInfo ConnectionInfo
         {
-            get 
-            { 
+            get
+            {
                 // null refers to local case for path
-                return null; 
+                return null;
             }
         }
 
@@ -253,9 +254,9 @@ namespace System.Management.Automation.Runspaces
         }
 
         #endregion properties
-       
+
         #region Open
-        
+
         /// <summary>
         /// Open the runspace synchronously.
         /// </summary>
@@ -264,7 +265,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         override public void Open()
         {
-            CoreOpen (true);
+            CoreOpen(true);
         }
 
         /// <summary>
@@ -273,9 +274,9 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="InvalidRunspaceStateException">
         /// RunspaceState is not BeforeOpen
         /// </exception>
-        override public void OpenAsync ()
+        override public void OpenAsync()
         {
-            CoreOpen (false);
+            CoreOpen(false);
         }
 
         /// <summary>
@@ -287,7 +288,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="InvalidRunspaceStateException">
         /// RunspaceState is not BeforeOpen
         /// </exception>
-        private void CoreOpen (bool syncCall)
+        private void CoreOpen(bool syncCall)
         {
             bool etwEnabled = RunspaceEventSource.Log.IsEnabled();
             if (etwEnabled) RunspaceEventSource.Log.OpenRunspaceStart();
@@ -299,7 +300,7 @@ namespace System.Management.Automation.Runspaces
                     InvalidRunspaceStateException e =
                         new InvalidRunspaceStateException
                         (
-                            StringUtil.Format(RunspaceStrings.CannotOpenAgain,new object[] { RunspaceState.ToString() }),
+                            StringUtil.Format(RunspaceStrings.CannotOpenAgain, new object[] { RunspaceState.ToString() }),
                             RunspaceState,
                             RunspaceState.BeforeOpen
                         );
@@ -332,9 +333,9 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         protected abstract void OpenHelper(bool syncCall);
 
-        
+
         #endregion open
-        
+
         #region close
         /// <summary>
         /// Close the runspace synchronously.
@@ -345,9 +346,9 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="InvalidRunspaceStateException">
         /// RunspaceState is BeforeOpen or Opening
         /// </exception>
-        override public void Close ()
+        override public void Close()
         {
-            CoreClose (true);
+            CoreClose(true);
         }
 
         /// <summary>
@@ -362,7 +363,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         override public void CloseAsync()
         {
-            CoreClose (false);
+            CoreClose(false);
         }
 
         /// <summary>
@@ -379,7 +380,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="InvalidOperationException">
         /// If SessionStateProxy has some method call in progress
         /// </exception>
-        private void CoreClose (bool syncCall)
+        private void CoreClose(bool syncCall)
         {
             bool alreadyClosing = false;
 
@@ -571,9 +572,9 @@ namespace System.Management.Automation.Runspaces
         /// Create an empty pipeline
         /// </summary>
         /// <returns>An empty pipeline</returns>
-        public override Pipeline CreatePipeline ()
+        public override Pipeline CreatePipeline()
         {
-            return CoreCreatePipeline (null, false, false);
+            return CoreCreatePipeline(null, false, false);
         }
 
         /// <summary>
@@ -590,12 +591,12 @@ namespace System.Management.Automation.Runspaces
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException ("command");
+                throw PSTraceSource.NewArgumentNullException("command");
             }
 
-            return CoreCreatePipeline (command, false, false);
+            return CoreCreatePipeline(command, false, false);
         }
-        
+
         /// <summary>
         /// Create a pipeline from a command string.
         /// </summary>
@@ -607,14 +608,14 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="ArgumentNullException">
         /// command is null
         /// </exception>
-        public override Pipeline CreatePipeline (string command, bool addToHistory)
+        public override Pipeline CreatePipeline(string command, bool addToHistory)
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException ("command");
+                throw PSTraceSource.NewArgumentNullException("command");
             }
 
-            return CoreCreatePipeline (command, addToHistory, false);
+            return CoreCreatePipeline(command, addToHistory, false);
         }
 
         /// <summary>
@@ -625,9 +626,9 @@ namespace System.Management.Automation.Runspaces
         /// prompt requires that we execute new pipelines( child pipelines)
         /// while current pipeline (lets call it parent pipeline) is blocked.
         /// </remarks>
-        public override Pipeline CreateNestedPipeline ()
+        public override Pipeline CreateNestedPipeline()
         {
-            return CoreCreatePipeline (null, false, true);
+            return CoreCreatePipeline(null, false, true);
         }
 
         /// <summary>
@@ -645,11 +646,10 @@ namespace System.Management.Automation.Runspaces
         {
             if (command == null)
             {
-
-                throw PSTraceSource.NewArgumentNullException ("command");
+                throw PSTraceSource.NewArgumentNullException("command");
             }
 
-            return CoreCreatePipeline (command, addToHistory, true);
+            return CoreCreatePipeline(command, addToHistory, true);
         }
 
         /// <summary>
@@ -662,7 +662,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>
         /// A pipline pre-filled with Commands specified in commandString.
         /// </returns>
-        protected abstract Pipeline CoreCreatePipeline (string command, bool addToHistory, bool isNested);
+        protected abstract Pipeline CoreCreatePipeline(string command, bool addToHistory, bool isNested);
 
         #endregion CreatePipeline
 
@@ -726,7 +726,7 @@ namespace System.Management.Automation.Runspaces
         /// Raising event with in a lock introduces chances of deadlock in GUI 
         /// applications.
         /// </summary>
-        Queue<RunspaceEventQueueItem> _runspaceEventQueue = new Queue<RunspaceEventQueueItem>();
+        private Queue<RunspaceEventQueueItem> _runspaceEventQueue = new Queue<RunspaceEventQueueItem>();
 
         private class RunspaceEventQueueItem
         {
@@ -737,7 +737,7 @@ namespace System.Management.Automation.Runspaces
                 this.NewRunspaceAvailability = newAvailability;
             }
 
-            public RunspaceStateInfo    RunspaceStateInfo;
+            public RunspaceStateInfo RunspaceStateInfo;
             public RunspaceAvailability CurrentRunspaceAvailability;
             public RunspaceAvailability NewRunspaceAvailability;
         }
@@ -757,13 +757,13 @@ namespace System.Management.Automation.Runspaces
         /// adds RunspaceStateInfo to a queue. 
         /// RaiseRunspaceStateEvents raises event for each item in this queue.
         /// </remarks>        
-        protected void SetRunspaceState (RunspaceState state, Exception reason)
+        protected void SetRunspaceState(RunspaceState state, Exception reason)
         {
             lock (SyncRoot)
             {
                 if (state != RunspaceState)
                 {
-                    _runspaceStateInfo = new RunspaceStateInfo (state, reason);
+                    _runspaceStateInfo = new RunspaceStateInfo(state, reason);
 
                     //Add _runspaceStateInfo to _runspaceEventQueue.
                     //RaiseRunspaceStateEvents will raise event for each item
@@ -777,8 +777,8 @@ namespace System.Management.Automation.Runspaces
 
                     _runspaceEventQueue.Enqueue(
                         new RunspaceEventQueueItem(
-                            _runspaceStateInfo.Clone(), 
-                            previousAvailability, 
+                            _runspaceStateInfo.Clone(),
+                            previousAvailability,
                             _runspaceAvailability));
                 }
             }
@@ -788,16 +788,16 @@ namespace System.Management.Automation.Runspaces
         /// Set the current runspace state - no error
         /// </summary>
         /// <param name="state">the new state</param>
-        protected void SetRunspaceState (RunspaceState state)
+        protected void SetRunspaceState(RunspaceState state)
         {
-            this.SetRunspaceState (state, null);
+            this.SetRunspaceState(state, null);
         }
 
 
         /// <summary>
         /// Raises events for changes in runspace state.
         /// </summary>
-        protected void RaiseRunspaceStateEvents ()
+        protected void RaiseRunspaceStateEvents()
         {
             Queue<RunspaceEventQueueItem> tempEventQueue = null;
             EventHandler<RunspaceStateEventArgs> stateChanged = null;
@@ -818,7 +818,7 @@ namespace System.Management.Automation.Runspaces
                     //Clear the events if there are no EventHandlers. This 
                     //ensures that events do not get called for state 
                     //changes prior to their registration.
-                    _runspaceEventQueue.Clear ();
+                    _runspaceEventQueue.Clear();
                 }
             }
 
@@ -903,7 +903,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="ArgumentNullException">Thrown if 
         /// <paramref name="pipeline"/> is null.
         /// </exception>
-        internal void AddToRunningPipelineList (PipelineBase pipeline)
+        internal void AddToRunningPipelineList(PipelineBase pipeline)
         {
             Dbg.Assert(pipeline != null, "caller should validate the parameter");
 
@@ -912,10 +912,10 @@ namespace System.Management.Automation.Runspaces
                 if (_bypassRunspaceStateCheck == false && RunspaceState != RunspaceState.Opened)
                 {
                     InvalidRunspaceStateException e =
-                        new InvalidRunspaceStateException 
+                        new InvalidRunspaceStateException
                         (
-                            StringUtil.Format(RunspaceStrings.RunspaceNotOpenForPipeline,RunspaceState.ToString()),
-                            RunspaceState, 
+                            StringUtil.Format(RunspaceStrings.RunspaceNotOpenForPipeline, RunspaceState.ToString()),
+                            RunspaceState,
                             RunspaceState.Opened
                         );
                     throw e;
@@ -924,8 +924,8 @@ namespace System.Management.Automation.Runspaces
                 //Add the pipeline to list of Excuting pipeline.
                 //Note:_runningPipelines is always accessed with the lock so
                 //there is no need to create a synchronized version of list
-                _runningPipelines.Add (pipeline);
-                currentlyRunningPipeline = pipeline;
+                _runningPipelines.Add(pipeline);
+                _currentlyRunningPipeline = pipeline;
             }
         }
 
@@ -938,7 +938,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="pipeline"/> is null.
         /// </exception>        
-        internal void RemoveFromRunningPipelineList (PipelineBase pipeline)
+        internal void RemoveFromRunningPipelineList(PipelineBase pipeline)
         {
             Dbg.Assert(pipeline != null, "caller should validate the parameter");
 
@@ -950,19 +950,19 @@ namespace System.Management.Automation.Runspaces
                 //Remove the pipeline to list of Excuting pipeline.
                 //Note:_runningPipelines is always accessed with the lock so
                 //there is no need to create a synchronized version of list
-                _runningPipelines.Remove (pipeline);
+                _runningPipelines.Remove(pipeline);
 
                 // Update the running pipeline
-                if(_runningPipelines.Count == 0)
+                if (_runningPipelines.Count == 0)
                 {
-                    currentlyRunningPipeline = null;
+                    _currentlyRunningPipeline = null;
                 }
                 else
                 {
-                    currentlyRunningPipeline = _runningPipelines[_runningPipelines.Count - 1];
+                    _currentlyRunningPipeline = _runningPipelines[_runningPipelines.Count - 1];
                 }
 
-                pipeline.PipelineFinishedEvent.Set ();
+                pipeline.PipelineFinishedEvent.Set();
             }
         }
 
@@ -970,7 +970,7 @@ namespace System.Management.Automation.Runspaces
         /// Waits till all the pipelines running in the runspace have 
         /// finished execution.
         /// </summary>
-        internal bool WaitForFinishofPipelines ()
+        internal bool WaitForFinishofPipelines()
         {
             //Take a snapshot of list of active pipelines.
             //Note:Before we enter to this CloseHelper routine
@@ -1001,12 +1001,12 @@ namespace System.Management.Automation.Runspaces
                 {
                     // We use a worker thread to wait for all handles, and the STA thread can just wait on the worker thread -- the worker
                     // threads from the ThreadPool are MTA.
-                    using(ManualResetEvent waitAllIsDone = new ManualResetEvent(false))
+                    using (ManualResetEvent waitAllIsDone = new ManualResetEvent(false))
                     {
                         Tuple<WaitHandle[], ManualResetEvent> stateInfo = new Tuple<WaitHandle[], ManualResetEvent>(waitHandles, waitAllIsDone);
 
                         ThreadPool.QueueUserWorkItem(new WaitCallback(
-                                                         delegate(object state)
+                                                         delegate (object state)
                                                          {
                                                              var tuple = (Tuple<WaitHandle[], ManualResetEvent>)state;
                                                              WaitHandle.WaitAll(tuple.Item1);
@@ -1028,7 +1028,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Stops all the running pipelines 
         /// </summary>
-        protected void StopPipelines ()
+        protected void StopPipelines()
         {
             PipelineBase[] runningPipelines;
 
@@ -1042,7 +1042,7 @@ namespace System.Management.Automation.Runspaces
                 //Start from the most recent pipeline.
                 for (int i = runningPipelines.Length - 1; i >= 0; i--)
                 {
-                    runningPipelines[i].Stop ();
+                    runningPipelines[i].Stop();
                 }
             }
         }
@@ -1056,8 +1056,8 @@ namespace System.Management.Automation.Runspaces
                 // If we have no running pipeline, or if the currently running pipeline is
                 // the same as the current thread, then execute the action.
 
-                var pipelineRunning = currentlyRunningPipeline as PipelineBase;
-                if (pipelineRunning == null || 
+                var pipelineRunning = _currentlyRunningPipeline as PipelineBase;
+                if (pipelineRunning == null ||
                     Thread.CurrentThread.Equals(pipelineRunning.NestedPipelineExecutionThread))
                 {
                     shouldRunAction = true;
@@ -1077,9 +1077,9 @@ namespace System.Management.Automation.Runspaces
         /// <remarks>Internal because it is needed by invoke-history</remarks>
         internal override Pipeline GetCurrentlyRunningPipeline()
         {
-            return currentlyRunningPipeline;
+            return _currentlyRunningPipeline;
         }
-        Pipeline currentlyRunningPipeline = null;
+        private Pipeline _currentlyRunningPipeline = null;
 
         /// <summary>
         /// This method stops all the pipelines which are nested
@@ -1087,7 +1087,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="pipeline"></param>
         /// <returns></returns>
-        internal void StopNestedPipelines (Pipeline pipeline)
+        internal void StopNestedPipelines(Pipeline pipeline)
         {
             List<Pipeline> nestedPipelines = null;
 
@@ -1103,7 +1103,7 @@ namespace System.Management.Automation.Runspaces
 
                 //If this pipeline is currently running pipeline,
                 //then it does not have nested pipelines
-                if (GetCurrentlyRunningPipeline () == pipeline)
+                if (GetCurrentlyRunningPipeline() == pipeline)
                 {
                     return;
                 }
@@ -1171,8 +1171,8 @@ namespace System.Management.Automation.Runspaces
                         // (as opposed to ignoring) is 1.6x slower.
                         try
                         {
-                            pulsePipeline = (PipelineBase)CreatePipeline("0");
-                            pulsePipeline.IsPulsePipeline = true;
+                            _pulsePipeline = (PipelineBase)CreatePipeline("0");
+                            _pulsePipeline.IsPulsePipeline = true;
                             pipelineCreated = true;
                         }
                         catch (ObjectDisposedException)
@@ -1191,7 +1191,7 @@ namespace System.Management.Automation.Runspaces
             {
                 try
                 {
-                    pulsePipeline.Invoke();
+                    _pulsePipeline.Invoke();
                 }
                 catch (PSInvalidOperationException)
                 {
@@ -1215,25 +1215,25 @@ namespace System.Management.Automation.Runspaces
 
         internal PipelineBase PulsePipeline
         {
-            get { return pulsePipeline; }
+            get { return _pulsePipeline; }
         }
-        private PipelineBase pulsePipeline;
+        private PipelineBase _pulsePipeline;
 
         #endregion running pipeline management
 
         #region session state proxy
-        
+
         //Note: When SessionStateProxy calls are in progress,
         //pipeline cannot be invoked. Also when pipeline is in
         //progress, SessionStateProxy calls cannot be made.
-        bool _bSessionStateProxyCallInProgress;
+        private bool _bSessionStateProxyCallInProgress;
 
         /// <summary>
         /// This method ensures that SessionStateProxy call is allowed and if
         /// allowed it sets a variable to disallow further SessionStateProxy or
         /// pipeline calls.
         /// </summary>
-        void DoConcurrentCheckAndMarkSessionStateProxyCallInProgress()
+        private void DoConcurrentCheckAndMarkSessionStateProxyCallInProgress()
         {
             lock (_syncRoot)
             {
@@ -1259,8 +1259,8 @@ namespace System.Management.Automation.Runspaces
                 {
                     // Detect if we're running an engine pulse, or we're running a nested pipeline
                     // from an engine pulse
-                    if (runningPipeline == pulsePipeline ||
-                        (runningPipeline.IsNested && pulsePipeline != null))
+                    if (runningPipeline == _pulsePipeline ||
+                        (runningPipeline.IsNested && _pulsePipeline != null))
                     {
                         // If so, wait and try again
                         // Release the lock before we wait for the pulse pipelines
@@ -1662,7 +1662,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         protected abstract ProviderIntrinsics DoInvokeProvider { get; }
 
-        SessionStateProxy _sessionStateProxy;
+        private SessionStateProxy _sessionStateProxy;
         /// <summary>
         /// Returns SessionState proxy object.
         /// </summary>

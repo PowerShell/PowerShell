@@ -244,7 +244,7 @@ namespace System.Management.Automation
             return commandMetadata.GetEndBlock();
         }
 
-        private static T GetProperty<T>(PSObject obj, string property) where T: class
+        private static T GetProperty<T>(PSObject obj, string property) where T : class
         {
             T result = null;
             if (obj != null && obj.Properties[property] != null)
@@ -364,7 +364,7 @@ namespace System.Management.Automation
                     break;
                 }
             }
-            
+
             if (!isHelpObject)
             {
                 string error = ProxyCommandStrings.HelpInfoObjectRequired;

@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Management;
 using System.Management.Automation;
@@ -10,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command to Remove WMI Object
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "WmiObject", DefaultParameterSetName = "class",SupportsShouldProcess = true,
+    [Cmdlet(VerbsCommon.Remove, "WmiObject", DefaultParameterSetName = "class", SupportsShouldProcess = true,
         HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113381", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class RemoveWmiObject : WmiBaseCmdlet
     {
@@ -22,34 +23,34 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "object")]
         public ManagementObject InputObject
         {
-            get { return this.inputObject; }
-            set { this.inputObject = value; }
+            get { return _inputObject; }
+            set { _inputObject = value; }
         }
         /// <summary>
         /// The WMI Path to use
         /// </summary>
-        [Parameter(Mandatory = true,ParameterSetName = "path")]
+        [Parameter(Mandatory = true, ParameterSetName = "path")]
         public string Path
         {
-            get { return this.path; }
-            set { this.path = value; }
+            get { return _path; }
+            set { _path = value; }
         }
         /// <summary>
         /// The WMI class to use
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true,ParameterSetName = "class")]
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = "class")]
         public string Class
         {
-            get { return this.className; }
-            set { this.className = value; }
+            get { return _className; }
+            set { _className = value; }
         }
 
         #endregion Parameters
 
         #region parameter data
-        private string path = null;
-        private string className = null;
-        private ManagementObject inputObject = null;
+        private string _path = null;
+        private string _className = null;
+        private ManagementObject _inputObject = null;
 
         #endregion parameter data
         #region Command code
@@ -58,20 +59,20 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if( this.AsJob )
+            if (this.AsJob)
             {
                 RunAsJob("Remove-WMIObject");
                 return;
             }
-            if (inputObject != null)
+            if (_inputObject != null)
             {
                 try
                 {
-                    if (!ShouldProcess(inputObject["__PATH"].ToString()) )
+                    if (!ShouldProcess(_inputObject["__PATH"].ToString()))
                     {
                         return;
                     }
-                    inputObject.Delete();
+                    _inputObject.Delete();
                 }
                 catch (ManagementException e)
                 {
@@ -90,14 +91,14 @@ namespace Microsoft.PowerShell.Commands
                 ConnectionOptions options = GetConnectionOption();
                 ManagementPath mPath = null;
                 ManagementObject mObject = null;
-                if (path != null)
+                if (_path != null)
                 {
-                    mPath = new ManagementPath(path);
-                    if(String.IsNullOrEmpty(mPath.NamespacePath))
+                    mPath = new ManagementPath(_path);
+                    if (String.IsNullOrEmpty(mPath.NamespacePath))
                     {
                         mPath.NamespacePath = this.Namespace;
                     }
-                    else if( namespaceSpecified )
+                    else if (namespaceSpecified)
                     {
                         //ThrowTerminatingError
                         ThrowTerminatingError(new ErrorRecord(
@@ -107,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
                             this.Namespace));
                     }
 
-                    if( mPath.Server != "." && serverNameSpecified )
+                    if (mPath.Server != "." && serverNameSpecified)
                     {
                         //ThrowTerminatingError
                         ThrowTerminatingError(new ErrorRecord(
@@ -126,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        if( path != null )
+                        if (_path != null)
                         {
                             mPath.Server = name;
                             if (mPath.IsClass)
@@ -145,11 +146,11 @@ namespace Microsoft.PowerShell.Commands
                         else
                         {
                             ManagementScope scope = new ManagementScope(WMIHelper.GetScopeString(name, this.Namespace), options);
-                            ManagementClass mClass = new ManagementClass(className);
+                            ManagementClass mClass = new ManagementClass(_className);
                             mObject = mClass;
                             mObject.Scope = scope;
                         }
-                        if (!ShouldProcess(mObject["__PATH"].ToString()) )
+                        if (!ShouldProcess(mObject["__PATH"].ToString()))
                         {
                             continue;
                         }

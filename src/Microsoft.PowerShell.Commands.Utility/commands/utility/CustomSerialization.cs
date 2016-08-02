@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 namespace System.Management.Automation
 {
     using System;
@@ -50,7 +51,7 @@ namespace System.Management.Automation
         /// depth to be used for serialization. If this value is specified, 
         /// depth from types.xml is not used.
         /// </param>
-        internal CustomSerialization(XmlWriter writer,bool notypeinformation, int depth)
+        internal CustomSerialization(XmlWriter writer, bool notypeinformation, int depth)
         {
             if (writer == null)
             {
@@ -69,14 +70,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Default depth of serialization
         /// </summary>
-        private static int mshDefaultSerializationDepth = 1;
+        private static int s_mshDefaultSerializationDepth = 1;
 
         /// <summary>
         /// Default depth of serializaiton
         /// </summary>
         public static int MshDefaultSerializationDepth
         {
-            get { return mshDefaultSerializationDepth; }
+            get { return s_mshDefaultSerializationDepth; }
         }
         /// <summary>
         /// Constructor
@@ -96,7 +97,7 @@ namespace System.Management.Automation
 
         #region public methods
 
-        private bool firstCall = true;
+        private bool _firstCall = true;
 
         /// <summary>
         /// Serialzies passed in object
@@ -107,9 +108,9 @@ namespace System.Management.Automation
         internal void Serialize(object source)
         {
             //Write the root element tag before writing first object.
-            if (firstCall)
+            if (_firstCall)
             {
-                firstCall = false;
+                _firstCall = false;
                 Start();
             }
 
@@ -140,7 +141,7 @@ namespace System.Management.Automation
             _serializer.WriteOneObject(source, null, _depth);
             _serializer = null;
         }
-        
+
         /// <summary>
         /// Writes the start of root element 
         /// </summary>
@@ -154,9 +155,9 @@ namespace System.Management.Automation
         /// </summary>
         internal void Done()
         {
-            if (firstCall)
+            if (_firstCall)
             {
-                firstCall = false;
+                _firstCall = false;
                 Start();
             }
             _writer.WriteEndElement();
@@ -194,12 +195,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Xml writer to be used
         /// </summary>
-        XmlWriter _writer;
+        private XmlWriter _writer;
 
         /// <summary>
         /// check first call for every pipeline object to write Object tag else property tag
         /// </summary>
-        private bool firstcall;
+        private bool _firstcall;
 
         /// <summary>
         /// should the type information to be shown
@@ -209,7 +210,7 @@ namespace System.Management.Automation
         /// <summary>
         /// check object call
         /// </summary>
-        private bool firstobjectcall = true ;
+        private bool _firstobjectcall = true;
 
         /// <summary>
         /// Constructor
@@ -229,26 +230,26 @@ namespace System.Management.Automation
 
             _writer = writer;
             _notypeinformation = notypeinformation;
-            firstcall = isfirstcallforObject;
+            _firstcall = isfirstcallforObject;
         }
 
         #endregion
 
         #region Stopping
 
-        private bool isStopping = false;
+        private bool _isStopping = false;
 
         /// <summary>
         /// Called from a separate thread will stop the serialization process
         /// </summary>
         internal void Stop()
         {
-            this.isStopping = true;
+            _isStopping = true;
         }
 
         private void CheckIfStopping()
         {
-            if (this.isStopping)
+            if (_isStopping)
             {
                 throw PSTraceSource.NewInvalidOperationException(Serialization.Stopping);
             }
@@ -317,7 +318,7 @@ namespace System.Management.Automation
         /// <returns>
         /// true if source is handled, else false.
         /// </returns>
-        private bool HandlePrimitiveKnownType( object source, string property)
+        private bool HandlePrimitiveKnownType(object source, string property)
         {
             Dbg.Assert(source != null, "caller should validate the parameter");
 
@@ -340,7 +341,7 @@ namespace System.Management.Automation
         /// <returns>
         /// true if source is handled, else false.
         /// </returns>
-        private bool HandlePrimitiveKnownTypePSObject( object source, string property, int depth)
+        private bool HandlePrimitiveKnownTypePSObject(object source, string property, int depth)
         {
             Dbg.Assert(source != null, "caller should validate the parameter");
 
@@ -444,7 +445,7 @@ namespace System.Management.Automation
         /// <param name="ct"></param>
         /// <param name="dictionary"></param>
         /// <param name="enumerable"></param>
-        void GetKnownContainerTypeInfo(
+        private void GetKnownContainerTypeInfo(
             object source, out ContainerType ct, out IDictionary dictionary, out IEnumerable enumerable)
         {
             Dbg.Assert(source != null, "caller should validate the parameter");
@@ -513,7 +514,6 @@ namespace System.Management.Automation
                     ct = ContainerType.Enumerable;
                 }
             }
-
         }
 
         /// <summary>
@@ -522,7 +522,7 @@ namespace System.Management.Automation
         /// <param name="derived"></param>
         /// <param name="baseType"></param>
         /// <returns></returns>
-        static bool DerivesFromGenericType(Type derived, Type baseType)
+        private static bool DerivesFromGenericType(Type derived, Type baseType)
         {
             Dbg.Assert(derived != null, "caller should validate the parameter");
             Dbg.Assert(baseType != null, "caller should validate the parameter");
@@ -559,7 +559,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="property"></param>
         /// <param name="depth"></param>
-        private void WritePrimitiveTypePSObjectWithNotes (
+        private void WritePrimitiveTypePSObjectWithNotes(
             PSObject source,
             object primitive,
             TypeSerializationInfo pktInfo,
@@ -576,7 +576,7 @@ namespace System.Management.Automation
             {
                 WriteOnePrimitiveKnownType(_writer, null, primitive, pktInfo);
             }
-                            
+
             //Serialize instanceMembers
             PSMemberInfoCollection<PSMemberInfo> instanceMembers = source.InstanceMembers;
             if (instanceMembers != null)
@@ -607,16 +607,15 @@ namespace System.Management.Automation
             {
                 object baseObject = source.ImmediateBaseObject;
                 foreach (PSPropertyInfo prop in source.Properties)
-                { 
+                {
                     WriteOneObject(System.Convert.ChangeType(baseObject, Enum.GetUnderlyingType(baseObject.GetType()), System.Globalization.CultureInfo.InvariantCulture), prop.Name, depth);
                 }
-                
             }
             else if (isPSObject)
             {
-                if (firstobjectcall)
+                if (_firstobjectcall)
                 {
-                    firstobjectcall = false;
+                    _firstobjectcall = false;
                     WritePSObjectProperties(source, depth);
                 }
                 else
@@ -628,7 +627,7 @@ namespace System.Management.Automation
             {
                 WritePSObjectProperties(source, depth);
             }
-        
+
             _writer.WriteEndElement();
         }
 
@@ -646,7 +645,7 @@ namespace System.Management.Automation
             bool writeTNH)
         {
             Dbg.Assert(mshObject != null, "caller should validate the parameter");
-                      
+
             if (property != null)
             {
                 WriteStartElement(_writer, CustomSerializationStrings.Properties);
@@ -654,19 +653,19 @@ namespace System.Management.Automation
             }
             else
             {
-                if (firstcall)
+                if (_firstcall)
                 {
                     WriteStartElement(_writer, CustomSerializationStrings.PSObjectTag);
-                    firstcall = false;
-                 }
+                    _firstcall = false;
+                }
                 else
                 {
                     WriteStartElement(_writer, CustomSerializationStrings.Properties);
                 }
             }
-            
+
             Object baseObject = mshObject.BaseObject;
-            if(!_notypeinformation)
+            if (!_notypeinformation)
                 WriteAttribute(_writer, CustomSerializationStrings.TypeAttribute, baseObject.GetType().ToString());
         }
 
@@ -678,7 +677,7 @@ namespace System.Management.Automation
         /// <param name="source"></param>
         /// <returns>
         /// </returns>
-        bool PSObjectHasNotes(PSObject source)
+        private bool PSObjectHasNotes(PSObject source)
         {
             if (source.InstanceMembers != null && source.InstanceMembers.Count > 0)
             {
@@ -719,7 +718,7 @@ namespace System.Management.Automation
                 }
 
                 enclosingTagWritten = true;
-                WriteStartElement(_writer, CustomSerializationStrings.Properties); 
+                WriteStartElement(_writer, CustomSerializationStrings.Properties);
                 WriteAttribute(_writer, CustomSerializationStrings.NameAttribute, info.Name);
                 if (!_notypeinformation)
                     WriteAttribute(_writer, CustomSerializationStrings.TypeAttribute, info.GetType().ToString());
@@ -761,7 +760,7 @@ namespace System.Management.Automation
                 SerializeProperties(specificProperties, CustomSerializationStrings.Properties, depth);
                 return;
             }
-               
+
             foreach (PSPropertyInfo prop in source.Properties)
             {
                 Dbg.Assert(prop != null, "propertyCollection should only have member of type PSProperty");
@@ -787,7 +786,6 @@ namespace System.Management.Automation
                     WriteOneObject(value, prop.Name, depth);
                 }
             }
-       
         }
 
         /// <summary>
@@ -848,7 +846,7 @@ namespace System.Management.Automation
         private void WriteEnumerable(IEnumerable enumerable, int depth)
         {
             Dbg.Assert(enumerable != null, "caller should validate the parameter");
-        
+
             IEnumerator enumerator = null;
             try
             {
@@ -887,7 +885,6 @@ namespace System.Management.Automation
                     WriteOneObject(item, null, depth);
                 }
             }
-       
         }
 
         /// <summary>
@@ -923,7 +920,7 @@ namespace System.Management.Automation
 
         #region serialize as string
 
-        void HandlePSObjectAsString(PSObject source, string property, int depth)
+        private void HandlePSObjectAsString(PSObject source, string property, int depth)
         {
             Dbg.Assert(source != null, "caller should validate the information");
 
@@ -940,7 +937,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    WriteOnePrimitiveKnownType(_writer, property,source.BaseObject, pktInfo);
+                    WriteOnePrimitiveKnownType(_writer, property, source.BaseObject, pktInfo);
                 }
             }
             else
@@ -968,7 +965,7 @@ namespace System.Management.Automation
         /// <returns>
         /// string value to use for serializing this PSObject.
         /// </returns>
-        string GetStringFromPSObject(PSObject source)
+        private string GetStringFromPSObject(PSObject source)
         {
             Dbg.Assert(source != null, "caller should have validated the information");
 
@@ -1014,7 +1011,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="source">PSObject to be serialized</param>
         /// <returns>true if the object needs to be serialized as a string</returns>
-        static bool SerializeAsString(PSObject source)
+        private static bool SerializeAsString(PSObject source)
         {
             return source.GetSerializationMethod(null) == SerializationMethod.String;
         }
@@ -1027,7 +1024,7 @@ namespace System.Management.Automation
         /// <param name="source">PSObject whose serialization depth has to be computed</param>
         /// <param name="depth">current depth</param>
         /// <returns></returns>
-        static int GetDepthOfSerialization(PSObject source, int depth)
+        private static int GetDepthOfSerialization(PSObject source, int depth)
         {
             if (source == null)
                 return depth;
@@ -1051,7 +1048,6 @@ namespace System.Management.Automation
         /// <param name="property"></param>
         private void WriteNull(string property)
         {
-
             if (property != null)
             {
                 WriteStartElement(_writer, CustomSerializationStrings.Properties);
@@ -1059,10 +1055,10 @@ namespace System.Management.Automation
             }
             else
             {
-                if (firstcall)
+                if (_firstcall)
                 {
                     WriteStartElement(_writer, CustomSerializationStrings.PSObjectTag);
-                    firstcall = false;
+                    _firstcall = false;
                 }
                 else
                 {
@@ -1076,14 +1072,14 @@ namespace System.Management.Automation
         #region known type serialization
 
         private void WritePropertyWithNullValue(
-            XmlWriter writer,PSPropertyInfo source, int depth)
+            XmlWriter writer, PSPropertyInfo source, int depth)
         {
             WriteStartElement(writer, CustomSerializationStrings.Properties);
             WriteAttribute(writer, CustomSerializationStrings.NameAttribute, ((PSPropertyInfo)source).Name.ToString());
             if (!_notypeinformation)
                 WriteAttribute(writer, CustomSerializationStrings.TypeAttribute, ((PSPropertyInfo)source).TypeNameOfValue.ToString());
             writer.WriteEndElement();
-         }
+        }
 
         private void WriteObjectString(
             XmlWriter writer, string property, object source, TypeSerializationInfo entry)
@@ -1095,10 +1091,10 @@ namespace System.Management.Automation
             }
             else
             {
-                if (firstcall)
+                if (_firstcall)
                 {
                     WriteStartElement(writer, CustomSerializationStrings.PSObjectTag);
-                    firstcall = false;
+                    _firstcall = false;
                 }
                 else
                 {
@@ -1120,7 +1116,7 @@ namespace System.Management.Automation
         /// <param name="property">name of property. Pass null for item</param>
         /// <param name="source">object to be written</param>
         /// <param name="entry">serialization information about source</param>
-       
+
         private void WriteOnePrimitiveKnownType(
             XmlWriter writer, string property, object source, TypeSerializationInfo entry)
         {

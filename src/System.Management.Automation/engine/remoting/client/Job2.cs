@@ -1,6 +1,7 @@
 ﻿/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
@@ -23,7 +24,6 @@ using Microsoft.PowerShell.CoreClr.Stubs;
 
 namespace System.Management.Automation
 {
-
     #region PowerShell v3 Job Extensions
 
     /// <summary>
@@ -113,7 +113,7 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentNullException("value");
                 }
 
-                lock(_syncobject)
+                lock (_syncobject)
                 {
                     _parameters = value;
                 }
@@ -151,7 +151,7 @@ namespace System.Management.Automation
         /// <param name="command">Command invoked by this job object</param>
         /// <param name="name">Friendly name for the job object</param>
         protected Job2(string command, string name)
-            :base(command, name)
+            : base(command, name)
         {
         }
 
@@ -449,7 +449,6 @@ namespace System.Management.Automation
         public event EventHandler<AsyncCompletedEventArgs> UnblockJobCompleted;
 
         #endregion State Management
-
     }
 
     /// <summary>
@@ -536,8 +535,8 @@ namespace System.Management.Automation
         internal PSEventManager EventManager
         {
             get { return _eventManager; }
-            set 
-            { 
+            set
+            {
                 _tracer.WriteMessage("Setting event manager for Job ", InstanceId);
                 _eventManager = value;
             }
@@ -706,7 +705,7 @@ namespace System.Management.Automation
             {
                 throw new ArgumentNullException("childJob");
             }
-            _tracer.WriteMessage(TraceClassName, "AddChildJob", Guid.Empty, childJob, "Adding Child to Parent with InstanceId : " , InstanceId.ToString());
+            _tracer.WriteMessage(TraceClassName, "AddChildJob", Guid.Empty, childJob, "Adding Child to Parent with InstanceId : ", InstanceId.ToString());
 
             JobStateInfo childJobStateInfo;
             lock (childJob.syncObject)
@@ -772,7 +771,7 @@ namespace System.Management.Automation
         {
             AssertNotDisposed();
             _tracer.WriteMessage(TraceClassName, "StartJob", Guid.Empty, this, "Entering method", null);
-            StructuredTracer.BeginContainerParentJobExecution(InstanceId);
+            s_structuredTracer.BeginContainerParentJobExecution(InstanceId);
 
             // If parent contains no child jobs then this method will hang.  Throw error in this case.
             if (ChildJobs.Count == 0)
@@ -861,7 +860,7 @@ namespace System.Management.Automation
                 job.StartJobAsync();
             }
             completed.WaitOne();
-            foreach(Job2 job in ChildJobs)
+            foreach (Job2 job in ChildJobs)
             {
                 Dbg.Assert(job != null, "Job is null after initial null check");
 
@@ -881,7 +880,7 @@ namespace System.Management.Automation
             _tracer.WriteMessage(TraceClassName, "StartJob", Guid.Empty, this, "Exiting method", null);
         }
 
-        private static Tracer StructuredTracer = new Tracer();
+        private static Tracer s_structuredTracer = new Tracer();
 
         /// <summary>
         /// Starts all child jobs asynchronously.
@@ -895,7 +894,7 @@ namespace System.Management.Automation
                 return;
             }
             _tracer.WriteMessage(TraceClassName, "StartJobAsync", Guid.Empty, this, "Entering method", null);
-            StructuredTracer.BeginContainerParentJobExecution(InstanceId);
+            s_structuredTracer.BeginContainerParentJobExecution(InstanceId);
             foreach (Job2 job in this.ChildJobs)
             {
                 if (job == null) throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNullChild);
@@ -1778,9 +1777,9 @@ namespace System.Management.Automation
 
                 if (_finishedChildJobsCount == ChildJobs.Count)
                 {
-                    StructuredTracer.EndContainerParentJobExecution(InstanceId);
+                    s_structuredTracer.EndContainerParentJobExecution(InstanceId);
                 }
-            }   
+            }
         }
 
         /// <summary>
@@ -1798,8 +1797,8 @@ namespace System.Management.Automation
         /// <param name="failedChildJobsCount"></param>
         /// <returns>true if the job state needs to be modified, false otherwise</returns>
         internal static bool ComputeJobStateFromChildJobStates(string traceClassName, JobStateEventArgs e,
-            ref int blockedChildJobsCount, ref int suspendedChildJobsCount, ref int suspendingChildJobsCount, ref int finishedChildJobsCount, 
-                ref int failedChildJobsCount, ref int stoppedChildJobsCount, int childJobsCount, 
+            ref int blockedChildJobsCount, ref int suspendedChildJobsCount, ref int suspendingChildJobsCount, ref int finishedChildJobsCount,
+                ref int failedChildJobsCount, ref int stoppedChildJobsCount, int childJobsCount,
                     out JobState computedJobState)
         {
             computedJobState = JobState.NotStarted;
@@ -1857,7 +1856,7 @@ namespace System.Management.Automation
                     if (suspendedChildJobsCount + finishedChildJobsCount == childJobsCount)
                     {
                         tracer.WriteMessage(traceClassName, ": JobState is suspended, all child jobs are suspended.");
-                        computedJobState =  JobState.Suspended;
+                        computedJobState = JobState.Suspended;
                         return true;
                     }
 
@@ -2023,7 +2022,7 @@ namespace System.Management.Automation
 
             StringBuilder sb = new StringBuilder();
 
-            for(int i = 0; i < ChildJobs.Count; i++)
+            for (int i = 0; i < ChildJobs.Count; i++)
             {
                 if (!String.IsNullOrEmpty(ChildJobs[i].StatusMessage))
                 {
@@ -2071,7 +2070,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            foreach(var job in ChildJobs)
+            foreach (var job in ChildJobs)
             {
                 UnregisterJobEvent(job);
             }
@@ -2122,8 +2121,8 @@ namespace System.Management.Automation
         /// <param name="displayScriptPosition">A ScriptExtent that describes where this error originated from.</param>
         public JobFailedException(Exception innerException, ScriptExtent displayScriptPosition)
         {
-            this.reason = innerException;
-            this.displayScriptPosition = displayScriptPosition;
+            _reason = innerException;
+            _displayScriptPosition = displayScriptPosition;
         }
 
         /// <summary>
@@ -2134,21 +2133,21 @@ namespace System.Management.Automation
         protected JobFailedException(SerializationInfo serializationInfo, StreamingContext streamingContext)
             : base(serializationInfo, streamingContext)
         {
-            reason = (Exception) serializationInfo.GetValue("Reason", typeof(Exception));
-            displayScriptPosition = (ScriptExtent) serializationInfo.GetValue("DisplayScriptPosition", typeof(ScriptExtent));
+            _reason = (Exception)serializationInfo.GetValue("Reason", typeof(Exception));
+            _displayScriptPosition = (ScriptExtent)serializationInfo.GetValue("DisplayScriptPosition", typeof(ScriptExtent));
         }
 
         /// <summary>
         /// The actual exception that caused this error.
         /// </summary>
-        public Exception Reason { get { return this.reason; } }
-        private Exception reason;
+        public Exception Reason { get { return _reason; } }
+        private Exception _reason;
 
         /// <summary>
         /// The user-focused location from where this error originated.
         /// </summary>
-        public ScriptExtent DisplayScriptPosition { get { return this.displayScriptPosition; } }
-        private ScriptExtent displayScriptPosition;
+        public ScriptExtent DisplayScriptPosition { get { return _displayScriptPosition; } }
+        private ScriptExtent _displayScriptPosition;
 
         /// <summary>
         /// Gets the information for serialization
@@ -2156,14 +2155,14 @@ namespace System.Management.Automation
         /// <param name="info">The standard SerializationInfo</param>
         /// <param name="context">The standard StreaminContext</param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {            
+        {
             if (info == null)
                 throw new ArgumentNullException("info");
 
             base.GetObjectData(info, context);
 
-            info.AddValue("Reason", reason);
-            info.AddValue("DisplayScriptPosition", displayScriptPosition);
+            info.AddValue("Reason", _reason);
+            info.AddValue("DisplayScriptPosition", _displayScriptPosition);
         }
 
         /// <summary>

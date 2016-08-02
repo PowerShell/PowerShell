@@ -27,19 +27,19 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// <summary>
     /// Base class for all child jobs that wrap CIM operations
     /// </summary>
-    internal abstract class CimChildJobBase<T> : 
-        StartableJob, 
+    internal abstract class CimChildJobBase<T> :
+        StartableJob,
         IObserver<T>
     {
-        private static long _globalJobNumberCounter;
-        private readonly long _myJobNumber = Interlocked.Increment(ref _globalJobNumberCounter);
+        private static long s_globalJobNumberCounter;
+        private readonly long _myJobNumber = Interlocked.Increment(ref s_globalJobNumberCounter);
         private const string CIMJobType = "CimJob";
 
         internal CimJobContext JobContext
         {
             get
             {
-                return this._jobContext;
+                return _jobContext;
             }
         }
         private readonly CimJobContext _jobContext;
@@ -47,18 +47,18 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal CimChildJobBase(CimJobContext jobContext)
             : base(Job.GetCommandTextFromInvocationInfo(jobContext.CmdletInvocationInfo), " " /* temporary name - reset below */)
         {
-            this._jobContext = jobContext;
+            _jobContext = jobContext;
             this.PSJobTypeName = CIMJobType;
 
-            this.Name = this.GetType().Name + this._myJobNumber.ToString(CultureInfo.InvariantCulture);
+            this.Name = this.GetType().Name + _myJobNumber.ToString(CultureInfo.InvariantCulture);
             UsesResultsCollection = true;
 
-            lock (GlobalRandom)
+            lock (s_globalRandom)
             {
-                this._random = new Random(GlobalRandom.Next());
+                _random = new Random(s_globalRandom.Next());
             }
 
-            this._jobSpecificCustomOptions = new Lazy<CimCustomOptionsDictionary>(this.CalculateJobSpecificCustomOptions);
+            _jobSpecificCustomOptions = new Lazy<CimCustomOptionsDictionary>(this.CalculateJobSpecificCustomOptions);
         }
 
         private CimSensitiveValueConverter _cimSensitiveValueConverter = new CimSensitiveValueConverter();
@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             ERROR_WSMAN_QUOTA_SYSTEM = 0x803381A8,
             ERROR_WSMAN_QUOTA_MAX_SHELLUSERS = 0x803381AB,
             ERROR_WSMAN_QUOTA_MAX_SHELLS_PPQ = 0x803381E4,
-            ERROR_WSMAN_QUOTA_MAX_USERS_PPQ  = 0x803381E5,
+            ERROR_WSMAN_QUOTA_MAX_USERS_PPQ = 0x803381E5,
             ERROR_WSMAN_QUOTA_MAX_PLUGINSHELLS_PPQ = 0x803381E6,
             ERROR_WSMAN_QUOTA_MAX_PLUGINOPERATIONS_PPQ = 0x803381E7,
             ERROR_WSMAN_QUOTA_MAX_OPERATIONS_USER_PPQ = 0x803381E8,
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 return false;
             }
 
-            WsManErrorCode wsManErrorCode = (WsManErrorCode) (UInt32) (errorCodeProperty.Value);
+            WsManErrorCode wsManErrorCode = (WsManErrorCode)(UInt32)(errorCodeProperty.Value);
             switch (wsManErrorCode) // error codes that should result in sleep-and-retry are based on an email from Ryan 
             {
                 case WsManErrorCode.ERROR_WSMAN_QUOTA_MAX_SHELLS:
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     });
         }
 
-        private static readonly Random GlobalRandom = new Random();
+        private static readonly Random s_globalRandom = new Random();
         private readonly Random _random;
         private int _sleepAndRetryDelayRangeMs = 1000;
         private int _sleepAndRetryExtraDelayMs = 0;
@@ -173,14 +173,14 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             this.ExceptionSafeWrapper(
                     delegate
                     {
-                        lock (this._jobStateLock)
+                        lock (_jobStateLock)
                         {
-                            if (this._sleepAndRetryTimer != null)
+                            if (_sleepAndRetryTimer != null)
                             {
-                                this._sleepAndRetryTimer.Dispose();
-                                this._sleepAndRetryTimer = null;
+                                _sleepAndRetryTimer.Dispose();
+                                _sleepAndRetryTimer = null;
                             }
-                            if (this._jobWasStopped)
+                            if (_jobWasStopped)
                             {
                                 this.SetCompletedJobState(JobState.Stopped, null);
                                 return;
@@ -191,12 +191,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
         private void SleepAndRetry()
         {
-            int tmpRandomDelay = _random.Next(0, this._sleepAndRetryDelayRangeMs);
-            int delay = MinRetryDelayMs + this._sleepAndRetryExtraDelayMs + tmpRandomDelay;
-            this._sleepAndRetryExtraDelayMs = _sleepAndRetryDelayRangeMs - tmpRandomDelay;
-            if (this._sleepAndRetryDelayRangeMs < MaxRetryDelayMs)
+            int tmpRandomDelay = _random.Next(0, _sleepAndRetryDelayRangeMs);
+            int delay = MinRetryDelayMs + _sleepAndRetryExtraDelayMs + tmpRandomDelay;
+            _sleepAndRetryExtraDelayMs = _sleepAndRetryDelayRangeMs - tmpRandomDelay;
+            if (_sleepAndRetryDelayRangeMs < MaxRetryDelayMs)
             {
-                this._sleepAndRetryDelayRangeMs *= 2;
+                _sleepAndRetryDelayRangeMs *= 2;
             }
 
             string verboseMessage = string.Format(
@@ -207,16 +207,16 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 delay / 1000.0);
             this.WriteVerbose(verboseMessage);
 
-            lock (this._jobStateLock)
+            lock (_jobStateLock)
             {
-                if (this._jobWasStopped)
+                if (_jobWasStopped)
                 {
                     this.SetCompletedJobState(JobState.Stopped, null);
                 }
                 else
                 {
-                    Dbg.Assert(this._sleepAndRetryTimer == null, "There should be only 1 active _sleepAndRetryTimer");
-                    this._sleepAndRetryTimer = new Timer(
+                    Dbg.Assert(_sleepAndRetryTimer == null, "There should be only 1 active _sleepAndRetryTimer");
+                    _sleepAndRetryTimer = new Timer(
                         state: null,
                         dueTime: delay,
                         period: Timeout.Infinite,
@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// </summary>
         public override string Location
         {
-            get 
+            get
             {
                 // this.JobContext is set in the constructor of CimChildJobBase, 
                 // but the constructor of Job wants to access Location property 
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// </summary>
         public override string StatusMessage
         {
-            get 
+            get
             {
                 return this.JobStateInfo.State.ToString();
             }
@@ -261,8 +261,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// </summary>
         public override bool HasMoreData
         {
-            get 
-            { 
+            get
+            {
                 return (Results.IsOpen || Results.Count > 0);
             }
         }
@@ -281,15 +281,15 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal override void StartJob()
         {
-            lock (this._jobStateLock)
+            lock (_jobStateLock)
             {
-                if (this._jobWasStopped)
+                if (_jobWasStopped)
                 {
                     this.SetCompletedJobState(JobState.Stopped, null);
                     return;
                 }
 
-                Dbg.Assert(!this._alreadyReachedCompletedState, "Job shouldn't reach completed state, before ThrottlingJob has a chance to register for job-completed/failed events");
+                Dbg.Assert(!_alreadyReachedCompletedState, "Job shouldn't reach completed state, before ThrottlingJob has a chance to register for job-completed/failed events");
 
                 TerminatingErrorTracker tracker = TerminatingErrorTracker.GetTracker(this.JobContext.CmdletInvocationInfo);
                 if (tracker.IsSessionTerminated(this.JobContext.Session))
@@ -298,16 +298,17 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     return;
                 }
 
-                if (!this._jobWasStarted)
+                if (!_jobWasStarted)
                 {
-                    this._jobWasStarted = true;
+                    _jobWasStarted = true;
                     this.SetJobState(JobState.Running);
                 }
             }
 
             // This invocation can block (i.e. by calling Job.ShouldProcess) and wait for pipeline thread to unblock it
             // Therefore we have to do the invocation outside of the pipeline thread.
-            ThreadPool.QueueUserWorkItem(delegate { 
+            ThreadPool.QueueUserWorkItem(delegate
+            {
                 this.ExceptionSafeWrapper(delegate
                 {
                     IObservable<T> observable = this.GetCimOperation();
@@ -358,14 +359,14 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
                 catch (PSInvalidOperationException)
                 {
-                    lock (this._jobStateLock)
+                    lock (_jobStateLock)
                     {
                         bool everythingIsOk = false;
-                        if (this._jobWasStopped)
+                        if (_jobWasStopped)
                         {
                             everythingIsOk = true;
                         }
-                        if (this._alreadyReachedCompletedState && this._jobHadErrors)
+                        if (_alreadyReachedCompletedState && _jobHadErrors)
                         {
                             everythingIsOk = true;
                         }
@@ -394,13 +395,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal CimOperationOptions CreateOperationOptions()
         {
             var operationOptions = new CimOperationOptions(mustUnderstand: false)
-                             {
-                                 CancellationToken = this._cancellationTokenSource.Token,
-                                 WriteProgress = this.WriteProgressCallback,
-                                 WriteMessage = this.WriteMessageCallback,
-                                 WriteError = this.WriteErrorCallback,
-                                 PromptUser = this.PromptUserCallback,
-                             };
+            {
+                CancellationToken = _cancellationTokenSource.Token,
+                WriteProgress = this.WriteProgressCallback,
+                WriteMessage = this.WriteMessageCallback,
+                WriteError = this.WriteErrorCallback,
+                PromptUser = this.PromptUserCallback,
+            };
 
             operationOptions.SetOption("__MI_OPERATIONOPTIONS_IMPROVEDPERF_STREAMING", 1);
 
@@ -464,7 +465,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
                 case MshCommandRuntime.ShouldProcessPossibleOptimization.NoOptimizationPossible:
                 default:
-                    operationOptions.PromptUserMode = CimCallbackMode.Inquire; 
+                    operationOptions.PromptUserMode = CimCallbackMode.Inquire;
                     break;
             }
 
@@ -486,31 +487,31 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             if (!string.IsNullOrWhiteSpace(this.GetProviderVersionExpectedByJob()))
             {
                 CimOperationOptionsHelper.SetCustomOption(
-                    operationOptions, 
-                    "MI_OPERATIONOPTIONS_PROVIDERVERSION", 
-                    this.GetProviderVersionExpectedByJob(), 
+                    operationOptions,
+                    "MI_OPERATIONOPTIONS_PROVIDERVERSION",
+                    this.GetProviderVersionExpectedByJob(),
                     CimSensitiveValueConverter);
             }
 
             if (this.JobContext.CmdletizationModuleVersion != null)
             {
                 CimOperationOptionsHelper.SetCustomOption(
-                    operationOptions, 
-                    "MI_OPERATIONOPTIONS_POWERSHELL_MODULEVERSION", 
-                    this.JobContext.CmdletizationModuleVersion, 
+                    operationOptions,
+                    "MI_OPERATIONOPTIONS_POWERSHELL_MODULEVERSION",
+                    this.JobContext.CmdletizationModuleVersion,
                     CimSensitiveValueConverter);
             }
             CimOperationOptionsHelper.SetCustomOption(
-                operationOptions, 
-                "MI_OPERATIONOPTIONS_POWERSHELL_CMDLETNAME", 
-                this.JobContext.CmdletInvocationInfo.MyCommand.Name, 
+                operationOptions,
+                "MI_OPERATIONOPTIONS_POWERSHELL_CMDLETNAME",
+                this.JobContext.CmdletInvocationInfo.MyCommand.Name,
                 CimSensitiveValueConverter);
             if (!string.IsNullOrWhiteSpace(this.JobContext.Session.ComputerName))
             {
                 CimOperationOptionsHelper.SetCustomOption(
-                    operationOptions, 
-                    "MI_OPERATIONOPTIONS_POWERSHELL_COMPUTERNAME", 
-                    this.JobContext.Session.ComputerName, 
+                    operationOptions,
+                    "MI_OPERATIONOPTIONS_POWERSHELL_COMPUTERNAME",
+                    this.JobContext.Session.ComputerName,
                     CimSensitiveValueConverter);
             }
 
@@ -542,22 +543,22 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// </summary>
         public override void StopJob()
         {
-            lock (this._jobStateLock)
+            lock (_jobStateLock)
             {
-                if (this._jobWasStopped || this._alreadyReachedCompletedState)
+                if (_jobWasStopped || _alreadyReachedCompletedState)
                 {
                     return;
                 }
-                this._jobWasStopped = true;
+                _jobWasStopped = true;
 
                 if (!_jobWasStarted)
                 {
                     this.SetCompletedJobState(JobState.Stopped, null);
                 }
-                else if (this._sleepAndRetryTimer != null)
+                else if (_sleepAndRetryTimer != null)
                 {
-                    this._sleepAndRetryTimer.Dispose();
-                    this._sleepAndRetryTimer = null;
+                    _sleepAndRetryTimer.Dispose();
+                    _sleepAndRetryTimer = null;
                     this.SetCompletedJobState(JobState.Stopped, null);
                 }
                 else
@@ -565,7 +566,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     this.SetJobState(JobState.Stopping);
                 }
             }
-            this._cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Cancel();
         }
 
         private readonly object _jobStateLock = new object();
@@ -578,9 +579,9 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             get
             {
-                lock (this._jobStateLock)
+                lock (_jobStateLock)
                 {
-                    return this._jobHadErrors;
+                    return _jobHadErrors;
                 }
             }
         }
@@ -592,9 +593,9 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             bool sessionWasAlreadyTerminated = false;
             bool isThisTerminatingError = false;
             Exception brokenSessionException = null;
-            lock (this._jobStateLock)
+            lock (_jobStateLock)
             {
-                if (!this._jobWasStopped)
+                if (!_jobWasStopped)
                 {
                     brokenSessionException = terminatingErrorTracker.GetExceptionIfBrokenSession(
                         this.JobContext.Session,
@@ -629,9 +630,9 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             bool writeError = !sessionWasAlreadyTerminated;
             if (writeError)
             {
-                lock (this._jobStateLock)
+                lock (_jobStateLock)
                 {
-                    if (this._jobWasStopped)
+                    if (_jobWasStopped)
                     {
                         writeError = false;
                     }
@@ -644,7 +645,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             if (writeError)
             {
-                lock (this._jobStateLock)
+                lock (_jobStateLock)
                 {
                     if (!_alreadyReachedCompletedState)
                     {
@@ -661,7 +662,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     }
                 }
             }
-            
+
             this.SetCompletedJobState(JobState.Failed, errorRecord.Exception);
         }
 
@@ -685,7 +686,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal void SetCompletedJobState(JobState state, Exception reason)
         {
-            lock (this._jobStateLock)
+            lock (_jobStateLock)
             {
                 if (_alreadyReachedCompletedState)
                 {
@@ -696,14 +697,14 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
                 if ((state == JobState.Failed) || (reason != null))
                 {
-                    this._jobHadErrors = true;
+                    _jobHadErrors = true;
                 }
 
-                if (this._jobWasStopped)
+                if (_jobWasStopped)
                 {
                     state = JobState.Stopped;
                 }
-                else if (this._jobHadErrors)
+                else if (_jobHadErrors)
                 {
                     state = JobState.Failed;
                 }
@@ -712,22 +713,22 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             this.FinishProgressReporting();
             this.SetJobState(state, reason);
             this.CloseAllStreams();
-            this._cancellationTokenSource.Cancel(); 
+            _cancellationTokenSource.Cancel();
         }
 
         #endregion
 
         #region Support for progress reporting
 
-        private readonly ConcurrentDictionary<int, ProgressRecord> _activityIdToLastProgressRecord = new ConcurrentDictionary<int,ProgressRecord>();
+        private readonly ConcurrentDictionary<int, ProgressRecord> _activityIdToLastProgressRecord = new ConcurrentDictionary<int, ProgressRecord>();
 
         internal override void WriteProgress(ProgressRecord progressRecord)
         {
             progressRecord.Activity = this.JobContext.PrependComputerNameToMessage(progressRecord.Activity);
 
-            this._activityIdToLastProgressRecord.AddOrUpdate(
-                progressRecord.ActivityId, 
-                progressRecord, 
+            _activityIdToLastProgressRecord.AddOrUpdate(
+                progressRecord.ActivityId,
+                progressRecord,
                 (activityId, oldProgressRecord) => progressRecord);
 
             base.WriteProgress(progressRecord);
@@ -735,7 +736,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal void FinishProgressReporting()
         {
-            foreach (ProgressRecord lastProgressRecord in this._activityIdToLastProgressRecord.Values)
+            foreach (ProgressRecord lastProgressRecord in _activityIdToLastProgressRecord.Values)
             {
                 if (lastProgressRecord.RecordType != ProgressRecordType.Completed)
                 {
@@ -746,7 +747,6 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     this.WriteProgress(newProgressRecord);
                 }
             }
-            
         }
 
         #endregion
@@ -771,7 +771,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
             else if (secondsRemaining <= Int32.MaxValue)
             {
-                signedSecondsRemaining = (Int32) secondsRemaining;
+                signedSecondsRemaining = (Int32)secondsRemaining;
             }
             else
             {
@@ -785,20 +785,20 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
             else if (percentageCompleted <= 100)
             {
-                signedPercentageComplete = (Int32) percentageCompleted;
+                signedPercentageComplete = (Int32)percentageCompleted;
             }
             else
             {
                 signedPercentageComplete = 100;
             }
 
-            var progressRecord = new ProgressRecord(unchecked((int)(this._myJobNumber % int.MaxValue)), activity, statusDescription)
-                                     {
-                                         CurrentOperation = currentOperation,
-                                         PercentComplete = signedPercentageComplete,
-                                         SecondsRemaining = signedSecondsRemaining,
-                                         RecordType = ProgressRecordType.Processing,
-                                     };
+            var progressRecord = new ProgressRecord(unchecked((int)(_myJobNumber % int.MaxValue)), activity, statusDescription)
+            {
+                CurrentOperation = currentOperation,
+                PercentComplete = signedPercentageComplete,
+                SecondsRemaining = signedSecondsRemaining,
+                RecordType = ProgressRecordType.Processing,
+            };
 
             this.ExceptionSafeWrapper(
                     delegate
@@ -856,9 +856,9 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private CimResponseType WriteErrorCallback(CimInstance cimError)
         {
-            lock (this._jobStateLock)
+            lock (_jobStateLock)
             {
-                this._jobHadErrors = true;
+                _jobHadErrors = true;
             }
 
             var cimException = new CimException(cimError);
@@ -898,7 +898,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             return ShouldProcess(verboseDescription, null, null);
         }
-        
+
         internal CimResponseType ShouldProcess(
             string verboseDescription,
             string verboseWarning,
@@ -949,7 +949,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             Exception exceptionThrownOnCmdletThread = null;
             CimResponseType result = CimResponseType.No;
 
-            this._userWasPromptedForContinuationOfProcessing = true;
+            _userWasPromptedForContinuationOfProcessing = true;
             switch (promptType)
             {
                 case CimPromptType.Critical:
@@ -987,7 +987,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             if ((result == CimResponseType.Yes) || (result == CimResponseType.YesToAll))
             {
-                this._userRespondedYesToAtLeastOneShouldProcess = true;
+                _userRespondedYesToAtLeastOneShouldProcess = true;
             }
             return result;
         }
@@ -1041,12 +1041,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 if (pso == null)
                 {
-                        pso = PSObject.AsPSObject(outputObject);
+                    pso = PSObject.AsPSObject(outputObject);
                 }
                 AddShowComputerNameMarker(pso);
-                if(cimInstance == null)
+                if (cimInstance == null)
                 {
-                    pso.Properties.Add(new PSNoteProperty(RemotingConstants.ComputerNameNoteProperty,this.JobContext.Session.ComputerName));
+                    pso.Properties.Add(new PSNoteProperty(RemotingConstants.ComputerNameNoteProperty, this.JobContext.Session.ComputerName));
                 }
             }
 
@@ -1058,9 +1058,9 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             if (disposing)
             {
                 bool isCompleted;
-                lock (this._jobStateLock)
+                lock (_jobStateLock)
                 {
-                    isCompleted = this._alreadyReachedCompletedState;
+                    isCompleted = _alreadyReachedCompletedState;
                 }
                 if (!isCompleted)
                 {

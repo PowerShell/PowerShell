@@ -196,7 +196,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // It is not, try to load it.
                 // Make sure that PSModuleAutoLoadingPreference is not set to 'None'.
-                PSModuleAutoLoadingPreference moduleAutoLoadingPreference = 
+                PSModuleAutoLoadingPreference moduleAutoLoadingPreference =
                             CommandDiscovery.GetCommandDiscoveryPreference(cmdlet.Context, SpecialVariables.PSModuleAutoLoadingPreferenceVarPath, "PSModuleAutoLoadingPreference");
                 if (moduleAutoLoadingPreference == PSModuleAutoLoadingPreference.None)
                 {

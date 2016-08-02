@@ -21,7 +21,6 @@ namespace System.Management.Automation
     /// </summary>
     internal class DataRowAdapter : PropertyOnlyAdapter
     {
-
         #region virtual
         /// <summary>
         /// Retrieves all the properties available in the object.
@@ -42,7 +41,6 @@ namespace System.Management.Automation
             }
 
             return;
-
         }
         /// <summary>
         /// Returns null if propertyName is not a property in the adapter or
@@ -244,7 +242,7 @@ namespace System.Management.Automation
         // native adsi object's method, if there is a failure it calls
         // dotnet method (if one available).
         // This ensures dotnet methods are available on the adapted object.
-        private static readonly DotNetAdapter dotNetAdapter = new DotNetAdapter();
+        private static readonly DotNetAdapter s_dotNetAdapter = new DotNetAdapter();
         #endregion
 
         #region member
@@ -568,7 +566,7 @@ namespace System.Management.Automation
 
             // this code is reached only on exception
             // check if there is a dotnet method, invoke the dotnet method if available
-            PSMethod dotNetmethod = dotNetAdapter.GetDotNetMethod<PSMethod>(method.baseObject, method.name);
+            PSMethod dotNetmethod = s_dotNetAdapter.GetDotNetMethod<PSMethod>(method.baseObject, method.name);
             if (null != dotNetmethod)
             {
                 return dotNetmethod.Invoke(arguments);

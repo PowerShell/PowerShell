@@ -81,28 +81,29 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Known_HTTP_Header_Names
 
-        private static HashSet<string> _contentHeaderSet = null;
+        private static HashSet<string> s_contentHeaderSet = null;
         internal static HashSet<string> ContentHeaders
         {
-            get {
-                if (_contentHeaderSet == null)
+            get
+            {
+                if (s_contentHeaderSet == null)
                 {
-                    _contentHeaderSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    s_contentHeaderSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-                    _contentHeaderSet.Add(HttpKnownHeaderNames.Allow);
-                    _contentHeaderSet.Add(HttpKnownHeaderNames.ContentDisposition);
-                    _contentHeaderSet.Add(HttpKnownHeaderNames.ContentEncoding);
-                    _contentHeaderSet.Add(HttpKnownHeaderNames.ContentLanguage);
-                    _contentHeaderSet.Add(HttpKnownHeaderNames.ContentLength);
-                    _contentHeaderSet.Add(HttpKnownHeaderNames.ContentLocation);
-                    _contentHeaderSet.Add(HttpKnownHeaderNames.ContentMD5);
-                    _contentHeaderSet.Add(HttpKnownHeaderNames.ContentRange);
-                    _contentHeaderSet.Add(HttpKnownHeaderNames.ContentType);
-                    _contentHeaderSet.Add(HttpKnownHeaderNames.Expires);
-                    _contentHeaderSet.Add(HttpKnownHeaderNames.LastModified);
+                    s_contentHeaderSet.Add(HttpKnownHeaderNames.Allow);
+                    s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentDisposition);
+                    s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentEncoding);
+                    s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentLanguage);
+                    s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentLength);
+                    s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentLocation);
+                    s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentMD5);
+                    s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentRange);
+                    s_contentHeaderSet.Add(HttpKnownHeaderNames.ContentType);
+                    s_contentHeaderSet.Add(HttpKnownHeaderNames.Expires);
+                    s_contentHeaderSet.Add(HttpKnownHeaderNames.LastModified);
                 }
 
-                return _contentHeaderSet;
+                return s_contentHeaderSet;
             }
         }
     }

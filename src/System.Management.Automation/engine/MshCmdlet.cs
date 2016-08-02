@@ -9,7 +9,7 @@ using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Reflection;
-using PipelineResultTypes=System.Management.Automation.Runspaces.PipelineResultTypes;
+using PipelineResultTypes = System.Management.Automation.Runspaces.PipelineResultTypes;
 
 namespace System.Management.Automation
 {
@@ -70,21 +70,21 @@ namespace System.Management.Automation
     /// </summary>
     public struct SwitchParameter
     {
-        private bool isPresent;
+        private bool _isPresent;
         /// <summary>
         /// Returns true if the parameter was specified on the command line, false otherwise.
         /// </summary>
         /// <value>True if the parameter was specified, false otherwise</value>
         public bool IsPresent
         {
-            get { return isPresent; }
+            get { return _isPresent; }
         }
         /// <summary>
         /// Implicit cast operator for casting SwitchParameter to bool. 
         /// </summary>
         /// <param name="switchParameter">The SwitchParameter object to convert to bool</param>
         /// <returns>The corresponding boolean value.</returns>
-        public static implicit operator bool(SwitchParameter switchParameter)
+        public static implicit operator bool (SwitchParameter switchParameter)
         {
             return switchParameter.IsPresent;
         }
@@ -105,7 +105,7 @@ namespace System.Management.Automation
         /// <returns>The boolean equivalent of the SwitchParameter</returns>
         public bool ToBool()
         {
-            return this.isPresent;
+            return _isPresent;
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace System.Management.Automation
         /// </param>
         public SwitchParameter(bool isPresent)
         {
-            this.isPresent = isPresent;
+            _isPresent = isPresent;
         }
 
         /// <summary>
@@ -135,17 +135,17 @@ namespace System.Management.Automation
         /// <returns>True if the objects are the same value.</returns>
         public override bool Equals(object obj)
         {
-            if (obj is bool) 
-            { 
-                return this.isPresent == (bool)obj; 
-            }
-            else if (obj is SwitchParameter) 
-            { 
-                return this.isPresent == ((SwitchParameter)obj).IsPresent;
-            }
-            else 
+            if (obj is bool)
             {
-                return false; 
+                return _isPresent == (bool)obj;
+            }
+            else if (obj is SwitchParameter)
+            {
+                return _isPresent == ((SwitchParameter)obj).IsPresent;
+            }
+            else
+            {
+                return false;
             }
         }
         /// <summary>
@@ -154,7 +154,7 @@ namespace System.Management.Automation
         /// <returns>The hash code for this cobject.</returns>
         public override int GetHashCode()
         {
-            return this.isPresent.GetHashCode();
+            return _isPresent.GetHashCode();
         }
 
         /// <summary>
@@ -173,9 +173,9 @@ namespace System.Management.Automation
         /// <param name="first">first object to compare</param>
         /// <param name="second">second object to compare</param>
         /// <returns>True if they are different</returns>
-        public static bool operator != (SwitchParameter first, SwitchParameter second)
+        public static bool operator !=(SwitchParameter first, SwitchParameter second)
         {
-            return !first.Equals (second);
+            return !first.Equals(second);
         }
         /// <summary>
         /// Implement the == operator for switch parameters and booleans.
@@ -183,9 +183,9 @@ namespace System.Management.Automation
         /// <param name="first">first object to compare</param>
         /// <param name="second">second object to compare</param>
         /// <returns>True if they are the same</returns>
-        public static bool operator == (SwitchParameter first, bool second)
+        public static bool operator ==(SwitchParameter first, bool second)
         {
-            return first.Equals (second);
+            return first.Equals(second);
         }
         /// <summary>
         /// Implement the != operator for switch parameters and booleans.
@@ -193,9 +193,9 @@ namespace System.Management.Automation
         /// <param name="first">first object to compare</param>
         /// <param name="second">second object to compare</param>
         /// <returns>True if they are different</returns>
-        public static bool operator != (SwitchParameter first, bool second)
+        public static bool operator !=(SwitchParameter first, bool second)
         {
-            return !first.Equals (second);
+            return !first.Equals(second);
         }
         /// <summary>
         /// Implement the == operator for bool and switch parameters
@@ -203,9 +203,9 @@ namespace System.Management.Automation
         /// <param name="first">first object to compare</param>
         /// <param name="second">second object to compare</param>
         /// <returns>True if they are the same</returns>
-        public static bool operator == (bool first, SwitchParameter second)
+        public static bool operator ==(bool first, SwitchParameter second)
         {
-            return first.Equals (second);
+            return first.Equals(second);
         }
         /// <summary>
         /// Implement the != operator for bool and switch parameters
@@ -213,9 +213,9 @@ namespace System.Management.Automation
         /// <param name="first">first object to compare</param>
         /// <param name="second">second object to compare</param>
         /// <returns>True if they are different</returns>
-        public static bool operator != (bool first, SwitchParameter second)
+        public static bool operator !=(bool first, SwitchParameter second)
         {
-            return !first.Equals (second);
+            return !first.Equals(second);
         }
 
         /// <summary>
@@ -224,7 +224,7 @@ namespace System.Management.Automation
         /// <returns>The string for this object.</returns>
         public override string ToString()
         {
-            return isPresent.ToString();
+            return _isPresent.ToString();
         }
     }
 
@@ -235,20 +235,20 @@ namespace System.Management.Automation
     {
         private ExecutionContext _context;
         private PSCmdlet _cmdlet;
-        private MshCommandRuntime commandRuntime;
+        private MshCommandRuntime _commandRuntime;
 
         internal CommandInvocationIntrinsics(ExecutionContext context, PSCmdlet cmdlet)
         {
-            this._context = context;
+            _context = context;
             if (cmdlet != null)
             {
-                this._cmdlet = cmdlet;
-                this.commandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
+                _cmdlet = cmdlet;
+                _commandRuntime = cmdlet.CommandRuntime as MshCommandRuntime;
             }
         }
 
         internal CommandInvocationIntrinsics(ExecutionContext context)
-            :this(context, null)
+            : this(context, null)
         {
         }
 
@@ -259,11 +259,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.commandRuntime.PipelineProcessor.ExecutionFailed;
+                return _commandRuntime.PipelineProcessor.ExecutionFailed;
             }
             set
             {
-                this.commandRuntime.PipelineProcessor.ExecutionFailed = value;
+                _commandRuntime.PipelineProcessor.ExecutionFailed = value;
             }
         }
 
@@ -309,16 +309,16 @@ namespace System.Management.Automation
             try
             {
                 CommandOrigin commandOrigin = CommandOrigin.Runspace;
-                if (this._cmdlet != null)
+                if (_cmdlet != null)
                 {
-                    commandOrigin = this._cmdlet.CommandOrigin;
+                    commandOrigin = _cmdlet.CommandOrigin;
                 }
-                else if (this._context != null)
+                else if (_context != null)
                 {
-                    commandOrigin = this._context.EngineSessionState.CurrentScope.ScopeOrigin;
+                    commandOrigin = _context.EngineSessionState.CurrentScope.ScopeOrigin;
                 }
 
-                result = CommandDiscovery.LookupCommandInfo(commandName, type, SearchResolutionOptions.None, commandOrigin, this._context);
+                result = CommandDiscovery.LookupCommandInfo(commandName, type, SearchResolutionOptions.None, commandOrigin, _context);
 
                 if ((result != null) && (arguments != null) && (arguments.Length > 0))
                 {
@@ -365,7 +365,7 @@ namespace System.Management.Automation
         /// <returns>The cmdletInfo object if found, null otherwise</returns>
         public CmdletInfo GetCmdlet(string commandName)
         {
-            return GetCmdlet(commandName, this._context);
+            return GetCmdlet(commandName, _context);
         }
 
         /// <summary>
@@ -460,7 +460,7 @@ namespace System.Management.Automation
             string verb = ca.VerbName;
             string cmdletName = verb + "-" + noun;
 
-            return new CmdletInfo(cmdletName, cmdletType, null, null, this._context);
+            return new CmdletInfo(cmdletName, cmdletType, null, null, _context);
         }
 
         /// <summary>
@@ -489,7 +489,7 @@ namespace System.Management.Automation
                     pattern,
                     SearchResolutionOptions.CommandNameIsPattern,
                     CommandTypes.Cmdlet,
-                    this._context);
+                    _context);
             do
             {
                 try
@@ -543,9 +543,9 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("name");
             }
-            
+
             List<string> commands = new List<string>();
-            
+
             foreach (CommandInfo current in this.GetCommands(name, CommandTypes.All, nameIsPattern))
             {
                 if (current.CommandType == CommandTypes.Application)
@@ -586,7 +586,7 @@ namespace System.Management.Automation
                     commands.Add(current.Name);
                 }
             }
-            
+
             return commands;
         }
 
@@ -617,7 +617,7 @@ namespace System.Management.Automation
                 name,
                 options,
                 commandTypes,
-                this._context);
+                _context);
 
             if (commandOrigin != null)
             {
@@ -661,7 +661,7 @@ namespace System.Management.Automation
                 }
             } while (true);
         }
-        
+
         /// <summary>
         /// Executes a piece of text as a script synchronously. 
         /// </summary>
@@ -815,24 +815,24 @@ namespace System.Management.Automation
             if (cmdletToUse != null)
             {
                 sb.InvokeUsingCmdlet(
-                    contextCmdlet:         cmdletToUse,
-                    useLocalScope:         useNewScope,
+                    contextCmdlet: cmdletToUse,
+                    useLocalScope: useNewScope,
                     errorHandlingBehavior: errorHandlingBehavior,
-                    dollarUnder:           AutomationNull.Value,
-                    input:                 input,
-                    scriptThis:            AutomationNull.Value,
-                    args:                  args); 
+                    dollarUnder: AutomationNull.Value,
+                    input: input,
+                    scriptThis: AutomationNull.Value,
+                    args: args);
                 rawResult = AutomationNull.Value;
             }
             else
             {
                 rawResult = sb.DoInvokeReturnAsIs(
-                    useLocalScope:         useNewScope,
+                    useLocalScope: useNewScope,
                     errorHandlingBehavior: errorHandlingBehavior,
-                    dollarUnder:           AutomationNull.Value,
-                    input:                 input,
-                    scriptThis:            AutomationNull.Value,
-                    args:                  args);
+                    dollarUnder: AutomationNull.Value,
+                    input: input,
+                    scriptThis: AutomationNull.Value,
+                    args: args);
             }
 
             if (rawResult == AutomationNull.Value)
@@ -873,10 +873,10 @@ namespace System.Management.Automation
         /// <param name="scriptText">The source text to compile</param>
         /// <returns>The compiled script block</returns>
         /// <exception cref="ParseException"></exception>
-        public ScriptBlock NewScriptBlock (string scriptText)
+        public ScriptBlock NewScriptBlock(string scriptText)
         {
-            if (null != commandRuntime)
-                commandRuntime.ThrowIfStopping();
+            if (null != _commandRuntime)
+                _commandRuntime.ThrowIfStopping();
 
             ScriptBlock result = ScriptBlock.Create(_context, scriptText);
             return result;
@@ -902,7 +902,8 @@ namespace System.Management.Automation
     {
         #region private_members
 
-        internal bool HasDynamicParameters {
+        internal bool HasDynamicParameters
+        {
             get { return this is IDynamicParameters; }
         }
 
@@ -956,19 +957,19 @@ namespace System.Management.Automation
                         return null;
                     }
 
-                    if (this.pagingParameters == null)
+                    if (_pagingParameters == null)
                     {
                         MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
                         if (mshCommandRuntime != null)
                         {
-                            this.pagingParameters = mshCommandRuntime.PagingParameters ?? new PagingParameters(mshCommandRuntime);
+                            _pagingParameters = mshCommandRuntime.PagingParameters ?? new PagingParameters(mshCommandRuntime);
                         }
                     }
-                    return this.pagingParameters;
+                    return _pagingParameters;
                 }
             }
         }
-        private PagingParameters pagingParameters;
+        private PagingParameters _pagingParameters;
 
         #region InvokeCommand
         private CommandInvocationIntrinsics _invokeCommand;

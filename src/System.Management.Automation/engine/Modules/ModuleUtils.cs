@@ -128,9 +128,9 @@ namespace System.Management.Automation.Internal
 
                 try
                 {
-                    foreach(string moduleFile in ModuleUtils.GetDefaultAvailableModuleFiles(directory))
+                    foreach (string moduleFile in ModuleUtils.GetDefaultAvailableModuleFiles(directory))
                     {
-                        if(uniqueModuleFiles.Add(moduleFile))
+                        if (uniqueModuleFiles.Add(moduleFile))
                         {
                             yield return moduleFile;
                         }

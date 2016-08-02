@@ -10,12 +10,13 @@ using System.Text;
 using Marshal = System.Runtime.InteropServices.Marshal;
 using VarEnum = System.Runtime.InteropServices.VarEnum;
 
-namespace System.Management.Automation.ComInterop {
-
+namespace System.Management.Automation.ComInterop
+{
     /// <summary>
     /// The parameter description of a method defined in a type library
     /// </summary>
-    internal class ComParamDesc {
+    internal class ComParamDesc
+    {
         # region private fields
 
         private readonly bool _isOut; // is an output parameter?
@@ -34,16 +35,18 @@ namespace System.Management.Automation.ComInterop {
         /// <summary>
         /// Creates a representation for the paramter of a COM method
         /// </summary>
-        internal ComParamDesc(ref ELEMDESC elemDesc, string name) {
+        internal ComParamDesc(ref ELEMDESC elemDesc, string name)
+        {
             // Ensure _defaultValue is set to DBNull.Value regardless of whether or not the 
             // default value is extracted from the parameter description.  Failure to do so
             // yields a runtime exception in the ToString() function.
             _defaultValue = DBNull.Value;
 
-            if (!String.IsNullOrEmpty(name)) {
+            if (!String.IsNullOrEmpty(name))
+            {
                 // This is a parameter, not a return value
-                this._isOut = (elemDesc.desc.paramdesc.wParamFlags & PARAMFLAG.PARAMFLAG_FOUT) != 0;
-                this._isOpt = (elemDesc.desc.paramdesc.wParamFlags & PARAMFLAG.PARAMFLAG_FOPT) != 0;
+                _isOut = (elemDesc.desc.paramdesc.wParamFlags & PARAMFLAG.PARAMFLAG_FOUT) != 0;
+                _isOpt = (elemDesc.desc.paramdesc.wParamFlags & PARAMFLAG.PARAMFLAG_FOPT) != 0;
                 // TODO: The PARAMDESCEX struct has a memory issue that needs to be resolved.  For now, we ignore it.
                 //_defaultValue = PARAMDESCEX.GetDefaultValue(ref elemDesc.desc.paramdesc);
             }
@@ -51,12 +54,18 @@ namespace System.Management.Automation.ComInterop {
             _name = name;
             _vt = (VarEnum)elemDesc.tdesc.vt;
             TYPEDESC typeDesc = elemDesc.tdesc;
-            while (true) {
-                if (_vt == VarEnum.VT_PTR) {
-                    this._byRef = true;
-                } else if (_vt == VarEnum.VT_ARRAY) {
-                    this._isArray = true;
-                } else {
+            while (true)
+            {
+                if (_vt == VarEnum.VT_PTR)
+                {
+                    _byRef = true;
+                }
+                else if (_vt == VarEnum.VT_ARRAY)
+                {
+                    _isArray = true;
+                }
+                else
+                {
                     break;
                 }
 
@@ -66,7 +75,8 @@ namespace System.Management.Automation.ComInterop {
             }
 
             VarEnum vtWithoutByref = _vt;
-            if ((_vt & VarEnum.VT_BYREF) != 0) {
+            if ((_vt & VarEnum.VT_BYREF) != 0)
+            {
                 vtWithoutByref = (_vt & ~VarEnum.VT_BYREF);
                 _byRef = true;
             }
@@ -79,33 +89,40 @@ namespace System.Management.Automation.ComInterop {
         /// TODO: Return values should be represented by a different type
         /// </summary>
         internal ComParamDesc(ref ELEMDESC elemDesc)
-            : this(ref elemDesc, String.Empty) {
+            : this(ref elemDesc, String.Empty)
+        {
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             StringBuilder result = new StringBuilder();
-            if (_isOpt) {
+            if (_isOpt)
+            {
                 result.Append("[Optional] ");
             }
 
-            if (_isOut) {
+            if (_isOut)
+            {
                 result.Append("[out]");
             }
 
             result.Append(_type.Name);
 
-            if (_isArray) {
+            if (_isArray)
+            {
                 result.Append("[]");
             }
 
-            if (_byRef) {
+            if (_byRef)
+            {
                 result.Append("&");
             }
 
             result.Append(" ");
             result.Append(_name);
 
-            if (_defaultValue != DBNull.Value) {
+            if (_defaultValue != DBNull.Value)
+            {
                 result.Append("=");
                 result.Append(_defaultValue.ToString());
             }
@@ -117,24 +134,30 @@ namespace System.Management.Automation.ComInterop {
 
         # region properties
 
-        public bool IsOut {
+        public bool IsOut
+        {
             get { return _isOut; }
         }
 
-        public bool IsOptional {
+        public bool IsOptional
+        {
             get { return _isOpt; }
         }
 
-        public bool ByReference {
+        public bool ByReference
+        {
             get { return _byRef; }
         }
 
-        public bool IsArray {
+        public bool IsArray
+        {
             get { return _isArray; }
         }
 
-        public Type ParameterType {
-            get {
+        public Type ParameterType
+        {
+            get
+            {
                 return _type;
             }
         }
@@ -142,8 +165,10 @@ namespace System.Management.Automation.ComInterop {
         /// <summary>
         /// DBNull.Value if there is no default value
         /// </summary>
-        internal object DefaultValue {
-            get {
+        internal object DefaultValue
+        {
+            get
+            {
                 return _defaultValue;
             }
         }

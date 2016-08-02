@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
     [Alias("scb")]
     public class SetClipboardCommand : PSCmdlet
     {
-        private List<string> contentList = new List<string>();
+        private List<string> _contentList = new List<string>();
         private const string ValueParameterSet = "Value";
         private const string PathParameterSet = "Path";
         private const string LiteralPathParameterSet = "LiteralPath";
@@ -66,22 +66,22 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter AsHtml
         {
-            get { return asHtml; }
+            get { return _asHtml; }
             set
             {
-                isHtmlSet = true;
-                asHtml = value;
+                _isHtmlSet = true;
+                _asHtml = value;
             }
         }
-        private bool asHtml;
-        private bool isHtmlSet = false;
+        private bool _asHtml;
+        private bool _isHtmlSet = false;
 
         /// <summary>
         /// This method implements the BeginProcessing method for Set-Clipboard command
         /// </summary>
         protected override void BeginProcessing()
         {
-            contentList.Clear();
+            _contentList.Clear();
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             // Html should only combine with Text content.
-            if (Value == null && isHtmlSet)
+            if (Value == null && _isHtmlSet)
             {
                 ThrowTerminatingError(new ErrorRecord(new InvalidOperationException(
     String.Format(CultureInfo.InvariantCulture, ClipboardResources.InvalidHtmlCombine)),
@@ -99,15 +99,15 @@ namespace Microsoft.PowerShell.Commands
 
             if (Value != null)
             {
-                contentList.AddRange(Value);
+                _contentList.AddRange(Value);
             }
             else if (Path != null)
             {
-                contentList.AddRange(Path);
+                _contentList.AddRange(Path);
             }
             else if (LiteralPath != null)
             {
-                contentList.AddRange(LiteralPath);
+                _contentList.AddRange(LiteralPath);
             }
         }
 
@@ -118,15 +118,15 @@ namespace Microsoft.PowerShell.Commands
         {
             if (LiteralPath != null)
             {
-                CopyFilesToClipboard(contentList, Append, true);
+                CopyFilesToClipboard(_contentList, Append, true);
             }
             else if (Path != null)
             {
-                CopyFilesToClipboard(contentList, Append, false);
+                CopyFilesToClipboard(_contentList, Append, false);
             }
             else
             {
-                SetClipboardContent(contentList, Append, asHtml);
+                SetClipboardContent(_contentList, Append, _asHtml);
             }
         }
 
@@ -416,6 +416,5 @@ EndSelection:<<<<<<<<4";
             }
             return count;
         }
-
     }
 }

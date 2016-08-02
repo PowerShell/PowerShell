@@ -82,10 +82,10 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
             else if (MethodParameterBindings.Error == (methodParameter.Bindings & MethodParameterBindings.Error))
             {
-                var gotError = (bool)LanguagePrimitives.ConvertTo(dotNetValue, typeof (bool), CultureInfo.InvariantCulture);
+                var gotError = (bool)LanguagePrimitives.ConvertTo(dotNetValue, typeof(bool), CultureInfo.InvariantCulture);
                 if (gotError)
                 {
-                    var errorCodeAsString = (string)LanguagePrimitives.ConvertTo(dotNetValue, typeof (string), CultureInfo.InvariantCulture);
+                    var errorCodeAsString = (string)LanguagePrimitives.ConvertTo(dotNetValue, typeof(string), CultureInfo.InvariantCulture);
                     CimJobException cje = CimJobException.CreateFromMethodErrorCode(this.GetDescription(), this.JobContext, this.MethodName, errorCodeAsString);
                     throw cje;
                 }

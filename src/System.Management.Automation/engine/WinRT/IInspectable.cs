@@ -1,7 +1,8 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
-﻿using System.Runtime.InteropServices;
+
+using System.Runtime.InteropServices;
 using System.Reflection;
 
 namespace System.Management.Automation

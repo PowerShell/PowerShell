@@ -20,7 +20,7 @@ using System.Management.Automation.Runspaces.Internal;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
-namespace System.Management.Automation 
+namespace System.Management.Automation
 {
     internal class RemotePipeline : Pipeline
     {
@@ -180,10 +180,10 @@ namespace System.Management.Automation
         /// <param name="pipeline">pipeline to clone from</param>
         /// <remarks>This constructor is private because this will
         /// only be called from the copy method</remarks>
-        private RemotePipeline(RemotePipeline pipeline):
+        private RemotePipeline(RemotePipeline pipeline) :
             this((RemoteRunspace)pipeline.Runspace, null, false, pipeline.IsNested)
         {
-            this._isSteppable = pipeline._isSteppable;
+            _isSteppable = pipeline._isSteppable;
 
             // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
             // the above comment copied from RemotePipelineBase which
@@ -194,7 +194,7 @@ namespace System.Management.Automation
             }
             if (pipeline._disposed)
             {
-               throw PSTraceSource.NewObjectDisposedException("pipeline");
+                throw PSTraceSource.NewObjectDisposedException("pipeline");
             }
 
             _addToHistory = pipeline._addToHistory;
@@ -235,7 +235,6 @@ namespace System.Management.Automation
         {
             get
             {
-
 #pragma warning disable 56503
                 // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
                 if (_disposed)
@@ -397,7 +396,7 @@ namespace System.Management.Automation
                 return _inputStream;
             }
         }
-        
+
         #endregion streams
 
         #region Invoke
@@ -458,7 +457,7 @@ namespace System.Management.Automation
                 InvalidRunspaceStateException e =
                     new InvalidRunspaceStateException
                     (
-                        StringUtil.Format(RunspaceStrings.RunspaceNotOpenForPipeline,_runspace.RunspaceStateInfo.State.ToString()),
+                        StringUtil.Format(RunspaceStrings.RunspaceNotOpenForPipeline, _runspace.RunspaceStateInfo.State.ToString()),
                         _runspace.RunspaceStateInfo.State,
                         RunspaceState.Opened
                     );
@@ -504,9 +503,9 @@ namespace System.Management.Automation
             // collect output in.  Check to see if the output was collected in a member variable.
             if (results.Count == 0)
             {
-                if (this._outputCollection != null && this._outputCollection.Count > 0)
+                if (_outputCollection != null && _outputCollection.Count > 0)
                 {
-                    results = new Collection<PSObject>(this._outputCollection);
+                    results = new Collection<PSObject>(_outputCollection);
                 }
             }
 
@@ -561,7 +560,7 @@ namespace System.Management.Automation
                     {
                         throw PSTraceSource.NewObjectDisposedException("Pipeline");
                     };
-                     
+
                     asyncresult.AsyncWaitHandle.WaitOne();
                 }
             }
@@ -747,7 +746,7 @@ namespace System.Management.Automation
         private void SetPipelineState(PipelineState state, Exception reason)
         {
             PipelineState copyState = state;
-            PipelineStateInfo copyStateInfo = null; 
+            PipelineStateInfo copyStateInfo = null;
 
             lock (_syncRoot)
             {
@@ -798,7 +797,6 @@ namespace System.Management.Automation
                         _pipelineStateInfo.Clone(),
                         previousAvailability,
                         _runspace.RunspaceAvailability));
-
             } // lock...
 
             // using the copyStateInfo here as this piece of code is 
@@ -813,7 +811,7 @@ namespace System.Management.Automation
                 Cleanup();
             }
         }
-        
+
         /// <summary>
         /// Raises events for changes in execution state.
         /// </summary>
@@ -909,7 +907,6 @@ namespace System.Management.Automation
 
             _powershell.RemotePowerShell.HostCallReceived +=
                 new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCallReceived);
-
         }
 
         /// <summary>
@@ -963,9 +960,9 @@ namespace System.Management.Automation
                 ((RemoteRunspace)_runspace).RunspacePool.RemoteRunspacePoolInternal.Host,
                 _errorStream,
                 _methodExecutorStream,
-                IsMethodExecutorStreamEnabled, 
+                IsMethodExecutorStreamEnabled,
                 ((RemoteRunspace)_runspace).RunspacePool.RemoteRunspacePoolInternal,
-                _powershell.InstanceId, 
+                _powershell.InstanceId,
                 eventArgs.Data);
         }
 
@@ -1103,15 +1100,15 @@ namespace System.Management.Automation
 
                 if (currentPipeline == null &&
                     ((RemoteRunspace)_runspace).RemoteCommand != null &&
-                    this._connectCmdInfo != null &&
-                    Guid.Equals(((RemoteRunspace)_runspace).RemoteCommand.CommandId, this._connectCmdInfo.CommandId))
+                    _connectCmdInfo != null &&
+                    Guid.Equals(((RemoteRunspace)_runspace).RemoteCommand.CommandId, _connectCmdInfo.CommandId))
                 {
                     // Connect case.  We can add a pipeline to a busy runspace when
                     // that pipeline represents the same command as is currently
                     // running.
                     return;
                 }
-                
+
                 if (currentPipeline != null &&
                          ReferenceEquals(currentPipeline, this))
                 {

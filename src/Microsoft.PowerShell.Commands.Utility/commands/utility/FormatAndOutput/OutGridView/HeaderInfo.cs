@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 namespace Microsoft.PowerShell.Commands
 {
     using System;
@@ -11,11 +12,11 @@ namespace Microsoft.PowerShell.Commands
 
     internal class HeaderInfo
     {
-        private List<ColumnInfo> columns = new List<ColumnInfo>();
+        private List<ColumnInfo> _columns = new List<ColumnInfo>();
 
         internal void AddColumn(ColumnInfo col)
         {
-            columns.Add(col);
+            _columns.Add(col);
         }
 
         internal PSObject AddColumnsToWindow(OutWindowProxy windowProxy, PSObject liveObject)
@@ -23,13 +24,13 @@ namespace Microsoft.PowerShell.Commands
             PSObject staleObject = new PSObject();
 
             // Initiate arrays to be of the same size.
-            int count = columns.Count;
+            int count = _columns.Count;
             string[] propertyNames = new string[count];
             string[] displayNames = new string[count];
             Type[] types = new Type[count];
 
             count = 0; // Reuse this variabe to count cycles.
-            foreach(ColumnInfo column in columns)
+            foreach (ColumnInfo column in _columns)
             {
                 propertyNames[count] = column.StaleObjectPropertyName();
                 displayNames[count] = column.DisplayName();
@@ -50,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
         internal PSObject CreateStalePSObject(PSObject liveObject)
         {
             PSObject staleObject = new PSObject();
-            foreach(ColumnInfo column in columns)
+            foreach (ColumnInfo column in _columns)
             {
                 // Add a property to the stale PSObject.
                 staleObject.Properties.Add(new PSNoteProperty(column.StaleObjectPropertyName(),

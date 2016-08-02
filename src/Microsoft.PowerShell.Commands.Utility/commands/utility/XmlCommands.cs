@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
                 _depth = value;
             }
         }
-        int _depth = 0;
+        private int _depth = 0;
 
         /// <summary>
         /// mandatory file name to write to
@@ -79,10 +79,10 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _path = value;
-                isLiteralPath = true;
+                _isLiteralPath = true;
             }
         }
-        private bool isLiteralPath = false;
+        private bool _isLiteralPath = false;
 
         /// <summary>
         /// Input object to be exported
@@ -128,14 +128,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return noclobber;
+                return _noclobber;
             }
             set
             {
-                noclobber = value;
+                _noclobber = value;
             }
         }
-        private bool noclobber;
+        private bool _noclobber;
 
         /// <summary>
         /// Encoding optional flag
@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing()
         {
             base.StopProcessing();
-            this._serializer.Stop();
+            _serializer.Stop();
         }
 
         #endregion Overrides
@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// handle to file stream
         /// </summary>
-        FileStream _fs;
+        private FileStream _fs;
 
         /// <summary>
         /// stream writer used to write to file
@@ -232,7 +232,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// FileInfo of file to clear read-only flag when operation is complete
         /// </summary>
-        private FileInfo readOnlyFileInfo = null;
+        private FileInfo _readOnlyFileInfo = null;
 
         private void CreateFileStream()
         {
@@ -242,19 +242,19 @@ namespace Microsoft.PowerShell.Commands
 
             StreamWriter sw;
             PathUtils.MasterStreamOpen(
-                this, 
-                this.Path, 
-                this.Encoding, 
+                this,
+                this.Path,
+                this.Encoding,
                 false, // default encoding
                 false, // append
-                this.Force, 
+                this.Force,
                 this.NoClobber,
-                out _fs, 
-                out sw, 
-                out readOnlyFileInfo,
-                isLiteralPath
+                out _fs,
+                out sw,
+                out _readOnlyFileInfo,
+                _isLiteralPath
                 );
-            
+
             // create xml writer
             XmlWriterSettings xmlSettings = new XmlWriterSettings();
             xmlSettings.CloseOutput = true;
@@ -287,10 +287,10 @@ namespace Microsoft.PowerShell.Commands
                 _fs = null;
             }
             // reset the read-only attribute
-            if (null != readOnlyFileInfo)
+            if (null != _readOnlyFileInfo)
             {
-                readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
-                this.readOnlyFileInfo = null;
+                _readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
+                _readOnlyFileInfo = null;
             }
         }
 
@@ -301,7 +301,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Set to true when object is disposed
         /// </summary>
-        bool _disposed;
+        private bool _disposed;
 
         /// <summary>
         /// public dispose method
@@ -360,38 +360,38 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _paths = value;
-                isLiteralPath = true;
+                _isLiteralPath = true;
             }
         }
-        private bool isLiteralPath = false;
+        private bool _isLiteralPath = false;
 
 
         #endregion Command Line Parameters
 
         #region IDisposable Members
 
-        private bool disposed = false;
+        private bool _disposed = false;
 
         /// <summary>
         /// public dispose method
         /// </summary>
         public void Dispose()
         {
-            if (!this.disposed)
+            if (!_disposed)
             {
                 GC.SuppressFinalize(this);
-                if (this.helper != null)
+                if (_helper != null)
                 {
-                    this.helper.Dispose();
-                    this.helper = null;
+                    _helper.Dispose();
+                    _helper = null;
                 }
-                this.disposed = true;
+                _disposed = true;
             }
         }
 
         #endregion
 
-        private ImportXmlHelper helper;
+        private ImportXmlHelper _helper;
 
         /// <summary>
         /// ProcessRecord overload
@@ -402,8 +402,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string path in _paths)
                 {
-                    this.helper = new ImportXmlHelper(path, this, isLiteralPath);
-                    this.helper.Import();
+                    _helper = new ImportXmlHelper(path, this, _isLiteralPath);
+                    _helper.Import();
                 }
             }
         }
@@ -414,7 +414,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing()
         {
             base.StopProcessing();
-            this.helper.Stop();
+            _helper.Stop();
         }
     }
 
@@ -446,7 +446,7 @@ namespace Microsoft.PowerShell.Commands
                 _depth = value;
             }
         }
-        int _depth = 0;
+        private int _depth = 0;
 
 
         /// <summary>
@@ -593,7 +593,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject(data);
                 }
             }
-            
+
             //Cleaning up
             CleanUp();
         }
@@ -669,7 +669,7 @@ namespace Microsoft.PowerShell.Commands
                 _serializer = new CustomSerialization(_xw, _notypeinformation, _depth);
             }
         }
-        
+
         /// <summary>
         ///Cleaning up the MemoryStream 
         /// </summary>
@@ -695,7 +695,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Set to true when object is disposed
         /// </summary>
-        bool _disposed;
+        private bool _disposed;
 
         /// <summary>
         /// public dispose method
@@ -731,7 +731,7 @@ namespace Microsoft.PowerShell.Commands
         /// Reference to cmdlet which is using this helper class
         /// </summary>
         private readonly PSCmdlet _cmdlet;
-        private bool isLiteralPath;
+        private bool _isLiteralPath;
 
         internal ImportXmlHelper(string fileName, PSCmdlet cmdlet, bool isLiteralPath)
         {
@@ -745,7 +745,7 @@ namespace Microsoft.PowerShell.Commands
             }
             _path = fileName;
             _cmdlet = cmdlet;
-            this.isLiteralPath = isLiteralPath;
+            _isLiteralPath = isLiteralPath;
         }
 
         #endregion constructor
@@ -782,7 +782,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal void CreateFileStream()
         {
-            _fs = PathUtils.OpenFileStream(_path, _cmdlet, isLiteralPath);
+            _fs = PathUtils.OpenFileStream(_path, _cmdlet, _isLiteralPath);
             _xr = CreateXmlReader(_fs);
         }
 
@@ -802,7 +802,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Set to true when object is disposed
         /// </summary>
-        bool _disposed;
+        private bool _disposed;
 
         /// <summary>
         /// public dispose method
@@ -832,7 +832,7 @@ namespace Microsoft.PowerShell.Commands
                 _cmdlet.WriteObject(totalCount);
             }
 
-            
+
             ulong skip = _cmdlet.PagingParameters.Skip;
             ulong first = _cmdlet.PagingParameters.First;
 
@@ -850,7 +850,6 @@ namespace Microsoft.PowerShell.Commands
 
                     _cmdlet.WriteObject(result);
                     first--;
-
                 }
             }
             // else try to flatten the output if possible
@@ -926,13 +925,13 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public String[] Path
         {
-            get { return path; }
+            get { return _path; }
             set
             {
-                path = value;
+                _path = value;
             }
         }
-        private String[] path;
+        private String[] _path;
 
         /// <summary>
         /// Specifies the literal path which contains the xml files. The default is the current 
@@ -944,14 +943,14 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSPath")]
         public String[] LiteralPath
         {
-            get { return path; }
+            get { return _path; }
             set
             {
-                path = value;
-                isLiteralPath = true;
+                _path = value;
+                _isLiteralPath = true;
             }
         }
-        private bool isLiteralPath = false;
+        private bool _isLiteralPath = false;
 
         /// <summary>
         /// The following is the definition of the input parameter "XML".
@@ -965,13 +964,13 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Node")]
         public System.Xml.XmlNode[] Xml
         {
-            get { return xml; }
+            get { return _xml; }
             set
             {
-                xml = value;
+                _xml = value;
             }
         }
-        private System.Xml.XmlNode[] xml;
+        private System.Xml.XmlNode[] _xml;
 
         /// <summary>
         /// The following is the definition of the input parameter in string format.
@@ -983,13 +982,13 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string[] Content
         {
-            get { return content; }
+            get { return _content; }
             set
             {
-                content = value;
+                _content = value;
             }
         }
-        private string[] content;
+        private string[] _content;
 
         /// <summary>
         /// The following is the definition of the input parameter "Xpath".
@@ -1000,13 +999,13 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string XPath
         {
-            get { return xpath; }
+            get { return _xpath; }
             set
             {
-                xpath = value;
+                _xpath = value;
             }
         }
-        private string xpath;
+        private string _xpath;
 
         /// <summary>
         /// The following definition used to specify the 
@@ -1040,7 +1039,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 SelectXmlInfo selectXmlInfo = new SelectXmlInfo();
                 selectXmlInfo.Node = foundXmlNode;
-                selectXmlInfo.Pattern = this.xpath;
+                selectXmlInfo.Pattern = _xpath;
                 selectXmlInfo.Path = filePath;
 
                 this.WriteObject(selectXmlInfo);
@@ -1052,14 +1051,14 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert(xmlNode != null, "Caller should verify xmlNode != null");
 
             XmlNodeList xList;
-            if (this._namespace != null)
+            if (_namespace != null)
             {
-                XmlNamespaceManager xmlns = AddNameSpaceTable(this.ParameterSetName, xmlNode as XmlDocument, this._namespace);
-                xList = xmlNode.SelectNodes(xpath, xmlns);
+                XmlNamespaceManager xmlns = AddNameSpaceTable(this.ParameterSetName, xmlNode as XmlDocument, _namespace);
+                xList = xmlNode.SelectNodes(_xpath, xmlns);
             }
             else
             {
-                xList = xmlNode.SelectNodes(xpath);
+                xList = xmlNode.SelectNodes(_xpath);
             }
             this.WriteResults(xList, filePath);
         }
@@ -1179,9 +1178,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 //If any file not resolved, execution stops. this is to make consistent with select-string.
                 List<string> fullresolvedPaths = new List<string>();
-                foreach (string fpath in path)
+                foreach (string fpath in _path)
                 {
-                    if (isLiteralPath)
+                    if (_isLiteralPath)
                     {
                         string resolvedPath = GetUnresolvedProviderPathFromPSPath(fpath);
                         fullresolvedPaths.Add(resolvedPath);
@@ -1209,7 +1208,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (ParameterSetName.Equals("Content", StringComparison.OrdinalIgnoreCase))
             {
-                foreach (string xmlstring in content)
+                foreach (string xmlstring in _content)
                 {
                     XmlDocument xmlDocument;
                     try
@@ -1230,9 +1229,8 @@ namespace Microsoft.PowerShell.Commands
                 Dbg.Assert(false, "Unrecognized parameterset");
             }
         }//End ProcessRecord()
-        
-        #endregion overrides
 
+        #endregion overrides
     }//End Class
 
     /// <summary>
@@ -1246,7 +1244,7 @@ namespace Microsoft.PowerShell.Commands
         private const string inputStream = "InputStream";
         private const string MatchFormat = "{0}:{1}";
         private const string SimpleFormat = "{0}";
-       
+
         /// <summary>
         /// The XmlNode that matches search
         /// </summary>
@@ -1255,14 +1253,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return node;
+                return _node;
             }
             set
             {
-                node = value;
+                _node = value;
             }
         }
-        private XmlNode node;
+        private XmlNode _node;
 
         /// <summary>
         /// The FileName from which the match is found.
@@ -1271,21 +1269,21 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return path;
+                return _path;
             }
             set
             {
                 if (String.IsNullOrEmpty(value))
                 {
-                    path = inputStream;
+                    _path = inputStream;
                 }
                 else
                 {
-                    path = value;
+                    _path = value;
                 }
             }
         }
-        private string path;
+        private string _path;
 
         /// <summary>
         /// The pattern used to search
@@ -1294,14 +1292,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return pattern;
+                return _pattern;
             }
             set
             {
-                pattern = value;
+                _pattern = value;
             }
         }
-        private string pattern;
+        private string _pattern;
 
         /// <summary>
         /// Returns the string representation of this object. The format
@@ -1320,7 +1318,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private string ToString(string directory)
         {
-            string displayPath = (directory != null) ? RelativePath(directory) : this.path;
+            string displayPath = (directory != null) ? RelativePath(directory) : _path;
             return FormatLine(GetNodeText(), displayPath);
         }
 
@@ -1331,15 +1329,15 @@ namespace Microsoft.PowerShell.Commands
         internal string GetNodeText()
         {
             string nodeText = String.Empty;
-            if (this.node != null)
+            if (_node != null)
             {
-                if (this.node.Value != null)
+                if (_node.Value != null)
                 {
-                    nodeText = this.node.Value.Trim();
+                    nodeText = _node.Value.Trim();
                 }
                 else
                 {
-                    nodeText = this.node.InnerXml.Trim();
+                    nodeText = _node.InnerXml.Trim();
                 }
             }
             return nodeText;
@@ -1356,7 +1354,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The relative path that was produced.</returns>
         private string RelativePath(string directory)
         {
-            string relPath = this.path;
+            string relPath = _path;
             if (!relPath.Equals(inputStream))
             {
                 if (relPath.StartsWith(directory, StringComparison.CurrentCultureIgnoreCase))
@@ -1382,7 +1380,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private string FormatLine(string text, string displaypath)
         {
-            if (this.path.Equals(inputStream))
+            if (_path.Equals(inputStream))
             {
                 return StringUtil.Format(SimpleFormat, text);
             }
@@ -1392,7 +1390,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
     }
-
 
     #endregion Select-Xml
 }

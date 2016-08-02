@@ -10,10 +10,10 @@ using System.IO;
 using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
-{ 
+{
     internal static class InputFileOpenModeConversion
     {
-       internal static FileMode Convert (OpenMode openMode)
+        internal static FileMode Convert(OpenMode openMode)
         {
             return SessionStateUtilities.GetFileModeFromOpenMode(openMode);
         }
@@ -28,9 +28,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// set inner command
         /// </summary>
-        public OutFileCommand ()
+        public OutFileCommand()
         {
-            this.implementation = new OutputManagerInner ();
+            this.implementation = new OutputManagerInner();
         }
 
         #region Command Line Parameters
@@ -38,14 +38,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// mandatory file name to write to
         /// </summary>
-        [Parameter(Mandatory=true, Position=0, ParameterSetName = "ByPath")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByPath")]
         public string FilePath
         {
-            get{ return fileName;}
-            set{ fileName = value;}
+            get { return _fileName; }
+            set { _fileName = value; }
         }
 
-        private string fileName;
+        private string _fileName;
 
         /// <summary>
         /// mandatory file name to write to
@@ -56,21 +56,21 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return fileName;
+                return _fileName;
             }
             set
             {
-                fileName = value;
-                isLiteralPath = true;
+                _fileName = value;
+                _isLiteralPath = true;
             }
         }
-        bool isLiteralPath = false;
+        private bool _isLiteralPath = false;
 
         /// <summary>
         /// Encoding optional flag
         /// </summary>
         /// 
-        [Parameter(Position=1)]
+        [Parameter(Position = 1)]
         [ValidateNotNullOrEmpty]
         [ValidateSetAttribute(new string[] {
             EncodingConversion.Unknown,
@@ -85,11 +85,11 @@ namespace Microsoft.PowerShell.Commands
             EncodingConversion.OEM })]
         public string Encoding
         {
-            get{ return encoding;}
-            set{ encoding = value;}
+            get { return _encoding; }
+            set { _encoding = value; }
         }
 
-        private string encoding;        
+        private string _encoding;
 
         /// <summary>
         /// Property that sets append parameter.
@@ -97,10 +97,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         public SwitchParameter Append
         {
-            get { return append; }
-            set { append = value; }
+            get { return _append; }
+            set { _append = value; }
         }
-        private bool append;
+        private bool _append;
 
         /// <summary>
         /// Property that sets force parameter.
@@ -108,10 +108,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         public SwitchParameter Force
         {
-            get { return force; }
-            set { force = value; }
+            get { return _force; }
+            set { _force = value; }
         }
-        private bool force;
+        private bool _force;
 
         /// <summary>
         /// Property that prevents file overwrite.
@@ -120,23 +120,23 @@ namespace Microsoft.PowerShell.Commands
         [Alias("NoOverwrite")]
         public SwitchParameter NoClobber
         {
-            get { return noclobber; }
-            set { noclobber = value; }
+            get { return _noclobber; }
+            set { _noclobber = value; }
         }
-        private bool noclobber;
+        private bool _noclobber;
 
         /// <summary>
         /// optional, number of columns to use when writing to device
         /// </summary>
-        [ValidateRangeAttribute(2,int.MaxValue)]
+        [ValidateRangeAttribute(2, int.MaxValue)]
         [Parameter]
         public int Width
         {
-            get { return (width != null) ? width.Value : 0; }
-            set { width = value; }
+            get { return (_width != null) ? _width.Value : 0; }
+            set { _width = value; }
         }
 
-        private Nullable<int> width = null;
+        private Nullable<int> _width = null;
 
         /// <summary>
         /// False to add a newline to the end of the output string, true if not.
@@ -146,15 +146,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return suppressNewline;
+                return _suppressNewline;
             }
             set
             {
-                suppressNewline = value;
+                _suppressNewline = value;
             }
         }
 
-        private bool suppressNewline = false;
+        private bool _suppressNewline = false;
 
         #endregion
 
@@ -168,18 +168,18 @@ namespace Microsoft.PowerShell.Commands
 
             // NOTICE: if any exception is thrown from here to the end of the method, the 
             // cleanup code will be called in IDisposable.Dispose()
-            outInner.LineOutput = InstantiateLineOutputInterface ();
+            outInner.LineOutput = InstantiateLineOutputInterface();
 
-            if (null == sw)
+            if (null == _sw)
             {
                 return;
             }
 
             // finally call the base class for general hookup
-            base.BeginProcessing ();
+            base.BeginProcessing();
         }
 
-        
+
         /// <summary>
         /// one time initialization: acquire a screen host interface
         /// by creating one on top of a file
@@ -187,23 +187,23 @@ namespace Microsoft.PowerShell.Commands
         /// available in the CRO. JonN recommends: file name has to be
         /// a MANDATORY parameter on the command line
         /// </summary>
-        private LineOutput InstantiateLineOutputInterface ()
+        private LineOutput InstantiateLineOutputInterface()
         {
             string action = StringUtil.Format(FormatAndOut_out_xxx.OutFile_Action);
-            if(ShouldProcess(FilePath, action))
+            if (ShouldProcess(FilePath, action))
             {
                 PathUtils.MasterStreamOpen(
                     this,
                     FilePath,
-                    encoding,
+                    _encoding,
                     false, // defaultEncoding
                     Append,
                     Force,
                     NoClobber,
-                    out fs,
-                    out sw,
-                    out readOnlyFileInfo,
-                    isLiteralPath
+                    out _fs,
+                    out _sw,
+                    out _readOnlyFileInfo,
+                    _isLiteralPath
                     );
             }
             else
@@ -212,10 +212,10 @@ namespace Microsoft.PowerShell.Commands
             // compute the # of columns available
             int computedWidth = 120;
 
-            if (this.width != null)
+            if (_width != null)
             {
                 // use the value from the command line
-                computedWidth = this.width.Value;
+                computedWidth = _width.Value;
             }
             else
             {
@@ -238,11 +238,10 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // use the stream writer to create and initialize the Line Output writer
-            TextWriterLineOutput twlo = new TextWriterLineOutput (sw, computedWidth, suppressNewline);
+            TextWriterLineOutput twlo = new TextWriterLineOutput(_sw, computedWidth, _suppressNewline);
 
             // finally have the ILineOutput interface extracted
             return (LineOutput)twlo;
-
         }
 
         /// <summary>
@@ -250,16 +249,16 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            processRecordExecuted = true;
-            if (null == sw)
+            _processRecordExecuted = true;
+            if (null == _sw)
             {
                 return;
             }
 
             // NOTICE: if any exception is thrown, the 
             // cleanup code will be called in IDisposable.Dispose()
-            base.ProcessRecord ();
-            sw.Flush ();
+            base.ProcessRecord();
+            _sw.Flush();
         }
 
         /// <summary>
@@ -273,23 +272,23 @@ namespace Microsoft.PowerShell.Commands
             //     Write-Error error > test.txt
             // In this case, the EndProcess method should return immediately as if it's 
             // never been called. The cleanup work will be done in IDisposable.Dispose()
-            if (!processRecordExecuted)
+            if (!_processRecordExecuted)
             {
                 return;
             }
 
-            if (null == sw)
+            if (null == _sw)
             {
                 return;
             }
 
             // NOTICE: if any exception is thrown, the 
             // cleanup code will be called in IDisposable.Dispose()
-            base.EndProcessing ();
-            
-            sw.Flush ();
+            base.EndProcessing();
 
-            CleanUp ();
+            _sw.Flush();
+
+            CleanUp();
         }
 
         /// <summary>
@@ -297,36 +296,35 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void InternalDispose()
         {
-            base.InternalDispose ();
-            CleanUp ();
-            
+            base.InternalDispose();
+            CleanUp();
         }
 
-        private void CleanUp ()
+        private void CleanUp()
         {
-            if (this.fs != null)
+            if (_fs != null)
             {
-                this.fs.Dispose();
-                this.fs = null;
+                _fs.Dispose();
+                _fs = null;
             }
 
             // reset the read-only attribute
-            if (null != readOnlyFileInfo)
+            if (null != _readOnlyFileInfo)
             {
-                readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
-                this.readOnlyFileInfo = null;
+                _readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
+                _readOnlyFileInfo = null;
             }
         }
 
         /// <summary>
         /// handle to file stream
         /// </summary>
-        FileStream fs;
+        private FileStream _fs;
 
         /// <summary>
         /// stream writer used to write to file
         /// </summary>
-        private StreamWriter sw = null;
+        private StreamWriter _sw = null;
 
         /// <summary>
         /// indicate whether the ProcessRecord method was executed.
@@ -337,12 +335,12 @@ namespace Microsoft.PowerShell.Commands
         /// In this case, the EndProcess method should return immediately as if it's 
         /// never been called.
         /// </summary>
-        private bool processRecordExecuted = false;
+        private bool _processRecordExecuted = false;
 
         /// <summary>
         /// FileInfo of file to clear read-only flag when operation is complete
         /// </summary>
-        private FileInfo readOnlyFileInfo = null;
+        private FileInfo _readOnlyFileInfo = null;
     }
 }
 

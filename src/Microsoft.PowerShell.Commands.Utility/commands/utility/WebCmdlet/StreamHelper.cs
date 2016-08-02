@@ -27,9 +27,9 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Data
 
-        private Stream originalStreamToProxy;
-        private bool isInitialized = false;
-        private Cmdlet ownerCmdlet;
+        private Stream _originalStreamToProxy;
+        private bool _isInitialized = false;
+        private Cmdlet _ownerCmdlet;
 
         #endregion
 
@@ -43,8 +43,8 @@ namespace Microsoft.PowerShell.Commands
         internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet cmdlet)
             : base(initialCapacity)
         {
-            originalStreamToProxy = stream;
-            ownerCmdlet = cmdlet;
+            _originalStreamToProxy = stream;
+            _ownerCmdlet = cmdlet;
         }
         #endregion
 
@@ -270,28 +270,28 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void Initialize()
         {
-            if (isInitialized) { return; }
-            isInitialized = true;
+            if (_isInitialized) { return; }
+            _isInitialized = true;
             try
             {
                 long totalLength = 0;
                 byte[] buffer = new byte[StreamHelper.ChunkSize];
                 for (int read = 1; 0 < read; totalLength += read)
                 {
-                    if (null != ownerCmdlet)
+                    if (null != _ownerCmdlet)
                     {
                         ProgressRecord record = new ProgressRecord(StreamHelper.ActivityId,
                             WebCmdletStrings.ReadResponseProgressActivity,
                         StringUtil.Format(WebCmdletStrings.ReadResponseProgressStatus, totalLength));
-                        ownerCmdlet.WriteProgress(record);
+                        _ownerCmdlet.WriteProgress(record);
 
-                        if (ownerCmdlet.IsStopping)
+                        if (_ownerCmdlet.IsStopping)
                         {
                             break;
                         }
                     }
 
-                    read = originalStreamToProxy.Read(buffer, 0, buffer.Length);
+                    read = _originalStreamToProxy.Read(buffer, 0, buffer.Length);
 
                     if (0 < read)
                     {
@@ -299,13 +299,13 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (ownerCmdlet != null)
+                if (_ownerCmdlet != null)
                 {
                     ProgressRecord record = new ProgressRecord(StreamHelper.ActivityId,
                         WebCmdletStrings.ReadResponseProgressActivity,
                         StringUtil.Format(WebCmdletStrings.ReadResponseComplete, totalLength));
                     record.RecordType = ProgressRecordType.Completed;
-                    ownerCmdlet.WriteProgress(record);
+                    _ownerCmdlet.WriteProgress(record);
                 }
 
                 // make sure the length is set appropriately
@@ -334,7 +334,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Constants
 
         #region Static Methods
-        
+
         internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet)
         {
             byte[] data = new byte[ChunkSize];
@@ -372,7 +372,7 @@ namespace Microsoft.PowerShell.Commands
 
             output.Flush();
         }
-        
+
         internal static void WriteToStream(byte[] input, Stream output)
         {
             output.Write(input, 0, input.Length);
@@ -407,7 +407,7 @@ namespace Microsoft.PowerShell.Commands
                 // just use the default encoding if one wasn't provided
                 encoding = ContentHelper.GetDefaultEncoding();
             }
-            
+
             StringBuilder result = new StringBuilder(capacity: ChunkSize);
             Decoder decoder = encoding.GetDecoder();
 
@@ -449,7 +449,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             while (bytesRead != 0);
-            
+
             return result.ToString();
         }
 

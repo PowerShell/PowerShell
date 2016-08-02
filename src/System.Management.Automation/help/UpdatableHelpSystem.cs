@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Globalization;
 using System.Collections.ObjectModel;
 using System.Net;
@@ -63,7 +64,6 @@ namespace System.Management.Automation.Help
         protected UpdatableHelpSystemException(SerializationInfo serializationInfo, StreamingContext streamingContext)
             : base(serializationInfo, streamingContext)
         {
-
         }
 #endif
 
@@ -451,7 +451,7 @@ namespace System.Management.Automation.Help
                     {
                         client.Timeout = _defaultTimeout;
                         Task<string> responseBody = client.GetStringAsync(uri);
-                        xml = responseBody.Result;   
+                        xml = responseBody.Result;
                         if (responseBody.Exception != null)
                         {
                             return null;
@@ -461,9 +461,9 @@ namespace System.Management.Automation.Help
 #else
                 string xml = _webClient.DownloadString(uri);
 #endif
-                UpdatableHelpInfo helpInfo = CreateHelpInfo(xml, moduleName, moduleGuid, 
-                                                            currentCulture: culture, pathOverride: null, verbose: true, 
-                                                            shouldResolveUri:true, ignoreValidationException: false);
+                UpdatableHelpInfo helpInfo = CreateHelpInfo(xml, moduleName, moduleGuid,
+                                                            currentCulture: culture, pathOverride: null, verbose: true,
+                                                            shouldResolveUri: true, ignoreValidationException: false);
 
                 return helpInfo;
             }
@@ -621,7 +621,7 @@ namespace System.Management.Automation.Help
                                 return uri;
                             }
                         }
-                        else if(response.StatusCode == HttpStatusCode.OK)
+                        else if (response.StatusCode == HttpStatusCode.OK)
                         {
                             if (uri.EndsWith("/", StringComparison.OrdinalIgnoreCase))
                             {
@@ -702,9 +702,9 @@ namespace System.Management.Automation.Help
             XmlDocument document = null;
             try
             {
-                document = CreateValidXmlDocument(xml, HelpInfoXmlNamespace,HelpInfoXmlSchema, 
+                document = CreateValidXmlDocument(xml, HelpInfoXmlNamespace, HelpInfoXmlSchema,
 #if !CORECLR
-                    new ValidationEventHandler(HelpInfoValidationHandler), 
+                    new ValidationEventHandler(HelpInfoValidationHandler),
 #endif
                     true);
             }
@@ -736,7 +736,7 @@ namespace System.Management.Automation.Help
                 }
                 else
                 {
-                   uri = unresolvedUri;
+                    uri = unresolvedUri;
                 }
             }
 
@@ -799,7 +799,7 @@ namespace System.Management.Automation.Help
             {
                 document.Load(reader);
             }
-            catch(XmlException e)
+            catch (XmlException e)
             {
                 if (helpInfo)
                 {
@@ -1157,8 +1157,8 @@ namespace System.Management.Automation.Help
             {
                 // constructing the helpinfo object from previous update help log xml..
                 // no need to resolve the uri's in this case.
-                oldHelpInfo = CreateHelpInfo(xml, moduleName, moduleGuid, currentCulture: null, pathOverride: null, 
-                                             verbose: false, shouldResolveUri:false, ignoreValidationException: force);
+                oldHelpInfo = CreateHelpInfo(xml, moduleName, moduleGuid, currentCulture: null, pathOverride: null,
+                                             verbose: false, shouldResolveUri: false, ignoreValidationException: force);
             }
 
             using (FileStream file = new FileStream(destHelpInfo, FileMode.Create, FileAccess.Write))
@@ -1252,7 +1252,7 @@ namespace System.Management.Automation.Help
             {
                 FileAttributes attributes = File.GetAttributes(path);
 
-                if((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                if ((attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                 {
                     attributes = (attributes & ~FileAttributes.ReadOnly);
                     File.SetAttributes(path, attributes);
@@ -1334,9 +1334,9 @@ namespace System.Management.Automation.Help
                         Directory.Delete(tempPath);
                     }
                 }
-                catch (IOException) {}
+                catch (IOException) { }
                 catch (UnauthorizedAccessException) { }
-                catch (ArgumentException ) {}
+                catch (ArgumentException) { }
             }
         }
 
@@ -1398,23 +1398,23 @@ namespace System.Management.Automation.Help
                             }
                         }
                         catch (FileNotFoundException)
-                        {}
+                        { }
                         catch (DirectoryNotFoundException)
-                        {}
+                        { }
                         catch (UnauthorizedAccessException)
-                        {}
+                        { }
                         catch (System.Security.SecurityException)
-                        {}
+                        { }
                         catch (ArgumentNullException)
-                        {}
+                        { }
                         catch (ArgumentException)
-                        {}
+                        { }
                         catch (PathTooLongException)
-                        {}
+                        { }
                         catch (NotSupportedException)
-                        {}
+                        { }
                         catch (IOException)
-                        {}
+                        { }
                     }
                 }
             }
@@ -1473,7 +1473,7 @@ namespace System.Management.Automation.Help
                 {
                     if (xsd == null)
                     {
-                       throw new ItemNotFoundException(StringUtil.Format(HelpDisplayStrings.HelpContentXsdNotFound, xsdPath));
+                        throw new ItemNotFoundException(StringUtil.Format(HelpDisplayStrings.HelpContentXsdNotFound, xsdPath));
                     }
                     else
                     {
@@ -1493,7 +1493,7 @@ namespace System.Management.Automation.Help
 
                         XmlNode helpItemsNode = null;
 
-                        if(contentDocument.DocumentElement != null &&
+                        if (contentDocument.DocumentElement != null &&
                             contentDocument.DocumentElement.LocalName.Equals("providerHelp", StringComparison.OrdinalIgnoreCase))
                         {
                             helpItemsNode = contentDocument;
@@ -1535,7 +1535,7 @@ namespace System.Management.Automation.Help
                         foreach (XmlNode node in helpItemsNode.ChildNodes)
                         {
                             if (node.NodeType == XmlNodeType.Element)
-                            {                              
+                            {
                                 if (!node.LocalName.Equals("providerHelp", StringComparison.OrdinalIgnoreCase))
                                 {
                                     if (node.LocalName.Equals("para", StringComparison.OrdinalIgnoreCase))
@@ -1551,9 +1551,9 @@ namespace System.Management.Automation.Help
                                             continue;
                                         }
                                     }
-                                    
+
                                     if (!node.NamespaceURI.Equals("http://schemas.microsoft.com/maml/dev/command/2004/10", StringComparison.OrdinalIgnoreCase) &&
-                                        !node.NamespaceURI.Equals("http://schemas.microsoft.com/maml/dev/dscResource/2004/10", StringComparison.OrdinalIgnoreCase) )
+                                        !node.NamespaceURI.Equals("http://schemas.microsoft.com/maml/dev/dscResource/2004/10", StringComparison.OrdinalIgnoreCase))
                                     {
                                         throw new UpdatableHelpSystemException("HelpContentXmlValidationFailure",
                                             StringUtil.Format(HelpDisplayStrings.HelpContentXmlValidationFailure,
@@ -1561,9 +1561,9 @@ namespace System.Management.Automation.Help
                                     }
                                 }
 
-                                CreateValidXmlDocument(node.OuterXml, targetNamespace, xsd, 
+                                CreateValidXmlDocument(node.OuterXml, targetNamespace, xsd,
 #if !CORECLR
-                                    new ValidationEventHandler(HelpContentValidationHandler), 
+                                    new ValidationEventHandler(HelpContentValidationHandler),
 #endif
                                     false);
                             }
@@ -1587,7 +1587,6 @@ namespace System.Management.Automation.Help
                                 StringUtil.Format(HelpDisplayStrings.HelpContentContainsInvalidFiles), ErrorCategory.InvalidData,
                                 null, null);
                         }
-
                     }
                 }
 
@@ -1740,7 +1739,7 @@ namespace System.Management.Automation.Help
                 // Ignore AccessDenied related exceptions
             }
         }
-        
+
         /// <summary>
         /// Checks if it is necessary to prompt to update help
         /// </summary>

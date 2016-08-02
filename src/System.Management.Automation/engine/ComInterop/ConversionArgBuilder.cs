@@ -15,22 +15,26 @@ using System.Runtime.CompilerServices;
 //using Microsoft.Scripting.Utils;
 using System.Management.Automation.Interpreter;
 
-namespace System.Management.Automation.ComInterop {
-
-    internal class ConversionArgBuilder : ArgBuilder {
+namespace System.Management.Automation.ComInterop
+{
+    internal class ConversionArgBuilder : ArgBuilder
+    {
         private SimpleArgBuilder _innerBuilder;
         private Type _parameterType;
 
-        internal ConversionArgBuilder(Type parameterType, SimpleArgBuilder innerBuilder) {
+        internal ConversionArgBuilder(Type parameterType, SimpleArgBuilder innerBuilder)
+        {
             _parameterType = parameterType;
             _innerBuilder = innerBuilder;
         }
 
-        internal override Expression Marshal(Expression parameter) {
+        internal override Expression Marshal(Expression parameter)
+        {
             return _innerBuilder.Marshal(Helpers.Convert(parameter, _parameterType));
         }
 
-        internal override Expression MarshalToRef(Expression parameter) {
+        internal override Expression MarshalToRef(Expression parameter)
+        {
             //we are not supporting conversion InOut
             throw Assert.Unreachable;
         }

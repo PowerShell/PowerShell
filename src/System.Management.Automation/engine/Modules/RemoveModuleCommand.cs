@@ -15,6 +15,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 //
 // Now define the set of commands for manipulating modules.
 //
+
 namespace Microsoft.PowerShell.Commands
 {
     #region Remove-Module
@@ -34,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
             set { _name = value; }
             get { return _name; }
         }
-        private string[] _name =  Utils.EmptyArray<string>();
+        private string[] _name = Utils.EmptyArray<string>();
 
         /// <summary>
         /// This parameter specifies the current pipeline object 
@@ -79,20 +80,20 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (var m in Context.Modules.GetModules(_name, false))
             {
-                modulesToRemove.Add(m, new List<PSModuleInfo>{m});
+                modulesToRemove.Add(m, new List<PSModuleInfo> { m });
             }
 
             if (FullyQualifiedName != null)
             {
                 foreach (var m in Context.Modules.GetModules(FullyQualifiedName, false))
                 {
-                    modulesToRemove.Add(m, new List<PSModuleInfo> {m});
+                    modulesToRemove.Add(m, new List<PSModuleInfo> { m });
                 }
             }
 
             foreach (var m in _moduleInfo)
             {
-                modulesToRemove.Add(m, new List<PSModuleInfo>{m});
+                modulesToRemove.Add(m, new List<PSModuleInfo> { m });
             }
 
             // Add any of the child modules of a manifests to the list of modules to remove...
@@ -297,11 +298,11 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-        
+
         /// <summary>
         /// Returns a map from a module to the list of modules that require it
         /// </summary>
-        Dictionary<PSModuleInfo, List<PSModuleInfo>> GetRequiredDependencies()
+        private Dictionary<PSModuleInfo, List<PSModuleInfo>> GetRequiredDependencies()
         {
             Dictionary<PSModuleInfo, List<PSModuleInfo>> requiredDependencies = new Dictionary<PSModuleInfo, List<PSModuleInfo>>();
 
@@ -364,5 +365,4 @@ namespace Microsoft.PowerShell.Commands
         }
     }
     #endregion Remove-Module
-
 } // Microsoft.PowerShell.Commands

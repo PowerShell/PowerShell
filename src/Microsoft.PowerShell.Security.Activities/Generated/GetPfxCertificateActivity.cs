@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using Microsoft.PowerShell.Activities;
 using System.Management.Automation;
 using System.Activities;
@@ -28,9 +29,9 @@ namespace Microsoft.PowerShell.Security.Activities
         /// Gets the fully qualified name of the command invoked by this activity.
         /// </summary>
         public override string PSCommandName { get { return "Microsoft.PowerShell.Security\\Get-PfxCertificate"; } }
-        
+
         // Arguments
-        
+
         /// <summary>
         /// Provides access to the FilePath parameter.
         /// </summary>
@@ -47,10 +48,10 @@ namespace Microsoft.PowerShell.Security.Activities
 
 
         // Module defining this command
-        
+
 
         // Optional custom code for this activity
-        
+
 
         /// <summary>
         /// Returns a configured instance of System.Management.Automation.PowerShell, pre-populated with the command to run.
@@ -64,13 +65,13 @@ namespace Microsoft.PowerShell.Security.Activities
             System.Management.Automation.PowerShell targetCommand = invoker.AddCommand(PSCommandName);
 
             // Initialize the arguments
-            
-            if(FilePath.Expression != null)
+
+            if (FilePath.Expression != null)
             {
                 targetCommand.AddParameter("FilePath", FilePath.Get(context));
             }
 
-            if(LiteralPath.Expression != null)
+            if (LiteralPath.Expression != null)
             {
                 targetCommand.AddParameter("LiteralPath", LiteralPath.Get(context));
             }

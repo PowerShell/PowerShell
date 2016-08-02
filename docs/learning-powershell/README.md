@@ -1,7 +1,7 @@
 Learning PowerShell
 ====
 
-Whether you're a Developer, a DevOps Professional or an IT Professional, this doc will help you getting started with PowerShell.
+Whether you're a Developer, a DevOps or an IT Professional, this doc will help you getting started with PowerShell.
 In this document we'll cover the following:
 installing PowerShell, samples walkthrough, PowerShell editor, debugger, testing tools and a map book for experienced bash users to get started with PowerShell faster.
 
@@ -21,7 +21,7 @@ At the end of this exercise, you should be able to launch the PowerShell session
 - Get PowerShell by installing package
  * [PowerShell on Linux][inst-linux]
  * [PowerShell on OS X][inst-linux]
- * PowerShell on Windows
+ * [PowerShell on Windows][inst-win]
 
   For this tutorial, you do not need to install PowerShell if you are running on Windows.
   You can launch PowerShell console by pressing Windows key, typing PowerShell, and clicking on Windows PowerShell.
@@ -52,11 +52,6 @@ Click on the following link to create your first PowerShell script.
 
 - [Using Visual Studio Code (VS Code)][use-vscode-editor]
 
-On Windows, you can also use [PowerShell Integrated Scripting Environment (ISE)][use-ise-editor] to edit PowerShell scripts.
-
-[use-vscode-editor]:./using-vscode.md#editing-with-vs-code
-[use-ise-editor]:./using-ise.md#editing-with-ise
-
 PowerShell Debugger
 ----
 
@@ -66,11 +61,16 @@ Click on the link below to learn more about debugging:
 - [Using Visual Studio Code (VS Code)][use-vscode-debugger]
 - [PowerShell Command-line Debugging][cli-debugging]
 
-On Windows, you can also use  [ISE][use-ise-debugger] to debug PowerShell scripts.
+On Windows, you can also use [PowerShell Integrated Scripting Environment (ISE)][use-ise-editor] to edit or debug PowerShell scripts.
+However it is not supported if you are using PowerShell installed from the [PowerShell package][get-powershell] or directly [built][build-powershell] from GitHub.
 
+[use-vscode-editor]:./using-vscode.md#editing-with-vs-code
+[use-ise-editor]:./using-ise.md#editing-with-ise
 [use-vscode-debugger]:./using-vscode.md#debugging-with-vs-code
 [use-ise-debugger]:./using-ise.md#debugging-with-ise
 [cli-debugging]:./debugging-from-commandline.md
+[get-powershell]:../../README.md#get-powershell
+[build-powershell]:../../README.md#building-the-repository
 
 
 PowerShell Testing

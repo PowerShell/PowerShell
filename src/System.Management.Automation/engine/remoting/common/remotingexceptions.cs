@@ -50,7 +50,7 @@ namespace System.Management.Automation.Remoting
         RemoteHostReadLineAsSecureStringPrompt = 215,
         RemoteHostGetBufferContents = 216,
         RemoteHostPromptSecureStringPrompt = 217,
-        WinPERemotingNotSupported =  218,
+        WinPERemotingNotSupported = 218,
 
         // reserved range: 300-399
 
@@ -109,12 +109,12 @@ namespace System.Management.Automation.Remoting
         // reserved range: 700-799
 
         // Transport related range: 800-899
-        
+
         ConnectFailed = 801,
         CloseIsCalled = 802,
         ForceClosed = 803,
         CloseFailed = 804,
-        CloseCompleted = 805,                
+        CloseCompleted = 805,
         UnsupportedWaitHandleType = 806,
         ReceivedDataStreamIsNotStdout = 807,
         StdInIsNotOpen = 808,
@@ -151,8 +151,8 @@ namespace System.Management.Automation.Remoting
         CloseExCallBackError = 866,
         // END: Error codes added to support new WSMan Fan-In Model API
         // BEGIN: Error IDs introduced for URI redirection
-        RedirectedURINotWellFormatted=867,
-        URIEndPointNotResolved=868,
+        RedirectedURINotWellFormatted = 867,
+        URIEndPointNotResolved = 868,
         // END: Error IDs introduced for URI redirection
         // BEGIN: Error IDs introduced for Quota Management
         ReceivedObjectSizeExceededMaximumClient = 869,
@@ -242,22 +242,22 @@ namespace System.Management.Automation.Remoting
         PSSenderInfoDescription = 1004,
 
         // IPC for Backgroud jobs related errors: 2000
-        IPCUnknownNodeType=2001,
+        IPCUnknownNodeType = 2001,
         IPCInsufficientDataforElement = 2002,
-        IPCWrongAttributeCountForDataElement=2003,
-        IPCOnlyTextExpectedInDataElement=2004,
-        IPCWrongAttributeCountForElement=2005,
-        IPCUnknownElementReceived=2006,
-        IPCSupportsOnlyDefaultAuth=2007,
-        IPCWowComponentNotPresent=2008,
-        IPCServerProcessReportedError=2100,
-        IPCServerProcessExited=2101,
-        IPCErrorProcessingServerData=2102,
-        IPCUnknownCommandGuid=2103,
-        IPCNoSignalForSession=2104,
-        IPCSignalTimedOut=2105,
-        IPCCloseTimedOut=2106,
-        IPCExceptionLaunchingProcess=2107,
+        IPCWrongAttributeCountForDataElement = 2003,
+        IPCOnlyTextExpectedInDataElement = 2004,
+        IPCWrongAttributeCountForElement = 2005,
+        IPCUnknownElementReceived = 2006,
+        IPCSupportsOnlyDefaultAuth = 2007,
+        IPCWowComponentNotPresent = 2008,
+        IPCServerProcessReportedError = 2100,
+        IPCServerProcessExited = 2101,
+        IPCErrorProcessingServerData = 2102,
+        IPCUnknownCommandGuid = 2103,
+        IPCNoSignalForSession = 2104,
+        IPCSignalTimedOut = 2105,
+        IPCCloseTimedOut = 2106,
+        IPCExceptionLaunchingProcess = 2107,
     }
 
 
@@ -326,7 +326,7 @@ namespace System.Management.Automation.Remoting
         /// Inner exception.
         /// </param>
         public PSRemotingDataStructureException(string message, Exception innerException)
-            : base (message, innerException)
+            : base(message, innerException)
         {
             SetDefaultErrorRecord();
         }
@@ -359,7 +359,7 @@ namespace System.Management.Automation.Remoting
         /// Optional parameters required to format the resource string.
         /// </param>
         internal PSRemotingDataStructureException(Exception innerException, string resourceString, params object[] args)
-            : base (PSRemotingErrorInvariants.FormatResourceString(resourceString, args), innerException)
+            : base(PSRemotingErrorInvariants.FormatResourceString(resourceString, args), innerException)
         {
             SetDefaultErrorRecord();
         }
@@ -387,7 +387,7 @@ namespace System.Management.Automation.Remoting
         }
     }
 
-    
+
     /// <summary>
     /// This exception is used by remoting code to indicate an error condition in network operations.
     /// </summary>
@@ -420,7 +420,7 @@ namespace System.Management.Automation.Remoting
             SetDefaultErrorRecord();
         }
 
-        
+
 
         /// <summary>
         /// This constructor takes a localized message and an inner exception.
@@ -432,7 +432,7 @@ namespace System.Management.Automation.Remoting
         /// Inner exception.
         /// </param>
         public PSRemotingTransportException(string message, Exception innerException)
-            : base (message, innerException)
+            : base(message, innerException)
         {
             SetDefaultErrorRecord();
         }
@@ -453,7 +453,7 @@ namespace System.Management.Automation.Remoting
             : base(PSRemotingErrorInvariants.FormatResourceString(resourceString, args))
         {
             SetDefaultErrorRecord();
-            this._errorCode = (int)errorId;
+            _errorCode = (int)errorId;
         }
 
         /// <summary>
@@ -469,7 +469,7 @@ namespace System.Management.Automation.Remoting
         /// Optional parameters required to format the resource string.
         /// </param>
         internal PSRemotingTransportException(Exception innerException, string resourceString, params object[] args)
-            : base (PSRemotingErrorInvariants.FormatResourceString(resourceString, args), innerException)
+            : base(PSRemotingErrorInvariants.FormatResourceString(resourceString, args), innerException)
         {
             SetDefaultErrorRecord();
         }
@@ -537,7 +537,6 @@ namespace System.Management.Automation.Remoting
             {
                 _errorCode = value;
             }
-
         }
 
         /// <summary>
@@ -583,7 +582,7 @@ namespace System.Management.Automation.Remoting
         public PSRemotingTransportRedirectException(string message)
             : base(message)
         {
-        }       
+        }
 
         /// <summary>
         /// This constructor takes a localized message and an inner exception.
@@ -595,7 +594,7 @@ namespace System.Management.Automation.Remoting
         /// Inner exception.
         /// </param>
         public PSRemotingTransportRedirectException(string message, Exception innerException)
-            : base (message, innerException)
+            : base(message, innerException)
         {
         }
 
@@ -612,7 +611,7 @@ namespace System.Management.Automation.Remoting
         /// Optional parameters required to format the resource string.
         /// </param>
         internal PSRemotingTransportRedirectException(Exception innerException, string resourceString, params object[] args)
-            : base (innerException, resourceString, args)
+            : base(innerException, resourceString, args)
         {
         }
 
@@ -632,7 +631,7 @@ namespace System.Management.Automation.Remoting
                 throw new PSArgumentNullException("info");
             }
 
-            redirectLocation = info.GetString("RedirectLocation");
+            _redirectLocation = info.GetString("RedirectLocation");
         }
 
         /// <summary>
@@ -653,7 +652,7 @@ namespace System.Management.Automation.Remoting
         internal PSRemotingTransportRedirectException(string redirectLocation, PSRemotingErrorId errorId, string resourceString, params object[] args)
             : base(errorId, resourceString, args)
         {
-            this.redirectLocation = redirectLocation;
+            _redirectLocation = redirectLocation;
         }
 
         #endregion
@@ -675,7 +674,7 @@ namespace System.Management.Automation.Remoting
 
             base.GetObjectData(info, context);
             // If there are simple fields, serialize them with info.AddValue
-            info.AddValue("RedirectLocation", redirectLocation);
+            info.AddValue("RedirectLocation", _redirectLocation);
         }
 
         #endregion
@@ -688,11 +687,11 @@ namespace System.Management.Automation.Remoting
         {
             get
             {
-                return redirectLocation;
+                return _redirectLocation;
             }
         }
 
-        private string redirectLocation;
+        private string _redirectLocation;
 
         #endregion
     }

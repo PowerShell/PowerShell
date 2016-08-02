@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using System.Threading;
@@ -11,10 +12,10 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Suspend shell, script, or runspace activity for the specified period of time.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Start, "Sleep", DefaultParameterSetName = "Seconds", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113407" )]
+    [Cmdlet(VerbsLifecycle.Start, "Sleep", DefaultParameterSetName = "Seconds", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113407")]
     public sealed class StartSleepCommand : PSCmdlet, IDisposable
     {
-        private bool disposed = false;
+        private bool _disposed = false;
 
         #region IDisposable
         /// <summary>
@@ -22,14 +23,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public void Dispose()
         {
-            if (disposed == false)
+            if (_disposed == false)
             {
-                if (waitHandle != null)
+                if (_waitHandle != null)
                 {
-                    waitHandle.Dispose();
-                    waitHandle = null;
+                    _waitHandle.Dispose();
+                    _waitHandle = null;
                 }
-                disposed = true;
+                _disposed = true;
             }
         }
 
@@ -42,74 +43,74 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Allows sleep time to be specified in seconds
         /// </summary>
-        [Parameter(Position = 0,Mandatory = true,ParameterSetName = "Seconds",ValueFromPipeline=true,
-                   ValueFromPipelineByPropertyName = true )]
-        [ValidateRangeAttribute( 0, int.MaxValue/1000 )]
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Seconds", ValueFromPipeline = true,
+                   ValueFromPipelineByPropertyName = true)]
+        [ValidateRangeAttribute(0, int.MaxValue / 1000)]
         public int Seconds
         {
             get
             {
-                return seconds;
+                return _seconds;
             }
             set
             {
-                seconds = value;
+                _seconds = value;
             }
         }
-        private int seconds;
+        private int _seconds;
 
 
         /// <summary>
         /// Allows sleep time to be specified in milliseconds
         /// </summary>
-        [Parameter(Mandatory=true,ParameterSetName = "Milliseconds", ValueFromPipelineByPropertyName=true)]
-        [ValidateRangeAttribute( 0, int.MaxValue )]
+        [Parameter(Mandatory = true, ParameterSetName = "Milliseconds", ValueFromPipelineByPropertyName = true)]
+        [ValidateRangeAttribute(0, int.MaxValue)]
         public int Milliseconds
         {
             get
             {
-                return milliseconds;
+                return _milliseconds;
             }
             set
             {
-                milliseconds = value;
+                _milliseconds = value;
             }
         }
-        private int milliseconds;
+        private int _milliseconds;
 
         #endregion
 
         #region methods
 
         //Wait handle which is used by thread to sleep.
-        ManualResetEvent waitHandle;
+        private ManualResetEvent _waitHandle;
 
         //object used for synchornizes pipeline thread and stop thread
         //access to waitHandle
-        object syncObject = new object();
+        private object _syncObject = new object();
 
         //this is set to true by stopProcessing
-        bool stopping = false;
+        private bool _stopping = false;
 
         /// <summary>
         /// This method causes calling thread to sleep for 
         /// specified milliseconds
         /// </summary>
-        void Sleep(int milliSecondsToSleep)
+        private void Sleep(int milliSecondsToSleep)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (stopping == false)
+                if (_stopping == false)
                 {
-                    waitHandle = new ManualResetEvent(false);
+                    _waitHandle = new ManualResetEvent(false);
                 }
             }
-            if (waitHandle != null)
+            if (_waitHandle != null)
             {
 #if CORECLR //TODO:CORECLR bool WaitOne(int millisecondsTimeout,bool exitContext) is not available on CLR yet
-                waitHandle.WaitOne(new TimeSpan(0, 0, 0, 0, milliSecondsToSleep));
+                _waitHandle.WaitOne(new TimeSpan(0, 0, 0, 0, milliSecondsToSleep));
 #else
-                waitHandle.WaitOne(new TimeSpan(0, 0, 0, 0, milliSecondsToSleep), true);
+                _waitHandle.WaitOne(new TimeSpan(0, 0, 0, 0, milliSecondsToSleep), true);
 #endif
             }
         }
@@ -121,7 +122,7 @@ namespace Microsoft.PowerShell.Commands
         {
             int sleepTime = 0;
 
-            switch ( ParameterSetName )
+            switch (ParameterSetName)
             {
                 case "Seconds":
                     sleepTime = Seconds * 1000;
@@ -132,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 default:
-                    Dbg.Diagnostics.Assert(false,"Only one of the specified parameter sets should be called." );
+                    Dbg.Diagnostics.Assert(false, "Only one of the specified parameter sets should be called.");
                     break;
             }
 
@@ -142,20 +143,19 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// stopprocessing override
         /// </summary>
-        protected override 
-        void 
+        protected override
+        void
         StopProcessing()
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-                stopping = true;
-                if (waitHandle != null)
+                _stopping = true;
+                if (_waitHandle != null)
                 {
-                    waitHandle.Set();
+                    _waitHandle.Set();
                 }
             }
         }
-
 
         #endregion
     } // StartSleepCommand

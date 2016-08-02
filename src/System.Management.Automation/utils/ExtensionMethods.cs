@@ -1,6 +1,7 @@
 ﻿//
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -81,7 +82,7 @@ namespace System.Management.Automation
         /// Type.EmptyTypes is not in CoreCLR. Use this one to replace it.
         /// </summary>
         internal static Type[] EmptyTypes = new Type[0];
-        private static readonly Type ComObjectType = Type.GetType("System.__ComObject");
+        private static readonly Type s_comObjectType = Type.GetType("System.__ComObject");
 
         /// <summary>
         /// Check does the type have an instance default constructor with visibility that allows calling it from subclass.
@@ -133,7 +134,7 @@ namespace System.Management.Automation
 #if UNIX
             return false;
 #elif CORECLR // Type.IsComObject(Type) is not in CoreCLR
-            return ComObjectType.IsAssignableFrom(type);
+            return s_comObjectType.IsAssignableFrom(type);
 #else
             return type.IsCOMObject;
 #endif
@@ -150,7 +151,7 @@ namespace System.Management.Automation
         }
 
         internal static IEnumerable<T> GetCustomAttributes<T>(this Type type, bool inherit)
-            where T: Attribute
+            where T : Attribute
         {
             return from attr in type.GetTypeInfo().GetCustomAttributes(typeof(T), inherit)
                    where attr is T
@@ -160,12 +161,11 @@ namespace System.Management.Automation
 
     internal static class WeakReferenceExtensions
     {
-        internal static bool TryGetTarget<T>(this WeakReference weakReference, out T target) where T:class 
+        internal static bool TryGetTarget<T>(this WeakReference weakReference, out T target) where T : class
         {
             var t = weakReference.Target;
             target = t as T;
             return (target != null);
         }
     }
-
 }

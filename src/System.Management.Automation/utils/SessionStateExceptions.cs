@@ -28,7 +28,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a ProviderInvocationException
         /// </summary>
-        public ProviderInvocationException () : base()
+        public ProviderInvocationException() : base()
         {
         }
 
@@ -46,7 +46,7 @@ namespace System.Management.Automation
         protected ProviderInvocationException(
             SerializationInfo info,
             StreamingContext context)
-            : base (info, context)
+            : base(info, context)
         {
         }
 
@@ -58,7 +58,7 @@ namespace System.Management.Automation
         /// The message for the exception.
         /// </param>
         public ProviderInvocationException(string message)
-            : base(message) 
+            : base(message)
         {
             _message = message;
         }
@@ -74,17 +74,16 @@ namespace System.Management.Automation
         /// <param name="innerException">
         /// The inner exception for this exception.
         /// </param>
-        internal ProviderInvocationException(ProviderInfo provider, Exception innerException) 
-            : base (RuntimeException.RetrieveMessage(innerException), innerException)
+        internal ProviderInvocationException(ProviderInfo provider, Exception innerException)
+            : base(RuntimeException.RetrieveMessage(innerException), innerException)
         {
-
             _message = base.Message;
             _providerInfo = provider;
 
             IContainsErrorRecord icer = innerException as IContainsErrorRecord;
             if (null != icer && null != icer.ErrorRecord)
             {
-                _errorRecord = new ErrorRecord (icer.ErrorRecord, innerException);
+                _errorRecord = new ErrorRecord(icer.ErrorRecord, innerException);
             }
             else
             {
@@ -108,13 +107,13 @@ namespace System.Management.Automation
         /// <param name="errorRecord">
         /// Detailed error information
         /// </param>
-        internal ProviderInvocationException(ProviderInfo provider, ErrorRecord errorRecord) 
-            : base (RuntimeException.RetrieveMessage(errorRecord),
+        internal ProviderInvocationException(ProviderInfo provider, ErrorRecord errorRecord)
+            : base(RuntimeException.RetrieveMessage(errorRecord),
                     RuntimeException.RetrieveException(errorRecord))
         {
             if (null == errorRecord)
             {
-                throw new ArgumentNullException ("errorRecord");
+                throw new ArgumentNullException("errorRecord");
             }
 
             _message = base.Message;
@@ -135,7 +134,7 @@ namespace System.Management.Automation
         /// The inner exception for this exception.
         /// </param>
         public ProviderInvocationException(string message, Exception innerException)
-            : base (message, innerException)
+            : base(message, innerException)
         {
             _message = message;
         }
@@ -209,14 +208,14 @@ namespace System.Management.Automation
         /// an ErrorRecord. If false, the error message retrieved using the errorId will be used.
         /// </param>
         /// 
-        internal ProviderInvocationException (
+        internal ProviderInvocationException(
             string errorId,
             string resourceStr,
             ProviderInfo provider,
             string path,
             Exception innerException,
             bool useInnerExceptionMessage)
-            : base (
+            : base(
                 RetrieveMessage(errorId, resourceStr, provider, path, innerException),
                 innerException)
         {
@@ -241,7 +240,7 @@ namespace System.Management.Automation
             }
             else
             {
-                _errorRecord = new ErrorRecord (
+                _errorRecord = new ErrorRecord(
                     errorRecordException,
                     errorId,
                     ErrorCategory.InvalidOperation,
@@ -281,12 +280,12 @@ namespace System.Management.Automation
         #endregion Properties
 
         #region Private/Internal
-        private static string RetrieveMessage (
+        private static string RetrieveMessage(
             string errorId,
             string resourceStr,
             ProviderInfo provider,
             string path,
-            Exception innerException) 
+            Exception innerException)
         {
             if (null == innerException)
             {
@@ -294,25 +293,25 @@ namespace System.Management.Automation
                 "ProviderInvocationException.RetrieveMessage needs innerException");
                 return "";
             }
-            if (String.IsNullOrEmpty (errorId))
+            if (String.IsNullOrEmpty(errorId))
             {
-                Diagnostics.Assert (false,
+                Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage needs errorId");
                 return RuntimeException.RetrieveMessage(innerException);
             }
             if (null == provider)
             {
-                Diagnostics.Assert (false,
+                Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage needs provider");
-                return RuntimeException.RetrieveMessage (innerException);
+                return RuntimeException.RetrieveMessage(innerException);
             }
 
             string format = resourceStr;
-            if (String.IsNullOrEmpty (format))
+            if (String.IsNullOrEmpty(format))
             {
-                Diagnostics.Assert (false,
+                Diagnostics.Assert(false,
                 "ProviderInvocationException.RetrieveMessage bad errorId " + errorId);
-                return RuntimeException.RetrieveMessage (innerException);
+                return RuntimeException.RetrieveMessage(innerException);
             }
             string result = null;
 
@@ -440,7 +439,7 @@ namespace System.Management.Automation
             string resourceStr,
             ErrorCategory errorCategory,
             params object[] messageArgs)
-            : base (BuildMessage(itemName,resourceStr,messageArgs))
+            : base(BuildMessage(itemName, resourceStr, messageArgs))
         {
             _itemName = itemName;
             _sessionStateCategory = sessionStateCategory;
@@ -481,7 +480,7 @@ namespace System.Management.Automation
         /// </param>
         public SessionStateException(string message,
                                      Exception innerException)
-                : base (message, innerException)
+                : base(message, innerException)
         {
         }
         #endregion ctor
@@ -661,7 +660,7 @@ namespace System.Management.Automation
         /// </param>
         public SessionStateOverflowException(string message,
                                              Exception innerException)
-                : base (message, innerException)
+                : base(message, innerException)
         {
         }
         #endregion ctor
@@ -757,7 +756,7 @@ namespace System.Management.Automation
         /// </param>
         public SessionStateUnauthorizedAccessException(string message,
                                              Exception innerException)
-                : base (message, innerException)
+                : base(message, innerException)
         {
         }
         #endregion ctor
@@ -818,9 +817,9 @@ namespace System.Management.Automation
             string resourceStr,
             params object[] messageArgs)
             : base(
-                itemName, 
+                itemName,
                 sessionStateCategory,
-                errorIdAndResourceId, 
+                errorIdAndResourceId,
                 resourceStr,
                 ErrorCategory.ObjectNotFound,
                 messageArgs)
@@ -857,7 +856,7 @@ namespace System.Management.Automation
         /// </param>
         public ProviderNotFoundException(string message,
                                          Exception innerException)
-                : base (message, innerException)
+                : base(message, innerException)
         {
         }
         #endregion ctor
@@ -1059,7 +1058,7 @@ namespace System.Management.Automation
         /// </param>
         public DriveNotFoundException(string message,
                                       Exception innerException)
-                : base (message, innerException)
+                : base(message, innerException)
         {
         }
         #endregion ctor
@@ -1145,7 +1144,7 @@ namespace System.Management.Automation
         /// </param>
         public ItemNotFoundException(string message,
                                       Exception innerException)
-                : base (message, innerException)
+                : base(message, innerException)
         {
         }
         #endregion ctor

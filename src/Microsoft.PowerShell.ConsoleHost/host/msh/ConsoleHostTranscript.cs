@@ -24,7 +24,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell
 {
-    internal sealed partial 
+    internal sealed partial
     class ConsoleHost
         :
         PSHost,
@@ -38,14 +38,14 @@ namespace Microsoft.PowerShell
             {
                 // no locking because the compare should be atomic
 
-                return isTranscribing;
+                return _isTranscribing;
             }
             set
             {
-                isTranscribing = value;
+                _isTranscribing = value;
             }
         }
-        private bool isTranscribing;
+        private bool _isTranscribing;
 
 
         /*
@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell
             }
         }
         */
-        private string transcriptFileName = String.Empty;
+        private string _transcriptFileName = String.Empty;
 
 
 
@@ -88,10 +88,9 @@ namespace Microsoft.PowerShell
         string
         StopTranscribing()
         {
-            lock (transcriptionStateLock)
+            lock (_transcriptionStateLock)
             {
-
-                if (transcriptionWriter == null)
+                if (_transcriptionWriter == null)
                 {
                     return null;
                 }
@@ -102,23 +101,23 @@ namespace Microsoft.PowerShell
                 // which will crash the process...
                 try
                 {
-                    transcriptionWriter.WriteLine(
+                    _transcriptionWriter.WriteLine(
                         StringUtil.Format(ConsoleHostStrings.TranscriptEpilogue, DateTime.Now));
                 }
                 finally
                 {
                     try
                     {
-                        transcriptionWriter.Dispose();
+                        _transcriptionWriter.Dispose();
                     }
                     finally
                     {
-                        transcriptionWriter = null;
-                        isTranscribing = false;
+                        _transcriptionWriter = null;
+                        _isTranscribing = false;
                     }
                 }
 
-                return transcriptFileName;
+                return _transcriptFileName;
             }
         }
 
@@ -128,19 +127,19 @@ namespace Microsoft.PowerShell
         void
         WriteToTranscript(string text)
         {
-            lock (transcriptionStateLock)
+            lock (_transcriptionStateLock)
             {
-                if (isTranscribing && transcriptionWriter != null)
+                if (_isTranscribing && _transcriptionWriter != null)
                 {
-                    transcriptionWriter.Write(text);
+                    _transcriptionWriter.Write(text);
                 }
             }
         }
 
 
 
-        private StreamWriter transcriptionWriter;
-        private object transcriptionStateLock = new object();
+        private StreamWriter _transcriptionWriter;
+        private object _transcriptionStateLock = new object();
     }
 }   // namespace 
 

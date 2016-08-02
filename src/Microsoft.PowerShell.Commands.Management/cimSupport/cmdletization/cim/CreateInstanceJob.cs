@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             Dbg.Assert(_resultFromCreateInstance != null, "GetInstance should only be called after CreteInstance came back with a keyed instance");
             IObservable<CimInstance> observable = this.JobContext.Session.GetInstanceAsync(
                 this.JobContext.Namespace,
-                this._resultFromCreateInstance,
+                _resultFromCreateInstance,
                 this.CreateOperationOptions());
             return observable;
         }
@@ -118,8 +118,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             Dbg.Assert(this.DidUserSuppressTheOperation || (_resultFromCreateInstance != null), "OnNext should always be called before OnComplete by CreateInstance");
 #if DEBUG
             Dbg.Assert(
-                !this._getInstanceOperationGotStarted || this.DidUserSuppressTheOperation || (this._resultFromGetInstance != null), 
-                    // <=> (this._getInstanceOperationGotStarted => (this._resultFromGetInstance != null))
+                !_getInstanceOperationGotStarted || this.DidUserSuppressTheOperation || (_resultFromGetInstance != null),
+                // <=> (this._getInstanceOperationGotStarted => (this._resultFromGetInstance != null))
                 "GetInstance should cause OnNext to be called which should set this._resultFromGetInstance to non-null");
 #endif
             if (this.IsPassThruObjectNeeded() && (_resultFromGetInstance == null))
@@ -141,6 +141,5 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 return _resultFromGetInstance;
             }
         }
-
     }
 }

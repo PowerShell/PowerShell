@@ -35,8 +35,8 @@ namespace Microsoft.PowerShell.Commands
         void SetAccessControl(ObjectSecurity securityDescriptor);
         ObjectSecurity GetAccessControl(AccessControlSections includeSections);
         void Close();
-        string Name { get;}
-        int SubKeyCount { get;}
+        string Name { get; }
+        int SubKeyCount { get; }
     }
 
     internal static class RegistryWrapperUtils
@@ -111,18 +111,18 @@ namespace Microsoft.PowerShell.Commands
 
     internal class RegistryWrapper : IRegistryWrapper
     {
-        RegistryKey regKey;
+        private RegistryKey _regKey;
 
         internal RegistryWrapper(RegistryKey regKey)
         {
-            this.regKey = regKey;
+            _regKey = regKey;
         }
 
         #region IRegistryWrapper Members
 
         public void SetValue(string name, object value)
         {
-            regKey.SetValue(name, value);
+            _regKey.SetValue(name, value);
         }
 
         public void SetValue(string name, object value, RegistryValueKind valueKind)
@@ -130,27 +130,27 @@ namespace Microsoft.PowerShell.Commands
             value = System.Management.Automation.PSObject.Base(value);
             value = RegistryWrapperUtils.ConvertUIntToValueForRegistryIfNeeded(value, valueKind);
 
-            regKey.SetValue(name, value, valueKind);
+            _regKey.SetValue(name, value, valueKind);
         }
 
         public string[] GetValueNames()
         {
-            return regKey.GetValueNames();
+            return _regKey.GetValueNames();
         }
 
         public void DeleteValue(string name)
         {
-            regKey.DeleteValue(name);
+            _regKey.DeleteValue(name);
         }
 
         public string[] GetSubKeyNames()
         {
-            return regKey.GetSubKeyNames();
+            return _regKey.GetSubKeyNames();
         }
 
         public IRegistryWrapper CreateSubKey(string subkey)
         {
-            RegistryKey newKey = regKey.CreateSubKey(subkey);
+            RegistryKey newKey = _regKey.CreateSubKey(subkey);
             if (newKey == null)
                 return null;
             else
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
 
         public IRegistryWrapper OpenSubKey(string name, bool writable)
         {
-            RegistryKey newKey = regKey.OpenSubKey(name, writable);
+            RegistryKey newKey = _regKey.OpenSubKey(name, writable);
             if (newKey == null)
                 return null;
             else
@@ -168,12 +168,12 @@ namespace Microsoft.PowerShell.Commands
 
         public void DeleteSubKeyTree(string subkey)
         {
-            regKey.DeleteSubKeyTree(subkey);
+            _regKey.DeleteSubKeyTree(subkey);
         }
 
         public object GetValue(string name)
         {
-            object value = regKey.GetValue(name);
+            object value = _regKey.GetValue(name);
 
             try
             {
@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
 
         public object GetValue(string name, object defaultValue, RegistryValueOptions options)
         {
-            object value = regKey.GetValue(name, defaultValue, options);
+            object value = _regKey.GetValue(name, defaultValue, options);
 
             try
             {
@@ -205,37 +205,37 @@ namespace Microsoft.PowerShell.Commands
 
         public RegistryValueKind GetValueKind(string name)
         {
-            return regKey.GetValueKind(name);
+            return _regKey.GetValueKind(name);
         }
 
         public void Close()
         {
-            regKey.Dispose();
+            _regKey.Dispose();
         }
 
         public string Name
         {
-            get { return regKey.Name; }
+            get { return _regKey.Name; }
         }
 
         public int SubKeyCount
         {
-            get { return regKey.SubKeyCount; }
+            get { return _regKey.SubKeyCount; }
         }
 
         public object RegistryKey
         {
-            get { return regKey; }
+            get { return _regKey; }
         }
 
         public void SetAccessControl(ObjectSecurity securityDescriptor)
         {
-            regKey.SetAccessControl((RegistrySecurity)securityDescriptor);
+            _regKey.SetAccessControl((RegistrySecurity)securityDescriptor);
         }
 
         public ObjectSecurity GetAccessControl(AccessControlSections includeSections)
         {
-            return regKey.GetAccessControl(includeSections);
+            return _regKey.GetAccessControl(includeSections);
         }
 
         #endregion
@@ -243,97 +243,97 @@ namespace Microsoft.PowerShell.Commands
 
     internal class TransactedRegistryWrapper : IRegistryWrapper
     {
-        TransactedRegistryKey txRegKey;
-        CmdletProvider provider;
+        private TransactedRegistryKey _txRegKey;
+        private CmdletProvider _provider;
 
         internal TransactedRegistryWrapper(TransactedRegistryKey txRegKey, CmdletProvider provider)
         {
-            this.txRegKey = txRegKey;
-            this.provider = provider;
+            _txRegKey = txRegKey;
+            _provider = provider;
         }
 
         #region IRegistryWrapper Members
 
         public void SetValue(string name, object value)
         {
-            using (provider.CurrentPSTransaction)
+            using (_provider.CurrentPSTransaction)
             {
-                txRegKey.SetValue(name, value);
+                _txRegKey.SetValue(name, value);
             }
         }
 
         public void SetValue(string name, object value, RegistryValueKind valueKind)
         {
-            using (provider.CurrentPSTransaction)
+            using (_provider.CurrentPSTransaction)
             {
                 value = System.Management.Automation.PSObject.Base(value);
                 value = RegistryWrapperUtils.ConvertUIntToValueForRegistryIfNeeded(value, valueKind);
 
-                txRegKey.SetValue(name, value, valueKind);
+                _txRegKey.SetValue(name, value, valueKind);
             }
         }
 
         public string[] GetValueNames()
         {
-            using (provider.CurrentPSTransaction)
+            using (_provider.CurrentPSTransaction)
             {
-                return txRegKey.GetValueNames();
+                return _txRegKey.GetValueNames();
             }
         }
 
         public void DeleteValue(string name)
         {
-            using (provider.CurrentPSTransaction)
+            using (_provider.CurrentPSTransaction)
             {
-                txRegKey.DeleteValue(name);
+                _txRegKey.DeleteValue(name);
             }
         }
 
         public string[] GetSubKeyNames()
         {
-            using (provider.CurrentPSTransaction)
+            using (_provider.CurrentPSTransaction)
             {
-                return txRegKey.GetSubKeyNames();
+                return _txRegKey.GetSubKeyNames();
             }
         }
 
         public IRegistryWrapper CreateSubKey(string subkey)
         {
-            using (provider.CurrentPSTransaction)
+            using (_provider.CurrentPSTransaction)
             {
-                TransactedRegistryKey newKey = txRegKey.CreateSubKey(subkey);
+                TransactedRegistryKey newKey = _txRegKey.CreateSubKey(subkey);
                 if (newKey == null)
                     return null;
                 else
-                    return new TransactedRegistryWrapper(newKey, provider);
+                    return new TransactedRegistryWrapper(newKey, _provider);
             }
         }
 
         public IRegistryWrapper OpenSubKey(string name, bool writable)
         {
-            using (provider.CurrentPSTransaction)
+            using (_provider.CurrentPSTransaction)
             {
-                TransactedRegistryKey newKey = txRegKey.OpenSubKey(name, writable);
+                TransactedRegistryKey newKey = _txRegKey.OpenSubKey(name, writable);
                 if (newKey == null)
                     return null;
                 else
-                    return new TransactedRegistryWrapper(newKey, provider);
+                    return new TransactedRegistryWrapper(newKey, _provider);
             }
         }
 
         public void DeleteSubKeyTree(string subkey)
         {
-            using (provider.CurrentPSTransaction)
+            using (_provider.CurrentPSTransaction)
             {
-                txRegKey.DeleteSubKeyTree(subkey);
+                _txRegKey.DeleteSubKeyTree(subkey);
             }
         }
 
         public object GetValue(string name)
         {
-            using (provider.CurrentPSTransaction)
+            using (_provider.CurrentPSTransaction)
             {
-                object value = txRegKey.GetValue(name);
+                object value = _txRegKey.GetValue(name);
 
                 try
                 {
@@ -350,9 +350,9 @@ namespace Microsoft.PowerShell.Commands
 
         public object GetValue(string name, object defaultValue, RegistryValueOptions options)
         {
-            using (provider.CurrentPSTransaction)
+            using (_provider.CurrentPSTransaction)
             {
-                object value = txRegKey.GetValue(name, defaultValue, options);
+                object value = _txRegKey.GetValue(name, defaultValue, options);
 
                 try
                 {
@@ -369,60 +369,60 @@ namespace Microsoft.PowerShell.Commands
 
         public RegistryValueKind GetValueKind(string name)
         {
-            using (provider.CurrentPSTransaction)
+            using (_provider.CurrentPSTransaction)
             {
-                return txRegKey.GetValueKind(name);
+                return _txRegKey.GetValueKind(name);
             }
         }
 
         public void Close()
         {
-            using (provider.CurrentPSTransaction)
+            using (_provider.CurrentPSTransaction)
             {
-                txRegKey.Close();
+                _txRegKey.Close();
             }
         }
 
         public string Name
         {
-            get 
+            get
             {
-                using (provider.CurrentPSTransaction)
+                using (_provider.CurrentPSTransaction)
                 {
-                    return txRegKey.Name;
+                    return _txRegKey.Name;
                 }
             }
         }
 
         public int SubKeyCount
         {
-            get 
+            get
             {
-                using (provider.CurrentPSTransaction)
+                using (_provider.CurrentPSTransaction)
                 {
-                    return txRegKey.SubKeyCount;
+                    return _txRegKey.SubKeyCount;
                 }
             }
         }
 
         public object RegistryKey
         {
-            get { return txRegKey; }
+            get { return _txRegKey; }
         }
 
         public void SetAccessControl(ObjectSecurity securityDescriptor)
         {
-            using (provider.CurrentPSTransaction)
+            using (_provider.CurrentPSTransaction)
             {
-                txRegKey.SetAccessControl((TransactedRegistrySecurity)securityDescriptor);
+                _txRegKey.SetAccessControl((TransactedRegistrySecurity)securityDescriptor);
             }
         }
 
         public ObjectSecurity GetAccessControl(AccessControlSections includeSections)
         {
-            using (provider.CurrentPSTransaction)
+            using (_provider.CurrentPSTransaction)
             {
-                return txRegKey.GetAccessControl(includeSections);
+                return _txRegKey.GetAccessControl(includeSections);
             }
         }
 

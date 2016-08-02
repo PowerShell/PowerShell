@@ -19,9 +19,9 @@ namespace Microsoft.PowerShell.Commands.Management
     /// </summary>
     public class TransactedString : IEnlistmentNotification
     {
-        StringBuilder m_Value;
-        StringBuilder m_TemporaryValue;
-        Transaction enlistedTransaction = null;
+        private StringBuilder _value;
+        private StringBuilder _temporaryValue;
+        private Transaction _enlistedTransaction = null;
 
         /// <summary>
         /// Constructor for the TransactedString class.
@@ -39,8 +39,8 @@ namespace Microsoft.PowerShell.Commands.Management
         /// </summary>
         public TransactedString(string value)
         {
-            m_Value = new StringBuilder(value);
-            m_TemporaryValue = null;
+            _value = new StringBuilder(value);
+            _temporaryValue = null;
         }
 
         /// <summary>
@@ -48,9 +48,9 @@ namespace Microsoft.PowerShell.Commands.Management
         /// </summary>
         void IEnlistmentNotification.Commit(Enlistment enlistment)
         {
-            m_Value = new StringBuilder(m_TemporaryValue.ToString());
-            m_TemporaryValue = null;
-            enlistedTransaction = null;
+            _value = new StringBuilder(_temporaryValue.ToString());
+            _temporaryValue = null;
+            _enlistedTransaction = null;
             enlistment.Done();
         }
 
@@ -59,8 +59,8 @@ namespace Microsoft.PowerShell.Commands.Management
         /// </summary>
         void IEnlistmentNotification.Rollback(Enlistment enlistment)
         {
-            m_TemporaryValue = null;
-            enlistedTransaction = null;
+            _temporaryValue = null;
+            _enlistedTransaction = null;
             enlistment.Done();
         }
 
@@ -87,13 +87,13 @@ namespace Microsoft.PowerShell.Commands.Management
         {
             ValidateTransactionOrEnlist();
 
-            if(enlistedTransaction != null)
+            if (_enlistedTransaction != null)
             {
-                m_TemporaryValue.Append(text);
+                _temporaryValue.Append(text);
             }
             else
             {
-                m_Value.Append(text);
+                _value.Append(text);
             }
         }
 
@@ -111,13 +111,13 @@ namespace Microsoft.PowerShell.Commands.Management
         {
             ValidateTransactionOrEnlist();
 
-            if(enlistedTransaction != null)
+            if (_enlistedTransaction != null)
             {
-                m_TemporaryValue.Remove(startIndex, length);
+                _temporaryValue.Remove(startIndex, length);
             }
             else
             {
-                m_Value.Remove(startIndex, length);
+                _value.Remove(startIndex, length);
             }
         }
 
@@ -133,15 +133,15 @@ namespace Microsoft.PowerShell.Commands.Management
             {
                 // If we're not in a transaction, or we are in a different transaction than the one we
                 // enlisted to, return the publicly visible state.
-                if(
+                if (
                     (Transaction.Current == null) ||
-                    (enlistedTransaction != Transaction.Current))
+                    (_enlistedTransaction != Transaction.Current))
                 {
-                    return m_Value.Length;
+                    return _value.Length;
                 }
                 else
                 {
-                    return m_TemporaryValue.Length;
+                    return _temporaryValue.Length;
                 }
             }
         }
@@ -156,37 +156,37 @@ namespace Microsoft.PowerShell.Commands.Management
         {
             // If we're not in a transaction, or we are in a different transaction than the one we
             // enlisted to, return the publicly visible state.
-            if(
+            if (
                (Transaction.Current == null) ||
-               (enlistedTransaction != Transaction.Current))
+               (_enlistedTransaction != Transaction.Current))
             {
-                return m_Value.ToString();
+                return _value.ToString();
             }
             else
             {
-                return m_TemporaryValue.ToString();
+                return _temporaryValue.ToString();
             }
         }
 
         private void ValidateTransactionOrEnlist()
         {
             // We're in a transaction
-            if(Transaction.Current != null)
+            if (Transaction.Current != null)
             {
                 // We haven't yet been called inside of a transaction. So enlist
                 // in the transaction, and store our save point
-                if(enlistedTransaction == null)
+                if (_enlistedTransaction == null)
                 {
                     Transaction.Current.EnlistVolatile(this, EnlistmentOptions.None);
-                    enlistedTransaction = Transaction.Current;
+                    _enlistedTransaction = Transaction.Current;
 
-                    m_TemporaryValue = new StringBuilder(m_Value.ToString());
+                    _temporaryValue = new StringBuilder(_value.ToString());
                 }
                 // We're already enlisted in a transaction
                 else
                 {
                     // And we're in that transaction
-                    if(Transaction.Current != enlistedTransaction)
+                    if (Transaction.Current != _enlistedTransaction)
                     {
                         throw new InvalidOperationException("Cannot modify string. It has been modified by another transaction.");
                     }
@@ -196,7 +196,7 @@ namespace Microsoft.PowerShell.Commands.Management
             else
             {
                 // If we're not subscribed to a transaction, modify the underlying value
-                if(enlistedTransaction != null)
+                if (_enlistedTransaction != null)
                 {
                     throw new InvalidOperationException("Cannot modify string. It has been modified by another transaction.");
                 }

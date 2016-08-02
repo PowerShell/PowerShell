@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     {
         internal CimCmdletInvocationContext(
             CimCmdletDefinitionContext cmdletDefinitionContext,
-            Cmdlet cmdlet, 
+            Cmdlet cmdlet,
             string namespaceOverride)
         {
             this.CmdletDefinitionContext = cmdletDefinitionContext;
@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             // Cmdlet might have a shorter lifespan than CimCmdletInvocationContext
             // - we need to extract information out of Cmdlet to extend information's lifespan
 
-            this.CmdletInvocationInfo = cmdlet.MyInvocation; 
+            this.CmdletInvocationInfo = cmdlet.MyInvocation;
 
             var runtime = cmdlet.CommandRuntime as MshCommandRuntime;
             Dbg.Assert(runtime != null, "CIM cmdlets should only be run from within PS runtime");
@@ -30,17 +30,17 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             this.DebugActionPreference = runtime.DebugPreference;
             WarnAboutUnsupportedActionPreferences(
                 cmdlet,
-                this.DebugActionPreference, 
-                "Debug", 
-                inquireMessageGetter: () => CmdletizationResources.CimCmdletAdapter_DebugInquire, 
+                this.DebugActionPreference,
+                "Debug",
+                inquireMessageGetter: () => CmdletizationResources.CimCmdletAdapter_DebugInquire,
                 stopMessageGetter: () => string.Empty);
 
             this.WarningActionPreference = runtime.WarningPreference;
             WarnAboutUnsupportedActionPreferences(
                 cmdlet,
-                this.WarningActionPreference, 
-                "WarningAction", 
-                inquireMessageGetter: () => CmdletizationResources.CimCmdletAdapter_WarningInquire, 
+                this.WarningActionPreference,
+                "WarningAction",
+                inquireMessageGetter: () => CmdletizationResources.CimCmdletAdapter_WarningInquire,
                 stopMessageGetter: () => CmdletizationResources.CimCmdletAdapter_WarningStop);
 
             this.VerboseActionPreference = runtime.VerbosePreference;

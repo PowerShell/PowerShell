@@ -13,8 +13,8 @@ namespace System.Management.Automation.Runspaces
     using System.Threading;
     using Dbg = System.Management.Automation.Diagnostics;
     using System.Management.Automation.Internal;
-    
-    #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
+
+#pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
     /// <summary>
     /// This class has common base implementation for Pipeline class. 
@@ -23,7 +23,7 @@ namespace System.Management.Automation.Runspaces
     internal abstract class PipelineBase : Pipeline
     {
         #region constructors
-        
+
         /// <summary>
         /// Create a pipeline initialized with a command string
         /// </summary>
@@ -34,15 +34,15 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="ArgumentNullException">
         /// Command is null and add to history is true
         /// </exception>
-        protected PipelineBase (Runspace runspace, string command, bool addToHistory, bool isNested)
-            :base(runspace)
+        protected PipelineBase(Runspace runspace, string command, bool addToHistory, bool isNested)
+            : base(runspace)
         {
             Initialize(runspace, command, addToHistory, isNested);
 
             //Initialize streams
-            _inputStream = new ObjectStream ();
-            _outputStream = new ObjectStream ();
-            ErrorStream = new ObjectStream ();
+            _inputStream = new ObjectStream();
+            _outputStream = new ObjectStream();
+            ErrorStream = new ObjectStream();
         }
 
         /// <summary>
@@ -125,8 +125,8 @@ namespace System.Management.Automation.Runspaces
         /// times.  This is accomplished via creating a master pipeline
         /// then cloning it and executing the cloned copy.  
         /// </remarks>
-        protected PipelineBase (PipelineBase pipeline)
-            : this (pipeline.Runspace, null,false,pipeline.IsNested)
+        protected PipelineBase(PipelineBase pipeline)
+            : this(pipeline.Runspace, null, false, pipeline.IsNested)
         {
             // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
             if (null == pipeline)
@@ -139,20 +139,20 @@ namespace System.Management.Automation.Runspaces
             }
 
             _addToHistory = pipeline._addToHistory;
-            _historyString = pipeline._historyString;                
+            _historyString = pipeline._historyString;
             foreach (Command command in pipeline.Commands)
             {
-                Command clone = command.Clone () ;
+                Command clone = command.Clone();
 
                 // Attach the cloned Command to this pipeline.
-                Commands.Add (clone);
+                Commands.Add(clone);
             }
         }
 
         #endregion constructors
 
         #region properties
-        
+
         private Runspace _runspace;
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private PipelineStateInfo _pipelineStateInfo = new PipelineStateInfo (PipelineState.NotStarted);
+        private PipelineStateInfo _pipelineStateInfo = new PipelineStateInfo(PipelineState.NotStarted);
 
         /// <summary>
         /// Info about current state of the pipeline.
@@ -220,7 +220,7 @@ namespace System.Management.Automation.Runspaces
                 lock (SyncRoot)
                 {
                     //Note:We do not return internal state.
-                    return _pipelineStateInfo.Clone ();
+                    return _pipelineStateInfo.Clone();
                 }
             }
         }
@@ -280,17 +280,17 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Synchronous call to stop the running pipeline.
         /// </summary>
-        override public void Stop ()
+        override public void Stop()
         {
-            CoreStop (true);
+            CoreStop(true);
         }
 
         /// <summary>
         /// Asynchronous call to stop the running pipeline.
         /// </summary>
-        override public void StopAsync ()
+        override public void StopAsync()
         {
-            CoreStop (false);
+            CoreStop(false);
         }
 
         /// <summary>
@@ -298,7 +298,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="syncCall">If true pipeline is stoped synchronously
         /// else asynchronously.</param>
-        private void CoreStop (bool syncCall)
+        private void CoreStop(bool syncCall)
         {
             //Is pipeline already in stopping state.
             bool alreadyStopping = false;
@@ -307,8 +307,8 @@ namespace System.Management.Automation.Runspaces
                 switch (PipelineState)
                 {
                     case PipelineState.NotStarted:
-                        SetPipelineState (PipelineState.Stopping);
-                        SetPipelineState (PipelineState.Stopped);
+                        SetPipelineState(PipelineState.Stopping);
+                        SetPipelineState(PipelineState.Stopped);
                         break;
 
                     //If pipeline execution has failed or completed or 
@@ -324,7 +324,7 @@ namespace System.Management.Automation.Runspaces
                         break;
 
                     case PipelineState.Running:
-                        SetPipelineState (PipelineState.Stopping);
+                        SetPipelineState(PipelineState.Stopping);
                         break;
                 }
             }
@@ -342,7 +342,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             //Raise the event outside the lock
-            RaisePipelineStateEvents ();
+            RaisePipelineStateEvents();
 
             //A pipeline can be stoped before it is started. See NotStarted
             //case in above switch statement. This is done to allow stoping a pipeline
@@ -360,14 +360,14 @@ namespace System.Management.Automation.Runspaces
             }
 
             //Start stop operation in derived class
-            ImplementStop (syncCall);
+            ImplementStop(syncCall);
         }
-        
+
         /// <summary>
         /// Stop execution of pipeline
         /// </summary>
         /// <param name="syncCall">If false, call is asynchronous</param>
-        protected abstract void ImplementStop (bool syncCall);
+        protected abstract void ImplementStop(bool syncCall);
 
         #endregion stop
 
@@ -387,7 +387,7 @@ namespace System.Management.Automation.Runspaces
         /// On Synchronous Invoke if output is throttled and no one is reading from
         /// output pipe, Execution will block after buffer is full.
         /// </remarks>
-        override public Collection<PSObject> Invoke (IEnumerable input)
+        override public Collection<PSObject> Invoke(IEnumerable input)
         {
             // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
             if (_disposed)
@@ -398,14 +398,14 @@ namespace System.Management.Automation.Runspaces
             CoreInvoke(input, true);
 
             //Wait for pipeline to finish execution
-            PipelineFinishedEvent.WaitOne ();
+            PipelineFinishedEvent.WaitOne();
 
             if (SyncInvokeCall)
             {
                 //Raise the pipeline completion events. These events are set in
                 //pipeline execution thread. However for Synchornous execution
                 //we raise the event in the main thread.
-                RaisePipelineStateEvents ();
+                RaisePipelineStateEvents();
             }
 
             if (PipelineStateInfo.State == PipelineState.Stopped)
@@ -426,7 +426,7 @@ namespace System.Management.Automation.Runspaces
 
             //Execution completed successfully
             // 2004/06/30-JonN was ReadAll() which was non-blocking
-            return Output.NonBlockingRead (Int32.MaxValue);
+            return Output.NonBlockingRead(Int32.MaxValue);
         }
 
         /// <summary>
@@ -435,9 +435,9 @@ namespace System.Management.Automation.Runspaces
         /// <remarks>
         /// Results are returned through the <see cref="Pipeline.Output"/> reader.
         /// </remarks>
-        override public void InvokeAsync ()
+        override public void InvokeAsync()
         {
-            CoreInvoke (null, false);
+            CoreInvoke(null, false);
         }
 
         private bool _syncInvokeCall;
@@ -502,10 +502,10 @@ namespace System.Management.Automation.Runspaces
                 if (PipelineState != PipelineState.NotStarted)
                 {
                     InvalidPipelineStateException e =
-                        new InvalidPipelineStateException 
+                        new InvalidPipelineStateException
                         (
                             StringUtil.Format(RunspaceStrings.PipelineReInvokeNotAllowed),
-                            PipelineState, 
+                            PipelineState,
                             PipelineState.NotStarted
                         );
                     throw e;
@@ -523,10 +523,10 @@ namespace System.Management.Automation.Runspaces
                         //ObjectDisposed exception will be thrown
                         foreach (object temp in input)
                         {
-                            _inputStream.Write (temp);
+                            _inputStream.Write(temp);
                         }
                     }
-                    _inputStream.Close ();
+                    _inputStream.Close();
                 }
 
                 _syncInvokeCall = syncCall;
@@ -538,7 +538,7 @@ namespace System.Management.Automation.Runspaces
                 //added to list of running pipelines. This avoids the race condition
                 //where Close is called after pipeline is added to list of 
                 //running pipeline but before event is created.
-                _pipelineFinishedEvent = new ManualResetEvent (false);
+                _pipelineFinishedEvent = new ManualResetEvent(false);
 
                 //1) Do the check to ensure that pipeline no other 
                 // pipeline is running.
@@ -551,7 +551,7 @@ namespace System.Management.Automation.Runspaces
                 //state where pipeline can be run.
                 //StartPipelineExecution raises this event. See Windows Bug 1160481 for
                 //more details.
-                SetPipelineState (PipelineState.Running);
+                SetPipelineState(PipelineState.Running);
             }
 
             try
@@ -585,12 +585,12 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Starts execution of pipeline.
         /// </summary>
-        protected abstract void StartPipelineExecution ();
+        protected abstract void StartPipelineExecution();
 
         #region concurrent pipeline check
 
 
-        bool _performNestedCheck = true;
+        private bool _performNestedCheck = true;
 
         /// <summary>
         /// For nested pipeline, system checks that Execute is called from
@@ -607,7 +607,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        Thread _nestedPipelineExecutionThread;
+        private Thread _nestedPipelineExecutionThread;
 
         /// <summary>
         /// This is the thread on which NestedPipeline can be executed.
@@ -646,9 +646,9 @@ namespace System.Management.Automation.Runspaces
         /// 3) Attempt is made to invoke a nested pipeline directly. Nested 
         /// pipeline must be invoked from a running pipeline.
         /// </exception>
-        internal void DoConcurrentCheck (bool syncCall, object syncObject, bool isInLock)
+        internal void DoConcurrentCheck(bool syncCall, object syncObject, bool isInLock)
         {
-            PipelineBase currentPipeline = (PipelineBase)RunspaceBase.GetCurrentlyRunningPipeline ();
+            PipelineBase currentPipeline = (PipelineBase)RunspaceBase.GetCurrentlyRunningPipeline();
 
             if (IsNested == false)
             {
@@ -711,7 +711,7 @@ namespace System.Management.Automation.Runspaces
                             // This shouldn't fail so we'll clear the IsNested and IsChild flags and then return
                             // That way executions proceeds but everything gets clean up at the end when the pipeline completes
                             this.IsChild = false;
-                            this._isNested = false;
+                            _isNested = false;
                             return;
                         }
 
@@ -719,10 +719,10 @@ namespace System.Management.Automation.Runspaces
                                 RunspaceStrings.NestedPipelineNoParentPipeline);
                     }
 
-                    Dbg.Assert (currentPipeline.NestedPipelineExecutionThread != null, "Current pipeline should always have NestedPipelineExecutionThread set");
+                    Dbg.Assert(currentPipeline.NestedPipelineExecutionThread != null, "Current pipeline should always have NestedPipelineExecutionThread set");
                     Thread th = Thread.CurrentThread;
 
-                    if (currentPipeline.NestedPipelineExecutionThread.Equals (th) == false)
+                    if (currentPipeline.NestedPipelineExecutionThread.Equals(th) == false)
                     {
                         throw PSTraceSource.NewInvalidOperationException(
                                 RunspaceStrings.NestedPipelineNoParentPipeline);
@@ -827,13 +827,13 @@ namespace System.Management.Automation.Runspaces
         /// also adds PipelineStateInfo to a queue. RaisePipelineStateEvents
         /// raises event for each item in this queue.  
         /// </remarks>
-        protected void SetPipelineState (PipelineState state, Exception reason)
+        protected void SetPipelineState(PipelineState state, Exception reason)
         {
             lock (SyncRoot)
             {
                 if (state != PipelineState)
                 {
-                    _pipelineStateInfo = new PipelineStateInfo (state, reason);
+                    _pipelineStateInfo = new PipelineStateInfo(state, reason);
 
                     //Add _pipelineStateInfo to _executionEventQueue. 
                     //RaisePipelineStateEvents will raise event for each item
@@ -858,15 +858,15 @@ namespace System.Management.Automation.Runspaces
         /// Set the new execution state
         /// </summary>
         /// <param name="state">the new state</param>       
-        protected void SetPipelineState (PipelineState state)
+        protected void SetPipelineState(PipelineState state)
         {
-            SetPipelineState (state, null);
+            SetPipelineState(state, null);
         }
 
         /// <summary>
         /// Raises events for changes in execution state.
         /// </summary>
-        protected void RaisePipelineStateEvents ()
+        protected void RaisePipelineStateEvents()
         {
             Queue<ExecutionEventQueueItem> tempEventQueue = null;
             EventHandler<PipelineStateEventArgs> stateChanged = null;
@@ -887,7 +887,7 @@ namespace System.Management.Automation.Runspaces
                     //Clear the events if there are no EventHandlers. This 
                     //ensures that events do not get called for state 
                     //changes prior to their registration.
-                    _executionEventQueue.Clear ();
+                    _executionEventQueue.Clear();
                 }
             }
 
@@ -920,9 +920,8 @@ namespace System.Management.Automation.Runspaces
 #pragma warning restore 56500
                 }
             }
-
         }
-        
+
         private ManualResetEvent _pipelineFinishedEvent;
 
         /// <summary>
@@ -953,7 +952,6 @@ namespace System.Management.Automation.Runspaces
             {
                 return _outputStream;
             }
-        
         }
 
         private ObjectStreamBase _errorStream;
@@ -1022,7 +1020,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         #endregion streams
-        
+
         #region history
 
         //History information is internal so that Pipeline serialization code
@@ -1110,7 +1108,7 @@ namespace System.Management.Automation.Runspaces
         }
 
 
-        private object _syncRoot = new object ();
+        private object _syncRoot = new object();
 
         /// <summary>
         /// Object used for synchronization
@@ -1130,7 +1128,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Set to true when object is disposed
         /// </summary>
-        bool _disposed;
+        private bool _disposed;
 
         /// <summary>
         /// Protected dispose which can be overridden by derived classes.

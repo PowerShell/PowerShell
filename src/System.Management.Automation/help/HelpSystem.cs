@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -98,7 +99,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("ExecutionContext");
             }
 
-            this._executionContext = context;
+            _executionContext = context;
 
             Initialize();
         }
@@ -137,9 +138,9 @@ namespace System.Management.Automation
         /// </summary>
         internal void Initialize()
         {
-            this._verboseHelpErrors = LanguagePrimitives.IsTrue(
+            _verboseHelpErrors = LanguagePrimitives.IsTrue(
                 _executionContext.GetVariableValue(SpecialVariables.VerboseHelpErrorsVarPath, false));
-            this._helpErrorTracer = new HelpErrorTracer(this);
+            _helpErrorTracer = new HelpErrorTracer(this);
 
             InitializeHelpProviders();
         }
@@ -236,7 +237,7 @@ namespace System.Management.Automation
 
         // Cache of search paths that are currently active.
         // This will save a lot time when help providers do their searching
-        Collection<String> _searchPaths = null;
+        private Collection<String> _searchPaths = null;
 
         /// <summary>
         /// Gets the search paths for external snapins/modules that are currently loaded.
@@ -302,11 +303,11 @@ namespace System.Management.Automation
         /// <returns>An array of HelpInfo object</returns>
         private IEnumerable<HelpInfo> DoGetHelp(HelpRequest helpRequest)
         {
-            this._lastErrors.Clear();
+            _lastErrors.Clear();
             // Reset SearchPaths
             _searchPaths = null;
 
-            this._lastHelpCategory = helpRequest.HelpCategory;
+            _lastHelpCategory = helpRequest.HelpCategory;
 
             if (String.IsNullOrEmpty(helpRequest.Target))
             {
@@ -486,7 +487,7 @@ namespace System.Management.Automation
 
             HelpProgressInfo progress = new HelpProgressInfo();
 
-            progress.Activity = StringUtil.Format(HelpDisplayStrings.SearchingForHelpContent, helpRequest.Target) ;
+            progress.Activity = StringUtil.Format(HelpDisplayStrings.SearchingForHelpContent, helpRequest.Target);
             progress.Completed = false;
             progress.PercentComplete = 0;
 
@@ -546,7 +547,6 @@ namespace System.Management.Automation
                         progress.PercentComplete += (100 / this.HelpProviders.Count);
                         OnProgress(this, progress);
                     }
-
                 } while (!shouldBreak);
             }
             finally
@@ -556,7 +556,6 @@ namespace System.Management.Automation
 
                 OnProgress(this, progress);
             }
-            
         }
 
         #endregion Help Engine
@@ -576,7 +575,7 @@ namespace System.Management.Automation
                 return _helpProviders;
             }
         }
-        
+
         /// <summary>
         /// Initialize help providers. 
         /// </summary>
@@ -604,12 +603,12 @@ namespace System.Management.Automation
             helpProvider = new PSClassHelpProvider(this);
             _helpProviders.Add(helpProvider);
 
-/* TH Bug#3141590 - Disable DscResourceHelp for ClientRTM due to perf issue.
-#if !CORECLR // TODO:CORECLR Add this back in once we support Get-DscResource
-            helpProvider = new DscResourceHelpProvider(this);
-            _helpProviders.Add(helpProvider);
-#endif
-*/
+            /* TH Bug#3141590 - Disable DscResourceHelp for ClientRTM due to perf issue.
+            #if !CORECLR // TODO:CORECLR Add this back in once we support Get-DscResource
+                        helpProvider = new DscResourceHelpProvider(this);
+                        _helpProviders.Add(helpProvider);
+            #endif
+            */
             helpProvider = new HelpFileHelpProvider(this);
             _helpProviders.Add(helpProvider);
 
@@ -797,10 +796,10 @@ namespace System.Management.Automation
         /// </summary>
         internal void ResetHelpProviders()
         {
-            if(this._helpProviders == null)
+            if (_helpProviders == null)
                 return;
 
-            for (int i = 0; i < this._helpProviders.Count; i++)
+            for (int i = 0; i < _helpProviders.Count; i++)
             {
                 HelpProvider helpProvider = (HelpProvider)_helpProviders[i];
 
@@ -814,21 +813,20 @@ namespace System.Management.Automation
 
         #region ScriptBlock Parse Tokens Caching/Clearing Functionality
 
-        private readonly Lazy<Dictionary<Ast, Token[]>> scriptBlockTokenCache = new Lazy<Dictionary<Ast, Token[]>>(isThreadSafe: true);
+        private readonly Lazy<Dictionary<Ast, Token[]>> _scriptBlockTokenCache = new Lazy<Dictionary<Ast, Token[]>>(isThreadSafe: true);
 
         internal Dictionary<Ast, Token[]> ScriptBlockTokenCache
         {
-            get { return scriptBlockTokenCache.Value; }
+            get { return _scriptBlockTokenCache.Value; }
         }
 
         internal void ClearScriptBlockTokenCache()
         {
-            if (scriptBlockTokenCache.IsValueCreated)
+            if (_scriptBlockTokenCache.IsValueCreated)
             {
-                scriptBlockTokenCache.Value.Clear();
+                _scriptBlockTokenCache.Value.Clear();
             }
         }
-
 
         #endregion
     }

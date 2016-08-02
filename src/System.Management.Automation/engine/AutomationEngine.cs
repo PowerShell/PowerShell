@@ -15,7 +15,7 @@ namespace System.Management.Automation
     /// This class aggregates the objects necessary for the Monad
     /// engine to run.
     /// </summary>
-    internal class AutomationEngine 
+    internal class AutomationEngine
     {
         // Holds the parser to use for this instance of the engine...
         internal Language.Parser EngineParser;
@@ -41,11 +41,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return commandDiscovery;
+                return _commandDiscovery;
             }
         }
-        private CommandDiscovery commandDiscovery;
-        
+        private CommandDiscovery _commandDiscovery;
+
 
         /// <summary>
         /// The principal constructor that most hosts will use when creating
@@ -74,8 +74,8 @@ namespace System.Management.Automation
             }
             if (!cplExist)
             {
-                pathext = (pathext == string.Empty) ? ".CPL" : 
-                    pathext.EndsWith(";", StringComparison.OrdinalIgnoreCase) 
+                pathext = (pathext == string.Empty) ? ".CPL" :
+                    pathext.EndsWith(";", StringComparison.OrdinalIgnoreCase)
                     ? (pathext + ".CPL") : (pathext + ";.CPL");
                 Environment.SetEnvironmentVariable("PathEXT", pathext);
             }
@@ -90,7 +90,7 @@ namespace System.Management.Automation
             }
 
             EngineParser = new Language.Parser();
-            commandDiscovery = new CommandDiscovery(_context);
+            _commandDiscovery = new CommandDiscovery(_context);
 
             // Initialize providers before loading types so that any ScriptBlocks in the
             // types.ps1xml file can be parsed.
@@ -109,7 +109,7 @@ namespace System.Management.Automation
 
             InitialSessionState.SetSessionStateDrive(_context, true);
 
-            InitialSessionState.CreateQuestionVariable(_context); 
+            InitialSessionState.CreateQuestionVariable(_context);
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 Using PowerShell Integrated Scripting Environment (ISE)
 ====
 The PowerShell ISE only works on Windows. If you are not using Windows, please see [Using Visual Studio Code](./using-vscode.md).
+Please note the ISE is not supported if you are using PowerShell installed from the [PowerShell package][get-powershell] or directly [built][build-powershell] from GitHub.
 
 Editing with ISE
 ---
@@ -72,3 +73,5 @@ PS C:\test>
 See [How to Debug in ISE][debug] for more information.
 
 [debug]:https://msdn.microsoft.com/en-us/powershell/scripting/core-powershell/ise/how-to-debug-scripts-in-windows-powershell-ise#bkmk_2
+[get-powershell]:../../README.md#get-powershell
+[build-powershell]:../../README.md#building-the-repository

@@ -17,20 +17,20 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.Clear, "RecycleBin", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=524082", ConfirmImpact = ConfirmImpact.High)]
     public class ClearRecycleBinCommand : PSCmdlet
     {
-        private string[] drivesList;
-        private DriveInfo[] availableDrives;
-        private bool force;
+        private string[] _drivesList;
+        private DriveInfo[] _availableDrives;
+        private bool _force;
 
         /// <summary>  
         /// Property that sets DriveLetter parameter.
         /// </summary>  
-        [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]        
+        [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] DriveLetter
         {
-            get { return drivesList; }
-            set { drivesList = value; }
+            get { return _drivesList; }
+            set { _drivesList = value; }
         }
 
         /// <summary>  
@@ -41,11 +41,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return force;
+                return _force;
             }
             set
             {
-                force = value;
+                _force = value;
             }
         }
 
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            availableDrives = DriveInfo.GetDrives();
+            _availableDrives = DriveInfo.GetDrives();
         }
 
         /// <summary>
@@ -64,9 +64,9 @@ namespace Microsoft.PowerShell.Commands
         {
             // There are two scenarios:
             // 1) The user provides a list of drives.
-            if (drivesList != null)
+            if (_drivesList != null)
             {
-                foreach (var drive in drivesList)
+                foreach (var drive in _drivesList)
                 {
                     if (!IsValidPattern(drive))
                     {
@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
                     // Get the full path for the drive.
                     string drivePath = GetDrivePath(drive);
                     if (ValidDrivePath(drivePath))
-                    {  
+                    {
                         EmptyRecycleBin(drivePath);
                     }
                 }
@@ -102,18 +102,18 @@ namespace Microsoft.PowerShell.Commands
         private bool ValidDrivePath(string drivePath)
         {
             DriveInfo actualDrive = null;
-            if (availableDrives != null)
+            if (_availableDrives != null)
             {
-                foreach (DriveInfo drive in availableDrives)
+                foreach (DriveInfo drive in _availableDrives)
                 {
                     if (String.Compare(drive.Name, drivePath, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         actualDrive = drive;
                         break;
-                    }                     
-                }            
-            }           
-                       
+                    }
+                }
+            }
+
             // The drive was not found.
             if (actualDrive == null)
             {
@@ -195,7 +195,7 @@ namespace Microsoft.PowerShell.Commands
                                                                    drivePath);
             }
 
-            if (force || (ShouldProcess(clearRecycleBinShouldProcessTarget, "Clear-RecycleBin")))
+            if (_force || (ShouldProcess(clearRecycleBinShouldProcessTarget, "Clear-RecycleBin")))
             {
                 // If driveName is null, then clear the recyclebin for all drives; otherwise, just for the specified drivename. 
 
@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
                 progress.PercentComplete = 100;
                 progress.RecordType = ProgressRecordType.Completed;
                 WriteProgress(progress);
-                
+
                 // 0 is for a successful operation
                 // 203 comes up when trying to empty an already emptied recyclebin
                 // 18 comes up when there are no more files in the given recyclebin
@@ -239,15 +239,15 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    static class NativeMethod
+    internal static class NativeMethod
     {
         // Internal code to SHEmptyRecycleBin
         internal enum RecycleFlags : uint
         {
             SHERB_NOCONFIRMATION = 0x00000001,
-            SHERB_NOPROGRESSUI   = 0x00000002,
-            SHERB_NOSOUND        = 0x00000004
-        }        
+            SHERB_NOPROGRESSUI = 0x00000002,
+            SHERB_NOSOUND = 0x00000004
+        }
         [DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
         internal static extern uint SHEmptyRecycleBin(IntPtr hwnd, string pszRootPath, RecycleFlags dwFlags);
     }

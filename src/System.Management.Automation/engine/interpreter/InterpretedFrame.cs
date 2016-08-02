@@ -26,8 +26,10 @@ using System.Management.Automation.Language;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace System.Management.Automation.Interpreter {
-    internal sealed class InterpretedFrame {
+namespace System.Management.Automation.Interpreter
+{
+    internal sealed class InterpretedFrame
+    {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
         public static readonly ThreadLocal<InterpretedFrame> CurrentFrame = new ThreadLocal<InterpretedFrame>();
 
@@ -53,13 +55,15 @@ namespace System.Management.Automation.Interpreter {
         // No handlers within this handler re-abort the current thread when left.
         public ExceptionHandler CurrentAbortHandler;
 
-        internal InterpretedFrame(Interpreter interpreter, StrongBox<object>[] closure) {
+        internal InterpretedFrame(Interpreter interpreter, StrongBox<object>[] closure)
+        {
             Interpreter = interpreter;
             StackIndex = interpreter.LocalCount;
             Data = new object[StackIndex + interpreter.Instructions.MaxStackDepth];
 
             int c = interpreter.Instructions.MaxContinuationDepth;
-            if (c > 0) {
+            if (c > 0)
+            {
                 _continuations = new int[c];
             }
 
@@ -69,41 +73,50 @@ namespace System.Management.Automation.Interpreter {
             _pendingValue = Interpreter.NoValue;
         }
 
-        public DebugInfo GetDebugInfo(int instructionIndex) {
+        public DebugInfo GetDebugInfo(int instructionIndex)
+        {
             return DebugInfo.GetMatchingDebugInfo(Interpreter._debugInfos, instructionIndex);
         }
 
-        public string Name {
+        public string Name
+        {
             get { return Interpreter._name; }
         }
 
         #region Data Stack Operations
 
-        public void Push(object value) {
+        public void Push(object value)
+        {
             Data[StackIndex++] = value;
         }
 
-        public void Push(bool value) {
+        public void Push(bool value)
+        {
             Data[StackIndex++] = value ? ScriptingRuntimeHelpers.True : ScriptingRuntimeHelpers.False;
         }
 
-        public void Push(int value) {
+        public void Push(int value)
+        {
             Data[StackIndex++] = ScriptingRuntimeHelpers.Int32ToObject(value);
         }
 
-        public object Pop() {
+        public object Pop()
+        {
             return Data[--StackIndex];
         }
 
-        internal void SetStackDepth(int depth) {
+        internal void SetStackDepth(int depth)
+        {
             StackIndex = Interpreter.LocalCount + depth;
         }
 
-        public object Peek() {
+        public object Peek()
+        {
             return Data[StackIndex - 1];
         }
 
-        public void Dup() {
+        public void Dup()
+        {
             int i = StackIndex;
             Data[i] = Data[i - 1];
             StackIndex = i + 1;
@@ -123,11 +136,13 @@ namespace System.Management.Automation.Interpreter {
 
         #region Stack Trace
 
-        public InterpretedFrame Parent {
+        public InterpretedFrame Parent
+        {
             get { return _parent; }
         }
 
-        public static bool IsInterpretedFrame(MethodBase method) {
+        public static bool IsInterpretedFrame(MethodBase method)
+        {
             //ContractUtils.RequiresNotNull(method, "method");
             return method.DeclaringType == typeof(Interpreter) && method.Name == "Run";
         }
@@ -136,45 +151,59 @@ namespace System.Management.Automation.Interpreter {
         /// A single interpreted frame might be represented by multiple subsequent Interpreter.Run CLR frames.
         /// This method filters out the duplicate CLR frames.
         /// </summary>
-        public static IEnumerable<StackFrame> GroupStackFrames(IEnumerable<StackFrame> stackTrace) {
+        public static IEnumerable<StackFrame> GroupStackFrames(IEnumerable<StackFrame> stackTrace)
+        {
             bool inInterpretedFrame = false;
-            foreach (StackFrame frame in stackTrace) {
-                if (InterpretedFrame.IsInterpretedFrame(frame.GetMethod())) {
-                    if (inInterpretedFrame) {
+            foreach (StackFrame frame in stackTrace)
+            {
+                if (InterpretedFrame.IsInterpretedFrame(frame.GetMethod()))
+                {
+                    if (inInterpretedFrame)
+                    {
                         continue;
                     }
                     inInterpretedFrame = true;
-                } else {
+                }
+                else
+                {
                     inInterpretedFrame = false;
                 }
                 yield return frame;
             }
         }
 
-        public IEnumerable<InterpretedFrameInfo> GetStackTraceDebugInfo() {
+        public IEnumerable<InterpretedFrameInfo> GetStackTraceDebugInfo()
+        {
             var frame = this;
-            do {
+            do
+            {
                 yield return new InterpretedFrameInfo(frame.Name, frame.GetDebugInfo(frame.InstructionIndex));
                 frame = frame.Parent;
             } while (frame != null);
         }
 
-        internal void SaveTraceToException(Exception exception) {
-            if (exception.Data[typeof(InterpretedFrameInfo)] == null) {
+        internal void SaveTraceToException(Exception exception)
+        {
+            if (exception.Data[typeof(InterpretedFrameInfo)] == null)
+            {
                 exception.Data[typeof(InterpretedFrameInfo)] = new List<InterpretedFrameInfo>(GetStackTraceDebugInfo()).ToArray();
             }
         }
 
-        public static InterpretedFrameInfo[] GetExceptionStackTrace(Exception exception) {
+        public static InterpretedFrameInfo[] GetExceptionStackTrace(Exception exception)
+        {
             return exception.Data[typeof(InterpretedFrameInfo)] as InterpretedFrameInfo[];
         }
 
 #if DEBUG
-        internal string[] Trace {
-            get {
+        internal string[] Trace
+        {
+            get
+            {
                 var trace = new List<string>();
                 var frame = this;
-                do {
+                do
+                {
                     trace.Add(frame.Name);
                     frame = frame.Parent;
                 } while (frame != null);
@@ -183,14 +212,16 @@ namespace System.Management.Automation.Interpreter {
         }
 #endif
 
-        internal ThreadLocal<InterpretedFrame>.StorageInfo Enter() {
+        internal ThreadLocal<InterpretedFrame>.StorageInfo Enter()
+        {
             var currentFrame = InterpretedFrame.CurrentFrame.GetStorageInfo();
             _parent = currentFrame.Value;
             currentFrame.Value = this;
             return currentFrame;
         }
 
-        internal void Leave(ThreadLocal<InterpretedFrame>.StorageInfo currentFrame) {
+        internal void Leave(ThreadLocal<InterpretedFrame>.StorageInfo currentFrame)
+        {
             currentFrame.Value = _parent;
         }
 
@@ -203,15 +234,18 @@ namespace System.Management.Automation.Interpreter {
             return _pendingContinuation >= 0;
         }
 
-        public void RemoveContinuation() {
+        public void RemoveContinuation()
+        {
             _continuationIndex--;
         }
 
-        public void PushContinuation(int continuation) {
+        public void PushContinuation(int continuation)
+        {
             _continuations[_continuationIndex++] = continuation;
         }
 
-        public int YieldToCurrentContinuation() {
+        public int YieldToCurrentContinuation()
+        {
             var target = Interpreter._labels[_continuations[_continuationIndex - 1]];
             SetStackDepth(target.StackDepth);
             return target.Index - InstructionIndex;
@@ -220,19 +254,22 @@ namespace System.Management.Automation.Interpreter {
         /// <summary>
         /// Get called from the LeaveFinallyInstruction
         /// </summary>
-        public int YieldToPendingContinuation() {
+        public int YieldToPendingContinuation()
+        {
             Debug.Assert(_pendingContinuation >= 0);
             RuntimeLabel pendingTarget = Interpreter._labels[_pendingContinuation];
 
             // the current continuation might have higher priority (continuationIndex is the depth of the current continuation):
-            if (pendingTarget.ContinuationStackDepth < _continuationIndex) {
+            if (pendingTarget.ContinuationStackDepth < _continuationIndex)
+            {
                 RuntimeLabel currentTarget = Interpreter._labels[_continuations[_continuationIndex - 1]];
                 SetStackDepth(currentTarget.StackDepth);
                 return currentTarget.Index - InstructionIndex;
             }
 
             SetStackDepth(pendingTarget.StackDepth);
-            if (_pendingValue != Interpreter.NoValue) {
+            if (_pendingValue != Interpreter.NoValue)
+            {
                 Data[StackIndex - 1] = _pendingValue;
             }
 
@@ -242,7 +279,8 @@ namespace System.Management.Automation.Interpreter {
             return pendingTarget.Index - InstructionIndex;
         }
 
-        internal void PushPendingContinuation() {
+        internal void PushPendingContinuation()
+        {
             Push(_pendingContinuation);
             Push(_pendingValue);
 
@@ -250,35 +288,42 @@ namespace System.Management.Automation.Interpreter {
             _pendingValue = Interpreter.NoValue;
         }
 
-        internal void PopPendingContinuation() {
+        internal void PopPendingContinuation()
+        {
             _pendingValue = Pop();
             _pendingContinuation = (int)Pop();
         }
 
-        private static MethodInfo _Goto;
-        private static MethodInfo _VoidGoto;
+        private static MethodInfo s_goto;
+        private static MethodInfo s_voidGoto;
 
-        internal static MethodInfo GotoMethod {
-            get { return _Goto ?? (_Goto = typeof(InterpretedFrame).GetMethod("Goto")); }
+        internal static MethodInfo GotoMethod
+        {
+            get { return s_goto ?? (s_goto = typeof(InterpretedFrame).GetMethod("Goto")); }
         }
 
-        internal static MethodInfo VoidGotoMethod {
-            get { return _VoidGoto ?? (_VoidGoto = typeof(InterpretedFrame).GetMethod("VoidGoto")); }
+        internal static MethodInfo VoidGotoMethod
+        {
+            get { return s_voidGoto ?? (s_voidGoto = typeof(InterpretedFrame).GetMethod("VoidGoto")); }
         }
 
-        public int VoidGoto(int labelIndex) {
+        public int VoidGoto(int labelIndex)
+        {
             return Goto(labelIndex, Interpreter.NoValue, gotoExceptionHandler: false);
         }
 
-        public int Goto(int labelIndex, object value, bool gotoExceptionHandler) {
+        public int Goto(int labelIndex, object value, bool gotoExceptionHandler)
+        {
             // TODO: we know this at compile time (except for compiled loop):
             RuntimeLabel target = Interpreter._labels[labelIndex];
             Debug.Assert(!gotoExceptionHandler || (gotoExceptionHandler && _continuationIndex == target.ContinuationStackDepth),
                 "When it's time to jump to the exception handler, all previous finally blocks should already be processed");
 
-            if (_continuationIndex == target.ContinuationStackDepth) {
+            if (_continuationIndex == target.ContinuationStackDepth)
+            {
                 SetStackDepth(target.StackDepth);
-                if (value != Interpreter.NoValue) {
+                if (value != Interpreter.NoValue)
+                {
                     Data[StackIndex - 1] = value;
                 }
                 return target.Index - InstructionIndex;
@@ -291,6 +336,5 @@ namespace System.Management.Automation.Interpreter {
         }
 
         #endregion
-
     }
 }

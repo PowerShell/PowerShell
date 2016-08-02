@@ -1,4 +1,4 @@
- /********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
@@ -42,7 +42,7 @@ namespace System.Management.Automation.Host
         {
             get;
         }
-        
+
         /// <summary>
         /// Returns true for hosts that support VT100 like virtual terminals.
         /// </summary>
@@ -159,7 +159,7 @@ namespace System.Management.Automation.Host
 
             // expressly not checking for value == null so that attempts to write a null cause an exception
 
-            if ( (value !=null)  && (value.Length != 0))
+            if ((value != null) && (value.Length != 0))
             {
                 Write(foregroundColor, backgroundColor, value);
             }
@@ -232,7 +232,7 @@ namespace System.Management.Automation.Host
         /// informational messages. These should not be displayed to the user by default, but may be useful to display in
         /// a separate area of the user interface.
         /// </summary>
-        public virtual void WriteInformation(InformationRecord record) {}
+        public virtual void WriteInformation(InformationRecord record) { }
 
         // Gets the state associated with PowerShell transcription.
         // 
@@ -250,25 +250,25 @@ namespace System.Management.Automation.Host
                 LocalRunspace localRunspace = Runspace.DefaultRunspace as LocalRunspace;
                 if (localRunspace != null)
                 {
-                    volatileTranscriptionData = localRunspace.TranscriptionData;
-                    if (volatileTranscriptionData != null)
-                    {                	
-                        return volatileTranscriptionData;
+                    _volatileTranscriptionData = localRunspace.TranscriptionData;
+                    if (_volatileTranscriptionData != null)
+                    {
+                        return _volatileTranscriptionData;
                     }
                 }
-                
+
                 // Otherwise, use the last stored transcription data. This will let us transcribe
                 // errors where the runspace has gone away.
-                if(volatileTranscriptionData != null)
+                if (_volatileTranscriptionData != null)
                 {
-                    return volatileTranscriptionData;
+                    return _volatileTranscriptionData;
                 }
 
                 TranscriptionData temporaryTranscriptionData = new TranscriptionData();
                 return temporaryTranscriptionData;
             }
         }
-        private TranscriptionData volatileTranscriptionData;
+        private TranscriptionData _volatileTranscriptionData;
 
         /// <summary>
         /// Transcribes a command being invoked
@@ -354,7 +354,7 @@ namespace System.Management.Automation.Host
                 if (String.Equals(helperCommand, commandName, StringComparison.OrdinalIgnoreCase))
                 {
                     IgnoreCommand(logElement, invocation);
-                    
+
                     // Record that this is a helper command. In this case, we ignore even the results
                     // from Out-Default
                     TranscriptionData.IsHelperCommand = true;
@@ -443,7 +443,7 @@ namespace System.Management.Automation.Host
             // Add bits from PSVersionTable
             StringBuilder psVersionInfo = new StringBuilder();
             Hashtable versionInfo = PSVersionInfo.GetPSVersionTable();
-            foreach(string versionKey in versionInfo.Keys)
+            foreach (string versionKey in versionInfo.Keys)
             {
                 Object value = versionInfo[versionKey];
 
@@ -489,7 +489,7 @@ namespace System.Management.Automation.Host
             LogTranscriptFooter(stoppedTranscript);
             stoppedTranscript.Dispose();
             TranscriptionData.Transcripts.Remove(stoppedTranscript);
-                        
+
             return stoppedTranscript.Path;
         }
 
@@ -532,8 +532,8 @@ namespace System.Management.Automation.Host
                     LogTranscriptFooter(TranscriptionData.SystemTranscript);
                     TranscriptionData.SystemTranscript.Dispose();
                     TranscriptionData.SystemTranscript = null;
-                    
-                    lock(systemTranscriptLock)
+
+                    lock (s_systemTranscriptLock)
                     {
                         systemTranscript = null;
                     }
@@ -548,12 +548,12 @@ namespace System.Management.Automation.Host
         /// <param name="resultText">The text to be transcribed.</param>
         internal void TranscribeResult(Runspace sourceRunspace, string resultText)
         {
-            if(IsTranscribing)
+            if (IsTranscribing)
             {
                 // If the runspace that this result applies to is not the current runspace, update Runspace.DefaultRunspace
                 // so that the transcript paths / etc. will be available to the TranscriptionData accessor.
                 Runspace originalDefaultRunspace = null;
-                if(sourceRunspace != null)
+                if (sourceRunspace != null)
                 {
                     originalDefaultRunspace = Runspace.DefaultRunspace;
                     Runspace.DefaultRunspace = sourceRunspace;
@@ -587,7 +587,7 @@ namespace System.Management.Automation.Host
                 }
                 finally
                 {
-                    if(originalDefaultRunspace != null)
+                    if (originalDefaultRunspace != null)
                     {
                         Runspace.DefaultRunspace = originalDefaultRunspace;
                     }
@@ -650,7 +650,7 @@ namespace System.Management.Automation.Host
                 {
                     lock (transcript.OutputToLog)
                     {
-                        if(transcript.OutputToLog.Count == 0)
+                        if (transcript.OutputToLog.Count == 0)
                         {
                             continue;
                         }
@@ -773,7 +773,7 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        public abstract PSCredential PromptForCredential( string caption, string message,
+        public abstract PSCredential PromptForCredential(string caption, string message,
             string userName, string targetName
         );
 
@@ -807,7 +807,7 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
-        public abstract PSCredential PromptForCredential( string caption, string message,
+        public abstract PSCredential PromptForCredential(string caption, string message,
             string userName, string targetName, PSCredentialTypes allowedCredentialTypes,
             PSCredentialUIOptions options
         );
@@ -876,7 +876,7 @@ namespace System.Management.Automation.Host
                 // Otherwise, populate the static variable with the result of the group policy setting.
                 //
                 // This way, multiple runspaces opened by the same process will share the same transcript.
-                lock (systemTranscriptLock)
+                lock (s_systemTranscriptLock)
                 {
                     if (systemTranscript == null)
                     {
@@ -888,14 +888,14 @@ namespace System.Management.Automation.Host
             return systemTranscript;
         }
         internal static TranscriptionOption systemTranscript = null;
-        private static Object systemTranscriptLock = new Object();
+        private static Object s_systemTranscriptLock = new Object();
 
         private static TranscriptionOption GetTranscriptOptionFromSettings(Dictionary<string, object> settings, TranscriptionOption currentTranscript)
         {
             TranscriptionOption transcript = null;
 
             object keyValue = null;
-            if(settings.TryGetValue("EnableTranscripting", out keyValue))
+            if (settings.TryGetValue("EnableTranscripting", out keyValue))
             {
                 if (String.Equals(keyValue.ToString(), "1", StringComparison.OrdinalIgnoreCase))
                 {
@@ -908,7 +908,7 @@ namespace System.Management.Automation.Host
 
                     // Pull out the transcript path
                     object outputDirectoryValue = null;
-                    if(settings.TryGetValue("OutputDirectory", out outputDirectoryValue))
+                    if (settings.TryGetValue("OutputDirectory", out outputDirectoryValue))
                     {
                         string outputDirectoryString = outputDirectoryValue as string;
                         transcript.Path = GetTranscriptPath(outputDirectoryString, true);
@@ -922,7 +922,7 @@ namespace System.Management.Automation.Host
                     object enableInvocationHeaderValue = null;
                     if (settings.TryGetValue("EnableInvocationHeader", out enableInvocationHeaderValue))
                     {
-                        if(String.Equals("1", enableInvocationHeaderValue.ToString(), StringComparison.OrdinalIgnoreCase))
+                        if (String.Equals("1", enableInvocationHeaderValue.ToString(), StringComparison.OrdinalIgnoreCase))
                         {
                             transcript.IncludeInvocationHeader = true;
                         }
@@ -941,13 +941,13 @@ namespace System.Management.Automation.Host
 
         internal static string GetTranscriptPath(string baseDirectory, bool includeDate)
         {
-            if(String.IsNullOrEmpty(baseDirectory))
+            if (String.IsNullOrEmpty(baseDirectory))
             {
                 baseDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             }
             else
             {
-                if(! Path.IsPathRooted(baseDirectory))
+                if (!Path.IsPathRooted(baseDirectory))
                 {
                     baseDirectory = Path.Combine(
                         Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
@@ -955,7 +955,7 @@ namespace System.Management.Automation.Host
                 }
             }
 
-            if(includeDate)
+            if (includeDate)
             {
                 baseDirectory = Path.Combine(baseDirectory, DateTime.Now.ToString("yyyyMMdd", CultureInfo.InvariantCulture));
             }
@@ -1021,12 +1021,12 @@ namespace System.Management.Automation.Host
         {
             get
             {
-                return path;
+                return _path;
             }
 
             set
             {
-                path = value;
+                _path = value;
 
                 Encoding = Encoding.UTF8;
                 FileSystemCmdletProviderEncoding fileEncoding = Utils.GetEncoding(value);
@@ -1035,9 +1035,9 @@ namespace System.Management.Automation.Host
                 {
                     Encoding = Utils.GetEncodingFromEnum(fileEncoding);
                 }
-           }
+            }
         }
-        private string path;
+        private string _path;
 
         /// <summary>
         /// Any output to log for this transcript.
@@ -1070,53 +1070,52 @@ namespace System.Management.Automation.Host
         {
             lock (OutputBeingLogged)
             {
-                if (!disposed)
+                if (!_disposed)
                 {
-                    if (contentWriter == null)
+                    if (_contentWriter == null)
                     {
                         try
                         {
                             // Try to first open the file with permissions that will allow us to read from it
                             // later.
-                            contentWriter = new StreamWriter(
+                            _contentWriter = new StreamWriter(
                                 new FileStream(this.Path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read),
                                 this.Encoding);
-                            contentWriter.BaseStream.Seek(0, SeekOrigin.End);
+                            _contentWriter.BaseStream.Seek(0, SeekOrigin.End);
                         }
-                        catch(IOException)
+                        catch (IOException)
                         {
                             // If that doesn't work (i.e.: logging to a tightly-ACL'd share), request fewer
                             // file permissions.
-                            contentWriter = new StreamWriter(
+                            _contentWriter = new StreamWriter(
                                 new FileStream(this.Path, FileMode.Append, FileAccess.Write, FileShare.Read),
                                 this.Encoding);
-
                         }
-                        contentWriter.AutoFlush = true;
+                        _contentWriter.AutoFlush = true;
                     }
 
                     foreach (string line in this.OutputBeingLogged)
                     {
-                        contentWriter.WriteLine(line);
+                        _contentWriter.WriteLine(line);
                     }
                 }
 
                 OutputBeingLogged.Clear();
             }
         }
-        StreamWriter contentWriter = null;
+        private StreamWriter _contentWriter = null;
 
         /// <summary>
         /// Disposes this runspace instance. Dispose will close the runspace if not closed already.
         /// </summary>
         public void Dispose()
         {
-            if (disposed) { return; }
+            if (_disposed) { return; }
 
             // Wait for any pending output to be flushed to disk so that Stop-Transcript
             // can be trusted to immediately have all content from that session in the file)
             int outputWait = 0;
-            while(
+            while (
                 (outputWait < 1000) &&
                 ((OutputToLog.Count > 0) || (OutputBeingLogged.Count > 0)))
             {
@@ -1124,16 +1123,16 @@ namespace System.Management.Automation.Host
                 outputWait += 100;
             }
 
-            if (contentWriter != null)
+            if (_contentWriter != null)
             {
-                contentWriter.Flush();
-                contentWriter.Dispose();
-                contentWriter = null;
+                _contentWriter.Flush();
+                _contentWriter.Dispose();
+                _contentWriter = null;
             }
 
-            disposed = true;
+            _disposed = true;
         }
-        bool disposed = false;
+        private bool _disposed = false;
     }
 
     /// <summary>
@@ -1183,7 +1182,7 @@ namespace System.Management.Automation.Host
         /// <exception cref="ArgumentException">
         /// 1. Cannot process the hot key because a question mark ("?") cannot be used as a hot key.
         /// </exception>
-        internal static void BuildHotkeysAndPlainLabels(Collection<ChoiceDescription> choices, 
+        internal static void BuildHotkeysAndPlainLabels(Collection<ChoiceDescription> choices,
             out string[,] hotkeysAndPlainLabels)
         {
             // we will allocate the result array
@@ -1270,7 +1269,6 @@ namespace System.Management.Automation.Host
             return result;
         }
     }
-
 } // namespace System.Management.Automation.Host
 
 

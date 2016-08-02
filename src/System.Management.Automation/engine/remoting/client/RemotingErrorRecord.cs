@@ -167,7 +167,7 @@ namespace System.Management.Automation.Runspaces
             get { return _originInfo; }
         }
         [DataMemberAttribute()]
-        private readonly OriginInfo _originInfo;  
+        private readonly OriginInfo _originInfo;
 
         /// <summary>
         /// Constructor

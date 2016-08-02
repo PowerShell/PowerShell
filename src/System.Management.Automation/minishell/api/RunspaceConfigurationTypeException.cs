@@ -38,7 +38,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="assemblyName">Name of the assembly where <paramref name="typeName"/> is defined.</param>
         /// <param name="typeName">Runspace configuration type</param>
-        internal RunspaceConfigurationTypeException (string assemblyName, string typeName) : base()
+        internal RunspaceConfigurationTypeException(string assemblyName, string typeName) : base()
         {
             _assemblyName = assemblyName;
             _typeName = typeName;
@@ -48,7 +48,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initiate an instance for RunspaceConfigurationTypeException
         /// </summary>
-        public RunspaceConfigurationTypeException () : base()
+        public RunspaceConfigurationTypeException() : base()
         {
         }
 
@@ -58,7 +58,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="assemblyName">Name of the assembly where <paramref name="typeName"/> is defined.</param>
         /// <param name="typeName">Runspace configuration type defined in <paramref name="assemblyName"/></param>
         /// <param name="innerException">Inner exception of this exception</param>
-        internal RunspaceConfigurationTypeException(string assemblyName, string typeName, Exception innerException) : base (innerException.Message, innerException)
+        internal RunspaceConfigurationTypeException(string assemblyName, string typeName, Exception innerException) : base(innerException.Message, innerException)
         {
             _assemblyName = assemblyName;
             _typeName = typeName;
@@ -182,8 +182,8 @@ namespace System.Management.Automation.Runspaces
 
             base.GetObjectData(info, context);
 
-            info.AddValue("TypeName", this._typeName);
-            info.AddValue("AssemblyName", this._assemblyName);
+            info.AddValue("TypeName", _typeName);
+            info.AddValue("AssemblyName", _assemblyName);
         }
 
         #endregion Serialization

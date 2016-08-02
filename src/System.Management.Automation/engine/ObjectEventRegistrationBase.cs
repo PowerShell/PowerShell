@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Management.Automation;
 
@@ -21,14 +22,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return sourceIdentifier;
+                return _sourceIdentifier;
             }
             set
             {
-                sourceIdentifier = value;
+                _sourceIdentifier = value;
             }
         }
-        private string sourceIdentifier = Guid.NewGuid().ToString();
+        private string _sourceIdentifier = Guid.NewGuid().ToString();
 
 
         /// <summary>
@@ -39,14 +40,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return action;
+                return _action;
             }
             set
             {
-                action = value;
+                _action = value;
             }
         }
-        private ScriptBlock action = null;
+        private ScriptBlock _action = null;
 
         /// <summary>
         /// Parameter for additional data to be associated with this event subscription
@@ -56,14 +57,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return messageData;
+                return _messageData;
             }
             set
             {
-                messageData = value;
+                _messageData = value;
             }
         }
-        private PSObject messageData = null;
+        private PSObject _messageData = null;
 
         /// <summary>
         /// Parameter for the flag that determines if this subscription is used to support
@@ -74,32 +75,32 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return supportEvent;
+                return _supportEvent;
             }
             set
             {
-                supportEvent = value;
+                _supportEvent = value;
             }
         }
-        private SwitchParameter supportEvent = new SwitchParameter();
+        private SwitchParameter _supportEvent = new SwitchParameter();
 
         /// <summary>
         /// Parameter for the flag that determines whether this
         /// subscription will forward its events to the PowerShell client during remote executions
         /// </summary>
         [Parameter]
-        public SwitchParameter Forward 
+        public SwitchParameter Forward
         {
             get
             {
-                return forward;
+                return _forward;
             }
             set
             {
-                forward = value;
+                _forward = value;
             }
         }
-        private SwitchParameter forward = new SwitchParameter();
+        private SwitchParameter _forward = new SwitchParameter();
 
         /// <summary>
         /// Parameter to indicate that the subscriber should be auto-unregistered after being triggered for specified times.
@@ -112,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _maxTriggerCount;
             }
-            set 
+            set
             {
                 _maxTriggerCount = value <= 0 ? 0 : value;
             }
@@ -136,16 +137,16 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected PSEventSubscriber NewSubscriber
         {
-            get { return newSubscriber; }
+            get { return _newSubscriber; }
         }
-        private PSEventSubscriber newSubscriber;
+        private PSEventSubscriber _newSubscriber;
 
         /// <summary>
         /// Check arguments
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (((bool)forward) && (action != null))
+            if (((bool)_forward) && (_action != null))
             {
                 ThrowTerminatingError(
                     new ErrorRecord(
@@ -163,12 +164,12 @@ namespace Microsoft.PowerShell.Commands
         {
             Object inputObject = PSObject.Base(GetSourceObject());
             string eventName = GetSourceObjectEventName();
-            
+
             try
             {
                 if (
                     ((inputObject != null) || (eventName != null)) &&
-                    (Events.GetEventSubscribers(sourceIdentifier).GetEnumerator().MoveNext())
+                    (Events.GetEventSubscribers(_sourceIdentifier).GetEnumerator().MoveNext())
                     )
                 {
                     // Detect if the event identifier already exists
@@ -176,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
                         new ArgumentException(
                             String.Format(
                                 System.Globalization.CultureInfo.CurrentCulture,
-                                EventingResources.SubscriberExists, sourceIdentifier)),
+                                EventingResources.SubscriberExists, _sourceIdentifier)),
                         "SUBSCRIBER_EXISTS",
                         ErrorCategory.InvalidArgument,
                         inputObject);
@@ -185,17 +186,17 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    newSubscriber =
+                    _newSubscriber =
                         Events.SubscribeEvent(
                             inputObject,
                             eventName,
-                            sourceIdentifier, messageData, action, (bool) supportEvent, (bool) forward, _maxTriggerCount);
-                    
-                    if((action != null) && (! (bool) supportEvent))
-                        WriteObject(newSubscriber.Action);
+                            _sourceIdentifier, _messageData, _action, (bool)_supportEvent, (bool)_forward, _maxTriggerCount);
+
+                    if ((_action != null) && (!(bool)_supportEvent))
+                        WriteObject(_newSubscriber.Action);
                 }
             }
-            catch(ArgumentException e)
+            catch (ArgumentException e)
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     e,

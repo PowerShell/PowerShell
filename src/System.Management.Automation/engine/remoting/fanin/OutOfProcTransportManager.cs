@@ -64,7 +64,7 @@ namespace System.Management.Automation.Remoting
             XmlReaderSettings = new XmlReaderSettings();
             XmlReaderSettings.CheckCharacters = false;
             XmlReaderSettings.IgnoreComments = true;
-            XmlReaderSettings.IgnoreProcessingInstructions = true;            
+            XmlReaderSettings.IgnoreProcessingInstructions = true;
 #if !CORECLR  // No XmlReaderSettings.XmlResolver in CoreCLR
             XmlReaderSettings.XmlResolver = null;
 #endif
@@ -105,8 +105,8 @@ namespace System.Management.Automation.Remoting
         }
 
         internal static string CreateClosePacket(Guid psGuid)
-        {   
-            return CreatePSGuidPacket(PS_OUT_OF_PROC_CLOSE_TAG, psGuid);        
+        {
+            return CreatePSGuidPacket(PS_OUT_OF_PROC_CLOSE_TAG, psGuid);
         }
 
         internal static string CreateCloseAckPacket(Guid psGuid)
@@ -165,7 +165,7 @@ namespace System.Management.Automation.Remoting
             internal ClosePacketReceived ClosePacketReceived;
             internal CloseAckPacketReceived CloseAckPacketReceived;
         }
-        
+
         /// <summary>
         /// Process's data. Data should be a valid XML.
         /// </summary>
@@ -199,7 +199,7 @@ namespace System.Management.Automation.Remoting
                             XmlNodeType.Element.ToString(),
                             XmlNodeType.EndElement.ToString());
                 }
-            }           
+            }
         }
 
         /// <summary>
@@ -217,9 +217,9 @@ namespace System.Management.Automation.Remoting
         {
             Dbg.Assert(null != xmlReader, "xmlReader cannot be null.");
             Dbg.Assert(xmlReader.NodeType == XmlNodeType.Element, "xmlReader's NodeType should be of type Element");
-            
+
             PowerShellTraceSource tracer = PowerShellTraceSourceFactory.GetTraceSource();
-            
+
             switch (xmlReader.LocalName)
             {
                 case OutOfProcessUtils.PS_OUT_OF_PROC_DATA_TAG:
@@ -227,7 +227,7 @@ namespace System.Management.Automation.Remoting
                         // A <Data> should have 1 attribute identifying the stream
                         if (xmlReader.AttributeCount != 2)
                         {
-                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForDataElement, 
+                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForDataElement,
                                 RemotingErrorIdStrings.IPCWrongAttributeCountForDataElement,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_STREAM_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
@@ -240,14 +240,14 @@ namespace System.Management.Automation.Remoting
                         // Now move the reader to the data portion
                         if (!xmlReader.Read())
                         {
-                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCInsufficientDataforElement, 
+                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCInsufficientDataforElement,
                                 RemotingErrorIdStrings.IPCInsufficientDataforElement,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_DATA_TAG);
                         }
 
                         if (xmlReader.NodeType != XmlNodeType.Text)
                         {
-                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCOnlyTextExpectedInDataElement, 
+                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCOnlyTextExpectedInDataElement,
                                 RemotingErrorIdStrings.IPCOnlyTextExpectedInDataElement,
                                 xmlReader.NodeType, OutOfProcessUtils.PS_OUT_OF_PROC_DATA_TAG, XmlNodeType.Text);
                         }
@@ -263,7 +263,7 @@ namespace System.Management.Automation.Remoting
                     {
                         if (xmlReader.AttributeCount != 1)
                         {
-                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement, 
+                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement,
                                 RemotingErrorIdStrings.IPCWrongAttributeCountForElement,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_DATA_ACK_TAG);
@@ -271,7 +271,7 @@ namespace System.Management.Automation.Remoting
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
                         Guid psGuid = new Guid(psGuidString);
 
-                        tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_DATA_ACK received, psGuid : " + psGuid.ToString());                        
+                        tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_DATA_ACK received, psGuid : " + psGuid.ToString());
                         callbacks.DataAckPacketReceived(psGuid);
                     }
                     break;
@@ -279,7 +279,7 @@ namespace System.Management.Automation.Remoting
                     {
                         if (xmlReader.AttributeCount != 1)
                         {
-                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement, 
+                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement,
                                 RemotingErrorIdStrings.IPCWrongAttributeCountForElement,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_COMMAND_TAG);
@@ -287,7 +287,7 @@ namespace System.Management.Automation.Remoting
                         string psGuidString = xmlReader.GetAttribute(OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE);
                         Guid psGuid = new Guid(psGuidString);
 
-                        tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_COMMAND received, psGuid : " + psGuid.ToString());                        
+                        tracer.WriteMessage("OutOfProcessUtils.ProcessElement : PS_OUT_OF_PROC_COMMAND received, psGuid : " + psGuid.ToString());
                         callbacks.CommandCreationPacketReceived(psGuid);
                     }
                     break;
@@ -295,7 +295,7 @@ namespace System.Management.Automation.Remoting
                     {
                         if (xmlReader.AttributeCount != 1)
                         {
-                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement, 
+                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement,
                                 RemotingErrorIdStrings.IPCWrongAttributeCountForElement,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_COMMAND_ACK_TAG);
@@ -310,7 +310,7 @@ namespace System.Management.Automation.Remoting
                     {
                         if (xmlReader.AttributeCount != 1)
                         {
-                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement, 
+                            throw new PSRemotingTransportException(PSRemotingErrorId.IPCWrongAttributeCountForElement,
                                 RemotingErrorIdStrings.IPCWrongAttributeCountForElement,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_PSGUID_ATTRIBUTE,
                                 OutOfProcessUtils.PS_OUT_OF_PROC_CLOSE_TAG);
@@ -388,9 +388,9 @@ namespace System.Management.Automation.Remoting
     {
         #region Private Data
 
-        private TextWriter writer;
-        private bool isStopped;
-        private object syncObject = new object();
+        private TextWriter _writer;
+        private bool _isStopped;
+        private object _syncObject = new object();
 
         #endregion
 
@@ -403,7 +403,7 @@ namespace System.Management.Automation.Remoting
         internal OutOfProcessTextWriter(TextWriter writerToWrap)
         {
             Dbg.Assert(null != writerToWrap, "Cannot wrap a null writer.");
-            writer = writerToWrap;
+            _writer = writerToWrap;
         }
 
         #endregion
@@ -416,14 +416,14 @@ namespace System.Management.Automation.Remoting
         /// <param name="data"></param>
         internal virtual void WriteLine(string data)
         {
-            if (isStopped)
+            if (_isStopped)
             {
                 return;
             }
 
-            lock (syncObject)
+            lock (_syncObject)
             {
-                writer.WriteLine(data);
+                _writer.WriteLine(data);
             }
         }
 
@@ -436,7 +436,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void StopWriting()
         {
-            isStopped = true;
+            _isStopped = true;
         }
 
         #endregion
@@ -449,10 +449,10 @@ namespace System.Management.Automation.Remoting.Client
     {
         #region Data
 
-        private PrioritySendDataCollection.OnDataAvailableCallback onDataAvailableToSendCallback;
-        private OutOfProcessUtils.DataProcessingDelegates dataProcessingCallbacks;
-        private Dictionary<Guid, OutOfProcessClientCommandTransportManager> cmdTransportManagers;
-        private Timer closeTimeOutTimer;
+        private PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
+        private OutOfProcessUtils.DataProcessingDelegates _dataProcessingCallbacks;
+        private Dictionary<Guid, OutOfProcessClientCommandTransportManager> _cmdTransportManagers;
+        private Timer _closeTimeOutTimer;
 
         protected OutOfProcessTextWriter stdInWriter;
         protected PowerShellTraceSource _tracer;
@@ -466,20 +466,20 @@ namespace System.Management.Automation.Remoting.Client
             PSRemotingCryptoHelper cryptoHelper)
             : base(runspaceId, cryptoHelper)
         {
-            onDataAvailableToSendCallback =
+            _onDataAvailableToSendCallback =
                 new PrioritySendDataCollection.OnDataAvailableCallback(OnDataAvailableCallback);
 
-            cmdTransportManagers = new Dictionary<Guid, OutOfProcessClientCommandTransportManager>();
+            _cmdTransportManagers = new Dictionary<Guid, OutOfProcessClientCommandTransportManager>();
 
-            dataProcessingCallbacks = new OutOfProcessUtils.DataProcessingDelegates();
-            dataProcessingCallbacks.DataPacketReceived += new OutOfProcessUtils.DataPacketReceived(OnDataPacketReceived);
-            dataProcessingCallbacks.DataAckPacketReceived += new OutOfProcessUtils.DataAckPacketReceived(OnDataAckPacketReceived);
-            dataProcessingCallbacks.CommandCreationPacketReceived += new OutOfProcessUtils.CommandCreationPacketReceived(OnCommandCreationPacketReceived);
-            dataProcessingCallbacks.CommandCreationAckReceived += new OutOfProcessUtils.CommandCreationAckReceived(OnCommandCreationAckReceived);
-            dataProcessingCallbacks.SignalPacketReceived += new OutOfProcessUtils.SignalPacketReceived(OnSignalPacketReceived);
-            dataProcessingCallbacks.SignalAckPacketReceived += new OutOfProcessUtils.SignalAckPacketReceived(OnSiganlAckPacketReceived);
-            dataProcessingCallbacks.ClosePacketReceived += new OutOfProcessUtils.ClosePacketReceived(OnClosePacketReceived);
-            dataProcessingCallbacks.CloseAckPacketReceived += new OutOfProcessUtils.CloseAckPacketReceived(OnCloseAckReceived);
+            _dataProcessingCallbacks = new OutOfProcessUtils.DataProcessingDelegates();
+            _dataProcessingCallbacks.DataPacketReceived += new OutOfProcessUtils.DataPacketReceived(OnDataPacketReceived);
+            _dataProcessingCallbacks.DataAckPacketReceived += new OutOfProcessUtils.DataAckPacketReceived(OnDataAckPacketReceived);
+            _dataProcessingCallbacks.CommandCreationPacketReceived += new OutOfProcessUtils.CommandCreationPacketReceived(OnCommandCreationPacketReceived);
+            _dataProcessingCallbacks.CommandCreationAckReceived += new OutOfProcessUtils.CommandCreationAckReceived(OnCommandCreationAckReceived);
+            _dataProcessingCallbacks.SignalPacketReceived += new OutOfProcessUtils.SignalPacketReceived(OnSignalPacketReceived);
+            _dataProcessingCallbacks.SignalAckPacketReceived += new OutOfProcessUtils.SignalAckPacketReceived(OnSiganlAckPacketReceived);
+            _dataProcessingCallbacks.ClosePacketReceived += new OutOfProcessUtils.ClosePacketReceived(OnClosePacketReceived);
+            _dataProcessingCallbacks.CloseAckPacketReceived += new OutOfProcessUtils.CloseAckPacketReceived(OnCloseAckReceived);
 
             dataToBeSent.Fragmentor = base.Fragmentor;
             // session transport manager can recieve unlimited data..however each object is limited
@@ -491,7 +491,7 @@ namespace System.Management.Automation.Remoting.Client
             ReceivedDataCollection.MaximumReceivedDataSize = null;
             ReceivedDataCollection.MaximumReceivedObjectSize = BaseTransportManager.MaximumReceivedObjectSize;
             // timers initialization
-            closeTimeOutTimer = new Timer(OnCloseTimeOutTimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
+            _closeTimeOutTimer = new Timer(OnCloseTimeOutTimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
 
             _tracer = PowerShellTraceSourceFactory.GetTraceSource();
         }
@@ -543,7 +543,7 @@ namespace System.Management.Automation.Remoting.Client
                 PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 RunspacePoolInstanceId.ToString());
 
-            _tracer.WriteMessage("OutOfProcessClientSessionTransportManager.CloseAsync, when sending close session packet, progress command count should be zero, current cmd count: " + cmdTransportManagers.Count + ", RunSpacePool Id : " + this.RunspacePoolInstanceId);
+            _tracer.WriteMessage("OutOfProcessClientSessionTransportManager.CloseAsync, when sending close session packet, progress command count should be zero, current cmd count: " + _cmdTransportManagers.Count + ", RunSpacePool Id : " + this.RunspacePoolInstanceId);
 
             try
             {
@@ -551,7 +551,7 @@ namespace System.Management.Automation.Remoting.Client
                 stdInWriter.WriteLine(OutOfProcessUtils.CreateClosePacket(Guid.Empty));
 
                 // start the timer..so client can fail deterministically
-                closeTimeOutTimer.Change(60 * 1000, Timeout.Infinite);
+                _closeTimeOutTimer.Change(60 * 1000, Timeout.Infinite);
             }
             catch (IOException)
             {
@@ -595,8 +595,8 @@ namespace System.Management.Automation.Remoting.Client
             base.Dispose(isDisposing);
             if (isDisposing)
             {
-                cmdTransportManagers.Clear();
-                closeTimeOutTimer.Dispose();
+                _cmdTransportManagers.Clear();
+                _closeTimeOutTimer.Dispose();
             }
         }
 
@@ -616,8 +616,8 @@ namespace System.Management.Automation.Remoting.Client
                     return;
                 }
 
-                Dbg.Assert(!cmdTransportManagers.ContainsKey(key), "key already exists");
-                cmdTransportManagers.Add(key, cmdTM);
+                Dbg.Assert(!_cmdTransportManagers.ContainsKey(key), "key already exists");
+                _cmdTransportManagers.Add(key, cmdTM);
             }
         }
 
@@ -628,7 +628,7 @@ namespace System.Management.Automation.Remoting.Client
                 // We always need to remove commands from collection, even if isClosed is true.
                 // If we don't then we hang because CloseAsync() will not complete until all 
                 // commands are closed.
-                if (!cmdTransportManagers.Remove(key))
+                if (!_cmdTransportManagers.Remove(key))
                 {
                     _tracer.WriteMessage("key does not exist to remove from cmdTransportManagers");
                 }
@@ -640,7 +640,7 @@ namespace System.Management.Automation.Remoting.Client
             lock (syncObject)
             {
                 OutOfProcessClientCommandTransportManager result = null;
-                cmdTransportManagers.TryGetValue(key, out result);
+                _cmdTransportManagers.TryGetValue(key, out result);
                 return result;
             }
         }
@@ -648,7 +648,7 @@ namespace System.Management.Automation.Remoting.Client
         private void OnCloseSessionCompleted()
         {
             //stop timer
-            closeTimeOutTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            _closeTimeOutTimer.Change(Timeout.Infinite, Timeout.Infinite);
             RaiseCloseCompleted();
             CleanupConnection();
         }
@@ -663,7 +663,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             try
             {
-                OutOfProcessUtils.ProcessData(data, dataProcessingCallbacks);
+                OutOfProcessUtils.ProcessData(data, _dataProcessingCallbacks);
             }
             catch (Exception exception)
             {
@@ -724,7 +724,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             DataPriorityType priorityType;
             // This will either return data or register callback but doesn't do both.
-            byte[] data = dataToBeSent.ReadOrRegisterCallback(onDataAvailableToSendCallback,
+            byte[] data = dataToBeSent.ReadOrRegisterCallback(_onDataAvailableToSendCallback,
                 out priorityType);
             if (null != data)
             {
@@ -849,8 +849,7 @@ namespace System.Management.Automation.Remoting.Client
 
             cmdTM.OnCreateCmdCompleted();
 
-            _tracer.WriteMessage("OutOfProcessClientSessionTransportManager.OnCommandCreationAckReceived, in progress command count after cmd creation ACK : " + cmdTransportManagers.Count + ", psGuid : " + psGuid.ToString());
-
+            _tracer.WriteMessage("OutOfProcessClientSessionTransportManager.OnCommandCreationAckReceived, in progress command count after cmd creation ACK : " + _cmdTransportManagers.Count + ", psGuid : " + psGuid.ToString());
         }
 
         private void OnSignalPacketReceived(Guid psGuid)
@@ -890,7 +889,7 @@ namespace System.Management.Automation.Remoting.Client
             int commandCount;
             lock (syncObject)
             {
-                commandCount = cmdTransportManagers.Count;
+                commandCount = _cmdTransportManagers.Count;
             }
 
             if (psGuid == Guid.Empty)
@@ -930,8 +929,8 @@ namespace System.Management.Automation.Remoting.Client
     {
         #region Private Data
 
-        private Process serverProcess;
-        private NewProcessConnectionInfo connectionInfo;
+        private Process _serverProcess;
+        private NewProcessConnectionInfo _connectionInfo;
         private bool _processCreated = true;
         private PowerShellProcessInstance _processInstance;
 
@@ -939,12 +938,12 @@ namespace System.Management.Automation.Remoting.Client
 
         #region Constructor
 
-        internal OutOfProcessClientSessionTransportManager(Guid runspaceId, 
+        internal OutOfProcessClientSessionTransportManager(Guid runspaceId,
             NewProcessConnectionInfo connectionInfo,
             PSRemotingCryptoHelper cryptoHelper)
             : base(runspaceId, cryptoHelper)
-        {            
-            this.connectionInfo = connectionInfo;
+        {
+            _connectionInfo = connectionInfo;
         }
 
         #endregion
@@ -963,21 +962,21 @@ namespace System.Management.Automation.Remoting.Client
         /// </exception>
         internal override void CreateAsync()
         {
-            if (null != connectionInfo)
+            if (null != _connectionInfo)
             {
-                _processInstance = connectionInfo.Process ?? new PowerShellProcessInstance(connectionInfo.PSVersion,
-                                                                                           connectionInfo.Credential,
-                                                                                           connectionInfo.InitializationScript,
-                                                                                           connectionInfo.RunAs32);
-                if (connectionInfo.Process != null)
+                _processInstance = _connectionInfo.Process ?? new PowerShellProcessInstance(_connectionInfo.PSVersion,
+                                                                                           _connectionInfo.Credential,
+                                                                                           _connectionInfo.InitializationScript,
+                                                                                           _connectionInfo.RunAs32);
+                if (_connectionInfo.Process != null)
                 {
                     _processCreated = false;
                 }
                 // _processInstance.Start();
             }
-           
+
             PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateShell, PSOpcode.Connect,
-                            PSTask.CreateRunspace, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic, 
+                            PSTask.CreateRunspace, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                             RunspacePoolInstanceId.ToString());
 
             try
@@ -990,7 +989,7 @@ namespace System.Management.Automation.Remoting.Client
                     }
 
                     // Attach handlers and start the process
-                    serverProcess = _processInstance.Process;
+                    _serverProcess = _processInstance.Process;
 
                     if (_processInstance.RunspacePool != null)
                     {
@@ -1001,29 +1000,29 @@ namespace System.Management.Automation.Remoting.Client
                     stdInWriter = _processInstance.StdInWriter;
                     //if (stdInWriter == null)
                     {
-                        serverProcess.OutputDataReceived += new DataReceivedEventHandler(OnOutputDataReceived);
-                        serverProcess.ErrorDataReceived += new DataReceivedEventHandler(OnErrorDataReceived);
+                        _serverProcess.OutputDataReceived += new DataReceivedEventHandler(OnOutputDataReceived);
+                        _serverProcess.ErrorDataReceived += new DataReceivedEventHandler(OnErrorDataReceived);
                     }
-                    serverProcess.Exited += new EventHandler(OnExited);
+                    _serverProcess.Exited += new EventHandler(OnExited);
 
                     //serverProcess.Start();
                     _processInstance.Start();
 
                     if (stdInWriter != null)
                     {
-                        serverProcess.CancelErrorRead();
-                        serverProcess.CancelOutputRead();
+                        _serverProcess.CancelErrorRead();
+                        _serverProcess.CancelOutputRead();
                     }
 
                     // Start asynchronous reading of output/errors
-                    serverProcess.BeginOutputReadLine();
-                    serverProcess.BeginErrorReadLine();
+                    _serverProcess.BeginOutputReadLine();
+                    _serverProcess.BeginErrorReadLine();
 
-                    stdInWriter = new OutOfProcessTextWriter(serverProcess.StandardInput);
+                    stdInWriter = new OutOfProcessTextWriter(_serverProcess.StandardInput);
                     _processInstance.StdInWriter = stdInWriter;
                 }
             }
-            catch(System.ComponentModel.Win32Exception w32e)
+            catch (System.ComponentModel.Win32Exception w32e)
             {
                 PSRemotingTransportException psrte = new PSRemotingTransportException(w32e, RemotingErrorIdStrings.IPCExceptionLaunchingProcess,
                     w32e.Message);
@@ -1058,10 +1057,10 @@ namespace System.Management.Automation.Remoting.Client
             if (isDisposing)
             {
                 KillServerProcess();
-                if (null != serverProcess && _processCreated)
+                if (null != _serverProcess && _processCreated)
                 {
                     // null can happen if Dispose is called before ConnectAsync()
-                    serverProcess.Dispose();
+                    _serverProcess.Dispose();
                 }
             }
         }
@@ -1092,27 +1091,27 @@ namespace System.Management.Automation.Remoting.Client
 
         private void KillServerProcess()
         {
-            if (null == serverProcess)
+            if (null == _serverProcess)
             {
                 // this can happen if Dispose is called before ConnectAsync()
                 return;
             }
-            
+
             try
             {
-                if (!serverProcess.HasExited)
+                if (!_serverProcess.HasExited)
                 {
-                    serverProcess.Exited -= OnExited;
+                    _serverProcess.Exited -= OnExited;
 
                     if (_processCreated)
                     {
-                        serverProcess.CancelOutputRead();
-                        serverProcess.CancelErrorRead();
-                        serverProcess.Kill();
+                        _serverProcess.CancelOutputRead();
+                        _serverProcess.CancelErrorRead();
+                        _serverProcess.Kill();
                     }
 
-                    serverProcess.OutputDataReceived -= new DataReceivedEventHandler(OnOutputDataReceived);
-                    serverProcess.ErrorDataReceived -= new DataReceivedEventHandler(OnErrorDataReceived);
+                    _serverProcess.OutputDataReceived -= new DataReceivedEventHandler(OnOutputDataReceived);
+                    _serverProcess.ErrorDataReceived -= new DataReceivedEventHandler(OnErrorDataReceived);
                 }
             }
             catch (System.ComponentModel.Win32Exception)
@@ -1122,7 +1121,7 @@ namespace System.Management.Automation.Remoting.Client
                     // For processes running in an NTVDM, trying to kill with
                     // the original handle fails with a Win32 error, so we'll 
                     // use the ID and try to get a new handle...
-                    Process newHandle = Process.GetProcessById(serverProcess.Id);
+                    Process newHandle = Process.GetProcessById(_serverProcess.Id);
                     // If the process was not found, we won't get here...
                     if (_processCreated) newHandle.Kill();
                 }
@@ -1206,7 +1205,7 @@ namespace System.Management.Automation.Remoting.Client
                 while (true)
                 {
                     string data = reader.ReadLine();
-                    if (data == null) 
+                    if (data == null)
                     {
                         // End of stream indicates the target process was lost.
                         // Raise transport exception to invalidate the client remote runspace.
@@ -1486,7 +1485,7 @@ namespace System.Management.Automation.Remoting.Client
                 while (true)
                 {
                     string data = reader.ReadLine();
-                    if (data == null) 
+                    if (data == null)
                     {
                         // End of stream indicates the target process was lost.
                         // Raise transport exception to invalidate the client remote runspace.
@@ -1619,7 +1618,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 throw new PSArgumentNullException("connectionInfo");
             }
-        
+
             _connectionInfo = connectionInfo;
         }
 
@@ -1634,7 +1633,7 @@ namespace System.Management.Automation.Remoting.Client
         internal override void CreateAsync()
         {
             _clientPipe = new ContainerSessionNamedPipeClient(
-                _connectionInfo.ContainerProc.ProcessId, 
+                _connectionInfo.ContainerProc.ProcessId,
                 string.Empty, // AppDomainName
                 _connectionInfo.ContainerProc.ContainerObRoot);
 
@@ -1665,29 +1664,29 @@ namespace System.Management.Automation.Remoting.Client
 
         #endregion
     }
-    
+
     internal class OutOfProcessClientCommandTransportManager : BaseClientCommandTransportManager
     {
         #region Private Data
 
-        private OutOfProcessTextWriter stdInWriter;
-        private PrioritySendDataCollection.OnDataAvailableCallback onDataAvailableToSendCallback;
-        private Timer signalTimeOutTimer;
+        private OutOfProcessTextWriter _stdInWriter;
+        private PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
+        private Timer _signalTimeOutTimer;
 
         #endregion
 
         #region Constructors
 
         internal OutOfProcessClientCommandTransportManager(
-            ClientRemotePowerShell cmd, 
+            ClientRemotePowerShell cmd,
             bool noInput,
             OutOfProcessClientSessionTransportManagerBase sessnTM,
             OutOfProcessTextWriter stdInWriter) : base(cmd, sessnTM.CryptoHelper, sessnTM)
         {
-            this.stdInWriter = stdInWriter;
-            onDataAvailableToSendCallback =
+            _stdInWriter = stdInWriter;
+            _onDataAvailableToSendCallback =
                 new PrioritySendDataCollection.OnDataAvailableCallback(OnDataAvailableCallback);
-            signalTimeOutTimer = new Timer(OnSignalTimeOutTimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
+            _signalTimeOutTimer = new Timer(OnSignalTimeOutTimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
         }
 
         #endregion
@@ -1706,7 +1705,7 @@ namespace System.Management.Automation.Remoting.Client
                                 PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                                 RunspacePoolInstanceId.ToString(), powershellInstanceId.ToString());
 
-            stdInWriter.WriteLine(OutOfProcessUtils.CreateCommandPacket(powershellInstanceId));
+            _stdInWriter.WriteLine(OutOfProcessUtils.CreateCommandPacket(powershellInstanceId));
         }
 
         internal override void CloseAsync()
@@ -1724,18 +1723,18 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             base.CloseAsync();
-            
+
             PSEtwLog.LogAnalyticInformational(PSEventId.WSManCloseCommand,
                 PSOpcode.Disconnect, PSTask.None,
                 PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 RunspacePoolInstanceId.ToString(), powershellInstanceId.ToString());
 
             // Send Close information to the server
-            if (stdInWriter != null)
+            if (_stdInWriter != null)
             {
                 try
                 {
-                    stdInWriter.WriteLine(OutOfProcessUtils.CreateClosePacket(powershellInstanceId));
+                    _stdInWriter.WriteLine(OutOfProcessUtils.CreateClosePacket(powershellInstanceId));
                 }
                 catch (IOException e)
                 {
@@ -1756,11 +1755,11 @@ namespace System.Management.Automation.Remoting.Client
             base.CloseAsync();
 
             // Stop is equivalent to closing on the server..
-            stdInWriter.WriteLine(OutOfProcessUtils.CreateSignalPacket(powershellInstanceId));
+            _stdInWriter.WriteLine(OutOfProcessUtils.CreateSignalPacket(powershellInstanceId));
 
             // start the timer..so client can fail deterministically
             // set the interval to 60 seconds.
-            signalTimeOutTimer.Change(60 * 1000, Timeout.Infinite);
+            _signalTimeOutTimer.Change(60 * 1000, Timeout.Infinite);
         }
 
         internal override void Dispose(bool isDisposing)
@@ -1769,14 +1768,14 @@ namespace System.Management.Automation.Remoting.Client
             if (isDisposing)
             {
                 StopSignalTimerAndDecrementOperations();
-                signalTimeOutTimer.Dispose();
+                _signalTimeOutTimer.Dispose();
             }
         }
 
         #endregion
 
         #region Helper Methods
-        
+
         internal void OnCreateCmdCompleted()
         {
             PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateCommandCallbackReceived,
@@ -1794,7 +1793,7 @@ namespace System.Management.Automation.Remoting.Client
                 }
 
                 // Start sending data if any..and see if we can initiate a receive.
-                SendOneItem();                
+                SendOneItem();
             }
         }
 
@@ -1873,7 +1872,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             lock (syncObject)
             {
-                signalTimeOutTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                _signalTimeOutTimer.Change(Timeout.Infinite, Timeout.Infinite);
             }
         }
 
@@ -1917,12 +1916,12 @@ namespace System.Management.Automation.Remoting.Client
             // and data is accessed by only one thread at any given time..so we can depend on this count
             if (serializedPipeline.Length > 0)
             {
-                data = serializedPipeline.ReadOrRegisterCallback(null);         
+                data = serializedPipeline.ReadOrRegisterCallback(null);
             }
             else
             {
                 // This will either return data or register callback but doesn't do both.
-                data = dataToBeSent.ReadOrRegisterCallback(onDataAvailableToSendCallback, out priorityType);
+                data = dataToBeSent.ReadOrRegisterCallback(_onDataAvailableToSendCallback, out priorityType);
             }
 
             if (null != data)
@@ -1947,7 +1946,7 @@ namespace System.Management.Automation.Remoting.Client
                     return;
                 }
 
-                stdInWriter.WriteLine(OutOfProcessUtils.CreateDataPacket(data,
+                _stdInWriter.WriteLine(OutOfProcessUtils.CreateDataPacket(data,
                     priorityType,
                     powershellInstanceId));
             }
@@ -1971,10 +1970,10 @@ namespace System.Management.Automation.Remoting.Server
     {
         #region Private Data
 
-        private OutOfProcessTextWriter stdOutWriter;
-        private OutOfProcessTextWriter stdErrWriter;
-        private Dictionary<Guid, OutOfProcessServerTransportManager> cmdTransportManagers;
-        private object syncObject = new object();
+        private OutOfProcessTextWriter _stdOutWriter;
+        private OutOfProcessTextWriter _stdErrWriter;
+        private Dictionary<Guid, OutOfProcessServerTransportManager> _cmdTransportManagers;
+        private object _syncObject = new object();
 
         #endregion
 
@@ -1985,9 +1984,9 @@ namespace System.Management.Automation.Remoting.Server
         {
             Dbg.Assert(null != outWriter, "outWriter cannot be null.");
             Dbg.Assert(null != errWriter, "errWriter cannot be null.");
-            stdOutWriter = outWriter;
-            stdErrWriter = errWriter;
-            cmdTransportManagers = new Dictionary<Guid, OutOfProcessServerTransportManager>();
+            _stdOutWriter = outWriter;
+            _stdErrWriter = errWriter;
+            _cmdTransportManagers = new Dictionary<Guid, OutOfProcessServerTransportManager>();
         }
 
         #endregion
@@ -1999,7 +1998,7 @@ namespace System.Management.Automation.Remoting.Server
             base.ProcessRawData(data, stream);
 
             // Send ACK back to the client as we have processed data.
-            stdOutWriter.WriteLine(OutOfProcessUtils.CreateDataAckPacket(Guid.Empty));
+            _stdOutWriter.WriteLine(OutOfProcessUtils.CreateDataAckPacket(Guid.Empty));
         }
 
         internal override void Prepare()
@@ -2009,7 +2008,7 @@ namespace System.Management.Automation.Remoting.Server
 
         protected override void SendDataToClient(byte[] data, bool flush, bool reportAsPending, bool reportAsDataBoundary)
         {
-            stdOutWriter.WriteLine(OutOfProcessUtils.CreateDataPacket(data, 
+            _stdOutWriter.WriteLine(OutOfProcessUtils.CreateDataPacket(data,
                 DataPriorityType.Default, Guid.Empty));
         }
 
@@ -2020,48 +2019,48 @@ namespace System.Management.Automation.Remoting.Server
 
         internal void CreateCommandTransportManager(Guid powerShellCmdId)
         {
-            OutOfProcessServerTransportManager cmdTM = new OutOfProcessServerTransportManager(stdOutWriter, stdErrWriter,
+            OutOfProcessServerTransportManager cmdTM = new OutOfProcessServerTransportManager(_stdOutWriter, _stdErrWriter,
                 powerShellCmdId, this.TypeTable, this.Fragmentor.FragmentSize, this.CryptoHelper);
             // this will make the Session's DataReady event handler handle 
             // the commands data as well. This is because the state machine
             // is per session.
             cmdTM.MigrateDataReadyEventHandlers(this);
-            
-            lock (syncObject)
+
+            lock (_syncObject)
             {
                 // the dictinoary is cleared by ServerPowershellDataStructure handler
                 // once the clean up is complete for the transport manager
-                Dbg.Assert(!cmdTransportManagers.ContainsKey(powerShellCmdId), "key already exists");
-                cmdTransportManagers.Add(powerShellCmdId, cmdTM);
+                Dbg.Assert(!_cmdTransportManagers.ContainsKey(powerShellCmdId), "key already exists");
+                _cmdTransportManagers.Add(powerShellCmdId, cmdTM);
             }
 
             // send command ack..so that client can start sending data
-            stdOutWriter.WriteLine(OutOfProcessUtils.CreateCommandAckPacket(powerShellCmdId));
+            _stdOutWriter.WriteLine(OutOfProcessUtils.CreateCommandAckPacket(powerShellCmdId));
         }
 
         internal override AbstractServerTransportManager GetCommandTransportManager(Guid powerShellCmdId)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
                 OutOfProcessServerTransportManager result = null;
-                cmdTransportManagers.TryGetValue(powerShellCmdId, out result);
+                _cmdTransportManagers.TryGetValue(powerShellCmdId, out result);
                 return result;
             }
         }
 
         internal override void RemoveCommandTransportManager(Guid powerShellCmdId)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-                cmdTransportManagers.Remove(powerShellCmdId);
-            }            
+                _cmdTransportManagers.Remove(powerShellCmdId);
+            }
         }
 
         internal override void Close(Exception reasonForClose)
         {
             RaiseClosingEvent();
         }
-        
+
         #endregion
     }
 
@@ -2069,10 +2068,10 @@ namespace System.Management.Automation.Remoting.Server
     {
         #region Private Data
 
-        private OutOfProcessTextWriter stdOutWriter;
-        private OutOfProcessTextWriter stdErrWriter;
-        private Guid powershellInstanceId;
-        private bool isDataAckSendPending;
+        private OutOfProcessTextWriter _stdOutWriter;
+        private OutOfProcessTextWriter _stdErrWriter;
+        private Guid _powershellInstanceId;
+        private bool _isDataAckSendPending;
 
         #endregion
 
@@ -2081,13 +2080,13 @@ namespace System.Management.Automation.Remoting.Server
         internal OutOfProcessServerTransportManager(OutOfProcessTextWriter stdOutWriter, OutOfProcessTextWriter stdErrWriter,
             Guid powershellInstanceId,
             TypeTable typeTableToUse,
-            int fragmentSize, 
+            int fragmentSize,
             PSRemotingCryptoHelper cryptoHelper)
             : base(fragmentSize, cryptoHelper)
         {
-            this.stdOutWriter = stdOutWriter;
-            this.stdErrWriter = stdErrWriter;
-            this.powershellInstanceId = powershellInstanceId;
+            _stdOutWriter = stdOutWriter;
+            _stdErrWriter = stdErrWriter;
+            _powershellInstanceId = powershellInstanceId;
             this.TypeTable = typeTableToUse;
 
             this.WSManTransportErrorOccured += HandleWSManTransportError;
@@ -2099,7 +2098,7 @@ namespace System.Management.Automation.Remoting.Server
 
         private void HandleWSManTransportError(object sender, TransportErrorOccuredEventArgs e)
         {
-            this.stdErrWriter.WriteLine(StringUtil.Format(RemotingErrorIdStrings.RemoteTransportError, e.Exception.TransportMessage));
+            _stdErrWriter.WriteLine(StringUtil.Format(RemotingErrorIdStrings.RemoteTransportError, e.Exception.TransportMessage));
         }
 
         #endregion
@@ -2108,14 +2107,14 @@ namespace System.Management.Automation.Remoting.Server
 
         internal override void ProcessRawData(byte[] data, string stream)
         {
-            isDataAckSendPending = true;
+            _isDataAckSendPending = true;
             base.ProcessRawData(data, stream);
 
-            if (isDataAckSendPending)
+            if (_isDataAckSendPending)
             {
-                isDataAckSendPending = false;
+                _isDataAckSendPending = false;
                 // Send ACK back to the client as we have processed data.
-                stdOutWriter.WriteLine(OutOfProcessUtils.CreateDataAckPacket(powershellInstanceId));
+                _stdOutWriter.WriteLine(OutOfProcessUtils.CreateDataAckPacket(_powershellInstanceId));
             }
         }
 
@@ -2126,19 +2125,19 @@ namespace System.Management.Automation.Remoting.Server
 
         protected override void SendDataToClient(byte[] data, bool flush, bool reportAsPending, bool reportAsDataBoundary)
         {
-            stdOutWriter.WriteLine(OutOfProcessUtils.CreateDataPacket(data,
-                DataPriorityType.Default, powershellInstanceId));
+            _stdOutWriter.WriteLine(OutOfProcessUtils.CreateDataPacket(data,
+                DataPriorityType.Default, _powershellInstanceId));
         }
 
         internal override void Prepare()
         {
-            if (isDataAckSendPending)
+            if (_isDataAckSendPending)
             {
-                isDataAckSendPending = false;
+                _isDataAckSendPending = false;
                 // let the base class prepare itself.
                 base.Prepare();
                 // Send ACK back to the client as we have processed data.
-                stdOutWriter.WriteLine(OutOfProcessUtils.CreateDataAckPacket(powershellInstanceId));
+                _stdOutWriter.WriteLine(OutOfProcessUtils.CreateDataAckPacket(_powershellInstanceId));
             }
         }
 

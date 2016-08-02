@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 namespace Microsoft.PowerShell.Commands
 {
     using System.Management.Automation;
@@ -8,19 +9,19 @@ namespace Microsoft.PowerShell.Commands
 
     internal class ScalarTypeColumnInfo : ColumnInfo
     {
-        private Type type;
+        private Type _type;
 
         internal ScalarTypeColumnInfo(Type type)
             : base(type.Name, type.Name)
         {
-            this.type = type;
+            _type = type;
         }
 
         internal override Object GetValue(PSObject liveObject)
         {
             // Strip a wrapping PSObject.
             object baseObject = ((PSObject)liveObject).BaseObject;
-            if(baseObject.GetType().Equals(this.type))
+            if (baseObject.GetType().Equals(_type))
             {
                 return ColumnInfo.LimitString(baseObject);
             }
@@ -30,10 +31,9 @@ namespace Microsoft.PowerShell.Commands
 
     internal class TypeNameColumnInfo : ColumnInfo
     {
-
         internal TypeNameColumnInfo(string staleObjectPropertyName, string displayName)
             : base(staleObjectPropertyName, displayName)
-        {}
+        { }
 
         internal override Object GetValue(PSObject liveObject)
         {
@@ -45,35 +45,35 @@ namespace Microsoft.PowerShell.Commands
 
     internal class ToStringColumnInfo : ColumnInfo
     {
-        private OutGridViewCommand parentCmdlet;
+        private OutGridViewCommand _parentCmdlet;
 
         internal ToStringColumnInfo(string staleObjectPropertyName, string displayName, OutGridViewCommand parentCmdlet)
             : base(staleObjectPropertyName, displayName)
         {
-            this.parentCmdlet = parentCmdlet;
+            _parentCmdlet = parentCmdlet;
         }
 
         internal override Object GetValue(PSObject liveObject)
         {
             // Convert to a string preserving PowerShell formatting.
-            return ColumnInfo.LimitString(parentCmdlet.ConvertToString(liveObject));
+            return ColumnInfo.LimitString(_parentCmdlet.ConvertToString(liveObject));
         }
     }
 
     internal class IndexColumnInfo : ColumnInfo
     {
-        private int index = 0;
+        private int _index = 0;
 
         internal IndexColumnInfo(string staleObjectPropertyName, string displayName, int index)
             : base(staleObjectPropertyName, displayName)
         {
-            this.index = index;
+            _index = index;
         }
 
         internal override Object GetValue(PSObject liveObject)
         {
             // Every time this method is called, another raw is added to ML.
-            return index++;
+            return _index++;
         }
     }
 }

@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Globalization;
 using System.Text;
@@ -14,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary> 
     /// implementation for the get-date command 
     /// </summary> 
-    [Cmdlet( VerbsCommon.Get, "Date", DefaultParameterSetName = "net", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113313" )]
+    [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = "net", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113313")]
     [OutputType(typeof(string), ParameterSetName = new string[] { "UFormat", "net" })]
     [OutputType(typeof(DateTime), ParameterSetName = new string[] { "net" })]
     public sealed class GetDateCommand : Cmdlet
@@ -30,162 +31,162 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return date;
+                return _date;
             }
             set
             {
-                date = value;
-                dateSpecified = true;
+                _date = value;
+                _dateSpecified = true;
             }
         }
-        private DateTime date;
-        private bool dateSpecified;
+        private DateTime _date;
+        private bool _dateSpecified;
 
 
         /// <summary>
         /// Allows the user to override the year
         /// </summary>
         [Parameter]
-        [ValidateRangeAttribute( 1, 9999 )]
+        [ValidateRangeAttribute(1, 9999)]
         public int Year
         {
             get
             {
-                return year;
+                return _year;
             }
             set
             {
-                year = value;
-                yearSpecified = true;
+                _year = value;
+                _yearSpecified = true;
             }
         }
-        private int year;
-        private bool yearSpecified;
+        private int _year;
+        private bool _yearSpecified;
 
 
         /// <summary>
         /// Allows the user to override the month
         /// </summary>
         [Parameter]
-        [ValidateRangeAttribute( 1, 12 )]
+        [ValidateRangeAttribute(1, 12)]
         public int Month
         {
             get
             {
-                return month;
+                return _month;
             }
             set
             {
-                month = value;
-                monthSpecified = true;
+                _month = value;
+                _monthSpecified = true;
             }
         }
-        private int month;
-        private bool monthSpecified;
+        private int _month;
+        private bool _monthSpecified;
 
 
         /// <summary>
         /// Allows the user to override the day
         /// </summary>
         [Parameter]
-        [ValidateRangeAttribute( 1, 31 )]
+        [ValidateRangeAttribute(1, 31)]
         public int Day
         {
             get
             {
-                return day;
+                return _day;
             }
             set
             {
-                day = value;
-                daySpecified = true;
+                _day = value;
+                _daySpecified = true;
             }
         }
-        private int day;
-        private bool daySpecified;
+        private int _day;
+        private bool _daySpecified;
 
 
         /// <summary>
         /// Allows the user to override the hour
         /// </summary>
         [Parameter]
-        [ValidateRangeAttribute( 0, 23 )]
+        [ValidateRangeAttribute(0, 23)]
         public int Hour
         {
             get
             {
-                return hour;
+                return _hour;
             }
             set
             {
-                hour = value;
-                hourSpecified = true;
+                _hour = value;
+                _hourSpecified = true;
             }
         }
-        private int hour;
-        private bool hourSpecified;
+        private int _hour;
+        private bool _hourSpecified;
 
 
         /// <summary>
         /// Allows the user to override the minute
         /// </summary>
         [Parameter]
-        [ValidateRangeAttribute( 0, 59 )]
+        [ValidateRangeAttribute(0, 59)]
         public int Minute
         {
             get
             {
-                return minute;
+                return _minute;
             }
             set
             {
-                minute = value;
-                minuteSpecified = true;
+                _minute = value;
+                _minuteSpecified = true;
             }
         }
-        private int minute;
-        private bool minuteSpecified;
+        private int _minute;
+        private bool _minuteSpecified;
 
 
         /// <summary>
         /// Allows the user to override the second
         /// </summary>
         [Parameter]
-        [ValidateRangeAttribute( 0, 59 )]
+        [ValidateRangeAttribute(0, 59)]
         public int Second
         {
             get
             {
-                return second;
+                return _second;
             }
             set
             {
-                second = value;
-                secondSpecified = true;
+                _second = value;
+                _secondSpecified = true;
             }
         }
-        private int second;
-        private bool secondSpecified;
+        private int _second;
+        private bool _secondSpecified;
 
         /// <summary>
         /// Allows the user to override the millisecond
         /// </summary>
         [Parameter]
-        [ValidateRangeAttribute( 0, 999 )]
+        [ValidateRangeAttribute(0, 999)]
         public int Millisecond
         {
             get
             {
-                return millisecond;
+                return _millisecond;
             }
             set
             {
-                millisecond = value;
-                millisecondSpecified = true;
+                _millisecond = value;
+                _millisecondSpecified = true;
             }
         }
-        private int millisecond;
-        private bool millisecondSpecified;
+        private int _millisecond;
+        private bool _millisecondSpecified;
 
         /// <summary>
         /// This option determines the default output format used to display the object get-date emits
@@ -195,50 +196,50 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return displayHint;
+                return _displayHint;
             }
             set
             {
-                displayHint = value;
+                _displayHint = value;
             }
         }
-        private DisplayHintType displayHint = DisplayHintType.DateTime;
+        private DisplayHintType _displayHint = DisplayHintType.DateTime;
 
 
         /// <summary>
         /// Unix format string
         /// </summary> 
-        [Parameter( ParameterSetName = "UFormat" )]
+        [Parameter(ParameterSetName = "UFormat")]
         public string UFormat
         {
             get
             {
-                return uFormat;
+                return _uFormat;
             }
             set
             {
-                uFormat = value;
+                _uFormat = value;
             }
         }
-        private string uFormat;
+        private string _uFormat;
 
 
         /// <summary>
         /// Unix format string
         /// </summary> 
-        [Parameter( ParameterSetName = "net" )]
+        [Parameter(ParameterSetName = "net")]
         public string Format
         {
             get
             {
-                return format;
+                return _format;
             }
             set
             {
-                format = value;
+                _format = value;
             }
         }
-        private string format;
+        private string _format;
 
         #endregion
 
@@ -253,67 +254,67 @@ namespace Microsoft.PowerShell.Commands
             int offset;
 
             // use passed date object if specified
-            if ( dateSpecified )
+            if (_dateSpecified)
             {
                 dateToUse = Date;
             }
 
             //use passed year if specified
-            if ( yearSpecified )
+            if (_yearSpecified)
             {
                 offset = Year - dateToUse.Year;
-                dateToUse = dateToUse.AddYears( offset );
+                dateToUse = dateToUse.AddYears(offset);
             }
 
             //use passed month if specified
-            if ( monthSpecified )
+            if (_monthSpecified)
             {
                 offset = Month - dateToUse.Month;
-                dateToUse = dateToUse.AddMonths( offset );
+                dateToUse = dateToUse.AddMonths(offset);
             }
 
             //use passed day if specified
-            if ( daySpecified )
+            if (_daySpecified)
             {
                 offset = Day - dateToUse.Day;
-                dateToUse = dateToUse.AddDays( offset );
+                dateToUse = dateToUse.AddDays(offset);
             }
 
             //use passed hour if specified
-            if ( hourSpecified )
+            if (_hourSpecified)
             {
                 offset = Hour - dateToUse.Hour;
-                dateToUse = dateToUse.AddHours( offset );
+                dateToUse = dateToUse.AddHours(offset);
             }
 
             //use passed minute if specified
-            if ( minuteSpecified )
+            if (_minuteSpecified)
             {
                 offset = Minute - dateToUse.Minute;
-                dateToUse = dateToUse.AddMinutes( offset );
+                dateToUse = dateToUse.AddMinutes(offset);
             }
 
             //use passed second if specified
-            if ( secondSpecified )
+            if (_secondSpecified)
             {
                 offset = Second - dateToUse.Second;
-                dateToUse = dateToUse.AddSeconds( offset );
+                dateToUse = dateToUse.AddSeconds(offset);
             }
 
             //use passed millisecond if specified
-            if ( millisecondSpecified )
+            if (_millisecondSpecified)
             {
                 offset = Millisecond - dateToUse.Millisecond;
                 dateToUse = dateToUse.AddMilliseconds(offset);
                 dateToUse = dateToUse.Subtract(TimeSpan.FromTicks(dateToUse.Ticks % 10000));
             }
 
-            if ( UFormat != null )
+            if (UFormat != null)
             {
                 //format according to UFormat string
-                WriteObject( UFormatDateString( dateToUse ) );
+                WriteObject(UFormatDateString(dateToUse));
             }
-            else if ( Format != null )
+            else if (Format != null)
             {
                 //format according to Format string
 
@@ -340,16 +341,16 @@ namespace Microsoft.PowerShell.Commands
                     Format = "yyyyMMddTHHmmssffffZ";
                 }
 
-                WriteObject( dateToUse.ToString( Format, CultureInfo.CurrentCulture ) );
+                WriteObject(dateToUse.ToString(Format, CultureInfo.CurrentCulture));
             }
             else
             {
                 //output DateTime object wrapped in an PSObject with DisplayHint attached
-                PSObject outputObj = new PSObject( dateToUse );
-                PSNoteProperty note = new PSNoteProperty( "DisplayHint", DisplayHint );
-                outputObj.Properties.Add( note );
+                PSObject outputObj = new PSObject(dateToUse);
+                PSNoteProperty note = new PSNoteProperty("DisplayHint", DisplayHint);
+                outputObj.Properties.Add(note);
 
-                WriteObject( outputObj );
+                WriteObject(outputObj);
             }
         } // EndProcessing
 
@@ -357,43 +358,43 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This is more an implementation of the UNIX strftime
         /// </summary>
-        private string UFormatDateString( DateTime dateTime )
+        private string UFormatDateString(DateTime dateTime)
         {
-			DateTime epoch = DateTime.Parse("January 1, 1970", System.Globalization.CultureInfo.InvariantCulture);
+            DateTime epoch = DateTime.Parse("January 1, 1970", System.Globalization.CultureInfo.InvariantCulture);
             int offset = 0;
             StringBuilder sb = new StringBuilder();
 
 
             // folks may include the "+" as part of the format string 
-            if ( UFormat[0] == '+' )
+            if (UFormat[0] == '+')
             {
                 offset++;
             }
-            for ( int i = offset; i < UFormat.Length; i++ )
+            for (int i = offset; i < UFormat.Length; i++)
             {
-                if ( UFormat[i] == '%' )
+                if (UFormat[i] == '%')
                 {
                     i++;
-                    switch ( UFormat[i] )
+                    switch (UFormat[i])
                     {
                         case 'A':
-                            sb.Append( "{0:dddd}" );
+                            sb.Append("{0:dddd}");
                             break;
 
                         case 'a':
-                            sb.Append( "{0:ddd}" );
+                            sb.Append("{0:ddd}");
                             break;
 
                         case 'B':
-                            sb.Append( "{0:MMMM}" );
+                            sb.Append("{0:MMMM}");
                             break;
 
                         case 'b':
-                            sb.Append( "{0:MMM}" );
+                            sb.Append("{0:MMM}");
                             break;
 
                         case 'h':
-                            sb.Append( "{0:MMM}" );
+                            sb.Append("{0:MMM}");
                             break;
 
                         case 'C':
@@ -401,145 +402,144 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'c':
-                            sb.Append( "{0:ddd} {0:MMM} " );
-                            sb.Append( StringUtil.Format( "{0,2} ", dateTime.Day ) );
-                            sb.Append( "{0:HH}:{0:mm}:{0:ss} {0:yyyy}" );
+                            sb.Append("{0:ddd} {0:MMM} ");
+                            sb.Append(StringUtil.Format("{0,2} ", dateTime.Day));
+                            sb.Append("{0:HH}:{0:mm}:{0:ss} {0:yyyy}");
                             break;
 
                         case 'D':
-                            sb.Append( "{0:MM/dd/yy}" );
+                            sb.Append("{0:MM/dd/yy}");
                             break;
 
                         case 'd':
-                            sb.Append( "{0:dd}" );
+                            sb.Append("{0:dd}");
                             break;
 
                         case 'e':
-                            sb.Append( StringUtil.Format( "{0,2}", dateTime.Day ) );
+                            sb.Append(StringUtil.Format("{0,2}", dateTime.Day));
                             break;
 
                         case 'H':
-                            sb.Append( "{0:HH}" );
+                            sb.Append("{0:HH}");
                             break;
 
                         case 'I':
-                            sb.Append( "{0:hh}" );
+                            sb.Append("{0:hh}");
                             break;
 
                         case 'j':
-                            sb.Append( dateTime.DayOfYear );
+                            sb.Append(dateTime.DayOfYear);
                             break;
 
                         case 'k':
-                            sb.Append( "{0:HH}" );
+                            sb.Append("{0:HH}");
                             break;
 
                         case 'l':
-                            sb.Append( "{0:hh}" );
+                            sb.Append("{0:hh}");
                             break;
 
                         case 'M':
-                            sb.Append( "{0:mm}" );
+                            sb.Append("{0:mm}");
                             break;
 
                         case 'm':
-                            sb.Append( "{0:MM}" );
+                            sb.Append("{0:MM}");
                             break;
 
                         case 'n':
-                            sb.Append( "\n" );
+                            sb.Append("\n");
                             break;
 
                         case 'p':
-                            sb.Append( "{0:tt}" );
+                            sb.Append("{0:tt}");
                             break;
 
                         case 'R':
-                            sb.Append( "{0:HH:mm}" );
+                            sb.Append("{0:HH:mm}");
                             break;
 
                         case 'r':
-                            sb.Append( "{0:hh:mm:ss tt}" );
+                            sb.Append("{0:hh:mm:ss tt}");
                             break;
 
                         case 'S':
-                            sb.Append( "{0:ss}" );
+                            sb.Append("{0:ss}");
                             break;
 
                         case 's':
-                            sb.Append(dateTime.Subtract( epoch ).TotalSeconds );
+                            sb.Append(dateTime.Subtract(epoch).TotalSeconds);
                             break;
 
                         case 'T':
-                            sb.Append( "{0:HH:mm:ss}" );
+                            sb.Append("{0:HH:mm:ss}");
                             break;
 
                         case 'X':
-                            sb.Append( "{0:HH:mm:ss}" );
+                            sb.Append("{0:HH:mm:ss}");
                             break;
 
                         case 't':
-                            sb.Append( "\t" );
+                            sb.Append("\t");
                             break;
 
                         case 'u':
-                            sb.Append( (int) dateTime.DayOfWeek );
+                            sb.Append((int)dateTime.DayOfWeek);
                             break;
 
                         case 'U':
-                            sb.Append( dateTime.DayOfYear / 7 );
+                            sb.Append(dateTime.DayOfYear / 7);
                             break;
 
                         case 'V':
-                            sb.Append( ( dateTime.DayOfYear / 7 ) + 1 );
+                            sb.Append((dateTime.DayOfYear / 7) + 1);
                             break;
 
                         case 'G':
-                            sb.Append( "{0:yyyy}" );
+                            sb.Append("{0:yyyy}");
                             break;
 
                         case 'g':
-                            sb.Append( "{0:yy}" );
+                            sb.Append("{0:yy}");
                             break;
 
                         case 'W':
-                            sb.Append( dateTime.DayOfYear / 7 );
+                            sb.Append(dateTime.DayOfYear / 7);
                             break;
 
                         case 'w':
-                            sb.Append( (int) dateTime.DayOfWeek );
+                            sb.Append((int)dateTime.DayOfWeek);
                             break;
 
                         case 'x':
-                            sb.Append( "{0:MM/dd/yy}" );
+                            sb.Append("{0:MM/dd/yy}");
                             break;
 
                         case 'y':
-                            sb.Append( "{0:yy}" );
+                            sb.Append("{0:yy}");
                             break;
 
                         case 'Y':
-                            sb.Append( "{0:yyyy}" );
+                            sb.Append("{0:yyyy}");
                             break;
 
                         case 'Z':
-                            sb.Append( "{0:zz}" );
+                            sb.Append("{0:zz}");
                             break;
 
                         default:
-                            sb.Append( UFormat[i] );
+                            sb.Append(UFormat[i]);
                             break;
-
                     }
                 }
                 else
                 {
                     // It's not a known format specifier, so just append it
-                    sb.Append( UFormat[i] );
+                    sb.Append(UFormat[i]);
                 }
             }
 
-            return StringUtil.Format( sb.ToString(), dateTime );
+            return StringUtil.Format(sb.ToString(), dateTime);
         } // UFormatDateString
 
         #endregion

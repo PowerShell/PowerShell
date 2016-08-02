@@ -19,7 +19,7 @@ namespace System.Management.Automation
     /// located in the Monad / CustomShell Path as well as in the Application Base
     /// of PSSnapIns
     /// </remarks>
-    internal class GeneralHelpProvider: HelpProviderWithFullCache
+    internal class GeneralHelpProvider : HelpProviderWithFullCache
     {
         /// <summary>
         /// Constructor for GeneralHelpProvider
@@ -63,7 +63,7 @@ namespace System.Management.Automation
         /// </summary>
         internal sealed override void LoadCache()
         {
-            Collection<String> files = MUIFileSearcher.SearchFiles("*.concept.xml",GetSearchPaths());
+            Collection<String> files = MUIFileSearcher.SearchFiles("*.concept.xml", GetSearchPaths());
 
             if (files == null)
                 return;

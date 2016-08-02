@@ -8,8 +8,8 @@ using System.Text;
 using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
 
-namespace System.Diagnostics.Eventing{
-    
+namespace System.Diagnostics.Eventing
+{
     public class EventProviderTraceListener : TraceListener
     {
         //
@@ -22,11 +22,11 @@ namespace System.Diagnostics.Eventing{
         // Event payload is "delimiter" separated, which can be configured
         // 
         // 
-        private EventProvider m_provider;
+        private EventProvider _provider;
         private const string s_nullStringValue = "null";
         private const string s_nullStringComaValue = "null,";
         private const string s_nullCStringValue = ": null";
-        private string m_delimiter = ";";
+        private string _delimiter = ";";
         private const uint s_keyWordMask = 0xFFFFFF00;
         private const int s_defaultPayloadSize = 512;
 
@@ -35,7 +35,7 @@ namespace System.Diagnostics.Eventing{
         {
             get
             {
-                return m_delimiter;
+                return _delimiter;
             }
 
             [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
@@ -47,7 +47,7 @@ namespace System.Diagnostics.Eventing{
                 if (value.Length == 0)
                     throw new ArgumentException(DotNetEventingStrings.Argument_NeedNonemptyDelimiter);
 
-                m_delimiter = value;
+                _delimiter = value;
             }
         }
 
@@ -78,19 +78,18 @@ namespace System.Diagnostics.Eventing{
             if (delimiter.Length == 0)
                 throw new ArgumentException(DotNetEventingStrings.Argument_NeedNonemptyDelimiter);
 
-            m_delimiter = delimiter;
+            _delimiter = delimiter;
             InitProvider(providerId);
         }
 
         private void InitProvider(string providerId)
         {
-
             Guid controlGuid = new Guid(providerId);
             //
             // Create The ETW TraceProvider
             //			
 
-            m_provider = new EventProvider(controlGuid);
+            _provider = new EventProvider(controlGuid);
         }
 
         //
@@ -112,18 +111,18 @@ namespace System.Diagnostics.Eventing{
         {
             if (disposing)
             {
-                m_provider.Close();
+                _provider.Close();
             }
         }
 
         public sealed override void Write(string message)
         {
-            if (!m_provider.IsEnabled()) 
+            if (!_provider.IsEnabled())
             {
                 return;
             }
 
-            m_provider.WriteMessageEvent(message, (byte)TraceEventType.Information, 0);
+            _provider.WriteMessageEvent(message, (byte)TraceEventType.Information, 0);
         }
 
         public sealed override void WriteLine(string message)
@@ -139,12 +138,12 @@ namespace System.Diagnostics.Eventing{
         // 
         public sealed override void TraceData(TraceEventCache eventCache, string source, TraceEventType eventType, int id, object data)
         {
-            if (!m_provider.IsEnabled())
+            if (!_provider.IsEnabled())
             {
                 return;
             }
 
-            if (Filter != null && !Filter.ShouldTrace(eventCache, source, eventType, id, null,null,null,null))
+            if (Filter != null && !Filter.ShouldTrace(eventCache, source, eventType, id, null, null, null, null))
             {
                 return;
             }
@@ -160,14 +159,14 @@ namespace System.Diagnostics.Eventing{
                 dataString.Append(s_nullCStringValue);
             }
 
-            m_provider.WriteMessageEvent(dataString.ToString(),
+            _provider.WriteMessageEvent(dataString.ToString(),
                             (byte)eventType,
                             (long)eventType & s_keyWordMask);
         }
 
         public sealed override void TraceData(TraceEventCache eventCache, String source, TraceEventType eventType, int id, params object[] data)
         {
-            if (!m_provider.IsEnabled())
+            if (!_provider.IsEnabled())
             {
                 return;
             }
@@ -176,11 +175,11 @@ namespace System.Diagnostics.Eventing{
             {
                 return;
             }
-            
+
             int index;
             StringBuilder dataString = new StringBuilder(s_defaultPayloadSize);
 
-            if ((data != null) && (data.Length > 0) )
+            if ((data != null) && (data.Length > 0))
             {
                 for (index = 0; index < (data.Length - 1); index++)
                 {
@@ -209,14 +208,14 @@ namespace System.Diagnostics.Eventing{
                 dataString.Append(s_nullStringValue);
             }
 
-            m_provider.WriteMessageEvent(dataString.ToString(),
+            _provider.WriteMessageEvent(dataString.ToString(),
                             (byte)eventType,
                             (long)eventType & s_keyWordMask);
         }
 
         public sealed override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id)
         {
-            if (!m_provider.IsEnabled())
+            if (!_provider.IsEnabled())
             {
                 return;
             }
@@ -226,14 +225,14 @@ namespace System.Diagnostics.Eventing{
                 return;
             }
 
-            m_provider.WriteMessageEvent(String.Empty,
+            _provider.WriteMessageEvent(String.Empty,
                             (byte)eventType,
                             (long)eventType & s_keyWordMask);
         }
 
         public sealed override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string message)
         {
-            if (!m_provider.IsEnabled())
+            if (!_provider.IsEnabled())
             {
                 return;
             }
@@ -246,14 +245,14 @@ namespace System.Diagnostics.Eventing{
             StringBuilder dataString = new StringBuilder(s_defaultPayloadSize);
             dataString.Append(message);
 
-            m_provider.WriteMessageEvent(dataString.ToString(),
+            _provider.WriteMessageEvent(dataString.ToString(),
                             (byte)eventType,
                             (long)eventType & s_keyWordMask);
         }
 
         public sealed override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string format, params object[] args)
         {
-            if (!m_provider.IsEnabled())
+            if (!_provider.IsEnabled())
             {
                 return;
             }
@@ -265,13 +264,13 @@ namespace System.Diagnostics.Eventing{
 
             if (args == null)
             {
-                m_provider.WriteMessageEvent(format,
+                _provider.WriteMessageEvent(format,
                                 (byte)eventType,
                                 (long)eventType & s_keyWordMask);
             }
             else
             {
-                m_provider.WriteMessageEvent(String.Format(CultureInfo.InvariantCulture, format, args),
+                _provider.WriteMessageEvent(String.Format(CultureInfo.InvariantCulture, format, args),
                                 (byte)eventType,
                                 (long)eventType & s_keyWordMask);
             }

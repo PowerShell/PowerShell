@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static int GetStatusCode(HttpResponseMessage response)
         {
-            int statusCode = (int) response.StatusCode;
+            int statusCode = (int)response.StatusCode;
             return statusCode;
         }
 

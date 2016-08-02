@@ -22,12 +22,11 @@ namespace System.Management.Automation
     /// </summary>
     internal class PSMISerializer
     {
-
         //TODO, insivara : Depth implementation will be added subsequently
         /// <summary>
         /// Default depth of serialization
         /// </summary>
-        private static int mshDefaultMISerializationDepth = 1;
+        private static int s_mshDefaultMISerializationDepth = 1;
 
         internal PSMISerializer()
         {
@@ -40,7 +39,7 @@ namespace System.Management.Automation
         /// <returns>The serialized object, as CimInstance</returns>n
         public static CimInstance Serialize(Object source)
         {
-            return Serialize(source, mshDefaultMISerializationDepth);
+            return Serialize(source, s_mshDefaultMISerializationDepth);
         }
 
         /// <summary>

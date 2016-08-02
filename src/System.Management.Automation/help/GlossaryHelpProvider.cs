@@ -19,7 +19,7 @@ namespace System.Management.Automation
     /// located in the Monad / CustomShell Path as well as in the Application Base
     /// of PSSnapIns
     /// </remarks>
-    internal class GlossaryHelpProvider: HelpProviderWithFullCache
+    internal class GlossaryHelpProvider : HelpProviderWithFullCache
     {
         /// <summary>
         /// Constructor for GlossaryHelpProvider
@@ -78,7 +78,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         protected sealed override bool CustomMatch(string target, string key)
         {
-            if(String.IsNullOrEmpty(target) || String.IsNullOrEmpty(key))
+            if (String.IsNullOrEmpty(target) || String.IsNullOrEmpty(key))
                 return false;
 
             string[] terms = key.Split(Utils.Separators.Comma);
@@ -103,7 +103,7 @@ namespace System.Management.Automation
 
             if (files == null)
                 return;
-            
+
             foreach (string file in files)
             {
                 if (!_helpFiles.ContainsKey(file))
@@ -113,7 +113,7 @@ namespace System.Management.Automation
                     _helpFiles[file] = 0;
                 }
             }
-        }        
+        }
 
         /// <summary>
         /// Load help file for HelpInfo objects. The HelpInfo objects will be 
@@ -136,7 +136,7 @@ namespace System.Management.Automation
             try
             {
                 doc = InternalDeserializer.LoadUnsafeXmlDocument(
-                    new FileInfo(helpFile), 
+                    new FileInfo(helpFile),
                     false, /* ignore whitespace, comments, etc. */
                     null); /* default maxCharactersInDocument */
             }

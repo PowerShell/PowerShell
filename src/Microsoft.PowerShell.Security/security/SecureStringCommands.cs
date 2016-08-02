@@ -9,7 +9,7 @@ using System.Security;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
 using System.Globalization;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public abstract class SecureStringCommandBase : PSCmdlet
     {
-        private SecureString ss;
+        private SecureString _ss;
 
         /// <summary>
         /// Gets or sets the secure string to be used by the get- and set-
@@ -27,14 +27,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected SecureString SecureStringData
         {
-            get { return ss; }
-            set { ss = value; }
+            get { return _ss; }
+            set { _ss = value; }
         }
 
         //
         // name of this command
         //
-        string commandName;
+        private string _commandName;
 
         /// <summary>
         /// Intitializes a new instance of the SecureStringCommandBase
@@ -46,10 +46,10 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         protected SecureStringCommandBase(string name) : base()
         {
-            commandName = name;
+            _commandName = name;
         }
 
-        private SecureStringCommandBase() : base() {}
+        private SecureStringCommandBase() : base() { }
     }
 
     /// <summary>
@@ -64,24 +64,24 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected ConvertFromToSecureStringCommandBase(string name) : base(name) { }
 
-        private SecureString secureKey = null;
-        private byte[] key;
+        private SecureString _secureKey = null;
+        private byte[] _key;
 
         /// <summary>
         /// Gets or sets the SecureString version of the encryption 
         /// key used by the SecureString cmdlets.
         /// </summary>
-        [Parameter(Position=1, ParameterSetName="Secure")]
+        [Parameter(Position = 1, ParameterSetName = "Secure")]
         public SecureString SecureKey
         {
             get
             {
-                return secureKey;
+                return _secureKey;
             }
 
             set
             {
-                secureKey = value;
+                _secureKey = value;
             }
         }
 
@@ -94,12 +94,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return key;
+                return _key;
             }
-            
+
             set
             {
-                key = value;
+                _key = value;
             }
         }
     }
@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Initializes a new instance of the ExportSecureStringCommand class
         /// </summary>
-        public ConvertFromSecureStringCommand() : base("ConvertFrom-SecureString") {}
+        public ConvertFromSecureStringCommand() : base("ConvertFrom-SecureString") { }
 
         /// <summary>
         /// Gets or sets the secure string to be exported.
@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return SecureStringData;
             }
-            
+
             set
             {
                 SecureStringData = value;
@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
                 exportedString = SecureStringHelper.Protect(SecureString);
             }
 
-            if(encryptionResult != null)
+            if (encryptionResult != null)
             {
                 // The formatted string is Algorithm Version,
                 // Initialization Vector, Encrypted Data
@@ -217,66 +217,66 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Initializes a new instance of the ImportSecureStringCommand class.
         /// </summary>
-        public ConvertToSecureStringCommand() : base("ConvertTo-SecureString") {}
+        public ConvertToSecureStringCommand() : base("ConvertTo-SecureString") { }
 
         /// <summary>
         /// Gets or sets the unsecured string to be imported.
         /// </summary>
         ///
-        [Parameter(Position=0, ValueFromPipeline = true, Mandatory=true)]
+        [Parameter(Position = 0, ValueFromPipeline = true, Mandatory = true)]
         public String String
         {
             get
             {
-                return s;
+                return _s;
             }
-            
+
             set
             {
-                s = value;
+                _s = value;
             }
         }
-        private string s;
+        private string _s;
 
         /// <summary>
         /// Gets or sets the flag that marks the unsecured string as a plain
         /// text string.
         /// </summary>
         /// 
-        [Parameter(Position=1, ParameterSetName="PlainText")]
+        [Parameter(Position = 1, ParameterSetName = "PlainText")]
         public SwitchParameter AsPlainText
         {
             get
             {
-                return asPlainText;
+                return _asPlainText;
             }
-            
+
             set
             {
-                asPlainText = value;
+                _asPlainText = value;
             }
         }
-        private bool asPlainText;
+        private bool _asPlainText;
 
         /// <summary>
         /// Gets or sets the flag that will force the import of a plaintext
         /// unsecured string.
         /// </summary>
         /// 
-        [Parameter(Position=2, ParameterSetName="PlainText")]
+        [Parameter(Position = 2, ParameterSetName = "PlainText")]
         public SwitchParameter Force
         {
             get
             {
-                return force;
+                return _force;
             }
-            
+
             set
             {
-                force = value;
+                _force = value;
             }
         }
-        private bool force;
+        private bool _force;
 
 
         /// <summary>
@@ -288,7 +288,7 @@ namespace Microsoft.PowerShell.Commands
         {
             SecureString importedString = null;
 
-            Utils.CheckArgForNullOrEmpty(s, "String");
+            Utils.CheckArgForNullOrEmpty(_s, "String");
 
             try
             {
@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
                 byte[] iv = null;
 
                 // If this is a V2 package
-                if(String.IndexOf(SecureStringHelper.SecureStringExportHeader,
+                if (String.IndexOf(SecureStringHelper.SecureStringExportHeader,
                         StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     try
@@ -313,13 +313,13 @@ namespace Microsoft.PowerShell.Commands
                         string dataPackage = System.Text.Encoding.Unicode.GetString(inputBytes);
                         string[] dataElements = dataPackage.Split(Utils.Separators.Pipe);
 
-                        if(dataElements.Length == 3)
+                        if (dataElements.Length == 3)
                         {
                             encryptedContent = dataElements[2];
                             iv = Convert.FromBase64String(dataElements[1]);
                         }
                     }
-                    catch(FormatException)
+                    catch (FormatException)
                     {
                         // Will be raised if we can't convert the
                         // input from a Base64 string. This means
@@ -338,17 +338,17 @@ namespace Microsoft.PowerShell.Commands
                 {
                     importedString = SecureStringHelper.Decrypt(encryptedContent, Key, iv);
                 }
-                else if(! AsPlainText)
+                else if (!AsPlainText)
                 {
                     importedString = SecureStringHelper.Unprotect(String);
                 }
                 else
                 {
-                    if(! Force)
+                    if (!Force)
                     {
                         String error =
                             SecureStringCommands.ForceRequired;
-                        Exception e =  new ArgumentException (error);
+                        Exception e = new ArgumentException(error);
                         WriteError(new ErrorRecord(e, "ImportSecureString_ForceRequired", ErrorCategory.InvalidArgument, null));
                     }
                     else
@@ -358,7 +358,7 @@ namespace Microsoft.PowerShell.Commands
                         // -AsPlainText and -Force flags, they consciously have made the decision to be OK
                         // with that.
                         importedString = new SecureString();
-                        foreach(char currentChar in String) { importedString.AppendChar(currentChar); }
+                        foreach (char currentChar in String) { importedString.AppendChar(currentChar); }
                     }
                 }
             }

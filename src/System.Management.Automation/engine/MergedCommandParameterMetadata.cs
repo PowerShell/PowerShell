@@ -34,28 +34,28 @@ namespace System.Management.Automation
             var result = new List<MergedCompiledCommandParameter>();
 
             // Replace bindable parameters
-            bindableParameters.Clear();
+            _bindableParameters.Clear();
             foreach (KeyValuePair<string, MergedCompiledCommandParameter> entry in metadata.BindableParameters)
             {
-                bindableParameters.Add(entry.Key, entry.Value);
+                _bindableParameters.Add(entry.Key, entry.Value);
                 result.Add(entry.Value);
             }
 
-            aliasedParameters.Clear();
+            _aliasedParameters.Clear();
             foreach (KeyValuePair<string, MergedCompiledCommandParameter> entry in metadata.AliasedParameters)
             {
-                aliasedParameters.Add(entry.Key, entry.Value);
+                _aliasedParameters.Add(entry.Key, entry.Value);
             }
 
             // Replace additional meta info
             _defaultParameterSetName = metadata._defaultParameterSetName;
-            nextAvailableParameterSetIndex = metadata.nextAvailableParameterSetIndex;
-            
-            parameterSetMap.Clear();
-            var parameterSetMapInList = (List<string>) parameterSetMap;
-            parameterSetMapInList.AddRange(metadata.parameterSetMap);
+            _nextAvailableParameterSetIndex = metadata._nextAvailableParameterSetIndex;
 
-            Diagnostics.Assert(ParameterSetCount == nextAvailableParameterSetIndex,
+            _parameterSetMap.Clear();
+            var parameterSetMapInList = (List<string>)_parameterSetMap;
+            parameterSetMapInList.AddRange(metadata._parameterSetMap);
+
+            Diagnostics.Assert(ParameterSetCount == _nextAvailableParameterSetIndex,
                 "After replacement with the metadata of the new parameters, ParameterSetCount should be equal to nextAvailableParameterSetIndex");
 
             return result;
@@ -100,7 +100,7 @@ namespace System.Management.Automation
 
             foreach (KeyValuePair<string, CompiledCommandParameter> bindableParameter in parameterMetadata.BindableParameters)
             {
-                if (this.bindableParameters.ContainsKey(bindableParameter.Key))
+                if (_bindableParameters.ContainsKey(bindableParameter.Key))
                 {
                     MetadataException exception =
                         new MetadataException(
@@ -112,7 +112,7 @@ namespace System.Management.Automation
                 }
 
                 // NTRAID#Windows Out Of Band Releases-926371-2005/12/27-JonN
-                if (this.aliasedParameters.ContainsKey(bindableParameter.Key))
+                if (_aliasedParameters.ContainsKey(bindableParameter.Key))
                 {
                     MetadataException exception =
                         new MetadataException(
@@ -120,21 +120,21 @@ namespace System.Management.Automation
                             null,
                             Metadata.ParameterNameConflictsWithAlias,
                             bindableParameter.Key,
-                            RetrieveParameterNameForAlias(bindableParameter.Key,this.aliasedParameters));
+                            RetrieveParameterNameForAlias(bindableParameter.Key, _aliasedParameters));
                     throw exception;
                 }
 
                 MergedCompiledCommandParameter mergedParameter =
                     new MergedCompiledCommandParameter(bindableParameter.Value, binderAssociation);
 
-                bindableParameters.Add(bindableParameter.Key, mergedParameter);
+                _bindableParameters.Add(bindableParameter.Key, mergedParameter);
                 result.Add(mergedParameter);
 
                 // Merge in the aliases
 
                 foreach (string aliasName in bindableParameter.Value.Aliases)
                 {
-                    if (this.aliasedParameters.ContainsKey(aliasName))
+                    if (_aliasedParameters.ContainsKey(aliasName))
                     {
                         MetadataException exception =
                             new MetadataException(
@@ -146,21 +146,20 @@ namespace System.Management.Automation
                     }
 
                     // NTRAID#Windows Out Of Band Releases-926371-2005/12/27-JonN
-                    if (this.bindableParameters.ContainsKey(aliasName))
+                    if (_bindableParameters.ContainsKey(aliasName))
                     {
                         MetadataException exception =
                             new MetadataException(
                                 "ParameterNameConflictsWithAlias",
                                 null,
                                 Metadata.ParameterNameConflictsWithAlias,
-                                RetrieveParameterNameForAlias(aliasName,this.bindableParameters),
+                                RetrieveParameterNameForAlias(aliasName, _bindableParameters),
                                 bindableParameter.Value.Name);
                         throw exception;
                     }
 
-                    aliasedParameters.Add(aliasName, mergedParameter);
+                    _aliasedParameters.Add(aliasName, mergedParameter);
                 }
-
             }
             return result;
         }
@@ -171,7 +170,7 @@ namespace System.Management.Automation
         /// set bit is really 1 shifted left this number of times. This number also acts
         /// as the index for the parameter set map.
         /// </summary>
-        private uint nextAvailableParameterSetIndex;
+        private uint _nextAvailableParameterSetIndex;
 
         /// <summary>
         /// Gets the number of parameter sets that were declared for the command.
@@ -181,7 +180,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return parameterSetMap.Count;
+                return _parameterSetMap.Count;
             }
         } // ParameterSetCount
 
@@ -203,7 +202,7 @@ namespace System.Management.Automation
         /// New parameter sets are added at the nextAvailableParameterSetIndex.
         /// </summary>
         /// 
-        private IList<string> parameterSetMap = new List<string>();
+        private IList<string> _parameterSetMap = new List<string>();
 
         /// <summary>
         /// The name of the default parameter set
@@ -239,12 +238,12 @@ namespace System.Management.Automation
             int index = -1;
             if (!String.IsNullOrEmpty(parameterSetName))
             {
-                index = parameterSetMap.IndexOf(parameterSetName);
+                index = _parameterSetMap.IndexOf(parameterSetName);
 
                 // A parameter set name should only be added once
                 if (index == -1)
                 {
-                    if (nextAvailableParameterSetIndex == uint.MaxValue)
+                    if (_nextAvailableParameterSetIndex == uint.MaxValue)
                     {
                         // Don't let the parameter set index overflow
                         ParsingMetadataException parsingException =
@@ -256,14 +255,14 @@ namespace System.Management.Automation
                         throw parsingException;
                     }
 
-                    parameterSetMap.Add(parameterSetName);
-                    index = parameterSetMap.IndexOf(parameterSetName);
+                    _parameterSetMap.Add(parameterSetName);
+                    index = _parameterSetMap.IndexOf(parameterSetName);
 
                     Diagnostics.Assert(
-                        index == nextAvailableParameterSetIndex,
+                        index == _nextAvailableParameterSetIndex,
                         "AddParameterSetToMap should always add the parameter set name to the map at the nextAvailableParameterSetIndex");
 
-                    nextAvailableParameterSetIndex++;
+                    _nextAvailableParameterSetIndex++;
                 }
             }
             return index;
@@ -290,8 +289,8 @@ namespace System.Management.Automation
         internal uint GenerateParameterSetMappingFromMetadata(string defaultParameterSetName)
         {
             // First clear the parameter set map
-            parameterSetMap.Clear();
-            nextAvailableParameterSetIndex = 0;
+            _parameterSetMap.Clear();
+            _nextAvailableParameterSetIndex = 0;
 
             uint defaultParameterSetFlag = 0;
 
@@ -389,9 +388,9 @@ namespace System.Management.Automation
                 if (((parameterSet >> (index + 1)) & 0x1) == 0)
                 {
                     // Ensure that the bit found was within the map, if not return an empty string
-                    if (index < parameterSetMap.Count)
+                    if (index < _parameterSetMap.Count)
                     {
-                        result = parameterSetMap[index];
+                        result = _parameterSetMap[index];
                     }
                     else
                     {
@@ -473,7 +472,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("name");
             }
 
-            Collection<MergedCompiledCommandParameter> matchingParameters = 
+            Collection<MergedCompiledCommandParameter> matchingParameters =
                 new Collection<MergedCompiledCommandParameter>();
 
             // Skip the leading '-' if present
@@ -485,7 +484,7 @@ namespace System.Management.Automation
 
             // First try to match the bindable parameters
 
-            foreach (string parameterName in bindableParameters.Keys)
+            foreach (string parameterName in _bindableParameters.Keys)
             {
                 if (CultureInfo.InvariantCulture.CompareInfo.IsPrefix(parameterName, name, CompareOptions.IgnoreCase))
                 {
@@ -494,18 +493,18 @@ namespace System.Management.Automation
 
                     if (tryExactMatching && String.Equals(parameterName, name, StringComparison.OrdinalIgnoreCase))
                     {
-                        return bindableParameters[parameterName];
+                        return _bindableParameters[parameterName];
                     }
                     else
                     {
-                        matchingParameters.Add(bindableParameters[parameterName]);
+                        matchingParameters.Add(_bindableParameters[parameterName]);
                     }
                 }
             }
 
             // Now check the aliases
 
-            foreach (string parameterName in aliasedParameters.Keys)
+            foreach (string parameterName in _aliasedParameters.Keys)
             {
                 if (CultureInfo.InvariantCulture.CompareInfo.IsPrefix(parameterName, name, CompareOptions.IgnoreCase))
                 {
@@ -514,13 +513,13 @@ namespace System.Management.Automation
 
                     if (tryExactMatching && String.Equals(parameterName, name, StringComparison.OrdinalIgnoreCase))
                     {
-                        return aliasedParameters[parameterName];
+                        return _aliasedParameters[parameterName];
                     }
                     else
                     {
-                        if (!matchingParameters.Contains(aliasedParameters[parameterName]))
+                        if (!matchingParameters.Contains(_aliasedParameters[parameterName]))
                         {
-                            matchingParameters.Add(aliasedParameters[parameterName]);
+                            matchingParameters.Add(_aliasedParameters[parameterName]);
                         }
                     }
                 }
@@ -534,14 +533,14 @@ namespace System.Management.Automation
 
                 foreach (MergedCompiledCommandParameter matchingParameter in matchingParameters)
                 {
-                    if((matchingParameter.BinderAssociation == ParameterBinderAssociation.DeclaredFormalParameters) ||
-                        (matchingParameter.BinderAssociation == ParameterBinderAssociation.DynamicParameters) )
+                    if ((matchingParameter.BinderAssociation == ParameterBinderAssociation.DeclaredFormalParameters) ||
+                        (matchingParameter.BinderAssociation == ParameterBinderAssociation.DynamicParameters))
                     {
                         filteredParameters.Add(matchingParameter);
                     }
                 }
 
-                if(filteredParameters.Count == 1)
+                if (filteredParameters.Count == 1)
                 {
                     matchingParameters = filteredParameters;
                 }
@@ -611,7 +610,7 @@ namespace System.Management.Automation
         /// 
         internal Collection<MergedCompiledCommandParameter> GetParametersInParameterSet(uint parameterSetFlag)
         {
-            Collection<MergedCompiledCommandParameter> result = 
+            Collection<MergedCompiledCommandParameter> result =
                 new Collection<MergedCompiledCommandParameter>();
 
             foreach (MergedCompiledCommandParameter parameter in BindableParameters.Values)
@@ -630,31 +629,30 @@ namespace System.Management.Automation
         /// The dictionary keys are the names of the parameters and
         /// the values are the compiled parameter metdata.
         /// </summary>
-        internal IDictionary<string, MergedCompiledCommandParameter> BindableParameters { get { return bindableParameters; } }
-        private IDictionary<string, MergedCompiledCommandParameter> bindableParameters =
+        internal IDictionary<string, MergedCompiledCommandParameter> BindableParameters { get { return _bindableParameters; } }
+        private IDictionary<string, MergedCompiledCommandParameter> _bindableParameters =
             new Dictionary<string, MergedCompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Gets a dictionary of the parameters that have been aliased to other names. The key is
         /// the alias name and the value is the MergedCompiledCommandParameter metadata.
         /// </summary>
-        internal IDictionary<string, MergedCompiledCommandParameter> AliasedParameters { get { return aliasedParameters; } }
-        private IDictionary<string, MergedCompiledCommandParameter> aliasedParameters =
+        internal IDictionary<string, MergedCompiledCommandParameter> AliasedParameters { get { return _aliasedParameters; } }
+        private IDictionary<string, MergedCompiledCommandParameter> _aliasedParameters =
             new Dictionary<string, MergedCompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
 
         internal void MakeReadOnly()
         {
-            bindableParameters = new ReadOnlyDictionary<string, MergedCompiledCommandParameter>(bindableParameters);
-            aliasedParameters = new ReadOnlyDictionary<string, MergedCompiledCommandParameter>(aliasedParameters);
-            parameterSetMap = new ReadOnlyCollection<string>(parameterSetMap);
+            _bindableParameters = new ReadOnlyDictionary<string, MergedCompiledCommandParameter>(_bindableParameters);
+            _aliasedParameters = new ReadOnlyDictionary<string, MergedCompiledCommandParameter>(_aliasedParameters);
+            _parameterSetMap = new ReadOnlyCollection<string>(_parameterSetMap);
         }
 
         internal void ResetReadOnly()
         {
-            bindableParameters = new Dictionary<string, MergedCompiledCommandParameter>(bindableParameters, StringComparer.OrdinalIgnoreCase);
-            aliasedParameters = new Dictionary<string, MergedCompiledCommandParameter>(aliasedParameters, StringComparer.OrdinalIgnoreCase);
+            _bindableParameters = new Dictionary<string, MergedCompiledCommandParameter>(_bindableParameters, StringComparer.OrdinalIgnoreCase);
+            _aliasedParameters = new Dictionary<string, MergedCompiledCommandParameter>(_aliasedParameters, StringComparer.OrdinalIgnoreCase);
         }
-
     } // MergedCommandParameterMetadata
 
     /// <summary>

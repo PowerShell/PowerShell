@@ -38,11 +38,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="errorRecord"></param>
         internal CmdletInvocationException(ErrorRecord errorRecord)
-            : base( RetrieveMessage(errorRecord), RetrieveException(errorRecord) )
+            : base(RetrieveMessage(errorRecord), RetrieveException(errorRecord))
         {
             if (null == errorRecord)
             {
-                throw new ArgumentNullException ("errorRecord");
+                throw new ArgumentNullException("errorRecord");
             }
             _errorRecord = errorRecord;
             if (null != errorRecord.Exception)
@@ -62,30 +62,30 @@ namespace System.Management.Automation
         /// </param>
         internal CmdletInvocationException(Exception innerException,
                                            InvocationInfo invocationInfo)
-            : base (RetrieveMessage(innerException), innerException)
+            : base(RetrieveMessage(innerException), innerException)
         {
             if (null == innerException)
             {
-                throw new ArgumentNullException ("innerException");
+                throw new ArgumentNullException("innerException");
             }
             // invocationInfo may be null
 
             IContainsErrorRecord icer = innerException as IContainsErrorRecord;
             if (null != icer && null != icer.ErrorRecord)
             {
-                _errorRecord = new ErrorRecord (icer.ErrorRecord, innerException);
+                _errorRecord = new ErrorRecord(icer.ErrorRecord, innerException);
             }
             else
             {
                 // When no ErrorId is specified by a thrown exception,
                 //  we use innerException.GetType().FullName.
-                _errorRecord = new ErrorRecord (
+                _errorRecord = new ErrorRecord(
                     innerException,
                     innerException.GetType().FullName,
                     ErrorCategory.NotSpecified,
                     null);
             }
-            _errorRecord.SetInvocationInfo (invocationInfo);
+            _errorRecord.SetInvocationInfo(invocationInfo);
             // 2005/04/13-JonN Can't do this in an unsealed class: HelpLink = innerException.HelpLink;
             // Exception.Source is set by Throw
             // Source = innerException.Source;
@@ -117,7 +117,7 @@ namespace System.Management.Automation
         /// <returns> constructed object </returns>
         public CmdletInvocationException(string message,
                                          Exception innerException)
-            : base (message, innerException)
+            : base(message, innerException)
         {
         }
 
@@ -145,14 +145,14 @@ namespace System.Management.Automation
         /// <param name="info"> serialization information </param>
         /// <param name="context"> streaming context </param>
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
-        public override void GetObjectData (SerializationInfo info, StreamingContext context)
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
             {
                 throw new PSArgumentNullException("info");
             }
 
-            base.GetObjectData (info, context);
+            base.GetObjectData(info, context);
             bool hasErrorRecord = (null != _errorRecord);
             info.AddValue("HasErrorRecord", hasErrorRecord);
             if (hasErrorRecord)
@@ -184,7 +184,6 @@ namespace System.Management.Automation
         private ErrorRecord _errorRecord = null;
 
         #endregion Properties
-
     } // class CmdletInvocationException
     #endregion CmdletInvocationException
 
@@ -210,11 +209,11 @@ namespace System.Management.Automation
         internal CmdletProviderInvocationException(
                     ProviderInvocationException innerException,
                     InvocationInfo myInvocation)
-            : base (GetInnerException(innerException), myInvocation)
+            : base(GetInnerException(innerException), myInvocation)
         {
             if (null == innerException)
             {
-                throw new ArgumentNullException ("innerException");
+                throw new ArgumentNullException("innerException");
             }
             _providerInvocationException = innerException;
         }
@@ -261,7 +260,7 @@ namespace System.Management.Automation
         /// <returns> constructed object </returns>
         public CmdletProviderInvocationException(string message,
                                                  Exception innerException)
-            : base (message, innerException)
+            : base(message, innerException)
         {
             _providerInvocationException = innerException as ProviderInvocationException;
         }
@@ -296,11 +295,11 @@ namespace System.Management.Automation
                     : _providerInvocationException.ProviderInfo;
             }
         }
-        
+
         #endregion Properties
 
         #region Internal
-        private static Exception GetInnerException (Exception e)
+        private static Exception GetInnerException(Exception e)
         {
             return (e == null) ? null : e.InnerException;
         }
@@ -375,7 +374,7 @@ namespace System.Management.Automation
         /// <returns> constructed object </returns>
         public PipelineStoppedException(string message,
                                         Exception innerException)
-            : base (message, innerException)
+            : base(message, innerException)
         {
         }
         #endregion ctor
@@ -473,11 +472,11 @@ namespace System.Management.Automation
         /// </param>
         /// <returns> constructed object </returns>
         internal ActionPreferenceStopException(ErrorRecord error)
-            : this( RetrieveMessage(error) )
+            : this(RetrieveMessage(error))
         {
             if (null == error)
             {
-                throw new ArgumentNullException ("error");
+                throw new ArgumentNullException("error");
             }
             _errorRecord = error;
         }
@@ -589,7 +588,7 @@ namespace System.Management.Automation
         /// <returns> constructed object </returns>
         public ActionPreferenceStopException(string message,
                                              Exception innerException)
-            : base (message, innerException)
+            : base(message, innerException)
         {
             SetErrorCategory(ErrorCategory.OperationStopped);
             SetErrorId("ActionPreferenceStop");
@@ -651,7 +650,7 @@ namespace System.Management.Automation
         // Please remove the #pragma warning when this is fixed.
         public ParentContainsErrorRecordException(Exception wrapperException)
         {
-            this.wrapperException = wrapperException;
+            _wrapperException = wrapperException;
         }
 
 #pragma warning restore 56506
@@ -663,7 +662,7 @@ namespace System.Management.Automation
         /// <returns> constructed object </returns>
         public ParentContainsErrorRecordException(string message)
         {
-            this.message = message;
+            _message = message;
         }
 
         /// <summary>
@@ -683,9 +682,9 @@ namespace System.Management.Automation
         /// <returns> constructed object </returns>
         public ParentContainsErrorRecordException(string message,
                                                   Exception innerException)
-            : base (message, innerException)
+            : base(message, innerException)
         {
-            this.message = message;
+            _message = message;
         }
         #endregion Constructors
 
@@ -703,7 +702,7 @@ namespace System.Management.Automation
             SerializationInfo info, StreamingContext context)
                     : base(info, context)
         {
-            message = info.GetString("ParentContainsErrorRecordException_Message");
+            _message = info.GetString("ParentContainsErrorRecordException_Message");
         }
         #endregion Serialization
         /// <summary>
@@ -713,12 +712,12 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == message)
+                if (null == _message)
                 {
-                    message = (null != wrapperException) ? wrapperException.Message : String.Empty;
+                    _message = (null != _wrapperException) ? _wrapperException.Message : String.Empty;
                 }
 
-                return message;
+                return _message;
             }
         }
 
@@ -740,8 +739,8 @@ namespace System.Management.Automation
 
         #region Private Data
 
-        private readonly Exception wrapperException;
-        private string message;
+        private readonly Exception _wrapperException;
+        private string _message;
 
         #endregion
     }
@@ -792,7 +791,7 @@ namespace System.Management.Automation
         /// <returns> constructed object </returns>
         public RedirectedException(string message,
                                    Exception innerException)
-            : base (message, innerException)
+            : base(message, innerException)
         {
             SetErrorId("RedirectedException");
             SetErrorCategory(ErrorCategory.NotSpecified);
@@ -860,7 +859,7 @@ namespace System.Management.Automation
         /// <returns> constructed object </returns>
         public ScriptCallDepthException(string message,
                                         Exception innerException)
-                : base (message, innerException)
+                : base(message, innerException)
         {
         }
         #endregion ctor
@@ -904,18 +903,18 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == errorRecord)
+                if (null == _errorRecord)
                 {
-                    errorRecord = new ErrorRecord(
+                    _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
                         "CallDepthOverflow",
                         ErrorCategory.InvalidOperation,
                         CallDepth);
                 }
-                return errorRecord;
+                return _errorRecord;
             }
         }
-        private ErrorRecord errorRecord = null;
+        private ErrorRecord _errorRecord = null;
 
         /// <summary>
         /// Always 0 - depth is not tracked as there is no hard coded maximum.
@@ -1012,18 +1011,18 @@ namespace System.Management.Automation
         {
             get
             {
-                if (null == errorRecord)
+                if (null == _errorRecord)
                 {
-                    errorRecord = new ErrorRecord(
+                    _errorRecord = new ErrorRecord(
                         new ParentContainsErrorRecordException(this),
                         "CallDepthOverflow",
                         ErrorCategory.InvalidOperation,
                         CallDepth);
                 }
-                return errorRecord;
+                return _errorRecord;
             }
         }
-        private ErrorRecord errorRecord = null;
+        private ErrorRecord _errorRecord = null;
 
         /// <summary>
         /// Always 0 - depth is not tracked as there is no hard coded maximum.

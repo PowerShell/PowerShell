@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell
         /// 
         /// </exception>
 
-        internal 
+        internal
         ConsoleHostRawUserInterface(ConsoleHostUserInterface mshConsole) : base()
         {
             defaultForeground = ForegroundColor;
@@ -121,11 +121,11 @@ namespace Microsoft.PowerShell
                     ConsoleHandle handle = GetBufferInfo(out bufferInfo);
 
                     // mask in the foreground from the current color.
-                    short a = (short) bufferInfo.Attributes;
+                    short a = (short)bufferInfo.Attributes;
 
-                    a &= (short) ~0x0f;
-                    a = (short) ((ushort) a | (ushort) value);
-                    ConsoleControl.SetConsoleTextAttribute(handle, (WORD) a);
+                    a &= (short)~0x0f;
+                    a = (short)((ushort)a | (ushort)value);
+                    ConsoleControl.SetConsoleTextAttribute(handle, (WORD)a);
                 }
                 else
                 {
@@ -179,11 +179,11 @@ namespace Microsoft.PowerShell
                     ConsoleHandle handle = GetBufferInfo(out bufferInfo);
 
                     // mask in the background from the current color.
-                    short a = (short) bufferInfo.Attributes;
+                    short a = (short)bufferInfo.Attributes;
 
-                    a &= (short) ~0xf0;
-                    a = (short) ((ushort) a | (ushort) ((uint) value << 4));
-                    ConsoleControl.SetConsoleTextAttribute(handle, (WORD) a);
+                    a &= (short)~0xf0;
+                    a = (short)((ushort)a | (ushort)((uint)value << 4));
+                    ConsoleControl.SetConsoleTextAttribute(handle, (WORD)a);
                 }
                 else
                 {
@@ -237,8 +237,8 @@ namespace Microsoft.PowerShell
             }
         }
 
-        
-        
+
+
         /// <summary>
         /// 
         /// See base class
@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell
                 const int MinCursorSize = 0;
                 const int MaxCursorSize = 100;
 
-                if (value >= MinCursorSize && value <= MaxCursorSize )
+                if (value >= MinCursorSize && value <= MaxCursorSize)
                 {
                     ConsoleHandle consoleHandle = ConsoleControl.GetActiveScreenBufferHandle();
                     ConsoleControl.CONSOLE_CURSOR_INFO cursorInfo =
@@ -292,7 +292,7 @@ namespace Microsoft.PowerShell
                     }
                     else
                     {
-                        cursorInfo.Size = (uint) value;
+                        cursorInfo.Size = (uint)value;
                         cursorInfo.Visible = true;
                     }
 
@@ -365,13 +365,13 @@ namespace Microsoft.PowerShell
                         ConsoleHostRawUserInterfaceStrings.InvalidYWindowPositionError);
                 }
 
-                r.Left = (short) value.X;
-                r.Top = (short) value.Y;
+                r.Left = (short)value.X;
+                r.Top = (short)value.Y;
 
                 // subtract 1 from each dimension because the semantics of the win32 api are not "number of characters in 
                 // span" but "starting and ending position"
-                r.Right = (short) (r.Left + windowWidth - 1);
-                r.Bottom = (short) (r.Top + windowHeight - 1);
+                r.Right = (short)(r.Left + windowWidth - 1);
+                r.Bottom = (short)(r.Top + windowHeight - 1);
                 Dbg.Assert(r.Right >= r.Left, "Window size is too narrow");
                 Dbg.Assert(r.Bottom >= r.Top, "Window size is too short");
                 ConsoleControl.SetConsoleWindowInfo(handle, true, r);
@@ -430,7 +430,6 @@ namespace Microsoft.PowerShell
                     {
                         throw PSTraceSource.NewArgumentOutOfRangeException("value", value,
                             ConsoleHostRawUserInterfaceStrings.InvalidBufferSizeError);
-
                     }
                     else
                     {
@@ -440,8 +439,8 @@ namespace Microsoft.PowerShell
             }
         }
 
-        
-        
+
+
         /// <summary>
         /// 
         /// See base class
@@ -487,7 +486,7 @@ namespace Microsoft.PowerShell
                 // the dimensions of the window can't extend past the dimensions of the screen buffer.  This means that the 
                 // width of the window is limited to the buffer width minus one minus the window X position, and the height
                 // of the window is limited to the buffer height minus one minus the window Y position.
-                 
+
                 if (value.Width < 1)
                 {
                     throw PSTraceSource.NewArgumentOutOfRangeException("value.Width", value.Width,
@@ -528,14 +527,14 @@ namespace Microsoft.PowerShell
 
                 // if the new size will extend past the edge of screen buffer, then move the window position to try to 
                 // accomodate that.
-                    
+
                 ConsoleControl.SMALL_RECT r = bufferInfo.WindowRect;
 
                 // subtract 1 from each dimension because the semantics of the win32 api are not "number of characters in 
                 // span" but "starting and ending position"
-                    
-                r.Right = (short) (r.Left + value.Width - 1);
-                r.Bottom = (short) (r.Top + value.Height - 1);
+
+                r.Right = (short)(r.Left + value.Width - 1);
+                r.Bottom = (short)(r.Top + value.Height - 1);
 
                 // Now we check if the bottom right coordinate of our window went over the coordinate of the bottom
                 // right of the buffer.  If it did then we need to adjust the window.
@@ -543,8 +542,8 @@ namespace Microsoft.PowerShell
                 // bufferInfo.BufferSize.X - 1  will give us the rightmost coordinate of the buffer.
                 // r.Right - rightCoordinateOfBuffer will give us how much we need to adjust the window left and right coordinates.
                 // Then we can do the same for top and bottom.
-                short adjustLeft = (short) (r.Right - (bufferInfo.BufferSize.X - 1));
-                short adjustTop = (short) (r.Bottom - (bufferInfo.BufferSize.Y - 1));
+                short adjustLeft = (short)(r.Right - (bufferInfo.BufferSize.X - 1));
+                short adjustTop = (short)(r.Bottom - (bufferInfo.BufferSize.Y - 1));
 
                 if (adjustLeft > 0)
                 {
@@ -742,7 +741,7 @@ namespace Microsoft.PowerShell
                                 actualNumberOfInput));
                         if (actualNumberOfInput == 1)
                         {
-                            if (((ConsoleControl.InputRecordEventTypes) inputRecords[0].EventType) ==
+                            if (((ConsoleControl.InputRecordEventTypes)inputRecords[0].EventType) ==
                                 ConsoleControl.InputRecordEventTypes.KEY_EVENT)
                             {
                                 Dbg.Assert((inputRecords[0].KeyEvent.KeyDown && inputRecords[0].KeyEvent.RepeatCount != 0) ||
@@ -785,10 +784,9 @@ namespace Microsoft.PowerShell
 
             if ((options & ReadKeyOptions.NoEcho) == 0)
             {
-                    parent.WriteToConsole(
-                        keyInfo.Character.ToString(),
-                        true);
-                
+                parent.WriteToConsole(
+                    keyInfo.Character.ToString(),
+                    true);
             }
 
             return keyInfo;
@@ -869,7 +867,7 @@ namespace Microsoft.PowerShell
 
                 for (int i = 0; i < acutalNumberOfInputRecords; i++)
                 {
-                    if (((ConsoleControl.InputRecordEventTypes) inputRecords[i].EventType) ==
+                    if (((ConsoleControl.InputRecordEventTypes)inputRecords[i].EventType) ==
                             ConsoleControl.InputRecordEventTypes.KEY_EVENT)
                     {
                         Dbg.Assert((inputRecords[i].KeyEvent.KeyDown && inputRecords[i].KeyEvent.RepeatCount != 0) ||
@@ -1054,7 +1052,7 @@ namespace Microsoft.PowerShell
         ///    there is not enough memory to complete calls to Win32's WriteConsoleOutput
         /// 
         /// </exception>
-        public override 
+        public override
         void
         SetBufferContents(Rectangle region, BufferCell fill)
         {
@@ -1192,8 +1190,8 @@ namespace Microsoft.PowerShell
             }
         }
 
-        
-        
+
+
         /// <summary>
         /// 
         /// See base class.
@@ -1278,8 +1276,8 @@ namespace Microsoft.PowerShell
             return contents;
         }
 
-        
-        
+
+
         /// <summary>
         /// 
         /// See base class 
@@ -1323,20 +1321,20 @@ namespace Microsoft.PowerShell
         )
         {
             ConsoleControl.SMALL_RECT scrollRectangle;
-            scrollRectangle.Left = (short) source.Left;
-            scrollRectangle.Right = (short) source.Right;
-            scrollRectangle.Top = (short) source.Top;
-            scrollRectangle.Bottom = (short) source.Bottom;
+            scrollRectangle.Left = (short)source.Left;
+            scrollRectangle.Right = (short)source.Right;
+            scrollRectangle.Top = (short)source.Top;
+            scrollRectangle.Bottom = (short)source.Bottom;
 
             ConsoleControl.SMALL_RECT clipRectangle;
-            clipRectangle.Left = (short) clip.Left;
-            clipRectangle.Right = (short) clip.Right;
-            clipRectangle.Top = (short) clip.Top;
-            clipRectangle.Bottom = (short) clip.Bottom;
+            clipRectangle.Left = (short)clip.Left;
+            clipRectangle.Right = (short)clip.Right;
+            clipRectangle.Top = (short)clip.Top;
+            clipRectangle.Bottom = (short)clip.Bottom;
 
             ConsoleControl.COORD origin;
-            origin.X = (short) destination.X;
-            origin.Y = (short) destination.Y;
+            origin.X = (short)destination.X;
+            origin.Y = (short)destination.Y;
 
             ConsoleControl.CHAR_INFO fillChar;
 
@@ -1413,7 +1411,7 @@ namespace Microsoft.PowerShell
             return ConsoleControl.LengthInBufferCells(c);
         }
 
-        #region internal
+#region internal
 
         /// <summary>
         /// 
@@ -1426,12 +1424,12 @@ namespace Microsoft.PowerShell
             cachedKeyEvent.RepeatCount = 0;
         }
 
-        #endregion internal
+#endregion internal
 
-        #region helpers
+#region helpers
 
 
-// pass-by-ref for speed.
+        // pass-by-ref for speed.
         /// <summary>
         /// 
         /// </summary>
@@ -1462,7 +1460,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        
+
         /// <summary>
         /// Get output buffer info
         /// </summary>
@@ -1522,17 +1520,17 @@ namespace Microsoft.PowerShell
 
     internal sealed class ConsoleHostRawUserInterface : PSHostRawUserInterface
     {
-        private ConsoleColor defaultForeground = ConsoleColor.Gray;
+        private ConsoleColor _defaultForeground = ConsoleColor.Gray;
 
-        private ConsoleColor defaultBackground = ConsoleColor.Black;
+        private ConsoleColor _defaultBackground = ConsoleColor.Black;
 
-        private ConsoleHostUserInterface parent = null;
+        private ConsoleHostUserInterface _parent = null;
 
         internal ConsoleHostRawUserInterface(ConsoleHostUserInterface mshConsole) : base()
         {
-            defaultForeground = ForegroundColor;
-            defaultBackground = BackgroundColor;
-            parent = mshConsole;
+            _defaultForeground = ForegroundColor;
+            _defaultBackground = BackgroundColor;
+            _parent = mshConsole;
         }
 
         /// <summary>
@@ -1546,14 +1544,14 @@ namespace Microsoft.PowerShell
                 // Console can return UnknownColor, a private enum, equivalent
                 // to -1. When this is a case, map it instead to our default.
                 return Console.BackgroundColor == (ConsoleColor)(-1)
-                    ? defaultBackground
+                    ? _defaultBackground
                     : Console.BackgroundColor;
             }
             set { Console.BackgroundColor = value; }
         }
 
         // TODO: Make wrap width user-customizable.
-        private static Size WrapSize = new Size(80, 40);
+        private static Size s_wrapSize = new Size(80, 40);
 
         /// <summary>
         /// Gets or sets the size of the host buffer.
@@ -1565,7 +1563,7 @@ namespace Microsoft.PowerShell
                 // Console can return zero when a pseduo-TTY is allocated, which
                 // is useless for us. Instead, map to the wrap size.
                 return Console.BufferWidth == 0 || Console.BufferHeight == 0
-                    ? WrapSize
+                    ? s_wrapSize
                     : new Size(Console.BufferWidth, Console.BufferHeight);
             }
             set { Console.SetBufferSize(value.Width, value.Height); }
@@ -1577,8 +1575,11 @@ namespace Microsoft.PowerShell
         public override Coordinates CursorPosition
         {
             get { return new Coordinates(Console.CursorLeft, Console.CursorTop); }
-            set { Console.SetCursorPosition(value.X < 0 ? 0 : value.X,
-                                            value.Y < 0 ? 0 : value.Y); }
+            set
+            {
+                Console.SetCursorPosition(value.X < 0 ? 0 : value.X,
+                                          value.Y < 0 ? 0 : value.Y);
+            }
         }
 
         /// <summary>
@@ -1604,7 +1605,7 @@ namespace Microsoft.PowerShell
                 // Console can return UnknownColor, a private enum, equivalent
                 // to -1. When this is a case, map it instead to our default.
                 return Console.ForegroundColor == (ConsoleColor)(-1)
-                    ? defaultForeground
+                    ? _defaultForeground
                     : Console.ForegroundColor;
             }
             set { Console.ForegroundColor = value; }
@@ -1642,7 +1643,7 @@ namespace Microsoft.PowerShell
                 // Console can return zero when a pseduo-TTY is allocated, which
                 // is useless for us. Instead, map to the wrap size.
                 return Console.LargestWindowWidth == 0 || Console.LargestWindowHeight == 0
-                    ? WrapSize
+                    ? s_wrapSize
                     : new Size(Console.LargestWindowWidth, Console.LargestWindowHeight);
             }
         }
@@ -1670,7 +1671,7 @@ namespace Microsoft.PowerShell
                 // Console can return zero when a pseduo-TTY is allocated, which
                 // is useless for us. Instead, map to the wrap size.
                 return Console.WindowWidth == 0 || Console.WindowHeight == 0
-                    ? WrapSize
+                    ? s_wrapSize
                     : new Size(Console.WindowWidth, Console.WindowHeight);
             }
             set { Console.SetWindowSize(value.Width, value.Height); }
@@ -1679,7 +1680,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Cached Window Title, for systems that needs it
         /// </summary>
-        private string title = String.Empty;
+        private string _title = String.Empty;
 
         /// <summary>
         /// Gets or sets the title of the displayed window. The example
@@ -1691,13 +1692,13 @@ namespace Microsoft.PowerShell
             {
                 // Console throws an exception on Unix platforms, so we handle
                 // caching and returning the Window title ourselves.
-                return Platform.IsWindows ? Console.Title : title;
+                return Platform.IsWindows ? Console.Title : _title;
             }
 
             set
             {
                 Console.Title = value;
-                title = value;
+                _title = value;
             }
         }
 
@@ -1712,9 +1713,9 @@ namespace Microsoft.PowerShell
             }
         }
 
-          public void ScrollBuffer(int lines)
+        public void ScrollBuffer(int lines)
         {
-            for (int i=0; i<lines; ++i)
+            for (int i = 0; i < lines; ++i)
             {
                 Console.Out.Write('\n');
 
@@ -1733,7 +1734,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-          internal struct SMALL_RECT
+        internal struct SMALL_RECT
         {
             internal short Left;
 

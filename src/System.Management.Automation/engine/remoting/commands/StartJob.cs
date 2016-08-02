@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Private members
 
-        private static readonly string StartJobType = "BackgroundJob";
+        private static readonly string s_startJobType = "BackgroundJob";
 
         #endregion
 
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Job SourceAdapter type for this job definition.
         /// </summary>
-        [Parameter(Position = 2, 
+        [Parameter(Position = 2,
             ParameterSetName = StartJobCommand.DefinitionNameParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
@@ -83,17 +83,17 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return name;
+                return _name;
             }
             set
             {
                 if (!String.IsNullOrEmpty(value))
                 {
-                    name = value;
+                    _name = value;
                 }
             }
         }
-        private String name;
+        private String _name;
 
         /// <summary>
         /// Command to execute specified as a string. This can be a single
@@ -303,9 +303,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public override string CertificateThumbprint
         {
-            get 
-            { 
-                return base.CertificateThumbprint; 
+            get
+            {
+                return base.CertificateThumbprint;
             }
             set
             {
@@ -313,16 +313,16 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-         /// <summary>
-         /// Overriding to suppress this parameter
-         /// </summary>
-         public override SwitchParameter AllowRedirection 
-         {
-             get
-             {
-                 return false;
-             }
-         }
+        /// <summary>
+        /// Overriding to suppress this parameter
+        /// </summary>
+        public override SwitchParameter AllowRedirection
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         /// <summary>
         /// Overriding to suppress this parameter
@@ -362,9 +362,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public override SwitchParameter RunAsAdministrator
         {
-            get 
+            get
             {
-                return false; 
+                return false;
             }
         }
 
@@ -399,10 +399,10 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = StartJobCommand.LiteralFilePathComputerNameParameterSet)]
         public virtual ScriptBlock InitializationScript
         {
-            get { return initScript; }
-            set { initScript = value; }
+            get { return _initScript; }
+            set { _initScript = value; }
         }
-        private ScriptBlock initScript;
+        private ScriptBlock _initScript;
 
         /// <summary>
         /// Launces the background job as a 32-bit process. This can be used on
@@ -413,10 +413,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = StartJobCommand.LiteralFilePathComputerNameParameterSet)]
         public virtual SwitchParameter RunAs32
         {
-            get { return shouldRunAs32; }
-            set { shouldRunAs32 = value; }
+            get { return _shouldRunAs32; }
+            set { _shouldRunAs32 = value; }
         }
-        private bool shouldRunAs32;
+        private bool _shouldRunAs32;
 
         /// <summary>
         /// Powershell Version to execute the background job
@@ -427,18 +427,18 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public virtual Version PSVersion
         {
-            get { return psVersion; }
+            get { return _psVersion; }
             set
             {
                 PSSessionConfigurationCommandBase.CheckPSVersion(value);
-                
+
                 // Check if specified version of PowerShell is installed
                 PSSessionConfigurationCommandUtilities.CheckIfPowerShellVersionIsInstalled(value);
 
-                psVersion = value;
+                _psVersion = value;
             }
         }
-        private Version psVersion;
+        private Version _psVersion;
 
         /// <summary>
         /// InputObject.
@@ -517,12 +517,12 @@ namespace Microsoft.PowerShell.Commands
             }
 
             NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(this.Credential);
-            connectionInfo.RunAs32 = this.shouldRunAs32;
-            connectionInfo.InitializationScript = this.initScript;
+            connectionInfo.RunAs32 = _shouldRunAs32;
+            connectionInfo.InitializationScript = _initScript;
             connectionInfo.AuthenticationMechanism = this.Authentication;
             connectionInfo.PSVersion = this.PSVersion;
 
-            RemoteRunspace remoteRunspace = (RemoteRunspace)RunspaceFactory.CreateRunspace(connectionInfo, this.Host, 
+            RemoteRunspace remoteRunspace = (RemoteRunspace)RunspaceFactory.CreateRunspace(connectionInfo, this.Host,
                         Utils.GetTypeTableFromExecutionContextTLS());
 
             remoteRunspace.Events.ReceivedEvents.PSEventReceived += OnRunspacePSEventReceived;
@@ -550,7 +550,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!string.IsNullOrEmpty(_definitionPath))
                 {
                     ProviderInfo provider = null;
-                    System.Collections.ObjectModel.Collection<string> paths = 
+                    System.Collections.ObjectModel.Collection<string> paths =
                         this.Context.SessionState.Path.GetResolvedProviderPathFromPSPath(_definitionPath, out provider);
 
                     // Only file system paths are allowed.
@@ -613,14 +613,14 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (firstProcessRecord)
+            if (_firstProcessRecord)
             {
-                firstProcessRecord = false;
+                _firstProcessRecord = false;
 
                 PSRemotingJob job = new PSRemotingJob(ResolvedComputerNames, Operations,
-                        ScriptBlock.ToString(), ThrottleLimit, name);
+                        ScriptBlock.ToString(), ThrottleLimit, _name);
 
-                job.PSJobTypeName = StartJobType;
+                job.PSJobTypeName = s_startJobType;
 
                 this.JobRepository.Add(job);
                 WriteObject(job);
@@ -636,7 +636,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         } // ProcessRecord
-        private bool firstProcessRecord = true;
+        private bool _firstProcessRecord = true;
 
         /// <summary>
         /// InvokeAsync would have been called in ProcessRecord. Wait here
@@ -671,10 +671,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 CloseAllInputStreams();
             }
-
         } // Dipose
 
         #endregion IDisposable Overrides
-
     }
 }

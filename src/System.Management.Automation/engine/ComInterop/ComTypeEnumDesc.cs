@@ -16,18 +16,21 @@ using System.Dynamic;
 using System.Globalization;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
 
-namespace System.Management.Automation.ComInterop {
-
-    internal sealed class ComTypeEnumDesc : ComTypeDesc, IDynamicMetaObjectProvider {
+namespace System.Management.Automation.ComInterop
+{
+    internal sealed class ComTypeEnumDesc : ComTypeDesc, IDynamicMetaObjectProvider
+    {
         private readonly string[] _memberNames;
         private readonly object[] _memberValues;
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return String.Format(CultureInfo.CurrentCulture, "<enum '{0}'>", TypeName);
         }
 
         internal ComTypeEnumDesc(ComTypes.ITypeInfo typeInfo, ComTypeLibDesc typeLibDesc) :
-            base(typeInfo, ComType.Enum, typeLibDesc) {
+            base(typeInfo, ComType.Enum, typeLibDesc)
+        {
             ComTypes.TYPEATTR typeAttr = ComRuntimeHelpers.GetTypeAttrForTypeInfo(typeInfo);
             string[] memberNames = new string[typeAttr.cVars];
             object[] memberValues = new object[typeAttr.cVars];
@@ -35,19 +38,24 @@ namespace System.Management.Automation.ComInterop {
             IntPtr p = IntPtr.Zero;
 
             // For each enum member get name and value.
-            for (int i = 0; i < typeAttr.cVars; i++) {
+            for (int i = 0; i < typeAttr.cVars; i++)
+            {
                 typeInfo.GetVarDesc(i, out p);
 
                 // Get the enum member value (as object).
                 ComTypes.VARDESC varDesc;
 
-                try {
+                try
+                {
                     varDesc = (ComTypes.VARDESC)Marshal.PtrToStructure(p, typeof(ComTypes.VARDESC));
 
-                    if (varDesc.varkind == ComTypes.VARKIND.VAR_CONST) {
+                    if (varDesc.varkind == ComTypes.VARKIND.VAR_CONST)
+                    {
                         memberValues[i] = Marshal.GetObjectForNativeVariant(varDesc.desc.lpvarValue);
                     }
-                } finally {
+                }
+                finally
+                {
                     typeInfo.ReleaseVarDesc(p);
                 }
 
@@ -59,13 +67,17 @@ namespace System.Management.Automation.ComInterop {
             _memberValues = memberValues;
         }
 
-        DynamicMetaObject IDynamicMetaObjectProvider.GetMetaObject(Expression parameter) {
+        DynamicMetaObject IDynamicMetaObjectProvider.GetMetaObject(Expression parameter)
+        {
             return new TypeEnumMetaObject(this, parameter);
         }
 
-        public object GetValue(string enumValueName) {
-            for (int i = 0; i < _memberNames.Length; i++) {
-                if (_memberNames[i] == enumValueName) {
+        public object GetValue(string enumValueName)
+        {
+            for (int i = 0; i < _memberNames.Length; i++)
+            {
+                if (_memberNames[i] == enumValueName)
+                {
                     return _memberValues[i];
                 }
             }
@@ -73,8 +85,10 @@ namespace System.Management.Automation.ComInterop {
             throw new MissingMemberException(enumValueName);
         }
 
-        internal bool HasMember(string name) {
-            for (int i = 0; i < _memberNames.Length; i++) {
+        internal bool HasMember(string name)
+        {
+            for (int i = 0; i < _memberNames.Length; i++)
+            {
                 if (_memberNames[i] == name)
                     return true;
             }
@@ -83,8 +97,9 @@ namespace System.Management.Automation.ComInterop {
         }
 
         // TODO: internal
-        public string[] GetMemberNames() {
-            return (string[])this._memberNames.Clone();
+        public string[] GetMemberNames()
+        {
+            return (string[])_memberNames.Clone();
         }
     }
 }

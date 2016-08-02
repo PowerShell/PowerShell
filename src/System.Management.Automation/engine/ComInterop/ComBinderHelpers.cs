@@ -20,10 +20,12 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Language;
 
-namespace System.Management.Automation.ComInterop {
-    internal static class ComBinderHelpers {
-
-        internal static bool PreferPut(Type type, bool holdsNull) {
+namespace System.Management.Automation.ComInterop
+{
+    internal static class ComBinderHelpers
+    {
+        internal static bool PreferPut(Type type, bool holdsNull)
+        {
             Debug.Assert(type != null);
 
             if (type.IsValueType || type.IsArray) return true;
@@ -32,20 +34,24 @@ namespace System.Management.Automation.ComInterop {
                 type == typeof(DBNull) ||
                 holdsNull ||
                 type == typeof(System.Reflection.Missing) ||
-                type == typeof(CurrencyWrapper)) {
-
+                type == typeof(CurrencyWrapper))
+            {
                 return true;
-            } else {
+            }
+            else
+            {
                 return false;
             }
         }
 
-        internal static bool IsByRef(DynamicMetaObject mo) {
+        internal static bool IsByRef(DynamicMetaObject mo)
+        {
             ParameterExpression pe = mo.Expression as ParameterExpression;
             return pe != null && pe.IsByRef;
         }
 
-        internal static bool IsPSReferenceArg(DynamicMetaObject o) {
+        internal static bool IsPSReferenceArg(DynamicMetaObject o)
+        {
             Type t = o.LimitType;
             return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(PSReference<>);
         }
@@ -60,18 +66,23 @@ namespace System.Management.Automation.ComInterop {
             DynamicMetaObject[] newArgs = new DynamicMetaObject[args.Length];
             bool[] isByRefArg = new bool[args.Length];
 
-            for (int i = 0; i < args.Length; i++) {
+            for (int i = 0; i < args.Length; i++)
+            {
                 DynamicMetaObject curArgument = args[i];
 
                 // set new arg infos to their original values or set default ones
                 // we will do this fixup early so that we can assume we always have
                 // arginfos in COM binder.
 
-                if (IsByRef(curArgument)) {
+                if (IsByRef(curArgument))
+                {
                     newArgs[i] = curArgument;
                     isByRefArg[i] = true;
-                } else {
-                    if (IsPSReferenceArg(curArgument)) {
+                }
+                else
+                {
+                    if (IsPSReferenceArg(curArgument))
+                    {
                         var restrictions = curArgument.Restrictions.Merge(
                             GetTypeRestrictionForDynamicMetaObject(curArgument)
                         );
@@ -95,7 +106,9 @@ namespace System.Management.Automation.ComInterop {
                         );
 
                         isByRefArg[i] = true;
-                    } else {
+                    }
+                    else
+                    {
                         if ((method.ParameterInformation != null) && (i < method.ParameterInformation.Length))
                         {
                             newArgs[i] = new DynamicMetaObject(curArgument.CastOrConvertMethodArgument(
@@ -119,8 +132,10 @@ namespace System.Management.Automation.ComInterop {
             return isByRefArg;
         }
 
-        internal static BindingRestrictions GetTypeRestrictionForDynamicMetaObject(DynamicMetaObject obj) {
-            if (obj.Value == null && obj.HasValue) {
+        internal static BindingRestrictions GetTypeRestrictionForDynamicMetaObject(DynamicMetaObject obj)
+        {
+            if (obj.Value == null && obj.HasValue)
+            {
                 //If the meta object holds a null value, create an instance restriction for checking null
                 return BindingRestrictions.GetInstanceRestriction(obj.Expression, null);
             }

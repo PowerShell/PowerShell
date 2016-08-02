@@ -38,7 +38,7 @@ namespace System.Management.Automation
         private readonly Hashtable _helpFiles = new Hashtable();
 
         [TraceSource("DscResourceHelpProvider", "DscResourceHelpProvider")]
-        static private readonly PSTraceSource tracer = PSTraceSource.GetTracer("DscResourceHelpProvider", "DscResourceHelpProvider");
+        static private readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("DscResourceHelpProvider", "DscResourceHelpProvider");
 
         #region common properties
 
@@ -72,7 +72,7 @@ namespace System.Management.Automation
 
             string target = helpRequest.Target;
             Collection<string> patternList = new Collection<string>();
-            
+
             bool decoratedSearch = !WildcardPattern.ContainsWildcardCharacters(helpRequest.Target);
 
             if (decoratedSearch)
@@ -86,7 +86,7 @@ namespace System.Management.Automation
             {
                 DscResourceSearcher searcher = new DscResourceSearcher(pattern, _context);
 
-                foreach(var helpInfo in GetHelpInfo(searcher))
+                foreach (var helpInfo in GetHelpInfo(searcher))
                 {
                     if (helpInfo != null)
                         yield return helpInfo;
@@ -103,7 +103,7 @@ namespace System.Management.Automation
         {
             Debug.Assert(helpRequest != null, "helpRequest cannot be null.");
 
-            if((helpRequest.HelpCategory & Automation.HelpCategory.DscResource) == 0)
+            if ((helpRequest.HelpCategory & Automation.HelpCategory.DscResource) == 0)
             {
                 yield return null;
             }
@@ -128,26 +128,26 @@ namespace System.Management.Automation
         /// <returns>Next HelpInfo object.</returns>
         private IEnumerable<HelpInfo> GetHelpInfo(DscResourceSearcher searcher)
         {
-            while(searcher.MoveNext())
+            while (searcher.MoveNext())
             {
                 DscResourceInfo current = ((IEnumerator<DscResourceInfo>)searcher).Current;
 
                 string moduleName = null;
                 string moduleDir = current.ParentPath;
-                
+
                 // for binary modules, current.Module is empty.
                 // in such cases use the leaf folder of ParentPath as filename.
                 if (current.Module != null)
                 {
                     moduleName = current.Module.Name;
                 }
-                else if(!String.IsNullOrEmpty(moduleDir))
+                else if (!String.IsNullOrEmpty(moduleDir))
                 {
                     string[] splitPath = moduleDir.Split(Utils.Separators.Backslash);
                     moduleName = splitPath[splitPath.Length - 1];
                 }
 
-                if(!String.IsNullOrEmpty(moduleName) && !String.IsNullOrEmpty(moduleDir))
+                if (!String.IsNullOrEmpty(moduleName) && !String.IsNullOrEmpty(moduleDir))
                 {
                     string helpFileToFind = moduleName + "-Help.xml";
 
@@ -203,7 +203,7 @@ namespace System.Management.Automation
         }
 
         #region private methods
-        
+
         private HelpInfo GetHelpInfoFromHelpFile(DscResourceInfo resourceInfo, string helpFileToFind, Collection<string> searchPaths, bool reportErrors, out string helpFile)
         {
             Dbg.Assert(resourceInfo != null, "Caller should verify that resourceInfo != null");
@@ -220,10 +220,10 @@ namespace System.Management.Automation
             {
                 //Load the help file only once. Then use it from the cache.
                 if (!_helpFiles.Contains(helpFile))
-                {   
+                {
                     LoadHelpFile(helpFile, helpFile, resourceInfo.Name, reportErrors);
                 }
-                
+
                 result = GetFromResourceHelpCache(helpFile, Automation.HelpCategory.DscResource);
             }
 
@@ -284,7 +284,7 @@ namespace System.Management.Automation
             }
 
             if (e != null)
-                tracer.WriteLine("Error occured in DscResourceHelpProvider {0}", e.Message);
+                s_tracer.WriteLine("Error occured in DscResourceHelpProvider {0}", e.Message);
 
             if (reportErrors && (e != null))
             {
@@ -332,7 +332,7 @@ namespace System.Management.Automation
 
             if (helpItemsNode == null)
             {
-                tracer.WriteLine("Unable to find 'helpItems' element in file {0}", helpFile);
+                s_tracer.WriteLine("Unable to find 'helpItems' element in file {0}", helpFile);
                 return;
             }
 
@@ -372,7 +372,5 @@ namespace System.Management.Automation
         }
 
         #endregion
-
-
     }
 }

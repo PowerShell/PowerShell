@@ -1,12 +1,13 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Management.Automation;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
@@ -50,7 +51,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("sessionState");
             }
 
-            this.sessionState = sessionState;
+            _sessionState = sessionState;
         } // PathInterfaces internal
 
         #endregion Constructors
@@ -69,10 +70,10 @@ namespace System.Management.Automation
             get
             {
                 Dbg.Diagnostics.Assert(
-                    sessionState != null,
+                    _sessionState != null,
                     "The only constructor for this class should always set the sessionState field");
 
-                return sessionState.CurrentLocation;
+                return _sessionState.CurrentLocation;
             } // get
         } // CurrentLocation
 
@@ -98,12 +99,12 @@ namespace System.Management.Automation
         public PathInfo CurrentProviderLocation(string providerName)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
-            
-            return sessionState.GetNamespaceCurrentLocation(providerName);
+
+            return _sessionState.GetNamespaceCurrentLocation(providerName);
         } // CurrentProviderLocation
 
         /// <summary>
@@ -118,10 +119,10 @@ namespace System.Management.Automation
             get
             {
                 Dbg.Diagnostics.Assert(
-                    sessionState != null,
+                    _sessionState != null,
                     "The only constructor for this class should always set the sessionState field");
 
-                return CurrentProviderLocation(sessionState.ExecutionContext.ProviderNames.FileSystem);
+                return CurrentProviderLocation(_sessionState.ExecutionContext.ProviderNames.FileSystem);
             } // get
         } // CurrentFileSystemLocation
 
@@ -162,12 +163,12 @@ namespace System.Management.Automation
         public PathInfo SetLocation(string path)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
-            
-            return sessionState.SetLocation(path);
+
+            return _sessionState.SetLocation(path);
         } // SetLocation
 
         /// <summary>
@@ -211,12 +212,12 @@ namespace System.Management.Automation
         internal PathInfo SetLocation(string path, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
-            
-            return sessionState.SetLocation(path, context);
+
+            return _sessionState.SetLocation(path, context);
         } // SetLocation
 
         /// <summary>
@@ -270,12 +271,12 @@ namespace System.Management.Automation
         internal bool IsCurrentLocationOrAncestor(string path, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
-            
-            return sessionState.IsCurrentLocationOrAncestor(path, context);
+
+            return _sessionState.IsCurrentLocationOrAncestor(path, context);
         } // IsCurrentLocationOrAncestor
 
         /// <summary>
@@ -288,10 +289,10 @@ namespace System.Management.Automation
         public void PushCurrentLocation(string stackName)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
-            sessionState.PushCurrentLocation(stackName);
+            _sessionState.PushCurrentLocation(stackName);
         } // PushCurrentLocation
 
         /// <summary>
@@ -332,10 +333,10 @@ namespace System.Management.Automation
         public PathInfo PopLocation(string stackName)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
-            return sessionState.PopLocation(stackName);
+            return _sessionState.PopLocation(stackName);
         } // PopLocation
 
         /// <summary>
@@ -348,10 +349,10 @@ namespace System.Management.Automation
         public PathInfoStack LocationStack(string stackName)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
-            return sessionState.LocationStack(stackName);
+            return _sessionState.LocationStack(stackName);
         } // LocationStack
 
         /// <summary>
@@ -368,10 +369,10 @@ namespace System.Management.Automation
         public PathInfoStack SetDefaultLocationStack(string stackName)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
-            return sessionState.SetDefaultLocationStack(stackName);
+            return _sessionState.SetDefaultLocationStack(stackName);
         }
 
         /// <summary>
@@ -473,7 +474,7 @@ namespace System.Management.Automation
         /// could not be found.
         /// </exception>
         internal Collection<PathInfo> GetResolvedPSPathFromPSPath(
-            string path, 
+            string path,
             CmdletProviderContext context)
         {
             // The parameters will be verified by the path resolver
@@ -536,7 +537,7 @@ namespace System.Management.Automation
         /// could not be found.
         /// </exception>
         public Collection<string> GetResolvedProviderPathFromPSPath(
-            string path, 
+            string path,
             out ProviderInfo provider)
         {
             // The parameters will be verified by the path resolver
@@ -545,7 +546,7 @@ namespace System.Management.Automation
         } // GetResolvedProviderPathFromPSPath
 
         internal Collection<string> GetResolvedProviderPathFromPSPath(
-            string path, 
+            string path,
             bool allowNonexistingPaths,
             out ProviderInfo provider)
         {
@@ -614,7 +615,7 @@ namespace System.Management.Automation
         /// could not be found.
         /// </exception>
         internal Collection<string> GetResolvedProviderPathFromPSPath(
-            string path, 
+            string path,
             CmdletProviderContext context,
             out ProviderInfo provider)
         {
@@ -623,7 +624,7 @@ namespace System.Management.Automation
             Provider.CmdletProvider providerInstance = null;
             return PathResolver.GetGlobbedProviderPathsFromMonadPath(path, false, context, out provider, out providerInstance);
         } // GetResolvedProviderPathFromPSPath        
-        
+
         /// <summary>
         /// Resolves a drive or provider qualified absolute or relative path that may contain
         /// wildcard characters into one or more provider-internal paths.
@@ -669,7 +670,7 @@ namespace System.Management.Automation
         /// could not be found.
         /// </exception>
         public Collection<string> GetResolvedProviderPathFromProviderPath(
-            string path, 
+            string path,
             string providerId)
         {
             // The parameters will be verified by the path resolver
@@ -727,7 +728,7 @@ namespace System.Management.Automation
         /// could not be found.
         /// </exception>
         internal Collection<string> GetResolvedProviderPathFromProviderPath(
-            string path, 
+            string path,
             string providerId,
             CmdletProviderContext context)
         {
@@ -849,7 +850,7 @@ namespace System.Management.Automation
             out ProviderInfo provider,
             out PSDriveInfo drive)
         {
-            CmdletProviderContext context = new CmdletProviderContext(sessionState.ExecutionContext);
+            CmdletProviderContext context = new CmdletProviderContext(_sessionState.ExecutionContext);
 
             // The parameters will be verified by the path resolver
 
@@ -1031,12 +1032,12 @@ namespace System.Management.Automation
         public string Combine(string parent, string child)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.MakePath(parent, child);
+            return _sessionState.MakePath(parent, child);
         } // Combine
 
         /// <summary>
@@ -1082,12 +1083,12 @@ namespace System.Management.Automation
         internal string Combine(string parent, string child, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.MakePath(parent, child, context);
+            return _sessionState.MakePath(parent, child, context);
         } // Combine
 
         #endregion Combine
@@ -1128,14 +1129,14 @@ namespace System.Management.Automation
         public string ParseParent(string path, string root)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetParentPath(path, root);
+            return _sessionState.GetParentPath(path, root);
         } // GetParentPath
-        
+
         /// <summary>
         /// Gets the parent path of the specified path.
         /// </summary>
@@ -1172,17 +1173,17 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal string ParseParent(
-            string path, 
+            string path,
             string root,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetParentPath(path, root, context, false);
+            return _sessionState.GetParentPath(path, root, context, false);
         } // GetParentPath
 
 
@@ -1234,14 +1235,14 @@ namespace System.Management.Automation
             bool useDefaultProvider)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetParentPath(path, root, context, useDefaultProvider);
+            return _sessionState.GetParentPath(path, root, context, useDefaultProvider);
         }
-        
+
         #endregion ParseParent
 
         #region ParseChildName
@@ -1281,14 +1282,14 @@ namespace System.Management.Automation
         public string ParseChildName(string path)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetChildName(path);
+            return _sessionState.GetChildName(path);
         } // ParseChildName
-        
+
         /// <summary>
         /// Gets the child name of the specified path.
         /// </summary>
@@ -1326,16 +1327,16 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal string ParseChildName(
-            string path, 
+            string path,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetChildName(path, context, false);
+            return _sessionState.GetChildName(path, context, false);
         } // ParseChildName
 
 
@@ -1387,14 +1388,14 @@ namespace System.Management.Automation
             bool useDefaultProvider)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetChildName(path, context, useDefaultProvider);
+            return _sessionState.GetChildName(path, context, useDefaultProvider);
         } // ParseChildName
-        
+
         #endregion ParseChildName
 
         #region NormalizeRelativePath
@@ -1435,12 +1436,12 @@ namespace System.Management.Automation
         public string NormalizeRelativePath(string path, string basePath)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.NormalizeRelativePath(path, basePath);
+            return _sessionState.NormalizeRelativePath(path, basePath);
         } // NormalizeRelativePath
 
         /// <summary>
@@ -1481,19 +1482,19 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         internal string NormalizeRelativePath(
-            string path, 
+            string path,
             string basePath,
             CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.NormalizeRelativePath(path, basePath, context);
+            return _sessionState.NormalizeRelativePath(path, basePath, context);
         } // NormalizeRelativePath
-        
+
         #endregion NormalizeRelativePath
 
         #region IsValid
@@ -1532,13 +1533,13 @@ namespace System.Management.Automation
         /// </exception>
         public bool IsValid(string path)
         {
-            Dbg.Diagnostics.Assert (
-                sessionState != null,
+            Dbg.Diagnostics.Assert(
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.IsValidPath (path);
+            return _sessionState.IsValidPath(path);
         } // IsValid
 
         /// <summary>
@@ -1581,13 +1582,13 @@ namespace System.Management.Automation
             string path,
             CmdletProviderContext context)
         {
-            Dbg.Diagnostics.Assert (
-                sessionState != null,
+            Dbg.Diagnostics.Assert(
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.IsValidPath (path, context);
+            return _sessionState.IsValidPath(path, context);
         } // IsValid
 
         #endregion IsValid
@@ -1601,19 +1602,19 @@ namespace System.Management.Automation
             get
             {
                 Dbg.Diagnostics.Assert(
-                    sessionState != null,
+                    _sessionState != null,
                     "The only constructor for this class should always set the sessionState field");
 
-                if (pathResolver == null)
+                if (_pathResolver == null)
                 {
-                    pathResolver = this.sessionState.ExecutionContext.LocationGlobber;
+                    _pathResolver = _sessionState.ExecutionContext.LocationGlobber;
                 }
-                return pathResolver;
+                return _pathResolver;
             } // get
         } // PathResolver
 
-        private LocationGlobber pathResolver;
-        private SessionStateInternal sessionState;
+        private LocationGlobber _pathResolver;
+        private SessionStateInternal _sessionState;
 
         #endregion private data
     } // PathIntrinsics

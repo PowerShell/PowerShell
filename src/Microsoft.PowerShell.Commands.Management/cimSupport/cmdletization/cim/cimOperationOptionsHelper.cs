@@ -13,7 +13,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
-    internal class CimCustomOptionsDictionary 
+    internal class CimCustomOptionsDictionary
     {
         private readonly IDictionary<string, object> _dict;
         private readonly object _dictModificationLock = new object();
@@ -21,18 +21,18 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private CimCustomOptionsDictionary(IEnumerable<KeyValuePair<string, object>> wrappedDictionary)
         {
             // no need to lock _dictModificationLock inside the constructor
-            this._dict = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            _dict = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             foreach (var kvp in wrappedDictionary)
             {
-                this._dict[kvp.Key] = kvp.Value;
+                _dict[kvp.Key] = kvp.Value;
             }
         }
 
         private IEnumerable<KeyValuePair<string, object>> GetSnapshot()
         {
-            lock (this._dictModificationLock)
+            lock (_dictModificationLock)
             {
-                return this._dict.ToList();
+                return _dict.ToList();
             }
         }
 
@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             return new CimCustomOptionsDictionary(wrappedDictionary);
         }
 
-        private static readonly ConditionalWeakTable<CimInstance, CimCustomOptionsDictionary> CimInstanceToCustomOptions = new ConditionalWeakTable<CimInstance, CimCustomOptionsDictionary>();
+        private static readonly ConditionalWeakTable<CimInstance, CimCustomOptionsDictionary> s_cimInstanceToCustomOptions = new ConditionalWeakTable<CimInstance, CimCustomOptionsDictionary>();
 
         internal static void AssociateCimInstanceWithCustomOptions(CimInstance cimInstance, CimCustomOptionsDictionary newCustomOptions)
         {
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
 
             bool foundAssociatedOptions = true;
-            CimCustomOptionsDictionary oldCustomOptions = CimInstanceToCustomOptions.GetValue(
+            CimCustomOptionsDictionary oldCustomOptions = s_cimInstanceToCustomOptions.GetValue(
                 cimInstance,
                 delegate
                     {
@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal static CimCustomOptionsDictionary MergeOptions(CimCustomOptionsDictionary optionsFromCommandLine, CimInstance instanceRelatedToThisOperation)
         {
             CimCustomOptionsDictionary instanceRelatedOptions;
-            if (CimInstanceToCustomOptions.TryGetValue(instanceRelatedToThisOperation, out instanceRelatedOptions) && instanceRelatedOptions != null)
+            if (s_cimInstanceToCustomOptions.TryGetValue(instanceRelatedToThisOperation, out instanceRelatedOptions) && instanceRelatedOptions != null)
             {
                 IEnumerable<KeyValuePair<string, object>> instanceRelatedOptionsSnapshot = instanceRelatedOptions.GetSnapshot();
                 IEnumerable<KeyValuePair<string, object>> optionsFromCommandLineSnapshot = optionsFromCommandLine.GetSnapshot();
@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     internal static class CimOperationOptionsHelper
     {
         internal static void SetCustomOptions(
-            CimOperationOptions operationOptions, 
+            CimOperationOptions operationOptions,
             IEnumerable<KeyValuePair<string, object>> customOptions,
             CimSensitiveValueConverter cimSensitiveValueConverter)
         {
@@ -134,8 +134,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         internal static void SetCustomOption(
-            CimOperationOptions operationOptions, 
-            string optionName, 
+            CimOperationOptions operationOptions,
+            string optionName,
             object optionValue,
             CimSensitiveValueConverter cimSensitiveValueConverter)
         {

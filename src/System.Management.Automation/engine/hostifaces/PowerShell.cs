@@ -64,7 +64,7 @@ namespace System.Management.Automation
         /// The exception that is the cause of the current exception.
         /// </param>
         public InvalidPowerShellStateException(string message, Exception innerException)
-            :base(message, innerException)
+            : base(message, innerException)
         {
         }
 
@@ -77,7 +77,7 @@ namespace System.Management.Automation
         : base
         (StringUtil.Format(PowerShellStrings.InvalidPowerShellStateGeneral))
         {
-            currState = currentState;
+            _currState = currentState;
         }
 
         #region ISerializable Members
@@ -98,7 +98,7 @@ namespace System.Management.Automation
         /// about the source or destination.
         /// </param>
         protected
-        InvalidPowerShellStateException(SerializationInfo info, StreamingContext context) 
+        InvalidPowerShellStateException(SerializationInfo info, StreamingContext context)
         : base(info, context)
         {
         }
@@ -112,7 +112,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return currState;
+                return _currState;
             }
         }
 
@@ -120,7 +120,7 @@ namespace System.Management.Automation
         /// State of powershell when exception was thrown.
         /// </summary>
         [NonSerialized]
-        private PSInvocationState currState = 0;
+        private PSInvocationState _currState = 0;
     }
 
     #endregion
@@ -193,10 +193,10 @@ namespace System.Management.Automation
         /// <param name="reason">A non-null exception if the state change was 
         /// caused by an error,otherwise; null.
         /// </param>
-        internal PSInvocationStateInfo (PSInvocationState state, Exception reason)
+        internal PSInvocationStateInfo(PSInvocationState state, Exception reason)
         {
-            executionState = state;
-            exceptionReason = reason;
+            _executionState = state;
+            _exceptionReason = reason;
         }
 
         /// <summary>
@@ -205,8 +205,8 @@ namespace System.Management.Automation
         /// <param name="pipelineStateInfo"></param>
         internal PSInvocationStateInfo(PipelineStateInfo pipelineStateInfo)
         {
-            executionState = (PSInvocationState)((int)pipelineStateInfo.State);
-            exceptionReason = pipelineStateInfo.Reason;
+            _executionState = (PSInvocationState)((int)pipelineStateInfo.State);
+            _exceptionReason = pipelineStateInfo.Reason;
         }
 
         #endregion
@@ -222,7 +222,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return executionState;
+                return _executionState;
             }
         }
 
@@ -238,7 +238,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return exceptionReason;
+                return _exceptionReason;
             }
         }
 
@@ -253,8 +253,8 @@ namespace System.Management.Automation
         internal PSInvocationStateInfo Clone()
         {
             return new PSInvocationStateInfo(
-                this.executionState,
-                this.exceptionReason
+                _executionState,
+                _exceptionReason
                 );
         }
 
@@ -263,12 +263,12 @@ namespace System.Management.Automation
         /// <summary>
         /// The current execution state
         /// </summary>
-        private PSInvocationState executionState;
+        private PSInvocationState _executionState;
 
         /// <summary>
         /// Non-null exception if the execution state change was due to an error.
         /// </summary>
-        private Exception exceptionReason;
+        private Exception _exceptionReason;
 
         #endregion
     }
@@ -290,7 +290,7 @@ namespace System.Management.Automation
         internal PSInvocationStateChangedEventArgs(PSInvocationStateInfo psStateInfo)
         {
             Dbg.Assert(psStateInfo != null, "caller should validate the parameter");
-            executionStateInfo = psStateInfo;
+            _executionStateInfo = psStateInfo;
         }
 
         #endregion
@@ -304,7 +304,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return executionStateInfo;
+                return _executionStateInfo;
             }
         }
 
@@ -313,7 +313,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Information about current state of a PowerShell Instance.
         /// </summary>
-        private PSInvocationStateInfo executionStateInfo;
+        private PSInvocationStateInfo _executionStateInfo;
     }
 
     #endregion
@@ -325,21 +325,21 @@ namespace System.Management.Automation
     {
         #region Private Fields
 
-        private PSHost host;
-        private RemoteStreamOptions remoteStreamOptions;
-        private ActionPreference? errorActionPreference;
-        private bool addToHistory;
+        private PSHost _host;
+        private RemoteStreamOptions _remoteStreamOptions;
+        private ActionPreference? _errorActionPreference;
+        private bool _addToHistory;
 
 #if !CORECLR // No ApartmentState In CoreCLR
         private ApartmentState apartmentState;
 #endif
         // the following are used to flow the identity to pipeline execution thread
-        private bool flowImpersonationPolicy;
-        private System.Security.Principal.WindowsIdentity windowsIdentityToImpersonate;
+        private bool _flowImpersonationPolicy;
+        private System.Security.Principal.WindowsIdentity _windowsIdentityToImpersonate;
 
         // Invokes a remote command and immediately disconnects, if transport layer
         // supports this operation.
-        private bool invokeAndDisconnect;
+        private bool _invokeAndDisconnect;
 
         #endregion
 
@@ -353,10 +353,10 @@ namespace System.Management.Automation
 #if !CORECLR // No ApartmentState In CoreCLR
             this.apartmentState = ApartmentState.Unknown;
 #endif
-            this.host = null;
-            this.remoteStreamOptions = 0;
-            this.addToHistory = false;
-            this.errorActionPreference = null;
+            _host = null;
+            _remoteStreamOptions = 0;
+            _addToHistory = false;
+            _errorActionPreference = null;
         }
 
         #endregion
@@ -366,7 +366,7 @@ namespace System.Management.Automation
         /// ApartmentState of the thread in which the command
         /// is executed.
         /// </summary>
-        public ApartmentState ApartmentState 
+        public ApartmentState ApartmentState
         {
             get
             {
@@ -384,11 +384,11 @@ namespace System.Management.Automation
         /// Host to use with the Runspace when the command is
         /// executed.
         /// </summary>
-        public PSHost Host 
+        public PSHost Host
         {
             get
             {
-                return host;
+                return _host;
             }
             set
             {
@@ -396,7 +396,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("Host");
                 }
-                host = value;
+                _host = value;
             }
         }
 
@@ -407,11 +407,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.remoteStreamOptions;
+                return _remoteStreamOptions;
             }
             set
             {
-                this.remoteStreamOptions = value;
+                _remoteStreamOptions = value;
             }
         }
 
@@ -421,8 +421,8 @@ namespace System.Management.Automation
         /// </summary>
         public bool AddToHistory
         {
-            get { return addToHistory; }
-            set { addToHistory = value; }
+            get { return _addToHistory; }
+            set { _addToHistory = value; }
         }
 
         /// <summary>
@@ -430,10 +430,10 @@ namespace System.Management.Automation
         /// </summary>
         public ActionPreference? ErrorActionPreference
         {
-            get { return errorActionPreference; }
-            set { errorActionPreference = value; }
+            get { return _errorActionPreference; }
+            set { _errorActionPreference = value; }
         }
-        
+
         /// <summary>
         /// Used by Powershell remoting infrastructure to flow identity from calling thread to
         /// Pipeline Execution Thread.
@@ -448,18 +448,18 @@ namespace System.Management.Automation
         {
             get
             {
-                return flowImpersonationPolicy;
+                return _flowImpersonationPolicy;
             }
             set
             {
-                flowImpersonationPolicy = value;
+                _flowImpersonationPolicy = value;
             }
         }
 
         internal System.Security.Principal.WindowsIdentity WindowsIdentityToImpersonate
         {
-            get { return windowsIdentityToImpersonate; }
-            set { windowsIdentityToImpersonate = value; }
+            get { return _windowsIdentityToImpersonate; }
+            set { _windowsIdentityToImpersonate = value; }
         }
 
         /// <summary>
@@ -478,8 +478,8 @@ namespace System.Management.Automation
         /// </summary>
         internal bool InvokeAndDisconnect
         {
-            get { return this.invokeAndDisconnect; }
-            set { this.invokeAndDisconnect = value; }
+            get { return _invokeAndDisconnect; }
+            set { _invokeAndDisconnect = value; }
         }
     }
 
@@ -488,9 +488,9 @@ namespace System.Management.Automation
     /// </summary>
     internal class BatchInvocationContext
     {
-        private PSCommand command;
-        private PSDataCollection<PSObject> output;
-        private AutoResetEvent completionEvent;
+        private PSCommand _command;
+        private PSDataCollection<PSObject> _output;
+        private AutoResetEvent _completionEvent;
 
         /// <summary>
         /// Class constructor
@@ -499,9 +499,9 @@ namespace System.Management.Automation
         /// <param name="output"></param>
         internal BatchInvocationContext(PSCommand command, PSDataCollection<PSObject> output)
         {
-            this.command = command;
-            this.output = output;
-            completionEvent = new AutoResetEvent(false);
+            _command = command;
+            _output = output;
+            _completionEvent = new AutoResetEvent(false);
         }
 
         /// <summary>
@@ -509,7 +509,7 @@ namespace System.Management.Automation
         /// </summary>
         internal PSDataCollection<PSObject> Output
         {
-            get { return output; }
+            get { return _output; }
         }
 
         /// <summary>
@@ -517,7 +517,7 @@ namespace System.Management.Automation
         /// </summary>
         internal PSCommand Command
         {
-            get { return command; }
+            get { return _command; }
         }
 
         /// <summary>
@@ -525,7 +525,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void Wait()
         {
-            completionEvent.WaitOne();
+            _completionEvent.WaitOne();
         }
 
         /// <summary>
@@ -533,7 +533,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void Signal()
         {
-            completionEvent.Set();
+            _completionEvent.Set();
         }
     }
 
@@ -541,7 +541,8 @@ namespace System.Management.Automation
     /// These flags control whether InvocationInfo is added to items in the Error, Warning, Verbose and Debug 
     /// streams during remote calls
     /// </summary>
-    [Flags] public enum RemoteStreamOptions
+    [Flags]
+    public enum RemoteStreamOptions
     {
         /// <summary>
         /// If this flag is set, ErrorRecord will include an instance of InvocationInfo on remote calls
@@ -566,7 +567,7 @@ namespace System.Management.Automation
         /// <summary>
         /// If this flag is set, ErrorRecord, WarningRecord, DebugRecord, and VerboseRecord will include an instance of InvocationInfo on remote calls
         /// </summary>
-        AddInvocationInfo = AddInvocationInfoToErrorRecord 
+        AddInvocationInfo = AddInvocationInfoToErrorRecord
                           | AddInvocationInfoToWarningRecord
                           | AddInvocationInfoToDebugRecord
                           | AddInvocationInfoToVerboseRecord
@@ -580,10 +581,10 @@ namespace System.Management.Automation
     internal sealed class PowerShellAsyncResult : AsyncResult
     {
         #region Private Data / Properties
-        
+
         // used to track if this AsyncResult is created by a BeginInvoke operation or
         // a BeginStop operation.
-        private bool isAssociatedWithAsyncInvoke;
+        private bool _isAssociatedWithAsyncInvoke;
 
         /// <summary>
         /// true if AsyncResult monitors Async BeginInvoke().
@@ -591,7 +592,7 @@ namespace System.Management.Automation
         /// </summary>
         internal bool IsAssociatedWithAsyncInvoke
         {
-            get { return isAssociatedWithAsyncInvoke; }
+            get { return _isAssociatedWithAsyncInvoke; }
         }
 
         /// <summary>
@@ -599,10 +600,10 @@ namespace System.Management.Automation
         /// </summary>
         internal PSDataCollection<PSObject> Output
         {
-            get { return output; }
+            get { return _output; }
         }
 
-        private PSDataCollection<PSObject> output;
+        private PSDataCollection<PSObject> _output;
 
         #endregion
 
@@ -631,8 +632,8 @@ namespace System.Management.Automation
             bool isCalledFromBeginInvoke)
             : base(ownerId, callback, state)
         {
-            this.isAssociatedWithAsyncInvoke = isCalledFromBeginInvoke;
-            this.output = output;
+            _isAssociatedWithAsyncInvoke = isCalledFromBeginInvoke;
+            _output = output;
         }
 
         #endregion
@@ -661,42 +662,42 @@ namespace System.Management.Automation
     {
         #region Private Fields
 
-        private bool isGetCommandMetadataSpecialPipeline;
-        private PSCommand psCommand;
-        private Collection<PSCommand> extraCommands;
-        private bool runningExtraCommands;
+        private bool _isGetCommandMetadataSpecialPipeline;
+        private PSCommand _psCommand;
+        private Collection<PSCommand> _extraCommands;
+        private bool _runningExtraCommands;
         // worker object which does the invoke
-        private Worker worker;
-        private PSInvocationStateInfo invocationStateInfo;
-        private PowerShellAsyncResult invokeAsyncResult;
-        private PowerShellAsyncResult stopAsyncResult;
-        private PowerShellAsyncResult batchAsyncResult;
-        private PSInvocationSettings batchInvocationSettings;
-        private PSCommand backupPSCommand;
-        private bool isNested;
-        private bool isChild = false;
-        private object rsConnection;
+        private Worker _worker;
+        private PSInvocationStateInfo _invocationStateInfo;
+        private PowerShellAsyncResult _invokeAsyncResult;
+        private PowerShellAsyncResult _stopAsyncResult;
+        private PowerShellAsyncResult _batchAsyncResult;
+        private PSInvocationSettings _batchInvocationSettings;
+        private PSCommand _backupPSCommand;
+        private bool _isNested;
+        private bool _isChild = false;
+        private object _rsConnection;
 
-        private PSDataCollection<PSObject> outputBuffer;
-        private bool outputBufferOwner = true;
-        private PSDataCollection<ErrorRecord> errorBuffer;
-        private bool errorBufferOwner = true;
-        private PSInformationalBuffers informationalBuffers;
-        private PSDataStreams dataStreams;
+        private PSDataCollection<PSObject> _outputBuffer;
+        private bool _outputBufferOwner = true;
+        private PSDataCollection<ErrorRecord> _errorBuffer;
+        private bool _errorBufferOwner = true;
+        private PSInformationalBuffers _informationalBuffers;
+        private PSDataStreams _dataStreams;
 
-        private bool isDisposed;
-        private Guid instanceId;
-        private object syncObject = new object();
+        private bool _isDisposed;
+        private Guid _instanceId;
+        private object _syncObject = new object();
 
-        private ClientRemotePowerShell remotePowerShell;
-                    // client remote powershell if the powershell
-                    // is executed with a remote runspace pool
-        private String historyString;
+        private ClientRemotePowerShell _remotePowerShell;
+        // client remote powershell if the powershell
+        // is executed with a remote runspace pool
+        private String _historyString;
 
-        private ConnectCommandInfo connectCmdInfo;
-        private bool commandInvokedSynchronously = false;
-        private bool isBatching = false;
-        private bool stopBatchExecution = false;
+        private ConnectCommandInfo _connectCmdInfo;
+        private bool _commandInvokedSynchronously = false;
+        private bool _isBatching = false;
+        private bool _stopBatchExecution = false;
 
         #endregion
 
@@ -719,20 +720,20 @@ namespace System.Management.Automation
         private PowerShell(PSCommand command, Collection<PSCommand> extraCommands, object rsConnection)
         {
             Dbg.Assert(command != null, "command must not be null");
-            this.extraCommands = (extraCommands == null) ? new Collection<PSCommand>() : extraCommands;
-            this.runningExtraCommands = false;
-            psCommand = command;
-            psCommand.Owner = this;
+            _extraCommands = (extraCommands == null) ? new Collection<PSCommand>() : extraCommands;
+            _runningExtraCommands = false;
+            _psCommand = command;
+            _psCommand.Owner = this;
             RemoteRunspace remoteRunspace = rsConnection as RemoteRunspace;
-            this.rsConnection = remoteRunspace != null ? remoteRunspace.RunspacePool : rsConnection;
-            instanceId = Guid.NewGuid();
-            invocationStateInfo = new PSInvocationStateInfo(PSInvocationState.NotStarted, null);
-            outputBuffer = null;
-            outputBufferOwner = true;
-            errorBuffer = new PSDataCollection<ErrorRecord>();
-            errorBufferOwner = true;
-            informationalBuffers = new PSInformationalBuffers(instanceId);
-            dataStreams = new PSDataStreams(this);
+            _rsConnection = remoteRunspace != null ? remoteRunspace.RunspacePool : rsConnection;
+            _instanceId = Guid.NewGuid();
+            _invocationStateInfo = new PSInvocationStateInfo(PSInvocationState.NotStarted, null);
+            _outputBuffer = null;
+            _outputBufferOwner = true;
+            _errorBuffer = new PSDataCollection<ErrorRecord>();
+            _errorBufferOwner = true;
+            _informationalBuffers = new PSInformationalBuffers(_instanceId);
+            _dataStreams = new PSDataStreams(this);
         }
 
         /// <summary>
@@ -744,27 +745,27 @@ namespace System.Management.Automation
         internal PowerShell(ConnectCommandInfo connectCmdInfo, object rsConnection)
             : this(new PSCommand(), null, rsConnection)
         {
-            this.extraCommands = new Collection<PSCommand>();
-            this.runningExtraCommands = false;
+            _extraCommands = new Collection<PSCommand>();
+            _runningExtraCommands = false;
             AddCommand(connectCmdInfo.Command);
-            this.connectCmdInfo = connectCmdInfo;
+            _connectCmdInfo = connectCmdInfo;
 
             // The command ID is passed to the PSRP layer through the PowerShell instanceID.
-            this.instanceId = this.connectCmdInfo.CommandId;
+            _instanceId = _connectCmdInfo.CommandId;
 
-            this.invocationStateInfo = new PSInvocationStateInfo(PSInvocationState.Disconnected, null);
+            _invocationStateInfo = new PSInvocationStateInfo(PSInvocationState.Disconnected, null);
 
             if (rsConnection is RemoteRunspace)
             {
-                this.runspace = rsConnection as Runspace;
-                this.runspacePool = ((RemoteRunspace)rsConnection).RunspacePool;
+                _runspace = rsConnection as Runspace;
+                _runspacePool = ((RemoteRunspace)rsConnection).RunspacePool;
             }
             else if (rsConnection is RunspacePool)
             {
-                this.runspacePool = (RunspacePool)rsConnection;
+                _runspacePool = (RunspacePool)rsConnection;
             }
-            Dbg.Assert(this.runspacePool != null, "Invalid rsConnection parameter>");
-            this.remotePowerShell = new ClientRemotePowerShell(this, this.runspacePool.RemoteRunspacePoolInternal);
+            Dbg.Assert(_runspacePool != null, "Invalid rsConnection parameter>");
+            _remotePowerShell = new ClientRemotePowerShell(this, _runspacePool.RemoteRunspacePoolInternal);
         }
 
         /// <summary>
@@ -777,23 +778,23 @@ namespace System.Management.Automation
         internal PowerShell(ObjectStreamBase inputstream,
             ObjectStreamBase outputstream, ObjectStreamBase errorstream, RunspacePool runspacePool)
         {
-            this.extraCommands = new Collection<PSCommand>();
-            this.runningExtraCommands = false;
-            rsConnection = runspacePool;
-            instanceId = Guid.NewGuid();
-            invocationStateInfo = new PSInvocationStateInfo(PSInvocationState.NotStarted, null);
-            informationalBuffers = new PSInformationalBuffers(instanceId);
-            dataStreams = new PSDataStreams(this);
-           
+            _extraCommands = new Collection<PSCommand>();
+            _runningExtraCommands = false;
+            _rsConnection = runspacePool;
+            _instanceId = Guid.NewGuid();
+            _invocationStateInfo = new PSInvocationStateInfo(PSInvocationState.NotStarted, null);
+            _informationalBuffers = new PSInformationalBuffers(_instanceId);
+            _dataStreams = new PSDataStreams(this);
+
             PSDataCollectionStream<PSObject> outputdatastream = (PSDataCollectionStream<PSObject>)outputstream;
-            outputBuffer = outputdatastream.ObjectStore;
+            _outputBuffer = outputdatastream.ObjectStore;
 
             PSDataCollectionStream<ErrorRecord> errordatastream = (PSDataCollectionStream<ErrorRecord>)errorstream;
-            errorBuffer = errordatastream.ObjectStore;
+            _errorBuffer = errordatastream.ObjectStore;
 
             if (runspacePool != null && runspacePool.RemoteRunspacePoolInternal != null)
             {
-                remotePowerShell = new ClientRemotePowerShell(this, runspacePool.RemoteRunspacePoolInternal);
+                _remotePowerShell = new ClientRemotePowerShell(this, runspacePool.RemoteRunspacePoolInternal);
             }
         }
 
@@ -810,21 +811,21 @@ namespace System.Management.Automation
             ObjectStreamBase errorstream, RunspacePool runspacePool)
             : this(inputstream, outputstream, errorstream, runspacePool)
         {
-            this.extraCommands = new Collection<PSCommand>();
-            this.runningExtraCommands = false;
-            this.psCommand = new PSCommand();
-            psCommand.Owner = this;
-            this.runspacePool = runspacePool;
+            _extraCommands = new Collection<PSCommand>();
+            _runningExtraCommands = false;
+            _psCommand = new PSCommand();
+            _psCommand.Owner = this;
+            _runspacePool = runspacePool;
 
             AddCommand(connectCmdInfo.Command);
-            this.connectCmdInfo = connectCmdInfo;
+            _connectCmdInfo = connectCmdInfo;
 
             // The command ID is passed to the PSRP layer through the PowerShell instanceID.
-            this.instanceId = this.connectCmdInfo.CommandId;
+            _instanceId = _connectCmdInfo.CommandId;
 
-            this.invocationStateInfo = new PSInvocationStateInfo(PSInvocationState.Disconnected, null);
+            _invocationStateInfo = new PSInvocationStateInfo(PSInvocationState.Disconnected, null);
 
-            this.remotePowerShell = new ClientRemotePowerShell(this, runspacePool.RemoteRunspacePoolInternal);
+            _remotePowerShell = new ClientRemotePowerShell(this, runspacePool.RemoteRunspacePoolInternal);
         }
 
         /// <summary>
@@ -839,21 +840,21 @@ namespace System.Management.Automation
         {
             Dbg.Assert(command != null, "A command collection need to be specified");
 
-            psCommand = new PSCommand(command[0]);
-            psCommand.Owner = this;
+            _psCommand = new PSCommand(command[0]);
+            _psCommand.Owner = this;
 
             for (int i = 1; i < command.Count; i++)
             {
                 AddCommand(command[i]);
             }
 
-            this.redirectShellErrorOutputPipe = redirectShellErrorOutputPipe;
+            _redirectShellErrorOutputPipe = redirectShellErrorOutputPipe;
 
             // create the client remote powershell for remoting
             // communications
-            if (remotePowerShell == null)
+            if (_remotePowerShell == null)
             {
-                remotePowerShell = new ClientRemotePowerShell(this, ((RunspacePool)rsConnection).RemoteRunspacePoolInternal);
+                _remotePowerShell = new ClientRemotePowerShell(this, ((RunspacePool)_rsConnection).RemoteRunspacePoolInternal);
             }
 
             // If we get here, we don't call 'Invoke' or any of it's friends on 'this', instead we serialize 'this' in PowerShell.ToPSObjectForRemoting.
@@ -862,13 +863,13 @@ namespace System.Management.Automation
             // in the call to ClientRemotePowerShell.Initialize (which happens just below.)
             DetermineIsBatching();
 
-            if (isBatching)
+            if (_isBatching)
             {
                 SetupAsyncBatchExecution();
             }
 
-            remotePowerShell.Initialize(inputstream, outputstream,
-                errorstream, this.informationalBuffers, settings);
+            _remotePowerShell.Initialize(inputstream, outputstream,
+                errorstream, _informationalBuffers, settings);
         }
 
         /// <summary>
@@ -886,21 +887,21 @@ namespace System.Management.Automation
             // Make sure the associated runspace is valid and connected.
             CheckRunspacePoolAndConnect();
 
-            if (this.invocationStateInfo.State != PSInvocationState.Disconnected)
+            if (_invocationStateInfo.State != PSInvocationState.Disconnected)
             {
-                throw new InvalidPowerShellStateException(this.invocationStateInfo.State);
+                throw new InvalidPowerShellStateException(_invocationStateInfo.State);
             }
 
-            this.redirectShellErrorOutputPipe = redirectShellErrorOutputPipe;
+            _redirectShellErrorOutputPipe = redirectShellErrorOutputPipe;
 
-            if (this.remotePowerShell == null)
+            if (_remotePowerShell == null)
             {
-                this.remotePowerShell = new ClientRemotePowerShell(this, ((RunspacePool)rsConnection).RemoteRunspacePoolInternal);
+                _remotePowerShell = new ClientRemotePowerShell(this, ((RunspacePool)_rsConnection).RemoteRunspacePoolInternal);
             }
 
-            if (!this.remotePowerShell.Initialized)
+            if (!_remotePowerShell.Initialized)
             {
-                this.remotePowerShell.Initialize(inputstream, outputstream, errorstream, this.informationalBuffers, settings);
+                _remotePowerShell.Initialize(inputstream, outputstream, errorstream, _informationalBuffers, settings);
             }
         }
 
@@ -936,10 +937,10 @@ namespace System.Management.Automation
                         throw new InvalidOperationException(PowerShellStrings.NoDefaultRunspaceForPSCreate);
                     }
                     result = new PowerShell(new PSCommand(), null, Runspace.DefaultRunspace);
-                    result.isChild = true;
-                    result.isNested = true;
+                    result._isChild = true;
+                    result._isNested = true;
                     result.IsRunspaceOwner = false;
-                    result.runspace = Runspace.DefaultRunspace;
+                    result._runspace = Runspace.DefaultRunspace;
                     break;
                 case RunspaceMode.NewRunspace:
                     result = new PowerShell(new PSCommand(), null, null);
@@ -957,10 +958,10 @@ namespace System.Management.Automation
         public static PowerShell Create(InitialSessionState initialSessionState)
         {
             PowerShell result = Create();
-            
+
             result.Runspace = RunspaceFactory.CreateRunspace(initialSessionState);
             result.Runspace.Open();
-            
+
             return result;
         }
 
@@ -984,11 +985,11 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "ps", Justification = "ps represents PowerShell and is used at many places.")]
         public PowerShell CreateNestedPowerShell()
         {
-            if ((null != this.worker) && (null != this.worker.CurrentlyRunningPipeline))
+            if ((null != _worker) && (null != _worker.CurrentlyRunningPipeline))
             {
-                PowerShell result = new PowerShell(new PSCommand(), 
-                    null, this.worker.CurrentlyRunningPipeline.Runspace);
-                result.isNested = true;
+                PowerShell result = new PowerShell(new PSCommand(),
+                    null, _worker.CurrentlyRunningPipeline.Runspace);
+                result._isNested = true;
                 return result;
             }
 
@@ -1004,7 +1005,7 @@ namespace System.Management.Automation
         private static PowerShell Create(bool isNested, PSCommand psCommand, Collection<PSCommand> extraCommands)
         {
             PowerShell powerShell = new PowerShell(psCommand, extraCommands, null);
-            powerShell.isNested = isNested;
+            powerShell._isNested = isNested;
             return powerShell;
         }
 
@@ -1040,11 +1041,11 @@ namespace System.Management.Automation
         /// </exception>
         public PowerShell AddCommand(string cmdlet)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
                 AssertChangesAreAccepted();
 
-                psCommand.AddCommand(cmdlet);
+                _psCommand.AddCommand(cmdlet);
 
                 return this;
             }
@@ -1081,11 +1082,11 @@ namespace System.Management.Automation
         /// </exception>
         public PowerShell AddCommand(string cmdlet, bool useLocalScope)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
                 AssertChangesAreAccepted();
 
-                psCommand.AddCommand(cmdlet, useLocalScope);
+                _psCommand.AddCommand(cmdlet, useLocalScope);
 
                 return this;
             }
@@ -1120,11 +1121,11 @@ namespace System.Management.Automation
         /// </exception>
         public PowerShell AddScript(string script)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
                 AssertChangesAreAccepted();
 
-                psCommand.AddScript(script);
+                _psCommand.AddScript(script);
 
                 return this;
             }
@@ -1162,11 +1163,11 @@ namespace System.Management.Automation
         /// </exception>
         public PowerShell AddScript(string script, bool useLocalScope)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
                 AssertChangesAreAccepted();
 
-                psCommand.AddScript(script, useLocalScope);
+                _psCommand.AddScript(script, useLocalScope);
 
                 return this;
             }
@@ -1197,11 +1198,11 @@ namespace System.Management.Automation
         /// </exception>
         internal PowerShell AddCommand(Command command)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
                 AssertChangesAreAccepted();
 
-                psCommand.AddCommand(command);
+                _psCommand.AddCommand(command);
 
                 return this;
             }
@@ -1234,7 +1235,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("commandInfo");
             }
             Command cmd = new Command(commandInfo);
-            psCommand.AddCommand(cmd);
+            _psCommand.AddCommand(cmd);
             return this;
         }
 
@@ -1272,15 +1273,15 @@ namespace System.Management.Automation
         /// </exception>
         public PowerShell AddParameter(string parameterName, object value)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (psCommand.Commands.Count == 0)
+                if (_psCommand.Commands.Count == 0)
                 {
                     throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.ParameterRequiresCommand);
                 }
 
                 AssertChangesAreAccepted();
-                psCommand.AddParameter(parameterName, value);
+                _psCommand.AddParameter(parameterName, value);
                 return this;
             }
         }
@@ -1315,15 +1316,15 @@ namespace System.Management.Automation
         /// </exception>
         public PowerShell AddParameter(string parameterName)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (psCommand.Commands.Count == 0)
+                if (_psCommand.Commands.Count == 0)
                 {
                     throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.ParameterRequiresCommand);
                 }
 
                 AssertChangesAreAccepted();
-                psCommand.AddParameter(parameterName);
+                _psCommand.AddParameter(parameterName);
                 return this;
             }
         }
@@ -1350,14 +1351,14 @@ namespace System.Management.Automation
         /// </exception>
         public PowerShell AddParameters(IList parameters)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
                 if (parameters == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("parameters");
                 }
 
-                if (psCommand.Commands.Count == 0)
+                if (_psCommand.Commands.Count == 0)
                 {
                     throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.ParameterRequiresCommand);
                 }
@@ -1366,7 +1367,7 @@ namespace System.Management.Automation
 
                 foreach (object p in parameters)
                 {
-                    psCommand.AddParameter(null, p);
+                    _psCommand.AddParameter(null, p);
                 }
 
                 return this;
@@ -1398,14 +1399,14 @@ namespace System.Management.Automation
         /// </exception>
         public PowerShell AddParameters(IDictionary parameters)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
                 if (parameters == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("parameters");
                 }
 
-                if (psCommand.Commands.Count == 0)
+                if (_psCommand.Commands.Count == 0)
                 {
                     throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.ParameterRequiresCommand);
                 }
@@ -1421,7 +1422,7 @@ namespace System.Management.Automation
                         throw PSTraceSource.NewArgumentException("parameters", PowerShellStrings.KeyMustBeString);
                     }
 
-                    psCommand.AddParameter(parameterName, entry.Value);
+                    _psCommand.AddParameter(parameterName, entry.Value);
                 }
 
                 return this;
@@ -1452,15 +1453,15 @@ namespace System.Management.Automation
         /// </remarks>
         public PowerShell AddArgument(object value)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (psCommand.Commands.Count == 0)
+                if (_psCommand.Commands.Count == 0)
                 {
                     throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.ParameterRequiresCommand);
                 }
 
                 AssertChangesAreAccepted();
-                psCommand.AddArgument(value);
+                _psCommand.AddArgument(value);
                 return this;
             }
         }
@@ -1485,18 +1486,18 @@ namespace System.Management.Automation
         /// </returns>
         public PowerShell AddStatement()
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
                 // for PowerShell.Create().AddStatement().AddCommand("Get-Process");
                 // we reduce it to PowerShell.Create().AddCommand("Get-Process");
-                if (psCommand.Commands.Count == 0)
+                if (_psCommand.Commands.Count == 0)
                 {
                     return this;
                 }
 
                 AssertChangesAreAccepted();
 
-                psCommand.Commands[psCommand.Commands.Count - 1].IsEndOfStatement = true;
+                _psCommand.Commands[_psCommand.Commands.Count - 1].IsEndOfStatement = true;
 
                 return this;
             }
@@ -1523,7 +1524,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return psCommand;
+                return _psCommand;
             }
 
             set
@@ -1532,11 +1533,11 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("Command");
                 }
-                lock (syncObject)
+                lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
-                    psCommand = value.Clone();
-                    psCommand.Owner = this;
+                    _psCommand = value.Clone();
+                    _psCommand.Owner = this;
                 }
             }
         }
@@ -1548,7 +1549,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.dataStreams;
+                return _dataStreams;
             }
         }
 
@@ -1571,7 +1572,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return errorBuffer;
+                return _errorBuffer;
             }
 
             set
@@ -1580,11 +1581,11 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("Error");
                 }
-                lock (syncObject)
+                lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
-                    errorBuffer = value;
-                    errorBufferOwner = false;
+                    _errorBuffer = value;
+                    _errorBufferOwner = false;
                 }
             }
         }
@@ -1605,7 +1606,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return informationalBuffers.Progress;
+                return _informationalBuffers.Progress;
             }
 
             set
@@ -1614,10 +1615,10 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("Progress");
                 }
-                lock (syncObject)
+                lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
-                    informationalBuffers.Progress = value;
+                    _informationalBuffers.Progress = value;
                 }
             }
         }
@@ -1638,7 +1639,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return informationalBuffers.Verbose;
+                return _informationalBuffers.Verbose;
             }
 
             set
@@ -1647,10 +1648,10 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("Verbose");
                 }
-                lock (syncObject)
+                lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
-                    informationalBuffers.Verbose = value;
+                    _informationalBuffers.Verbose = value;
                 }
             }
         }
@@ -1671,7 +1672,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return informationalBuffers.Debug;
+                return _informationalBuffers.Debug;
             }
 
             set
@@ -1680,10 +1681,10 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("Debug");
                 }
-                lock (syncObject)
+                lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
-                    informationalBuffers.Debug = value;
+                    _informationalBuffers.Debug = value;
                 }
             }
         }
@@ -1707,7 +1708,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return informationalBuffers.Warning;
+                return _informationalBuffers.Warning;
             }
 
             set
@@ -1716,10 +1717,10 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("Warning");
                 }
-                lock (syncObject)
+                lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
-                    informationalBuffers.Warning = value;
+                    _informationalBuffers.Warning = value;
                 }
             }
         }
@@ -1743,7 +1744,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return informationalBuffers.Information;
+                return _informationalBuffers.Information;
             }
 
             set
@@ -1752,10 +1753,10 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentNullException("Information");
                 }
-                lock (syncObject)
+                lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
-                    informationalBuffers.Information = value;
+                    _informationalBuffers.Information = value;
                 }
             }
         }
@@ -1765,7 +1766,7 @@ namespace System.Management.Automation
         /// </summary>
         internal PSInformationalBuffers InformationalBuffers
         {
-            get { return informationalBuffers; }
+            get { return _informationalBuffers; }
         }
 
         /// <summary>
@@ -1777,10 +1778,10 @@ namespace System.Management.Automation
         /// </summary>
         internal bool RedirectShellErrorOutputPipe
         {
-            get { return this.redirectShellErrorOutputPipe; }
-            set { this.redirectShellErrorOutputPipe = value; }
+            get { return _redirectShellErrorOutputPipe; }
+            set { _redirectShellErrorOutputPipe = value; }
         }
-        private bool redirectShellErrorOutputPipe = true;
+        private bool _redirectShellErrorOutputPipe = true;
 
         /// <summary>
         /// Get unqiue id for this instance of runspace pool. It is primarily used 
@@ -1790,7 +1791,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return instanceId;
+                return _instanceId;
             }
         }
 
@@ -1801,7 +1802,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return invocationStateInfo;
+                return _invocationStateInfo;
             }
         }
 
@@ -1813,7 +1814,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return isNested;
+                return _isNested;
             }
         }
 
@@ -1830,7 +1831,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return isChild;
+                return _isChild;
             }
         }
 
@@ -1845,7 +1846,7 @@ namespace System.Management.Automation
         {
             _hadErrors = status;
         }
-        bool _hadErrors;
+        private bool _hadErrors;
 
         /// <summary>
         /// Access to the EndInvoke AysncResult object.  Used by remote
@@ -1892,11 +1893,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (this.runspace == null && this.runspacePool == null) // create a runspace only if neither a runspace nor a runspace pool have been set
+                if (_runspace == null && _runspacePool == null) // create a runspace only if neither a runspace nor a runspace pool have been set
                 {
-                    lock (this.syncObject)
+                    lock (_syncObject)
                     {
-                        if (this.runspace == null && this.runspacePool == null)
+                        if (_runspace == null && _runspacePool == null)
                         {
                             AssertChangesAreAccepted();
                             SetRunspace(RunspaceFactory.CreateRunspace(), true);
@@ -1905,26 +1906,26 @@ namespace System.Management.Automation
                     }
                 }
 
-                return runspace;
+                return _runspace;
             }
 
             set
             {
-                lock (this.syncObject)
+                lock (_syncObject)
                 {
                     AssertChangesAreAccepted();
 
-                    if (this.runspace != null && this.runspaceOwner)
+                    if (_runspace != null && _runspaceOwner)
                     {
-                        this.runspace.Dispose();
-                        this.runspace = null;
-                        this.runspaceOwner = false;
+                        _runspace.Dispose();
+                        _runspace = null;
+                        _runspaceOwner = false;
                     }
 
                     SetRunspace(value, false);
                 }
             }
-        }        
+        }
 
         /// <summary>
         /// Internal method to set the Runspace property
@@ -1935,27 +1936,27 @@ namespace System.Management.Automation
 
             if (remoteRunspace == null)
             {
-                this.rsConnection = runspace;
+                _rsConnection = runspace;
             }
             else
             {
-                this.rsConnection = remoteRunspace.RunspacePool;
+                _rsConnection = remoteRunspace.RunspacePool;
 
-                if (remotePowerShell != null)
+                if (_remotePowerShell != null)
                 {
-                    remotePowerShell.Clear();
-                    remotePowerShell.Dispose();
+                    _remotePowerShell.Clear();
+                    _remotePowerShell.Dispose();
                 }
-                remotePowerShell = new ClientRemotePowerShell(this, remoteRunspace.RunspacePool.RemoteRunspacePoolInternal);
+                _remotePowerShell = new ClientRemotePowerShell(this, remoteRunspace.RunspacePool.RemoteRunspacePoolInternal);
             }
 
-            this.runspace = runspace;
-            this.runspaceOwner = owner;
-            this.runspacePool = null;
+            _runspace = runspace;
+            _runspaceOwner = owner;
+            _runspacePool = null;
         }
 
-        private Runspace runspace = null;
-        private bool runspaceOwner = false; // If true, runspace was created by this instance; otherwise it was set by the user and we should not dispose it
+        private Runspace _runspace = null;
+        private bool _runspaceOwner = false; // If true, runspace was created by this instance; otherwise it was set by the user and we should not dispose it
 
         /// <summary>
         /// Sets an associated RunspacePool for this PowerShell instance.
@@ -1980,44 +1981,44 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.runspacePool;
+                return _runspacePool;
             }
 
             set
             {
                 if (value != null)
                 {
-                    lock (this.syncObject)
+                    lock (_syncObject)
                     {
                         AssertChangesAreAccepted();
 
-                        if (this.runspace != null && this.runspaceOwner)
+                        if (_runspace != null && _runspaceOwner)
                         {
-                            this.runspace.Dispose();
-                            this.runspace = null;
-                            this.runspaceOwner = false;
+                            _runspace.Dispose();
+                            _runspace = null;
+                            _runspaceOwner = false;
                         }
 
-                        this.rsConnection = value;
-                        this.runspacePool = value;
+                        _rsConnection = value;
+                        _runspacePool = value;
 
-                        if (this.runspacePool.IsRemote)
+                        if (_runspacePool.IsRemote)
                         {
-                            if (this.remotePowerShell != null)
+                            if (_remotePowerShell != null)
                             {
-                                this.remotePowerShell.Clear();
-                                this.remotePowerShell.Dispose();
+                                _remotePowerShell.Clear();
+                                _remotePowerShell.Dispose();
                             }
-                            this.remotePowerShell = new
-                                ClientRemotePowerShell(this, this.runspacePool.RemoteRunspacePoolInternal);
+                            _remotePowerShell = new
+                                ClientRemotePowerShell(this, _runspacePool.RemoteRunspacePoolInternal);
                         }
-                        this.runspace = null;
+                        _runspace = null;
                     }
                 }
             }
         }
 
-        private RunspacePool runspacePool = null;
+        private RunspacePool _runspacePool = null;
 
         /// <summary>
         /// Gets the associated Runspace or RunspacePool for this PowerShell
@@ -2026,7 +2027,7 @@ namespace System.Management.Automation
         /// </summary>
         internal object GetRunspaceConnection()
         {
-            return rsConnection;
+            return _rsConnection;
         }
 
         #endregion
@@ -2041,7 +2042,7 @@ namespace System.Management.Automation
         {
             // Regardless of how the command was originally invoked, set this member
             // variable to indicate the command is now running synchronously.
-            this.commandInvokedSynchronously = true;
+            _commandInvokedSynchronously = true;
 
             IAsyncResult asyncResult = ConnectAsync();
             PowerShellAsyncResult psAsyncResult = asyncResult as PowerShellAsyncResult;
@@ -2092,25 +2093,25 @@ namespace System.Management.Automation
             AsyncCallback invocationCallback,
             object state)
         {
-            if (this.invocationStateInfo.State != PSInvocationState.Disconnected)
+            if (_invocationStateInfo.State != PSInvocationState.Disconnected)
             {
-                throw new InvalidPowerShellStateException(this.invocationStateInfo.State);
+                throw new InvalidPowerShellStateException(_invocationStateInfo.State);
             }
 
             // Ensure this is a command invoked on a remote runspace(pool) and connect the
             // runspace if it is currently disconnected.
             CheckRunspacePoolAndConnect();
 
-            if (this.connectCmdInfo != null)
+            if (_connectCmdInfo != null)
             {
                 //
                 // This is a reconstruct/connect scenario and we create new state.
                 //
 
-                PSDataCollection<PSObject> streamToUse = this.outputBuffer;
+                PSDataCollection<PSObject> streamToUse = _outputBuffer;
 
                 // The remotePowerShell may have been initialized by InitForRemotePipelineConnect()
-                if (!this.remotePowerShell.Initialized)
+                if (!_remotePowerShell.Initialized)
                 {
                     // Empty input stream.
                     ObjectStreamBase inputStream = new ObjectStream();
@@ -2120,63 +2121,63 @@ namespace System.Management.Automation
                     if (output != null)
                     {
                         // Use the supplied output buffer.
-                        this.outputBuffer = output;
-                        this.outputBufferOwner = false;
+                        _outputBuffer = output;
+                        _outputBufferOwner = false;
                     }
-                    else if (this.outputBuffer == null)
+                    else if (_outputBuffer == null)
                     {
-                        this.outputBuffer = new PSDataCollection<PSObject>();
-                        this.outputBufferOwner = true;
+                        _outputBuffer = new PSDataCollection<PSObject>();
+                        _outputBufferOwner = true;
                     }
-                    streamToUse = this.outputBuffer;
+                    streamToUse = _outputBuffer;
 
-                    ObjectStreamBase outputStream = new PSDataCollectionStream<PSObject>(this.instanceId, streamToUse);
+                    ObjectStreamBase outputStream = new PSDataCollectionStream<PSObject>(_instanceId, streamToUse);
 
-                    this.remotePowerShell.Initialize(inputStream, outputStream,
-                                                     new PSDataCollectionStream<ErrorRecord>(this.instanceId, this.errorBuffer),
-                                                     this.informationalBuffers, null);
+                    _remotePowerShell.Initialize(inputStream, outputStream,
+                                                     new PSDataCollectionStream<ErrorRecord>(_instanceId, _errorBuffer),
+                                                     _informationalBuffers, null);
                 }
 
-                Dbg.Assert((this.invokeAsyncResult == null), "Async result should be null in the reconstruct scenario.");
-                this.invokeAsyncResult = new PowerShellAsyncResult(this.instanceId, invocationCallback, state, streamToUse, true);
+                Dbg.Assert((_invokeAsyncResult == null), "Async result should be null in the reconstruct scenario.");
+                _invokeAsyncResult = new PowerShellAsyncResult(_instanceId, invocationCallback, state, streamToUse, true);
             }
             else
             {
                 // If this is not a reconstruct scenario then this must be a PowerShell object that was 
                 // previously disconnected, and all state should be valid.
-                Dbg.Assert((this.invokeAsyncResult != null && this.remotePowerShell.Initialized),
+                Dbg.Assert((_invokeAsyncResult != null && _remotePowerShell.Initialized),
                             "AsyncResult and RemotePowerShell objects must be valid here.");
 
                 if (output != null ||
                     invocationCallback != null ||
-                    invokeAsyncResult.IsCompleted)
+                    _invokeAsyncResult.IsCompleted)
                 {
                     // A new async object is needed.
                     PSDataCollection<PSObject> streamToUse;
                     if (output != null)
                     {
                         streamToUse = output;
-                        this.outputBuffer = output;
-                        this.outputBufferOwner = false;
+                        _outputBuffer = output;
+                        _outputBufferOwner = false;
                     }
-                    else if (invokeAsyncResult.Output == null ||
-                             !invokeAsyncResult.Output.IsOpen)
+                    else if (_invokeAsyncResult.Output == null ||
+                             !_invokeAsyncResult.Output.IsOpen)
                     {
-                        this.outputBuffer = new PSDataCollection<PSObject>();
-                        this.outputBufferOwner = true;
-                        streamToUse = this.outputBuffer;
+                        _outputBuffer = new PSDataCollection<PSObject>();
+                        _outputBufferOwner = true;
+                        streamToUse = _outputBuffer;
                     }
                     else
                     {
-                        streamToUse = invokeAsyncResult.Output;
-                        this.outputBuffer = streamToUse;
-                        this.outputBufferOwner = false;
+                        streamToUse = _invokeAsyncResult.Output;
+                        _outputBuffer = streamToUse;
+                        _outputBufferOwner = false;
                     }
 
-                    this.invokeAsyncResult = new PowerShellAsyncResult(
-                        this.instanceId,
-                        invocationCallback ?? this.invokeAsyncResult.Callback,
-                        (invocationCallback != null) ? state : this.invokeAsyncResult.AsyncState,
+                    _invokeAsyncResult = new PowerShellAsyncResult(
+                        _instanceId,
+                        invocationCallback ?? _invokeAsyncResult.Callback,
+                        (invocationCallback != null) ? state : _invokeAsyncResult.AsyncState,
                         streamToUse,
                         true);
                 }
@@ -2187,24 +2188,24 @@ namespace System.Management.Automation
                 // Perform the connect operation to the remote server through the PSRP layer.
                 // If this.connectCmdInfo is null then a connection will be attempted using current state.
                 // If this.connectCmdInfo is non-null then a connection will be attempted with this info.
-                this.remotePowerShell.ConnectAsync(this.connectCmdInfo);
+                _remotePowerShell.ConnectAsync(_connectCmdInfo);
             }
             catch (Exception exception)
             {
                 // allow GC collection
-                invokeAsyncResult = null;
+                _invokeAsyncResult = null;
                 SetStateChanged(new PSInvocationStateInfo(PSInvocationState.Failed, exception));
 
                 // re-throw the exception
                 InvalidRunspacePoolStateException poolException = exception as InvalidRunspacePoolStateException;
-                if (poolException != null && this.runspace != null) // the pool exception was actually thrown by a runspace
+                if (poolException != null && _runspace != null) // the pool exception was actually thrown by a runspace
                 {
                     throw poolException.ToInvalidRunspaceStateException();
                 }
                 throw;
             }
 
-            return this.invokeAsyncResult;
+            return _invokeAsyncResult;
         }
 
         /// <summary>
@@ -2214,13 +2215,13 @@ namespace System.Management.Automation
         private void CheckRunspacePoolAndConnect()
         {
             RemoteRunspacePoolInternal remoteRunspacePoolInternal = null;
-            if (this.rsConnection is RemoteRunspace)
+            if (_rsConnection is RemoteRunspace)
             {
-                remoteRunspacePoolInternal = (this.rsConnection as RemoteRunspace).RunspacePool.RemoteRunspacePoolInternal;
+                remoteRunspacePoolInternal = (_rsConnection as RemoteRunspace).RunspacePool.RemoteRunspacePoolInternal;
             }
-            else if (this.rsConnection is RunspacePool)
+            else if (_rsConnection is RunspacePool)
             {
-                remoteRunspacePoolInternal = (this.rsConnection as RunspacePool).RemoteRunspacePoolInternal;
+                remoteRunspacePoolInternal = (_rsConnection as RunspacePool).RemoteRunspacePoolInternal;
             }
 
             if (remoteRunspacePoolInternal == null)
@@ -2237,7 +2238,7 @@ namespace System.Management.Automation
             // Make sure runspace is in valid state for connection.
             if (remoteRunspacePoolInternal.RunspacePoolStateInfo.State != RunspacePoolState.Opened)
             {
-                throw new InvalidRunspacePoolStateException(RunspacePoolStrings.InvalidRunspacePoolState, 
+                throw new InvalidRunspacePoolStateException(RunspacePoolStrings.InvalidRunspacePoolState,
                                     remoteRunspacePoolInternal.RunspacePoolStateInfo.State, RunspacePoolState.Opened);
             }
         }
@@ -2261,12 +2262,12 @@ namespace System.Management.Automation
         /// </param>
         /// <returns>DebuggerCommandResults</returns>
         internal void InvokeWithDebugger(
-            IEnumerable<object> input, 
-            IList<PSObject> output, 
+            IEnumerable<object> input,
+            IList<PSObject> output,
             PSInvocationSettings settings,
             bool invokeMustRun)
         {
-            Debugger debugger = this.runspace.Debugger;
+            Debugger debugger = _runspace.Debugger;
             bool addToHistory = true;
 
             if (debugger != null &&
@@ -2779,7 +2780,7 @@ namespace System.Management.Automation
             Invoke<T>(input, output, null);
         }
 
-        
+
         /// <summary>
         /// Invoke the <see cref="Command"/> synchronously and collect
         /// output data into the buffer <paramref name="output"/>
@@ -2914,7 +2915,7 @@ namespace System.Management.Automation
         /// <exception cref="MetadataException">
         /// If there is an error generating the metadata for dynamic parameters.
         /// </exception>
-        public void Invoke<TInput, TOutput>(PSDataCollection<TInput>input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
+        public void Invoke<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
             if (null == output)
             {
@@ -3026,26 +3027,26 @@ namespace System.Management.Automation
         {
             DetermineIsBatching();
 
-            if (this.outputBuffer != null)
+            if (_outputBuffer != null)
             {
-                if (isBatching || extraCommands.Count != 0)
+                if (_isBatching || _extraCommands.Count != 0)
                 {
-                    return BeginBatchInvoke<T, PSObject>(input, this.outputBuffer, settings, callback, state);
+                    return BeginBatchInvoke<T, PSObject>(input, _outputBuffer, settings, callback, state);
                 }
 
-                return CoreInvokeAsync<T, PSObject>(input, this.outputBuffer, settings, callback, state, null);
+                return CoreInvokeAsync<T, PSObject>(input, _outputBuffer, settings, callback, state, null);
             }
             else
             {
-                this.outputBuffer = new PSDataCollection<PSObject>();
-                outputBufferOwner = true;
+                _outputBuffer = new PSDataCollection<PSObject>();
+                _outputBufferOwner = true;
 
-                if (isBatching || extraCommands.Count != 0)
+                if (_isBatching || _extraCommands.Count != 0)
                 {
-                    return BeginBatchInvoke<T, PSObject>(input, this.outputBuffer, settings, callback, state);
+                    return BeginBatchInvoke<T, PSObject>(input, _outputBuffer, settings, callback, state);
                 }
 
-                return CoreInvokeAsync<T, PSObject>(input, this.outputBuffer, settings, callback, state, this.outputBuffer);
+                return CoreInvokeAsync<T, PSObject>(input, _outputBuffer, settings, callback, state, _outputBuffer);
             }
         }
 
@@ -3088,9 +3089,9 @@ namespace System.Management.Automation
         /// <exception cref="ObjectDisposedException">
         /// Object is disposed.
         /// </exception>
-        public IAsyncResult BeginInvoke<TInput,TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output)
+        public IAsyncResult BeginInvoke<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output)
         {
-            return BeginInvoke<TInput,TOutput>(input, output, null, null, null);
+            return BeginInvoke<TInput, TOutput>(input, output, null, null, null);
         }
 
         /// <summary>
@@ -3143,7 +3144,7 @@ namespace System.Management.Automation
         /// <exception cref="ObjectDisposedException">
         /// Object is disposed.
         /// </exception>
-        public IAsyncResult BeginInvoke<TInput,TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, AsyncCallback callback, object state)
+        public IAsyncResult BeginInvoke<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, AsyncCallback callback, object state)
         {
             if (null == output)
             {
@@ -3152,12 +3153,12 @@ namespace System.Management.Automation
 
             DetermineIsBatching();
 
-            if (isBatching || extraCommands.Count != 0)
+            if (_isBatching || _extraCommands.Count != 0)
             {
                 return BeginBatchInvoke<TInput, TOutput>(input, output, settings, callback, state);
             }
 
-            return CoreInvokeAsync<TInput,TOutput>(input, output, settings, callback, state, null);
+            return CoreInvokeAsync<TInput, TOutput>(input, output, settings, callback, state, null);
         }
 
         /// <summary>
@@ -3203,12 +3204,12 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewInvalidOperationException();
             }
 
-            if (isBatching)
+            if (_isBatching)
             {
                 SetupAsyncBatchExecution();
             }
 
-            RunspacePool pool = rsConnection as RunspacePool;
+            RunspacePool pool = _rsConnection as RunspacePool;
             if ((null != pool) && (pool.IsRemote))
             {
                 // Server supports batch invocation, in this case, we just send everything to the server and return immediately
@@ -3220,7 +3221,7 @@ namespace System.Management.Automation
                     }
                     finally
                     {
-                        if (isBatching)
+                        if (_isBatching)
                         {
                             EndAsyncBatchExecution();
                         }
@@ -3231,14 +3232,14 @@ namespace System.Management.Automation
             // Non-remoting case or server does not support batching
             // In this case we execute the cmdlets one by one
 
-            runningExtraCommands = true;
-            batchInvocationSettings = settings;
+            _runningExtraCommands = true;
+            _batchInvocationSettings = settings;
 
-            batchAsyncResult = new PowerShellAsyncResult(instanceId, callback, state, asyncOutput, true);
+            _batchAsyncResult = new PowerShellAsyncResult(_instanceId, callback, state, asyncOutput, true);
 
             CoreInvokeAsync<TInput, TOutput>(input, output, settings, new AsyncCallback(BatchInvocationCallback), state, asyncOutput);
 
-            return batchAsyncResult;
+            return _batchAsyncResult;
         }
 
 
@@ -3248,35 +3249,35 @@ namespace System.Management.Automation
         /// <param name="state"></param>
         private void BatchInvocationWorkItem(object state)
         {
-            Debug.Assert(extraCommands.Count != 0, "This callback is for batch invocation only");
+            Debug.Assert(_extraCommands.Count != 0, "This callback is for batch invocation only");
 
             BatchInvocationContext context = state as BatchInvocationContext;
 
             Debug.Assert(context != null, "Context should never be null");
 
-            PSCommand backupCommand = psCommand;
+            PSCommand backupCommand = _psCommand;
             try
             {
-                psCommand = context.Command;
+                _psCommand = context.Command;
 
                 // Last element
-                if (psCommand == extraCommands[extraCommands.Count - 1])
+                if (_psCommand == _extraCommands[_extraCommands.Count - 1])
                 {
-                    runningExtraCommands = false;
+                    _runningExtraCommands = false;
                 }
 
                 try
                 {
-                    IAsyncResult cmdResult = CoreInvokeAsync<object, PSObject>(null, context.Output, batchInvocationSettings,
-                        null, batchAsyncResult.AsyncState, context.Output);
+                    IAsyncResult cmdResult = CoreInvokeAsync<object, PSObject>(null, context.Output, _batchInvocationSettings,
+                        null, _batchAsyncResult.AsyncState, context.Output);
 
                     EndInvoke(cmdResult);
                 }
                 catch (ActionPreferenceStopException e)
                 {
                     // We need to honor the current error action preference here
-                    stopBatchExecution = true;
-                    batchAsyncResult.SetAsCompleted(e);
+                    _stopBatchExecution = true;
+                    _batchAsyncResult.SetAsCompleted(e);
                     return;
                 }
                 catch (Exception e)
@@ -3286,17 +3287,17 @@ namespace System.Management.Automation
                     SetHadErrors(true);
 
                     // Stop if necessarily
-                    if ((null != batchInvocationSettings) && batchInvocationSettings.ErrorActionPreference == ActionPreference.Stop)
+                    if ((null != _batchInvocationSettings) && _batchInvocationSettings.ErrorActionPreference == ActionPreference.Stop)
                     {
-                        stopBatchExecution = true;
+                        _stopBatchExecution = true;
                         AppendExceptionToErrorStream(e);
-                        batchAsyncResult.SetAsCompleted(null);
+                        _batchAsyncResult.SetAsCompleted(null);
                         return;
                     }
 
                     // If we get here, then ErrorActionPreference is either Continue,
                     // SilentlyContinue, or Inquire (Continue), so we just continue....
-                    if (batchInvocationSettings == null)
+                    if (_batchInvocationSettings == null)
                     {
                         ActionPreference preference = (ActionPreference)Runspace.SessionStateProxy.GetVariable("ErrorActionPreference");
 
@@ -3307,14 +3308,14 @@ namespace System.Management.Automation
                                 AppendExceptionToErrorStream(e);
                                 break;
                             case ActionPreference.Stop:
-                                batchAsyncResult.SetAsCompleted(e);
+                                _batchAsyncResult.SetAsCompleted(e);
                                 return;
                             case ActionPreference.Inquire:
                             case ActionPreference.Ignore:
                                 break;
                         }
                     }
-                    else if (batchInvocationSettings.ErrorActionPreference != ActionPreference.Ignore)
+                    else if (_batchInvocationSettings.ErrorActionPreference != ActionPreference.Ignore)
                     {
                         AppendExceptionToErrorStream(e);
                     }
@@ -3322,14 +3323,14 @@ namespace System.Management.Automation
                     // Let it continue
                 }
 
-                if (psCommand == extraCommands[extraCommands.Count - 1])
+                if (_psCommand == _extraCommands[_extraCommands.Count - 1])
                 {
-                    batchAsyncResult.SetAsCompleted(null);
+                    _batchAsyncResult.SetAsCompleted(null);
                 }
             }
             finally
             {
-                psCommand = backupCommand;
+                _psCommand = backupCommand;
                 context.Signal();
             }
         }
@@ -3340,18 +3341,17 @@ namespace System.Management.Automation
         /// <param name="result"></param>
         private void BatchInvocationCallback(IAsyncResult result)
         {
-            Debug.Assert(extraCommands.Count != 0, "This callback is for batch invocation only");
+            Debug.Assert(_extraCommands.Count != 0, "This callback is for batch invocation only");
 
             PSDataCollection<PSObject> objs = null;
 
             try
             {
-
                 objs = EndInvoke(result);
 
                 if (objs == null)
                 {
-                    objs = batchAsyncResult.Output;
+                    objs = _batchAsyncResult.Output;
                 }
 
                 DoRemainingBatchCommands(objs);
@@ -3359,27 +3359,27 @@ namespace System.Management.Automation
             catch (PipelineStoppedException e)
             {
                 // PowerShell throws the pipeline stopped exception.
-                batchAsyncResult.SetAsCompleted(e);
+                _batchAsyncResult.SetAsCompleted(e);
                 return;
             }
             catch (ActionPreferenceStopException e)
             {
                 // We need to honor the current error action preference here
-                batchAsyncResult.SetAsCompleted(e);
+                _batchAsyncResult.SetAsCompleted(e);
                 return;
             }
             catch (Exception e)
             {
-                runningExtraCommands = false;
+                _runningExtraCommands = false;
                 CommandProcessorBase.CheckForSevereException(e);
 
                 SetHadErrors(true);
 
                 ActionPreference preference;
-                if (batchInvocationSettings != null)
+                if (_batchInvocationSettings != null)
                 {
-                    preference = (batchInvocationSettings.ErrorActionPreference.HasValue) ?
-                        batchInvocationSettings.ErrorActionPreference.Value
+                    preference = (_batchInvocationSettings.ErrorActionPreference.HasValue) ?
+                        _batchInvocationSettings.ErrorActionPreference.Value
                         : ActionPreference.Continue;
                 }
                 else
@@ -3396,7 +3396,7 @@ namespace System.Management.Automation
                         AppendExceptionToErrorStream(e);
                         break;
                     case ActionPreference.Stop:
-                        batchAsyncResult.SetAsCompleted(e);
+                        _batchAsyncResult.SetAsCompleted(e);
                         return;
                     case ActionPreference.Inquire:
                     case ActionPreference.Ignore:
@@ -3405,14 +3405,14 @@ namespace System.Management.Automation
 
                 if (objs == null)
                 {
-                    objs = batchAsyncResult.Output;
+                    objs = _batchAsyncResult.Output;
                 }
 
                 DoRemainingBatchCommands(objs);
             }
             finally
             {
-                if (isBatching)
+                if (_isBatching)
                 {
                     EndAsyncBatchExecution();
                 }
@@ -3424,16 +3424,16 @@ namespace System.Management.Automation
         /// </summary>
         private void DoRemainingBatchCommands(PSDataCollection<PSObject> objs)
         {
-            if (extraCommands.Count > 1)
+            if (_extraCommands.Count > 1)
             {
-                for (int i = 1; i < extraCommands.Count; i++)
+                for (int i = 1; i < _extraCommands.Count; i++)
                 {
-                    if (stopBatchExecution)
+                    if (_stopBatchExecution)
                     {
                         break;
                     }
 
-                    BatchInvocationContext context = new BatchInvocationContext(extraCommands[i], objs);
+                    BatchInvocationContext context = new BatchInvocationContext(_extraCommands[i], objs);
 
                     // Queue a batch work item here.
                     // Calling CoreInvokeAsync / CoreInvoke here directly doesn't work and causes the thread to hang.
@@ -3441,7 +3441,6 @@ namespace System.Management.Automation
                     context.Wait();
                 }
             }
-
         }
 
         /// <summary>
@@ -3449,16 +3448,16 @@ namespace System.Management.Automation
         /// </summary>
         private void DetermineIsBatching()
         {
-            foreach (Command command in psCommand.Commands)
+            foreach (Command command in _psCommand.Commands)
             {
                 if (command.IsEndOfStatement)
                 {
-                    isBatching = true;
+                    _isBatching = true;
                     return;
                 }
             }
 
-            isBatching = false;
+            _isBatching = false;
         }
 
         /// <summary>
@@ -3466,20 +3465,20 @@ namespace System.Management.Automation
         /// </summary>
         private void SetupAsyncBatchExecution()
         {
-            Debug.Assert(isBatching);
+            Debug.Assert(_isBatching);
 
-            backupPSCommand = psCommand.Clone();
-            extraCommands.Clear();
+            _backupPSCommand = _psCommand.Clone();
+            _extraCommands.Clear();
 
             PSCommand currentPipe = new PSCommand();
             currentPipe.Owner = this;
 
-            foreach (Command command in psCommand.Commands)
+            foreach (Command command in _psCommand.Commands)
             {
                 if (command.IsEndOfStatement)
                 {
                     currentPipe.Commands.Add(command);
-                    extraCommands.Add(currentPipe);
+                    _extraCommands.Add(currentPipe);
                     currentPipe = new PSCommand();
                     currentPipe.Owner = this;
                 }
@@ -3491,10 +3490,10 @@ namespace System.Management.Automation
 
             if (currentPipe.Commands.Count != 0)
             {
-                extraCommands.Add(currentPipe);
+                _extraCommands.Add(currentPipe);
             }
 
-            psCommand = extraCommands[0];
+            _psCommand = _extraCommands[0];
         }
 
         /// <summary>
@@ -3502,9 +3501,9 @@ namespace System.Management.Automation
         /// </summary>
         private void EndAsyncBatchExecution()
         {
-            Debug.Assert(isBatching);
+            Debug.Assert(_isBatching);
 
-            psCommand = backupPSCommand;
+            _psCommand = _backupPSCommand;
         }
 
         /// <summary>
@@ -3546,7 +3545,7 @@ namespace System.Management.Automation
         {
             try
             {
-                this.commandInvokedSynchronously = true;
+                _commandInvokedSynchronously = true;
 
                 if (null == asyncResult)
                 {
@@ -3556,7 +3555,7 @@ namespace System.Management.Automation
                 PowerShellAsyncResult psAsyncResult = asyncResult as PowerShellAsyncResult;
 
                 if ((null == psAsyncResult) ||
-                    (psAsyncResult.OwnerId != instanceId) ||
+                    (psAsyncResult.OwnerId != _instanceId) ||
                     (psAsyncResult.IsAssociatedWithAsyncInvoke != true))
                 {
                     throw PSTraceSource.NewArgumentException("asyncResult",
@@ -3567,11 +3566,11 @@ namespace System.Management.Automation
                 psAsyncResult.EndInvoke();
                 EndInvokeAsyncResult = null;
 
-                if (this.outputBufferOwner)
+                if (_outputBufferOwner)
                 {
                     // PowerShell no longer owns the output buffer when it is passed back to the caller.
-                    this.outputBufferOwner = false;
-                    this.outputBuffer = null;
+                    _outputBufferOwner = false;
+                    _outputBuffer = null;
                 }
 
                 return psAsyncResult.Output;
@@ -3579,7 +3578,7 @@ namespace System.Management.Automation
             catch (InvalidRunspacePoolStateException exception)
             {
                 SetHadErrors(true);
-                if (this.runspace != null) // the pool exception was actually thrown by a runspace
+                if (_runspace != null) // the pool exception was actually thrown by a runspace
                 {
                     throw exception.ToInvalidRunspaceStateException();
                 }
@@ -3656,8 +3655,8 @@ namespace System.Management.Automation
 
             PowerShellAsyncResult psAsyncResult = asyncResult as PowerShellAsyncResult;
 
-            if ((null == psAsyncResult) || 
-                (psAsyncResult.OwnerId != instanceId) || 
+            if ((null == psAsyncResult) ||
+                (psAsyncResult.OwnerId != _instanceId) ||
                 (psAsyncResult.IsAssociatedWithAsyncInvoke != false))
             {
                 throw PSTraceSource.NewArgumentException("asyncResult",
@@ -3713,20 +3712,20 @@ namespace System.Management.Automation
         /// </summary>
         public bool IsRunspaceOwner
         {
-            get { return runspaceOwner; }
-            internal set { runspaceOwner = value; }
+            get { return _runspaceOwner; }
+            internal set { _runspaceOwner = value; }
         }
 
         internal bool ErrorBufferOwner
         {
-            get { return errorBufferOwner; }
-            set { errorBufferOwner = value; }
+            get { return _errorBufferOwner; }
+            set { _errorBufferOwner = value; }
         }
 
         internal bool OutputBufferOwner
         {
-            get { return outputBufferOwner; }
-            set { outputBufferOwner = value; }
+            get { return _outputBufferOwner; }
+            set { _outputBufferOwner = value; }
         }
 
         /// <summary>
@@ -3734,7 +3733,7 @@ namespace System.Management.Automation
         /// </summary>
         internal PSDataCollection<PSObject> OutputBuffer
         {
-            get { return this.outputBuffer; }
+            get { return _outputBuffer; }
         }
 
         /// <summary>
@@ -3757,7 +3756,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void GenerateNewInstanceId()
         {
-            instanceId = Guid.NewGuid();
+            _instanceId = Guid.NewGuid();
         }
 
         /// <summary>
@@ -3833,10 +3832,10 @@ namespace System.Management.Automation
                                 Runspace.DefaultRunspace.ExecutionContext,
                                 ((LocalRunspace)Runspace.DefaultRunspace).CommandFactory,
                                 false,
-                                isNested == true ? CommandOrigin.Internal : CommandOrigin.Runspace
+                                _isNested == true ? CommandOrigin.Internal : CommandOrigin.Runspace
                             );
 
-                    commandProcessorBase.RedirectShellErrorOutputPipe = this.redirectShellErrorOutputPipe;
+                    commandProcessorBase.RedirectShellErrorOutputPipe = _redirectShellErrorOutputPipe;
 
                     pipelineProcessor.Add(commandProcessorBase);
                 }
@@ -3865,8 +3864,8 @@ namespace System.Management.Automation
 
         internal bool IsGetCommandMetadataSpecialPipeline
         {
-            get { return this.isGetCommandMetadataSpecialPipeline; }
-            set { this.isGetCommandMetadataSpecialPipeline = value; }            
+            get { return _isGetCommandMetadataSpecialPipeline; }
+            set { _isGetCommandMetadataSpecialPipeline = value; }
         }
 
         /// <summary>
@@ -3891,7 +3890,7 @@ namespace System.Management.Automation
         {
             return (InvocationStateInfo.State == PSInvocationState.Disconnected);
         }
-        
+
         /// <summary>
         /// Checks if the command is already running.
         /// If the command is already running, throws an
@@ -3919,7 +3918,7 @@ namespace System.Management.Automation
                 throw new InvalidOperationException(message);
             }
 
-            if (invocationStateInfo.State == PSInvocationState.Stopping)
+            if (_invocationStateInfo.State == PSInvocationState.Stopping)
             {
                 string message = StringUtil.Format(PowerShellStrings.ExecutionStopping);
                 throw new InvalidOperationException(message);
@@ -3940,7 +3939,7 @@ namespace System.Management.Automation
         /// </exception>
         internal void AssertChangesAreAccepted()
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
                 AssertNotDisposed();
                 if (IsCommandRunning() || IsDisconnected())
@@ -3959,7 +3958,7 @@ namespace System.Management.Automation
         /// </exception>
         private void AssertNotDisposed()
         {
-            if (isDisposed)
+            if (_isDisposed)
             {
                 throw PSTraceSource.NewObjectDisposedException("PowerShell");
             }
@@ -3975,49 +3974,49 @@ namespace System.Management.Automation
         {
             if (disposing)
             {
-                lock (syncObject)
+                lock (_syncObject)
                 {
                     // if already disposed return
-                    if (isDisposed)
+                    if (_isDisposed)
                     {
                         return;
                     }
                 }
 
                 // Stop the currently running command outside of the lock
-                if (invocationStateInfo.State == PSInvocationState.Running ||
-                    invocationStateInfo.State == PSInvocationState.Stopping)
+                if (_invocationStateInfo.State == PSInvocationState.Running ||
+                    _invocationStateInfo.State == PSInvocationState.Stopping)
                 {
                     Stop();
                 }
 
-                lock (syncObject)
+                lock (_syncObject)
                 {
-                    isDisposed = true;
+                    _isDisposed = true;
                 }
 
-                if (outputBuffer != null && outputBufferOwner)
+                if (_outputBuffer != null && _outputBufferOwner)
                 {
-                    outputBuffer.Dispose();
+                    _outputBuffer.Dispose();
                 }
 
-                if (errorBuffer != null && errorBufferOwner)
+                if (_errorBuffer != null && _errorBufferOwner)
                 {
-                    errorBuffer.Dispose();
+                    _errorBuffer.Dispose();
                 }
 
-                if (runspaceOwner)
+                if (_runspaceOwner)
                 {
-                    runspace.Dispose();
+                    _runspace.Dispose();
                 }
 
-                if (remotePowerShell != null)
+                if (_remotePowerShell != null)
                 {
-                    remotePowerShell.Dispose();
+                    _remotePowerShell.Dispose();
                 }
 
-                invokeAsyncResult = null;
-                stopAsyncResult = null;
+                _invokeAsyncResult = null;
+                _stopAsyncResult = null;
             }
         }
 
@@ -4026,11 +4025,11 @@ namespace System.Management.Automation
         /// </summary>
         private void InternalClearSuppressExceptions()
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (null != worker)
+                if (null != _worker)
                 {
-                    worker.InternalClearSuppressExceptions();                    
+                    _worker.InternalClearSuppressExceptions();
                 }
             }
         }
@@ -4047,10 +4046,10 @@ namespace System.Management.Automation
             // The Pipeline class takes care of updating local runspaces.
             // Don't update for RemoteRunspace and nested PowerShell since this is used
             // only internally by the remote debugger.
-            RemoteRunspace remoteRunspace = this.runspace as RemoteRunspace;
+            RemoteRunspace remoteRunspace = _runspace as RemoteRunspace;
             if (remoteRunspace != null && !this.IsNested)
             {
-                this.runspace.UpdateRunspaceAvailability(invocationStateInfo.State, true, instanceId);
+                _runspace.UpdateRunspaceAvailability(_invocationStateInfo.State, true, _instanceId);
             }
 
             if (stateInfo.State == PSInvocationState.Running)
@@ -4063,7 +4062,7 @@ namespace System.Management.Automation
                 RemoveFromRemoteRunspaceRunningList();
             }
 
-            InvocationStateChanged.SafeInvoke(this, new PSInvocationStateChangedEventArgs(stateInfo));             
+            InvocationStateChanged.SafeInvoke(this, new PSInvocationStateChangedEventArgs(stateInfo));
         }
 
         /// <summary>
@@ -4076,9 +4075,9 @@ namespace System.Management.Automation
             PSInvocationState previousState;
 
             // copy pipeline HasdErrors property to PowerShell instance...
-            if (worker != null && worker.CurrentlyRunningPipeline != null)
+            if (_worker != null && _worker.CurrentlyRunningPipeline != null)
             {
-                SetHadErrors(worker.CurrentlyRunningPipeline.HadErrors);
+                SetHadErrors(_worker.CurrentlyRunningPipeline.HadErrors);
             }
 
             // win281312: Usig temporary variables to avoid thread
@@ -4087,12 +4086,12 @@ namespace System.Management.Automation
             PowerShellAsyncResult tempInvokeAsyncResult;
             PowerShellAsyncResult tempStopAsyncResult;
 
-            lock (syncObject)
+            lock (_syncObject)
             {
-                previousState = invocationStateInfo.State;
+                previousState = _invocationStateInfo.State;
 
                 // Check the current state and see if we need to process this pipeline event.
-                switch (invocationStateInfo.State)
+                switch (_invocationStateInfo.State)
                 {
                     case PSInvocationState.Completed:
                     case PSInvocationState.Failed:
@@ -4124,20 +4123,20 @@ namespace System.Management.Automation
                         break;
                 }
 
-                tempInvokeAsyncResult = invokeAsyncResult;
-                tempStopAsyncResult = stopAsyncResult;
-                invocationStateInfo = copyStateInfo;
+                tempInvokeAsyncResult = _invokeAsyncResult;
+                tempStopAsyncResult = _stopAsyncResult;
+                _invocationStateInfo = copyStateInfo;
             }
 
             bool isExceptionOccured = false;
-            switch (invocationStateInfo.State)
+            switch (_invocationStateInfo.State)
             {
                 case PSInvocationState.Running:
                     CloseInputBufferOnReconnection(previousState);
-                    RaiseStateChangeEvent(invocationStateInfo.Clone());
+                    RaiseStateChangeEvent(_invocationStateInfo.Clone());
                     break;
                 case PSInvocationState.Stopping:
-                    RaiseStateChangeEvent(invocationStateInfo.Clone());
+                    RaiseStateChangeEvent(_invocationStateInfo.Clone());
                     break;
                 case PSInvocationState.Completed:
                 case PSInvocationState.Failed:
@@ -4146,29 +4145,29 @@ namespace System.Management.Automation
                     InternalClearSuppressExceptions();
 
                     // Ensure remote receive queue is not blocked.
-                    if (remotePowerShell != null)
+                    if (_remotePowerShell != null)
                     {
                         ResumeIncomingData();
                     }
 
                     try
                     {
-                        if (runningExtraCommands)
+                        if (_runningExtraCommands)
                         {
                             if (null != tempInvokeAsyncResult)
                             {
-                                tempInvokeAsyncResult.SetAsCompleted(invocationStateInfo.Reason);
+                                tempInvokeAsyncResult.SetAsCompleted(_invocationStateInfo.Reason);
                             }
 
-                            RaiseStateChangeEvent(invocationStateInfo.Clone());
+                            RaiseStateChangeEvent(_invocationStateInfo.Clone());
                         }
                         else
                         {
-                            RaiseStateChangeEvent(invocationStateInfo.Clone());
+                            RaiseStateChangeEvent(_invocationStateInfo.Clone());
 
                             if (null != tempInvokeAsyncResult)
                             {
-                                tempInvokeAsyncResult.SetAsCompleted(invocationStateInfo.Reason);
+                                tempInvokeAsyncResult.SetAsCompleted(_invocationStateInfo.Reason);
                             }
                         }
 
@@ -4198,14 +4197,14 @@ namespace System.Management.Automation
                     try
                     {
                         // Ensure remote receive queue is not blocked.
-                        if (remotePowerShell != null)
+                        if (_remotePowerShell != null)
                         {
                             ResumeIncomingData();
                         }
 
                         // If this command was disconnected and was also invoked synchronously then
                         // we throw an exception on the calling thread.
-                        if (this.commandInvokedSynchronously && (tempInvokeAsyncResult != null))
+                        if (_commandInvokedSynchronously && (tempInvokeAsyncResult != null))
                         {
                             tempInvokeAsyncResult.SetAsCompleted(new RuntimeException(PowerShellStrings.DiscOnSyncCommand));
                         }
@@ -4224,7 +4223,7 @@ namespace System.Management.Automation
                         // times with the command remaining in Disconnected state.
                         if (previousState != PSInvocationState.Disconnected)
                         {
-                            RaiseStateChangeEvent(invocationStateInfo.Clone());
+                            RaiseStateChangeEvent(_invocationStateInfo.Clone());
                         }
                     }
                     catch (Exception)
@@ -4247,7 +4246,7 @@ namespace System.Management.Automation
                     // Make sure the connect command information is null when going to Disconnected state.
                     // This parameter is used to determine reconnect/reconstruct scenarios.  Setting to null
                     // means we have a reconnect scenario.
-                    this.connectCmdInfo = null;
+                    _connectCmdInfo = null;
                     break;
 
                 default:
@@ -4266,12 +4265,12 @@ namespace System.Management.Automation
             // the input buffer to allow the remote command to complete.  Otherwise the 
             // synchronous Connect() method will wait indefinitely for the command to complete.
             if (previousState == PSInvocationState.Disconnected &&
-                this.commandInvokedSynchronously &&
-                this.remotePowerShell.InputStream != null &&
-                this.remotePowerShell.InputStream.IsOpen &&
-                this.remotePowerShell.InputStream.Count > 0)
+                _commandInvokedSynchronously &&
+                _remotePowerShell.InputStream != null &&
+                _remotePowerShell.InputStream.IsOpen &&
+                _remotePowerShell.InputStream.Count > 0)
             {
-                this.remotePowerShell.InputStream.Close();
+                _remotePowerShell.InputStream.Close();
             }
         }
 
@@ -4280,11 +4279,11 @@ namespace System.Management.Automation
         /// </summary>
         internal void ClearRemotePowerShell()
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (null != remotePowerShell)
+                if (null != _remotePowerShell)
                 {
-                    remotePowerShell.Clear();
+                    _remotePowerShell.Clear();
                 }
             }
         }
@@ -4297,7 +4296,7 @@ namespace System.Management.Automation
         {
             AssertChangesAreAccepted();
 
-            this.isNested = isNested;
+            _isNested = isNested;
         }
 
         /// <summary>
@@ -4359,18 +4358,17 @@ namespace System.Management.Automation
         /// </exception>
         private void CoreInvoke<TOutput>(IEnumerable input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
-
             PSDataCollection<object> inputBuffer = null;
             if (null != input)
             {
-                inputBuffer = new PSDataCollection<object>(); 
+                inputBuffer = new PSDataCollection<object>();
                 foreach (object o in input)
                 {
                     inputBuffer.Add(o);
                 }
                 inputBuffer.Complete();
             }
-	        CoreInvoke(inputBuffer, output, settings);
+            CoreInvoke(inputBuffer, output, settings);
         }
 
         /// <summary>
@@ -4383,7 +4381,7 @@ namespace System.Management.Automation
         /// <param name="settings">invocation settings</param>
         private void CoreInvokeHelper<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
-            RunspacePool pool = rsConnection as RunspacePool;
+            RunspacePool pool = _rsConnection as RunspacePool;
 
             // Prepare the environment...non-remoting case.
             Prepare<TInput, TOutput>(input, output, settings, true);
@@ -4392,7 +4390,7 @@ namespace System.Management.Automation
             {
                 // Invoke in the same thread as the calling thread.
                 Runspace rsToUse = null;
-                if (!isNested)
+                if (!_isNested)
                 {
                     if (null != pool)
                     {
@@ -4401,13 +4399,13 @@ namespace System.Management.Automation
 #endif
                         // getting the runspace asynchronously so that Stop can be supported from a different
                         // thread.
-                        worker.GetRunspaceAsyncResult = pool.BeginGetRunspace(null, null);
-                        worker.GetRunspaceAsyncResult.AsyncWaitHandle.WaitOne();
-                        rsToUse = pool.EndGetRunspace(worker.GetRunspaceAsyncResult);
+                        _worker.GetRunspaceAsyncResult = pool.BeginGetRunspace(null, null);
+                        _worker.GetRunspaceAsyncResult.AsyncWaitHandle.WaitOne();
+                        rsToUse = pool.EndGetRunspace(_worker.GetRunspaceAsyncResult);
                     }
                     else
                     {
-                        rsToUse = rsConnection as Runspace;
+                        rsToUse = _rsConnection as Runspace;
                         if (null != rsToUse)
                         {
 #if !CORECLR                // No ApartmentState In CoreCLR
@@ -4428,11 +4426,11 @@ namespace System.Management.Automation
                     }
 
                     // perform the work in the current thread
-                    worker.CreateRunspaceIfNeededAndDoWork(rsToUse, true);
+                    _worker.CreateRunspaceIfNeededAndDoWork(rsToUse, true);
                 }
                 else
                 {
-                    rsToUse = rsConnection as Runspace;
+                    rsToUse = _rsConnection as Runspace;
                     Dbg.Assert(null != rsToUse,
                         "Nested PowerShell can only work on a Runspace");
 
@@ -4440,7 +4438,7 @@ namespace System.Management.Automation
                     // Peform work on the current thread. Nested Pipeline
                     // should be invoked from the same thread that the parent
                     // pipeline is executing in.
-                    worker.ConstructPipelineAndDoWork(rsToUse, true);
+                    _worker.ConstructPipelineAndDoWork(rsToUse, true);
                 }
             }
             catch (Exception exception)
@@ -4450,7 +4448,7 @@ namespace System.Management.Automation
                 // re-throw the exception
                 InvalidRunspacePoolStateException poolException = exception as InvalidRunspacePoolStateException;
 
-                if (poolException != null && this.runspace != null) // the pool exception was actually thrown by a runspace
+                if (poolException != null && _runspace != null) // the pool exception was actually thrown by a runspace
                 {
                     throw poolException.ToInvalidRunspaceStateException();
                 }
@@ -4468,12 +4466,12 @@ namespace System.Management.Automation
         /// <param name="settings">invocation settings</param>
         private void CoreInvokeRemoteHelper<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings)
         {
-            RunspacePool pool = rsConnection as RunspacePool;
+            RunspacePool pool = _rsConnection as RunspacePool;
 
             // For remote calls..use the infrastructure built in CoreInvokeAsync..
             IAsyncResult asyncResult = CoreInvokeAsync<TInput, TOutput>(input, output, settings,
                 null, null, null);
-            this.commandInvokedSynchronously = true;
+            _commandInvokedSynchronously = true;
             PowerShellAsyncResult psAsyncResult = asyncResult as PowerShellAsyncResult;
 
             // Wait for command to complete.  If an exception was thrown during command
@@ -4483,10 +4481,10 @@ namespace System.Management.Automation
             psAsyncResult.EndInvoke();
             EndInvokeAsyncResult = null;
 
-            if ((PSInvocationState.Failed == invocationStateInfo.State) &&
-                        (null != invocationStateInfo.Reason))
+            if ((PSInvocationState.Failed == _invocationStateInfo.State) &&
+                        (null != _invocationStateInfo.Reason))
             {
-                throw invocationStateInfo.Reason;
+                throw _invocationStateInfo.Reason;
             }
 
             return;
@@ -4506,13 +4504,13 @@ namespace System.Management.Automation
 
             DetermineIsBatching();
 
-            if (isBatching)
+            if (_isBatching)
             {
                 SetupAsyncBatchExecution();
             }
 
             SetHadErrors(false);
-            RunspacePool pool = rsConnection as RunspacePool;
+            RunspacePool pool = _rsConnection as RunspacePool;
             if ((null != pool) && (pool.IsRemote))
             {
                 if (ServerSupportsBatchInvocation())
@@ -4523,7 +4521,7 @@ namespace System.Management.Automation
                     }
                     finally
                     {
-                        if (isBatching)
+                        if (_isBatching)
                         {
                             EndAsyncBatchExecution();
                         }
@@ -4535,25 +4533,25 @@ namespace System.Management.Automation
                 isRemote = true;
             }
 
-            if (isBatching)
+            if (_isBatching)
             {
                 try
                 {
-                    foreach (PSCommand command in extraCommands)
+                    foreach (PSCommand command in _extraCommands)
                     {
                         // Last element
-                        if (psCommand != extraCommands[extraCommands.Count - 1])
+                        if (_psCommand != _extraCommands[_extraCommands.Count - 1])
                         {
-                            runningExtraCommands = true;
+                            _runningExtraCommands = true;
                         }
                         else
                         {
-                            runningExtraCommands = false;
+                            _runningExtraCommands = false;
                         }
 
                         try
                         {
-                            psCommand = command;
+                            _psCommand = command;
 
                             if (isRemote)
                             {
@@ -4608,9 +4606,9 @@ namespace System.Management.Automation
                 }
                 finally
                 {
-                    runningExtraCommands = false;
+                    _runningExtraCommands = false;
 
-                    if (isBatching)
+                    if (_isBatching)
                     {
                         EndAsyncBatchExecution();
                     }
@@ -4618,7 +4616,7 @@ namespace System.Management.Automation
             }
             else
             {
-                runningExtraCommands = false;
+                _runningExtraCommands = false;
 
                 if (isRemote)
                 {
@@ -4664,21 +4662,21 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
-        private IAsyncResult CoreInvokeAsync<TInput,TOutput>(PSDataCollection<TInput> input,
+        private IAsyncResult CoreInvokeAsync<TInput, TOutput>(PSDataCollection<TInput> input,
             PSDataCollection<TOutput> output, PSInvocationSettings settings,
             AsyncCallback callback, object state, PSDataCollection<PSObject> asyncResultOutput)
         {
-            RunspacePool pool = rsConnection as RunspacePool;
+            RunspacePool pool = _rsConnection as RunspacePool;
 
             // We dont need to create worker if pool is remote
-            Prepare<TInput,TOutput>(input, output, settings, (pool == null || !pool.IsRemote));
+            Prepare<TInput, TOutput>(input, output, settings, (pool == null || !pool.IsRemote));
 
-            invokeAsyncResult = new PowerShellAsyncResult(instanceId, callback, state, asyncResultOutput, true);
+            _invokeAsyncResult = new PowerShellAsyncResult(_instanceId, callback, state, asyncResultOutput, true);
 
             try
             {
                 // IsNested is true for the icm | % { icm } scenario
-                if (!isNested || (pool != null && pool.IsRemote))
+                if (!_isNested || (pool != null && pool.IsRemote))
                 {
                     if (null != pool)
                     {
@@ -4690,9 +4688,9 @@ namespace System.Management.Automation
                         // for executing in a remote runspace pool case
                         if (pool.IsRemote)
                         {
-                            worker = null;
+                            _worker = null;
 
-                            lock (syncObject)
+                            lock (_syncObject)
                             {
                                 // for remoting case, when the state is set to 
                                 // Running, the message should have been sent
@@ -4708,55 +4706,54 @@ namespace System.Management.Automation
                                 // are blocked.
                                 AssertExecutionNotStarted();
 
-                                invocationStateInfo = new PSInvocationStateInfo(PSInvocationState.Running, null);
+                                _invocationStateInfo = new PSInvocationStateInfo(PSInvocationState.Running, null);
 
                                 ObjectStreamBase inputStream = null;
 
                                 if (input != null)
                                 {
-                                    inputStream = new PSDataCollectionStream<TInput>(instanceId, input);
+                                    inputStream = new PSDataCollectionStream<TInput>(_instanceId, input);
                                 }
 
-                                if (!remotePowerShell.Initialized)
+                                if (!_remotePowerShell.Initialized)
                                 {
                                     if (inputStream == null)
                                     {
                                         inputStream = new ObjectStream();
                                         inputStream.Close();
                                     }
-                                    remotePowerShell.Initialize(
-                                        inputStream, new PSDataCollectionStream<TOutput>(instanceId, output),
-                                                new PSDataCollectionStream<ErrorRecord>(instanceId, errorBuffer),
-                                                    informationalBuffers, settings);
+                                    _remotePowerShell.Initialize(
+                                        inputStream, new PSDataCollectionStream<TOutput>(_instanceId, output),
+                                                new PSDataCollectionStream<ErrorRecord>(_instanceId, _errorBuffer),
+                                                    _informationalBuffers, settings);
                                 }
                                 else
                                 {
                                     if (inputStream != null)
                                     {
-                                        remotePowerShell.InputStream = inputStream;
+                                        _remotePowerShell.InputStream = inputStream;
                                     }
                                     if (output != null)
                                     {
-                                        remotePowerShell.OutputStream =
-                                            new PSDataCollectionStream<TOutput>(instanceId, output);
+                                        _remotePowerShell.OutputStream =
+                                            new PSDataCollectionStream<TOutput>(_instanceId, output);
                                     }
                                 }
 
-                                pool.RemoteRunspacePoolInternal.CreatePowerShellOnServerAndInvoke(remotePowerShell);
-
+                                pool.RemoteRunspacePoolInternal.CreatePowerShellOnServerAndInvoke(_remotePowerShell);
                             } // lock
 
-                            RaiseStateChangeEvent(invocationStateInfo.Clone());
+                            RaiseStateChangeEvent(_invocationStateInfo.Clone());
                         }
                         else
                         {
-                            worker.GetRunspaceAsyncResult = pool.BeginGetRunspace(
-                                    new AsyncCallback(worker.RunspaceAvailableCallback), null);
+                            _worker.GetRunspaceAsyncResult = pool.BeginGetRunspace(
+                                    new AsyncCallback(_worker.RunspaceAvailableCallback), null);
                         }
                     }
                     else
                     {
-                        LocalRunspace rs = rsConnection as LocalRunspace;
+                        LocalRunspace rs = _rsConnection as LocalRunspace;
                         if (null != rs)
                         {
 #if !CORECLR                // No ApartmentState In CoreCLR
@@ -4773,14 +4770,14 @@ namespace System.Management.Automation
 
                                 throw e;
                             }
-                            worker.CreateRunspaceIfNeededAndDoWork(rs, false);
+                            _worker.CreateRunspaceIfNeededAndDoWork(rs, false);
                         }
                         else
                         {
                             // create a new runspace and perform invoke..
                             ThreadPool.QueueUserWorkItem(
-                                new WaitCallback(worker.CreateRunspaceIfNeededAndDoWork),
-                                rsConnection);
+                                new WaitCallback(_worker.CreateRunspaceIfNeededAndDoWork),
+                                _rsConnection);
                         }
                     }
                 }
@@ -4793,19 +4790,19 @@ namespace System.Management.Automation
             catch (Exception exception)
             {
                 // allow GC collection
-                invokeAsyncResult = null;
+                _invokeAsyncResult = null;
                 SetStateChanged(new PSInvocationStateInfo(PSInvocationState.Failed, exception));
                 // re-throw the exception
                 InvalidRunspacePoolStateException poolException = exception as InvalidRunspacePoolStateException;
 
-                if (poolException != null && this.runspace != null) // the pool exception was actually thrown by a runspace
+                if (poolException != null && _runspace != null) // the pool exception was actually thrown by a runspace
                 {
                     throw poolException.ToInvalidRunspaceStateException();
                 }
                 throw;
             }
 
-            return invokeAsyncResult;
+            return _invokeAsyncResult;
         }
 
 #if !CORECLR // No ApartmentState In CoreCLR
@@ -4861,13 +4858,13 @@ namespace System.Management.Automation
         /// <exception cref="ObjectDisposedException">
         /// Object is disposed.
         /// </exception>
-        private void Prepare<TInput,TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, bool shouldCreateWorker)
+        private void Prepare<TInput, TOutput>(PSDataCollection<TInput> input, PSDataCollection<TOutput> output, PSInvocationSettings settings, bool shouldCreateWorker)
         {
             Dbg.Assert(null != output, "Output cannot be null");
-         
-            lock (syncObject)
+
+            lock (_syncObject)
             {
-                if ((null == psCommand) || (null == psCommand.Commands) || (0 == psCommand.Commands.Count))
+                if ((null == _psCommand) || (null == _psCommand.Commands) || (0 == _psCommand.Commands.Count))
                 {
                     throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.NoCommandToInvoke);
                 }
@@ -4879,7 +4876,7 @@ namespace System.Management.Automation
                     // set the execution state to running.. so changes 
                     // to the current instance of powershell
                     // are blocked.
-                    invocationStateInfo = new PSInvocationStateInfo(PSInvocationState.Running, null);
+                    _invocationStateInfo = new PSInvocationStateInfo(PSInvocationState.Running, null);
 
                     // update settings for impersonation policy
                     if ((null != settings) && (settings.FlowImpersonationPolicy))
@@ -4898,7 +4895,7 @@ namespace System.Management.Automation
                     ObjectStreamBase inputStream;
                     if (null != input)
                     {
-                        inputStream = new PSDataCollectionStream<TInput>(instanceId, input);
+                        inputStream = new PSDataCollectionStream<TInput>(_instanceId, input);
                     }
                     else
                     {
@@ -4906,8 +4903,8 @@ namespace System.Management.Automation
                         inputStream.Close();
                     }
 
-                    ObjectStreamBase outputStream = new PSDataCollectionStream<TOutput>(instanceId, output);
-                    worker = new Worker(inputStream, outputStream, settings, this);
+                    ObjectStreamBase outputStream = new PSDataCollectionStream<TOutput>(_instanceId, output);
+                    _worker = new Worker(inputStream, outputStream, settings, this);
                 }
             }
 
@@ -4919,7 +4916,7 @@ namespace System.Management.Automation
                 // Raise the state change events outside of the lock
                 // send a cloned copy..this way the handler will
                 // not see changes happening to the instance's execution state.
-                RaiseStateChangeEvent(invocationStateInfo.Clone());                
+                RaiseStateChangeEvent(_invocationStateInfo.Clone());
             }
         }
 
@@ -4945,17 +4942,17 @@ namespace System.Management.Automation
             Queue<PSInvocationStateInfo> events = new Queue<PSInvocationStateInfo>();
 
             // Acquire lock as we are going to change state here..
-            lock (syncObject)
+            lock (_syncObject)
             {
                 //BUGBUG: remote powershell appears to handle state change's differently
                 //Need to speak with remoting dev and resolve this.
-                switch (invocationStateInfo.State)
+                switch (_invocationStateInfo.State)
                 {
                     case PSInvocationState.NotStarted:
                         // Stopped is called before operation started..we need to change
                         // state to stopping and then to stopped... so that future stops
                         // dont affect the state.
-                        invocationStateInfo = new PSInvocationStateInfo(PSInvocationState.Stopping,
+                        _invocationStateInfo = new PSInvocationStateInfo(PSInvocationState.Stopping,
                             null);
 
                         events.Enqueue(new PSInvocationStateInfo(PSInvocationState.Stopped,
@@ -4965,33 +4962,33 @@ namespace System.Management.Automation
                     case PSInvocationState.Completed:
                     case PSInvocationState.Failed:
                     case PSInvocationState.Stopped:
-                        stopAsyncResult = new PowerShellAsyncResult(instanceId, callback, state, null, false);
-                        stopAsyncResult.SetAsCompleted(null);
-                        return stopAsyncResult;
+                        _stopAsyncResult = new PowerShellAsyncResult(_instanceId, callback, state, null, false);
+                        _stopAsyncResult.SetAsCompleted(null);
+                        return _stopAsyncResult;
 
                     case PSInvocationState.Stopping:
                         // Create new stop sync object if none exists.  Otherwise return existing.
-                        if (stopAsyncResult == null)
+                        if (_stopAsyncResult == null)
                         {
-                            stopAsyncResult = new PowerShellAsyncResult(instanceId, callback, state, null, false);
-                            stopAsyncResult.SetAsCompleted(null);
+                            _stopAsyncResult = new PowerShellAsyncResult(_instanceId, callback, state, null, false);
+                            _stopAsyncResult.SetAsCompleted(null);
                         }
-                        return stopAsyncResult;
+                        return _stopAsyncResult;
 
                     case PSInvocationState.Running:
-                        invocationStateInfo = new PSInvocationStateInfo(PSInvocationState.Stopping,
+                        _invocationStateInfo = new PSInvocationStateInfo(PSInvocationState.Stopping,
                             null);
                         isRunning = true;
                         break;
 
                     case PSInvocationState.Disconnected:
                         // Stopping a disconnected command results in a failed state.
-                        invocationStateInfo = new PSInvocationStateInfo(PSInvocationState.Failed, null);
+                        _invocationStateInfo = new PSInvocationStateInfo(PSInvocationState.Failed, null);
                         isDisconnected = true;
                         break;
                 }
 
-                stopAsyncResult = new PowerShellAsyncResult(instanceId, callback, state, null, false);
+                _stopAsyncResult = new PowerShellAsyncResult(_instanceId, callback, state, null, false);
             }
 
             // If in the Disconnected state then stopping simply cuts loose the PowerShell object
@@ -4999,36 +4996,36 @@ namespace System.Management.Automation
             // cannot complete with this object.
             if (isDisconnected)
             {
-                if (invokeAsyncResult != null)
+                if (_invokeAsyncResult != null)
                 {
                     // Since object is stopped, allow result wait to end.
-                    invokeAsyncResult.SetAsCompleted(null);
+                    _invokeAsyncResult.SetAsCompleted(null);
                 }
-                stopAsyncResult.SetAsCompleted(null);
+                _stopAsyncResult.SetAsCompleted(null);
 
                 // Raise event for failed state change.
-                RaiseStateChangeEvent(invocationStateInfo.Clone());
+                RaiseStateChangeEvent(_invocationStateInfo.Clone());
 
-                return stopAsyncResult;
+                return _stopAsyncResult;
             }
 
             // Ensure the runspace is not blocking in a debug stop.
             ReleaseDebugger();
 
-            RaiseStateChangeEvent(invocationStateInfo.Clone());
+            RaiseStateChangeEvent(_invocationStateInfo.Clone());
 
             bool shouldRunStopHelper = false;
-            RunspacePool pool = rsConnection as RunspacePool;
+            RunspacePool pool = _rsConnection as RunspacePool;
 
             if (pool != null && pool.IsRemote)
             {
-                if ((remotePowerShell != null) && remotePowerShell.Initialized)
-                {                
-                    remotePowerShell.StopAsync();
+                if ((_remotePowerShell != null) && _remotePowerShell.Initialized)
+                {
+                    _remotePowerShell.StopAsync();
 
                     if (isSyncCall)
                     {
-                        stopAsyncResult.AsyncWaitHandle.WaitOne();
+                        _stopAsyncResult.AsyncWaitHandle.WaitOne();
                     }
                 }
                 else
@@ -5038,13 +5035,13 @@ namespace System.Management.Automation
             }
             else if (isRunning)
             {
-                 worker.Stop(isSyncCall);
-            } 
+                _worker.Stop(isSyncCall);
+            }
             else
             {
                 shouldRunStopHelper = true;
             }
-            
+
             if (shouldRunStopHelper)
             {
                 if (isSyncCall)
@@ -5054,15 +5051,15 @@ namespace System.Management.Automation
                 else
                 {
                     ThreadPool.QueueUserWorkItem(new WaitCallback(StopThreadProc), events);
-                }            
+                }
             }
 
-            return stopAsyncResult;
+            return _stopAsyncResult;
         }
 
         private void ReleaseDebugger()
         {
-            LocalRunspace localRunspace = this.runspace as LocalRunspace;
+            LocalRunspace localRunspace = _runspace as LocalRunspace;
             if (localRunspace != null)
             {
                 localRunspace.ReleaseDebugger();
@@ -5120,7 +5117,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return remotePowerShell;
+                return _remotePowerShell;
             }
         }
 
@@ -5132,11 +5129,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return historyString;
+                return _historyString;
             }
             set
             {
-                historyString = value;
+                _historyString = value;
             }
         }
 
@@ -5145,7 +5142,7 @@ namespace System.Management.Automation
         /// </summary>
         internal Collection<PSCommand> ExtraCommands
         {
-            get { return extraCommands; }
+            get { return _extraCommands; }
         }
 
         /// <summary>
@@ -5153,25 +5150,25 @@ namespace System.Management.Automation
         /// </summary>
         internal bool RunningExtraCommands
         {
-            get { return runningExtraCommands; }
+            get { return _runningExtraCommands; }
         }
 
         private bool ServerSupportsBatchInvocation()
         {
-            if (runspace != null)
+            if (_runspace != null)
             {
-                return runspace.RunspaceStateInfo.State != RunspaceState.BeforeOpen &&
-                       runspace.GetRemoteProtocolVersion() >= RemotingConstants.ProtocolVersionWin8RTM;
+                return _runspace.RunspaceStateInfo.State != RunspaceState.BeforeOpen &&
+                       _runspace.GetRemoteProtocolVersion() >= RemotingConstants.ProtocolVersionWin8RTM;
             }
 
             RemoteRunspacePoolInternal remoteRunspacePoolInternal = null;
-            if (this.rsConnection is RemoteRunspace)
+            if (_rsConnection is RemoteRunspace)
             {
-                remoteRunspacePoolInternal = (this.rsConnection as RemoteRunspace).RunspacePool.RemoteRunspacePoolInternal;
+                remoteRunspacePoolInternal = (_rsConnection as RemoteRunspace).RunspacePool.RemoteRunspacePoolInternal;
             }
-            else if (this.rsConnection is RunspacePool)
+            else if (_rsConnection is RunspacePool)
             {
-                remoteRunspacePoolInternal = (this.rsConnection as RunspacePool).RemoteRunspacePoolInternal;
+                remoteRunspacePoolInternal = (_rsConnection as RunspacePool).RemoteRunspacePoolInternal;
             }
 
             return remoteRunspacePoolInternal != null &&
@@ -5183,9 +5180,9 @@ namespace System.Management.Automation
         /// </summary>
         private void AddToRemoteRunspaceRunningList()
         {
-            if (this.runspace != null)
+            if (_runspace != null)
             {
-                this.runspace.PushRunningPowerShell(this);
+                _runspace.PushRunningPowerShell(this);
             }
             else
             {
@@ -5202,9 +5199,9 @@ namespace System.Management.Automation
         /// </summary>
         private void RemoveFromRemoteRunspaceRunningList()
         {
-            if (this.runspace != null)
+            if (_runspace != null)
             {
-                this.runspace.PopRunningPowerShell();
+                _runspace.PopRunningPowerShell();
             }
             else
             {
@@ -5218,7 +5215,7 @@ namespace System.Management.Automation
 
         private RemoteRunspacePoolInternal GetRemoteRunspacePoolInternal()
         {
-            RunspacePool runspacePool = this.rsConnection as RunspacePool;
+            RunspacePool runspacePool = _rsConnection as RunspacePool;
             return (runspacePool != null) ? (runspacePool.RemoteRunspacePoolInternal) : null;
         }
 
@@ -5232,15 +5229,15 @@ namespace System.Management.Automation
         /// </summary>
         private sealed class Worker
         {
-            private ObjectStreamBase inputStream;
-            private ObjectStreamBase outputStream;
-            private ObjectStreamBase errorStream;
-            private PSInvocationSettings settings;
-            private IAsyncResult getRunspaceAsyncResult;
-            private Pipeline currentlyRunningPipeline;
-            private bool isNotActive;
-            private PowerShell shell;
-            private object syncObject = new object();
+            private ObjectStreamBase _inputStream;
+            private ObjectStreamBase _outputStream;
+            private ObjectStreamBase _errorStream;
+            private PSInvocationSettings _settings;
+            private IAsyncResult _getRunspaceAsyncResult;
+            private Pipeline _currentlyRunningPipeline;
+            private bool _isNotActive;
+            private PowerShell _shell;
+            private object _syncObject = new object();
 
             /// <summary>
             /// 
@@ -5254,11 +5251,11 @@ namespace System.Management.Automation
                 PSInvocationSettings settings,
                 PowerShell shell)
             {
-                this.inputStream = inputStream;
-                this.outputStream = outputStream;
-                this.errorStream = new PSDataCollectionStream<ErrorRecord>(shell.instanceId, shell.errorBuffer);
-                this.settings = settings;
-                this.shell = shell;
+                _inputStream = inputStream;
+                _outputStream = outputStream;
+                _errorStream = new PSDataCollectionStream<ErrorRecord>(shell._instanceId, shell._errorBuffer);
+                _settings = settings;
+                _shell = shell;
             }
 
             /// <summary>
@@ -5268,8 +5265,8 @@ namespace System.Management.Automation
             /// </summary>
             internal IAsyncResult GetRunspaceAsyncResult
             {
-                get { return getRunspaceAsyncResult; }
-                set { getRunspaceAsyncResult = value; }
+                get { return _getRunspaceAsyncResult; }
+                set { _getRunspaceAsyncResult = value; }
             }
 
             /// <summary>
@@ -5277,7 +5274,7 @@ namespace System.Management.Automation
             /// </summary>
             internal Pipeline CurrentlyRunningPipeline
             {
-                get { return currentlyRunningPipeline; }
+                get { return _currentlyRunningPipeline; }
             }
 
             /// <summary>
@@ -5287,7 +5284,7 @@ namespace System.Management.Automation
             internal void CreateRunspaceIfNeededAndDoWork(object state)
             {
                 Runspace rsToUse = state as Runspace;
-                CreateRunspaceIfNeededAndDoWork(rsToUse, false);               
+                CreateRunspaceIfNeededAndDoWork(rsToUse, false);
             }
 
             /// <summary>
@@ -5314,26 +5311,26 @@ namespace System.Management.Automation
                     LocalRunspace rs = rsToUse as LocalRunspace;
                     if (null == rs)
                     {
-                        lock (this.shell.syncObject)
+                        lock (_shell._syncObject)
                         {
-                            if (this.shell.runspace != null)
+                            if (_shell._runspace != null)
                             {
-                                rsToUse = this.shell.runspace;
+                                rsToUse = _shell._runspace;
                             }
                             else
                             {
                                 Runspace runspace = null;
 
-                                if ((null != settings) && (null != settings.Host))
+                                if ((null != _settings) && (null != _settings.Host))
                                 {
-                                    runspace = RunspaceFactory.CreateRunspace(settings.Host);
+                                    runspace = RunspaceFactory.CreateRunspace(_settings.Host);
                                 }
                                 else
                                 {
                                     runspace = RunspaceFactory.CreateRunspace();
                                 }
 
-                                this.shell.SetRunspace(runspace, true);
+                                _shell.SetRunspace(runspace, true);
 
                                 rsToUse = (LocalRunspace)runspace;
                                 rsToUse.Open();
@@ -5348,14 +5345,14 @@ namespace System.Management.Automation
                     // PipelineStateChangedEvent is not raised
                     // if there is an exception calling BeginInvoke
                     // So raise the event here and notify the caller.   
-                    lock (syncObject)
+                    lock (_syncObject)
                     {
-                        if (isNotActive)
+                        if (_isNotActive)
                             return;
-                        isNotActive = true;
+                        _isNotActive = true;
                     }
 
-                    shell.PipelineStateChanged(this,
+                    _shell.PipelineStateChanged(this,
                            new PipelineStateEventArgs(
                                new PipelineStateInfo(PipelineState.Failed,
                                    e)));
@@ -5391,7 +5388,7 @@ namespace System.Management.Automation
 #pragma warning disable 56500
                 try
                 {
-                    RunspacePool pool = shell.rsConnection as RunspacePool;
+                    RunspacePool pool = _shell._rsConnection as RunspacePool;
                     Dbg.Assert(pool != null, "RunspaceConnection must be a runspace pool");
 
                     // get the runspace..this will throw if there is an exception
@@ -5410,17 +5407,16 @@ namespace System.Management.Automation
                     // PipelineStateChangedEvent is not raised
                     // if there is an exception calling BeginInvoke
                     // So raise the event here and notify the caller.
-                    lock (syncObject)
+                    lock (_syncObject)
                     {
-                        if (isNotActive)
+                        if (_isNotActive)
                             return;
-                        isNotActive = true;
+                        _isNotActive = true;
                     }
-                    shell.PipelineStateChanged(this,
+                    _shell.PipelineStateChanged(this,
                             new PipelineStateEventArgs(
                                 new PipelineStateInfo(PipelineState.Failed,
                                     e)));
-
                 }
 #pragma warning restore 56500
             }
@@ -5448,15 +5444,15 @@ namespace System.Management.Automation
             internal bool ConstructPipelineAndDoWork(Runspace rs, bool performSyncInvoke)
             {
                 Dbg.Assert(rs != null, "Runspace cannot be null in ConstructPipelineAndDoWork");
-                shell.RunspaceAssigned.SafeInvoke(this, new PSEventArgs<Runspace>(rs));
+                _shell.RunspaceAssigned.SafeInvoke(this, new PSEventArgs<Runspace>(rs));
 
                 // lock is needed until a pipeline is created to 
                 // make stop() cleanly release resources.
                 LocalRunspace lrs = rs as LocalRunspace;
-                
-                lock (syncObject)
+
+                lock (_syncObject)
                 {
-                    if (isNotActive)
+                    if (_isNotActive)
                     {
                         return false;
                     }
@@ -5465,28 +5461,28 @@ namespace System.Management.Automation
                     {
                         LocalPipeline localPipeline = new LocalPipeline(
                             lrs,
-                            shell.Commands.Commands,
-                            ((null != settings) && (settings.AddToHistory)) ? true : false,
-                            shell.IsNested,
-                            inputStream,
-                            outputStream,
-                            errorStream,
-                            shell.informationalBuffers);
+                            _shell.Commands.Commands,
+                            ((null != _settings) && (_settings.AddToHistory)) ? true : false,
+                            _shell.IsNested,
+                            _inputStream,
+                            _outputStream,
+                            _errorStream,
+                            _shell._informationalBuffers);
 
-                        localPipeline.IsChild = shell.IsChild;
+                        localPipeline.IsChild = _shell.IsChild;
 
-                        if (!String.IsNullOrEmpty(shell.HistoryString))
+                        if (!String.IsNullOrEmpty(_shell.HistoryString))
                         {
-                            localPipeline.SetHistoryString(shell.HistoryString);
+                            localPipeline.SetHistoryString(_shell.HistoryString);
                         }
 
-                        localPipeline.RedirectShellErrorOutputPipe = this.shell.RedirectShellErrorOutputPipe;
+                        localPipeline.RedirectShellErrorOutputPipe = _shell.RedirectShellErrorOutputPipe;
 
-                        currentlyRunningPipeline = localPipeline;
+                        _currentlyRunningPipeline = localPipeline;
                         // register for pipeline state changed events within a lock...so that if
                         // stop is called before invoke, we can listen to state transition and 
                         // take appropriate action.
-                        currentlyRunningPipeline.StateChanged += shell.PipelineStateChanged;
+                        _currentlyRunningPipeline.StateChanged += _shell.PipelineStateChanged;
                     }
                     else
                     {
@@ -5495,17 +5491,17 @@ namespace System.Management.Automation
                 }
 
                 // Set pipeline specific settings
-                currentlyRunningPipeline.InvocationSettings = settings;        
-        
+                _currentlyRunningPipeline.InvocationSettings = _settings;
+
                 Dbg.Assert(lrs != null, "LocalRunspace cannot be null here");
 
                 if (performSyncInvoke)
                 {
-                    currentlyRunningPipeline.Invoke();
+                    _currentlyRunningPipeline.Invoke();
                 }
                 else
                 {
-                    currentlyRunningPipeline.InvokeAsync();
+                    _currentlyRunningPipeline.InvokeAsync();
                 }
 
                 return true;
@@ -5517,32 +5513,32 @@ namespace System.Management.Automation
             /// <param name="isSyncCall"></param>
             internal void Stop(bool isSyncCall)
             {
-                lock (syncObject)
+                lock (_syncObject)
                 {
-                    if (isNotActive)
+                    if (_isNotActive)
                     {
                         return;
                     }
 
-                    isNotActive = true;
-                    if (null != currentlyRunningPipeline)
+                    _isNotActive = true;
+                    if (null != _currentlyRunningPipeline)
                     {
                         if (isSyncCall)
                         {
-                            currentlyRunningPipeline.Stop();
+                            _currentlyRunningPipeline.Stop();
                         }
                         else
                         {
-                            currentlyRunningPipeline.StopAsync();
+                            _currentlyRunningPipeline.StopAsync();
                         }
                         return;
                     }
-                    
-                    if (null != getRunspaceAsyncResult)
+
+                    if (null != _getRunspaceAsyncResult)
                     {
-                        RunspacePool pool = shell.rsConnection as RunspacePool;
+                        RunspacePool pool = _shell._rsConnection as RunspacePool;
                         Dbg.Assert(pool != null, "RunspaceConnection must be a runspace pool");
-                        pool.CancelGetRunspace(getRunspaceAsyncResult);
+                        pool.CancelGetRunspace(_getRunspaceAsyncResult);
                     }
                 }
 
@@ -5553,11 +5549,11 @@ namespace System.Management.Automation
 
                 if (isSyncCall)
                 {
-                    shell.StopHelper(events);
+                    _shell.StopHelper(events);
                 }
                 else
                 {
-                    ThreadPool.QueueUserWorkItem(new WaitCallback(shell.StopThreadProc), events);
+                    ThreadPool.QueueUserWorkItem(new WaitCallback(_shell.StopThreadProc), events);
                 }
             }
 
@@ -5569,41 +5565,41 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    if ((null != settings) && (null != settings.WindowsIdentityToImpersonate))
+                    if ((null != _settings) && (null != _settings.WindowsIdentityToImpersonate))
                     {
-                        settings.WindowsIdentityToImpersonate.Dispose();
-                        settings.WindowsIdentityToImpersonate = null;
+                        _settings.WindowsIdentityToImpersonate.Dispose();
+                        _settings.WindowsIdentityToImpersonate = null;
                     }
 
-                    inputStream.Close();
-                    outputStream.Close();
-                    errorStream.Close();
+                    _inputStream.Close();
+                    _outputStream.Close();
+                    _errorStream.Close();
 
-                    if (null == currentlyRunningPipeline)
+                    if (null == _currentlyRunningPipeline)
                     {
                         return;
                     }
 
                     // Detach state changed handler so that runspace.close
                     // and pipeline.dispose will not change powershell instances state
-                    currentlyRunningPipeline.StateChanged -= shell.PipelineStateChanged;
+                    _currentlyRunningPipeline.StateChanged -= _shell.PipelineStateChanged;
 
-                    if ((null == getRunspaceAsyncResult) && (null == shell.rsConnection))
+                    if ((null == _getRunspaceAsyncResult) && (null == _shell._rsConnection))
                     {
                         // user did not supply a runspace..Invoke* method created
                         // a new runspace..so close it.
-                        currentlyRunningPipeline.Runspace.Close();
+                        _currentlyRunningPipeline.Runspace.Close();
                     }
                     else
                     {
-                        RunspacePool pool = shell.rsConnection as RunspacePool;
+                        RunspacePool pool = _shell._rsConnection as RunspacePool;
                         if (null != pool)
                         {
-                            pool.ReleaseRunspace(currentlyRunningPipeline.Runspace);
+                            pool.ReleaseRunspace(_currentlyRunningPipeline.Runspace);
                         }
                     }
 
-                    currentlyRunningPipeline.Dispose();
+                    _currentlyRunningPipeline.Dispose();
                 }
                 catch (ArgumentException)
                 {
@@ -5618,15 +5614,15 @@ namespace System.Management.Automation
                 {
                 }
 
-                currentlyRunningPipeline = null;
+                _currentlyRunningPipeline = null;
             }
 
 #if !CORECLR // PSMI Not Supported On CSS
             internal void GetSettings(out bool addToHistory, out bool noInput, out uint apartmentState)
             {
-                addToHistory = this.settings.AddToHistory;
+                addToHistory = _settings.AddToHistory;
                 noInput = false;
-                apartmentState = (uint)this.settings.ApartmentState;
+                apartmentState = (uint)_settings.ApartmentState;
             }
 #endif
         }
@@ -5658,8 +5654,8 @@ namespace System.Management.Automation
 
             Collection<PSCommand> extraCommands = null;
             ReadOnlyPSMemberInfoCollection<PSPropertyInfo> properties = powerShellAsPSObject.Properties.Match(RemoteDataNameStrings.ExtraCommands);
-            
-            if(properties.Count > 0)
+
+            if (properties.Count > 0)
             {
                 extraCommands = new Collection<PSCommand>();
 
@@ -5688,7 +5684,7 @@ namespace System.Management.Automation
             PSCommand psCommand = null;
             foreach (PSObject commandAsPSObject in RemotingDecoder.EnumerateListProperty<PSObject>(powerShellAsPSObject, RemoteDataNameStrings.Commands))
             {
-                System.Management.Automation.Runspaces.Command command = 
+                System.Management.Automation.Runspaces.Command command =
                     System.Management.Automation.Runspaces.Command.FromPSObjectForRemoting(commandAsPSObject);
 
                 if (psCommand == null)
@@ -5716,15 +5712,15 @@ namespace System.Management.Automation
         internal PSObject ToPSObjectForRemoting()
         {
             PSObject powerShellAsPSObject = RemotingEncoder.CreateEmptyPSObject();
-            Version psRPVersion = RemotingEncoder.GetPSRemotingProtocolVersion(rsConnection as RunspacePool);
+            Version psRPVersion = RemotingEncoder.GetPSRemotingProtocolVersion(_rsConnection as RunspacePool);
 
             // Check if the server supports batch invocation
             if (ServerSupportsBatchInvocation())
             {
-                if (extraCommands.Count > 0)
+                if (_extraCommands.Count > 0)
                 {
-                    List<PSObject> extraCommandsAsListOfPSObjects = new List<PSObject>(this.extraCommands.Count);
-                    foreach (PSCommand extraCommand in extraCommands)
+                    List<PSObject> extraCommandsAsListOfPSObjects = new List<PSObject>(_extraCommands.Count);
+                    foreach (PSCommand extraCommand in _extraCommands)
                     {
                         PSObject obj = RemotingEncoder.CreateEmptyPSObject();
 
@@ -5741,7 +5737,7 @@ namespace System.Management.Automation
 
             powerShellAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.Commands, commandsAsListOfPSObjects));
             powerShellAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.IsNested, this.IsNested));
-            powerShellAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.HistoryString, this.historyString));
+            powerShellAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.HistoryString, _historyString));
             powerShellAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.RedirectShellErrorOutputPipe, this.RedirectShellErrorOutputPipe));
             return powerShellAsPSObject;
         }
@@ -5766,14 +5762,14 @@ namespace System.Management.Automation
         /// </summary>
         internal void SuspendIncomingData()
         {
-            if (remotePowerShell == null)
+            if (_remotePowerShell == null)
             {
                 throw new PSNotSupportedException();
             }
 
-            if (remotePowerShell.DataStructureHandler != null)
+            if (_remotePowerShell.DataStructureHandler != null)
             {
-                remotePowerShell.DataStructureHandler.TransportManager.SuspendQueue(true);
+                _remotePowerShell.DataStructureHandler.TransportManager.SuspendQueue(true);
             }
         }
 
@@ -5782,14 +5778,14 @@ namespace System.Management.Automation
         /// </summary>
         internal void ResumeIncomingData()
         {
-            if (remotePowerShell == null)
+            if (_remotePowerShell == null)
             {
                 throw new PSNotSupportedException();
             }
 
-            if (remotePowerShell.DataStructureHandler != null)
+            if (_remotePowerShell.DataStructureHandler != null)
             {
-                remotePowerShell.DataStructureHandler.TransportManager.ResumeQueue();
+                _remotePowerShell.DataStructureHandler.TransportManager.ResumeQueue();
             }
         }
 
@@ -5800,16 +5796,16 @@ namespace System.Management.Automation
         /// </summary>
         internal void WaitForServicingComplete()
         {
-            if (remotePowerShell == null)
+            if (_remotePowerShell == null)
             {
                 throw new PSNotSupportedException();
             }
 
-            if (remotePowerShell.DataStructureHandler != null)
+            if (_remotePowerShell.DataStructureHandler != null)
             {
                 int count = 0;
                 while (++count < 2 &&
-                       remotePowerShell.DataStructureHandler.TransportManager.IsServicing)
+                       _remotePowerShell.DataStructureHandler.TransportManager.IsServicing)
                 {
                     // Try waiting for 50 ms, then continue.
                     Threading.Thread.Sleep(50);
@@ -5846,14 +5842,14 @@ namespace System.Management.Automation
             // check if the AsJob parameter has already 
             // been added. If not, add the same
             bool found = false;
-            foreach(CommandParameter parameter in this.Commands.Commands[0].Parameters)
+            foreach (CommandParameter parameter in this.Commands.Commands[0].Parameters)
             {
                 if (string.Compare(parameter.Name, "AsJob", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     found = true;
                 }
             }
-            
+
             if (!found)
             {
                 AddParameter("AsJob");
@@ -5874,31 +5870,31 @@ namespace System.Management.Automation
         internal CimInstance AsPSPowerShellPipeline()
         {
             CimInstance c = InternalMISerializer.CreateCimInstance("PS_PowerShellPipeline");
-            CimProperty instanceIdProperty = InternalMISerializer.CreateCimProperty("InstanceId", 
-                                                                                    this.InstanceId.ToString(), 
+            CimProperty instanceIdProperty = InternalMISerializer.CreateCimProperty("InstanceId",
+                                                                                    this.InstanceId.ToString(),
                                                                                     Microsoft.Management.Infrastructure.CimType.String);
             c.CimInstanceProperties.Add(instanceIdProperty);
-            CimProperty isNestedProperty = InternalMISerializer.CreateCimProperty("IsNested", 
-                                                                                  this.IsNested, 
-                                                                                  Microsoft.Management.Infrastructure.CimType.Boolean); 
+            CimProperty isNestedProperty = InternalMISerializer.CreateCimProperty("IsNested",
+                                                                                  this.IsNested,
+                                                                                  Microsoft.Management.Infrastructure.CimType.Boolean);
             c.CimInstanceProperties.Add(isNestedProperty);
 
-            bool addToHistoryValue=false, noInputValue=false;
+            bool addToHistoryValue = false, noInputValue = false;
             uint apartmentStateValue = 0;
-            if (this.worker != null)
+            if (_worker != null)
             {
-                this.worker.GetSettings(out addToHistoryValue, out noInputValue, out apartmentStateValue);
+                _worker.GetSettings(out addToHistoryValue, out noInputValue, out apartmentStateValue);
             }
-            CimProperty addToHistoryProperty = InternalMISerializer.CreateCimProperty("AddToHistory", 
-                                                                                      addToHistoryValue, 
+            CimProperty addToHistoryProperty = InternalMISerializer.CreateCimProperty("AddToHistory",
+                                                                                      addToHistoryValue,
                                                                                       Microsoft.Management.Infrastructure.CimType.Boolean);
             c.CimInstanceProperties.Add(addToHistoryProperty);
-            CimProperty noInputProperty = InternalMISerializer.CreateCimProperty("NoInput", 
-                                                                                 noInputValue, 
+            CimProperty noInputProperty = InternalMISerializer.CreateCimProperty("NoInput",
+                                                                                 noInputValue,
                                                                                  Microsoft.Management.Infrastructure.CimType.Boolean);
             c.CimInstanceProperties.Add(noInputProperty);
-            CimProperty apartmentStateProperty = InternalMISerializer.CreateCimProperty("ApartmentState", 
-                                                                                        apartmentStateValue, 
+            CimProperty apartmentStateProperty = InternalMISerializer.CreateCimProperty("ApartmentState",
+                                                                                        apartmentStateValue,
                                                                                         Microsoft.Management.Infrastructure.CimType.UInt32);
             c.CimInstanceProperties.Add(apartmentStateProperty);
 
@@ -5932,7 +5928,7 @@ namespace System.Management.Automation
         /// </summary>
         internal PSDataStreams(PowerShell powershell)
         {
-            this.powershell = powershell;
+            _powershell = powershell;
         }
 
         /// <summary>
@@ -5950,16 +5946,16 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "We want to allow callers to change the backing store.")]
-        public PSDataCollection<ErrorRecord> Error 
+        public PSDataCollection<ErrorRecord> Error
         {
             get
             {
-                return this.powershell.ErrorBuffer;
+                return _powershell.ErrorBuffer;
             }
 
             set
             {
-                this.powershell.ErrorBuffer = value;
+                _powershell.ErrorBuffer = value;
             }
         }
 
@@ -5979,12 +5975,12 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.powershell.ProgressBuffer;
+                return _powershell.ProgressBuffer;
             }
 
             set
             {
-                this.powershell.ProgressBuffer = value;
+                _powershell.ProgressBuffer = value;
             }
         }
 
@@ -6004,12 +6000,12 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.powershell.VerboseBuffer;
+                return _powershell.VerboseBuffer;
             }
 
             set
             {
-                this.powershell.VerboseBuffer = value;
+                _powershell.VerboseBuffer = value;
             }
         }
 
@@ -6029,12 +6025,12 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.powershell.DebugBuffer;
+                return _powershell.DebugBuffer;
             }
 
             set
             {
-                this.powershell.DebugBuffer = value;
+                _powershell.DebugBuffer = value;
             }
         }
 
@@ -6053,16 +6049,16 @@ namespace System.Management.Automation
         /// Object is disposed.
         /// </exception>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "We want to allow callers to change the backing store.")]
-        public PSDataCollection<WarningRecord> Warning 
+        public PSDataCollection<WarningRecord> Warning
         {
             get
             {
-                return this.powershell.WarningBuffer;
+                return _powershell.WarningBuffer;
             }
 
             set
             {
-                this.powershell.WarningBuffer = value;
+                _powershell.WarningBuffer = value;
             }
         }
 
@@ -6085,12 +6081,12 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.powershell.InformationBuffer;
+                return _powershell.InformationBuffer;
             }
 
             set
             {
-                this.powershell.InformationBuffer = value;
+                _powershell.InformationBuffer = value;
             }
         }
 
@@ -6106,8 +6102,8 @@ namespace System.Management.Automation
             this.Debug.Clear();
             this.Warning.Clear();
         }
-        
-        private PowerShell powershell;
+
+        private PowerShell _powershell;
     }
 
     /// <summary>
@@ -6126,9 +6122,9 @@ namespace System.Management.Automation
     /// </example>
     internal class PowerShellStopper : IDisposable
     {
-        private PipelineBase pipeline;
-        private PowerShell powerShell;
-        private EventHandler<PipelineStateEventArgs> eventHandler;
+        private PipelineBase _pipeline;
+        private PowerShell _powerShell;
+        private EventHandler<PipelineStateEventArgs> _eventHandler;
 
         internal PowerShellStopper(ExecutionContext context, PowerShell powerShell)
         {
@@ -6141,44 +6137,43 @@ namespace System.Management.Automation
                 throw new ArgumentNullException("powerShell");
             }
 
-            this.powerShell = powerShell;
-            
+            _powerShell = powerShell;
+
             if ((context.CurrentCommandProcessor != null) &&
                 (context.CurrentCommandProcessor.CommandRuntime != null) &&
                 (context.CurrentCommandProcessor.CommandRuntime.PipelineProcessor != null) &&
                 (context.CurrentCommandProcessor.CommandRuntime.PipelineProcessor.LocalPipeline != null))
             {
-                this.eventHandler = new EventHandler<PipelineStateEventArgs>(LocalPipeline_StateChanged);
-                this.pipeline = context.CurrentCommandProcessor.CommandRuntime.PipelineProcessor.LocalPipeline;
-                this.pipeline.StateChanged += eventHandler;
+                _eventHandler = new EventHandler<PipelineStateEventArgs>(LocalPipeline_StateChanged);
+                _pipeline = context.CurrentCommandProcessor.CommandRuntime.PipelineProcessor.LocalPipeline;
+                _pipeline.StateChanged += _eventHandler;
             }
         }
 
         private void LocalPipeline_StateChanged(object sender, PipelineStateEventArgs e)
         {
             if ((e.PipelineStateInfo.State == PipelineState.Stopping) &&
-                (this.powerShell.InvocationStateInfo.State == PSInvocationState.Running))
+                (_powerShell.InvocationStateInfo.State == PSInvocationState.Running))
             {
-                this.powerShell.Stop();
+                _powerShell.Stop();
             }
         }
 
-        private bool isDisposed;
-    
-        public void  Dispose()
+        private bool _isDisposed;
+
+        public void Dispose()
         {
-            if (!isDisposed)
+            if (!_isDisposed)
             {
-                if (this.eventHandler != null)
+                if (_eventHandler != null)
                 {
-                    pipeline.StateChanged -= this.eventHandler;
-                    this.eventHandler = null;
+                    _pipeline.StateChanged -= _eventHandler;
+                    _eventHandler = null;
                 }
 
                 GC.SuppressFinalize(this);
-                isDisposed = true;
+                _isDisposed = true;
             }
         }
     }
-
 }

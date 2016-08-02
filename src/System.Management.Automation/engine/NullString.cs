@@ -1,6 +1,7 @@
 ﻿/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 
 namespace System.Management.Automation.Language
@@ -13,7 +14,7 @@ namespace System.Management.Automation.Language
         #region private_members
 
         // Private member for instance.
-        private static readonly NullString _value = new NullString();
+        private static readonly NullString s_value = new NullString();
 
         #endregion private_members
 
@@ -32,7 +33,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public static NullString Value
         {
-            get { return _value; }
+            get { return s_value; }
         }
 
         #endregion public_property

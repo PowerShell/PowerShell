@@ -10,7 +10,7 @@ using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Security;
-using Dbg=System.Management.Automation.Diagnostics;
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -29,10 +29,10 @@ namespace Microsoft.PowerShell.Commands
         /// 
         internal string[] NameInternal
         {
-            get { return names; }
-            set { names = value; }
+            get { return _names; }
+            set { _names = value; }
         }
-        private string[] names = new string[0];
+        private string[] _names = new string[0];
 
 
         /// <summary>
@@ -41,14 +41,14 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         internal PSTraceSourceOptions OptionsInternal
         {
-            get { return options; }
-            set 
-            { 
-                options = value; 
-                optionsSpecified = true; 
+            get { return _options; }
+            set
+            {
+                _options = value;
+                optionsSpecified = true;
             }
         } // Flags
-        private PSTraceSourceOptions options = PSTraceSourceOptions.All;
+        private PSTraceSourceOptions _options = PSTraceSourceOptions.All;
 
         /// <summary>
         /// True if the Options parameter has been set, or false otherwise.
@@ -62,14 +62,14 @@ namespace Microsoft.PowerShell.Commands
         /// 
         internal TraceOptions ListenerOptionsInternal
         {
-            get { return traceOptions; }
-            set 
+            get { return _traceOptions; }
+            set
             {
-                traceOptionsSpecified = true; 
-                traceOptions = value; 
+                traceOptionsSpecified = true;
+                _traceOptions = value;
             }
         }
-        private TraceOptions traceOptions = TraceOptions.None;
+        private TraceOptions _traceOptions = TraceOptions.None;
 
         /// <summary>
         /// True if the TraceOptions parameter was specified, or false otherwise
@@ -82,10 +82,10 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         internal string FileListener
         {
-            get { return file; }
-            set { file = value; }
+            get { return _file; }
+            set { _file = value; }
         } // File
-        private string file;
+        private string _file;
 
         /// <summary>
         /// Property that sets force parameter.  This will clear the
@@ -96,11 +96,11 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         public bool ForceWrite
         {
-            get { return forceWrite; }
-            set { forceWrite = value; }
+            get { return _forceWrite; }
+            set { _forceWrite = value; }
         } // Force
 
-        private bool forceWrite;
+        private bool _forceWrite;
 
         /// <summary>
         /// If this parameter is specified the Debugger trace listener
@@ -109,10 +109,10 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         internal bool DebuggerListener
         {
-            get { return debugger; }
-            set { debugger = value; }
+            get { return _debugger; }
+            set { _debugger = value; }
         } // Debugger
-        private bool debugger;
+        private bool _debugger;
 
         /// <summary>
         /// If this parameter is specified the Msh Host trace listener
@@ -121,10 +121,10 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         internal SwitchParameter PSHostListener
         {
-            get { return host; }
-            set { host = value; }
+            get { return _host; }
+            set { _host = value; }
         } // UseHost
-        private bool host = false;
+        private bool _host = false;
 
         #endregion Parameters
 
@@ -217,36 +217,36 @@ namespace Microsoft.PowerShell.Commands
         {
             if (DebuggerListener)
             {
-                if (defaultListener == null)
+                if (_defaultListener == null)
                 {
-                    defaultListener =
+                    _defaultListener =
                         new DefaultTraceListener();
 
                     // Note, this is not meant to be localized.
-                    defaultListener.Name = "Debug";
+                    _defaultListener.Name = "Debug";
                 }
-                AddListenerToSources(matchingSources, defaultListener);
+                AddListenerToSources(matchingSources, _defaultListener);
             }
 
             if (PSHostListener)
             {
-                if (hostListener == null)
+                if (_hostListener == null)
                 {
                     ((MshCommandRuntime)this.CommandRuntime).DebugPreference = ActionPreference.Continue;
-                    hostListener = new PSHostTraceListener(this);
+                    _hostListener = new PSHostTraceListener(this);
 
                     // Note, this is not meant to be localized.
-                    hostListener.Name = "Host";
+                    _hostListener.Name = "Host";
                 }
-                AddListenerToSources (matchingSources, hostListener);
+                AddListenerToSources(matchingSources, _hostListener);
             }
 
             if (FileListener != null)
             {
-                if (fileListeners == null)
+                if (_fileListeners == null)
                 {
-                    fileListeners = new Collection<TextWriterTraceListener>();
-                    fileStreams = new Collection<FileStream>();
+                    _fileListeners = new Collection<TextWriterTraceListener>();
+                    _fileStreams = new Collection<FileStream>();
 
                     Exception error = null;
 
@@ -257,7 +257,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Resolve the file path
                             ProviderInfo provider = null;
-                            resolvedPaths = this.SessionState.Path.GetResolvedProviderPathFromPSPath(file, out provider);
+                            resolvedPaths = this.SessionState.Path.GetResolvedProviderPathFromPSPath(_file, out provider);
 
                             // We can only export aliases to the file system
                             if (!provider.NameEquals(this.Context.ProviderNames.FileSystem))
@@ -265,10 +265,9 @@ namespace Microsoft.PowerShell.Commands
                                 throw
                                     new PSNotSupportedException(
                                         StringUtil.Format(TraceCommandStrings.TraceFileOnly,
-                                            file,
+                                            _file,
                                             provider.FullName));
                             }
-
                         }
                         catch (ItemNotFoundException)
                         {
@@ -277,9 +276,9 @@ namespace Microsoft.PowerShell.Commands
 
                             PSDriveInfo driveInfo = null;
                             ProviderInfo provider = null;
-                            string path = 
+                            string path =
                                 this.SessionState.Path.GetUnresolvedProviderPathFromPSPath(
-                                    file, 
+                                    _file,
                                     new CmdletProviderContext(this.Context),
                                     out provider,
                                     out driveInfo);
@@ -290,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
                                 throw
                                     new PSNotSupportedException(
                                         StringUtil.Format(TraceCommandStrings.TraceFileOnly,
-                                            file,
+                                            _file,
                                             provider.FullName));
                             }
                             resolvedPaths.Add(path);
@@ -299,7 +298,7 @@ namespace Microsoft.PowerShell.Commands
                         if (resolvedPaths.Count > 1)
                         {
                             throw
-                                new PSNotSupportedException(StringUtil.Format(TraceCommandStrings.TraceSingleFileOnly, file));
+                                new PSNotSupportedException(StringUtil.Format(TraceCommandStrings.TraceSingleFileOnly, _file));
                         }
 
                         string resolvedPath = resolvedPaths[0];
@@ -324,16 +323,16 @@ namespace Microsoft.PowerShell.Commands
 
                             // Trace commands always append..So there is no need to set overwrite with force..
                             FileStream fileStream = new FileStream(resolvedPath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
-                            fileStreams.Add(fileStream);
+                            _fileStreams.Add(fileStream);
 
                             // Open the file stream
 
                             TextWriterTraceListener fileListener =
                                     new TextWriterTraceListener(fileStream, resolvedPath);
 
-                            fileListener.Name = file;
+                            fileListener.Name = _file;
 
-                            fileListeners.Add(fileListener);
+                            _fileListeners.Add(fileListener);
                         }
                         catch (IOException ioException)
                         {
@@ -380,21 +379,21 @@ namespace Microsoft.PowerShell.Commands
                                 error,
                                 "FileListenerPathResolutionFailed",
                                 ErrorCategory.InvalidArgument,
-                                file);
+                                _file);
 
                         WriteError(errorRecord);
                     }
                 }
 
-                foreach (TraceListener listener in fileListeners)
+                foreach (TraceListener listener in _fileListeners)
                 {
                     AddListenerToSources(matchingSources, listener);
                 }
             }
         }
-        private DefaultTraceListener defaultListener;
-        private PSHostTraceListener hostListener;
-        private Collection<TextWriterTraceListener> fileListeners;
+        private DefaultTraceListener _defaultListener;
+        private PSHostTraceListener _hostListener;
+        private Collection<TextWriterTraceListener> _fileListeners;
 
         /// <summary>
         /// The file streams that were open by this command
@@ -402,9 +401,9 @@ namespace Microsoft.PowerShell.Commands
         /// 
         internal Collection<FileStream> FileStreams
         {
-            get { return fileStreams; }
+            get { return _fileStreams; }
         }
-        private Collection<FileStream> fileStreams;
+        private Collection<FileStream> _fileStreams;
 
         private static void AddListenerToSources(Collection<PSTraceSource> matchingSources, TraceListener listener)
         {
@@ -424,8 +423,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// 
         internal static void RemoveListenersByName(
-            Collection<PSTraceSource> matchingSources, 
-            string[] listenerNames, 
+            Collection<PSTraceSource> matchingSources,
+            string[] listenerNames,
             bool fileListenersOnly)
         {
             Collection<WildcardPattern> listenerMatcher =
@@ -498,7 +497,7 @@ namespace Microsoft.PowerShell.Commands
         /// Sets the flags for all the specified TraceSources
         /// </summary>
         /// 
-        internal void SetFlags (Collection<PSTraceSource> matchingSources)
+        internal void SetFlags(Collection<PSTraceSource> matchingSources)
         {
             foreach (PSTraceSource structuredSource in matchingSources)
             {
@@ -513,19 +512,19 @@ namespace Microsoft.PowerShell.Commands
         /// Turns on tracing for the TraceSources, flags, and listeners defined by
         /// the parameters
         /// </summary>
-        internal void TurnOnTracing (Collection<PSTraceSource> matchingSources, bool preConfigured)
+        internal void TurnOnTracing(Collection<PSTraceSource> matchingSources, bool preConfigured)
         {
             foreach (PSTraceSource source in matchingSources)
             {
                 // Store the current state of the TraceSource
-                if (!storedTraceSourceState.ContainsKey(source))
+                if (!_storedTraceSourceState.ContainsKey(source))
                 {
                     // Copy the listeners into a different collection
 
-                    Collection<TraceListener> listenerCollection = new Collection<TraceListener> ();
+                    Collection<TraceListener> listenerCollection = new Collection<TraceListener>();
                     foreach (TraceListener listener in source.Listeners)
                     {
-                        listenerCollection.Add (listener);
+                        listenerCollection.Add(listener);
                     }
 
                     if (preConfigured)
@@ -533,14 +532,14 @@ namespace Microsoft.PowerShell.Commands
                         // If the source is a preconfigured source, then the default options
                         // and listeners should be stored as the existing state.
 
-                        storedTraceSourceState[source] =
+                        _storedTraceSourceState[source] =
                             new KeyValuePair<PSTraceSourceOptions, Collection<TraceListener>>(
                                 PSTraceSourceOptions.None,
                                 new Collection<TraceListener>());
                     }
                     else
                     {
-                        storedTraceSourceState[source] =
+                        _storedTraceSourceState[source] =
                             new KeyValuePair<PSTraceSourceOptions, Collection<TraceListener>>(
                                 source.Options,
                                 listenerCollection);
@@ -552,9 +551,9 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Now turn on the listeners
-            
-            AddTraceListenersToSources (matchingSources);
-            SetTraceListenerOptions (matchingSources);
+
+            AddTraceListenersToSources(matchingSources);
+            SetTraceListenerOptions(matchingSources);
         }
 
         #endregion TurnOnTracing
@@ -577,17 +576,17 @@ namespace Microsoft.PowerShell.Commands
                     listener.Flush();
                 }
 
-                if (storedTraceSourceState.ContainsKey (source))
+                if (_storedTraceSourceState.ContainsKey(source))
                 {
                     // Restore the TraceSource to its original state
 
                     KeyValuePair<PSTraceSourceOptions, Collection<TraceListener>> storedState =
-                        storedTraceSourceState[source];
+                        _storedTraceSourceState[source];
 
-                    source.Listeners.Clear ();
+                    source.Listeners.Clear();
                     foreach (TraceListener listener in storedState.Value)
                     {
-                        source.Listeners.Add (listener);
+                        source.Listeners.Add(listener);
                     }
 
                     source.Options = storedState.Key;
@@ -597,7 +596,7 @@ namespace Microsoft.PowerShell.Commands
                     // Since we don't have any stored state for this TraceSource,
                     // just turn it off.
 
-                    source.Listeners.Clear ();
+                    source.Listeners.Clear();
                     source.Options = PSTraceSourceOptions.None;
                 }
             }
@@ -610,11 +609,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Clears the store TraceSource state.
         /// </summary>
-        protected void ClearStoredState ()
+        protected void ClearStoredState()
         {
             // First close all listeners
 
-            foreach (KeyValuePair<PSTraceSourceOptions, Collection<TraceListener>> pair in storedTraceSourceState.Values)
+            foreach (KeyValuePair<PSTraceSourceOptions, Collection<TraceListener>> pair in _storedTraceSourceState.Values)
             {
                 foreach (TraceListener listener in pair.Value)
                 {
@@ -622,11 +621,11 @@ namespace Microsoft.PowerShell.Commands
                     listener.Dispose();
                 }
             }
-            storedTraceSourceState.Clear ();
+            _storedTraceSourceState.Clear();
         }
 
-        private Dictionary<PSTraceSource, KeyValuePair<PSTraceSourceOptions, Collection<TraceListener>>> storedTraceSourceState =
-            new Dictionary<PSTraceSource, KeyValuePair<PSTraceSourceOptions, Collection<TraceListener>>> ();
+        private Dictionary<PSTraceSource, KeyValuePair<PSTraceSourceOptions, Collection<TraceListener>>> _storedTraceSourceState =
+            new Dictionary<PSTraceSource, KeyValuePair<PSTraceSourceOptions, Collection<TraceListener>>>();
 
         #endregion stored state
     }

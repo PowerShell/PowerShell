@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using Microsoft.PowerShell.Commands.Internal.Format;
@@ -19,21 +20,21 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject
         {
-            get { return inputObject; }
-            set { inputObject = value; }
+            get { return _inputObject; }
+            set { _inputObject = value; }
         }
-        private PSObject inputObject;
-	
+        private PSObject _inputObject;
+
         /// <summary>
         /// FilePath parameter
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "File")]
         public string FilePath
         {
-            get{ return fileName;}
-            set{ fileName = value;}
+            get { return _fileName; }
+            set { _fileName = value; }
         }
-        private string fileName;
+        private string _fileName;
 
         /// <summary>
         /// Literal FilePath parameter
@@ -44,12 +45,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return fileName;
+                return _fileName;
             }
             set
             {
-                fileName = value;
-            }       
+                _fileName = value;
+            }
         }
 
         /// <summary>
@@ -58,10 +59,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "File")]
         public SwitchParameter Append
         {
-            get{ return append;}
-            set{ append = value;}
+            get { return _append; }
+            set { _append = value; }
         }
-        private bool append;
+        private bool _append;
 
         /// <summary>
         /// Variable parameter
@@ -69,34 +70,34 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = "Variable")]
         public string Variable
         {
-            get { return variable; }
-            set { variable = value; }
+            get { return _variable; }
+            set { _variable = value; }
         }
-        private string variable;
+        private string _variable;
 
         /// <summary>
         /// 
         /// </summary>
         protected override void BeginProcessing()
         {
-            commandWrapper = new CommandWrapper();
+            _commandWrapper = new CommandWrapper();
             if (String.Equals(ParameterSetName, "File", StringComparison.OrdinalIgnoreCase))
             {
-                commandWrapper.Initialize(Context, "out-file", typeof(OutFileCommand));
-                commandWrapper.AddNamedParameter("filepath", fileName);
-                commandWrapper.AddNamedParameter("append", append);
+                _commandWrapper.Initialize(Context, "out-file", typeof(OutFileCommand));
+                _commandWrapper.AddNamedParameter("filepath", _fileName);
+                _commandWrapper.AddNamedParameter("append", _append);
             }
             else if (String.Equals(ParameterSetName, "LiteralFile", StringComparison.OrdinalIgnoreCase))
             {
-                commandWrapper.Initialize(Context, "out-file", typeof(OutFileCommand));
-                commandWrapper.AddNamedParameter("LiteralPath", fileName);
-                commandWrapper.AddNamedParameter("append", append);
+                _commandWrapper.Initialize(Context, "out-file", typeof(OutFileCommand));
+                _commandWrapper.AddNamedParameter("LiteralPath", _fileName);
+                _commandWrapper.AddNamedParameter("append", _append);
             }
             else
             {
                 // variable parameter set
-                commandWrapper.Initialize(Context, "set-variable", typeof(SetVariableCommand));
-                commandWrapper.AddNamedParameter("name", variable);
+                _commandWrapper.Initialize(Context, "set-variable", typeof(SetVariableCommand));
+                _commandWrapper.AddNamedParameter("name", _variable);
                 // Can't use set-var's passthru because it writes the var object to the pipeline, we want just
                 // the values to be written
             }
@@ -106,8 +107,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            commandWrapper.Process(inputObject);
-            WriteObject(inputObject);
+            _commandWrapper.Process(_inputObject);
+            WriteObject(_inputObject);
         }
 
         /// <summary>
@@ -115,19 +116,18 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            commandWrapper.ShutDown();
+            _commandWrapper.ShutDown();
         }
 
         private void Dispose(bool isDisposing)
         {
-            if (!alreadyDisposed)
+            if (!_alreadyDisposed)
             {
-                alreadyDisposed = true; 
-                if (isDisposing && commandWrapper != null)
+                _alreadyDisposed = true;
+                if (isDisposing && _commandWrapper != null)
                 {
-                    commandWrapper.Dispose();
-                    commandWrapper = null;
-
+                    _commandWrapper.Dispose();
+                    _commandWrapper = null;
                 }
             }
         }
@@ -149,8 +149,8 @@ namespace Microsoft.PowerShell.Commands
             Dispose(false);
         }
         #region private
-        private CommandWrapper commandWrapper;
-        private bool alreadyDisposed;
+        private CommandWrapper _commandWrapper;
+        private bool _alreadyDisposed;
         #endregion private
     }
 }

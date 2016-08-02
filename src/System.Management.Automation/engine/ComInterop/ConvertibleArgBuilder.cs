@@ -15,17 +15,21 @@ using System.Globalization;
 //using Microsoft.Scripting.Utils;
 using System.Management.Automation.Interpreter;
 
-namespace System.Management.Automation.ComInterop {
-
-    internal class ConvertibleArgBuilder : ArgBuilder {
-        internal ConvertibleArgBuilder() {
+namespace System.Management.Automation.ComInterop
+{
+    internal class ConvertibleArgBuilder : ArgBuilder
+    {
+        internal ConvertibleArgBuilder()
+        {
         }
 
-        internal override Expression Marshal(Expression parameter) {
+        internal override Expression Marshal(Expression parameter)
+        {
             return Helpers.Convert(parameter, typeof(IConvertible));
         }
 
-        internal override Expression MarshalToRef(Expression parameter) {
+        internal override Expression MarshalToRef(Expression parameter)
+        {
             //we are not supporting convertible InOut
             throw Assert.Unreachable;
         }

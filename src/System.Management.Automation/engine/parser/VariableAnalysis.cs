@@ -11,7 +11,7 @@ using System.Reflection;
 
 namespace System.Management.Automation.Language
 {
-    static class VariablePathExtentions
+    internal static class VariablePathExtentions
     {
         static internal bool IsAnyLocal(this VariablePath variablePath)
         {
@@ -36,10 +36,10 @@ namespace System.Management.Automation.Language
         public List<Ast> AssociatedAsts { get; private set; }
     }
 
-    class FindAllVariablesVisitor : AstVisitor
+    internal class FindAllVariablesVisitor : AstVisitor
     {
-        private static readonly HashSet<string> hashOfPessimizingCmdlets = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        private static readonly string[] pessimizingCmdlets = new string[]
+        private static readonly HashSet<string> s_hashOfPessimizingCmdlets = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private static readonly string[] s_pessimizingCmdlets = new string[]
                                                           {
                                                               "New-Variable",
                                                               "Remove-Variable",
@@ -58,9 +58,9 @@ namespace System.Management.Automation.Language
 
         static FindAllVariablesVisitor()
         {
-            foreach (var cmdlet in pessimizingCmdlets)
+            foreach (var cmdlet in s_pessimizingCmdlets)
             {
-                hashOfPessimizingCmdlets.Add(cmdlet);
+                s_hashOfPessimizingCmdlets.Add(cmdlet);
             }
         }
 
@@ -111,9 +111,9 @@ namespace System.Management.Automation.Language
         private readonly Dictionary<string, VariableAnalysisDetails> _variables
             = new Dictionary<string, VariableAnalysisDetails>(StringComparer.OrdinalIgnoreCase);
 
-        FindAllVariablesVisitor(bool disableOptimizations, bool scriptCmdlet)
+        private FindAllVariablesVisitor(bool disableOptimizations, bool scriptCmdlet)
         {
-            this._disableOptimizations = disableOptimizations;
+            _disableOptimizations = disableOptimizations;
 
             var automaticVariables = SpecialVariables.AutomaticVariables;
             Diagnostics.Assert(Array.IndexOf(automaticVariables, SpecialVariables.Underbar) == (int)AutomaticVariable.Underbar,
@@ -249,7 +249,7 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitCommand(CommandAst commandAst)
         {
             var commandName = commandAst.CommandElements[0] as StringConstantExpressionAst;
-            if (commandName != null && hashOfPessimizingCmdlets.Contains(commandName.Value))
+            if (commandName != null && s_hashOfPessimizingCmdlets.Contains(commandName.Value))
             {
                 // TODO: psuedo-bind the command invocation to figure out the variable and only force that variable to be unoptimized
                 _disableOptimizations = true;
@@ -311,7 +311,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    class VariableAnalysis : ICustomAstVisitor
+    internal class VariableAnalysis : ICustomAstVisitor
     {
         // Tuple slots start at index 0.  >= 0 means a variable is allocated in the tuple.  -1 means we don't
         // we haven't analyzed a specific use of a variable and don't know what slot it might be assigned to yet.
@@ -326,7 +326,7 @@ namespace System.Management.Automation.Language
         // in these cases, we rely on the setter PSVariable.Value to handle those attributes.
         internal const int ForceDynamic = -2;
 
-        class LoopGotoTargets
+        private class LoopGotoTargets
         {
             internal LoopGotoTargets(string label, Block breakTarget, Block continueTarget)
             {
@@ -339,7 +339,7 @@ namespace System.Management.Automation.Language
             internal Block ContinueTarget { get; private set; }
         }
 
-        class Block
+        private class Block
         {
             internal readonly List<Ast> _asts = new List<Ast>();
             private readonly List<Block> _successors = new List<Block>();
@@ -348,7 +348,7 @@ namespace System.Management.Automation.Language
             internal object _visitData;
             internal bool _throws;
             internal bool _returns;
-            internal bool _unreachable { get; private set;  }
+            internal bool _unreachable { get; private set; }
 
             // Only Entry block, that can be constructed via NewEntryBlock() is reachable initially.
             // all other blocks are unreachable.
@@ -422,7 +422,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        class AssignmentTarget : Ast
+        private class AssignmentTarget : Ast
         {
             internal readonly ExpressionAst _targetAst;
             internal readonly string _variableName;
@@ -481,16 +481,16 @@ namespace System.Management.Automation.Language
         // constant though - it only contains variable names known to _always_ be allscope.  For other names, we need a special
         // check before choosing to run the optimized code or unoptimized (dotted) version which will correctly handle allscope
         // assignments.
-        private readonly static ConcurrentDictionary<string, bool> _allScopeVariables = new ConcurrentDictionary<string, bool>(1, 16, StringComparer.OrdinalIgnoreCase);
+        private readonly static ConcurrentDictionary<string, bool> s_allScopeVariables = new ConcurrentDictionary<string, bool>(1, 16, StringComparer.OrdinalIgnoreCase);
 
         internal static void NoteAllScopeVariable(string variableName)
         {
-            _allScopeVariables.GetOrAdd(variableName, true);
+            s_allScopeVariables.GetOrAdd(variableName, true);
         }
 
         internal static bool AnyVariablesCouldBeAllScope(Dictionary<string, int> variableNames)
         {
-            return variableNames.Any(keyValuePair => _allScopeVariables.ContainsKey(keyValuePair.Key));
+            return variableNames.Any(keyValuePair => s_allScopeVariables.ContainsKey(keyValuePair.Key));
         }
 
         private Dictionary<string, VariableAnalysisDetails> _variables;
@@ -571,7 +571,7 @@ namespace System.Management.Automation.Language
             va.AnalyzeImpl(ast, false, false);
             return va._exitBlock._predecessors.All(b => b._returns || b._throws || b._unreachable);
         }
- 
+
         private Tuple<Type, Dictionary<string, int>> AnalyzeImpl(IParameterMetadataProvider ast, bool disableOptimizations, bool scriptCmdlet)
         {
             _variables = FindAllVariablesVisitor.Visit(ast, disableOptimizations, scriptCmdlet, out _localsAllocated, out _disableOptimizations);
@@ -865,7 +865,7 @@ namespace System.Management.Automation.Language
             var analysisDetails = _variables[variableName];
             if (analysisDetails.LocalTupleIndex == VariableAnalysis.Unanalyzed)
             {
-                analysisDetails.LocalTupleIndex = _disableOptimizations || _allScopeVariables.ContainsKey(variableName)
+                analysisDetails.LocalTupleIndex = _disableOptimizations || s_allScopeVariables.ContainsKey(variableName)
                                                       ? VariableAnalysis.ForceDynamic
                                                       : _localsAllocated++;
             }
@@ -996,7 +996,7 @@ namespace System.Management.Automation.Language
             return VisitStatementBlock(statementBlockAst.Statements);
         }
 
-        object VisitStatementBlock(ReadOnlyCollection<StatementAst> statements)
+        private object VisitStatementBlock(ReadOnlyCollection<StatementAst> statements)
         {
             foreach (var stmt in statements)
             {
@@ -1336,7 +1336,7 @@ namespace System.Management.Automation.Language
             if (finallyFirstBlock != null)
             {
                 lastBlockInTry.FlowsTo(finallyFirstBlock);
-                
+
                 _currentBlock = finallyFirstBlock;
                 tryStatementAst.Finally.Accept(this);
                 _currentBlock.FlowsTo(afterTry);

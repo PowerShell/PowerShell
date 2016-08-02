@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
@@ -23,22 +24,22 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (int) timeout.TotalMinutes;
+                return (int)_timeout.TotalMinutes;
             }
             set
             {
                 // The transactions constructor treats a timeout of
                 // zero as infinite. So we fudge it to be a bit longer.
-                if(value == 0)
-                    timeout = TimeSpan.FromTicks(1);
+                if (value == 0)
+                    _timeout = TimeSpan.FromTicks(1);
                 else
-                    timeout = TimeSpan.FromMinutes(value);
-                
-                timeoutSpecified = true;
+                    _timeout = TimeSpan.FromMinutes(value);
+
+                _timeoutSpecified = true;
             }
         }
-        bool timeoutSpecified = false;
-        private TimeSpan timeout = TimeSpan.MinValue;
+        private bool _timeoutSpecified = false;
+        private TimeSpan _timeout = TimeSpan.MinValue;
 
         /// <summary>
         /// Gets or sets the flag to determine if this transaction can
@@ -47,10 +48,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         public SwitchParameter Independent
         {
-            get { return independent; }
-            set { independent = value; }
+            get { return _independent; }
+            set { _independent = value; }
         }
-        private SwitchParameter independent;
+        private SwitchParameter _independent;
 
         /// <summary>
         /// Gets or sets the rollback preference for this transaction.
@@ -58,48 +59,46 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         public RollbackSeverity RollbackPreference
         {
-            get { return rollbackPreference; }
-            set { rollbackPreference = value; }
+            get { return _rollbackPreference; }
+            set { _rollbackPreference = value; }
         }
-        private RollbackSeverity rollbackPreference = RollbackSeverity.Error;
-        
+        private RollbackSeverity _rollbackPreference = RollbackSeverity.Error;
+
         /// <summary>
         /// Creates a new transaction.
         /// </summary>
-        protected override void EndProcessing ()
+        protected override void EndProcessing()
         {
-            if(ShouldProcess(
+            if (ShouldProcess(
                 NavigationResources.TransactionResource,
                 NavigationResources.CreateAction))
             {
                 // Set the default timeout
-                if(! timeoutSpecified)
+                if (!_timeoutSpecified)
                 {
                     // See if we're being invoked directly at the
                     // command line. In that case, set the timeout to infinite.
-                    if(MyInvocation.CommandOrigin == CommandOrigin.Runspace)
+                    if (MyInvocation.CommandOrigin == CommandOrigin.Runspace)
                     {
-                        timeout = TimeSpan.MaxValue;
+                        _timeout = TimeSpan.MaxValue;
                     }
                     else
                     {
-                        timeout = TimeSpan.FromMinutes(30);
+                        _timeout = TimeSpan.FromMinutes(30);
                     }
                 }
-                
+
                 // Create the new transaction
-                if(independent)
+                if (_independent)
                 {
-                    this.Context.TransactionManager.CreateNew(rollbackPreference, timeout);
+                    this.Context.TransactionManager.CreateNew(_rollbackPreference, _timeout);
                 }
                 else
                 {
-                    this.Context.TransactionManager.CreateOrJoin(rollbackPreference, timeout);
+                    this.Context.TransactionManager.CreateOrJoin(_rollbackPreference, _timeout);
                 }
             }
         }
-
     } // StartTransactionCommand
-
 } // namespace Microsoft.PowerShell.Commands
 

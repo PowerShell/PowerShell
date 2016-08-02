@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Globalization;
 using System.Xml;
 using System.Text;
@@ -34,15 +35,15 @@ namespace System.Management.Automation
             // set user defined data
             if (helpObject.Properties["Component"] != null)
             {
-                this._component = helpObject.Properties["Component"].Value as string;
+                _component = helpObject.Properties["Component"].Value as string;
             }
             if (helpObject.Properties["Role"] != null)
             {
-                this._role = helpObject.Properties["Role"].Value as string;
+                _role = helpObject.Properties["Role"].Value as string;
             }
             if (helpObject.Properties["Functionality"] != null)
             {
-                this._functionality = helpObject.Properties["Functionality"].Value as string;
+                _functionality = helpObject.Properties["Functionality"].Value as string;
             }
         }
 
@@ -60,24 +61,24 @@ namespace System.Management.Automation
         {
             MamlNode mamlNode = new MamlNode(xmlNode);
             _fullHelpObject = mamlNode.PSObject;
-            
+
             this.Errors = mamlNode.Errors;
 
             // The type name hierarchy for mshObject doesn't necessary
             // reflect the hierarchy in source code. From display's point of 
             // view MamlCommandHelpInfo is derived from HelpInfo.
 
-            this._fullHelpObject.TypeNames.Clear();
+            _fullHelpObject.TypeNames.Clear();
             if (helpCategory == HelpCategory.DscResource)
             {
-                this._fullHelpObject.TypeNames.Add("DscResourceHelpInfo");
+                _fullHelpObject.TypeNames.Add("DscResourceHelpInfo");
             }
             else
             {
-                this._fullHelpObject.TypeNames.Add("MamlCommandHelpInfo");
-                this._fullHelpObject.TypeNames.Add("HelpInfo");
+                _fullHelpObject.TypeNames.Add("MamlCommandHelpInfo");
+                _fullHelpObject.TypeNames.Add("HelpInfo");
             }
-            
+
             this.ForwardHelpCategory = HelpCategory.Provider;
         }
 
@@ -87,13 +88,13 @@ namespace System.Management.Automation
         internal void OverrideProviderSpecificHelpWithGenericHelp(HelpInfo genericHelpInfo)
         {
             PSObject genericHelpMaml = genericHelpInfo.FullHelp;
-            MamlUtil.OverrideName(this._fullHelpObject, genericHelpMaml);
-            MamlUtil.OverridePSTypeNames(this._fullHelpObject, genericHelpMaml);
-            MamlUtil.PrependSyntax(this._fullHelpObject, genericHelpMaml);
-            MamlUtil.PrependDetailedDescription(this._fullHelpObject, genericHelpMaml);
-            MamlUtil.OverrideParameters(this._fullHelpObject, genericHelpMaml);
-            MamlUtil.PrependNotes(this._fullHelpObject, genericHelpMaml);
-            MamlUtil.AddCommonProperties(this._fullHelpObject, genericHelpMaml);
+            MamlUtil.OverrideName(_fullHelpObject, genericHelpMaml);
+            MamlUtil.OverridePSTypeNames(_fullHelpObject, genericHelpMaml);
+            MamlUtil.PrependSyntax(_fullHelpObject, genericHelpMaml);
+            MamlUtil.PrependDetailedDescription(_fullHelpObject, genericHelpMaml);
+            MamlUtil.OverrideParameters(_fullHelpObject, genericHelpMaml);
+            MamlUtil.PrependNotes(_fullHelpObject, genericHelpMaml);
+            MamlUtil.AddCommonProperties(_fullHelpObject, genericHelpMaml);
         }
 
         #region Basic Help Properties
@@ -206,9 +207,9 @@ namespace System.Management.Automation
 
         internal void SetAdditionalDataFromHelpComment(string component, string functionality, string role)
         {
-            this._component = component;
-            this._functionality = functionality;
-            this._role = role;
+            _component = component;
+            _functionality = functionality;
+            _role = role;
 
             // component,role,functionality is part of common help..
             // Update these properties as we have new data now..
@@ -227,17 +228,17 @@ namespace System.Management.Automation
             string propertyValue;
             if (userDefinedData.Properties.TryGetValue("component", out propertyValue))
             {
-                this._component = propertyValue;
+                _component = propertyValue;
             }
 
             if (userDefinedData.Properties.TryGetValue("role", out propertyValue))
             {
-                this._role = propertyValue;
+                _role = propertyValue;
             }
 
             if (userDefinedData.Properties.TryGetValue("functionality", out propertyValue))
             {
-                this._functionality = propertyValue;
+                _functionality = propertyValue;
             }
 
             // component,role,functionality is part of common help..
@@ -327,9 +328,9 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            return ExtractText(PSObject.AsPSObject(psObject.Properties[propertyName].Value));      
+            return ExtractText(PSObject.AsPSObject(psObject.Properties[propertyName].Value));
         }
-        
+
         /// <summary>
         /// Given a PSObject, this method will traverse through the objects properties,
         /// extracts content from properities that are of type System.String, appends them
@@ -434,13 +435,13 @@ namespace System.Management.Automation
 
         internal MamlCommandHelpInfo Copy()
         {
-            MamlCommandHelpInfo result = new MamlCommandHelpInfo(this._fullHelpObject.Copy(), this.HelpCategory);
+            MamlCommandHelpInfo result = new MamlCommandHelpInfo(_fullHelpObject.Copy(), this.HelpCategory);
             return result;
         }
 
         internal MamlCommandHelpInfo Copy(HelpCategory newCategoryToUse)
         {
-            MamlCommandHelpInfo result = new MamlCommandHelpInfo(this._fullHelpObject.Copy(), newCategoryToUse);
+            MamlCommandHelpInfo result = new MamlCommandHelpInfo(_fullHelpObject.Copy(), newCategoryToUse);
             result.FullHelp.Properties["Category"].Value = newCategoryToUse;
             return result;
         }

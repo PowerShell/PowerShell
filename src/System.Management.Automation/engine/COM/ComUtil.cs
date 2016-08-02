@@ -53,7 +53,6 @@ namespace System.Management.Automation
 
             for (int i = 0; i < funcdesc.cParams; i++)
             {
-
                 COM.ELEMDESC ElementDescription;
                 int ElementDescriptionArrayByteOffset;
                 IntPtr ElementDescriptionPointer;
@@ -61,8 +60,8 @@ namespace System.Management.Automation
                 ElementDescription = new COM.ELEMDESC();
                 ElementDescriptionArrayByteOffset = i * ElementDescriptionSize;
 
-//Disable PRefast warning for converting to int32 and converting back into intptr. 
-//Code below takes into account 32 bit vs 64 bit conversions
+                //Disable PRefast warning for converting to int32 and converting back into intptr. 
+                //Code below takes into account 32 bit vs 64 bit conversions
 #pragma warning disable 56515
                 if (IntPtr.Size == 4)
                 {
@@ -73,7 +72,7 @@ namespace System.Management.Automation
                     ElementDescriptionPointer = (IntPtr)(ElementDescriptionArrayPtr.ToInt64() + ElementDescriptionArrayByteOffset);
                 }
 #pragma warning restore 56515
-                
+
                 ElementDescription = ClrFacade.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
 
                 string paramstring = GetStringFromTypeDesc(typeinfo, ElementDescription.tdesc);
@@ -91,7 +90,6 @@ namespace System.Management.Automation
                         builder.Append(", ");
                     }
                 }
-
             }
             builder.Append(")");
 
@@ -105,7 +103,7 @@ namespace System.Management.Automation
         /// <param name="typeinfo">ITypeInfo interface of the type</param>
         /// <param name="funcdesc">FuncDesc of property of method</param>
         /// <returns>name of the method or property</returns>
-        internal  static string GetNameFromFuncDesc(COM.ITypeInfo typeinfo, COM.FUNCDESC funcdesc)
+        internal static string GetNameFromFuncDesc(COM.ITypeInfo typeinfo, COM.FUNCDESC funcdesc)
         {
             //Get the method or property name.
             String strName, strDoc, strHelp;
@@ -135,10 +133,9 @@ namespace System.Management.Automation
                 return strName;
             }
             return "UnknownCustomtype";
-
         }
 
-// Disable obsolete warning about VarEnum in CoreCLR
+        // Disable obsolete warning about VarEnum in CoreCLR
 #pragma warning disable 618
 
         /// <summary>
@@ -194,14 +191,14 @@ namespace System.Management.Automation
 
                 case VarEnum.VT_UI2:
                     return "ushort";
-                    
+
                 case VarEnum.VT_UI4:
                 case VarEnum.VT_UINT:
                     return "uint";
-                    
+
                 case VarEnum.VT_UI8:
                     return "uint64";
-                    
+
                 case VarEnum.VT_BSTR:
                 case VarEnum.VT_LPSTR:
                 case VarEnum.VT_LPWSTR:
@@ -212,7 +209,7 @@ namespace System.Management.Automation
 
                 case VarEnum.VT_BOOL:
                     return "bool";
-                    
+
                 case VarEnum.VT_CY:
                     return "currency";
 
@@ -221,10 +218,10 @@ namespace System.Management.Automation
 
                 case VarEnum.VT_CLSID:
                     return "clsid";
-                    
+
                 case VarEnum.VT_DISPATCH:
                     return "IDispatch";
-                    
+
                 case VarEnum.VT_UNKNOWN:
                     return "IUnknown";
 
@@ -233,7 +230,7 @@ namespace System.Management.Automation
 
                 case VarEnum.VT_VOID:
                     return "void";
-                    
+
                 case VarEnum.VT_ARRAY:
                     return "object[]";
 
@@ -263,7 +260,7 @@ namespace System.Management.Automation
         /// </summary>
         private static ComMethodInformation GetMethodInformation(COM.FUNCDESC funcdesc, bool skipLastParameter)
         {
-            Type returntype  =  GetTypeFromTypeDesc(funcdesc.elemdescFunc.tdesc);
+            Type returntype = GetTypeFromTypeDesc(funcdesc.elemdescFunc.tdesc);
             ParameterInformation[] parameters = GetParameterInformation(funcdesc, skipLastParameter);
             bool hasOptional = false;
             foreach (ParameterInformation p in parameters)
@@ -316,7 +313,7 @@ namespace System.Management.Automation
                 }
 
 #pragma warning enable 56515
-                
+
                 ElementDescription = ClrFacade.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
 
                 //get the type of parameter
@@ -358,4 +355,4 @@ namespace System.Management.Automation
             return returnValue;
         }
     }
-} 
+}

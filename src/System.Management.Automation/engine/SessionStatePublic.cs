@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
@@ -39,8 +40,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("sessionState");
             }
 
-            this.sessionState = sessionState;
-
+            _sessionState = sessionState;
 
 #if RELATIONSHIP_SUPPORTED
     // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
@@ -73,14 +73,14 @@ namespace System.Management.Automation
 
             if (createAsChild)
             {
-                sessionState = new SessionStateInternal(context.EngineSessionState, linkToGlobal, context);
+                _sessionState = new SessionStateInternal(context.EngineSessionState, linkToGlobal, context);
             }
             else
             {
-                sessionState = new SessionStateInternal(context);
+                _sessionState = new SessionStateInternal(context);
             }
 
-            sessionState.PublicSessionState = this;
+            _sessionState.PublicSessionState = this;
         } // SessionState
 
 
@@ -92,9 +92,9 @@ namespace System.Management.Automation
             ExecutionContext ecFromTLS = LocalPipeline.GetExecutionContextFromTLS();
             if (ecFromTLS == null)
                 throw new InvalidOperationException("ExecutionContext");
-            
-            sessionState = new SessionStateInternal(ecFromTLS);
-            sessionState.PublicSessionState = this;
+
+            _sessionState = new SessionStateInternal(ecFromTLS);
+            _sessionState.PublicSessionState = this;
         }
 
         #endregion Constructors
@@ -108,11 +108,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (drive == null)
+                if (_drive == null)
                 {
-                    this.drive = new DriveManagementIntrinsics(sessionState);
+                    _drive = new DriveManagementIntrinsics(_sessionState);
                 }
-                return drive;
+                return _drive;
             }
         } // Drive
 
@@ -123,11 +123,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (provider == null)
+                if (_provider == null)
                 {
-                    provider = new CmdletProviderManagementIntrinsics(sessionState);
+                    _provider = new CmdletProviderManagementIntrinsics(_sessionState);
                 }
-                return provider;
+                return _provider;
             } // get
         } // Provider
 
@@ -138,11 +138,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (path == null)
+                if (_path == null)
                 {
-                    path = new PathIntrinsics(sessionState);
+                    _path = new PathIntrinsics(_sessionState);
                 }
-                return path;
+                return _path;
             } // get
         } // Path
 
@@ -153,11 +153,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (variable == null)
+                if (_variable == null)
                 {
-                    variable = new PSVariableIntrinsics(sessionState);
+                    _variable = new PSVariableIntrinsics(_sessionState);
                 }
-                return variable;
+                return _variable;
             } // get
         } // PSVariable
 
@@ -168,11 +168,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return sessionState.LanguageMode;
+                return _sessionState.LanguageMode;
             }
             set
             {
-                sessionState.LanguageMode = value;
+                _sessionState.LanguageMode = value;
             }
         }
 
@@ -183,7 +183,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return sessionState.UseFullLanguageModeInDebugger;
+                return _sessionState.UseFullLanguageModeInDebugger;
             }
         }
 
@@ -193,7 +193,7 @@ namespace System.Management.Automation
         /// </summary>
         public List<string> Scripts
         {
-            get { return sessionState.Scripts; }
+            get { return _sessionState.Scripts; }
         }
 
         /// <summary>
@@ -202,7 +202,7 @@ namespace System.Management.Automation
         /// </summary>
         public List<string> Applications
         {
-            get { return sessionState.Applications; }
+            get { return _sessionState.Applications; }
         }
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace System.Management.Automation
         /// </summary>
         public PSModuleInfo Module
         {
-            get { return sessionState.Module; }
+            get { return _sessionState.Module; }
         }
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace System.Management.Automation
         /// </summary>
         public ProviderIntrinsics InvokeProvider
         {
-            get { return sessionState.InvokeProvider; }
+            get { return _sessionState.InvokeProvider; }
         }
 
         /// <summary>
@@ -226,7 +226,7 @@ namespace System.Management.Automation
         /// </summary>
         public CommandInvocationIntrinsics InvokeCommand
         {
-            get { return sessionState.ExecutionContext.EngineIntrinsics.InvokeCommand; }
+            get { return _sessionState.ExecutionContext.EngineIntrinsics.InvokeCommand; }
         }
 
         /// <summary>
@@ -239,7 +239,7 @@ namespace System.Management.Automation
         public static void ThrowIfNotVisible(CommandOrigin origin, object valueToCheck)
         {
             SessionStateException exception;
-            if (! IsVisible(origin, valueToCheck))
+            if (!IsVisible(origin, valueToCheck))
             {
                 PSVariable sv = valueToCheck as PSVariable;
                 if (sv != null)
@@ -380,17 +380,17 @@ namespace System.Management.Automation
         /// 
         internal SessionStateInternal Internal
         {
-            get {return sessionState;}
+            get { return _sessionState; }
         } // Internal
         #endregion Internal methods
 
         #region private data
 
-        private SessionStateInternal sessionState;
-        private DriveManagementIntrinsics drive;
-        private CmdletProviderManagementIntrinsics provider;
-        private PathIntrinsics path;
-        private PSVariableIntrinsics variable;
+        private SessionStateInternal _sessionState;
+        private DriveManagementIntrinsics _drive;
+        private CmdletProviderManagementIntrinsics _provider;
+        private PathIntrinsics _path;
+        private PSVariableIntrinsics _variable;
 
 #if RELATIONSHIP_SUPPORTED
         // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release

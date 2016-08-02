@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 namespace System.Management.Automation.Internal
 {
     using System;
@@ -23,11 +24,11 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="stream">the stream to read</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null</exception>
-        public ObjectReaderBase ([In, Out] ObjectStreamBase stream)
+        public ObjectReaderBase([In, Out] ObjectStreamBase stream)
         {
             if (stream == null)
             {
-                throw new ArgumentNullException ("stream", "stream may not be null");
+                throw new ArgumentNullException("stream", "stream may not be null");
             }
 
             _stream = stream;
@@ -48,7 +49,7 @@ namespace System.Management.Automation.Internal
                     InternalDataReady += value;
                     if (firstRegistrant)
                     {
-                        _stream.DataReady += new EventHandler (this.OnDataReady);
+                        _stream.DataReady += new EventHandler(this.OnDataReady);
                     }
                 }
             }
@@ -59,7 +60,7 @@ namespace System.Management.Automation.Internal
                     InternalDataReady -= value;
                     if (null == InternalDataReady)
                     {
-                        _stream.DataReady -= new EventHandler (this.OnDataReady);
+                        _stream.DataReady -= new EventHandler(this.OnDataReady);
                     }
                 }
             }
@@ -160,10 +161,10 @@ namespace System.Management.Automation.Internal
         /// <exception cref="ObjectDisposedException">
         /// The stream is already disposed
         /// </exception>
-        public override void Close ()
+        public override void Close()
         {
             // 2003/09/02-JonN added call to close underlying stream
-            _stream.Close ();
+            _stream.Close();
         }
 
         #endregion Public Methods
@@ -175,7 +176,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="sender">The stream raising the event</param>
         /// <param name="args">standard event args.</param>
-        private void OnDataReady (object sender, EventArgs args)
+        private void OnDataReady(object sender, EventArgs args)
         {
             // call any event handlers on this, replacing the 
             // ObjectStream sender with 'this' since receivers
@@ -225,7 +226,6 @@ namespace System.Management.Automation.Internal
         protected abstract void Dispose(bool disposing);
 
         #endregion IDisposable
-
     } // ObjectReaderBase
 
     /// <summary>
@@ -242,9 +242,9 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="stream">the stream to read</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null</exception>
-        public ObjectReader ([In, Out] ObjectStream stream)
+        public ObjectReader([In, Out] ObjectStream stream)
             : base(stream)
-        {}
+        { }
         #endregion ctor
 
         /// <summary>
@@ -256,9 +256,9 @@ namespace System.Management.Automation.Internal
         /// This method blocks if the number of objects in the stream is less than <paramref name="count"/>
         /// and the stream is not closed.
         /// </remarks>
-        public override Collection<object> Read (int count)
+        public override Collection<object> Read(int count)
         {
-            return _stream.Read (count);
+            return _stream.Read(count);
         }
 
         /// <summary>
@@ -266,9 +266,9 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <returns>the next object in the stream</returns>
         /// <remarks>This method blocks if the stream is empty</remarks>
-        public override object Read ()
+        public override object Read()
         {
-            return _stream.Read ();
+            return _stream.Read();
         }
 
         /// <summary>
@@ -278,9 +278,9 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// If the stream is empty, an empty collection is returned.
         /// </remarks>
-        public override Collection<object> ReadToEnd ()
+        public override Collection<object> ReadToEnd()
         {
-            return _stream.ReadToEnd ();
+            return _stream.ReadToEnd();
         }
 
         /// <summary>
@@ -293,9 +293,9 @@ namespace System.Management.Automation.Internal
         /// stream is acquired.  If there are no objects in the stream, 
         /// an empty collection is returned.
         /// </remarks>
-        public override Collection<object> NonBlockingRead ()
+        public override Collection<object> NonBlockingRead()
         {
-            return _stream.NonBlockingRead (Int32.MaxValue);
+            return _stream.NonBlockingRead(Int32.MaxValue);
         }
 
         /// <summary>
@@ -311,18 +311,18 @@ namespace System.Management.Automation.Internal
         /// <param name="maxRequested">
         /// Return no more than maxRequested objects.
         /// </param>
-        public override Collection<object> NonBlockingRead (int maxRequested)
+        public override Collection<object> NonBlockingRead(int maxRequested)
         {
-            return _stream.NonBlockingRead (maxRequested);
+            return _stream.NonBlockingRead(maxRequested);
         }
 
         /// <summary>
         /// Peek the next object
         /// </summary>
         /// <returns>The next object in the stream or ObjectStream.EmptyObject if the stream is empty</returns>
-        public override object Peek ()
+        public override object Peek()
         {
-            return _stream.Peek ();
+            return _stream.Peek();
         }
 
         /// <summary>
@@ -352,9 +352,9 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="stream">the stream to read</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null</exception>
-        public PSObjectReader ([In, Out] ObjectStream stream)
+        public PSObjectReader([In, Out] ObjectStream stream)
             : base(stream)
-        {}
+        { }
         #endregion ctor
 
         /// <summary>
@@ -366,9 +366,9 @@ namespace System.Management.Automation.Internal
         /// This method blocks if the number of objects in the stream is less than <paramref name="count"/>
         /// and the stream is not closed.
         /// </remarks>
-        public override Collection<PSObject> Read (int count)
+        public override Collection<PSObject> Read(int count)
         {
-            return MakePSObjectCollection (_stream.Read (count));
+            return MakePSObjectCollection(_stream.Read(count));
         }
 
         /// <summary>
@@ -376,9 +376,9 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <returns>the next PSObject in the stream</returns>
         /// <remarks>This method blocks if the stream is empty</remarks>
-        public override PSObject Read ()
+        public override PSObject Read()
         {
-            return MakePSObject (_stream.Read ());
+            return MakePSObject(_stream.Read());
         }
 
         /// <summary>
@@ -388,9 +388,9 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// If the stream is empty, an empty collection is returned.
         /// </remarks>
-        public override Collection<PSObject> ReadToEnd ()
+        public override Collection<PSObject> ReadToEnd()
         {
-            return MakePSObjectCollection (_stream.ReadToEnd ());
+            return MakePSObjectCollection(_stream.ReadToEnd());
         }
 
         /// <summary>
@@ -403,9 +403,9 @@ namespace System.Management.Automation.Internal
         /// stream is acquired.  If there are no objects in the stream, 
         /// an empty collection is returned.
         /// </remarks>
-        public override Collection<PSObject> NonBlockingRead ()
+        public override Collection<PSObject> NonBlockingRead()
         {
-            return MakePSObjectCollection (_stream.NonBlockingRead (Int32.MaxValue));
+            return MakePSObjectCollection(_stream.NonBlockingRead(Int32.MaxValue));
         }
 
         /// <summary>
@@ -421,18 +421,18 @@ namespace System.Management.Automation.Internal
         /// <param name="maxRequested">
         /// Return no more than maxRequested objects.
         /// </param>
-        public override Collection<PSObject> NonBlockingRead (int maxRequested)
+        public override Collection<PSObject> NonBlockingRead(int maxRequested)
         {
-            return MakePSObjectCollection (_stream.NonBlockingRead (maxRequested));
+            return MakePSObjectCollection(_stream.NonBlockingRead(maxRequested));
         }
 
         /// <summary>
         /// Peek the next PSObject
         /// </summary>
         /// <returns>The next PSObject in the stream or ObjectStream.EmptyObject if the stream is empty</returns>
-        public override PSObject Peek ()
+        public override PSObject Peek()
         {
-            return MakePSObject (_stream.Peek ());
+            return MakePSObject(_stream.Peek());
         }
 
         /// <summary>
@@ -448,27 +448,27 @@ namespace System.Management.Automation.Internal
         }
 
         #region Private
-        private static PSObject MakePSObject (object o)
+        private static PSObject MakePSObject(object o)
         {
             if (null == o)
                 return null;
 
-            return PSObject.AsPSObject (o);
+            return PSObject.AsPSObject(o);
         }
 
         // It might ultimately be more efficient to
         // make ObjectStream generic and convert the objects to PSObject
         // before inserting them into the initial Collection, so that we
         // don't have to convert the collection later.
-        private static Collection<PSObject> MakePSObjectCollection (
+        private static Collection<PSObject> MakePSObjectCollection(
             Collection<object> coll)
         {
             if (null == coll)
                 return null;
-            Collection<PSObject> retval = new Collection<PSObject> ();
+            Collection<PSObject> retval = new Collection<PSObject>();
             foreach (object o in coll)
             {
-                retval.Add (MakePSObject (o));
+                retval.Add(MakePSObject(o));
             }
             return retval;
         }
@@ -484,13 +484,13 @@ namespace System.Management.Automation.Internal
     /// commands concurrently. 
     /// Only Read() operation is supported currently.
     /// </remarks>
-    internal class PSDataCollectionReader<DataStoreType, ReturnType> 
-        : ObjectReaderBase<ReturnType> 
+    internal class PSDataCollectionReader<DataStoreType, ReturnType>
+        : ObjectReaderBase<ReturnType>
     {
         #region Private Data
 
-        private PSDataCollectionEnumerator<DataStoreType> enumerator;
-        
+        private PSDataCollectionEnumerator<DataStoreType> _enumerator;
+
         #endregion
 
         #region ctor
@@ -504,7 +504,7 @@ namespace System.Management.Automation.Internal
         {
             System.Management.Automation.Diagnostics.Assert(null != stream.ObjectStore,
                 "Stream should have a valid data store");
-            enumerator = (PSDataCollectionEnumerator<DataStoreType>)stream.ObjectStore.GetEnumerator();
+            _enumerator = (PSDataCollectionEnumerator<DataStoreType>)stream.ObjectStore.GetEnumerator();
         }
 
         #endregion ctor
@@ -532,12 +532,12 @@ namespace System.Management.Automation.Internal
         public override ReturnType Read()
         {
             object result = AutomationNull.Value;
-            if (enumerator.MoveNext())
+            if (_enumerator.MoveNext())
             {
-                result = enumerator.Current;
+                result = _enumerator.Current;
             }
 
-            return ConvertToReturnType(result); 
+            return ConvertToReturnType(result);
         }
 
         /// <summary>
@@ -574,7 +574,7 @@ namespace System.Management.Automation.Internal
             {
                 throw PSTraceSource.NewArgumentOutOfRangeException("maxRequested", maxRequested);
             }
-         
+
             if (maxRequested == 0)
             {
                 return new Collection<ReturnType>();
@@ -582,12 +582,12 @@ namespace System.Management.Automation.Internal
             Collection<ReturnType> results = new Collection<ReturnType>();
             int readCount = maxRequested;
 
-            while (readCount > 0)            
+            while (readCount > 0)
             {
-                if (enumerator.MoveNext(false))
+                if (_enumerator.MoveNext(false))
                 {
-                   results.Add(ConvertToReturnType(enumerator.Current));
-                   continue;
+                    results.Add(ConvertToReturnType(_enumerator.Current));
+                    continue;
                 }
 
                 break;
@@ -630,7 +630,6 @@ namespace System.Management.Automation.Internal
             System.Management.Automation.Diagnostics.Assert(false,
                 "ReturnType should be either object or PSObject only");
             throw PSTraceSource.NewNotSupportedException();
-        
         }
     }
 
@@ -648,9 +647,9 @@ namespace System.Management.Automation.Internal
     {
         #region Private Data
 
-        private PSDataCollection<DataStoreType> datastore;
-        private String computerName;
-        private Guid runspaceId;
+        private PSDataCollection<DataStoreType> _datastore;
+        private String _computerName;
+        private Guid _runspaceId;
 
         #endregion Private Data
 
@@ -667,9 +666,9 @@ namespace System.Management.Automation.Internal
         {
             System.Management.Automation.Diagnostics.Assert(null != stream.ObjectStore,
                 "Stream should have a valid data store");
-            datastore = stream.ObjectStore;
-            this.computerName = computerName;
-            this.runspaceId = runspaceId;
+            _datastore = stream.ObjectStore;
+            _computerName = computerName;
+            _runspaceId = runspaceId;
         }
 
         #endregion ctor
@@ -682,7 +681,7 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                return computerName;
+                return _computerName;
             }
         }
 
@@ -694,7 +693,7 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                return runspaceId;
+                return _runspaceId;
             }
         }
 
@@ -721,9 +720,9 @@ namespace System.Management.Automation.Internal
         public override ReturnType Read()
         {
             object result = AutomationNull.Value;
-            if (datastore.Count > 0)
+            if (_datastore.Count > 0)
             {
-                Collection<DataStoreType> resultCollection = datastore.ReadAndRemove(1);
+                Collection<DataStoreType> resultCollection = _datastore.ReadAndRemove(1);
 
                 // ReadAndRemove returns a Collection<DataStoreType> type but we 
                 // just want the single object contained in the collection.
@@ -780,9 +779,9 @@ namespace System.Management.Automation.Internal
 
             while (readCount > 0)
             {
-                if (datastore.Count > 0)
+                if (_datastore.Count > 0)
                 {
-                    results.Add(ConvertToReturnType((datastore.ReadAndRemove(1))[0]));
+                    results.Add(ConvertToReturnType((_datastore.ReadAndRemove(1))[0]));
                     readCount--;
                     continue;
                 }
@@ -820,7 +819,6 @@ namespace System.Management.Automation.Internal
             System.Management.Automation.Diagnostics.Assert(false,
                 "ReturnType should be either object or PSObject only");
             throw PSTraceSource.NewNotSupportedException();
-
         }
 
         #region IDisposable
@@ -833,7 +831,7 @@ namespace System.Management.Automation.Internal
         {
             if (disposing)
             {
-                datastore.Dispose();                
+                _datastore.Dispose();
             }
         }
 

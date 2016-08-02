@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Host;
@@ -43,7 +44,7 @@ namespace System.Management.Automation.Runspaces
         {
             PSHost host = new DefaultHost(CultureInfo.CurrentCulture, CultureInfo.CurrentUICulture);
 
-            return CreateRunspace( host );
+            return CreateRunspace(host);
         }
 
         /// <summary>
@@ -68,7 +69,7 @@ namespace System.Management.Automation.Runspaces
 
             return CreateRunspace(host, RunspaceConfiguration.Create());
         }
-        
+
         /// <summary>
         /// Creates a runspace using <see cref="DefaultHost"/>
         /// </summary>
@@ -182,7 +183,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="ArgumentNullException">
         /// Thrown when initialSessionState is null
         /// </exception>    
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")] 
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
         public static Runspace CreateRunspace(PSHost host, InitialSessionState initialSessionState)
         {
             if (host == null)
@@ -242,7 +243,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public static RunspacePool CreateRunspacePool()
         {
-            return CreateRunspacePool(1, 1, 
+            return CreateRunspacePool(1, 1,
                 RunspaceConfiguration.Create(),
                 new DefaultHost
                 (
@@ -271,7 +272,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         public static RunspacePool CreateRunspacePool(int minRunspaces, int maxRunspaces)
         {
-            return CreateRunspacePool(minRunspaces, maxRunspaces, 
+            return CreateRunspacePool(minRunspaces, maxRunspaces,
                 RunspaceConfiguration.Create(),
                 new DefaultHost
                 (
@@ -360,7 +361,7 @@ namespace System.Management.Automation.Runspaces
         /// Maximum runspaces is less than 1.
         /// Minimum runspaces is less than 1.
         /// </exception>
-        private static RunspacePool CreateRunspacePool(int minRunspaces, int maxRunspaces, 
+        private static RunspacePool CreateRunspacePool(int minRunspaces, int maxRunspaces,
             RunspaceConfiguration runspaceConfiguration, PSHost host)
         {
             return new RunspacePool(minRunspaces,
@@ -571,8 +572,8 @@ namespace System.Management.Automation.Runspaces
         public static RunspacePool CreateRunspacePool(int minRunspaces,
             int maxRunspaces, RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable, PSPrimitiveDictionary applicationArguments)
         {
-            if ((!(connectionInfo is WSManConnectionInfo)) && 
-                (!(connectionInfo is NewProcessConnectionInfo)) && 
+            if ((!(connectionInfo is WSManConnectionInfo)) &&
+                (!(connectionInfo is NewProcessConnectionInfo)) &&
                 (!(connectionInfo is NamedPipeConnectionInfo)) &&
                 (!(connectionInfo is VMConnectionInfo)) &&
                 (!(connectionInfo is ContainerConnectionInfo)))
@@ -584,7 +585,7 @@ namespace System.Management.Automation.Runspaces
             {
                 RemotingCommandUtil.CheckHostRemotingPrerequisites();
             }
-		    
+
             return new RunspacePool(minRunspaces, maxRunspaces, typeTable, host, applicationArguments, connectionInfo);
         }
 
@@ -659,8 +660,8 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public static Runspace CreateRunspace(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable, PSPrimitiveDictionary applicationArguments, string name)
         {
-            if ((!(connectionInfo is WSManConnectionInfo)) && 
-                (!(connectionInfo is NewProcessConnectionInfo)) && 
+            if ((!(connectionInfo is WSManConnectionInfo)) &&
+                (!(connectionInfo is NewProcessConnectionInfo)) &&
                 (!(connectionInfo is NamedPipeConnectionInfo)) &&
                 (!(connectionInfo is VMConnectionInfo)) &&
                 (!(connectionInfo is ContainerConnectionInfo)))
@@ -710,7 +711,7 @@ namespace System.Management.Automation.Runspaces
         {
             NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(null);
 
-            return CreateRunspace(connectionInfo, null,typeTable);
+            return CreateRunspace(connectionInfo, null, typeTable);
         }
 
         /// <summary>
@@ -721,13 +722,12 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public static Runspace CreateOutOfProcessRunspace(TypeTable typeTable, PowerShellProcessInstance processInstance)
         {
-            NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(null) {Process = processInstance};
+            NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(null) { Process = processInstance };
 
             return CreateRunspace(connectionInfo, null, typeTable);
         }
 
         #endregion V3 Extensions
     }
-
 }
 

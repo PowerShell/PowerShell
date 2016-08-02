@@ -23,8 +23,8 @@ namespace Microsoft.PowerShell.Cmdletization
             return mb;
         }
 
-        private static Lazy<ModuleBuilder> _moduleBuilder = new Lazy<ModuleBuilder>(CreateModuleBuilder, isThreadSafe: true);
-        private static object _moduleBuilderUsageLock = new object();
+        private static Lazy<ModuleBuilder> s_moduleBuilder = new Lazy<ModuleBuilder>(CreateModuleBuilder, isThreadSafe: true);
+        private static object s_moduleBuilderUsageLock = new object();
 
         internal static string GetEnumFullName(EnumMetadataEnum enumMetadata)
         {
@@ -45,9 +45,9 @@ namespace Microsoft.PowerShell.Cmdletization
                 underlyingType = typeof(Int32);
             }
 
-            ModuleBuilder mb = _moduleBuilder.Value;
+            ModuleBuilder mb = s_moduleBuilder.Value;
             EnumBuilder eb;
-            lock (_moduleBuilderUsageLock)
+            lock (s_moduleBuilderUsageLock)
             {
                 eb = mb.DefineEnum(fullEnumName, TypeAttributes.Public, underlyingType);
             }

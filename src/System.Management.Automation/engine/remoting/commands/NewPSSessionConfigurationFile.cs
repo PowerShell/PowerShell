@@ -38,14 +38,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return path;
+                return _path;
             }
             set
             {
-                path = value;
+                _path = value;
             }
         }
-        private string path;
+        private string _path;
 
         /// <summary>
         /// Configuration file schema version
@@ -56,14 +56,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return schemaVersion;
+                return _schemaVersion;
             }
             set
             {
-                schemaVersion = value;
+                _schemaVersion = value;
             }
         }
-        private Version schemaVersion = new Version("2.0.0.0");
+        private Version _schemaVersion = new Version("2.0.0.0");
 
         /// <summary>
         /// Configuration file GUID
@@ -73,14 +73,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return guid;
+                return _guid;
             }
             set
             {
-                guid = value;
+                _guid = value;
             }
         }
-        private Guid guid = Guid.NewGuid();
+        private Guid _guid = Guid.NewGuid();
 
         /// <summary>
         /// Author of the configuration file
@@ -90,14 +90,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return author;
+                return _author;
             }
             set
             {
-                author = value;
+                _author = value;
             }
         }
-        private string author;
+        private string _author;
 
         /// <summary>
         /// Description
@@ -107,14 +107,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return description;
+                return _description;
             }
             set
             {
-                description = value;
+                _description = value;
             }
         }
-        private string description;
+        private string _description;
 
         /// <summary>
         /// Company name
@@ -124,14 +124,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return companyName;
+                return _companyName;
             }
             set
             {
-                companyName = value;
+                _companyName = value;
             }
         }
-        private string companyName;
+        private string _companyName;
 
         /// <summary>
         /// Copyright information
@@ -141,14 +141,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return copyright;
+                return _copyright;
             }
             set
             {
-                copyright = value;
+                _copyright = value;
             }
         }
-        private string copyright;
+        private string _copyright;
 
         /// <summary>
         /// Specifies type of initial session state to use.
@@ -158,14 +158,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return sessionType;
+                return _sessionType;
             }
             set
             {
-                sessionType = value;
+                _sessionType = value;
             }
         }
-        private SessionType sessionType = SessionType.Default;
+        private SessionType _sessionType = SessionType.Default;
 
         /// <summary>
         /// Specifies the directory for transcripts to be placed.
@@ -175,14 +175,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return transcriptDirectory;
+                return _transcriptDirectory;
             }
             set
             {
-                transcriptDirectory = value;
+                _transcriptDirectory = value;
             }
         }
-        private string transcriptDirectory = null;
+        private string _transcriptDirectory = null;
 
         /// <summary>
         /// Specifies whether to run this configuration under a virtual account.
@@ -203,8 +203,8 @@ namespace Microsoft.PowerShell.Commands
         /// not visible in the session.
         /// </summary>
         [Parameter()]
-        public SwitchParameter MountUserDrive 
-        { 
+        public SwitchParameter MountUserDrive
+        {
             get;
             set;
         }
@@ -245,14 +245,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return scriptsToProcess;
+                return _scriptsToProcess;
             }
             set
             {
-                scriptsToProcess = value;
+                _scriptsToProcess = value;
             }
         }
-        private string[] scriptsToProcess = Utils.EmptyArray<string>();
+        private string[] _scriptsToProcess = Utils.EmptyArray<string>();
 
         /// <summary>
         /// Role definitions for this session configuration (Role name -> Role capability)
@@ -263,14 +263,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return roleDefinitions;
+                return _roleDefinitions;
             }
             set
             {
-                roleDefinitions = value;
+                _roleDefinitions = value;
             }
         }
-        private IDictionary roleDefinitions;
+        private IDictionary _roleDefinitions;
 
         /// <summary>
         /// Specifies account groups that are membership requirements for this session
@@ -279,10 +279,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public IDictionary RequiredGroups
         {
-            get { return requiredGroups; }
-            set { requiredGroups = value; }
+            get { return _requiredGroups; }
+            set { _requiredGroups = value; }
         }
-        private IDictionary requiredGroups;
+        private IDictionary _requiredGroups;
 
         /// <summary>
         /// Languange mode
@@ -292,16 +292,16 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return languageMode;
+                return _languageMode;
             }
             set
             {
-                languageMode = value;
-                isLanguageModeSpecified = true;
+                _languageMode = value;
+                _isLanguageModeSpecified = true;
             }
         }
-        private PSLanguageMode languageMode = PSLanguageMode.NoLanguage;
-        private bool isLanguageModeSpecified;
+        private PSLanguageMode _languageMode = PSLanguageMode.NoLanguage;
+        private bool _isLanguageModeSpecified;
 
         /// <summary>
         /// Execution policy
@@ -311,14 +311,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return executionPolicy;
+                return _executionPolicy;
             }
             set
             {
-                executionPolicy = value;
+                _executionPolicy = value;
             }
         }
-        private ExecutionPolicy executionPolicy = ExecutionPolicy.Restricted;
+        private ExecutionPolicy _executionPolicy = ExecutionPolicy.Restricted;
 
         /// <summary>
         /// PowerShell version
@@ -328,14 +328,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return powerShellVersion;
+                return _powerShellVersion;
             }
             set
             {
-                powerShellVersion = value;
+                _powerShellVersion = value;
             }
         }
-        private Version powerShellVersion;
+        private Version _powerShellVersion;
 
         /// <summary>
         /// A list of modules to import
@@ -346,14 +346,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return modulesToImport;
+                return _modulesToImport;
             }
             set
             {
-                modulesToImport = value;
+                _modulesToImport = value;
             }
         }
-        private object[] modulesToImport;
+        private object[] _modulesToImport;
 
         /// <summary>
         /// A list of visible aliases
@@ -364,14 +364,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return visibleAliases;
+                return _visibleAliases;
             }
             set
             {
-                visibleAliases = value;
+                _visibleAliases = value;
             }
         }
-        private string[] visibleAliases = Utils.EmptyArray<string>();
+        private string[] _visibleAliases = Utils.EmptyArray<string>();
 
         /// <summary>
         /// A list of visible cmdlets
@@ -382,14 +382,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return visibleCmdlets;
+                return _visibleCmdlets;
             }
             set
             {
-                visibleCmdlets = value;
+                _visibleCmdlets = value;
             }
         }
-        private Object[] visibleCmdlets = null;
+        private Object[] _visibleCmdlets = null;
 
         /// <summary>
         /// A list of visible functions
@@ -400,14 +400,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return visibleFunctions;
+                return _visibleFunctions;
             }
             set
             {
-                visibleFunctions = value;
+                _visibleFunctions = value;
             }
         }
-        private Object[] visibleFunctions = null;
+        private Object[] _visibleFunctions = null;
 
         /// <summary>
         /// A list of visible external commands (scripts and applications)
@@ -418,14 +418,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return visibleExternalCommands;
+                return _visibleExternalCommands;
             }
             set
             {
-                visibleExternalCommands = value;
+                _visibleExternalCommands = value;
             }
         }
-        private string[] visibleExternalCommands = Utils.EmptyArray<string>();
+        private string[] _visibleExternalCommands = Utils.EmptyArray<string>();
 
         /// <summary>
         /// A list of providers
@@ -436,14 +436,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return visibleProviders;
+                return _visibleProviders;
             }
             set
             {
-                visibleProviders = value;
+                _visibleProviders = value;
             }
         }
-        private string[] visibleProviders = Utils.EmptyArray<string>();
+        private string[] _visibleProviders = Utils.EmptyArray<string>();
 
         /// <summary>
         /// A list of alises
@@ -454,14 +454,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return aliasDefinitions;
+                return _aliasDefinitions;
             }
             set
             {
-                aliasDefinitions = value;
+                _aliasDefinitions = value;
             }
         }
-        private IDictionary[] aliasDefinitions;
+        private IDictionary[] _aliasDefinitions;
 
         /// <summary>
         /// A list of functions
@@ -472,14 +472,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return functionDefinitions;
+                return _functionDefinitions;
             }
             set
             {
-                functionDefinitions = value;
+                _functionDefinitions = value;
             }
         }
-        private IDictionary[] functionDefinitions;
+        private IDictionary[] _functionDefinitions;
 
         /// <summary>
         /// A list of variables
@@ -490,14 +490,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return variableDefinitions;
+                return _variableDefinitions;
             }
             set
             {
-                variableDefinitions = value;
+                _variableDefinitions = value;
             }
         }
-        private object variableDefinitions;
+        private object _variableDefinitions;
 
         /// <summary>
         /// A list of environment variables
@@ -509,14 +509,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return environmentVariables;
+                return _environmentVariables;
             }
             set
             {
-                environmentVariables = value;
+                _environmentVariables = value;
             }
         }
-        private IDictionary environmentVariables;
+        private IDictionary _environmentVariables;
 
         /// <summary>
         /// A list of types to process
@@ -527,14 +527,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return typesToProcess;
+                return _typesToProcess;
             }
             set
             {
-                typesToProcess = value;
+                _typesToProcess = value;
             }
         }
-        private string[] typesToProcess = Utils.EmptyArray<string>();
+        private string[] _typesToProcess = Utils.EmptyArray<string>();
 
         /// <summary>
         /// A list of format data to process
@@ -545,14 +545,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return formatsToProcess;
+                return _formatsToProcess;
             }
             set
             {
-                formatsToProcess = value;
+                _formatsToProcess = value;
             }
         }
-        private string[] formatsToProcess = Utils.EmptyArray<string>();
+        private string[] _formatsToProcess = Utils.EmptyArray<string>();
 
         /// <summary>
         /// A list of assemblies to load
@@ -563,14 +563,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return assembliesToLoad;
+                return _assembliesToLoad;
             }
             set
             {
-                assembliesToLoad = value;
+                _assembliesToLoad = value;
             }
         }
-        private string[] assembliesToLoad;
+        private string[] _assembliesToLoad;
 
         /// <summary>
         /// Gets or sets whether to include a full expansion of all possible session configuration
@@ -588,18 +588,18 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            Debug.Assert(!String.IsNullOrEmpty(path));
+            Debug.Assert(!String.IsNullOrEmpty(_path));
 
             ProviderInfo provider = null;
             PSDriveInfo drive;
-            string filePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(path, out provider, out drive);
+            string filePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(_path, out provider, out drive);
 
             if (!provider.NameEquals(Context.ProviderNames.FileSystem) || !filePath.EndsWith(StringLiterals.PowerShellDISCFileExtension, StringComparison.OrdinalIgnoreCase))
             {
-                string message = StringUtil.Format(RemotingErrorIdStrings.InvalidPSSessionConfigurationFilePath, path);
+                string message = StringUtil.Format(RemotingErrorIdStrings.InvalidPSSessionConfigurationFilePath, _path);
                 InvalidOperationException ioe = new InvalidOperationException(message);
                 ErrorRecord er = new ErrorRecord(ioe, "InvalidPSSessionConfigurationFilePath",
-                    ErrorCategory.InvalidArgument, path);
+                    ErrorCategory.InvalidArgument, _path);
                 ThrowTerminatingError(er);
             }
 
@@ -632,55 +632,55 @@ namespace Microsoft.PowerShell.Commands
 
                 // Schema version
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.SchemaVersion, RemotingErrorIdStrings.DISCSchemaVersionComment,
-                    SessionConfigurationUtils.QuoteName(schemaVersion), streamWriter, false));
+                    SessionConfigurationUtils.QuoteName(_schemaVersion), streamWriter, false));
 
                 // Guid
-                result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Guid, RemotingErrorIdStrings.DISCGUIDComment, SessionConfigurationUtils.QuoteName(guid), streamWriter, false));
+                result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Guid, RemotingErrorIdStrings.DISCGUIDComment, SessionConfigurationUtils.QuoteName(_guid), streamWriter, false));
 
                 // Author
-                if (String.IsNullOrEmpty(author))
+                if (String.IsNullOrEmpty(_author))
                 {
-                    author = Environment.UserName;
+                    _author = Environment.UserName;
                 }
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Author, RemotingErrorIdStrings.DISCAuthorComment,
-                    SessionConfigurationUtils.QuoteName(author), streamWriter, false));
+                    SessionConfigurationUtils.QuoteName(_author), streamWriter, false));
 
                 // Description
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Description, RemotingErrorIdStrings.DISCDescriptionComment,
-                    SessionConfigurationUtils.QuoteName(description), streamWriter, String.IsNullOrEmpty(description)));
+                    SessionConfigurationUtils.QuoteName(_description), streamWriter, String.IsNullOrEmpty(_description)));
 
                 // Company name
                 if (ShouldGenerateConfigurationSnippet("CompanyName"))
                 {
-                    if (String.IsNullOrEmpty(companyName))
+                    if (String.IsNullOrEmpty(_companyName))
                     {
-                        companyName = Modules.DefaultCompanyName;
+                        _companyName = Modules.DefaultCompanyName;
                     }
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.CompanyName, RemotingErrorIdStrings.DISCCompanyNameComment,
-                        SessionConfigurationUtils.QuoteName(companyName), streamWriter, false));
+                        SessionConfigurationUtils.QuoteName(_companyName), streamWriter, false));
                 }
 
                 // Copyright
                 if (ShouldGenerateConfigurationSnippet("Copyright"))
                 {
-                    if (String.IsNullOrEmpty(copyright))
+                    if (String.IsNullOrEmpty(_copyright))
                     {
-                        copyright = StringUtil.Format(Modules.DefaultCopyrightMessage, DateTime.Now.Year, author);
+                        _copyright = StringUtil.Format(Modules.DefaultCopyrightMessage, DateTime.Now.Year, _author);
                     }
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Copyright, RemotingErrorIdStrings.DISCCopyrightComment,
-                        SessionConfigurationUtils.QuoteName(copyright), streamWriter, false));
+                        SessionConfigurationUtils.QuoteName(_copyright), streamWriter, false));
                 }
 
                 // Session type
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.SessionType, RemotingErrorIdStrings.DISCInitialSessionStateComment,
-                    SessionConfigurationUtils.QuoteName(sessionType), streamWriter, false));
+                    SessionConfigurationUtils.QuoteName(_sessionType), streamWriter, false));
 
                 string resultData = null;
 
                 // Transcript directory
-                resultData = String.IsNullOrEmpty(transcriptDirectory) ? "'C:\\Transcripts\\'" : SessionConfigurationUtils.QuoteName(transcriptDirectory);
+                resultData = String.IsNullOrEmpty(_transcriptDirectory) ? "'C:\\Transcripts\\'" : SessionConfigurationUtils.QuoteName(_transcriptDirectory);
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.TranscriptDirectory, RemotingErrorIdStrings.DISCTranscriptDirectoryComment,
-                    resultData, streamWriter, String.IsNullOrEmpty(transcriptDirectory)));
+                    resultData, streamWriter, String.IsNullOrEmpty(_transcriptDirectory)));
 
                 // Run as virtual account
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.RunAsVirtualAccount, RemotingErrorIdStrings.DISCRunAsVirtualAccountComment,
@@ -727,28 +727,28 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Scripts to process
-                resultData = (scriptsToProcess.Length > 0) ? SessionConfigurationUtils.CombineStringArray(scriptsToProcess) : "'C:\\ConfigData\\InitScript1.ps1', 'C:\\ConfigData\\InitScript2.ps1'";
+                resultData = (_scriptsToProcess.Length > 0) ? SessionConfigurationUtils.CombineStringArray(_scriptsToProcess) : "'C:\\ConfigData\\InitScript1.ps1', 'C:\\ConfigData\\InitScript2.ps1'";
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.ScriptsToProcess, RemotingErrorIdStrings.DISCScriptsToProcessComment,
-                    resultData, streamWriter, (scriptsToProcess.Length == 0)));
+                    resultData, streamWriter, (_scriptsToProcess.Length == 0)));
 
                 // Role definitions
-                if (roleDefinitions == null)
+                if (_roleDefinitions == null)
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.RoleDefinitions, RemotingErrorIdStrings.DISCRoleDefinitionsComment,
                         "@{ 'CONTOSO\\SqlAdmins' = @{ RoleCapabilities = 'SqlAdministration' }; 'CONTOSO\\ServerMonitors' = @{ VisibleCmdlets = 'Get-Process' } } ", streamWriter, true));
                 }
                 else
                 {
-                    DISCUtils.ValidateRoleDefinitions(roleDefinitions);
+                    DISCUtils.ValidateRoleDefinitions(_roleDefinitions);
 
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.RoleDefinitions, RemotingErrorIdStrings.DISCRoleDefinitionsComment,
-                        SessionConfigurationUtils.CombineHashtable(roleDefinitions, streamWriter), streamWriter, false));
+                        SessionConfigurationUtils.CombineHashtable(_roleDefinitions, streamWriter), streamWriter, false));
                 }
 
                 // Required groups
                 if (ShouldGenerateConfigurationSnippet("RequiredGroups"))
                 {
-                    if (requiredGroups == null)
+                    if (_requiredGroups == null)
                     {
                         result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.RequiredGroups, RemotingErrorIdStrings.DISCRequiredGroupsComment,
                             "@{ And = @{ Or = 'CONTOSO\\SmartCard-Logon1', 'CONTOSO\\SmartCard-Logon2' }, 'Administrators' }", streamWriter, true));
@@ -756,29 +756,29 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.RequiredGroups, RemotingErrorIdStrings.DISCRequiredGroupsComment,
-                            SessionConfigurationUtils.CombineRequiredGroupsHash(requiredGroups), streamWriter, false));
+                            SessionConfigurationUtils.CombineRequiredGroupsHash(_requiredGroups), streamWriter, false));
                     }
                 }
 
                 // PSLanguageMode languageMode
                 if (ShouldGenerateConfigurationSnippet("LanguageMode"))
                 {
-                    if (!isLanguageModeSpecified)
+                    if (!_isLanguageModeSpecified)
                     {
-                        if (sessionType == SessionType.Default)
+                        if (_sessionType == SessionType.Default)
                         {
-                            languageMode = PSLanguageMode.FullLanguage;
+                            _languageMode = PSLanguageMode.FullLanguage;
                         }
                     }
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.LanguageMode, RemotingErrorIdStrings.DISCLanguageModeComment,
-                        SessionConfigurationUtils.QuoteName(languageMode), streamWriter, false));
+                        SessionConfigurationUtils.QuoteName(_languageMode), streamWriter, false));
                 }
 
                 // ExecutionPolicy executionPolicy
                 if (ShouldGenerateConfigurationSnippet("ExecutionPolicy"))
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.ExecutionPolicy, RemotingErrorIdStrings.DISCExecutionPolicyComment,
-                        SessionConfigurationUtils.QuoteName(executionPolicy), streamWriter, false));
+                        SessionConfigurationUtils.QuoteName(_executionPolicy), streamWriter, false));
                 }
 
                 // PowerShell version
@@ -786,17 +786,17 @@ namespace Microsoft.PowerShell.Commands
 
                 if (ShouldGenerateConfigurationSnippet("PowerShellVersion"))
                 {
-                    if (powerShellVersion == null)
+                    if (_powerShellVersion == null)
                     {
                         isExample = true;
-                        powerShellVersion = PSVersionInfo.PSVersion;
+                        _powerShellVersion = PSVersionInfo.PSVersion;
                     }
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.PowerShellVersion, RemotingErrorIdStrings.DISCPowerShellVersionComment,
-                        SessionConfigurationUtils.QuoteName(powerShellVersion), streamWriter, isExample));
+                        SessionConfigurationUtils.QuoteName(_powerShellVersion), streamWriter, isExample));
                 }
 
                 // Modules to import
-                if (modulesToImport == null)
+                if (_modulesToImport == null)
                 {
                     if (Full)
                     {
@@ -807,18 +807,18 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.ModulesToImport, RemotingErrorIdStrings.DISCModulesToImportComment,
-                        SessionConfigurationUtils.CombineHashTableOrStringArray(modulesToImport, streamWriter, this), streamWriter, false));
+                        SessionConfigurationUtils.CombineHashTableOrStringArray(_modulesToImport, streamWriter, this), streamWriter, false));
                 }
 
                 // Visible aliases
                 if (ShouldGenerateConfigurationSnippet("VisibleAliases"))
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleAliases, RemotingErrorIdStrings.DISCVisibleAliasesComment,
-                        SessionConfigurationUtils.GetVisibilityDefault(visibleAliases, streamWriter, this), streamWriter, visibleAliases.Length == 0));
+                        SessionConfigurationUtils.GetVisibilityDefault(_visibleAliases, streamWriter, this), streamWriter, _visibleAliases.Length == 0));
                 }
 
                 // Visible cmdlets
-                if ((visibleCmdlets == null) || (visibleCmdlets.Length == 0))
+                if ((_visibleCmdlets == null) || (_visibleCmdlets.Length == 0))
                 {
                     if (Full)
                     {
@@ -829,11 +829,11 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleCmdlets, RemotingErrorIdStrings.DISCVisibleCmdletsComment,
-                        SessionConfigurationUtils.GetVisibilityDefault(visibleCmdlets, streamWriter, this), streamWriter, false));
+                        SessionConfigurationUtils.GetVisibilityDefault(_visibleCmdlets, streamWriter, this), streamWriter, false));
                 }
 
                 // Visible functions
-                if ((visibleFunctions == null) || (visibleFunctions.Length == 0))
+                if ((_visibleFunctions == null) || (_visibleFunctions.Length == 0))
                 {
                     if (Full)
                     {
@@ -844,25 +844,25 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleFunctions, RemotingErrorIdStrings.DISCVisibleFunctionsComment,
-                        SessionConfigurationUtils.GetVisibilityDefault(visibleFunctions, streamWriter, this), streamWriter, visibleFunctions.Length == 0));
+                        SessionConfigurationUtils.GetVisibilityDefault(_visibleFunctions, streamWriter, this), streamWriter, _visibleFunctions.Length == 0));
                 }
 
                 // Visible external commands (scripts, executables)
                 if (ShouldGenerateConfigurationSnippet("VisibleExternalCommands"))
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleExternalCommands, RemotingErrorIdStrings.DISCVisibleExternalCommandsComment,
-                        SessionConfigurationUtils.GetVisibilityDefault(visibleExternalCommands, streamWriter, this), streamWriter, visibleExternalCommands.Length == 0));
+                        SessionConfigurationUtils.GetVisibilityDefault(_visibleExternalCommands, streamWriter, this), streamWriter, _visibleExternalCommands.Length == 0));
                 }
 
                 // Visible providers
                 if (ShouldGenerateConfigurationSnippet("VisibleProviders"))
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleProviders, RemotingErrorIdStrings.DISCVisibleProvidersComment,
-                        SessionConfigurationUtils.GetVisibilityDefault(visibleProviders, streamWriter, this), streamWriter, visibleProviders.Length == 0));
+                        SessionConfigurationUtils.GetVisibilityDefault(_visibleProviders, streamWriter, this), streamWriter, _visibleProviders.Length == 0));
                 }
 
                 // Alias definitions
-                if ((aliasDefinitions == null) || (aliasDefinitions.Length == 0))
+                if ((_aliasDefinitions == null) || (_aliasDefinitions.Length == 0))
                 {
                     if (Full)
                     {
@@ -873,11 +873,11 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.AliasDefinitions, RemotingErrorIdStrings.DISCAliasDefinitionsComment,
-                        SessionConfigurationUtils.CombineHashtableArray(aliasDefinitions, streamWriter), streamWriter, false));
+                        SessionConfigurationUtils.CombineHashtableArray(_aliasDefinitions, streamWriter), streamWriter, false));
                 }
 
                 // Function definitions
-                if (functionDefinitions == null)
+                if (_functionDefinitions == null)
                 {
                     if (Full)
                     {
@@ -887,7 +887,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    Hashtable[] funcHash = DISCPowerShellConfiguration.TryGetHashtableArray(functionDefinitions);
+                    Hashtable[] funcHash = DISCPowerShellConfiguration.TryGetHashtableArray(_functionDefinitions);
 
                     if (funcHash != null)
                     {
@@ -899,21 +899,21 @@ namespace Microsoft.PowerShell.Commands
                             if (!hashtable.ContainsKey(ConfigFileConstants.FunctionNameToken))
                             {
                                 PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
-                                    ConfigFileConstants.FunctionDefinitions, ConfigFileConstants.FunctionNameToken, path));
+                                    ConfigFileConstants.FunctionDefinitions, ConfigFileConstants.FunctionNameToken, _path));
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
 
                             if (!hashtable.ContainsKey(ConfigFileConstants.FunctionValueToken))
                             {
                                 PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
-                                    ConfigFileConstants.FunctionDefinitions, ConfigFileConstants.FunctionValueToken, path));
+                                    ConfigFileConstants.FunctionDefinitions, ConfigFileConstants.FunctionValueToken, _path));
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
-                            
+
                             if ((hashtable[ConfigFileConstants.FunctionValueToken] as ScriptBlock) == null)
                             {
                                 PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCKeyMustBeScriptBlock,
-                                    ConfigFileConstants.FunctionValueToken, ConfigFileConstants.FunctionDefinitions, path));
+                                    ConfigFileConstants.FunctionValueToken, ConfigFileConstants.FunctionDefinitions, _path));
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
 
@@ -924,7 +924,7 @@ namespace Microsoft.PowerShell.Commands
                                     !String.Equals(functionKey, ConfigFileConstants.FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
                                 {
                                     PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
-                                        functionKey, ConfigFileConstants.FunctionDefinitions, path));
+                                        functionKey, ConfigFileConstants.FunctionDefinitions, _path));
                                     ThrowTerminatingError(e.ErrorRecord);
                                 }
                             }
@@ -939,7 +939,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Variable definitions
-                if (variableDefinitions == null)
+                if (_variableDefinitions == null)
                 {
                     if (Full)
                     {
@@ -949,7 +949,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    string varString = variableDefinitions as string;
+                    string varString = _variableDefinitions as string;
 
                     if (varString != null)
                     {
@@ -958,7 +958,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        Hashtable[] varHash = DISCPowerShellConfiguration.TryGetHashtableArray(variableDefinitions);
+                        Hashtable[] varHash = DISCPowerShellConfiguration.TryGetHashtableArray(_variableDefinitions);
 
                         if (varHash != null)
                         {
@@ -970,24 +970,24 @@ namespace Microsoft.PowerShell.Commands
                                 if (!hashtable.ContainsKey(ConfigFileConstants.VariableNameToken))
                                 {
                                     PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
-                                        ConfigFileConstants.VariableDefinitions, ConfigFileConstants.VariableNameToken, path));
+                                        ConfigFileConstants.VariableDefinitions, ConfigFileConstants.VariableNameToken, _path));
                                     ThrowTerminatingError(e.ErrorRecord);
                                 }
 
                                 if (!hashtable.ContainsKey(ConfigFileConstants.VariableValueToken))
                                 {
                                     PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
-                                        ConfigFileConstants.VariableDefinitions, ConfigFileConstants.VariableValueToken, path));
+                                        ConfigFileConstants.VariableDefinitions, ConfigFileConstants.VariableValueToken, _path));
                                     ThrowTerminatingError(e.ErrorRecord);
                                 }
 
                                 foreach (string variableKey in hashtable.Keys)
                                 {
-                                    if (!String.Equals(variableKey, ConfigFileConstants.VariableNameToken, StringComparison.OrdinalIgnoreCase) && 
+                                    if (!String.Equals(variableKey, ConfigFileConstants.VariableNameToken, StringComparison.OrdinalIgnoreCase) &&
                                         !String.Equals(variableKey, ConfigFileConstants.VariableValueToken, StringComparison.OrdinalIgnoreCase))
                                     {
                                         PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
-                                            variableKey, ConfigFileConstants.VariableDefinitions, path));
+                                            variableKey, ConfigFileConstants.VariableDefinitions, _path));
                                         ThrowTerminatingError(e.ErrorRecord);
                                     }
                                 }
@@ -1003,7 +1003,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Environment variables
-                if (environmentVariables == null)
+                if (_environmentVariables == null)
                 {
                     if (Full)
                     {
@@ -1015,36 +1015,36 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.EnvironmentVariables, RemotingErrorIdStrings.DISCEnvironmentVariablesComment,
-                        SessionConfigurationUtils.CombineHashtable(environmentVariables, streamWriter), streamWriter, false));
+                        SessionConfigurationUtils.CombineHashtable(_environmentVariables, streamWriter), streamWriter, false));
                 }
 
                 // Types to process
                 if (ShouldGenerateConfigurationSnippet("TypesToProcess"))
                 {
-                    resultData = (typesToProcess.Length > 0) ? SessionConfigurationUtils.CombineStringArray(typesToProcess) : "'C:\\ConfigData\\MyTypes.ps1xml', 'C:\\ConfigData\\OtherTypes.ps1xml'";
+                    resultData = (_typesToProcess.Length > 0) ? SessionConfigurationUtils.CombineStringArray(_typesToProcess) : "'C:\\ConfigData\\MyTypes.ps1xml', 'C:\\ConfigData\\OtherTypes.ps1xml'";
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.TypesToProcess, RemotingErrorIdStrings.DISCTypesToProcessComment,
-                        resultData, streamWriter, (typesToProcess.Length == 0)));
+                        resultData, streamWriter, (_typesToProcess.Length == 0)));
                 }
 
                 // Formats to process
                 if (ShouldGenerateConfigurationSnippet("FormatsToProcess"))
                 {
-                    resultData = (formatsToProcess.Length > 0) ? SessionConfigurationUtils.CombineStringArray(formatsToProcess) : "'C:\\ConfigData\\MyFormats.ps1xml', 'C:\\ConfigData\\OtherFormats.ps1xml'";
+                    resultData = (_formatsToProcess.Length > 0) ? SessionConfigurationUtils.CombineStringArray(_formatsToProcess) : "'C:\\ConfigData\\MyFormats.ps1xml', 'C:\\ConfigData\\OtherFormats.ps1xml'";
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.FormatsToProcess, RemotingErrorIdStrings.DISCFormatsToProcessComment,
-                        resultData, streamWriter, (formatsToProcess.Length == 0)));
+                        resultData, streamWriter, (_formatsToProcess.Length == 0)));
                 }
 
                 // Assemblies to load
                 if (ShouldGenerateConfigurationSnippet("AssembliesToLoad"))
                 {
                     isExample = false;
-                    if ((assembliesToLoad == null) || (assembliesToLoad.Length == 0))
+                    if ((_assembliesToLoad == null) || (_assembliesToLoad.Length == 0))
                     {
                         isExample = true;
-                        assembliesToLoad = new string[] { "System.Web", "System.OtherAssembly, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" };
+                        _assembliesToLoad = new string[] { "System.Web", "System.OtherAssembly, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" };
                     }
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.AssembliesToLoad, RemotingErrorIdStrings.DISCAssembliesToLoadComment,
-                        SessionConfigurationUtils.CombineStringArray(assembliesToLoad), streamWriter, isExample));
+                        SessionConfigurationUtils.CombineStringArray(_assembliesToLoad), streamWriter, isExample));
                 }
 
                 result.Append("}");
@@ -1088,14 +1088,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return path;
+                return _path;
             }
             set
             {
-                path = value;
+                _path = value;
             }
         }
-        private string path;
+        private string _path;
 
         /// <summary>
         /// Configuration file GUID
@@ -1105,14 +1105,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return guid;
+                return _guid;
             }
             set
             {
-                guid = value;
+                _guid = value;
             }
         }
-        private Guid guid = Guid.NewGuid();
+        private Guid _guid = Guid.NewGuid();
 
         /// <summary>
         /// Author of the configuration file
@@ -1122,14 +1122,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return author;
+                return _author;
             }
             set
             {
-                author = value;
+                _author = value;
             }
         }
-        private string author;
+        private string _author;
 
         /// <summary>
         /// Description
@@ -1139,14 +1139,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return description;
+                return _description;
             }
             set
             {
-                description = value;
+                _description = value;
             }
         }
-        private string description;
+        private string _description;
 
         /// <summary>
         /// Company name
@@ -1156,14 +1156,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return companyName;
+                return _companyName;
             }
             set
             {
-                companyName = value;
+                _companyName = value;
             }
         }
-        private string companyName;
+        private string _companyName;
 
         /// <summary>
         /// Copyright information
@@ -1173,14 +1173,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return copyright;
+                return _copyright;
             }
             set
             {
-                copyright = value;
+                _copyright = value;
             }
         }
-        private string copyright;
+        private string _copyright;
 
         /// <summary>
         /// A list of modules to import
@@ -1191,14 +1191,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return modulesToImport;
+                return _modulesToImport;
             }
             set
             {
-                modulesToImport = value;
+                _modulesToImport = value;
             }
         }
-        private object[] modulesToImport;
+        private object[] _modulesToImport;
 
         /// <summary>
         /// A list of visible aliases
@@ -1209,14 +1209,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return visibleAliases;
+                return _visibleAliases;
             }
             set
             {
-                visibleAliases = value;
+                _visibleAliases = value;
             }
         }
-        private string[] visibleAliases = Utils.EmptyArray<string>();
+        private string[] _visibleAliases = Utils.EmptyArray<string>();
 
         /// <summary>
         /// A list of visible cmdlets
@@ -1227,14 +1227,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return visibleCmdlets;
+                return _visibleCmdlets;
             }
             set
             {
-                visibleCmdlets = value;
+                _visibleCmdlets = value;
             }
         }
-        private Object[] visibleCmdlets = null;
+        private Object[] _visibleCmdlets = null;
 
         /// <summary>
         /// A list of visible functions
@@ -1245,14 +1245,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return visibleFunctions;
+                return _visibleFunctions;
             }
             set
             {
-                visibleFunctions = value;
+                _visibleFunctions = value;
             }
         }
-        private Object[] visibleFunctions = null;
+        private Object[] _visibleFunctions = null;
 
         /// <summary>
         /// A list of visible external commands (scripts and applications)
@@ -1263,14 +1263,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return visibleExternalCommands;
+                return _visibleExternalCommands;
             }
             set
             {
-                visibleExternalCommands = value;
+                _visibleExternalCommands = value;
             }
         }
-        private string[] visibleExternalCommands = Utils.EmptyArray<string>();
+        private string[] _visibleExternalCommands = Utils.EmptyArray<string>();
 
         /// <summary>
         /// A list of providers
@@ -1281,14 +1281,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return visibleProviders;
+                return _visibleProviders;
             }
             set
             {
-                visibleProviders = value;
+                _visibleProviders = value;
             }
         }
-        private string[] visibleProviders = Utils.EmptyArray<string>();
+        private string[] _visibleProviders = Utils.EmptyArray<string>();
 
         /// <summary>
         /// Scripts to process
@@ -1299,14 +1299,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return scriptsToProcess;
+                return _scriptsToProcess;
             }
             set
             {
-                scriptsToProcess = value;
+                _scriptsToProcess = value;
             }
         }
-        private string[] scriptsToProcess = Utils.EmptyArray<string>();
+        private string[] _scriptsToProcess = Utils.EmptyArray<string>();
 
         /// <summary>
         /// A list of alises
@@ -1317,14 +1317,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return aliasDefinitions;
+                return _aliasDefinitions;
             }
             set
             {
-                aliasDefinitions = value;
+                _aliasDefinitions = value;
             }
         }
-        private IDictionary[] aliasDefinitions;
+        private IDictionary[] _aliasDefinitions;
 
         /// <summary>
         /// A list of functions
@@ -1335,14 +1335,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return functionDefinitions;
+                return _functionDefinitions;
             }
             set
             {
-                functionDefinitions = value;
+                _functionDefinitions = value;
             }
         }
-        private IDictionary[] functionDefinitions;
+        private IDictionary[] _functionDefinitions;
 
         /// <summary>
         /// A list of variables
@@ -1353,14 +1353,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return variableDefinitions;
+                return _variableDefinitions;
             }
             set
             {
-                variableDefinitions = value;
+                _variableDefinitions = value;
             }
         }
-        private object variableDefinitions;
+        private object _variableDefinitions;
 
         /// <summary>
         /// A list of environment variables
@@ -1372,14 +1372,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return environmentVariables;
+                return _environmentVariables;
             }
             set
             {
-                environmentVariables = value;
+                _environmentVariables = value;
             }
         }
-        private IDictionary environmentVariables;
+        private IDictionary _environmentVariables;
 
         /// <summary>
         /// A list of types to process
@@ -1390,14 +1390,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return typesToProcess;
+                return _typesToProcess;
             }
             set
             {
-                typesToProcess = value;
+                _typesToProcess = value;
             }
         }
-        private string[] typesToProcess = Utils.EmptyArray<string>();
+        private string[] _typesToProcess = Utils.EmptyArray<string>();
 
         /// <summary>
         /// A list of format data to process
@@ -1408,14 +1408,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return formatsToProcess;
+                return _formatsToProcess;
             }
             set
             {
-                formatsToProcess = value;
+                _formatsToProcess = value;
             }
         }
-        private string[] formatsToProcess = Utils.EmptyArray<string>();
+        private string[] _formatsToProcess = Utils.EmptyArray<string>();
 
         /// <summary>
         /// A list of assemblies to load
@@ -1426,14 +1426,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return assembliesToLoad;
+                return _assembliesToLoad;
             }
             set
             {
-                assembliesToLoad = value;
+                _assembliesToLoad = value;
             }
         }
-        private string[] assembliesToLoad;
+        private string[] _assembliesToLoad;
 
         #endregion
 
@@ -1444,18 +1444,18 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            Debug.Assert(!String.IsNullOrEmpty(path));
+            Debug.Assert(!String.IsNullOrEmpty(_path));
 
             ProviderInfo provider = null;
             PSDriveInfo drive;
-            string filePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(path, out provider, out drive);
+            string filePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(_path, out provider, out drive);
 
             if (!provider.NameEquals(Context.ProviderNames.FileSystem) || !filePath.EndsWith(StringLiterals.PowerShellRoleCapabilityFileExtension, StringComparison.OrdinalIgnoreCase))
             {
-                string message = StringUtil.Format(RemotingErrorIdStrings.InvalidRoleCapabilityFilePath, path);
+                string message = StringUtil.Format(RemotingErrorIdStrings.InvalidRoleCapabilityFilePath, _path);
                 InvalidOperationException ioe = new InvalidOperationException(message);
                 ErrorRecord er = new ErrorRecord(ioe, "InvalidRoleCapabilityFilePath",
-                    ErrorCategory.InvalidArgument, path);
+                    ErrorCategory.InvalidArgument, _path);
                 ThrowTerminatingError(er);
             }
 
@@ -1487,55 +1487,54 @@ namespace Microsoft.PowerShell.Commands
                 result.Append(streamWriter.NewLine);
 
                 // Guid
-                result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Guid, RemotingErrorIdStrings.DISCGUIDComment, SessionConfigurationUtils.QuoteName(guid), streamWriter, false));
+                result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Guid, RemotingErrorIdStrings.DISCGUIDComment, SessionConfigurationUtils.QuoteName(_guid), streamWriter, false));
 
                 // Author
-                if (String.IsNullOrEmpty(author))
+                if (String.IsNullOrEmpty(_author))
                 {
-                    author = Environment.UserName;
+                    _author = Environment.UserName;
                 }
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Author, RemotingErrorIdStrings.DISCAuthorComment,
-                    SessionConfigurationUtils.QuoteName(author), streamWriter, false));
+                    SessionConfigurationUtils.QuoteName(_author), streamWriter, false));
 
                 // Description
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Description, RemotingErrorIdStrings.DISCDescriptionComment,
-                    SessionConfigurationUtils.QuoteName(description), streamWriter, String.IsNullOrEmpty(description)));
+                    SessionConfigurationUtils.QuoteName(_description), streamWriter, String.IsNullOrEmpty(_description)));
 
                 // Company name
-                if (String.IsNullOrEmpty(companyName))
+                if (String.IsNullOrEmpty(_companyName))
                 {
-                    companyName = Modules.DefaultCompanyName;
+                    _companyName = Modules.DefaultCompanyName;
                 }
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.CompanyName, RemotingErrorIdStrings.DISCCompanyNameComment,
-                    SessionConfigurationUtils.QuoteName(companyName), streamWriter, false));
+                    SessionConfigurationUtils.QuoteName(_companyName), streamWriter, false));
 
                 // Copyright
-                if (String.IsNullOrEmpty(copyright))
+                if (String.IsNullOrEmpty(_copyright))
                 {
-                    copyright = StringUtil.Format(Modules.DefaultCopyrightMessage, DateTime.Now.Year, author);
+                    _copyright = StringUtil.Format(Modules.DefaultCopyrightMessage, DateTime.Now.Year, _author);
                 }
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Copyright, RemotingErrorIdStrings.DISCCopyrightComment,
-                    SessionConfigurationUtils.QuoteName(copyright), streamWriter, false));
+                    SessionConfigurationUtils.QuoteName(_copyright), streamWriter, false));
 
                 // Modules to import
-                if (modulesToImport == null)
+                if (_modulesToImport == null)
                 {
                     string exampleModulesToImport = "'MyCustomModule', @{ ModuleName = 'MyCustomModule'; ModuleVersion = '1.0.0.0'; GUID = '4d30d5f0-cb16-4898-812d-f20a6c596bdf' }";
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.ModulesToImport, RemotingErrorIdStrings.DISCModulesToImportComment, exampleModulesToImport, streamWriter, true));
-
                 }
                 else
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.ModulesToImport, RemotingErrorIdStrings.DISCModulesToImportComment,
-                        SessionConfigurationUtils.CombineHashTableOrStringArray(modulesToImport, streamWriter, this), streamWriter, false));
+                        SessionConfigurationUtils.CombineHashTableOrStringArray(_modulesToImport, streamWriter, this), streamWriter, false));
                 }
 
                 // Visible aliases
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleAliases, RemotingErrorIdStrings.DISCVisibleAliasesComment,
-                    SessionConfigurationUtils.GetVisibilityDefault(visibleAliases, streamWriter, this), streamWriter, visibleAliases.Length == 0));
+                    SessionConfigurationUtils.GetVisibilityDefault(_visibleAliases, streamWriter, this), streamWriter, _visibleAliases.Length == 0));
 
                 // Visible cmdlets
-                if ((visibleCmdlets == null) || (visibleCmdlets.Length == 0))
+                if ((_visibleCmdlets == null) || (_visibleCmdlets.Length == 0))
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleCmdlets, RemotingErrorIdStrings.DISCVisibleCmdletsComment,
                         "'Invoke-Cmdlet1', @{ Name = 'Invoke-Cmdlet2'; Parameters = @{ Name = 'Parameter1'; ValidateSet = 'Item1', 'Item2' }, @{ Name = 'Parameter2'; ValidatePattern = 'L*' } }", streamWriter, true));
@@ -1543,11 +1542,11 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleCmdlets, RemotingErrorIdStrings.DISCVisibleCmdletsComment,
-                        SessionConfigurationUtils.GetVisibilityDefault(visibleCmdlets, streamWriter, this), streamWriter, false));
+                        SessionConfigurationUtils.GetVisibilityDefault(_visibleCmdlets, streamWriter, this), streamWriter, false));
                 }
 
                 // Visible functions
-                if ((visibleFunctions == null) || (visibleFunctions.Length == 0))
+                if ((_visibleFunctions == null) || (_visibleFunctions.Length == 0))
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleFunctions, RemotingErrorIdStrings.DISCVisibleFunctionsComment,
                         "'Invoke-Function1', @{ Name = 'Invoke-Function2'; Parameters = @{ Name = 'Parameter1'; ValidateSet = 'Item1', 'Item2' }, @{ Name = 'Parameter2'; ValidatePattern = 'L*' } }", streamWriter, true));
@@ -1555,24 +1554,24 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleFunctions, RemotingErrorIdStrings.DISCVisibleFunctionsComment,
-                        SessionConfigurationUtils.GetVisibilityDefault(visibleFunctions, streamWriter, this), streamWriter, visibleFunctions.Length == 0));
+                        SessionConfigurationUtils.GetVisibilityDefault(_visibleFunctions, streamWriter, this), streamWriter, _visibleFunctions.Length == 0));
                 }
 
                 // Visible external commands (scripts, executables)
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleExternalCommands, RemotingErrorIdStrings.DISCVisibleExternalCommandsComment,
-                    SessionConfigurationUtils.GetVisibilityDefault(visibleExternalCommands, streamWriter, this), streamWriter, visibleExternalCommands.Length == 0));
+                    SessionConfigurationUtils.GetVisibilityDefault(_visibleExternalCommands, streamWriter, this), streamWriter, _visibleExternalCommands.Length == 0));
 
                 // Visible providers
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VisibleProviders, RemotingErrorIdStrings.DISCVisibleProvidersComment,
-                    SessionConfigurationUtils.GetVisibilityDefault(visibleProviders, streamWriter, this), streamWriter, visibleProviders.Length == 0));
+                    SessionConfigurationUtils.GetVisibilityDefault(_visibleProviders, streamWriter, this), streamWriter, _visibleProviders.Length == 0));
 
                 // Scripts to process
-                string resultData = (scriptsToProcess.Length > 0) ? SessionConfigurationUtils.CombineStringArray(scriptsToProcess) : "'C:\\ConfigData\\InitScript1.ps1', 'C:\\ConfigData\\InitScript2.ps1'";
+                string resultData = (_scriptsToProcess.Length > 0) ? SessionConfigurationUtils.CombineStringArray(_scriptsToProcess) : "'C:\\ConfigData\\InitScript1.ps1', 'C:\\ConfigData\\InitScript2.ps1'";
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.ScriptsToProcess, RemotingErrorIdStrings.DISCScriptsToProcessComment,
-                    resultData, streamWriter, (scriptsToProcess.Length == 0)));
+                    resultData, streamWriter, (_scriptsToProcess.Length == 0)));
 
                 // Alias definitions
-                if ((aliasDefinitions == null) || (aliasDefinitions.Length == 0))
+                if ((_aliasDefinitions == null) || (_aliasDefinitions.Length == 0))
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.AliasDefinitions, RemotingErrorIdStrings.DISCAliasDefinitionsComment,
                        "@{ Name = 'Alias1'; Value = 'Invoke-Alias1'}, @{ Name = 'Alias2'; Value = 'Invoke-Alias2'}", streamWriter, true));
@@ -1580,18 +1579,18 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.AliasDefinitions, RemotingErrorIdStrings.DISCAliasDefinitionsComment,
-                        SessionConfigurationUtils.CombineHashtableArray(aliasDefinitions, streamWriter), streamWriter, false));
+                        SessionConfigurationUtils.CombineHashtableArray(_aliasDefinitions, streamWriter), streamWriter, false));
                 }
 
                 // Function definitions
-                if (functionDefinitions == null)
+                if (_functionDefinitions == null)
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.FunctionDefinitions, RemotingErrorIdStrings.DISCFunctionDefinitionsComment,
                         "@{ Name = 'MyFunction'; ScriptBlock = { param($MyInput) $MyInput } }", streamWriter, true));
                 }
                 else
                 {
-                    Hashtable[] funcHash = DISCPowerShellConfiguration.TryGetHashtableArray(functionDefinitions);
+                    Hashtable[] funcHash = DISCPowerShellConfiguration.TryGetHashtableArray(_functionDefinitions);
 
                     if (funcHash != null)
                     {
@@ -1603,21 +1602,21 @@ namespace Microsoft.PowerShell.Commands
                             if (!hashtable.ContainsKey(ConfigFileConstants.FunctionNameToken))
                             {
                                 PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
-                                    ConfigFileConstants.FunctionDefinitions, ConfigFileConstants.FunctionNameToken, path));
+                                    ConfigFileConstants.FunctionDefinitions, ConfigFileConstants.FunctionNameToken, _path));
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
 
                             if (!hashtable.ContainsKey(ConfigFileConstants.FunctionValueToken))
                             {
                                 PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
-                                    ConfigFileConstants.FunctionDefinitions, ConfigFileConstants.FunctionValueToken, path));
+                                    ConfigFileConstants.FunctionDefinitions, ConfigFileConstants.FunctionValueToken, _path));
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
 
                             if ((hashtable[ConfigFileConstants.FunctionValueToken] as ScriptBlock) == null)
                             {
                                 PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCKeyMustBeScriptBlock,
-                                    ConfigFileConstants.FunctionValueToken, ConfigFileConstants.FunctionDefinitions, path));
+                                    ConfigFileConstants.FunctionValueToken, ConfigFileConstants.FunctionDefinitions, _path));
                                 ThrowTerminatingError(e.ErrorRecord);
                             }
 
@@ -1628,7 +1627,7 @@ namespace Microsoft.PowerShell.Commands
                                     !String.Equals(functionKey, ConfigFileConstants.FunctionOptionsToken, StringComparison.OrdinalIgnoreCase))
                                 {
                                     PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
-                                        functionKey, ConfigFileConstants.FunctionDefinitions, path));
+                                        functionKey, ConfigFileConstants.FunctionDefinitions, _path));
                                     ThrowTerminatingError(e.ErrorRecord);
                                 }
                             }
@@ -1643,14 +1642,14 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Variable definitions
-                if (variableDefinitions == null)
+                if (_variableDefinitions == null)
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.VariableDefinitions, RemotingErrorIdStrings.DISCVariableDefinitionsComment,
                         "@{ Name = 'Variable1'; Value = { 'Dynamic' + 'InitialValue' } }, @{ Name = 'Variable2'; Value = 'StaticInitialValue' }", streamWriter, true));
                 }
                 else
                 {
-                    string varString = variableDefinitions as string;
+                    string varString = _variableDefinitions as string;
 
                     if (varString != null)
                     {
@@ -1659,7 +1658,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        Hashtable[] varHash = DISCPowerShellConfiguration.TryGetHashtableArray(variableDefinitions);
+                        Hashtable[] varHash = DISCPowerShellConfiguration.TryGetHashtableArray(_variableDefinitions);
 
                         if (varHash != null)
                         {
@@ -1671,14 +1670,14 @@ namespace Microsoft.PowerShell.Commands
                                 if (!hashtable.ContainsKey(ConfigFileConstants.VariableNameToken))
                                 {
                                     PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
-                                        ConfigFileConstants.VariableDefinitions, ConfigFileConstants.VariableNameToken, path));
+                                        ConfigFileConstants.VariableDefinitions, ConfigFileConstants.VariableNameToken, _path));
                                     ThrowTerminatingError(e.ErrorRecord);
                                 }
 
                                 if (!hashtable.ContainsKey(ConfigFileConstants.VariableValueToken))
                                 {
                                     PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeMustContainKey,
-                                        ConfigFileConstants.VariableDefinitions, ConfigFileConstants.VariableValueToken, path));
+                                        ConfigFileConstants.VariableDefinitions, ConfigFileConstants.VariableValueToken, _path));
                                     ThrowTerminatingError(e.ErrorRecord);
                                 }
 
@@ -1688,7 +1687,7 @@ namespace Microsoft.PowerShell.Commands
                                         !String.Equals(variableKey, ConfigFileConstants.VariableValueToken, StringComparison.OrdinalIgnoreCase))
                                     {
                                         PSArgumentException e = new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.DISCTypeContainsInvalidKey,
-                                            variableKey, ConfigFileConstants.VariableDefinitions, path));
+                                            variableKey, ConfigFileConstants.VariableDefinitions, _path));
                                         ThrowTerminatingError(e.ErrorRecord);
                                     }
                                 }
@@ -1704,7 +1703,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Environment variables
-                if (environmentVariables == null)
+                if (_environmentVariables == null)
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.EnvironmentVariables, RemotingErrorIdStrings.DISCEnvironmentVariablesComment,
                         "@{ Variable1 = 'Value1'; Variable2 = 'Value2' }",
@@ -1713,28 +1712,28 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.EnvironmentVariables, RemotingErrorIdStrings.DISCEnvironmentVariablesComment,
-                        SessionConfigurationUtils.CombineHashtable(environmentVariables, streamWriter), streamWriter, false));
+                        SessionConfigurationUtils.CombineHashtable(_environmentVariables, streamWriter), streamWriter, false));
                 }
 
                 // Types to process
-                resultData = (typesToProcess.Length > 0) ? SessionConfigurationUtils.CombineStringArray(typesToProcess) : "'C:\\ConfigData\\MyTypes.ps1xml', 'C:\\ConfigData\\OtherTypes.ps1xml'";
+                resultData = (_typesToProcess.Length > 0) ? SessionConfigurationUtils.CombineStringArray(_typesToProcess) : "'C:\\ConfigData\\MyTypes.ps1xml', 'C:\\ConfigData\\OtherTypes.ps1xml'";
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.TypesToProcess, RemotingErrorIdStrings.DISCTypesToProcessComment,
-                    resultData, streamWriter, (typesToProcess.Length == 0)));
+                    resultData, streamWriter, (_typesToProcess.Length == 0)));
 
                 // Formats to process
-                resultData = (formatsToProcess.Length > 0) ? SessionConfigurationUtils.CombineStringArray(formatsToProcess) : "'C:\\ConfigData\\MyFormats.ps1xml', 'C:\\ConfigData\\OtherFormats.ps1xml'";
+                resultData = (_formatsToProcess.Length > 0) ? SessionConfigurationUtils.CombineStringArray(_formatsToProcess) : "'C:\\ConfigData\\MyFormats.ps1xml', 'C:\\ConfigData\\OtherFormats.ps1xml'";
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.FormatsToProcess, RemotingErrorIdStrings.DISCFormatsToProcessComment,
-                    resultData, streamWriter, (formatsToProcess.Length == 0)));
+                    resultData, streamWriter, (_formatsToProcess.Length == 0)));
 
                 // Assemblies to load
                 bool isExample = false;
-                if ((assembliesToLoad == null) || (assembliesToLoad.Length == 0))
+                if ((_assembliesToLoad == null) || (_assembliesToLoad.Length == 0))
                 {
                     isExample = true;
-                    assembliesToLoad = new string[] { "System.Web", "System.OtherAssembly, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" };
+                    _assembliesToLoad = new string[] { "System.Web", "System.OtherAssembly, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" };
                 }
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.AssembliesToLoad, RemotingErrorIdStrings.DISCAssembliesToLoadComment,
-                    SessionConfigurationUtils.CombineStringArray(assembliesToLoad), streamWriter, isExample));
+                    SessionConfigurationUtils.CombineStringArray(_assembliesToLoad), streamWriter, isExample));
 
                 result.Append("}");
 
@@ -1804,7 +1803,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal static string WriteBoolean(bool booleanToEmit)
         {
-            if(booleanToEmit)
+            if (booleanToEmit)
             {
                 return "$true";
             }
@@ -1914,7 +1913,7 @@ namespace Microsoft.PowerShell.Commands
             object[] values = keyObject as object[];
             if (values != null)
             {
-                for (int i = 0; i < values.Length; )
+                for (int i = 0; i < values.Length;)
                 {
                     WriteRequriedGroup(values[i++], sb);
 

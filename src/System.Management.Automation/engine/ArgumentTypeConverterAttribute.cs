@@ -62,12 +62,12 @@ namespace System.Management.Automation
                         // No Conversion should be done.
                         if (_convertTypes[i].Equals(typeof(System.Management.Automation.PSReference)))
                         {
-                            object temp; 
+                            object temp;
                             PSObject mshObject = result as PSObject;
                             if (mshObject != null)
                                 temp = mshObject.BaseObject;
                             else
-                                temp = result; 
+                                temp = result;
 
                             PSReference reference = temp as PSReference;
 
@@ -84,7 +84,7 @@ namespace System.Management.Automation
                             if (mshObject != null)
                                 temp = mshObject.BaseObject;
                             else
-                                temp = result; 
+                                temp = result;
 
                             // If a non-ref type is expected but currently passed in is a ref, do an implicit dereference. 
                             PSReference reference = temp as PSReference;
@@ -141,7 +141,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    result = LanguagePrimitives.ConvertTo(result, _convertTypes[i], CultureInfo.InvariantCulture);                  
+                    result = LanguagePrimitives.ConvertTo(result, _convertTypes[i], CultureInfo.InvariantCulture);
 
                     // Do validation of invalid direct variable assignments which are allowed to
                     // be used for parameters.
@@ -153,7 +153,7 @@ namespace System.Management.Automation
                         // during variable assignment (here) - "Ignore" is blocked during variable retrieval.
                         if (_convertTypes[i] == typeof(ActionPreference))
                         {
-                            ActionPreference resultPreference = (ActionPreference) result;
+                            ActionPreference resultPreference = (ActionPreference)result;
 
                             if (resultPreference == ActionPreference.Suspend)
                             {
@@ -163,7 +163,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-            catch(PSInvalidCastException e)
+            catch (PSInvalidCastException e)
             {
                 throw new ArgumentTransformationMetadataException(e.Message, e);
             }

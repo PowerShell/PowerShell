@@ -31,7 +31,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// Consolidation of constants for uniformity.
     /// </summary>
-    static class WSManPluginConstants
+    internal static class WSManPluginConstants
     {
         internal const int ExitCodeSuccess = 0x00000000;
         internal const int ExitCodeFailure = 0x00000001;
@@ -48,7 +48,7 @@ namespace System.Management.Automation.Remoting
         internal const string PowerShellStartupProtocolVersionValue = "2.0";
         internal const string PowerShellOptionPrefix = "PS_";
 
-        internal const int WSManPluginParamsGetRequestedLocale      = 5;
+        internal const int WSManPluginParamsGetRequestedLocale = 5;
         internal const int WSManPluginParamsGetRequestedDataLocale = 6;
     }
 
@@ -59,33 +59,33 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal enum WSManPluginErrorCodes : int
     {
-        NullPluginContext               = -2141976624, // 0x805407D0
-        PluginContextNotFound           = -2141976623, // 0x805407D1
+        NullPluginContext = -2141976624, // 0x805407D0
+        PluginContextNotFound = -2141976623, // 0x805407D1
 
-        NullInvalidInput                = -2141975624, // 0x80540BB8
-        NullInvalidStreamSets           = -2141975623, // 0x80540BB9
-        SessionCreationFailed           = -2141975622, // 0x80540BBA
-        NullShellContext                = -2141975621, // 0x80540BBB
-        InvalidShellContext             = -2141975620, // 0x80540BBC
-        InvalidCommandContext           = -2141975619, // 0x80540BBD
-        InvalidInputStream              = -2141975618, // 0x80540BBE
-        InvalidInputDatatype            = -2141975617, // 0x80540BBF
-        InvalidOutputStream             = -2141975616, // 0x80540BC0
-        InvalidSenderDetails            = -2141975615, // 0x80540BC1
-        ShutdownRegistrationFailed      = -2141975614, // 0x80540BC2
-        ReportContextFailed             = -2141975613, // 0x80540BC3
-        InvalidArgSet                   = -2141975612, // 0x80540BC4
-        ProtocolVersionNotMatch         = -2141975611, // 0x80540BC5
-        OptionNotUnderstood             = -2141975610, // 0x80540BC6
-        ProtocolVersionNotFound         = -2141975609, // 0x80540BC7
+        NullInvalidInput = -2141975624, // 0x80540BB8
+        NullInvalidStreamSets = -2141975623, // 0x80540BB9
+        SessionCreationFailed = -2141975622, // 0x80540BBA
+        NullShellContext = -2141975621, // 0x80540BBB
+        InvalidShellContext = -2141975620, // 0x80540BBC
+        InvalidCommandContext = -2141975619, // 0x80540BBD
+        InvalidInputStream = -2141975618, // 0x80540BBE
+        InvalidInputDatatype = -2141975617, // 0x80540BBF
+        InvalidOutputStream = -2141975616, // 0x80540BC0
+        InvalidSenderDetails = -2141975615, // 0x80540BC1
+        ShutdownRegistrationFailed = -2141975614, // 0x80540BC2
+        ReportContextFailed = -2141975613, // 0x80540BC3
+        InvalidArgSet = -2141975612, // 0x80540BC4
+        ProtocolVersionNotMatch = -2141975611, // 0x80540BC5
+        OptionNotUnderstood = -2141975610, // 0x80540BC6
+        ProtocolVersionNotFound = -2141975609, // 0x80540BC7
 
-        ManagedException                = -2141974624, // 0x80540FA0
-        PluginOperationClose            = -2141974623, // 0x80540FA1
-        PluginConnectNoNegotiationData  = -2141974622, // 0x80540FA2
-        PluginConnectOperationFailed    = -2141974621, // 0x80540FA3
+        ManagedException = -2141974624, // 0x80540FA0
+        PluginOperationClose = -2141974623, // 0x80540FA1
+        PluginConnectNoNegotiationData = -2141974622, // 0x80540FA2
+        PluginConnectOperationFailed = -2141974621, // 0x80540FA3
 
-        NoError                         = 0,
-        OutOfMemory                     = -2147024882  // 0x8007000E
+        NoError = 0,
+        OutOfMemory = -2147024882  // 0x8007000E
     }
 
     /// <summary>
@@ -96,7 +96,7 @@ namespace System.Management.Automation.Remoting
     /// their lifetime is managed by WinRM.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    class WSManPluginOperationShutdownContext // TODO: Rename to OperationShutdownContext when removing the MC++ module.
+    internal class WSManPluginOperationShutdownContext // TODO: Rename to OperationShutdownContext when removing the MC++ module.
     {
         #region Internal Members
 
@@ -111,9 +111,9 @@ namespace System.Management.Automation.Remoting
         #region Constructors
 
         internal WSManPluginOperationShutdownContext(
-            IntPtr plgContext, 
-            IntPtr shContext, 
-            IntPtr cmdContext, 
+            IntPtr plgContext,
+            IntPtr shContext,
+            IntPtr cmdContext,
             bool isRcvOp)
         {
             pluginContext = plgContext;
@@ -130,13 +130,13 @@ namespace System.Management.Automation.Remoting
     /// Represents the logical grouping of all actions required to handle the 
     /// lifecycle of shell sessions through the WinRM plugin.
     /// </summary>
-    class WSManPluginInstance
+    internal class WSManPluginInstance
     {
         #region Private Members
 
-        private Dictionary<IntPtr, WSManPluginShellSession> activeShellSessions;
-        private object syncObject;
-        private static Dictionary<IntPtr, WSManPluginInstance> activePlugins = new Dictionary<IntPtr, WSManPluginInstance>();
+        private Dictionary<IntPtr, WSManPluginShellSession> _activeShellSessions;
+        private object _syncObject;
+        private static Dictionary<IntPtr, WSManPluginInstance> s_activePlugins = new Dictionary<IntPtr, WSManPluginInstance>();
 
         /// <summary>
         /// Enables dependency injection after the static constructor is called.
@@ -152,8 +152,8 @@ namespace System.Management.Automation.Remoting
 
         internal WSManPluginInstance()
         {
-            activeShellSessions = new Dictionary<IntPtr, WSManPluginShellSession>();
-            syncObject = new System.Object();
+            _activeShellSessions = new Dictionary<IntPtr, WSManPluginShellSession>();
+            _syncObject = new System.Object();
         }
 
         /// <summary>
@@ -324,12 +324,12 @@ namespace System.Management.Automation.Remoting
 
                 if (null != inboundShellInformation)
                 {
-                    if ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT  != inboundShellInformation.Type)
+                    if ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT != inboundShellInformation.Type)
                     {
                         // only text data is supported
                         ReportOperationComplete(
                             requestDetails,
-                            WSManPluginErrorCodes.InvalidInputDatatype, 
+                            WSManPluginErrorCodes.InvalidInputDatatype,
                             StringUtil.Format(
                                 RemotingErrorIdStrings.WSManPluginInvalidInputDataType,
                                 "WSMAN_DATA_TYPE_TEXT"));
@@ -354,15 +354,15 @@ namespace System.Management.Automation.Remoting
                 if (WSManPluginConstants.ExitCodeSuccess != result)
                 {
                     ReportOperationComplete(
-                        requestDetails, 
+                        requestDetails,
                         WSManPluginErrorCodes.ReportContextFailed,
                         StringUtil.Format(
                                 RemotingErrorIdStrings.WSManPluginReportContextFailed));
                     DeleteFromActiveShellSessions(requestDetails.unmanagedHandle);
                     return;
-                }      
+                }
             }
-            catch(System.Exception e)
+            catch (System.Exception e)
             {
                 CommandProcessorBase.CheckForSevereException(e);
 
@@ -373,7 +373,7 @@ namespace System.Management.Automation.Remoting
                 DeleteFromActiveShellSessions(requestDetails.unmanagedHandle);
                 ReportOperationComplete(
                     requestDetails,
-                    WSManPluginErrorCodes.ManagedException, 
+                    WSManPluginErrorCodes.ManagedException,
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginManagedException,
                         e.Message));
@@ -382,9 +382,9 @@ namespace System.Management.Automation.Remoting
 
             bool isRegisterWaitForSingleObjectSucceeded = true;
 
-           //always synchronize calls to OperationComplete once notification handle is registered.. else duplicate OperationComplete calls are bound to happen
-           lock (mgdShellSession.shellSyncObject)
-           {
+            //always synchronize calls to OperationComplete once notification handle is registered.. else duplicate OperationComplete calls are bound to happen
+            lock (mgdShellSession.shellSyncObject)
+            {
                 mgdShellSession.registeredShutdownNotification = 1;
 
                 // Wrap the provided handle so it can be passed to the registration function
@@ -400,13 +400,13 @@ namespace System.Management.Automation.Remoting
                     //On non-windows platforms the shutdown notification is done through a callback instead of a windows event handle.
                     //Register the callback and this will then signal the event. Note, the gch object is deleted in the shell shutdown
                     //notification that will always come in to shut down the operation.
-                    
+
                     GCHandle gch = GCHandle.Alloc(eventWaitHandle);
                     IntPtr p = GCHandle.ToIntPtr(gch);
 
                     wsmanPinvokeStatic.WSManPluginRegisterShutdownCallback(
                                                            requestDetails.unmanagedHandle,
-                                                           WSManPluginManagedEntryWrapper.workerPtrs.UnmanagedStruct.wsManPluginShutdownCallbackNative, 
+                                                           WSManPluginManagedEntryWrapper.workerPtrs.UnmanagedStruct.wsManPluginShutdownCallbackNative,
                                                            p);
                 }
 
@@ -439,9 +439,8 @@ namespace System.Management.Automation.Remoting
                 {
                     mgdShellSession.SendOneItemToSessionHelper(convertedBase64, WSManPluginConstants.SupportedInputStream);
                 }
-
             }
-            catch(System.Exception e)
+            catch (System.Exception e)
             {
                 CommandProcessorBase.CheckForSevereException(e);
 
@@ -500,12 +499,12 @@ namespace System.Management.Automation.Remoting
 
         internal void CloseCommandOperation(
             WSManPluginOperationShutdownContext context)
-        {    
+        {
             PSEtwLog.LogAnalyticInformational(PSEventId.ServerCloseOperation,
                 PSOpcode.Disconnect, PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                context.shellContext.ToString(), 
-                context.commandContext.ToString(), 
+                context.shellContext.ToString(),
+                context.commandContext.ToString(),
                 context.isReceiveOperation.ToString());
 
             WSManPluginShellSession mgdShellSession = GetFromActiveShellSessions(context.shellContext);
@@ -517,7 +516,6 @@ namespace System.Management.Automation.Remoting
             }
             SetThreadProperties(mgdShellSession.creationRequestDetails);
             mgdShellSession.CloseCommandOperation(context);
-    
         }
 
         /// <summary>
@@ -529,17 +527,17 @@ namespace System.Management.Automation.Remoting
             WSManPluginShellSession newShellSession)
         {
             int count = -1;
-            lock (syncObject)
+            lock (_syncObject)
             {
                 IntPtr key = newShellSession.creationRequestDetails.unmanagedHandle;
                 Dbg.Assert(IntPtr.Zero != key, "NULL handles should not be provided");
 
-                if (!activeShellSessions.ContainsKey(key))
+                if (!_activeShellSessions.ContainsKey(key))
                 {
-                    activeShellSessions.Add(key, newShellSession);
+                    _activeShellSessions.Add(key, newShellSession);
 
                     // trigger an event outside the lock
-                    count = activeShellSessions.Count;
+                    count = _activeShellSessions.Count;
                 }
             }
 
@@ -558,10 +556,10 @@ namespace System.Management.Automation.Remoting
         private WSManPluginShellSession GetFromActiveShellSessions(
             IntPtr key)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
                 WSManPluginShellSession result;
-                activeShellSessions.TryGetValue(key, out result);
+                _activeShellSessions.TryGetValue(key, out result);
                 return result;
             }
         }
@@ -574,12 +572,12 @@ namespace System.Management.Automation.Remoting
             IntPtr keyToDelete)
         {
             int count = -1;
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (activeShellSessions.Remove(keyToDelete))
+                if (_activeShellSessions.Remove(keyToDelete))
                 {
                     // trigger an event outside the lock
-                    count = activeShellSessions.Count;
+                    count = _activeShellSessions.Count;
                 }
             }
             if (-1 != count)
@@ -588,14 +586,14 @@ namespace System.Management.Automation.Remoting
                 WSManServerChannelEvents.RaiseActiveSessionsChangedEvent(new ActiveSessionsChangedEventArgs(count));
             }
         }
-    
+
         /// <summary>
         /// Triggers a shell close from an event handler.
         /// </summary>
         /// <param name="source">Shell context</param>
         /// <param name="e"></param>
         private void HandleShellSessionClosed(
-            Object source, 
+            Object source,
             EventArgs e)
         {
             DeleteFromActiveShellSessions((IntPtr)source);
@@ -676,19 +674,19 @@ namespace System.Management.Automation.Remoting
             if (null == mgdShellSession)
             {
                 ReportOperationComplete(
-                    requestDetails, 
+                    requestDetails,
                     WSManPluginErrorCodes.InvalidShellContext,
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginInvalidShellContext));
                 return;
             }
 
-            mgdShellSession.CreateCommand(pluginContext, requestDetails, flags, commandLine, arguments);   
+            mgdShellSession.CreateCommand(pluginContext, requestDetails, flags, commandLine, arguments);
         }
 
         internal void StopCommand(
-            WSManNativeApi.WSManPluginRequest requestDetails, 
-            IntPtr shellContext, 
+            WSManNativeApi.WSManPluginRequest requestDetails,
+            IntPtr shellContext,
             IntPtr commandContext)
         {
             if (null == requestDetails)
@@ -706,21 +704,21 @@ namespace System.Management.Automation.Remoting
                     String.Empty);
                 return;
             }
-    
+
             SetThreadProperties(requestDetails);
-    
+
             PSEtwLog.LogAnalyticInformational(PSEventId.ServerStopCommand,
                     PSOpcode.Disconnect, PSTask.None,
                     PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                    ((IntPtr)shellContext).ToString(), 
-                    ((IntPtr)commandContext).ToString(), 
+                    ((IntPtr)shellContext).ToString(),
+                    ((IntPtr)commandContext).ToString(),
                     requestDetails.ToString());
 
             WSManPluginShellSession mgdShellSession = GetFromActiveShellSessions(shellContext);
             if (null == mgdShellSession)
             {
                 ReportOperationComplete(
-                    requestDetails, 
+                    requestDetails,
                     WSManPluginErrorCodes.InvalidShellContext,
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginInvalidShellContext));
@@ -748,7 +746,7 @@ namespace System.Management.Automation.Remoting
                     PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic);
 
             // all active shells should be closed at this point
-            Dbg.Assert(activeShellSessions.Count == 0, "All active shells should be closed");
+            Dbg.Assert(_activeShellSessions.Count == 0, "All active shells should be closed");
 
             // raise shutting down notification
             WSManServerChannelEvents.RaiseShuttingDownEvent();
@@ -785,7 +783,7 @@ namespace System.Management.Automation.Remoting
             if (null == mgdShellSession)
             {
                 ReportOperationComplete(
-                    requestDetails, 
+                    requestDetails,
                     WSManPluginErrorCodes.InvalidShellContext,
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginInvalidShellContext));
@@ -794,7 +792,7 @@ namespace System.Management.Automation.Remoting
 
             if (IntPtr.Zero == commandContext)
             {
-                mgdShellSession.ExecuteConnect(requestDetails, flags, inboundConnectInformation);        
+                mgdShellSession.ExecuteConnect(requestDetails, flags, inboundConnectInformation);
                 return;
             }
 
@@ -803,7 +801,7 @@ namespace System.Management.Automation.Remoting
             if (null == mgdCmdSession)
             {
                 ReportOperationComplete(
-                    requestDetails, 
+                    requestDetails,
                     WSManPluginErrorCodes.InvalidCommandContext,
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginInvalidCommandContext));
@@ -836,7 +834,7 @@ namespace System.Management.Automation.Remoting
             }
 
             SetThreadProperties(requestDetails);
-    
+
             PSEtwLog.LogAnalyticInformational(PSEventId.ServerReceivedData,
                     PSOpcode.Open, PSTask.None,
                     PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
@@ -846,7 +844,7 @@ namespace System.Management.Automation.Remoting
             if (null == mgdShellSession)
             {
                 ReportOperationComplete(
-                    requestDetails, 
+                    requestDetails,
                     WSManPluginErrorCodes.InvalidShellContext,
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginInvalidShellContext)
@@ -857,7 +855,7 @@ namespace System.Management.Automation.Remoting
             if (IntPtr.Zero == commandContext)
             {
                 // the data is destined for shell (runspace) session. so let shell handle it
-                mgdShellSession.SendOneItemToSession(requestDetails, flags, stream, inboundData);        
+                mgdShellSession.SendOneItemToSession(requestDetails, flags, stream, inboundData);
                 return;
             }
 
@@ -866,14 +864,14 @@ namespace System.Management.Automation.Remoting
             if (null == mgdCmdSession)
             {
                 ReportOperationComplete(
-                    requestDetails, 
+                    requestDetails,
                     WSManPluginErrorCodes.InvalidCommandContext,
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginInvalidCommandContext));
                 return;
             }
 
-            mgdCmdSession.SendOneItemToSession(requestDetails, flags, stream, inboundData);    
+            mgdCmdSession.SendOneItemToSession(requestDetails, flags, stream, inboundData);
         }
 
         /// <summary>
@@ -900,19 +898,19 @@ namespace System.Management.Automation.Remoting
             }
 
             SetThreadProperties(requestDetails);
-    
+
             PSEtwLog.LogAnalyticInformational(PSEventId.ServerClientReceiveRequest,
                     PSOpcode.Open, PSTask.None,
                     PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                    ((IntPtr)shellContext).ToString(), 
-                    ((IntPtr)commandContext).ToString(), 
+                    ((IntPtr)shellContext).ToString(),
+                    ((IntPtr)commandContext).ToString(),
                     requestDetails.ToString());
 
             WSManPluginShellSession mgdShellSession = GetFromActiveShellSessions(shellContext);
             if (null == mgdShellSession)
             {
                 ReportOperationComplete(
-                    requestDetails, 
+                    requestDetails,
                     WSManPluginErrorCodes.InvalidShellContext,
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginInvalidShellContext)
@@ -944,10 +942,10 @@ namespace System.Management.Automation.Remoting
                 if (null == mgdCmdSession)
                 {
                     ReportOperationComplete(
-                        requestDetails, 
+                        requestDetails,
                         WSManPluginErrorCodes.InvalidCommandContext,
                         StringUtil.Format(
-                            RemotingErrorIdStrings.WSManPluginInvalidCommandContext));             
+                            RemotingErrorIdStrings.WSManPluginInvalidCommandContext));
                     return;
                 }
 
@@ -1102,7 +1100,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="clientVersionString"></param>
         /// <returns></returns>
         protected internal bool EnsureProtocolVersionComplies(
-            WSManNativeApi.WSManPluginRequest requestDetails, 
+            WSManNativeApi.WSManPluginRequest requestDetails,
             string clientVersionString)
         {
             if (String.Equals(clientVersionString, WSManPluginConstants.PowerShellStartupProtocolVersionValue, StringComparison.Ordinal))
@@ -1117,7 +1115,7 @@ namespace System.Management.Automation.Remoting
             System.Version serverVersion = Utils.StringToVersion(WSManPluginConstants.PowerShellStartupProtocolVersionValue);
 
             if ((null != clientVersion) && (null != serverVersion) &&
-                (clientVersion.Major == serverVersion.Major) && 
+                (clientVersion.Major == serverVersion.Major) &&
                 (clientVersion.Minor >= serverVersion.Minor))
             {
                 return true;
@@ -1155,7 +1153,7 @@ namespace System.Management.Automation.Remoting
 
             if (null == pluginToUse)
             {
-                lock (activePlugins)
+                lock (s_activePlugins)
                 {
                     pluginToUse = GetFromActivePlugins(pluginContext);
                     if (null == pluginToUse)
@@ -1183,9 +1181,9 @@ namespace System.Management.Automation.Remoting
             IntPtr shellContext, // PVOID
             [MarshalAs(UnmanagedType.LPWStr)] string commandLine,
             IntPtr arguments) // WSMAN_COMMAND_ARG_SET*
-        {    
+        {
             WSManPluginInstance pluginToUse = GetFromActivePlugins(pluginContext);
-    
+
             if (null == pluginToUse)
             {
                 ReportOperationComplete(
@@ -1199,7 +1197,7 @@ namespace System.Management.Automation.Remoting
             // Marshal the incoming pointers into managed types prior to the call
             WSManNativeApi.WSManPluginRequest request = WSManNativeApi.WSManPluginRequest.UnMarshal(requestDetails);
             WSManNativeApi.WSManCommandArgSet argSet = WSManNativeApi.WSManCommandArgSet.UnMarshal(arguments);
-    
+
             pluginToUse.CreateCommand(pluginContext, request, flags, shellContext, commandLine, argSet);
         }
 
@@ -1210,13 +1208,13 @@ namespace System.Management.Automation.Remoting
             IntPtr shellContext,
             IntPtr commandContext,
             IntPtr inboundConnectInformation)
-        {    
+        {
             WSManPluginInstance pluginToUse = GetFromActivePlugins(pluginContext);
-    
+
             if (null == pluginToUse)
             {
                 ReportOperationComplete(
-                    requestDetails, 
+                    requestDetails,
                     WSManPluginErrorCodes.PluginContextNotFound,
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginContextNotFound));
@@ -1227,7 +1225,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest request = WSManNativeApi.WSManPluginRequest.UnMarshal(requestDetails);
             WSManNativeApi.WSManData_UnToMan connectInformation = WSManNativeApi.WSManData_UnToMan.UnMarshal(inboundConnectInformation);
 
-            pluginToUse.ConnectShellOrCommand(request, flags, shellContext, commandContext, connectInformation);   
+            pluginToUse.ConnectShellOrCommand(request, flags, shellContext, commandContext, connectInformation);
         }
 
         internal static void PerformWSManPluginSend(
@@ -1240,11 +1238,11 @@ namespace System.Management.Automation.Remoting
             IntPtr inboundData) // WSMAN_DATA*
         {
             WSManPluginInstance pluginToUse = GetFromActivePlugins(pluginContext);
-    
+
             if (null == pluginToUse)
             {
                 ReportOperationComplete(
-                    requestDetails, 
+                    requestDetails,
                     WSManPluginErrorCodes.PluginContextNotFound,
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginContextNotFound));
@@ -1271,7 +1269,7 @@ namespace System.Management.Automation.Remoting
             if (null == pluginToUse)
             {
                 ReportOperationComplete(
-                    requestDetails, 
+                    requestDetails,
                     WSManPluginErrorCodes.PluginContextNotFound,
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginContextNotFound));
@@ -1320,7 +1318,7 @@ namespace System.Management.Automation.Remoting
                     if (null == pluginToUse)
                     {
                         ReportOperationComplete(
-                            request, 
+                            request,
                             WSManPluginErrorCodes.PluginContextNotFound,
                             StringUtil.Format(
                                 RemotingErrorIdStrings.WSManPluginContextNotFound));
@@ -1382,21 +1380,21 @@ namespace System.Management.Automation.Remoting
 
         private static WSManPluginInstance GetFromActivePlugins(IntPtr pluginContext)
         {
-            lock (activePlugins)
+            lock (s_activePlugins)
             {
                 WSManPluginInstance result = null;
-                activePlugins.TryGetValue(pluginContext, out result);
+                s_activePlugins.TryGetValue(pluginContext, out result);
                 return result;
             }
         }
 
         private static void AddToActivePlugins(IntPtr pluginContext, WSManPluginInstance plugin)
         {
-            lock (activePlugins)
+            lock (s_activePlugins)
             {
-                if (!activePlugins.ContainsKey(pluginContext))
+                if (!s_activePlugins.ContainsKey(pluginContext))
                 {
-                    activePlugins.Add(pluginContext, plugin);
+                    s_activePlugins.Add(pluginContext, plugin);
                     return;
                 }
             }
@@ -1410,7 +1408,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="requestDetails"></param>
         /// <param name="errorCode"></param>
         internal static void ReportWSManOperationComplete(
-            WSManNativeApi.WSManPluginRequest requestDetails, 
+            WSManNativeApi.WSManPluginRequest requestDetails,
             WSManPluginErrorCodes errorCode)
         {
             Dbg.Assert(null != requestDetails, "requestDetails cannot be null in operation complete.");
@@ -1432,7 +1430,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="requestDetails"></param>
         /// <param name="reasonForClose"></param>
         internal static void ReportWSManOperationComplete(
-            WSManNativeApi.WSManPluginRequest requestDetails, 
+            WSManNativeApi.WSManPluginRequest requestDetails,
             Exception reasonForClose)
         {
             Dbg.Assert(null != requestDetails, "requestDetails cannot be null in operation complete.");
@@ -1451,11 +1449,11 @@ namespace System.Management.Automation.Remoting
             PSEtwLog.LogAnalyticInformational(PSEventId.ReportOperationComplete,
                 PSOpcode.Close, PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                requestDetails.ToString(), 
+                requestDetails.ToString(),
                 Convert.ToString(error, CultureInfo.InvariantCulture),
                 errorMessage,
                 stackTrace);
-    
+
             if (null != reasonForClose)
             {
                 // report operation complete to wsman with the error message (if any).
@@ -1469,7 +1467,7 @@ namespace System.Management.Automation.Remoting
             else
             {
                 ReportOperationComplete(
-                    requestDetails.unmanagedHandle, 
+                    requestDetails.unmanagedHandle,
                     WSManPluginErrorCodes.NoError);
             }
         }
@@ -1486,14 +1484,14 @@ namespace System.Management.Automation.Remoting
         {
             // requestDetails cannot not be null.
             Dbg.Assert(null != requestDetails, "requestDetails cannot be null");
-        
+
             //IntPtr nativeLocaleData = IntPtr.Zero;
             WSManNativeApi.WSManDataStruct outputStruct = new WSManNativeApi.WSManDataStruct();
             int hResult = wsmanPinvokeStatic.WSManPluginGetOperationParameters(
                 requestDetails.unmanagedHandle,
                 WSManPluginConstants.WSManPluginParamsGetRequestedLocale,
                 outputStruct);
-                //ref nativeLocaleData);
+            //ref nativeLocaleData);
             bool retreivingLocaleSucceeded = (0 == hResult);
             WSManNativeApi.WSManData_UnToMan localeData = WSManNativeApi.WSManData_UnToMan.UnMarshal(outputStruct); // nativeLocaleData
 
@@ -1502,7 +1500,7 @@ namespace System.Management.Automation.Remoting
                 requestDetails.unmanagedHandle,
                 WSManPluginConstants.WSManPluginParamsGetRequestedDataLocale,
                 outputStruct);
-                //ref nativeDataLocaleData);
+            //ref nativeDataLocaleData);
             bool retreivingDataLocaleSucceeded = ((int)WSManPluginErrorCodes.NoError == hResult);
             WSManNativeApi.WSManData_UnToMan dataLocaleData = WSManNativeApi.WSManData_UnToMan.UnMarshal(outputStruct); // nativeDataLocaleData
 
@@ -1511,7 +1509,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (retreivingLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == localeData.Type))
                 {
-                    CultureInfo uiCultureToUse =  new CultureInfo(localeData.Text);
+                    CultureInfo uiCultureToUse = new CultureInfo(localeData.Text);
                     ClrFacade.SetCurrentThreadUiCulture(uiCultureToUse);
                 }
             }
@@ -1525,13 +1523,13 @@ namespace System.Management.Automation.Remoting
             {
                 if (retreivingDataLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == dataLocaleData.Type))
                 {
-                    CultureInfo cultureToUse =  new CultureInfo(dataLocaleData.Text);
+                    CultureInfo cultureToUse = new CultureInfo(dataLocaleData.Text);
                     ClrFacade.SetCurrentThreadCulture(cultureToUse);
                 }
             }
             // ignore if there is any exception constructing the culture..
             catch (ArgumentException)
-            {        
+            {
             }
         }
 

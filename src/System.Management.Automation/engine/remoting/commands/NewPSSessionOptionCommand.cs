@@ -67,15 +67,15 @@ namespace System.Management.Automation.Remoting
         {
             get
             {
-                return maximumConnectionRedirectionCount;
+                return _maximumConnectionRedirectionCount;
             }
             set
             {
-                maximumConnectionRedirectionCount = value;
+                _maximumConnectionRedirectionCount = value;
             }
         }
-        private int maximumConnectionRedirectionCount = WSManConnectionInfo.defaultMaximumConnectionRedirectionCount;
-                /// <summary>
+        private int _maximumConnectionRedirectionCount = WSManConnectionInfo.defaultMaximumConnectionRedirectionCount;
+        /// <summary>
         /// If false, underlying WSMan infrastructure will compress data sent on the network.
         /// If true, data will not be compressed. Compression improves performance by 
         /// reducing the amount of data sent on the network. Compression my require extra
@@ -87,14 +87,14 @@ namespace System.Management.Automation.Remoting
         {
             get
             {
-                return noCompression;
+                return _noCompression;
             }
             set
             {
-                noCompression = value;
+                _noCompression = value;
             }
         }
-        private bool noCompression = false;
+        private bool _noCompression = false;
 
         /// <summary>
         /// If <c>true</c> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
@@ -105,14 +105,14 @@ namespace System.Management.Automation.Remoting
         {
             get
             {
-                return noMachineProfile;
+                return _noMachineProfile;
             }
             set
             {
-                noMachineProfile = value;
+                _noMachineProfile = value;
             }
         }
-        private bool noMachineProfile = false;
+        private bool _noMachineProfile = false;
 
         /// <summary>
         /// By default, ProxyAccessType is None, that means Proxy information (ProxyAccessType, 
@@ -120,10 +120,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public ProxyAccessType ProxyAccessType
         {
-            get { return proxyAcessType; }
-            set { proxyAcessType = value; }
+            get { return _proxyAcessType; }
+            set { _proxyAcessType = value; }
         }
-        private ProxyAccessType proxyAcessType = ProxyAccessType.None;
+        private ProxyAccessType _proxyAcessType = ProxyAccessType.None;
 
         /// <summary>
         /// The following is the definition of the input parameter "ProxyAuthentication".
@@ -138,7 +138,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public AuthenticationMechanism ProxyAuthentication
         {
-            get { return proxyAuthentication; }
+            get { return _proxyAuthentication; }
             set
             {
                 switch (value)
@@ -146,11 +146,11 @@ namespace System.Management.Automation.Remoting
                     case AuthenticationMechanism.Basic:
                     case AuthenticationMechanism.Negotiate:
                     case AuthenticationMechanism.Digest:
-                        proxyAuthentication = value;
+                        _proxyAuthentication = value;
                         break;
                     default:
                         string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ProxyAmbiguosAuthentication,
-                            value, 
+                            value,
                             AuthenticationMechanism.Basic.ToString(),
                             AuthenticationMechanism.Negotiate.ToString(),
                             AuthenticationMechanism.Digest.ToString());
@@ -158,17 +158,17 @@ namespace System.Management.Automation.Remoting
                 }
             }
         }
-        private AuthenticationMechanism proxyAuthentication = AuthenticationMechanism.Negotiate;
+        private AuthenticationMechanism _proxyAuthentication = AuthenticationMechanism.Negotiate;
 
         /// <summary>
         /// The following is the definition of the input parameter "ProxyCredential".
         /// </summary>
         public PSCredential ProxyCredential
         {
-            get { return proxyCredential; }
-            set { proxyCredential = value; }
+            get { return _proxyCredential; }
+            set { _proxyCredential = value; }
         }
-        private PSCredential proxyCredential;
+        private PSCredential _proxyCredential;
 
 
         /// <summary>
@@ -180,10 +180,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public bool SkipCACheck
         {
-            get { return skipCACheck; }
-            set { skipCACheck = value; }
+            get { return _skipCACheck; }
+            set { _skipCACheck = value; }
         }
-        private bool skipCACheck;
+        private bool _skipCACheck;
 
         /// <summary>
         /// Indicates that certificate common name (CN) of the server need not match the 
@@ -192,10 +192,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public bool SkipCNCheck
         {
-            get { return skipCNCheck; }
-            set { skipCNCheck = value; }
+            get { return _skipCNCheck; }
+            set { _skipCNCheck = value; }
         }
-        private bool skipCNCheck;
+        private bool _skipCNCheck;
 
         /// <summary>
         /// Indicates that certificate common name (CN) of the server need not match the 
@@ -204,10 +204,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public bool SkipRevocationCheck
         {
-            get { return skipRevocationCheck; }
-            set { skipRevocationCheck = value; }
+            get { return _skipRevocationCheck; }
+            set { _skipRevocationCheck = value; }
         }
-        private bool skipRevocationCheck;
+        private bool _skipRevocationCheck;
 
         /// <summary>
         /// The duration for which PowerShell remoting waits before timing out 
@@ -219,10 +219,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public TimeSpan OperationTimeout
         {
-            get { return operationTimeout; }
-            set { operationTimeout = value; }
+            get { return _operationTimeout; }
+            set { _operationTimeout = value; }
         }
-        private TimeSpan operationTimeout = 
+        private TimeSpan _operationTimeout =
             TimeSpan.FromMilliseconds(BaseTransportManager.ClientDefaultOperationTimeoutMs);
 
         /// <summary>
@@ -232,10 +232,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public bool NoEncryption
         {
-            get { return noEncryption; }
-            set { noEncryption = value; }
+            get { return _noEncryption; }
+            set { _noEncryption = value; }
         }
-        private bool noEncryption;
+        private bool _noEncryption;
 
         /// <summary>
         /// Indicates the request is encoded in UTF16 format rather than UTF8 format; 
@@ -244,10 +244,10 @@ namespace System.Management.Automation.Remoting
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "UTF")]
         public bool UseUTF16
         {
-            get { return useUtf16; }
-            set { useUtf16 = value; }
+            get { return _useUtf16; }
+            set { _useUtf16 = value; }
         }
-        private bool useUtf16;
+        private bool _useUtf16;
 
         /// <summary>
         /// Uses Service Principal Name (SPN) along with the Port number during authentication.
@@ -255,10 +255,10 @@ namespace System.Management.Automation.Remoting
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SPN")]
         public bool IncludePortInSPN
         {
-            get { return includePortInSPN; }
-            set { includePortInSPN = value; }
+            get { return _includePortInSPN; }
+            set { _includePortInSPN = value; }
         }
-        bool includePortInSPN;
+        private bool _includePortInSPN;
 
         /// <summary>
         /// Determines how server in disconnected state deals with cached output
@@ -268,10 +268,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public OutputBufferingMode OutputBufferingMode
         {
-            get { return this.outputBufferingMode; }
-            set { this.outputBufferingMode = value; }
+            get { return _outputBufferingMode; }
+            set { _outputBufferingMode = value; }
         }
-        private OutputBufferingMode outputBufferingMode = WSManConnectionInfo.DefaultOutputBufferingMode;
+        private OutputBufferingMode _outputBufferingMode = WSManConnectionInfo.DefaultOutputBufferingMode;
 
         /// <summary>
         /// Number of times a connection will be re-attempted when a connection fails due to network
@@ -279,10 +279,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public int MaxConnectionRetryCount
         {
-            get { return this.maxConnectionRetryCount; }
-            set { this.maxConnectionRetryCount = value; }
+            get { return _maxConnectionRetryCount; }
+            set { _maxConnectionRetryCount = value; }
         }
-        private int maxConnectionRetryCount = WSManConnectionInfo.DefaultMaxConnectionRetryCount;
+        private int _maxConnectionRetryCount = WSManConnectionInfo.DefaultMaxConnectionRetryCount;
 
         /// <summary>
         /// Culture that the remote session should use
@@ -291,14 +291,14 @@ namespace System.Management.Automation.Remoting
         {
             get
             {
-                return culture;
+                return _culture;
             }
             set
             {
-                culture = value;
+                _culture = value;
             }
         }
-        private CultureInfo culture;
+        private CultureInfo _culture;
 
         /// <summary>
         /// UI culture that the remote session should use
@@ -307,14 +307,14 @@ namespace System.Management.Automation.Remoting
         {
             get
             {
-                return uiCulture;
+                return _uiCulture;
             }
             set
             {
-                uiCulture = value;
+                _uiCulture = value;
             }
         }
-        private CultureInfo uiCulture;
+        private CultureInfo _uiCulture;
 
         /// <summary>
         /// Total data (in bytes) that can be received from a remote machine
@@ -323,10 +323,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public Nullable<int> MaximumReceivedDataSizePerCommand
         {
-            get { return maxRecvdDataSizePerCommand; }
-            set { maxRecvdDataSizePerCommand = value; }
+            get { return _maxRecvdDataSizePerCommand; }
+            set { _maxRecvdDataSizePerCommand = value; }
         }
-        private Nullable<int> maxRecvdDataSizePerCommand;
+        private Nullable<int> _maxRecvdDataSizePerCommand;
 
         /// <summary>
         /// Maximum size (in bytes) of a deserialized object received from a remote machine.
@@ -334,10 +334,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public Nullable<int> MaximumReceivedObjectSize
         {
-            get { return maxRecvdObjectSize; }
-            set { maxRecvdObjectSize = value; }
+            get { return _maxRecvdObjectSize; }
+            set { _maxRecvdObjectSize = value; }
         }
-        private Nullable<int> maxRecvdObjectSize = 200 << 20; // Default: 200MB. Bug Win8: 44870. This is to protect client from malicious server attacks.
+        private Nullable<int> _maxRecvdObjectSize = 200 << 20; // Default: 200MB. Bug Win8: 44870. This is to protect client from malicious server attacks.
 
         /// <summary>
         /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
@@ -345,13 +345,13 @@ namespace System.Management.Automation.Remoting
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public PSPrimitiveDictionary ApplicationArguments
         {
-            get { return applicationArguments; }
-            set 
+            get { return _applicationArguments; }
+            set
             {
-                applicationArguments = value; 
+                _applicationArguments = value;
             }
         }
-        private PSPrimitiveDictionary applicationArguments;
+        private PSPrimitiveDictionary _applicationArguments;
 
         /// <summary>
         /// The duration for which PowerShell remoting waits before timing out on a connection to a remote machine. 
@@ -363,10 +363,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public TimeSpan OpenTimeout
         {
-            get { return openTimeout; }
-            set { openTimeout = value; }
+            get { return _openTimeout; }
+            set { _openTimeout = value; }
         }
-        private TimeSpan openTimeout = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultOpenTimeout);
+        private TimeSpan _openTimeout = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultOpenTimeout);
 
         /// <summary>
         /// The duration for which PowerShell should wait before it times out on cancel operations 
@@ -379,10 +379,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public TimeSpan CancelTimeout
         {
-            get { return cancelTimeout; }
-            set { cancelTimeout = value; }
+            get { return _cancelTimeout; }
+            set { _cancelTimeout = value; }
         }
-        private TimeSpan cancelTimeout = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.defaultCancelTimeout);
+        private TimeSpan _cancelTimeout = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.defaultCancelTimeout);
 
         /// <summary>
         /// The duration for which a Runspace on server needs to wait before it declares the client dead and closes itself down. 
@@ -393,10 +393,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public TimeSpan IdleTimeout
         {
-            get { return idleTimeout; }
-            set { idleTimeout = value; }
+            get { return _idleTimeout; }
+            set { _idleTimeout = value; }
         }
-        private TimeSpan idleTimeout = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultIdleTimeout);
+        private TimeSpan _idleTimeout = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultIdleTimeout);
     }
 }
 
@@ -420,10 +420,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public int MaximumRedirection
         {
-            get { return maximumRedirection.Value; }
-            set { maximumRedirection = value; }
+            get { return _maximumRedirection.Value; }
+            set { _maximumRedirection = value; }
         }
-        private int? maximumRedirection;
+        private int? _maximumRedirection;
 
         /// <summary>
         /// If false, underlying WSMan infrastructure will compress data sent on the network.
@@ -436,10 +436,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter NoCompression
         {
-            get { return noCompression; }
-            set { noCompression = value; }
+            get { return _noCompression; }
+            set { _noCompression = value; }
         }
-        private SwitchParameter noCompression;
+        private SwitchParameter _noCompression;
 
         /// <summary>
         /// If <c>true</c> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
@@ -451,14 +451,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return noMachineProfile;
+                return _noMachineProfile;
             }
             set
             {
-                noMachineProfile = value;
+                _noMachineProfile = value;
             }
         }
-        private SwitchParameter noMachineProfile;
+        private SwitchParameter _noMachineProfile;
 
         /// <summary>
         /// Culture that the remote session should use
@@ -469,14 +469,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return culture;
+                return _culture;
             }
             set
             {
-                culture = value;
+                _culture = value;
             }
         }
-        private CultureInfo culture;
+        private CultureInfo _culture;
 
         /// <summary>
         /// UI culture that the remote session should use
@@ -487,14 +487,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return uiCulture;
+                return _uiCulture;
             }
             set
             {
-                uiCulture = value;
+                _uiCulture = value;
             }
         }
-        private CultureInfo uiCulture;
+        private CultureInfo _uiCulture;
 
         /// <summary>
         /// Total data (in bytes) that can be received from a remote machine
@@ -504,10 +504,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public int MaximumReceivedDataSizePerCommand
         {
-            get { return maxRecvdDataSizePerCommand.Value; }
-            set { maxRecvdDataSizePerCommand = value; }
+            get { return _maxRecvdDataSizePerCommand.Value; }
+            set { _maxRecvdDataSizePerCommand = value; }
         }
-        private Nullable<int> maxRecvdDataSizePerCommand;
+        private Nullable<int> _maxRecvdDataSizePerCommand;
 
         /// <summary>
         /// Maximum size (in bytes) of a deserialized object received from a remote machine.
@@ -516,10 +516,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public int MaximumReceivedObjectSize
         {
-            get { return maxRecvdObjectSize.Value; }
-            set { maxRecvdObjectSize = value; }
+            get { return _maxRecvdObjectSize.Value; }
+            set { _maxRecvdObjectSize = value; }
         }
-        private Nullable<int> maxRecvdObjectSize;
+        private Nullable<int> _maxRecvdObjectSize;
 
         /// <summary>
         /// Specifies the output mode on the server when it is in Disconnected mode
@@ -528,10 +528,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public OutputBufferingMode OutputBufferingMode
         {
-            get { return this.outputBufferingMode; }
-            set { this.outputBufferingMode = value; }
+            get { return _outputBufferingMode; }
+            set { _outputBufferingMode = value; }
         }
-        private OutputBufferingMode outputBufferingMode;
+        private OutputBufferingMode _outputBufferingMode;
 
         /// <summary>
         /// Maximum number of times a connection will be re-attempted when a connection fails due to network
@@ -541,10 +541,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(0, Int32.MaxValue)]
         public int MaxConnectionRetryCount
         {
-            get { return this.maxConnectionRetryCount; }
-            set { this.maxConnectionRetryCount = value; }
+            get { return _maxConnectionRetryCount; }
+            set { _maxConnectionRetryCount = value; }
         }
-        private int maxConnectionRetryCount;
+        private int _maxConnectionRetryCount;
 
         /// <summary>
         /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
@@ -554,10 +554,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public PSPrimitiveDictionary ApplicationArguments
         {
-            get { return applicationArguments; }
-            set { applicationArguments = value; }
+            get { return _applicationArguments; }
+            set { _applicationArguments = value; }
         }
-        private PSPrimitiveDictionary applicationArguments;
+        private PSPrimitiveDictionary _applicationArguments;
 
         /// <summary>
         /// The duration for which PowerShell remoting waits (in milliseconds) before timing 
@@ -572,14 +572,14 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(0, Int32.MaxValue)]
         public int OpenTimeout
         {
-            get 
+            get
             {
-                return openTimeout.HasValue ? openTimeout.Value :
+                return _openTimeout.HasValue ? _openTimeout.Value :
                     RunspaceConnectionInfo.DefaultOpenTimeout;
             }
-            set { openTimeout = value; }
+            set { _openTimeout = value; }
         }
-        private int? openTimeout;
+        private int? _openTimeout;
 
         /// <summary>
         /// The duration for which PowerShell should wait (in milliseconds) before it 
@@ -595,14 +595,14 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(0, Int32.MaxValue)]
         public int CancelTimeout
         {
-            get 
+            get
             {
-                return cancelTimeout.HasValue ? cancelTimeout.Value :
+                return _cancelTimeout.HasValue ? _cancelTimeout.Value :
                     BaseTransportManager.ClientCloseTimeoutMs;
             }
-            set { cancelTimeout = value; }
+            set { _cancelTimeout = value; }
         }
-        private int? cancelTimeout;
+        private int? _cancelTimeout;
 
         /// <summary>
         /// The duration for which a Runspace on server needs to wait (in milliseconds) before it
@@ -615,14 +615,14 @@ namespace Microsoft.PowerShell.Commands
         [Alias("IdleTimeoutMSec")]
         public int IdleTimeout
         {
-            get 
-            { 
-                return idleTimeout.HasValue ? idleTimeout.Value 
+            get
+            {
+                return _idleTimeout.HasValue ? _idleTimeout.Value
                     : RunspaceConnectionInfo.DefaultIdleTimeout;
             }
-            set { idleTimeout = value; }
+            set { _idleTimeout = value; }
         }
-        private int? idleTimeout;
+        private int? _idleTimeout;
 
         #endregion Parameters
 
@@ -653,10 +653,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public AuthenticationMechanism ProxyAuthentication
         {
-            get { return proxyauthentication; }
-            set { proxyauthentication = value; }
+            get { return _proxyauthentication; }
+            set { _proxyauthentication = value; }
         }
-        private AuthenticationMechanism proxyauthentication = AuthenticationMechanism.Negotiate;
+        private AuthenticationMechanism _proxyauthentication = AuthenticationMechanism.Negotiate;
 
         /// <summary>
         /// The following is the definition of the input parameter "ProxyCredential".
@@ -682,10 +682,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter SkipCACheck
         {
-            get { return skipcacheck; }
-            set { skipcacheck = value; }
+            get { return _skipcacheck; }
+            set { _skipcacheck = value; }
         }
-        private bool skipcacheck;
+        private bool _skipcacheck;
 
         /// <summary>
         /// The following is the definition of the input parameter "SkipCNCheck".
@@ -696,10 +696,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter SkipCNCheck
         {
-            get { return skipcncheck; }
-            set { skipcncheck = value; }
+            get { return _skipcncheck; }
+            set { _skipcncheck = value; }
         }
-        private bool skipcncheck;
+        private bool _skipcncheck;
 
         /// <summary>
         /// The following is the definition of the input parameter "SkipRevocation".
@@ -710,10 +710,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter SkipRevocationCheck
         {
-            get { return skiprevocationcheck; }
-            set { skiprevocationcheck = value; }
+            get { return _skiprevocationcheck; }
+            set { _skiprevocationcheck = value; }
         }
-        private bool skiprevocationcheck;
+        private bool _skiprevocationcheck;
 
         /// <summary>
         /// The following is the definition of the input parameter "Timeout".
@@ -724,14 +724,14 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(0, Int32.MaxValue)]
         public Int32 OperationTimeout
         {
-            get 
-            { 
-                return (operationtimeout.HasValue ? operationtimeout.Value :
-                    BaseTransportManager.ClientDefaultOperationTimeoutMs); 
+            get
+            {
+                return (_operationtimeout.HasValue ? _operationtimeout.Value :
+                    BaseTransportManager.ClientDefaultOperationTimeoutMs);
             }
-            set { operationtimeout = value; }
+            set { _operationtimeout = value; }
         }
-        private Int32? operationtimeout;
+        private Int32? _operationtimeout;
 
         /// <summary>
         /// The following is the definition of the input parameter "UnEncrypted".
@@ -742,13 +742,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter NoEncryption
         {
-            get { return noencryption; }
+            get { return _noencryption; }
             set
             {
-                noencryption = value;
+                _noencryption = value;
             }
         }
-        private bool noencryption;
+        private bool _noencryption;
 
         /// <summary>
         /// The following is the definition of the input parameter "UTF16".
@@ -759,13 +759,13 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "UTF")]
         public SwitchParameter UseUTF16
         {
-            get { return useutf16; }
+            get { return _useutf16; }
             set
             {
-                useutf16 = value;
+                _useutf16 = value;
             }
         }
-        private bool useutf16;
+        private bool _useutf16;
 
         /// <summary>
         /// Uses Service Principal Name (SPN) along with the Port number during authentication.
@@ -774,15 +774,15 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SPN")]
         public SwitchParameter IncludePortInSPN
         {
-            get { return includePortInSPN; }
-            set { includePortInSPN = value; }
+            get { return _includePortInSPN; }
+            set { _includePortInSPN = value; }
         }
-        private bool includePortInSPN;
+        private bool _includePortInSPN;
 
         #endregion
 
         #region Implementation
-                
+
         /// <summary>
         /// Performs initialization of cmdlet execution.
         /// </summary>
@@ -796,15 +796,15 @@ namespace Microsoft.PowerShell.Commands
             result.SkipCACheck = this.SkipCACheck;
             result.SkipCNCheck = this.SkipCNCheck;
             result.SkipRevocationCheck = this.SkipRevocationCheck;
-            if (this.operationtimeout.HasValue)
+            if (_operationtimeout.HasValue)
             {
-                result.OperationTimeout = TimeSpan.FromMilliseconds(this.operationtimeout.Value);
+                result.OperationTimeout = TimeSpan.FromMilliseconds(_operationtimeout.Value);
             }
             result.NoEncryption = this.NoEncryption;
             result.UseUTF16 = this.UseUTF16;
             result.IncludePortInSPN = this.IncludePortInSPN;
             // End: WSMan specific options
-            if (this.maximumRedirection.HasValue)
+            if (_maximumRedirection.HasValue)
             {
                 result.MaximumConnectionRedirectionCount = this.MaximumRedirection;
             }
@@ -812,8 +812,8 @@ namespace Microsoft.PowerShell.Commands
             result.NoCompression = this.NoCompression.IsPresent;
             result.NoMachineProfile = this.NoMachineProfile.IsPresent;
 
-            result.MaximumReceivedDataSizePerCommand = this.maxRecvdDataSizePerCommand;
-            result.MaximumReceivedObjectSize = this.maxRecvdObjectSize;
+            result.MaximumReceivedDataSizePerCommand = _maxRecvdDataSizePerCommand;
+            result.MaximumReceivedObjectSize = _maxRecvdObjectSize;
 
             if (this.Culture != null)
             {
@@ -824,22 +824,22 @@ namespace Microsoft.PowerShell.Commands
                 result.UICulture = this.UICulture;
             }
 
-            if (this.openTimeout.HasValue)
+            if (_openTimeout.HasValue)
             {
-                result.OpenTimeout = TimeSpan.FromMilliseconds(this.openTimeout.Value);
+                result.OpenTimeout = TimeSpan.FromMilliseconds(_openTimeout.Value);
             }
-            if (this.cancelTimeout.HasValue)
+            if (_cancelTimeout.HasValue)
             {
-                result.CancelTimeout = TimeSpan.FromMilliseconds(this.cancelTimeout.Value);
+                result.CancelTimeout = TimeSpan.FromMilliseconds(_cancelTimeout.Value);
             }
-            if (this.idleTimeout.HasValue)
+            if (_idleTimeout.HasValue)
             {
-                result.IdleTimeout = TimeSpan.FromMilliseconds(this.idleTimeout.Value);
+                result.IdleTimeout = TimeSpan.FromMilliseconds(_idleTimeout.Value);
             }
 
-            result.OutputBufferingMode = this.outputBufferingMode;
+            result.OutputBufferingMode = _outputBufferingMode;
 
-            result.MaxConnectionRetryCount = this.maxConnectionRetryCount;
+            result.MaxConnectionRetryCount = _maxConnectionRetryCount;
 
             if (this.ApplicationArguments != null)
             {

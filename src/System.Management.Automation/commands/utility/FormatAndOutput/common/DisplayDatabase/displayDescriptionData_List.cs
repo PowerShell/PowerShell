@@ -12,7 +12,6 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
-
     #region List View Definitions
 
     /// <summary>
@@ -29,7 +28,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// optional list of list entry definition overrides. It can be empty if there are no overrides
         /// </summary>
-        internal List<ListControlEntryDefinition> optionalEntryList = new List<ListControlEntryDefinition> ();
+        internal List<ListControlEntryDefinition> optionalEntryList = new List<ListControlEntryDefinition>();
 
         internal override ControlBase Copy()
         {
@@ -64,7 +63,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// mandatory list of list view items.
         /// It cannot be empty
         /// </summary>
-        internal List<ListControlItemDefinition> itemDefinitionList = new List<ListControlItemDefinition> ();
+        internal List<ListControlItemDefinition> itemDefinitionList = new List<ListControlItemDefinition>();
 
         /// <summary>
         /// Returns a Shallow Copy of the current object.
@@ -107,7 +106,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         ///     * PropertyToken
         ///     * NOTHING (provide an empty cell)
         /// </summary>
-        internal List<FormatToken> formatTokenList = new List<FormatToken> ();
+        internal List<FormatToken> formatTokenList = new List<FormatToken>();
     }
 
     #endregion
@@ -126,7 +125,7 @@ namespace System.Management.Automation
         /// <summary></summary>
         public static ListControlBuilder Create(bool outOfBand = false)
         {
-            var list = new ListControl {OutOfBand = false};
+            var list = new ListControl { OutOfBand = false };
             return new ListControlBuilder(list);
         }
 
@@ -160,7 +159,7 @@ namespace System.Management.Automation
         internal ListControl(ListControlBody listcontrolbody, ViewDefinition viewDefinition)
             : this()
         {
-            this.GroupBy = PSControlGroupBy.Get(viewDefinition.groupBy); 
+            this.GroupBy = PSControlGroupBy.Get(viewDefinition.groupBy);
             this.OutOfBand = viewDefinition.outOfBand;
 
             Entries.Add(new ListControlEntry(listcontrolbody.defaultEntryDefinition));
@@ -212,13 +211,13 @@ namespace System.Management.Automation
             get
             {
                 if (EntrySelectedBy == null)
-                    EntrySelectedBy = new EntrySelectedBy {TypeNames = new List<string>()};
+                    EntrySelectedBy = new EntrySelectedBy { TypeNames = new List<string>() };
                 return EntrySelectedBy.TypeNames;
             }
         }
 
         /// <summary>List of typenames and/or a script block which select this entry.</summary>
-        public EntrySelectedBy EntrySelectedBy { get; internal set; } 
+        public EntrySelectedBy EntrySelectedBy { get; internal set; }
 
         /// <summary>Initiate an instance of ListControlEntry</summary>
         public ListControlEntry()
@@ -259,7 +258,7 @@ namespace System.Management.Automation
             if (selectedBy == null)
                 throw PSTraceSource.NewArgumentNullException("selectedBy");
 
-            EntrySelectedBy = new EntrySelectedBy {TypeNames = new List<string>(selectedBy)};
+            EntrySelectedBy = new EntrySelectedBy { TypeNames = new List<string>(selectedBy) };
             foreach (ListControlEntryItem item in listItems)
             {
                 this.Items.Add(item);
@@ -268,7 +267,7 @@ namespace System.Management.Automation
 
         internal bool SafeForExport()
         {
-            foreach(var item in Items)
+            foreach (var item in Items)
             {
                 if (!item.SafeForExport())
                     return false;
@@ -279,7 +278,7 @@ namespace System.Management.Automation
 
         internal bool CompatibleWithOldPowerShell()
         {
-            foreach(var item in Items)
+            foreach (var item in Items)
             {
                 if (!item.CompatibleWithOldPowerShell())
                     return false;

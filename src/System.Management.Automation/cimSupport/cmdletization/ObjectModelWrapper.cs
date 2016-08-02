@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Cmdletization
     /// For example - CimCmdletAdapter knows how to invoke a static method "Foo" in the CIM OM.
     /// </summary>
     /// <typeparam name="TObjectInstance">Type that represents instances of objects from the wrapped object model</typeparam>
-    public abstract class CmdletAdapter<TObjectInstance> 
+    public abstract class CmdletAdapter<TObjectInstance>
         where TObjectInstance : class
     {
         internal void Initialize(PSCmdlet cmdlet, string className, string classVersion, IDictionary<string, string> privateData)
@@ -35,10 +35,10 @@ namespace Microsoft.PowerShell.Cmdletization
                 throw new ArgumentNullException("privateData");
             }
 
-            this.cmdlet = cmdlet;
-            this.className = className;
-            this.classVersion = classVersion;
-            this.privateData = privateData;
+            _cmdlet = cmdlet;
+            _className = className;
+            _classVersion = classVersion;
+            _privateData = privateData;
 
             var compiledScript = this.Cmdlet as PSScriptCmdlet;
             if (compiledScript != null)
@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Cmdletization
                             {
                                 disposable.Dispose();
                             }
-                        };                
+                        };
             }
         }
 
@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="privateData"></param>
         public void Initialize(PSCmdlet cmdlet, string className, string classVersion, Version moduleVersion, IDictionary<string, string> privateData)
         {
-            this.moduleVersion = moduleVersion;
+            _moduleVersion = moduleVersion;
 
             Initialize(cmdlet, className, classVersion, privateData);
         }
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="query">Query parameters</param>
         /// <param name="methodInvocationInfo">Method invocation details</param>
         /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the object instance being operated on</param>
-    	public virtual void ProcessRecord(QueryBuilder query, MethodInvocationInfo methodInvocationInfo, bool passThru)
+        public virtual void ProcessRecord(QueryBuilder query, MethodInvocationInfo methodInvocationInfo, bool passThru)
         {
             throw new NotImplementedException();
         }
@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// Invokes a static method in the object model.
         /// </summary>
         /// <param name="methodInvocationInfo">Method invocation details</param>
-    	public virtual void ProcessRecord(
+        public virtual void ProcessRecord(
             MethodInvocationInfo methodInvocationInfo)
         {
             throw new NotImplementedException();
@@ -159,10 +159,10 @@ namespace Microsoft.PowerShell.Cmdletization
         {
             get
             {
-                return this.cmdlet;
+                return _cmdlet;
             }
         }
-        private PSCmdlet cmdlet;
+        private PSCmdlet _cmdlet;
 
         /// <summary>
         /// Name of the class (from the object model handled by this ObjectModelWrapper) that is wrapped by the currently executing cmdlet
@@ -171,10 +171,10 @@ namespace Microsoft.PowerShell.Cmdletization
         {
             get
             {
-                return this.className;
+                return _className;
             }
         }
-        private string className;
+        private string _className;
 
         /// <summary>
         /// Name of the class (from the object model handled by this ObjectModelWrapper) that is wrapped by the currently executing cmdlet.
@@ -184,10 +184,10 @@ namespace Microsoft.PowerShell.Cmdletization
         {
             get
             {
-                return this.classVersion;
+                return _classVersion;
             }
         }
-        private string classVersion;
+        private string _classVersion;
 
         /// <summary>
         /// Module version
@@ -196,10 +196,10 @@ namespace Microsoft.PowerShell.Cmdletization
         {
             get
             {
-                return this.moduleVersion;
+                return _moduleVersion;
             }
         }
-        private Version moduleVersion;
+        private Version _moduleVersion;
 
         /// <summary>
         /// Private data from Cmdlet Definition XML (from &lt;ObjectModelWrapperPrivateData&gt; element)
@@ -208,9 +208,9 @@ namespace Microsoft.PowerShell.Cmdletization
         {
             get
             {
-                return this.privateData;
+                return _privateData;
             }
         }
-        private IDictionary<string, string> privateData;
+        private IDictionary<string, string> _privateData;
     }
 }

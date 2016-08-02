@@ -39,7 +39,7 @@ namespace System.Management.Automation.Remoting
     {
         private RemoteSessionCapability _clientCapability;
         private RemoteSessionCapability _serverCapability;
-        private bool isNegotiationSucceeded;
+        private bool _isNegotiationSucceeded;
 
         #region Constructors
 
@@ -90,8 +90,8 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal bool IsNegotiationSucceeded
         {
-            get { return isNegotiationSucceeded; }
-            set { isNegotiationSucceeded = value; }
+            get { return _isNegotiationSucceeded; }
+            set { _isNegotiationSucceeded = value; }
         }
     }
 
@@ -109,7 +109,7 @@ namespace System.Management.Automation.Remoting
     internal class ServerRemoteSession : RemoteSession
     {
         [TraceSourceAttribute("ServerRemoteSession", "ServerRemoteSession")]
-        static private PSTraceSource _trace = PSTraceSource.GetTracer("ServerRemoteSession", "ServerRemoteSession");
+        static private PSTraceSource s_trace = PSTraceSource.GetTracer("ServerRemoteSession", "ServerRemoteSession");
 
         private ServerRemoteSessionContext _context;
         private ServerRemoteSessionDataStructureHandler _sessionDSHandler;
@@ -120,8 +120,8 @@ namespace System.Management.Automation.Remoting
         private PSSessionConfiguration _sessionConfigProvider;
 
         // used to apply quotas on command and session transportmanagers.
-        private Nullable<int> maxRecvdObjectSize;
-        private Nullable<int> maxRecvdDataSizeCommand;
+        private Nullable<int> _maxRecvdObjectSize;
+        private Nullable<int> _maxRecvdDataSizeCommand;
 
         private ServerRunspacePoolDriver _runspacePoolDriver;
         private PSRemotingCryptoHelperServer _cryptoHelper;
@@ -172,8 +172,8 @@ namespace System.Management.Automation.Remoting
             _initParameters = initializationParameters;
             if (Platform.IsWindows)
             {
-            	_cryptoHelper = (PSRemotingCryptoHelperServer)transportManager.CryptoHelper;
-            	_cryptoHelper.Session = this;
+                _cryptoHelper = (PSRemotingCryptoHelperServer)transportManager.CryptoHelper;
+                _cryptoHelper.Session = this;
             }
 
             _context = new ServerRemoteSessionContext();
@@ -182,13 +182,13 @@ namespace System.Management.Automation.Remoting
             _sessionDSHandler.CreateRunspacePoolReceived += HandleCreateRunspacePool;
             _sessionDSHandler.NegotiationReceived += HandleNegotiationReceived;
             _sessionDSHandler.SessionClosing += HandleSessionDSHandlerClosing;
-            _sessionDSHandler.PublicKeyReceived += 
-                new EventHandler<RemoteDataEventArgs<string>>(HandlePublicKeyReceived);      
+            _sessionDSHandler.PublicKeyReceived +=
+                new EventHandler<RemoteDataEventArgs<string>>(HandlePublicKeyReceived);
             transportManager.Closing += HandleResourceClosing;
 
             // update the quotas from sessionState..start with default size..and
             // when Custom Session Configuration is loaded (during runsapce creation) update this.
-            transportManager.ReceivedDataCollection.MaximumReceivedObjectSize = 
+            transportManager.ReceivedDataCollection.MaximumReceivedObjectSize =
                 BaseTransportManager.MaximumReceivedObjectSize;
 
             // session transport manager can recieve unlimited data..however each object is limited
@@ -234,10 +234,10 @@ namespace System.Management.Automation.Remoting
             AbstractServerSessionTransportManager transportManager,
             string configurationName = null)
         {
-            Dbg.Assert((senderInfo != null) & (senderInfo.UserInfo != null), 
+            Dbg.Assert((senderInfo != null) & (senderInfo.UserInfo != null),
                 "senderInfo and userInfo cannot be null.");
-             
-            _trace.WriteLine("Finding InitialSessionState provider for id : {0}", configurationProviderId);
+
+            s_trace.WriteLine("Finding InitialSessionState provider for id : {0}", configurationProviderId);
 
             if (string.IsNullOrEmpty(configurationProviderId))
             {
@@ -251,7 +251,7 @@ namespace System.Management.Automation.Remoting
             {
                 _configurationName = configurationName
             };
-               
+
             // start state machine.
             RemoteSessionStateMachineEventArgs startEventArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.CreateSession);
             result._sessionDSHandler.StateMachine.RaiseEvent(startEventArg);
@@ -272,7 +272,7 @@ namespace System.Management.Automation.Remoting
             AbstractServerSessionTransportManager transportManager,
             string configurationName)
         {
-            ServerRemoteSession result = CreateServerRemoteSession(senderInfo, 
+            ServerRemoteSession result = CreateServerRemoteSession(senderInfo,
                 "Microsoft.PowerShell", "", transportManager, configurationName);
             result._initScriptForOutOfProcRS = initializationScriptForOutOfProcessRunspace;
             return result;
@@ -378,7 +378,7 @@ namespace System.Management.Automation.Remoting
                             case RemotingDataType.SessionCapability:
                                 _sessionDSHandler.RaiseDataReceivedEvent(dataEventArg);
                                 break;
-                                
+
                             case RemotingDataType.PublicKey:
                                 _sessionDSHandler.RaiseDataReceivedEvent(dataEventArg);
                                 break;
@@ -387,7 +387,7 @@ namespace System.Management.Automation.Remoting
                                 Dbg.Assert(false, "Should never reach here");
                                 break;
                         }
-                    }                        
+                    }
                     break;
 
                 // TODO: Directly calling an event handler in StateMachine bypassing the StateMachine's
@@ -453,7 +453,7 @@ namespace System.Management.Automation.Remoting
                 // send using data structure handler
                 SessionDataStructureHandler.SendRequestForPublicKey();
 
-                RemoteSessionStateMachineEventArgs eventArgs = 
+                RemoteSessionStateMachineEventArgs eventArgs =
                     new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.KeyRequested);
                 SessionDataStructureHandler.StateMachine.RaiseEvent(eventArgs);
             }
@@ -573,7 +573,7 @@ namespace System.Management.Automation.Remoting
             long fragmentId = FragmentedRemoteObject.GetFragmentId(connectData, 0);
             bool sFlag = FragmentedRemoteObject.GetIsStartFragment(connectData, 0);
             bool eFlag = FragmentedRemoteObject.GetIsEndFragment(connectData, 0);
-            int blobLength = FragmentedRemoteObject.GetBlobLength(connectData, 0);            
+            int blobLength = FragmentedRemoteObject.GetBlobLength(connectData, 0);
 
             if (blobLength > totalDataLen - FragmentedRemoteObject.HeaderLength)
             {
@@ -684,7 +684,7 @@ namespace System.Management.Automation.Remoting
                 try
                 {
                     clientRequestedMinRunspaces = RemotingDecoder.GetMinRunspaces(connectRunspacePoolObject.Data);
-                    clientRequestedMaxRunspaces = RemotingDecoder.GetMaxRunspaces(connectRunspacePoolObject.Data);                    
+                    clientRequestedMaxRunspaces = RemotingDecoder.GetMaxRunspaces(connectRunspacePoolObject.Data);
                     clientRequestedRunspaceCount = true;
                 }
                 catch (PSRemotingDataStructureException)
@@ -716,7 +716,7 @@ namespace System.Management.Automation.Remoting
             //setMax or setMinrunspacees request. 
             //TODO: resolve this race.. probably by letting the runspace pool consume all messages before we execute this.
             if (clientRequestedRunspaceCount
-                && (_runspacePoolDriver.RunspacePool.GetMaxRunspaces() != clientRequestedMaxRunspaces) 
+                && (_runspacePoolDriver.RunspacePool.GetMaxRunspaces() != clientRequestedMaxRunspaces)
                 && (_runspacePoolDriver.RunspacePool.GetMinRunspaces() != clientRequestedMinRunspaces))
             {
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerConnectFailedOnMismatchedRunspacePoolProperties);
@@ -728,12 +728,12 @@ namespace System.Management.Automation.Remoting
             RemoteDataObject runspacepoolInitData = RemotingEncoder.GenerateRunspacePoolInitData(_runspacePoolDriver.InstanceId,
                                                                                                _runspacePoolDriver.RunspacePool.GetMaxRunspaces(),
                                                                                                _runspacePoolDriver.RunspacePool.GetMinRunspaces());
-            
+
             //having this stream operating separately will result in out of sync fragment Ids. but this is still OK
             //as this is executed only when connecting from a new client that does not have any previous fragments context.
             //no problem even if fragment Ids in this respose and the sessiontransport stream clash (interfere) and its guaranteed
             // that the fragments in connect response are always complete (enclose a complete object).
-            SerializedDataStream stream = new SerializedDataStream(4*1024);//Each message with fragment headers cannot cross 4k
+            SerializedDataStream stream = new SerializedDataStream(4 * 1024);//Each message with fragment headers cannot cross 4k
             stream.Enter();
             capability.Serialize(stream, fragmentor);
             stream.Exit();
@@ -749,7 +749,7 @@ namespace System.Management.Automation.Remoting
             //enque a connect event in state machine to let session do any other post-connect operation
             // Do this outside of the sychronous connect operation, as otherwise connect can easily get deadlocked
             ThreadPool.QueueUserWorkItem(new WaitCallback(
-                delegate(object state)
+                delegate (object state)
                 {
                     RemoteSessionStateMachineEventArgs startEventArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.ConnectSession);
                     _sessionDSHandler.StateMachine.RaiseEvent(startEventArg);
@@ -765,7 +765,7 @@ namespace System.Management.Automation.Remoting
             if (_runspacePoolDriver != null)
             {
                 _runspacePoolDriver.SendApplicationPrivateDataToClient();
-            }            
+            }
         }
 
         /// <summary>
@@ -806,8 +806,8 @@ namespace System.Management.Automation.Remoting
             configurationData.InitializationScriptForOutOfProcessRunspace = _initScriptForOutOfProcRS;
             // start with data from configuration XML and then override with data
             // from EndPointConfiguration type.
-            maxRecvdObjectSize = configurationData.MaxReceivedObjectSizeMB;
-            maxRecvdDataSizeCommand = configurationData.MaxReceivedCommandSizeMB;
+            _maxRecvdObjectSize = configurationData.MaxReceivedObjectSizeMB;
+            _maxRecvdDataSizeCommand = configurationData.MaxReceivedCommandSizeMB;
 
             DISCPowerShellConfiguration discProvider = null;
 
@@ -860,7 +860,7 @@ namespace System.Management.Automation.Remoting
                 new SessionStateVariableEntry(RemoteDataNameStrings.SenderInfoPreferenceVariable,
                 _senderInfo,
                 Remoting.PSRemotingErrorInvariants.FormatResourceString(
-                    RemotingErrorIdStrings.PSSenderInfoDescription),                
+                    RemotingErrorIdStrings.PSSenderInfoDescription),
                 ScopedItemOptions.ReadOnly));
 
             // check if the current scenario is Win7(client) to Win8(server). Add back the PSv2 version TabExpansion
@@ -894,10 +894,10 @@ namespace System.Management.Automation.Remoting
             if (!string.IsNullOrEmpty(configurationData.EndPointConfigurationTypeName))
             {
                 // user specified a type to load for configuration..use the values from this type.
-                maxRecvdObjectSize = _sessionConfigProvider.GetMaximumReceivedObjectSize(_senderInfo);
-                maxRecvdDataSizeCommand = _sessionConfigProvider.GetMaximumReceivedDataSizePerCommand(_senderInfo);
+                _maxRecvdObjectSize = _sessionConfigProvider.GetMaximumReceivedObjectSize(_senderInfo);
+                _maxRecvdDataSizeCommand = _sessionConfigProvider.GetMaximumReceivedDataSizePerCommand(_senderInfo);
             }
-            _sessionDSHandler.TransportManager.ReceivedDataCollection.MaximumReceivedObjectSize = maxRecvdObjectSize;
+            _sessionDSHandler.TransportManager.ReceivedDataCollection.MaximumReceivedObjectSize = _maxRecvdObjectSize;
             // MaximumReceivedDataSize is not set for session transport manager...see the constructor
             // for more info.
 
@@ -915,19 +915,19 @@ namespace System.Management.Automation.Remoting
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.RunspaceAlreadyExists,
                     _runspacePoolDriver.InstanceId);
             }
-            
+
             bool isAdministrator = _senderInfo.UserInfo.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
 
             ServerRunspacePoolDriver tmpDriver = new ServerRunspacePoolDriver(
                 clientRunspacePoolId,
-                minRunspaces, 
-                maxRunspaces, 
-                threadOptions, 
+                minRunspaces,
+                maxRunspaces,
+                threadOptions,
 #if !CORECLR // No ApartmentState In CoreCLR
-                apartmentState, 
+                apartmentState,
 #endif
-                hostInfo, 
-                rsSessionStateToUse, 
+                hostInfo,
+                rsSessionStateToUse,
                 applicationPrivateData,
                 configurationData,
                 this.SessionDataStructureHandler.TransportManager,
@@ -970,13 +970,13 @@ namespace System.Management.Automation.Remoting
                 // Send server's capability to client.
                 RemoteSessionStateMachineEventArgs sendingNegotiationArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationSending);
                 _sessionDSHandler.StateMachine.RaiseEvent(sendingNegotiationArg);
-                
+
                 // if negotiation succeeded change the state to neg. completed.
                 RemoteSessionStateMachineEventArgs negotiationCompletedArg =
                     new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationCompleted);
                 _sessionDSHandler.StateMachine.RaiseEvent(negotiationCompletedArg);
             }
-            catch(PSRemotingDataStructureException dse)
+            catch (PSRemotingDataStructureException dse)
             {
                 // Before setting to negotiation failed..send servers capability...that
                 // way client can communicate differently if it wants to.
@@ -984,8 +984,8 @@ namespace System.Management.Automation.Remoting
                     new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationSending);
                 _sessionDSHandler.StateMachine.RaiseEvent(sendingNegotiationArg);
 
-                RemoteSessionStateMachineEventArgs negotiationFailedArg = 
-                    new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationFailed, 
+                RemoteSessionStateMachineEventArgs negotiationFailedArg =
+                    new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationFailed,
                         dse);
                 _sessionDSHandler.StateMachine.RaiseEvent(negotiationFailedArg);
             }
@@ -1204,8 +1204,8 @@ namespace System.Management.Automation.Remoting
         internal void ApplyQuotaOnCommandTransportManager(AbstractServerTransportManager cmdTransportManager)
         {
             Dbg.Assert(null != cmdTransportManager, "cmdTransportManager cannot be null");
-            cmdTransportManager.ReceivedDataCollection.MaximumReceivedDataSize = maxRecvdDataSizeCommand;
-            cmdTransportManager.ReceivedDataCollection.MaximumReceivedObjectSize = maxRecvdObjectSize;
+            cmdTransportManager.ReceivedDataCollection.MaximumReceivedDataSize = _maxRecvdDataSizeCommand;
+            cmdTransportManager.ReceivedDataCollection.MaximumReceivedObjectSize = _maxRecvdObjectSize;
         }
 
         #endregion

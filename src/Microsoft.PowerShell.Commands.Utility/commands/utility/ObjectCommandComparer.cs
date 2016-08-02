@@ -26,8 +26,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal ObjectCommandPropertyValue(object propVal)
         {
-            propertyValue = propVal;
-            isExistingProperty = true;
+            _propertyValue = propVal;
+            _isExistingProperty = true;
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         internal ObjectCommandPropertyValue(object propVal, bool isCaseSensitive, CultureInfo cultureInfo)
             : this(propVal)
         {
-            this.caseSensitive = isCaseSensitive;
+            _caseSensitive = isCaseSensitive;
             this.cultureInfo = cultureInfo;
         }
 
@@ -48,14 +48,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return propertyValue;
+                return _propertyValue;
             }
         }
         internal bool IsExistingProperty
         {
             get
             {
-                return isExistingProperty;
+                return _isExistingProperty;
             }
         }
 
@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal SwitchParameter CaseSensitive
         {
-            get { return caseSensitive; }
+            get { return _caseSensitive; }
         }
 
         /// <summary>
@@ -78,11 +78,11 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private object propertyValue;
-        private bool isExistingProperty;
+        private object _propertyValue;
+        private bool _isExistingProperty;
         internal readonly static ObjectCommandPropertyValue NonExistingProperty = new ObjectCommandPropertyValue();
         internal readonly static ObjectCommandPropertyValue ExistingNullProperty = new ObjectCommandPropertyValue(null);
-        private bool caseSensitive;
+        private bool _caseSensitive;
         internal CultureInfo cultureInfo = null;
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
             if (objectCommandPropertyValueObject == null)
                 return false;
 
-            object baseObject = PSObject.Base(propertyValue);
+            object baseObject = PSObject.Base(_propertyValue);
             object inComingbaseObjectPropertyValue = PSObject.Base(objectCommandPropertyValueObject.PropertyValue);
 
             IComparable baseObjectComparable = baseObject as IComparable;
@@ -127,10 +127,10 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Hashcode in the form of an integer.</returns>
         public override int GetHashCode()
         {
-            if (propertyValue == null)
+            if (_propertyValue == null)
                 return 0;
 
-            object baseObject = PSObject.Base(propertyValue);
+            object baseObject = PSObject.Base(_propertyValue);
             IComparable baseObjectComparable = baseObject as IComparable;
 
             if (baseObjectComparable != null)
@@ -156,9 +156,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal ObjectCommandComparer(bool ascending, CultureInfo cultureInfo, bool caseSensitive)
         {
-            this.ascendingOrder = ascending;
-            this.cultureInfo = cultureInfo ?? CultureInfo.CurrentCulture;
-            this.caseSensitive = caseSensitive;
+            _ascendingOrder = ascending;
+            _cultureInfo = cultureInfo ?? CultureInfo.CurrentCulture;
+            _caseSensitive = caseSensitive;
         }
 
         private static bool IsValueNull(object value)
@@ -224,7 +224,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                return LanguagePrimitives.Compare(first, second, !caseSensitive, cultureInfo) * (ascendingOrder ? 1 : -1);
+                return LanguagePrimitives.Compare(first, second, !_caseSensitive, _cultureInfo) * (_ascendingOrder ? 1 : -1);
             }
             catch (InvalidCastException)
             {
@@ -240,15 +240,14 @@ namespace Microsoft.PowerShell.Commands
             string firstString = PSObject.AsPSObject(first).ToString();
             string secondString = PSObject.AsPSObject(second).ToString();
 
-            return cultureInfo.CompareInfo.Compare(firstString, secondString, caseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase) * (ascendingOrder ? 1 : -1);
+            return _cultureInfo.CompareInfo.Compare(firstString, secondString, _caseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase) * (_ascendingOrder ? 1 : -1);
         }
 
-        private CultureInfo cultureInfo = null;
+        private CultureInfo _cultureInfo = null;
 
-        private bool ascendingOrder = true;
+        private bool _ascendingOrder = true;
 
-        private bool caseSensitive = false;
-
+        private bool _caseSensitive = false;
     }
 
     #endregion

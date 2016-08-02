@@ -10,35 +10,36 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace System.Management.Automation.Tracing
 {
-	/// <summary>
-	/// Attribute to represent an EtwEvent
-	/// </summary>
-	[AttributeUsage(AttributeTargets.Method)]
-	[SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-	[SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-	public sealed class EtwEvent : Attribute
-	{
-		private long eventId;
+    /// <summary>
+    /// Attribute to represent an EtwEvent
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method)]
+    [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+    [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+    public sealed class EtwEvent : Attribute
+    {
+        private long eventId;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="eventId"></param>
-		public EtwEvent(long eventId)
-		{
-			this.eventId = eventId;
-		}
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="eventId"></param>
+        public EtwEvent(long eventId)
+        {
+            this.eventId = eventId;
+        }
 
-		/// <summary>
-		/// EventId
-		/// </summary>
-		public long EventId {
-			get
-			{
-				return eventId;
-			}
-		}
-	}
+        /// <summary>
+        /// EventId
+        /// </summary>
+        public long EventId
+        {
+            get
+            {
+                return eventId;
+            }
+        }
+    }
 
     /// <summary>
     /// Delegates that defines a call back with no parameter
@@ -103,7 +104,7 @@ namespace System.Management.Automation.Tracing
     /// <summary>
     /// This the abstract base class of all activity classes that represent an end-to-end scenario.
     /// </summary>
-	[SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+    [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public abstract class EtwActivity
     {
         /// <summary>
@@ -265,7 +266,7 @@ namespace System.Management.Automation.Tracing
         private static Dictionary<Guid, EventProvider> providers = new Dictionary<Guid, EventProvider>();
         private static object syncLock = new object();
 
-        private static EventDescriptor _WriteTransferEvent = new EventDescriptor(0x1f05, 0x1, 0x11, 0x5, 0x14, 0x0, (long) 0x4000000000000000);
+        private static EventDescriptor _WriteTransferEvent = new EventDescriptor(0x1f05, 0x1, 0x11, 0x5, 0x14, 0x0, (long)0x4000000000000000);
 
         private EventProvider currentProvider;
 
@@ -274,7 +275,8 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         public static event EventHandler<EtwEventArgs> EventWritten;
 
-        static EtwActivity() {
+        static EtwActivity()
+        {
         }
 
         /// <summary>
@@ -308,7 +310,7 @@ namespace System.Management.Automation.Tracing
         /// Returns the ActivityId set in current thread
         /// </summary>
         /// <returns></returns>
- 	    [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults")]
+        [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults")]
         public static Guid GetActivityId()
         {
             Guid activityId = Guid.Empty;
@@ -319,7 +321,8 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Constructor
         /// </summary>
-        protected EtwActivity() {
+        protected EtwActivity()
+        {
         }
 
         /// <summary>
@@ -374,7 +377,7 @@ namespace System.Management.Automation.Tracing
             Guid parentAcitvity = GetActivityId();
             CorrelateWithActivity(parentAcitvity);
         }
-        
+
         /// <summary>
         /// Wraps a callback with no params
         /// </summary>
@@ -464,9 +467,10 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         /// <param name="ed">EventDescriptor</param>
         /// <param name="payload">payload</param>
-        protected void WriteEvent(EventDescriptor ed, params object[] payload) {
+        protected void WriteEvent(EventDescriptor ed, params object[] payload)
+        {
             EventProvider provider = GetProvider();
-            
+
             if (!provider.IsEnabled())
                 return;
 

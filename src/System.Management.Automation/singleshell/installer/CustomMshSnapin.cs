@@ -42,7 +42,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.GetType().FullName; 
+                return this.GetType().FullName;
             }
         }
 

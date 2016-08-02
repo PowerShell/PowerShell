@@ -6,7 +6,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using Dbg=System.Management.Automation.Diagnostics;
+using Dbg = System.Management.Automation.Diagnostics;
 using System.Collections.Generic;
 using System.Collections;
 using System.IO;
@@ -17,7 +17,7 @@ using System.Runtime.InteropServices;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 
-using DWORD  = System.UInt32;
+using DWORD = System.UInt32;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -36,15 +36,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return path;
+                return _path;
             }
-            
+
             set
             {
-                path = value;
+                _path = value;
             }
         }
-        private string[] path;
+        private string[] _path;
 
         /// <summary>
         /// Gets or sets the literal path to the file for which to get or set the 
@@ -57,16 +57,16 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return path;
+                return _path;
             }
 
             set
             {
-                path = value;
-                isLiteralPath = true;
+                _path = value;
+                _isLiteralPath = true;
             }
         }
-        bool isLiteralPath = false;
+        private bool _isLiteralPath = false;
 
         /// <summary>
         /// Gets or sets the digital signature to be written to 
@@ -74,10 +74,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected Signature Signature
         {
-            get { return signature; }
-            set { signature = value; }
+            get { return _signature; }
+            set { _signature = value; }
         }
-        private Signature signature;
+        private Signature _signature;
 
         /// <summary>
         /// Gets or sets the file type of the byte array containing the content with
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // name of this command
         //
-        string commandName;
+        private string _commandName;
 
         /// <summary>
         /// Initializes a new instance of the SignatureCommandsBase class,
@@ -130,13 +130,13 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         protected SignatureCommandsBase(string name) : base()
         {
-            commandName = name;
+            _commandName = name;
         }
 
         //
         // hide default ctor
         //
-        private SignatureCommandsBase() : base() {}
+        private SignatureCommandsBase() : base() { }
 
         /// <summary>
         /// Processes records from the input pipeline.
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
                     Collection<string> paths = new Collection<string>();
 
                     // Expand wildcard characters
-                    if (isLiteralPath)
+                    if (_isLiteralPath)
                     {
                         paths.Add(SessionState.Path.GetUnresolvedProviderPathFromPSPath(p));
                     }
@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     WriteObject(Signature);
                                 }
-                           }
+                            }
                         }
                     }
 
@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteError(SecurityUtils.CreateFileNotFoundErrorRecord(
                             SignatureCommands.CannotRetrieveFromContainer,
                             "SignatureCommandsBaseCannotRetrieveFromContainer"));
-                    }                
+                    }
                 }
             }
             else
@@ -320,15 +320,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return certificate;
+                return _certificate;
             }
 
             set
             {
-                certificate = value;
+                _certificate = value;
             }
         }
-        private X509Certificate2 certificate;
+        private X509Certificate2 _certificate;
 
         /// <summary>
         /// Gets or sets the additional certificates to
@@ -347,15 +347,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return includeChain;
+                return _includeChain;
             }
 
             set
             {
-                includeChain = value;
+                _includeChain = value;
             }
         }
-        private string includeChain = "notroot";
+        private string _includeChain = "notroot";
 
         /// <summary>
         /// Gets or sets the Url of the time stamping server.
@@ -367,7 +367,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return timestampServer;
+                return _timestampServer;
             }
 
             set
@@ -376,10 +376,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     value = String.Empty;
                 }
-                timestampServer = value;
+                _timestampServer = value;
             }
         }
-        private string timestampServer = "";
+        private string _timestampServer = "";
 
         /// <summary>
         /// Gets or sets the hash algorithm used for signing.
@@ -391,15 +391,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return hashAlgorithm;
+                return _hashAlgorithm;
             }
 
             set
             {
-                hashAlgorithm = value;
+                _hashAlgorithm = value;
             }
         }
-        private string hashAlgorithm = null;
+        private string _hashAlgorithm = null;
 
         /// <summary>
         /// Property that sets force parameter.
@@ -409,14 +409,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return force;
+                return _force;
             }
             set
             {
-                force = value;
+                _force = value;
             }
         }
-        private bool force;
+        private bool _force;
 
         /// <summary>
         /// Sets the digital signature on the specified file.
@@ -559,7 +559,7 @@ namespace Microsoft.PowerShell.Commands
                                                 filePath,
                                                 Certificate,
                                                 TimestampServer,
-                                                hashAlgorithm);
+                                                _hashAlgorithm);
             }
             finally
             {
@@ -595,7 +595,7 @@ namespace Microsoft.PowerShell.Commands
         /// association between SigningOption.* values and the
         /// corresponding string names.
         /// </summary>
-        private static readonly SigningOptionInfo[] sigOptionInfo =
+        private static readonly SigningOptionInfo[] s_sigOptionInfo =
         {
             new SigningOptionInfo(SigningOption.AddOnlyCertificate, "signer"),
             new SigningOptionInfo(SigningOption.AddFullCertificateChainExceptRoot, "notroot"),
@@ -612,7 +612,7 @@ namespace Microsoft.PowerShell.Commands
         ///
         private static SigningOption GetSigningOption(string optionName)
         {
-            foreach (SigningOptionInfo si in sigOptionInfo)
+            foreach (SigningOptionInfo si in s_sigOptionInfo)
             {
                 if (String.Equals(optionName, si.optionName,
                                   StringComparison.OrdinalIgnoreCase))

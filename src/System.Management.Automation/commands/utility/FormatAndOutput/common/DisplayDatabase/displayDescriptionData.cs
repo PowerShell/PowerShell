@@ -36,16 +36,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed partial class TypeInfoDataBase
     {
         // define the sections corresponding the XML file
-        internal DefaultSettingsSection defaultSettingsSection = new DefaultSettingsSection ();
-        internal TypeGroupsSection typeGroupSection = new TypeGroupsSection ();
-        internal ViewDefinitionsSection viewDefinitionsSection = new ViewDefinitionsSection ();
-        internal FormatControlDefinitionHolder formatControlDefinitionHolder = new FormatControlDefinitionHolder ();
+        internal DefaultSettingsSection defaultSettingsSection = new DefaultSettingsSection();
+        internal TypeGroupsSection typeGroupSection = new TypeGroupsSection();
+        internal ViewDefinitionsSection viewDefinitionsSection = new ViewDefinitionsSection();
+        internal FormatControlDefinitionHolder formatControlDefinitionHolder = new FormatControlDefinitionHolder();
 
 
         /// <summary>
         /// cache for resource strings in format.ps1xml
         /// </summary>
-        internal DisplayResourceManagerCache displayResourceManagerCache = new DisplayResourceManagerCache ();
+        internal DisplayResourceManagerCache displayResourceManagerCache = new DisplayResourceManagerCache();
     }
 
     internal sealed class DatabaseLoadingInfo
@@ -109,13 +109,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 if (!_multilineTables.HasValue)
                 {
-                    this._multilineTables = value;
+                    _multilineTables = value;
                 }
             }
             get
             {
                 if (_multilineTables.HasValue)
-                    return this._multilineTables.Value;
+                    return _multilineTables.Value;
                 return false;
             }
         }
@@ -123,8 +123,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
 
         internal FormatErrorPolicy formatErrorPolicy = new FormatErrorPolicy();
-        internal ShapeSelectionDirectives shapeSelectionDirectives = new ShapeSelectionDirectives ();
-        internal List<EnumerableExpansionDirective> enumerableExpansionDirectiveList = new List<EnumerableExpansionDirective> ();
+        internal ShapeSelectionDirectives shapeSelectionDirectives = new ShapeSelectionDirectives();
+        internal List<EnumerableExpansionDirective> enumerableExpansionDirectiveList = new List<EnumerableExpansionDirective>();
     }
 
     internal sealed class FormatErrorPolicy
@@ -138,13 +138,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 if (!_showErrorsAsMessages.HasValue)
                 {
-                    this._showErrorsAsMessages = value;
+                    _showErrorsAsMessages = value;
                 }
             }
             get
             {
                 if (_showErrorsAsMessages.HasValue)
-                    return this._showErrorsAsMessages.Value;
+                    return _showErrorsAsMessages.Value;
                 return false;
             }
         }
@@ -160,13 +160,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 if (!_showErrorsInFormattedOutput.HasValue)
                 {
-                    this._showErrorsInFormattedOutput = value;
+                    _showErrorsInFormattedOutput = value;
                 }
             }
             get
             {
                 if (_showErrorsInFormattedOutput.HasValue)
-                    return this._showErrorsInFormattedOutput.Value;
+                    return _showErrorsInFormattedOutput.Value;
                 return false;
             }
         }
@@ -194,19 +194,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 if (!_propertyCountForTable.HasValue)
                 {
-                    this._propertyCountForTable = value;
+                    _propertyCountForTable = value;
                 }
             }
             get
             {
                 if (_propertyCountForTable.HasValue)
-                    return this._propertyCountForTable.Value;
+                    return _propertyCountForTable.Value;
                 return 4;
             }
         }
         private int? _propertyCountForTable;
 
-        internal List<FormatShapeSelectionOnType> formatShapeSelectionOnTypeList = new List<FormatShapeSelectionOnType> ();
+        internal List<FormatShapeSelectionOnType> formatShapeSelectionOnTypeList = new List<FormatShapeSelectionOnType>();
     }
 
     internal enum FormatShape { Table, List, Wide, Complex, Undefined }
@@ -234,13 +234,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal sealed class TypeGroupsSection
     {
-        internal List<TypeGroupDefinition> typeGroupDefinitionList = new List<TypeGroupDefinition> ();
+        internal List<TypeGroupDefinition> typeGroupDefinitionList = new List<TypeGroupDefinition>();
     }
 
     internal sealed class TypeGroupDefinition
     {
         internal string name;
-        internal List<TypeReference> typeReferenceList = new List<TypeReference> ();
+        internal List<TypeReference> typeReferenceList = new List<TypeReference>();
     }
 
     internal abstract class TypeOrGroupReference
@@ -287,7 +287,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// item associated with this frame definition
         /// </summary>
-        internal ComplexControlItemDefinition itemDefinition = new ComplexControlItemDefinition ();
+        internal ComplexControlItemDefinition itemDefinition = new ComplexControlItemDefinition();
 
         /// <summary>
         /// frame info assocated with this frame definition
@@ -319,7 +319,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         internal int firstLine = 0;
     }
-    
+
     internal sealed class ExpressionToken
     {
         internal ExpressionToken() { }
@@ -341,7 +341,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         internal ExpressionToken conditionToken = null;
 
-        internal ExpressionToken expression = new ExpressionToken ();
+        internal ExpressionToken expression = new ExpressionToken();
         internal bool enumerateCollection = false;
     }
 
@@ -365,7 +365,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     #endregion Elementary Tokens
 
- 
+
     #region Control Definitions: common data
 
     /// <summary>
@@ -457,18 +457,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     #region View Definitions: common data
     internal sealed class ViewDefinitionsSection
     {
-        internal List<ViewDefinition> viewDefinitionList = new List<ViewDefinition> ();
+        internal List<ViewDefinition> viewDefinitionList = new List<ViewDefinition>();
     }
 
     internal sealed partial class AppliesTo
     {
         //it can contain either a type or type group reference 
-        internal List<TypeOrGroupReference> referenceList = new List<TypeOrGroupReference> ();
+        internal List<TypeOrGroupReference> referenceList = new List<TypeOrGroupReference>();
     }
 
     internal sealed class GroupBy
     {
-        internal StartGroup startGroup = new StartGroup ();
+        internal StartGroup startGroup = new StartGroup();
         // NOTE: extension point for describing:
         // * end group statistics
         // * end group footer
@@ -505,7 +505,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// list of control definitions
         /// </summary>
-        internal List<ControlDefinition> controlDefinitionList = new List<ControlDefinition> ();
+        internal List<ControlDefinition> controlDefinitionList = new List<ControlDefinition>();
     }
 
     /// <summary>
@@ -533,7 +533,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// container for optional local formatting directives
         /// </summary>
-        internal FormatControlDefinitionHolder formatControlDefinitionHolder = new FormatControlDefinitionHolder ();
+        internal FormatControlDefinitionHolder formatControlDefinitionHolder = new FormatControlDefinitionHolder();
 
         /// <summary>
         /// main control for the view (e.g. reference to a control or a control body
@@ -577,11 +577,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal string baseName = null;
         internal string resourceId = null;
     }
-    
+
     #endregion
-
-
- 
 }
 
 namespace System.Management.Automation
@@ -706,7 +703,7 @@ namespace System.Management.Automation
         /// You can group by same property value, or result of evaluating a script block.
         /// </summary>
         public PSControlGroupBy GroupBy { get; set; }
-        
+
         /// <summary>
         /// When the "shape" of formatting has been determined by previous objects,
         /// sometimes you want objects of different types to continue using that shape

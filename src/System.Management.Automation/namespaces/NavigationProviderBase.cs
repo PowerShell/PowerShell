@@ -67,7 +67,7 @@ namespace System.Management.Automation.Provider
         /// </remarks>
         /// 
         internal string MakePath(
-            string parent, 
+            string parent,
             string child,
             CmdletProviderContext context)
         {
@@ -111,7 +111,7 @@ namespace System.Management.Automation.Provider
         /// </remarks>
         /// 
         internal string GetParentPath(
-            string path, 
+            string path,
             string root,
             CmdletProviderContext context)
         {
@@ -154,7 +154,7 @@ namespace System.Management.Automation.Provider
         /// </remarks>
         /// 
         internal string NormalizeRelativePath(
-            string path, 
+            string path,
             string basePath,
             CmdletProviderContext context)
         {
@@ -164,7 +164,7 @@ namespace System.Management.Automation.Provider
 
             return NormalizeRelativePath(path, basePath);
         } // NormalizeRelativePath
-        
+
         /// <summary>
         /// Internal wrapper for the GetChildName protected method. It is called instead
         /// of the protected method that is overridden by derived classes so that the
@@ -520,7 +520,7 @@ namespace System.Management.Automation.Provider
                 path = NormalizePath(path);
                 path = path.TrimEnd(StringLiterals.DefaultPathSeparator);
                 string rootPath = String.Empty;
-                
+
                 if (root != null)
                 {
                     rootPath = NormalizePath(root);
@@ -530,7 +530,7 @@ namespace System.Management.Automation.Provider
                 // of the virtual drive
 
                 if (String.Compare(
-                    path, 
+                    path,
                     rootPath,
                     StringComparison.OrdinalIgnoreCase) == 0)
                 {
@@ -589,7 +589,7 @@ namespace System.Management.Automation.Provider
         /// are done using StringComparison.InvariantCultureIngoreCase.
         /// </remarks>
         protected virtual string NormalizeRelativePath(
-            string path, 
+            string path,
             string basePath)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
@@ -643,7 +643,7 @@ namespace System.Management.Automation.Provider
             // Active Directory team.
             //
             // WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND 
-            if (! String.Equals(context.ProviderInstance.ProviderInfo.FullName,
+            if (!String.Equals(context.ProviderInstance.ProviderInfo.FullName,
                 @"Microsoft.ActiveDirectory.Management\ActiveDirectory", StringComparison.OrdinalIgnoreCase))
             {
                 normalizedPath = NormalizePath(path);
@@ -676,7 +676,7 @@ namespace System.Management.Automation.Provider
 
                 // If the base path isn't really a base, then we resolve to a parent
                 // path (such as ../../foo)
-                if (! normalizedPath.StartsWith(normalizedBasePath, StringComparison.OrdinalIgnoreCase) &&
+                if (!normalizedPath.StartsWith(normalizedBasePath, StringComparison.OrdinalIgnoreCase) &&
                     (basePath.Length > 0))
                 {
                     result = String.Empty;
@@ -835,7 +835,7 @@ namespace System.Management.Automation.Provider
                         result = path;
                     // If the parent path ends with the path separator, we can't split
                     // the path based on that
-                    else if(parentPath.IndexOf(StringLiterals.DefaultPathSeparator) == (parentPath.Length -1 ))
+                    else if (parentPath.IndexOf(StringLiterals.DefaultPathSeparator) == (parentPath.Length - 1))
                     {
                         separatorIndex = path.IndexOf(parentPath, StringComparison.OrdinalIgnoreCase) + parentPath.Length;
                         result = path.Substring(separatorIndex);
@@ -957,7 +957,7 @@ namespace System.Management.Automation.Provider
         /// The default implemenation returns null. (no additional parameters)
         /// </returns>
         protected virtual object MoveItemDynamicParameters(
-            string path, 
+            string path,
             string destination)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
@@ -966,7 +966,7 @@ namespace System.Management.Automation.Provider
             }
         } // MoveItemDynamicParameters
 
-    
+
         #endregion Protected methods
 
         #region private members
@@ -1026,7 +1026,7 @@ namespace System.Management.Automation.Provider
             {
                 result = true;
             }
-            else if (this.PSDriveInfo != null && !String.IsNullOrEmpty(this.PSDriveInfo.Root) && 
+            else if (this.PSDriveInfo != null && !String.IsNullOrEmpty(this.PSDriveInfo.Root) &&
                      path.StartsWith(this.PSDriveInfo.Root, StringComparison.OrdinalIgnoreCase))
             {
                 result = true;
@@ -1067,7 +1067,7 @@ namespace System.Management.Automation.Provider
                 if (String.IsNullOrEmpty(childName))
                 {
                     // Push the parent on and then stop
-                    tokenizedPathStack.Push (tempPath);
+                    tokenizedPathStack.Push(tempPath);
                     break;
                 }
 
@@ -1204,10 +1204,8 @@ namespace System.Management.Automation.Provider
         } // CreateNormalizedRelativePathFromStack
 
         #endregion private members
-
     } // NavigationCmdletProvider
 
     #endregion NavigationCmdletProvider
-
 } // namespace System.Management.Automation
 

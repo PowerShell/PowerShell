@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Text.RegularExpressions;
 using System.Management.Automation;
@@ -14,7 +15,7 @@ namespace System.Management.Automation
     {
         #region private_members
 
-        private ExecutionContext context;
+        private ExecutionContext _context;
 
         #endregion private_members
 
@@ -25,8 +26,8 @@ namespace System.Management.Automation
         /// </summary>
         internal ExecutionContext Context
         {
-            get {return context;}
-            set {context = value;}
+            get { return _context; }
+            set { _context = value; }
         }
 
         #endregion public_properties
@@ -108,13 +109,13 @@ namespace System.Management.Automation
         private CommandProcessorBase _CreateCommand(string commandName,
             CommandOrigin commandOrigin, bool? useLocalScope)
         {
-            if (context == null)
+            if (_context == null)
             {
                 throw PSTraceSource.NewInvalidOperationException(DiscoveryExceptions.ExecutionContextNotSet);
             }
 
             // Look for a cmdlet...
-            CommandDiscovery discovery = this.context.CommandDiscovery;
+            CommandDiscovery discovery = _context.CommandDiscovery;
 
             if (discovery == null)
             {

@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,46 +14,45 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     internal sealed class ComplexViewGenerator : ViewGenerator
     {
-
-        internal override void Initialize (TerminatingErrorContext errorContext, MshExpressionFactory expressionFactory, 
+        internal override void Initialize(TerminatingErrorContext errorContext, MshExpressionFactory expressionFactory,
             PSObject so, TypeInfoDataBase db, FormattingCommandLineParameters parameters)
         {
-            base.Initialize (errorContext, expressionFactory, so, db, parameters);
+            base.Initialize(errorContext, expressionFactory, so, db, parameters);
             this.inputParameters = parameters;
         }
 
-        internal override FormatStartData GenerateStartData (PSObject so)
+        internal override FormatStartData GenerateStartData(PSObject so)
         {
-            FormatStartData startFormat = base.GenerateStartData (so);
-            startFormat.shapeInfo = new ComplexViewHeaderInfo ();
+            FormatStartData startFormat = base.GenerateStartData(so);
+            startFormat.shapeInfo = new ComplexViewHeaderInfo();
             return startFormat;
         }
 
-        internal override FormatEntryData GeneratePayload (PSObject so, int enumerationLimit)
+        internal override FormatEntryData GeneratePayload(PSObject so, int enumerationLimit)
         {
-            FormatEntryData fed = new FormatEntryData ();
+            FormatEntryData fed = new FormatEntryData();
 
             if (this.dataBaseInfo.view != null)
-                fed.formatEntryInfo = GenerateComplexViewEntryFromDataBaseInfo (so, enumerationLimit);
+                fed.formatEntryInfo = GenerateComplexViewEntryFromDataBaseInfo(so, enumerationLimit);
             else
-                fed.formatEntryInfo = GenerateComplexViewEntryFromProperties (so, enumerationLimit);
+                fed.formatEntryInfo = GenerateComplexViewEntryFromProperties(so, enumerationLimit);
             return fed;
         }
 
-        private ComplexViewEntry GenerateComplexViewEntryFromProperties (PSObject so, int enumerationLimit)
+        private ComplexViewEntry GenerateComplexViewEntryFromProperties(PSObject so, int enumerationLimit)
         {
-            ComplexViewObjectBrowser browser = new ComplexViewObjectBrowser (this.ErrorManager, this.expressionFactory, enumerationLimit);
-            return browser.GenerateView (so, this.inputParameters);
+            ComplexViewObjectBrowser browser = new ComplexViewObjectBrowser(this.ErrorManager, this.expressionFactory, enumerationLimit);
+            return browser.GenerateView(so, this.inputParameters);
         }
 
-        private ComplexViewEntry GenerateComplexViewEntryFromDataBaseInfo (PSObject so, int enumerationLimit)
+        private ComplexViewEntry GenerateComplexViewEntryFromDataBaseInfo(PSObject so, int enumerationLimit)
         {
             // execute on the format directive
-            ComplexViewEntry cve = new ComplexViewEntry ();
+            ComplexViewEntry cve = new ComplexViewEntry();
 
             // NOTE: we set a max depth to protect ourselves from infinite loops
             const int maxTreeDepth = 50;
-            ComplexControlGenerator controlGenerator = 
+            ComplexControlGenerator controlGenerator =
                             new ComplexControlGenerator(this.dataBaseInfo.db,
                                     this.dataBaseInfo.view.loadingInfo,
                                     this.expressionFactory,
@@ -61,11 +61,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                     enumerationLimit,
                                     this.errorContext);
 
-            controlGenerator.GenerateFormatEntries (maxTreeDepth, 
+            controlGenerator.GenerateFormatEntries(maxTreeDepth,
                 this.dataBaseInfo.view.mainControl, so, cve.formatValueList);
             return cve;
         }
-
     }
 
     /// <summary>
@@ -74,7 +73,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal sealed class ComplexControlGenerator
     {
-        internal ComplexControlGenerator (TypeInfoDataBase dataBase,
+        internal ComplexControlGenerator(TypeInfoDataBase dataBase,
                                             DatabaseLoadingInfo loadingInfo,
                                             MshExpressionFactory expressionFactory,
                                             List<ControlDefinition> controlDefinitionList,
@@ -82,16 +81,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                             int enumerationLimit,
                                             TerminatingErrorContext errorContext)
         {
-            this.db = dataBase;
-            this.loadingInfo = loadingInfo;
-            this.expressionFactory = expressionFactory;
-            this.controlDefinitionList = controlDefinitionList;
-            this.errorManager = resultErrorManager;
-            this.enumerationLimit = enumerationLimit;
-            this.errorContext = errorContext;
+            _db = dataBase;
+            _loadingInfo = loadingInfo;
+            _expressionFactory = expressionFactory;
+            _controlDefinitionList = controlDefinitionList;
+            _errorManager = resultErrorManager;
+            _enumerationLimit = enumerationLimit;
+            _errorContext = errorContext;
         }
 
-        internal void GenerateFormatEntries (int maxTreeDepth, ControlBase control,
+        internal void GenerateFormatEntries(int maxTreeDepth, ControlBase control,
                 PSObject so, List<FormatValue> formatValueList)
         {
             if (control == null)
@@ -99,11 +98,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 throw PSTraceSource.NewArgumentNullException("control");
             }
 
-            ExecuteFormatControl (new TraversalInfo (0, maxTreeDepth), control,
+            ExecuteFormatControl(new TraversalInfo(0, maxTreeDepth), control,
                                     so, formatValueList);
         }
 
-        private bool ExecuteFormatControl (TraversalInfo level, ControlBase control,
+        private bool ExecuteFormatControl(TraversalInfo level, ControlBase control,
         PSObject so, List<FormatValue> formatValueList)
         {
             // we are looking for a complex control to execute
@@ -114,9 +113,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (controlReference != null && controlReference.controlType == typeof(ComplexControlBody))
             {
                 // retrieve the reference
-                complexBody = DisplayDataQuery.ResolveControlReference (
-                                        this.db,
-                                        this.controlDefinitionList,
+                complexBody = DisplayDataQuery.ResolveControlReference(
+                                        _db,
+                                        _controlDefinitionList,
                                         controlReference) as ComplexControlBody;
             }
             else
@@ -129,31 +128,30 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (complexBody != null)
             {
                 // we have an inline control, just execute it
-                ExecuteFormatControlBody (level, so, complexBody, formatValueList);
+                ExecuteFormatControlBody(level, so, complexBody, formatValueList);
                 return true;
             }
             return false;
         }
 
-        private void ExecuteFormatControlBody (TraversalInfo level,
+        private void ExecuteFormatControlBody(TraversalInfo level,
                 PSObject so, ComplexControlBody complexBody, List<FormatValue> formatValueList)
         {
             ComplexControlEntryDefinition activeControlEntryDefinition =
-                    GetActiveComplexControlEntryDefinition (complexBody, so);
+                    GetActiveComplexControlEntryDefinition(complexBody, so);
 
-            ExecuteFormatTokenList (level,
+            ExecuteFormatTokenList(level,
                                  so, activeControlEntryDefinition.itemDefinition.formatTokenList, formatValueList);
-
         }
 
-        private ComplexControlEntryDefinition GetActiveComplexControlEntryDefinition (ComplexControlBody complexBody, PSObject so)
+        private ComplexControlEntryDefinition GetActiveComplexControlEntryDefinition(ComplexControlBody complexBody, PSObject so)
         {
             // see if we have an override that matches
             var typeNames = so.InternalTypeNames;
-            TypeMatch match = new TypeMatch (expressionFactory, db, typeNames);
+            TypeMatch match = new TypeMatch(_expressionFactory, _db, typeNames);
             foreach (ComplexControlEntryDefinition x in complexBody.optionalEntryList)
             {
-                if (match.PerfectMatch (new TypeMatchItem (x, x.appliesTo)))
+                if (match.PerfectMatch(new TypeMatchItem(x, x.appliesTo)))
                 {
                     return x;
                 }
@@ -167,7 +165,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
                 if (null != typesWithoutPrefix)
                 {
-                    match = new TypeMatch(expressionFactory, db, typesWithoutPrefix);
+                    match = new TypeMatch(_expressionFactory, _db, typesWithoutPrefix);
                     foreach (ComplexControlEntryDefinition x in complexBody.optionalEntryList)
                     {
                         if (match.PerfectMatch(new TypeMatchItem(x, x.appliesTo)))
@@ -186,12 +184,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        private void ExecuteFormatTokenList (TraversalInfo level,
+        private void ExecuteFormatTokenList(TraversalInfo level,
                 PSObject so, List<FormatToken> formatTokenList, List<FormatValue> formatValueList)
         {
             if (so == null)
             {
-                throw PSTraceSource.NewArgumentNullException ("so");
+                throw PSTraceSource.NewArgumentNullException("so");
             }
 
             // guard against infinite loop
@@ -200,9 +198,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return;
             }
 
-            FormatEntry fe = new FormatEntry ();
+            FormatEntry fe = new FormatEntry();
 
-            formatValueList.Add (fe);
+            formatValueList.Add(fe);
             #region foreach loop
             foreach (FormatToken t in formatTokenList)
             {
@@ -210,7 +208,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (tt != null)
                 {
                     FormatTextField ftf = new FormatTextField();
-                    ftf.text = this.db.displayResourceManagerCache.GetTextTokenString(tt);
+                    ftf.text = _db.displayResourceManagerCache.GetTextTokenString(tt);
                     fe.formatValueList.Add(ftf);
                     continue;
                 }
@@ -244,7 +242,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 #region CompoundPropertyToken
                 CompoundPropertyToken cpt = t as CompoundPropertyToken;
-		        if (cpt != null)
+                if (cpt != null)
                 {
                     if (!EvaluateDisplayCondition(so, cpt.conditionToken))
                     {
@@ -263,14 +261,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     else
                     {
-                        MshExpression ex = this.expressionFactory.CreateFromExpressionToken(cpt.expression, this.loadingInfo);
+                        MshExpression ex = _expressionFactory.CreateFromExpressionToken(cpt.expression, _loadingInfo);
                         List<MshExpressionResult> resultList = ex.GetValues(so);
                         if (resultList.Count > 0)
                         {
                             val = resultList[0].Result;
                             if (resultList[0].Exception != null)
                             {
-                                this.errorManager.LogMshExpressionFailedResult(resultList[0], so);
+                                _errorManager.LogMshExpressionFailedResult(resultList[0], so);
                             }
                         }
                     }
@@ -291,7 +289,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         if (cpt.control != null)
                         {
                             fieldFormattingDirective = ((FieldControlBody)cpt.control).fieldFormattingDirective;
-                            if (fieldFormattingDirective != null && this.errorManager.DisplayFormatErrorString)
+                            if (fieldFormattingDirective != null && _errorManager.DisplayFormatErrorString)
                             {
                                 formatErrorObject = new StringFormatError();
                             }
@@ -310,7 +308,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 }
                                 fpf = new FormatPropertyField();
 
-                                fpf.propertyValue = PSObjectHelper.FormatField(fieldFormattingDirective, x, enumerationLimit, formatErrorObject, expressionFactory);
+                                fpf.propertyValue = PSObjectHelper.FormatField(fieldFormattingDirective, x, _enumerationLimit, formatErrorObject, _expressionFactory);
                                 fe.formatValueList.Add(fpf);
                             }
                         }
@@ -318,13 +316,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         {
                             fpf = new FormatPropertyField();
 
-                            fpf.propertyValue = PSObjectHelper.FormatField(fieldFormattingDirective, val, enumerationLimit, formatErrorObject, expressionFactory);
+                            fpf.propertyValue = PSObjectHelper.FormatField(fieldFormattingDirective, val, _enumerationLimit, formatErrorObject, _expressionFactory);
                             fe.formatValueList.Add(fpf);
                         }
                         if (formatErrorObject != null && formatErrorObject.exception != null)
                         {
-                            this.errorManager.LogStringFormatError(formatErrorObject);
-                            fpf.propertyValue = this.errorManager.FormatErrorString;
+                            _errorManager.LogStringFormatError(formatErrorObject);
+                            fpf.propertyValue = _errorManager.FormatErrorString;
                         }
                     }
                     else
@@ -361,34 +359,34 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             #endregion foreach loop
         }
 
-        private bool EvaluateDisplayCondition (PSObject so, ExpressionToken conditionToken)
+        private bool EvaluateDisplayCondition(PSObject so, ExpressionToken conditionToken)
         {
             if (conditionToken == null)
                 return true;
 
-            MshExpression ex = this.expressionFactory.CreateFromExpressionToken(conditionToken, loadingInfo);
+            MshExpression ex = _expressionFactory.CreateFromExpressionToken(conditionToken, _loadingInfo);
             MshExpressionResult expressionResult;
-            bool retVal = DisplayCondition.Evaluate (so, ex, out expressionResult);
+            bool retVal = DisplayCondition.Evaluate(so, ex, out expressionResult);
 
             if (expressionResult != null && expressionResult.Exception != null)
             {
-                this.errorManager.LogMshExpressionFailedResult (expressionResult, so);
+                _errorManager.LogMshExpressionFailedResult(expressionResult, so);
             }
             return retVal;
         }
 
-        private TypeInfoDataBase db;
-        private DatabaseLoadingInfo loadingInfo;
-        private MshExpressionFactory expressionFactory;
-        private List<ControlDefinition> controlDefinitionList;
-        private FormatErrorManager errorManager;
-        private TerminatingErrorContext errorContext;
-        private int enumerationLimit;
+        private TypeInfoDataBase _db;
+        private DatabaseLoadingInfo _loadingInfo;
+        private MshExpressionFactory _expressionFactory;
+        private List<ControlDefinition> _controlDefinitionList;
+        private FormatErrorManager _errorManager;
+        private TerminatingErrorContext _errorContext;
+        private int _enumerationLimit;
     }
 
     internal class TraversalInfo
     {
-        internal TraversalInfo (int level, int maxDepth)
+        internal TraversalInfo(int level, int maxDepth)
         {
             _level = level;
             _maxDepth = maxDepth;
@@ -401,7 +399,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                return new TraversalInfo (this._level + 1, this._maxDepth);
+                return new TraversalInfo(_level + 1, _maxDepth);
             }
         }
 
@@ -416,9 +414,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal ComplexViewObjectBrowser(FormatErrorManager resultErrorManager, MshExpressionFactory mshExpressionFactory, int enumerationLimit)
         {
-            this.errorManager = resultErrorManager;
-            this.expressionFactory = mshExpressionFactory;
-            this.enumerationLimit = enumerationLimit;
+            _errorManager = resultErrorManager;
+            _expressionFactory = mshExpressionFactory;
+            _enumerationLimit = enumerationLimit;
         }
 
         /// <summary>
@@ -428,26 +426,26 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="so">object to process</param>
         /// <param name="inputParameters">parameters from the command line</param>
         /// <returns>complex view entry to send to the output command</returns>
-        internal ComplexViewEntry GenerateView (PSObject so, FormattingCommandLineParameters inputParameters)
+        internal ComplexViewEntry GenerateView(PSObject so, FormattingCommandLineParameters inputParameters)
         {
-            this.complexSpecificParameters = (ComplexSpecificParameters)inputParameters.shapeParameters;
+            _complexSpecificParameters = (ComplexSpecificParameters)inputParameters.shapeParameters;
 
-            int maxDepth = this.complexSpecificParameters.maxDepth;
-            TraversalInfo level = new TraversalInfo (0, maxDepth);
+            int maxDepth = _complexSpecificParameters.maxDepth;
+            TraversalInfo level = new TraversalInfo(0, maxDepth);
 
             List<MshParameter> mshParameterList = null;
             if (inputParameters != null)
                 mshParameterList = inputParameters.mshParameterList;
 
             // create a top level entry as root of the tree
-            ComplexViewEntry cve = new ComplexViewEntry ();
+            ComplexViewEntry cve = new ComplexViewEntry();
             var typeNames = so.InternalTypeNames;
-            if (TreatAsScalarType (typeNames))
+            if (TreatAsScalarType(typeNames))
             {
-                FormatEntry fe = new FormatEntry ();
+                FormatEntry fe = new FormatEntry();
 
-                cve.formatValueList.Add (fe);
-                DisplayRawObject (so, fe.formatValueList);
+                cve.formatValueList.Add(fe);
+                DisplayRawObject(so, fe.formatValueList);
             }
             else
             {
@@ -457,49 +455,49 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (e != null)
                 {
                     // let's start the traversal with an enumeration
-                    FormatEntry fe = new FormatEntry ();
+                    FormatEntry fe = new FormatEntry();
 
-                    cve.formatValueList.Add (fe);
-                    DisplayEnumeration (e, level, fe.formatValueList);
+                    cve.formatValueList.Add(fe);
+                    DisplayEnumeration(e, level, fe.formatValueList);
                 }
                 else
                 {
                     // let's start the traversal with a traversal on properties
-                    DisplayObject (so, level, mshParameterList, cve.formatValueList);
+                    DisplayObject(so, level, mshParameterList, cve.formatValueList);
                 }
             }
 
             return cve;
         }
 
-        private void DisplayRawObject (PSObject so, List<FormatValue> formatValueList)
+        private void DisplayRawObject(PSObject so, List<FormatValue> formatValueList)
         {
-            FormatPropertyField fpf = new FormatPropertyField ();
+            FormatPropertyField fpf = new FormatPropertyField();
 
             StringFormatError formatErrorObject = null;
-            if (this.errorManager.DisplayFormatErrorString)
+            if (_errorManager.DisplayFormatErrorString)
             {
                 // we send a format error object down to the formatting calls
                 // only if we want to show the formatting error strings
                 formatErrorObject = new StringFormatError();
             }
 
-            fpf.propertyValue = PSObjectHelper.SmartToString (so, this.expressionFactory, enumerationLimit, formatErrorObject);
+            fpf.propertyValue = PSObjectHelper.SmartToString(so, _expressionFactory, _enumerationLimit, formatErrorObject);
 
             if (formatErrorObject != null && formatErrorObject.exception != null)
             {
                 // if we did no thave any errors in the expression evaluation
                 // we might have errors in the formatting, if present
-                this.errorManager.LogStringFormatError(formatErrorObject);
-                if (this.errorManager.DisplayFormatErrorString)
+                _errorManager.LogStringFormatError(formatErrorObject);
+                if (_errorManager.DisplayFormatErrorString)
                 {
-                    fpf.propertyValue = this.errorManager.FormatErrorString;
+                    fpf.propertyValue = _errorManager.FormatErrorString;
                 }
             }
 
 
-            formatValueList.Add (fpf);
-            formatValueList.Add (new FormatNewLine ());
+            formatValueList.Add(fpf);
+            formatValueList.Add(new FormatNewLine());
         }
 
         /// <summary>
@@ -509,51 +507,51 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="currentLevel">current level in the traversal</param>
         /// <param name="parameterList"> list of parameters from the command line</param>
         /// <param name="formatValueList">list of format tokens to add to</param>
-        private void DisplayObject (PSObject so, TraversalInfo currentLevel, List<MshParameter> parameterList,
+        private void DisplayObject(PSObject so, TraversalInfo currentLevel, List<MshParameter> parameterList,
                                         List<FormatValue> formatValueList)
         {
             // resolve the names of the properties
             List<MshResolvedExpressionParameterAssociation> activeAssociationList =
-                        AssociationManager.SetupActiveProperties (parameterList, so, this.expressionFactory);
+                        AssociationManager.SetupActiveProperties(parameterList, so, _expressionFactory);
 
             // create a format entry
-            FormatEntry fe = new FormatEntry ();
-            formatValueList.Add (fe);
+            FormatEntry fe = new FormatEntry();
+            formatValueList.Add(fe);
 
             // add the display name of the object
-            string objectDisplayName = GetObjectDisplayName (so);
+            string objectDisplayName = GetObjectDisplayName(so);
             if (objectDisplayName != null)
                 objectDisplayName = "class " + objectDisplayName;
 
-            AddPrologue (fe.formatValueList, "{", objectDisplayName);
-            ProcessActiveAssociationList (so, currentLevel, activeAssociationList, AddIndentationLevel (fe.formatValueList));
-            AddEpilogue (fe.formatValueList, "}");
+            AddPrologue(fe.formatValueList, "{", objectDisplayName);
+            ProcessActiveAssociationList(so, currentLevel, activeAssociationList, AddIndentationLevel(fe.formatValueList));
+            AddEpilogue(fe.formatValueList, "}");
         }
 
-        private void ProcessActiveAssociationList (PSObject so, 
+        private void ProcessActiveAssociationList(PSObject so,
                                 TraversalInfo currentLevel,
                                 List<MshResolvedExpressionParameterAssociation> activeAssociationList,
                                                     List<FormatValue> formatValueList)
         {
             foreach (MshResolvedExpressionParameterAssociation a in activeAssociationList)
             {
-                FormatTextField ftf = new FormatTextField ();
+                FormatTextField ftf = new FormatTextField();
 
-                ftf.text = a.ResolvedExpression.ToString () + " = ";
-                formatValueList.Add (ftf);
+                ftf.text = a.ResolvedExpression.ToString() + " = ";
+                formatValueList.Add(ftf);
 
                 // compute the value of the entry
-                List<MshExpressionResult> resList = a.ResolvedExpression.GetValues (so);
+                List<MshExpressionResult> resList = a.ResolvedExpression.GetValues(so);
                 object val = null;
                 if (resList.Count >= 1)
                 {
                     MshExpressionResult result = resList[0];
                     if (result.Exception != null)
                     {
-                        this.errorManager.LogMshExpressionFailedResult (result, so);
-                        if (this.errorManager.DisplayErrorStrings)
+                        _errorManager.LogMshExpressionFailedResult(result, so);
+                        if (_errorManager.DisplayErrorStrings)
                         {
-                            val = this.errorManager.ErrorString;
+                            val = _errorManager.ErrorString;
                         }
                         else
                         {
@@ -571,11 +569,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 TraversalInfo level = currentLevel;
                 if (a.OriginatingParameter != null)
                 {
-                    object maxDepthKey = a.OriginatingParameter.GetEntry (FormatParameterDefinitionKeys.DepthEntryKey);
+                    object maxDepthKey = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.DepthEntryKey);
                     if (maxDepthKey != AutomationNull.Value)
                     {
                         int parameterMaxDept = (int)maxDepthKey;
-                        level = new TraversalInfo (currentLevel.Level, parameterMaxDept);
+                        level = new TraversalInfo(currentLevel.Level, parameterMaxDept);
                     }
                 }
 
@@ -585,21 +583,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (e != null)
                 {
-                    formatValueList.Add (new FormatNewLine ());
-                    DisplayEnumeration (e, level.NextLevel, AddIndentationLevel (formatValueList));
-
+                    formatValueList.Add(new FormatNewLine());
+                    DisplayEnumeration(e, level.NextLevel, AddIndentationLevel(formatValueList));
                 }
-                else if (val == null || TreatAsLeafNode (val, level))
+                else if (val == null || TreatAsLeafNode(val, level))
                 {
-                    DisplayLeaf (val, formatValueList);
+                    DisplayLeaf(val, formatValueList);
                 }
                 else
                 {
-                    formatValueList.Add (new FormatNewLine ());
+                    formatValueList.Add(new FormatNewLine());
 
                     // we need to go one more level down
-                    DisplayObject (PSObject.AsPSObject (val), level.NextLevel, null,
-                        AddIndentationLevel (formatValueList));
+                    DisplayObject(PSObject.AsPSObject(val), level.NextLevel, null,
+                        AddIndentationLevel(formatValueList));
                 }
             } // for each
         }
@@ -610,16 +607,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="e">enumeration to display</param>
         /// <param name="level">current level in the traversal</param>
         /// <param name="formatValueList">list of format tokens to add to</param>
-        private void DisplayEnumeration (IEnumerable e, TraversalInfo level, List<FormatValue> formatValueList)
+        private void DisplayEnumeration(IEnumerable e, TraversalInfo level, List<FormatValue> formatValueList)
         {
-            AddPrologue (formatValueList, "[", null);
-            DisplayEnumerationInner (e, level, AddIndentationLevel (formatValueList));
-            AddEpilogue (formatValueList, "]");
+            AddPrologue(formatValueList, "[", null);
+            DisplayEnumerationInner(e, level, AddIndentationLevel(formatValueList));
+            AddEpilogue(formatValueList, "]");
 
-            formatValueList.Add (new FormatNewLine ());
+            formatValueList.Add(new FormatNewLine());
         }
 
-        private void DisplayEnumerationInner (IEnumerable e, TraversalInfo level, List<FormatValue> formatValueList)
+        private void DisplayEnumerationInner(IEnumerable e, TraversalInfo level, List<FormatValue> formatValueList)
         {
             int enumCount = 0;
             foreach (object x in e)
@@ -628,32 +625,32 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     throw new PipelineStoppedException();
                 }
-                if (enumerationLimit >= 0)
+                if (_enumerationLimit >= 0)
                 {
-                    if (enumerationLimit == enumCount)
+                    if (_enumerationLimit == enumCount)
                     {
                         DisplayLeaf(PSObjectHelper.ellipses, formatValueList);
                         break;
                     }
                     enumCount++;
                 }
-                if (TreatAsLeafNode (x, level))
+                if (TreatAsLeafNode(x, level))
                 {
-                    DisplayLeaf (x, formatValueList);
+                    DisplayLeaf(x, formatValueList);
                 }
                 else
                 {
-                     // check if the top level object is an enumeration
+                    // check if the top level object is an enumeration
                     IEnumerable e1 = PSObjectHelper.GetEnumerable(x);
 
                     if (e1 != null)
                     {
-                        formatValueList.Add (new FormatNewLine ());
-                        DisplayEnumeration (e1, level.NextLevel, AddIndentationLevel (formatValueList));
+                        formatValueList.Add(new FormatNewLine());
+                        DisplayEnumeration(e1, level.NextLevel, AddIndentationLevel(formatValueList));
                     }
                     else
                     {
-                        DisplayObject (PSObjectHelper.AsPSObject (x), level.NextLevel, null, formatValueList);
+                        DisplayObject(PSObjectHelper.AsPSObject(x), level.NextLevel, null, formatValueList);
                     }
                 }
             }
@@ -664,13 +661,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="val">object to display</param>
         /// <param name="formatValueList">list of format tokens to add to</param>
-        private void DisplayLeaf (object val, List<FormatValue> formatValueList)
+        private void DisplayLeaf(object val, List<FormatValue> formatValueList)
         {
-            FormatPropertyField fpf = new FormatPropertyField ();
+            FormatPropertyField fpf = new FormatPropertyField();
 
-            fpf.propertyValue = PSObjectHelper.FormatField(null, PSObjectHelper.AsPSObject(val), enumerationLimit, null, expressionFactory);
-            formatValueList.Add (fpf);
-            formatValueList.Add (new FormatNewLine ());
+            fpf.propertyValue = PSObjectHelper.FormatField(null, PSObjectHelper.AsPSObject(val), _enumerationLimit, null, _expressionFactory);
+            formatValueList.Add(fpf);
+            formatValueList.Add(new FormatNewLine());
         }
 
         /// <summary>
@@ -679,7 +676,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="val">object to verify</param>
         /// <param name="level">current level of recursion</param>
         /// <returns></returns>
-        private static bool TreatAsLeafNode (object val, TraversalInfo level)
+        private static bool TreatAsLeafNode(object val, TraversalInfo level)
         {
             if (level.Level >= level.MaxDepth || val == null)
                 return true;
@@ -692,14 +689,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="typeNames">name of the type to check</param>
         /// <returns>true if it has to be treated as a scalar</returns>
-        private static bool TreatAsScalarType (Collection<string> typeNames)
+        private static bool TreatAsScalarType(Collection<string> typeNames)
         {
-            return DefaultScalarTypes.IsTypeInList (typeNames);
+            return DefaultScalarTypes.IsTypeInList(typeNames);
         }
 
-        private string GetObjectDisplayName (PSObject so)
+        private string GetObjectDisplayName(PSObject so)
         {
-            if (this.complexSpecificParameters.classDisplay == ComplexSpecificParameters.ClassInfoDisplay.none)
+            if (_complexSpecificParameters.classDisplay == ComplexSpecificParameters.ClassInfoDisplay.none)
                 return null;
 
             var typeNames = so.InternalTypeNames;
@@ -708,7 +705,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return "PSObject";
             }
 
-            if (this.complexSpecificParameters.classDisplay == ComplexSpecificParameters.ClassInfoDisplay.shortName)
+            if (_complexSpecificParameters.classDisplay == ComplexSpecificParameters.ClassInfoDisplay.shortName)
             {
                 // get the last token in the full name
                 string[] arr = typeNames[0].Split(Utils.Separators.Dot);
@@ -719,60 +716,59 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return typeNames[0];
         }
 
-        private static void AddPrologue (List<FormatValue> formatValueList, string openTag, string label)
+        private static void AddPrologue(List<FormatValue> formatValueList, string openTag, string label)
         {
             if (label != null)
             {
-                FormatTextField ftfLabel = new FormatTextField ();
+                FormatTextField ftfLabel = new FormatTextField();
                 ftfLabel.text = label;
-                formatValueList.Add (ftfLabel);
-                formatValueList.Add (new FormatNewLine ());
+                formatValueList.Add(ftfLabel);
+                formatValueList.Add(new FormatNewLine());
             }
 
-            FormatTextField ftf = new FormatTextField ();
+            FormatTextField ftf = new FormatTextField();
             ftf.text = openTag;
-            formatValueList.Add (ftf);
+            formatValueList.Add(ftf);
 
-            formatValueList.Add (new FormatNewLine ());
+            formatValueList.Add(new FormatNewLine());
         }
 
-        private static void AddEpilogue (List<FormatValue> formatValueList, string closeTag)
+        private static void AddEpilogue(List<FormatValue> formatValueList, string closeTag)
         {
-            FormatTextField ftf = new FormatTextField ();
+            FormatTextField ftf = new FormatTextField();
 
             ftf.text = closeTag;
-            formatValueList.Add (ftf);
+            formatValueList.Add(ftf);
 
-            formatValueList.Add (new FormatNewLine ());
+            formatValueList.Add(new FormatNewLine());
         }
 
-        private List<FormatValue> AddIndentationLevel (List<FormatValue> formatValueList)
+        private List<FormatValue> AddIndentationLevel(List<FormatValue> formatValueList)
         {
-            FormatEntry feFrame = new FormatEntry ();
-            feFrame.frameInfo = new FrameInfo ();
+            FormatEntry feFrame = new FormatEntry();
+            feFrame.frameInfo = new FrameInfo();
 
             // add the frame info 
             feFrame.frameInfo.firstLine = 0;
-            feFrame.frameInfo.leftIndentation = indentationStep;
+            feFrame.frameInfo.leftIndentation = _indentationStep;
             feFrame.frameInfo.rightIndentation = 0;
-            formatValueList.Add (feFrame);
+            formatValueList.Add(feFrame);
 
             return feFrame.formatValueList;
         }
 
-        private ComplexSpecificParameters complexSpecificParameters;
+        private ComplexSpecificParameters _complexSpecificParameters;
 
         /// <summary>
         /// identation added to each level in the recursion
         /// </summary>
-        private int indentationStep = 2;
+        private int _indentationStep = 2;
 
-        private FormatErrorManager errorManager;
+        private FormatErrorManager _errorManager;
 
-        private MshExpressionFactory expressionFactory;
+        private MshExpressionFactory _expressionFactory;
 
-        private int enumerationLimit;
+        private int _enumerationLimit;
     }
-
 }
 

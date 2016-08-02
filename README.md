@@ -95,6 +95,13 @@ If you do not see your problem captured, please file a [new issue][] and follow 
 [GitHub issues]: https://github.com/PowerShell/PowerShell/issues
 [new issue]:https://github.com/PowerShell/PowerShell/issues/new
 
+Legal and Licensing
+-------------------
+
+PowerShell is licensed under the [MIT license][].
+
+[MIT license]: LICENSE.txt
+
 Code of Conduct
 ---------------
 

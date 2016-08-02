@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
         #region Constants
 
         // used to split contentType arguments
-        private static readonly char[] _contentTypeParamSeparator = { ';' };
+        private static readonly char[] s_contentTypeParamSeparator = { ';' };
 
         // default codepage encoding for web content.  See RFC 2616.
         private const string _defaultCodePage = "ISO-8859-1";
@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static Encoding GetDefaultEncoding()
         {
-           return GetEncodingOrDefault((string)null);
+            return GetEncodingOrDefault((string)null);
         }
 
         #endregion Internal Methods
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
             if (String.IsNullOrEmpty(contentType))
                 return null;
 
-            string sig = contentType.Split(_contentTypeParamSeparator, 2)[0].ToUpperInvariant();
+            string sig = contentType.Split(s_contentTypeParamSeparator, 2)[0].ToUpperInvariant();
             return (sig);
         }
 
@@ -99,10 +99,10 @@ namespace Microsoft.PowerShell.Commands
                         {
                             using (RegistryKey extensionKey = Registry.ClassesRoot.OpenSubKey(extension))
                             {
-                            if (extensionKey != null)
+                                if (extensionKey != null)
                                 {
-                                string perceivedType = extensionKey.GetValue("PerceivedType") as string;
-                                isText = (perceivedType == "text");
+                                    string perceivedType = extensionKey.GetValue("PerceivedType") as string;
+                                    isText = (perceivedType == "text");
                                 }
                             }
                         }
@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
 
             return (isJson);
         }
-        
+
         #endregion Internal Helper Methods
     }
 }

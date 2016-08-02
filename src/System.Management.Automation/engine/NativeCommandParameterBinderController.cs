@@ -87,14 +87,13 @@ namespace System.Management.Automation
         {
             ((NativeCommandParameterBinder)DefaultParameterBinder).BindParameters(parameters);
 
-            Diagnostics.Assert(emptyReturnCollection.Count == 0, "This list shouldn't be used for anything as it's shared.");
+            Diagnostics.Assert(s_emptyReturnCollection.Count == 0, "This list shouldn't be used for anything as it's shared.");
 
-            return emptyReturnCollection;
+            return s_emptyReturnCollection;
         } // BindParameters
 
-        static readonly Collection<CommandParameterInternal> emptyReturnCollection = new Collection<CommandParameterInternal>(); 
+        private static readonly Collection<CommandParameterInternal> s_emptyReturnCollection = new Collection<CommandParameterInternal>();
     }
-
 }
 
 

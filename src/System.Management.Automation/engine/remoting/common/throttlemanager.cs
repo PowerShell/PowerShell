@@ -39,14 +39,14 @@ namespace System.Management.Automation.Remoting
         {
             get
             {
-                return operationState;
+                return _operationState;
             }
             set
             {
-                operationState = value;
+                _operationState = value;
             }
         }
-        private OperationState operationState;
+        private OperationState _operationState;
 
         /// <summary>
         /// the original event which actually resulted in this
@@ -56,18 +56,18 @@ namespace System.Management.Automation.Remoting
         {
             get
             {
-                return baseEvent;
+                return _baseEvent;
             }
             set
             {
-                baseEvent = value;
+                _baseEvent = value;
             }
         }
-        private EventArgs baseEvent;
+        private EventArgs _baseEvent;
     }
 
     #endregion OperationState
-    
+
     #region IThrottleOperation
 
     /// <summary>
@@ -152,7 +152,6 @@ namespace System.Management.Automation.Remoting
             }
         }
         private bool _ignoreStop = false;
-
     } // IThrottleOperation
 
     #endregion IThrottleOperation   
@@ -192,17 +191,17 @@ namespace System.Management.Automation.Remoting
         {
             set
             {
-                if (value > 0 && value <= THROTTLE_LIMIT_MAX)
+                if (value > 0 && value <= s_THROTTLE_LIMIT_MAX)
                 {
-                    throttleLimit = value;
+                    _throttleLimit = value;
                 }
             }
             get
             {
-                return throttleLimit;
+                return _throttleLimit;
             }
         }
-        private Int32 throttleLimit = DEFAULT_THROTTLE_LIMIT;
+        private Int32 _throttleLimit = s_DEFAULT_THROTTLE_LIMIT;
 
         #endregion Public (internal) Properties
 
@@ -217,18 +216,18 @@ namespace System.Management.Automation.Remoting
         /// </remarks>
         internal void SubmitOperations(List<IThrottleOperation> operations)
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
                 // operations can be submitted only until submitComplete 
                 // is not set to true (happens when EndSubmitOperations is called)
-                if (!submitComplete)
+                if (!_submitComplete)
                 {
                     // add items to the queue
                     foreach (IThrottleOperation operation in operations)
                     {
                         Dbg.Assert(operation != null,
                             "Operation submitComplete to throttle manager cannot be null");
-                        operationsQueue.Add(operation);
+                        _operationsQueue.Add(operation);
                     }
                 }
                 else
@@ -236,7 +235,7 @@ namespace System.Management.Automation.Remoting
                     throw new InvalidOperationException();
                 }
             }
-            
+
             // schedule operations here if possible
             StartOperationsFromQueue();
         } // SubmitOperations
@@ -248,16 +247,16 @@ namespace System.Management.Automation.Remoting
         internal void AddOperation(IThrottleOperation operation)
         {
             // add item to the queue
-            lock (syncObject)
+            lock (_syncObject)
             {
                 // operations can be submitted only until submitComplete 
                 // is not set to true (happens when EndSubmitOperations is called)
-                if (!submitComplete)
+                if (!_submitComplete)
                 {
                     Dbg.Assert(operation != null,
                         "Operation submitComplete to throttle manager cannot be null");
 
-                    operationsQueue.Add(operation);
+                    _operationsQueue.Add(operation);
                 }
                 else
                 {
@@ -267,7 +266,6 @@ namespace System.Management.Automation.Remoting
 
             // start operations from queue if possible
             StartOperationsFromQueue();
-
         }// AddOperation        
 
         /// <summary>
@@ -283,11 +281,11 @@ namespace System.Management.Automation.Remoting
             // if stopping is already in progress, make it a no op
             bool needToReturn = false;
 
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (!stopping)
+                if (!_stopping)
                 {
-                    stopping = true;
+                    _stopping = true;
                 }
                 else
                 {
@@ -303,20 +301,20 @@ namespace System.Management.Automation.Remoting
 
             IThrottleOperation[] startOperationsInProcessArray;
 
-            lock (syncObject)
+            lock (_syncObject)
             {
                 // no more submissions possible once stopped
-                submitComplete = true;
+                _submitComplete = true;
 
                 // Clear all pending operations in queue so that they are not
                 // scheduled when a stop operation completes
-                operationsQueue.Clear();
+                _operationsQueue.Clear();
 
                 // Make a copy of the in process queue so as to stop all
                 // operations in progress
                 startOperationsInProcessArray =
-                        new IThrottleOperation[startOperationQueue.Count];
-                startOperationQueue.CopyTo(startOperationsInProcessArray);
+                        new IThrottleOperation[_startOperationQueue.Count];
+                _startOperationQueue.CopyTo(startOperationsInProcessArray);
 
                 // stop all operations in process (using the copy)
                 foreach (IThrottleOperation operation in startOperationsInProcessArray)
@@ -332,22 +330,20 @@ namespace System.Management.Automation.Remoting
                     // removal. In case the stop succeeds before start succeeds then
                     // both will get removed (it goes without saying that there cannot
                     // be a situation where start succeeds after stop succeeded)
-                    stopOperationQueue.Add(operation);
+                    _stopOperationQueue.Add(operation);
 
                     operation.IgnoreStop = true;
-                
                 } // foreach...
             } // lock...
 
-            foreach(IThrottleOperation operation in startOperationsInProcessArray)
+            foreach (IThrottleOperation operation in startOperationsInProcessArray)
             {
                 operation.StopOperation();
-            }                
+            }
 
             // Raise event as it can be that at this point, all operations are
             // complete
             RaiseThrottleManagerEvents();
-
         } // StopAllOperations
 
         /// <summary>
@@ -366,13 +362,13 @@ namespace System.Management.Automation.Remoting
 
             // If the operation has not yet been started, then
             // remove it from the pending queue 
-            if (operationsQueue.IndexOf(operation) != -1)
+            if (_operationsQueue.IndexOf(operation) != -1)
             {
-                lock (syncObject)
+                lock (_syncObject)
                 {
-                    if (operationsQueue.IndexOf(operation) != -1)
+                    if (_operationsQueue.IndexOf(operation) != -1)
                     {
-                        operationsQueue.Remove(operation);
+                        _operationsQueue.Remove(operation);
                         RaiseThrottleManagerEvents();
                         return;
                     }
@@ -383,9 +379,9 @@ namespace System.Management.Automation.Remoting
             // to the inprocess queue and call stop. Refer to
             // comment in StopAllOperations() as to why this is
             // being added a second time
-            lock (syncObject)
+            lock (_syncObject)
             {
-                stopOperationQueue.Add(operation);
+                _stopOperationQueue.Add(operation);
 
                 operation.IgnoreStop = true;
             }
@@ -400,13 +396,12 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void EndSubmitOperations()
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
-                submitComplete = true;
+                _submitComplete = true;
             }
 
             RaiseThrottleManagerEvents();
-
         } // EndSubmitOperations
 
         #endregion Public (internal) Methods
@@ -427,11 +422,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public ThrottleManager()
         {
-            operationsQueue = new List<IThrottleOperation>();
-            startOperationQueue = new List<IThrottleOperation>();
-            stopOperationQueue = new List<IThrottleOperation>();
-            syncObject = new Object();
-
+            _operationsQueue = new List<IThrottleOperation>();
+            _startOperationQueue = new List<IThrottleOperation>();
+            _stopOperationQueue = new List<IThrottleOperation>();
+            _syncObject = new Object();
         }// ThrottleManager
 
         #endregion Constructors
@@ -451,8 +445,8 @@ namespace System.Management.Automation.Remoting
             // An item has completed operation. If its a start operation which completed
             // remove the instance from the startOperationqueue. If its a stop operation 
             // which completed, then remove the instance from both queues
-            lock (syncObject)
-            {                    
+            lock (_syncObject)
+            {
                 IThrottleOperation operation = source as IThrottleOperation;
 
                 Dbg.Assert(operation != null, "Source of event should not be null");
@@ -465,10 +459,10 @@ namespace System.Management.Automation.Remoting
                     // A stop operation handler cleans up an outstanding start operation.
                     // So it is possible that a start operation complete callback will find the 
                     // operation removed from the queue by an earlier stop operation complete.
-                    index = startOperationQueue.IndexOf(operation);
+                    index = _startOperationQueue.IndexOf(operation);
                     if (index != -1)
                     {
-                        startOperationQueue.RemoveAt(index);
+                        _startOperationQueue.RemoveAt(index);
                     }
                 }
                 else
@@ -476,16 +470,16 @@ namespace System.Management.Automation.Remoting
                     // for a stop operation, the same operation object would have been
                     // added to the stopOperationQueue as well. So we need to 
                     // remove both the instances.
-                    index = startOperationQueue.IndexOf(operation);                        
+                    index = _startOperationQueue.IndexOf(operation);
                     if (index != -1)
                     {
-                        startOperationQueue.RemoveAt(index);
+                        _startOperationQueue.RemoveAt(index);
                     }
 
-                    index = stopOperationQueue.IndexOf(operation);
+                    index = _stopOperationQueue.IndexOf(operation);
                     if (index != -1)
                     {
-                        stopOperationQueue.RemoveAt(index);
+                        _stopOperationQueue.RemoveAt(index);
                     }
 
                     // if an operation signals a stopcomplete, it can mean
@@ -501,7 +495,6 @@ namespace System.Management.Automation.Remoting
 
             // Do necessary things for starting operation for the next item in the queue
             StartOneOperationFromQueue();
-
         } // OperationCompleteHandler
 
         /// <summary>
@@ -511,15 +504,15 @@ namespace System.Management.Automation.Remoting
         {
             IThrottleOperation operation = null;
 
-            lock (syncObject)
+            lock (_syncObject)
             {
-                if (operationsQueue.Count > 0)
+                if (_operationsQueue.Count > 0)
                 {
-                    operation = operationsQueue[0];
-                    operationsQueue.RemoveAt(0);
+                    operation = _operationsQueue[0];
+                    _operationsQueue.RemoveAt(0);
                     operation.OperationComplete +=
                         new EventHandler<OperationStateEventArgs>(OperationCompleteHandler);
-                    startOperationQueue.Add(operation);
+                    _startOperationQueue.Add(operation);
                 }
             }
 
@@ -527,7 +520,6 @@ namespace System.Management.Automation.Remoting
             {
                 operation.StartOperation();
             }
-
         } //StartOneOperationFromQueue
 
         /// <summary>
@@ -538,13 +530,13 @@ namespace System.Management.Automation.Remoting
             int operationsInProcessCount = 0;
             int operationsQueueCount = 0;
 
-            lock (syncObject)
+            lock (_syncObject)
             {
-                operationsInProcessCount = startOperationQueue.Count;
-                operationsQueueCount = operationsQueue.Count;
+                operationsInProcessCount = _startOperationQueue.Count;
+                operationsQueueCount = _operationsQueue.Count;
             }
-                
-            int remainingCap = throttleLimit - operationsInProcessCount;
+
+            int remainingCap = _throttleLimit - operationsInProcessCount;
 
             if (remainingCap > 0)
             {
@@ -564,14 +556,14 @@ namespace System.Management.Automation.Remoting
         {
             bool readyToRaise = false;
 
-            lock (syncObject)
+            lock (_syncObject)
             {
                 // if submit is complete, there are no operations in progress and
                 // the pending queue is empty, then raise events
-                if (submitComplete && 
-                    startOperationQueue.Count == 0 && 
-                    stopOperationQueue.Count == 0 && 
-                    operationsQueue.Count == 0)
+                if (_submitComplete &&
+                    _startOperationQueue.Count == 0 &&
+                    _stopOperationQueue.Count == 0 &&
+                    _operationsQueue.Count == 0)
                 {
                     readyToRaise = true;
                 }
@@ -581,7 +573,6 @@ namespace System.Management.Automation.Remoting
             {
                 ThrottleComplete.SafeInvoke(this, EventArgs.Empty);
             }
-
         } // RaiseThrottleManagerEvents
 
         #endregion Private Methods
@@ -592,37 +583,37 @@ namespace System.Management.Automation.Remoting
         /// default throttle limit - the maximum number of operations 
         /// to be processed at a time
         /// </summary>
-        private static int DEFAULT_THROTTLE_LIMIT = 32;    
+        private static int s_DEFAULT_THROTTLE_LIMIT = 32;
 
         /// <summary>
         /// Maximum value that the throttle limit can be set to
         /// </summary>
-        private static int THROTTLE_LIMIT_MAX = int.MaxValue; 
+        private static int s_THROTTLE_LIMIT_MAX = int.MaxValue;
 
         /// <summary>
         /// All pending operations
         /// </summary>
-        private List<IThrottleOperation> operationsQueue;
-                                                   
+        private List<IThrottleOperation> _operationsQueue;
+
         /// <summary>
         /// List of items on which a StartOperation has
         /// been called
         /// </summary>
-        private List<IThrottleOperation> startOperationQueue;
-                                                   
+        private List<IThrottleOperation> _startOperationQueue;
+
         /// <summary>
         /// List of items on which a StopOperation has 
         /// been called
         /// </summary>
-        private List<IThrottleOperation> stopOperationQueue;
+        private List<IThrottleOperation> _stopOperationQueue;
 
         /// <summary>
         /// Object used to synchronize access to the queues
         /// </summary>
-        private Object syncObject;
+        private Object _syncObject;
 
-        bool submitComplete = false;                    // to check if operations have been submitComplete
-        bool stopping = false;                      // if stop is in process
+        private bool _submitComplete = false;                    // to check if operations have been submitComplete
+        private bool _stopping = false;                      // if stop is in process
 
         #endregion Private Members
 
@@ -652,11 +643,9 @@ namespace System.Management.Automation.Remoting
             {
                 StopAllOperations();
             }
-
         } // Dispose
 
         #endregion IDisposable Overrides
-
     }
 
     #endregion ThrottleManager
@@ -746,7 +735,7 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-        void Operation_OperationComplete(object sender, OperationStateEventArgs e)
+        private void Operation_OperationComplete(object sender, OperationStateEventArgs e)
         {
             InternalEvent.SafeInvoke(sender, e);
         }

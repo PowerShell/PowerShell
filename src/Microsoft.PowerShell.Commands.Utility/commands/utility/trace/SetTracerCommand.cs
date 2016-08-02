@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         /// The flags to be set on the TraceSource
         /// </summary>
         /// <value></value>
-        [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ParameterSetName  = "optionsSet")]
+        [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ParameterSetName = "optionsSet")]
         public PSTraceSourceOptions Option
         {
             get { return base.OptionsInternal; }
@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         /// trace listeners.
         /// </summary>
         /// 
-        [Parameter (ParameterSetName  = "optionsSet")]
+        [Parameter(ParameterSetName = "optionsSet")]
         public TraceOptions ListenerOption
         {
             get { return base.ListenerOptionsInternal; }
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
         /// Adds the file trace listener using the specified file
         /// </summary>
         /// <value></value>
-        [Parameter (ParameterSetName = "optionsSet")]
+        [Parameter(ParameterSetName = "optionsSet")]
         [Alias("PSPath")]
         public string FilePath
         {
@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
         /// will be added.
         /// </summary>
         /// <value></value>
-        [Parameter (ParameterSetName = "optionsSet")]
+        [Parameter(ParameterSetName = "optionsSet")]
         public SwitchParameter Debugger
         {
             get { return base.DebuggerListener; }
@@ -110,14 +110,14 @@ namespace Microsoft.PowerShell.Commands
         /// of their type.
         /// </summary>
         /// 
-        [Parameter (ParameterSetName  = "removeAllListenersSet")]
+        [Parameter(ParameterSetName = "removeAllListenersSet")]
         [ValidateNotNullOrEmpty]
         public string[] RemoveListener
         {
-            get { return removeListeners; }
-            set { removeListeners = value; }
+            get { return _removeListeners; }
+            set { _removeListeners = value; }
         }
-        private string[] removeListeners = new string[] { "*" };
+        private string[] _removeListeners = new string[] { "*" };
 
         /// <summary>
         /// If set, the specified file trace listeners will be removed.
@@ -127,23 +127,23 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string[] RemoveFileListener
         {
-            get { return removeFileListeners; }
-            set { removeFileListeners = value; }
+            get { return _removeFileListeners; }
+            set { _removeFileListeners = value; }
         }
-        private string[] removeFileListeners = new string[] { "*" };
-        
+        private string[] _removeFileListeners = new string[] { "*" };
+
         /// <summary>
         /// Determines if the modified PSTraceSource should be written out.
         /// Default is false.
         /// </summary>
         /// <value></value>
-        [Parameter (ParameterSetName = "optionsSet")]
+        [Parameter(ParameterSetName = "optionsSet")]
         public SwitchParameter PassThru
         {
-            get { return passThru; }
-            set { passThru = value; }
+            get { return _passThru; }
+            set { _passThru = value; }
         } // Passthru
-        private bool passThru;
+        private bool _passThru;
 
         #endregion Parameters
 
@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the TraceSource properties
         /// </summary>
-        protected override void ProcessRecord ()
+        protected override void ProcessRecord()
         {
             Collection<PSTraceSource> matchingSources = null;
 
@@ -179,7 +179,6 @@ namespace Microsoft.PowerShell.Commands
                     RemoveListenersByName(matchingSources, RemoveFileListener, true);
                     break;
             }
-
         } // ProcessRecord
 
         #endregion Cmdlet code

@@ -32,10 +32,10 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal abstract class WSManPluginServerSession : IDisposable
     {
-        private object syncObject;
+        private object _syncObject;
 
         protected bool isClosed;
-        protected bool isContextReported;    
+        protected bool isContextReported;
         // used to keep track of last error..this will be used
         // for reporting operation complete to WSMan.
         protected Exception lastErrorReported;
@@ -57,13 +57,13 @@ namespace System.Management.Automation.Remoting
         internal event EventHandler<EventArgs> SessionClosed;
 
         // Track whether Dispose has been called. 
-        private bool disposed = false;
+        private bool _disposed = false;
 
         protected WSManPluginServerSession(
             WSManNativeApi.WSManPluginRequest creationRequestDetails,
             WSManPluginServerTransportManager trnsprtMgr)
         {
-            syncObject = new Object();
+            _syncObject = new Object();
             this.creationRequestDetails = creationRequestDetails;
             this.transportMgr = trnsprtMgr;
 
@@ -96,13 +96,13 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="disposing"></param> True when called from Dispose(), False when called from Finalize().
         protected virtual void Dispose(bool disposing)
-        {    
+        {
             // Check to see if Dispose has already been called. 
-            if(!this.disposed)
+            if (!_disposed)
             {
                 // If disposing equals true, dispose all managed 
                 // and unmanaged resources. 
-                if(disposing)
+                if (disposing)
                 {
                     // Dispose managed resources.
                     //Close(false);
@@ -115,7 +115,7 @@ namespace System.Management.Automation.Remoting
                 Close(false);
 
                 // Note disposing has been done.
-                disposed = true;
+                _disposed = true;
             }
         }
 
@@ -139,7 +139,7 @@ namespace System.Management.Automation.Remoting
             int flags,
             string stream,
             WSManNativeApi.WSManData_UnToMan inboundData)
-        {    
+        {
             if ((!String.Equals(stream, WSManPluginConstants.SupportedInputStream, StringComparison.Ordinal)) &&
                 (!String.Equals(stream, WSManPluginConstants.SupportedPromptResponseStream, StringComparison.Ordinal)))
             {
@@ -147,7 +147,7 @@ namespace System.Management.Automation.Remoting
                     requestDetails,
                     WSManPluginErrorCodes.InvalidInputStream,
                     StringUtil.Format(
-                        RemotingErrorIdStrings.WSManPluginInvalidInputStream, 
+                        RemotingErrorIdStrings.WSManPluginInvalidInputStream,
                         WSManPluginConstants.SupportedInputStream));
                 return;
             }
@@ -156,7 +156,7 @@ namespace System.Management.Automation.Remoting
             {
                 // no data is supplied..just ignore.
                 WSManPluginInstance.ReportOperationComplete(
-                    requestDetails, 
+                    requestDetails,
                     WSManPluginErrorCodes.NoError);
                 return;
             }
@@ -168,12 +168,12 @@ namespace System.Management.Automation.Remoting
                     requestDetails,
                     WSManPluginErrorCodes.InvalidInputDatatype,
                     StringUtil.Format(
-                        RemotingErrorIdStrings.WSManPluginInvalidInputStream, 
+                        RemotingErrorIdStrings.WSManPluginInvalidInputStream,
                         "WSMAN_DATA_TYPE_BINARY"));
                 return;
             }
 
-            lock (syncObject)
+            lock (_syncObject)
             {
                 if (true == isClosed)
                 {
@@ -192,7 +192,7 @@ namespace System.Management.Automation.Remoting
         }
 
         internal void SendOneItemToSessionHelper(
-            System.Byte[] data, 
+            System.Byte[] data,
             string stream)
         {
             transportMgr.ProcessRawData(data, stream);
@@ -218,7 +218,7 @@ namespace System.Management.Automation.Remoting
                     requestDetails,
                     WSManPluginErrorCodes.InvalidOutputStream,
                     StringUtil.Format(
-                        RemotingErrorIdStrings.WSManPluginInvalidOutputStream, 
+                        RemotingErrorIdStrings.WSManPluginInvalidOutputStream,
                         WSManPluginConstants.SupportedOutputStream));
                 return false;
             }
@@ -230,12 +230,12 @@ namespace System.Management.Automation.Remoting
                     requestDetails,
                     WSManPluginErrorCodes.InvalidOutputStream,
                     StringUtil.Format(
-                        RemotingErrorIdStrings.WSManPluginInvalidOutputStream, 
+                        RemotingErrorIdStrings.WSManPluginInvalidOutputStream,
                         WSManPluginConstants.SupportedOutputStream));
                 return false;
             }
 
-            return transportMgr.EnableTransportManagerSendDataToClient(requestDetails, ctxtToReport);    
+            return transportMgr.EnableTransportManagerSendDataToClient(requestDetails, ctxtToReport);
         }
 
         /// <summary>
@@ -247,7 +247,7 @@ namespace System.Management.Automation.Remoting
             int result = 0;
             bool isRegisterWaitForSingleObjectFailed = false;
 
-            lock (syncObject)
+            lock (_syncObject)
             {
                 if (true == isClosed)
                 {
@@ -379,7 +379,7 @@ namespace System.Management.Automation.Remoting
         // Report Operation Complete using the send request details.
         internal void ReportSendOperationComplete()
         {
-            lock (syncObject)
+            lock (_syncObject)
             {
                 if (null != sendRequestDetails)
                 {
@@ -404,34 +404,34 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// 
     /// </summary>
-    class WSManPluginShellSession : WSManPluginServerSession
+    internal class WSManPluginShellSession : WSManPluginServerSession
     {
         #region Private Members
 
-        private Dictionary<IntPtr, WSManPluginCommandSession> activeCommandSessions;
-        private ServerRemoteSession remoteSession;
-        
+        private Dictionary<IntPtr, WSManPluginCommandSession> _activeCommandSessions;
+        private ServerRemoteSession _remoteSession;
+
         #endregion
 
         #region Internally Visible Members
-        
+
         internal object shellSyncObject;
-        
+
         #endregion
 
         #region Constructor
         internal WSManPluginShellSession(
-            WSManNativeApi.WSManPluginRequest creationRequestDetails, 
+            WSManNativeApi.WSManPluginRequest creationRequestDetails,
             WSManPluginServerTransportManager trnsprtMgr,
             ServerRemoteSession remoteSession,
             WSManPluginOperationShutdownContext shutDownContext)
             : base(creationRequestDetails, trnsprtMgr)
         {
-            this.remoteSession = remoteSession;
-            this.remoteSession.Closed +=
+            _remoteSession = remoteSession;
+            _remoteSession.Closed +=
                 new EventHandler<RemoteSessionStateMachineEventArgs>(this.HandleServerRemoteSessionClosed);
 
-            this.activeCommandSessions = new Dictionary<IntPtr, WSManPluginCommandSession>();
+            _activeCommandSessions = new Dictionary<IntPtr, WSManPluginCommandSession>();
             this.shellSyncObject = new System.Object();
             this.shutDownContext = shutDownContext;
         }
@@ -453,7 +453,7 @@ namespace System.Management.Automation.Remoting
             if (null == inboundConnectInformation)
             {
                 WSManPluginInstance.ReportOperationComplete(
-                    requestDetails, 
+                    requestDetails,
                     WSManPluginErrorCodes.NullInvalidInput,
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginNullInvalidInput,
@@ -463,7 +463,7 @@ namespace System.Management.Automation.Remoting
             }
 
             //not registering shutdown event as this is a synchronous operation.
-    
+
             IntPtr responseXml = IntPtr.Zero;
             try
             {
@@ -474,14 +474,14 @@ namespace System.Management.Automation.Remoting
                 inputData = ServerOperationHelpers.ExtractEncodedXmlElement(
                     inboundConnectInformation.Text,
                     WSManNativeApi.PS_CONNECT_XML_TAG);
-        
+
                 //this will raise exceptions on failure
                 try
                 {
-                    remoteSession.ExecuteConnect(inputData, out outputData);
+                    _remoteSession.ExecuteConnect(inputData, out outputData);
 
                     //construct Xml to send back
-                    string responseData = String.Format(System.Globalization.CultureInfo.InvariantCulture, 
+                    string responseData = String.Format(System.Globalization.CultureInfo.InvariantCulture,
                                     "<{0} xmlns=\"{1}\">{2}</{0}>",
                                     WSManNativeApi.PS_CONNECTRESPONSE_XML_TAG,
                                     WSManNativeApi.PS_XML_NAMESPACE,
@@ -494,7 +494,7 @@ namespace System.Management.Automation.Remoting
                 catch (PSRemotingDataStructureException ex)
                 {
                     WSManPluginInstance.ReportOperationComplete(requestDetails, WSManPluginErrorCodes.PluginConnectOperationFailed, ex.Message);
-                }        
+                }
             }
             catch (OutOfMemoryException)
             {
@@ -507,7 +507,7 @@ namespace System.Management.Automation.Remoting
                     Marshal.FreeHGlobal(responseXml);
                 }
             }
-    
+
             return;
         }
 
@@ -522,20 +522,20 @@ namespace System.Management.Automation.Remoting
             try
             {
                 // inbound cmd information is already verified.. so no need to verify here.
-                WSManPluginCommandTransportManager serverCmdTransportMgr = new WSManPluginCommandTransportManager(transportMgr);        
+                WSManPluginCommandTransportManager serverCmdTransportMgr = new WSManPluginCommandTransportManager(transportMgr);
                 serverCmdTransportMgr.Initialize();
 
                 // Apply quota limits on the command transport manager
-                remoteSession.ApplyQuotaOnCommandTransportManager(serverCmdTransportMgr);
+                _remoteSession.ApplyQuotaOnCommandTransportManager(serverCmdTransportMgr);
 
-                WSManPluginCommandSession mgdCmdSession = new WSManPluginCommandSession(requestDetails, serverCmdTransportMgr, this.remoteSession);
+                WSManPluginCommandSession mgdCmdSession = new WSManPluginCommandSession(requestDetails, serverCmdTransportMgr, _remoteSession);
                 AddToActiveCmdSessions(mgdCmdSession);
                 mgdCmdSession.SessionClosed += new EventHandler<EventArgs>(this.HandleCommandSessionClosed);
 
                 mgdCmdSession.shutDownContext = new WSManPluginOperationShutdownContext(
                     pluginContext,
-                    creationRequestDetails.unmanagedHandle, 
-                    mgdCmdSession.creationRequestDetails.unmanagedHandle, 
+                    creationRequestDetails.unmanagedHandle,
+                    mgdCmdSession.creationRequestDetails.unmanagedHandle,
                     false);
 
                 do
@@ -546,25 +546,25 @@ namespace System.Management.Automation.Remoting
                             requestDetails,
                             WSManPluginErrorCodes.InvalidArgSet,
                             StringUtil.Format(
-                                RemotingErrorIdStrings.WSManPluginInvalidArgSet, 
+                                RemotingErrorIdStrings.WSManPluginInvalidArgSet,
                                 "WSManPluginCommand"));
                         break;
                     }
 
                     // Report plugin context to WSMan
                     mgdCmdSession.ReportContext();
-                }while(false); 
+                } while (false);
             }
-            catch(System.Exception e)
+            catch (System.Exception e)
             {
                 CommandProcessorBase.CheckForSevereException(e);
 
                 // if there is an exception creating remote session send the message to client.
                 WSManPluginInstance.ReportOperationComplete(
-                    requestDetails, 
+                    requestDetails,
                     WSManPluginErrorCodes.ManagedException,
                     StringUtil.Format(
-                        RemotingErrorIdStrings.WSManPluginManagedException, 
+                        RemotingErrorIdStrings.WSManPluginManagedException,
                         e.Message));
             }
         }
@@ -597,16 +597,16 @@ namespace System.Management.Automation.Remoting
             lock (shellSyncObject)
             {
                 if (isClosed)
-                {                
+                {
                     return;
                 }
 
                 IntPtr key = newCmdSession.creationRequestDetails.unmanagedHandle;
                 Dbg.Assert(IntPtr.Zero != key, "NULL handles should not be provided");
 
-                if (!activeCommandSessions.ContainsKey(key))
+                if (!_activeCommandSessions.ContainsKey(key))
                 {
-                    activeCommandSessions.Add(key, newCmdSession);            
+                    _activeCommandSessions.Add(key, newCmdSession);
                     return;
                 }
             }
@@ -622,29 +622,29 @@ namespace System.Management.Automation.Remoting
                     return;
                 }
 
-                activeCommandSessions.Remove(keyToDelete);
+                _activeCommandSessions.Remove(keyToDelete);
             }
         }
 
         // closes all the active command sessions.
         private void CloseAndClearCommandSessions(
-            Exception reasonForClose)    
+            Exception reasonForClose)
         {
             Collection<WSManPluginCommandSession> copyCmdSessions = new Collection<WSManPluginCommandSession>();
             lock (shellSyncObject)
             {
-                Dictionary<IntPtr, WSManPluginCommandSession>.Enumerator cmdEnumerator = activeCommandSessions.GetEnumerator();
-                while(cmdEnumerator.MoveNext())
+                Dictionary<IntPtr, WSManPluginCommandSession>.Enumerator cmdEnumerator = _activeCommandSessions.GetEnumerator();
+                while (cmdEnumerator.MoveNext())
                 {
                     copyCmdSessions.Add(cmdEnumerator.Current.Value);
                 }
 
-                activeCommandSessions.Clear();
+                _activeCommandSessions.Clear();
             }
 
             // close the command sessions outside of the lock
             IEnumerator<WSManPluginCommandSession> cmdSessionEnumerator = copyCmdSessions.GetEnumerator();
-            while(cmdSessionEnumerator.MoveNext())
+            while (cmdSessionEnumerator.MoveNext())
             {
                 WSManPluginCommandSession cmdSession = cmdSessionEnumerator.Current;
                 // we are not interested in session closed events anymore as we are intiating the close
@@ -663,13 +663,13 @@ namespace System.Management.Automation.Remoting
             lock (shellSyncObject)
             {
                 WSManPluginCommandSession result = null;
-                activeCommandSessions.TryGetValue(cmdContext, out result);
+                _activeCommandSessions.TryGetValue(cmdContext, out result);
                 return result;
             }
         }
 
         private void HandleServerRemoteSessionClosed(
-            Object sender, 
+            Object sender,
             RemoteSessionStateMachineEventArgs eventArgs)
         {
             Exception reasonForClose = null;
@@ -681,7 +681,7 @@ namespace System.Management.Automation.Remoting
         }
 
         private void HandleCommandSessionClosed(
-            Object source, 
+            Object source,
             EventArgs e)
         {
             // command context is passed as "source" parameter
@@ -689,12 +689,12 @@ namespace System.Management.Automation.Remoting
         }
 
         internal override void CloseOperation(
-            WSManPluginOperationShutdownContext context, 
+            WSManPluginOperationShutdownContext context,
             Exception reasonForClose)
-        {   
+        {
             // let command sessions to close.
             lock (shellSyncObject)
-            {        
+            {
                 if (true == isClosed)
                 {
                     return;
@@ -714,7 +714,7 @@ namespace System.Management.Automation.Remoting
             ReportSendOperationComplete();
             // close the shell's transport manager after commands handled the operation
             transportMgr.DoClose(isRcvOpShuttingDown, reasonForClose);
-        
+
             if (!isRcvOp)
             {
                 // Initiate close on the active command sessions and then clear the internal
@@ -732,32 +732,32 @@ namespace System.Management.Automation.Remoting
         }
     }
 
-    class WSManPluginCommandSession : WSManPluginServerSession
+    internal class WSManPluginCommandSession : WSManPluginServerSession
     {
         #region Private Members
 
-        private ServerRemoteSession remoteSession;
-        
+        private ServerRemoteSession _remoteSession;
+
         #endregion
 
         #region Internally Visible Members
-        
+
         internal object cmdSyncObject;
-        
+
         #endregion
 
         #region Constructor
-        
+
         internal WSManPluginCommandSession(
-            WSManNativeApi.WSManPluginRequest creationRequestDetails, 
+            WSManNativeApi.WSManPluginRequest creationRequestDetails,
             WSManPluginServerTransportManager trnsprtMgr,
             ServerRemoteSession remoteSession)
             : base(creationRequestDetails, trnsprtMgr)
         {
-            this.remoteSession = remoteSession;
+            _remoteSession = remoteSession;
             cmdSyncObject = new System.Object();
         }
-        
+
         #endregion
 
         internal bool ProcessArguments(
@@ -768,7 +768,7 @@ namespace System.Management.Automation.Remoting
                 return false;
             }
 
-            System.Byte[] convertedBase64 = Convert.FromBase64String(arguments.args[0]);    
+            System.Byte[] convertedBase64 = Convert.FromBase64String(arguments.args[0]);
             transportMgr.ProcessRawData(convertedBase64, WSManPluginConstants.SupportedInputStream);
 
             return true;
@@ -784,11 +784,11 @@ namespace System.Management.Automation.Remoting
             // stop the command..command will be stoped if we raise ClosingEvent on
             // transport manager.
             transportMgr.PerformStop();
-            WSManPluginInstance.ReportWSManOperationComplete(requestDetails, null);    
+            WSManPluginInstance.ReportWSManOperationComplete(requestDetails, null);
         }
 
         internal override void CloseOperation(
-            WSManPluginOperationShutdownContext context, 
+            WSManPluginOperationShutdownContext context,
             Exception reasonForClose)
         {
             // let command sessions to close.
@@ -804,14 +804,14 @@ namespace System.Management.Automation.Remoting
                     isClosed = true;
                 }
             }
-        
+
             bool isRcvOp = context.isReceiveOperation;
             // only one thread will be here.
-            bool isRcvOpShuttingDown = (context.isShuttingDown) && 
+            bool isRcvOpShuttingDown = (context.isShuttingDown) &&
                 (context.isReceiveOperation) &&
                 (context.commandContext == creationRequestDetails.unmanagedHandle);
 
-            bool isCmdShuttingDown = (context.isShuttingDown) && 
+            bool isCmdShuttingDown = (context.isShuttingDown) &&
                 (!context.isReceiveOperation) &&
                 (context.commandContext == creationRequestDetails.unmanagedHandle);
 
@@ -826,10 +826,10 @@ namespace System.Management.Automation.Remoting
                 // null check is not performed here because Managed C++ will take care of this.
                 base.SafeInvokeSessionClosed(creationRequestDetails.unmanagedHandle, EventArgs.Empty);
                 // Send Operation Complete to WSMan service
-                WSManPluginInstance.ReportWSManOperationComplete(creationRequestDetails, reasonForClose);            
+                WSManPluginInstance.ReportWSManOperationComplete(creationRequestDetails, reasonForClose);
                 // let base class release its resources
                 this.Close(isCmdShuttingDown);
-            }    
+            }
         }
 
         /// <summary>
@@ -840,13 +840,13 @@ namespace System.Management.Automation.Remoting
         /// <param name="requestDetails"></param>
         /// <param name="flags"></param>
         /// <param name="inboundConnectInformation"></param>
-        internal override void ExecuteConnect( 
+        internal override void ExecuteConnect(
             WSManNativeApi.WSManPluginRequest requestDetails,
             int flags,
             WSManNativeApi.WSManData_UnToMan inboundConnectInformation)
         {
             WSManPluginInstance.ReportOperationComplete(
-                requestDetails, 
+                requestDetails,
                 WSManPluginErrorCodes.NoError);
             return;
         }

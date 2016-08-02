@@ -59,12 +59,12 @@ namespace System.Management.Automation.Provider
         /// The context under which the provider is running. This will change between each
         /// invocation of a method in this class or derived classes.
         /// </summary>
-        private CmdletProviderContext contextBase = null;
+        private CmdletProviderContext _contextBase = null;
 
         /// <summary>
         /// The information that the Monad engine stores on behalf of the provider.
         /// </summary>
-        private ProviderInfo providerInformation = null;
+        private ProviderInfo _providerInformation = null;
 
         #endregion private data
 
@@ -77,7 +77,7 @@ namespace System.Management.Automation.Provider
         /// using "CmdletProviderClasses" as the category.
         /// </summary>
         [TraceSourceAttribute(
-             "CmdletProviderClasses", 
+             "CmdletProviderClasses",
              "The namespace provider base classes tracer")]
         internal static PSTraceSource providerBaseTracer = PSTraceSource.GetTracer(
                                                                "CmdletProviderClasses",
@@ -105,7 +105,7 @@ namespace System.Management.Automation.Provider
                 throw PSTraceSource.NewArgumentNullException("providerInfoToSet");
             }
 
-            this.providerInformation = providerInfoToSet;
+            _providerInformation = providerInfoToSet;
         } // SetProviderInformation
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace System.Management.Automation.Provider
         {
             get
             {
-                return contextBase;
+                return _contextBase;
             }
 
             set
@@ -150,16 +150,16 @@ namespace System.Management.Automation.Provider
                 // Check that the provider supports the use of credentials
                 if (value.Credential != null &&
                     value.Credential != PSCredential.Empty &&
-                    !CmdletProviderManagementIntrinsics.CheckProviderCapabilities(ProviderCapabilities.Credentials, providerInformation))
+                    !CmdletProviderManagementIntrinsics.CheckProviderCapabilities(ProviderCapabilities.Credentials, _providerInformation))
                 {
                     throw PSTraceSource.NewNotSupportedException(
                         SessionStateStrings.Credentials_NotSupported);
                 }
 
                 // Supplying Credentials for the FileSystemProvider is supported only for New-PSDrive Command.
-                if (providerInformation != null && !string.IsNullOrEmpty(providerInformation.Name) && providerInformation.Name.Equals("FileSystem") &&
+                if (_providerInformation != null && !string.IsNullOrEmpty(_providerInformation.Name) && _providerInformation.Name.Equals("FileSystem") &&
                     value.Credential != null &&
-                    value.Credential != PSCredential.Empty && 
+                    value.Credential != PSCredential.Empty &&
                     !value.ExecutionContext.CurrentCommandProcessor.Command.GetType().Name.Equals("NewPSDriveCommand"))
                 {
                     throw PSTraceSource.NewNotSupportedException(
@@ -167,8 +167,8 @@ namespace System.Management.Automation.Provider
                 }
 
                 // Check that the provider supports the use of filters
-                if ((! String.IsNullOrEmpty(value.Filter)) &&
-                    (! CmdletProviderManagementIntrinsics.CheckProviderCapabilities(ProviderCapabilities.Filter, providerInformation)))
+                if ((!String.IsNullOrEmpty(value.Filter)) &&
+                    (!CmdletProviderManagementIntrinsics.CheckProviderCapabilities(ProviderCapabilities.Filter, _providerInformation)))
                 {
                     throw PSTraceSource.NewNotSupportedException(
                         SessionStateStrings.Filter_NotSupported);
@@ -176,15 +176,15 @@ namespace System.Management.Automation.Provider
 
                 // Check that the provider supports the use of transactions if the command
                 // requested it
-                if((value.UseTransaction) &&
-                   (! CmdletProviderManagementIntrinsics.CheckProviderCapabilities(ProviderCapabilities.Transactions, providerInformation)))
+                if ((value.UseTransaction) &&
+                   (!CmdletProviderManagementIntrinsics.CheckProviderCapabilities(ProviderCapabilities.Transactions, _providerInformation)))
                 {
                     throw PSTraceSource.NewNotSupportedException(
                         SessionStateStrings.Transactions_NotSupported);
                 }
 
-                contextBase = value;
-                contextBase.ProviderInstance = this;
+                _contextBase = value;
+                _contextBase.ProviderInstance = this;
             }
         } // Context
 
@@ -224,7 +224,7 @@ namespace System.Management.Automation.Provider
         internal object StartDynamicParameters(CmdletProviderContext cmdletProviderContext)
         {
             Context = cmdletProviderContext;
-        
+
             return StartDynamicParameters();
         } // StartDynamicParmaters
 
@@ -316,7 +316,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         /// 
         internal object GetPropertyDynamicParameters(
-            string path, 
+            string path,
             Collection<string> providerSpecificPickList,
             CmdletProviderContext cmdletProviderContext)
         {
@@ -395,7 +395,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         /// 
         internal object SetPropertyDynamicParameters(
-            string path, 
+            string path,
             PSObject propertyValue,
             CmdletProviderContext cmdletProviderContext)
         {
@@ -478,7 +478,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         /// 
         internal object ClearPropertyDynamicParameters(
-            string path, 
+            string path,
             Collection<string> providerSpecificPickList,
             CmdletProviderContext cmdletProviderContext)
         {
@@ -1059,7 +1059,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         /// 
         internal object NewPropertyDynamicParameters(
-            string path, 
+            string path,
             string propertyName,
             string propertyTypeName,
             object value,
@@ -1143,7 +1143,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         /// 
         internal object RemovePropertyDynamicParameters(
-            string path, 
+            string path,
             string propertyName,
             CmdletProviderContext cmdletProviderContext)
         {
@@ -1234,7 +1234,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         /// 
         internal object RenamePropertyDynamicParameters(
-            string path, 
+            string path,
             string sourceProperty,
             string destinationProperty,
             CmdletProviderContext cmdletProviderContext)
@@ -1249,7 +1249,7 @@ namespace System.Management.Automation.Provider
             }
             return propertyProvider.RenamePropertyDynamicParameters(path, sourceProperty, destinationProperty);
         } // RenamePropertyDynamicParameters
-        
+
         /// <summary>
         /// Internal wrapper for the CopyProperty protected method. This method will
         /// only be called if the provider implements the IDynamicPropertyCmdletProvider interface.
@@ -1289,7 +1289,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider ;
+            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
             if (propertyProvider == null)
             {
@@ -1335,7 +1335,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         /// 
         internal object CopyPropertyDynamicParameters(
-            string path, 
+            string path,
             string sourceProperty,
             string destinationPath,
             string destinationProperty,
@@ -1351,7 +1351,7 @@ namespace System.Management.Automation.Provider
             }
             return propertyProvider.CopyPropertyDynamicParameters(path, sourceProperty, destinationPath, destinationProperty);
         } // CopyPropertyDynamicParameters
-        
+
         /// <summary>
         /// Internal wrapper for the MoveProperty protected method. This method will
         /// only be called if the provider implements the IDynamicPropertyCmdletProvider  interface.
@@ -1391,7 +1391,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider  propertyProvider = this as IDynamicPropertyCmdletProvider ;
+            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
 
             if (propertyProvider == null)
             {
@@ -1437,7 +1437,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         /// 
         internal object MovePropertyDynamicParameters(
-            string path, 
+            string path,
             string sourceProperty,
             string destinationPath,
             string destinationProperty,
@@ -1453,7 +1453,7 @@ namespace System.Management.Automation.Provider
             }
             return propertyProvider.MovePropertyDynamicParameters(path, sourceProperty, destinationPath, destinationProperty);
         } // MovePropertyDynamicParameters
-        
+
         #endregion IDynamicPropertyCmdletProvider method wrappers
 
         #region IContentCmdletProvider method wrappers
@@ -1515,7 +1515,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         /// 
         internal object GetContentReaderDynamicParameters(
-            string path, 
+            string path,
             CmdletProviderContext cmdletProviderContext)
         {
             Context = cmdletProviderContext;
@@ -1528,7 +1528,7 @@ namespace System.Management.Automation.Provider
             }
             return contentProvider.GetContentReaderDynamicParameters(path);
         } // GetContentReaderDynamicParameters
-        
+
 
         /// <summary>
         /// Internal wrapper for the GetContentWriter protected method. This method will
@@ -1566,7 +1566,7 @@ namespace System.Management.Automation.Provider
 
             return contentProvider.GetContentWriter(path);
         } // GetContentWriter
-        
+
         /// <summary>
         /// Gives the provider a chance to attach additional parameters to
         /// the add-content and set-content cmdlet.
@@ -1587,7 +1587,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         /// 
         internal object GetContentWriterDynamicParameters(
-            string path, 
+            string path,
             CmdletProviderContext cmdletProviderContext)
         {
             Context = cmdletProviderContext;
@@ -1600,7 +1600,7 @@ namespace System.Management.Automation.Provider
             }
             return contentProvider.GetContentWriterDynamicParameters(path);
         } // GetContentWriterDynamicParameters
-        
+
 
         /// <summary>
         /// Internal wrapper for the ClearContent protected method. This method will
@@ -1634,7 +1634,7 @@ namespace System.Management.Automation.Provider
 
             contentProvider.ClearContent(path);
         } // ClearContent
-        
+
         /// <summary>
         /// Gives the provider a chance to attach additional parameters to
         /// the clear-content cmdlet.
@@ -1655,7 +1655,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         /// 
         internal object ClearContentDynamicParameters(
-            string path, 
+            string path,
             CmdletProviderContext cmdletProviderContext)
         {
             Context = cmdletProviderContext;
@@ -1668,7 +1668,7 @@ namespace System.Management.Automation.Provider
             }
             return contentProvider.ClearContentDynamicParameters(path);
         } // ClearContentDynamicParameters
-        
+
 
         #endregion IContentCmdletProvider method wrappers
 
@@ -1749,7 +1749,7 @@ namespace System.Management.Automation.Provider
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    Diagnostics.Assert (
+                    Diagnostics.Assert(
                         Context != null,
                         "The context should always be set");
 
@@ -1767,11 +1767,11 @@ namespace System.Management.Automation.Provider
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    Diagnostics.Assert (
+                    Diagnostics.Assert(
                         Context != null,
                         "The context should always be set");
 
-                    return new SessionState (Context.ExecutionContext.EngineSessionState);
+                    return new SessionState(Context.ExecutionContext.EngineSessionState);
                 } // TraceProperty
             } // get
         } // SessionState
@@ -1785,11 +1785,11 @@ namespace System.Management.Automation.Provider
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    Diagnostics.Assert (
+                    Diagnostics.Assert(
                         Context != null,
                         "The context should always be set");
 
-                    return new ProviderIntrinsics (Context.ExecutionContext.EngineSessionState);
+                    return new ProviderIntrinsics(Context.ExecutionContext.EngineSessionState);
                 } // TraceProperty
             } // get
         } // InvokeProvider
@@ -1803,12 +1803,12 @@ namespace System.Management.Automation.Provider
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    Diagnostics.Assert (
+                    Diagnostics.Assert(
                         Context != null,
                         "The context should always be set");
 
 
-                    return new CommandInvocationIntrinsics (Context.ExecutionContext);
+                    return new CommandInvocationIntrinsics(Context.ExecutionContext);
                 } // TraceProperty
             } // get
         } // InvokeCommand
@@ -1822,7 +1822,7 @@ namespace System.Management.Automation.Provider
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    Diagnostics.Assert (
+                    Diagnostics.Assert(
                         Context != null,
                         "The context should always be set");
 
@@ -1846,7 +1846,7 @@ namespace System.Management.Automation.Provider
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    return providerInformation;
+                    return _providerInformation;
                 } // TraceProperty
             } // get
         }
@@ -1860,7 +1860,7 @@ namespace System.Management.Automation.Provider
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    Diagnostics.Assert (
+                    Diagnostics.Assert(
                         Context != null,
                         "The context should always be set");
 
@@ -1879,7 +1879,7 @@ namespace System.Management.Automation.Provider
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    Diagnostics.Assert (
+                    Diagnostics.Assert(
                         Context != null,
                         "The context should always be set");
 
@@ -1887,7 +1887,7 @@ namespace System.Management.Automation.Provider
                 } // TraceProperty
             } // get
         } // DynamicParameters
-        
+
         /// <summary>
         /// Gets the force property.
         /// </summary>
@@ -1907,7 +1907,7 @@ namespace System.Management.Automation.Provider
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    Diagnostics.Assert (
+                    Diagnostics.Assert(
                         Context != null,
                         "The context should always be set");
 
@@ -1925,7 +1925,7 @@ namespace System.Management.Automation.Provider
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    Diagnostics.Assert (
+                    Diagnostics.Assert(
                         Context != null,
                         "The context should always be set");
 
@@ -1944,16 +1944,15 @@ namespace System.Management.Automation.Provider
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    Diagnostics.Assert (
+                    Diagnostics.Assert(
                         Context != null,
                         "The context should always be set");
 
                     return Context.Include;
                 } // TraceProperty
             } // get 
-
         } // Include
-        
+
         /// <summary>
         /// Gets the exclude wildcard patterns which is used to determine which items
         /// will be excluded when taking an action.
@@ -1982,7 +1981,7 @@ namespace System.Management.Automation.Provider
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    Diagnostics.Assert (
+                    Diagnostics.Assert(
                         Context != null,
                         "The context should always be set");
 
@@ -2018,26 +2017,26 @@ namespace System.Management.Automation.Provider
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if (String.IsNullOrEmpty (baseName))
+                if (String.IsNullOrEmpty(baseName))
                 {
-                    throw PSTraceSource.NewArgumentException ("baseName");
+                    throw PSTraceSource.NewArgumentException("baseName");
                 }
 
-                if (String.IsNullOrEmpty (resourceId))
+                if (String.IsNullOrEmpty(resourceId))
                 {
-                    throw PSTraceSource.NewArgumentException ("resourceId");
+                    throw PSTraceSource.NewArgumentException("resourceId");
                 }
 
-                ResourceManager manager = 
-                    ResourceManagerCache.GetResourceManager (
-                        this.GetType().GetTypeInfo().Assembly, 
+                ResourceManager manager =
+                    ResourceManagerCache.GetResourceManager(
+                        this.GetType().GetTypeInfo().Assembly,
                         baseName);
 
                 string retValue = null;
 
                 try
                 {
-                    retValue = manager.GetString (resourceId,
+                    retValue = manager.GetString(resourceId,
                                                   System.Globalization.CultureInfo.CurrentUICulture);
                 }
                 catch (MissingManifestResourceException)
@@ -2062,10 +2061,10 @@ namespace System.Management.Automation.Provider
             {
                 if (null == errorRecord)
                 {
-                    throw PSTraceSource.NewArgumentNullException ("errorRecord");
+                    throw PSTraceSource.NewArgumentNullException("errorRecord");
                 }
 
-                if (   null != errorRecord.ErrorDetails
+                if (null != errorRecord.ErrorDetails
                     && null != errorRecord.ErrorDetails.TextLookupError)
                 {
                     Exception textLookupError = errorRecord.ErrorDetails.TextLookupError;
@@ -2083,7 +2082,7 @@ namespace System.Management.Automation.Provider
                 //  it in ProviderInvocationException.
 
                 ProviderInvocationException providerInvocationException =
-                    new ProviderInvocationException (ProviderInfo, errorRecord);
+                    new ProviderInvocationException(ProviderInfo, errorRecord);
 
                 // Log a provider health event
 
@@ -2106,22 +2105,22 @@ namespace System.Management.Automation.Provider
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                Diagnostics.Assert (
+                Diagnostics.Assert(
                     Context != null,
                     "The context should always be set");
 
-               return Context.ShouldProcess(target);
+                return Context.ShouldProcess(target);
             }
         } // ShouldProcess
 
         /// <Content contentref="System.Management.Automation.Cmdlet.ShouldProcess" />
         public bool ShouldProcess(
-            string target, 
+            string target,
             string action)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                Diagnostics.Assert (
+                Diagnostics.Assert(
                     Context != null,
                     "The context should always be set");
 
@@ -2166,7 +2165,7 @@ namespace System.Management.Automation.Provider
                     verboseWarning,
                     caption,
                     out shouldProcessReason);
-            } 
+            }
         } // ShouldProcess
 
         /// <Content contentref="System.Management.Automation.Cmdlet.ShouldContinue" />
@@ -2176,11 +2175,11 @@ namespace System.Management.Automation.Provider
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                Diagnostics.Assert (
+                Diagnostics.Assert(
                     Context != null,
                     "The context should always be set");
 
-                return Context.ShouldContinue (query, caption);
+                return Context.ShouldContinue(query, caption);
             }
         } // ShouldContinue
 
@@ -2193,7 +2192,7 @@ namespace System.Management.Automation.Provider
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                Diagnostics.Assert (
+                Diagnostics.Assert(
                     Context != null,
                     "The context should always be set");
 
@@ -2211,7 +2210,7 @@ namespace System.Management.Automation.Provider
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                if(Context == null)
+                if (Context == null)
                     return false;
                 else
                     return Context.TransactionAvailable();
@@ -2226,7 +2225,7 @@ namespace System.Management.Automation.Provider
         {
             get
             {
-                if(Context == null)
+                if (Context == null)
                     return null;
                 else
                     return Context.CurrentPSTransaction;
@@ -2239,7 +2238,7 @@ namespace System.Management.Automation.Provider
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                Diagnostics.Assert (
+                Diagnostics.Assert(
                     Context != null,
                     "The context should always be set");
 
@@ -2279,13 +2278,13 @@ namespace System.Management.Automation.Provider
             }
         } // WriteProgress
 
-        
+
         /// <Content contentref="System.Management.Automation.Cmdlet.WriteDebug" />
         public void WriteDebug(string text)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                Diagnostics.Assert (
+                Diagnostics.Assert(
                     Context != null,
                     "The context should always be set");
 
@@ -2348,7 +2347,7 @@ namespace System.Management.Automation.Provider
             result.AddOrSetProperty("PSIsContainer", isContainer ? Boxed.True : Boxed.False);
             providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSIsContainer", isContainer);
 
-            Diagnostics.Assert (
+            Diagnostics.Assert(
                 Context != null,
                 "The context should always be set");
 
@@ -2426,7 +2425,7 @@ namespace System.Management.Automation.Provider
         {
             PSObject result = WrapOutputInPSObject(item, path);
 
-            Diagnostics.Assert (
+            Diagnostics.Assert(
                 Context != null,
                 "The context should always be set");
 
@@ -2461,14 +2460,14 @@ namespace System.Management.Automation.Provider
         {
             if (item == null)
             {
-                throw PSTraceSource.NewArgumentNullException ("item");
+                throw PSTraceSource.NewArgumentNullException("item");
             }
             PSObject result = new PSObject(item);
 
             Diagnostics.Assert(
                 ProviderInfo != null,
                 "The ProviderInfo should always be set");
-            
+
             // Move the TypeNames to the wrapping object if the wrapped object
             // was an PSObject
 
@@ -2480,7 +2479,7 @@ namespace System.Management.Automation.Provider
 
             // Construct a provider qualified path as the Path note
 
-            String providerQualifiedPath = 
+            String providerQualifiedPath =
                 LocationGlobber.GetProviderQualifiedPath(path, ProviderInfo);
 
             result.AddOrSetProperty("PSPath", providerQualifiedPath);
@@ -2494,7 +2493,7 @@ namespace System.Management.Automation.Provider
                 // Get the parent path
 
                 string parentPath = null;
-                
+
                 if (PSDriveInfo != null)
                 {
                     parentPath = navProvider.GetParentPath(path, PSDriveInfo.Root, Context);
@@ -2506,10 +2505,10 @@ namespace System.Management.Automation.Provider
 
                 string providerQualifiedParentPath = String.Empty;
 
-                if (!String.IsNullOrEmpty (parentPath))
+                if (!String.IsNullOrEmpty(parentPath))
                 {
                     providerQualifiedParentPath =
-                        LocationGlobber.GetProviderQualifiedPath (parentPath, ProviderInfo);
+                        LocationGlobber.GetProviderQualifiedPath(parentPath, ProviderInfo);
                 }
                 result.AddOrSetProperty("PSParentPath", providerQualifiedParentPath);
                 providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSParentPath", providerQualifiedParentPath);
@@ -2518,7 +2517,7 @@ namespace System.Management.Automation.Provider
 
                 string childName = navProvider.GetChildName(path, Context);
 
-                
+
                 result.AddOrSetProperty("PSChildName", childName);
                 providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSChildName", childName);
             }
@@ -2686,11 +2685,11 @@ namespace System.Management.Automation.Provider
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
-                Diagnostics.Assert (
+                Diagnostics.Assert(
                     Context != null,
                     "The context should always be set");
 
-                if(errorRecord == null)
+                if (errorRecord == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("errorRecord");
                 }
@@ -2713,7 +2712,6 @@ namespace System.Management.Automation.Provider
 
 
         #endregion protected members
-
     } // CmdletProvider
 
     #endregion CmdletProvider

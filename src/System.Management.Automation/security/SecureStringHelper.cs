@@ -14,7 +14,6 @@ using System.Text;
 
 namespace Microsoft.PowerShell
 {
-    
     /// <summary>
     /// helper class for secure string related functionality
     /// </summary>
@@ -24,7 +23,7 @@ namespace Microsoft.PowerShell
         // Some random hex characters to identify the beginning of a
         // V2-exported SecureString.
         internal static string SecureStringExportHeader = "76492d1116743f0423413b16050a5345";
-        
+
         /// <summary>
         /// Create a new SecureString based on the specified binary data.
         ///
@@ -38,7 +37,7 @@ namespace Microsoft.PowerShell
         ///
         private static SecureString New(byte[] data)
         {
-            if((data.Length % 2) != 0)
+            if ((data.Length % 2) != 0)
             {
                 // If the data is not an even length, they supplied an invalid key
                 String error = Serialization.InvalidKey;
@@ -53,16 +52,16 @@ namespace Microsoft.PowerShell
             //
             int len = data.Length / 2;
 
-            for (int i=0; i < len; i++)
+            for (int i = 0; i < len; i++)
             {
-                ch = (char) (data[2*i+1]*256 + data[2*i]);
+                ch = (char)(data[2 * i + 1] * 256 + data[2 * i]);
                 ss.AppendChar(ch);
 
                 //
                 // zero out the data slots as soon as we use them
                 //
-                data[2*i] = 0;
-                data[2*i+1] = 0;
+                data[2 * i] = 0;
+                data[2 * i + 1] = 0;
             }
 
             return ss;
@@ -82,7 +81,7 @@ namespace Microsoft.PowerShell
             //
             // each unicode char is 2 bytes. 
             //
-            byte[] data = new byte[s.Length*2];
+            byte[] data = new byte[s.Length * 2];
 
             if (s.Length > 0)
             {
@@ -117,7 +116,7 @@ namespace Microsoft.PowerShell
         {
             StringBuilder sb = new StringBuilder();
 
-            for (int i=0; i < data.Length; i++)
+            for (int i = 0; i < data.Length; i++)
             {
                 sb.Append(data[i].ToString("x2", System.Globalization.CultureInfo.InvariantCulture));
             }
@@ -139,15 +138,15 @@ namespace Microsoft.PowerShell
             //
             // two hex chars per byte
             //
-            int dataLen = s.Length/2;
+            int dataLen = s.Length / 2;
             byte[] data = new byte[dataLen];
 
             if (s.Length > 0)
             {
-                for (int i=0; i < dataLen; i++)
+                for (int i = 0; i < dataLen; i++)
                 {
-                    data[i] = byte.Parse(s.Substring(2*i,2),
-                                         NumberStyles.AllowHexSpecifier, 
+                    data[i] = byte.Parse(s.Substring(2 * i, 2),
+                                         NumberStyles.AllowHexSpecifier,
                                          System.Globalization.CultureInfo.InvariantCulture);
                 }
             }
@@ -171,17 +170,17 @@ namespace Microsoft.PowerShell
             string output = "";
             byte[] data = null;
             byte[] protectedData = null;
-        
+
             data = GetData(input);
             protectedData = ProtectedData.Protect(data, null,
                                                   DataProtectionScope.CurrentUser);
-            for (int i=0; i < data.Length; i++)
+            for (int i = 0; i < data.Length; i++)
             {
                 data[i] = 0;
             }
 
             output = ByteArrayToString(protectedData);
-        
+
             return output;
         }
 
@@ -209,7 +208,7 @@ namespace Microsoft.PowerShell
             SecureString s;
 
             protectedData = ByteArrayFromString(input);
-        
+
             data = ProtectedData.Unprotect(protectedData, null,
                                            DataProtectionScope.CurrentUser);
 
@@ -294,7 +293,6 @@ namespace Microsoft.PowerShell
 
             using (cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
             {
-
                 //
                 // get clear text data from the input SecureString
                 //
@@ -356,7 +354,7 @@ namespace Microsoft.PowerShell
             //
             Array.Clear(keyBlob, 0, keyBlob.Length);
 
-            return output;           
+            return output;
         }
 
         /// <summary>
@@ -390,8 +388,8 @@ namespace Microsoft.PowerShell
             encryptedData = ByteArrayFromString(input);
 
             ICryptoTransform decryptor = null;
-            
-            if(IV != null)
+
+            if (IV != null)
             {
                 decryptor = aes.CreateDecryptor(key, IV);
             }
@@ -399,7 +397,7 @@ namespace Microsoft.PowerShell
             {
                 decryptor = aes.CreateDecryptor(key, aes.IV);
             }
-            
+
             MemoryStream ms = new MemoryStream(encryptedData);
 
             using (CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
@@ -439,8 +437,8 @@ namespace Microsoft.PowerShell
     {
         internal EncryptionResult(string encrypted, string IV)
         {
-            this.encryptedData = encrypted;
-            this.iv = IV;
+            _encryptedData = encrypted;
+            _iv = IV;
         }
 
         /// <summary>
@@ -450,10 +448,10 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                return encryptedData;
+                return _encryptedData;
             }
         }
-        private String encryptedData;
+        private String _encryptedData;
 
         /// <summary>
         /// Gets the IV used to encrypt the data
@@ -462,10 +460,10 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                return iv;
+                return _iv;
             }
         }
-        private String iv;
+        private String _iv;
     }
 
 #if CORECLR
@@ -480,7 +478,7 @@ namespace Microsoft.PowerShell
         CurrentUser = 0x00,
         LocalMachine = 0x01
     }
-    
+
     internal static class ProtectedData
     {
         /// <summary>
@@ -522,7 +520,7 @@ namespace Microsoft.PowerShell
                                                 new IntPtr(&blob)))
                     {
                         int lastWin32Error = Marshal.GetLastWin32Error();
-                            
+
                         // One of the most common reasons that DPAPI operations fail is that the user
                         // profile is not loaded (for instance in the case of impersonation or running in a
                         // service.  In those cases, throw an exception that provides more specific details
@@ -656,7 +654,7 @@ namespace Microsoft.PowerShell
                 [In]     IntPtr pPromptStruct,
                 [In]     uint dwFlags,
                 [In, Out] IntPtr pDataBlob);
-        
+
         [DllImport("CRYPT32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern bool CryptUnprotectData(
                 [In]     IntPtr pDataIn,

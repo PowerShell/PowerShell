@@ -28,9 +28,9 @@ namespace Microsoft.PowerShell
         /// Command line arguments to the managed MSH
         /// </param>
 #if CORECLR
-        #pragma warning disable 1573
+#pragma warning disable 1573
         public static int Start(string consoleFilePath, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)]string[] args, int argc)
-        #pragma warning restore 1573
+#pragma warning restore 1573
 #else
         public int Start(string consoleFilePath, string[] args)
 #endif
@@ -94,14 +94,14 @@ namespace Microsoft.PowerShell
                         ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
                         configuration = null;
                     }
-                    else 
+                    else
                     {
                         ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
                         configuration = null;
                     }
 #else
                     ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
-                configuration = null;
+                    configuration = null;
 #endif
                 }
                 else

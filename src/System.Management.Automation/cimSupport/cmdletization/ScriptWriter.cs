@@ -36,38 +36,38 @@ namespace Microsoft.PowerShell.Cmdletization
     {
         #region Static code reused for reading cmdletization xml
 
-        private static readonly XmlReaderSettings xmlReaderSettings;
+        private static readonly XmlReaderSettings s_xmlReaderSettings;
 
         static ScriptWriter()
         {
             //
             // XmlReaderSettings
             //
-            ScriptWriter.xmlReaderSettings = new XmlReaderSettings();
+            ScriptWriter.s_xmlReaderSettings = new XmlReaderSettings();
             // general settings
-            ScriptWriter.xmlReaderSettings.CheckCharacters = true;
-            ScriptWriter.xmlReaderSettings.CloseInput = false;
-            ScriptWriter.xmlReaderSettings.ConformanceLevel = ConformanceLevel.Document;
-            ScriptWriter.xmlReaderSettings.IgnoreComments = true;
-            ScriptWriter.xmlReaderSettings.IgnoreProcessingInstructions = true;
-            ScriptWriter.xmlReaderSettings.IgnoreWhitespace = false;
-            ScriptWriter.xmlReaderSettings.MaxCharactersFromEntities = 16384; // generous guess for the upper bound
-            ScriptWriter.xmlReaderSettings.MaxCharactersInDocument = 128 * 1024 * 1024; // generous guess for the upper bound
+            ScriptWriter.s_xmlReaderSettings.CheckCharacters = true;
+            ScriptWriter.s_xmlReaderSettings.CloseInput = false;
+            ScriptWriter.s_xmlReaderSettings.ConformanceLevel = ConformanceLevel.Document;
+            ScriptWriter.s_xmlReaderSettings.IgnoreComments = true;
+            ScriptWriter.s_xmlReaderSettings.IgnoreProcessingInstructions = true;
+            ScriptWriter.s_xmlReaderSettings.IgnoreWhitespace = false;
+            ScriptWriter.s_xmlReaderSettings.MaxCharactersFromEntities = 16384; // generous guess for the upper bound
+            ScriptWriter.s_xmlReaderSettings.MaxCharactersInDocument = 128 * 1024 * 1024; // generous guess for the upper bound
 
 #if CORECLR // XmlReaderSettings doesn't have XmlResolver and Schema Validation related members in CoreCLR.
-            ScriptWriter.xmlReaderSettings.DtdProcessing = DtdProcessing.Ignore; // DtdProcessing.Parse is not in CoreCLR, so we ignore DTDs in OneCore powershell
+            ScriptWriter.s_xmlReaderSettings.DtdProcessing = DtdProcessing.Ignore; // DtdProcessing.Parse is not in CoreCLR, so we ignore DTDs in OneCore powershell
 #else
-            ScriptWriter.xmlReaderSettings.DtdProcessing = DtdProcessing.Parse; // Allowing DTD parsing with limits of MaxCharactersFromEntities/MaxCharactersInDocument
-            ScriptWriter.xmlReaderSettings.XmlResolver = null; // do not fetch external documents
+            ScriptWriter.s_xmlReaderSettings.DtdProcessing = DtdProcessing.Parse; // Allowing DTD parsing with limits of MaxCharactersFromEntities/MaxCharactersInDocument
+            ScriptWriter.s_xmlReaderSettings.XmlResolver = null; // do not fetch external documents
             // xsd schema related settings
-            ScriptWriter.xmlReaderSettings.ValidationFlags = XmlSchemaValidationFlags.ProcessIdentityConstraints |
+            ScriptWriter.s_xmlReaderSettings.ValidationFlags = XmlSchemaValidationFlags.ProcessIdentityConstraints |
                                                 XmlSchemaValidationFlags.ReportValidationWarnings;
-            ScriptWriter.xmlReaderSettings.ValidationType = ValidationType.Schema;
+            ScriptWriter.s_xmlReaderSettings.ValidationType = ValidationType.Schema;
             string cmdletizationXsd = CmdletizationCoreResources.Xml_cmdletsOverObjectsXsd;
-            XmlReader cmdletizationSchemaReader = XmlReader.Create(new StringReader(cmdletizationXsd), ScriptWriter.xmlReaderSettings);
-            ScriptWriter.xmlReaderSettings.Schemas = new XmlSchemaSet();
-            ScriptWriter.xmlReaderSettings.Schemas.Add(null, cmdletizationSchemaReader);
-            ScriptWriter.xmlReaderSettings.Schemas.XmlResolver = null; // do not fetch external documents
+            XmlReader cmdletizationSchemaReader = XmlReader.Create(new StringReader(cmdletizationXsd), ScriptWriter.s_xmlReaderSettings);
+            ScriptWriter.s_xmlReaderSettings.Schemas = new XmlSchemaSet();
+            ScriptWriter.s_xmlReaderSettings.Schemas.Add(null, cmdletizationSchemaReader);
+            ScriptWriter.s_xmlReaderSettings.Schemas.XmlResolver = null; // do not fetch external documents
 #endif
         }
 
@@ -83,12 +83,12 @@ namespace Microsoft.PowerShell.Cmdletization
             HelpXml = 4,
         }
 
-        private readonly PowerShellMetadata cmdletizationMetadata;
-        private readonly string moduleName;
-        private readonly Type objectModelWrapper;
-        private readonly Type objectInstanceType;
-        private readonly InvocationInfo invocationInfo;
-        private readonly GenerationOptions generationOptions;
+        private readonly PowerShellMetadata _cmdletizationMetadata;
+        private readonly string _moduleName;
+        private readonly Type _objectModelWrapper;
+        private readonly Type _objectInstanceType;
+        private readonly InvocationInfo _invocationInfo;
+        private readonly GenerationOptions _generationOptions;
 
         internal ScriptWriter(
             TextReader cmdletizationXmlReader,
@@ -102,11 +102,11 @@ namespace Microsoft.PowerShell.Cmdletization
             Dbg.Assert(invocationInfo != null, "Caller should verify that invocationInfo != null");
             Dbg.Assert(!string.IsNullOrEmpty(defaultObjectModelWrapper), "Caller should verify that defaultObjectModelWrapper != null");
 
-            XmlReader xmlReader = XmlReader.Create(cmdletizationXmlReader, ScriptWriter.xmlReaderSettings);
+            XmlReader xmlReader = XmlReader.Create(cmdletizationXmlReader, ScriptWriter.s_xmlReaderSettings);
             try
             {
                 var xmlSerializer = new PowerShellMetadataSerializer();
-                this.cmdletizationMetadata = (PowerShellMetadata)xmlSerializer.Deserialize(xmlReader);
+                _cmdletizationMetadata = (PowerShellMetadata)xmlSerializer.Deserialize(xmlReader);
             }
             catch (InvalidOperationException e)
             {
@@ -137,9 +137,9 @@ namespace Microsoft.PowerShell.Cmdletization
                 throw;
             }
 
-            string objectModelWrapperName = this.cmdletizationMetadata.Class.CmdletAdapter ?? defaultObjectModelWrapper;
-            this.objectModelWrapper = (Type)LanguagePrimitives.ConvertTo(objectModelWrapperName, typeof(Type), CultureInfo.InvariantCulture);
-            TypeInfo objectModelWrapperTypeInfo = this.objectModelWrapper.GetTypeInfo();
+            string objectModelWrapperName = _cmdletizationMetadata.Class.CmdletAdapter ?? defaultObjectModelWrapper;
+            _objectModelWrapper = (Type)LanguagePrimitives.ConvertTo(objectModelWrapperName, typeof(Type), CultureInfo.InvariantCulture);
+            TypeInfo objectModelWrapperTypeInfo = _objectModelWrapper.GetTypeInfo();
             if (objectModelWrapperTypeInfo.IsGenericType)
             {
                 string message = string.Format(
@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Cmdletization
                     objectModelWrapperName);
                 throw new XmlException(message);
             }
-            Type baseType = this.objectModelWrapper;
+            Type baseType = _objectModelWrapper;
             TypeInfo baseTypeInfo = objectModelWrapperTypeInfo;
             while ((!baseTypeInfo.IsGenericType) || baseTypeInfo.GetGenericTypeDefinition() != typeof(CmdletAdapter<>))
             {
@@ -164,11 +164,11 @@ namespace Microsoft.PowerShell.Cmdletization
                 }
                 baseTypeInfo = baseType.GetTypeInfo();
             }
-            this.objectInstanceType = baseType.GetGenericArguments()[0];
+            _objectInstanceType = baseType.GetGenericArguments()[0];
 
-            this.moduleName = moduleName;
-            this.invocationInfo = invocationInfo;
-            this.generationOptions = generationOptions;
+            _moduleName = moduleName;
+            _invocationInfo = invocationInfo;
+            _generationOptions = generationOptions;
         }
 
         #endregion Constructors / setup code
@@ -196,14 +196,14 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function @()
         {
             output.WriteLine(
                 ScriptWriter.HeaderTemplate,
-                CodeGeneration.EscapeSingleQuotedStringContent(this.cmdletizationMetadata.Class.ClassName),
-                CodeGeneration.EscapeSingleQuotedStringContent(this.cmdletizationMetadata.Class.ClassVersion ?? string.Empty),
-                CodeGeneration.EscapeSingleQuotedStringContent(new Version(this.cmdletizationMetadata.Class.Version).ToString()),
-                CodeGeneration.EscapeSingleQuotedStringContent(this.objectModelWrapper.FullName));
+                CodeGeneration.EscapeSingleQuotedStringContent(_cmdletizationMetadata.Class.ClassName),
+                CodeGeneration.EscapeSingleQuotedStringContent(_cmdletizationMetadata.Class.ClassVersion ?? string.Empty),
+                CodeGeneration.EscapeSingleQuotedStringContent(new Version(_cmdletizationMetadata.Class.Version).ToString()),
+                CodeGeneration.EscapeSingleQuotedStringContent(_objectModelWrapper.FullName));
 
-            if (this.cmdletizationMetadata.Class.CmdletAdapterPrivateData != null)
+            if (_cmdletizationMetadata.Class.CmdletAdapterPrivateData != null)
             {
-                foreach (ClassMetadataData data in this.cmdletizationMetadata.Class.CmdletAdapterPrivateData)
+                foreach (ClassMetadataData data in _cmdletizationMetadata.Class.CmdletAdapterPrivateData)
                 {
                     output.WriteLine(
                         "$script:PrivateData.Add('{0}', '{1}')",
@@ -241,13 +241,13 @@ function __cmdletization_BindCommonParameters
 
         private string GetCmdletName(CommonCmdletMetadata cmdletMetadata)
         {
-            string noun = cmdletMetadata.Noun ?? this.cmdletizationMetadata.Class.DefaultNoun;
+            string noun = cmdletMetadata.Noun ?? _cmdletizationMetadata.Class.DefaultNoun;
             string verb = cmdletMetadata.Verb;
             return verb + "-" + noun;
         }
 
-        private readonly List<String> aliasesToExport = new List<string>();
-        private readonly List<String> functionsToExport = new List<string>();
+        private readonly List<String> _aliasesToExport = new List<string>();
+        private readonly List<String> _functionsToExport = new List<string>();
 
         private string GetCmdletAttributes(CommonCmdletMetadata cmdletMetadata)
         {
@@ -256,7 +256,7 @@ function __cmdletization_BindCommonParameters
             if (cmdletMetadata.Aliases != null)
             {
                 attributes.Append("[Alias('" + string.Join("','", cmdletMetadata.Aliases.Select(alias => CodeGeneration.EscapeSingleQuotedStringContent(alias))) + "')]");
-                this.aliasesToExport.AddRange(cmdletMetadata.Aliases);
+                _aliasesToExport.AddRange(cmdletMetadata.Aliases);
             }
 
             if (cmdletMetadata.Obsolete != null)
@@ -274,7 +274,7 @@ function __cmdletization_BindCommonParameters
         {
             Dictionary<string, ParameterMetadata> commonParameters = new Dictionary<string, ParameterMetadata>(StringComparer.OrdinalIgnoreCase);
 
-            InternalParameterMetadata internalParameterMetadata = new InternalParameterMetadata(this.objectModelWrapper, false);
+            InternalParameterMetadata internalParameterMetadata = new InternalParameterMetadata(_objectModelWrapper, false);
             foreach (CompiledCommandParameter compiledCommandParameter in internalParameterMetadata.BindableParameters.Values)
             {
                 ParameterMetadata parameterMetadata = new ParameterMetadata(compiledCommandParameter);
@@ -285,7 +285,7 @@ function __cmdletization_BindCommonParameters
                         string message = string.Format(
                             CultureInfo.InvariantCulture,
                             CmdletizationCoreResources.ScriptWriter_ObjectModelWrapperUsesIgnoredParameterMetadata,
-                            this.objectModelWrapper.FullName,
+                            _objectModelWrapper.FullName,
                             parameterMetadata.Name,
                             "ValueFromPipeline");
                         throw new XmlException(message);
@@ -296,7 +296,7 @@ function __cmdletization_BindCommonParameters
                         string message = string.Format(
                             CultureInfo.InvariantCulture,
                             CmdletizationCoreResources.ScriptWriter_ObjectModelWrapperUsesIgnoredParameterMetadata,
-                            this.objectModelWrapper.FullName,
+                            _objectModelWrapper.FullName,
                             parameterMetadata.Name,
                             "ValueFromPipelineByPropertyName");
                         throw new XmlException(message);
@@ -307,7 +307,7 @@ function __cmdletization_BindCommonParameters
                         string message = string.Format(
                             CultureInfo.InvariantCulture,
                             CmdletizationCoreResources.ScriptWriter_ObjectModelWrapperUsesIgnoredParameterMetadata,
-                            this.objectModelWrapper.FullName,
+                            _objectModelWrapper.FullName,
                             parameterMetadata.Name,
                             "ValueFromRemainingArguments");
                         throw new XmlException(message);
@@ -326,7 +326,7 @@ function __cmdletization_BindCommonParameters
                 string message = string.Format(
                     CultureInfo.InvariantCulture,
                     CmdletizationCoreResources.ScriptWriter_ObjectModelWrapperDefinesMultipleParameterSets,
-                    this.objectModelWrapper.FullName);
+                    _objectModelWrapper.FullName);
                 throw new XmlException(message);
             }
             foreach (ParameterMetadata parameter in commonParameters.Values)
@@ -405,10 +405,10 @@ function __cmdletization_BindCommonParameters
             Dbg.Assert(methodMetadata != null, "Caller should verify that instanceMethod != null");
 
             int uniqueId;
-            if (!this._staticMethodMetadataToUniqueId.TryGetValue(methodMetadata, out uniqueId))
+            if (!_staticMethodMetadataToUniqueId.TryGetValue(methodMetadata, out uniqueId))
             {
-                uniqueId = this._staticMethodMetadataToUniqueId.Count;
-                this._staticMethodMetadataToUniqueId.Add(methodMetadata, uniqueId);
+                uniqueId = _staticMethodMetadataToUniqueId.Count;
+                _staticMethodMetadataToUniqueId.Add(methodMetadata, uniqueId);
             }
 
             return methodMetadata.MethodName + uniqueId;
@@ -429,10 +429,10 @@ function __cmdletization_BindCommonParameters
         {
             if (instanceCmdlet == null)
             {
-                if ((this.cmdletizationMetadata.Class.InstanceCmdlets.GetCmdlet != null) &&
-                    (this.cmdletizationMetadata.Class.InstanceCmdlets.GetCmdlet.GetCmdletParameters != null))
+                if ((_cmdletizationMetadata.Class.InstanceCmdlets.GetCmdlet != null) &&
+                    (_cmdletizationMetadata.Class.InstanceCmdlets.GetCmdlet.GetCmdletParameters != null))
                 {
-                    return this.cmdletizationMetadata.Class.InstanceCmdlets.GetCmdlet.GetCmdletParameters;
+                    return _cmdletizationMetadata.Class.InstanceCmdlets.GetCmdlet.GetCmdletParameters;
                 }
             }
             else
@@ -443,7 +443,7 @@ function __cmdletization_BindCommonParameters
                 }
             }
 
-            return this.cmdletizationMetadata.Class.InstanceCmdlets.GetCmdletParameters;
+            return _cmdletizationMetadata.Class.InstanceCmdlets.GetCmdletParameters;
         }
 
         private List<string> GetQueryParameterSets(InstanceCmdletMetadata instanceCmdlet)
@@ -527,10 +527,10 @@ function __cmdletization_BindCommonParameters
             Dbg.Assert(typeMetadata != null, "Caller should verify typeMetadata != null");
 
             string psTypeText;
-            List<EnumMetadataEnum> matchingEnums = (this.cmdletizationMetadata.Enums ?? Enumerable.Empty<EnumMetadataEnum>())
+            List<EnumMetadataEnum> matchingEnums = (_cmdletizationMetadata.Enums ?? Enumerable.Empty<EnumMetadataEnum>())
                 .Where(e => Regex.IsMatch(
-                    typeMetadata.PSType, 
-                    string.Format(CultureInfo.InvariantCulture, @"\b{0}\b", Regex.Escape(e.EnumName)), 
+                    typeMetadata.PSType,
+                    string.Format(CultureInfo.InvariantCulture, @"\b{0}\b", Regex.Escape(e.EnumName)),
                     RegexOptions.CultureInvariant))
                 .ToList();
             EnumMetadataEnum matchingEnum = matchingEnums.Count == 1 ? matchingEnums[0] : null;
@@ -548,11 +548,11 @@ function __cmdletization_BindCommonParameters
         }
 
         private ParameterMetadata GetParameter(
-            string parameterSetName, 
-            string objectModelParameterName, 
-            TypeMetadata parameterTypeMetadata, 
-            CmdletParameterMetadata parameterCmdletization, 
-            bool isValueFromPipeline, 
+            string parameterSetName,
+            string objectModelParameterName,
+            TypeMetadata parameterTypeMetadata,
+            CmdletParameterMetadata parameterCmdletization,
+            bool isValueFromPipeline,
             bool isValueFromPipelineByPropertyName)
         {
             string parameterName;
@@ -661,10 +661,9 @@ function __cmdletization_BindCommonParameters
                     }
                     parameterMetadata.Attributes.Add(new ValidateSetAttribute(allowedValues.ToArray()));
                 }
-
             }
 
-            int position = int.MinValue; 
+            int position = int.MinValue;
             ParameterSetMetadata.ParameterFlags parameterFlags = 0;
             if (parameterCmdletization != null)
             {
@@ -692,31 +691,31 @@ function __cmdletization_BindCommonParameters
         }
 
         private ParameterMetadata GetParameter(
-            string parameterSetName, 
-            string objectModelParameterName, 
-            TypeMetadata parameterType, 
+            string parameterSetName,
+            string objectModelParameterName,
+            TypeMetadata parameterType,
             CmdletParameterMetadataForInstanceMethodParameter parameterCmdletization)
         {
             return GetParameter(
-                parameterSetName, 
-                objectModelParameterName, 
-                parameterType, 
-                parameterCmdletization, 
+                parameterSetName,
+                objectModelParameterName,
+                parameterType,
+                parameterCmdletization,
                 false, /* isValueFromPipeline */
                 parameterCmdletization != null && parameterCmdletization.ValueFromPipelineByPropertyNameSpecified && parameterCmdletization.ValueFromPipelineByPropertyName);
         }
-        
+
         private ParameterMetadata GetParameter(
             IEnumerable<string> queryParameterSets,
-            string objectModelParameterName, 
-            TypeMetadata parameterType, 
+            string objectModelParameterName,
+            TypeMetadata parameterType,
             CmdletParameterMetadataForGetCmdletParameter parameterCmdletization)
         {
             ParameterMetadata result = GetParameter(
-                ParameterAttribute.AllParameterSets, 
-                objectModelParameterName, 
-                parameterType, 
-                parameterCmdletization, 
+                ParameterAttribute.AllParameterSets,
+                objectModelParameterName,
+                parameterType,
+                parameterCmdletization,
                 parameterCmdletization != null && parameterCmdletization.ValueFromPipelineSpecified && parameterCmdletization.ValueFromPipeline,
                 parameterCmdletization != null && parameterCmdletization.ValueFromPipelineByPropertyNameSpecified && parameterCmdletization.ValueFromPipelineByPropertyName);
 
@@ -738,19 +737,19 @@ function __cmdletization_BindCommonParameters
 
             return result;
         }
-        
+
         private ParameterMetadata GetParameter(
-            string parameterSetName, 
-            string objectModelParameterName, 
-            TypeMetadata parameterType, 
+            string parameterSetName,
+            string objectModelParameterName,
+            TypeMetadata parameterType,
             CmdletParameterMetadataForStaticMethodParameter parameterCmdletization)
         {
             return GetParameter(
-                parameterSetName, 
-                objectModelParameterName, 
-                parameterType, 
-                parameterCmdletization, 
-                parameterCmdletization != null && parameterCmdletization.ValueFromPipelineSpecified && parameterCmdletization.ValueFromPipeline, 
+                parameterSetName,
+                objectModelParameterName,
+                parameterType,
+                parameterCmdletization,
+                parameterCmdletization != null && parameterCmdletization.ValueFromPipelineSpecified && parameterCmdletization.ValueFromPipeline,
                 parameterCmdletization != null && parameterCmdletization.ValueFromPipelineByPropertyNameSpecified && parameterCmdletization.ValueFromPipelineByPropertyName);
         }
 
@@ -770,7 +769,7 @@ function __cmdletization_BindCommonParameters
                                 CmdletizationCoreResources.ScriptWriter_ParameterNameConflictsWithCommonParameters,
                                 parameter.Key,
                                 commandMetadata.Name,
-                                this.objectModelWrapper.FullName);
+                                _objectModelWrapper.FullName);
                             throw new XmlException(message);
                         }
                         else
@@ -945,14 +944,14 @@ function __cmdletization_BindCommonParameters
 
             foreach (ParameterMetadata parameter in parameters.Values)
             {
-                List<KeyValuePair<string, ParameterSetMetadata>> oldParameterSets = new List<KeyValuePair<string,ParameterSetMetadata>>(parameter.ParameterSets);
+                List<KeyValuePair<string, ParameterSetMetadata>> oldParameterSets = new List<KeyValuePair<string, ParameterSetMetadata>>(parameter.ParameterSets);
 
                 parameter.ParameterSets.Clear();
                 foreach (KeyValuePair<string, ParameterSetMetadata> oldParameterSet in oldParameterSets)
                 {
                     foreach (List<string> combination in combinations)
                     {
-                        string[] formattingArray = new string[otherParameterSets.Length+1];
+                        string[] formattingArray = new string[otherParameterSets.Length + 1];
                         formattingArray[0] = oldParameterSet.Key;
                         combination.CopyTo(formattingArray, 1);
                         string newParameterSetName = string.Format(CultureInfo.InvariantCulture, parameterSetNameTemplate, formattingArray);
@@ -1213,8 +1212,8 @@ function __cmdletization_BindCommonParameters
                         MethodParameterBindings methodParameterBindings = GetMethodParameterKind(methodParameter);
                         Type dotNetTypeOfParameter = GetDotNetType(methodParameter.Type);
                         GenerateSingleMethodParameterProcessing(
-                            output, 
-                            "        ", 
+                            output,
+                            "        ",
                             cmdletParameterName,
                             dotNetTypeOfParameter,
                             methodParameter.Type.ETSType,
@@ -1257,7 +1256,7 @@ function __cmdletization_BindCommonParameters
                 }
 
                 output.WriteLine(
-                    "      $__cmdletization_methodInvocationInfo = [Microsoft.PowerShell.Cmdletization.MethodInvocationInfo]::new('{0}', $__cmdletization_methodParameters, $__cmdletization_returnValue)", 
+                    "      $__cmdletization_methodInvocationInfo = [Microsoft.PowerShell.Cmdletization.MethodInvocationInfo]::new('{0}', $__cmdletization_methodParameters, $__cmdletization_returnValue)",
                     CodeGeneration.EscapeSingleQuotedStringContent(method.MethodName));
                 output.WriteLine("      $__cmdletization_objectModelWrapper.ProcessRecord($__cmdletization_methodInvocationInfo)");
 
@@ -1395,7 +1394,7 @@ function __cmdletization_BindCommonParameters
             }
 
             output.WriteLine(
-                "      $__cmdletization_methodInvocationInfo = [Microsoft.PowerShell.Cmdletization.MethodInvocationInfo]::new('{0}', $__cmdletization_methodParameters, $__cmdletization_returnValue)", 
+                "      $__cmdletization_methodInvocationInfo = [Microsoft.PowerShell.Cmdletization.MethodInvocationInfo]::new('{0}', $__cmdletization_methodParameters, $__cmdletization_returnValue)",
                 CodeGeneration.EscapeSingleQuotedStringContent(method.MethodName));
 
             if (typesOfOutParameters.Count == 0)
@@ -1441,27 +1440,27 @@ function __cmdletization_BindCommonParameters
         }
 
         private void GenerateIfBoundParameter(
-            IEnumerable<string> commonParameterSets, 
-            IEnumerable<string> methodParameterSets, 
-            ParameterMetadata cmdletParameterMetadata, 
+            IEnumerable<string> commonParameterSets,
+            IEnumerable<string> methodParameterSets,
+            ParameterMetadata cmdletParameterMetadata,
             TextWriter output)
         {
             output.Write("    if ($PSBoundParameters.ContainsKey('{0}') -and (@(", CodeGeneration.EscapeSingleQuotedStringContent(cmdletParameterMetadata.Name));
             bool firstParameterSet = true;
             foreach (string queryParameterSetName in cmdletParameterMetadata.ParameterSets.Keys)
-            foreach (string parameterSetName in MultiplyParameterSets(queryParameterSetName, InstanceQueryParameterSetTemplate, commonParameterSets, methodParameterSets))
-            {
-                if (!firstParameterSet) output.Write(", ");
-                firstParameterSet = false;
-                output.Write("'{0}'", CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
-            }
+                foreach (string parameterSetName in MultiplyParameterSets(queryParameterSetName, InstanceQueryParameterSetTemplate, commonParameterSets, methodParameterSets))
+                {
+                    if (!firstParameterSet) output.Write(", ");
+                    firstParameterSet = false;
+                    output.Write("'{0}'", CodeGeneration.EscapeSingleQuotedStringContent(parameterSetName));
+                }
             output.WriteLine(") -contains $PSCmdlet.ParameterSetName )) {");
         }
 
         private ParameterMetadata GenerateQueryClause(
-            IEnumerable<string> commonParameterSets, 
-            IEnumerable<string> queryParameterSets, 
-            IEnumerable<string> methodParameterSets, 
+            IEnumerable<string> commonParameterSets,
+            IEnumerable<string> queryParameterSets,
+            IEnumerable<string> methodParameterSets,
             string queryBuilderMethodName,
             PropertyMetadata property,
             PropertyQuery query,
@@ -1513,7 +1512,7 @@ function __cmdletization_BindCommonParameters
             }
             else
             {
-                bool allowGlobbing = 
+                bool allowGlobbing =
                     (!wildcardablePropertyQuery.AllowGlobbingSpecified && cmdletParameterMetadata.ParameterType.Equals(typeof(string[]))) ||
                     (wildcardablePropertyQuery.AllowGlobbingSpecified && wildcardablePropertyQuery.AllowGlobbing);
                 output.WriteLine(
@@ -1574,10 +1573,10 @@ function __cmdletization_BindCommonParameters
         }
 
         private ParameterMetadata GenerateOptionClause(
-            IEnumerable<string> commonParameterSets, 
-            IEnumerable<string> queryParameterSets, 
-            IEnumerable<string> methodParameterSets, 
-            QueryOption queryOptionMetadata, 
+            IEnumerable<string> commonParameterSets,
+            IEnumerable<string> queryParameterSets,
+            IEnumerable<string> methodParameterSets,
+            QueryOption queryOptionMetadata,
             TextWriter output)
         {
             ParameterMetadata cmdletParameterMetadata = GetParameter(
@@ -1638,7 +1637,7 @@ function __cmdletization_BindCommonParameters
                                 methodName = "NotAValidMethod";
                                 break;
                         }
-                        
+
                         ParameterMetadata parameterMetadata = GenerateQueryClause(
                             commonParameterSets, queryParameterSets, methodParameterSets, methodName, property, property.Items[i], output);
 
@@ -1717,7 +1716,7 @@ function __cmdletization_BindCommonParameters
 
             if (instanceCmdlet != null)
             {
-                ParameterMetadata inputObjectParameter = new ParameterMetadata("InputObject", this.objectInstanceType.MakeArrayType());
+                ParameterMetadata inputObjectParameter = new ParameterMetadata("InputObject", _objectInstanceType.MakeArrayType());
 
                 ParameterSetMetadata.ParameterFlags inputObjectFlags = ParameterSetMetadata.ParameterFlags.ValueFromPipeline;
                 if (queryParameters.Count > 0)
@@ -1726,18 +1725,18 @@ function __cmdletization_BindCommonParameters
                 }
 
                 string psTypeNameOfInputObjectElements;
-                if (this.objectModelWrapper.FullName.Equals("Microsoft.PowerShell.Cmdletization.Cim.CimCmdletAdapter"))
+                if (_objectModelWrapper.FullName.Equals("Microsoft.PowerShell.Cmdletization.Cim.CimCmdletAdapter"))
                 {
-                    int indexOfLastBackslash = this.cmdletizationMetadata.Class.ClassName.LastIndexOf('\\');
-                    int indexOfLastForwardSlash = this.cmdletizationMetadata.Class.ClassName.LastIndexOf('/');
+                    int indexOfLastBackslash = _cmdletizationMetadata.Class.ClassName.LastIndexOf('\\');
+                    int indexOfLastForwardSlash = _cmdletizationMetadata.Class.ClassName.LastIndexOf('/');
                     int indexOfLastSeparator = Math.Max(indexOfLastBackslash, indexOfLastForwardSlash);
-                    string cimClassName = this.cmdletizationMetadata.Class.ClassName.Substring(
-                        indexOfLastSeparator + 1, 
-                        this.cmdletizationMetadata.Class.ClassName.Length - indexOfLastSeparator - 1);
+                    string cimClassName = _cmdletizationMetadata.Class.ClassName.Substring(
+                        indexOfLastSeparator + 1,
+                        _cmdletizationMetadata.Class.ClassName.Length - indexOfLastSeparator - 1);
                     psTypeNameOfInputObjectElements = string.Format(
                         CultureInfo.InvariantCulture,
                         "{0}#{1}",
-                        this.objectInstanceType.FullName,
+                        _objectInstanceType.FullName,
                         cimClassName);
                 }
                 else
@@ -1745,8 +1744,8 @@ function __cmdletization_BindCommonParameters
                     psTypeNameOfInputObjectElements = string.Format(
                         CultureInfo.InvariantCulture,
                         "{0}#{1}",
-                        this.objectInstanceType.FullName,
-                        this.cmdletizationMetadata.Class.ClassName);
+                        _objectInstanceType.FullName,
+                        _cmdletizationMetadata.Class.ClassName);
                 }
                 inputObjectParameter.Attributes.Add(new PSTypeNameAttribute(psTypeNameOfInputObjectElements));
 
@@ -1851,12 +1850,12 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
         {
             StringBuilder output = new StringBuilder();
 
-            if (GenerationOptions.HelpXml == (this.generationOptions & GenerationOptions.HelpXml))
+            if (GenerationOptions.HelpXml == (_generationOptions & GenerationOptions.HelpXml))
             {
                 output.AppendFormat(
                     CultureInfo.InvariantCulture,
                     "# .EXTERNALHELP {0}.cdxml-Help.xml",
-                    ScriptWriter.EscapeModuleNameForHelpComment(this.moduleName));
+                    ScriptWriter.EscapeModuleNameForHelpComment(_moduleName));
             }
 
             return output.ToString();
@@ -1908,7 +1907,7 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
                 /* 0 */ this.GetHelpDirectiveForExternalHelp(),
                 /* 1 */ CodeGeneration.EscapeSingleQuotedStringContent(commandMetadata.Name));
 
-            this.functionsToExport.Add(commandMetadata.Name);
+            _functionsToExport.Add(commandMetadata.Name);
         }
 
         private static void AddPassThruParameter(IDictionary<string, ParameterMetadata> commonParameters, InstanceCmdletMetadata instanceCmdletMetadata)
@@ -1930,7 +1929,7 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
             }
             if (instanceCmdletMetadata.Method.ReturnValue != null)
             {
-                if ((instanceCmdletMetadata.Method.ReturnValue.CmdletOutputMetadata != null) && 
+                if ((instanceCmdletMetadata.Method.ReturnValue.CmdletOutputMetadata != null) &&
                     (instanceCmdletMetadata.Method.ReturnValue.CmdletOutputMetadata.ErrorCode == null))
                 {
                     outParametersArePresent = true;
@@ -2003,8 +2002,8 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
                 CmdletEndBlockTemplate,
                 /* 0 */ this.GetHelpDirectiveForExternalHelp(),
                 /* 1 */ CodeGeneration.EscapeSingleQuotedStringContent(commandMetadata.Name));
-            
-            this.functionsToExport.Add(commandMetadata.Name);
+
+            _functionsToExport.Add(commandMetadata.Name);
         }
 
         private string GetOutputAttributeForGetCmdlet()
@@ -2013,29 +2012,29 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
             result.AppendFormat(
                 CultureInfo.InvariantCulture,
                 "[OutputType([{0}])]",
-                CodeGeneration.EscapeSingleQuotedStringContent(this.objectInstanceType.FullName));
+                CodeGeneration.EscapeSingleQuotedStringContent(_objectInstanceType.FullName));
             result.AppendLine();
             result.AppendFormat(
                 CultureInfo.InvariantCulture,
                 "[OutputType('{0}#{1}')]",
-                CodeGeneration.EscapeSingleQuotedStringContent(this.objectInstanceType.FullName),
-                CodeGeneration.EscapeSingleQuotedStringContent(this.cmdletizationMetadata.Class.ClassName));
+                CodeGeneration.EscapeSingleQuotedStringContent(_objectInstanceType.FullName),
+                CodeGeneration.EscapeSingleQuotedStringContent(_cmdletizationMetadata.Class.ClassName));
             result.AppendLine();
             return result.ToString();
         }
 
         private CommonCmdletMetadata GetGetCmdletMetadata()
         {
-            Dbg.Assert(this.cmdletizationMetadata.Class.InstanceCmdlets != null, "Caller should verify presence of instance cmdlets");
+            Dbg.Assert(_cmdletizationMetadata.Class.InstanceCmdlets != null, "Caller should verify presence of instance cmdlets");
             CommonCmdletMetadata cmdletMetadata;
-            if (this.cmdletizationMetadata.Class.InstanceCmdlets.GetCmdlet != null)
+            if (_cmdletizationMetadata.Class.InstanceCmdlets.GetCmdlet != null)
             {
-                cmdletMetadata = this.cmdletizationMetadata.Class.InstanceCmdlets.GetCmdlet.CmdletMetadata;
+                cmdletMetadata = _cmdletizationMetadata.Class.InstanceCmdlets.GetCmdlet.CmdletMetadata;
             }
             else
             {
                 cmdletMetadata = new CommonCmdletMetadata();
-                cmdletMetadata.Noun = this.cmdletizationMetadata.Class.DefaultNoun;
+                cmdletMetadata.Noun = _cmdletizationMetadata.Class.DefaultNoun;
                 cmdletMetadata.Verb = VerbsCommon.Get;
             }
             Dbg.Assert(cmdletMetadata != null, "xsd should ensure that cmdlet metadata element is always present");
@@ -2089,17 +2088,17 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
                 /* 0 */ this.GetHelpDirectiveForExternalHelp(),
                 /* 1 */ CodeGeneration.EscapeSingleQuotedStringContent(commandMetadata.Name));
 
-            this.functionsToExport.Add(commandMetadata.Name);
+            _functionsToExport.Add(commandMetadata.Name);
         }
 
-        private static object _enumCompilationLock = new object();
+        private static object s_enumCompilationLock = new object();
         private static void CompileEnum(EnumMetadataEnum enumMetadata)
         {
             try
             {
                 string enumFullName = EnumWriter.GetEnumFullName(enumMetadata);
 
-                lock (_enumCompilationLock)
+                lock (s_enumCompilationLock)
                 {
                     Type alreadyExistingType;
                     if (!LanguagePrimitives.TryConvertTo(enumFullName, CultureInfo.InvariantCulture, out alreadyExistingType))
@@ -2124,28 +2123,28 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
             this.WriteModulePreamble(output);
             this.WriteBindCommonParametersFunction(output);
 
-            if (this.cmdletizationMetadata.Enums != null)
+            if (_cmdletizationMetadata.Enums != null)
             {
-                foreach (EnumMetadataEnum enumMetadata in this.cmdletizationMetadata.Enums)
+                foreach (EnumMetadataEnum enumMetadata in _cmdletizationMetadata.Enums)
                 {
                     CompileEnum(enumMetadata);
                 }
             }
 
-            if (this.cmdletizationMetadata.Class.StaticCmdlets != null)
+            if (_cmdletizationMetadata.Class.StaticCmdlets != null)
             {
-                foreach (StaticCmdletMetadata staticCmdlet in this.cmdletizationMetadata.Class.StaticCmdlets)
+                foreach (StaticCmdletMetadata staticCmdlet in _cmdletizationMetadata.Class.StaticCmdlets)
                 {
                     this.WriteCmdlet(output, staticCmdlet);
                 }
             }
 
-            if (this.cmdletizationMetadata.Class.InstanceCmdlets != null)
+            if (_cmdletizationMetadata.Class.InstanceCmdlets != null)
             {
                 this.WriteGetCmdlet(output);
-                if (this.cmdletizationMetadata.Class.InstanceCmdlets.Cmdlet != null)
+                if (_cmdletizationMetadata.Class.InstanceCmdlets.Cmdlet != null)
                 {
-                    foreach (InstanceCmdletMetadata instanceCmdlet in this.cmdletizationMetadata.Class.InstanceCmdlets.Cmdlet)
+                    foreach (InstanceCmdletMetadata instanceCmdlet in _cmdletizationMetadata.Class.InstanceCmdlets.Cmdlet)
                     {
                         this.WriteCmdlet(output, instanceCmdlet);
                     }
@@ -2165,11 +2164,11 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
         internal void PopulatePSModuleInfo(PSModuleInfo moduleInfo)
         {
             moduleInfo.SetModuleType(ModuleType.Cim);
-            moduleInfo.SetVersion(new Version(this.cmdletizationMetadata.Class.Version));
+            moduleInfo.SetVersion(new Version(_cmdletizationMetadata.Class.Version));
 
             Hashtable cmdletizationData = new Hashtable(StringComparer.OrdinalIgnoreCase);
-            cmdletizationData.Add(PrivateDataKey_ClassName, this.cmdletizationMetadata.Class.ClassName);
-            cmdletizationData.Add(PrivateDataKey_ObjectModelWrapper, this.objectModelWrapper);
+            cmdletizationData.Add(PrivateDataKey_ClassName, _cmdletizationMetadata.Class.ClassName);
+            cmdletizationData.Add(PrivateDataKey_ObjectModelWrapper, _objectModelWrapper);
 
             Hashtable privateData = new Hashtable(StringComparer.OrdinalIgnoreCase);
             privateData.Add(PrivateDataKey_CmdletsOverObjects, cmdletizationData);
@@ -2187,24 +2186,24 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
             moduleInfo.DeclaredFunctionExports = new Collection<string>();
 
             IEnumerable<CommonCmdletMetadata> cmdletMetadatas = Enumerable.Empty<CommonCmdletMetadata>();
-            if (this.cmdletizationMetadata.Class.InstanceCmdlets != null)
+            if (_cmdletizationMetadata.Class.InstanceCmdlets != null)
             {
                 cmdletMetadatas = cmdletMetadatas.Append(this.GetGetCmdletMetadata());
-                if (this.cmdletizationMetadata.Class.InstanceCmdlets.Cmdlet != null)
+                if (_cmdletizationMetadata.Class.InstanceCmdlets.Cmdlet != null)
                 {
                     cmdletMetadatas =
                         cmdletMetadatas.Concat(
-                            this.cmdletizationMetadata.Class.InstanceCmdlets.Cmdlet.Select(c => c.CmdletMetadata));
+                            _cmdletizationMetadata.Class.InstanceCmdlets.Cmdlet.Select(c => c.CmdletMetadata));
                 }
             }
-            if (this.cmdletizationMetadata.Class.StaticCmdlets != null)
+            if (_cmdletizationMetadata.Class.StaticCmdlets != null)
             {
                 cmdletMetadatas =
                     cmdletMetadatas.Concat(
-                        this.cmdletizationMetadata.Class.StaticCmdlets.Select(c => c.CmdletMetadata));
+                        _cmdletizationMetadata.Class.StaticCmdlets.Select(c => c.CmdletMetadata));
             }
 
-            
+
             foreach (CommonCmdletMetadata cmdletMetadata in cmdletMetadatas)
             {
                 if (cmdletMetadata.Aliases != null)

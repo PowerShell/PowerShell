@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Management.Automation;
 
@@ -22,19 +23,19 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return sourceIdentifier;
+                return _sourceIdentifier;
             }
             set
             {
-                sourceIdentifier = value;
+                _sourceIdentifier = value;
 
-                if(value != null)
+                if (value != null)
                 {
-                    matchPattern = WildcardPattern.Get(value, WildcardOptions.IgnoreCase);
+                    _matchPattern = WildcardPattern.Get(value, WildcardOptions.IgnoreCase);
                 }
             }
         }
-        private string sourceIdentifier = null;
+        private string _sourceIdentifier = null;
 
         /// <summary>
         /// An identifier for this event subscription
@@ -44,14 +45,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return subscriptionId;
+                return _subscriptionId;
             }
             set
             {
-                subscriptionId = value;
+                _subscriptionId = value;
             }
         }
-        private int subscriptionId = -1;
+        private int _subscriptionId = -1;
 
         /// <summary>
         /// Flag that determines if we should include subscriptions used to support
@@ -62,19 +63,19 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return force;
+                return _force;
             }
             set
             {
-                force = value;
+                _force = value;
             }
         }
-        private SwitchParameter force;
+        private SwitchParameter _force;
 
         #endregion parameters
 
-        WildcardPattern matchPattern;
-        bool foundMatch = false;
+        private WildcardPattern _matchPattern;
+        private bool _foundMatch = false;
 
         /// <summary>
         /// Unsubscribe from the event
@@ -83,24 +84,24 @@ namespace Microsoft.PowerShell.Commands
         {
             // Go through all the received events and write them to the output
             // pipeline
-            foreach(PSEventSubscriber subscriber in Events.Subscribers)
+            foreach (PSEventSubscriber subscriber in Events.Subscribers)
             {
                 // If the event identifier matches, remove the subscription
-                if(
-                    ((sourceIdentifier != null) && matchPattern.IsMatch(subscriber.SourceIdentifier)) ||
+                if (
+                    ((_sourceIdentifier != null) && _matchPattern.IsMatch(subscriber.SourceIdentifier)) ||
                     ((SubscriptionId >= 0) && (subscriber.SubscriptionId == SubscriptionId))
                    )
                 {
                     // If this is a support event but they aren't explicitly
                     // looking for them, continue.
-                    if (subscriber.SupportEvent && (! Force))
+                    if (subscriber.SupportEvent && (!Force))
                     {
                         continue;
                     }
 
-                    foundMatch = true;
+                    _foundMatch = true;
 
-                    if(ShouldProcess(
+                    if (ShouldProcess(
                         String.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
                             EventingStrings.EventSubscription,
@@ -114,23 +115,23 @@ namespace Microsoft.PowerShell.Commands
 
             // Generate an error if we couldn't find the subscription identifier,
             // and no globbing was done.
-            if((sourceIdentifier != null) &&
-               (! WildcardPattern.ContainsWildcardCharacters(sourceIdentifier)) &&
-               (! foundMatch))
+            if ((_sourceIdentifier != null) &&
+               (!WildcardPattern.ContainsWildcardCharacters(_sourceIdentifier)) &&
+               (!_foundMatch))
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new ArgumentException(
                         String.Format(
                             System.Globalization.CultureInfo.CurrentCulture,
-                            EventingStrings.EventSubscriptionNotFound, sourceIdentifier)),
+                            EventingStrings.EventSubscriptionNotFound, _sourceIdentifier)),
                     "INVALID_SOURCE_IDENTIFIER",
                     ErrorCategory.InvalidArgument,
                     null);
 
                 WriteError(errorRecord);
-             }
-            else if((SubscriptionId >= 0) &&
-               (! foundMatch))
+            }
+            else if ((SubscriptionId >= 0) &&
+               (!_foundMatch))
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new ArgumentException(
@@ -142,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
                     null);
 
                 WriteError(errorRecord);
-             }
+            }
         }
     }
 }

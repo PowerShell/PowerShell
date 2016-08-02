@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Management.Automation.Provider;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 using System.Globalization;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -23,7 +23,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The currently active drive. It determines the current working directory.
         /// </summary>
-        private PSDriveInfo currentDrive;
+        private PSDriveInfo _currentDrive;
 
 
         #region NewDrive
@@ -204,7 +204,7 @@ namespace System.Management.Automation
 
                 try
                 {
-                    SessionStateScope scope = currentScope;
+                    SessionStateScope scope = _currentScope;
 
                     if (!String.IsNullOrEmpty(scopeID))
                     {
@@ -270,7 +270,7 @@ namespace System.Management.Automation
                     break;
                 }
 
-                if (name.IndexOfAny( _charactersInvalidInDriveName ) >= 0)
+                if (name.IndexOfAny(s_charactersInvalidInDriveName) >= 0)
                 {
                     result = false;
                     break;
@@ -279,7 +279,7 @@ namespace System.Management.Automation
 
             return result;
         } // IsValidDriveName
-        private static char[] _charactersInvalidInDriveName = new char[] { ':', '/', '\\', '.', '~' };
+        private static char[] s_charactersInvalidInDriveName = new char[] { ':', '/', '\\', '.', '~' };
 
         /// <summary>
         /// Tries to resolve the drive root as an MSH path. If it successfully resolves
@@ -447,7 +447,7 @@ namespace System.Management.Automation
         #endregion NewDrive
 
         #region GetDrive
-        
+
         /// <summary>
         /// Searches through the session state scopes to find a drive
         /// </summary>
@@ -478,7 +478,6 @@ namespace System.Management.Automation
             if (name == null)
             {
                 throw PSTraceSource.NewArgumentNullException("name");
-
             }
 
             PSDriveInfo result = null;
@@ -498,26 +497,23 @@ namespace System.Management.Automation
                 {
                     if (result.IsAutoMounted)
                     {
-                        
-                           // Validate or remove the auto-mounted drive
+                        // Validate or remove the auto-mounted drive
 
-                            if (!ValidateOrRemoveAutoMountedDrive(result, processingScope))
-                            {
-                                result = null;
-                            }
-                        
+                        if (!ValidateOrRemoveAutoMountedDrive(result, processingScope))
+                        {
+                            result = null;
+                        }
                     }
 
                     if (result != null)
                     {
-                        tracer.WriteLine("Drive found in scope {0}", scopeID);
+                        s_tracer.WriteLine("Drive found in scope {0}", scopeID);
                         break;
                     }
                 }
 
                 // Increment the scope ID
                 ++scopeID;
-
             } // foreach scope
 
             if (result == null && automount)
@@ -584,7 +580,6 @@ namespace System.Management.Automation
             if (name == null)
             {
                 throw PSTraceSource.NewArgumentNullException("name");
-
             }
 
             PSDriveInfo result = null;
@@ -700,7 +695,7 @@ namespace System.Management.Automation
 
             if (!IsProviderLoaded(this.ExecutionContext.ProviderNames.FileSystem))
             {
-                tracer.WriteLine("The {0} provider is not loaded", this.ExecutionContext.ProviderNames.FileSystem);
+                s_tracer.WriteLine("The {0} provider is not loaded", this.ExecutionContext.ProviderNames.FileSystem);
                 return result;
             }
 
@@ -813,7 +808,7 @@ namespace System.Management.Automation
 
         internal static void MountDefaultDrive(string name, ExecutionContext context)
         {
-            PSModuleAutoLoadingPreference moduleAutoLoadingPreference = 
+            PSModuleAutoLoadingPreference moduleAutoLoadingPreference =
                 CommandDiscovery.GetCommandDiscoveryPreference(context, SpecialVariables.PSModuleAutoLoadingPreferenceVarPath, "PSModuleAutoLoadingPreference");
             if (moduleAutoLoadingPreference == PSModuleAutoLoadingPreference.None)
             {
@@ -832,17 +827,17 @@ namespace System.Management.Automation
             {
                 moduleName = "Microsoft.PowerShell.Security";
             }
-            else if(String.Equals("WSMan", name, StringComparison.OrdinalIgnoreCase))
+            else if (String.Equals("WSMan", name, StringComparison.OrdinalIgnoreCase))
             {
                 moduleName = "Microsoft.WSMan.Management";
             }
 
             if (!String.IsNullOrEmpty(moduleName))
             {
-                tracer.WriteLine("Auto-mounting built-in drive: {0}", name);
+                s_tracer.WriteLine("Auto-mounting built-in drive: {0}", name);
                 CommandInfo commandInfo = new CmdletInfo("Import-Module", typeof(Microsoft.PowerShell.Commands.ImportModuleCommand), null, null, context);
                 Exception exception = null;
-                tracer.WriteLine("Attempting to load module: {0}", moduleName);
+                s_tracer.WriteLine("Attempting to load module: {0}", moduleName);
                 CommandDiscovery.AutoloadSpecifiedModule(moduleName, context, commandInfo.Visibility, out exception);
                 if (exception != null)
                 {
@@ -1002,7 +997,6 @@ namespace System.Management.Automation
                             }
                         }
                     }
-
                 }
                 catch (ArgumentException)
                 {
@@ -1180,7 +1174,6 @@ namespace System.Management.Automation
             {
                 context.ThrowFirstErrorOrDoNothing();
             }
-
         } // RemoveDrive
 
         /// <summary>
@@ -1212,9 +1205,9 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal void RemoveDrive(
-            PSDriveInfo drive, 
-            bool force, 
-            string scopeID, 
+            PSDriveInfo drive,
+            bool force,
+            string scopeID,
             CmdletProviderContext context)
         {
             // Make sure that the CanRemoveDrive is called even if we are forcing
@@ -1222,7 +1215,7 @@ namespace System.Management.Automation
             // cleanup.
 
             bool canRemove = false;
-            
+
             try
             {
                 canRemove = CanRemoveDrive(drive, context);
@@ -1303,17 +1296,16 @@ namespace System.Management.Automation
             {
                 PSInvalidOperationException e =
                     (PSInvalidOperationException)
-                    PSTraceSource.NewInvalidOperationException (
+                    PSTraceSource.NewInvalidOperationException(
                         SessionStateStrings.DriveRemovalPreventedByProvider,
-                        drive.Name,    
+                        drive.Name,
                         drive.Provider);
 
-                context.WriteError (
-                    new ErrorRecord (
+                context.WriteError(
+                    new ErrorRecord(
                         e.ErrorRecord,
                         e));
             }
-
         } // RemoveDrive
 
         /// <summary>
@@ -1353,7 +1345,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("drive");
             }
 
-            tracer.WriteLine("Drive name = {0}", drive.Name);
+            s_tracer.WriteLine("Drive name = {0}", drive.Name);
 
             // First set the drive data
 
@@ -1408,13 +1400,12 @@ namespace System.Management.Automation
             }
 
             return driveRemovable;
-
         } // CanRemoveDrive
 
         #endregion RemoveDrive
 
         #region Drives
-        
+
         /// <summary>
         /// Gets an enumerable list of the drives that are mounted in
         /// the specified scope.
@@ -1439,7 +1430,7 @@ namespace System.Management.Automation
         {
             Dictionary<String, PSDriveInfo> driveTable = new Dictionary<String, PSDriveInfo>();
 
-            SessionStateScope startingScope = this.currentScope;
+            SessionStateScope startingScope = _currentScope;
 
             if (!String.IsNullOrEmpty(scope))
             {
@@ -1450,11 +1441,11 @@ namespace System.Management.Automation
                 new SessionStateScopeEnumerator(startingScope);
             DriveInfo[] alldrives = DriveInfo.GetDrives();
             Collection<String> driveNames = new Collection<String>();
-            foreach(DriveInfo drive in alldrives)
+            foreach (DriveInfo drive in alldrives)
             {
-                driveNames.Add(drive.Name.Substring(0,1));
+                driveNames.Add(drive.Name.Substring(0, 1));
             }
-            
+
 
             foreach (SessionStateScope lookupScope in scopeEnumerator)
             {
@@ -1475,13 +1466,13 @@ namespace System.Management.Automation
                             driveIsValid = ValidateOrRemoveAutoMountedDrive(drive, lookupScope);
                         }
 #endif
-                        if(drive.Name.Length == 1)
+                        if (drive.Name.Length == 1)
                         {
-                            if(!(driveNames.Contains(drive.Name)))
+                            if (!(driveNames.Contains(drive.Name)))
                                 driveTable.Remove(drive.Name);
                         }
-                        
-                        
+
+
 
                         if (driveIsValid && !driveTable.ContainsKey(drive.Name))
                         {
@@ -1550,7 +1541,7 @@ namespace System.Management.Automation
                 if (this != _context.TopLevelSessionState)
                     return _context.TopLevelSessionState.CurrentDrive;
                 else
-                    return currentDrive;
+                    return _currentDrive;
             } // get
 
             set
@@ -1558,11 +1549,10 @@ namespace System.Management.Automation
                 if (this != _context.TopLevelSessionState)
                     _context.TopLevelSessionState.CurrentDrive = value;
                 else
-                    currentDrive = value;
+                    _currentDrive = value;
             } // set
         } // CurrentDrive
     }           // SessionStateInternal class
-
 }
 
 #pragma warning restore 56500

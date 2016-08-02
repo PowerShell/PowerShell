@@ -17,8 +17,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class DefaultCommandRuntime : ICommandRuntime2
     {
-
-        private List<object> output;
+        private List<object> _output;
         /// <summary>
         /// Constructs an instance of the default ICommandRuntime object
         /// that will write objects into the list that was passed.
@@ -28,25 +27,25 @@ namespace System.Management.Automation
             if (outputList == null)
                 throw new System.ArgumentNullException("outputList");
 
-            this.output = outputList;
+            _output = outputList;
         }
 
-        private PSHost host;
+        private PSHost _host;
 
         /// <summary>
         /// Return the instance of PSHost - null by default.
         /// </summary>
         public PSHost Host
         {
-            set { host = value; }
-            get { return host; }
+            set { _host = value; }
+            get { return _host; }
         }
-    #region Write
+        #region Write
         /// <summary>
         /// Implementation of WriteDebug - just discards the input.
         /// </summary>
         /// <param name="text">Text to write</param>
-        public void WriteDebug(string text) { ; }
+        public void WriteDebug(string text) {; }
 
         /// <summary>
         /// Default implementation of WriteError - if the error record contains
@@ -69,7 +68,7 @@ namespace System.Management.Automation
         /// <param name="sendToPipeline">Object to write</param>
         public void WriteObject(object sendToPipeline)
         {
-            output.Add(sendToPipeline);
+            _output.Add(sendToPipeline);
         }
 
         /// <summary>
@@ -87,19 +86,19 @@ namespace System.Management.Automation
                 IEnumerator e = LanguagePrimitives.GetEnumerator(sendToPipeline);
                 if (e == null)
                 {
-                    output.Add(sendToPipeline);
+                    _output.Add(sendToPipeline);
                 }
                 else
                 {
                     while (e.MoveNext())
                     {
-                        output.Add(e.Current);
+                        _output.Add(e.Current);
                     }
                 }
             }
             else
             {
-                output.Add(sendToPipeline);
+                _output.Add(sendToPipeline);
             }
         }
 
@@ -107,48 +106,48 @@ namespace System.Management.Automation
         /// Default implementation - just discards it's arguments
         /// </summary>
         /// <param name="progressRecord">progress record to write.</param>
-        public void WriteProgress(ProgressRecord progressRecord) { ; }
+        public void WriteProgress(ProgressRecord progressRecord) {; }
 
         /// <summary>
         /// Default implementation - just discards it's arguments
         /// </summary>
         /// <param name="sourceId">Source ID to write for</param>
         /// <param name="progressRecord">record to write.</param>
-        public void WriteProgress(Int64 sourceId, ProgressRecord progressRecord) { ; }
+        public void WriteProgress(Int64 sourceId, ProgressRecord progressRecord) {; }
 
         /// <summary>
         /// Default implementation - just discards it's arguments
         /// </summary>
         /// <param name="text">Text to write.</param>
-        public void WriteVerbose(string text) { ; }
+        public void WriteVerbose(string text) {; }
 
         /// <summary>
         /// Default implementation - just discards it's arguments
         /// </summary>
         /// <param name="text">Text to write.</param>
-        public void WriteWarning(string text) { ; }
+        public void WriteWarning(string text) {; }
 
         /// <summary>
         /// Default implementation - just discards it's arguments
         /// </summary>
         /// <param name="text">Text to write.</param>
-        public void WriteCommandDetail(string text) { ; }
+        public void WriteCommandDetail(string text) {; }
 
         /// <summary>
         /// Default implementation - just discards it's arguments
         /// </summary>
         /// <param name="informationRecord">Record to write.</param>
-        public void WriteInformation(InformationRecord informationRecord) { ; }
+        public void WriteInformation(InformationRecord informationRecord) {; }
 
-    #endregion Write
+        #endregion Write
 
-    #region Should
+        #region Should
         /// <summary>
         /// Default implementation - always returns true.
         /// </summary>
         /// <param name="target">ignored</param>
         /// <returns>true</returns>
-        public bool ShouldProcess( string target ) { return true; }
+        public bool ShouldProcess(string target) { return true; }
 
         /// <summary>
         /// Default implementation - always returns true.
@@ -156,7 +155,7 @@ namespace System.Management.Automation
         /// <param name="target">ignored</param>
         /// <param name="action">ignored</param>
         /// <returns>true</returns>
-        public bool ShouldProcess( string target, string action ) {return true; }
+        public bool ShouldProcess(string target, string action) { return true; }
 
         /// <summary>
         /// Default implementation - always returns true.
@@ -175,7 +174,7 @@ namespace System.Management.Automation
         /// <param name="caption">ignored</param>
         /// <param name="shouldProcessReason">ignored</param>
         /// <returns>true</returns>
-        public bool ShouldProcess(string verboseDescription, string verboseWarning, string caption, out ShouldProcessReason shouldProcessReason) { shouldProcessReason = ShouldProcessReason.None;  return true; }
+        public bool ShouldProcess(string verboseDescription, string verboseWarning, string caption, out ShouldProcessReason shouldProcessReason) { shouldProcessReason = ShouldProcessReason.None; return true; }
 
         /// <summary>
         /// Default implementation - always returns true.
@@ -193,7 +192,7 @@ namespace System.Management.Automation
         /// <param name="yesToAll">ignored</param>
         /// <param name="noToAll">ignored</param>
         /// <returns>true</returns>
-        public bool ShouldContinue( string query, string caption, ref bool yesToAll, ref bool noToAll ) { return true; }
+        public bool ShouldContinue(string query, string caption, ref bool yesToAll, ref bool noToAll) { return true; }
 
         /// <summary>
         /// Default implementation - always returns true.
@@ -206,33 +205,33 @@ namespace System.Management.Automation
         /// <returns>true</returns>
         public bool ShouldContinue(string query, string caption, bool hasSecurityImpact, ref bool yesToAll, ref bool noToAll) { return true; }
 
-    #endregion Should
+        #endregion Should
 
-   #region Transaction Support
-    /// <summary>
-    /// Returns true if a transaction is available and active.
-    /// </summary>
-    public bool TransactionAvailable() { return false; }
+        #region Transaction Support
+        /// <summary>
+        /// Returns true if a transaction is available and active.
+        /// </summary>
+        public bool TransactionAvailable() { return false; }
 
-    /// <summary>
-    /// Gets an object that surfaces the current PowerShell transaction.
-    /// When this object is disposed, PowerShell resets the active transaction
-    /// </summary>
-    public PSTransactionContext CurrentPSTransaction 
-    {
-        get
+        /// <summary>
+        /// Gets an object that surfaces the current PowerShell transaction.
+        /// When this object is disposed, PowerShell resets the active transaction
+        /// </summary>
+        public PSTransactionContext CurrentPSTransaction
         {
-            string error = TransactionStrings.CmdletRequiresUseTx;
+            get
+            {
+                string error = TransactionStrings.CmdletRequiresUseTx;
 
-            // We want to throw in this situation, and want to use a
-            // property because it mimics the C# using(TransactionScope ...) syntax
-            #pragma warning suppress 56503
-            throw new InvalidOperationException(error);
+                // We want to throw in this situation, and want to use a
+                // property because it mimics the C# using(TransactionScope ...) syntax
+#pragma warning suppress 56503
+                throw new InvalidOperationException(error);
+            }
         }
-    }
-    #endregion Transaction Support
+        #endregion Transaction Support
 
-    #region Misc
+        #region Misc
         /// <summary>
         /// Implementation of the dummy default ThrowTerminatingError API - it just
         /// does what the base implementation does anyway - rethrow the exception
@@ -250,6 +249,6 @@ namespace System.Management.Automation
                 throw new System.InvalidOperationException(errorRecord.ToString());
             }
         }
-    #endregion
+        #endregion
     }
 }

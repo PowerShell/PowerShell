@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -13,7 +14,6 @@ using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
-
     /// <summary>
     /// The get-childitem command class.
     /// This command lists the contents of a container
@@ -57,16 +57,16 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the path for the operation
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = childrenSet,
-                   ValueFromPipeline=true, ValueFromPipelineByPropertyName = true)]
+                   ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
             get
             {
-                return paths;
+                return _paths;
             }
             set
             {
-                paths = value;
+                _paths = value;
             }
         }
 
@@ -74,19 +74,19 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the literal path parameter to the command
         /// </summary>
         [Parameter(ParameterSetName = literalChildrenSet,
-                   Mandatory = true, ValueFromPipeline=false, ValueFromPipelineByPropertyName = true)]
+                   Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath")]
         public string[] LiteralPath
         {
             get
             {
-                return paths;
+                return _paths;
             } // get
 
             set
             {
                 base.SuppressWildcardExpansion = true;
-                paths = value;
+                _paths = value;
             } // set
         } // LiteralPath
 
@@ -149,11 +149,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return recurse;
+                return _recurse;
             }
             set
             {
-                recurse = value;
+                _recurse = value;
             }
         }
 
@@ -168,11 +168,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return depth;
+                return _depth;
             }
             set
             {
-                depth = value;
+                _depth = value;
                 this.Recurse = true; // Bug 2391925 - Get-ChildItem -Depth should auto-set -Recurse
             }
         }
@@ -212,11 +212,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return childNames;
+                return _childNames;
             }
             set
             {
-                childNames = value;
+                _childNames = value;
             }
         }
 
@@ -285,9 +285,9 @@ namespace Microsoft.PowerShell.Commands
             object result = null;
             string path = String.Empty;
 
-            if (paths != null && paths.Length > 0)
+            if (_paths != null && _paths.Length > 0)
             {
-                path = paths[0];
+                path = _paths[0];
             }
             else
             {
@@ -298,7 +298,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 case childrenSet:
                 case literalChildrenSet:
-                    if(Name)
+                    if (Name)
                     {
                         result = InvokeProvider.ChildItem.GetChildNamesDynamicParameters(path, context);
                     }
@@ -329,12 +329,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The path for the get-location operation.
         /// </summary>
-        private string[] paths;
+        private string[] _paths;
 
         /// <summary>
         /// Determines if the command should do recursion.
         /// </summary>
-        private bool recurse;
+        private bool _recurse;
 
         /// <summary>
         /// Limits the depth of recursion; used with Recurse parameter;
@@ -342,12 +342,12 @@ namespace Microsoft.PowerShell.Commands
         /// Value '1' will show 1 level deep, etc...;
         /// Default is uint.MaxValue - it performs full recursion (this parameter has no effect).
         /// </summary>
-        private uint depth = uint.MaxValue;
+        private uint _depth = uint.MaxValue;
 
         /// <summary>
         /// The flag that specifies whether to retrieve the child names or the child items
         /// </summary>
-        private bool childNames = false;
+        private bool _childNames = false;
 
         #endregion command data
 
@@ -357,17 +357,17 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The main execution method for the get-childitem command. 
         /// </summary>
-        protected override void ProcessRecord ()
+        protected override void ProcessRecord()
         {
             CmdletProviderContext currentContext = CmdletProviderContext;
 
-            if (paths == null ||
-                (paths != null && paths.Length == 0))
+            if (_paths == null ||
+                (_paths != null && _paths.Length == 0))
             {
-                paths = new string[] { String.Empty };
+                _paths = new string[] { String.Empty };
             }
 
-            foreach (string path in paths)
+            foreach (string path in _paths)
             {
                 switch (ParameterSetName)
                 {
@@ -375,7 +375,7 @@ namespace Microsoft.PowerShell.Commands
                     case literalChildrenSet:
                         try
                         {
-                            if(Name)
+                            if (Name)
                             {
                                 // Get the names of the child items using the static namespace method.
                                 // The child names should be written directly to the pipeline using the
@@ -499,7 +499,6 @@ namespace Microsoft.PowerShell.Commands
         private const string targetTreatAsType = "System.Management.Automation.RelationshipTarget";
 #endif
         #endregion command code
-
     } // class GetChildrenCommand
 } // namespace Microsoft.PowerShell.Commands
 

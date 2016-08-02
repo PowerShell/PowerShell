@@ -29,7 +29,7 @@ namespace System.Management.Automation
         internal CommandProcessorBase()
         {
         }
-        
+
         /// <summary>
         /// Initializes the base command processor class with the command metadata
         /// </summary>
@@ -39,21 +39,21 @@ namespace System.Management.Automation
         /// </param>
         /// 
         internal CommandProcessorBase(
-            CommandInfo commandInfo) 
+            CommandInfo commandInfo)
         {
             if (commandInfo == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandInfo");
             }
 
-            this.commandInfo = commandInfo;
+            _commandInfo = commandInfo;
         }
-        
+
         #endregion ctor
 
         #region properties
 
-        private InternalCommand command;
+        private InternalCommand _command;
 
         // marker of whether BeginProcessing() has already run,
         // also used by CommandProcessor
@@ -75,10 +75,10 @@ namespace System.Management.Automation
         /// <value></value>
         internal CommandInfo CommandInfo
         {
-            get { return commandInfo; }
-            set { commandInfo = value; }
+            get { return _commandInfo; }
+            set { _commandInfo = value; }
         }
-        private CommandInfo commandInfo;
+        private CommandInfo _commandInfo;
 
         /// <summary>
         /// This indicates whether this command processor is created from
@@ -109,8 +109,8 @@ namespace System.Management.Automation
         /// </summary>
         internal bool RedirectShellErrorOutputPipe
         {
-            get { return this._redirectShellErrorOutputPipe; }
-            set { this._redirectShellErrorOutputPipe = value; }
+            get { return _redirectShellErrorOutputPipe; }
+            set { _redirectShellErrorOutputPipe = value; }
         }
         private bool _redirectShellErrorOutputPipe = false;
 
@@ -119,23 +119,23 @@ namespace System.Management.Automation
         /// </summary>
         internal InternalCommand Command
         {
-            get{ return command;}
-            set 
+            get { return _command; }
+            set
             {
                 // The command runtime needs to be set up...
                 if (value != null)
                 {
                     value.commandRuntime = this.commandRuntime;
-                    if (command != null)
-                        value.CommandInfo = command.CommandInfo;
+                    if (_command != null)
+                        value.CommandInfo = _command.CommandInfo;
 
                     // Set the execution context for the command it's currently
                     // null and our context has already been set up.
                     if (value.Context == null && _context != null)
                         value.Context = _context;
                 }
-                command = value;
-            }   
+                _command = value;
+            }
         }
 
         /// <summary>
@@ -207,7 +207,8 @@ namespace System.Management.Automation
         /// The execution context used by the system.
         /// </summary>
         protected ExecutionContext _context;
-        internal ExecutionContext Context {
+        internal ExecutionContext Context
+        {
             get { return _context; }
             set { _context = value; }
         }
@@ -252,7 +253,7 @@ namespace System.Management.Automation
         /// <param name="helpCategory">help category</param>
         /// <returns>command processor for "get-help [helpTarget]"</returns>
         static internal CommandProcessorBase CreateGetHelpCommandProcessor(
-            ExecutionContext context, 
+            ExecutionContext context,
             string helpTarget,
             HelpCategory helpCategory)
         {
@@ -387,7 +388,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(parameter != null, "Caller to verify parameter argument");
             arguments.Add(parameter);
         } // AddParameter
-        
+
         /// <summary>
         /// Prepares the command for execution.
         /// This should be called once before ProcessRecord().
@@ -401,10 +402,10 @@ namespace System.Management.Automation
         private void HandleObsoleteCommand(ObsoleteAttribute obsoleteAttr)
         {
             string commandName =
-                String.IsNullOrEmpty(this.commandInfo.Name)
+                String.IsNullOrEmpty(_commandInfo.Name)
                     ? "script block"
                     : String.Format(System.Globalization.CultureInfo.InvariantCulture,
-                                    CommandBaseStrings.ObsoleteCommand, this.commandInfo.Name);
+                                    CommandBaseStrings.ObsoleteCommand, _commandInfo.Name);
 
             string warningMsg = String.Format(
                 System.Globalization.CultureInfo.InvariantCulture,
@@ -667,15 +668,15 @@ namespace System.Management.Automation
         /// <returns></returns>
         public override string ToString()
         {
-            if (null != commandInfo)
-                return commandInfo.ToString();
+            if (null != _commandInfo)
+                return _commandInfo.ToString();
             return "<NullCommandInfo>"; // does not require localization
         }
 
         /// <summary>
         /// True if Read() has not be called, false otherwise.
         /// </summary>
-        private bool firstCallToRead = true;
+        private bool _firstCallToRead = true;
 
         /// <summary>
         /// Entry point used by the engine to reads the input pipeline object
@@ -693,9 +694,9 @@ namespace System.Management.Automation
         internal virtual bool Read()
         {
             // Prepare the default value parameter list if this is the first call to Read
-            if (firstCallToRead)
+            if (_firstCallToRead)
             {
-                firstCallToRead = false;
+                _firstCallToRead = false;
             }
 
             // Retrieve the object from the input pipeline
@@ -707,7 +708,7 @@ namespace System.Management.Automation
             }
 
             // If we are reading input for the first command in the pipeline increment PipelineIterationInfo[0], which is the number of items read from the input 
-            if (this.Command.MyInvocation.PipelinePosition == 1) 
+            if (this.Command.MyInvocation.PipelinePosition == 1)
             {
                 this.Command.MyInvocation.PipelineIterationInfo[0]++;
             }
@@ -819,7 +820,7 @@ namespace System.Management.Automation
         /// stopped by CTRL-C etc, in which case we choose not to
         /// re-wrap the exception as with CmdletInvocationException.
         /// </remarks>
-        internal PipelineStoppedException ManageInvocationException (Exception e)
+        internal PipelineStoppedException ManageInvocationException(Exception e)
         {
             try
             {
@@ -905,8 +906,8 @@ namespace System.Management.Automation
 
                         // Rollback the transaction in the case of errors.
                         if (
-                            _context.TransactionManager.HasTransaction 
-                            && 
+                            _context.TransactionManager.HasTransaction
+                            &&
                             _context.TransactionManager.RollbackPreference != RollbackSeverity.Never
                            )
                         {
@@ -915,7 +916,6 @@ namespace System.Management.Automation
                     }
 
                     return (PipelineStoppedException)this.commandRuntime.ManageException(e);
-
                 }
 
                 // Upstream cmdlets see only that execution stopped
@@ -978,7 +978,7 @@ namespace System.Management.Automation
         // 2004/03/05-JonN BrucePay has suggested that the IDispose
         // implementations in PipelineProcessor and CommandProcessor can be
         // removed.
-        private bool disposed;
+        private bool _disposed;
 
         /// <summary>
         /// IDisposable implementation
@@ -987,15 +987,15 @@ namespace System.Management.Automation
         /// without waiting for garbage collection
         /// </summary>
         /// <remarks>We use the standard IDispose pattern</remarks>
-        public void Dispose ()
+        public void Dispose()
         {
-            Dispose (true);
-            GC.SuppressFinalize (this);
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
-        private void Dispose (bool disposing)
+        private void Dispose(bool disposing)
         {
-            if (disposed)
+            if (_disposed)
                 return;
 
             if (disposing)
@@ -1006,19 +1006,19 @@ namespace System.Management.Automation
                 IDisposable id = Command as IDisposable;
                 if (null != id)
                 {
-                    id.Dispose ();
+                    id.Dispose();
                 }
             }
 
-            disposed = true;
+            _disposed = true;
         }
 
         /// <summary>
         /// Finalizer for class CommandProcessorBase
         /// </summary>
-        ~CommandProcessorBase ()
+        ~CommandProcessorBase()
         {
-            Dispose (false);
+            Dispose(false);
         }
 
         #endregion IDispose

@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 namespace System.Management.Automation
 {
     /// <summary>
@@ -8,14 +9,14 @@ namespace System.Management.Automation
     /// </summary> 
     internal static class CustomSerializationStrings
     {
-    #region element tags        
+        #region element tags        
 
-             
+
         /// <summary>
         /// Element tag for root node
         /// </summary>
         internal const string RootElementTag = "Objects";
-            
+
         /// <summary>
         /// Element tag for PSObject
         /// </summary>
@@ -26,8 +27,8 @@ namespace System.Management.Automation
         /// </summary>
         internal const string Properties = "Property";
 
-                   
-         #region attribute tags
+
+        #region attribute tags
 
         /// <summary>
         /// String for name attribute
@@ -38,7 +39,7 @@ namespace System.Management.Automation
         /// String for type attribute
         /// </summary>
         internal const string TypeAttribute = "Type";
-              
+
         #endregion
 
         #region known container tags
@@ -55,6 +56,6 @@ namespace System.Management.Automation
 
         #endregion
 
-    #endregion
+        #endregion
     }
 }

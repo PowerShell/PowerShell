@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal static string Platform
         {
-            get 
+            get
             {
                 return ("Windows NT");
             }
@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
 #else
                 OperatingSystem os = Environment.OSVersion;
                 string platform = GetOSName(os.Platform);
-                string formattedOS = string.Format(CultureInfo.InvariantCulture, 
+                string formattedOS = string.Format(CultureInfo.InvariantCulture,
                     "{0} {1}.{2}", platform, os.Version.Major, os.Version.Minor);
                 return (formattedOS);
 #endif

@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace System.Management.Automation
 
         private HelpCommentsParser(List<string> parameterDescriptions)
         {
-            this.parameterDescriptions = parameterDescriptions;
+            _parameterDescriptions = parameterDescriptions;
         }
 
         private HelpCommentsParser(CommandInfo commandInfo, List<string> parameterDescriptions)
@@ -36,20 +37,20 @@ namespace System.Management.Automation
             FunctionInfo fi = commandInfo as FunctionInfo;
             if (fi != null)
             {
-                this.scriptBlock = fi.ScriptBlock;
-                this.commandName = fi.Name;
+                _scriptBlock = fi.ScriptBlock;
+                _commandName = fi.Name;
             }
             else
             {
                 ExternalScriptInfo si = commandInfo as ExternalScriptInfo;
                 if (si != null)
                 {
-                    this.scriptBlock = si.ScriptBlock;
-                    this.commandName = si.Path;
+                    _scriptBlock = si.ScriptBlock;
+                    _commandName = si.Path;
                 }
             }
-            this.commandMetadata = commandInfo.CommandMetadata;
-            this.parameterDescriptions = parameterDescriptions;
+            _commandMetadata = commandInfo.CommandMetadata;
+            _parameterDescriptions = parameterDescriptions;
         }
 
         private readonly Language.CommentHelpInfo _sections = new Language.CommentHelpInfo();
@@ -60,30 +61,30 @@ namespace System.Management.Automation
         private readonly List<string> _links = new List<string>();
         internal bool isExternalHelpSet = false;
 
-        ScriptBlock scriptBlock;
-        CommandMetadata commandMetadata;
-        string commandName;
-        List<string> parameterDescriptions;
-        XmlDocument doc;
+        private ScriptBlock _scriptBlock;
+        private CommandMetadata _commandMetadata;
+        private string _commandName;
+        private List<string> _parameterDescriptions;
+        private XmlDocument _doc;
         internal static readonly string mamlURI = "http://schemas.microsoft.com/maml/2004/10";
         internal static readonly string commandURI = "http://schemas.microsoft.com/maml/dev/command/2004/10";
         internal static readonly string devURI = "http://schemas.microsoft.com/maml/dev/2004/10";
-        const string directive = @"^\s*\.(\w+)(\s+(\S.*))?\s*$";
-        const string blankline = @"^\s*$";
+        private const string directive = @"^\s*\.(\w+)(\s+(\S.*))?\s*$";
+        private const string blankline = @"^\s*$";
         internal static readonly string ProviderHelpCommandXPath =
             "/helpItems/providerHelp/CmdletHelpPaths/CmdletHelpPath{0}/command:command[command:details/command:verb='{1}' and command:details/command:noun='{2}']";
 
         private void DetermineParameterDescriptions()
         {
             int i = 0;
-            foreach (string parameterName in commandMetadata.StaticCommandParameterMetadata.BindableParameters.Keys)
+            foreach (string parameterName in _commandMetadata.StaticCommandParameterMetadata.BindableParameters.Keys)
             {
                 string description;
                 if (!_parameters.TryGetValue(parameterName.ToUpperInvariant(), out description))
                 {
-                    if (i < parameterDescriptions.Count)
+                    if (i < _parameterDescriptions.Count)
                     {
-                        _parameters.Add(parameterName.ToUpperInvariant(), parameterDescriptions[i]);
+                        _parameters.Add(parameterName.ToUpperInvariant(), _parameterDescriptions[i]);
                     }
                 }
                 ++i;
@@ -111,7 +112,7 @@ namespace System.Management.Automation
             string defaultValue,
             bool forSyntax)
         {
-            XmlElement command_parameter = doc.CreateElement("command:parameter", commandURI);
+            XmlElement command_parameter = _doc.CreateElement("command:parameter", commandURI);
             command_parameter.SetAttribute("required", isMandatory ? "true" : "false");
             //command_parameter.SetAttribute("variableLength", "unknown");
             command_parameter.SetAttribute("globbing", supportsWildcards ? "true" : "false");
@@ -135,14 +136,14 @@ namespace System.Management.Automation
             command_parameter.SetAttribute("pipelineInput", fromPipeline);
             command_parameter.SetAttribute("position", position);
 
-            XmlElement name = doc.CreateElement("maml:name", mamlURI);
-            XmlText name_text = doc.CreateTextNode(parameterName);
+            XmlElement name = _doc.CreateElement("maml:name", mamlURI);
+            XmlText name_text = _doc.CreateTextNode(parameterName);
             command_parameter.AppendChild(name).AppendChild(name_text);
             if (!string.IsNullOrEmpty(description))
             {
-                XmlElement maml_description = doc.CreateElement("maml:description", mamlURI);
-                XmlElement maml_para = doc.CreateElement("maml:para", mamlURI);
-                XmlText maml_para_text = doc.CreateTextNode(description);
+                XmlElement maml_description = _doc.CreateElement("maml:description", mamlURI);
+                XmlElement maml_para = _doc.CreateElement("maml:para", mamlURI);
+                XmlText maml_para_text = _doc.CreateTextNode(description);
                 command_parameter.AppendChild(maml_description).AppendChild(maml_para).AppendChild(maml_para_text);
             }
 
@@ -154,12 +155,12 @@ namespace System.Management.Automation
 
             if (elementType.GetTypeInfo().IsEnum)
             {
-                XmlElement parameterValueGroup = doc.CreateElement("command:parameterValueGroup", commandURI);
+                XmlElement parameterValueGroup = _doc.CreateElement("command:parameterValueGroup", commandURI);
                 foreach (string valueName in Enum.GetNames(elementType))
                 {
-                    XmlElement parameterValue = doc.CreateElement("command:parameterValue", commandURI);
+                    XmlElement parameterValue = _doc.CreateElement("command:parameterValue", commandURI);
                     parameterValue.SetAttribute("required", "false");
-                    XmlText parameterValue_text = doc.CreateTextNode(valueName);
+                    XmlText parameterValue_text = _doc.CreateTextNode(valueName);
                     parameterValueGroup.AppendChild(parameterValue).AppendChild(parameterValue_text);
                 }
                 command_parameter.AppendChild(parameterValueGroup);
@@ -169,23 +170,23 @@ namespace System.Management.Automation
                 bool isSwitchParameter = elementType == typeof(SwitchParameter);
                 if (!forSyntax || !isSwitchParameter)
                 {
-                    XmlElement parameterValue = doc.CreateElement("command:parameterValue", commandURI);
+                    XmlElement parameterValue = _doc.CreateElement("command:parameterValue", commandURI);
                     parameterValue.SetAttribute("required", isSwitchParameter ? "false" : "true");
                     //parameterValue.SetAttribute("variableLength", "unknown");
-                    XmlText parameterValue_text = doc.CreateTextNode(type.Name);
+                    XmlText parameterValue_text = _doc.CreateTextNode(type.Name);
                     command_parameter.AppendChild(parameterValue).AppendChild(parameterValue_text);
                 }
             }
 
             if (!forSyntax)
             {
-                XmlElement devType = doc.CreateElement("dev:type", devURI);
-                XmlElement typeName = doc.CreateElement("maml:name", mamlURI);
-                XmlText typeName_text = doc.CreateTextNode(type.Name);
+                XmlElement devType = _doc.CreateElement("dev:type", devURI);
+                XmlElement typeName = _doc.CreateElement("maml:name", mamlURI);
+                XmlText typeName_text = _doc.CreateTextNode(type.Name);
                 command_parameter.AppendChild(devType).AppendChild(typeName).AppendChild(typeName_text);
 
-                XmlElement defaultValueElement = doc.CreateElement("dev:defaultValue", devURI);
-                XmlText defaultValue_text = doc.CreateTextNode(defaultValue);
+                XmlElement defaultValueElement = _doc.CreateElement("dev:defaultValue", devURI);
+                XmlText defaultValue_text = _doc.CreateTextNode(defaultValue);
                 command_parameter.AppendChild(defaultValueElement).AppendChild(defaultValue_text);
             }
 
@@ -198,27 +199,27 @@ namespace System.Management.Automation
         /// <returns>The xml node for the command constructed</returns>
         internal XmlDocument BuildXmlFromComments()
         {
-            Diagnostics.Assert(!string.IsNullOrEmpty(commandName), "Name can never be null");
+            Diagnostics.Assert(!string.IsNullOrEmpty(_commandName), "Name can never be null");
 
-            doc = new XmlDocument();
-            XmlElement command = doc.CreateElement("command:command", commandURI);
+            _doc = new XmlDocument();
+            XmlElement command = _doc.CreateElement("command:command", commandURI);
             command.SetAttribute("xmlns:maml", mamlURI);
             command.SetAttribute("xmlns:command", commandURI);
             command.SetAttribute("xmlns:dev", devURI);
-            doc.AppendChild(command);
+            _doc.AppendChild(command);
 
-            XmlElement details = doc.CreateElement("command:details", commandURI);
+            XmlElement details = _doc.CreateElement("command:details", commandURI);
             command.AppendChild(details);
 
-            XmlElement name = doc.CreateElement("command:name", commandURI);
-            XmlText name_text = doc.CreateTextNode(commandName);
+            XmlElement name = _doc.CreateElement("command:name", commandURI);
+            XmlText name_text = _doc.CreateTextNode(_commandName);
             details.AppendChild(name).AppendChild(name_text);
 
             if (!string.IsNullOrEmpty(_sections.Synopsis))
             {
-                XmlElement synopsis = doc.CreateElement("maml:description", mamlURI);
-                XmlElement synopsis_para = doc.CreateElement("maml:para", mamlURI);
-                XmlText synopsis_text = doc.CreateTextNode(_sections.Synopsis);
+                XmlElement synopsis = _doc.CreateElement("maml:description", mamlURI);
+                XmlElement synopsis_para = _doc.CreateElement("maml:para", mamlURI);
+                XmlText synopsis_text = _doc.CreateTextNode(_sections.Synopsis);
                 details.AppendChild(synopsis).AppendChild(synopsis_para).AppendChild(synopsis_text);
             }
 
@@ -227,8 +228,8 @@ namespace System.Management.Automation
             // The syntax is automatically generated from parameter metadata
             DetermineParameterDescriptions();
 
-            XmlElement syntax = doc.CreateElement("command:syntax", commandURI);
-            MergedCommandParameterMetadata parameterMetadata = this.commandMetadata.StaticCommandParameterMetadata;
+            XmlElement syntax = _doc.CreateElement("command:syntax", commandURI);
+            MergedCommandParameterMetadata parameterMetadata = _commandMetadata.StaticCommandParameterMetadata;
             if (parameterMetadata.ParameterSetCount > 0)
             {
                 for (int i = 0; i < parameterMetadata.ParameterSetCount; ++i)
@@ -245,7 +246,7 @@ namespace System.Management.Automation
 
             #region Parameters
 
-            XmlElement commandParameters = doc.CreateElement("command:parameters", commandURI);
+            XmlElement commandParameters = _doc.CreateElement("command:parameters", commandURI);
             foreach (KeyValuePair<string, MergedCompiledCommandParameter> pair in parameterMetadata.BindableParameters)
             {
                 MergedCompiledCommandParameter mergedParameter = pair.Value;
@@ -297,7 +298,7 @@ namespace System.Management.Automation
                     if (defaultValue == null)
                     {
                         RuntimeDefinedParameter rdp;
-                        if (scriptBlock.RuntimeDefinedParameters.TryGetValue(parameterName, out rdp))
+                        if (_scriptBlock.RuntimeDefinedParameters.TryGetValue(parameterName, out rdp))
                         {
                             defaultValue = rdp.Value;
                         }
@@ -325,33 +326,33 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrEmpty(_sections.Description))
             {
-                XmlElement description = doc.CreateElement("maml:description", mamlURI);
-                XmlElement description_para = doc.CreateElement("maml:para", mamlURI);
-                XmlText description_text = doc.CreateTextNode(_sections.Description);
+                XmlElement description = _doc.CreateElement("maml:description", mamlURI);
+                XmlElement description_para = _doc.CreateElement("maml:para", mamlURI);
+                XmlText description_text = _doc.CreateTextNode(_sections.Description);
                 command.AppendChild(description).AppendChild(description_para).AppendChild(description_text);
             }
             if (!string.IsNullOrEmpty(_sections.Notes))
             {
-                XmlElement alertSet = doc.CreateElement("maml:alertSet", mamlURI);
-                XmlElement alert = doc.CreateElement("maml:alert", mamlURI);
-                XmlElement alert_para = doc.CreateElement("maml:para", mamlURI);
-                XmlText alert_para_text = doc.CreateTextNode(_sections.Notes);
+                XmlElement alertSet = _doc.CreateElement("maml:alertSet", mamlURI);
+                XmlElement alert = _doc.CreateElement("maml:alert", mamlURI);
+                XmlElement alert_para = _doc.CreateElement("maml:para", mamlURI);
+                XmlText alert_para_text = _doc.CreateTextNode(_sections.Notes);
                 command.AppendChild(alertSet).AppendChild(alert).AppendChild(alert_para).AppendChild(alert_para_text);
             }
             if (_examples.Count > 0)
             {
-                XmlElement examples = doc.CreateElement("command:examples", commandURI);
+                XmlElement examples = _doc.CreateElement("command:examples", commandURI);
                 int count = 1;
                 foreach (string example in _examples)
-                {                 
-                    XmlElement example_node = doc.CreateElement("command:example", commandURI);
+                {
+                    XmlElement example_node = _doc.CreateElement("command:example", commandURI);
 
                     // The title is automatically generated
-                    XmlElement title = doc.CreateElement("maml:title", mamlURI);
+                    XmlElement title = _doc.CreateElement("maml:title", mamlURI);
                     string titleStr = string.Format(CultureInfo.InvariantCulture,
                         "				-------------------------- {0} {1} --------------------------",
                         HelpDisplayStrings.ExampleUpperCase, count++);
-                    XmlText title_text = doc.CreateTextNode(titleStr);
+                    XmlText title_text = _doc.CreateTextNode(titleStr);
                     example_node.AppendChild(title).AppendChild(title_text);
 
                     string prompt_str;
@@ -360,25 +361,25 @@ namespace System.Management.Automation
                     GetExampleSections(example, out prompt_str, out code_str, out remarks_str);
 
                     // Introduction (usually the prompt)
-                    XmlElement introduction = doc.CreateElement("maml:introduction", mamlURI);
-                    XmlElement introduction_para = doc.CreateElement("maml:para", mamlURI);
-                    XmlText introduction_para_text = doc.CreateTextNode(prompt_str);
+                    XmlElement introduction = _doc.CreateElement("maml:introduction", mamlURI);
+                    XmlElement introduction_para = _doc.CreateElement("maml:para", mamlURI);
+                    XmlText introduction_para_text = _doc.CreateTextNode(prompt_str);
                     example_node.AppendChild(introduction).AppendChild(introduction_para).AppendChild(introduction_para_text);
 
                     // Example code
-                    XmlElement code = doc.CreateElement("dev:code", devURI);
-                    XmlText code_text = doc.CreateTextNode(code_str);
+                    XmlElement code = _doc.CreateElement("dev:code", devURI);
+                    XmlText code_text = _doc.CreateTextNode(code_str);
                     example_node.AppendChild(code).AppendChild(code_text);
 
                     // Remarks are comments on the example
-                    XmlElement remarks = doc.CreateElement("dev:remarks", devURI);
-                    XmlElement remarks_para = doc.CreateElement("maml:para", mamlURI);
-                    XmlText remarks_para_text = doc.CreateTextNode(remarks_str);
+                    XmlElement remarks = _doc.CreateElement("dev:remarks", devURI);
+                    XmlElement remarks_para = _doc.CreateElement("maml:para", mamlURI);
+                    XmlText remarks_para_text = _doc.CreateTextNode(remarks_str);
                     example_node.AppendChild(remarks).AppendChild(remarks_para).AppendChild(remarks_para_text);
                     // The convention is to have 4 blank paras after the example for spacing
                     for (int i = 0; i < 4; i++)
                     {
-                        remarks.AppendChild(doc.CreateElement("maml:para", mamlURI));
+                        remarks.AppendChild(_doc.CreateElement("maml:para", mamlURI));
                     }
                     examples.AppendChild(example_node);
                 }
@@ -386,13 +387,13 @@ namespace System.Management.Automation
             }
             if (_inputs.Count > 0)
             {
-                XmlElement inputTypes = doc.CreateElement("command:inputTypes", commandURI);
+                XmlElement inputTypes = _doc.CreateElement("command:inputTypes", commandURI);
                 foreach (string inputStr in _inputs)
                 {
-                    XmlElement inputType = doc.CreateElement("command:inputType", commandURI);
-                    XmlElement type = doc.CreateElement("dev:type", devURI);
-                    XmlElement maml_name = doc.CreateElement("maml:name", mamlURI);
-                    XmlText maml_name_text = doc.CreateTextNode(inputStr);
+                    XmlElement inputType = _doc.CreateElement("command:inputType", commandURI);
+                    XmlElement type = _doc.CreateElement("dev:type", devURI);
+                    XmlElement maml_name = _doc.CreateElement("maml:name", mamlURI);
+                    XmlText maml_name_text = _doc.CreateTextNode(inputStr);
                     inputTypes.AppendChild(inputType).AppendChild(type).AppendChild(maml_name).AppendChild(maml_name_text);
                 }
                 command.AppendChild(inputTypes);
@@ -404,47 +405,47 @@ namespace System.Management.Automation
             {
                 outputs = _outputs;
             }
-            else if (scriptBlock.OutputType.Count > 0)
+            else if (_scriptBlock.OutputType.Count > 0)
             {
-                outputs = scriptBlock.OutputType;
+                outputs = _scriptBlock.OutputType;
             }
             if (outputs != null)
             {
-                XmlElement returnValues = doc.CreateElement("command:returnValues", commandURI);
+                XmlElement returnValues = _doc.CreateElement("command:returnValues", commandURI);
                 foreach (object output in outputs)
                 {
-                    XmlElement returnValue = doc.CreateElement("command:returnValue", commandURI);
-                    XmlElement type = doc.CreateElement("dev:type", devURI);
-                    XmlElement maml_name = doc.CreateElement("maml:name", mamlURI);
+                    XmlElement returnValue = _doc.CreateElement("command:returnValue", commandURI);
+                    XmlElement type = _doc.CreateElement("dev:type", devURI);
+                    XmlElement maml_name = _doc.CreateElement("maml:name", mamlURI);
                     string returnValueStr = output as string ?? ((PSTypeName)output).Name;
-                    XmlText maml_name_text = doc.CreateTextNode(returnValueStr);
+                    XmlText maml_name_text = _doc.CreateTextNode(returnValueStr);
                     returnValues.AppendChild(returnValue).AppendChild(type).AppendChild(maml_name).AppendChild(maml_name_text);
                 }
                 command.AppendChild(returnValues);
             }
             if (_links.Count > 0)
             {
-                XmlElement links = doc.CreateElement("maml:relatedLinks", mamlURI);
+                XmlElement links = _doc.CreateElement("maml:relatedLinks", mamlURI);
                 foreach (string link in _links)
                 {
-                    XmlElement navigationLink = doc.CreateElement("maml:navigationLink", mamlURI);
+                    XmlElement navigationLink = _doc.CreateElement("maml:navigationLink", mamlURI);
                     bool isOnlineHelp = Uri.IsWellFormedUriString(Uri.EscapeUriString(link), UriKind.Absolute);
                     string nodeName = isOnlineHelp ? "maml:uri" : "maml:linkText";
-                    XmlElement linkText = doc.CreateElement(nodeName, mamlURI);
-                    XmlText linkText_text = doc.CreateTextNode(link);
+                    XmlElement linkText = _doc.CreateElement(nodeName, mamlURI);
+                    XmlText linkText_text = _doc.CreateTextNode(link);
                     links.AppendChild(navigationLink).AppendChild(linkText).AppendChild(linkText_text);
                 }
                 command.AppendChild(links);
             }
 
-            return doc;
+            return _doc;
         }
 
         private void BuildSyntaxForParameterSet(XmlElement command, XmlElement syntax, MergedCommandParameterMetadata parameterMetadata, int i)
         {
-            XmlElement syntaxItem = doc.CreateElement("command:syntaxItem", commandURI);
-            XmlElement syntaxItemName = doc.CreateElement("maml:name", mamlURI);
-            XmlText syntaxItemName_text = doc.CreateTextNode(commandName);
+            XmlElement syntaxItem = _doc.CreateElement("command:syntaxItem", commandURI);
+            XmlElement syntaxItemName = _doc.CreateElement("maml:name", mamlURI);
+            XmlText syntaxItemName_text = _doc.CreateTextNode(_commandName);
 
             syntaxItem.AppendChild(syntaxItemName).AppendChild(syntaxItemName_text);
 
@@ -659,7 +660,7 @@ namespace System.Management.Automation
             SessionState sessionState = scriptCommandInfo.ScriptBlock.SessionState;
             object runspaceInfoAsObject = sessionState.PSVariable.GetValue(_sections.RemoteHelpRunspace);
             PSSession runspaceInfo;
-            if (runspaceInfoAsObject == null || 
+            if (runspaceInfoAsObject == null ||
                 !LanguagePrimitives.TryConvertTo(runspaceInfoAsObject, out runspaceInfo))
             {
                 string errorMessage = HelpErrors.RemoteRunspaceNotAvailable;
@@ -667,10 +668,10 @@ namespace System.Management.Automation
             }
 
             return new RemoteHelpInfo(
-                context, 
+                context,
                 (RemoteRunspace)runspaceInfo.Runspace,
                 commandInfo.Name,
-                _sections.ForwardHelpTargetName, 
+                _sections.ForwardHelpTargetName,
                 _sections.ForwardHelpCategory,
                 commandInfo.HelpCategory);
         }
@@ -715,7 +716,8 @@ namespace System.Management.Automation
                                 {
                                     string param = match.Groups[3].Value.ToUpperInvariant().Trim();
                                     string section = GetSection(commentLines, ref i);
-                                    if (!_parameters.ContainsKey(param)) {
+                                    if (!_parameters.ContainsKey(param))
+                                    {
                                         _parameters.Add(param, section);
                                     }
                                     break;
@@ -776,7 +778,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
-                else if (! Regex.IsMatch(commentLines[i], blankline))
+                else if (!Regex.IsMatch(commentLines[i], blankline))
                 {
                     return false;
                 }
@@ -807,7 +809,7 @@ namespace System.Management.Automation
                 _sections.Functionality,
                 _sections.Role);
         }
-        
+
         internal static CommentHelpInfo GetHelpContents(List<Language.Token> comments, List<string> parameterDescriptions)
         {
             HelpCommentsParser helpCommentsParser = new HelpCommentsParser(parameterDescriptions);
@@ -915,15 +917,15 @@ namespace System.Management.Automation
 
                     localHelpInfo.FullHelp.Properties.Add(new PSNoteProperty("CommonParameters", common));
                     localHelpInfo.FullHelp.Properties.Add(new PSNoteProperty("WorkflowCommonParameters", commonWorkflow));
-                    DefaultCommandHelpObjectBuilder.AddDetailsProperties(obj:localHelpInfo.FullHelp, name:workflowInfo.Name,
-                                                                        noun: workflowInfo.Noun, verb: workflowInfo.Verb, 
+                    DefaultCommandHelpObjectBuilder.AddDetailsProperties(obj: localHelpInfo.FullHelp, name: workflowInfo.Name,
+                                                                        noun: workflowInfo.Noun, verb: workflowInfo.Verb,
                                                                         typeNameForHelp: "MamlCommandHelpInfo", synopsis: localHelpInfo.Synopsis);
                     DefaultCommandHelpObjectBuilder.AddSyntaxProperties(localHelpInfo.FullHelp, workflowInfo.Name,
                                                                         workflowInfo.ParameterSets, common, commonWorkflow, "MamlCommandHelpInfo");
                 }
-                
+
                 // Add HelpUri if necessary 
-                if(localHelpInfo.GetUriForOnlineHelp() == null)
+                if (localHelpInfo.GetUriForOnlineHelp() == null)
                 {
                     DefaultCommandHelpObjectBuilder.AddRelatedLinksProperties(localHelpInfo.FullHelp, commandInfo.CommandMetadata.HelpUri);
                 }
@@ -1093,7 +1095,7 @@ namespace System.Management.Automation
             Dictionary<Ast, Token[]> scriptBlockTokenCache)
         {
             Diagnostics.Assert(scriptBlockTokenCache != null, "scriptBlockTokenCache cannot be null");
-            var ast = (Ast) ipmp;
+            var ast = (Ast)ipmp;
 
             var rootAst = ast;
             Ast configAst = null;
@@ -1174,7 +1176,6 @@ namespace System.Management.Automation
                     "Unexpected first token in script block");
                 Diagnostics.Assert(tokens[lastTokenIndex].Kind == TokenKind.RCurly,
                     "Unexpected last token in script block");
-
             }
 
             while (true)
@@ -1221,5 +1222,5 @@ namespace System.Management.Automation
         }
 
         #endregion Collect comments from AST
-    } 
+    }
 }

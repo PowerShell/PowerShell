@@ -23,7 +23,7 @@ using Microsoft.PowerShell.Commands;
 
 namespace System.Management.Automation
 {
-    static class PipelineOps
+    internal static class PipelineOps
     {
         private static CommandProcessorBase AddCommand(PipelineProcessor pipe,
                                                        CommandParameterInternal[] commandElements,
@@ -134,7 +134,7 @@ namespace System.Management.Automation
                         if (rte.ErrorRecord.InvocationInfo == null)
                         {
                             InvocationInfo invocationInfo = new InvocationInfo(null, commandExtent, context)
-                                                            {InvocationName = invocationName};
+                            { InvocationName = invocationName };
                             rte.ErrorRecord.SetInvocationInfo(invocationInfo);
                         }
                         throw;
@@ -157,7 +157,7 @@ namespace System.Management.Automation
                     if (cpi.ParameterName.Equals("-", StringComparison.OrdinalIgnoreCase) && !isNativeCommand)
                     {
                         continue;
-                    }                    
+                    }
                 }
 
                 if (cpi.ArgumentSplatted)
@@ -239,7 +239,7 @@ namespace System.Management.Automation
                 else
                 {
                     commandProcessor.CommandRuntime.ErrorOutputPipe.ExternalWriter = context.ExternalErrorOutput;
-                }                
+                }
             }
             if (!redirectedWarning && (context.ExpressionWarningOutputPipe != null))
             {
@@ -288,7 +288,6 @@ namespace System.Management.Automation
                 {
                     commandProcessor.CommandRuntime.InformationOutputPipe = context.CurrentCommandProcessor.CommandRuntime.InformationOutputPipe;
                 }
-
             }
 
             return commandProcessor;
@@ -447,7 +446,7 @@ namespace System.Management.Automation
 
         private static void AddNoopCommandProcessor(PipelineProcessor pipelineProcessor, ExecutionContext context)
         {
-            var commandInfo = new CmdletInfo("Out-Null", typeof (OutNullCommand));
+            var commandInfo = new CmdletInfo("Out-Null", typeof(OutNullCommand));
             var commandProcessor = context.CommandDiscovery.LookupCommandProcessor(commandInfo,
                                                                                    context.EngineSessionState.CurrentScope.ScopeOrigin,
                                                                                    useLocalScope: false,
@@ -477,7 +476,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-            
+
             return objArray;
         }
 
@@ -522,7 +521,7 @@ namespace System.Management.Automation
                                                         Compiler.DottedLocalsNameIndexMap);
                     object[] remainingArgs =
                         ScriptBlock.BindArgumentsForScripblockInvoke(
-                            (RuntimeDefinedParameter[])scriptBlock.RuntimeDefinedParameters.Data, 
+                            (RuntimeDefinedParameter[])scriptBlock.RuntimeDefinedParameters.Data,
                             args, context, false, null, locals);
                     locals.SetAutomaticVariable(AutomaticVariable.Args, remainingArgs, context);
                     newScope.LocalsTuple = locals;
@@ -694,12 +693,12 @@ namespace System.Management.Automation
         }
 
         // This is to work around a DLR problem with gotos in try/catch to the end of a lambda.
-        internal static void Nop() {}
+        internal static void Nop() { }
     }
 
     #region Redirections
 
-    abstract class CommandRedirection
+    internal abstract class CommandRedirection
     {
         protected CommandRedirection(RedirectionStream from)
         {
@@ -721,37 +720,37 @@ namespace System.Management.Automation
             var context = funcContext._executionContext;
             switch (FromStream)
             {
-            case RedirectionStream.All:
-                funcContext._outputPipe = pipes[(int)RedirectionStream.Output];
-                context.ShellFunctionErrorOutputPipe = pipes[(int)RedirectionStream.Error];
-                context.ExpressionWarningOutputPipe = pipes[(int)RedirectionStream.Warning];
-                context.ExpressionVerboseOutputPipe = pipes[(int)RedirectionStream.Verbose];
-                context.ExpressionDebugOutputPipe = pipes[(int)RedirectionStream.Debug];
-                context.ExpressionInformationOutputPipe = pipes[(int)RedirectionStream.Information];
-                break;
-            case RedirectionStream.Output:
-                funcContext._outputPipe = pipes[(int)RedirectionStream.Output];
-                break;
-            case RedirectionStream.Error:
-                context.ShellFunctionErrorOutputPipe = pipes[(int)FromStream];
-                break;
-            case RedirectionStream.Warning:
-                context.ExpressionWarningOutputPipe = pipes[(int)FromStream];
-                break;
-            case RedirectionStream.Verbose:
-                context.ExpressionVerboseOutputPipe = pipes[(int)FromStream];
-                break;
-            case RedirectionStream.Debug:
-                context.ExpressionDebugOutputPipe = pipes[(int)FromStream];
-                break;
-            case RedirectionStream.Information:
-                context.ExpressionInformationOutputPipe = pipes[(int)FromStream];
-                break;
+                case RedirectionStream.All:
+                    funcContext._outputPipe = pipes[(int)RedirectionStream.Output];
+                    context.ShellFunctionErrorOutputPipe = pipes[(int)RedirectionStream.Error];
+                    context.ExpressionWarningOutputPipe = pipes[(int)RedirectionStream.Warning];
+                    context.ExpressionVerboseOutputPipe = pipes[(int)RedirectionStream.Verbose];
+                    context.ExpressionDebugOutputPipe = pipes[(int)RedirectionStream.Debug];
+                    context.ExpressionInformationOutputPipe = pipes[(int)RedirectionStream.Information];
+                    break;
+                case RedirectionStream.Output:
+                    funcContext._outputPipe = pipes[(int)RedirectionStream.Output];
+                    break;
+                case RedirectionStream.Error:
+                    context.ShellFunctionErrorOutputPipe = pipes[(int)FromStream];
+                    break;
+                case RedirectionStream.Warning:
+                    context.ExpressionWarningOutputPipe = pipes[(int)FromStream];
+                    break;
+                case RedirectionStream.Verbose:
+                    context.ExpressionVerboseOutputPipe = pipes[(int)FromStream];
+                    break;
+                case RedirectionStream.Debug:
+                    context.ExpressionDebugOutputPipe = pipes[(int)FromStream];
+                    break;
+                case RedirectionStream.Information:
+                    context.ExpressionInformationOutputPipe = pipes[(int)FromStream];
+                    break;
             }
         }
     }
 
-    class MergingRedirection : CommandRedirection
+    internal class MergingRedirection : CommandRedirection
     {
         internal MergingRedirection(RedirectionStream from, RedirectionStream to)
             : base(from)
@@ -761,7 +760,6 @@ namespace System.Management.Automation
                 throw InterpreterError.NewInterpreterException(to, typeof(ArgumentException),
                                                null, "RedirectionStreamCanOnlyMergeToOutputStream",
                                                ParserStrings.RedirectionStreamCanOnlyMergeToOutputStream);
-  
             }
 
             //this.ToStream = to;
@@ -869,7 +867,7 @@ namespace System.Management.Automation
         }
     }
 
-    class FileRedirection : CommandRedirection, IDisposable
+    internal class FileRedirection : CommandRedirection, IDisposable
     {
         internal FileRedirection(RedirectionStream from, bool appending, string file)
             : base(from)
@@ -899,49 +897,49 @@ namespace System.Management.Automation
 
             switch (FromStream)
             {
-            case RedirectionStream.All:
-                // Since a temp output pipe is going to be used, we should pass along the error and warning variable list.
-                // Normally, context.CurrentCommandProcessor will not be null. But in legacy DRTs from ParserTest.cs, 
-                // a scriptblock may be invoked through 'DoInvokeReturnAsIs' using .NET reflection. In that case,
-                // context.CurrentCommandProcessor will be null. We don't try passing along variable lists in such case.
-                if (context.CurrentCommandProcessor != null)
-                {
-                    context.CurrentCommandProcessor.CommandRuntime.
-                        OutputPipe.SetVariableListForTemporaryPipe(pipe);
-                }
+                case RedirectionStream.All:
+                    // Since a temp output pipe is going to be used, we should pass along the error and warning variable list.
+                    // Normally, context.CurrentCommandProcessor will not be null. But in legacy DRTs from ParserTest.cs, 
+                    // a scriptblock may be invoked through 'DoInvokeReturnAsIs' using .NET reflection. In that case,
+                    // context.CurrentCommandProcessor will be null. We don't try passing along variable lists in such case.
+                    if (context.CurrentCommandProcessor != null)
+                    {
+                        context.CurrentCommandProcessor.CommandRuntime.
+                            OutputPipe.SetVariableListForTemporaryPipe(pipe);
+                    }
 
-                commandProcessor.CommandRuntime.OutputPipe = pipe;
-                commandProcessor.CommandRuntime.ErrorOutputPipe = pipe;
-                commandProcessor.CommandRuntime.WarningOutputPipe = pipe;
-                commandProcessor.CommandRuntime.VerboseOutputPipe = pipe;
-                commandProcessor.CommandRuntime.DebugOutputPipe = pipe;
-                commandProcessor.CommandRuntime.InformationOutputPipe = pipe;
-                break;
-            case RedirectionStream.Output:
-                // Since a temp output pipe is going to be used, we should pass along the error and warning variable list.
-                if (context.CurrentCommandProcessor != null)
-                {
-                    context.CurrentCommandProcessor.CommandRuntime.
-                        OutputPipe.SetVariableListForTemporaryPipe(pipe);
-                }
+                    commandProcessor.CommandRuntime.OutputPipe = pipe;
+                    commandProcessor.CommandRuntime.ErrorOutputPipe = pipe;
+                    commandProcessor.CommandRuntime.WarningOutputPipe = pipe;
+                    commandProcessor.CommandRuntime.VerboseOutputPipe = pipe;
+                    commandProcessor.CommandRuntime.DebugOutputPipe = pipe;
+                    commandProcessor.CommandRuntime.InformationOutputPipe = pipe;
+                    break;
+                case RedirectionStream.Output:
+                    // Since a temp output pipe is going to be used, we should pass along the error and warning variable list.
+                    if (context.CurrentCommandProcessor != null)
+                    {
+                        context.CurrentCommandProcessor.CommandRuntime.
+                            OutputPipe.SetVariableListForTemporaryPipe(pipe);
+                    }
 
-                commandProcessor.CommandRuntime.OutputPipe = pipe;
-                break;
-            case RedirectionStream.Error:
-                commandProcessor.CommandRuntime.ErrorOutputPipe = pipe;
-                break;
-            case RedirectionStream.Warning:
-                commandProcessor.CommandRuntime.WarningOutputPipe = pipe;
-                break;
-            case RedirectionStream.Verbose:
-                commandProcessor.CommandRuntime.VerboseOutputPipe = pipe;
-                break;
-            case RedirectionStream.Debug:
-                commandProcessor.CommandRuntime.DebugOutputPipe = pipe;
-                break;
-            case RedirectionStream.Information:
-                commandProcessor.CommandRuntime.InformationOutputPipe = pipe;
-                break;
+                    commandProcessor.CommandRuntime.OutputPipe = pipe;
+                    break;
+                case RedirectionStream.Error:
+                    commandProcessor.CommandRuntime.ErrorOutputPipe = pipe;
+                    break;
+                case RedirectionStream.Warning:
+                    commandProcessor.CommandRuntime.WarningOutputPipe = pipe;
+                    break;
+                case RedirectionStream.Verbose:
+                    commandProcessor.CommandRuntime.VerboseOutputPipe = pipe;
+                    break;
+                case RedirectionStream.Debug:
+                    commandProcessor.CommandRuntime.DebugOutputPipe = pipe;
+                    break;
+                case RedirectionStream.Information:
+                    commandProcessor.CommandRuntime.InformationOutputPipe = pipe;
+                    break;
             }
         }
 
@@ -957,49 +955,49 @@ namespace System.Management.Automation
 
             switch (FromStream)
             {
-            case RedirectionStream.All:
-                oldPipes[(int)RedirectionStream.Output] = funcContext._outputPipe;
-                oldPipes[(int)RedirectionStream.Error] = context.ShellFunctionErrorOutputPipe;
-                oldPipes[(int)RedirectionStream.Warning] = context.ExpressionWarningOutputPipe;
-                oldPipes[(int)RedirectionStream.Verbose] = context.ExpressionVerboseOutputPipe;
-                oldPipes[(int)RedirectionStream.Debug] = context.ExpressionDebugOutputPipe;
-                oldPipes[(int)RedirectionStream.Information] = context.ExpressionInformationOutputPipe;
+                case RedirectionStream.All:
+                    oldPipes[(int)RedirectionStream.Output] = funcContext._outputPipe;
+                    oldPipes[(int)RedirectionStream.Error] = context.ShellFunctionErrorOutputPipe;
+                    oldPipes[(int)RedirectionStream.Warning] = context.ExpressionWarningOutputPipe;
+                    oldPipes[(int)RedirectionStream.Verbose] = context.ExpressionVerboseOutputPipe;
+                    oldPipes[(int)RedirectionStream.Debug] = context.ExpressionDebugOutputPipe;
+                    oldPipes[(int)RedirectionStream.Information] = context.ExpressionInformationOutputPipe;
 
-                // Since a temp output pipe is going to be used, we should pass along the error and warning variable list.
-                funcContext._outputPipe.SetVariableListForTemporaryPipe(pipe);
-                funcContext._outputPipe = pipe;                
-                context.ShellFunctionErrorOutputPipe = pipe;
-                context.ExpressionWarningOutputPipe = pipe;
-                context.ExpressionVerboseOutputPipe = pipe;
-                context.ExpressionDebugOutputPipe = pipe;
-                context.ExpressionInformationOutputPipe = pipe;
-                break;
-            case RedirectionStream.Output:
-                oldPipes[(int)RedirectionStream.Output] = funcContext._outputPipe;
-                // Since a temp output pipe is going to be used, we should pass along the error and warning variable list.
-                funcContext._outputPipe.SetVariableListForTemporaryPipe(pipe);
-                funcContext._outputPipe = pipe;                
-                break;
-            case RedirectionStream.Error:
-                oldPipes[(int)FromStream] = context.ShellFunctionErrorOutputPipe;
-                context.ShellFunctionErrorOutputPipe = pipe;
-                break;
-            case RedirectionStream.Warning:
-                oldPipes[(int)FromStream] = context.ExpressionWarningOutputPipe;
-                context.ExpressionWarningOutputPipe = pipe;
-                break;
-            case RedirectionStream.Verbose:
-                oldPipes[(int)FromStream] = context.ExpressionVerboseOutputPipe;
-                context.ExpressionVerboseOutputPipe = pipe;
-                break;
-            case RedirectionStream.Debug:
-                oldPipes[(int)FromStream] = context.ExpressionDebugOutputPipe;
-                context.ExpressionDebugOutputPipe = pipe;
-                break;
-            case RedirectionStream.Information:
-                oldPipes[(int)FromStream] = context.ExpressionInformationOutputPipe;
-                context.ExpressionInformationOutputPipe = pipe;
-                break;
+                    // Since a temp output pipe is going to be used, we should pass along the error and warning variable list.
+                    funcContext._outputPipe.SetVariableListForTemporaryPipe(pipe);
+                    funcContext._outputPipe = pipe;
+                    context.ShellFunctionErrorOutputPipe = pipe;
+                    context.ExpressionWarningOutputPipe = pipe;
+                    context.ExpressionVerboseOutputPipe = pipe;
+                    context.ExpressionDebugOutputPipe = pipe;
+                    context.ExpressionInformationOutputPipe = pipe;
+                    break;
+                case RedirectionStream.Output:
+                    oldPipes[(int)RedirectionStream.Output] = funcContext._outputPipe;
+                    // Since a temp output pipe is going to be used, we should pass along the error and warning variable list.
+                    funcContext._outputPipe.SetVariableListForTemporaryPipe(pipe);
+                    funcContext._outputPipe = pipe;
+                    break;
+                case RedirectionStream.Error:
+                    oldPipes[(int)FromStream] = context.ShellFunctionErrorOutputPipe;
+                    context.ShellFunctionErrorOutputPipe = pipe;
+                    break;
+                case RedirectionStream.Warning:
+                    oldPipes[(int)FromStream] = context.ExpressionWarningOutputPipe;
+                    context.ExpressionWarningOutputPipe = pipe;
+                    break;
+                case RedirectionStream.Verbose:
+                    oldPipes[(int)FromStream] = context.ExpressionVerboseOutputPipe;
+                    context.ExpressionVerboseOutputPipe = pipe;
+                    break;
+                case RedirectionStream.Debug:
+                    oldPipes[(int)FromStream] = context.ExpressionDebugOutputPipe;
+                    context.ExpressionDebugOutputPipe = pipe;
+                    break;
+                case RedirectionStream.Information:
+                    oldPipes[(int)FromStream] = context.ExpressionInformationOutputPipe;
+                    context.ExpressionInformationOutputPipe = pipe;
+                    break;
             }
             return oldPipes;
         }
@@ -1008,7 +1006,7 @@ namespace System.Management.Automation
         {
             if (String.IsNullOrWhiteSpace(File))
             {
-                return new Pipe {NullPipe = true};
+                return new Pipe { NullPipe = true };
             }
 
             CommandProcessorBase commandProcessor = context.CreateCommand("out-file", false);
@@ -1089,7 +1087,7 @@ namespace System.Management.Automation
 
     #endregion Redirections
 
-    static class FunctionOps
+    internal static class FunctionOps
     {
         internal static void DefineFunction(ExecutionContext context,
                                             FunctionDefinitionAst functionDefinitionAst,
@@ -1164,7 +1162,7 @@ namespace System.Management.Automation
 
         internal ScriptBlockExpressionWrapper(IParameterMetadataProvider ast)
         {
-            this._ast = ast;
+            _ast = ast;
         }
 
         internal ScriptBlock GetScriptBlock(ExecutionContext context, bool isFilter)
@@ -1180,7 +1178,7 @@ namespace System.Management.Automation
         }
     }
 
-    static class HashtableOps
+    internal static class HashtableOps
     {
         internal static void AddKeyValuePair(IDictionary hashtable, object key, object value, IScriptExtent errorExtent)
         {
@@ -1238,9 +1236,9 @@ namespace System.Management.Automation
         }
     }
 
-    static class ExceptionHandlingOps
+    internal static class ExceptionHandlingOps
     {
-        internal class CatchAll {}
+        internal class CatchAll { }
 
         internal static int FindMatchingHandler(MutableTuple tuple, RuntimeException rte, Type[] types, ExecutionContext context)
         {
@@ -1491,18 +1489,18 @@ namespace System.Management.Automation
                         newScope.LocalsTuple = locals;
 
                         var trapFuncContext = new FunctionContext
-                                              {
-                                                  _file = funcContext._file,
-                                                  _scriptBlock = funcContext._scriptBlock,
-                                                  _sequencePoints = funcContext._sequencePoints,
-                                                  _debuggerHidden = funcContext._debuggerHidden,
-                                                  _debuggerStepThrough = funcContext._debuggerStepThrough,
-                                                  _executionContext = funcContext._executionContext,
-                                                  _boundBreakpoints = funcContext._boundBreakpoints,                                                  
-                                                  _outputPipe = funcContext._outputPipe,
-                                                  _breakPoints = funcContext._breakPoints,
-                                                  _localsTuple = locals,
-                                              };
+                        {
+                            _file = funcContext._file,
+                            _scriptBlock = funcContext._scriptBlock,
+                            _sequencePoints = funcContext._sequencePoints,
+                            _debuggerHidden = funcContext._debuggerHidden,
+                            _debuggerStepThrough = funcContext._debuggerStepThrough,
+                            _executionContext = funcContext._executionContext,
+                            _boundBreakpoints = funcContext._boundBreakpoints,
+                            _outputPipe = funcContext._outputPipe,
+                            _breakPoints = funcContext._breakPoints,
+                            _localsTuple = locals,
+                        };
 
                         handlers[handler](trapFuncContext);
                     }
@@ -1763,7 +1761,7 @@ namespace System.Management.Automation
             // Win8: 178063. Allow flow control related exceptions for PowerShell hosting API
             if ((exception is FlowControlException ||
                 exception is ScriptCallDepthException ||
-                exception is PipelineStoppedException) && 
+                exception is PipelineStoppedException) &&
                 ((memberInfo == null) || ((memberInfo.DeclaringType != typeof(PowerShell)) && (memberInfo.DeclaringType != typeof(Pipeline)))))
             {
                 return;
@@ -1811,7 +1809,7 @@ namespace System.Management.Automation
         }
     }
 
-    static class TypeOps
+    internal static class TypeOps
     {
         internal static Type ResolveTypeName(ITypeName typeName, IScriptExtent errorPos)
         {
@@ -1822,14 +1820,14 @@ namespace System.Management.Automation
             {
                 if (exception != null)
                 {
-                    if (exception is InvalidCastException && 
-                        exception.InnerException != null && 
+                    if (exception is InvalidCastException &&
+                        exception.InnerException != null &&
                         exception.InnerException is TypeResolver.AmbiguousTypeException)
                     {
                         throw exception;
                     }
 
-                    throw InterpreterError.NewInterpreterException(typeName, typeof (RuntimeException), errorPos,
+                    throw InterpreterError.NewInterpreterException(typeName, typeof(RuntimeException), errorPos,
                                                                    "TypeNotFoundWithMessage",
                                                                    ParserStrings.TypeNotFoundWithMessage,
                                                                    typeName.FullName, exception.Message);
@@ -1853,7 +1851,7 @@ namespace System.Management.Automation
                     catch (Exception e)
                     {
                         CommandProcessorBase.CheckForSevereException(e);
-                        throw InterpreterError.NewInterpreterException(typeName, typeof (RuntimeException), errorPos,
+                        throw InterpreterError.NewInterpreterException(typeName, typeof(RuntimeException), errorPos,
                                                                        "TypeNotFoundWithMessage",
                                                                        ParserStrings.TypeNotFoundWithMessage,
                                                                        typeName.FullName, e.Message);
@@ -1867,7 +1865,7 @@ namespace System.Management.Automation
                     ResolveTypeName(arrayTypeName.ElementType, errorPos);
                 }
 
-                throw InterpreterError.NewInterpreterException(typeName, typeof (RuntimeException), errorPos,
+                throw InterpreterError.NewInterpreterException(typeName, typeof(RuntimeException), errorPos,
                                                                "TypeNotFound", ParserStrings.TypeNotFound,
                                                                typeName.FullName);
             }
@@ -2045,7 +2043,7 @@ namespace System.Management.Automation
         }
     }
 
-    static class SwitchOps
+    internal static class SwitchOps
     {
         internal static bool ConditionSatisfiedWildcard(bool caseSensitive,
                                                         object condition,
@@ -2198,7 +2196,6 @@ namespace System.Management.Automation
                     rte.ErrorRecord.SetInvocationInfo(new InvocationInfo(null, errorExtent, context));
                 throw;
             }
-
         }
     }
 
@@ -2233,7 +2230,7 @@ namespace System.Management.Automation
         Split = 5,
     }
 
-    static class EnumerableOps
+    internal static class EnumerableOps
     {
         /// <summary>
         /// Implements the Where(expression) operation on collections
@@ -2357,7 +2354,7 @@ namespace System.Management.Automation
             {
                 notMatched = new Collection<PSObject>();
             }
-            var resultCollection  = new List<object>();
+            var resultCollection = new List<object>();
             Pipe outputPipe = new Pipe(resultCollection);
             bool returnTheRest = false;
 
@@ -2466,7 +2463,7 @@ namespace System.Management.Automation
                 }
                 return new System.Object[] { matches, notMatched };
             }
-           
+
             return matches;
         }
 
@@ -2638,7 +2635,7 @@ namespace System.Management.Automation
                                     nullRefException.GetType().Name,
                                     nullRefException,
                                     ExtendedTypeSystem.MethodInvocationException,
-                                    name, arguments.Length, nullRefException.Message); 
+                                    name, arguments.Length, nullRefException.Message);
                             }
                             continue;
                         }
@@ -2665,9 +2662,8 @@ namespace System.Management.Automation
                                 else
                                 {
                                     throw InterpreterError.NewInterpreterException(ie, typeof(NullReferenceException), null, "ForEachNonexistentMemberReference",
-                                        ParserStrings.ForEachNonexistentMemberReference, name); 
+                                        ParserStrings.ForEachNonexistentMemberReference, name);
                                 }
-
                             }
 
                             var method = member as PSMethodInfo;
@@ -2701,19 +2697,19 @@ namespace System.Management.Automation
                                 switch (numArgs)
                                 {
                                     case 0:
-                                    // No args: do a get
-                                    result.Add(PSObject.AsPSObject(property.Value));
-                                    break;
+                                        // No args: do a get
+                                        result.Add(PSObject.AsPSObject(property.Value));
+                                        break;
 
                                     case 1:
-                                    // 1 arg: set as a scalar
-                                    property.Value = arguments[0];
-                                    break;
+                                        // 1 arg: set as a scalar
+                                        property.Value = arguments[0];
+                                        break;
 
                                     default:
-                                    // more than one arg, just assign as is
-                                    property.Value = arguments;
-                                    break;
+                                        // more than one arg, just assign as is
+                                        property.Value = arguments;
+                                        break;
                                 }
                             }
                         }
@@ -2759,12 +2755,11 @@ namespace System.Management.Automation
                         result.Add(o);
                     }
                 }
-
             }
             else
             {
                 result.Add(o);
-            }            
+            }
         }
 
         private static void PropertyGetterWorker(CallSite<Func<CallSite, object, object>> getMemberBinderSite,
@@ -2872,7 +2867,7 @@ namespace System.Management.Automation
                     // will get wrapped in a new TargetInvocationException.
                     throw tie.InnerException;
                 }
-            }            
+            }
         }
 
         // Call some method(s) named by binder on all objects from enumerator - applied recursively if an object is itself enumerable
@@ -2978,33 +2973,33 @@ namespace System.Management.Automation
             internal static IEnumerator Create(object obj)
             {
                 return new NonEnumerableObjectEnumerator
-                       {
-                           obj = obj,
-                           realEnumerator = (new[] {obj}).GetEnumerator()
-                       };
+                {
+                    _obj = obj,
+                    _realEnumerator = (new[] { obj }).GetEnumerator()
+                };
             }
 
-            private object obj;
-            private IEnumerator realEnumerator;
+            private object _obj;
+            private IEnumerator _realEnumerator;
 
             bool IEnumerator.MoveNext()
             {
-                return realEnumerator.MoveNext();
+                return _realEnumerator.MoveNext();
             }
 
             void IEnumerator.Reset()
             {
-                realEnumerator.Reset();
+                _realEnumerator.Reset();
             }
 
             object IEnumerator.Current
             {
-                get { return realEnumerator.Current; }
+                get { return _realEnumerator.Current; }
             }
 
             internal object GetNonEnumerableObject()
             {
-                return obj;
+                return _obj;
             }
         }
 
@@ -3194,7 +3189,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return resultArray.ToArray();            
+            return resultArray.ToArray();
         }
 
         internal static void WriteEnumerableToPipe(IEnumerator enumerator, Pipe pipe, ExecutionContext context, bool dispose)

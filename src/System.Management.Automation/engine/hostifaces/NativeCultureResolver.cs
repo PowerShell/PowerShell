@@ -39,10 +39,10 @@ namespace Microsoft.PowerShell
     /// </summary>
     internal class VistaCultureInfo : CultureInfo
     {
-        private string[] m_fallbacks;
+        private string[] _fallbacks;
         // Cache the immediate parent and immediate fallback
-        private VistaCultureInfo parentCI = null;
-        private object syncObject = new object();
+        private VistaCultureInfo _parentCI = null;
+        private object _syncObject = new object();
 
         /// <summary>
         /// Constructs a CultureInfo that keeps track of fallbacks
@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell
             string[] fallbacks)
             : base(name)
         {
-            m_fallbacks = fallbacks;
+            _fallbacks = fallbacks;
         }
 
         /// <summary>
@@ -76,21 +76,21 @@ namespace Microsoft.PowerShell
                     return ImmediateParent;
                 }
 
-                
+
                 // Check whether we have any fallback specified
                 // MUI_MERGE_SYSTEM_FALLBACK | MUI_MERGE_USER_FALLBACK
                 // returns fallback cultures (specified by the user)
                 // and also adds neutral culture where appropriate.
                 // Ex: ja-jp ja en-us en 
-                while((null != m_fallbacks) && (m_fallbacks.Length > 0))
+                while ((null != _fallbacks) && (_fallbacks.Length > 0))
                 {
-                    string fallback = m_fallbacks[0];
+                    string fallback = _fallbacks[0];
                     string[] fallbacksForParent = null;
 
-                    if (m_fallbacks.Length > 1)
+                    if (_fallbacks.Length > 1)
                     {
-                        fallbacksForParent = new string[m_fallbacks.Length - 1];
-                        Array.Copy(m_fallbacks, 1, fallbacksForParent, 0, m_fallbacks.Length - 1);
+                        fallbacksForParent = new string[_fallbacks.Length - 1];
+                        Array.Copy(_fallbacks, 1, fallbacksForParent, 0, _fallbacks.Length - 1);
                     }
 
                     try
@@ -101,9 +101,9 @@ namespace Microsoft.PowerShell
                     // the next culture in the list.
                     catch (ArgumentException)
                     {
-                        m_fallbacks = fallbacksForParent;
+                        _fallbacks = fallbacksForParent;
                     }
-                } 
+                }
 
                 //no fallbacks..just return base parent
                 return base.Parent;
@@ -118,21 +118,21 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (null == parentCI)
+                if (null == _parentCI)
                 {
-                    lock (syncObject)
+                    lock (_syncObject)
                     {
-                        if (null == parentCI)
+                        if (null == _parentCI)
                         {
                             string parentCulture = base.Parent.Name;
                             // remove the parentCulture from the m_fallbacks list.
                             // ie., remove duplicates from the parent heirarchy.
                             string[] fallbacksForTheParent = null;
-                            if (null != m_fallbacks)
+                            if (null != _fallbacks)
                             {
-                                fallbacksForTheParent = new string[m_fallbacks.Length];
+                                fallbacksForTheParent = new string[_fallbacks.Length];
                                 int currentIndex = 0;
-                                foreach (string culture in m_fallbacks)
+                                foreach (string culture in _fallbacks)
                                 {
                                     if (!parentCulture.Equals(culture, StringComparison.OrdinalIgnoreCase))
                                     {
@@ -143,17 +143,17 @@ namespace Microsoft.PowerShell
 
                                 // There is atlease 1 duplicate in m_fallbacks which was not added to
                                 // fallbacksForTheParent array. Resize the array to take care of  this.
-                                if (m_fallbacks.Length != currentIndex)
+                                if (_fallbacks.Length != currentIndex)
                                 {
                                     Array.Resize<string>(ref fallbacksForTheParent, currentIndex);
                                 }
                             }
-                            parentCI = new VistaCultureInfo(parentCulture, fallbacksForTheParent);
+                            _parentCI = new VistaCultureInfo(parentCulture, fallbacksForTheParent);
                         }
                     }
                 }
 
-                return parentCI;
+                return _parentCI;
             }
         }
 
@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell
         /// <returns>Cloned custom CultureInfo</returns>
         public override object Clone()
         {
-            return new VistaCultureInfo(base.Name, m_fallbacks);
+            return new VistaCultureInfo(base.Name, _fallbacks);
         }
     }
 
@@ -172,9 +172,9 @@ namespace Microsoft.PowerShell
     /// </summary>
     internal static class NativeCultureResolver
     {
-        private static CultureInfo m_uiCulture = null;
-        private static CultureInfo m_Culture = null;
-        private static object m_syncObject = new object();
+        private static CultureInfo s_uiCulture = null;
+        private static CultureInfo s_culture = null;
+        private static object s_syncObject = new object();
 
         /// <summary>
         /// Gets the UICulture to be used by console host
@@ -183,18 +183,18 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (null == m_uiCulture)
+                if (null == s_uiCulture)
                 {
-                    lock (m_syncObject)
+                    lock (s_syncObject)
                     {
-                        if (null == m_uiCulture)
+                        if (null == s_uiCulture)
                         {
-                            m_uiCulture = GetUICulture();
+                            s_uiCulture = GetUICulture();
                         }
                     }
                 }
 
-                return (CultureInfo)m_uiCulture.Clone();
+                return (CultureInfo)s_uiCulture.Clone();
             }
         }
 
@@ -202,18 +202,18 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                if (null == m_Culture)
+                if (null == s_culture)
                 {
-                    lock (m_syncObject)
+                    lock (s_syncObject)
                     {
-                        if (null == m_Culture)
+                        if (null == s_culture)
                         {
-                            m_Culture = GetCulture();
+                            s_culture = GetCulture();
                         }
                     }
                 }
 
-                return m_Culture;
+                return s_culture;
             }
         }
 
@@ -231,8 +231,8 @@ namespace Microsoft.PowerShell
         {
             if (!IsVistaAndLater())
             {
-                m_uiCulture = EmulateDownLevel();
-                return m_uiCulture;
+                s_uiCulture = EmulateDownLevel();
+                return s_uiCulture;
             }
 
             // We are running on Vista
@@ -252,16 +252,16 @@ namespace Microsoft.PowerShell
                         Array.Copy(fallbacks, 1, fallbacksForParent, 0, fallbacks.Length - 1);
                     }
 
-                    m_uiCulture = new VistaCultureInfo(fallback, fallbacksForParent);
-                    return m_uiCulture;
+                    s_uiCulture = new VistaCultureInfo(fallback, fallbacksForParent);
+                    return s_uiCulture;
                 }
                 catch (ArgumentException)
                 {
                 }
             }
 
-            m_uiCulture = EmulateDownLevel();
-            return m_uiCulture;
+            s_uiCulture = EmulateDownLevel();
+            return s_uiCulture;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("GoldMan", "#pw17903:UseOfLCID", Justification = "In XP and below GetUserDefaultLocaleName is not available")]
@@ -301,7 +301,6 @@ namespace Microsoft.PowerShell
                     returnValue = CultureInfo.CreateSpecificCulture(
                         returnValue.GetConsoleFallbackUICulture().Name);
                 }
-
             }
             catch (ArgumentException)
             {
@@ -378,7 +377,7 @@ namespace Microsoft.PowerShell
                 // set Console CodePage filter.
                 // The MSDN documentation does not call this out explicitly. Opened
                 // Bug 950 (Windows Developer Content) to track this.
-                if (!SetThreadPreferredUILanguages(MUI_CONSOLE_FILTER, null, IntPtr.Zero))
+                if (!SetThreadPreferredUILanguages(s_MUI_CONSOLE_FILTER, null, IntPtr.Zero))
                 {
                     return returnval;
                 }
@@ -390,7 +389,7 @@ namespace Microsoft.PowerShell
             // and also adds neutral culture where appropriate.
             // Ex: ja-jp ja en-us en 
             if (!GetThreadPreferredUILanguages(
-                MUI_LANGUAGE_NAME | MUI_MERGE_SYSTEM_FALLBACK | MUI_MERGE_USER_FALLBACK,
+                s_MUI_LANGUAGE_NAME | s_MUI_MERGE_SYSTEM_FALLBACK | s_MUI_MERGE_USER_FALLBACK,
                 out numberLangs,
                 null,
                 out bufferSize))
@@ -406,7 +405,7 @@ namespace Microsoft.PowerShell
 
             // Now get the actual value
             if (!GetThreadPreferredUILanguages(
-                MUI_LANGUAGE_NAME | MUI_MERGE_SYSTEM_FALLBACK | MUI_MERGE_USER_FALLBACK,
+                s_MUI_LANGUAGE_NAME | s_MUI_MERGE_SYSTEM_FALLBACK | s_MUI_MERGE_USER_FALLBACK,
                 out numberLangs,
                 langBufferPtr, // Pointer to a buffer in which this function retrieves an ordered, null-delimited list.
                 out bufferSize))
@@ -487,10 +486,10 @@ namespace Microsoft.PowerShell
         internal static extern Int16 SetThreadUILanguage(Int16 langId);
 
         //private static int MUI_LANGUAGE_ID = 0x4;
-        private static int MUI_LANGUAGE_NAME = 0x8;
-        private static int MUI_CONSOLE_FILTER = 0x100;
-        private static int MUI_MERGE_USER_FALLBACK = 0x20;
-        private static int MUI_MERGE_SYSTEM_FALLBACK =  0x10;
+        private static int s_MUI_LANGUAGE_NAME = 0x8;
+        private static int s_MUI_CONSOLE_FILTER = 0x100;
+        private static int s_MUI_MERGE_USER_FALLBACK = 0x20;
+        private static int s_MUI_MERGE_SYSTEM_FALLBACK = 0x10;
 
         #endregion
     }

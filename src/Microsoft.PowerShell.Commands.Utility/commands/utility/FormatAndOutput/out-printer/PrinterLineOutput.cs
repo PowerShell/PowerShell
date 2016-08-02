@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.IO;
 using System.Text;
@@ -15,7 +16,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal sealed class PrinterLineOutput : LineOutput
     {
-
         #region LineOutput implementation
 
         /// <summary>
@@ -26,10 +26,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// do the printing on playback
         /// </summary>
-        internal override void ExecuteBufferPlayBack (DoPlayBackCall playback) 
+        internal override void ExecuteBufferPlayBack(DoPlayBackCall playback)
         {
-            this.playbackCall = playback;
-            DoPrint ();
+            _playbackCall = playback;
+            DoPrint();
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             get
             {
                 CheckStopProcessing();
-                return this.deviceColumns;
+                return _deviceColumns;
             }
         }
 
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             get
             {
                 CheckStopProcessing();
-                return this.deviceRows;
+                return _deviceRows;
             }
         }
 
@@ -62,13 +62,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// write a line to the output device
         /// </summary>
         /// <param name="s">line to write</param>
-        internal override void WriteLine (string s)
+        internal override void WriteLine(string s)
         {
             CheckStopProcessing();
             // delegate the action to the helper,
             // that will properly break the string into
             // screen lines
-            this.writeLineHelper.WriteLine (s, this.ColumnNumber);
+            _writeLineHelper.WriteLine(s, this.ColumnNumber);
         }
         #endregion
 
@@ -80,31 +80,31 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // This default must be loaded from a resource file as different
             // cultures will have different defaults and the localizer would
             // know the default for different cultures.
-            DefaultPrintFontName = OutPrinterDisplayStrings.DefaultPrintFontName;
+            s_defaultPrintFontName = OutPrinterDisplayStrings.DefaultPrintFontName;
         }
 
         /// <summary>
         /// constructor for the class
         /// </summary>
         /// <param name="printerName">name of printer, if null use default printer</param>
-        internal PrinterLineOutput (string printerName)
+        internal PrinterLineOutput(string printerName)
         {
-            this.printerName = printerName;
+            _printerName = printerName;
 
             // instantiate the helper to do the line processing when LineOutput.WriteXXX() is called
-            WriteLineHelper.WriteCallback wl = new WriteLineHelper.WriteCallback (this.OnWriteLine);
-            WriteLineHelper.WriteCallback w = new WriteLineHelper.WriteCallback (this.OnWrite);
+            WriteLineHelper.WriteCallback wl = new WriteLineHelper.WriteCallback(this.OnWriteLine);
+            WriteLineHelper.WriteCallback w = new WriteLineHelper.WriteCallback(this.OnWrite);
 
-            this.writeLineHelper = new WriteLineHelper (true, wl, w, this.DisplayCells);
+            _writeLineHelper = new WriteLineHelper(true, wl, w, this.DisplayCells);
         }
 
         /// <summary>
         /// callback to be called when IConsole.WriteLine() is called by WriteLineHelper 
         /// </summary>
         /// <param name="s">string to write</param>
-        private void OnWriteLine (string s)
+        private void OnWriteLine(string s)
         {
-            this.lines.Enqueue (s);
+            _lines.Enqueue(s);
         }
 
         /// <summary>
@@ -113,39 +113,39 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// is the same as the width of the screen buffer
         /// </summary>
         /// <param name="s">string to write</param>
-        private void OnWrite (string s)
+        private void OnWrite(string s)
         {
-            this.lines.Enqueue (s);
+            _lines.Enqueue(s);
         }
 
         /// <summary>
         /// do the printing
         /// </summary>
-        private void DoPrint ()
+        private void DoPrint()
         {
             try
             {
                 // create a new print document object and set the printer name, if available
-                PrintDocument pd = new PrintDocument ();
+                PrintDocument pd = new PrintDocument();
 
-                if (!string.IsNullOrEmpty (this.printerName))
+                if (!string.IsNullOrEmpty(_printerName))
                 {
-                    pd.PrinterSettings.PrinterName = this.printerName;
+                    pd.PrinterSettings.PrinterName = _printerName;
                 }
 
                 // set up the callaback mechanism
-                pd.PrintPage += new PrintPageEventHandler (this.pd_PrintPage);
+                pd.PrintPage += new PrintPageEventHandler(this.pd_PrintPage);
 
                 // start printing
-                pd.Print ();
+                pd.Print();
             }
             finally
             {
                 // make sure we do not leak the font
-                if (this.printFont != null)
+                if (_printFont != null)
                 {
-                    this.printFont.Dispose ();
-                    this.printFont = null;
+                    _printFont.Dispose();
+                    _printFont = null;
                 }
             }
         }
@@ -156,26 +156,26 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Else, the a new object is created and verified
         /// </summary>
         /// <param name="g">GDI+ graphics object needed for verification</param>
-        private void CreateFont (Graphics g)
+        private void CreateFont(Graphics g)
         {
-            if (this.printFont != null)
+            if (_printFont != null)
                 return;
 
             // create the font
-            
+
             // do we have a specified font?
-            if (string.IsNullOrEmpty (this.printFontName))
+            if (string.IsNullOrEmpty(_printFontName))
             {
-                this.printFontName = DefaultPrintFontName;
+                _printFontName = s_defaultPrintFontName;
             }
 
-            if (this.printFontSize <= 0)
+            if (_printFontSize <= 0)
             {
-                this.printFontSize = DefaultPrintFontSize;
+                _printFontSize = DefaultPrintFontSize;
             }
 
-            this.printFont = new Font (this.printFontName, this.printFontSize);
-            VerifyFont (g);
+            _printFont = new Font(_printFontName, _printFontSize);
+            VerifyFont(g);
         }
 
         /// <summary>
@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// it reverts to the default font
         /// </summary>
         /// <param name="g">GDI+ graphics object needed for verification</param>
-        private void VerifyFont (Graphics g)
+        private void VerifyFont(Graphics g)
         {
             // check if the font is fixed pitch
             // HEURISTICS:
@@ -191,9 +191,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // one made of "narrow" ones. If they are the same length, we assume that
             // the font is fixed pitch.
             string large = "ABCDEF";
-            float wLarge = g.MeasureString (large, this.printFont).Width / large.Length;
+            float wLarge = g.MeasureString(large, _printFont).Width / large.Length;
             string narrow = ".;'}l|";
-            float wNarrow = g.MeasureString (narrow, this.printFont).Width / narrow.Length;
+            float wNarrow = g.MeasureString(narrow, _printFont).Width / narrow.Length;
 
             if (Math.Abs((float)(wLarge - wNarrow)) < 0.001F)
             {
@@ -202,8 +202,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // just get back to the default, since it's not fixed pitch
-            this.printFont.Dispose ();
-            this.printFont = new Font (DefaultPrintFontName, DefaultPrintFontSize);
+            _printFont.Dispose();
+            _printFont = new Font(s_defaultPrintFontName, DefaultPrintFontSize);
         }
 
         /// <summary>
@@ -211,86 +211,86 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="sender">sender, not used</param>
         /// <param name="ev">print page event</param>
-        private void pd_PrintPage (object sender, PrintPageEventArgs ev)
+        private void pd_PrintPage(object sender, PrintPageEventArgs ev)
         {
             float yPos = 0; // GDI+ coordinate down the page
             int linesPrinted = 0; // linesPrinted
             float leftMargin = ev.MarginBounds.Left;
             float topMargin = ev.MarginBounds.Top;
 
-            CreateFont (ev.Graphics);
+            CreateFont(ev.Graphics);
 
             // compute the height of a line of text
-            float lineHeight = this.printFont.GetHeight (ev.Graphics);
+            float lineHeight = _printFont.GetHeight(ev.Graphics);
 
             // Work out the number of lines per page
             // Use the MarginBounds on the event to do this
-            float linesPerPage = ev.MarginBounds.Height / this.printFont.GetHeight (ev.Graphics);
+            float linesPerPage = ev.MarginBounds.Height / _printFont.GetHeight(ev.Graphics);
 
-            if (!this.printingInitalized)
+            if (!_printingInitalized)
             {
                 // on the first page we have to initialize the metrics for LineOutput
 
                 // work out the number of columns per page assuming fixed pitch font
                 string s = "ABCDEF";
-                float w = ev.Graphics.MeasureString (s, printFont).Width / s.Length;
+                float w = ev.Graphics.MeasureString(s, _printFont).Width / s.Length;
                 float columnsPerPage = ev.MarginBounds.Width / w;
 
-                this.printingInitalized = true;
-                this.deviceRows = (int)linesPerPage;
-                this.deviceColumns = (int)columnsPerPage;
+                _printingInitalized = true;
+                _deviceRows = (int)linesPerPage;
+                _deviceColumns = (int)columnsPerPage;
 
                 // now that we initialized the column and row count for the LineOutput
                 // interface we can tell the outputter to playback from cache to do the
                 // proper computations of line widths
                 // returning from this call, the string queue on this object is full of
                 // lines of text to print
-                this.playbackCall ();
+                _playbackCall();
             }
 
             // now iterate over the file printing out each line
-            while ((linesPrinted < linesPerPage) && (this.lines.Count > 0))
+            while ((linesPrinted < linesPerPage) && (_lines.Count > 0))
             {
                 // get the string to be printed
-                String line = this.lines.Dequeue ();
+                String line = _lines.Dequeue();
 
                 // compute the Y position where to draw
                 yPos = topMargin + (linesPrinted * lineHeight);
 
                 // do the actual drawing
-                ev.Graphics.DrawString (line, printFont, Brushes.Black, leftMargin, yPos, new StringFormat ());
+                ev.Graphics.DrawString(line, _printFont, Brushes.Black, leftMargin, yPos, new StringFormat());
                 linesPrinted++;
             }
 
             //If we have more lines then print another page
-            ev.HasMorePages = this.lines.Count > 0;
+            ev.HasMorePages = _lines.Count > 0;
         }
 
-       
+
         /// <summary>
         /// flag for one time initialization of the interface (columns, etc.)
         /// </summary>
-        private bool printingInitalized = false;
+        private bool _printingInitalized = false;
 
         /// <summary>
         /// callback to ask the outputter to playback its cache
         /// </summary>
-        private DoPlayBackCall playbackCall;
+        private DoPlayBackCall _playbackCall;
 
         /// <summary>
         /// name of the printer to print to. Null means default printer
         /// </summary>
-        private string printerName = null;
+        private string _printerName = null;
 
         /// <summary>
         /// name of the font to use, if null the default is used
         /// </summary>
-        private string printFontName = null;
+        private string _printFontName = null;
 
         /// <summary>
         /// font size
         /// </summary>
-        private int printFontSize = 0;
+        private int _printFontSize = 0;
 
 
         /// <summary>
@@ -302,32 +302,31 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// cultures will have different defaults and the localizer would
         /// know the default for different cultures.
         /// </remarks>
-        private static readonly string DefaultPrintFontName;
+        private static readonly string s_defaultPrintFontName;
 
         /// <summary>
         /// default size for the default font
         /// </summary>
-        const int DefaultPrintFontSize = 8;
+        private const int DefaultPrintFontSize = 8;
 
         /// <summary>
         /// number of columns on the sheet
         /// </summary>
-        private int deviceColumns = 80;
-        
+        private int _deviceColumns = 80;
+
         // number of rows per sheet
-        private int deviceRows = 40;
+        private int _deviceRows = 40;
 
         /// <summary>
         /// text lines ready to print (after output cache playback)
         /// </summary>
-        private Queue<string> lines = new Queue<string> ();
+        private Queue<string> _lines = new Queue<string>();
 
         /// <summary>
         /// cached font object
         /// </summary>
-        private Font printFont = null;
-        
-        private WriteLineHelper writeLineHelper;
-    }
+        private Font _printFont = null;
 
+        private WriteLineHelper _writeLineHelper;
+    }
 }

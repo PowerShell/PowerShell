@@ -11,7 +11,7 @@ using System.Management.Automation.Runspaces;
 
 namespace System.Management.Automation
 {
-    static class ArrayOps
+    internal static class ArrayOps
     {
         internal static object[] SlicingIndex(object target, object[] indexes, Func<object, object, object> indexer)
         {
@@ -224,7 +224,7 @@ namespace System.Management.Automation
                 "NeedMultidimensionalIndex", ParserStrings.NeedMultidimensionalIndex, reason, array.Rank, msgString);
         }
 
-        private static string IndexStringMessage(object index)
+        internal static string IndexStringMessage(object index)
         {
             // Convert this index into something printable (we hope)...
             string msgString = PSObject.ToString(null, index, ",", null, null, true, true);

@@ -3,6 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 #region Using directives
+
 using System;
 // System.Management.Automation is the namespace which contains the types and
 // methods pertaining to the Microsoft Command Shell
@@ -34,11 +35,11 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public ExecutionPolicyScope Scope
         {
-            get { return executionPolicyScope; }
-            set { executionPolicyScope = value; scopeSpecified = true; }
+            get { return _executionPolicyScope; }
+            set { _executionPolicyScope = value; _scopeSpecified = true; }
         }
-        private ExecutionPolicyScope executionPolicyScope = ExecutionPolicyScope.LocalMachine;
-        private bool scopeSpecified = false;
+        private ExecutionPolicyScope _executionPolicyScope = ExecutionPolicyScope.LocalMachine;
+        private bool _scopeSpecified = false;
 
         /// <summary>
         /// Gets or sets the List parameter, which lists all scopes and their execution
@@ -47,17 +48,17 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = false)]
         public SwitchParameter List
         {
-            get { return list; }
-            set { list = value; }
+            get { return _list; }
+            set { _list = value; }
         }
-        private bool list;
+        private bool _list;
 
         /// <summary>
         /// Outputs the execution policy.
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (list && scopeSpecified)
+            if (_list && _scopeSpecified)
             {
                 string message = ExecutionPolicyCommands.ListAndScopeSpecified;
 
@@ -75,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
 
             string shellId = base.Context.ShellID;
 
-            if (list)
+            if (_list)
             {
                 foreach (ExecutionPolicyScope scope in SecuritySupport.ExecutionPolicyScopePreferences)
                 {
@@ -91,11 +92,10 @@ namespace Microsoft.PowerShell.Commands
 
                     WriteObject(outputObject);
                 }
-
             }
-            else if (scopeSpecified)
+            else if (_scopeSpecified)
             {
-                WriteObject(SecuritySupport.GetExecutionPolicy(shellId, executionPolicyScope));
+                WriteObject(SecuritySupport.GetExecutionPolicy(shellId, _executionPolicyScope));
             }
             else
             {
@@ -122,10 +122,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         public ExecutionPolicy ExecutionPolicy
         {
-            get { return executionPolicy; }
-            set { executionPolicy = value; }
+            get { return _executionPolicy; }
+            set { _executionPolicy = value; }
         }
-        private ExecutionPolicy executionPolicy;
+        private ExecutionPolicy _executionPolicy;
 
         /// <summary>
         /// Gets or sets the scope of the execution policy.
@@ -133,10 +133,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public ExecutionPolicyScope Scope
         {
-            get { return executionPolicyScope; }
-            set { executionPolicyScope = value; }
+            get { return _executionPolicyScope; }
+            set { _executionPolicyScope = value; }
         }
-        private ExecutionPolicyScope executionPolicyScope = ExecutionPolicyScope.LocalMachine;
+        private ExecutionPolicyScope _executionPolicyScope = ExecutionPolicyScope.LocalMachine;
 
         /// <summary>
         /// Specifies whether to force the execution policy change.
@@ -147,14 +147,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return force;
+                return _force;
             }
             set
             {
-                force = value;
+                _force = value;
             }
         }
-        private SwitchParameter force;
+        private SwitchParameter _force;
 
         /// <summary>
         /// Sets the execution policy (validation).
@@ -162,8 +162,8 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             // Verify they've specified a valid scope
-            if ((executionPolicyScope == ExecutionPolicyScope.UserPolicy) ||
-                (executionPolicyScope == ExecutionPolicyScope.MachinePolicy))
+            if ((_executionPolicyScope == ExecutionPolicyScope.UserPolicy) ||
+                (_executionPolicyScope == ExecutionPolicyScope.MachinePolicy))
             {
                 string message = ExecutionPolicyCommands.CantSetGroupPolicy;
 
@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    SecuritySupport.SetExecutionPolicy(executionPolicyScope, ExecutionPolicy, shellId);
+                    SecuritySupport.SetExecutionPolicy(_executionPolicyScope, ExecutionPolicy, shellId);
                 }
                 catch (UnauthorizedAccessException exception)
                 {
@@ -240,16 +240,16 @@ namespace Microsoft.PowerShell.Commands
 #else
         private bool ShouldProcessPolicyChange(string localPreference)
         {
-            if(ShouldProcess(localPreference))
+            if (ShouldProcess(localPreference))
             {
                 // See if we're being invoked directly at the
                 // command line. In that case, give a warning.
-                if(! Force)
+                if (!Force)
                 {
                     // We don't give this warning if we're in a script, or
                     // if we don't have a window handle
                     // (i.e.: PowerShell -command Set-ExecutionPolicy Unrestricted)
-                    if(IsProcessInteractive())
+                    if (IsProcessInteractive())
                     {
                         string query = ExecutionPolicyCommands.SetExecutionPolicyQuery;
                         string caption = ExecutionPolicyCommands.SetExecutionPolicyCaption;
@@ -288,7 +288,7 @@ namespace Microsoft.PowerShell.Commands
         private bool IsProcessInteractive()
         {
             // CommandOrigin != Runspace means it is in a script
-            if(MyInvocation.CommandOrigin != CommandOrigin.Runspace)
+            if (MyInvocation.CommandOrigin != CommandOrigin.Runspace)
                 return false;
 
             // If we don't own the window handle, we've been invoked
@@ -305,10 +305,10 @@ namespace Microsoft.PowerShell.Commands
                 TimeSpan timeSinceStart = DateTime.Now - currentProcess.StartTime;
                 TimeSpan idleTime = timeSinceStart - currentProcess.TotalProcessorTime;
 
-                if(idleTime.TotalSeconds > 1)
+                if (idleTime.TotalSeconds > 1)
                     return true;
             }
-            catch(System.ComponentModel.Win32Exception)
+            catch (System.ComponentModel.Win32Exception)
             {
                 // Don't have access to the properties
                 return false;
@@ -332,5 +332,4 @@ namespace Microsoft.PowerShell.Commands
             ThrowTerminatingError(errorRecord);
         }
     }//End Class
-
 }//End namespace

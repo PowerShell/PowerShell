@@ -9,36 +9,44 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace System.Management.Automation.ComInterop {
+namespace System.Management.Automation.ComInterop
+{
     /// <summary>
     /// ComEventSinksContainer is just a regular list with a finalizer.
     /// This list is usually attached as a custom data for RCW object and 
     /// is finalized whenever RCW is finalized.
     /// </summary>
-    internal class ComEventSinksContainer : List<ComEventSink>, IDisposable {
-        private ComEventSinksContainer() {
+    internal class ComEventSinksContainer : List<ComEventSink>, IDisposable
+    {
+        private ComEventSinksContainer()
+        {
         }
 
-        private static readonly object _ComObjectEventSinksKey = new object();
+        private static readonly object s_comObjectEventSinksKey = new object();
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
-        public static ComEventSinksContainer FromRuntimeCallableWrapper(object rcw, bool createIfNotFound) {
+        public static ComEventSinksContainer FromRuntimeCallableWrapper(object rcw, bool createIfNotFound)
+        {
             // !!! Marshal.Get/SetComObjectData has a LinkDemand for UnmanagedCode which will turn into
             // a full demand. We need to avoid this by making this method SecurityCritical
-            object data = Marshal.GetComObjectData(rcw, _ComObjectEventSinksKey);
-            if (data != null || createIfNotFound == false) {
+            object data = Marshal.GetComObjectData(rcw, s_comObjectEventSinksKey);
+            if (data != null || createIfNotFound == false)
+            {
                 return (ComEventSinksContainer)data;
             }
 
-            lock (_ComObjectEventSinksKey) {
-                data = Marshal.GetComObjectData(rcw, _ComObjectEventSinksKey);
-                if (data != null) {
+            lock (s_comObjectEventSinksKey)
+            {
+                data = Marshal.GetComObjectData(rcw, s_comObjectEventSinksKey);
+                if (data != null)
+                {
                     return (ComEventSinksContainer)data;
                 }
 
                 ComEventSinksContainer comEventSinks = new ComEventSinksContainer();
-                if (!Marshal.SetComObjectData(rcw, _ComObjectEventSinksKey, comEventSinks)) {
+                if (!Marshal.SetComObjectData(rcw, s_comObjectEventSinksKey, comEventSinks))
+                {
                     throw Error.SetComObjectDataFailed();
                 }
 
@@ -48,20 +56,24 @@ namespace System.Management.Automation.ComInterop {
 
         #region IDisposable Members
 
-        public void Dispose() {
+        public void Dispose()
+        {
             DisposeAll();
             GC.SuppressFinalize(this);
         }
 
         #endregion
 
-        private void DisposeAll() {
-            foreach (ComEventSink sink in this) {
+        private void DisposeAll()
+        {
+            foreach (ComEventSink sink in this)
+            {
                 sink.Dispose();
             }
         }
 
-        ~ComEventSinksContainer() {
+        ~ComEventSinksContainer()
+        {
             DisposeAll();
         }
     }

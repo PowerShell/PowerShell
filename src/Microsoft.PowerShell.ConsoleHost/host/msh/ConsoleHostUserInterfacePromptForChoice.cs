@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell
 
             // we lock here so that multiple threads won't interleave the various reads and writes here.
 
-            lock (instanceLock)
+            lock (_instanceLock)
             {
                 if (!string.IsNullOrEmpty(caption))
                 {
@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentException("choices",
                     ConsoleHostUserInterfaceStrings.EmptyChoicesErrorTemplate, "choices");
             }
-            
+
             Dictionary<int, bool> defaultChoiceKeys = new Dictionary<int, bool>();
 
             if (null != defaultChoices)
@@ -208,8 +208,8 @@ namespace Microsoft.PowerShell
                     if ((defaultChoice < 0) || (defaultChoice >= choices.Count))
                     {
                         throw PSTraceSource.NewArgumentOutOfRangeException("defaultChoice", defaultChoice,
-                            ConsoleHostUserInterfaceStrings.InvalidDefaultChoiceForMultipleSelection, 
-                            "defaultChoice", 
+                            ConsoleHostUserInterfaceStrings.InvalidDefaultChoiceForMultipleSelection,
+                            "defaultChoice",
                             "choices",
                             defaultChoice);
                     }
@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell
 
             Collection<int> result = new Collection<int>();
             // we lock here so that multiple threads won't interleave the various reads and writes here.
-            lock (instanceLock)
+            lock (_instanceLock)
             {
                 // write caption on the console, if present.
                 if (!string.IsNullOrEmpty(caption))
@@ -274,7 +274,7 @@ namespace Microsoft.PowerShell
                         // 1. user wants to go with the defaults
                         // 2. user selected some choices and wanted those
                         // choices to be picked.
-                                                
+
                         // user did not pick up any choices..choose the default
                         if ((result.Count == 0) && (defaultChoiceKeys.Keys.Count >= 0))
                         {
@@ -309,10 +309,10 @@ namespace Microsoft.PowerShell
 
                 return result;
             }
-        }        
-        
+        }
+
         private void WriteChoicePrompt(string[,] hotkeysAndPlainLabels,
-            Dictionary<int, bool> defaultChoiceKeys, 
+            Dictionary<int, bool> defaultChoiceKeys,
             bool shouldEmulateForMultipleChoiceSelection)
         {
             System.Management.Automation.Diagnostics.Assert(defaultChoiceKeys != null, "defaultChoiceKeys cannot be null.");
@@ -414,7 +414,7 @@ namespace Microsoft.PowerShell
             }
 
             WriteToConsole(fg, bg, trimEnd ? text.TrimEnd(null) : text);
-        }       
+        }
 
         private void ShowChoiceHelp(Collection<ChoiceDescription> choices, string[,] hotkeysAndPlainLabels)
         {

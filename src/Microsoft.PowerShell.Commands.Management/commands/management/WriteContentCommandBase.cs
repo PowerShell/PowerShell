@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     public class WriteContentCommandBase : PassThroughContentCommandBase
     {
         #region Parameters
-        
+
         /// <summary>
         /// The value of the content to set.
         /// </summary>
@@ -26,30 +27,30 @@ namespace Microsoft.PowerShell.Commands
         /// This value type is determined by the InvokeProvider.
         /// </value>
         ///
-        [Parameter (Mandatory = true, Position = 1, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Mandatory = true, Position = 1, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [AllowNull]
         [AllowEmptyCollection]
         public object[] Value
         {
             get
             {
-                return content;
+                return _content;
             } // get
 
             set
             {
-                content = value;
+                _content = value;
             }
         } // Value
 
         #endregion Parameters
 
         #region parameter data
-        
+
         /// <summary>
         /// The value of the content to be set.
         /// </summary>
-        private object[] content;
+        private object[] _content;
 
         #endregion parameter data
 
@@ -60,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
         /// parameter was specified on the command line or via the pipeline.
         /// </summary>
         /// 
-        bool pipingPaths;
+        private bool _pipingPaths;
 
         /// <summary>
         /// True if the content writers have been open.
@@ -68,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
         /// to determine if the content writers need to
         /// be closed each time ProgressRecord is called.
         /// </summary>
-        bool contentWritersOpen;
+        private bool _contentWritersOpen;
 
         #endregion private Data
 
@@ -82,41 +83,41 @@ namespace Microsoft.PowerShell.Commands
         {
             if (Path != null && Path.Length > 0)
             {
-                pipingPaths = false;
+                _pipingPaths = false;
             }
             else
             {
-                pipingPaths = true;
+                _pipingPaths = true;
             }
         }
 
         /// <summary>
         /// Appends the content to the specified item.
         /// </summary>
-        protected override void ProcessRecord ()
+        protected override void ProcessRecord()
         {
             CmdletProviderContext currentContext = GetCurrentContext();
 
             // Initialize the content
-            
-            if (content == null)
+
+            if (_content == null)
             {
-                content = new object[0];
+                _content = new object[0];
             }
 
-            if (pipingPaths)
+            if (_pipingPaths)
             {
                 // Make sure to clean up the content writers that are already there
 
                 if (contentStreams != null && contentStreams.Count > 0)
                 {
                     CloseContent(contentStreams, false);
-                    contentWritersOpen = false;
+                    _contentWritersOpen = false;
                     contentStreams = new List<ContentHolder>();
                 }
             }
 
-            if (!contentWritersOpen)
+            if (!_contentWritersOpen)
             {
                 // Since the paths are being pipelined in, we have 
                 // to get new content writers for the new paths
@@ -129,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
                     SeekContentPosition(contentStreams);
                 }
 
-                contentWritersOpen = true;
+                _contentWritersOpen = true;
             }
 
             // Now write the content to the item
@@ -142,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
                         IList result = null;
                         try
                         {
-                            result = holder.Writer.Write(content);
+                            result = holder.Writer.Write(_content);
                         }
                         catch (Exception e) // Catch-all OK. 3rd party callout
                         {
@@ -177,14 +178,14 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            finally 
+            finally
             {
                 // Need to close all the writers if the paths are being pipelined
 
-                if (pipingPaths)
+                if (_pipingPaths)
                 {
                     CloseContent(contentStreams, false);
-                    contentWritersOpen = false;
+                    _contentWritersOpen = false;
                     contentStreams = new List<ContentHolder>();
                 }
             }
@@ -355,11 +356,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return (string[]) paths.ToArray(typeof(String));
+            return (string[])paths.ToArray(typeof(String));
         }
-       
+
         #endregion protected members
-
     } // WriteContentCommandBase
-
 } // namespace Microsoft.PowerShell.Commands

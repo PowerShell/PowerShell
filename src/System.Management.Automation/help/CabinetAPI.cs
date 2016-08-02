@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Diagnostics.CodeAnalysis;
 
 namespace System.Management.Automation.Internal
@@ -29,7 +30,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Flag: Has Dispose already been called?
         /// </summary>
-        private bool disposed = false;
+        private bool _disposed = false;
 
         /// <summary>
         /// Disposes the instance, callable by consumers.
@@ -42,7 +43,7 @@ namespace System.Management.Automation.Internal
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposed)
+            if (_disposed)
             {
                 // Nothing to do since the resource has already been disposed.
                 return;
@@ -52,7 +53,7 @@ namespace System.Management.Automation.Internal
             // Free managed objects if disposing == true;
             // Free unmanaged objects regardless.
 
-            disposed = true;
+            _disposed = true;
         }
 
         ~ICabinetExtractor()
@@ -81,7 +82,7 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal class CabinetExtractorFactory
     {
-        private static ICabinetExtractorLoader cabinetLoader;
+        private static ICabinetExtractorLoader s_cabinetLoader;
         internal static ICabinetExtractor EmptyExtractor = new EmptyCabinetExtractor();
 
         /// <summary>
@@ -90,7 +91,7 @@ namespace System.Management.Automation.Internal
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFrom")]
         static CabinetExtractorFactory()
         {
-            cabinetLoader = CabinetExtractorLoader.GetInstance();
+            s_cabinetLoader = CabinetExtractorLoader.GetInstance();
         }
 
         /// <summary>
@@ -99,9 +100,9 @@ namespace System.Management.Automation.Internal
         /// <returns>Tracer instance</returns>
         internal static ICabinetExtractor GetCabinetExtractor()
         {
-            if (cabinetLoader != null)
+            if (s_cabinetLoader != null)
             {
-                return cabinetLoader.GetCabinetExtractor();
+                return s_cabinetLoader.GetCabinetExtractor();
             }
             else
             {

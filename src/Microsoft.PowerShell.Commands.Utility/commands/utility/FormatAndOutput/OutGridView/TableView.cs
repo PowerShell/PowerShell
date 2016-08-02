@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 namespace Microsoft.PowerShell.Commands
 {
     using System;
@@ -13,23 +14,23 @@ namespace Microsoft.PowerShell.Commands
 
     internal class TableView
     {
-        private MshExpressionFactory expressionFactory;
-        private TypeInfoDataBase typeInfoDatabase;
-        private FormatErrorManager errorManager;
+        private MshExpressionFactory _expressionFactory;
+        private TypeInfoDataBase _typeInfoDatabase;
+        private FormatErrorManager _errorManager;
 
         internal void Initialize(MshExpressionFactory expressionFactory,
                                  TypeInfoDataBase db)
         {
-            this.expressionFactory = expressionFactory;
-            this.typeInfoDatabase = db;
+            _expressionFactory = expressionFactory;
+            _typeInfoDatabase = db;
 
             // Initialize Format Error Manager.
             FormatErrorPolicy formatErrorPolicy = new FormatErrorPolicy();
 
-            formatErrorPolicy.ShowErrorsAsMessages = this.typeInfoDatabase.defaultSettingsSection.formatErrorPolicy.ShowErrorsAsMessages;
-            formatErrorPolicy.ShowErrorsInFormattedOutput = this.typeInfoDatabase.defaultSettingsSection.formatErrorPolicy.ShowErrorsInFormattedOutput;
+            formatErrorPolicy.ShowErrorsAsMessages = _typeInfoDatabase.defaultSettingsSection.formatErrorPolicy.ShowErrorsAsMessages;
+            formatErrorPolicy.ShowErrorsInFormattedOutput = _typeInfoDatabase.defaultSettingsSection.formatErrorPolicy.ShowErrorsInFormattedOutput;
 
-            this.errorManager = new FormatErrorManager(formatErrorPolicy);
+            _errorManager = new FormatErrorManager(formatErrorPolicy);
         }
 
         internal HeaderInfo GenerateHeaderInfo(PSObject input, TableControlBody tableBody, OutGridViewCommand parentCmdlet)
@@ -57,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (colHeader != null && colHeader.label != null)
                     {
-                        displayName = this.typeInfoDatabase.displayResourceManagerCache.GetTextTokenString(colHeader.label);
+                        displayName = _typeInfoDatabase.displayResourceManagerCache.GetTextTokenString(colHeader.label);
                     }
 
                     FormatToken token = null;
@@ -71,19 +72,19 @@ namespace Microsoft.PowerShell.Commands
                         FieldPropertyToken fpt = token as FieldPropertyToken;
                         if (fpt != null)
                         {
-                            if(displayName == null)
+                            if (displayName == null)
                             {
                                 // Database does not provide a label(DisplayName) for the current property, use the expression value instead.
                                 displayName = fpt.expression.expressionValue;
                             }
-                            if(fpt.expression.isScriptBlock)
+                            if (fpt.expression.isScriptBlock)
                             {
-                                MshExpression ex = this.expressionFactory.CreateFromExpressionToken(fpt.expression);
+                                MshExpression ex = _expressionFactory.CreateFromExpressionToken(fpt.expression);
                                 // Using the displayName as a propertyName for a stale PSObject.
                                 const string LastWriteTimePropertyName = "LastWriteTime";
 
                                 // For FileSystem objects "LastWriteTime" property value should be used although the database indicates that a script should be executed to get the value.
-                                if(fileSystemObject && displayName.Equals(LastWriteTimePropertyName, StringComparison.OrdinalIgnoreCase))
+                                if (fileSystemObject && displayName.Equals(LastWriteTimePropertyName, StringComparison.OrdinalIgnoreCase))
                                 {
                                     columnInfo = new OriginalColumnInfo(displayName, displayName, LastWriteTimePropertyName, parentCmdlet);
                                 }
@@ -102,12 +103,12 @@ namespace Microsoft.PowerShell.Commands
                             TextToken tt = token as TextToken;
                             if (tt != null)
                             {
-                                displayName = this.typeInfoDatabase.displayResourceManagerCache.GetTextTokenString(tt);
-                                columnInfo = new OriginalColumnInfo(tt.text, displayName, tt.text, parentCmdlet); 
+                                displayName = _typeInfoDatabase.displayResourceManagerCache.GetTextTokenString(tt);
+                                columnInfo = new OriginalColumnInfo(tt.text, displayName, tt.text, parentCmdlet);
                             }
                         }
                     }
-                    if(columnInfo != null)
+                    if (columnInfo != null)
                     {
                         headerInfo.AddColumn(columnInfo);
                     }
@@ -124,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
             List<MshResolvedExpressionParameterAssociation> activeAssociationList;
 
             // Get properties from the default property set of the object
-            activeAssociationList = AssociationManager.ExpandDefaultPropertySet(input, this.expressionFactory);
+            activeAssociationList = AssociationManager.ExpandDefaultPropertySet(input, _expressionFactory);
             if (activeAssociationList.Count > 0)
             {
                 // we got a valid set of properties from the default property set..add computername for
@@ -148,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     // We were unable to retrieve any properties, so we leave an empty list
-                     activeAssociationList = new List<MshResolvedExpressionParameterAssociation>();
+                    activeAssociationList = new List<MshResolvedExpressionParameterAssociation>();
                 }
             }
 
@@ -215,7 +216,7 @@ namespace Microsoft.PowerShell.Commands
             TableRowDefinition matchingRowDefinition = null;
 
             var typeNames = so.InternalTypeNames;
-            TypeMatch match = new TypeMatch(this.expressionFactory, this.typeInfoDatabase, typeNames);
+            TypeMatch match = new TypeMatch(_expressionFactory, _typeInfoDatabase, typeNames);
 
             foreach (TableRowDefinition x in tableBody.optionalDefinitionList)
             {
@@ -235,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
                 Collection<string> typesWithoutPrefix = Deserializer.MaskDeserializationPrefix(typeNames);
                 if (null != typesWithoutPrefix)
                 {
-                    match = new TypeMatch(expressionFactory, this.typeInfoDatabase, typesWithoutPrefix);
+                    match = new TypeMatch(_expressionFactory, _typeInfoDatabase, typesWithoutPrefix);
 
                     foreach (TableRowDefinition x in tableBody.optionalDefinitionList)
                     {

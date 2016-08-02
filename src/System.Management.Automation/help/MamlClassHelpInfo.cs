@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System.Xml;
 
 namespace System.Management.Automation
@@ -11,8 +12,8 @@ namespace System.Management.Automation
     /// class help provider.
     /// 
     /// </summary>
-    internal class MamlClassHelpInfo : HelpInfo 
-    {   
+    internal class MamlClassHelpInfo : HelpInfo
+    {
         /// <summary>
         /// Constructor for custom HelpInfo object creation.
         /// </summary>
@@ -37,8 +38,8 @@ namespace System.Management.Automation
             _fullHelpObject = mamlNode.PSObject;
 
             this.Errors = mamlNode.Errors;
-            this._fullHelpObject.TypeNames.Clear();
-            this._fullHelpObject.TypeNames.Add("PSClassHelpInfo");
+            _fullHelpObject.TypeNames.Clear();
+            _fullHelpObject.TypeNames.Add("PSClassHelpInfo");
         }
 
         /// <summary>
@@ -50,7 +51,7 @@ namespace System.Management.Automation
         /// PSObject representation on help.
         /// </summary>
         private PSObject _fullHelpObject;
-        
+
         #region Load 
 
         /// <summary>
@@ -81,7 +82,7 @@ namespace System.Management.Automation
         /// <returns>MamlClassHelpInfo object.</returns>
         internal MamlClassHelpInfo Copy()
         {
-            MamlClassHelpInfo result = new MamlClassHelpInfo(this._fullHelpObject.Copy(), this.HelpCategory);
+            MamlClassHelpInfo result = new MamlClassHelpInfo(_fullHelpObject.Copy(), this.HelpCategory);
             return result;
         }
 
@@ -92,46 +93,46 @@ namespace System.Management.Automation
         /// <returns>MamlClassHelpInfo</returns>
         internal MamlClassHelpInfo Copy(HelpCategory newCategoryToUse)
         {
-            MamlClassHelpInfo result = new MamlClassHelpInfo(this._fullHelpObject.Copy(), newCategoryToUse);
+            MamlClassHelpInfo result = new MamlClassHelpInfo(_fullHelpObject.Copy(), newCategoryToUse);
             result.FullHelp.Properties["Category"].Value = newCategoryToUse;
             return result;
         }
 
         internal override string Name
         {
-            get 
+            get
             {
                 string tempName = string.Empty;
-                var title = this._fullHelpObject.Properties["title"];
+                var title = _fullHelpObject.Properties["title"];
 
                 if (title != null && title.Value != null)
                 {
                     tempName = title.Value.ToString();
                 }
 
-                return tempName; 
+                return tempName;
             }
         }
 
         internal override string Synopsis
         {
-            get 
+            get
             {
                 string tempSynopsis = string.Empty;
-                var intro = this._fullHelpObject.Properties["introduction"];
+                var intro = _fullHelpObject.Properties["introduction"];
 
-                if(intro != null && intro.Value != null)
+                if (intro != null && intro.Value != null)
                 {
                     tempSynopsis = intro.Value.ToString();
                 }
 
-                return tempSynopsis; 
+                return tempSynopsis;
             }
         }
 
         internal override HelpCategory HelpCategory
         {
-            get 
+            get
             {
                 return _helpCategory;
             }
@@ -139,7 +140,7 @@ namespace System.Management.Automation
 
         internal override PSObject FullHelp
         {
-            get 
+            get
             {
                 return _fullHelpObject;
             }

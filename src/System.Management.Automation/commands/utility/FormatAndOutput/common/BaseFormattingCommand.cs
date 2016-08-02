@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// constructor to set up the formatting context
         /// </summary>
-        internal InnerFormatShapeCommandBase ()
+        internal InnerFormatShapeCommandBase()
         {
             contextManager.Push(FormattingContextState.none);
         }
@@ -47,9 +47,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// constructor to glue to the CRO
         /// </summary>
-        internal InnerFormatShapeCommand (FormatShape shape)
+        internal InnerFormatShapeCommand(FormatShape shape)
         {
-            this.shape = shape;
+            _shape = shape;
         }
 
         internal static int FormatEnumerationLimit()
@@ -76,16 +76,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return enumLimitVal is int ? (int)enumLimitVal : InitialSessionState.DefaultFormatEnumerationLimit;
         }
 
-        internal override void BeginProcessing ()
+        internal override void BeginProcessing()
         {
-            base.BeginProcessing ();
+            base.BeginProcessing();
 
             // Get the Format Enumeration Limit.
-            this.enumerationLimit = InnerFormatShapeCommand.FormatEnumerationLimit();
+            _enumerationLimit = InnerFormatShapeCommand.FormatEnumerationLimit();
 
-            this.expressionFactory = new MshExpressionFactory();
+            _expressionFactory = new MshExpressionFactory();
 
-            this.formatObjectDeserializer = new FormatObjectDeserializer (this.TerminatingErrorContext);
+            _formatObjectDeserializer = new FormatObjectDeserializer(this.TerminatingErrorContext);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         internal override void ProcessRecord()
         {
-            this._typeInfoDataBase = this.OuterCmdlet().Context.FormatDBManager.GetTypeInfoDataBase();
+            _typeInfoDataBase = this.OuterCmdlet().Context.FormatDBManager.GetTypeInfoDataBase();
 
             PSObject so = this.ReadObject();
             if (so == null || so == AutomationNull.Value)
@@ -137,30 +137,29 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     break;
             }
-
         }
 
         private EnumerableExpansion GetExpansionState(PSObject so)
         {
             // if the command line swtich has been specified, use this as an override
-            if (this.parameters != null && this.parameters.expansion.HasValue)
+            if (_parameters != null && _parameters.expansion.HasValue)
             {
-                return this.parameters.expansion.Value;
+                return _parameters.expansion.Value;
             }
 
             // check if we have an expansion entry in format.mshxml 
             var typeNames = so.InternalTypeNames;
-            return DisplayDataQuery.GetEnumerableExpansionFromType (
-                expressionFactory, this._typeInfoDataBase, typeNames);
+            return DisplayDataQuery.GetEnumerableExpansionFromType(
+                _expressionFactory, _typeInfoDataBase, typeNames);
         }
 
-        private void ProcessCoreOutOfBand (PSObject so, int count)
+        private void ProcessCoreOutOfBand(PSObject so, int count)
         {
             // emit some description header
-            SendCommentOutOfBand (FormatAndOut_format_xxx.IEnum_Header);
+            SendCommentOutOfBand(FormatAndOut_format_xxx.IEnum_Header);
 
             // emit the object as out of band
-            ProcessOutOfBand (so, isProcessingError: false);
+            ProcessOutOfBand(so, isProcessingError: false);
 
             string msg;
             // emit a comment to signal that the next N objects are from the IEnumerable
@@ -182,15 +181,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                     break;
             }
-            SendCommentOutOfBand (msg);
+            SendCommentOutOfBand(msg);
         }
 
-        private void SendCommentOutOfBand (string msg)
+        private void SendCommentOutOfBand(string msg)
         {
-            FormatEntryData fed = OutOfBandFormatViewManager.GenerateOutOfBandObjectAsToString (PSObjectHelper.AsPSObject (msg));
+            FormatEntryData fed = OutOfBandFormatViewManager.GenerateOutOfBandObjectAsToString(PSObjectHelper.AsPSObject(msg));
             if (fed != null)
             {
-                this.WriteObject (fed);
+                this.WriteObject(fed);
             }
         }
 
@@ -198,11 +197,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// execute formatting on a single object
         /// </summary>
         /// <param name="so">object to process</param>
-        private void ProcessObject (PSObject so)
+        private void ProcessObject(PSObject so)
         {
             // we do protect against reentrancy, assuming
             // no fancy multiplexing
-            if (this.formatObjectDeserializer.IsFormatInfoData (so))
+            if (_formatObjectDeserializer.IsFormatInfoData(so))
             {
                 // we are already formatted...
                 this.WriteObject(so);
@@ -213,7 +212,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // bail now
             // this is the case of objects coming before the
             // context manager is properly set
-            if (ProcessOutOfBandObjectOutsideDocumentSequence (so))
+            if (ProcessOutOfBandObjectOutsideDocumentSequence(so))
             {
                 return;
             }
@@ -223,10 +222,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (ctx == FormattingContextState.none)
             {
                 // initialize the view manager
-                this.viewManager.Initialize(this.TerminatingErrorContext, this.expressionFactory, this._typeInfoDataBase, so, this.shape, this.parameters);
+                _viewManager.Initialize(this.TerminatingErrorContext, _expressionFactory, _typeInfoDataBase, so, _shape, _parameters);
 
                 // add the start message to output queue
-                WriteFormatStartData (so);
+                WriteFormatStartData(so);
 
                 // enter the document context
                 contextManager.Push(FormattingContextState.document);
@@ -235,7 +234,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // if we are here, we are either in the document document, or in a group
 
             // since we have a view now, we check if objects should be treated as out of band
-            if (ProcessOutOfBandObjectInsideDocumentSequence (so))
+            if (ProcessOutOfBandObjectInsideDocumentSequence(so))
             {
                 return;
             }
@@ -271,41 +270,41 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                if (this.shape == FormatShape.Undefined || this.parameters == null)
+                if (_shape == FormatShape.Undefined || _parameters == null)
                 {
                     return true;
                 }
-                return !this.parameters.forceFormattingAlsoOnOutOfBand;
+                return !_parameters.forceFormattingAlsoOnOutOfBand;
             }
         }
 
-        private bool ProcessOutOfBandObjectOutsideDocumentSequence (PSObject so)
+        private bool ProcessOutOfBandObjectOutsideDocumentSequence(PSObject so)
         {
             if (!ShouldProcessOutOfBand)
             {
                 return false;
             }
 
-			if (so.InternalTypeNames.Count == 0)
-			{
-				return false;
-			}
+            if (so.InternalTypeNames.Count == 0)
+            {
+                return false;
+            }
 
             List<ErrorRecord> errors;
-            var fed = OutOfBandFormatViewManager.GenerateOutOfBandData(this.TerminatingErrorContext, this.expressionFactory,
-                this._typeInfoDataBase, so, enumerationLimit, false, out errors);
+            var fed = OutOfBandFormatViewManager.GenerateOutOfBandData(this.TerminatingErrorContext, _expressionFactory,
+                _typeInfoDataBase, so, _enumerationLimit, false, out errors);
             WriteErrorRecords(errors);
 
             if (fed != null)
             {
-                this.WriteObject (fed);
+                this.WriteObject(fed);
                 return true;
             }
 
             return false;
         }
 
-        private bool ProcessOutOfBandObjectInsideDocumentSequence (PSObject so)
+        private bool ProcessOutOfBandObjectInsideDocumentSequence(PSObject so)
         {
             if (!ShouldProcessOutOfBand)
             {
@@ -313,19 +312,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             var typeNames = so.InternalTypeNames;
-            if (this.viewManager.ViewGenerator.IsObjectApplicable(typeNames))
+            if (_viewManager.ViewGenerator.IsObjectApplicable(typeNames))
             {
                 return false;
             }
 
-            return ProcessOutOfBand (so, isProcessingError: false);
+            return ProcessOutOfBand(so, isProcessingError: false);
         }
 
         private bool ProcessOutOfBand(PSObject so, bool isProcessingError)
         {
             List<ErrorRecord> errors;
-            FormatEntryData fed = OutOfBandFormatViewManager.GenerateOutOfBandData(this.TerminatingErrorContext, this.expressionFactory,
-                                    this._typeInfoDataBase, so, enumerationLimit, true, out errors);
+            FormatEntryData fed = OutOfBandFormatViewManager.GenerateOutOfBandData(this.TerminatingErrorContext, _expressionFactory,
+                                    _typeInfoDataBase, so, _enumerationLimit, true, out errors);
             if (!isProcessingError)
                 WriteErrorRecords(errors);
 
@@ -338,30 +337,30 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return false;
         }
 
-        protected void WriteInternalErrorMessage (string message)
+        protected void WriteInternalErrorMessage(string message)
         {
-            FormatEntryData fed = new FormatEntryData ();
+            FormatEntryData fed = new FormatEntryData();
             fed.outOfBand = true;
 
-            ComplexViewEntry cve = new ComplexViewEntry ();
-            FormatEntry fe = new FormatEntry ();
-            cve.formatValueList.Add (fe);
+            ComplexViewEntry cve = new ComplexViewEntry();
+            FormatEntry fe = new FormatEntry();
+            cve.formatValueList.Add(fe);
 
-            fe.formatValueList.Add( new FormatNewLine());
+            fe.formatValueList.Add(new FormatNewLine());
 
             // get a field for the message
-            FormatTextField ftf = new FormatTextField ();
+            FormatTextField ftf = new FormatTextField();
             ftf.text = message;
-            fe.formatValueList.Add (ftf);
+            fe.formatValueList.Add(ftf);
 
-            fe.formatValueList.Add( new FormatNewLine());
- 
+            fe.formatValueList.Add(new FormatNewLine());
+
             fed.formatEntryInfo = cve;
 
-            this.WriteObject (fed);
+            this.WriteObject(fed);
         }
 
-        private void WriteErrorRecords (List<ErrorRecord> errorRecordList)
+        private void WriteErrorRecords(List<ErrorRecord> errorRecordList)
         {
             if (errorRecordList == null)
                 return;
@@ -374,19 +373,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             foreach (ErrorRecord errorRecord in errorRecordList)
             {
                 // we are recursing on formatting errors: isProcessingError == true
-                ProcessOutOfBand (PSObjectHelper.AsPSObject (errorRecord), true);
+                ProcessOutOfBand(PSObjectHelper.AsPSObject(errorRecord), true);
             }
         }
 
 
-        internal override void EndProcessing ()
+        internal override void EndProcessing()
         {
             // need to pop all the contexts, in case the transmission sequence
             // was interrupted
             while (true)
             {
                 FormattingContextState ctx = contextManager.Peek();
-                
+
                 if (ctx == FormattingContextState.none)
                 {
                     break; // we emerged and we are done
@@ -402,14 +401,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     this.WriteObject(endFormat);
                     contextManager.Pop();
                 }
-                
             } // while
         }
 
-        internal void SetCommandLineParameters (FormattingCommandLineParameters commandLineParameters)
+        internal void SetCommandLineParameters(FormattingCommandLineParameters commandLineParameters)
         {
             Diagnostics.Assert(commandLineParameters != null, "the caller has to pass a valid instance");
-            parameters = commandLineParameters;
+            _parameters = commandLineParameters;
         }
 
         /// <summary>
@@ -425,14 +423,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="so">object receoved from the input pipeline</param>
         /// <returns>GroupTransition enumeration</returns>
-        private GroupTransition ComputeGroupTransition (PSObject so)
+        private GroupTransition ComputeGroupTransition(PSObject so)
         {
             // check if we have to start a group
             FormattingContextState ctx = contextManager.Peek();
             if (ctx == FormattingContextState.document)
             {
                 // prime the grouping algorithm
-                this.viewManager.ViewGenerator.UpdateGroupingKeyValue (so);
+                _viewManager.ViewGenerator.UpdateGroupingKeyValue(so);
 
                 // need to start a group, but we are not in one
                 return GroupTransition.enter;
@@ -440,13 +438,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // check if we need to start another group and keep track
             // of the current value for the grouping property
-            return this.viewManager.ViewGenerator.UpdateGroupingKeyValue (so) ? GroupTransition.startNew : GroupTransition.none;
+            return _viewManager.ViewGenerator.UpdateGroupingKeyValue(so) ? GroupTransition.startNew : GroupTransition.none;
         }
 
-        private void WriteFormatStartData (PSObject so)
+        private void WriteFormatStartData(PSObject so)
         {
-            FormatStartData startFormat = this.viewManager.ViewGenerator.GenerateStartData (so);
-            this.WriteObject (startFormat);
+            FormatStartData startFormat = _viewManager.ViewGenerator.GenerateStartData(so);
+            this.WriteObject(startFormat);
         }
 
 
@@ -455,17 +453,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// a FormatEntry object
         /// </summary>
         /// <param name="so">object to process</param>
-        private void WritePayloadObject (PSObject so)
+        private void WritePayloadObject(PSObject so)
         {
-            Diagnostics.Assert (so != null, "object so cannot be null");
-            FormatEntryData fed = this.viewManager.ViewGenerator.GeneratePayload (so, enumerationLimit);
+            Diagnostics.Assert(so != null, "object so cannot be null");
+            FormatEntryData fed = _viewManager.ViewGenerator.GeneratePayload(so, _enumerationLimit);
             fed.SetStreamTypeFromPSObject(so);
-            this.WriteObject (fed);
+            this.WriteObject(fed);
 
-            List<ErrorRecord> errors = this.viewManager.ViewGenerator.ErrorManager.DrainFailedResultList ();
-            WriteErrorRecords (errors);
+            List<ErrorRecord> errors = _viewManager.ViewGenerator.ErrorManager.DrainFailedResultList();
+            WriteErrorRecords(errors);
         }
-        
+
         /// <summary>
         /// inject the start group information
         /// and push group context on stack
@@ -474,7 +472,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// that is starting the group</param>
         private void PushGroup(PSObject firstObjectInGroup)
         {
-            GroupStartData startGroup = this.viewManager.ViewGenerator.GenerateGroupStartData(firstObjectInGroup, enumerationLimit);
+            GroupStartData startGroup = _viewManager.ViewGenerator.GenerateGroupStartData(firstObjectInGroup, _enumerationLimit);
             this.WriteObject(startGroup);
             contextManager.Push(FormattingContextState.group);
         }
@@ -485,7 +483,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         private void PopGroup()
         {
-            GroupEndData endGroup = this.viewManager.ViewGenerator.GenerateGroupEndData ();
+            GroupEndData endGroup = _viewManager.ViewGenerator.GenerateGroupEndData();
             this.WriteObject(endGroup);
             contextManager.Pop();
         }
@@ -493,30 +491,30 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// the formatting shape this formatter emits
         /// </summary>
-        private FormatShape shape;
+        private FormatShape _shape;
 
         #region expression factory
 
         /// <exception cref="ParseException"></exception>
-        internal ScriptBlock CreateScriptBlock (string scriptText)
+        internal ScriptBlock CreateScriptBlock(string scriptText)
         {
-            var scriptBlock = this.OuterCmdlet ().InvokeCommand.NewScriptBlock (scriptText);
+            var scriptBlock = this.OuterCmdlet().InvokeCommand.NewScriptBlock(scriptText);
             scriptBlock.DebuggerStepThrough = true;
             return scriptBlock;
         }
 
 
-        private MshExpressionFactory expressionFactory;
+        private MshExpressionFactory _expressionFactory;
         #endregion
 
-        private FormatObjectDeserializer formatObjectDeserializer;
+        private FormatObjectDeserializer _formatObjectDeserializer;
 
         private TypeInfoDataBase _typeInfoDataBase = null;
 
-        private FormattingCommandLineParameters parameters = null;
-        private FormatViewManager viewManager = new FormatViewManager();
+        private FormattingCommandLineParameters _parameters = null;
+        private FormatViewManager _viewManager = new FormatViewManager();
 
-        private int enumerationLimit = InitialSessionState.DefaultFormatEnumerationLimit;
+        private int _enumerationLimit = InitialSessionState.DefaultFormatEnumerationLimit;
     }
 
     /// <summary>
@@ -533,10 +531,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         [Parameter]
         public object GroupBy
         {
-            get { return groupByParameter; }
-            set { groupByParameter = value; }
+            get { return _groupByParameter; }
+            set { _groupByParameter = value; }
         }
-        private object groupByParameter = null;
+        private object _groupByParameter = null;
 
 
         /// <summary>
@@ -546,10 +544,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         [Parameter]
         public string View
         {
-            get { return viewName; }
-            set { viewName = value; }
+            get { return _viewName; }
+            set { _viewName = value; }
         }
-        private string viewName = null;
+        private string _viewName = null;
 
         /// <summary>
         /// optional, non positional parameter
@@ -593,43 +591,43 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         [Parameter]
         public SwitchParameter Force
         {
-            get { return forceFormattingAlsoOnOutOfBand; }
-            set { forceFormattingAlsoOnOutOfBand = value; }
+            get { return _forceFormattingAlsoOnOutOfBand; }
+            set { _forceFormattingAlsoOnOutOfBand = value; }
         }
-        private bool forceFormattingAlsoOnOutOfBand;
+        private bool _forceFormattingAlsoOnOutOfBand;
 
         /// <summary>
         /// optional, non positional parameter
         /// </summary>
         /// <value></value>
         [Parameter]
-        [ValidateSet (EnumerableExpansionConversion.CoreOnlyString,
+        [ValidateSet(EnumerableExpansionConversion.CoreOnlyString,
                         EnumerableExpansionConversion.EnumOnlyString,
                         EnumerableExpansionConversion.BothString, IgnoreCase = true)]
         public string Expand
         {
             get
             {
-                return expansionString;
+                return _expansionString;
             }
             set
             {
-                expansionString = value;
+                _expansionString = value;
             }
         }
-        private string expansionString = null;
+        private string _expansionString = null;
         internal Nullable<EnumerableExpansion> expansion = null;
 
-        internal Nullable<EnumerableExpansion> ProcessExpandParameter ()
+        internal Nullable<EnumerableExpansion> ProcessExpandParameter()
         {
             Nullable<EnumerableExpansion> retVal = null;
-            if (string.IsNullOrEmpty (this.expansionString))
+            if (string.IsNullOrEmpty(_expansionString))
             {
                 return retVal;
             }
 
             EnumerableExpansion temp;
-            bool success = EnumerableExpansionConversion.Convert (this.expansionString, out temp);
+            bool success = EnumerableExpansionConversion.Convert(_expansionString, out temp);
             if (!success)
             {
                 // this should never happen, since we use the [ValidateSet] attribute
@@ -640,15 +638,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return retVal;
         }
 
-        internal MshParameter ProcessGroupByParameter ()
+        internal MshParameter ProcessGroupByParameter()
         {
-            if (this.groupByParameter != null)
+            if (_groupByParameter != null)
             {
-                TerminatingErrorContext invocationContext = 
-                        new TerminatingErrorContext (this);
-                ParameterProcessor processor = new ParameterProcessor (new FormatGroupByParameterDefinition ());
-                List<MshParameter> groupParameterList = 
-                    processor.ProcessParameters (new object[] { this.groupByParameter },
+                TerminatingErrorContext invocationContext =
+                        new TerminatingErrorContext(this);
+                ParameterProcessor processor = new ParameterProcessor(new FormatGroupByParameterDefinition());
+                List<MshParameter> groupParameterList =
+                    processor.ProcessParameters(new object[] { _groupByParameter },
                                                 invocationContext);
 
                 if (groupParameterList.Count != 0)
@@ -666,12 +664,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         protected override void BeginProcessing()
         {
-            InnerFormatShapeCommand innerFormatCommand = 
+            InnerFormatShapeCommand innerFormatCommand =
                             (InnerFormatShapeCommand)this.implementation;
 
             // read command line switches and pass them to the inner command
             FormattingCommandLineParameters parameters = GetCommandLineParameters();
-            innerFormatCommand.SetCommandLineParameters (parameters);
+            innerFormatCommand.SetCommandLineParameters(parameters);
 
             // must call base class for further processing
             base.BeginProcessing();
@@ -688,18 +686,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return null;
         }
 
-        internal void ReportCannotSpecifyViewAndProperty ()
+        internal void ReportCannotSpecifyViewAndProperty()
         {
             string msg = StringUtil.Format(FormatAndOut_format_xxx.CannotSpecifyViewAndPropertyError);
 
-            ErrorRecord errorRecord = new ErrorRecord (
-                new InvalidDataException (),
+            ErrorRecord errorRecord = new ErrorRecord(
+                new InvalidDataException(),
                 "FormatCannotSpecifyViewAndProperty",
                 ErrorCategory.InvalidArgument,
                 null);
 
-            errorRecord.ErrorDetails = new ErrorDetails (msg);
-            this.ThrowTerminatingError (errorRecord);
+            errorRecord.ErrorDetails = new ErrorDetails(msg);
+            this.ThrowTerminatingError(errorRecord);
         }
     }
 
@@ -716,24 +714,24 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// The paramater is optional, since the defaults
         /// will be determined using property sets, etc.
         /// </summary>
-        [Parameter(Position=0)]
+        [Parameter(Position = 0)]
         public object[] Property
         {
-            get { return props; }
-            set { props = value; }
+            get { return _props; }
+            set { _props = value; }
         }
 
-        private object[] props;
+        private object[] _props;
 
         #endregion
 
-        internal override FormattingCommandLineParameters GetCommandLineParameters ()
+        internal override FormattingCommandLineParameters GetCommandLineParameters()
         {
-            FormattingCommandLineParameters parameters = new FormattingCommandLineParameters ();
+            FormattingCommandLineParameters parameters = new FormattingCommandLineParameters();
 
-            GetCommandLineProperties (parameters,false);
-            parameters.groupByParameter = this.ProcessGroupByParameter ();
-            
+            GetCommandLineProperties(parameters, false);
+            parameters.groupByParameter = this.ProcessGroupByParameter();
+
             parameters.forceFormattingAlsoOnOutOfBand = this.Force;
             if (this.showErrorsAsMessages.HasValue)
                 parameters.showErrorsAsMessages = this.showErrorsAsMessages;
@@ -745,28 +743,28 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return parameters;
         }
 
-        internal void GetCommandLineProperties (FormattingCommandLineParameters parameters, bool isTable)
+        internal void GetCommandLineProperties(FormattingCommandLineParameters parameters, bool isTable)
         {
-            if (this.props != null)
+            if (_props != null)
             {
                 CommandParameterDefinition def;
 
                 if (isTable)
-                    def = new FormatTableParameterDefinition ();
+                    def = new FormatTableParameterDefinition();
                 else
-                    def = new FormatListParameterDefinition ();
-                ParameterProcessor processor = new ParameterProcessor (def);
-                TerminatingErrorContext invocationContext = new TerminatingErrorContext (this);
+                    def = new FormatListParameterDefinition();
+                ParameterProcessor processor = new ParameterProcessor(def);
+                TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
 
-                parameters.mshParameterList = processor.ProcessParameters (this.props, invocationContext);
+                parameters.mshParameterList = processor.ProcessParameters(_props, invocationContext);
             }
 
-            if (!string.IsNullOrEmpty (this.View))
+            if (!string.IsNullOrEmpty(this.View))
             {
                 // we have a view command line switch
                 if (parameters.mshParameterList.Count != 0)
                 {
-                    ReportCannotSpecifyViewAndProperty ();
+                    ReportCannotSpecifyViewAndProperty();
                 }
                 parameters.viewName = this.View;
             }
@@ -787,15 +785,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         [Parameter]
         public SwitchParameter AutoSize
         {
-            get 
+            get
             {
-                if (autosize.HasValue)
-                    return autosize.Value;
-                return false; 
+                if (_autosize.HasValue)
+                    return _autosize.Value;
+                return false;
             }
-            set { autosize = value; }
+            set { _autosize = value; }
         }
-        private Nullable<bool> autosize = null;
+        private Nullable<bool> _autosize = null;
 
         /// <summary>
         /// optional, non positional parameter
@@ -806,13 +804,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                if (hideHeaders.HasValue)
-                    return hideHeaders.Value;
+                if (_hideHeaders.HasValue)
+                    return _hideHeaders.Value;
                 return false;
             }
-            set { hideHeaders = value; }
+            set { _hideHeaders = value; }
         }
-        private Nullable<bool> hideHeaders = null;
+        private Nullable<bool> _hideHeaders = null;
 
         /// <summary>
         /// optional, non positional parameter
@@ -823,50 +821,49 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                if (multiLine.HasValue)
-                    return multiLine.Value;
+                if (_multiLine.HasValue)
+                    return _multiLine.Value;
                 return false;
             }
-            set { multiLine = value; }
+            set { _multiLine = value; }
         }
-        private Nullable<bool> multiLine = null;
+        private Nullable<bool> _multiLine = null;
 
 
         #endregion
-        internal override FormattingCommandLineParameters GetCommandLineParameters ()
+        internal override FormattingCommandLineParameters GetCommandLineParameters()
         {
-            FormattingCommandLineParameters parameters = new FormattingCommandLineParameters ();
+            FormattingCommandLineParameters parameters = new FormattingCommandLineParameters();
 
-            GetCommandLineProperties (parameters, true);
+            GetCommandLineProperties(parameters, true);
             parameters.forceFormattingAlsoOnOutOfBand = this.Force;
             if (this.showErrorsAsMessages.HasValue)
                 parameters.showErrorsAsMessages = this.showErrorsAsMessages;
             if (this.showErrorsInFormattedOutput.HasValue)
                 parameters.showErrorsInFormattedOutput = this.showErrorsInFormattedOutput;
 
-            parameters.expansion = ProcessExpandParameter ();
+            parameters.expansion = ProcessExpandParameter();
 
-            if (this.autosize.HasValue)
-                parameters.autosize = this.autosize.Value;
+            if (_autosize.HasValue)
+                parameters.autosize = _autosize.Value;
 
-            parameters.groupByParameter = this.ProcessGroupByParameter ();
+            parameters.groupByParameter = this.ProcessGroupByParameter();
 
-            TableSpecificParameters tableParameters = new TableSpecificParameters ();
+            TableSpecificParameters tableParameters = new TableSpecificParameters();
             parameters.shapeParameters = tableParameters;
 
-            if (this.hideHeaders.HasValue)
+            if (_hideHeaders.HasValue)
             {
-                tableParameters.hideHeaders = this.hideHeaders.Value;
+                tableParameters.hideHeaders = _hideHeaders.Value;
             }
 
-            if (this.multiLine.HasValue)
+            if (_multiLine.HasValue)
             {
-                tableParameters.multiLine = this.multiLine.Value;
+                tableParameters.multiLine = _multiLine.Value;
             }
             return parameters;
         }
     }
-
 }
 
 

@@ -19,17 +19,17 @@ namespace System.Management.Automation.Language
     internal class SemanticChecks : AstVisitor2, IAstPostVisitHandler
     {
         private readonly Parser _parser;
-        private static readonly IsConstantValueVisitor _isConstantAttributeArgVisitor = new IsConstantValueVisitor
+        private static readonly IsConstantValueVisitor s_isConstantAttributeArgVisitor = new IsConstantValueVisitor
         {
             CheckingAttributeArgument = true,
         };
-        private static readonly IsConstantValueVisitor _isConstantAttributeArgForClassVisitor = new IsConstantValueVisitor
+        private static readonly IsConstantValueVisitor s_isConstantAttributeArgForClassVisitor = new IsConstantValueVisitor
         {
             CheckingAttributeArgument = true,
             CheckingClassAttributeArguments = true
         };
         private readonly Stack<MemberAst> _memberScopeStack;
-        private readonly Stack<ScriptBlockAst> _scopeStack; 
+        private readonly Stack<ScriptBlockAst> _scopeStack;
 
         internal static void CheckAst(Parser parser, ScriptBlockAst ast)
         {
@@ -43,9 +43,9 @@ namespace System.Management.Automation.Language
 
         private SemanticChecks(Parser parser)
         {
-            this._parser = parser;
-            this._memberScopeStack = new Stack<MemberAst>();
-            this._scopeStack = new Stack<ScriptBlockAst>();
+            _parser = parser;
+            _memberScopeStack = new Stack<MemberAst>();
+            _scopeStack = new Stack<ScriptBlockAst>();
         }
 
         private bool AnalyzingStaticMember()
@@ -149,15 +149,15 @@ namespace System.Management.Automation.Language
                 else if (parent is ParameterAst && _memberScopeStack.Peek() is FunctionMemberAst)
                 {
                     checkingAttributeOnClass = true;
-                    
+
                     // TODO: we aren't actually generating any attributes in the class metadata
                     attributeTargets = AttributeTargets.Parameter;
                 }
             }
 
             var constantValueVisitor = checkingAttributeOnClass
-                ? _isConstantAttributeArgForClassVisitor
-                : _isConstantAttributeArgVisitor;
+                ? s_isConstantAttributeArgForClassVisitor
+                : s_isConstantAttributeArgVisitor;
 
             if (checkingAttributeOnClass)
             {
@@ -241,9 +241,9 @@ namespace System.Management.Automation.Language
         }
 
         private static string GetValidNamedAttributeProperties(Type attributeType)
-        {            
+        {
             var propertyNames = new List<string>();
-            PropertyInfo [] properties = attributeType.GetProperties(BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+            PropertyInfo[] properties = attributeType.GetProperties(BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
             for (int i = 0; i < properties.Length; i++)
             {
                 PropertyInfo propertyInfo = properties[i];
@@ -301,7 +301,7 @@ namespace System.Management.Automation.Language
             CheckArrayTypeNameDepth(typeExpressionAst.TypeName, typeExpressionAst.Extent, _parser);
 
             // If this is access to the [Type] class, it may be suspicious
-            if(typeof(Type) == typeExpressionAst.TypeName.GetReflectionType())
+            if (typeof(Type) == typeExpressionAst.TypeName.GetReflectionType())
             {
                 MarkAstParentsAsSuspicious(typeExpressionAst);
             }
@@ -313,7 +313,7 @@ namespace System.Management.Automation.Language
         {
             int count = 0;
             ITypeName type = typeName;
-            while ((type is TypeName)==false)
+            while ((type is TypeName) == false)
             {
                 count++;
                 if (count > 200)
@@ -323,7 +323,7 @@ namespace System.Management.Automation.Language
                 }
                 if (type is ArrayTypeName)
                 {
-                    type = ((ArrayTypeName) type).ElementType;
+                    type = ((ArrayTypeName)type).ElementType;
                 }
                 else
                 {
@@ -346,7 +346,7 @@ namespace System.Management.Automation.Language
             }
             if (dscResourceAttibuteAst != null)
             {
-                DscResourceChecker.CheckType(this._parser, typeDefinitionAst, dscResourceAttibuteAst);
+                DscResourceChecker.CheckType(_parser, typeDefinitionAst, dscResourceAttibuteAst);
             }
 
             return AstVisitAction.Continue;
@@ -526,7 +526,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="ast">BreakStatementAst or ContinueStatementAst</param>
         /// <param name="label">label name. Can be null</param>
-        void CheckLabelExists(StatementAst ast, string label)
+        private void CheckLabelExists(StatementAst ast, string label)
         {
             if (String.IsNullOrEmpty(label))
             {
@@ -561,7 +561,7 @@ namespace System.Management.Automation.Language
         /// <param name="label">If label is null, either it's a break/continue to an unknown label 
         /// (and unknown does not mean not specified, it means it's an expression we can't evaluate) or we have a return statement.
         /// </param>
-        void CheckForFlowOutOfFinally(Ast ast, string label)
+        private void CheckForFlowOutOfFinally(Ast ast, string label)
         {
             Ast parent;
             for (parent = ast.Parent; parent != null; parent = parent.Parent)
@@ -591,12 +591,12 @@ namespace System.Management.Automation.Language
                     {
                         _parser.ReportError(ast.Extent, () => ParserStrings.ControlLeavingFinally);
                         break;
-                    }                    
+                    }
                 }
             }
         }
 
-        static string GetLabel(ExpressionAst expr)
+        private static string GetLabel(ExpressionAst expr)
         {
             // We only return null from this method if the label is unknown.  If no label is specified,
             // we just use the empty string.
@@ -627,7 +627,7 @@ namespace System.Management.Automation.Language
             return AstVisitAction.Continue;
         }
 
-        void CheckForReturnStatement(ReturnStatementAst ast)
+        private void CheckForReturnStatement(ReturnStatementAst ast)
         {
             var functionMemberAst = _memberScopeStack.Peek() as FunctionMemberAst;
             if (functionMemberAst == null)
@@ -638,14 +638,14 @@ namespace System.Management.Automation.Language
             {
                 if (functionMemberAst.IsReturnTypeVoid())
                 {
-                    this._parser.ReportError(ast.Extent, () => ParserStrings.VoidMethodHasReturn);
+                    _parser.ReportError(ast.Extent, () => ParserStrings.VoidMethodHasReturn);
                 }
             }
             else
             {
                 if (!functionMemberAst.IsReturnTypeVoid())
                 {
-                    this._parser.ReportError(ast.Extent, () => ParserStrings.NonVoidMethodMissingReturnValue);
+                    _parser.ReportError(ast.Extent, () => ParserStrings.NonVoidMethodMissingReturnValue);
                 }
             }
         }
@@ -744,7 +744,6 @@ namespace System.Management.Automation.Language
                                         if (expectedType != lastConvertType)
                                         {
                                             _parser.ReportError(ast.Extent, () => ParserStrings.AssignmentStatementToAutomaticNotSupported, varPath.UnqualifiedPath, expectedType);
-                                            
                                         }
                                         break;
                                     }
@@ -796,14 +795,14 @@ namespace System.Management.Automation.Language
         {
             switch (unaryExpressionAst.TokenKind)
             {
-            case TokenKind.PlusPlus:
-            case TokenKind.PostfixPlusPlus:
-            case TokenKind.MinusMinus:
-            case TokenKind.PostfixMinusMinus:
-            CheckAssignmentTarget(unaryExpressionAst.Child, false,
-                ast => _parser.ReportError(ast.Extent, () => ParserStrings.OperatorRequiresVariableOrProperty,
-                    unaryExpressionAst.TokenKind.Text()));
-            break;
+                case TokenKind.PlusPlus:
+                case TokenKind.PostfixPlusPlus:
+                case TokenKind.MinusMinus:
+                case TokenKind.PostfixMinusMinus:
+                    CheckAssignmentTarget(unaryExpressionAst.Child, false,
+                        ast => _parser.ReportError(ast.Extent, () => ParserStrings.OperatorRequiresVariableOrProperty,
+                            unaryExpressionAst.TokenKind.Text()));
+                    break;
             }
 
             return AstVisitAction.Continue;
@@ -928,7 +927,7 @@ namespace System.Management.Automation.Language
             var indexExpr = exprAst as IndexExpressionAst;
             if (indexExpr != null)
             {
-                if (!IsValidAttributeArgument(indexExpr.Index, _isConstantAttributeArgVisitor))
+                if (!IsValidAttributeArgument(indexExpr.Index, s_isConstantAttributeArgVisitor))
                 {
                     return indexExpr.Index;
                 }
@@ -1038,7 +1037,7 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitMemberExpression(MemberExpressionAst memberExpressionAst)
         {
-            CheckMemberAccess(memberExpressionAst); 
+            CheckMemberAccess(memberExpressionAst);
             return AstVisitAction.Continue;
         }
 
@@ -1059,7 +1058,7 @@ namespace System.Management.Automation.Language
             TypeExpressionAst typeExpression = ast.Expression as TypeExpressionAst;
 
             // If this is static access on a variable, it may be suspicious
-            if(ast.Static && (typeExpression == null))
+            if (ast.Static && (typeExpression == null))
             {
                 MarkAstParentsAsSuspicious(ast);
             }
@@ -1159,9 +1158,9 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitUsingStatement(UsingStatementAst usingStatementAst)
         {
-	        bool usingKindSupported = usingStatementAst.UsingStatementKind == UsingStatementKind.Namespace ||
-	                                  usingStatementAst.UsingStatementKind == UsingStatementKind.Assembly  ||
-                                      usingStatementAst.UsingStatementKind == UsingStatementKind.Module; 
+            bool usingKindSupported = usingStatementAst.UsingStatementKind == UsingStatementKind.Namespace ||
+                                      usingStatementAst.UsingStatementKind == UsingStatementKind.Assembly ||
+                                      usingStatementAst.UsingStatementKind == UsingStatementKind.Module;
             if (!usingKindSupported ||
                 usingStatementAst.Alias != null)
             {
@@ -1169,7 +1168,7 @@ namespace System.Management.Automation.Language
             }
 
             return AstVisitAction.Continue;
-        }        
+        }
 
         public override AstVisitAction VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst)
         {
@@ -1233,7 +1232,7 @@ namespace System.Management.Automation.Language
                         _parser.ReportError(propName.Extent,
                             () => ParserStrings.InvalidInstanceProperty,
                             propName.Value,
-                            string.Join("', '", keyword.Properties.Keys.OrderBy(key=>key, StringComparer.OrdinalIgnoreCase)));
+                            string.Join("', '", keyword.Properties.Keys.OrderBy(key => key, StringComparer.OrdinalIgnoreCase)));
                     }
                 }
             }
@@ -1435,7 +1434,6 @@ namespace System.Management.Automation.Language
                     {
                         var propertyMemberAst = (PropertyMemberAst)member;
                         CheckKey(parser, propertyMemberAst, ref hasKey);
-                        
                     }
                 }
                 if (baseTypeDefinitionAst.BaseTypes != null && (!hasSet || !hasGet || !hasTest || !hasKey))
@@ -1457,25 +1455,25 @@ namespace System.Management.Automation.Language
                 return;
             }
             if (functionMemberAst.Name.Equals("Get", StringComparison.OrdinalIgnoreCase) &&
-                functionMemberAst.Parameters.Count == 0 )
+                functionMemberAst.Parameters.Count == 0)
             {
-	            if (functionMemberAst.ReturnType != null)
-	            {
-		            // Return type is of the class we're defined in
-		            //it must return the class type, or array of the class type.
-		            var arrayTypeName = functionMemberAst.ReturnType.TypeName as ArrayTypeName;
-		            var typeName =
-			            (arrayTypeName != null ? arrayTypeName.ElementType : functionMemberAst.ReturnType.TypeName) as
-				            TypeName;
-		            if (typeName == null || typeName._typeDefinitionAst != functionMemberAst.Parent)
-		            {
-			            parser.ReportError(functionMemberAst.Extent, () => ParserStrings.DscResourceInvalidGetMethod, ((TypeDefinitionAst)functionMemberAst.Parent).Name);
-		            }
-	            }
-	            else
-	            {
-					parser.ReportError(functionMemberAst.Extent, () => ParserStrings.DscResourceInvalidGetMethod, ((TypeDefinitionAst)functionMemberAst.Parent).Name);
-	            }
+                if (functionMemberAst.ReturnType != null)
+                {
+                    // Return type is of the class we're defined in
+                    //it must return the class type, or array of the class type.
+                    var arrayTypeName = functionMemberAst.ReturnType.TypeName as ArrayTypeName;
+                    var typeName =
+                        (arrayTypeName != null ? arrayTypeName.ElementType : functionMemberAst.ReturnType.TypeName) as
+                            TypeName;
+                    if (typeName == null || typeName._typeDefinitionAst != functionMemberAst.Parent)
+                    {
+                        parser.ReportError(functionMemberAst.Extent, () => ParserStrings.DscResourceInvalidGetMethod, ((TypeDefinitionAst)functionMemberAst.Parent).Name);
+                    }
+                }
+                else
+                {
+                    parser.ReportError(functionMemberAst.Extent, () => ParserStrings.DscResourceInvalidGetMethod, ((TypeDefinitionAst)functionMemberAst.Parent).Name);
+                }
                 //Set hasGet to true to stop look up; it may have invalid get
                 hasGet = true;
                 return;
@@ -1494,7 +1492,6 @@ namespace System.Management.Automation.Language
                     functionMemberAst.Parameters.Count == 0 &&
                     functionMemberAst.ReturnType != null &&
                     functionMemberAst.ReturnType.TypeName.GetReflectionType() == typeof(bool));
-
         }
         /// <summary>
         /// Check if it is a Set method with correct return type and signature
@@ -1530,7 +1527,7 @@ namespace System.Management.Automation.Language
                                 && LanguagePrimitives.IsTrue(attrArgValue))
                             {
                                 hasKey = true;
-                                
+
                                 bool keyPropertyTypeAllowed = false;
                                 var propertyType = propertyMemberAst.PropertyType;
                                 if (propertyType != null)
@@ -1540,8 +1537,8 @@ namespace System.Management.Automation.Language
                                     {
                                         var type = typeName.GetReflectionType();
                                         if (type != null)
-                                        {   
-                                            keyPropertyTypeAllowed = type == typeof (string) || type.IsInteger();
+                                        {
+                                            keyPropertyTypeAllowed = type == typeof(string) || type.IsInteger();
                                         }
                                         else
                                         {
@@ -1558,7 +1555,7 @@ namespace System.Management.Automation.Language
                                     parser.ReportError(propertyMemberAst.Extent, () => ParserStrings.DscResourceInvalidKeyProperty);
                                 }
                                 return;
-	                        }
+                            }
                         }
                     }
                 }
@@ -1566,7 +1563,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    class RestrictedLanguageChecker : AstVisitor
+    internal class RestrictedLanguageChecker : AstVisitor
     {
         private readonly Parser _parser;
         private readonly IEnumerable<string> _allowedCommands;
@@ -1576,8 +1573,8 @@ namespace System.Management.Automation.Language
 
         internal RestrictedLanguageChecker(Parser parser, IEnumerable<string> allowedCommands, IEnumerable<string> allowedVariables, bool allowEnvironmentVariables)
         {
-            this._parser = parser;
-            this._allowedCommands = allowedCommands;
+            _parser = parser;
+            _allowedCommands = allowedCommands;
 
             if (allowedVariables != null)
             {
@@ -1591,15 +1588,15 @@ namespace System.Management.Automation.Language
                 else
                 {
                     // Allowed variables are the union of the default variables plus any the caller has passed in.
-                    this._allowedVariables  = new HashSet<string>(_defaultAllowedVariables).Union(allowedVariablesList);
+                    _allowedVariables = new HashSet<string>(s_defaultAllowedVariables).Union(allowedVariablesList);
                 }
             }
             else
             {
-                this._allowedVariables = _defaultAllowedVariables;
+                _allowedVariables = s_defaultAllowedVariables;
             }
 
-            this._allowEnvironmentVariables = allowEnvironmentVariables;
+            _allowEnvironmentVariables = allowEnvironmentVariables;
         }
 
         private bool FoundError
@@ -1681,7 +1678,7 @@ namespace System.Management.Automation.Language
             // If we couldn't resolve the type, then it's definitely an error.
             if (type == null || ((type.IsArray ? type.GetElementType() : type).GetTypeCode() == TypeCode.Object))
             {
-                ReportError(ast, () => ParserStrings.TypeNotAllowedInDataSection, typename.FullName);                
+                ReportError(ast, () => ParserStrings.TypeNotAllowedInDataSection, typename.FullName);
             }
         }
 
@@ -1989,7 +1986,7 @@ namespace System.Management.Automation.Language
             return AstVisitAction.Continue;
         }
 
-        private static readonly HashSet<string> _defaultAllowedVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        private static readonly HashSet<string> s_defaultAllowedVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                                                                     {"PSCulture", "PSUICulture", "true", "false", "null"};
 
         public override AstVisitAction VisitVariableExpression(VariableExpressionAst variableExpressionAst)
@@ -2008,7 +2005,7 @@ namespace System.Management.Automation.Language
             }
 
             string resourceArg;
-            if (ReferenceEquals(_allowedVariables, _defaultAllowedVariables))
+            if (ReferenceEquals(_allowedVariables, s_defaultAllowedVariables))
             {
                 resourceArg = ParserStrings.DefaultAllowedVariablesInDataSection;
             }
@@ -2023,7 +2020,7 @@ namespace System.Management.Automation.Language
                         first = false;
                     else
                         argBuilder.Append(", ");
-                    
+
                     argBuilder.Append("$");
                     argBuilder.Append(varName);
                 }

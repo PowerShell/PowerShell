@@ -113,32 +113,32 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("errorId");
             }
 
-            this.invocationInfo = invocationInfo;
+            _invocationInfo = invocationInfo;
 
-            if (this.invocationInfo != null)
+            if (_invocationInfo != null)
             {
-                this.commandName = invocationInfo.MyCommand.Name;
+                _commandName = invocationInfo.MyCommand.Name;
             }
 
-            this.parameterName = parameterName;
-            this.parameterType = parameterType;
-            this.typeSpecified = typeSpecified;
+            _parameterName = parameterName;
+            _parameterType = parameterType;
+            _typeSpecified = typeSpecified;
 
-            if ((errorPosition == null) && (this.invocationInfo != null))
+            if ((errorPosition == null) && (_invocationInfo != null))
             {
                 errorPosition = invocationInfo.ScriptPosition;
             }
             if (errorPosition != null)
             {
-                this.line = errorPosition.StartLineNumber;
-                this.offset = errorPosition.StartColumnNumber;
+                _line = errorPosition.StartLineNumber;
+                _offset = errorPosition.StartColumnNumber;
             }
-            this.resourceString = resourceString;
-            this.errorId = errorId;
+            _resourceString = resourceString;
+            _errorId = errorId;
 
             if (args != null)
             {
-                this.args = args;
+                _args = args;
             }
         }
 
@@ -237,11 +237,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("errorId");
             }
 
-            this.invocationInfo = invocationInfo;
-            this.commandName = invocationInfo.MyCommand.Name;
-            this.parameterName = parameterName;
-            this.parameterType = parameterType;
-            this.typeSpecified = typeSpecified;
+            _invocationInfo = invocationInfo;
+            _commandName = invocationInfo.MyCommand.Name;
+            _parameterName = parameterName;
+            _parameterType = parameterType;
+            _typeSpecified = typeSpecified;
 
             if (errorPosition == null)
             {
@@ -249,16 +249,16 @@ namespace System.Management.Automation
             }
             if (errorPosition != null)
             {
-                this.line = errorPosition.StartLineNumber;
-                this.offset = errorPosition.StartColumnNumber;
+                _line = errorPosition.StartLineNumber;
+                _offset = errorPosition.StartColumnNumber;
             }
 
-            this.resourceString = resourceString;
-            this.errorId = errorId;
+            _resourceString = resourceString;
+            _errorId = errorId;
 
             if (args != null)
             {
-                this.args = args;
+                _args = args;
             }
         }
 
@@ -286,37 +286,37 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("resourceString");
             }
 
-            this.invocationInfo = pbex.CommandInvocation;
-            if(this.invocationInfo != null)
+            _invocationInfo = pbex.CommandInvocation;
+            if (_invocationInfo != null)
             {
-                this.commandName = this.invocationInfo.MyCommand.Name;
+                _commandName = _invocationInfo.MyCommand.Name;
             }
             IScriptExtent errorPosition = null;
-            if (this.invocationInfo != null)
+            if (_invocationInfo != null)
             {
-                errorPosition = invocationInfo.ScriptPosition;
+                errorPosition = _invocationInfo.ScriptPosition;
             }
 
-            this.line = pbex.Line;
-            this.offset = pbex.Offset;
+            _line = pbex.Line;
+            _offset = pbex.Offset;
 
-            this.parameterName = pbex.ParameterName;
-            this.parameterType = pbex.ParameterType;
-            this.typeSpecified = pbex.TypeSpecified;
-            this.errorId = pbex.ErrorId;
+            _parameterName = pbex.ParameterName;
+            _parameterType = pbex.ParameterType;
+            _typeSpecified = pbex.TypeSpecified;
+            _errorId = pbex.ErrorId;
 
-            this.resourceString = resourceString;
+            _resourceString = resourceString;
 
             if (args != null)
             {
-                this.args = args;
+                _args = args;
             }
 
             base.SetErrorCategory(pbex.ErrorRecord._category);
-            base.SetErrorId(errorId);
-            if (this.invocationInfo != null)
+            base.SetErrorId(_errorId);
+            if (_invocationInfo != null)
             {
-                base.ErrorRecord.SetInvocationInfo(new InvocationInfo(invocationInfo.MyCommand, errorPosition));
+                base.ErrorRecord.SetInvocationInfo(new InvocationInfo(_invocationInfo.MyCommand, errorPosition));
             }
         }
         #endregion Preferred constructors
@@ -334,14 +334,14 @@ namespace System.Management.Automation
         /// streaming context 
         /// </param>
         protected ParameterBindingException(
-            SerializationInfo info, 
-            StreamingContext context) 
+            SerializationInfo info,
+            StreamingContext context)
             : base(info, context)
         {
-            message = info.GetString("ParameterBindingException_Message");
-            parameterName = info.GetString("ParameterName");
-            line = info.GetInt64("Line");
-            offset = info.GetInt64("Offset");
+            _message = info.GetString("ParameterBindingException_Message");
+            _parameterName = info.GetString("ParameterName");
+            _line = info.GetInt64("Line");
+            _offset = info.GetInt64("Offset");
         }
 
         /// <summary>
@@ -365,9 +365,9 @@ namespace System.Management.Automation
 
             base.GetObjectData(info, context);
             info.AddValue("ParameterBindingException_Message", this.Message);
-            info.AddValue("ParameterName", parameterName);
-            info.AddValue("Line", line);
-            info.AddValue("Offset", offset);
+            info.AddValue("ParameterName", _parameterName);
+            info.AddValue("Line", _line);
+            info.AddValue("Offset", _offset);
         }
         #endregion serialization
 
@@ -380,7 +380,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// DO NOT USE!!!
         /// </remarks>
-        public ParameterBindingException() : base() { ;}
+        public ParameterBindingException() : base() {; }
 
         /// <summary>
         /// Constructors a ParameterBindingException
@@ -393,7 +393,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// DO NOT USE!!!
         /// </remarks>
-        public ParameterBindingException(string message) : base(message) { this.message = message; }
+        public ParameterBindingException(string message) : base(message) { _message = message; }
 
         /// <summary>
         /// Constructs a ParameterBindingException
@@ -411,9 +411,10 @@ namespace System.Management.Automation
         /// DO NOT USE!!!
         /// </remarks>
         public ParameterBindingException(
-            string message, 
-            Exception innerException) 
-            : base (message, innerException) { this.message = message;}
+            string message,
+            Exception innerException)
+            : base(message, innerException)
+        { _message = message; }
 
         #endregion Do Not Use
         #endregion Constructors
@@ -426,15 +427,15 @@ namespace System.Management.Automation
         {
             get
             {
-                if (message == null)
+                if (_message == null)
                 {
-                    message = BuildMessage();
+                    _message = BuildMessage();
                 }
-                return message;
+                return _message;
             }
         }
 
-        private string message;
+        private string _message;
 
         /// <summary>
         /// Gets the name of the parameter that the parameter binding
@@ -444,10 +445,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return parameterName;
+                return _parameterName;
             }
         }
-        private string parameterName = String.Empty;
+        private string _parameterName = String.Empty;
 
         /// <summary>
         /// Gets the type the parameter is expecting.
@@ -456,10 +457,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return parameterType;
+                return _parameterType;
             }
         }
-        private Type parameterType;
+        private Type _parameterType;
 
         /// <summary>
         /// Gets the Type that was specified as the parameter value
@@ -468,10 +469,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return typeSpecified;
+                return _typeSpecified;
             }
         }
-        private Type typeSpecified;
+        private Type _typeSpecified;
 
         /// <summary>
         /// Gets the errorId of this ParameterBindingException
@@ -480,10 +481,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return errorId;
+                return _errorId;
             }
         }
-        private string errorId;
+        private string _errorId;
 
         /// <summary>
         /// Gets the line in the script at which the error occurred.
@@ -492,10 +493,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return line;
+                return _line;
             }
         }
-        private Int64 line = Int64.MinValue;
+        private Int64 _line = Int64.MinValue;
 
         /// <summary>
         /// Gets the offset on the line in the script at which the error occurred.
@@ -504,10 +505,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return offset;
+                return _offset;
             }
         }
-        private Int64 offset = Int64.MinValue;
+        private Int64 _offset = Int64.MinValue;
 
         /// <summary>
         /// Gets the invocation information about the command.
@@ -516,39 +517,39 @@ namespace System.Management.Automation
         {
             get
             {
-                return invocationInfo;
+                return _invocationInfo;
             }
         }
-        private InvocationInfo invocationInfo;
+        private InvocationInfo _invocationInfo;
         #endregion Properties
 
         #region private
 
-        private string resourceString;
-        private object[] args = new object[0];
-        private string commandName;
+        private string _resourceString;
+        private object[] _args = new object[0];
+        private string _commandName;
 
-        private string BuildMessage()            
+        private string BuildMessage()
         {
             object[] messageArgs = new object[0];
 
-            if (args != null)
+            if (_args != null)
             {
-                messageArgs = new object[args.Length + 6];
-                messageArgs[0] = commandName;
-                messageArgs[1] = parameterName;
-                messageArgs[2] = parameterType;
-                messageArgs[3] = typeSpecified;
-                messageArgs[4] = line;
-                messageArgs[5] = offset;
-                args.CopyTo(messageArgs, 6);
+                messageArgs = new object[_args.Length + 6];
+                messageArgs[0] = _commandName;
+                messageArgs[1] = _parameterName;
+                messageArgs[2] = _parameterType;
+                messageArgs[3] = _typeSpecified;
+                messageArgs[4] = _line;
+                messageArgs[5] = _offset;
+                _args.CopyTo(messageArgs, 6);
             }
 
             string result = String.Empty;
 
-            if (!String.IsNullOrEmpty(resourceString))
+            if (!String.IsNullOrEmpty(_resourceString))
             {
-                result = StringUtil.Format(resourceString, messageArgs);
+                result = StringUtil.Format(_resourceString, messageArgs);
             }
             return result;
         }
@@ -630,11 +631,11 @@ namespace System.Management.Automation
             string errorId,
             params object[] args)
             : base(
-                errorCategory, 
-                invocationInfo, 
+                errorCategory,
+                invocationInfo,
                 errorPosition,
-                parameterName, 
-                parameterType, 
+                parameterName,
+                parameterType,
                 typeSpecified,
                 resourceString,
                 errorId,
@@ -721,11 +722,11 @@ namespace System.Management.Automation
             params object[] args)
             : base(
                 innerException,
-                errorCategory, 
+                errorCategory,
                 invocationInfo,
-                errorPosition, 
-                parameterName, 
-                parameterType, 
+                errorPosition,
+                parameterName,
+                parameterType,
                 typeSpecified,
                 resourceString,
                 errorId,
@@ -734,7 +735,7 @@ namespace System.Management.Automation
             ValidationMetadataException validationException = innerException as ValidationMetadataException;
             if (validationException != null && validationException.SwallowException)
             {
-                this._swallowException = true;
+                _swallowException = true;
             }
         }
         #endregion Preferred constructors
@@ -752,8 +753,8 @@ namespace System.Management.Automation
         /// streaming context 
         /// </param>
         protected ParameterBindingValidationException(
-            SerializationInfo info, 
-            StreamingContext context) 
+            SerializationInfo info,
+            StreamingContext context)
             : base(info, context)
         {
         }
@@ -943,11 +944,11 @@ namespace System.Management.Automation
             params object[] args)
             : base(
                 innerException,
-                errorCategory, 
-                invocationInfo, 
-                errorPosition, 
-                parameterName, 
-                parameterType, 
+                errorCategory,
+                invocationInfo,
+                errorPosition,
+                parameterName,
+                parameterType,
                 typeSpecified,
                 resourceString,
                 errorId,
@@ -968,8 +969,8 @@ namespace System.Management.Automation
         /// streaming context 
         /// </param>
         protected ParameterBindingArgumentTransformationException(
-            SerializationInfo info, 
-            StreamingContext context) 
+            SerializationInfo info,
+            StreamingContext context)
             : base(info, context)
         {
         }
@@ -1051,11 +1052,11 @@ namespace System.Management.Automation
             string errorId,
             params object[] args)
             : base(
-                errorCategory, 
-                invocationInfo, 
-                errorPosition, 
-                parameterName, 
-                parameterType, 
+                errorCategory,
+                invocationInfo,
+                errorPosition,
+                parameterName,
+                parameterType,
                 typeSpecified,
                 resourceString,
                 errorId,
@@ -1142,11 +1143,11 @@ namespace System.Management.Automation
             params object[] args)
             : base(
                 innerException,
-                errorCategory, 
-                invocationInfo, 
-                errorPosition, 
-                parameterName, 
-                parameterType, 
+                errorCategory,
+                invocationInfo,
+                errorPosition,
+                parameterName,
+                parameterType,
                 typeSpecified,
                 resourceString,
                 errorId,
@@ -1169,13 +1170,12 @@ namespace System.Management.Automation
         /// </param>
         protected ParameterBindingParameterDefaultValueException(
             SerializationInfo info,
-            StreamingContext context) 
+            StreamingContext context)
             : base(info, context)
         {
         }
 
         #endregion serialization
     }
-    
 } // namespace System.Management.Automation
 

@@ -40,17 +40,17 @@ namespace System.Management.Automation.Remoting
         /// Makes a connect call asynchronously.
         /// </summary>
         internal abstract void ConnectAsync();
-      
+
         /// <summary>
         /// Send capability negotiation asynchronously.
         /// </summary>
         internal abstract void SendNegotiationAsync();
-        
+
         /// <summary>
         /// This event indicates that a client's capability negotiation packet has been received.
         /// </summary>
-        internal abstract event EventHandler<RemoteSessionNegotiationEventArgs> NegotiationReceived; 
-        
+        internal abstract event EventHandler<RemoteSessionNegotiationEventArgs> NegotiationReceived;
+
         /// <summary>
         /// Close the connection asynchronously.
         /// </summary>
@@ -58,12 +58,12 @@ namespace System.Management.Automation.Remoting
         /// Message describing why the session is closing
         /// </param>
         internal abstract void CloseConnectionAsync(Exception reasonForClose);
-        
+
         /// <summary>
         /// Event that raised when session datastructure handler is closing.
         /// </summary>
         internal abstract event EventHandler<EventArgs> SessionClosing;
-        
+
         /// <summary>
         /// This event indicates a request for creating a new runspace pool
         /// has been received on the server side
@@ -85,7 +85,7 @@ namespace System.Management.Automation.Remoting
         {
             get;
         }
-        
+
         /// <summary>
         /// This method is used by the client data dispatching mechanism. 
         /// </summary>

@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -26,21 +27,21 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Message to be sent and processed if debug mode is on.
         /// </summary>
-        [Parameter( Position = 0, Mandatory = true, ValueFromPipeline = true )]
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [AllowEmptyString]
         [Alias("Msg")]
         public string Message
         {
             get
             {
-                return message;
+                return _message;
             }
             set
             {
-                message = value;
+                _message = value;
             }
         }
-        private string message = null;
+        private string _message = null;
 
 
         /// <summary>
@@ -87,21 +88,21 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Message to be sent if verbose messages are being shown.
         /// </summary>
-        [Parameter( Position = 0, Mandatory = true, ValueFromPipeline = true )]
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [AllowEmptyString]
         [Alias("Msg")]
         public string Message
         {
             get
             {
-                return message;
+                return _message;
             }
             set
             {
-                message = value;
+                _message = value;
             }
         }
-        private string message = null;
+        private string _message = null;
 
 
         /// <summary>
@@ -155,14 +156,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return message;
+                return _message;
             }
             set
             {
-                message = value;
+                _message = value;
             }
         }
-        private string message = null;
+        private string _message = null;
 
 
         /// <summary>
@@ -462,17 +463,17 @@ namespace Microsoft.PowerShell.Commands
             {
             */
 
-                // 2005/07/14-913791 "write-error output is confusing and misleading"
-                // set InvocationInfo to the script not the command
-                InvocationInfo myInvocation = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
-                if (null != myInvocation)
-                {
-                    errorRecord.SetInvocationInfo(myInvocation);
-                    errorRecord.PreserveInvocationInfoOnce = true;
-                    errorRecord.CategoryInfo.Activity = "Write-Error";
-                }
+            // 2005/07/14-913791 "write-error output is confusing and misleading"
+            // set InvocationInfo to the script not the command
+            InvocationInfo myInvocation = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
+            if (null != myInvocation)
+            {
+                errorRecord.SetInvocationInfo(myInvocation);
+                errorRecord.PreserveInvocationInfoOnce = true;
+                errorRecord.CategoryInfo.Activity = "Write-Error";
+            }
 
-                WriteError(errorRecord);
+            WriteError(errorRecord);
             /*
             }
             */
@@ -494,25 +495,25 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-/* 2005/01/25 removing throw-error
-    /// <summary>
-    /// This class implements Write-Error command
-    /// </summary>
-    [Cmdlet("Throw", "Error", DefaultParameterSetName = "NoException")]
-    public sealed class ThrowErrorCommand : WriteOrThrowErrorCommand
-    {
+    /* 2005/01/25 removing throw-error
         /// <summary>
-        /// constructor
+        /// This class implements Write-Error command
         /// </summary>
-        public ThrowErrorCommand()
+        [Cmdlet("Throw", "Error", DefaultParameterSetName = "NoException")]
+        public sealed class ThrowErrorCommand : WriteOrThrowErrorCommand
         {
-            using (tracer.TraceConstructor(this))
+            /// <summary>
+            /// constructor
+            /// </summary>
+            public ThrowErrorCommand()
             {
-                _terminating = true;
+                using (tracer.TraceConstructor(this))
+                {
+                    _terminating = true;
+                }
             }
         }
-    }
-*/
+    */
 
     #endregion WriteOrThrowErrorCommand
 
@@ -573,7 +574,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Serialization
     } // WriteErrorException
     #endregion WriteErrorException
-
 } //namespace
 
 

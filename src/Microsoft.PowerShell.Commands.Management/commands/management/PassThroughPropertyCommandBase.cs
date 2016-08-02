@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
@@ -14,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     public class PassThroughItemPropertyCommandBase : ItemPropertyCommandBase
     {
         #region Parameters
-        
+
         /// <summary>
         /// Gets or sets the passthrough parameter to the command
         /// </summary>
@@ -23,12 +24,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return passThrough;
+                return _passThrough;
             } // get
 
             set
             {
-                passThrough = value;
+                _passThrough = value;
             } // set
         } // PassThru
 
@@ -62,12 +63,12 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameters
 
         #region parameter data
-        
+
         /// <summary>
         /// Determines if the property returned from the provider should
         /// be passed through to the pipeline.
         /// </summary>
-        private bool passThrough;
+        private bool _passThrough;
 
         #endregion parameter data
 
@@ -81,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return base.DoesProviderSupportShouldProcess (base.paths);
+                return base.DoesProviderSupportShouldProcess(base.paths);
             }
         }
 
@@ -103,8 +104,6 @@ namespace Microsoft.PowerShell.Commands
         } // GetCurrentContext
 
         #endregion protected members
-
     } // PassThroughItemPropertyCommandBase
-
 } // namespace Microsoft.PowerShell.Commands
 

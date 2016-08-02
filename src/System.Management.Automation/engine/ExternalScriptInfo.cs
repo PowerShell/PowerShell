@@ -62,7 +62,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(IO.Path.IsPathRooted(path), "Caller makes sure that 'path' is already resolved.");
 
             // Path might contian short-name syntax such as 'DOCUME~1'. Use Path.GetFullPath to expand the short name
-            this._path = IO.Path.GetFullPath(path);
+            _path = IO.Path.GetFullPath(path);
             CommonInitialization();
         }
 
@@ -92,7 +92,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(IO.Path.IsPathRooted(path), "Caller makes sure that 'path' is already resolved.");
 
             // Path might contian short-name syntax such as 'DOCUME~1'. Use Path.GetFullPath to expand the short name
-            this._path = IO.Path.GetFullPath(path);
+            _path = IO.Path.GetFullPath(path);
             CommonInitialization();
         }
 
@@ -102,7 +102,7 @@ namespace System.Management.Automation
         internal ExternalScriptInfo(ExternalScriptInfo other)
             : base(other)
         {
-            this._path = other._path;
+            _path = other._path;
             CommonInitialization();
         }
 
@@ -136,7 +136,7 @@ namespace System.Management.Automation
         /// </summary>
         internal override CommandInfo CreateGetCommandCopy(object[] argumentList)
         {
-            ExternalScriptInfo copy = new ExternalScriptInfo(this) {IsGetCommandCopy = true, Arguments = argumentList};
+            ExternalScriptInfo copy = new ExternalScriptInfo(this) { IsGetCommandCopy = true, Arguments = argumentList };
             return copy;
         }
 
@@ -144,8 +144,8 @@ namespace System.Management.Automation
 
         internal override HelpCategory HelpCategory
         {
-            get { return HelpCategory.ExternalScript;  }
-        } 
+            get { return HelpCategory.ExternalScript; }
+        }
 
         /// <summary>
         /// Gets the path to the script file.
@@ -200,7 +200,7 @@ namespace System.Management.Automation
         /// </summary>
         public override SessionStateEntryVisibility Visibility
         {
-            get 
+            get
             {
                 if (Context == null) return SessionStateEntryVisibility.Public;
 
@@ -215,7 +215,7 @@ namespace System.Management.Automation
         /// 
         public ScriptBlock ScriptBlock
         {
-            get 
+            get
             {
                 if (_scriptBlock == null)
                 {
@@ -326,7 +326,7 @@ namespace System.Management.Automation
                         new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
             }
         }
-        CommandMetadata _commandMetadata;
+        private CommandMetadata _commandMetadata;
 
         /// <summary>
         /// True if the command has dynamic parameters, false otherwise.
@@ -382,7 +382,7 @@ namespace System.Management.Automation
                 return data == null ? null : data.RequiredPSVersion;
             }
         }
-        
+
         internal IEnumerable<string> RequiresPSEditions
         {
             get
@@ -435,7 +435,7 @@ namespace System.Management.Automation
                 {
                     ReadScriptContents();
                 }
-                
+
                 return _scriptContents;
             }
         }
@@ -452,7 +452,7 @@ namespace System.Management.Automation
                 {
                     ReadScriptContents();
                 }
-                
+
                 return _originalEncoding;
             }
         }
@@ -471,7 +471,7 @@ namespace System.Management.Automation
 
                 try
                 {
-                    using(FileStream readerStream = new FileStream(_path, FileMode.Open, FileAccess.Read))
+                    using (FileStream readerStream = new FileStream(_path, FileMode.Open, FileAccess.Read))
                     {
                         Encoding defaultEncoding = ClrFacade.GetDefaultEncoding();
                         Microsoft.Win32.SafeHandles.SafeFileHandle safeFileHandle = readerStream.SafeFileHandle;
@@ -524,7 +524,7 @@ namespace System.Management.Automation
                     ThrowCommandNotFoundException(e);
                 }
             }
-        }   
+        }
 
         private static void ThrowCommandNotFoundException(Exception innerException)
         {

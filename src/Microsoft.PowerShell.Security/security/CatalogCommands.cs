@@ -6,7 +6,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
 using System.Management.Automation;
-using Dbg=System.Management.Automation.Diagnostics;
+using Dbg = System.Management.Automation.Diagnostics;
 using System.Collections;
 using System.IO;
 using System.Management.Automation.Provider;
@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// Defines the base class from which all catalog commands are derived.
     /// </summary>
     public abstract class CatalogCommandsBase : PSCmdlet
-    {       
+    {
         /// <summary>
         /// Path of folder/file to generate or validate the catalog file 
         /// </summary>
@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // name of this command
         //
-        string commandName;
+        private string commandName;
 
         /// <summary>
         /// Initializes a new instance of the CatalogCommandsBase class,
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
             commandName = name;
         }
 
-        private CatalogCommandsBase() : base() {}
+        private CatalogCommandsBase() : base() { }
 
         /// <summary>
         /// Processes records from the input pipeline.
@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
             Collection<string> paths = new Collection<string>();
 
             if (Path != null)
-            {                
+            {
                 foreach (string p in Path)
                 {
                     foreach (PathInfo tempPath in SessionState.Path.GetResolvedPSPathFromPSPath(p))
@@ -100,15 +100,15 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            string drive = null;            
+            string drive = null;
 
             // resolve catalog destination Path 
             if (!SessionState.Path.IsPSAbsolute(catalogFilePath, out drive) && !System.IO.Path.IsPathRooted(catalogFilePath))
-            {                
-                catalogFilePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(catalogFilePath);                
+            {
+                catalogFilePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(catalogFilePath);
             }
 
-            PerformAction(paths, catalogFilePath);                                      
+            PerformAction(paths, catalogFilePath);
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace Microsoft.PowerShell.Commands
         /// Initializes a new instance of the New-FileCatalog class.
         /// </summary>
         public NewFileCatalogCommand() : base("New-FileCatalog") { }
-                
+
         /// <summary>  
         /// Catalog version 
         /// </summary>  
@@ -149,12 +149,12 @@ namespace Microsoft.PowerShell.Commands
             }
             set
             {
-               catalogVersion = value;
+                catalogVersion = value;
             }
         }
-        
+
         // Based on the Catalog version we will decide which hashing Algorithm to use 
-        private int catalogVersion = 1; 
+        private int catalogVersion = 1;
 
         /// <summary>
         /// Generate the Catalog for the Path 
@@ -168,8 +168,8 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>
         /// True if able to Create Catalog or else False 
         /// </returns>
-        protected override void PerformAction(Collection<string> path,string catalogFilePath)
-        {                        
+        protected override void PerformAction(Collection<string> path, string catalogFilePath)
+        {
             if (path.Count == 0)
             {
                 // if user has not provided the path use current directory to generate catalog
@@ -182,9 +182,9 @@ namespace Microsoft.PowerShell.Commands
             // parent Directory exists other wise CryptoAPI fails to create a .cat file                                     
             if (catalogFileInfo.Extension.Equals(".cat", StringComparison.Ordinal))
             {
-                System.IO.Directory.CreateDirectory(catalogFileInfo.Directory.FullName);               
+                System.IO.Directory.CreateDirectory(catalogFileInfo.Directory.FullName);
             }
-            else 
+            else
             {
                 // This only creates Directory if it does not exists, Append a default name 
                 System.IO.Directory.CreateDirectory(catalogFilePath);
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteObject(catalogFile);
             }
-        }        
+        }
     }
 
     /// <summary>
@@ -228,8 +228,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Patterns used to exclude files from DiskPaths and Catalog         
         /// </summary>
-        [Parameter()]        
-        public string[] FilesToSkip 
+        [Parameter()]
+        public string[] FilesToSkip
         {
             get
             {
@@ -245,7 +245,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-        string[] filesToSkip = null;
+        private string[] filesToSkip = null;
         internal WildcardPattern[] excludedPatterns = null;
 
         /// <summary>
@@ -277,10 +277,9 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 WriteObject(catalogInfo.Status);
-            }            
+            }
         }
     }
-
 }
 
 #endif

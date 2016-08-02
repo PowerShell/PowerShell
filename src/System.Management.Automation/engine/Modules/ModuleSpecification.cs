@@ -14,6 +14,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 //
 // Now define the set of commands for manipulating modules.
 //
+
 namespace Microsoft.PowerShell.Commands
 {
     #region Module Specification class
@@ -198,7 +199,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     moduleSpecString += "; RequiredVersion = '" + RequiredVersion + "'";
                 }
-                else 
+                else
                 {
                     if (Version != null)
                     {
@@ -206,7 +207,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     if (MaximumVersion != null)
                     {
-                        moduleSpecString += "; MaximumVersion = '" + MaximumVersion + "'"; 
+                        moduleSpecString += "; MaximumVersion = '" + MaximumVersion + "'";
                     }
                 }
                 moduleSpecString += " }";
@@ -214,7 +215,7 @@ namespace Microsoft.PowerShell.Commands
             return moduleSpecString;
         }
 
-        
+
 
         /// <summary>
         /// Parse the specified string into a ModuleSpecification object
@@ -266,10 +267,9 @@ namespace Microsoft.PowerShell.Commands
         /// The exact version of the module if specified, otherwise null.
         /// </summary>
         public Version RequiredVersion { get; internal set; }
-
     }
 
-    internal class ModuleSpecificationComparer:IEqualityComparer<ModuleSpecification>
+    internal class ModuleSpecificationComparer : IEqualityComparer<ModuleSpecification>
     {
         public bool Equals(ModuleSpecification x, ModuleSpecification y)
         {
@@ -357,11 +357,10 @@ namespace Microsoft.PowerShell.Commands
                     result = result ^ obj.RequiredVersion.GetHashCode();
                 }
             }
-            
+
             return result;
         }
     }
 
     #endregion
-
 } // Microsoft.PowerShell.Commands

@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Threading;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     /// <seealso cref="System.Management.Automation.Runspaces.Pipeline.Output"/>
     /// <seealso cref="System.Management.Automation.Runspaces.Pipeline.Error"/>
-    public abstract class PipelineReader<T> 
+    public abstract class PipelineReader<T>
     {
         /// <summary>
         /// Event fired when data is added to the buffer

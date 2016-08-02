@@ -13,14 +13,18 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace System.Management.Automation.ComInterop {
-    internal sealed class CurrencyArgBuilder : SimpleArgBuilder {
+namespace System.Management.Automation.ComInterop
+{
+    internal sealed class CurrencyArgBuilder : SimpleArgBuilder
+    {
         internal CurrencyArgBuilder(Type parameterType)
-            : base(parameterType) {
+            : base(parameterType)
+        {
             Debug.Assert(parameterType == typeof(CurrencyWrapper));
         }
 
-        internal override Expression Marshal(Expression parameter) {
+        internal override Expression Marshal(Expression parameter)
+        {
             // parameter.WrappedObject
             return Expression.Property(
                 Helpers.Convert(base.Marshal(parameter), typeof(CurrencyWrapper)),
@@ -28,7 +32,8 @@ namespace System.Management.Automation.ComInterop {
             );
         }
 
-        internal override Expression MarshalToRef(Expression parameter) {
+        internal override Expression MarshalToRef(Expression parameter)
+        {
             // Decimal.ToOACurrency(parameter.WrappedObject)
             return Expression.Call(
                 typeof(Decimal).GetMethod("ToOACurrency"),
@@ -36,7 +41,8 @@ namespace System.Management.Automation.ComInterop {
             );
         }
 
-        internal override Expression UnmarshalFromRef(Expression value) {
+        internal override Expression UnmarshalFromRef(Expression value)
+        {
             // Decimal.FromOACurrency(value)
             return base.UnmarshalFromRef(
                 Expression.New(

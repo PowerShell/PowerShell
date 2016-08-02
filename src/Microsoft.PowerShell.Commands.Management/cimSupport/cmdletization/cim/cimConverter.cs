@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Cim
 
 #if !CORECLR    // String.IsInterned Not In CoreCLR
                 Debug.Assert(
-                    string.IsInterned(_string) == null, 
+                    string.IsInterned(_string) == null,
                     "We will overwrite string contents - we can't / shouldn't do this for interned strings.");
 #endif
 
@@ -170,9 +170,9 @@ namespace Microsoft.PowerShell.Cim
 
             PSObject psObject = PSObject.AsPSObject(dotNetObject);
             Type dotNetType = psObject.BaseObject.GetType();
-            if (typeof (PSCredential).IsAssignableFrom(dotNetType))
+            if (typeof(PSCredential).IsAssignableFrom(dotNetType))
             {
-                var credential = (PSCredential) (psObject.BaseObject);
+                var credential = (PSCredential)(psObject.BaseObject);
 
                 string escapedUsername = credential.UserName;
                 escapedUsername = escapedUsername.Replace("\\", "\\\\"); // Esc backslashes
@@ -186,9 +186,9 @@ namespace Microsoft.PowerShell.Cim
                 return sensitiveString.Value;
             }
 
-            if (typeof (SecureString).IsAssignableFrom(dotNetType))
+            if (typeof(SecureString).IsAssignableFrom(dotNetType))
             {
-                SecureString secureString = (SecureString) psObject.BaseObject;
+                SecureString secureString = (SecureString)psObject.BaseObject;
                 var sensitiveString = new SensitiveString(secureString.Length);
                 lock (_trackedDisposables) { _trackedDisposables.Add(sensitiveString); }
                 sensitiveString.Copy(secureString, 0);
@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell.Cim
             PSObject psObject = PSObject.AsPSObject(dotNetObject);
             Type dotNetType = psObject.BaseObject.GetType();
             Dbg.Assert(
-                !(dotNetType.GetTypeInfo().IsGenericType && dotNetType.GetGenericTypeDefinition() == typeof (Nullable<>)),
+                !(dotNetType.GetTypeInfo().IsGenericType && dotNetType.GetGenericTypeDefinition() == typeof(Nullable<>)),
                 "GetType on a boxed object should never return Nullable<T>");
 
             if (LanguagePrimitives.IsCimIntrinsicScalarType(dotNetType))
@@ -394,7 +394,7 @@ namespace Microsoft.PowerShell.Cim
                 return dotNetObject;
             }
 
-            Func<Func<object>, object> exceptionSafeReturn = delegate(Func<object> innerAction)
+            Func<Func<object>, object> exceptionSafeReturn = delegate (Func<object> innerAction)
                                                                  {
                                                                      try
                                                                      {
@@ -402,7 +402,6 @@ namespace Microsoft.PowerShell.Cim
                                                                      }
                                                                      catch (Exception e)
                                                                      {
-
                                                                          CommandProcessor.CheckForSevereException(e);
                                                                          throw CimValueConverter.GetInvalidCastException(
                                                                              e,
@@ -470,7 +469,7 @@ namespace Microsoft.PowerShell.Cim
                 return exceptionSafeReturn(delegate
                                                {
                                                    XmlDocument doc = InternalDeserializer.LoadUnsafeXmlDocument(
-                                                       cimIntrinsicValue, 
+                                                       cimIntrinsicValue,
                                                        true, /* preserve non elements: whitespace, processing instructions, comments, etc. */
                                                        null); /* default maxCharactersInDocument */
                                                    return doc;
@@ -671,8 +670,8 @@ namespace Microsoft.PowerShell.Cim
                 (type.IsArray && LanguagePrimitives.IsCimIntrinsicScalarType(type.GetElementType())) ||
                 typeof(CimInstance).IsAssignableFrom(type) ||
                 typeof(PSReference).IsAssignableFrom(type) ||
-                type == typeof (CimInstance[]) ||
-                type == typeof (PSReference[]),
+                type == typeof(CimInstance[]) ||
+                type == typeof(PSReference[]),
                 "Caller should verify that type is an intrinsic CIM type");
         }
     }

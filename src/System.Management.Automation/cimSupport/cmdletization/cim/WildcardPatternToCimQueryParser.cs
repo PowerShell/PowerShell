@@ -3,6 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 // TODO/FIXME: move this to Microsoft.PowerShell.Cim namespace (and move in source depot folder as well)
+
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     using System.Management.Automation;
@@ -20,8 +21,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// </remarks>
     internal class WildcardPatternToCimQueryParser : WildcardPatternParser
     {
-        private readonly StringBuilder result = new StringBuilder();
-        private bool needClientSideFiltering;
+        private readonly StringBuilder _result = new StringBuilder();
+        private bool _needClientSideFiltering;
 
         protected override void AppendLiteralCharacter(char c)
         {
@@ -35,24 +36,24 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     this.EndBracketExpression();
                     break;
                 default:
-                    result.Append(c);
+                    _result.Append(c);
                     break;
             }
         }
 
         protected override void AppendAsterix()
         {
-            result.Append('%');
+            _result.Append('%');
         }
 
         protected override void AppendQuestionMark()
         {
-            result.Append('_');
+            _result.Append('_');
         }
 
         protected override void BeginBracketExpression()
         {
-            result.Append('[');
+            _result.Append('[');
         }
 
         protected override void AppendLiteralCharacterToBracketExpression(char c)
@@ -66,7 +67,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     this.AppendCharacterRangeToBracketExpression(c, c);
                     break;
                 default:
-                    result.Append(c);
+                    _result.Append(c);
                     break;
             }
         }
@@ -82,12 +83,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             if ((91 <= startOfCharacterRange) && (startOfCharacterRange <= 94))
             {
                 startOfCharacterRange = (char)90;
-                needClientSideFiltering = true;
+                _needClientSideFiltering = true;
             }
             if ((91 <= endOfCharacterRange) && (endOfCharacterRange <= 94))
             {
                 endOfCharacterRange = (char)95;
-                needClientSideFiltering = true;
+                _needClientSideFiltering = true;
             }
 
             // 44 = ,
@@ -96,22 +97,22 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             if (startOfCharacterRange == 45)
             {
                 startOfCharacterRange = (char)44;
-                needClientSideFiltering = true;
+                _needClientSideFiltering = true;
             }
             if (endOfCharacterRange == 45)
             {
                 endOfCharacterRange = (char)46;
-                needClientSideFiltering = true;
+                _needClientSideFiltering = true;
             }
 
-            result.Append(startOfCharacterRange);
-            result.Append('-');
-            result.Append(endOfCharacterRange);
+            _result.Append(startOfCharacterRange);
+            _result.Append('-');
+            _result.Append(endOfCharacterRange);
         }
 
         protected override void EndBracketExpression()
         {
-            result.Append(']');
+            _result.Append(']');
         }
 
         /// <summary>
@@ -122,8 +123,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             var parser = new WildcardPatternToCimQueryParser();
             WildcardPatternParser.Parse(wildcardPattern, parser);
-            needsClientSideFiltering = parser.needClientSideFiltering;
-            return parser.result.ToString();
+            needsClientSideFiltering = parser._needClientSideFiltering;
+            return parser._result.ToString();
         }
     }
 }

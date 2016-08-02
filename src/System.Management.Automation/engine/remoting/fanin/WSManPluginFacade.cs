@@ -46,7 +46,7 @@ namespace System.Management.Automation.Remoting
     /// <param name="extraInfo">PCWSTR</param>
     /// <param name="startupInfo">WSMAN_SHELL_STARTUP_INFO*</param>
     /// <param name="inboundShellInformation">WSMAN_DATA*</param>
-    delegate void WSMPluginShellDelegate( // TODO: Rename to WSManPluginShellDelegate once I remove the MC++ module.
+    internal delegate void WSMPluginShellDelegate( // TODO: Rename to WSManPluginShellDelegate once I remove the MC++ module.
         IntPtr pluginContext,
         IntPtr requestDetails,
         int flags,
@@ -59,7 +59,7 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
     /// <param name="shellContext">PVOID</param>
-    delegate void WSMPluginReleaseShellContextDelegate(
+    internal delegate void WSMPluginReleaseShellContextDelegate(
         IntPtr pluginContext,
         IntPtr shellContext);
 
@@ -72,7 +72,7 @@ namespace System.Management.Automation.Remoting
     /// <param name="shellContext">PVOID</param>
     /// <param name="commandContext">PVOID optional</param>
     /// <param name="inboundConnectInformation">WSMAN_DATA* optional</param>
-    delegate void WSMPluginConnectDelegate(
+    internal delegate void WSMPluginConnectDelegate(
         IntPtr pluginContext,
         IntPtr requestDetails,
         int flags,
@@ -89,7 +89,7 @@ namespace System.Management.Automation.Remoting
     /// <param name="shellContext">PVOID</param>
     /// <param name="commandLine">PCWSTR</param>
     /// <param name="arguments">WSMAN_COMMAND_ARG_SET*</param>
-    delegate void WSMPluginCommandDelegate(
+    internal delegate void WSMPluginCommandDelegate(
         IntPtr pluginContext,
         IntPtr requestDetails,
         int flags,
@@ -101,8 +101,8 @@ namespace System.Management.Automation.Remoting
     /// Delegate that is passed to native layer for callback on operation shutdown notifications
     /// </summary>
     /// <param name="shutdownContext">IntPtr</param>
-     delegate void WSMPluginOperationShutdownDelegate(
-            IntPtr shutdownContext);
+    internal delegate void WSMPluginOperationShutdownDelegate(
+           IntPtr shutdownContext);
 
     /// <summary>
     /// 
@@ -110,7 +110,7 @@ namespace System.Management.Automation.Remoting
     /// <param name="pluginContext">PVOID</param>
     /// <param name="shellContext">PVOID</param>
     /// <param name="commandContext">PVOID</param>
-    delegate void WSMPluginReleaseCommandContextDelegate(
+    internal delegate void WSMPluginReleaseCommandContextDelegate(
         IntPtr pluginContext,
         IntPtr shellContext,
         IntPtr commandContext);
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Remoting
     /// <param name="commandContext">PVOID</param>
     /// <param name="stream">PCWSTR</param>
     /// <param name="inboundData">WSMAN_DATA*</param>
-    delegate void WSMPluginSendDelegate(
+    internal delegate void WSMPluginSendDelegate(
         IntPtr pluginContext,
         IntPtr requestDetails,
         int flags,
@@ -143,7 +143,7 @@ namespace System.Management.Automation.Remoting
     /// <param name="shellContext">PVOID</param>
     /// <param name="commandContext">PVOID optional</param>
     /// <param name="streamSet">WSMAN_STREAM_ID_SET* optional</param>
-    delegate void WSMPluginReceiveDelegate(
+    internal delegate void WSMPluginReceiveDelegate(
         IntPtr pluginContext,
         IntPtr requestDetails,
         int flags,
@@ -160,7 +160,7 @@ namespace System.Management.Automation.Remoting
     /// <param name="shellContext">PVOID</param>
     /// <param name="commandContext">PVOID optional</param>
     /// <param name="code">PCWSTR</param>
-    delegate void WSMPluginSignalDelegate(
+    internal delegate void WSMPluginSignalDelegate(
         IntPtr pluginContext,
         IntPtr requestDetails,
         int flags,
@@ -181,7 +181,7 @@ namespace System.Management.Automation.Remoting
     ///
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
-    delegate void WSMShutdownPluginDelegate(
+    internal delegate void WSMShutdownPluginDelegate(
         IntPtr pluginContext);
 
     /// <summary>
@@ -192,28 +192,28 @@ namespace System.Management.Automation.Remoting
         #region Private Members
 
         // Holds the delegate pointers in a structure that has identical layout to the native structure.
-        private WSManPluginEntryDelegatesInternal unmanagedStruct = new WSManPluginEntryDelegatesInternal();
+        private WSManPluginEntryDelegatesInternal _unmanagedStruct = new WSManPluginEntryDelegatesInternal();
         internal WSManPluginEntryDelegatesInternal UnmanagedStruct
         {
-            get { return unmanagedStruct; }
+            get { return _unmanagedStruct; }
         }
 
         // Flag: Has Dispose already been called?
-        private bool disposed = false;
+        private bool _disposed = false;
 
         /// <summary>
         /// GC handle which prevents garbage collector from collecting this delegate.
         /// </summary>
-        private GCHandle pluginShellGCHandle;
-        private GCHandle pluginReleaseShellContextGCHandle;
-        private GCHandle pluginCommandGCHandle;
-        private GCHandle pluginReleaseCommandContextGCHandle;
-        private GCHandle pluginSendGCHandle;
-        private GCHandle pluginReceiveGCHandle;
-        private GCHandle pluginSignalGCHandle;
-        private GCHandle pluginConnectGCHandle;
-        private GCHandle shutdownPluginGCHandle;
-        private GCHandle WSMPluginOperationShutdownGCHandle;
+        private GCHandle _pluginShellGCHandle;
+        private GCHandle _pluginReleaseShellContextGCHandle;
+        private GCHandle _pluginCommandGCHandle;
+        private GCHandle _pluginReleaseCommandContextGCHandle;
+        private GCHandle _pluginSendGCHandle;
+        private GCHandle _pluginReceiveGCHandle;
+        private GCHandle _pluginSignalGCHandle;
+        private GCHandle _pluginConnectGCHandle;
+        private GCHandle _shutdownPluginGCHandle;
+        private GCHandle _WSMPluginOperationShutdownGCHandle;
 
         #endregion
 
@@ -234,9 +234,9 @@ namespace System.Management.Automation.Remoting
         /// Internal implementation of Dispose pattern callable by consumers. 
         /// </summary>
         public void Dispose()
-        { 
+        {
             Dispose(true);
-            GC.SuppressFinalize(this);           
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -245,13 +245,13 @@ namespace System.Management.Automation.Remoting
         /// <param name="disposing"></param>
         private void Dispose(bool disposing)
         {
-            if (disposed)
-                return; 
+            if (_disposed)
+                return;
 
             // Free any unmanaged objects here. 
             this.CleanUpDelegates();
 
-            disposed = true;
+            _disposed = true;
         }
 
         /// <summary>
@@ -281,56 +281,56 @@ namespace System.Management.Automation.Remoting
             // of the managed heap.
             {
                 WSMPluginShellDelegate pluginShell = new WSMPluginShellDelegate(WSManPluginManagedEntryWrapper.WSManPluginShell);
-                this.pluginShellGCHandle = GCHandle.Alloc(pluginShell);
+                _pluginShellGCHandle = GCHandle.Alloc(pluginShell);
                 // marshal the delegate to a unmanaged function pointer so that AppDomain reference is stored correctly.
                 // Populate the outgoing structure so the caller has access to the entry points
-                unmanagedStruct.wsManPluginShellCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginShell);
+                _unmanagedStruct.wsManPluginShellCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginShell);
             }
             {
                 WSMPluginReleaseShellContextDelegate pluginReleaseShellContext = new WSMPluginReleaseShellContextDelegate(WSManPluginManagedEntryWrapper.WSManPluginReleaseShellContext);
-                this.pluginReleaseShellContextGCHandle = GCHandle.Alloc(pluginReleaseShellContext);
-                unmanagedStruct.wsManPluginReleaseShellContextCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginReleaseShellContext);
+                _pluginReleaseShellContextGCHandle = GCHandle.Alloc(pluginReleaseShellContext);
+                _unmanagedStruct.wsManPluginReleaseShellContextCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginReleaseShellContext);
             }
-            { 
+            {
                 WSMPluginCommandDelegate pluginCommand = new WSMPluginCommandDelegate(WSManPluginManagedEntryWrapper.WSManPluginCommand);
-                this.pluginCommandGCHandle = GCHandle.Alloc(pluginCommand);
-                unmanagedStruct.wsManPluginCommandCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginCommand);
+                _pluginCommandGCHandle = GCHandle.Alloc(pluginCommand);
+                _unmanagedStruct.wsManPluginCommandCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginCommand);
             }
             {
                 WSMPluginReleaseCommandContextDelegate pluginReleaseCommandContext = new WSMPluginReleaseCommandContextDelegate(WSManPluginManagedEntryWrapper.WSManPluginReleaseCommandContext);
-                this.pluginReleaseCommandContextGCHandle = GCHandle.Alloc(pluginReleaseCommandContext);
-                unmanagedStruct.wsManPluginReleaseCommandContextCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginReleaseCommandContext);
+                _pluginReleaseCommandContextGCHandle = GCHandle.Alloc(pluginReleaseCommandContext);
+                _unmanagedStruct.wsManPluginReleaseCommandContextCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginReleaseCommandContext);
             }
-            { 
+            {
                 WSMPluginSendDelegate pluginSend = new WSMPluginSendDelegate(WSManPluginManagedEntryWrapper.WSManPluginSend);
-                this.pluginSendGCHandle = GCHandle.Alloc(pluginSend);
-                unmanagedStruct.wsManPluginSendCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginSend);
+                _pluginSendGCHandle = GCHandle.Alloc(pluginSend);
+                _unmanagedStruct.wsManPluginSendCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginSend);
             }
-            { 
+            {
                 WSMPluginReceiveDelegate pluginReceive = new WSMPluginReceiveDelegate(WSManPluginManagedEntryWrapper.WSManPluginReceive);
-                this.pluginReceiveGCHandle = GCHandle.Alloc(pluginReceive);
-                unmanagedStruct.wsManPluginReceiveCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginReceive);
+                _pluginReceiveGCHandle = GCHandle.Alloc(pluginReceive);
+                _unmanagedStruct.wsManPluginReceiveCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginReceive);
             }
-            { 
+            {
                 WSMPluginSignalDelegate pluginSignal = new WSMPluginSignalDelegate(WSManPluginManagedEntryWrapper.WSManPluginSignal);
-                this.pluginSignalGCHandle = GCHandle.Alloc(pluginSignal);
-                unmanagedStruct.wsManPluginSignalCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginSignal);
+                _pluginSignalGCHandle = GCHandle.Alloc(pluginSignal);
+                _unmanagedStruct.wsManPluginSignalCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginSignal);
             }
-            { 
+            {
                 WSMPluginConnectDelegate pluginConnect = new WSMPluginConnectDelegate(WSManPluginManagedEntryWrapper.WSManPluginConnect);
-                this.pluginConnectGCHandle = GCHandle.Alloc(pluginConnect);
-                unmanagedStruct.wsManPluginConnectCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginConnect);
+                _pluginConnectGCHandle = GCHandle.Alloc(pluginConnect);
+                _unmanagedStruct.wsManPluginConnectCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginConnect);
             }
             {
                 WSMShutdownPluginDelegate shutdownPlugin = new WSMShutdownPluginDelegate(WSManPluginManagedEntryWrapper.ShutdownPlugin);
-                this.shutdownPluginGCHandle = GCHandle.Alloc(shutdownPlugin);
-                unmanagedStruct.wsManPluginShutdownPluginCallbackNative = Marshal.GetFunctionPointerForDelegate(shutdownPlugin);
+                _shutdownPluginGCHandle = GCHandle.Alloc(shutdownPlugin);
+                _unmanagedStruct.wsManPluginShutdownPluginCallbackNative = Marshal.GetFunctionPointerForDelegate(shutdownPlugin);
             }
-            if(!Platform.IsWindows)
+            if (!Platform.IsWindows)
             {
                 WSMPluginOperationShutdownDelegate pluginShutDownDelegate = new WSMPluginOperationShutdownDelegate(WSManPluginManagedEntryWrapper.WSManPSShutdown);
-                this.WSMPluginOperationShutdownGCHandle = GCHandle.Alloc(pluginShutDownDelegate);
-                unmanagedStruct.wsManPluginShutdownCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginShutDownDelegate);
+                _WSMPluginOperationShutdownGCHandle = GCHandle.Alloc(pluginShutDownDelegate);
+                _unmanagedStruct.wsManPluginShutdownCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginShutDownDelegate);
             }
         }
 
@@ -340,27 +340,27 @@ namespace System.Management.Automation.Remoting
         private void CleanUpDelegates()
         {
             // Free GCHandles so that the memory they point to may be unpinned (garbage collected)
-            if (null != this.pluginShellGCHandle)
+            if (null != _pluginShellGCHandle)
             {
-                this.pluginShellGCHandle.Free();
-                this.pluginReleaseShellContextGCHandle.Free();
-                this.pluginCommandGCHandle.Free();
-                this.pluginReleaseCommandContextGCHandle.Free();
-                this.pluginSendGCHandle.Free();
-                this.pluginReceiveGCHandle.Free();
-                this.pluginSignalGCHandle.Free();
-                this.pluginConnectGCHandle.Free();
-                this.shutdownPluginGCHandle.Free();
-                if(!Platform.IsWindows)
+                _pluginShellGCHandle.Free();
+                _pluginReleaseShellContextGCHandle.Free();
+                _pluginCommandGCHandle.Free();
+                _pluginReleaseCommandContextGCHandle.Free();
+                _pluginSendGCHandle.Free();
+                _pluginReceiveGCHandle.Free();
+                _pluginSignalGCHandle.Free();
+                _pluginConnectGCHandle.Free();
+                _shutdownPluginGCHandle.Free();
+                if (!Platform.IsWindows)
                 {
-                    this.WSMPluginOperationShutdownGCHandle.Free();
+                    _WSMPluginOperationShutdownGCHandle.Free();
                 }
             }
         }
 
         /// <summary>
         /// Structure definition to match the native one.
-        /// NOTE: The layout of this structure must be IDENTICAL between here and WSManPluginEntryDelegates in pwrshplugin.h!
+        /// NOTE: The layout of this structure must be IDENTICAL between here and PwrshPluginWkr_Ptrs in pwrshplugindefs.h!
         /// </summary>
         [StructLayout(LayoutKind.Sequential)]
         internal class WSManPluginEntryDelegatesInternal
@@ -424,8 +424,7 @@ namespace System.Management.Automation.Remoting
             /// </summary>
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr wsManPluginShutdownCallbackNative;
-
-       }
+        }
     }
 
     /// <summary>
@@ -523,12 +522,12 @@ namespace System.Management.Automation.Remoting
                     requestDetails,
                     WSManPluginErrorCodes.NullPluginContext,
                     StringUtil.Format(
-                        RemotingErrorIdStrings.WSManPluginNullPluginContext, 
-                        "pluginContext", 
+                        RemotingErrorIdStrings.WSManPluginNullPluginContext,
+                        "pluginContext",
                         "WSManPluginConnect")
                     );
                 return;
-            }    
+            }
 
             WSManPluginInstance.PerformWSManPluginConnect(pluginContext, requestDetails, flags, shellContext, commandContext, inboundConnectInformation);
         }
@@ -549,7 +548,7 @@ namespace System.Management.Automation.Remoting
             [MarshalAs(UnmanagedType.LPWStr)] string extraInfo,
             IntPtr startupInfo,
             IntPtr inboundShellInformation)
-        {    
+        {
             if (IntPtr.Zero == pluginContext)
             {
                 WSManPluginInstance.ReportOperationComplete(
@@ -557,7 +556,7 @@ namespace System.Management.Automation.Remoting
                     WSManPluginErrorCodes.NullPluginContext,
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginNullPluginContext,
-                        "pluginContext", 
+                        "pluginContext",
                         "WSManPluginShell")
                     );
                 return;
@@ -615,7 +614,7 @@ namespace System.Management.Automation.Remoting
                     WSManPluginErrorCodes.NullPluginContext,
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginNullPluginContext,
-                        "Plugin Context", 
+                        "Plugin Context",
                         "WSManPluginCommand")
                     );
                 return;
@@ -624,15 +623,15 @@ namespace System.Management.Automation.Remoting
             WSManPluginInstance.PerformWSManPluginCommand(pluginContext, requestDetails, flags, shellContext, commandLine, arguments);
         }
 
-         /// <summary>
+        /// <summary>
         /// Operation shutdown notification that was registered with the native layer for each of the shellCreate operations.
         /// </summary>
         /// <param name="shutdownContext">IntPtr</param>
-        public static void WSManPSShutdown(         
+        public static void WSManPSShutdown(
             IntPtr shutdownContext)
-        {   
+        {
             GCHandle gch = GCHandle.FromIntPtr(shutdownContext);
-            EventWaitHandle eventHandle = (EventWaitHandle) gch.Target;
+            EventWaitHandle eventHandle = (EventWaitHandle)gch.Target;
             eventHandle.Set();
             gch.Free();
         }
@@ -674,19 +673,19 @@ namespace System.Management.Automation.Remoting
             if (IntPtr.Zero == pluginContext)
             {
                 WSManPluginInstance.ReportOperationComplete(
-                    requestDetails, 
+                    requestDetails,
                     WSManPluginErrorCodes.NullPluginContext,
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginNullPluginContext,
-                        "Plugin Context", 
+                        "Plugin Context",
                         "WSManPluginSend")
                     );
                 return;
             }
-    
+
             WSManPluginInstance.PerformWSManPluginSend(pluginContext, requestDetails, flags, shellContext, commandContext, stream, inboundData);
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -707,11 +706,11 @@ namespace System.Management.Automation.Remoting
             if (IntPtr.Zero == pluginContext)
             {
                 WSManPluginInstance.ReportOperationComplete(
-                    requestDetails, 
+                    requestDetails,
                     WSManPluginErrorCodes.NullPluginContext,
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginNullPluginContext,
-                        "Plugin Context", 
+                        "Plugin Context",
                         "WSManPluginReceive")
                     );
                 return;
@@ -740,11 +739,11 @@ namespace System.Management.Automation.Remoting
             if ((IntPtr.Zero == pluginContext) || (IntPtr.Zero == shellContext))
             {
                 WSManPluginInstance.ReportOperationComplete(
-                    requestDetails, 
+                    requestDetails,
                     WSManPluginErrorCodes.NullPluginContext,
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginNullPluginContext,
-                        "Plugin Context", 
+                        "Plugin Context",
                         "WSManPluginSignal")
                     );
                 return;
@@ -752,7 +751,7 @@ namespace System.Management.Automation.Remoting
 
             WSManPluginInstance.PerformWSManPluginSignal(pluginContext, requestDetails, flags, shellContext, commandContext, code);
         }
-        
+
         /// <summary>
         /// Callback used to register with thread pool to notify when a plugin operation shuts down.
         /// Conforms to:
@@ -775,9 +774,8 @@ namespace System.Management.Automation.Remoting
 
             WSManPluginInstance.PerformCloseOperation(context);
         }
-        
-        #endregion
 
+        #endregion
     }
 
     /// <summary>
@@ -791,15 +789,15 @@ namespace System.Management.Automation.Remoting
         #region IDisposable
 
         // Flag: Has Dispose already been called? 
-        private bool disposed = false;
+        private bool _disposed = false;
 
         /// <summary>
         /// Internal implementation of Dispose pattern callable by consumers. 
         /// </summary>
         public void Dispose()
-        { 
+        {
             Dispose(true);
-            GC.SuppressFinalize(this);           
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -808,13 +806,13 @@ namespace System.Management.Automation.Remoting
         /// <param name="disposing"></param>
         private void Dispose(bool disposing)
         {
-            if (disposed)
-                return; 
+            if (_disposed)
+                return;
 
             // Free any unmanaged objects here. 
-            this.initDelegateHandle.Free();
+            _initDelegateHandle.Free();
 
-            disposed = true;
+            _disposed = true;
         }
 
         /// <summary>
@@ -844,7 +842,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Prevents the delegate object from being garbage collected so it can be passed to the native code.
         /// </summary>
-        private GCHandle initDelegateHandle;
+        private GCHandle _initDelegateHandle;
 
         /// <summary>
         /// Entry point for native code that cannot call static methods.
@@ -853,7 +851,7 @@ namespace System.Management.Automation.Remoting
         public IntPtr GetEntryDelegate()
         {
             InitPluginDelegate initDelegate = new InitPluginDelegate(WSManPluginManagedEntryWrapper.InitPlugin);
-            this.initDelegateHandle = GCHandle.Alloc(initDelegate);
+            _initDelegateHandle = GCHandle.Alloc(initDelegate);
             return Marshal.GetFunctionPointerForDelegate(initDelegate);
         }
 

@@ -2,6 +2,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,16 +18,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// </summary>
     internal abstract class ViewGenerator
     {
-
-        internal virtual void Initialize (TerminatingErrorContext terminatingErrorContext, 
+        internal virtual void Initialize(TerminatingErrorContext terminatingErrorContext,
                                         MshExpressionFactory mshExpressionFactory,
                                         TypeInfoDataBase db,
                                         ViewDefinition view,
                                         FormattingCommandLineParameters formatParameters)
         {
-            Diagnostics.Assert (mshExpressionFactory != null, "mshExpressionFactory cannot be null");
-            Diagnostics.Assert (db != null, "db cannot be null");
-            Diagnostics.Assert (view != null, "view cannot be null");
+            Diagnostics.Assert(mshExpressionFactory != null, "mshExpressionFactory cannot be null");
+            Diagnostics.Assert(db != null, "db cannot be null");
+            Diagnostics.Assert(view != null, "view cannot be null");
 
             errorContext = terminatingErrorContext;
             expressionFactory = mshExpressionFactory;
@@ -34,14 +34,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             dataBaseInfo.db = db;
             dataBaseInfo.view = view;
-            dataBaseInfo.applicableTypes = DisplayDataQuery.GetAllApplicableTypes (db, view.appliesTo);
+            dataBaseInfo.applicableTypes = DisplayDataQuery.GetAllApplicableTypes(db, view.appliesTo);
 
             InitializeHelper();
         }
 
         internal virtual void Initialize(TerminatingErrorContext terminatingErrorContext,
                                             MshExpressionFactory mshExpressionFactory,
-                                            PSObject so, 
+                                            PSObject so,
                                             TypeInfoDataBase db,
                                             FormattingCommandLineParameters formatParameters)
         {
@@ -90,26 +90,26 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 formatErrorPolicy.ShowErrorsInFormattedOutput = this.dataBaseInfo.db.defaultSettingsSection.formatErrorPolicy.ShowErrorsInFormattedOutput;
             }
 
-            this.errorManager = new FormatErrorManager(formatErrorPolicy);
+            _errorManager = new FormatErrorManager(formatErrorPolicy);
         }
 
-        private void InitializeGroupBy ()
+        private void InitializeGroupBy()
         {
             // first check if there is an override from the command line
             if (parameters != null && parameters.groupByParameter != null)
             {
                 // get the epxpression to use
-                MshExpression groupingKeyExpression = parameters.groupByParameter.GetEntry (FormatParameterDefinitionKeys.ExpressionEntryKey) as MshExpression;
+                MshExpression groupingKeyExpression = parameters.groupByParameter.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as MshExpression;
 
                 // set the label
                 string label = null;
-                object labelKey = parameters.groupByParameter.GetEntry (FormatParameterDefinitionKeys.LabelEntryKey);
+                object labelKey = parameters.groupByParameter.GetEntry(FormatParameterDefinitionKeys.LabelEntryKey);
                 if (labelKey != AutomationNull.Value)
                 {
                     label = labelKey as string;
                 }
-                this.groupingManager = new GroupingInfoManager ();
-                this.groupingManager.Initialize (groupingKeyExpression, label);
+                _groupingManager = new GroupingInfoManager();
+                _groupingManager.Initialize(groupingKeyExpression, label);
                 return;
             }
 
@@ -126,19 +126,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return;
                 }
 
-                MshExpression ex = this.expressionFactory.CreateFromExpressionToken (gb.startGroup.expression, this.dataBaseInfo.view.loadingInfo);
+                MshExpression ex = this.expressionFactory.CreateFromExpressionToken(gb.startGroup.expression, this.dataBaseInfo.view.loadingInfo);
 
-                this.groupingManager = new GroupingInfoManager ();
-                this.groupingManager.Initialize (ex, null);
+                _groupingManager = new GroupingInfoManager();
+                _groupingManager.Initialize(ex, null);
             }
         }
 
-        private void InitializeAutoSize ()
+        private void InitializeAutoSize()
         {
             // check the autosize flag first
             if (parameters != null && parameters.autosize.HasValue)
             {
-                this.autosize = parameters.autosize.Value;
+                _autosize = parameters.autosize.Value;
                 return;
             }
             // check if we have a view with autosize checked
@@ -147,36 +147,36 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 ControlBody controlBody = this.dataBaseInfo.view.mainControl as ControlBody;
                 if (controlBody != null && controlBody.autosize.HasValue)
                 {
-                    this.autosize = controlBody.autosize.Value;
+                    _autosize = controlBody.autosize.Value;
                 }
             }
         }
 
-        internal virtual FormatStartData GenerateStartData (PSObject so)
+        internal virtual FormatStartData GenerateStartData(PSObject so)
         {
-            FormatStartData startFormat = new FormatStartData ();
+            FormatStartData startFormat = new FormatStartData();
 
-            if (this.autosize)
+            if (_autosize)
             {
-                startFormat.autosizeInfo = new AutosizeInfo ();
+                startFormat.autosizeInfo = new AutosizeInfo();
             }
             return startFormat;
         }
 
-        abstract internal FormatEntryData GeneratePayload (PSObject so, int enumerationLimit);
+        abstract internal FormatEntryData GeneratePayload(PSObject so, int enumerationLimit);
 
-        internal GroupStartData GenerateGroupStartData (PSObject firstObjectInGroup, int enumerationLimit)
+        internal GroupStartData GenerateGroupStartData(PSObject firstObjectInGroup, int enumerationLimit)
         {
-            GroupStartData startGroup = new GroupStartData ();
-            if (this.groupingManager == null)
+            GroupStartData startGroup = new GroupStartData();
+            if (_groupingManager == null)
                 return startGroup;
 
-            object currentGroupingValue = this.groupingManager.CurrentGroupingKeyPropertyValue;
+            object currentGroupingValue = _groupingManager.CurrentGroupingKeyPropertyValue;
 
             if (currentGroupingValue == AutomationNull.Value)
                 return startGroup;
 
-            PSObject so = PSObjectHelper.AsPSObject (currentGroupingValue);
+            PSObject so = PSObjectHelper.AsPSObject(currentGroupingValue);
 
             // we need to determine how to display the group header
             ControlBase control = null;
@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            startGroup.groupingEntry = new GroupingEntry ();
+            startGroup.groupingEntry = new GroupingEntry();
 
             if (control == null)
             {
@@ -200,56 +200,56 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // snippet of complex display using a label
 
                 StringFormatError formatErrorObject = null;
-                if (this.errorManager.DisplayFormatErrorString)
+                if (_errorManager.DisplayFormatErrorString)
                 {
                     // we send a format error object down to the formatting calls
                     // only if we want to show the formatting error strings
                     formatErrorObject = new StringFormatError();
                 }
 
-                string currentGroupingValueDisplay = PSObjectHelper.SmartToString (so, this.expressionFactory, enumerationLimit, formatErrorObject);
+                string currentGroupingValueDisplay = PSObjectHelper.SmartToString(so, this.expressionFactory, enumerationLimit, formatErrorObject);
 
                 if (formatErrorObject != null && formatErrorObject.exception != null)
                 {
                     // if we did no thave any errors in the expression evaluation
                     // we might have errors in the formatting, if present
-                    this.errorManager.LogStringFormatError(formatErrorObject);
-                    if (this.errorManager.DisplayFormatErrorString)
+                    _errorManager.LogStringFormatError(formatErrorObject);
+                    if (_errorManager.DisplayFormatErrorString)
                     {
-                        currentGroupingValueDisplay = this.errorManager.FormatErrorString;
+                        currentGroupingValueDisplay = _errorManager.FormatErrorString;
                     }
                 }
 
 
-                FormatEntry fe = new FormatEntry ();
-                startGroup.groupingEntry.formatValueList.Add (fe);
+                FormatEntry fe = new FormatEntry();
+                startGroup.groupingEntry.formatValueList.Add(fe);
 
-                FormatTextField ftf = new FormatTextField ();
+                FormatTextField ftf = new FormatTextField();
 
                 // determine what the label should be. If we have a label from the
                 // database, let's use it, else fall back to the string provided
                 // by the grouping manager
                 string label;
                 if (labelTextToken != null)
-                    label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString (labelTextToken);
+                    label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(labelTextToken);
                 else
-                    label = this.groupingManager.GroupingKeyDisplayName;
+                    label = _groupingManager.GroupingKeyDisplayName;
 
                 ftf.text = StringUtil.Format(FormatAndOut_format_xxx.GroupStartDataIndentedAutoGeneratedLabel, label);
 
-                fe.formatValueList.Add (ftf);
+                fe.formatValueList.Add(ftf);
 
-                FormatPropertyField fpf = new FormatPropertyField ();
+                FormatPropertyField fpf = new FormatPropertyField();
 
                 fpf.propertyValue = currentGroupingValueDisplay;
-                fe.formatValueList.Add (fpf);
+                fe.formatValueList.Add(fpf);
             }
             else
             {
                 // NOTE: we set a max depth to protect ourselves from infinite loops
                 const int maxTreeDepth = 50;
                 ComplexControlGenerator controlGenerator =
-                                new ComplexControlGenerator (this.dataBaseInfo.db,
+                                new ComplexControlGenerator(this.dataBaseInfo.db,
                                         this.dataBaseInfo.view.loadingInfo,
                                         this.expressionFactory,
                                         this.dataBaseInfo.view.formatControlDefinitionHolder.controlDefinitionList,
@@ -257,9 +257,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                         enumerationLimit,
                                         this.errorContext);
 
-                controlGenerator.GenerateFormatEntries (maxTreeDepth,
+                controlGenerator.GenerateFormatEntries(maxTreeDepth,
                     control, firstObjectInGroup, startGroup.groupingEntry.formatValueList);
-
             }
             return startGroup;
         }
@@ -269,20 +268,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="so">object to use for the update</param>
         /// <returns>true if the value of the key changed</returns>
-        internal bool UpdateGroupingKeyValue (PSObject so)
+        internal bool UpdateGroupingKeyValue(PSObject so)
         {
-            if (this.groupingManager == null)
+            if (_groupingManager == null)
                 return false;
-            return this.groupingManager.UpdateGroupingKeyValue (so);
+            return _groupingManager.UpdateGroupingKeyValue(so);
         }
 
 
-        internal GroupEndData GenerateGroupEndData ()
+        internal GroupEndData GenerateGroupEndData()
         {
-            return new GroupEndData ();
+            return new GroupEndData();
         }
 
-        internal bool IsObjectApplicable (Collection<string> typeNames)
+        internal bool IsObjectApplicable(Collection<string> typeNames)
         {
             if (dataBaseInfo.view == null)
                 return true;
@@ -290,8 +289,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (typeNames.Count == 0)
                 return false;
 
-            TypeMatch match = new TypeMatch (expressionFactory, dataBaseInfo.db, typeNames);
-            if (match.PerfectMatch (new TypeMatchItem (this, dataBaseInfo.applicableTypes)))
+            TypeMatch match = new TypeMatch(expressionFactory, dataBaseInfo.db, typeNames);
+            if (match.PerfectMatch(new TypeMatchItem(this, dataBaseInfo.applicableTypes)))
             {
                 return true;
             }
@@ -313,13 +312,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
 
-        private GroupingInfoManager groupingManager = null;
+        private GroupingInfoManager _groupingManager = null;
 
         protected bool AutoSize
         {
-            get { return this.autosize; }
+            get { return _autosize; }
         }
-        private bool autosize = false;
+        private bool _autosize = false;
 
         protected class DataBaseInfo
         {
@@ -339,25 +338,25 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         protected List<MshResolvedExpressionParameterAssociation> activeAssociationList = null;
         protected FormattingCommandLineParameters inputParameters = null;
 
-        protected string GetExpressionDisplayValue (PSObject so, int enumerationLimit, MshExpression ex,
+        protected string GetExpressionDisplayValue(PSObject so, int enumerationLimit, MshExpression ex,
                     FieldFormattingDirective directive)
         {
             MshExpressionResult resolvedExpression;
-            return GetExpressionDisplayValue (so, enumerationLimit, ex, directive, out resolvedExpression);
+            return GetExpressionDisplayValue(so, enumerationLimit, ex, directive, out resolvedExpression);
         }
 
-        protected string GetExpressionDisplayValue (PSObject so, int enumerationLimit, MshExpression ex,
+        protected string GetExpressionDisplayValue(PSObject so, int enumerationLimit, MshExpression ex,
                     FieldFormattingDirective directive, out MshExpressionResult expressionResult)
         {
             StringFormatError formatErrorObject = null;
-            if (this.errorManager.DisplayFormatErrorString)
+            if (_errorManager.DisplayFormatErrorString)
             {
                 // we send a format error object down to the formatting calls
                 // only if we want to show the formatting error strings
-                formatErrorObject = new StringFormatError ();
+                formatErrorObject = new StringFormatError();
             }
 
-            string retVal = PSObjectHelper.GetExpressionDisplayValue (so, enumerationLimit, ex,
+            string retVal = PSObjectHelper.GetExpressionDisplayValue(so, enumerationLimit, ex,
                                 directive, formatErrorObject, expressionFactory, out expressionResult);
 
             if (expressionResult != null)
@@ -365,38 +364,38 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // we obtained a result, check if there is an error
                 if (expressionResult.Exception != null)
                 {
-                    this.errorManager.LogMshExpressionFailedResult (expressionResult, so);
-                    if (this.errorManager.DisplayErrorStrings)
+                    _errorManager.LogMshExpressionFailedResult(expressionResult, so);
+                    if (_errorManager.DisplayErrorStrings)
                     {
-                        retVal = this.errorManager.ErrorString;
+                        retVal = _errorManager.ErrorString;
                     }
                 }
                 else if (formatErrorObject != null && formatErrorObject.exception != null)
                 {
                     // if we did no thave any errors in the expression evaluation
                     // we might have errors in the formatting, if present
-                    this.errorManager.LogStringFormatError (formatErrorObject);
-                    if (this.errorManager.DisplayErrorStrings)
+                    _errorManager.LogStringFormatError(formatErrorObject);
+                    if (_errorManager.DisplayErrorStrings)
                     {
-                        retVal = this.errorManager.FormatErrorString;
+                        retVal = _errorManager.FormatErrorString;
                     }
                 }
             }
             return retVal;
         }
 
-        protected bool EvaluateDisplayCondition (PSObject so, ExpressionToken conditionToken)
+        protected bool EvaluateDisplayCondition(PSObject so, ExpressionToken conditionToken)
         {
             if (conditionToken == null)
                 return true;
 
-            MshExpression ex = this.expressionFactory.CreateFromExpressionToken (conditionToken, this.dataBaseInfo.view.loadingInfo);
+            MshExpression ex = this.expressionFactory.CreateFromExpressionToken(conditionToken, this.dataBaseInfo.view.loadingInfo);
             MshExpressionResult expressionResult;
-            bool retVal = DisplayCondition.Evaluate (so, ex, out expressionResult);
+            bool retVal = DisplayCondition.Evaluate(so, ex, out expressionResult);
 
             if (expressionResult != null && expressionResult.Exception != null)
             {
-                this.errorManager.LogMshExpressionFailedResult (expressionResult, so);
+                _errorManager.LogMshExpressionFailedResult(expressionResult, so);
             }
             return retVal;
         }
@@ -404,24 +403,24 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal FormatErrorManager ErrorManager
         {
-            get { return this.errorManager; }
+            get { return _errorManager; }
         }
 
-        private FormatErrorManager errorManager;
+        private FormatErrorManager _errorManager;
 
 
         #region helpers
 
-        protected FormatPropertyField GenerateFormatPropertyField (List<FormatToken> formatTokenList, PSObject so, int enumerationLimit)
+        protected FormatPropertyField GenerateFormatPropertyField(List<FormatToken> formatTokenList, PSObject so, int enumerationLimit)
         {
             MshExpressionResult result;
-            return GenerateFormatPropertyField (formatTokenList, so, enumerationLimit, out result);
+            return GenerateFormatPropertyField(formatTokenList, so, enumerationLimit, out result);
         }
 
-        protected FormatPropertyField GenerateFormatPropertyField (List<FormatToken> formatTokenList, PSObject so, int enumerationLimit, out MshExpressionResult result)
+        protected FormatPropertyField GenerateFormatPropertyField(List<FormatToken> formatTokenList, PSObject so, int enumerationLimit, out MshExpressionResult result)
         {
             result = null;
-            FormatPropertyField fpf = new FormatPropertyField ();
+            FormatPropertyField fpf = new FormatPropertyField();
             if (formatTokenList.Count != 0)
             {
                 FormatToken token = formatTokenList[0];
@@ -429,13 +428,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (fpt != null)
                 {
                     MshExpression ex = this.expressionFactory.CreateFromExpressionToken(fpt.expression, this.dataBaseInfo.view.loadingInfo);
-                    fpf.propertyValue = this.GetExpressionDisplayValue (so, enumerationLimit, ex, fpt.fieldFormattingDirective, out result);
+                    fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, ex, fpt.fieldFormattingDirective, out result);
                 }
                 else
                 {
                     TextToken tt = token as TextToken;
                     if (tt != null)
-                    fpf.propertyValue = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString (tt);
+                        fpf.propertyValue = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
                 }
             }
             else
@@ -446,7 +445,5 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         #endregion
-
     }
-
 }

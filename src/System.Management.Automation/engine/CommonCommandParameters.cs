@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Management.Automation;
@@ -29,13 +30,13 @@ namespace System.Management.Automation.Internal
         /// If <paramref name="cmdlet"/> is null.
         /// </exception>
         /// 
-        internal CommonParameters (MshCommandRuntime commandRuntime)
+        internal CommonParameters(MshCommandRuntime commandRuntime)
         {
             if (commandRuntime == null)
             {
                 throw PSTraceSource.NewArgumentNullException("commandRuntime");
             }
-            this.commandRuntime = commandRuntime;
+            _commandRuntime = commandRuntime;
         } // ctor
         #endregion ctor
 
@@ -86,8 +87,8 @@ namespace System.Management.Automation.Internal
         [Alias("vb")]
         public SwitchParameter Verbose
         {
-            get { return commandRuntime.Verbose; }
-            set { commandRuntime.Verbose = value; }
+            get { return _commandRuntime.Verbose; }
+            set { _commandRuntime.Verbose = value; }
         } //Verbose
 
         /// <summary>
@@ -103,8 +104,8 @@ namespace System.Management.Automation.Internal
         [Alias("db")]
         public SwitchParameter Debug
         {
-            get { return commandRuntime.Debug; }
-            set { commandRuntime.Debug = value; }
+            get { return _commandRuntime.Debug; }
+            set { _commandRuntime.Debug = value; }
         } //Debug
 
         /// <summary>
@@ -118,8 +119,8 @@ namespace System.Management.Automation.Internal
         [Alias("ea")]
         public ActionPreference ErrorAction
         {
-            get { return commandRuntime.ErrorAction; }
-            set { commandRuntime.ErrorAction = value; }
+            get { return _commandRuntime.ErrorAction; }
+            set { _commandRuntime.ErrorAction = value; }
         } //ErrorAction
 
         /// <summary>
@@ -134,8 +135,8 @@ namespace System.Management.Automation.Internal
         [Alias("wa")]
         public ActionPreference WarningAction
         {
-            get { return commandRuntime.WarningPreference; }
-            set { commandRuntime.WarningPreference = value; }
+            get { return _commandRuntime.WarningPreference; }
+            set { _commandRuntime.WarningPreference = value; }
         } //WarningAction
 
         /// <summary>
@@ -149,8 +150,8 @@ namespace System.Management.Automation.Internal
         [Alias("infa")]
         public ActionPreference InformationAction
         {
-            get { return commandRuntime.InformationPreference; }
-            set { commandRuntime.InformationPreference = value; }
+            get { return _commandRuntime.InformationPreference; }
+            set { _commandRuntime.InformationPreference = value; }
         } //InformationAction
 
         /// <summary>
@@ -171,8 +172,8 @@ namespace System.Management.Automation.Internal
         [ValidateVariableName]
         public string ErrorVariable
         {
-            get { return commandRuntime.ErrorVariable; }
-            set { commandRuntime.ErrorVariable = value; }
+            get { return _commandRuntime.ErrorVariable; }
+            set { _commandRuntime.ErrorVariable = value; }
         }//ErrorVariable
 
         /// <summary>
@@ -188,8 +189,8 @@ namespace System.Management.Automation.Internal
         [ValidateVariableName]
         public string WarningVariable
         {
-            get { return commandRuntime.WarningVariable; }
-            set { commandRuntime.WarningVariable = value; }
+            get { return _commandRuntime.WarningVariable; }
+            set { _commandRuntime.WarningVariable = value; }
         }//WarningVariable
 
         /// <summary>
@@ -205,8 +206,8 @@ namespace System.Management.Automation.Internal
         [ValidateVariableName]
         public string InformationVariable
         {
-            get { return commandRuntime.InformationVariable; }
-            set { commandRuntime.InformationVariable = value; }
+            get { return _commandRuntime.InformationVariable; }
+            set { _commandRuntime.InformationVariable = value; }
         }
 
         /// <summary>
@@ -220,12 +221,12 @@ namespace System.Management.Automation.Internal
         /// but it should be MUCH faster as there is no binding that takes place
         /// </remarks>
         [Parameter]
-        [Alias ("ov")]
+        [Alias("ov")]
         [ValidateVariableName]
         public string OutVariable
         {
-            get { return commandRuntime.OutVariable; }
-            set { commandRuntime.OutVariable = value; }
+            get { return _commandRuntime.OutVariable; }
+            set { _commandRuntime.OutVariable = value; }
         } //OutVariable
 
         /// <summary>
@@ -240,8 +241,8 @@ namespace System.Management.Automation.Internal
         [Alias("ob")]
         public int OutBuffer
         {
-            get { return commandRuntime.OutBuffer; }
-            set { commandRuntime.OutBuffer = value; }
+            get { return _commandRuntime.OutBuffer; }
+            set { _commandRuntime.OutBuffer = value; }
         } //OutBuffer
 
         /// <summary>
@@ -259,13 +260,13 @@ namespace System.Management.Automation.Internal
         [ValidateVariableName]
         public string PipelineVariable
         {
-            get { return commandRuntime.PipelineVariable; }
-            set { commandRuntime.PipelineVariable = value; }
+            get { return _commandRuntime.PipelineVariable; }
+            set { _commandRuntime.PipelineVariable = value; }
         } //PipelineVariable
 
         #endregion parameters
 
-        private MshCommandRuntime commandRuntime;
+        private MshCommandRuntime _commandRuntime;
 
         internal class ValidateVariableName : ValidateArgumentsAttribute
         {
@@ -290,6 +291,5 @@ namespace System.Management.Automation.Internal
             }
         }
     } // class UserFeedbackParameters
-
 }
 

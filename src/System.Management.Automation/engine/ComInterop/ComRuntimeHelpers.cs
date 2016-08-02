@@ -14,10 +14,10 @@ using System.Security;
 using System.Security.Permissions;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
 
-namespace System.Management.Automation.ComInterop {
-
-    internal static class ComRuntimeHelpers {
-
+namespace System.Management.Automation.ComInterop
+{
+    internal static class ComRuntimeHelpers
+    {
         [SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId = "1#")]
         public static void CheckThrowException(int hresult, ref ExcepInfo excepInfo, ComMethodDesc method, object[] args, uint argErr)
@@ -29,7 +29,8 @@ namespace System.Management.Automation.ComInterop {
 
             Exception parameterException = null;
 
-            switch (hresult) {
+            switch (hresult)
+            {
                 case ComHresults.DISP_E_BADPARAMCOUNT:
                     // The number of elements provided to DISPPARAMS is different from the number of arguments 
                     // accepted by the method or property.
@@ -95,15 +96,15 @@ namespace System.Management.Automation.ComInterop {
 
                     string originalValueString = originalValue.ToString();
                     string originalTypeName = Microsoft.PowerShell.ToStringCodeMethods.Type(originalValue.GetType(), true);
-                    
+
                     // ByRef arguments should be displayed in the error message as a PSReference
-                    if(destinationType == typeof(Object) && method.ParameterInformation[argErr].isByRef)
+                    if (destinationType == typeof(Object) && method.ParameterInformation[argErr].isByRef)
                     {
                         destinationType = typeof(PSReference);
                     }
 
                     string destinationTypeName = Microsoft.PowerShell.ToStringCodeMethods.Type(destinationType, true);
-                    
+
                     parameterException = Error.DispTypeMismatch(method.Name, originalValueString, originalTypeName, destinationTypeName);
                     ThrowWrappedInvocationException(method, parameterException);
                     break;
@@ -146,21 +147,24 @@ namespace System.Management.Automation.ComInterop {
             throw parameterException;
         }
 
-        internal static void GetInfoFromType(ComTypes.ITypeInfo typeInfo, out string name, out string documentation) {
+        internal static void GetInfoFromType(ComTypes.ITypeInfo typeInfo, out string name, out string documentation)
+        {
             int dwHelpContext;
             string strHelpFile;
 
             typeInfo.GetDocumentation(-1, out name, out documentation, out dwHelpContext, out strHelpFile);
         }
 
-        internal static string GetNameOfMethod(ComTypes.ITypeInfo typeInfo, int memid) {
+        internal static string GetNameOfMethod(ComTypes.ITypeInfo typeInfo, int memid)
+        {
             int cNames;
             string[] rgNames = new string[1];
             typeInfo.GetNames(memid, rgNames, 1, out cNames);
             return rgNames[0];
         }
 
-        internal static string GetNameOfLib(ComTypes.ITypeLib typeLib) {
+        internal static string GetNameOfLib(ComTypes.ITypeLib typeLib)
+        {
             string name;
             string strDocString;
             int dwHelpContext;
@@ -170,7 +174,8 @@ namespace System.Management.Automation.ComInterop {
             return name;
         }
 
-        internal static string GetNameOfType(ComTypes.ITypeInfo typeInfo) {
+        internal static string GetNameOfType(ComTypes.ITypeInfo typeInfo)
+        {
             string name;
             string documentation;
             GetInfoFromType(typeInfo, out name, out documentation);
@@ -187,7 +192,8 @@ namespace System.Management.Automation.ComInterop {
         /// Some COM objects do intend to expose typeinfo, but may not be able to do so if the type-library is not properly 
         /// registered. This will be considered as acceptable or as an error condition depending on throwIfMissingExpectedTypeInfo</param>
         /// <returns></returns>
-        internal static ComTypes.ITypeInfo GetITypeInfoFromIDispatch(IDispatch dispatch, bool throwIfMissingExpectedTypeInfo) {
+        internal static ComTypes.ITypeInfo GetITypeInfoFromIDispatch(IDispatch dispatch, bool throwIfMissingExpectedTypeInfo)
+        {
             uint typeCount;
             int hresult = dispatch.TryGetTypeInfoCount(out typeCount);
 
@@ -201,28 +207,35 @@ namespace System.Management.Automation.ComInterop {
             }
 
             Debug.Assert(typeCount <= 1);
-            if (typeCount == 0) {
+            if (typeCount == 0)
+            {
                 return null;
             }
 
             IntPtr typeInfoPtr = IntPtr.Zero;
 
             hresult = dispatch.TryGetTypeInfo(0, 0, out typeInfoPtr);
-            if (! Utils.Succeeded(hresult)) {
+            if (!Utils.Succeeded(hresult))
+            {
                 CheckIfMissingTypeInfoIsExpected(hresult, throwIfMissingExpectedTypeInfo);
                 return null;
             }
-            if (typeInfoPtr == IntPtr.Zero) { // be defensive against components that return IntPtr.Zero
-                if (throwIfMissingExpectedTypeInfo) {
+            if (typeInfoPtr == IntPtr.Zero)
+            { // be defensive against components that return IntPtr.Zero
+                if (throwIfMissingExpectedTypeInfo)
+                {
                     Marshal.ThrowExceptionForHR(ComHresults.E_FAIL);
                 }
                 return null;
             }
 
             ComTypes.ITypeInfo typeInfo = null;
-            try {
+            try
+            {
                 typeInfo = Marshal.GetObjectForIUnknown(typeInfoPtr) as ComTypes.ITypeInfo;
-            } finally {
+            }
+            finally
+            {
                 Marshal.Release(typeInfoPtr);
             }
 
@@ -238,12 +251,14 @@ namespace System.Management.Automation.ComInterop {
         /// However, if accessing the typeinfo is failing in a transient way, we might want to throw
         /// an exception so that we will eagerly predictably indicate the problem.
         /// </summary>
-        private static void CheckIfMissingTypeInfoIsExpected(int hresult, bool throwIfMissingExpectedTypeInfo) {
-            Debug.Assert(! Utils.Succeeded(hresult));
+        private static void CheckIfMissingTypeInfoIsExpected(int hresult, bool throwIfMissingExpectedTypeInfo)
+        {
+            Debug.Assert(!Utils.Succeeded(hresult));
 
             // Word.Basic always returns this because of an incorrect implementation of IDispatch.GetTypeInfo
             // Any implementation that returns E_NOINTERFACE is likely to do so in all environments
-            if (hresult == ComHresults.E_NOINTERFACE) {
+            if (hresult == ComHresults.E_NOINTERFACE)
+            {
                 return;
             }
 
@@ -252,50 +267,63 @@ namespace System.Management.Automation.ComInterop {
             // can investigate the scenarios to ensure that there is no bug in our own code.
             Debug.Assert(hresult == ComHresults.TYPE_E_LIBNOTREGISTERED);
 
-            if (throwIfMissingExpectedTypeInfo) {
+            if (throwIfMissingExpectedTypeInfo)
+            {
                 Marshal.ThrowExceptionForHR(hresult);
             }
         }
 
         [SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]
-        internal static ComTypes.TYPEATTR GetTypeAttrForTypeInfo(ComTypes.ITypeInfo typeInfo) {
+        internal static ComTypes.TYPEATTR GetTypeAttrForTypeInfo(ComTypes.ITypeInfo typeInfo)
+        {
             IntPtr pAttrs = IntPtr.Zero;
             typeInfo.GetTypeAttr(out pAttrs);
 
             // GetTypeAttr should never return null, this is just to be safe
-            if (pAttrs == IntPtr.Zero) {
+            if (pAttrs == IntPtr.Zero)
+            {
                 throw Error.CannotRetrieveTypeInformation();
             }
 
-            try {
+            try
+            {
                 return (ComTypes.TYPEATTR)Marshal.PtrToStructure(pAttrs, typeof(ComTypes.TYPEATTR));
-            } finally {
+            }
+            finally
+            {
                 typeInfo.ReleaseTypeAttr(pAttrs);
             }
         }
 
         [SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]
-        internal static ComTypes.TYPELIBATTR GetTypeAttrForTypeLib(ComTypes.ITypeLib typeLib) {
+        internal static ComTypes.TYPELIBATTR GetTypeAttrForTypeLib(ComTypes.ITypeLib typeLib)
+        {
             IntPtr pAttrs = IntPtr.Zero;
             typeLib.GetLibAttr(out pAttrs);
 
             // GetTypeAttr should never return null, this is just to be safe
-            if (pAttrs == IntPtr.Zero) {
+            if (pAttrs == IntPtr.Zero)
+            {
                 throw Error.CannotRetrieveTypeInformation();
             }
 
-            try {
+            try
+            {
                 return (ComTypes.TYPELIBATTR)Marshal.PtrToStructure(pAttrs, typeof(ComTypes.TYPELIBATTR));
-            } finally {
+            }
+            finally
+            {
                 typeLib.ReleaseTLibAttr(pAttrs);
             }
         }
 
-        public static BoundDispEvent CreateComEvent(object rcw, Guid sourceIid, int dispid) {
+        public static BoundDispEvent CreateComEvent(object rcw, Guid sourceIid, int dispid)
+        {
             return new BoundDispEvent(rcw, sourceIid, dispid);
         }
 
-        public static DispCallable CreateDispCallable(IDispatchComObject dispatch, ComMethodDesc method) {
+        public static DispCallable CreateDispCallable(IDispatchComObject dispatch, ComMethodDesc method)
+        {
             return new DispCallable(dispatch, method.Name, method.DispId);
         }
     }
@@ -306,7 +334,8 @@ namespace System.Management.Automation.ComInterop {
     /// and other problems.
     /// </summary>
     /// 
-    internal static class UnsafeMethods {
+    internal static class UnsafeMethods
+    {
         [System.Runtime.Versioning.ResourceExposure(System.Runtime.Versioning.ResourceScope.None)]
         [System.Runtime.Versioning.ResourceConsumption(System.Runtime.Versioning.ResourceScope.Process, System.Runtime.Versioning.ResourceScope.Process)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1060:MovePInvokesToNativeMethodsClass")] // TODO: fix
@@ -319,15 +348,16 @@ namespace System.Management.Automation.ComInterop {
         [DllImport("oleaut32.dll", PreserveSig = false)]
         internal static extern ComTypes.ITypeLib LoadRegTypeLib(ref Guid clsid, short majorVersion, short minorVersion, int lcid);
 
-            #region public members
+        #region public members
 
-        private static readonly MethodInfo _ConvertByrefToPtr = Create_ConvertByrefToPtr();
+        private static readonly MethodInfo s_convertByrefToPtr = Create_ConvertByrefToPtr();
 
         public delegate IntPtr ConvertByrefToPtrDelegate<T>(ref T value);
 
-        private static readonly ConvertByrefToPtrDelegate<Variant> _ConvertVariantByrefToPtr = (ConvertByrefToPtrDelegate<Variant>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<Variant>), _ConvertByrefToPtr.MakeGenericMethod(typeof(Variant)));
+        private static readonly ConvertByrefToPtrDelegate<Variant> s_convertVariantByrefToPtr = (ConvertByrefToPtrDelegate<Variant>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<Variant>), s_convertByrefToPtr.MakeGenericMethod(typeof(Variant)));
 
-        private static MethodInfo Create_ConvertByrefToPtr() {
+        private static MethodInfo Create_ConvertByrefToPtr()
+        {
             // We dont use AssemblyGen.DefineMethod since that can create a anonymously-hosted DynamicMethod which cannot contain unverifiable code.
             var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("ComSnippets"), AssemblyBuilderAccess.Run);
             var moduleBuilder = assemblyBuilder.DefineDynamicModule("ComSnippets");
@@ -354,19 +384,19 @@ namespace System.Management.Automation.ComInterop {
         // *** BEGIN GENERATED CODE ***
         // generated by function: gen_ConvertByrefToPtrDelegates from: generate_comdispatch.py
 
-        private static readonly ConvertByrefToPtrDelegate<SByte> _ConvertSByteByrefToPtr = (ConvertByrefToPtrDelegate<SByte>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<SByte>), _ConvertByrefToPtr.MakeGenericMethod(typeof(SByte)));
-        private static readonly ConvertByrefToPtrDelegate<Int16> _ConvertInt16ByrefToPtr = (ConvertByrefToPtrDelegate<Int16>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<Int16>), _ConvertByrefToPtr.MakeGenericMethod(typeof(Int16)));
-        private static readonly ConvertByrefToPtrDelegate<Int32> _ConvertInt32ByrefToPtr = (ConvertByrefToPtrDelegate<Int32>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<Int32>), _ConvertByrefToPtr.MakeGenericMethod(typeof(Int32)));
-        private static readonly ConvertByrefToPtrDelegate<Int64> _ConvertInt64ByrefToPtr = (ConvertByrefToPtrDelegate<Int64>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<Int64>), _ConvertByrefToPtr.MakeGenericMethod(typeof(Int64)));
-        private static readonly ConvertByrefToPtrDelegate<Byte> _ConvertByteByrefToPtr = (ConvertByrefToPtrDelegate<Byte>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<Byte>), _ConvertByrefToPtr.MakeGenericMethod(typeof(Byte)));
-        private static readonly ConvertByrefToPtrDelegate<UInt16> _ConvertUInt16ByrefToPtr = (ConvertByrefToPtrDelegate<UInt16>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<UInt16>), _ConvertByrefToPtr.MakeGenericMethod(typeof(UInt16)));
-        private static readonly ConvertByrefToPtrDelegate<UInt32> _ConvertUInt32ByrefToPtr = (ConvertByrefToPtrDelegate<UInt32>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<UInt32>), _ConvertByrefToPtr.MakeGenericMethod(typeof(UInt32)));
-        private static readonly ConvertByrefToPtrDelegate<UInt64> _ConvertUInt64ByrefToPtr = (ConvertByrefToPtrDelegate<UInt64>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<UInt64>), _ConvertByrefToPtr.MakeGenericMethod(typeof(UInt64)));
-        private static readonly ConvertByrefToPtrDelegate<IntPtr> _ConvertIntPtrByrefToPtr = (ConvertByrefToPtrDelegate<IntPtr>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<IntPtr>), _ConvertByrefToPtr.MakeGenericMethod(typeof(IntPtr)));
-        private static readonly ConvertByrefToPtrDelegate<UIntPtr> _ConvertUIntPtrByrefToPtr = (ConvertByrefToPtrDelegate<UIntPtr>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<UIntPtr>), _ConvertByrefToPtr.MakeGenericMethod(typeof(UIntPtr)));
-        private static readonly ConvertByrefToPtrDelegate<Single> _ConvertSingleByrefToPtr = (ConvertByrefToPtrDelegate<Single>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<Single>), _ConvertByrefToPtr.MakeGenericMethod(typeof(Single)));
-        private static readonly ConvertByrefToPtrDelegate<Double> _ConvertDoubleByrefToPtr = (ConvertByrefToPtrDelegate<Double>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<Double>), _ConvertByrefToPtr.MakeGenericMethod(typeof(Double)));
-        private static readonly ConvertByrefToPtrDelegate<Decimal> _ConvertDecimalByrefToPtr = (ConvertByrefToPtrDelegate<Decimal>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<Decimal>), _ConvertByrefToPtr.MakeGenericMethod(typeof(Decimal)));
+        private static readonly ConvertByrefToPtrDelegate<SByte> s_convertSByteByrefToPtr = (ConvertByrefToPtrDelegate<SByte>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<SByte>), s_convertByrefToPtr.MakeGenericMethod(typeof(SByte)));
+        private static readonly ConvertByrefToPtrDelegate<Int16> s_convertInt16ByrefToPtr = (ConvertByrefToPtrDelegate<Int16>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<Int16>), s_convertByrefToPtr.MakeGenericMethod(typeof(Int16)));
+        private static readonly ConvertByrefToPtrDelegate<Int32> s_convertInt32ByrefToPtr = (ConvertByrefToPtrDelegate<Int32>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<Int32>), s_convertByrefToPtr.MakeGenericMethod(typeof(Int32)));
+        private static readonly ConvertByrefToPtrDelegate<Int64> s_convertInt64ByrefToPtr = (ConvertByrefToPtrDelegate<Int64>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<Int64>), s_convertByrefToPtr.MakeGenericMethod(typeof(Int64)));
+        private static readonly ConvertByrefToPtrDelegate<Byte> s_convertByteByrefToPtr = (ConvertByrefToPtrDelegate<Byte>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<Byte>), s_convertByrefToPtr.MakeGenericMethod(typeof(Byte)));
+        private static readonly ConvertByrefToPtrDelegate<UInt16> s_convertUInt16ByrefToPtr = (ConvertByrefToPtrDelegate<UInt16>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<UInt16>), s_convertByrefToPtr.MakeGenericMethod(typeof(UInt16)));
+        private static readonly ConvertByrefToPtrDelegate<UInt32> s_convertUInt32ByrefToPtr = (ConvertByrefToPtrDelegate<UInt32>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<UInt32>), s_convertByrefToPtr.MakeGenericMethod(typeof(UInt32)));
+        private static readonly ConvertByrefToPtrDelegate<UInt64> s_convertUInt64ByrefToPtr = (ConvertByrefToPtrDelegate<UInt64>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<UInt64>), s_convertByrefToPtr.MakeGenericMethod(typeof(UInt64)));
+        private static readonly ConvertByrefToPtrDelegate<IntPtr> s_convertIntPtrByrefToPtr = (ConvertByrefToPtrDelegate<IntPtr>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<IntPtr>), s_convertByrefToPtr.MakeGenericMethod(typeof(IntPtr)));
+        private static readonly ConvertByrefToPtrDelegate<UIntPtr> s_convertUIntPtrByrefToPtr = (ConvertByrefToPtrDelegate<UIntPtr>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<UIntPtr>), s_convertByrefToPtr.MakeGenericMethod(typeof(UIntPtr)));
+        private static readonly ConvertByrefToPtrDelegate<Single> s_convertSingleByrefToPtr = (ConvertByrefToPtrDelegate<Single>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<Single>), s_convertByrefToPtr.MakeGenericMethod(typeof(Single)));
+        private static readonly ConvertByrefToPtrDelegate<Double> s_convertDoubleByrefToPtr = (ConvertByrefToPtrDelegate<Double>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<Double>), s_convertByrefToPtr.MakeGenericMethod(typeof(Double)));
+        private static readonly ConvertByrefToPtrDelegate<Decimal> s_convertDecimalByrefToPtr = (ConvertByrefToPtrDelegate<Decimal>)Delegate.CreateDelegate(typeof(ConvertByrefToPtrDelegate<Decimal>), s_convertByrefToPtr.MakeGenericMethod(typeof(Decimal)));
 
         // *** END GENERATED CODE ***
 
@@ -378,56 +408,60 @@ namespace System.Management.Automation.ComInterop {
         // generated by function: gen_ConvertByrefToPtr from: generate_comdispatch.py
 
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
-        public static IntPtr ConvertSByteByrefToPtr(ref SByte value) { return _ConvertSByteByrefToPtr(ref value); }
+        public static IntPtr ConvertSByteByrefToPtr(ref SByte value) { return s_convertSByteByrefToPtr(ref value); }
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
-        public static IntPtr ConvertInt16ByrefToPtr(ref Int16 value) { return _ConvertInt16ByrefToPtr(ref value); }
+        public static IntPtr ConvertInt16ByrefToPtr(ref Int16 value) { return s_convertInt16ByrefToPtr(ref value); }
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
-        public static IntPtr ConvertInt32ByrefToPtr(ref Int32 value) { return _ConvertInt32ByrefToPtr(ref value); }
+        public static IntPtr ConvertInt32ByrefToPtr(ref Int32 value) { return s_convertInt32ByrefToPtr(ref value); }
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
-        public static IntPtr ConvertInt64ByrefToPtr(ref Int64 value) { return _ConvertInt64ByrefToPtr(ref value); }
+        public static IntPtr ConvertInt64ByrefToPtr(ref Int64 value) { return s_convertInt64ByrefToPtr(ref value); }
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
-        public static IntPtr ConvertByteByrefToPtr(ref Byte value) { return _ConvertByteByrefToPtr(ref value); }
+        public static IntPtr ConvertByteByrefToPtr(ref Byte value) { return s_convertByteByrefToPtr(ref value); }
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
-        public static IntPtr ConvertUInt16ByrefToPtr(ref UInt16 value) { return _ConvertUInt16ByrefToPtr(ref value); }
+        public static IntPtr ConvertUInt16ByrefToPtr(ref UInt16 value) { return s_convertUInt16ByrefToPtr(ref value); }
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
-        public static IntPtr ConvertUInt32ByrefToPtr(ref UInt32 value) { return _ConvertUInt32ByrefToPtr(ref value); }
+        public static IntPtr ConvertUInt32ByrefToPtr(ref UInt32 value) { return s_convertUInt32ByrefToPtr(ref value); }
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
-        public static IntPtr ConvertUInt64ByrefToPtr(ref UInt64 value) { return _ConvertUInt64ByrefToPtr(ref value); }
+        public static IntPtr ConvertUInt64ByrefToPtr(ref UInt64 value) { return s_convertUInt64ByrefToPtr(ref value); }
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
-        public static IntPtr ConvertIntPtrByrefToPtr(ref IntPtr value) { return _ConvertIntPtrByrefToPtr(ref value); }
+        public static IntPtr ConvertIntPtrByrefToPtr(ref IntPtr value) { return s_convertIntPtrByrefToPtr(ref value); }
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
-        public static IntPtr ConvertUIntPtrByrefToPtr(ref UIntPtr value) { return _ConvertUIntPtrByrefToPtr(ref value); }
+        public static IntPtr ConvertUIntPtrByrefToPtr(ref UIntPtr value) { return s_convertUIntPtrByrefToPtr(ref value); }
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
-        public static IntPtr ConvertSingleByrefToPtr(ref Single value) { return _ConvertSingleByrefToPtr(ref value); }
+        public static IntPtr ConvertSingleByrefToPtr(ref Single value) { return s_convertSingleByrefToPtr(ref value); }
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
-        public static IntPtr ConvertDoubleByrefToPtr(ref Double value) { return _ConvertDoubleByrefToPtr(ref value); }
+        public static IntPtr ConvertDoubleByrefToPtr(ref Double value) { return s_convertDoubleByrefToPtr(ref value); }
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
-        public static IntPtr ConvertDecimalByrefToPtr(ref Decimal value) { return _ConvertDecimalByrefToPtr(ref value); }
+        public static IntPtr ConvertDecimalByrefToPtr(ref Decimal value) { return s_convertDecimalByrefToPtr(ref value); }
 
         // *** END GENERATED CODE ***
 
         #endregion
 
         [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference")]
-        public static IntPtr ConvertVariantByrefToPtr(ref Variant value) { return _ConvertVariantByrefToPtr(ref value); }
+        public static IntPtr ConvertVariantByrefToPtr(ref Variant value) { return s_convertVariantByrefToPtr(ref value); }
 
-        internal static Variant GetVariantForObject(object obj) {
+        internal static Variant GetVariantForObject(object obj)
+        {
             Variant variant = default(Variant);
-            if (obj == null) {
+            if (obj == null)
+            {
                 return variant;
             }
             InitVariantForObject(obj, ref variant);
             return variant;
         }
 
-        internal static void InitVariantForObject(object obj, ref Variant variant) {
+        internal static void InitVariantForObject(object obj, ref Variant variant)
+        {
             Debug.Assert(obj != null);
 
             // GetNativeVariantForObject is very expensive for values that marshal as VT_DISPATCH
             // also is is extremely common scenario when object at hand is an RCW. 
             // Therefore we are going to test for IDispatch before defaulting to GetNativeVariantForObject.
             IDispatch disp = obj as IDispatch;
-            if (disp != null) {
+            if (disp != null)
+            {
                 variant.AsDispatch = obj;
                 return;
             }
@@ -436,19 +470,23 @@ namespace System.Management.Automation.ComInterop {
         }
 
         [Obsolete("do not use this method", true)]
-        public static object GetObjectForVariant(Variant variant) {
+        public static object GetObjectForVariant(Variant variant)
+        {
             IntPtr ptr = UnsafeMethods.ConvertVariantByrefToPtr(ref variant);
             return System.Runtime.InteropServices.Marshal.GetObjectForNativeVariant(ptr);
         }
 
         [Obsolete("do not use this method", true)]
-        public static int IUnknownRelease(IntPtr interfacePointer) {
-            return _IUnknownRelease(interfacePointer);
+        public static int IUnknownRelease(IntPtr interfacePointer)
+        {
+            return s_IUnknownRelease(interfacePointer);
         }
 
         [Obsolete("do not use this method", true)]
-        public static void IUnknownReleaseNotZero(IntPtr interfacePointer) {
-            if (interfacePointer != IntPtr.Zero) {
+        public static void IUnknownReleaseNotZero(IntPtr interfacePointer)
+        {
+            if (interfacePointer != IntPtr.Zero)
+            {
                 IUnknownRelease(interfacePointer);
             }
         }
@@ -463,9 +501,9 @@ namespace System.Management.Automation.ComInterop {
             out Variant result,
             out ExcepInfo excepInfo,
             out uint argErr
-        ) {
-
-            int hresult = _IDispatchInvoke(
+        )
+        {
+            int hresult = s_IDispatchInvoke(
                 dispatchPointer,
                 memberDispId,
                 flags,
@@ -477,8 +515,8 @@ namespace System.Management.Automation.ComInterop {
 
             if (hresult == ComHresults.DISP_E_MEMBERNOTFOUND
                 && (flags & ComTypes.INVOKEKIND.INVOKE_FUNC) != 0
-                && (flags & (ComTypes.INVOKEKIND.INVOKE_PROPERTYPUT | ComTypes.INVOKEKIND.INVOKE_PROPERTYPUTREF)) == 0) {
-
+                && (flags & (ComTypes.INVOKEKIND.INVOKE_PROPERTYPUT | ComTypes.INVOKEKIND.INVOKE_PROPERTYPUTREF)) == 0)
+            {
                 // Re-invoke with no result argument to accomodate Word
                 hresult = _IDispatchInvokeNoResult(
                     dispatchPointer,
@@ -493,16 +531,19 @@ namespace System.Management.Automation.ComInterop {
         }
 
         [Obsolete("do not use this method", true)]
-        public static IntPtr GetIdsOfNamedParameters(IDispatch dispatch, string[] names, int methodDispId, out GCHandle pinningHandle) {
+        public static IntPtr GetIdsOfNamedParameters(IDispatch dispatch, string[] names, int methodDispId, out GCHandle pinningHandle)
+        {
             pinningHandle = GCHandle.Alloc(null, GCHandleType.Pinned);
             int[] dispIds = new int[names.Length];
             Guid empty = Guid.Empty;
             int hresult = dispatch.TryGetIDsOfNames(ref empty, names, (uint)names.Length, 0, dispIds);
-            if (hresult < 0) {
+            if (hresult < 0)
+            {
                 Marshal.ThrowExceptionForHR(hresult);
             }
 
-            if (methodDispId != dispIds[0]) {
+            if (methodDispId != dispIds[0])
+            {
                 throw Error.GetIDsOfNamesInvalid(names[0]);
             }
 
@@ -517,12 +558,14 @@ namespace System.Management.Automation.ComInterop {
         #region non-public members
 
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
-        static UnsafeMethods() {
+        static UnsafeMethods()
+        {
         }
 
-        private static void EmitLoadArg(ILGenerator il, int index) {
-
-            switch (index) {
+        private static void EmitLoadArg(ILGenerator il, int index)
+        {
+            switch (index)
+            {
                 case 0:
                     il.Emit(OpCodes.Ldarg_0);
                     break;
@@ -536,9 +579,12 @@ namespace System.Management.Automation.ComInterop {
                     il.Emit(OpCodes.Ldarg_3);
                     break;
                 default:
-                    if (index <= Byte.MaxValue) {
+                    if (index <= Byte.MaxValue)
+                    {
                         il.Emit(OpCodes.Ldarg_S, (byte)index);
-                    } else {
+                    }
+                    else
+                    {
                         il.Emit(OpCodes.Ldarg, index);
                     }
                     break;
@@ -551,8 +597,10 @@ namespace System.Management.Automation.ComInterop {
         /// allowed "value"  to be a pinned object.
         /// </summary>
         [Conditional("DEBUG")]
-        public static void AssertByrefPointsToStack(IntPtr ptr) {
-            if (Marshal.ReadInt32(ptr) == _dummyMarker) {
+        public static void AssertByrefPointsToStack(IntPtr ptr)
+        {
+            if (Marshal.ReadInt32(ptr) == _dummyMarker)
+            {
                 // Prevent recursion
                 return;
             }
@@ -562,31 +610,36 @@ namespace System.Management.Automation.ComInterop {
             Debug.Assert((ptr.ToInt64() - ptrToLocal.ToInt64()) < (16 * 1024));
         }
 
-        private static readonly object _lock = new object();
-        private static ModuleBuilder _dynamicModule;
+        private static readonly object s_lock = new object();
+        private static ModuleBuilder s_dynamicModule;
 
-        internal static ModuleBuilder DynamicModule {
-            get {
-                if (_dynamicModule != null) {
-                    return _dynamicModule;
+        internal static ModuleBuilder DynamicModule
+        {
+            get
+            {
+                if (s_dynamicModule != null)
+                {
+                    return s_dynamicModule;
                 }
-                lock (_lock) {
-                    if (_dynamicModule == null) {
-                        var attributes = new[] { 
+                lock (s_lock)
+                {
+                    if (s_dynamicModule == null)
+                    {
+                        var attributes = new[] {
                             new CustomAttributeBuilder(typeof(UnverifiableCodeAttribute).GetConstructor(Type.EmptyTypes), Utils.EmptyArray<object>()),
                             //PermissionSet(SecurityAction.Demand, Unrestricted = true)
-                            new CustomAttributeBuilder(typeof(PermissionSetAttribute).GetConstructor(new Type[]{typeof(SecurityAction)}), 
+                            new CustomAttributeBuilder(typeof(PermissionSetAttribute).GetConstructor(new Type[]{typeof(SecurityAction)}),
                                 new object[]{SecurityAction.Demand},
-                                new PropertyInfo[]{typeof(PermissionSetAttribute).GetProperty("Unrestricted")}, 
+                                new PropertyInfo[]{typeof(PermissionSetAttribute).GetProperty("Unrestricted")},
                                 new object[] {true})
                         };
 
                         string name = typeof(VariantArray).Namespace + ".DynamicAssembly";
                         var assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(name), AssemblyBuilderAccess.Run, attributes);
                         assembly.DefineVersionInfoResource();
-                        _dynamicModule = assembly.DefineDynamicModule(name);
+                        s_dynamicModule = assembly.DefineDynamicModule(name);
                     }
-                    return _dynamicModule;
+                    return s_dynamicModule;
                 }
             }
         }
@@ -599,9 +652,10 @@ namespace System.Management.Automation.ComInterop {
         /// the JIT-compiler to do pinvoke-stub-inlining and calling the pinvoke target directly.
         /// </summary>
         private delegate int IUnknownReleaseDelegate(IntPtr interfacePointer);
-        private static readonly IUnknownReleaseDelegate _IUnknownRelease = Create_IUnknownRelease();
+        private static readonly IUnknownReleaseDelegate s_IUnknownRelease = Create_IUnknownRelease();
 
-        private static IUnknownReleaseDelegate Create_IUnknownRelease() {
+        private static IUnknownReleaseDelegate Create_IUnknownRelease()
+        {
             DynamicMethod dm = new DynamicMethod("IUnknownRelease", typeof(int), new Type[] { typeof(IntPtr) }, DynamicModule);
 
             ILGenerator method = dm.GetILGenerator();
@@ -629,10 +683,12 @@ namespace System.Management.Automation.ComInterop {
 
         internal static readonly IntPtr NullInterfaceId = GetNullInterfaceId();
 
-        private static IntPtr GetNullInterfaceId() {
+        private static IntPtr GetNullInterfaceId()
+        {
             int size = Marshal.SizeOf(Guid.Empty);
             IntPtr ptr = Marshal.AllocHGlobal(size);
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < size; i++)
+            {
                 Marshal.WriteByte(ptr, i, 0);
             }
             return ptr;
@@ -657,23 +713,29 @@ namespace System.Management.Automation.ComInterop {
             out uint argErr
         );
 
-        private static readonly IDispatchInvokeDelegate _IDispatchInvoke = Create_IDispatchInvoke(true);
-        private static IDispatchInvokeDelegate _IDispatchInvokeNoResultImpl;
+        private static readonly IDispatchInvokeDelegate s_IDispatchInvoke = Create_IDispatchInvoke(true);
+        private static IDispatchInvokeDelegate s_IDispatchInvokeNoResultImpl;
 
-        private static IDispatchInvokeDelegate _IDispatchInvokeNoResult {
-            get {
-                if (_IDispatchInvokeNoResultImpl == null) {
-                    lock (_IDispatchInvoke) {
-                        if (_IDispatchInvokeNoResultImpl == null) {
-                            _IDispatchInvokeNoResultImpl = Create_IDispatchInvoke(false);
+        private static IDispatchInvokeDelegate _IDispatchInvokeNoResult
+        {
+            get
+            {
+                if (s_IDispatchInvokeNoResultImpl == null)
+                {
+                    lock (s_IDispatchInvoke)
+                    {
+                        if (s_IDispatchInvokeNoResultImpl == null)
+                        {
+                            s_IDispatchInvokeNoResultImpl = Create_IDispatchInvoke(false);
                         }
                     }
                 }
-                return _IDispatchInvokeNoResultImpl;
+                return s_IDispatchInvokeNoResultImpl;
             }
         }
 
-        private static IDispatchInvokeDelegate Create_IDispatchInvoke(bool returnResult) {
+        private static IDispatchInvokeDelegate Create_IDispatchInvoke(bool returnResult)
+        {
             const int dispatchPointerIndex = 0;
             const int memberDispIdIndex = 1;
             const int flagsIndex = 2;
@@ -704,9 +766,12 @@ namespace System.Management.Automation.ComInterop {
             // burn the address of our empty IID in directly.  This is never freed, relocated, etc...
             // Note passing this as a Guid directly results in a ~30% perf hit for IDispatch invokes so
             // we also pass it directly as an IntPtr instead.
-            if (IntPtr.Size == 4) {
+            if (IntPtr.Size == 4)
+            {
                 method.Emit(OpCodes.Ldc_I4, UnsafeMethods.NullInterfaceId.ToInt32()); // riid
-            } else {
+            }
+            else
+            {
                 method.Emit(OpCodes.Ldc_I8, UnsafeMethods.NullInterfaceId.ToInt64()); // riid
             }
             method.Emit(OpCodes.Conv_I);
@@ -716,9 +781,12 @@ namespace System.Management.Automation.ComInterop {
 
             EmitLoadArg(method, dispParamsIndex);
 
-            if (returnResult) {
+            if (returnResult)
+            {
                 EmitLoadArg(method, resultIndex);
-            } else {
+            }
+            else
+            {
                 method.Emit(OpCodes.Ldsfld, typeof(IntPtr).GetField("Zero"));
             }
             EmitLoadArg(method, exceptInfoIndex);
@@ -733,7 +801,7 @@ namespace System.Management.Automation.ComInterop {
             method.Emit(OpCodes.Ldind_I);
 
             System.Reflection.Emit.SignatureHelper signature = System.Reflection.Emit.SignatureHelper.GetMethodSigHelper(CallingConvention.Winapi, typeof(int));
-            Type[] invokeParamTypes = new Type[] { 
+            Type[] invokeParamTypes = new Type[] {
                     typeof(IntPtr), // dispatchPointer
                     typeof(int),    // memberDispId
                     typeof(IntPtr), // riid
@@ -755,7 +823,8 @@ namespace System.Management.Automation.ComInterop {
     }
 
 
-    internal static class NativeMethods {
+    internal static class NativeMethods
+    {
         [System.Runtime.Versioning.ResourceExposure(System.Runtime.Versioning.ResourceScope.None)]
         [System.Runtime.Versioning.ResourceConsumption(System.Runtime.Versioning.ResourceScope.Process, System.Runtime.Versioning.ResourceScope.Process)]
         [DllImport("oleaut32.dll", PreserveSig = false)]

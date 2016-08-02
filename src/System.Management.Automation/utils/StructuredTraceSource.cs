@@ -14,7 +14,6 @@ using System.Threading;
 
 namespace System.Management.Automation
 {
-
     #region PSTraceSourceOptions
     /// <summary>
     /// These flags enable tracing based on the types of
@@ -111,7 +110,7 @@ namespace System.Management.Automation
         /// <!--
         /// The TraceError methods are enabled
         /// -->
-        Error           = 0x00000200,
+        Error = 0x00000200,
 
         /// <summary>
         /// Warnings will be traced
@@ -152,13 +151,13 @@ namespace System.Management.Automation
         /// The methods associated with the flags; Constructor, Dispose,
         /// Finalizer, Method, Delegates, and Events will be enabled
         /// </remarks>
-        ExecutionFlow = 
-            Constructor     | 
-            Dispose         | 
-            Finalizer       |  
-            Method          |   
-            Delegates       | 
-            Events          |
+        ExecutionFlow =
+            Constructor |
+            Dispose |
+            Finalizer |
+            Method |
+            Delegates |
+            Events |
             Scope,
 
         /// <summary>
@@ -169,12 +168,12 @@ namespace System.Management.Automation
         /// The methods associated with the flags; Constructor, Dispose,
         /// Finalizer, Property, and WriteLine will be enabled
         /// </remarks>
-        Data = 
-            Constructor  |
-            Dispose      |
-            Finalizer    |
-            Property     |
-            Verbose      |
+        Data =
+            Constructor |
+            Dispose |
+            Finalizer |
+            Property |
+            Verbose |
             WriteLine,
 
         /// <summary>
@@ -184,8 +183,8 @@ namespace System.Management.Automation
         /// The methods associated with the flags; Error,
         /// and Exception will be enabled
         /// </remarks>
-        Errors = 
-            Error        |
+        Errors =
+            Error |
             Exception,
 
         /// <summary>
@@ -195,23 +194,22 @@ namespace System.Management.Automation
         /// <remarks>
         /// All methods for tracing will be enabled.
         /// </remarks>
-        All = 
-            Constructor      |
-            Dispose          |
-            Finalizer        |
-            Method           |
-            Property         |
-            Delegates        |
-            Events           |
-            Exception        |
-            Error            |
-            Warning          |
-            Verbose          |
-            Lock             |
-            WriteLine        |
-            Scope            |
+        All =
+            Constructor |
+            Dispose |
+            Finalizer |
+            Method |
+            Property |
+            Delegates |
+            Events |
+            Exception |
+            Error |
+            Warning |
+            Verbose |
+            Lock |
+            WriteLine |
+            Scope |
             Assert
-
     }
 
     #endregion PSTraceSourceOptions
@@ -279,7 +277,7 @@ namespace System.Management.Automation
         /// 
         internal PSTraceSource(string fullName, string name, string description, bool traceHeaders)
         {
-            if (String.IsNullOrEmpty (fullName))
+            if (String.IsNullOrEmpty(fullName))
             {
                 // 2005/04/13-JonN In theory this should be ArgumentException,
                 // but I don't want to deal with loading the string in this
@@ -289,8 +287,8 @@ namespace System.Management.Automation
 
             try
             {
-                this.fullName = fullName;
-                this.name = name;
+                _fullName = fullName;
+                _name = name;
 
 #if !CORECLR // TraceSource.Attributes is not in CoreCLR
                 string tracingEnvVar = Environment.GetEnvironmentVariable("MshEnableTrace");
@@ -303,19 +301,19 @@ namespace System.Management.Automation
                     string options = this.TraceSource.Attributes["Options"];
                     if (options != null)
                     {
-                        flags = (PSTraceSourceOptions)Enum.Parse(typeof(PSTraceSourceOptions), options, true);
+                        _flags = (PSTraceSourceOptions)Enum.Parse(typeof(PSTraceSourceOptions), options, true);
                     }
                 }
 #endif
-                this.showHeaders = traceHeaders;
-                this.description = description;
+                _showHeaders = traceHeaders;
+                _description = description;
             }
             catch (System.Xml.XmlException)
             {
                 // This exception occurs when the config
                 // file is malformed. Just default to Off.
 
-                flags = PSTraceSourceOptions.None;
+                _flags = PSTraceSourceOptions.None;
             }
 #if !CORECLR
             catch (System.Configuration.ConfigurationException)
@@ -323,7 +321,7 @@ namespace System.Management.Automation
                 // This exception occurs when the config
                 // file is malformed. Just default to Off.
 
-                flags = PSTraceSourceOptions.None;
+                _flags = PSTraceSourceOptions.None;
             }
 #endif
         }
@@ -358,7 +356,7 @@ namespace System.Management.Automation
                 PSTraceSourceOptions.All,
                 "\tCurrent time: {0}",
                 DateTime.Now);
-                    
+
             // OS build
 
             OutputLine(
@@ -397,7 +395,7 @@ namespace System.Management.Automation
         internal void TracerObjectHeader(
             Assembly callingAssembly)
         {
-            if (flags == PSTraceSourceOptions.None)
+            if (_flags == PSTraceSourceOptions.None)
             {
                 return;
             }
@@ -419,7 +417,7 @@ namespace System.Management.Automation
                 PSTraceSourceOptions.All,
                 "\tDescription: {0}",
                 Description);
-            
+
             if (callingAssembly != null)
             {
                 // Assembly name
@@ -430,7 +428,7 @@ namespace System.Management.Automation
                     callingAssembly.FullName);
 
                 // Assembly location
-                
+
                 OutputLine(
                     PSTraceSourceOptions.All,
                     "\tAssembly Location: {0}",
@@ -452,7 +450,7 @@ namespace System.Management.Automation
             // Label
 
             flagBuilder.Append("\tFlags: ");
-            flagBuilder.Append(flags.ToString());
+            flagBuilder.Append(_flags.ToString());
 
             // Write out the flags
 
@@ -464,11 +462,11 @@ namespace System.Management.Automation
 
         internal IDisposable TraceScope(string msg)
         {
-            if ((flags & PSTraceSourceOptions.Scope) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.Scope) != PSTraceSourceOptions.None)
             {
                 try
                 {
-                    return new ScopeTracer (this, PSTraceSourceOptions.Scope, null, null, String.Empty, msg);
+                    return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, String.Empty, msg);
                 }
                 catch { }
             }
@@ -477,11 +475,11 @@ namespace System.Management.Automation
 
         internal IDisposable TraceScope(string format, object arg1)
         {
-            if ((flags & PSTraceSourceOptions.Scope) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.Scope) != PSTraceSourceOptions.None)
             {
                 try
                 {
-                    return new ScopeTracer (this, PSTraceSourceOptions.Scope, null, null, String.Empty, format, arg1);
+                    return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, String.Empty, format, arg1);
                 }
                 catch { }
             }
@@ -490,11 +488,11 @@ namespace System.Management.Automation
 
         internal IDisposable TraceScope(string format, object arg1, object arg2)
         {
-            if ((flags & PSTraceSourceOptions.Scope) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.Scope) != PSTraceSourceOptions.None)
             {
                 try
                 {
-                    return new ScopeTracer (this, PSTraceSourceOptions.Scope, null, null, String.Empty, format, arg1, arg2);
+                    return new ScopeTracer(this, PSTraceSourceOptions.Scope, null, null, String.Empty, format, arg1, arg2);
                 }
                 catch { }
             }
@@ -544,7 +542,7 @@ namespace System.Management.Automation
             string format,
             params object[] args)
         {
-            if ((flags & PSTraceSourceOptions.Method) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.Method) != PSTraceSourceOptions.None)
             {
                 try
                 {
@@ -555,8 +553,8 @@ namespace System.Management.Automation
                     string methodName = GetCallingMethodNameAndParameters(1);
 
                     // Create the method tracer object
-                    return 
-                        (IDisposable) 
+                    return
+                        (IDisposable)
                             new ScopeTracer(
                                 this,
                                 PSTraceSourceOptions.Method,
@@ -579,7 +577,7 @@ namespace System.Management.Automation
         }
 
         #endregion PSTraceSourceOptions.Method methods/helpers
-        
+
         #region PSTraceSourceOptions.Events methods/helpers
 
         /// <summary>
@@ -592,7 +590,7 @@ namespace System.Management.Automation
         /// </returns>
         internal IDisposable TraceEventHandlers()
         {
-            if ((flags & PSTraceSourceOptions.Events) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.Events) != PSTraceSourceOptions.None)
             {
                 try
                 {
@@ -603,8 +601,8 @@ namespace System.Management.Automation
                     string methodName = GetCallingMethodNameAndParameters(1);
 
                     // Create the scope tracer object
-                    return 
-                        (IDisposable) 
+                    return
+                        (IDisposable)
                             new ScopeTracer(
                                 this,
                                 PSTraceSourceOptions.Events,
@@ -643,7 +641,7 @@ namespace System.Management.Automation
             string format,
             params object[] args)
         {
-            if ((flags & PSTraceSourceOptions.Events) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.Events) != PSTraceSourceOptions.None)
             {
                 try
                 {
@@ -654,8 +652,8 @@ namespace System.Management.Automation
                     string methodName = GetCallingMethodNameAndParameters(1);
 
                     // Create the scope tracer object
-                    return 
-                        (IDisposable) 
+                    return
+                        (IDisposable)
                             new ScopeTracer(
                                 this,
                                 PSTraceSourceOptions.Events,
@@ -713,7 +711,7 @@ namespace System.Management.Automation
         /// </remarks>
         internal IDisposable TraceLock(string lockName)
         {
-            if ((flags & PSTraceSourceOptions.Lock) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.Lock) != PSTraceSourceOptions.None)
             {
                 try
                 {
@@ -746,7 +744,7 @@ namespace System.Management.Automation
         /// </param>
         internal void TraceLockAcquiring(string lockName)
         {
-            if ((flags & PSTraceSourceOptions.Lock) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.Lock) != PSTraceSourceOptions.None)
             {
                 TraceLockHelper(
                     lockAcquiringFormatter,
@@ -768,7 +766,7 @@ namespace System.Management.Automation
         /// </remarks>
         internal void TraceLockAcquired(string lockName)
         {
-            if ((flags & PSTraceSourceOptions.Lock) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.Lock) != PSTraceSourceOptions.None)
             {
                 TraceLockHelper(
                     lockEnterFormatter,
@@ -786,7 +784,7 @@ namespace System.Management.Automation
         /// </param>
         internal void TraceLockReleased(string lockName)
         {
-            if ((flags & PSTraceSourceOptions.Lock) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.Lock) != PSTraceSourceOptions.None)
             {
                 TraceLockHelper(
                     lockLeavingFormatter,
@@ -840,12 +838,12 @@ namespace System.Management.Automation
             string errorMessageFormat,
             params object[] args)
         {
-            if ((flags & PSTraceSourceOptions.Error) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.Error) != PSTraceSourceOptions.None)
             {
                 FormatOutputLine(
                     PSTraceSourceOptions.Error,
-                    errorFormatter, 
-                    errorMessageFormat, 
+                    errorFormatter,
+                    errorMessageFormat,
                     args);
             }
         }
@@ -867,12 +865,12 @@ namespace System.Management.Automation
             string warningMessageFormat,
             params object[] args)
         {
-            if ((flags & PSTraceSourceOptions.Warning) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.Warning) != PSTraceSourceOptions.None)
             {
                 FormatOutputLine(
                     PSTraceSourceOptions.Warning,
-                    warningFormatter, 
-                    warningMessageFormat, 
+                    warningFormatter,
+                    warningMessageFormat,
                     args);
             }
         }
@@ -890,13 +888,13 @@ namespace System.Management.Automation
         /// The arguments for the format string
         /// </param>
         /// 
-        internal void TraceVerbose (
+        internal void TraceVerbose(
             string verboseMessageFormat,
             params object[] args)
         {
-            if ((flags & PSTraceSourceOptions.Verbose) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.Verbose) != PSTraceSourceOptions.None)
             {
-                FormatOutputLine (
+                FormatOutputLine(
                     PSTraceSourceOptions.Verbose,
                     verboseFormatter,
                     verboseMessageFormat,
@@ -914,12 +912,12 @@ namespace System.Management.Automation
         /// 
         internal void WriteLine(string format)
         {
-            if ((flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
             {
                 FormatOutputLine(
-                    PSTraceSourceOptions.WriteLine, 
-                    writeLineFormatter, 
-                    format, 
+                    PSTraceSourceOptions.WriteLine,
+                    writeLineFormatter,
+                    format,
                     Utils.EmptyArray<object>());
             }
         }
@@ -933,13 +931,13 @@ namespace System.Management.Automation
         /// 
         internal void WriteLine(string format, object arg1)
         {
-            if ((flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
             {
                 FormatOutputLine(
-                    PSTraceSourceOptions.WriteLine, 
-                    writeLineFormatter, 
-                    format, 
-                    new object[] {arg1});
+                    PSTraceSourceOptions.WriteLine,
+                    writeLineFormatter,
+                    format,
+                    new object[] { arg1 });
             }
         }
 
@@ -953,13 +951,13 @@ namespace System.Management.Automation
         /// 
         internal void WriteLine(string format, object arg1, object arg2)
         {
-            if ((flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
             {
                 FormatOutputLine(
-                    PSTraceSourceOptions.WriteLine, 
-                    writeLineFormatter, 
-                    format, 
-                    new object[] {arg1, arg2});
+                    PSTraceSourceOptions.WriteLine,
+                    writeLineFormatter,
+                    format,
+                    new object[] { arg1, arg2 });
             }
         }
 
@@ -974,13 +972,13 @@ namespace System.Management.Automation
         /// 
         internal void WriteLine(string format, object arg1, object arg2, object arg3)
         {
-            if ((flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
             {
                 FormatOutputLine(
                     PSTraceSourceOptions.WriteLine,
                     writeLineFormatter,
                     format,
-                    new object[] {arg1, arg2, arg3});
+                    new object[] { arg1, arg2, arg3 });
             }
         }
 
@@ -996,13 +994,13 @@ namespace System.Management.Automation
         /// 
         internal void WriteLine(string format, object arg1, object arg2, object arg3, object arg4)
         {
-            if ((flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
             {
                 FormatOutputLine(
                     PSTraceSourceOptions.WriteLine,
                     writeLineFormatter,
                     format,
-                    new object[] {arg1, arg2, arg3, arg4});
+                    new object[] { arg1, arg2, arg3, arg4 });
             }
         }
 
@@ -1019,13 +1017,13 @@ namespace System.Management.Automation
         /// 
         internal void WriteLine(string format, object arg1, object arg2, object arg3, object arg4, object arg5)
         {
-            if ((flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
             {
                 FormatOutputLine(
                     PSTraceSourceOptions.WriteLine,
                     writeLineFormatter,
                     format,
-                    new object[] {arg1, arg2, arg3, arg4, arg5});
+                    new object[] { arg1, arg2, arg3, arg4, arg5 });
             }
         }
 
@@ -1043,13 +1041,13 @@ namespace System.Management.Automation
         /// 
         internal void WriteLine(string format, object arg1, object arg2, object arg3, object arg4, object arg5, object arg6)
         {
-            if ((flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
             {
                 FormatOutputLine(
                     PSTraceSourceOptions.WriteLine,
                     writeLineFormatter,
                     format,
-                    new object[] {arg1, arg2, arg3, arg4, arg5, arg6});
+                    new object[] { arg1, arg2, arg3, arg4, arg5, arg6 });
             }
         }
 
@@ -1063,7 +1061,7 @@ namespace System.Management.Automation
         /// 
         internal void WriteLine(object arg)
         {
-            if ((flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
             {
                 WriteLine("{0}", arg == null ? "null" : arg.ToString());
             }
@@ -1112,7 +1110,7 @@ namespace System.Management.Automation
                 {
                     output.AppendFormat(
                         CultureInfo.CurrentCulture,
-                        format, 
+                        format,
                         args);
                 }
 
@@ -1176,12 +1174,11 @@ namespace System.Management.Automation
 
                 methodAndParameters.AppendFormat(
                     CultureInfo.CurrentCulture,
-                    "{0}.{1}(", 
+                    "{0}.{1}(",
                     declaringType.Name,
                     callingMethod.Name);
 
                 methodAndParameters.Append(")");
-
             }
             catch
             {
@@ -1277,7 +1274,7 @@ namespace System.Management.Automation
 
         private const string lockAcquiringFormatter =
             "Acquiring Lock: {0}";
- 
+
         private static StringBuilder GetLinePrefix(PSTraceSourceOptions flag)
         {
             StringBuilder prefixBuilder = new StringBuilder();
@@ -1302,8 +1299,8 @@ namespace System.Management.Automation
             int threadIndentLevel = ThreadIndentLevel;
 
             for (
-                int index = 0; 
-                index < indentSize * threadIndentLevel; 
+                int index = 0;
+                index < indentSize * threadIndentLevel;
                 index++)
             {
                 lineBuilder.Append(" ");
@@ -1311,7 +1308,7 @@ namespace System.Management.Automation
         }
 
         // used to find and blocks cyclic-loops in tracing.
-        private bool alreadyTracing = false;
+        private bool _alreadyTracing = false;
         /// <summary>
         /// Composes a line of trace output and then writes it
         /// </summary>
@@ -1341,12 +1338,12 @@ namespace System.Management.Automation
         {
             // if already tracing something for this current TraceSource,
             // dont trace again. This will block cyclic-loops from happening.
-            if (alreadyTracing)
+            if (_alreadyTracing)
             {
                 return;
             }
 
-            alreadyTracing = true;
+            _alreadyTracing = true;
             try
             {
                 Diagnostics.Assert(
@@ -1355,7 +1352,7 @@ namespace System.Management.Automation
 
                 StringBuilder lineBuilder = new StringBuilder();
 
-                if (showHeaders)
+                if (_showHeaders)
                 {
                     // Get the line prefix string which includes things
                     // like App name, clock tick, thread ID, etc.
@@ -1393,7 +1390,7 @@ namespace System.Management.Automation
             {
                 // reset tracing for the current trace source..
                 // so future traces can go through.
-                alreadyTracing = false;
+                _alreadyTracing = false;
             }
         }
 
@@ -1406,7 +1403,7 @@ namespace System.Management.Automation
             {
                 // The first time access the ThreadLocal instance, the default int value will be used
                 // to initialize the instance. The default int value is 0.
-                return LocalIndentLevel.Value;
+                return s_localIndentLevel.Value;
             }
 
             set
@@ -1414,7 +1411,7 @@ namespace System.Management.Automation
                 if (value >= 0)
                 {
                     // Set the new indent level in thread local storage
-                    LocalIndentLevel.Value = value;
+                    s_localIndentLevel.Value = value;
                 }
                 else
                 {
@@ -1426,22 +1423,22 @@ namespace System.Management.Automation
         /// <summary>
         /// Allocates some thread local storage to hold the indent level
         /// </summary>
-        private static readonly ThreadLocal<int> LocalIndentLevel = new ThreadLocal<int>();
+        private static readonly ThreadLocal<int> s_localIndentLevel = new ThreadLocal<int>();
 
         /// <summary>
         /// Local storage for the trace switch flags
         /// </summary>
-        private PSTraceSourceOptions flags = PSTraceSourceOptions.None;
+        private PSTraceSourceOptions _flags = PSTraceSourceOptions.None;
 
         /// <summary>
         /// Gets or sets the description for this trace sources
         /// </summary>
         public string Description
         {
-            get { return description; }
-            set { description = value; }
+            get { return _description; }
+            set { _description = value; }
         }
-        private string description = String.Empty;
+        private string _description = String.Empty;
 
         /// <summary>
         /// Determines if the line and switch headers should be shown
@@ -1449,10 +1446,10 @@ namespace System.Management.Automation
         /// <value></value>
         internal bool ShowHeaders
         {
-            get { return showHeaders; }
-            set { showHeaders = value; }
+            get { return _showHeaders; }
+            set { _showHeaders = value; }
         }
-        private bool showHeaders = true;
+        private bool _showHeaders = true;
 
         /// <summary>
         /// Gets the full name of the trace source category
@@ -1460,10 +1457,10 @@ namespace System.Management.Automation
         /// 
         internal string FullName
         {
-            get { return fullName; }
+            get { return _fullName; }
         }
-        private string fullName = String.Empty;
-        private string name;
+        private string _fullName = String.Empty;
+        private string _name;
 
         /// <summary>
         /// Creates an instance of the TraceSource on demand
@@ -1473,14 +1470,14 @@ namespace System.Management.Automation
         {
             get
             {
-                if (traceSource == null)
+                if (_traceSource == null)
                 {
-                    traceSource = new MonadTraceSource(name);
+                    _traceSource = new MonadTraceSource(_name);
                 }
-                return traceSource;
+                return _traceSource;
             }
         }
-        private TraceSource traceSource;
+        private TraceSource _traceSource;
 
         #endregion Class helper methods and properties
 
@@ -1491,18 +1488,18 @@ namespace System.Management.Automation
         /// </summary>
         public PSTraceSourceOptions Options
         {
-            get { return flags; }
+            get { return _flags; }
 
             set
             {
-                flags = value;
-                this.TraceSource.Switch.Level = (SourceLevels)flags;
+                _flags = value;
+                this.TraceSource.Switch.Level = (SourceLevels)_flags;
             }
         }
 
         internal bool IsEnabled
         {
-            get { return flags != PSTraceSourceOptions.None; }
+            get { return _flags != PSTraceSourceOptions.None; }
         }
 
 #if !CORECLR // TraceSource.Attributes is not in CoreCLR
@@ -1541,7 +1538,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return name;
+                return _name;
             }
         }
 
@@ -1569,9 +1566,9 @@ namespace System.Management.Automation
         /// <value></value>
         internal static Dictionary<String, PSTraceSource> TraceCatalog
         {
-            get { return traceCatalog; }
+            get { return s_traceCatalog; }
         }
-        private static Dictionary<String, PSTraceSource> traceCatalog =
+        private static Dictionary<String, PSTraceSource> s_traceCatalog =
             new Dictionary<String, PSTraceSource>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
@@ -1584,13 +1581,12 @@ namespace System.Management.Automation
         /// 
         internal static Dictionary<String, PSTraceSource> PreConfiguredTraceSource
         {
-            get { return preConfiguredTraceSource; }
+            get { return s_preConfiguredTraceSource; }
         }
-        private static Dictionary<String, PSTraceSource> preConfiguredTraceSource =
+        private static Dictionary<String, PSTraceSource> s_preConfiguredTraceSource =
             new Dictionary<String, PSTraceSource>(StringComparer.OrdinalIgnoreCase);
 
         #endregion TraceCatalog
-
     }      // class PSTraceSource : Switch
 
     #region ScopeTracer object/helpers
@@ -1644,11 +1640,11 @@ namespace System.Management.Automation
         internal ScopeTracer(
             PSTraceSource tracer,
             PSTraceSourceOptions flag,
-            string scopeOutputFormatter, 
+            string scopeOutputFormatter,
             string leavingScopeFormatter,
             string scopeName)
         {
-            this._tracer = tracer;
+            _tracer = tracer;
 
             // Call the helper
 
@@ -1710,7 +1706,7 @@ namespace System.Management.Automation
             string format,
             params object[] args)
         {
-            this._tracer = tracer;
+            _tracer = tracer;
 
             // Call the helper
 
@@ -1780,25 +1776,25 @@ namespace System.Management.Automation
             // Store the flags, scopeName, and the leavingScopeFormatter
             // so that it can be used in the Dispose method
 
-            this._flag = flag;
-            this._scopeName = scopeName;
-            this._leavingScopeFormatter = leavingScopeFormatter;
-    
+            _flag = flag;
+            _scopeName = scopeName;
+            _leavingScopeFormatter = leavingScopeFormatter;
+
             // Format the string for output
 
             StringBuilder output = new StringBuilder();
 
-            if (!String.IsNullOrEmpty (scopeOutputFormatter))
+            if (!String.IsNullOrEmpty(scopeOutputFormatter))
             {
-                output.AppendFormat (
+                output.AppendFormat(
                     CultureInfo.CurrentCulture,
                     scopeOutputFormatter,
                     _scopeName);
             }
 
-            if (!String.IsNullOrEmpty (format))
+            if (!String.IsNullOrEmpty(format))
             {
-                output.AppendFormat (
+                output.AppendFormat(
                     CultureInfo.CurrentCulture,
                     format,
                     args);
@@ -1822,12 +1818,12 @@ namespace System.Management.Automation
             // Decrement the indent level in thread local storage
 
             PSTraceSource.ThreadIndentLevel--;
-            
+
             // Trace out the scope name
 
-            if (!String.IsNullOrEmpty (_leavingScopeFormatter))
+            if (!String.IsNullOrEmpty(_leavingScopeFormatter))
             {
-                _tracer.OutputLine (_flag, _leavingScopeFormatter, _scopeName);
+                _tracer.OutputLine(_flag, _leavingScopeFormatter, _scopeName);
             }
             GC.SuppressFinalize(this);
         }
@@ -1877,7 +1873,7 @@ namespace System.Management.Automation
     /// </remarks>
     [AttributeUsage(
          AttributeTargets.Field,
-         AllowMultiple=false)]
+         AllowMultiple = false)]
     internal class TraceSourceAttribute : Attribute
     {
         /// <summary>
@@ -1890,41 +1886,40 @@ namespace System.Management.Automation
         /// <param name="description">
         /// A description for the category.
         /// </param>
-        internal TraceSourceAttribute (
+        internal TraceSourceAttribute(
             string category,
             string description)
         {
-            this.category = category;
-            this.description = description;
+            _category = category;
+            _description = description;
         }
 
         /// <summary>
         /// The category to be used for the TraceSource
         /// </summary>
-        private string category;
+        private string _category;
 
         /// <summary>
         /// The category to be used for the TraceSource
         /// </summary>
         internal string Category
         {
-            get { return category; }
+            get { return _category; }
         }
 
         /// <summary>
         /// The description for the category to be used for the TraceSource
         /// </summary>
-        private string description;
+        private string _description;
 
         /// <summary>
         /// The description for the category to be used for the TraceSource
         /// </summary>
         internal string Description
         {
-            get { return description; }
-            set { description = value; }
+            get { return _description; }
+            set { _description = value; }
         }
-
     }
     #endregion TraceSourceAttribute
 
@@ -1960,6 +1955,5 @@ namespace System.Management.Automation
 #endif
     }
     #endregion MonadTraceSource
-
 }
 

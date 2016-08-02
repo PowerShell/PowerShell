@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 namespace System.Management.Automation
 {
     using System;
@@ -11,14 +12,14 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines a class which allows simple execution of commands from CLR languages
     /// </summary>
-    public class RunspaceInvoke: IDisposable
+    public class RunspaceInvoke : IDisposable
     {
         #region constructors
 
         /// <summary>
         /// Runspace on which commands are invoked
         /// </summary>
-        Runspace _runspace;
+        private Runspace _runspace;
 
         /// <summary>
         /// Create a RunspaceInvoke for invoking commands. This uses
@@ -97,7 +98,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="runspace"></param>
         /// <remarks>Runspace must be opened state</remarks>
-        public RunspaceInvoke (Runspace runspace)
+        public RunspaceInvoke(Runspace runspace)
         {
             if (runspace == null)
             {
@@ -119,7 +120,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="script">msh script to invoke</param>
         /// <returns>Output of invocation</returns>
-        public Collection<PSObject> Invoke (string script)
+        public Collection<PSObject> Invoke(string script)
         {
             return Invoke(script, null);
         }
@@ -130,7 +131,7 @@ namespace System.Management.Automation
         /// <param name="script">msh script to invoke</param>
         /// <param name="input">input to script</param>
         /// <returns>Output of invocation</returns>
-        public Collection<PSObject> Invoke (string script, IEnumerable input)
+        public Collection<PSObject> Invoke(string script, IEnumerable input)
         {
             if (_disposed == true)
             {
@@ -139,10 +140,10 @@ namespace System.Management.Automation
 
             if (script == null)
             {
-                throw PSTraceSource.NewArgumentNullException ("script");
+                throw PSTraceSource.NewArgumentNullException("script");
             }
-            Pipeline p = _runspace.CreatePipeline (script);
-            return p.Invoke (input);
+            Pipeline p = _runspace.CreatePipeline(script);
+            return p.Invoke(input);
         }
 
         /// <summary>
@@ -158,7 +159,7 @@ namespace System.Management.Automation
         /// In this release, the objects read from this PipelineReader
         /// are PSObjects wrapping ErrorRecords.
         /// </remarks>
-        public Collection<PSObject> Invoke (string script, IEnumerable input, out IList errors)
+        public Collection<PSObject> Invoke(string script, IEnumerable input, out IList errors)
         {
             if (_disposed == true)
             {
@@ -167,12 +168,12 @@ namespace System.Management.Automation
 
             if (script == null)
             {
-                throw PSTraceSource.NewArgumentNullException ("script");
+                throw PSTraceSource.NewArgumentNullException("script");
             }
-            Pipeline p = _runspace.CreatePipeline (script);
-            Collection<PSObject> output = p.Invoke (input);
+            Pipeline p = _runspace.CreatePipeline(script);
+            Collection<PSObject> output = p.Invoke(input);
             // 2004/06/30-JonN was ReadAll() which was non-blocking
-            errors = p.Error.NonBlockingRead ();
+            errors = p.Error.NonBlockingRead();
             return output;
         }
 
@@ -183,7 +184,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Set to true when object is disposed
         /// </summary>
-        bool _disposed;
+        private bool _disposed;
 
         /// <summary>
         /// Dispose underlying Runspace

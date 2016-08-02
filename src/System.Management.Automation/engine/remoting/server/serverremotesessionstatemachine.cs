@@ -35,11 +35,11 @@ namespace System.Management.Automation.Remoting
     internal class ServerRemoteSessionDSHandlerStateMachine
     {
         [TraceSourceAttribute("ServerRemoteSessionDSHandlerStateMachine", "ServerRemoteSessionDSHandlerStateMachine")]
-        static private PSTraceSource _trace = PSTraceSource.GetTracer("ServerRemoteSessionDSHandlerStateMachine", "ServerRemoteSessionDSHandlerStateMachine");
+        static private PSTraceSource s_trace = PSTraceSource.GetTracer("ServerRemoteSessionDSHandlerStateMachine", "ServerRemoteSessionDSHandlerStateMachine");
 
         private ServerRemoteSession _session;
         private object _syncObject;
-        private Queue<RemoteSessionStateMachineEventArgs> processPendingEventsQueue
+        private Queue<RemoteSessionStateMachineEventArgs> _processPendingEventsQueue
             = new Queue<RemoteSessionStateMachineEventArgs>();
         // whether some thread is actively processing events
         // in a loop. If this is set then other threads
@@ -47,8 +47,8 @@ namespace System.Management.Automation.Remoting
         // at processing the events in the queue. This will
         // guarantee that events will always be serialized
         // and processed
-        private bool eventsInProcess = false;
-        
+        private bool _eventsInProcess = false;
+
         private EventHandler<RemoteSessionStateMachineEventArgs>[,] _stateMachineHandle;
         private RemoteSessionState _state;
 
@@ -82,7 +82,7 @@ namespace System.Management.Automation.Remoting
             _syncObject = new object();
 
             _stateMachineHandle = new EventHandler<RemoteSessionStateMachineEventArgs>[(int)RemoteSessionState.MaxState, (int)RemoteSessionEvent.MaxEvent];
-            
+
             for (int i = 0; i < _stateMachineHandle.GetLength(0); i++)
             {
                 _stateMachineHandle[i, (int)RemoteSessionEvent.FatalError] += DoFatalError;
@@ -90,34 +90,34 @@ namespace System.Management.Automation.Remoting
                 _stateMachineHandle[i, (int)RemoteSessionEvent.Close] += DoClose;
                 _stateMachineHandle[i, (int)RemoteSessionEvent.CloseFailed] += DoCloseFailed;
                 _stateMachineHandle[i, (int)RemoteSessionEvent.CloseCompleted] += DoCloseCompleted;
-               
+
                 _stateMachineHandle[i, (int)RemoteSessionEvent.NegotiationTimeout] += DoNegotiationTimeout;
 
                 _stateMachineHandle[i, (int)RemoteSessionEvent.SendFailed] += DoSendFailed;
 
                 _stateMachineHandle[i, (int)RemoteSessionEvent.ReceiveFailed] += DoReceiveFailed;
-                _stateMachineHandle[i, (int)RemoteSessionEvent.ConnectSession] += DoConnect;                    
+                _stateMachineHandle[i, (int)RemoteSessionEvent.ConnectSession] += DoConnect;
             }
 
             _stateMachineHandle[(int)RemoteSessionState.Idle, (int)RemoteSessionEvent.CreateSession] += DoCreateSession;
 
             _stateMachineHandle[(int)RemoteSessionState.NegotiationPending, (int)RemoteSessionEvent.NegotiationReceived] += DoNegotiationReceived;
 
-            _stateMachineHandle[(int)RemoteSessionState.NegotiationReceived, (int)RemoteSessionEvent.NegotiationSending] += DoNegotiationSending; 
+            _stateMachineHandle[(int)RemoteSessionState.NegotiationReceived, (int)RemoteSessionEvent.NegotiationSending] += DoNegotiationSending;
 
             _stateMachineHandle[(int)RemoteSessionState.NegotiationSending, (int)RemoteSessionEvent.NegotiationSendCompleted] += DoNegotiationCompleted;
 
             _stateMachineHandle[(int)RemoteSessionState.NegotiationSent, (int)RemoteSessionEvent.NegotiationCompleted] += DoEstablished;
 
             _stateMachineHandle[(int)RemoteSessionState.NegotiationSent, (int)RemoteSessionEvent.NegotiationPending] += DoNegotiationPending;
-                           
+
             _stateMachineHandle[(int)RemoteSessionState.Established, (int)RemoteSessionEvent.MessageReceived] += DoMessageReceived;
 
             _stateMachineHandle[(int)RemoteSessionState.NegotiationReceived, (int)RemoteSessionEvent.NegotiationFailed] += DoNegotiationFailed;
 
             _stateMachineHandle[(int)RemoteSessionState.Connecting, (int)RemoteSessionEvent.ConnectFailed] += DoConnectFailed;
 
-            _stateMachineHandle[(int)RemoteSessionState.Established, (int)RemoteSessionEvent.KeyReceived] += DoKeyExchange ; //
+            _stateMachineHandle[(int)RemoteSessionState.Established, (int)RemoteSessionEvent.KeyReceived] += DoKeyExchange; //
             _stateMachineHandle[(int)RemoteSessionState.Established, (int)RemoteSessionEvent.KeyRequested] += DoKeyExchange; //
             _stateMachineHandle[(int)RemoteSessionState.Established, (int)RemoteSessionEvent.KeyReceiveFailed] += DoKeyExchange; //
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyRequested, (int)RemoteSessionEvent.KeyReceived] += DoKeyExchange; //
@@ -130,7 +130,7 @@ namespace System.Management.Automation.Remoting
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyExchanged, (int)RemoteSessionEvent.KeyReceived] += DoKeyExchange; //
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyExchanged, (int)RemoteSessionEvent.KeyRequested] += DoKeyExchange; //
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyExchanged, (int)RemoteSessionEvent.KeyReceiveFailed] += DoKeyExchange; //
-            
+
 
 
             for (int i = 0; i < _stateMachineHandle.GetLength(0); i++)
@@ -201,14 +201,14 @@ namespace System.Management.Automation.Remoting
             // make sure only one thread is processing events.
             lock (_syncObject)
             {
-                _trace.WriteLine("Event received : {0}", fsmEventArg.StateEvent);
-                processPendingEventsQueue.Enqueue(fsmEventArg);
+                s_trace.WriteLine("Event received : {0}", fsmEventArg.StateEvent);
+                _processPendingEventsQueue.Enqueue(fsmEventArg);
 
-                if (eventsInProcess)
+                if (_eventsInProcess)
                 {
-                    return;                        
+                    return;
                 }
-                eventsInProcess = true;
+                _eventsInProcess = true;
             }
 
             ProcessEvents();
@@ -233,17 +233,16 @@ namespace System.Management.Automation.Remoting
             {
                 lock (_syncObject)
                 {
-                    if (processPendingEventsQueue.Count == 0)
+                    if (_processPendingEventsQueue.Count == 0)
                     {
-                        eventsInProcess = false;
+                        _eventsInProcess = false;
                         break;
                     }
-                    eventArgs = processPendingEventsQueue.Dequeue();
+                    eventArgs = _processPendingEventsQueue.Dequeue();
                 }
 
                 RaiseEventPrivate(eventArgs);
-
-            } while (eventsInProcess);
+            } while (_eventsInProcess);
         }
 
         /// <summary>
@@ -269,11 +268,11 @@ namespace System.Management.Automation.Remoting
             EventHandler<RemoteSessionStateMachineEventArgs> handler = _stateMachineHandle[(int)_state, (int)fsmEventArg.StateEvent];
             if (handler != null)
             {
-                _trace.WriteLine("Before calling state machine event handler: state = {0}, event = {1}", _state, fsmEventArg.StateEvent);
+                s_trace.WriteLine("Before calling state machine event handler: state = {0}, event = {1}", _state, fsmEventArg.StateEvent);
 
                 handler(this, fsmEventArg);
 
-                _trace.WriteLine("After calling state machine event handler: state = {0}, event = {1}", _state, fsmEventArg.StateEvent);
+                s_trace.WriteLine("After calling state machine event handler: state = {0}, event = {1}", _state, fsmEventArg.StateEvent);
             }
         }
 
@@ -294,7 +293,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoCreateSession(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 if (fsmEventArg == null)
                 {
@@ -304,10 +303,10 @@ namespace System.Management.Automation.Remoting
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.CreateSession, "StateEvent must be CreateSession");
                 Dbg.Assert(_state == RemoteSessionState.Idle, "DoCreateSession cannot only be called in Idle state");
 
-                DoNegotiationPending(sender, fsmEventArg);             
+                DoNegotiationPending(sender, fsmEventArg);
             }
         }
-        
+
         /// <summary>
         /// This is the handler for NegotiationPending event. 
         /// NegotiationPending state can be in reached in the following cases
@@ -323,7 +322,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoNegotiationPending(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 if (fsmEventArg == null)
                 {
@@ -353,10 +352,10 @@ namespace System.Management.Automation.Remoting
         /// If the parameter <paramref name="fsmEventArg"/> is not NegotiationReceived event or it does not hold the
         /// client negotiation packet.
         /// </exception>
-        
+
         private void DoNegotiationReceived(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 if (fsmEventArg == null)
                 {
@@ -366,7 +365,7 @@ namespace System.Management.Automation.Remoting
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.NegotiationReceived, "StateEvent must be NegotiationReceived");
                 Dbg.Assert(fsmEventArg.RemoteSessionCapability != null, "RemoteSessioncapability must be non-null");
                 Dbg.Assert(_state == RemoteSessionState.NegotiationPending, "state must be in NegotiationPending state");
-                    
+
                 if (fsmEventArg.StateEvent != RemoteSessionEvent.NegotiationReceived)
                 {
                     throw PSTraceSource.NewArgumentException("fsmEventArg");
@@ -376,7 +375,7 @@ namespace System.Management.Automation.Remoting
                 {
                     throw PSTraceSource.NewArgumentException("fsmEventArg");
                 }
-                
+
                 SetState(RemoteSessionState.NegotiationReceived, null);
             }
         }
@@ -394,7 +393,7 @@ namespace System.Management.Automation.Remoting
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
-        
+
         private void DoNegotiationSending(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
             if (fsmEventArg == null)
@@ -422,10 +421,10 @@ namespace System.Management.Automation.Remoting
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
-        
+
         private void DoNegotiationCompleted(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 if (fsmEventArg == null)
                 {
@@ -451,10 +450,10 @@ namespace System.Management.Automation.Remoting
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
-        
+
         private void DoEstablished(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 if (fsmEventArg == null)
                 {
@@ -475,7 +474,7 @@ namespace System.Management.Automation.Remoting
                 }
 
                 SetState(RemoteSessionState.Established, null);
-             }
+            }
         }
 
         /// <summary>
@@ -495,7 +494,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>        
         internal void DoMessageReceived(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 if (fsmEventArg == null)
                 {
@@ -552,7 +551,7 @@ namespace System.Management.Automation.Remoting
                         }
                         else
                         {
-                            _trace.WriteLine(@"Server received data for Runspace (id: {0}), 
+                            s_trace.WriteLine(@"Server received data for Runspace (id: {0}), 
                                 but the Runspace cannot be found", clientRunspacePoolId);
 
                             PSRemotingDataStructureException reasonOfFailure = new
@@ -572,13 +571,13 @@ namespace System.Management.Automation.Remoting
                         break;
 
                     default:
-                        _trace.WriteLine("Server received data unknown targetInterface: {0}", targetInterface);
+                        s_trace.WriteLine("Server received data unknown targetInterface: {0}", targetInterface);
 
                         PSRemotingDataStructureException reasonOfFailure2 = new PSRemotingDataStructureException(RemotingErrorIdStrings.ReceivedUnsupportedRemotingTargetInterfaceType, targetInterface);
                         RemoteSessionStateMachineEventArgs unknownTargetArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.FatalError, reasonOfFailure2);
                         RaiseEvent(unknownTargetArg);
                         break;
-                }   
+                }
             }
         }
 
@@ -600,7 +599,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>   
         private void DoConnectFailed(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 if (fsmEventArg == null)
                 {
@@ -639,7 +638,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoFatalError(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 if (fsmEventArg == null)
                 {
@@ -685,13 +684,13 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoClose(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 if (fsmEventArg == null)
                 {
                     throw PSTraceSource.NewArgumentNullException("fsmEventArg");
                 }
-                
+
                 RemoteSessionState oldState = _state;
 
                 switch (oldState)
@@ -719,9 +718,9 @@ namespace System.Management.Automation.Remoting
                     default:
                         Exception forcedCloseException = new PSRemotingTransportException(fsmEventArg.Reason, RemotingErrorIdStrings.ForceClosed);
                         SetState(RemoteSessionState.Closed, forcedCloseException);
-                        break;                      
+                        break;
                 }
-  
+
                 CleanAll();
             }
         }
@@ -740,7 +739,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoCloseFailed(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 if (fsmEventArg == null)
                 {
@@ -771,7 +770,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoCloseCompleted(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 if (fsmEventArg == null)
                 {
@@ -802,7 +801,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoNegotiationFailed(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 if (fsmEventArg == null)
                 {
@@ -812,7 +811,7 @@ namespace System.Management.Automation.Remoting
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.NegotiationFailed, "StateEvent must be NegotiationFailed");
 
                 RemoteSessionStateMachineEventArgs closeArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
-                
+
                 RaiseEventPrivate(closeArg);
             }
         }
@@ -832,7 +831,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoNegotiationTimeout(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 if (fsmEventArg == null)
                 {
@@ -848,7 +847,7 @@ namespace System.Management.Automation.Remoting
                 }
 
                 RemoteSessionStateMachineEventArgs closeArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
-                
+
                 RaiseEventPrivate(closeArg);
             }
         }
@@ -868,7 +867,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoSendFailed(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 if (fsmEventArg == null)
                 {
@@ -878,7 +877,7 @@ namespace System.Management.Automation.Remoting
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.SendFailed, "StateEvent must be SendFailed");
 
                 RemoteSessionStateMachineEventArgs closeArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
-               
+
                 RaiseEventPrivate(closeArg);
             }
         }
@@ -898,7 +897,7 @@ namespace System.Management.Automation.Remoting
         /// </exception>
         private void DoReceiveFailed(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
-            using (_trace.TraceEventHandlers())
+            using (s_trace.TraceEventHandlers())
             {
                 if (fsmEventArg == null)
                 {
@@ -908,7 +907,7 @@ namespace System.Management.Automation.Remoting
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.ReceiveFailed, "StateEvent must be ReceivedFailed");
 
                 RemoteSessionStateMachineEventArgs closeArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
-               
+
                 RaiseEventPrivate(closeArg);
             }
         }
@@ -921,7 +920,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="eventArgs">event args</param>
         private void DoKeyExchange(object sender, RemoteSessionStateMachineEventArgs eventArgs)
         {
-
             //There are corner cases with disconnect that can result in client receiving outdated key exchange packets
             //***TODO*** Deal with this on the client side. Key exchange packets should have additional information
             //that identify the context of negotiation. Just like callId in SetMax and SetMinRunspaces messages
@@ -932,7 +930,6 @@ namespace System.Management.Automation.Remoting
             {
                 case RemoteSessionEvent.KeyReceived:
                     {
-
                         //does the server ever start key exchange process??? This may not be required
                         if (_state == RemoteSessionState.EstablishedAndKeyRequested)
                         {
@@ -942,7 +939,6 @@ namespace System.Management.Automation.Remoting
                             {
                                 tmp.Dispose();
                             }
-
                         }
 
                         // the key import would have been done
@@ -1014,7 +1010,6 @@ namespace System.Management.Automation.Remoting
                 new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerKeyExchangeFailed);
 
             RaiseEvent(new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.KeyReceiveFailed, exception));
-
         } // SetStateHandler
 
         #endregion Event Handlers
@@ -1043,7 +1038,7 @@ namespace System.Management.Automation.Remoting
             if (newState != oldState)
             {
                 _state = newState;
-                _trace.WriteLine("state machine state transition: from state {0} to state {1}", oldState, _state);
+                s_trace.WriteLine("state machine state transition: from state {0} to state {1}", oldState, _state);
             }
             // TODO: else should we close the session here?
         }

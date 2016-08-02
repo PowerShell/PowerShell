@@ -11,19 +11,18 @@ using System.Reflection;
 
 namespace System.Management.Automation.Language
 {
-
     /*
      * The IsGetPowerShellSafeValueVisitor class in SafeValues.cs used this class as the basis for implementation.
      * There is a number of similarities between these two classes, and changes (fixes) in this code
      * may need to be reflected in that class and vice versa
      */
-    class IsConstantValueVisitor : ICustomAstVisitor
+    internal class IsConstantValueVisitor : ICustomAstVisitor
     {
         public static bool IsConstant(Ast ast, out object constantValue, bool forAttribute = false, bool forRequires = false)
         {
             try
             {
-                if ((bool)ast.Accept(new IsConstantValueVisitor {CheckingAttributeArgument = forAttribute, CheckingRequiresArgument = forRequires}))
+                if ((bool)ast.Accept(new IsConstantValueVisitor { CheckingAttributeArgument = forAttribute, CheckingRequiresArgument = forRequires }))
                 {
                     Ast parent = ast.Parent;
                     while (parent != null)
@@ -37,7 +36,7 @@ namespace System.Management.Automation.Language
 
                     if (parent == null)
                     {
-                        constantValue = ast.Accept(new ConstantValueVisitor { AttributeArgument = forAttribute, RequiresArgument = forRequires});
+                        constantValue = ast.Accept(new ConstantValueVisitor { AttributeArgument = forAttribute, RequiresArgument = forRequires });
                         return true;
                     }
                 }
@@ -126,13 +125,13 @@ namespace System.Management.Automation.Language
 
             switch (parent.Operator)
             {
-            case TokenKind.Divide:
-            case TokenKind.DivideEquals:
-            case TokenKind.Rem:
-            case TokenKind.RemainderEquals:
-                string name = varExpr.VariablePath.UnqualifiedPath;
-                return (name.Equals(SpecialVariables.False, StringComparison.OrdinalIgnoreCase) ||
-                        name.Equals(SpecialVariables.Null, StringComparison.OrdinalIgnoreCase));
+                case TokenKind.Divide:
+                case TokenKind.DivideEquals:
+                case TokenKind.Rem:
+                case TokenKind.RemainderEquals:
+                    string name = varExpr.VariablePath.UnqualifiedPath;
+                    return (name.Equals(SpecialVariables.False, StringComparison.OrdinalIgnoreCase) ||
+                            name.Equals(SpecialVariables.Null, StringComparison.OrdinalIgnoreCase));
             }
 
             return false;
@@ -264,7 +263,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    class ConstantValueVisitor : ICustomAstVisitor
+    internal class ConstantValueVisitor : ICustomAstVisitor
     {
         internal bool AttributeArgument { get; set; }
         internal bool RequiresArgument { get; set; }
@@ -274,14 +273,14 @@ namespace System.Management.Automation.Language
         private void CheckIsConstant(Ast ast, string msg)
         {
             Diagnostics.Assert(
-                (bool)ast.Accept(new IsConstantValueVisitor {CheckingAttributeArgument = this.AttributeArgument, CheckingRequiresArgument = RequiresArgument}), msg);
+                (bool)ast.Accept(new IsConstantValueVisitor { CheckingAttributeArgument = this.AttributeArgument, CheckingRequiresArgument = RequiresArgument }), msg);
         }
 
         private static object CompileAndInvoke(Ast ast)
         {
             try
             {
-                var compiler = new Compiler {CompilingConstantExpression = true};
+                var compiler = new Compiler { CompilingConstantExpression = true };
                 return Expression.Lambda((Expression)ast.Accept(compiler)).Compile().DynamicInvoke();
             }
             catch (TargetInvocationException tie)

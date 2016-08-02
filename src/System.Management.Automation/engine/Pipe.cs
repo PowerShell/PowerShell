@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -285,7 +286,7 @@ namespace System.Management.Automation.Internal
 
         internal void RemovePipelineVariable()
         {
-             if (_pipelineVariableObject != null)
+            if (_pipelineVariableObject != null)
             {
                 _pipelineVariableObject.Value = null;
                 _pipelineVariableObject = null;

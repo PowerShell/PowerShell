@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
@@ -17,18 +18,16 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Rolls the current transaction back.
         /// </summary>
-        protected override void EndProcessing ()
+        protected override void EndProcessing()
         {
             // Rollback the transaction
-            if(ShouldProcess(
+            if (ShouldProcess(
                 NavigationResources.TransactionResource,
                 NavigationResources.RollbackAction))
             {
                 this.Context.TransactionManager.Rollback();
             }
         }
-
     } // RollbackTransactionCommand
-
 } // namespace Microsoft.PowerShell.Commands
 

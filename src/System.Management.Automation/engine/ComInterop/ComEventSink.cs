@@ -14,7 +14,8 @@ using System.Security;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
 //using Microsoft.Scripting.Utils;
 
-namespace System.Management.Automation.ComInterop {
+namespace System.Management.Automation.ComInterop
+{
     /// <summary>
     /// This class implements an event sink for a particular RCW.
     /// Unlike the implementation of events in TlbImp'd assemblies,
@@ -30,8 +31,8 @@ namespace System.Management.Automation.ComInterop {
     /// ComEventSinksContainer finalizer. Notice that lifetime of ComEventSinksContainer
     /// is bound to the lifetime of the RCW. 
     /// </summary>
-    internal sealed class ComEventSink : MarshalByRefObject, IReflect, IDisposable {
-
+    internal sealed class ComEventSink : MarshalByRefObject, IReflect, IDisposable
+    {
         #region private fields
 
         private Guid _sourceIid;
@@ -48,7 +49,8 @@ namespace System.Management.Automation.ComInterop {
         /// Contains a methods DISPID (in a string formatted of "[DISPID=N]"
         /// and a chained list of delegates to invoke
         /// </summary>
-        private class ComEventSinkMethod {
+        private class ComEventSinkMethod
+        {
             public string _name;
             public Func<object[], object> _handlers;
         }
@@ -56,13 +58,15 @@ namespace System.Management.Automation.ComInterop {
 
         #region ctor
 
-        private ComEventSink(object rcw, Guid sourceIid) {
+        private ComEventSink(object rcw, Guid sourceIid)
+        {
             Initialize(rcw, sourceIid);
         }
 
         #endregion
 
-        private void Initialize(object rcw, Guid sourceIid) {
+        private void Initialize(object rcw, Guid sourceIid)
+        {
             _sourceIid = sourceIid;
             _adviseCookie = -1;
 
@@ -83,21 +87,27 @@ namespace System.Management.Automation.ComInterop {
 
         #region static methods
 
-        public static ComEventSink FromRuntimeCallableWrapper(object rcw, Guid sourceIid, bool createIfNotFound) {
+        public static ComEventSink FromRuntimeCallableWrapper(object rcw, Guid sourceIid, bool createIfNotFound)
+        {
             List<ComEventSink> comEventSinks = ComEventSinksContainer.FromRuntimeCallableWrapper(rcw, createIfNotFound);
 
-            if (comEventSinks == null) {
+            if (comEventSinks == null)
+            {
                 return null;
             }
 
             ComEventSink comEventSink = null;
-            lock (comEventSinks) {
-
-                foreach (ComEventSink sink in comEventSinks) {
-                    if (sink._sourceIid == sourceIid) {
+            lock (comEventSinks)
+            {
+                foreach (ComEventSink sink in comEventSinks)
+                {
+                    if (sink._sourceIid == sourceIid)
+                    {
                         comEventSink = sink;
                         break;
-                    } else if (sink._sourceIid == Guid.Empty) {
+                    }
+                    else if (sink._sourceIid == Guid.Empty)
+                    {
                         // we found a ComEventSink object that 
                         // was previously disposed. Now we will reuse it.
                         sink.Initialize(rcw, sourceIid);
@@ -105,7 +115,8 @@ namespace System.Management.Automation.ComInterop {
                     }
                 }
 
-                if (comEventSink == null && createIfNotFound == true) {
+                if (comEventSink == null && createIfNotFound == true)
+                {
                     comEventSink = new ComEventSink(rcw, sourceIid);
                     comEventSinks.Add(comEventSink);
                 }
@@ -116,15 +127,19 @@ namespace System.Management.Automation.ComInterop {
 
         #endregion
 
-        public void AddHandler(int dispid, object func) {
+        public void AddHandler(int dispid, object func)
+        {
             string name = String.Format(CultureInfo.InvariantCulture, "[DISPID={0}]", dispid);
 
-            lock (_lockObject) {
+            lock (_lockObject)
+            {
                 ComEventSinkMethod sinkMethod;
                 sinkMethod = FindSinkMethod(name);
 
-                if (sinkMethod == null) {
-                    if (_comEventSinkMethods == null) {
+                if (sinkMethod == null)
+                {
+                    if (_comEventSinkMethods == null)
+                    {
                         _comEventSinkMethods = new List<ComEventSinkMethod>();
                     }
 
@@ -137,14 +152,15 @@ namespace System.Management.Automation.ComInterop {
             }
         }
 
-        public void RemoveHandler(int dispid, object func) {
-
+        public void RemoveHandler(int dispid, object func)
+        {
             string name = String.Format(CultureInfo.InvariantCulture, "[DISPID={0}]", dispid);
 
-            lock (_lockObject) {
-
+            lock (_lockObject)
+            {
                 ComEventSinkMethod sinkEntry = FindSinkMethod(name);
-                if (sinkEntry == null){
+                if (sinkEntry == null)
+                {
                     return;
                 }
 
@@ -154,9 +170,11 @@ namespace System.Management.Automation.ComInterop {
                 // easy since we Target property of the delegate object
                 // is a ComEventCallContext object.
                 Delegate[] delegates = sinkEntry._handlers.GetInvocationList();
-                foreach (Delegate d in delegates) {
+                foreach (Delegate d in delegates)
+                {
                     SplatCallSite callContext = d.Target as SplatCallSite;
-                    if (callContext != null && callContext._callable.Equals(func)) {
+                    if (callContext != null && callContext._callable.Equals(func))
+                    {
                         sinkEntry._handlers -= d as Func<object[], object>;
                         break;
                     }
@@ -170,7 +188,8 @@ namespace System.Management.Automation.ComInterop {
                 // We can Unadvise from the ConnectionPoint if no more sink entries
                 // are registered for this interface 
                 //(calling Dispose will call IConnectionPoint.Unadvise).
-                if (_comEventSinkMethods.Count == 0) {
+                if (_comEventSinkMethods.Count == 0)
+                {
                     // notice that we do not remove 
                     // ComEventSinkEntry from the list, we will re-use this data structure
                     // if a new handler needs to be attached.
@@ -179,11 +198,13 @@ namespace System.Management.Automation.ComInterop {
             }
         }
 
-        public object ExecuteHandler(string name, object[] args) {
+        public object ExecuteHandler(string name, object[] args)
+        {
             ComEventSinkMethod site;
             site = FindSinkMethod(name);
 
-            if (site != null && site._handlers != null) {
+            if (site != null && site._handlers != null)
+            {
                 return site._handlers(args);
             }
 
@@ -194,50 +215,62 @@ namespace System.Management.Automation.ComInterop {
 
         #region Unimplemented members
 
-        public FieldInfo GetField(string name, BindingFlags bindingAttr) {
+        public FieldInfo GetField(string name, BindingFlags bindingAttr)
+        {
             return null;
         }
 
-        public FieldInfo[] GetFields(BindingFlags bindingAttr) {
+        public FieldInfo[] GetFields(BindingFlags bindingAttr)
+        {
             return Utils.EmptyArray<FieldInfo>();
         }
 
-        public MemberInfo[] GetMember(string name, BindingFlags bindingAttr) {
+        public MemberInfo[] GetMember(string name, BindingFlags bindingAttr)
+        {
             return Utils.EmptyArray<MemberInfo>();
         }
 
-        public MemberInfo[] GetMembers(BindingFlags bindingAttr) {
+        public MemberInfo[] GetMembers(BindingFlags bindingAttr)
+        {
             return Utils.EmptyArray<MemberInfo>();
         }
 
-        public MethodInfo GetMethod(string name, BindingFlags bindingAttr) {
+        public MethodInfo GetMethod(string name, BindingFlags bindingAttr)
+        {
             return null;
         }
 
-        public MethodInfo GetMethod(string name, BindingFlags bindingAttr, Binder binder, Type[] types, ParameterModifier[] modifiers) {
+        public MethodInfo GetMethod(string name, BindingFlags bindingAttr, Binder binder, Type[] types, ParameterModifier[] modifiers)
+        {
             return null;
         }
 
-        public MethodInfo[] GetMethods(BindingFlags bindingAttr) {
+        public MethodInfo[] GetMethods(BindingFlags bindingAttr)
+        {
             return Utils.EmptyArray<MethodInfo>();
         }
 
-        public PropertyInfo GetProperty(string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers) {
+        public PropertyInfo GetProperty(string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers)
+        {
             return null;
         }
 
-        public PropertyInfo GetProperty(string name, BindingFlags bindingAttr) {
+        public PropertyInfo GetProperty(string name, BindingFlags bindingAttr)
+        {
             return null;
         }
 
-        public PropertyInfo[] GetProperties(BindingFlags bindingAttr) {
+        public PropertyInfo[] GetProperties(BindingFlags bindingAttr)
+        {
             return Utils.EmptyArray<PropertyInfo>();
         }
 
         #endregion
 
-        public Type UnderlyingSystemType {
-            get {
+        public Type UnderlyingSystemType
+        {
+            get
+            {
                 return typeof(object);
             }
         }
@@ -250,8 +283,8 @@ namespace System.Management.Automation.ComInterop {
             object[] args,
             ParameterModifier[] modifiers,
             CultureInfo culture,
-            string[] namedParameters) {
-
+            string[] namedParameters)
+        {
             return ExecuteHandler(name, args);
         }
 
@@ -259,27 +292,33 @@ namespace System.Management.Automation.ComInterop {
 
         #region IDisposable
 
-        public void Dispose() {
+        public void Dispose()
+        {
             DisposeAll();
             GC.SuppressFinalize(this);
         }
 
         #endregion
 
-        ~ComEventSink() {
+        ~ComEventSink()
+        {
             DisposeAll();
         }
 
-        private void DisposeAll() {
-            if (_connectionPoint == null) {
+        private void DisposeAll()
+        {
+            if (_connectionPoint == null)
+            {
                 return;
             }
 
-            if (_adviseCookie == -1) {
+            if (_adviseCookie == -1)
+            {
                 return;
             }
 
-            try {
+            try
+            {
                 _connectionPoint.Unadvise(_adviseCookie);
 
                 // _connectionPoint has entered the CLR in the constructor
@@ -288,23 +327,29 @@ namespace System.Management.Automation.ComInterop {
                 // hence it is safe to call RCO on it w/o worrying about
                 // killing the RCW for other objects that link to it.
                 Marshal.ReleaseComObject(_connectionPoint);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 // if something has gone wrong, and the object is no longer attached to the CLR,
                 // the Unadvise is going to throw.  In this case, since we're going away anyway,
                 // we'll ignore the failure and quietly go on our merry way.
                 COMException exCOM = ex as COMException;
-                if (exCOM != null && exCOM.ErrorCode == ComHresults.CONNECT_E_NOCONNECTION) {
+                if (exCOM != null && exCOM.ErrorCode == ComHresults.CONNECT_E_NOCONNECTION)
+                {
                     Debug.Assert(false, "IConnectionPoint::Unadvise returned CONNECT_E_NOCONNECTION.");
                     throw;
                 }
-            } finally {
+            }
+            finally
+            {
                 _connectionPoint = null;
                 _adviseCookie = -1;
                 _sourceIid = Guid.Empty;
             }
         }
 
-        private ComEventSinkMethod FindSinkMethod(string name) {
+        private ComEventSinkMethod FindSinkMethod(string name)
+        {
             if (_comEventSinkMethods == null)
                 return null;
 

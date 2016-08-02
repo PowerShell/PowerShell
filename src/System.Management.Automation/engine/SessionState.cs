@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Management.Automation.Runspaces;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 using System.Diagnostics.CodeAnalysis;
 
 namespace System.Management.Automation
@@ -21,7 +21,6 @@ namespace System.Management.Automation
     [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "This is a bridge class between internal classes and a public interface. It requires this much coupling.")]
     internal sealed partial class SessionStateInternal
     {
-
         #region tracer
 
         /// <summary>
@@ -29,10 +28,10 @@ namespace System.Management.Automation
         /// using "SessionState" as the category. 
         /// </summary>
         [Dbg.TraceSourceAttribute(
-             "SessionState", 
+             "SessionState",
              "SessionState Class")]
-        private static Dbg.PSTraceSource tracer =
-            Dbg.PSTraceSource.GetTracer ("SessionState",
+        private static Dbg.PSTraceSource s_tracer =
+            Dbg.PSTraceSource.GetTracer("SessionState",
              "SessionState Class");
 
         #endregion tracer
@@ -61,16 +60,16 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("context");
             }
-            this._context = context;
+            _context = context;
 
             // Create the working directory stack. This
             // is used for the pushd and popd commands
 
-            workingLocationStack = new Dictionary<String, Stack<PathInfo>>(StringComparer.OrdinalIgnoreCase);
+            _workingLocationStack = new Dictionary<String, Stack<PathInfo>>(StringComparer.OrdinalIgnoreCase);
 
             _globalScope = new SessionStateScope(null);
             _moduleScope = _globalScope;
-            currentScope = _globalScope;
+            _currentScope = _globalScope;
 
             InitializeSessionStateInternalSpecialVariables(false);
 
@@ -101,7 +100,7 @@ namespace System.Management.Automation
             }
             else
             {
-                currentScope.LocalsTuple = MutableTuple.MakeTuple(Compiler.DottedLocalsTupleType, Compiler.DottedLocalsNameIndexMap);
+                _currentScope.LocalsTuple = MutableTuple.MakeTuple(Compiler.DottedLocalsTupleType, Compiler.DottedLocalsNameIndexMap);
             }
         }
 
@@ -148,14 +147,14 @@ namespace System.Management.Automation
         {
             get
             {
-                if (globberPrivate == null)
+                if (_globberPrivate == null)
                 {
-                    globberPrivate = _context.LocationGlobber;
+                    _globberPrivate = _context.LocationGlobber;
                 }
-                return globberPrivate;
+                return _globberPrivate;
             }
         }
-        private LocationGlobber globberPrivate;
+        private LocationGlobber _globberPrivate;
 
         /// <summary>
         /// The context of the runspace to which this session state object belongs.
@@ -213,7 +212,7 @@ namespace System.Management.Automation
         // This is used to maintain the order in which modules were imported. 
         // This is used by Get-Command -All to order by last imported
         internal List<string> ModuleTableKeys = new List<string>();
-        
+
         /// <summary>
         /// The private module table for this session state object...
         /// </summary>
@@ -257,7 +256,7 @@ namespace System.Management.Automation
         {
             get { return _scripts; }
         }
-        List<String> _scripts = new List<string>(new string[] { "*" });
+        private List<String> _scripts = new List<string>(new string[] { "*" });
 
         /// <summary>
         /// See if a script is allowed to be run.
@@ -277,7 +276,7 @@ namespace System.Management.Automation
         {
             get { return _applications; }
         }
-        List<String> _applications = new List<string>(new string[] { "*" });
+        private List<String> _applications = new List<string>(new string[] { "*" });
 
 
         /// <summary>
@@ -437,7 +436,7 @@ namespace System.Management.Automation
             // $Console - set the console file for this shell, if there is one, "" otherwise...
             string consoleFileName = string.Empty;
             RunspaceConfigForSingleShell rcss = _context.RunspaceConfiguration as RunspaceConfigForSingleShell;
-            if (rcss != null && rcss.ConsoleInfo != null && ! string.IsNullOrEmpty(rcss.ConsoleInfo.Filename))
+            if (rcss != null && rcss.ConsoleInfo != null && !string.IsNullOrEmpty(rcss.ConsoleInfo.Filename))
             {
                 consoleFileName = rcss.ConsoleInfo.Filename;
             }
@@ -518,7 +517,7 @@ namespace System.Management.Automation
                 if (String.Equals(p, path, StringComparison.OrdinalIgnoreCase))
                     return SessionStateEntryVisibility.Public;
 
-                if(WildcardPattern.ContainsWildcardCharacters(p))
+                if (WildcardPattern.ContainsWildcardCharacters(p))
                 {
                     WildcardPattern pattern = WildcardPattern.Get(p, WildcardOptions.IgnoreCase);
                     if (pattern.IsMatch(path))
@@ -530,7 +529,7 @@ namespace System.Management.Automation
             return SessionStateEntryVisibility.Private;
         }
 
- #if RELATIONSHIP_SUPPORTED
+#if RELATIONSHIP_SUPPORTED
         // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
 
         /// <summary>
@@ -545,7 +544,7 @@ namespace System.Management.Automation
 #endif
 
         #endregion Private data
- 
+
         /// <summary>
         /// Notification for SessionState to do cleanup
         /// before runspace is closed. 
@@ -557,12 +556,12 @@ namespace System.Management.Automation
             {
                 // Remove all providers at the top level...
 
-                CmdletProviderContext context = new CmdletProviderContext (this.ExecutionContext);
+                CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
 
-                Collection<string> keys = new Collection<string> ();
+                Collection<string> keys = new Collection<string>();
                 foreach (string key in Providers.Keys)
                 {
-                    keys.Add (key);
+                    keys.Add(key);
                 }
 
                 foreach (string providerName in keys)
@@ -573,7 +572,7 @@ namespace System.Management.Automation
                 }
             }
         }
-         
+
         #region Errors
 
         /// <summary>
@@ -622,7 +621,7 @@ namespace System.Management.Automation
             return NewProviderInvocationException(resourceId, resourceStr, provider, path, e, true);
         }
 
-            
+
         /// <summary>
         /// Constructs a new instance of a ProviderInvocationException
         /// using the specified data
@@ -664,7 +663,7 @@ namespace System.Management.Automation
         /// and then throws it.
         /// </exception>
         /// 
-        internal ProviderInvocationException NewProviderInvocationException (
+        internal ProviderInvocationException NewProviderInvocationException(
             string resourceId,
             string resourceStr,
             ProviderInfo provider,
@@ -683,12 +682,12 @@ namespace System.Management.Automation
                 return pie;
             }
 
-            pie = new ProviderInvocationException (resourceId, resourceStr, provider, path, e, useInnerExceptionErrorMessage);
+            pie = new ProviderInvocationException(resourceId, resourceStr, provider, path, e, useInnerExceptionErrorMessage);
 
             // Log a provider health event
 
             MshLog.LogProviderHealthEvent(
-                this._context,
+                _context,
                 provider.Name,
                 pie,
                 Severity.Warning);
@@ -697,6 +696,4 @@ namespace System.Management.Automation
         }
         #endregion Errors
     } // SessionStateInternal class
-
-
 }

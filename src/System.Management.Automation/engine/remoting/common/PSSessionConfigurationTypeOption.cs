@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System.Collections;
 using System.Management.Automation.Runspaces;
 
@@ -11,25 +12,25 @@ using Microsoft.PowerShell.CoreClr.Stubs;
 
 namespace System.Management.Automation
 {
-	/// <summary>
-	/// This is the base class from which other classes should derive.
-	/// This class defines the options for the specified configuration type.
-	/// </summary>
-	public abstract class PSSessionTypeOption
-	{
-		/// <summary>
-		/// Returns a xml formatted data that represents the options
-		/// </summary>
-		/// <returns></returns>
-		protected internal virtual string ConstructPrivateData()
-		{
-			throw new NotImplementedException();
-		}
+    /// <summary>
+    /// This is the base class from which other classes should derive.
+    /// This class defines the options for the specified configuration type.
+    /// </summary>
+    public abstract class PSSessionTypeOption
+    {
+        /// <summary>
+        /// Returns a xml formatted data that represents the options
+        /// </summary>
+        /// <returns></returns>
+        protected internal virtual string ConstructPrivateData()
+        {
+            throw new NotImplementedException();
+        }
 
-		/// <summary>
-		/// Returns a new instance constructed from privateData string.
-		/// </summary>
-		/// <returns></returns>
+        /// <summary>
+        /// Returns a new instance constructed from privateData string.
+        /// </summary>
+        /// <returns></returns>
         protected internal virtual PSSessionTypeOption ConstructObjectFromPrivateData(string privateData)
         {
             throw new NotImplementedException();
@@ -43,21 +44,21 @@ namespace System.Management.Automation
         {
             throw new NotImplementedException();
         }
-	}
+    }
 
-	/// <summary>
-	/// This the abstract class that defines the options for underlying transport layer.
-	/// </summary>
-	public abstract class PSTransportOption : ICloneable
-	{
-		/// <summary>
-		/// Returns all the non-quota options set in this object in a format of xml attributes.
-		/// </summary>
-		/// <returns></returns>
-		internal virtual string ConstructOptionsAsXmlAttributes()
-		{
-			throw new NotImplementedException();
-		}
+    /// <summary>
+    /// This the abstract class that defines the options for underlying transport layer.
+    /// </summary>
+    public abstract class PSTransportOption : ICloneable
+    {
+        /// <summary>
+        /// Returns all the non-quota options set in this object in a format of xml attributes.
+        /// </summary>
+        /// <returns></returns>
+        internal virtual string ConstructOptionsAsXmlAttributes()
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Returns all the non-quota options set in this object in a name-value pair (hashtable).
@@ -86,7 +87,8 @@ namespace System.Management.Automation
             throw new NotImplementedException();
         }
 
-        internal void LoadFromDefaults(PSSessionType sessionType) {
+        internal void LoadFromDefaults(PSSessionType sessionType)
+        {
             LoadFromDefaults(sessionType, false);
         }
 
@@ -97,7 +99,8 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sessionType"></param>
         /// <param name="keepAssigned"></param>
-        protected internal virtual void LoadFromDefaults(PSSessionType sessionType, bool keepAssigned) {
+        protected internal virtual void LoadFromDefaults(PSSessionType sessionType, bool keepAssigned)
+        {
             throw new NotImplementedException();
         }
 
@@ -108,5 +111,5 @@ namespace System.Management.Automation
         {
             return this.MemberwiseClone();
         }
-	}
+    }
 }

@@ -15,19 +15,23 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace System.Management.Automation.ComInterop {
-    internal class VariantArgBuilder : SimpleArgBuilder {
+namespace System.Management.Automation.ComInterop
+{
+    internal class VariantArgBuilder : SimpleArgBuilder
+    {
         private readonly bool _isWrapper;
 
         internal VariantArgBuilder(Type parameterType)
-            : base(parameterType) {
-
+            : base(parameterType)
+        {
             _isWrapper = parameterType == typeof(VariantWrapper);
         }
 
-        internal override Expression Marshal(Expression parameter) {
+        internal override Expression Marshal(Expression parameter)
+        {
             // parameter.WrappedObject
-            if (_isWrapper) {
+            if (_isWrapper)
+            {
                 parameter = Expression.Property(
                     Helpers.Convert(parameter, typeof(VariantWrapper)),
                     typeof(VariantWrapper).GetProperty("WrappedObject")
@@ -37,7 +41,8 @@ namespace System.Management.Automation.ComInterop {
             return Helpers.Convert(parameter, typeof(object));
         }
 
-        internal override Expression MarshalToRef(Expression parameter) {
+        internal override Expression MarshalToRef(Expression parameter)
+        {
             parameter = Marshal(parameter);
 
             // parameter == UnsafeMethods.GetVariantForObject(parameter);
@@ -48,7 +53,8 @@ namespace System.Management.Automation.ComInterop {
         }
 
 
-        internal override Expression UnmarshalFromRef(Expression value) {
+        internal override Expression UnmarshalFromRef(Expression value)
+        {
             // value == IntPtr.Zero ? null : Marshal.GetObjectForNativeVariant(value);
 
             Expression unmarshal = Expression.Call(
@@ -56,7 +62,8 @@ namespace System.Management.Automation.ComInterop {
                 value
             );
 
-            if (_isWrapper) {
+            if (_isWrapper)
+            {
                 unmarshal = Expression.New(
                     typeof(VariantWrapper).GetConstructor(new Type[] { typeof(object) }),
                     unmarshal

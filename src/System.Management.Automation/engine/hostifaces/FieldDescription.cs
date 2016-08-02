@@ -30,7 +30,7 @@ namespace System.Management.Automation.Host
     /// but there is no established scenario for doing this, nor has it been tested.
     /// </remarks>
 
-    public class 
+    public class
     FieldDescription
     {
         /// <summary>
@@ -49,7 +49,7 @@ namespace System.Management.Automation.Host
         /// 
         /// </exception>
 
-        public 
+        public
         FieldDescription(string name)
         {
             // the only required parameter is the name.
@@ -59,7 +59,7 @@ namespace System.Management.Automation.Host
                 throw PSTraceSource.NewArgumentException("name", DescriptionsStrings.NullOrEmptyErrorTemplate, "name");
             }
 
-            this.name = name;
+            _name = name;
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace System.Management.Automation.Host
         {
             get
             {
-                return name;
+                return _name;
             }
         }
 
@@ -136,25 +136,25 @@ namespace System.Management.Automation.Host
         /// 
         /// </remarks>
 
-        public 
-        string 
+        public
+        string
         ParameterTypeName
         {
             get
             {
-                if (String.IsNullOrEmpty(parameterTypeName))
+                if (String.IsNullOrEmpty(_parameterTypeName))
                 {
                     // the default if the type name is not specified is 'string'
 
                     SetParameterType(typeof(string));
                 }
 
-                return parameterTypeName;
+                return _parameterTypeName;
             }
         }
 
 
-        
+
         /// <summary>
         /// 
         /// Gets the full string name of the parameter's type.
@@ -169,20 +169,20 @@ namespace System.Management.Automation.Host
         /// 
         /// </remarks>
 
-        public 
+        public
         string
         ParameterTypeFullName
         {
             get
             {
-                if (String.IsNullOrEmpty(parameterTypeFullName))
+                if (String.IsNullOrEmpty(_parameterTypeFullName))
                 {
                     // the default if the type name is not specified is 'string'
 
                     SetParameterType(typeof(string));
                 }
 
-                return parameterTypeFullName;
+                return _parameterTypeFullName;
             }
         }
 
@@ -202,25 +202,25 @@ namespace System.Management.Automation.Host
         /// 
         /// </remarks>
 
-        public 
-        string 
+        public
+        string
         ParameterAssemblyFullName
         {
             get
             {
-                if (String.IsNullOrEmpty(parameterAssemblyFullName))
+                if (String.IsNullOrEmpty(_parameterAssemblyFullName))
                 {
                     // the default if the type name is not specified is 'string'
 
                     SetParameterType(typeof(string));
                 }
 
-                return parameterAssemblyFullName;
+                return _parameterAssemblyFullName;
             }
         }
 
-        
-        
+
+
         /// <summary>
         /// 
         /// A short, human-presentable message to describe and identify the field.  If supplied, a typical implementation of 
@@ -248,15 +248,15 @@ namespace System.Management.Automation.Host
         /// 
         /// </remarks>
 
-        public 
+        public
         string
         Label
         {
             get
             {
-                Dbg.Assert(label != null, "label should not be null");
+                Dbg.Assert(_label != null, "label should not be null");
 
-                return label;
+                return _label;
             }
             set
             {
@@ -265,12 +265,12 @@ namespace System.Management.Automation.Host
                     throw PSTraceSource.NewArgumentNullException("value");
                 }
 
-                label = value;
+                _label = value;
             }
         }
 
 
-        
+
         /// <summary>
         /// 
         /// Gets and sets the help message for this field.
@@ -288,15 +288,15 @@ namespace System.Management.Automation.Host
         /// 
         /// </remarks>
 
-        public 
-        string 
+        public
+        string
         HelpMessage
         {
             get
             {
-                Dbg.Assert(helpMessage != null, "helpMessage should not be null");
+                Dbg.Assert(_helpMessage != null, "helpMessage should not be null");
 
-                return helpMessage;
+                return _helpMessage;
             }
             set
             {
@@ -305,7 +305,7 @@ namespace System.Management.Automation.Host
                     throw PSTraceSource.NewArgumentNullException("value");
                 }
 
-                helpMessage = value;
+                _helpMessage = value;
             }
         }
 
@@ -322,11 +322,11 @@ namespace System.Management.Automation.Host
         {
             get
             {
-                return isMandatory;
+                return _isMandatory;
             }
             set
             {
-                isMandatory = value;
+                _isMandatory = value;
             }
         }
 
@@ -350,14 +350,14 @@ namespace System.Management.Automation.Host
         {
             get
             {
-                return defaultValue;
+                return _defaultValue;
             }
 
             set
             {
                 // null is allowed.
 
-                defaultValue = value;
+                _defaultValue = value;
             }
         }
 
@@ -377,11 +377,11 @@ namespace System.Management.Automation.Host
         {
             get
             {
-                if (metadata == null)
+                if (_metadata == null)
                 {
-                    metadata = new Collection<Attribute> ();
+                    _metadata = new Collection<Attribute>();
                 }
-                return metadata;
+                return _metadata;
             }
         }
 
@@ -408,7 +408,7 @@ namespace System.Management.Automation.Host
                 throw PSTraceSource.NewArgumentException("nameOfType", DescriptionsStrings.NullOrEmptyErrorTemplate, "nameOfType");
             }
 
-            parameterTypeName = nameOfType;
+            _parameterTypeName = nameOfType;
         }
 
 
@@ -434,7 +434,7 @@ namespace System.Management.Automation.Host
                 throw PSTraceSource.NewArgumentException("fullNameOfType", DescriptionsStrings.NullOrEmptyErrorTemplate, "fullNameOfType");
             }
 
-            parameterTypeFullName = fullNameOfType;
+            _parameterTypeFullName = fullNameOfType;
         }
 
 
@@ -460,7 +460,7 @@ namespace System.Management.Automation.Host
                 throw PSTraceSource.NewArgumentException("fullNameOfAssembly", DescriptionsStrings.NullOrEmptyErrorTemplate, "fullNameOfAssembly");
             }
 
-            parameterAssemblyFullName = fullNameOfAssembly;
+            _parameterAssemblyFullName = fullNameOfAssembly;
         }
 
         /// <summary>
@@ -475,11 +475,11 @@ namespace System.Management.Automation.Host
         {
             get
             {
-                return modifiedByRemotingProtocol;
+                return _modifiedByRemotingProtocol;
             }
             set
             {
-                modifiedByRemotingProtocol = value;
+                _modifiedByRemotingProtocol = value;
             }
         }
 
@@ -495,29 +495,29 @@ namespace System.Management.Automation.Host
         {
             get
             {
-                return isFromRemoteHost;
+                return _isFromRemoteHost;
             }
             set
             {
-                isFromRemoteHost = value;
+                _isFromRemoteHost = value;
             }
         }
 
         #region Helper
         #endregion Helper
-        
-        private readonly string name = null;
-        private string label = "";
-        private string parameterTypeName = null;
-        private string parameterTypeFullName = null;
-        private string parameterAssemblyFullName = null;
-        private string helpMessage = "";
-        private bool isMandatory = true;
 
-        private PSObject defaultValue = null;
-        private Collection<Attribute> metadata = new Collection<Attribute>();
-        private bool modifiedByRemotingProtocol = false;
-        private bool isFromRemoteHost = false;
+        private readonly string _name = null;
+        private string _label = "";
+        private string _parameterTypeName = null;
+        private string _parameterTypeFullName = null;
+        private string _parameterAssemblyFullName = null;
+        private string _helpMessage = "";
+        private bool _isMandatory = true;
+
+        private PSObject _defaultValue = null;
+        private Collection<Attribute> _metadata = new Collection<Attribute>();
+        private bool _modifiedByRemotingProtocol = false;
+        private bool _isFromRemoteHost = false;
     }
 }
 

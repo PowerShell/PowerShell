@@ -13,7 +13,6 @@ using Dbg = System.Diagnostics;
 
 namespace Microsoft.PowerShell
 {
-
     /// <summary>
     /// This is the default host implementing PSHost offering minimal host capabilities.
     /// Runspace is the primary user of this class.
@@ -34,8 +33,8 @@ namespace Microsoft.PowerShell
 
         internal DefaultHost(CultureInfo currentCulture, CultureInfo currentUICulture)
         {
-            this.currentCulture = currentCulture;
-            this.currentUICulture = currentUICulture;
+            _currentCulture = currentCulture;
+            _currentUICulture = currentUICulture;
         }
 
         #endregion ctor
@@ -74,7 +73,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                return ver;
+                return _ver;
             }
         }
 
@@ -92,11 +91,11 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                return id;
+                return _id;
             }
         }
 
-        
+
         /// <summary>
         /// 
         /// See base class
@@ -130,7 +129,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                return currentCulture;
+                return _currentCulture;
             }
         }
 
@@ -148,7 +147,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                return currentUICulture;
+                return _currentUICulture;
             }
         }
 
@@ -242,14 +241,12 @@ namespace Microsoft.PowerShell
 
         #region private fields
 
-        private CultureInfo currentCulture = null;
-        private CultureInfo currentUICulture = null;
-        private Guid id = Guid.NewGuid();
-        private Version ver = PSVersionInfo.PSVersion;
+        private CultureInfo _currentCulture = null;
+        private CultureInfo _currentUICulture = null;
+        private Guid _id = Guid.NewGuid();
+        private Version _ver = PSVersionInfo.PSVersion;
 
         #endregion private fields
-
     }
-
 }
 

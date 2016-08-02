@@ -21,7 +21,7 @@ namespace System.Management.Automation
     /// <seealso cref="System.Management.Automation.Cmdlet.WriteProgress(ProgressRecord)"/>
 
     [DataContract()]
-    public 
+    public
     class ProgressRecord
     {
         #region Public API
@@ -66,9 +66,9 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("activity", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "statusDescription");
             }
 
-            this.id = activityId;
-            this.activity = activity;
-            this.status = statusDescription;
+            _id = activityId;
+            _activity = activity;
+            _status = statusDescription;
         }
 
         /// <summary>
@@ -77,14 +77,14 @@ namespace System.Management.Automation
         /// <param name="other"></param>
         internal ProgressRecord(ProgressRecord other)
         {
-            this.activity = other.activity;
-            this.currentOperation = other.currentOperation;
-            this.id = other.id;
-            this.parentId = other.parentId;
-            this.percent = other.percent;
-            this.secondsRemaining = other.secondsRemaining;
-            this.status = other.status;
-            this.type = other.type;
+            _activity = other._activity;
+            _currentOperation = other._currentOperation;
+            _id = other._id;
+            _parentId = other._parentId;
+            _percent = other._percent;
+            _secondsRemaining = other._secondsRemaining;
+            _status = other._status;
+            _type = other._type;
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return id;
+                return _id;
             }
         }
 
@@ -133,13 +133,13 @@ namespace System.Management.Automation
         /// 
         /// </remarks>
 
-        public 
-        int 
+        public
+        int
         ParentActivityId
         {
             get
             {
-                return parentId;
+                return _parentId;
             }
             set
             {
@@ -147,7 +147,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.ParentActivityIdCantBeActivityId);
                 }
-                parentId = value;
+                _parentId = value;
             }
         }
 
@@ -165,13 +165,13 @@ namespace System.Management.Automation
         /// 
         /// </remarks>
 
-        public 
-        string 
+        public
+        string
         Activity
         {
             get
             {
-                return activity;
+                return _activity;
             }
             set
             {
@@ -179,10 +179,10 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "value");
                 }
-                activity = value;
+                _activity = value;
             }
         }
-        
+
 
 
         /// <summary>
@@ -191,13 +191,13 @@ namespace System.Management.Automation
         /// 
         /// </summary>
 
-        public 
-        string 
+        public
+        string
         StatusDescription
         {
             get
             {
-                return status;
+                return _status;
             }
             set
             {
@@ -205,7 +205,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "value");
                 }
-                status = value;
+                _status = value;
             }
         }
 
@@ -220,21 +220,21 @@ namespace System.Management.Automation
         /// </summary>
 
         public
-        string 
+        string
         CurrentOperation
         {
             get
             {
-                return currentOperation;
+                return _currentOperation;
             }
             set
             {
                 // null or empty string is allowed
 
-                currentOperation= value;
+                _currentOperation = value;
             }
         }
-        
+
 
 
         /// <summary>
@@ -250,20 +250,20 @@ namespace System.Management.Automation
         {
             get
             {
-                return percent;
+                return _percent;
             }
             set
             {
                 // negative values are allowed
-                
+
                 if (value > 100)
                 {
-                    throw 
+                    throw
                         PSTraceSource.NewArgumentOutOfRangeException(
                             "value", value, ProgressRecordStrings.PercentMayNotBeMoreThan100, "PercentComplete");
                 }
 
-                percent = value;
+                _percent = value;
             }
         }
 
@@ -289,13 +289,13 @@ namespace System.Management.Automation
         {
             get
             {
-                return secondsRemaining;
+                return _secondsRemaining;
             }
             set
             {
                 // negative values are allowed
 
-                secondsRemaining = value;
+                _secondsRemaining = value;
             }
         }
 
@@ -306,14 +306,14 @@ namespace System.Management.Automation
         /// Gets and sets the type of record represented by this instance.
         /// 
         /// </summary>
-         
+
         public
         ProgressRecordType
         RecordType
         {
             get
             {
-                return type;
+                return _type;
             }
             set
             {
@@ -322,7 +322,7 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentException("value");
                 }
 
-                type = value;
+                _type = value;
             }
         }
 
@@ -341,22 +341,22 @@ namespace System.Management.Automation
         /// 
         /// </returns>
 
-        public override 
-        string 
+        public override
+        string
         ToString()
         {
-            return 
+            return
                 String.Format(
                     System.Globalization.CultureInfo.CurrentCulture,
                     "parent = {0} id = {1} act = {2} stat = {3} cur = {4} pct = {5} sec = {6} type = {7}",
-                    parentId, 
-                    id,
-                    activity, 
-                    status,
-                    currentOperation, 
-                    percent, 
-                    secondsRemaining, 
-                    type);
+                    _parentId,
+                    _id,
+                    _activity,
+                    _status,
+                    _currentOperation,
+                    _percent,
+                    _secondsRemaining,
+                    _type);
         }
 
         #endregion
@@ -368,7 +368,7 @@ namespace System.Management.Automation
             Dbg.Assert(percentageComplete >= 0.0, "Caller should verify percentageComplete >= 0.0");
             Dbg.Assert(percentageComplete <= 1.0, "Caller should verify percentageComplete <= 1.0");
             Dbg.Assert(
-                startTime.Kind == DateTimeKind.Utc, 
+                startTime.Kind == DateTimeKind.Utc,
                 "DateTime arithmetic should always be done in utc mode [to avoid problems when some operands are calculated right before and right after switching to /from a daylight saving time");
 
             if ((percentageComplete < 0.00001) || double.IsNaN(percentageComplete))
@@ -395,7 +395,7 @@ namespace System.Management.Automation
             }
             TimeSpan remainingTime = totalTime - elapsedTime;
 
-            return (int) (remainingTime.TotalSeconds);
+            return (int)(remainingTime.TotalSeconds);
         }
 
         /// <summary>
@@ -416,7 +416,7 @@ namespace System.Management.Automation
             DateTime now = DateTime.UtcNow;
 
             Dbg.Assert(
-                startTime.Kind == DateTimeKind.Utc, 
+                startTime.Kind == DateTimeKind.Utc,
                 "DateTime arithmetic should always be done in utc mode [to avoid problems when some operands are calculated right before and right after switching to /from a daylight saving time");
 
             if (startTime > now)
@@ -474,28 +474,28 @@ namespace System.Management.Automation
         #endregion
 
         [DataMemberAttribute()]
-        private int id;
+        private int _id;
 
         [DataMemberAttribute()]
-        private int parentId = -1;
+        private int _parentId = -1;
 
         [DataMemberAttribute()]
-        private string activity;
+        private string _activity;
 
         [DataMemberAttribute()]
-        private string status;
+        private string _status;
 
         [DataMemberAttribute()]
-        private string currentOperation;
+        private string _currentOperation;
 
         [DataMemberAttribute()]
-        private int percent = -1;
+        private int _percent = -1;
 
         [DataMemberAttribute()]
-        private int secondsRemaining = -1;
+        private int _secondsRemaining = -1;
 
         [DataMemberAttribute()]
-        private ProgressRecordType type = ProgressRecordType.Processing;
+        private ProgressRecordType _type = ProgressRecordType.Processing;
 
         #region Serialization / deserialization for remoting
 
@@ -547,7 +547,7 @@ namespace System.Management.Automation
 
             progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_Activity, this.Activity));
             progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_ActivityId, this.ActivityId));
-            progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_StatusDescription, this.StatusDescription));                
+            progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_StatusDescription, this.StatusDescription));
 
             progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_CurrentOperation, this.CurrentOperation));
             progressAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.ProgressRecord_ParentActivityId, this.ParentActivityId));
@@ -558,13 +558,11 @@ namespace System.Management.Automation
             return progressAsPSObject;
         }
 
-
         #endregion
-
     } //ProgressRecord
 
 
-    
+
     /// <summary>
     /// 
     /// Defines two types of progress record that refer to the beginning (or middle) and end of an operation.

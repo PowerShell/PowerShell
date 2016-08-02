@@ -22,13 +22,13 @@ namespace System.Management.Automation.Runspaces
     /// from expected state.
     /// </summary>     
     [Serializable]
-    public  class InvalidPipelineStateException : SystemException
+    public class InvalidPipelineStateException : SystemException
     {
         /// <summary>
         /// Initializes a new instance of the InvalidPipelineStateException class 
         /// </summary>
-        public InvalidPipelineStateException ()
-            :base (StringUtil.Format(RunspaceStrings.InvalidPipelineStateStateGeneral))
+        public InvalidPipelineStateException()
+            : base(StringUtil.Format(RunspaceStrings.InvalidPipelineStateStateGeneral))
         {
         }
 
@@ -39,8 +39,8 @@ namespace System.Management.Automation.Runspaces
         /// <param name="message">
         /// The error message that explains the reason for the exception.
         /// </param>
-        public InvalidPipelineStateException (string message)
-        :base(message)
+        public InvalidPipelineStateException(string message)
+        : base(message)
         {
         }
 
@@ -54,8 +54,8 @@ namespace System.Management.Automation.Runspaces
         /// <param name="innerException">
         /// The exception that is the cause of the current exception.
         /// </param>
-        public InvalidPipelineStateException (string message, Exception innerException)
-        :base(message, innerException)
+        public InvalidPipelineStateException(string message, Exception innerException)
+        : base(message, innerException)
         {
         }
 
@@ -67,7 +67,7 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         /// <param name="currentState">Current state of pipeline</param>
         /// <param name="expectedState">Expected state of pipeline</param>
-        internal InvalidPipelineStateException(string message, PipelineState currentState, PipelineState expectedState) 
+        internal InvalidPipelineStateException(string message, PipelineState currentState, PipelineState expectedState)
         : base(message)
         {
             _expectedState = expectedState;
@@ -91,7 +91,7 @@ namespace System.Management.Automation.Runspaces
         /// The <see cref="StreamingContext"/> that contains contextual information 
         /// about the source or destination.
         /// </param>
-        private InvalidPipelineStateException (SerializationInfo info, StreamingContext context) 
+        private InvalidPipelineStateException(SerializationInfo info, StreamingContext context)
         : base(info, context)
         {
         }
@@ -178,8 +178,8 @@ namespace System.Management.Automation.Runspaces
         /// Constructor for state changes not resulting from an error.
         /// </summary>
         /// <param name="state">Execution state</param>
-        internal PipelineStateInfo (PipelineState state)
-            :this(state, null)
+        internal PipelineStateInfo(PipelineState state)
+            : this(state, null)
         {
         }
 
@@ -190,7 +190,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="reason">A non-null exception if the state change was 
         /// caused by an error,otherwise; null.
         /// </param>
-        internal PipelineStateInfo (PipelineState state, Exception reason)
+        internal PipelineStateInfo(PipelineState state, Exception reason)
         {
             _state = state;
             _reason = reason;
@@ -203,7 +203,7 @@ namespace System.Management.Automation.Runspaces
         /// <throws>
         /// ArgumentNullException when <paramref name="pipelineStateInfo"/> is null.
         /// </throws>
-        internal PipelineStateInfo (PipelineStateInfo pipelineStateInfo)
+        internal PipelineStateInfo(PipelineStateInfo pipelineStateInfo)
         {
             Dbg.Assert(pipelineStateInfo != null, "caller should validate the parameter");
 
@@ -246,9 +246,9 @@ namespace System.Management.Automation.Runspaces
         /// Clones this object
         /// </summary>
         /// <returns>Cloned object</returns>
-        internal PipelineStateInfo Clone ()
+        internal PipelineStateInfo Clone()
         {
-            return new PipelineStateInfo (this);
+            return new PipelineStateInfo(this);
         }
 
         #region private_fields
@@ -272,7 +272,6 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     public sealed class PipelineStateEventArgs : EventArgs
     {
-
         #region constructors
 
         /// <summary>
@@ -283,7 +282,7 @@ namespace System.Management.Automation.Runspaces
         /// <throws>
         /// ArgumentNullException when <paramref name="pipelineStateInfo"/> is null.
         /// </throws>
-        internal PipelineStateEventArgs (PipelineStateInfo pipelineStateInfo)
+        internal PipelineStateEventArgs(PipelineStateInfo pipelineStateInfo)
         {
             Dbg.Assert(pipelineStateInfo != null, "caller should validate the parameter");
             _pipelineStateInfo = pipelineStateInfo;
@@ -316,15 +315,15 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// Defines a class which can be used to invoke a pipeline of commands.
     /// </summary>
-    public abstract class Pipeline :IDisposable
+    public abstract class Pipeline : IDisposable
     {
         #region constructor
-        
+
         /// <summary>
         /// Explicit default constructor
         /// </summary>
         internal Pipeline(Runspace runspace)
-            :this(runspace, new CommandCollection())
+            : this(runspace, new CommandCollection())
         {
         }
 
@@ -463,7 +462,7 @@ namespace System.Management.Automation.Runspaces
                 return _hadErrors;
             }
         }
-        bool _hadErrors;
+        private bool _hadErrors;
 
         internal void SetHadErrors(bool status)
         {
@@ -492,7 +491,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        bool _setPipelineSessionState = true;
+        private bool _setPipelineSessionState = true;
         /// <summary>
         /// If this property is true, SessionState is updated for this
         /// pipeline state.
@@ -532,8 +531,8 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal bool RedirectShellErrorOutputPipe
         {
-            get { return this._redirectShellErrorOutputPipe; }
-            set { this._redirectShellErrorOutputPipe = value; }
+            get { return _redirectShellErrorOutputPipe; }
+            set { _redirectShellErrorOutputPipe = value; }
         }
         private bool _redirectShellErrorOutputPipe = false;
 
@@ -617,7 +616,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         public Collection<PSObject> Invoke()
         {
-            return Invoke (null);
+            return Invoke(null);
         }
 
         /// <summary>
@@ -728,18 +727,18 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Synchronous call to stop the running pipeline.
         /// </summary>
-        public abstract void Stop ();
+        public abstract void Stop();
 
         /// <summary>
         /// Asynchronous call to stop the running pipeline.
         /// </summary>
-        public abstract void StopAsync ();
+        public abstract void StopAsync();
 
         /// <summary>
         /// Creates a new <see cref="Pipeline"/> that is a copy of the current instance.
         /// </summary>
         /// <returns>A new <see cref="Pipeline"/> that is a copy of this instance.</returns>
-        public abstract Pipeline Copy ();
+        public abstract Pipeline Copy();
 
         /// <summary>
         /// Connects synchronously to a running command on a remote server.

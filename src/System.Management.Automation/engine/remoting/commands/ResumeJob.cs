@@ -1,6 +1,7 @@
 //
 //    Copyright (C) Microsoft.  All rights reserved.
 //
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -39,14 +40,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return jobs;
+                return _jobs;
             }
             set
             {
-                jobs = value;
+                _jobs = value;
             }
         }
-        private Job[] jobs;
+        private Job[] _jobs;
 
         /// <summary>
         /// 
@@ -112,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
 
                 default:
                     {
-                        jobsToResume = CopyJobsToList(jobs, false, false);
+                        jobsToResume = CopyJobsToList(_jobs, false, false);
                     }
                     break;
             }

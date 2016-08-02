@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// operations involving security.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Credential", DefaultParameterSetName = GetCredentialCommand.credentialSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113311")]
-    [OutputType(typeof(PSCredential), ParameterSetName = new string[] { GetCredentialCommand.credentialSet, GetCredentialCommand.messageSet})]
+    [OutputType(typeof(PSCredential), ParameterSetName = new string[] { GetCredentialCommand.credentialSet, GetCredentialCommand.messageSet })]
     public sealed class GetCredentialCommand : PSCmdlet
     {
         /// <summary>
@@ -40,15 +40,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return cred;
+                return _cred;
             }
-            
+
             set
             {
-                cred = value;
+                _cred = value;
             }
         }
-        private PSCredential cred;
+        private PSCredential _cred;
 
         /// <summary>
         /// Gets and sets the user supplied message providing description about which script/function is 
@@ -57,10 +57,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = messageSet)]
         public string Message
         {
-            get { return message; }
-            set { message = value; }
+            get { return _message; }
+            set { _message = value; }
         }
-        private string message = null;
+        private string _message = null;
 
         /// <summary>
         /// Gets and sets the user supplied username to be used while creating the PSCredential.
@@ -68,10 +68,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = false, ParameterSetName = messageSet)]
         public string UserName
         {
-            get { return userName; }
-            set { userName = value; }
+            get { return _userName; }
+            set { _userName = value; }
         }
-        private string userName = null;
+        private string _userName = null;
 
         /// <summary>
         /// Initializes a new instance of the GetCredentialCommand
@@ -79,7 +79,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public GetCredentialCommand() : base()
         {
-            
         }
 
         /// <summary>
@@ -94,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    Credential = this.Host.UI.PromptForCredential(caption, message, userName, string.Empty);
+                    Credential = this.Host.UI.PromptForCredential(caption, message, _userName, string.Empty);
                 }
                 catch (ArgumentException exception)
                 {

@@ -64,13 +64,13 @@ namespace System.Management.Automation
             int caughtCount = 0;
             ProcessModule mainModule = null;
 
-            while(mainModule == null)
+            while (mainModule == null)
             {
                 try
                 {
                     mainModule = targetProcess.MainModule;
                 }
-                catch(System.ComponentModel.Win32Exception e)
+                catch (System.ComponentModel.Win32Exception e)
                 {
                     // If this is an Access Denied error (which can happen with thread impersonation)
                     // then re-throw immediately.
@@ -105,7 +105,7 @@ namespace System.Management.Automation
         /// parent of</param>
         internal static Process GetParentProcess(Process current)
         {
-            string wmiQuery = String.Format(CultureInfo.CurrentCulture, 
+            string wmiQuery = String.Format(CultureInfo.CurrentCulture,
                                             "Select * From Win32_Process Where Handle='{0}'",
                                             current.Id);
 
@@ -186,7 +186,7 @@ namespace System.Management.Automation
                 const string v4KeyName = @"v4\Client";
                 const string install = "Install";
                 const string oneToThreePointFivePrefix = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\";
-                
+
                 // In .NET 4.5, there is no concept of Client and Full. There is only the full redistributable package available 
                 // http://msdn.microsoft.com/en-us/library/cc656912(VS.110).aspx
                 const string v45KeyName = @"v4\Full";
@@ -334,7 +334,7 @@ namespace System.Management.Automation
             private static Version V3_0_00 = new Version(3, 0, 0, 0);
             private static Version V2_0_00 = new Version(2, 0, 0, 0);
             private static Version V1_1_00 = new Version(1, 1, 0, 0);
-            
+
             // Dictionary holding compatible .NET framework versions
             // This is used in verifying the .NET framework version for loading module manifest
             internal static Dictionary<Version, HashSet<Version>> CompatibleNetFrameworkVersions = new Dictionary<Version, HashSet<Version>>() {
@@ -347,7 +347,7 @@ namespace System.Management.Automation
             };
 
             // .NET 4.5 is the highest known .NET version for PowerShell 3.0
-            internal static Version KnownHighestNetFrameworkVersion = new Version(4,5);
+            internal static Version KnownHighestNetFrameworkVersion = new Version(4, 5);
 
             /// <summary>
             /// Returns true if IsFrameworkInstalled will be able to check for this framework version.
@@ -504,7 +504,7 @@ namespace System.Management.Automation
                 }
                 // The detection logic for .NET 4.5 is to check for the existence of a DWORD key named Release under HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full folder in the registry.
                 // For .NET 4.5, the value of this key is the release number and not 1 (Install = 1 for .NET 3.5, .NET 4.0) . So, we need to bypasss the check below
-                if ((majorVersion != 4  && minorVersion != 5 ) && (installValue != 1))
+                if ((majorVersion != 4 && minorVersion != 5) && (installValue != 1))
                 {
                     Debug.Assert(PSVersionInfo.CLRVersion.Major == 4, "This check is valid only for CLR Version 4.0 and .NET Version 4.5");
                     return false;
@@ -559,7 +559,7 @@ namespace System.Management.Automation
                     result = ProcessorArchitecture.None;
                     isRunningOnArm = true;
                     break;
-                    
+
                 default:
                     result = ProcessorArchitecture.None;
                     break;
@@ -574,6 +574,17 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static bool IsRunningOnProcessorArchitectureARM()
         {
+#if CORECLR
+            Architecture arch = RuntimeInformation.OSArchitecture;
+            if (arch == Architecture.Arm || arch == Architecture.Arm64)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+#else
             // Important:
             // this functiona has a clone in Workflow.ServiceCore in admin\monad\src\m3p\product\ServiceCore\WorkflowCore\WorkflowRuntimeCompilation.cs
             // if you are making any changes specific to this function then update the clone as well.
@@ -581,6 +592,7 @@ namespace System.Management.Automation
             var sysInfo = new NativeMethods.SYSTEM_INFO();
             NativeMethods.GetSystemInfo(ref sysInfo);
             return sysInfo.wProcessorArchitecture == NativeMethods.PROCESSOR_ARCHITECTURE_ARM;
+#endif
         }
 
         internal static string GetHostName()
@@ -598,7 +610,7 @@ namespace System.Management.Automation
 
         internal static string WinGetHostName()
         {
-            System.Net.NetworkInformation.IPGlobalProperties ipProperties = 
+            System.Net.NetworkInformation.IPGlobalProperties ipProperties =
                 System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
 
             string hostname = ipProperties.HostName;
@@ -723,8 +735,8 @@ namespace System.Management.Automation
                       parameterName,
                       psDataFilePath,
                       context,
-                      Microsoft.PowerShell.Commands.ModuleCmdletBase.PermittedCmdlets, 
-                      new[] {"PSScriptRoot"}, 
+                      Microsoft.PowerShell.Commands.ModuleCmdletBase.PermittedCmdlets,
+                      new[] { "PSScriptRoot" },
                       allowEnvironmentVariables: true,
                       skipPathValidation: skipPathValidation);
         }
@@ -864,9 +876,9 @@ namespace System.Management.Automation
 
         #endregion EvaluatePowerShellDataFile
 
-        internal static readonly string[] ManifestModuleVersionPropertyName = new[] {"ModuleVersion"};
+        internal static readonly string[] ManifestModuleVersionPropertyName = new[] { "ModuleVersion" };
         internal static readonly string[] ManifestGuidPropertyName = new[] { "GUID" };
-        internal static readonly string[] FastModuleManifestAnalysisPropertyNames = new[] {"AliasesToExport", "CmdletsToExport", "FunctionsToExport", "NestedModules", "RootModule", "ModuleToProcess", "ModuleVersion"};
+        internal static readonly string[] FastModuleManifestAnalysisPropertyNames = new[] { "AliasesToExport", "CmdletsToExport", "FunctionsToExport", "NestedModules", "RootModule", "ModuleToProcess", "ModuleVersion" };
 
         internal static Hashtable GetModuleManifestProperties(string psDataFilePath, string[] keys)
         {
@@ -912,7 +924,6 @@ namespace System.Management.Automation
                     }
                     return result;
                 }
-
             }
 
             throw PSTraceSource.NewInvalidOperationException(

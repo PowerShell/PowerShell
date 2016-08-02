@@ -1,10 +1,11 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 #pragma warning disable 56500
@@ -74,9 +75,9 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal Collection<PSObject> NewProperty(
-            string[] paths, 
-            string property, 
-            string type, 
+            string[] paths,
+            string property,
+            string type,
             object value,
             bool force,
             bool literalPath)
@@ -241,8 +242,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private void NewProperty(
-            CmdletProvider providerInstance, 
-            string path, 
+            CmdletProvider providerInstance,
+            string path,
             string property,
             string type,
             object value,
@@ -288,7 +289,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "NewPropertyProviderException",
                     SessionStateStrings.NewPropertyProviderException,
                     providerInstance.ProviderInfo,
@@ -349,7 +350,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal object NewPropertyDynamicParameters(
-             string path, 
+             string path,
             string propertyName,
             string type,
             object value,
@@ -434,7 +435,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private object NewPropertyDynamicParameters(
-            CmdletProvider providerInstance, 
+            CmdletProvider providerInstance,
             string path,
             string propertyName,
             string type,
@@ -478,7 +479,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "NewPropertyDynamicParametersProviderException",
                     SessionStateStrings.NewPropertyDynamicParametersProviderException,
                     providerInstance.ProviderInfo,
@@ -487,7 +488,7 @@ namespace System.Management.Automation
             }
             return result;
         } // NewPropertyDynamicParameters
-        
+
         #endregion NewProperty
 
         #region RemoveProperty
@@ -669,8 +670,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private void RemoveProperty(
-            CmdletProvider providerInstance, 
-            string path, 
+            CmdletProvider providerInstance,
+            string path,
             string property,
             CmdletProviderContext context)
         {
@@ -714,7 +715,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "RemovePropertyProviderException",
                     SessionStateStrings.RemovePropertyProviderException,
                     providerInstance.ProviderInfo,
@@ -767,7 +768,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal object RemovePropertyDynamicParameters(
-             string path, 
+             string path,
             string propertyName,
             CmdletProviderContext context)
         {
@@ -842,7 +843,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private object RemovePropertyDynamicParameters(
-            CmdletProvider providerInstance, 
+            CmdletProvider providerInstance,
             string path,
             string propertyName,
             CmdletProviderContext context)
@@ -885,7 +886,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "RemovePropertyDynamicParametersProviderException",
                     SessionStateStrings.RemovePropertyDynamicParametersProviderException,
                     providerInstance.ProviderInfo,
@@ -953,8 +954,8 @@ namespace System.Management.Automation
         /// 
         internal Collection<PSObject> CopyProperty(
             string[] sourcePaths,
-            string sourceProperty, 
-            string destinationPath, 
+            string sourceProperty,
+            string destinationPath,
             string destinationProperty,
             bool force,
             bool literalPath)
@@ -1171,8 +1172,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private void CopyProperty(
-            CmdletProvider providerInstance, 
-            string sourcePath, 
+            CmdletProvider providerInstance,
+            string sourcePath,
             string sourceProperty,
             string destinationPath,
             string destinationProperty,
@@ -1226,7 +1227,7 @@ namespace System.Management.Automation
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
                 CommandProcessorBase.CheckForSevereException(e);
-                throw NewProviderInvocationException (
+                throw NewProviderInvocationException(
                     "CopyPropertyProviderException",
                     SessionStateStrings.CopyPropertyProviderException,
                     providerInstance.ProviderInfo,
@@ -1287,7 +1288,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal object CopyPropertyDynamicParameters(
-             string path, 
+             string path,
             string sourceProperty,
             string destinationPath,
             string destinationProperty,
@@ -1321,8 +1322,8 @@ namespace System.Management.Automation
                 // Get the dynamic parameters for the first resolved path
 
                 return CopyPropertyDynamicParameters(
-                    providerInstance, 
-                    providerPaths[0], 
+                    providerInstance,
+                    providerPaths[0],
                     sourceProperty,
                     destinationPath,
                     destinationProperty,
@@ -1377,7 +1378,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private object CopyPropertyDynamicParameters(
-            CmdletProvider providerInstance, 
+            CmdletProvider providerInstance,
             string path,
             string sourceProperty,
             string destinationPath,
@@ -1498,8 +1499,8 @@ namespace System.Management.Automation
         /// 
         internal Collection<PSObject> MoveProperty(
             string[] sourcePaths,
-            string sourceProperty, 
-            string destinationPath, 
+            string sourceProperty,
+            string destinationPath,
             string destinationProperty,
             bool force,
             bool literalPath)
@@ -1643,12 +1644,12 @@ namespace System.Management.Automation
 
             if (destinationProviderPaths.Count > 1)
             {
-                ArgumentException argException = 
+                ArgumentException argException =
                     PSTraceSource.NewArgumentException(
                         "destinationPath",
                         SessionStateStrings.MovePropertyDestinationResolveToSingle);
 
-                context.WriteError (new ErrorRecord (argException, argException.GetType().FullName, ErrorCategory.InvalidArgument, destinationProviderPaths));
+                context.WriteError(new ErrorRecord(argException, argException.GetType().FullName, ErrorCategory.InvalidArgument, destinationProviderPaths));
             }
             else
             {
@@ -1717,8 +1718,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private void MoveProperty(
-            CmdletProvider providerInstance, 
-            string sourcePath, 
+            CmdletProvider providerInstance,
+            string sourcePath,
             string sourceProperty,
             string destinationPath,
             string destinationProperty,
@@ -1833,7 +1834,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal object MovePropertyDynamicParameters(
-             string path, 
+             string path,
             string sourceProperty,
             string destinationPath,
             string destinationProperty,
@@ -1867,8 +1868,8 @@ namespace System.Management.Automation
                 // Get the dynamic parameters for the first resolved path
 
                 return MovePropertyDynamicParameters(
-                    providerInstance, 
-                    providerPaths[0], 
+                    providerInstance,
+                    providerPaths[0],
                     sourceProperty,
                     destinationPath,
                     destinationProperty,
@@ -1923,7 +1924,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private object MovePropertyDynamicParameters(
-            CmdletProvider providerInstance, 
+            CmdletProvider providerInstance,
             string path,
             string sourceProperty,
             string destinationPath,
@@ -1983,7 +1984,7 @@ namespace System.Management.Automation
             }
             return result;
         } // MovePropertyDynamicParameters
-        
+
         #endregion MoveProperty
 
         #region RenameProperty
@@ -2036,7 +2037,7 @@ namespace System.Management.Automation
         /// 
         internal Collection<PSObject> RenameProperty(
             string[] sourcePaths,
-            string sourceProperty, 
+            string sourceProperty,
             string destinationProperty,
             bool force,
             bool literalPath)
@@ -2199,8 +2200,8 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private void RenameProperty(
-            CmdletProvider providerInstance, 
-            string sourcePath, 
+            CmdletProvider providerInstance,
+            string sourcePath,
             string sourceProperty,
             string destinationProperty,
             CmdletProviderContext context)
@@ -2306,7 +2307,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         internal object RenamePropertyDynamicParameters(
-             string path, 
+             string path,
             string sourceProperty,
             string destinationProperty,
             CmdletProviderContext context)
@@ -2339,8 +2340,8 @@ namespace System.Management.Automation
                 // Get the dynamic parameters for the first resolved path
 
                 return RenamePropertyDynamicParameters(
-                    providerInstance, 
-                    providerPaths[0], 
+                    providerInstance,
+                    providerPaths[0],
                     sourceProperty,
                     destinationProperty,
                     newContext);
@@ -2390,7 +2391,7 @@ namespace System.Management.Automation
         /// </exception>
         /// 
         private object RenamePropertyDynamicParameters(
-            CmdletProvider providerInstance, 
+            CmdletProvider providerInstance,
             string path,
             string sourceProperty,
             string destinationProperty,
@@ -2451,7 +2452,6 @@ namespace System.Management.Automation
 
         #endregion IDynamicPropertyCmdletProvider accessors
     }           // SessionStateInternal class
-
 }
 
 #pragma warning restore 56500

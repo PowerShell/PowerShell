@@ -27,7 +27,6 @@ using System.Management.Automation.Remoting;
 
 namespace System.Management.Automation
 {
-
     /// <summary>
     /// This internal helper class provides methods for serializing mshObject.
     /// </summary>
@@ -65,21 +64,21 @@ namespace System.Management.Automation
         /// avaliable (to get the ExecutionContext's TypeTable)
         private TypeTable _typeTable;
 
-        private Collection<CollectionEntry<PSPropertyInfo>> allPropertiesCollection;
+        private Collection<CollectionEntry<PSPropertyInfo>> _allPropertiesCollection;
         private Collection<CollectionEntry<PSPropertyInfo>> AllPropertiesCollection
         {
             get
             {
-                if (allPropertiesCollection == null)
+                if (_allPropertiesCollection == null)
                 {
-                    allPropertiesCollection = PSObject.GetPropertyCollection(PSMemberViewTypes.All, _typeTable);
+                    _allPropertiesCollection = PSObject.GetPropertyCollection(PSMemberViewTypes.All, _typeTable);
                 }
-                return allPropertiesCollection;
+                return _allPropertiesCollection;
             }
         }
 
         // Similar to the property by the same name in serialization.cs
-        private bool? canUseDefaultRunspaceInThreadSafeManner;
+        private bool? _canUseDefaultRunspaceInThreadSafeManner;
 
         private bool CanUseDefaultRunspaceInThreadSafeManner
         {
@@ -96,9 +95,9 @@ namespace System.Management.Automation
                 // to avoid a race condition where a pipeline is started
                 // after this property getter did all the checks
 
-                if (!canUseDefaultRunspaceInThreadSafeManner.HasValue)
+                if (!_canUseDefaultRunspaceInThreadSafeManner.HasValue)
                 {
-                    canUseDefaultRunspaceInThreadSafeManner = false;
+                    _canUseDefaultRunspaceInThreadSafeManner = false;
 
                     RunspaceBase runspace = Runspace.DefaultRunspace as RunspaceBase;
                     if (runspace != null)
@@ -107,20 +106,20 @@ namespace System.Management.Automation
                         LocalPipeline localPipeline = currentPipeline as LocalPipeline;
                         if ((localPipeline != null) && (localPipeline.NestedPipelineExecutionThread != null))
                         {
-                            canUseDefaultRunspaceInThreadSafeManner =
+                            _canUseDefaultRunspaceInThreadSafeManner =
                                 (localPipeline.NestedPipelineExecutionThread.ManagedThreadId
                                 == Threading.Thread.CurrentThread.ManagedThreadId);
                         }
                     }
                 }
 
-                return canUseDefaultRunspaceInThreadSafeManner.Value;
+                return _canUseDefaultRunspaceInThreadSafeManner.Value;
             }
         }
 
         #endregion Properties
 
-        internal CimInstance Serialize (object o)
+        internal CimInstance Serialize(object o)
         {
             return CreateCimInstanceForOneTopLevelObject(o);
         }
@@ -300,7 +299,7 @@ namespace System.Management.Automation
                     Dbg.Assert(false, "All containers should be handled in the switch");
                     break;
             }
-            
+
             CimInstance[] instanceArray = listOfCimInstances.ToArray();
             CimProperty valueProperty = CimProperty.Create("Value", instanceArray, Microsoft.Management.Infrastructure.CimType.InstanceArray, CimFlags.Property);
             result.CimInstanceProperties.Add(valueProperty);
@@ -362,7 +361,7 @@ namespace System.Management.Automation
             }
 
             // This will create a CimInstance for PS_Object and populate the typenames. 
-            result = CreateCimInstanceForPSObject(cimClassName: "PS_Object", 
+            result = CreateCimInstanceForPSObject(cimClassName: "PS_Object",
                                                   psObj: mshSource,
                                                   writeToString: writeToString);
 
@@ -394,7 +393,7 @@ namespace System.Management.Automation
             {
                 CreateCimInstanceForPSObjectProperties(mshSource, depth, specificPropertiesToSerialize, out listOfCimInstancesProperties);
             }
-        
+
             //TODO, insivara : Implement serialization of CimInstance 
             //if (isCimInstance)
             //{
@@ -404,7 +403,7 @@ namespace System.Management.Automation
 
             //TODO, insivara : ExtendedProperties implementation will be done in a subsequent checkin
             //SerializeExtendedProperties(mshSource, depth, specificPropertiesToSerialize, out listOfCimInstancesExtendedProperties);
-            
+
             if (listOfCimInstancesProperties != null && listOfCimInstancesProperties.Count > 0)
             {
                 CimInstance[] referenceArray = listOfCimInstancesProperties.ToArray();
@@ -452,7 +451,7 @@ namespace System.Management.Automation
 
             bool hasNotes = false;
             //hasNotes = PSObjectHasNotes(source);
-            
+
             bool hasModifiedToString = (toStringValue != null);
 
             if (hasNotes || hasModifiedTypesCollection || hasModifiedToString)
@@ -702,7 +701,7 @@ namespace System.Management.Automation
         /// <param name="entry">serialization information about source</param>
         internal static CimInstance CreateCimInstanceForPrimitiveType(string property, object source, MITypeSerializationInfo entry)
         {
-            CimInstance c; 
+            CimInstance c;
             if (property != null)
             {
                 c = CreateCimInstanceWhenPropertyNameExists(property, source, entry);
@@ -738,8 +737,8 @@ namespace System.Management.Automation
             }
             return c;
         }
-        
-        #endregion 
+
+        #endregion
 
         #region Serialization Helper Methods
 
@@ -767,8 +766,8 @@ namespace System.Management.Automation
 
             if (writeToString)
             {
-                CimProperty toStringProperty = CimProperty.Create("ToString", 
-                                                                  SerializationUtilities.GetToString(psObj), 
+                CimProperty toStringProperty = CimProperty.Create("ToString",
+                                                                  SerializationUtilities.GetToString(psObj),
                                                                   Microsoft.Management.Infrastructure.CimType.String,
                                                                   Microsoft.Management.Infrastructure.CimFlags.Property);
                 cimInstance.CimInstanceProperties.Add(toStringProperty);
@@ -778,7 +777,7 @@ namespace System.Management.Automation
 
         private static CimInstance CreateRawStringCimInstance(string property, string value, MITypeSerializationInfo entry)
         {
-            CimInstance c; 
+            CimInstance c;
             if (property != null)
             {
                 c = CreateCimInstanceWhenPropertyNameExists(property, value, entry);
@@ -787,7 +786,7 @@ namespace System.Management.Automation
             {
                 c = CreateCimInstance(entry.CimClassName);
                 CimProperty p1 = CimProperty.Create("Value", value, entry.CimType, CimFlags.Property);
-                c.CimInstanceProperties.Add(p1);                
+                c.CimInstanceProperties.Add(p1);
             }
             return c;
         }
@@ -799,11 +798,11 @@ namespace System.Management.Automation
             innerInstance.CimInstanceProperties.Add(valueProperty);
             CimInstance c = CreateCimInstance("PS_ObjectProperty");
             CimProperty name = CimProperty.Create("Name", property,
-                                                  Microsoft.Management.Infrastructure.CimType.String, 
+                                                  Microsoft.Management.Infrastructure.CimType.String,
                                                   CimFlags.Property);
             c.CimInstanceProperties.Add(name);
             CimProperty outerInstanceValueProperty = CimProperty.Create("Value", innerInstance,
-                                                                        Microsoft.Management.Infrastructure.CimType.Reference, 
+                                                                        Microsoft.Management.Infrastructure.CimType.Reference,
                                                                         CimFlags.Property);
             c.CimInstanceProperties.Add(outerInstanceValueProperty);
 
@@ -814,10 +813,10 @@ namespace System.Management.Automation
         {
             CimInstance enumCimInstance = null;
             object baseObject = mshSource.ImmediateBaseObject;
-            CreateCimInstanceForOneObject(source:System.Convert.ChangeType(baseObject, Enum.GetUnderlyingType(baseObject.GetType()),System.Globalization.CultureInfo.InvariantCulture), 
-                                          property:null, 
-                                          depth:depth,
-                                          result:out enumCimInstance);
+            CreateCimInstanceForOneObject(source: System.Convert.ChangeType(baseObject, Enum.GetUnderlyingType(baseObject.GetType()), System.Globalization.CultureInfo.InvariantCulture),
+                                          property: null,
+                                          depth: depth,
+                                          result: out enumCimInstance);
             return enumCimInstance;
         }
 
@@ -905,6 +904,5 @@ namespace System.Management.Automation
         }
 
         #endregion 
-
     }
 }

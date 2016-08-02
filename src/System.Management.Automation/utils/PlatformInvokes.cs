@@ -36,13 +36,15 @@ namespace System.Management.Automation
                 dwHighDateTime = 0;
             }
 
-            internal FILETIME(long fileTime) {
-                dwLowDateTime = (uint) fileTime;
-                dwHighDateTime = (uint) (fileTime >> 32);
+            internal FILETIME(long fileTime)
+            {
+                dwLowDateTime = (uint)fileTime;
+                dwHighDateTime = (uint)(fileTime >> 32);
             }
 
-            public long ToTicks() {
-                return ((long) dwHighDateTime << 32) + dwLowDateTime;
+            public long ToTicks()
+            {
+                return ((long)dwHighDateTime << 32) + dwLowDateTime;
             }
         };
 
@@ -156,7 +158,6 @@ namespace System.Management.Automation
                 : base(ownsHandle)
             {
                 base.SetHandle(existingHandle);
-
             }
 
             [DllImport(PinvokeDllNames.LocalFreeDllName), ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
@@ -164,7 +165,6 @@ namespace System.Management.Automation
             protected override bool ReleaseHandle()
             {
                 return (LocalFree(base.handle) == IntPtr.Zero);
-
             }
         }
 

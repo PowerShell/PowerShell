@@ -1,11 +1,12 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Globalization;
 using System.Management.Automation;
-using Dbg=System.Management.Automation;
+using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
 {
@@ -45,7 +46,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("sessionState");
             }
 
-            this.sessionState = sessionState;
+            _sessionState = sessionState;
         } // PSVariableInterfaces internal
 
         #endregion Constructors
@@ -71,7 +72,7 @@ namespace System.Management.Automation
         public PSVariable Get(string name)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
@@ -87,7 +88,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            return sessionState.GetVariable(name);
+            return _sessionState.GetVariable(name);
         } // Get
 
         /// <summary>
@@ -125,14 +126,14 @@ namespace System.Management.Automation
         internal PSVariable GetAtScope(string name, string scope)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetVariableAtScope(name, scope);
+            return _sessionState.GetVariableAtScope(name, scope);
         } // GetAtScope
-        
+
         /// <summary>
         /// Gets the specified variable value from session state.
         /// </summary>
@@ -169,12 +170,12 @@ namespace System.Management.Automation
         public object GetValue(string name)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetVariableValue(name);
+            return _sessionState.GetVariableValue(name);
         } // GetValue
 
         /// <summary>
@@ -219,12 +220,12 @@ namespace System.Management.Automation
         public object GetValue(string name, object defaultValue)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetVariableValue(name) ?? defaultValue;
+            return _sessionState.GetVariableValue(name) ?? defaultValue;
         } // GetValue
 
         /// <summary>
@@ -279,12 +280,12 @@ namespace System.Management.Automation
         internal object GetValueAtScope(string name, string scope)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            return sessionState.GetVariableValueAtScope(name, scope);
+            return _sessionState.GetVariableValueAtScope(name, scope);
         } // GetValueAtScope
 
         /// <summary>
@@ -331,12 +332,12 @@ namespace System.Management.Automation
         public void Set(string name, object value)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.SetVariableValue(name, value, CommandOrigin.Internal);
+            _sessionState.SetVariableValue(name, value, CommandOrigin.Internal);
         } // SetVariable
 
         /// <summary>
@@ -362,12 +363,12 @@ namespace System.Management.Automation
         public void Set(PSVariable variable)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.SetVariable(variable, false, CommandOrigin.Internal);
+            _sessionState.SetVariable(variable, false, CommandOrigin.Internal);
         } // SetVariable
 
         /// <summary>
@@ -406,12 +407,12 @@ namespace System.Management.Automation
         public void Remove(string name)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.RemoveVariable(name);
+            _sessionState.RemoveVariable(name);
         } // RemoveVariable
 
         /// <summary>
@@ -432,12 +433,12 @@ namespace System.Management.Automation
         public void Remove(PSVariable variable)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.RemoveVariable(variable);
+            _sessionState.RemoveVariable(variable);
         } // RemoveVariable
 
         /// <summary>
@@ -475,12 +476,12 @@ namespace System.Management.Automation
         internal void RemoveAtScope(string name, string scope)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.RemoveVariableAtScope(name, scope);
+            _sessionState.RemoveVariableAtScope(name, scope);
         }
 
         /// <summary>
@@ -513,19 +514,19 @@ namespace System.Management.Automation
         internal void RemoveAtScope(PSVariable variable, string scope)
         {
             Dbg.Diagnostics.Assert(
-                sessionState != null,
+                _sessionState != null,
                 "The only constructor for this class should always set the sessionState field");
 
             // Parameter validation is done in the session state object
 
-            sessionState.RemoveVariableAtScope(variable, scope);
+            _sessionState.RemoveVariableAtScope(variable, scope);
         }
 
         #endregion Public methods
 
         #region private data
 
-        private SessionStateInternal sessionState;
+        private SessionStateInternal _sessionState;
 
         #endregion private data
     } // PSVariableIntrinsics

@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -10,7 +11,6 @@ using System.Management.Automation.Internal;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
-
     /// <summary>
     /// inner command class used to manage the sub pipelines
     /// it determines which command should process the incoming objects
@@ -21,38 +21,38 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class OutputManagerInner : ImplementationCommandBase
     {
         #region tracer
-        [TraceSource ("format_out_OutputManagerInner", "OutputManagerInner")]
-        internal static PSTraceSource tracer = PSTraceSource.GetTracer ("format_out_OutputManagerInner", "OutputManagerInner");
+        [TraceSource("format_out_OutputManagerInner", "OutputManagerInner")]
+        internal static PSTraceSource tracer = PSTraceSource.GetTracer("format_out_OutputManagerInner", "OutputManagerInner");
         #endregion tracer
 
 
-#region LineOutput
+        #region LineOutput
         internal LineOutput LineOutput
         {
             set
             {
-                lock (this.syncRoot)
+                lock (_syncRoot)
                 {
-                    this.lo = value;
+                    _lo = value;
 
-                    if (this.isStopped)
+                    if (_isStopped)
                     {
-                        this.lo.StopProcessing();
+                        _lo.StopProcessing();
                     }
                 }
             }
         }
 
-        private LineOutput lo = null;
-#endregion
+        private LineOutput _lo = null;
+        #endregion
 
         /// <summary>
         /// handler for processing each object coming through the pipeline
         /// it forwards the call to the pipeline manager object
         /// </summary>
-        internal override void ProcessRecord ()
+        internal override void ProcessRecord()
         {
-            PSObject so = this.ReadObject ();
+            PSObject so = this.ReadObject();
 
             if (so == null || so == AutomationNull.Value)
             {
@@ -61,10 +61,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // on demand initialization when the first pipeline
             // object is initialized
-            if (mgr == null)
+            if (_mgr == null)
             {
-                this.mgr = new SubPipelineManager ();
-                this.mgr.Initialize (this.lo, this.OuterCmdlet ().Context);
+                _mgr = new SubPipelineManager();
+                _mgr.Initialize(_lo, this.OuterCmdlet().Context);
             }
 
 #if false
@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 #else
-            this.mgr.Process (so);
+            _mgr.Process(so);
 #endif
         }
 
@@ -92,35 +92,35 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// handler for processing shut down. It forwards the call to the 
         /// pipeline manager object
         /// </summary>
-        internal override void EndProcessing ()
+        internal override void EndProcessing()
         {
             // shut down only if we ever processed a pipeline object
-            if (mgr != null)
-                mgr.ShutDown ();
+            if (_mgr != null)
+                _mgr.ShutDown();
         }
 
         internal override void StopProcessing()
         {
-            lock (this.syncRoot)
+            lock (_syncRoot)
             {
-                if (this.lo != null)
+                if (_lo != null)
                 {
-                    this.lo.StopProcessing();
+                    _lo.StopProcessing();
                 }
-                this.isStopped = true;
+                _isStopped = true;
             }
         }
 
         /// <summary>
         /// make sure we dispose of the sub pipeline manager
         /// </summary>
-        protected override void InternalDispose ()
+        protected override void InternalDispose()
         {
-            base.InternalDispose ();
-            if (mgr != null)
+            base.InternalDispose();
+            if (_mgr != null)
             {
-                mgr.Dispose ();
-                mgr = null;
+                _mgr.Dispose();
+                _mgr = null;
             }
         }
 
@@ -128,17 +128,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// instance of the pipeline manager object
         /// </summary>
-        private SubPipelineManager mgr = null;
+        private SubPipelineManager _mgr = null;
 
         /// <summary>
         /// True if the cmdlet has been stopped
         /// </summary>
-        private bool isStopped = false;
+        private bool _isStopped = false;
 
         /// <summary>
         /// Lock object
         /// </summary>
-        private object syncRoot = new object();
+        private object _syncRoot = new object();
     }
 
     /// <summary>
@@ -156,18 +156,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// instance of pipeline wrapper object
             /// </summary>
-            internal CommandWrapper command = new CommandWrapper ();
+            internal CommandWrapper command = new CommandWrapper();
 
             /// <summary>
             /// 
             /// </summary>
             /// <param name="typeName">ETS type name of the object to process</param>
             /// <returns>true if there is a match</returns>
-            internal bool AppliesToType (string typeName)
+            internal bool AppliesToType(string typeName)
             {
-                foreach (String s in this.applicableTypes)
+                foreach (String s in _applicableTypes)
                 {
-                    if (string.Equals (s, typeName, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(s, typeName, StringComparison.OrdinalIgnoreCase))
                         return true;
                 }
 
@@ -177,19 +177,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// just dispose of the inner command wrapper
             /// </summary>
-            public void Dispose ()
+            public void Dispose()
             {
                 if (this.command == null)
                     return;
 
-                this.command.Dispose ();
+                this.command.Dispose();
                 this.command = null;
             }
 
             /// <summary>
             /// ordered list of ETS type names this object is handling
             /// </summary>
-            private StringCollection applicableTypes = new StringCollection ();
+            private StringCollection _applicableTypes = new StringCollection();
         }
 
         /// <summary>
@@ -197,10 +197,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="lineOutput">LineOutput to pass to the child pipelines</param>
         /// <param name="context">ExecutionContext to pass to the child pipelines</param>
-        internal void Initialize (LineOutput lineOutput, ExecutionContext context)
+        internal void Initialize(LineOutput lineOutput, ExecutionContext context)
         {
-            lo = lineOutput;
-            InitializeCommandsHardWired (context);
+            _lo = lineOutput;
+            InitializeCommandsHardWired(context);
         }
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void InitializeCommandsHardWired(ExecutionContext context)
         {
             // set the default handler
-            RegisterCommandDefault (context, "out-lineoutput", typeof(OutLineOutputCommand));
+            RegisterCommandDefault(context, "out-lineoutput", typeof(OutLineOutputCommand));
             /*
             NOTE: 
             This is the spot where we could add new specialized handlers for 
@@ -245,61 +245,61 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="context">ExecutionContext to pass to the child pipeline</param>
         /// <param name="commandName">name of the command to execute</param>
         /// <param name="commandType">Type of the command to execute</param>
-        private void RegisterCommandDefault (ExecutionContext context, string commandName, Type commandType)
+        private void RegisterCommandDefault(ExecutionContext context, string commandName, Type commandType)
         {
-            CommandEntry ce = new CommandEntry ();
+            CommandEntry ce = new CommandEntry();
 
-            ce.command.Initialize (context, commandName, commandType);
-            ce.command.AddNamedParameter ("LineOutput", this.lo);
-            this.defaultCommandEntry = ce;
+            ce.command.Initialize(context, commandName, commandType);
+            ce.command.AddNamedParameter("LineOutput", _lo);
+            _defaultCommandEntry = ce;
         }
 
         /// <summary>
         /// process an incoming parent pipeline object
         /// </summary>
         /// <param name="so">pipeline object to process</param>
-        internal void Process (PSObject so)
+        internal void Process(PSObject so)
         {
             // select which pipeline should handle the object
-            CommandEntry ce = this.GetActiveCommandEntry (so);
+            CommandEntry ce = this.GetActiveCommandEntry(so);
 
-            Diagnostics.Assert (ce != null, "CommandEntry ce must not be null");
+            Diagnostics.Assert(ce != null, "CommandEntry ce must not be null");
 
             // delegate the processing
-            ce.command.Process (so);
+            ce.command.Process(so);
         }
 
         /// <summary>
         /// shut down the child pipelines
         /// </summary>
-        internal void ShutDown ()
+        internal void ShutDown()
         {
             // we assume that command entries are never null
-            foreach (CommandEntry ce in this.commandEntryList)
+            foreach (CommandEntry ce in _commandEntryList)
             {
-                Diagnostics.Assert (ce != null, "ce != null");
-                ce.command.ShutDown ();
+                Diagnostics.Assert(ce != null, "ce != null");
+                ce.command.ShutDown();
                 ce.command = null;
             }
 
             // we assume we always have a default command entry
-            Diagnostics.Assert (this.defaultCommandEntry != null, "defaultCommandEntry != null");
-            this.defaultCommandEntry.command.ShutDown ();
-            this.defaultCommandEntry.command = null;
+            Diagnostics.Assert(_defaultCommandEntry != null, "defaultCommandEntry != null");
+            _defaultCommandEntry.command.ShutDown();
+            _defaultCommandEntry.command = null;
         }
 
-        public void Dispose ()
+        public void Dispose()
         {
             // we assume that command entries are never null
-            foreach (CommandEntry ce in this.commandEntryList)
+            foreach (CommandEntry ce in _commandEntryList)
             {
-                Diagnostics.Assert (ce != null, "ce != null");
-                ce.Dispose ();
+                Diagnostics.Assert(ce != null, "ce != null");
+                ce.Dispose();
             }
 
             // we assume we always have a default command entry
-            Diagnostics.Assert (this.defaultCommandEntry != null, "defaultCommandEntry != null");
-            this.defaultCommandEntry.Dispose ();
+            Diagnostics.Assert(_defaultCommandEntry != null, "defaultCommandEntry != null");
+            _defaultCommandEntry.Dispose();
         }
 
         /// <summary>
@@ -308,30 +308,29 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="so">pipeline object to be processed</param>
         /// <returns>applicable command entry</returns>
-        private CommandEntry GetActiveCommandEntry (PSObject so)
+        private CommandEntry GetActiveCommandEntry(PSObject so)
         {
             string typeName = PSObjectHelper.PSObjectIsOfExactType(so.InternalTypeNames);
-            foreach (CommandEntry ce in this.commandEntryList)
+            foreach (CommandEntry ce in _commandEntryList)
             {
-
                 if (ce.AppliesToType(typeName))
                     return ce;
             }
 
             // falied any match: return the default handler
-            return this.defaultCommandEntry;
+            return _defaultCommandEntry;
         }
 
-        private LineOutput lo = null;
+        private LineOutput _lo = null;
 
         /// <summary>
         /// list of command entries, each with a set of applicable types
         /// </summary>
-        private List<CommandEntry> commandEntryList = new List<CommandEntry> ();
+        private List<CommandEntry> _commandEntryList = new List<CommandEntry>();
 
         /// <summary>
         /// default command entry to be executed when all type matches fail
         /// </summary>
-        CommandEntry defaultCommandEntry = new CommandEntry ();
+        private CommandEntry _defaultCommandEntry = new CommandEntry();
     }
 }

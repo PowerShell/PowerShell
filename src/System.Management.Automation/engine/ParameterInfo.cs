@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -32,19 +33,19 @@ namespace System.Management.Automation
         /// If <paramref name="parameter"/> is null.
         /// </exception>
         /// 
-        internal CommandParameterInfo (
+        internal CommandParameterInfo(
             CompiledCommandParameter parameter,
             uint parameterSetFlag)
         {
             if (parameter == null)
             {
-                throw PSTraceSource.NewArgumentNullException ("parameter");
+                throw PSTraceSource.NewArgumentNullException("parameter");
             }
 
-            this.name = parameter.Name;
-            this.parameterType = parameter.Type;
-            this.isDynamic = parameter.IsDynamic;
-            this.aliases = new ReadOnlyCollection<string> (parameter.Aliases);
+            _name = parameter.Name;
+            _parameterType = parameter.Type;
+            _isDynamic = parameter.IsDynamic;
+            _aliases = new ReadOnlyCollection<string>(parameter.Aliases);
 
             SetAttributes(parameter.CompiledAttributes);
             SetParameterSetData(parameter.GetParameterSetData(parameterSetFlag));
@@ -61,10 +62,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return name;
+                return _name;
             }
         }
-        private string name = String.Empty;
+        private string _name = String.Empty;
 
         /// <summary>
         /// Gets the type of the parameter.
@@ -73,10 +74,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return parameterType;
+                return _parameterType;
             }
         }
-        private Type parameterType;
+        private Type _parameterType;
 
         /// <summary>
         /// Gets whether or not the parameter is a dynamic parameter.
@@ -89,10 +90,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return isMandatory;
+                return _isMandatory;
             }
         }
-        private bool isMandatory;
+        private bool _isMandatory;
 
         /// <summary>
         /// Gets whether or not the parameter is mandatory.
@@ -105,11 +106,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return isDynamic;
+                return _isDynamic;
             }
         }
-        private bool isDynamic;
-        
+        private bool _isDynamic;
+
         /// <summary>
         /// Gets the position in which the parameter can be specified on the command line
         /// if not named. If the returned value is int.MinValue then the parameter must be named.
@@ -118,12 +119,12 @@ namespace System.Management.Automation
         {
             get
             {
-                return position;
+                return _position;
             }
         }
-        private int position = int.MinValue;
+        private int _position = int.MinValue;
 
-        private bool valueFromPipeline;
+        private bool _valueFromPipeline;
         /// <summary>
         /// Gets whether the parameter can take values from the incoming pipeline object.
         /// </summary>
@@ -131,11 +132,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return valueFromPipeline;
+                return _valueFromPipeline;
             }
         }
 
-        private bool valueFromPipelineByPropertyName;
+        private bool _valueFromPipelineByPropertyName;
         /// <summary>
         /// Gets whether the parameter can take values from a property inn the incoming
         /// pipeline object with the same name as the parameter.
@@ -144,7 +145,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return valueFromPipelineByPropertyName;
+                return _valueFromPipelineByPropertyName;
             }
         }
 
@@ -155,10 +156,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return valueFromRemainingArguments;
+                return _valueFromRemainingArguments;
             }
         }
-        private bool valueFromRemainingArguments;
+        private bool _valueFromRemainingArguments;
 
         /// <summary>
         /// Gets the help message for this parameter.
@@ -167,10 +168,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return helpMessage;
+                return _helpMessage;
             }
         }
-        private string helpMessage = String.Empty;
+        private string _helpMessage = String.Empty;
 
         /// <summary>
         /// Gets the aliases by which this parameter can be referenced.
@@ -179,10 +180,10 @@ namespace System.Management.Automation
         {
             get
             {
-                return aliases;
+                return _aliases;
             }
         }
-        private ReadOnlyCollection<string> aliases;
+        private ReadOnlyCollection<string> _aliases;
 
         /// <summary>
         /// Gets the attributes that are specified on the parameter.
@@ -191,18 +192,18 @@ namespace System.Management.Automation
         {
             get
             {
-                return attributes;
+                return _attributes;
             }
         }
-        private ReadOnlyCollection<Attribute> attributes;
+        private ReadOnlyCollection<Attribute> _attributes;
 
         #endregion public members
 
         #region private members
 
-        private void SetAttributes (IList<Attribute> attributeMetadata)
+        private void SetAttributes(IList<Attribute> attributeMetadata)
         {
-            Diagnostics.Assert (
+            Diagnostics.Assert(
                 attributeMetadata != null,
                 "The compiled attribute collection should never be null");
 
@@ -213,22 +214,21 @@ namespace System.Management.Automation
                 processedAttributes.Add(attribute);
             }
 
-            this.attributes = new ReadOnlyCollection<Attribute> (processedAttributes);
+            _attributes = new ReadOnlyCollection<Attribute>(processedAttributes);
         }
 
 
-        private void SetParameterSetData (ParameterSetSpecificMetadata parameterMetadata)
+        private void SetParameterSetData(ParameterSetSpecificMetadata parameterMetadata)
         {
-            this.isMandatory = parameterMetadata.IsMandatory;
-            this.position = parameterMetadata.Position;
-            this.valueFromPipeline = parameterMetadata.valueFromPipeline;
-            this.valueFromPipelineByPropertyName = parameterMetadata.valueFromPipelineByPropertyName;
-            this.valueFromRemainingArguments = parameterMetadata.ValueFromRemainingArguments;
-            this.helpMessage = parameterMetadata.HelpMessage;
+            _isMandatory = parameterMetadata.IsMandatory;
+            _position = parameterMetadata.Position;
+            _valueFromPipeline = parameterMetadata.valueFromPipeline;
+            _valueFromPipelineByPropertyName = parameterMetadata.valueFromPipelineByPropertyName;
+            _valueFromRemainingArguments = parameterMetadata.ValueFromRemainingArguments;
+            _helpMessage = parameterMetadata.HelpMessage;
         }
 
         #endregion private members
     } // class CommandParameterInfo
-
 } // namespace System.Management.Automation
 

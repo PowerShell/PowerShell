@@ -1,8 +1,4 @@
-// ==++==
-// 
-//   Copyright (c) Microsoft Corporation.  All rights reserved.
-// 
-// ==--==
+
 //
 // NOTE: A vast majority of this code was copied from BCL in
 // ndp\clr\src\BCL\System\Security\AccessControl\RegistrySecurity.cs.
@@ -10,7 +6,6 @@
 //
 /*============================================================
 **
-** Class:  TransactedRegistrySecurity
 **
 **
 ** Purpose: Managed ACL wrapper for registry keys.
@@ -32,7 +27,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.PowerShell.Commands.Internal
 {
-
     /// <summary>
     /// <para>Represents a set of access rights allowed or denied for a user or group. This class cannot be inherited.</para>
     /// </summary>
@@ -50,8 +44,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="registryRights">A bitwise combination of Microsoft.Win32.RegistryRights values indicating the rights allowed or denied.</param>
         /// <param name="type">One of the AccessControlType values indicating whether the rights are allowed or denied.</param>
         /// </summary>
-        internal TransactedRegistryAccessRule(IdentityReference identity, RegistryRights registryRights, AccessControlType type) 
-            : this(identity, (int) registryRights, false, InheritanceFlags.None, PropagationFlags.None, type)
+        internal TransactedRegistryAccessRule(IdentityReference identity, RegistryRights registryRights, AccessControlType type)
+            : this(identity, (int)registryRights, false, InheritanceFlags.None, PropagationFlags.None, type)
         {
         }
 
@@ -62,8 +56,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="registryRights">A bitwise combination of Microsoft.Win32.RegistryRights values indicating the rights allowed or denied.</param>
         /// <param name="type">One of the AccessControlType values indicating whether the rights are allowed or denied.</param>
         /// </summary>
-        internal TransactedRegistryAccessRule(String identity, RegistryRights registryRights, AccessControlType type) 
-            : this(new NTAccount(identity), (int) registryRights, false, InheritanceFlags.None, PropagationFlags.None, type)
+        internal TransactedRegistryAccessRule(String identity, RegistryRights registryRights, AccessControlType type)
+            : this(new NTAccount(identity), (int)registryRights, false, InheritanceFlags.None, PropagationFlags.None, type)
         {
         }
 
@@ -78,7 +72,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="type">One of the AccessControlType values indicating whether the rights are allowed or denied.</param>
         /// </summary>
         public TransactedRegistryAccessRule(IdentityReference identity, RegistryRights registryRights, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
-            : this(identity, (int) registryRights, false, inheritanceFlags, propagationFlags, type)
+            : this(identity, (int)registryRights, false, inheritanceFlags, propagationFlags, type)
         {
         }
 
@@ -92,7 +86,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="type">One of the AccessControlType values indicating whether the rights are allowed or denied.</param>
         /// </summary>
         internal TransactedRegistryAccessRule(string identity, RegistryRights registryRights, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
-            : this(new NTAccount(identity), (int) registryRights, false, inheritanceFlags, propagationFlags, type)
+            : this(new NTAccount(identity), (int)registryRights, false, inheritanceFlags, propagationFlags, type)
         {
         }
 
@@ -106,14 +100,14 @@ namespace Microsoft.PowerShell.Commands.Internal
             bool isInherited,
             InheritanceFlags inheritanceFlags,
             PropagationFlags propagationFlags,
-            AccessControlType type )
+            AccessControlType type)
             : base(
                 identity,
                 accessMask,
                 isInherited,
                 inheritanceFlags,
                 propagationFlags,
-                type )
+                type)
         {
         }
 
@@ -121,8 +115,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <para>Gets the rights allowed or denied by the access rule.</para>
         /// </summary>
         public RegistryRights RegistryRights
-        { 
-            get { return (RegistryRights) base.AccessMask; }
+        {
+            get { return (RegistryRights)base.AccessMask; }
         }
     }
 
@@ -145,7 +139,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="flags">A bitwise combination of AuditFlags values specifying whether to audit success, failure, or both.</param>
         /// </summary>
         internal TransactedRegistryAuditRule(IdentityReference identity, RegistryRights registryRights, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
-            : this(identity, (int) registryRights, false, inheritanceFlags, propagationFlags, flags)
+            : this(identity, (int)registryRights, false, inheritanceFlags, propagationFlags, flags)
         {
         }
 
@@ -159,7 +153,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="flags">A bitwise combination of AuditFlags values specifying whether to audit success, failure, or both.</param>
         /// </summary>
         internal TransactedRegistryAuditRule(string identity, RegistryRights registryRights, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
-            : this(new NTAccount(identity), (int) registryRights, false, inheritanceFlags, propagationFlags, flags)
+            : this(new NTAccount(identity), (int)registryRights, false, inheritanceFlags, propagationFlags, flags)
         {
         }
 
@@ -172,8 +166,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <para>Gets the access rights affected by the audit rule.</para>
         /// </summary>
         public RegistryRights RegistryRights
-        { 
-            get { return (RegistryRights) base.AccessMask; }
+        {
+            get { return (RegistryRights)base.AccessMask; }
         }
     }
 
@@ -208,11 +202,11 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
         */
 
-        [SecurityPermission(SecurityAction.Assert, UnmanagedCode=true)]
+        [SecurityPermission(SecurityAction.Assert, UnmanagedCode = true)]
         // Suppressed because the passed name and hkey won't change.
         [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity")]
         internal TransactedRegistrySecurity(SafeRegistryHandle hKey, String name, AccessControlSections includeSections)
-            : base(true, ResourceType.RegistryKey, hKey, includeSections, _HandleErrorCode, null )
+            : base(true, ResourceType.RegistryKey, hKey, includeSections, _HandleErrorCode, null)
         {
             new RegistryPermission(RegistryPermissionAccess.NoAccess, AccessControlActions.View, name).Demand();
         }
@@ -220,22 +214,23 @@ namespace Microsoft.PowerShell.Commands.Internal
         private static Exception _HandleErrorCode(int errorCode, string name, SafeHandle handle, object context)
         {
             System.Exception exception = null;
-            
-            switch (errorCode) {
-            case Win32Native.ERROR_FILE_NOT_FOUND:
-                exception = new IOException(RegistryProviderStrings.Arg_RegKeyNotFound);
-                break;
 
-            case Win32Native.ERROR_INVALID_NAME:
-                exception = new ArgumentException(RegistryProviderStrings.Arg_RegInvalidKeyName);
-                break;
+            switch (errorCode)
+            {
+                case Win32Native.ERROR_FILE_NOT_FOUND:
+                    exception = new IOException(RegistryProviderStrings.Arg_RegKeyNotFound);
+                    break;
 
-            case Win32Native.ERROR_INVALID_HANDLE:
-                exception = new ArgumentException(RegistryProviderStrings.AccessControl_InvalidHandle);
-                break;
+                case Win32Native.ERROR_INVALID_NAME:
+                    exception = new ArgumentException(RegistryProviderStrings.Arg_RegInvalidKeyName);
+                    break;
 
-            default:
-                break;
+                case Win32Native.ERROR_INVALID_HANDLE:
+                    exception = new ArgumentException(RegistryProviderStrings.AccessControl_InvalidHandle);
+                    break;
+
+                default:
+                    break;
             }
 
             return exception;
@@ -287,7 +282,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             return persistRules;
         }
 
-        [SecurityPermission(SecurityAction.Assert, UnmanagedCode=true)]
+        [SecurityPermission(SecurityAction.Assert, UnmanagedCode = true)]
         // Suppressed because the passed keyName won't change.
         [SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity")]
         internal void Persist(SafeRegistryHandle hKey, String keyName)

@@ -11,19 +11,19 @@ using System.Threading;
 using System.Security;
 using System.Diagnostics.CodeAnalysis;
 
-namespace System.Diagnostics.Eventing{
-    
-    public class EventProvider : IDisposable 
+namespace System.Diagnostics.Eventing
+{
+    public class EventProvider : IDisposable
     {
         [SecurityCritical]
-        UnsafeNativeMethods.EtwEnableCallback m_etwCallback;  // Trace Callback function
-        private long m_regHandle;                       // Trace Registration Handle
-        private byte m_level;                            // Tracing Level
-        private long m_anyKeywordMask;                  // Trace Enable Flags
-        private long m_allKeywordMask;                  // Match all keyword
-        private int m_enabled;                           // Enabled flag from Trace callback
-        private Guid m_providerId;                       // Control Guid 
-        private int m_disposed;                          // when 1, provider has unregister
+        private UnsafeNativeMethods.EtwEnableCallback _etwCallback;  // Trace Callback function
+        private long _regHandle;                       // Trace Registration Handle
+        private byte _level;                            // Tracing Level
+        private long _anyKeywordMask;                  // Trace Enable Flags
+        private long _allKeywordMask;                  // Match all keyword
+        private int _enabled;                           // Enabled flag from Trace callback
+        private Guid _providerId;                       // Control Guid 
+        private int _disposed;                          // when 1, provider has unregister
 
         [ThreadStatic]
         private static WriteEventErrorCode t_returnCode; // thread slot to keep last error
@@ -75,8 +75,8 @@ namespace System.Diagnostics.Eventing{
         [SecuritySafeCritical]
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "guid")]
         public EventProvider(Guid providerGuid)
-        {            
-            m_providerId = providerGuid;
+        {
+            _providerId = providerGuid;
 
             //
             // EtwRegister the ProviderId with ETW
@@ -96,14 +96,13 @@ namespace System.Diagnostics.Eventing{
         {
             uint status;
 
-            m_etwCallback = new UnsafeNativeMethods.EtwEnableCallback(EtwEnableCallBack);
-            
-            status = UnsafeNativeMethods.EventRegister(ref m_providerId, m_etwCallback, null, ref m_regHandle);
+            _etwCallback = new UnsafeNativeMethods.EtwEnableCallback(EtwEnableCallBack);
+
+            status = UnsafeNativeMethods.EventRegister(ref _providerId, _etwCallback, null, ref _regHandle);
             if (status != 0)
             {
                 throw new Win32Exception((int)status);
             }
-
         }
 
         //
@@ -131,9 +130,9 @@ namespace System.Diagnostics.Eventing{
             //
             // check if the object has been already disposed
             //
-            if (m_disposed == 1) return;
+            if (_disposed == 1) return;
 
-            if (Interlocked.Exchange(ref m_disposed, 1) != 0)
+            if (Interlocked.Exchange(ref _disposed, 1) != 0)
             {
                 // somebody is allready disposing the provider
                 return;
@@ -143,7 +142,7 @@ namespace System.Diagnostics.Eventing{
             // Disables Tracing in the provider, then unregister
             // 
 
-            m_enabled = 0;
+            _enabled = 0;
 
             Deregister();
         }
@@ -173,15 +172,15 @@ namespace System.Diagnostics.Eventing{
             // the register call.
             //
 
-            if (m_regHandle != 0)
+            if (_regHandle != 0)
             {
-                UnsafeNativeMethods.EventUnregister(m_regHandle);
-                m_regHandle = 0;
+                UnsafeNativeMethods.EventUnregister(_regHandle);
+                _regHandle = 0;
             }
         }
 
         [System.Security.SecurityCritical]
-        unsafe void EtwEnableCallBack(
+        private unsafe void EtwEnableCallBack(
                         [In] ref System.Guid sourceId,
                         [In] int isEnabled,
                         [In] byte setLevel,
@@ -191,11 +190,10 @@ namespace System.Diagnostics.Eventing{
                         [In] void* callbackContext
                         )
         {
-
-            m_enabled = isEnabled;
-            m_level = setLevel;
-            m_anyKeywordMask = anyKeyword;
-            m_allKeywordMask = allKeyword;
+            _enabled = isEnabled;
+            _level = setLevel;
+            _anyKeywordMask = anyKeyword;
+            _allKeywordMask = allKeyword;
             return;
         }
 
@@ -204,7 +202,7 @@ namespace System.Diagnostics.Eventing{
         /// </summary>
         public bool IsEnabled()
         {
-            return (m_enabled != 0) ? true : false;
+            return (_enabled != 0) ? true : false;
         }
 
         /// <summary>
@@ -218,28 +216,26 @@ namespace System.Diagnostics.Eventing{
         /// </param>
         public bool IsEnabled(byte level, long keywords)
         {
-
             //
             // If not enabled at all, return false.
             //
 
-            if (m_enabled == 0)
+            if (_enabled == 0)
             {
                 return false;
             }
 
             // This also covers the case of Level == 0.
-            if ((level <= m_level) || 
-                (m_level == 0))
+            if ((level <= _level) ||
+                (_level == 0))
             {
-
                 //
                 // Check if Keyword is enabled
                 //
 
                 if ((keywords == 0) ||
-                    (((keywords & m_anyKeywordMask) != 0) &&
-                     ((keywords & m_allKeywordMask) == m_allKeywordMask)))
+                    (((keywords & _anyKeywordMask) != 0) &&
+                     ((keywords & _allKeywordMask) == _allKeywordMask)))
                 {
                     return true;
                 }
@@ -251,12 +247,13 @@ namespace System.Diagnostics.Eventing{
         public static WriteEventErrorCode GetLastWriteEventError()
         {
             return t_returnCode;
-        } 
+        }
 
         //
         // Helper function to set the last error on the thread
         //
-        private static void SetLastError(int error){
+        private static void SetLastError(int error)
+        {
             switch (error)
             {
                 case UnsafeNativeMethods.ERROR_ARITHMETIC_OVERFLOW:
@@ -465,7 +462,7 @@ namespace System.Diagnostics.Eventing{
                 {
                     fixed (char* pdata = eventMessage)
                     {
-                        status = (int)UnsafeNativeMethods.EventWriteString(m_regHandle, eventLevel, eventKeywords, pdata);
+                        status = (int)UnsafeNativeMethods.EventWriteString(_regHandle, eventLevel, eventKeywords, pdata);
                     }
 
                     if (status != 0)
@@ -499,9 +496,9 @@ namespace System.Diagnostics.Eventing{
         /// </param>
         /// <param name="eventPayload">
         /// </param>
-        public bool WriteEvent(ref EventDescriptor eventDescriptor, params  object[] eventPayload)
+        public bool WriteEvent(ref EventDescriptor eventDescriptor, params object[] eventPayload)
         {
-            return WriteTransferEvent(ref eventDescriptor, Guid.Empty, eventPayload);            
+            return WriteTransferEvent(ref eventDescriptor, Guid.Empty, eventPayload);
         }
 
         /// <summary>
@@ -528,13 +525,13 @@ namespace System.Diagnostics.Eventing{
             {
                 if (data.Length > s_traceEventMaximumStringSize)
                 {
-                    t_returnCode = WriteEventErrorCode.EventTooBig; 
+                    t_returnCode = WriteEventErrorCode.EventTooBig;
                     return false;
                 }
 
                 EventData userData;
 
-                userData.Size = (uint)((data.Length +1)* 2);
+                userData.Size = (uint)((data.Length + 1) * 2);
                 userData.Reserved = 0;
 
                 unsafe
@@ -544,7 +541,7 @@ namespace System.Diagnostics.Eventing{
                         Guid activityId = GetActivityId();
                         userData.DataPointer = (ulong)pdata;
 
-                        status = UnsafeNativeMethods.EventWriteTransfer(m_regHandle,
+                        status = UnsafeNativeMethods.EventWriteTransfer(_regHandle,
                                                                         ref eventDescriptor,
                                                                         (activityId == Guid.Empty) ? null : &activityId,
                                                                         null,
@@ -584,7 +581,7 @@ namespace System.Diagnostics.Eventing{
                 Guid activityId = GetActivityId();
 
                 status = UnsafeNativeMethods.EventWriteTransfer(
-                                    m_regHandle,
+                                    _regHandle,
                                     ref eventDescriptor,
                                     (activityId == Guid.Empty) ? null : &activityId,
                                     null,
@@ -598,7 +595,6 @@ namespace System.Diagnostics.Eventing{
                 return false;
             }
             return true;
-
         }
 
 
@@ -625,7 +621,7 @@ namespace System.Diagnostics.Eventing{
                 {
                     int argCount = 0;
                     EventData* userDataPtr = null;
-                    
+
                     if ((eventPayload != null) && (eventPayload.Length != 0))
                     {
                         argCount = eventPayload.Length;
@@ -655,7 +651,7 @@ namespace System.Diagnostics.Eventing{
                         // size value set in EncodeObjec method.
                         //
                         for (index = 0; index < eventPayload.Length; index++)
-                        {                            
+                        {
                             string isString;
                             isString = EncodeObject(ref eventPayload[index], userDataPtr, currentBuffer);
                             currentBuffer += s_basicTypeAllocationBufferSize;
@@ -674,7 +670,7 @@ namespace System.Diagnostics.Eventing{
                                     throw new ArgumentOutOfRangeException("eventPayload",
                                         string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_MaxStringsExceeded, s_etwAPIMaxStringCount));
                                 }
-                             }
+                            }
                         }
 
                         if (totalEventSize > s_traceEventMaximumSize)
@@ -722,7 +718,7 @@ namespace System.Diagnostics.Eventing{
                         }
                     }
 
-                    status = UnsafeNativeMethods.EventWriteTransfer(m_regHandle,
+                    status = UnsafeNativeMethods.EventWriteTransfer(_regHandle,
                                                                     ref eventDescriptor,
                                                                     (activityId == Guid.Empty) ? null : &activityId,
                                                                     (relatedActivityId == Guid.Empty) ? null : &relatedActivityId,
@@ -743,17 +739,17 @@ namespace System.Diagnostics.Eventing{
         protected bool WriteTransferEvent(ref EventDescriptor eventDescriptor, Guid relatedActivityId, int dataCount, IntPtr data)
         {
             uint status = 0;
-            
-            Guid activityId = GetActivityId();         
-            
+
+            Guid activityId = GetActivityId();
+
             unsafe
-            {                
+            {
                 status = UnsafeNativeMethods.EventWriteTransfer(
-                                                m_regHandle, 
+                                                _regHandle,
                                                 ref eventDescriptor,
-                                                (activityId == Guid.Empty) ? null : &activityId, 
-                                                &relatedActivityId, 
-                                                (uint)dataCount, 
+                                                (activityId == Guid.Empty) ? null : &activityId,
+                                                &relatedActivityId,
+                                                (uint)dataCount,
                                                 (void*)data);
             }
 
@@ -767,7 +763,7 @@ namespace System.Diagnostics.Eventing{
 
         [System.Security.SecurityCritical]
         private static Guid GetActivityId()
-        {                        
+        {
             return t_activityId;
         }
 
