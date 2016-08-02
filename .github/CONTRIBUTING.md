@@ -234,18 +234,6 @@ is also appropriate, as is using Markdown syntax.
   Before you invest a large amount of time,
   file an issue and start a discussion with the community.
 
-File Headers
-------------
-
-The following file header is used for all PowerShell code.
-Please use it for new files.
-For more information, see [coding guidelines](../docs/dev-process/coding-guidelines.md).
-
-```C#
-// The PowerShell licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-```
-
 Contributor License Agreement (CLA)
 -----------------------------------
 
