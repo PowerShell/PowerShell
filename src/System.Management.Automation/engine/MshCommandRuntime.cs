@@ -2841,7 +2841,7 @@ namespace System.Management.Automation
         /// but the command failure will ultimately be
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
-        internal void _WriteErrorSkipAllowCheck(ErrorRecord errorRecord, ActionPreference? actionPreference = null)
+        internal void _WriteErrorSkipAllowCheck(ErrorRecord errorRecord, ActionPreference? actionPreference = null, bool isNativeError = false)
         {
             ThrowIfStopping();
 
@@ -2923,7 +2923,9 @@ namespace System.Management.Automation
             PSObject errorWrap = PSObject.AsPSObject(errorRecord);
             // It's possible we've already added the member (this method is recursive sometimes
             // when tracing), so don't add the member again.
-            if (errorWrap.Members["writeErrorStream"] == null)
+
+            // We don't add a note property on messages that comes from stderr stream.
+            if (!isNativeError && errorWrap.Members["writeErrorStream"] == null)
             {
                 PSNoteProperty note = new PSNoteProperty("writeErrorStream", true);
                 errorWrap.Properties.Add(note);

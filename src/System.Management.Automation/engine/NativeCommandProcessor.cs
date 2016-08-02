@@ -947,7 +947,7 @@ namespace System.Management.Automation
                     ErrorRecord record = outputValue.Data as ErrorRecord;
                     Dbg.Assert(record != null, "ProcessReader should ensure that data is ErrorRecord");
                     record.SetInvocationInfo(this.Command.MyInvocation);
-                    this.commandRuntime._WriteErrorSkipAllowCheck(record);
+                    this.commandRuntime._WriteErrorSkipAllowCheck(record, isNativeError: true);
                 }
                 else if (outputValue.Stream == MinishellStream.Output)
                 {
@@ -1880,17 +1880,11 @@ namespace System.Management.Automation
                 //
                 // Wrap the rest of the output in ErrorRecords with the "NativeCommandErrorMessage" error ID
                 //
-                char[] buffer = new char[4096];
-
-                int read = 0;
-
-                while ((read = _streamReader.Read(buffer, 0, buffer.Length)) != 0)
+                while ((line = _streamReader.ReadLine()) != null)
                 {
-                    StringBuilder errorMessage = new StringBuilder().Append(buffer, 0, read);
-
                     AddObjectToWriter(
                         new ErrorRecord(
-                            new RemoteException(errorMessage.ToString()),
+                            new RemoteException(line),
                             "NativeCommandErrorMessage",
                             ErrorCategory.NotSpecified,
                             null),
