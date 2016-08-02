@@ -74,12 +74,12 @@ What I can do with the produced binaries?
 Creating a deployable package out of them is **not a supported scenario**.
 
 The reason why we are building these binaries is
-we have components (i.e. workflows) that are not currently available in the CoreClr version.
-We want to make sure that CoreClr PowerShell changes don't introduce regressions in FullClr PowerShelll.
+we have components (i.e. workflows) that are not currently available in the CoreCLR version.
+We want to make sure that CoreCLR PowerShell changes don't introduce regressions in FullCLR PowerShell.
 
 It's possible to run (for test purposes) the dev version of these binaries as follows.
 
-Running Dev version of FullClr PowerShell
+Running Dev version of FullCLR PowerShell
 -----------------------------------------
 
 Running FullCLR version is not as simple as CoreCLR version.
@@ -89,7 +89,7 @@ process, but all the interesting DLLs (such as
 `System.Management.Automation.dll`) would be loaded from the Global
 Assembly Cache (GAC), not your output directory.
 
-Use `Start-DevPowerShell` helper funciton, to workaround it with `$env:DEVPATH`
+Use `Start-DevPowerShell` helper function to workaround it with `$env:DEVPATH`
 
 ```powershell
 Start-DevPowerShell -FullCLR
