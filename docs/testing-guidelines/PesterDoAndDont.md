@@ -25,6 +25,7 @@
     2. Avoid using COM
 14. Avoid being too specific about the _count_ of a resource as these can change platform to platform
     1. ex: checking for the count of loaded format files, check rather for format data for a specific type
+
 ## Don't
 1. Don't have too many evaluations in a single It block
 	1. The first `Should` failure will stop that block
