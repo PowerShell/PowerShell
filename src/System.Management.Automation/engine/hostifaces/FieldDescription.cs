@@ -57,7 +57,7 @@ namespace System.Management.Automation.Host
                 throw PSTraceSource.NewArgumentException("name", DescriptionsStrings.NullOrEmptyErrorTemplate, "name");
             }
 
-            _name = name;
+            Name = name;
         }
 
         /// <summary>
@@ -68,19 +68,9 @@ namespace System.Management.Automation.Host
         { }
 
         /// <summary>
-        /// 
         /// Gets the name of the field.
-        ///  
         /// </summary>
-
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-        }
-
+        public string Name { get; } = null;
 
 
         /// <summary>
@@ -316,17 +306,7 @@ namespace System.Management.Automation.Host
 
         public
         bool
-        IsMandatory
-        {
-            get
-            {
-                return _isMandatory;
-            }
-            set
-            {
-                _isMandatory = value;
-            }
-        }
+        IsMandatory { get; set; } = true;
 
         /// <summary>
         /// 
@@ -344,21 +324,7 @@ namespace System.Management.Automation.Host
 
         public
         PSObject
-        DefaultValue
-        {
-            get
-            {
-                return _defaultValue;
-            }
-
-            set
-            {
-                // null is allowed.
-
-                _defaultValue = value;
-            }
-        }
-
+        DefaultValue { get; set; } = null;
 
 
         /// <summary>
@@ -469,17 +435,7 @@ namespace System.Management.Automation.Host
         /// determine if this field description was
         /// modified by the remoting protocol layer 
         /// and take appropriate actions</remarks>
-        internal bool ModifiedByRemotingProtocol
-        {
-            get
-            {
-                return _modifiedByRemotingProtocol;
-            }
-            set
-            {
-                _modifiedByRemotingProtocol = value;
-            }
-        }
+        internal bool ModifiedByRemotingProtocol { get; set; } = false;
 
         /// <summary>
         /// Indicates if this field description 
@@ -489,33 +445,18 @@ namespace System.Management.Automation.Host
         /// not cast strings to an arbitrary type,
         /// but let the server-side do the type conversion
         /// </remarks>
-        internal bool IsFromRemoteHost
-        {
-            get
-            {
-                return _isFromRemoteHost;
-            }
-            set
-            {
-                _isFromRemoteHost = value;
-            }
-        }
+        internal bool IsFromRemoteHost { get; set; } = false;
 
         #region Helper
         #endregion Helper
 
-        private readonly string _name = null;
         private string _label = "";
         private string _parameterTypeName = null;
         private string _parameterTypeFullName = null;
         private string _parameterAssemblyFullName = null;
         private string _helpMessage = "";
-        private bool _isMandatory = true;
 
-        private PSObject _defaultValue = null;
         private Collection<Attribute> _metadata = new Collection<Attribute>();
-        private bool _modifiedByRemotingProtocol = false;
-        private bool _isFromRemoteHost = false;
     }
 }
 

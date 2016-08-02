@@ -68,17 +68,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Default depth of serialization
-        /// </summary>
-        private static int s_mshDefaultSerializationDepth = 1;
-
-        /// <summary>
         /// Default depth of serializaiton
         /// </summary>
-        public static int MshDefaultSerializationDepth
-        {
-            get { return s_mshDefaultSerializationDepth; }
-        }
+        public static int MshDefaultSerializationDepth { get; } = 1;
+
         /// <summary>
         /// Constructor
         /// </summary>

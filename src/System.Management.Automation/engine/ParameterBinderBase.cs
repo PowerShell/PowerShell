@@ -1991,8 +1991,6 @@ namespace System.Management.Automation
 
         // Private member for Value.
 
-        private static readonly object s_singletonValue = new object();
-
         #endregion private_members
 
         #region public_property
@@ -2000,7 +1998,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Represents an object of the same class (singleton class).
         /// </summary>
-        internal static object Value { get { return s_singletonValue; } }
+        internal static object Value { get; } = new object();
 
         #endregion public_property
     }

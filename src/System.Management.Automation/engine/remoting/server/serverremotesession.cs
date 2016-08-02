@@ -29,10 +29,6 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal class ServerRemoteSessionContext
     {
-        private RemoteSessionCapability _clientCapability;
-        private RemoteSessionCapability _serverCapability;
-        private bool _isNegotiationSucceeded;
-
         #region Constructors
 
         /// <summary>
@@ -41,7 +37,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal ServerRemoteSessionContext()
         {
-            _serverCapability = RemoteSessionCapability.CreateServerCapability();
+            ServerCapability = RemoteSessionCapability.CreateServerCapability();
         }
 
         #endregion Constructors
@@ -49,42 +45,18 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// This property represents the capability that the server receives from the client.
         /// </summary>
-        internal RemoteSessionCapability ClientCapability
-        {
-            get
-            {
-                return _clientCapability;
-            }
-            set
-            {
-                _clientCapability = value;
-            }
-        }
+        internal RemoteSessionCapability ClientCapability { get; set; }
 
         /// <summary>
         /// This property is the server capability generated on the server side.
         /// </summary>
-        internal RemoteSessionCapability ServerCapability
-        {
-            get
-            {
-                return _serverCapability;
-            }
-            set
-            {
-                _serverCapability = value;
-            }
-        }
+        internal RemoteSessionCapability ServerCapability { get; set; }
 
         /// <summary>
         /// True if negotiation from client is succeeded...in which case ClienCapability
         /// is the capability that server agreed with.
         /// </summary>
-        internal bool IsNegotiationSucceeded
-        {
-            get { return _isNegotiationSucceeded; }
-            set { _isNegotiationSucceeded = value; }
-        }
+        internal bool IsNegotiationSucceeded { get; set; }
     }
 
     /// <summary>
@@ -103,8 +75,6 @@ namespace System.Management.Automation.Remoting
         [TraceSourceAttribute("ServerRemoteSession", "ServerRemoteSession")]
         static private PSTraceSource s_trace = PSTraceSource.GetTracer("ServerRemoteSession", "ServerRemoteSession");
 
-        private ServerRemoteSessionContext _context;
-        private ServerRemoteSessionDataStructureHandler _sessionDSHandler;
         private PSSenderInfo _senderInfo;
         private string _configProviderId;
         private string _initParameters;
@@ -168,13 +138,13 @@ namespace System.Management.Automation.Remoting
                 _cryptoHelper.Session = this;
             }
 
-            _context = new ServerRemoteSessionContext();
-            _sessionDSHandler = new ServerRemoteSessionDSHandlerlImpl(this, transportManager);
-            BaseSessionDataStructureHandler = _sessionDSHandler;
-            _sessionDSHandler.CreateRunspacePoolReceived += HandleCreateRunspacePool;
-            _sessionDSHandler.NegotiationReceived += HandleNegotiationReceived;
-            _sessionDSHandler.SessionClosing += HandleSessionDSHandlerClosing;
-            _sessionDSHandler.PublicKeyReceived +=
+            Context = new ServerRemoteSessionContext();
+            SessionDataStructureHandler = new ServerRemoteSessionDSHandlerlImpl(this, transportManager);
+            BaseSessionDataStructureHandler = SessionDataStructureHandler;
+            SessionDataStructureHandler.CreateRunspacePoolReceived += HandleCreateRunspacePool;
+            SessionDataStructureHandler.NegotiationReceived += HandleNegotiationReceived;
+            SessionDataStructureHandler.SessionClosing += HandleSessionDSHandlerClosing;
+            SessionDataStructureHandler.PublicKeyReceived +=
                 new EventHandler<RemoteDataEventArgs<string>>(HandlePublicKeyReceived);
             transportManager.Closing += HandleResourceClosing;
 
@@ -246,7 +216,7 @@ namespace System.Management.Automation.Remoting
 
             // start state machine.
             RemoteSessionStateMachineEventArgs startEventArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.CreateSession);
-            result._sessionDSHandler.StateMachine.RaiseEvent(startEventArg);
+            result.SessionDataStructureHandler.StateMachine.RaiseEvent(startEventArg);
 
             return result;
         }
@@ -364,15 +334,15 @@ namespace System.Management.Automation.Remoting
                                 break;
 
                             case RemotingDataType.CloseSession:
-                                _sessionDSHandler.RaiseDataReceivedEvent(dataEventArg);
+                                SessionDataStructureHandler.RaiseDataReceivedEvent(dataEventArg);
                                 break;
 
                             case RemotingDataType.SessionCapability:
-                                _sessionDSHandler.RaiseDataReceivedEvent(dataEventArg);
+                                SessionDataStructureHandler.RaiseDataReceivedEvent(dataEventArg);
                                 break;
 
                             case RemotingDataType.PublicKey:
-                                _sessionDSHandler.RaiseDataReceivedEvent(dataEventArg);
+                                SessionDataStructureHandler.RaiseDataReceivedEvent(dataEventArg);
                                 break;
 
                             default:
@@ -495,25 +465,13 @@ namespace System.Management.Automation.Remoting
         /// This property returns the ServerRemoteSessionContext object created inside
         /// this object's contructor.
         /// </summary>
-        internal ServerRemoteSessionContext Context
-        {
-            get
-            {
-                return _context;
-            }
-        }
+        internal ServerRemoteSessionContext Context { get; }
 
         /// <summary>
         /// This property returns the ServerRemoteSessionDataStructureHandler object created inside
         /// this object's contructor.
         /// </summary>
-        internal ServerRemoteSessionDataStructureHandler SessionDataStructureHandler
-        {
-            get
-            {
-                return _sessionDSHandler;
-            }
-        }
+        internal ServerRemoteSessionDataStructureHandler SessionDataStructureHandler { get; }
 
         #endregion
 
@@ -716,7 +674,7 @@ namespace System.Management.Automation.Remoting
 
             // all client messages are validated
             // now build up the server capabilites and connect response messages to be piggybacked on connect response
-            RemoteDataObject capability = RemotingEncoder.GenerateServerSessionCapability(_context.ServerCapability, _runspacePoolDriver.InstanceId);
+            RemoteDataObject capability = RemotingEncoder.GenerateServerSessionCapability(Context.ServerCapability, _runspacePoolDriver.InstanceId);
             RemoteDataObject runspacepoolInitData = RemotingEncoder.GenerateRunspacePoolInitData(_runspacePoolDriver.InstanceId,
                                                                                                _runspacePoolDriver.RunspacePool.GetMaxRunspaces(),
                                                                                                _runspacePoolDriver.RunspacePool.GetMinRunspaces());
@@ -744,7 +702,7 @@ namespace System.Management.Automation.Remoting
                 delegate (object state)
                 {
                     RemoteSessionStateMachineEventArgs startEventArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.ConnectSession);
-                    _sessionDSHandler.StateMachine.RaiseEvent(startEventArg);
+                    SessionDataStructureHandler.StateMachine.RaiseEvent(startEventArg);
                 }));
 
             _runspacePoolDriver.DataStructureHandler.ProcessConnect();
@@ -780,10 +738,10 @@ namespace System.Management.Automation.Remoting
 
             // set the PSSenderInfo sent in the first packets
             // This is used by the initial session state configuration providers like Exchange.
-            if (_context != null)
+            if (Context != null)
             {
 #if !CORECLR // TimeZone Not In CoreCLR
-                _senderInfo.ClientTimeZone = _context.ClientCapability.TimeZone;
+                _senderInfo.ClientTimeZone = Context.ClientCapability.TimeZone;
 #endif
             }
 
@@ -889,7 +847,7 @@ namespace System.Management.Automation.Remoting
                 _maxRecvdObjectSize = _sessionConfigProvider.GetMaximumReceivedObjectSize(_senderInfo);
                 _maxRecvdDataSizeCommand = _sessionConfigProvider.GetMaximumReceivedDataSizePerCommand(_senderInfo);
             }
-            _sessionDSHandler.TransportManager.ReceivedDataCollection.MaximumReceivedObjectSize = _maxRecvdObjectSize;
+            SessionDataStructureHandler.TransportManager.ReceivedDataCollection.MaximumReceivedObjectSize = _maxRecvdObjectSize;
             // MaximumReceivedDataSize is not set for session transport manager...see the constructor
             // for more info.
 
@@ -924,7 +882,7 @@ namespace System.Management.Automation.Remoting
                 configurationData,
                 this.SessionDataStructureHandler.TransportManager,
                 isAdministrator,
-                _context.ServerCapability,
+                Context.ServerCapability,
                 psClientVersion,
                 _configurationName);
 
@@ -955,18 +913,18 @@ namespace System.Management.Automation.Remoting
 
             try
             {
-                _context.ClientCapability = negotiationEventArg.RemoteSessionCapability;
+                Context.ClientCapability = negotiationEventArg.RemoteSessionCapability;
                 // This will throw if there is an error running the algorithm
                 RunServerNegotiationAlgorithm(negotiationEventArg.RemoteSessionCapability, false);
 
                 // Send server's capability to client.
                 RemoteSessionStateMachineEventArgs sendingNegotiationArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationSending);
-                _sessionDSHandler.StateMachine.RaiseEvent(sendingNegotiationArg);
+                SessionDataStructureHandler.StateMachine.RaiseEvent(sendingNegotiationArg);
 
                 // if negotiation succeeded change the state to neg. completed.
                 RemoteSessionStateMachineEventArgs negotiationCompletedArg =
                     new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationCompleted);
-                _sessionDSHandler.StateMachine.RaiseEvent(negotiationCompletedArg);
+                SessionDataStructureHandler.StateMachine.RaiseEvent(negotiationCompletedArg);
             }
             catch (PSRemotingDataStructureException dse)
             {
@@ -974,12 +932,12 @@ namespace System.Management.Automation.Remoting
                 // way client can communicate differently if it wants to.
                 RemoteSessionStateMachineEventArgs sendingNegotiationArg =
                     new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationSending);
-                _sessionDSHandler.StateMachine.RaiseEvent(sendingNegotiationArg);
+                SessionDataStructureHandler.StateMachine.RaiseEvent(sendingNegotiationArg);
 
                 RemoteSessionStateMachineEventArgs negotiationFailedArg =
                     new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationFailed,
                         dse);
-                _sessionDSHandler.StateMachine.RaiseEvent(negotiationFailedArg);
+                SessionDataStructureHandler.StateMachine.RaiseEvent(negotiationFailedArg);
             }
         }
 
@@ -1014,7 +972,7 @@ namespace System.Management.Automation.Remoting
         {
             RemoteSessionStateMachineEventArgs closeSessionArgs = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.Close);
             closeSessionArgs.RemoteData = null;
-            _sessionDSHandler.StateMachine.RaiseEvent(closeSessionArgs);
+            SessionDataStructureHandler.StateMachine.RaiseEvent(closeSessionArgs);
         }
 
         /// <summary>
@@ -1041,7 +999,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(clientCapability != null, "Client capability cache must be non-null");
 
             Version clientProtocolVersion = clientCapability.ProtocolVersion;
-            Version serverProtocolVersion = _context.ServerCapability.ProtocolVersion;
+            Version serverProtocolVersion = Context.ServerCapability.ProtocolVersion;
 
             if (onConnect)
             {
@@ -1059,7 +1017,7 @@ namespace System.Management.Automation.Remoting
                         // Protocol: 2.2
                         connectSupported = true;
                         serverProtocolVersion = RemotingConstants.ProtocolVersionWin8RTM;
-                        _context.ServerCapability.ProtocolVersion = serverProtocolVersion;
+                        Context.ServerCapability.ProtocolVersion = serverProtocolVersion;
                     }
                     else if (clientProtocolVersion.Minor > RemotingConstants.ProtocolVersionWin8RTM.Minor)
                     {
@@ -1092,7 +1050,7 @@ namespace System.Management.Automation.Remoting
                 {
                     // - report that server is Win8 version to the client
                     serverProtocolVersion = RemotingConstants.ProtocolVersionWin8RTM;
-                    _context.ServerCapability.ProtocolVersion = serverProtocolVersion;
+                    Context.ServerCapability.ProtocolVersion = serverProtocolVersion;
                 }
 
                 // Win8, Win10 server can support Win7 client
@@ -1104,7 +1062,7 @@ namespace System.Management.Automation.Remoting
                 {
                     // - report that server is Win7 version to the client
                     serverProtocolVersion = RemotingConstants.ProtocolVersionWin7RTM;
-                    _context.ServerCapability.ProtocolVersion = serverProtocolVersion;
+                    Context.ServerCapability.ProtocolVersion = serverProtocolVersion;
                 }
 
                 // Win7, Win8, Win10 server can support Win7 RC client
@@ -1117,7 +1075,7 @@ namespace System.Management.Automation.Remoting
                 {
                     // - report that server is RC version to the client
                     serverProtocolVersion = RemotingConstants.ProtocolVersionWin7RC;
-                    _context.ServerCapability.ProtocolVersion = serverProtocolVersion;
+                    Context.ServerCapability.ProtocolVersion = serverProtocolVersion;
                 }
 
                 if (!((clientProtocolVersion.Major == serverProtocolVersion.Major) &&
@@ -1135,7 +1093,7 @@ namespace System.Management.Automation.Remoting
 
             // PSVersion Check
             Version clientPSVersion = clientCapability.PSVersion;
-            Version serverPSVersion = _context.ServerCapability.PSVersion;
+            Version serverPSVersion = Context.ServerCapability.PSVersion;
             if (!((clientPSVersion.Major == serverPSVersion.Major) &&
                   (clientPSVersion.Minor >= serverPSVersion.Minor)))
             {
@@ -1150,7 +1108,7 @@ namespace System.Management.Automation.Remoting
 
             // SerializationVersion check
             Version clientSerVersion = clientCapability.SerializationVersion;
-            Version serverSerVersion = _context.ServerCapability.SerializationVersion;
+            Version serverSerVersion = Context.ServerCapability.SerializationVersion;
             if (!((clientSerVersion.Major == serverSerVersion.Major) &&
                   (clientSerVersion.Minor >= serverSerVersion.Minor)))
             {

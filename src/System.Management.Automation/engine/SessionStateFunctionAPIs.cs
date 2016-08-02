@@ -128,33 +128,14 @@ namespace System.Management.Automation
         /// <summary>
         /// List of functions/filters to export from this session state object...
         /// </summary>
-        internal List<FunctionInfo> ExportedFunctions
-        {
-            get
-            {
-                return _exportedFunctions;
-            }
-        }
-        private List<FunctionInfo> _exportedFunctions = new List<FunctionInfo>();
+        internal List<FunctionInfo> ExportedFunctions { get; } = new List<FunctionInfo>();
 
         /// <summary>
         /// List of workflows to export from this session state object...
         /// </summary>
-        internal List<WorkflowInfo> ExportedWorkflows
-        {
-            get
-            {
-                return _exportedWorkflows;
-            }
-        }
-        private List<WorkflowInfo> _exportedWorkflows = new List<WorkflowInfo>();
+        internal List<WorkflowInfo> ExportedWorkflows { get; } = new List<WorkflowInfo>();
 
-        internal bool UseExportList
-        {
-            get { return _useExportList; }
-            set { _useExportList = value; }
-        }
-        private bool _useExportList = false;
+        internal bool UseExportList { get; set; } = false;
 
         /// <summary>
         /// Get a functions out of session state.

@@ -24,18 +24,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath")]
-        public string[] Path
-        {
-            get
-            {
-                return _paths;
-            } // get
-
-            set
-            {
-                _paths = value;
-            } // set
-        } // Path
+        public string[] Path { get; set; }
 
         /// <summary>
         /// Gets or sets the childPath parameter to the command
@@ -43,57 +32,16 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [AllowNull]
         [AllowEmptyString]
-        public string ChildPath
-        {
-            get
-            {
-                return _childPath;
-            } // get
-
-            set
-            {
-                _childPath = value;
-            } // set
-        } // childPath
+        public string ChildPath { get; set; } = String.Empty;
 
         /// <summary>
         /// Determines if the path should be resolved after being joined
         /// </summary>
         /// <value></value>
         [Parameter]
-        public SwitchParameter Resolve
-        {
-            get
-            {
-                return _resolve;
-            } // get
-
-            set
-            {
-                _resolve = value;
-            } //set
-        } // Resolve
+        public SwitchParameter Resolve { get; set; }
 
         #endregion Parameters
-
-        #region parameter data
-
-        /// <summary>
-        /// The path to resolve
-        /// </summary>
-        private string[] _paths;
-
-        /// <summary>
-        /// The child part of the path to be joined with the Path paramter
-        /// </summary>
-        private string _childPath = String.Empty;
-
-        /// <summary>
-        /// Determines if the path should be resolved after being joined.
-        /// </summary>
-        private bool _resolve;
-
-        #endregion parameter data
 
         #region Command code
 
@@ -104,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             Dbg.Diagnostics.Assert(
-                _paths != null,
+                Path != null,
                 "Since Path is a mandatory parameter, paths should never be null");
 
             foreach (string path in Path)

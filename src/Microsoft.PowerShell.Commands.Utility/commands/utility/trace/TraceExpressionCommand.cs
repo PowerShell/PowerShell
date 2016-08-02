@@ -27,12 +27,7 @@ namespace Microsoft.PowerShell.Commands
         /// This parameter specifies the current pipeline object 
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject
-        {
-            set { _inputObject = value; }
-            get { return _inputObject; }
-        }
-        private PSObject _inputObject = AutomationNull.Value;
+        public PSObject InputObject { set; get; } = AutomationNull.Value;
 
         /// <summary>
         /// The TraceSource parameter determines which TraceSource categories the
@@ -65,24 +60,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(Position = 1, Mandatory = true, ParameterSetName = "expressionSet")]
-        public ScriptBlock Expression
-        {
-            get { return _expression; }
-            set { _expression = value; }
-        }
-        private ScriptBlock _expression;
+        public ScriptBlock Expression { get; set; }
 
         /// <summary>
         /// The parameter for the expression that should be traced.
         /// </summary>
         /// <value></value>
         [Parameter(Position = 1, Mandatory = true, ParameterSetName = "commandSet")]
-        public string Command
-        {
-            get { return _command; }
-            set { _command = value; }
-        }
-        private string _command;
+        public string Command { get; set; }
 
         /// <summary>
         /// When set, this parameter is the arguments to pass to the command specified by
@@ -90,12 +75,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "commandSet", ValueFromRemainingArguments = true)]
         [Alias("Args")]
-        public object[] ArgumentList
-        {
-            get { return _commandArgs; }
-            set { _commandArgs = value; }
-        }
-        private object[] _commandArgs;
+        public object[] ArgumentList { get; set; }
 
         /// <summary>
         /// The parameter which determines the options for output from the
@@ -190,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
                 // Create the CommmandProcessor and add it to a pipeline
 
                 CommandProcessorBase commandProcessor =
-                    this.Context.CommandDiscovery.LookupCommandProcessor(_command, CommandOrigin.Runspace, false);
+                    this.Context.CommandDiscovery.LookupCommandProcessor(Command, CommandOrigin.Runspace, false);
 
                 // Add the parameters that were specified
 
@@ -278,7 +258,7 @@ namespace Microsoft.PowerShell.Commands
 
         private object RunExpression()
         {
-            return _expression.DoInvokeReturnAsIs(
+            return Expression.DoInvokeReturnAsIs(
                 useLocalScope: false,
                 errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                 dollarUnder: InputObject,

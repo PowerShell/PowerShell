@@ -1246,20 +1246,12 @@ namespace System.Management.Automation
 
         #region Error handling
 
-        private Collection<ErrorRecord> _errors = new Collection<ErrorRecord>();
-
         /// <summary>
         /// This is for tracking the set of errors happened during the parsing of 
         /// maml text.
         /// </summary>
         /// <value></value>
-        internal Collection<ErrorRecord> Errors
-        {
-            get
-            {
-                return _errors;
-            }
-        }
+        internal Collection<ErrorRecord> Errors { get; } = new Collection<ErrorRecord>();
 
         #endregion
     }

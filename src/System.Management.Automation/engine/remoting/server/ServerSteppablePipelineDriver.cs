@@ -64,38 +64,23 @@ namespace System.Management.Automation
     {
         #region Private Data
 
-        private PowerShell _localPowerShell;
-        private Guid _clientPowerShellId;        // the client PowerShell's guid 
         // that is associated with this
         // powershell driver
-        private Guid _clientRunspacePoolId;      // the id of the client runspace pool
         // associated with this powershell
-        private ServerPowerShellDataStructureHandler _dsHandler;
         // data structure handler object to handle all
         // communications with the client
-        private PSDataCollection<object> _input; // input for local powershell invocation
-        private IEnumerator<object> _inputEnumerator;
         //private bool datasent = false;          // if the remaining data has been sent
         // to the client before sending state
         // information
-        private object _syncObject = new object(); // sync object for synchronizing sending
         // data to client
-        private bool _noInput;                   // there is no input when this driver 
         // was created
         private bool _addToHistory;
-        private ServerRemoteHost _remoteHost;   // the server remote host instance
-                                                // associated with this powershell
+        // associated with this powershell
 #if !CORECLR // No ApartmentState In CoreCLR       
         private ApartmentState apartmentState;  // apartment state for this powershell
 #endif
-        private RemoteStreamOptions _remoteStreamOptions;  // serialization options for the streams in this powershell
 
-        private int _totalObjectsProcessedSoFar;
         // pipeline that runs the actual command.
-        private SteppablePipeline _steppablePipeline;
-        private bool _isProcessingInput;
-        private bool _isPulsed;
-        private PSInvocationState _stateOfSteppablePipeline;
         private ServerSteppablePipelineSubscriber _eventSubscriber;
         private PSDataCollection<object> _powershellInput; // input collection of the PowerShell pipeline
 
@@ -162,32 +147,32 @@ namespace System.Management.Automation
             bool addToHistory, Runspace rsToUse, ServerSteppablePipelineSubscriber eventSubscriber, PSDataCollection<object> powershellInput)
 #endif
         {
-            _localPowerShell = powershell;
-            _clientPowerShellId = clientPowerShellId;
-            _clientRunspacePoolId = clientRunspacePoolId;
-            _remoteStreamOptions = streamOptions;
+            LocalPowerShell = powershell;
+            InstanceId = clientPowerShellId;
+            RunspacePoolId = clientRunspacePoolId;
+            RemoteStreamOptions = streamOptions;
 #if !CORECLR // No ApartmentState In CoreCLR
             this.apartmentState = apartmentState;
 #endif
-            _noInput = noInput;
+            NoInput = noInput;
             _addToHistory = addToHistory;
             _eventSubscriber = eventSubscriber;
             _powershellInput = powershellInput;
 
-            _input = new PSDataCollection<object>();
-            _inputEnumerator = _input.GetEnumerator();
-            _input.ReleaseOnEnumeration = true;
+            Input = new PSDataCollection<object>();
+            InputEnumerator = Input.GetEnumerator();
+            Input.ReleaseOnEnumeration = true;
 
-            _dsHandler = runspacePoolDriver.DataStructureHandler.CreatePowerShellDataStructureHandler(clientPowerShellId, clientRunspacePoolId, _remoteStreamOptions, null);
-            _remoteHost = _dsHandler.GetHostAssociatedWithPowerShell(hostInfo, runspacePoolDriver.ServerRemoteHost);
+            DataStructureHandler = runspacePoolDriver.DataStructureHandler.CreatePowerShellDataStructureHandler(clientPowerShellId, clientRunspacePoolId, RemoteStreamOptions, null);
+            RemoteHost = DataStructureHandler.GetHostAssociatedWithPowerShell(hostInfo, runspacePoolDriver.ServerRemoteHost);
 
             // subscribe to various data structure handler events
-            _dsHandler.InputEndReceived += new EventHandler(HandleInputEndReceived);
-            _dsHandler.InputReceived += new EventHandler<RemoteDataEventArgs<object>>(HandleInputReceived);
-            _dsHandler.StopPowerShellReceived += new EventHandler(HandleStopReceived);
-            _dsHandler.HostResponseReceived +=
+            DataStructureHandler.InputEndReceived += new EventHandler(HandleInputEndReceived);
+            DataStructureHandler.InputReceived += new EventHandler<RemoteDataEventArgs<object>>(HandleInputReceived);
+            DataStructureHandler.StopPowerShellReceived += new EventHandler(HandleStopReceived);
+            DataStructureHandler.HostResponseReceived +=
                 new EventHandler<RemoteDataEventArgs<RemoteHostResponse>>(HandleHostResponseReceived);
-            _dsHandler.OnSessionConnected += new EventHandler(HandleSessionConnected);
+            DataStructureHandler.OnSessionConnected += new EventHandler(HandleSessionConnected);
 
             if (rsToUse == null)
             {
@@ -195,10 +180,10 @@ namespace System.Management.Automation
             }
 
             // else, set the runspace pool and invoke this powershell
-            _localPowerShell.Runspace = rsToUse;
+            LocalPowerShell.Runspace = rsToUse;
             eventSubscriber.SubscribeEvents(this);
 
-            _stateOfSteppablePipeline = PSInvocationState.NotStarted;
+            PipelineState = PSInvocationState.NotStarted;
         }
 
         #region Internal Methods
@@ -206,36 +191,24 @@ namespace System.Management.Automation
         /// <summary>
         /// Local PowerShell instance
         /// </summary>
-        internal PowerShell LocalPowerShell
-        {
-            get { return _localPowerShell; }
-        }
+        internal PowerShell LocalPowerShell { get; }
 
         /// <summary>
         /// Instance id by which this powershell driver is 
         /// identified. This is the same as the id of the
         /// powershell on the client side
         /// </summary>
-        internal Guid InstanceId
-        {
-            get { return _clientPowerShellId; }
-        }
+        internal Guid InstanceId { get; }
 
         /// <summary>
         /// Server remote host
         /// </summary>
-        internal ServerRemoteHost RemoteHost
-        {
-            get { return _remoteHost; }
-        }
+        internal ServerRemoteHost RemoteHost { get; }
 
         /// <summary>
         /// Serialization options for the streams in this powershell
         /// </summary>
-        internal RemoteStreamOptions RemoteStreamOptions
-        {
-            get { return _remoteStreamOptions; }
-        }
+        internal RemoteStreamOptions RemoteStreamOptions { get; }
 
         /// <summary>
         /// Id of the runspace pool driver which created
@@ -244,102 +217,65 @@ namespace System.Management.Automation
         /// is associated with the powershell on the 
         /// client side
         /// </summary>
-        internal Guid RunspacePoolId
-        {
-            get { return _clientRunspacePoolId; }
-        }
+        internal Guid RunspacePoolId { get; }
 
         /// <summary>
         /// ServerPowerShellDataStructureHandler associated with this
         /// powershell driver
         /// </summary>
-        internal ServerPowerShellDataStructureHandler DataStructureHandler
-        {
-            get { return _dsHandler; }
-        }
+        internal ServerPowerShellDataStructureHandler DataStructureHandler { get; }
 
         /// <summary>
         /// Pipeline invocation state
         /// </summary>
-        internal PSInvocationState PipelineState
-        {
-            get { return _stateOfSteppablePipeline; }
-        }
+        internal PSInvocationState PipelineState { get; private set; }
 
         /// <summary>
         /// Checks if the steppable pipeline has input
         /// </summary>
-        internal bool NoInput
-        {
-            get { return _noInput; }
-        }
+        internal bool NoInput { get; }
 
         /// <summary>
         /// Steppablepipeline object
         /// </summary>
-        internal SteppablePipeline SteppablePipeline
-        {
-            get { return _steppablePipeline; }
-            set { _steppablePipeline = value; }
-        }
+        internal SteppablePipeline SteppablePipeline { get; set; }
 
         /// <summary>
         /// Synchronization object
         /// </summary>
-        internal object SyncObject
-        {
-            get { return _syncObject; }
-        }
+        internal object SyncObject { get; } = new object();
 
         /// <summary>
         /// Processing input
         /// </summary>
-        internal bool ProcessingInput
-        {
-            get { return _isProcessingInput; }
-            set { _isProcessingInput = value; }
-        }
+        internal bool ProcessingInput { get; set; }
 
         /// <summary>
         /// Input enumerator
         /// </summary>
-        internal IEnumerator<object> InputEnumerator
-        {
-            get { return _inputEnumerator; }
-        }
+        internal IEnumerator<object> InputEnumerator { get; }
 
         /// <summary>
         /// Input collection
         /// </summary>
-        internal PSDataCollection<object> Input
-        {
-            get { return _input; }
-        }
+        internal PSDataCollection<object> Input { get; }
 
         /// <summary>
         /// Is the pipeline pulsed
         /// </summary>
-        internal bool Pulsed
-        {
-            get { return _isPulsed; }
-            set { _isPulsed = value; }
-        }
+        internal bool Pulsed { get; set; }
 
         /// <summary>
         /// Total objects processed
         /// </summary>
-        internal int TotalObjectsProcessed
-        {
-            get { return _totalObjectsProcessedSoFar; }
-            set { _totalObjectsProcessedSoFar = value; }
-        }
+        internal int TotalObjectsProcessed { get; set; }
 
         /// <summary>
         /// Starts the exectution
         /// </summary>
         internal void Start()
         {
-            _stateOfSteppablePipeline = PSInvocationState.Running;
+            PipelineState = PSInvocationState.Running;
 
             _eventSubscriber.FireStartSteppablePipeline(this);
 
@@ -360,7 +296,7 @@ namespace System.Management.Automation
         /// <param name="eventArgs">arguments describing this event</param>
         internal void HandleInputEndReceived(object sender, EventArgs eventArgs)
         {
-            _input.Complete();
+            Input.Complete();
 
             CheckAndPulseForProcessing(true);
 
@@ -374,9 +310,9 @@ namespace System.Management.Automation
         {
             //Close input if its active. no need to synchronize as input stream would have already been processed
             // when connect call came into PS plugin
-            if (_input != null)
+            if (Input != null)
             {
-                _input.Complete();
+                Input.Complete();
             }
         }
 
@@ -387,7 +323,7 @@ namespace System.Management.Automation
         /// <param name="eventArgs">arguments describing this event</param>
         internal void HandleHostResponseReceived(object sender, RemoteDataEventArgs<RemoteHostResponse> eventArgs)
         {
-            _remoteHost.ServerMethodExecutor.HandleRemoteHostResponseFromClient(eventArgs.Data);
+            RemoteHost.ServerMethodExecutor.HandleRemoteHostResponseFromClient(eventArgs.Data);
         }
 
         /// <summary>
@@ -397,9 +333,9 @@ namespace System.Management.Automation
         /// <param name="eventArgs">unused</param>
         private void HandleStopReceived(object sender, EventArgs eventArgs)
         {
-            lock (_syncObject)
+            lock (SyncObject)
             {
-                _stateOfSteppablePipeline = PSInvocationState.Stopping;
+                PipelineState = PSInvocationState.Stopping;
             }
 
             PerformStop();
@@ -417,13 +353,13 @@ namespace System.Management.Automation
         /// <param name="eventArgs">arguments describing this event</param>
         private void HandleInputReceived(object sender, RemoteDataEventArgs<object> eventArgs)
         {
-            Dbg.Assert(!_noInput, "Input data should not be received for powershells created with no input");
+            Dbg.Assert(!NoInput, "Input data should not be received for powershells created with no input");
 
-            if (_input != null)
+            if (Input != null)
             {
-                lock (_syncObject)
+                lock (SyncObject)
                 {
-                    _input.Add(eventArgs.Data);
+                    Input.Add(eventArgs.Data);
                 }
                 CheckAndPulseForProcessing(false);
 
@@ -446,24 +382,24 @@ namespace System.Management.Automation
             {
                 _eventSubscriber.FireHandleProcessRecord(this);
             }
-            else if (!_isPulsed)
+            else if (!Pulsed)
             {
                 bool shouldPulse = false;
-                lock (_syncObject)
+                lock (SyncObject)
                 {
-                    if (_isPulsed)
+                    if (Pulsed)
                     {
                         return;
                     }
 
-                    if (!_isProcessingInput && ((_input.Count > _totalObjectsProcessedSoFar)))
+                    if (!ProcessingInput && ((Input.Count > TotalObjectsProcessed)))
                     {
                         shouldPulse = true;
-                        _isPulsed = true;
+                        Pulsed = true;
                     }
                 }
 
-                if (shouldPulse && (_stateOfSteppablePipeline == PSInvocationState.Running))
+                if (shouldPulse && (PipelineState == PSInvocationState.Running))
                 {
                     _eventSubscriber.FireHandleProcessRecord(this);
                 }
@@ -476,9 +412,9 @@ namespace System.Management.Automation
         internal void PerformStop()
         {
             bool shouldPerformStop = false;
-            lock (_syncObject)
+            lock (SyncObject)
             {
-                if (!_isProcessingInput && (_stateOfSteppablePipeline == PSInvocationState.Stopping))
+                if (!ProcessingInput && (PipelineState == PSInvocationState.Stopping))
                 {
                     shouldPerformStop = true;
                 }
@@ -499,9 +435,9 @@ namespace System.Management.Automation
         {
             PSInvocationState copyState = PSInvocationState.NotStarted;
             bool shoulRaiseEvents = false;
-            lock (_syncObject)
+            lock (SyncObject)
             {
-                switch (_stateOfSteppablePipeline)
+                switch (PipelineState)
                 {
                     case PSInvocationState.NotStarted:
                         {
@@ -566,22 +502,22 @@ namespace System.Management.Automation
                         break;
                 }
 
-                _stateOfSteppablePipeline = copyState;
+                PipelineState = copyState;
             }
 
             if (shoulRaiseEvents)
             {
                 // send the state change notification to the client
-                _dsHandler.SendStateChangedInformationToClient(
+                DataStructureHandler.SendStateChangedInformationToClient(
                     new PSInvocationStateInfo(copyState, reason));
             }
 
-            if (_stateOfSteppablePipeline == PSInvocationState.Completed
-                || _stateOfSteppablePipeline == PSInvocationState.Stopped
-                || _stateOfSteppablePipeline == PSInvocationState.Failed)
+            if (PipelineState == PSInvocationState.Completed
+                || PipelineState == PSInvocationState.Stopped
+                || PipelineState == PSInvocationState.Failed)
             {
                 // Remove itself from the runspace pool
-                _dsHandler.RaiseRemoveAssociationEvent();
+                DataStructureHandler.RaiseRemoveAssociationEvent();
             }
         }
 

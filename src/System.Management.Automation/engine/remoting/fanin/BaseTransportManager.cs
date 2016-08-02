@@ -55,9 +55,6 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal class TransportErrorOccuredEventArgs : EventArgs
     {
-        private PSRemotingTransportException _exception;
-        private TransportMethodEnum _method;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -70,23 +67,19 @@ namespace System.Management.Automation.Remoting
         internal TransportErrorOccuredEventArgs(PSRemotingTransportException e,
             TransportMethodEnum m)
         {
-            _exception = e;
-            _method = m;
+            Exception = e;
+            ReportingTransportMethod = m;
         }
 
         /// <summary>
         /// Gets the error occurred.
         /// </summary>
-        internal PSRemotingTransportException Exception
-        {
-            get { return _exception; }
-            set { _exception = value; }
-        }
+        internal PSRemotingTransportException Exception { get; set; }
 
         /// <summary>
         /// Transport method that is reporting this error.
         /// </summary>
-        internal TransportMethodEnum ReportingTransportMethod { get { return _method; } }
+        internal TransportMethodEnum ReportingTransportMethod { get; }
     }
 
     #endregion
@@ -111,17 +104,12 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal class ConnectionStatusEventArgs : EventArgs
     {
-        private ConnectionStatus _notification;
-
         internal ConnectionStatusEventArgs(ConnectionStatus notification)
         {
-            _notification = notification;
+            Notification = notification;
         }
 
-        internal ConnectionStatus Notification
-        {
-            get { return _notification; }
-        }
+        internal ConnectionStatus Notification { get; }
     }
 
     #endregion
@@ -133,16 +121,12 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal class CreateCompleteEventArgs : EventArgs
     {
-        readonly private RunspaceConnectionInfo _connectionInfo;
-        internal RunspaceConnectionInfo ConnectionInfo
-        {
-            get { return _connectionInfo; }
-        }
+        internal RunspaceConnectionInfo ConnectionInfo { get; }
 
         internal CreateCompleteEventArgs(
             RunspaceConnectionInfo connectionInfo)
         {
-            _connectionInfo = connectionInfo;
+            ConnectionInfo = connectionInfo;
         }
     }
 
@@ -194,13 +178,10 @@ namespace System.Management.Automation.Remoting
         #region Private Data
 
         // fragmentor used to fragment & defragment objects added to this collection.
-        private Fragmentor _fragmentor;
-        private PriorityReceiveDataCollection _recvdData;// callbacks
         private ReceiveDataCollection.OnDataAvailableCallback _onDataAvailableCallback;
 
         // crypto helper used for encrypting/decrypting
         // secure string
-        private PSRemotingCryptoHelper _cryptoHelper;
 
         #endregion
 
@@ -227,12 +208,12 @@ namespace System.Management.Automation.Remoting
 
         protected BaseTransportManager(PSRemotingCryptoHelper cryptoHelper)
         {
-            _cryptoHelper = cryptoHelper;
+            CryptoHelper = cryptoHelper;
             // create a common fragmentor used by this transport manager to send and receive data.
             // so type information is serialized only the first time an object of a particular type
             // is sent. only data is serialized for the rest of the objects of the same type.
-            _fragmentor = new Fragmentor(DefaultFragmentSize, cryptoHelper);
-            _recvdData = new PriorityReceiveDataCollection(_fragmentor, (this is BaseClientTransportManager));
+            Fragmentor = new Fragmentor(DefaultFragmentSize, cryptoHelper);
+            ReceivedDataCollection = new PriorityReceiveDataCollection(Fragmentor, (this is BaseClientTransportManager));
             _onDataAvailableCallback = new ReceiveDataCollection.OnDataAvailableCallback(OnDataAvailableCallback);
         }
 
@@ -240,11 +221,7 @@ namespace System.Management.Automation.Remoting
 
         #region Helper Methods
 
-        internal Fragmentor Fragmentor
-        {
-            get { return _fragmentor; }
-            set { _fragmentor = value; }
-        }
+        internal Fragmentor Fragmentor { get; set; }
 
         /// <summary>
         /// This is needed to deserialize objects coming from the network. 
@@ -256,8 +233,8 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal TypeTable TypeTable
         {
-            get { return _fragmentor.TypeTable; }
-            set { _fragmentor.TypeTable = value; }
+            get { return Fragmentor.TypeTable; }
+            set { Fragmentor.TypeTable = value; }
         }
 
         /// <summary>
@@ -340,7 +317,7 @@ namespace System.Management.Automation.Remoting
                 s_baseTracer.WriteLine("{0} is not a valid stream", stream);
             }
             // process data
-            _recvdData.ProcessRawData(data, dataPriority, dataAvailableCallback);
+            ReceivedDataCollection.ProcessRawData(data, dataPriority, dataAvailableCallback);
         }
 
         /// <summary>
@@ -395,25 +372,12 @@ namespace System.Management.Automation.Remoting
         /// Crypto handler to be used for encrypting/decrypting
         /// secure strings
         /// </summary>
-        internal PSRemotingCryptoHelper CryptoHelper
-        {
-            get
-            {
-                return _cryptoHelper;
-            }
-            set
-            {
-                _cryptoHelper = value;
-            }
-        }
+        internal PSRemotingCryptoHelper CryptoHelper { get; set; }
 
         /// <summary>
         /// A data buffer used to store data received from remote machine.
         /// </summary>
-        internal PriorityReceiveDataCollection ReceivedDataCollection
-        {
-            get { return _recvdData; }
-        }
+        internal PriorityReceiveDataCollection ReceivedDataCollection { get; }
 
         #endregion
 
@@ -435,7 +399,7 @@ namespace System.Management.Automation.Remoting
         {
             if (isDisposing)
             {
-                _recvdData.Dispose();
+                ReceivedDataCollection.Dispose();
             }
         }
 
@@ -465,7 +429,6 @@ namespace System.Management.Automation.Remoting.Client
         private bool _isDebuggerSuspend;
 
         // this is used log crimson messages.
-        private Guid _runspacePoolInstanceId;
 
         //keeps track of whether a receive request has been placed on transport
         protected bool receiveDataInitiated;
@@ -477,7 +440,7 @@ namespace System.Management.Automation.Remoting.Client
         protected BaseClientTransportManager(Guid runspaceId, PSRemotingCryptoHelper cryptoHelper)
             : base(cryptoHelper)
         {
-            _runspacePoolInstanceId = runspaceId;
+            RunspacePoolInstanceId = runspaceId;
             dataToBeSent = new PrioritySendDataCollection();
             _onDataAvailableCallback = new ReceiveDataCollection.OnDataAvailableCallback(OnDataAvailableHandler);
             _callbackNotificationQueue = new Queue<CallbackNotificationInformation>();
@@ -572,10 +535,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Used to log crimson messages
         /// </summary>
-        internal Guid RunspacePoolInstanceId
-        {
-            get { return _runspacePoolInstanceId; }
-        }
+        internal Guid RunspacePoolInstanceId { get; }
 
         /// <summary>
         /// Raise the Connect completed handler
@@ -842,7 +802,7 @@ namespace System.Management.Automation.Remoting.Client
         internal void ServicePendingCallbacks(object objectToProcess)
         {
             tracer.WriteLine("ServicePendingCallbacks thread is starting");
-            PSEtwLog.ReplaceActivityIdForCurrentThread(_runspacePoolInstanceId,
+            PSEtwLog.ReplaceActivityIdForCurrentThread(RunspacePoolInstanceId,
                 PSEventId.OperationalTransferEventRunspacePool,
                 PSEventId.AnalyticTransferEventRunspacePool,
                 PSKeyword.Transport,

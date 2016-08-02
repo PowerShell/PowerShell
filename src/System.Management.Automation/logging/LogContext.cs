@@ -16,38 +16,13 @@ namespace System.Management.Automation
     {
         #region Context Properties
 
-        private String _severity = "";
-        internal String Severity
-        {
-            get
-            {
-                return _severity;
-            }
-            set
-            {
-                _severity = value;
-            }
-        }
-
-        private string _hostName = "";
+        internal String Severity { get; set; } = "";
 
         /// <summary>
         /// Name of the host.
         /// </summary>
         /// <value></value>
-        internal string HostName
-        {
-            get
-            {
-                return _hostName;
-            }
-            set
-            {
-                _hostName = value;
-            }
-        }
-
-        private string _hostVersion = "";
+        internal string HostName { get; set; } = "";
 
         /// <summary>
         /// Name of the host application.
@@ -62,109 +37,37 @@ namespace System.Management.Automation
         /// Version of the host.
         /// </summary>
         /// <value></value>
-        internal string HostVersion
-        {
-            get
-            {
-                return _hostVersion;
-            }
-            set
-            {
-                _hostVersion = value;
-            }
-        }
-
-        private string _hostId = "";
+        internal string HostVersion { get; set; } = "";
 
         /// <summary>
         /// Id of the host that is hosting current monad engine.
         /// </summary>
         /// <value></value>
-        internal string HostId
-        {
-            get
-            {
-                return _hostId;
-            }
-            set
-            {
-                _hostId = value;
-            }
-        }
-
-        private string _engineVersion = "";
+        internal string HostId { get; set; } = "";
 
         /// <summary>
         /// Version of monad engine.
         /// </summary>
         /// <value></value>
-        internal string EngineVersion
-        {
-            get
-            {
-                return _engineVersion;
-            }
-            set
-            {
-                _engineVersion = value;
-            }
-        }
-
-        private string _runspaceId = "";
+        internal string EngineVersion { get; set; } = "";
 
         /// <summary>
         /// Id for currently running runspace
         /// </summary>
         /// <value></value>
-        internal string RunspaceId
-        {
-            get
-            {
-                return _runspaceId;
-            }
-            set
-            {
-                _runspaceId = value;
-            }
-        }
-
-        private string _pipelineId = "";
+        internal string RunspaceId { get; set; } = "";
 
         /// <summary>
         /// PipelineId of current running pipeline
         /// </summary>
         /// <value></value>
-        internal string PipelineId
-        {
-            get
-            {
-                return _pipelineId;
-            }
-            set
-            {
-                _pipelineId = value;
-            }
-        }
-
-        private string _commandName = "";
+        internal string PipelineId { get; set; } = "";
 
         /// <summary>
         /// Command text that is typed in from commandline
         /// </summary>
         /// <value></value>
-        internal string CommandName
-        {
-            get
-            {
-                return _commandName;
-            }
-            set
-            {
-                _commandName = value;
-            }
-        }
-
-        private string _commandType = "";
+        internal string CommandName { get; set; } = "";
 
         /// <summary>
         /// Type of the command, which can be Alias, CommandLet, Script, Application, etc.
@@ -172,122 +75,32 @@ namespace System.Management.Automation
         /// The value of this property is a usually coversion of CommandTypes enum into a string.
         /// </summary>
         /// <value></value>
-        internal string CommandType
-        {
-            get
-            {
-                return _commandType;
-            }
-            set
-            {
-                _commandType = value;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private string _scriptName = "";
+        internal string CommandType { get; set; } = "";
 
         /// <summary>
         /// Script file name if current command is executed as a result of script run.
         /// </summary>
-        /// <value></value>
-        internal string ScriptName
-        {
-            get
-            {
-                return _scriptName;
-            }
-            set
-            {
-                _scriptName = value;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private string _commandPath = "";
+        internal string ScriptName { get; set; } = "";
 
         /// <summary>
         /// Path to the command executable file.
         /// </summary>
-        /// <value></value>
-        internal string CommandPath
-        {
-            get
-            {
-                return _commandPath;
-            }
-            set
-            {
-                _commandPath = value;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private string _commandLine = "";
+        internal string CommandPath { get; set; } = "";
 
         /// <summary>
         /// Extension for the command executable file.
         /// </summary>
-        /// <value></value>
-        internal string CommandLine
-        {
-            get
-            {
-                return _commandLine;
-            }
-            set
-            {
-                _commandLine = value;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private string _sequenceNumber = "";
+        internal string CommandLine { get; set; } = "";
 
         /// <summary>
         /// Sequence Id for the event to be logged.
         /// </summary>
-        /// <value></value>
-        internal string SequenceNumber
-        {
-            get
-            {
-                return _sequenceNumber;
-            }
-            set
-            {
-                _sequenceNumber = value;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private string _user = "";
+        internal string SequenceNumber { get; set; } = "";
 
         /// <summary>
         /// Current user. 
         /// </summary>
-        /// <value></value>
-        internal string User
-        {
-            get
-            {
-                return _user;
-            }
-            set
-            {
-                _user = value;
-            }
-        }
+        internal string User { get; set; } = "";
 
         /// <summary>
         /// The user connected to the machine, if being done with 
@@ -296,71 +109,28 @@ namespace System.Management.Automation
         internal string ConnectedUser { get; set; }
 
         /// <summary>
-        /// 
-        /// </summary>
-        private string _time = "";
-
-        /// <summary>
         /// Event happening time
         /// </summary>
-        /// <value></value>
-        internal string Time
-        {
-            get
-            {
-                return _time;
-            }
-            set
-            {
-                _time = value;
-            }
-        }
+        internal string Time { get; set; } = "";
 
         #endregion
 
         #region Shell Id
 
         /// <summary>
-        /// 
-        /// </summary>
-        private string _shellId;
-
-        /// <summary>
         /// This property should be filled in when logging api is called directly 
         /// with LogContext (when ExecutionContext is not available). 
         /// </summary>
-        internal string ShellId
-        {
-            get
-            {
-                return _shellId;
-            }
-            set
-            {
-                _shellId = value;
-            }
-        }
+        internal string ShellId { get; set; }
 
         #endregion
 
         #region Execution context
 
-        private ExecutionContext _executionContext;
-
         /// <summary>
         /// Execution context is necessary for GetVariableValue
         /// </summary>
-        internal ExecutionContext ExecutionContext
-        {
-            get
-            {
-                return _executionContext;
-            }
-            set
-            {
-                _executionContext = value;
-            }
-        }
+        internal ExecutionContext ExecutionContext { get; set; }
 
         #endregion
     }

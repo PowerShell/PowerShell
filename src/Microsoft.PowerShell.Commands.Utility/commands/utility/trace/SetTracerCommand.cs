@@ -112,12 +112,7 @@ namespace Microsoft.PowerShell.Commands
         /// 
         [Parameter(ParameterSetName = "removeAllListenersSet")]
         [ValidateNotNullOrEmpty]
-        public string[] RemoveListener
-        {
-            get { return _removeListeners; }
-            set { _removeListeners = value; }
-        }
-        private string[] _removeListeners = new string[] { "*" };
+        public string[] RemoveListener { get; set; } = new string[] { "*" };
 
         /// <summary>
         /// If set, the specified file trace listeners will be removed.
@@ -125,12 +120,7 @@ namespace Microsoft.PowerShell.Commands
         /// 
         [Parameter(ParameterSetName = "removeFileListenersSet")]
         [ValidateNotNullOrEmpty]
-        public string[] RemoveFileListener
-        {
-            get { return _removeFileListeners; }
-            set { _removeFileListeners = value; }
-        }
-        private string[] _removeFileListeners = new string[] { "*" };
+        public string[] RemoveFileListener { get; set; } = new string[] { "*" };
 
         /// <summary>
         /// Determines if the modified PSTraceSource should be written out.

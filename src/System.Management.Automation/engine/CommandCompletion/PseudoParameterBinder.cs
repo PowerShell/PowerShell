@@ -33,76 +33,40 @@ namespace System.Management.Automation.Language
     /// </summary>
     internal abstract class AstParameterArgumentPair
     {
-        private CommandParameterAst _parameter;
-        private AstParameterArgumentType _parameterArgumentType;
-        private bool _parameterSpecified = false;
-        private bool _argumentSpecified = false;
-        private string _parameterName;
-        private string _parameterText;
-        private Type _argumentType;
-
         /// <summary>
         /// The parameter Ast
         /// </summary>
-        public CommandParameterAst Parameter
-        {
-            get { return _parameter; }
-            protected set { _parameter = value; }
-        }
+        public CommandParameterAst Parameter { get; protected set; }
 
         /// <summary>
         /// The argument type
         /// </summary>
-        public AstParameterArgumentType ParameterArgumentType
-        {
-            get { return _parameterArgumentType; }
-            protected set { _parameterArgumentType = value; }
-        }
+        public AstParameterArgumentType ParameterArgumentType { get; protected set; }
 
         /// <summary>
         /// Indicate if the parameter is specified
         /// </summary>
-        public bool ParameterSpecified
-        {
-            get { return _parameterSpecified; }
-            protected set { _parameterSpecified = value; }
-        }
+        public bool ParameterSpecified { get; protected set; } = false;
 
         /// <summary>
         /// Indicate if the parameter is specified
         /// </summary>
-        public bool ArgumentSpecified
-        {
-            get { return _argumentSpecified; }
-            protected set { _argumentSpecified = value; }
-        }
+        public bool ArgumentSpecified { get; protected set; } = false;
 
         /// <summary>
         /// The parameter name
         /// </summary>
-        public string ParameterName
-        {
-            get { return _parameterName; }
-            protected set { _parameterName = value; }
-        }
+        public string ParameterName { get; protected set; }
 
         /// <summary>
         /// The parameter text
         /// </summary>
-        public string ParameterText
-        {
-            get { return _parameterText; }
-            protected set { _parameterText = value; }
-        }
+        public string ParameterText { get; protected set; }
 
         /// <summary>
         /// The argument type
         /// </summary>
-        public Type ArgumentType
-        {
-            get { return _argumentType; }
-            protected set { _argumentType = value; }
-        }
+        public Type ArgumentType { get; protected set; }
     }
 
     /// <summary>
@@ -131,8 +95,6 @@ namespace System.Management.Automation.Language
     /// </summary>
     internal sealed class AstArrayPair : AstParameterArgumentPair
     {
-        private ExpressionAst[] _argument = null;
-
         internal AstArrayPair(string parameterName, ICollection<ExpressionAst> arguments)
         {
             if (parameterName == null)
@@ -148,16 +110,13 @@ namespace System.Management.Automation.Language
             ParameterText = parameterName;
             ArgumentType = typeof(Array);
 
-            _argument = arguments.ToArray();
+            Argument = arguments.ToArray();
         }
 
         /// <summary>
         /// Get the argument
         /// </summary>
-        public ExpressionAst[] Argument
-        {
-            get { return _argument; }
-        }
+        public ExpressionAst[] Argument { get; } = null;
     }
 
     /// <summary>
@@ -215,10 +174,6 @@ namespace System.Management.Automation.Language
     /// </summary>
     internal sealed class AstPair : AstParameterArgumentPair
     {
-        private CommandElementAst _argument = null;
-        private bool _parameterContainsArgument = false;
-        private bool _argumentIsCommandParameterAst = false;
-
         internal AstPair(CommandParameterAst parameterAst)
         {
             if (parameterAst == null || parameterAst.Argument == null)
@@ -232,8 +187,8 @@ namespace System.Management.Automation.Language
             ParameterText = "-" + ParameterName + ":";
             ArgumentType = parameterAst.Argument.StaticType;
 
-            _parameterContainsArgument = true;
-            _argument = parameterAst.Argument;
+            ParameterContainsArgument = true;
+            Argument = parameterAst.Argument;
         }
 
         internal AstPair(CommandParameterAst parameterAst, ExpressionAst argumentAst)
@@ -252,8 +207,8 @@ namespace System.Management.Automation.Language
             ParameterText = parameterAst != null ? parameterAst.ParameterName : null;
             ArgumentType = argumentAst != null ? argumentAst.StaticType : null;
 
-            _parameterContainsArgument = false;
-            _argument = argumentAst;
+            ParameterContainsArgument = false;
+            Argument = argumentAst;
         }
 
         internal AstPair(CommandParameterAst parameterAst, CommandElementAst argumentAst)
@@ -272,34 +227,25 @@ namespace System.Management.Automation.Language
             ParameterText = parameterAst.ParameterName;
             ArgumentType = typeof(string);
 
-            _parameterContainsArgument = false;
-            _argument = argumentAst;
-            _argumentIsCommandParameterAst = true;
+            ParameterContainsArgument = false;
+            Argument = argumentAst;
+            ArgumentIsCommandParameterAst = true;
         }
 
         /// <summary>
         /// Indicate if the argument is contained in the CommandParameterAst
         /// </summary>
-        public bool ParameterContainsArgument
-        {
-            get { return _parameterContainsArgument; }
-        }
+        public bool ParameterContainsArgument { get; } = false;
 
         /// <summary>
         /// Indicate if the argument is of type CommandParameterAst
         /// </summary>
-        public bool ArgumentIsCommandParameterAst
-        {
-            get { return _argumentIsCommandParameterAst; }
-        }
+        public bool ArgumentIsCommandParameterAst { get; } = false;
 
         /// <summary>
         /// Get the argument
         /// </summary>
-        public CommandElementAst Argument
-        {
-            get { return _argument; }
-        }
+        public CommandElementAst Argument { get; } = null;
     }
 
     #endregion "AstArgumentPair"
@@ -426,8 +372,8 @@ namespace System.Management.Automation.Language
     {
         internal StaticBindingResult(CommandAst commandAst, PseudoBindingInfo bindingInfo)
         {
-            _boundParameters = new Dictionary<string, ParameterBindingResult>(StringComparer.OrdinalIgnoreCase);
-            _bindingExceptions = new Dictionary<string, StaticBindingError>(StringComparer.OrdinalIgnoreCase);
+            BoundParameters = new Dictionary<string, ParameterBindingResult>(StringComparer.OrdinalIgnoreCase);
+            BindingExceptions = new Dictionary<string, StaticBindingError>(StringComparer.OrdinalIgnoreCase);
 
             if (bindingInfo == null)
             {
@@ -473,7 +419,7 @@ namespace System.Management.Automation.Language
                         null,
                         ParameterBinderStrings.AmbiguousParameterSet,
                         "AmbiguousParameterSet");
-                _bindingExceptions.Add(commandAst.CommandElements[0].Extent.Text,
+                BindingExceptions.Add(commandAst.CommandElements[0].Extent.Text,
                     new StaticBindingError(commandAst.CommandElements[0], bindingException));
             }
 
@@ -501,7 +447,7 @@ namespace System.Management.Automation.Language
                             null,
                             ParameterBinderStrings.NamedParameterNotFound,
                             "NamedParameterNotFound");
-                    _bindingExceptions.Add(parameterNotFound.ParameterName, new StaticBindingError(parameterNotFound, bindingException));
+                    BindingExceptions.Add(parameterNotFound.ParameterName, new StaticBindingError(parameterNotFound, bindingException));
                 }
             }
 
@@ -511,7 +457,7 @@ namespace System.Management.Automation.Language
                 foreach (CommandParameterAst ambiguousParameter in bindingInfo.AmbiguousParameters)
                 {
                     ParameterBindingException bindingException = bindingInfo.BindingExceptions[ambiguousParameter];
-                    _bindingExceptions.Add(ambiguousParameter.ParameterName, new StaticBindingError(ambiguousParameter, bindingException));
+                    BindingExceptions.Add(ambiguousParameter.ParameterName, new StaticBindingError(ambiguousParameter, bindingException));
                 }
             }
 
@@ -532,7 +478,7 @@ namespace System.Management.Automation.Language
                             null,
                             ParameterBinderStrings.PositionalParameterNotFound,
                             "PositionalParameterNotFound");
-                    _bindingExceptions.Add(argument.Argument.Extent.Text, new StaticBindingError(argument.Argument, bindingException));
+                    BindingExceptions.Add(argument.Argument.Extent.Text, new StaticBindingError(argument.Argument, bindingException));
                 }
             }
 
@@ -595,7 +541,7 @@ namespace System.Management.Automation.Language
                     // We got a parameter and a value
                     if ((value != null) || (constantValue != null))
                     {
-                        _boundParameters.Add(item.Key, new ParameterBindingResult(parameter, value, constantValue));
+                        BoundParameters.Add(item.Key, new ParameterBindingResult(parameter, value, constantValue));
                     }
                     else
                     {
@@ -623,7 +569,7 @@ namespace System.Management.Automation.Language
                                     ParameterBinderStrings.MissingArgument,
                                     "MissingArgument");
 
-                            _bindingExceptions.Add(commandAst.CommandElements[0].Extent.Text,
+                            BindingExceptions.Add(commandAst.CommandElements[0].Extent.Text,
                                 new StaticBindingError(commandAst.CommandElements[0], bindingException));
                         }
                     }
@@ -649,9 +595,9 @@ namespace System.Management.Automation.Language
                     ParameterBinderStrings.ParameterAlreadyBound,
                     "ParameterAlreadyBound");
             // if the duplicated Parameter Name appears more than twice, we will ignore as we already have similar bindingException.
-            if (!_bindingExceptions.ContainsKey(duplicateParameter.ParameterName))
+            if (!BindingExceptions.ContainsKey(duplicateParameter.ParameterName))
             {
-                _bindingExceptions.Add(duplicateParameter.ParameterName, new StaticBindingError(duplicateParameter, bindingException));
+                BindingExceptions.Add(duplicateParameter.ParameterName, new StaticBindingError(duplicateParameter, bindingException));
             }
         }
         private PseudoBindingInfo _bindingInfo = null;
@@ -732,13 +678,13 @@ namespace System.Management.Automation.Language
 
         private void AddBoundParameter(CommandParameterAst parameter, string parameterName, ParameterBindingResult bindingResult)
         {
-            if (_boundParameters.ContainsKey(parameterName))
+            if (BoundParameters.ContainsKey(parameterName))
             {
                 AddDuplicateParameterBindingException(parameter);
             }
             else
             {
-                _boundParameters.Add(parameterName, bindingResult);
+                BoundParameters.Add(parameterName, bindingResult);
             }
         }
 
@@ -757,20 +703,12 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// 
         /// </summary>
-        public Dictionary<string, ParameterBindingResult> BoundParameters
-        {
-            get { return _boundParameters; }
-        }
-        private Dictionary<string, ParameterBindingResult> _boundParameters;
+        public Dictionary<string, ParameterBindingResult> BoundParameters { get; }
 
         /// <summary>
         /// 
         /// </summary>
-        public Dictionary<string, StaticBindingError> BindingExceptions
-        {
-            get { return _bindingExceptions; }
-        }
-        private Dictionary<string, StaticBindingError> _bindingExceptions;
+        public Dictionary<string, StaticBindingError> BindingExceptions { get; }
     }
 
     /// <summary>
@@ -867,22 +805,6 @@ namespace System.Management.Automation.Language
 
     internal sealed class PseudoBindingInfo
     {
-        private readonly CommandInfo _commandInfo;
-        private readonly PseudoBindingInfoType _infoType;
-        private readonly uint _validParameterSetsFlags;
-        private readonly uint _defaultParameterSetFlag;
-        private readonly Dictionary<string, MergedCompiledCommandParameter> _boundParameters;
-        private readonly Dictionary<string, AstParameterArgumentPair> _boundArguments;
-        private readonly List<MergedCompiledCommandParameter> _unboundParameters;
-        private readonly Collection<string> _boundPositionalParameter;
-        private readonly Collection<AstParameterArgumentPair> _allParsedArguments;
-
-        private readonly Collection<CommandParameterAst> _parametersNotFound;
-        private readonly Collection<CommandParameterAst> _ambiguousParameters;
-        private readonly Dictionary<CommandParameterAst, ParameterBindingException> _bindingExceptions;
-        private readonly Collection<AstParameterArgumentPair> _duplicateParameters;
-        private readonly Collection<AstParameterArgumentPair> _unboundArguments;
-
         /// <summary>
         /// The pseudo binding succeeded
         /// </summary>
@@ -914,20 +836,20 @@ namespace System.Management.Automation.Language
             Collection<AstParameterArgumentPair> duplicateParameters,
             Collection<AstParameterArgumentPair> unboundArguments)
         {
-            _commandInfo = commandInfo;
-            _infoType = PseudoBindingInfoType.PseudoBindingSucceed;
-            _validParameterSetsFlags = validParameterSetsFlags;
-            _defaultParameterSetFlag = defaultParameterSetFalg;
-            _boundParameters = boundParameters;
-            _unboundParameters = unboundParameters;
-            _boundArguments = boundArguments;
-            _boundPositionalParameter = boundPositionalParameter;
-            _allParsedArguments = allParsedArguments;
-            _parametersNotFound = parametersNotFound;
-            _ambiguousParameters = ambiguousParameters;
-            _bindingExceptions = bindingExceptions;
-            _duplicateParameters = duplicateParameters;
-            _unboundArguments = unboundArguments;
+            CommandInfo = commandInfo;
+            InfoType = PseudoBindingInfoType.PseudoBindingSucceed;
+            ValidParameterSetsFlags = validParameterSetsFlags;
+            DefaultParameterSetFlag = defaultParameterSetFalg;
+            BoundParameters = boundParameters;
+            UnboundParameters = unboundParameters;
+            BoundArguments = boundArguments;
+            BoundPositionalParameter = boundPositionalParameter;
+            AllParsedArguments = allParsedArguments;
+            ParametersNotFound = parametersNotFound;
+            AmbiguousParameters = ambiguousParameters;
+            BindingExceptions = bindingExceptions;
+            DuplicateParameters = duplicateParameters;
+            UnboundArguments = unboundArguments;
         }
 
         /// <summary>
@@ -943,87 +865,45 @@ namespace System.Management.Automation.Language
             Collection<AstParameterArgumentPair> allParsedArguments,
             List<MergedCompiledCommandParameter> unboundParameters)
         {
-            _commandInfo = commandInfo;
-            _infoType = PseudoBindingInfoType.PseudoBindingFail;
-            _defaultParameterSetFlag = defaultParameterSetFlag;
-            _allParsedArguments = allParsedArguments;
-            _unboundParameters = unboundParameters;
+            CommandInfo = commandInfo;
+            InfoType = PseudoBindingInfoType.PseudoBindingFail;
+            DefaultParameterSetFlag = defaultParameterSetFlag;
+            AllParsedArguments = allParsedArguments;
+            UnboundParameters = unboundParameters;
         }
 
         internal string CommandName
         {
-            get { return _commandInfo.Name; }
+            get { return CommandInfo.Name; }
         }
 
-        internal CommandInfo CommandInfo
-        {
-            get { return _commandInfo; }
-        }
+        internal CommandInfo CommandInfo { get; }
 
-        internal PseudoBindingInfoType InfoType
-        {
-            get { return _infoType; }
-        }
+        internal PseudoBindingInfoType InfoType { get; }
 
-        internal uint ValidParameterSetsFlags
-        {
-            get { return _validParameterSetsFlags; }
-        }
+        internal uint ValidParameterSetsFlags { get; }
 
-        internal uint DefaultParameterSetFlag
-        {
-            get { return _defaultParameterSetFlag; }
-        }
+        internal uint DefaultParameterSetFlag { get; }
 
-        internal Dictionary<string, MergedCompiledCommandParameter> BoundParameters
-        {
-            get { return _boundParameters; }
-        }
+        internal Dictionary<string, MergedCompiledCommandParameter> BoundParameters { get; }
 
-        internal List<MergedCompiledCommandParameter> UnboundParameters
-        {
-            get { return _unboundParameters; }
-        }
+        internal List<MergedCompiledCommandParameter> UnboundParameters { get; }
 
-        internal Dictionary<string, AstParameterArgumentPair> BoundArguments
-        {
-            get { return _boundArguments; }
-        }
+        internal Dictionary<string, AstParameterArgumentPair> BoundArguments { get; }
 
-        internal Collection<AstParameterArgumentPair> UnboundArguments
-        {
-            get { return _unboundArguments; }
-        }
+        internal Collection<AstParameterArgumentPair> UnboundArguments { get; }
 
-        internal Collection<string> BoundPositionalParameter
-        {
-            get { return _boundPositionalParameter; }
-        }
+        internal Collection<string> BoundPositionalParameter { get; }
 
-        internal Collection<AstParameterArgumentPair> AllParsedArguments
-        {
-            get { return _allParsedArguments; }
-        }
+        internal Collection<AstParameterArgumentPair> AllParsedArguments { get; }
 
-        internal Collection<CommandParameterAst> ParametersNotFound
-        {
-            get { return _parametersNotFound; }
-        }
+        internal Collection<CommandParameterAst> ParametersNotFound { get; }
 
-        internal Collection<CommandParameterAst> AmbiguousParameters
-        {
-            get { return _ambiguousParameters; }
-        }
+        internal Collection<CommandParameterAst> AmbiguousParameters { get; }
 
-        internal Dictionary<CommandParameterAst, ParameterBindingException> BindingExceptions
-        {
-            get { return _bindingExceptions; }
-        }
+        internal Dictionary<CommandParameterAst, ParameterBindingException> BindingExceptions { get; }
 
-        internal Collection<AstParameterArgumentPair> DuplicateParameters
-        {
-            get { return _duplicateParameters; }
-        }
+        internal Collection<AstParameterArgumentPair> DuplicateParameters { get; }
     }
 
     #endregion "PseudoBindingInfo"

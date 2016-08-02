@@ -44,16 +44,9 @@ namespace Microsoft.PowerShell.Commands
                     Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
-            get
-            {
-                return _paths;
-            } // get
-
-            set
-            {
-                _paths = value;
-            } // set
-        } // Path
+            get { return _paths; }
+            set { _paths = value; }
+        }
 
         /// <summary>
         /// Gets or sets the literal path parameter to the command
@@ -63,17 +56,13 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSPath")]
         public string[] LiteralPath
         {
-            get
-            {
-                return _paths;
-            } // get
-
+            get { return _paths; }
             set
             {
                 base.SuppressWildcardExpansion = true;
                 _paths = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
         /// Gets or sets the filter property
@@ -81,14 +70,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override string Filter
         {
-            get
-            {
-                return base.Filter;
-            }
-            set
-            {
-                base.Filter = value;
-            }
+            get { return base.Filter; }
+            set { base.Filter = value; }
         }
 
         /// <summary>
@@ -97,16 +80,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override string[] Include
         {
-            get
-            {
-                return base.Include;
-            } // get
-
-            set
-            {
-                base.Include = value;
-            } // set
-        } // Include
+            get { return base.Include; }
+            set { base.Include = value; }
+        }
 
         /// <summary>
         /// Gets or sets the exclude property
@@ -114,51 +90,22 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override string[] Exclude
         {
-            get
-            {
-                return base.Exclude;
-            } // get
-
-            set
-            {
-                base.Exclude = value;
-            } // set
-        } // Exclude
+            get { return base.Exclude; }
+            set { base.Exclude = value; }
+        }
 
         /// <summary>
         /// Gets or sets the isContainer property
         /// </summary>
         [Parameter]
         [Alias("Type")]
-        public TestPathType PathType
-        {
-            get
-            {
-                return _type;
-            } // get
-
-            set
-            {
-                _type = value;
-            } // set
-        } // Type
+        public TestPathType PathType { get; set; } = TestPathType.Any;
 
         /// <summary>
         /// Gets or sets the IsValid parameter
         /// </summary>
         [Parameter]
-        public SwitchParameter IsValid
-        {
-            get
-            {
-                return _isValid;
-            } // get
-
-            set
-            {
-                _isValid = value;
-            } // set
-        } // IsValid
+        public SwitchParameter IsValid { get; set; } = new SwitchParameter();
 
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
@@ -201,19 +148,6 @@ namespace Microsoft.PowerShell.Commands
         /// The path to the item to ping
         /// </summary>
         private string[] _paths;
-
-
-        /// <summary>
-        /// Determines if the command should check to see if any item exists at
-        /// the specified path, a container exists at the specified path, or a 
-        /// leaf item exists at the specified path.
-        /// </summary>
-        private TestPathType _type = TestPathType.Any;
-
-        /// <summary>
-        /// Determines if the path should be checked for validity.
-        /// </summary>
-        private SwitchParameter _isValid = new SwitchParameter();
 
         #endregion parameter data
 

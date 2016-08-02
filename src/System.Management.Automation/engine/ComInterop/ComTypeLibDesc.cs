@@ -27,7 +27,6 @@ namespace System.Management.Automation.ComInterop
         // on small number of entities
         private LinkedList<ComTypeClassDesc> _classes;
         private Dictionary<string, ComTypeEnumDesc> _enums;
-        private string _typeLibName;
         private ComTypes.TYPELIBATTR _typeLibAttributes;
 
         private static Dictionary<Guid, ComTypeLibDesc> s_cachedTypeLibDesc = new Dictionary<Guid, ComTypeLibDesc>();
@@ -40,7 +39,7 @@ namespace System.Management.Automation.ComInterop
 
         public override string ToString()
         {
-            return String.Format(CultureInfo.CurrentCulture, "<type library {0}>", _typeLibName);
+            return String.Format(CultureInfo.CurrentCulture, "<type library {0}>", Name);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
@@ -116,7 +115,7 @@ namespace System.Management.Automation.ComInterop
 
             typeLibDesc = new ComTypeLibDesc();
 
-            typeLibDesc._typeLibName = ComRuntimeHelpers.GetNameOfLib(typeLib);
+            typeLibDesc.Name = ComRuntimeHelpers.GetNameOfLib(typeLib);
             typeLibDesc._typeLibAttributes = typeLibAttr;
 
             int countTypes = typeLib.GetTypeInfoCount();
@@ -235,10 +234,7 @@ namespace System.Management.Automation.ComInterop
             get { return _typeLibAttributes.wMinorVerNum; }
         }
 
-        public string Name
-        {
-            get { return _typeLibName; }
-        }
+        public string Name { get; private set; }
 
         internal ComTypeClassDesc GetCoClassForInterface(string itfName)
         {

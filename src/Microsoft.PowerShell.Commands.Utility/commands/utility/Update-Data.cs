@@ -18,30 +18,22 @@ namespace Microsoft.PowerShell.Commands
         /// File parameter set name
         /// </summary>
         protected const string FileParameterSet = "FileSet";
-        private string[] _appendPath = new string[0];
+
         /// <summary>
         /// Files to append to the existing set
         /// </summary>
-        [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = FileParameterSet)]
+        [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true,
+            ParameterSetName = FileParameterSet)]
         [Alias("PSPath", "Path")]
         [ValidateNotNull]
-        public string[] AppendPath
-        {
-            set { _appendPath = value; }
-            get { return _appendPath; }
-        }
+        public string[] AppendPath { set; get; } = Utils.EmptyArray<string>();
 
-        private string[] _prependPath = new string[0];
         /// <summary>
         /// Files to prepend to the existing set
         /// </summary>
         [Parameter(ParameterSetName = FileParameterSet)]
         [ValidateNotNull]
-        public string[] PrependPath
-        {
-            set { _prependPath = value; }
-            get { return _prependPath; }
-        }
+        public string[] PrependPath { set; get; } = Utils.EmptyArray<string>();
 
         private static void ReportWrongExtension(string file, string errorId, PSCmdlet cmdlet)
         {

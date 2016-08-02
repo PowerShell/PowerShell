@@ -249,12 +249,8 @@ namespace System.Management.Automation.Runspaces
         /// The administrator wouldn�t mind waiting for 15 seconds, but this should be time bound and of a shorter duration. 
         /// A high timeout here like 3 minutes will give the administrator a feeling that the PowerShell client has hung.
         /// </summary>
-        public int CancelTimeout
-        {
-            get { return _cancelTimeout; }
-            set { _cancelTimeout = value; }
-        }
-        private int _cancelTimeout = defaultCancelTimeout;
+        public int CancelTimeout { get; set; } = defaultCancelTimeout;
+
         internal const int defaultCancelTimeout = BaseTransportManager.ClientCloseTimeoutMs;
 
         /// <summary>
@@ -265,39 +261,22 @@ namespace System.Management.Automation.Runspaces
         /// 
         /// Default: 3*60*1000 == 3minutes
         /// </summary>
-        public int OperationTimeout
-        {
-            get { return _operationTimeout; }
-            set { _operationTimeout = value; }
-        }
-        private int _operationTimeout = BaseTransportManager.ClientDefaultOperationTimeoutMs;
+        public int OperationTimeout { get; set; } = BaseTransportManager.ClientDefaultOperationTimeoutMs;
 
         /// <summary>
         /// The duration (in ms) for which a Runspace on server needs to wait before it declares the client dead and closes itself down. 
         /// This is especially important as these values may have to be configured differently for enterprise administration 
         /// and exchange scenarios.
         /// </summary>
-        public int IdleTimeout
-        {
-            get { return _idleTimeout; }
-            set
-            {
-                _idleTimeout = value;
-            }
-        }
-        private int _idleTimeout = DefaultIdleTimeout;
+        public int IdleTimeout { get; set; } = DefaultIdleTimeout;
+
         internal const int DefaultIdleTimeout = BaseTransportManager.UseServerDefaultIdleTimeout;
 
         /// <summary>
         /// The maximum allowed idle timeout duration (in ms) that can be set on a Runspace.  This is a read-only property
         /// that is set once the Runspace is successfully created and opened.
         /// </summary>
-        public int MaxIdleTimeout
-        {
-            get { return _maxIdleTimeout; }
-            internal set { _maxIdleTimeout = value; }
-        }
-        private int _maxIdleTimeout = Int32.MaxValue;
+        public int MaxIdleTimeout { get; internal set; } = Int32.MaxValue;
 
         /// <summary>
         /// Populates session options from a PSSessionOption instance.
@@ -321,13 +300,13 @@ namespace System.Management.Automation.Runspaces
             }
 
             _openTimeout = TimeSpanToTimeOutMs(options.OpenTimeout);
-            _cancelTimeout = TimeSpanToTimeOutMs(options.CancelTimeout);
-            _operationTimeout = TimeSpanToTimeOutMs(options.OperationTimeout);
+            CancelTimeout = TimeSpanToTimeOutMs(options.CancelTimeout);
+            OperationTimeout = TimeSpanToTimeOutMs(options.OperationTimeout);
 
             // Special case for idle timeout.  A value of milliseconds == -1 
             // (BaseTransportManager.UseServerDefaultIdleTimeout) is allowed for 
             // specifying the default value on the server.
-            _idleTimeout = (options.IdleTimeout.TotalMilliseconds >= BaseTransportManager.UseServerDefaultIdleTimeout &&
+            IdleTimeout = (options.IdleTimeout.TotalMilliseconds >= BaseTransportManager.UseServerDefaultIdleTimeout &&
                                 options.IdleTimeout.TotalMilliseconds < int.MaxValue)
                                 ? (int)(options.IdleTimeout.TotalMilliseconds) : int.MaxValue;
         }
@@ -504,7 +483,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                switch (_authMechanism)
+                switch (WSManAuthenticationMechanism)
                 {
                     case WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION:
                         return AuthenticationMechanism.Default;
@@ -513,7 +492,7 @@ namespace System.Management.Automation.Runspaces
                     case WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_CREDSSP:
                         return AuthenticationMechanism.Credssp;
                     case WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_NEGOTIATE:
-                        if (_allowImplicitCredForNegotiate)
+                        if (AllowImplicitCredentialForNegotiate)
                         {
                             return AuthenticationMechanism.NegotiateWithImplicitCredential;
                         }
@@ -532,26 +511,26 @@ namespace System.Management.Automation.Runspaces
                 switch (value)
                 {
                     case AuthenticationMechanism.Default:
-                        _authMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION;
+                        WSManAuthenticationMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION;
                         break;
                     case AuthenticationMechanism.Basic:
-                        _authMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_BASIC;
+                        WSManAuthenticationMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_BASIC;
                         break;
                     case AuthenticationMechanism.Negotiate:
-                        _authMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_NEGOTIATE;
+                        WSManAuthenticationMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_NEGOTIATE;
                         break;
                     case AuthenticationMechanism.NegotiateWithImplicitCredential:
-                        _authMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_NEGOTIATE;
-                        _allowImplicitCredForNegotiate = true;
+                        WSManAuthenticationMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_NEGOTIATE;
+                        AllowImplicitCredentialForNegotiate = true;
                         break;
                     case AuthenticationMechanism.Credssp:
-                        _authMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_CREDSSP;
+                        WSManAuthenticationMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_CREDSSP;
                         break;
                     case AuthenticationMechanism.Digest:
-                        _authMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_DIGEST;
+                        WSManAuthenticationMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_DIGEST;
                         break;
                     case AuthenticationMechanism.Kerberos:
-                        _authMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_KERBEROS;
+                        WSManAuthenticationMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_AUTH_KERBEROS;
                         break;
                     default:
                         throw new PSNotSupportedException();
@@ -564,27 +543,18 @@ namespace System.Management.Automation.Runspaces
         /// AuthenticationMaechanism converted to WSManAuthenticationMechanism type.
         /// This is internal.
         /// </summary>
-        internal WSManAuthenticationMechanism WSManAuthenticationMechanism
-        {
-            get { return _authMechanism; }
-        }
+        internal WSManAuthenticationMechanism WSManAuthenticationMechanism { get; private set; } = WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION;
 
         /// <summary>
         /// Allow default credentials for Negotiate
         /// </summary>
-        internal bool AllowImplicitCredentialForNegotiate
-        {
-            get { return _allowImplicitCredForNegotiate; }
-        }
+        internal bool AllowImplicitCredentialForNegotiate { get; private set; }
 
         /// <summary>
         /// Returns the actual port property value and not the ConnectionUri port.
         /// Internal only.
         /// </summary>
-        internal int PortSetting
-        {
-            get { return _port; }
-        }
+        internal int PortSetting { get; private set; } = -1;
 
         /// <summary>
         /// ThumbPrint of a certificate used for connecting to a remote machine.
@@ -607,11 +577,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Maximum uri redirection count
         /// </summary>
-        public int MaximumConnectionRedirectionCount
-        {
-            get { return _maxUriRedirectionCount; }
-            set { _maxUriRedirectionCount = value; }
-        }
+        public int MaximumConnectionRedirectionCount { get; set; }
+
         internal const int defaultMaximumConnectionRedirectionCount = 5;
 
         /// <summary>
@@ -619,21 +586,13 @@ namespace System.Management.Automation.Runspaces
         /// targeted towards a command. If null, then the size is unlimited.
         /// Default is unlimited data.
         /// </summary>
-        public Nullable<int> MaximumReceivedDataSizePerCommand
-        {
-            get { return _maxRecvdDataSizePerCommand; }
-            set { _maxRecvdDataSizePerCommand = value; }
-        }
+        public Nullable<int> MaximumReceivedDataSizePerCommand { get; set; }
 
         /// <summary>
         /// Maximum size (in bytes) of a deserialized object received from a remote machine.
         /// If null, then the size is unlimited. Default is unlimited object size.
         /// </summary>
-        public Nullable<int> MaximumReceivedObjectSize
-        {
-            get { return _maxRecvdObjectSize; }
-            set { _maxRecvdObjectSize = value; }
-        }
+        public Nullable<int> MaximumReceivedObjectSize { get; set; }
 
         /// <summary>
         /// If true, underlying WSMan infrastructure will compress data sent on the network.
@@ -643,28 +602,14 @@ namespace System.Management.Automation.Runspaces
         /// set this property to false.
         /// By default the value of this property is "true".
         /// </summary>
-        public bool UseCompression
-        {
-            get { return _useCompression; }
-            set { _useCompression = value; }
-        }
+        public bool UseCompression { get; set; } = true;
 
         /// <summary>
         /// If <c>true</c> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
         /// which can result in a faster session creation time.  This option won't have any effect if the remote machine has
         /// already loaded the profile (i.e. in another session). 
         /// </summary>
-        public bool NoMachineProfile
-        {
-            get
-            {
-                return _noMachineProfile;
-            }
-            set
-            {
-                _noMachineProfile = value;
-            }
-        }
+        public bool NoMachineProfile { get; set; }
 
         // BEGIN: Session Options
 
@@ -680,11 +625,7 @@ namespace System.Management.Automation.Runspaces
         /// IMPORTANT: proxy configuration is supported for HTTPS only; for HTTP, the direct 
         /// connection to the server is used 
         /// </summary>
-        public ProxyAccessType ProxyAccessType
-        {
-            get { return _proxyAcessType; }
-            set { _proxyAcessType = value; }
-        }
+        public ProxyAccessType ProxyAccessType { get; set; } = ProxyAccessType.None;
 
         /// <summary>
         /// The following is the definition of the input parameter "ProxyAuthentication".
@@ -726,7 +667,7 @@ namespace System.Management.Automation.Runspaces
             get { return _proxyCredential; }
             set
             {
-                if (_proxyAcessType == ProxyAccessType.None)
+                if (ProxyAccessType == ProxyAccessType.None)
                 {
                     string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ProxyCredentialWithoutAccess,
                                 ProxyAccessType.None);
@@ -745,76 +686,49 @@ namespace System.Management.Automation.Runspaces
         /// computer is part of a network that is physically secure and isolated or the 
         /// remote computer is listed as a trusted host in WinRM configuration
         /// </summary>
-        public bool SkipCACheck
-        {
-            get { return _skipCaCheck; }
-            set { _skipCaCheck = value; }
-        }
+        public bool SkipCACheck { get; set; }
 
         /// <summary>
         /// Indicates that certificate common name (CN) of the server need not match the 
         /// hostname of the server. Used only in remote operations using https. This 
         /// option should only be used for trusted machines.
         /// </summary>
-        public bool SkipCNCheck
-        {
-            get { return _skipCnCheck; }
-            set { _skipCnCheck = value; }
-        }
+        public bool SkipCNCheck { get; set; }
 
         /// <summary>
         /// Indicates that certificate common name (CN) of the server need not match the 
         /// hostname of the server. Used only in remote operations using https. This 
         /// option should only be used for trusted machines
         /// </summary>
-        public bool SkipRevocationCheck
-        {
-            get { return _skipRevocationCheck; }
-            set { _skipRevocationCheck = value; }
-        }
+        public bool SkipRevocationCheck { get; set; }
 
         /// <summary>
         /// Specifies that no encryption will be used when doing remote operations over 
         /// http. Unencrypted traffix is not allowed by default and must be enabled in 
         /// the local configuration
         /// </summary>
-        public bool NoEncryption
-        {
-            get { return _noEncryption; }
-            set { _noEncryption = value; }
-        }
+        public bool NoEncryption { get; set; }
 
         /// <summary>
         /// Indicates the request is encoded in UTF16 format rather than UTF8 format; 
         /// UTF8 is the default.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "UTF")]
-        public bool UseUTF16
-        {
-            get { return _useUtf16; }
-            set { _useUtf16 = value; }
-        }
+        public bool UseUTF16 { get; set; }
+
         // END: Session Options
 
         /// <summary>
         /// Determines how server in disconnected state deals with cached output
         /// data when the cache becomes filled.
         /// </summary>
-        public OutputBufferingMode OutputBufferingMode
-        {
-            get { return _outputBufferingMode; }
-            set { _outputBufferingMode = value; }
-        }
+        public OutputBufferingMode OutputBufferingMode { get; set; } = DefaultOutputBufferingMode;
 
         /// <summary>
         /// Uses Service Principal Name (SPN) along with the Port number during authentication.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SPN")]
-        public bool IncludePortInSPN
-        {
-            get { return _includePortInSPN; }
-            set { _includePortInSPN = value; }
-        }
+        public bool IncludePortInSPN { get; set; }
 
         /// <summary>
         /// When true and in loopback scenario (localhost) this enables creation of WSMan
@@ -822,21 +736,13 @@ namespace System.Management.Automation.Runspaces
         /// i.e., allows going off box.  When this property is true and a PSSession is disconnected, 
         /// reconnection is allowed only if reconnecting from a PowerShell session on the same box.
         /// </summary>
-        public bool EnableNetworkAccess
-        {
-            get { return _enableNetworkAccess; }
-            set { _enableNetworkAccess = value; }
-        }
+        public bool EnableNetworkAccess { get; set; }
 
         /// <summary>
         /// Specifies the maximum number of connection retries if previous connection attempts fail
         /// due to network issues.
         /// </summary>
-        public int MaxConnectionRetryCount
-        {
-            get { return _maxConnectionRetryCount; }
-            set { _maxConnectionRetryCount = value; }
-        }
+        public int MaxConnectionRetryCount { get; set; } = DefaultMaxConnectionRetryCount;
 
         #endregion Public Properties
 
@@ -1060,18 +966,18 @@ namespace System.Management.Automation.Runspaces
             this.UseCompression = !(options.NoCompression);
             this.NoMachineProfile = options.NoMachineProfile;
 
-            _proxyAcessType = options.ProxyAccessType;
+            ProxyAccessType = options.ProxyAccessType;
             _proxyAuthentication = options.ProxyAuthentication;
             _proxyCredential = options.ProxyCredential;
-            _skipCaCheck = options.SkipCACheck;
-            _skipCnCheck = options.SkipCNCheck;
-            _skipRevocationCheck = options.SkipRevocationCheck;
-            _noEncryption = options.NoEncryption;
-            _useUtf16 = options.UseUTF16;
-            _includePortInSPN = options.IncludePortInSPN;
+            SkipCACheck = options.SkipCACheck;
+            SkipCNCheck = options.SkipCNCheck;
+            SkipRevocationCheck = options.SkipRevocationCheck;
+            NoEncryption = options.NoEncryption;
+            UseUTF16 = options.UseUTF16;
+            IncludePortInSPN = options.IncludePortInSPN;
 
-            _outputBufferingMode = options.OutputBufferingMode;
-            _maxConnectionRetryCount = options.MaxConnectionRetryCount;
+            OutputBufferingMode = options.OutputBufferingMode;
+            MaxConnectionRetryCount = options.MaxConnectionRetryCount;
         }
 
         /// <summary>
@@ -1093,15 +999,15 @@ namespace System.Management.Automation.Runspaces
             result._connectionUri = _connectionUri;
             result._computerName = _computerName;
             result._scheme = _scheme;
-            result._port = _port;
+            result.PortSetting = PortSetting;
             result._appName = _appName;
             result._shellUri = _shellUri;
             result._credential = _credential;
             result.UseDefaultWSManPort = UseDefaultWSManPort;
-            result._authMechanism = _authMechanism;
-            result._maxUriRedirectionCount = _maxUriRedirectionCount;
-            result._maxRecvdDataSizePerCommand = _maxRecvdDataSizePerCommand;
-            result._maxRecvdObjectSize = _maxRecvdObjectSize;
+            result.WSManAuthenticationMechanism = WSManAuthenticationMechanism;
+            result.MaximumConnectionRedirectionCount = MaximumConnectionRedirectionCount;
+            result.MaximumReceivedDataSizePerCommand = MaximumReceivedDataSizePerCommand;
+            result.MaximumReceivedObjectSize = MaximumReceivedObjectSize;
             result.OpenTimeout = this.OpenTimeout;
             result.IdleTimeout = this.IdleTimeout;
             result.MaxIdleTimeout = this.MaxIdleTimeout;
@@ -1110,21 +1016,21 @@ namespace System.Management.Automation.Runspaces
             result.Culture = this.Culture;
             result.UICulture = this.UICulture;
             result._thumbPrint = _thumbPrint;
-            result._allowImplicitCredForNegotiate = _allowImplicitCredForNegotiate;
-            result.UseCompression = _useCompression;
-            result.NoMachineProfile = _noMachineProfile;
-            result._proxyAcessType = this.ProxyAccessType;
+            result.AllowImplicitCredentialForNegotiate = AllowImplicitCredentialForNegotiate;
+            result.UseCompression = UseCompression;
+            result.NoMachineProfile = NoMachineProfile;
+            result.ProxyAccessType = this.ProxyAccessType;
             result._proxyAuthentication = this.ProxyAuthentication;
             result._proxyCredential = this.ProxyCredential;
-            result._skipCaCheck = this.SkipCACheck;
-            result._skipCnCheck = this.SkipCNCheck;
-            result._skipRevocationCheck = this.SkipRevocationCheck;
-            result._noEncryption = this.NoEncryption;
-            result._useUtf16 = this.UseUTF16;
-            result._includePortInSPN = this.IncludePortInSPN;
-            result._enableNetworkAccess = this.EnableNetworkAccess;
+            result.SkipCACheck = this.SkipCACheck;
+            result.SkipCNCheck = this.SkipCNCheck;
+            result.SkipRevocationCheck = this.SkipRevocationCheck;
+            result.NoEncryption = this.NoEncryption;
+            result.UseUTF16 = this.UseUTF16;
+            result.IncludePortInSPN = this.IncludePortInSPN;
+            result.EnableNetworkAccess = this.EnableNetworkAccess;
             result.UseDefaultWSManPort = this.UseDefaultWSManPort;
-            result._outputBufferingMode = _outputBufferingMode;
+            result.OutputBufferingMode = OutputBufferingMode;
             result.DisconnectedOn = this.DisconnectedOn;
             result.ExpiresOn = this.ExpiresOn;
             result.MaxConnectionRetryCount = this.MaxConnectionRetryCount;
@@ -1266,12 +1172,12 @@ namespace System.Management.Automation.Runspaces
                 {
                     // this is needed so that the OriginalString on 
                     // connection uri is fine
-                    _port = -1;
+                    PortSetting = -1;
                     UseDefaultWSManPort = true;
                 }
                 else if (port.Value == DefaultPortHttp || port.Value == DefaultPortHttps)
                 {
-                    _port = port.Value;
+                    PortSetting = port.Value;
                     UseDefaultWSManPort = false;
                 }
                 else if ((port.Value < MinPort || port.Value > MaxPort))
@@ -1284,7 +1190,7 @@ namespace System.Management.Automation.Runspaces
                 }
                 else
                 {
-                    _port = port.Value;
+                    PortSetting = port.Value;
                     UseDefaultWSManPort = false;
                 }
             }
@@ -1298,7 +1204,7 @@ namespace System.Management.Automation.Runspaces
 
             // construct Uri
             UriBuilder uriBuilder = new UriBuilder(_scheme, _computerName,
-                                _port, _appName);
+                                PortSetting, _appName);
 
             _connectionUri = uriBuilder.Uri;
         }
@@ -1344,7 +1250,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         private void ValidateSpecifiedAuthentication()
         {
-            if ((_authMechanism != WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION)
+            if ((WSManAuthenticationMechanism != WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION)
                 && (_thumbPrint != null))
             {
                 throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.NewRunspaceAmbiguosAuthentication,
@@ -1363,7 +1269,7 @@ namespace System.Management.Automation.Runspaces
             if (uri.OriginalString.LastIndexOf(":", StringComparison.OrdinalIgnoreCase) >
                 uri.AbsoluteUri.IndexOf("//", StringComparison.OrdinalIgnoreCase))
             {
-                _useDefaultWSManPort = false;
+                UseDefaultWSManPort = false;
             }
 
             // This check is needed to make sure we connect to WSMan app in the 
@@ -1385,9 +1291,9 @@ namespace System.Management.Automation.Runspaces
                 _connectionUri = uri;
                 _scheme = uri.Scheme;
                 _appName = uri.AbsolutePath;
-                _port = uri.Port;
+                PortSetting = uri.Port;
                 _computerName = uri.Host;
-                _useDefaultWSManPort = false;
+                UseDefaultWSManPort = false;
             }
         }
 
@@ -1398,30 +1304,12 @@ namespace System.Management.Automation.Runspaces
         private string _scheme = HttpScheme;
         private string _computerName = DefaultComputerName;
         private string _appName = s_defaultAppName;
-        private Int32 _port = -1;
         private Uri _connectionUri = new Uri(LocalHostUriString);          // uri of this connection
         private PSCredential _credential;    // credentials to be used for this connection
         private string _shellUri = DefaultShellUri;            // shell thats specified by the user
-        private WSManAuthenticationMechanism _authMechanism = WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION;
-        private bool _allowImplicitCredForNegotiate;
         private string _thumbPrint;
-        private int _maxUriRedirectionCount;
-        private int? _maxRecvdDataSizePerCommand; // Default unlimited
-        private int? _maxRecvdObjectSize; // Default unlimited
-        private bool _useCompression = true;
-        private bool _noMachineProfile;
-        private ProxyAccessType _proxyAcessType = ProxyAccessType.None;
         private AuthenticationMechanism _proxyAuthentication;
         private PSCredential _proxyCredential;
-        private bool _skipCaCheck;
-        private bool _skipCnCheck;
-        private bool _skipRevocationCheck;
-        private bool _noEncryption;
-        private bool _useUtf16;
-        private OutputBufferingMode _outputBufferingMode = DefaultOutputBufferingMode;
-        private bool _includePortInSPN;
-        private bool _enableNetworkAccess;
-        private int _maxConnectionRetryCount = DefaultMaxConnectionRetryCount;
 
         #endregion Private Members
 
@@ -1472,12 +1360,8 @@ namespace System.Management.Automation.Runspaces
         /// in the connection string passed to WSMan, we use
         /// this internal boolean.
         /// </summary>
-        internal bool UseDefaultWSManPort
-        {
-            get { return _useDefaultWSManPort; }
-            set { _useDefaultWSManPort = value; }
-        }
-        private bool _useDefaultWSManPort;
+        internal bool UseDefaultWSManPort { get; set; }
+
 #endif
 
         /// <summary>
@@ -1639,10 +1523,6 @@ namespace System.Management.Automation.Runspaces
 
         private PSCredential _credential;
         private AuthenticationMechanism _authMechanism;
-        private ScriptBlock _initScript;
-        private bool _shouldRunsAs32;
-        private Version _psVersion;
-        private PowerShellProcessInstance _process;
 
         #endregion
 
@@ -1651,36 +1531,21 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Script to run while starting the background process.
         /// </summary>
-        public ScriptBlock InitializationScript
-        {
-            get { return _initScript; }
-            set { _initScript = value; }
-        }
+        public ScriptBlock InitializationScript { get; set; }
 
         /// <summary>
         /// On a 64bit machine, specifying true for this will launch a 32 bit process
         /// for the background process.
         /// </summary>
-        public bool RunAs32
-        {
-            get { return _shouldRunsAs32; }
-            set { _shouldRunsAs32 = value; }
-        }
+        public bool RunAs32 { get; set; }
 
         /// <summary>
         /// Powershell version to execute the job in
         /// </summary>
-        public Version PSVersion
-        {
-            get { return _psVersion; }
-            set { _psVersion = value; }
-        }
+        public Version PSVersion { get; set; }
 
-        internal PowerShellProcessInstance Process
-        {
-            get { return _process; }
-            set { _process = value; }
-        }
+        internal PowerShellProcessInstance Process { get; set; }
+
         #endregion
 
         #region Overrides
@@ -1967,9 +1832,6 @@ namespace System.Management.Automation.Runspaces
         private AuthenticationMechanism _authMechanism;
         private PSCredential _credential;
         private const int _defaultOpenTimeout = 20000; /* 20 seconds. */
-        private Guid _vmGuid;
-        private string _vmName;
-        private string _configurationName;
 
         #endregion
 
@@ -1978,20 +1840,12 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// GUID of the target VM.
         /// </summary>
-        public Guid VMGuid
-        {
-            get { return _vmGuid; }
-            set { _vmGuid = value; }
-        }
+        public Guid VMGuid { get; set; }
 
         /// <summary>
         /// Configuration name of the VM session.
         /// </summary>
-        public string ConfigurationName
-        {
-            get { return _configurationName; }
-            set { _configurationName = value; }
-        }
+        public string ConfigurationName { get; set; }
 
         #endregion
 
@@ -2047,11 +1901,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Name of the target VM.
         /// </summary>
-        public override string ComputerName
-        {
-            get { return _vmName; }
-            set { _vmName = value; }
-        }
+        public override string ComputerName { get; set; }
 
         internal override RunspaceConnectionInfo InternalCopy()
         {
@@ -2106,7 +1956,6 @@ namespace System.Management.Automation.Runspaces
         #region Private Data
 
         private AuthenticationMechanism _authMechanism;
-        private ContainerProcess _containerProc;
         private PSCredential _credential;
         private const int _defaultOpenTimeout = 20000; /* 20 seconds. */
 
@@ -2117,11 +1966,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// ContainerProcess class instance.
         /// </summary>
-        internal ContainerProcess ContainerProc
-        {
-            get { return _containerProc; }
-            set { _containerProc = value; }
-        }
+        internal ContainerProcess ContainerProc { get; set; }
 
         #endregion
 
@@ -2179,7 +2024,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override string ComputerName
         {
-            get { return _containerProc.ContainerId; }
+            get { return ContainerProc.ContainerId; }
             set { throw new PSNotSupportedException(); }
         }
 
@@ -2272,16 +2117,6 @@ namespace System.Management.Automation.Runspaces
     {
         #region Private Data
 
-        private Guid _runtimeId;
-        private string _containerObRoot;
-        private string _containerId;
-        private int _processId;
-        private bool _runAsAdmin = false;
-        private string _configurationName;
-        private bool _processTerminated = false;
-        private uint _errorCode = 0;
-        private string _errorMessage = string.Empty;
-
         private const uint NoError = 0;
         private const uint InvalidContainerId = 1;
         private const uint ContainersFeatureNotEnabled = 2;
@@ -2295,84 +2130,48 @@ namespace System.Management.Automation.Runspaces
         /// For Hyper-V container, it is Guid of utility VM hosting Hyper-V container.
         /// For Windows Server Container, it is empty.
         /// </summary>
-        public Guid RuntimeId
-        {
-            get { return _runtimeId; }
-            set { _runtimeId = value; }
-        }
+        public Guid RuntimeId { get; set; }
 
         /// <summary>
         /// OB root of the container.
         /// </summary>
-        public string ContainerObRoot
-        {
-            get { return _containerObRoot; }
-            set { _containerObRoot = value; }
-        }
+        public string ContainerObRoot { get; set; }
 
         /// <summary>
         /// ID of the container.
         /// </summary>
-        public string ContainerId
-        {
-            get { return _containerId; }
-            set { _containerId = value; }
-        }
+        public string ContainerId { get; set; }
 
         /// <summary>
         /// Process ID of the process created in container.
         /// </summary>
-        internal int ProcessId
-        {
-            get { return _processId; }
-            set { _processId = value; }
-        }
+        internal int ProcessId { get; set; }
 
         /// <summary>
         /// Whether the process in container should be launched as high privileged account
         /// (RunAsAdmin being true) or low privileged account (RunAsAdmin being false).
         /// </summary>
-        internal bool RunAsAdmin
-        {
-            get { return _runAsAdmin; }
-            set { _runAsAdmin = value; }
-        }
+        internal bool RunAsAdmin { get; set; } = false;
 
         /// <summary>
         /// The configuration name of the container session.
         /// </summary>
-        internal string ConfigurationName
-        {
-            get { return _configurationName; }
-            set { _configurationName = value; }
-        }
+        internal string ConfigurationName { get; set; }
 
         /// <summary>
         /// Whether the process in container has terminated.
         /// </summary>
-        internal bool ProcessTerminated
-        {
-            get { return _processTerminated; }
-            set { _processTerminated = value; }
-        }
+        internal bool ProcessTerminated { get; set; } = false;
 
         /// <summary>
         /// The error code.
         /// </summary>
-        internal uint ErrorCode
-        {
-            get { return _errorCode; }
-            set { _errorCode = value; }
-        }
+        internal uint ErrorCode { get; set; } = 0;
 
         /// <summary>
         /// The error message for other errors.
         /// </summary>
-        internal string ErrorMessage
-        {
-            get { return _errorMessage; }
-            set { _errorMessage = value; }
-        }
+        internal string ErrorMessage { get; set; } = string.Empty;
 
         #endregion
 

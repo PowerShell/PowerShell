@@ -27,28 +27,20 @@ namespace System.Management.Automation.ComInterop
     /// </summary>
     internal class VarEnumSelector
     {
-        private readonly VariantBuilder[] _variantBuilders;
-
         private static readonly Dictionary<VarEnum, Type> s_comToManagedPrimitiveTypes = CreateComToManagedPrimitiveTypes();
         private static readonly IList<IList<VarEnum>> s_comPrimitiveTypeFamilies = CreateComPrimitiveTypeFamilies();
 
         internal VarEnumSelector(Type[] explicitArgTypes)
         {
-            _variantBuilders = new VariantBuilder[explicitArgTypes.Length];
+            VariantBuilders = new VariantBuilder[explicitArgTypes.Length];
 
             for (int i = 0; i < explicitArgTypes.Length; i++)
             {
-                _variantBuilders[i] = GetVariantBuilder(explicitArgTypes[i]);
+                VariantBuilders[i] = GetVariantBuilder(explicitArgTypes[i]);
             }
         }
 
-        internal VariantBuilder[] VariantBuilders
-        {
-            get
-            {
-                return _variantBuilders;
-            }
-        }
+        internal VariantBuilder[] VariantBuilders { get; }
 
         internal static Type GetTypeForVarEnum(VarEnum vt)
         {

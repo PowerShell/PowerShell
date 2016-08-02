@@ -68,55 +68,27 @@ namespace Microsoft.PowerShell.Commands
         /// This parameter specifies the current pipeline object 
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject
-        {
-            get { return _inputObject; }
-            set { _inputObject = value; }
-        }
-        private PSObject _inputObject = AutomationNull.Value;
+        public PSObject InputObject { get; set; } = AutomationNull.Value;
 
         /// <summary>
         /// Gets/sets the title of the Out-GridView window.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        public string Title
-        {
-            get { return title; }
-            set { title = value; }
-        }
-        internal string title;
-
-        /// <summary>
-        /// Field used for the Block parameter.
-        /// </summary>
-        private SwitchParameter _wait;
+        public string Title { get; set; }
 
         /// <summary>
         /// Get or sets a value indicating whether the cmdlet should wait for the window to be closed
         /// </summary>
         [Parameter(ParameterSetName = "Wait")]
-        public SwitchParameter Wait
-        {
-            get { return _wait; }
-            set { _wait = value; }
-        }
-
-        /// <summary>
-        /// Field used for the OutputMode parameter.
-        /// </summary>
-        private OutputModeOption _outputMode;
+        public SwitchParameter Wait { get; set; }
 
         /// <summary>
         /// Get or sets a value indicating whether the selected items should be written to the pipeline
         /// and if it should be possible to select multiple or single list items
         /// </summary>
         [Parameter(ParameterSetName = "OutputMode")]
-        public OutputModeOption OutputMode
-        {
-            set { _outputMode = value; }
-            get { return _outputMode; }
-        }
+        public OutputModeOption OutputMode { set; get; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the selected items should be written to the pipeline
@@ -126,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter PassThru
         {
             set { this.OutputMode = value.IsPresent ? OutputModeOption.Multiple : OutputModeOption.None; }
-            get { return _outputMode == OutputModeOption.Multiple ? new SwitchParameter(true) : new SwitchParameter(false); }
+            get { return OutputMode == OutputModeOption.Multiple ? new SwitchParameter(true) : new SwitchParameter(false); }
         }
 
         #endregion Input Parameters
@@ -142,14 +114,14 @@ namespace Microsoft.PowerShell.Commands
             _expressionFactory = new MshExpressionFactory();
 
             // If the value of the Title parameter is valid, use it as a window's title.
-            if (this.title != null)
+            if (this.Title != null)
             {
-                _windowProxy = new OutWindowProxy(this.title, _outputMode, this);
+                _windowProxy = new OutWindowProxy(this.Title, OutputMode, this);
             }
             else
             {
                 // Using the command line as a title.
-                _windowProxy = new OutWindowProxy(this.MyInvocation.Line, _outputMode, this);
+                _windowProxy = new OutWindowProxy(this.MyInvocation.Line, OutputMode, this);
             }
 
             // Load the Type info database.
@@ -202,12 +174,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (_inputObject == null || _inputObject == AutomationNull.Value)
+            if (InputObject == null || InputObject == AutomationNull.Value)
             {
                 return;
             }
 
-            IDictionary dictionary = _inputObject.BaseObject as IDictionary;
+            IDictionary dictionary = InputObject.BaseObject as IDictionary;
             if (dictionary != null)
             {
                 // Dictionaries should be enumerated through because the pipeline does not enumerate through them. 
@@ -218,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                ProcessObject(_inputObject);
+                ProcessObject(InputObject);
             }
         }
 

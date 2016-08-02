@@ -51,7 +51,7 @@ namespace System.Management.Automation
     /// <summary>
     /// This class represents the compiled metadata for a command type.
     /// </summary>
-    [DebuggerDisplay("CommandName = {_commandName}; Type = {CommandType}")]
+    [DebuggerDisplay("CommandName = {Name}; Type = {CommandType}")]
     public sealed class CommandMetadata
     {
         #region Public Constructor
@@ -173,14 +173,14 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("other");
             }
 
-            _commandName = other._commandName;
-            _confirmImpact = other._confirmImpact;
+            Name = other.Name;
+            ConfirmImpact = other.ConfirmImpact;
             _defaultParameterSetFlag = other._defaultParameterSetFlag;
             _defaultParameterSetName = other._defaultParameterSetName;
             _implementsDynamicParameters = other._implementsDynamicParameters;
-            _supportsShouldProcess = other._supportsShouldProcess;
-            _supportsPaging = other._supportsPaging;
-            _supportsTransactions = other._supportsTransactions;
+            SupportsShouldProcess = other.SupportsShouldProcess;
+            SupportsPaging = other.SupportsPaging;
+            SupportsTransactions = other.SupportsTransactions;
             this.CommandType = other.CommandType;
             _wrappedAnyCmdlet = other._wrappedAnyCmdlet;
             _wrappedCommand = other._wrappedCommand;
@@ -232,21 +232,21 @@ namespace System.Management.Automation
             bool positionalBinding,
             Dictionary<string, ParameterMetadata> parameters)
         {
-            _commandName = _wrappedCommand = name;
+            Name = _wrappedCommand = name;
             _wrappedCommandType = commandType;
             _wrappedAnyCmdlet = isProxyForCmdlet;
             _defaultParameterSetName = defaultParameterSetName;
-            _supportsShouldProcess = supportsShouldProcess;
-            _supportsPaging = supportsPaging;
-            _confirmImpact = confirmImpact;
-            _supportsTransactions = supportsTransactions;
-            _positionalBinding = positionalBinding;
+            SupportsShouldProcess = supportsShouldProcess;
+            SupportsPaging = supportsPaging;
+            ConfirmImpact = confirmImpact;
+            SupportsTransactions = supportsTransactions;
+            PositionalBinding = positionalBinding;
             this.Parameters = parameters;
         }
 
         private void Init(string name, string fullyQualifiedName, Type commandType, bool shouldGenerateCommonParameters)
         {
-            _commandName = name;
+            Name = name;
             this.CommandType = commandType;
 
             if (commandType != null)
@@ -256,7 +256,7 @@ namespace System.Management.Automation
             }
 
             // Use fully qualified name if available.
-            _wrappedCommand = !string.IsNullOrEmpty(fullyQualifiedName) ? fullyQualifiedName : _commandName;
+            _wrappedCommand = !string.IsNullOrEmpty(fullyQualifiedName) ? fullyQualifiedName : Name;
             _wrappedCommandType = CommandTypes.Cmdlet;
             _wrappedAnyCmdlet = true;
         }
@@ -283,9 +283,9 @@ namespace System.Management.Automation
                 _defaultParameterSetName = null;
             }
 
-            _obsolete = scriptBlock.ObsoleteAttribute;
+            Obsolete = scriptBlock.ObsoleteAttribute;
             _scriptBlock = scriptBlock;
-            _wrappedCommand = _commandName = name;
+            _wrappedCommand = Name = name;
             _shouldGenerateCommonParameters = shouldGenerateCommonParameters;
         }
 
@@ -399,7 +399,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("commandName");
             }
 
-            _commandName = commandName;
+            Name = commandName;
             this.CommandType = cmdletType;
 
             if (cmdletType != null)
@@ -454,8 +454,8 @@ namespace System.Management.Automation
                 _defaultParameterSetName = null;
             }
 
-            _obsolete = scriptblock.ObsoleteAttribute;
-            _commandName = commandName;
+            Obsolete = scriptblock.ObsoleteAttribute;
+            Name = commandName;
             this.CommandType = typeof(PSScriptCmdlet);
 
             if (scriptblock.HasDynamicParameters)
@@ -477,20 +477,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the command this metadata represents
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                return _commandName;
-            }
-
-            set
-            {
-                // TODO: can value be null here
-                _commandName = value;
-            }
-        }
-        private string _commandName = String.Empty;
+        public string Name { get; set; } = String.Empty;
 
         /// <summary>
         /// The Type which this CommandMetadata represents.
@@ -505,10 +492,7 @@ namespace System.Management.Automation
         /// </summary>
         public string DefaultParameterSetName
         {
-            get
-            {
-                return _defaultParameterSetName;
-            }
+            get { return _defaultParameterSetName; }
             set
             {
                 if (string.IsNullOrEmpty(value))
@@ -525,57 +509,32 @@ namespace System.Management.Automation
         /// True if the cmdlet declared that it supports ShouldProcess, false otherwise.
         /// </summary>
         /// <value></value>
-        public bool SupportsShouldProcess
-        {
-            get { return _supportsShouldProcess; }
-            set { _supportsShouldProcess = value; }
-        }
-        private bool _supportsShouldProcess;
+        public bool SupportsShouldProcess { get; set; }
 
         /// <summary>
         /// True if the cmdlet declared that it supports Paging, false otherwise.
         /// </summary>
         /// <value></value>
-        public bool SupportsPaging
-        {
-            get { return _supportsPaging; }
-            set { _supportsPaging = value; }
-        }
-        private bool _supportsPaging;
+        public bool SupportsPaging { get; set; }
 
         /// <summary>
         /// When true, the command will auto-generate appropriate parameter metadata to support positional
         /// parameters if the script hasn't already specified multiple parameter sets or specified positions
         /// explicitly via the <see cref="ParameterAttribute"/>.
         /// </summary>
-        public bool PositionalBinding
-        {
-            get { return _positionalBinding; }
-            set { _positionalBinding = value; }
-        }
-        private bool _positionalBinding = true;
+        public bool PositionalBinding { get; set; } = true;
 
         /// <summary>
         /// True if the cmdlet declared that it supports transactions, false otherwise.
         /// </summary>
         /// <value></value>
-        public bool SupportsTransactions
-        {
-            get { return _supportsTransactions; }
-            set { _supportsTransactions = value; }
-        }
-        private bool _supportsTransactions;
+        public bool SupportsTransactions { get; set; }
 
         /// <summary>
         /// Related link URI for Get-Help -Online
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
-        public string HelpUri
-        {
-            get { return _helpUri; }
-            set { _helpUri = value; }
-        }
-        private string _helpUri = String.Empty;
+        public string HelpUri { get; set; } = String.Empty;
 
         /// <summary>
         /// The remoting capabilities of this cmdlet, when exposed in a context
@@ -605,12 +564,7 @@ namespace System.Management.Automation
         /// SupportsShouldProcess is specified.
         /// </summary>
         /// <value></value>
-        public ConfirmImpact ConfirmImpact
-        {
-            get { return _confirmImpact; }
-            set { _confirmImpact = value; }
-        }
-        private ConfirmImpact _confirmImpact = ConfirmImpact.Medium;
+        public ConfirmImpact ConfirmImpact { get; set; } = ConfirmImpact.Medium;
 
         /// <summary>
         /// Gets the parameter data for this command
@@ -658,12 +612,7 @@ namespace System.Management.Automation
         /// Gets or sets the obsolete attribute on the command
         /// </summary>
         /// <value></value>
-        internal ObsoleteAttribute Obsolete
-        {
-            get { return _obsolete; }
-            set { _obsolete = value; }
-        }
-        private ObsoleteAttribute _obsolete;
+        internal ObsoleteAttribute Obsolete { get; set; }
 
         #endregion
 
@@ -772,7 +721,7 @@ namespace System.Management.Automation
                 }
                 else if (attribute is ObsoleteAttribute)
                 {
-                    _obsolete = (ObsoleteAttribute)attribute;
+                    Obsolete = (ObsoleteAttribute)attribute;
                 }
                 else
                 {
@@ -808,19 +757,19 @@ namespace System.Management.Automation
             _defaultParameterSetName = attribute.DefaultParameterSetName;
 
             // Check to see if the cmdlet supports ShouldProcess
-            _supportsShouldProcess = attribute.SupportsShouldProcess;
+            SupportsShouldProcess = attribute.SupportsShouldProcess;
 
             // Determine the cmdlet's impact confirmation
-            _confirmImpact = attribute.ConfirmImpact;
+            ConfirmImpact = attribute.ConfirmImpact;
 
             // Check to see if the cmdlet supports paging
-            _supportsPaging = attribute.SupportsPaging;
+            SupportsPaging = attribute.SupportsPaging;
 
             // Check to see if the cmdlet supports transactions
-            _supportsTransactions = attribute.SupportsTransactions;
+            SupportsTransactions = attribute.SupportsTransactions;
 
             // Grab related link
-            _helpUri = attribute.HelpUri;
+            HelpUri = attribute.HelpUri;
 
             // Remoting support
             _remotingCapability = attribute.RemotingCapability;
@@ -976,25 +925,25 @@ end
                     separator = ", ";
                 }
 
-                if (_supportsShouldProcess)
+                if (SupportsShouldProcess)
                 {
                     decl.Append(separator);
                     decl.Append("SupportsShouldProcess=$true");
                     separator = ", ";
                     decl.Append(separator);
                     decl.Append("ConfirmImpact='");
-                    decl.Append(_confirmImpact);
+                    decl.Append(ConfirmImpact);
                     decl.Append("'");
                 }
 
-                if (_supportsPaging)
+                if (SupportsPaging)
                 {
                     decl.Append(separator);
                     decl.Append("SupportsPaging=$true");
                     separator = ", ";
                 }
 
-                if (_supportsTransactions)
+                if (SupportsTransactions)
                 {
                     decl.Append(separator);
                     decl.Append("SupportsTransactions=$true");
@@ -1008,11 +957,11 @@ end
                     separator = ", ";
                 }
 
-                if (!string.IsNullOrEmpty(_helpUri))
+                if (!string.IsNullOrEmpty(HelpUri))
                 {
                     decl.Append(separator);
                     decl.Append("HelpUri='");
-                    decl.Append(CodeGeneration.EscapeSingleQuotedStringContent(_helpUri));
+                    decl.Append(CodeGeneration.EscapeSingleQuotedStringContent(HelpUri));
                     decl.Append("'");
                     separator = ", ";
                 }

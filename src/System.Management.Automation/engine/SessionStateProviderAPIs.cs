@@ -27,9 +27,9 @@ namespace System.Management.Automation
         {
             get
             {
-                if (this == _context.TopLevelSessionState)
+                if (this == ExecutionContext.TopLevelSessionState)
                     return _providers;
-                return _context.TopLevelSessionState.Providers;
+                return ExecutionContext.TopLevelSessionState.Providers;
             }
         }
         private Dictionary<string, List<ProviderInfo>> _providers =
@@ -45,9 +45,9 @@ namespace System.Management.Automation
         {
             get
             {
-                if (this == _context.TopLevelSessionState)
+                if (this == ExecutionContext.TopLevelSessionState)
                     return _providersCurrentWorkingDrive;
-                return _context.TopLevelSessionState.ProvidersCurrentWorkingDrive;
+                return ExecutionContext.TopLevelSessionState.ProvidersCurrentWorkingDrive;
             }
         }
         private Dictionary<ProviderInfo, PSDriveInfo> _providersCurrentWorkingDrive = new Dictionary<ProviderInfo, PSDriveInfo>();
@@ -65,7 +65,7 @@ namespace System.Management.Automation
             if (this.ExecutionContext.RunspaceConfiguration == null)
                 throw PSTraceSource.NewInvalidOperationException();
 
-            if (this == _context.TopLevelSessionState && !_providersInitialized)
+            if (this == ExecutionContext.TopLevelSessionState && !_providersInitialized)
             {
                 foreach (ProviderConfigurationEntry providerConfig in this.ExecutionContext.RunspaceConfiguration.Providers)
                 {
@@ -1016,7 +1016,7 @@ namespace System.Management.Automation
             if (!Providers.TryGetValue(providerName.ShortName, out matchingProviders))
             {
                 // If the provider was not found, we may need to auto-mount it.
-                SessionStateInternal.MountDefaultDrive(providerName.ShortName, _context);
+                SessionStateInternal.MountDefaultDrive(providerName.ShortName, ExecutionContext);
 
                 if (!Providers.TryGetValue(providerName.ShortName, out matchingProviders))
                 {
@@ -1232,7 +1232,7 @@ namespace System.Management.Automation
                             // Since providers are global then the drives created
                             // through InitializeDefaultDrives should also be global.
 
-                            _globalScope.NewDrive(validatedNewDrive);
+                            GlobalScope.NewDrive(validatedNewDrive);
                         }
                     }
                     catch (SessionStateException exception)

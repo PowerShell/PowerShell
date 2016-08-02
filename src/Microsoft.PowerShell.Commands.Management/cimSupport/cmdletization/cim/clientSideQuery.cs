@@ -332,10 +332,10 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             protected PropertyValueFilter(string propertyName, object expectedPropertyValue, BehaviorOnNoMatch behaviorOnNoMatch)
             {
-                _propertyName = propertyName;
+                PropertyName = propertyName;
                 _behaviorOnNoMatch = behaviorOnNoMatch;
-                _originalExpectedPropertyValue = expectedPropertyValue;
-                _cimTypedExpectedPropertyValue = CimValueConverter.ConvertFromDotNetToCim(expectedPropertyValue);
+                OriginalExpectedPropertyValue = expectedPropertyValue;
+                CimTypedExpectedPropertyValue = CimValueConverter.ConvertFromDotNetToCim(expectedPropertyValue);
             }
 
             public BehaviorOnNoMatch BehaviorOnNoMatch
@@ -352,17 +352,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             protected abstract BehaviorOnNoMatch GetDefaultBehaviorWhenNoMatchesFound(object cimTypedExpectedPropertyValue);
             private BehaviorOnNoMatch _behaviorOnNoMatch;
 
-            public string PropertyName { get { return _propertyName; } }
-            private readonly string _propertyName;
+            public string PropertyName { get; }
 
-            public object CimTypedExpectedPropertyValue { get { return _cimTypedExpectedPropertyValue; } }
-            private readonly object _cimTypedExpectedPropertyValue;
+            public object CimTypedExpectedPropertyValue { get; }
 
-            public object OriginalExpectedPropertyValue { get { return _originalExpectedPropertyValue; } }
-            private readonly object _originalExpectedPropertyValue;
+            public object OriginalExpectedPropertyValue { get; }
 
-            public bool HadMatch { get { return _hadMatch; } }
-            private bool _hadMatch;
+            public bool HadMatch { get; private set; }
 
             public bool IsMatch(CimInstance o)
             {
@@ -371,27 +367,27 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     return false;
                 }
 
-                CimProperty propertyInfo = o.CimInstanceProperties[_propertyName];
+                CimProperty propertyInfo = o.CimInstanceProperties[PropertyName];
                 if (propertyInfo == null)
                 {
                     return false;
                 }
                 object actualPropertyValue = propertyInfo.Value;
 
-                if (_cimTypedExpectedPropertyValue == null)
+                if (CimTypedExpectedPropertyValue == null)
                 {
-                    _hadMatch = _hadMatch || (actualPropertyValue == null);
+                    HadMatch = HadMatch || (actualPropertyValue == null);
                     return actualPropertyValue == null;
                 }
 
                 CimValueConverter.AssertIntrinsicCimValue(actualPropertyValue);
-                CimValueConverter.AssertIntrinsicCimValue(_cimTypedExpectedPropertyValue);
+                CimValueConverter.AssertIntrinsicCimValue(CimTypedExpectedPropertyValue);
 
-                actualPropertyValue = ConvertActualValueToExpectedType(actualPropertyValue, _cimTypedExpectedPropertyValue);
-                Dbg.Assert(IsSameType(actualPropertyValue, _cimTypedExpectedPropertyValue), "Types of actual vs expected property value should always match");
+                actualPropertyValue = ConvertActualValueToExpectedType(actualPropertyValue, CimTypedExpectedPropertyValue);
+                Dbg.Assert(IsSameType(actualPropertyValue, CimTypedExpectedPropertyValue), "Types of actual vs expected property value should always match");
 
                 bool isMatch = this.IsMatchingValue(actualPropertyValue);
-                _hadMatch = _hadMatch || isMatch;
+                HadMatch = HadMatch || isMatch;
                 return isMatch;
             }
 
@@ -409,7 +405,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     var errorMessage = string.Format(
                         CultureInfo.InvariantCulture,
                         CmdletizationResources.CimJob_MismatchedTypeOfPropertyReturnedByQuery,
-                        _propertyName,
+                        PropertyName,
                         actualPropertyValue.GetType().FullName,
                         expectedPropertyValue.GetType().FullName);
                     throw CimJobException.CreateWithoutJobContext(

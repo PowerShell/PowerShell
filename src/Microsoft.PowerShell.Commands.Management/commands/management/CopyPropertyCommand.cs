@@ -23,16 +23,9 @@ namespace Microsoft.PowerShell.Commands
                    Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
-            get
-            {
-                return paths;
-            } // get
-
-            set
-            {
-                paths = value;
-            } // set
-        } // Path
+            get { return paths; }
+            set { paths = value; }
+        }
 
         /// <summary>
         /// Gets or sets the literal path parameter to the command
@@ -42,17 +35,13 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSPath")]
         public string[] LiteralPath
         {
-            get
-            {
-                return paths;
-            } // get
-
+            get { return paths; }
             set
             {
                 base.SuppressWildcardExpansion = true;
                 paths = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
         /// The name of the property to create on the item
@@ -60,36 +49,14 @@ namespace Microsoft.PowerShell.Commands
         ///
         [Parameter(Position = 2, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [Alias("PSProperty")]
-        public string Name
-        {
-            get
-            {
-                return _property;
-            } // get
-
-            set
-            {
-                _property = value;
-            }
-        } // Property
+        public string Name { get; set; }
 
         /// <summary>
         /// The path to the destination item to copy the property to.
         /// </summary>
         /// 
         [Parameter(Mandatory = true, Position = 1, ValueFromPipelineByPropertyName = true)]
-        public string Destination
-        {
-            get
-            {
-                return _destination;
-            } // get
-
-            set
-            {
-                _destination = value;
-            }
-        } // Destination
+        public string Destination { get; set; }
 
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
@@ -112,32 +79,22 @@ namespace Microsoft.PowerShell.Commands
             {
                 return InvokeProvider.Property.CopyPropertyDynamicParameters(
                     Path[0],
-                    _property,
+                    Name,
                     Destination,
-                    _property,
+                    Name,
                     context);
             }
             return InvokeProvider.Property.CopyPropertyDynamicParameters(
                 ".",
-                _property,
+                Name,
                 Destination,
-                _property,
+                Name,
                 context);
         } // GetDynamicParameters
 
         #endregion Parameters
 
         #region parameter data
-
-        /// <summary>
-        /// The property to be copied.
-        /// </summary>
-        private string _property;
-
-        /// <summary>
-        /// The destination path of the item to copy the property to.
-        /// </summary>
-        private string _destination;
 
         #endregion parameter data
 
@@ -154,9 +111,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     InvokeProvider.Property.Copy(
                         path,
-                        _property,
+                        Name,
                         Destination,
-                        _property,
+                        Name,
                         GetCurrentContext());
                 }
                 catch (PSNotSupportedException notSupported)

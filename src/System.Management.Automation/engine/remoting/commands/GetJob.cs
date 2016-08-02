@@ -26,12 +26,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = JobCmdletBase.NameParameterSet)]
         [Parameter(ParameterSetName = JobCmdletBase.StateParameterSet)]
         [Parameter(ParameterSetName = JobCmdletBase.CommandParameterSet)]
-        public SwitchParameter IncludeChildJob
-        {
-            get { return _includeChildJob; }
-            set { _includeChildJob = value; }
-        }
-        private SwitchParameter _includeChildJob;
+        public SwitchParameter IncludeChildJob { get; set; }
 
         /// <summary>
         /// ChildJobState parameter.
@@ -41,12 +36,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = JobCmdletBase.NameParameterSet)]
         [Parameter(ParameterSetName = JobCmdletBase.StateParameterSet)]
         [Parameter(ParameterSetName = JobCmdletBase.CommandParameterSet)]
-        public JobState ChildJobState
-        {
-            get { return _childJobState; }
-            set { _childJobState = value; }
-        }
-        private JobState _childJobState;
+        public JobState ChildJobState { get; set; }
 
         /// <summary>
         /// HasMoreData parameter.
@@ -56,12 +46,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = JobCmdletBase.NameParameterSet)]
         [Parameter(ParameterSetName = JobCmdletBase.StateParameterSet)]
         [Parameter(ParameterSetName = JobCmdletBase.CommandParameterSet)]
-        public bool HasMoreData
-        {
-            get { return _hasMoreData; }
-            set { _hasMoreData = value; }
-        }
-        private bool _hasMoreData;
+        public bool HasMoreData { get; set; }
 
         /// <summary>
         /// Before time filter.
@@ -71,12 +56,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = JobCmdletBase.NameParameterSet)]
         [Parameter(ParameterSetName = JobCmdletBase.StateParameterSet)]
         [Parameter(ParameterSetName = JobCmdletBase.CommandParameterSet)]
-        public DateTime Before
-        {
-            get { return _beforeTime; }
-            set { _beforeTime = value; }
-        }
-        private DateTime _beforeTime;
+        public DateTime Before { get; set; }
 
         /// <summary>
         /// After time filter.
@@ -86,12 +66,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = JobCmdletBase.NameParameterSet)]
         [Parameter(ParameterSetName = JobCmdletBase.StateParameterSet)]
         [Parameter(ParameterSetName = JobCmdletBase.CommandParameterSet)]
-        public DateTime After
-        {
-            get { return _afterTime; }
-            set { _afterTime = value; }
-        }
-        private DateTime _afterTime;
+        public DateTime After { get; set; }
 
         /// <summary>
         /// Newest returned count.
@@ -101,12 +76,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = JobCmdletBase.NameParameterSet)]
         [Parameter(ParameterSetName = JobCmdletBase.StateParameterSet)]
         [Parameter(ParameterSetName = JobCmdletBase.CommandParameterSet)]
-        public int Newest
-        {
-            get { return _newestCount; }
-            set { _newestCount = value; }
-        }
-        private int _newestCount;
+        public int Newest { get; set; }
 
 
         /// <summary>
@@ -238,7 +208,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (Job job in jobList)
             {
-                if (job.HasMoreData == _hasMoreData)
+                if (job.HasMoreData == HasMoreData)
                 {
                     matches.Add(job);
                 }
@@ -283,7 +253,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (Job childJob in job.ChildJobs)
                     {
-                        if (childJob.JobStateInfo.State != _childJobState) continue;
+                        if (childJob.JobStateInfo.State != ChildJobState) continue;
 
                         matches.Add(childJob);
                     }
@@ -325,16 +295,16 @@ namespace Microsoft.PowerShell.Commands
 
                     if (beforeParameter && afterParameter)
                     {
-                        if (job.PSEndTime < _beforeTime &&
-                            job.PSEndTime > _afterTime)
+                        if (job.PSEndTime < Before &&
+                            job.PSEndTime > After)
                         {
                             filteredJobs.Add(job);
                         }
                     }
                     else if ((beforeParameter &&
-                              job.PSEndTime < _beforeTime) ||
+                              job.PSEndTime < Before) ||
                              (afterParameter &&
-                              job.PSEndTime > _afterTime))
+                              job.PSEndTime > After))
                     {
                         filteredJobs.Add(job);
                     }
@@ -376,7 +346,7 @@ namespace Microsoft.PowerShell.Commands
             int count = 0;
             foreach (Job job in filteredJobs)
             {
-                if (++count > _newestCount)
+                if (++count > Newest)
                 {
                     break;
                 }

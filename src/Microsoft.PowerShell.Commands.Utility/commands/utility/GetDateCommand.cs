@@ -192,54 +192,21 @@ namespace Microsoft.PowerShell.Commands
         /// This option determines the default output format used to display the object get-date emits
         /// </summary>
         [Parameter]
-        public DisplayHintType DisplayHint
-        {
-            get
-            {
-                return _displayHint;
-            }
-            set
-            {
-                _displayHint = value;
-            }
-        }
-        private DisplayHintType _displayHint = DisplayHintType.DateTime;
+        public DisplayHintType DisplayHint { get; set; } = DisplayHintType.DateTime;
 
 
         /// <summary>
         /// Unix format string
         /// </summary> 
         [Parameter(ParameterSetName = "UFormat")]
-        public string UFormat
-        {
-            get
-            {
-                return _uFormat;
-            }
-            set
-            {
-                _uFormat = value;
-            }
-        }
-        private string _uFormat;
+        public string UFormat { get; set; }
 
 
         /// <summary>
         /// Unix format string
         /// </summary> 
         [Parameter(ParameterSetName = "net")]
-        public string Format
-        {
-            get
-            {
-                return _format;
-            }
-            set
-            {
-                _format = value;
-            }
-        }
-        private string _format;
+        public string Format { get; set; }
 
         #endregion
 

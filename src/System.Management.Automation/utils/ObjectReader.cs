@@ -648,8 +648,6 @@ namespace System.Management.Automation.Internal
         #region Private Data
 
         private PSDataCollection<DataStoreType> _datastore;
-        private String _computerName;
-        private Guid _runspaceId;
 
         #endregion Private Data
 
@@ -667,8 +665,8 @@ namespace System.Management.Automation.Internal
             System.Management.Automation.Diagnostics.Assert(null != stream.ObjectStore,
                 "Stream should have a valid data store");
             _datastore = stream.ObjectStore;
-            _computerName = computerName;
-            _runspaceId = runspaceId;
+            ComputerName = computerName;
+            RunspaceId = runspaceId;
         }
 
         #endregion ctor
@@ -677,25 +675,13 @@ namespace System.Management.Automation.Internal
         /// Computer name passed in by the pipeline which
         /// created this reader
         /// </summary>
-        internal String ComputerName
-        {
-            get
-            {
-                return _computerName;
-            }
-        }
+        internal String ComputerName { get; }
 
         /// <summary>
         /// Runspace Id passed in by the pipeline which
         /// created this reader
         /// </summary>
-        internal Guid RunspaceId
-        {
-            get
-            {
-                return _runspaceId;
-            }
-        }
+        internal Guid RunspaceId { get; }
 
         /// <summary>
         /// This method is not supported.

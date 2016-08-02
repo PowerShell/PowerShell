@@ -1317,7 +1317,7 @@ namespace System.Management.Automation
                 }
                 else if (variablePath.IsGlobal)
                 {
-                    scope = _globalScope;
+                    scope = GlobalScope;
                 }
                 else if (variablePath.IsPrivate)
                 {
@@ -2131,14 +2131,7 @@ namespace System.Management.Automation
         /// <summary>
         /// List of variables to export from this session state object...
         /// </summary>
-        internal List<PSVariable> ExportedVariables
-        {
-            get
-            {
-                return _exportedVariables;
-            }
-        }
-        private List<PSVariable> _exportedVariables = new List<PSVariable>();
+        internal List<PSVariable> ExportedVariables { get; } = new List<PSVariable>();
 
         #endregion variables
     }           // SessionStateInternal class

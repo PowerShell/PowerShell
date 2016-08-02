@@ -22,24 +22,16 @@ namespace System.Management.Automation.ComInterop
     /// </summary>
     internal class ComObject : IDynamicMetaObjectProvider
     {
-        /// <summary>
-        /// The runtime-callable wrapper
-        /// </summary>
-        private readonly object _rcw;
-
         internal ComObject(object rcw)
         {
             Debug.Assert(ComObject.IsComObject(rcw));
-            _rcw = rcw;
+            RuntimeCallableWrapper = rcw;
         }
 
-        internal object RuntimeCallableWrapper
-        {
-            get
-            {
-                return _rcw;
-            }
-        }
+        /// <summary>
+        /// The runtime-callable wrapper
+        /// </summary>
+        internal object RuntimeCallableWrapper { get; }
 
         private readonly static object s_comObjectInfoKey = new object();
 

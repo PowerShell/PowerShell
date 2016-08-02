@@ -39,23 +39,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal TypeMatchItem(object obj, AppliesTo a)
         {
-            _item = obj;
-            _appliesTo = a;
+            Item = obj;
+            AppliesTo = a;
         }
         internal TypeMatchItem(object obj, AppliesTo a, PSObject currentObject)
         {
-            _item = obj;
-            _appliesTo = a;
-            _currentObject = currentObject;
+            Item = obj;
+            AppliesTo = a;
+            CurrentObject = currentObject;
         }
 
-        internal object Item { get { return _item; } }
-        internal AppliesTo AppliesTo { get { return _appliesTo; } }
-        internal PSObject CurrentObject { get { return _currentObject; } }
-
-        private object _item;
-        private AppliesTo _appliesTo;
-        private PSObject _currentObject;
+        internal object Item { get; }
+        internal AppliesTo AppliesTo { get; }
+        internal PSObject CurrentObject { get; }
     }
 
     /// <summary>

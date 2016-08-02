@@ -113,20 +113,12 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Return a unique position representing an empty or missing position.
         /// </summary>
-        public static IScriptPosition EmptyPosition
-        {
-            get { return s_emptyPosition; }
-        }
-        private readonly static IScriptPosition s_emptyPosition = new EmptyScriptPosition();
+        public static IScriptPosition EmptyPosition { get; } = new EmptyScriptPosition();
 
         /// <summary>
         /// Return a unique extent repesenting an empty or missing extent.
         /// </summary>
-        public static IScriptExtent EmptyExtent
-        {
-            get { return s_emptyExtent; }
-        }
-        private static readonly IScriptExtent s_emptyExtent = new EmptyScriptExtent();
+        public static IScriptExtent EmptyExtent { get; } = new EmptyScriptExtent();
 
         /// <summary>
         /// Return a message that looks like:
@@ -277,11 +269,11 @@ namespace System.Management.Automation.Language
             {
                 return start;
             }
-            if (start == s_emptyExtent)
+            if (start == EmptyExtent)
             {
                 return end;
             }
-            if (end == s_emptyExtent)
+            if (end == EmptyExtent)
             {
                 return start;
             }
@@ -372,30 +364,22 @@ namespace System.Management.Automation.Language
 
     internal class PositionHelper
     {
-        private readonly string _filename;
-        private readonly string _scriptText;
         private int[] _lineStartMap;
 
         internal PositionHelper(string filename, string scriptText)
         {
-            _filename = filename;
-            _scriptText = scriptText;
+            File = filename;
+            ScriptText = scriptText;
         }
 
-        internal string ScriptText
-        {
-            get { return _scriptText; }
-        }
+        internal string ScriptText { get; }
 
         internal int[] LineStartMap
         {
             set { _lineStartMap = value; }
         }
 
-        public string File
-        {
-            get { return _filename; }
-        }
+        public string File { get; }
 
         internal int LineFromOffset(int offset)
         {
@@ -427,19 +411,18 @@ namespace System.Management.Automation.Language
     internal sealed class InternalScriptPosition : IScriptPosition
     {
         private readonly PositionHelper _positionHelper;
-        private readonly int _offset;
 
         internal InternalScriptPosition(PositionHelper _positionHelper, int offset)
         {
             this._positionHelper = _positionHelper;
-            _offset = offset;
+            Offset = offset;
         }
 
         public string File { get { return _positionHelper.File; } }
-        public int LineNumber { get { return _positionHelper.LineFromOffset(_offset); } }
-        public int ColumnNumber { get { return _positionHelper.ColumnFromOffset(_offset); } }
+        public int LineNumber { get { return _positionHelper.LineFromOffset(Offset); } }
+        public int ColumnNumber { get { return _positionHelper.ColumnFromOffset(Offset); } }
         public string Line { get { return _positionHelper.Text(LineNumber); } }
-        public int Offset { get { return _offset; } }
+        public int Offset { get; }
 
         internal InternalScriptPosition CloneWithNewOffset(int offset)
         {
@@ -454,50 +437,46 @@ namespace System.Management.Automation.Language
 
     internal sealed class InternalScriptExtent : IScriptExtent
     {
-        private readonly PositionHelper _positionHelper;
-        private readonly int _startOffset;
-        private readonly int _endOffset;
-
         internal InternalScriptExtent(PositionHelper _positionHelper, int startOffset, int endOffset)
         {
-            this._positionHelper = _positionHelper;
-            _startOffset = startOffset;
-            _endOffset = endOffset;
+            this.PositionHelper = _positionHelper;
+            StartOffset = startOffset;
+            EndOffset = endOffset;
         }
 
         public string File
         {
-            get { return _positionHelper.File; }
+            get { return PositionHelper.File; }
         }
 
         public IScriptPosition StartScriptPosition
         {
-            get { return new InternalScriptPosition(_positionHelper, _startOffset); }
+            get { return new InternalScriptPosition(PositionHelper, StartOffset); }
         }
 
         public IScriptPosition EndScriptPosition
         {
-            get { return new InternalScriptPosition(_positionHelper, _endOffset); }
+            get { return new InternalScriptPosition(PositionHelper, EndOffset); }
         }
 
         public int StartLineNumber
         {
-            get { return _positionHelper.LineFromOffset(_startOffset); }
+            get { return PositionHelper.LineFromOffset(StartOffset); }
         }
 
         public int StartColumnNumber
         {
-            get { return _positionHelper.ColumnFromOffset(_startOffset); }
+            get { return PositionHelper.ColumnFromOffset(StartOffset); }
         }
 
         public int EndLineNumber
         {
-            get { return _positionHelper.LineFromOffset(_endOffset); }
+            get { return PositionHelper.LineFromOffset(EndOffset); }
         }
 
         public int EndColumnNumber
         {
-            get { return _positionHelper.ColumnFromOffset(_endOffset); }
+            get { return PositionHelper.ColumnFromOffset(EndOffset); }
         }
 
         public string Text
@@ -505,11 +484,11 @@ namespace System.Management.Automation.Language
             get
             {
                 // StartOffset can be > the length for the EOF token.
-                if (_startOffset > _positionHelper.ScriptText.Length)
+                if (StartOffset > PositionHelper.ScriptText.Length)
                 {
                     return "";
                 }
-                return _positionHelper.ScriptText.Substring(_startOffset, _endOffset - _startOffset);
+                return PositionHelper.ScriptText.Substring(StartOffset, EndOffset - StartOffset);
             }
         }
 
@@ -518,9 +497,9 @@ namespace System.Management.Automation.Language
             return Text;
         }
 
-        internal PositionHelper PositionHelper { get { return _positionHelper; } }
-        public int StartOffset { get { return _startOffset; } }
-        public int EndOffset { get { return _endOffset; } }
+        internal PositionHelper PositionHelper { get; }
+        public int StartOffset { get; }
+        public int EndOffset { get; }
     }
 
     #endregion Internal Position
@@ -586,10 +565,6 @@ namespace System.Management.Automation.Language
     /// </summary>
     sealed public class ScriptPosition : IScriptPosition
     {
-        private readonly int _offsetInLine;
-        private readonly int _scriptLineNumber;
-        private readonly string _scriptName;
-        private readonly string _line;
         private readonly string _fullScript;
 
         /// <summary>
@@ -602,17 +577,17 @@ namespace System.Management.Automation.Language
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         public ScriptPosition(string scriptName, int scriptLineNumber, int offsetInLine, string line)
         {
-            _scriptName = scriptName;
-            _scriptLineNumber = scriptLineNumber;
-            _offsetInLine = offsetInLine;
+            File = scriptName;
+            LineNumber = scriptLineNumber;
+            ColumnNumber = offsetInLine;
 
             if (string.IsNullOrEmpty(line))
             {
-                _line = String.Empty;
+                Line = String.Empty;
             }
             else
             {
-                _line = line;
+                Line = line;
             }
         }
 
@@ -639,17 +614,17 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The name of the file, or if the script did not come from a file, then null.
         /// </summary>
-        public string File { get { return _scriptName; } }
+        public string File { get; }
 
         /// <summary>
         /// The line number of the position, with the value 1 being the first line.
         /// </summary>
-        public int LineNumber { get { return _scriptLineNumber; } }
+        public int LineNumber { get; }
 
         /// <summary>
         /// The column number of the position, with the value 1 being the first column.
         /// </summary>
-        public int ColumnNumber { get { return _offsetInLine; } }
+        public int ColumnNumber { get; }
 
         /// <summary>
         /// The offset from the beginning of the script, always return 0.
@@ -659,7 +634,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The complete text of the line that this position is included on.
         /// </summary>
-        public string Line { get { return _line; } }
+        public string Line { get; }
 
         /// <summary>
         /// The complete script that this position is included in.

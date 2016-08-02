@@ -31,20 +31,9 @@ namespace System.Management.Automation
         /// <summary>
         /// The events received by this runspace
         /// </summary>
-        internal PSLocalEventManager Events
-        {
-            get
-            {
-                return _eventManager;
-            }
-        }
-        private PSLocalEventManager _eventManager;
+        internal PSLocalEventManager Events { get; private set; }
 
-        internal HashSet<String> AutoLoadingModuleInProgress
-        {
-            get { return _autoLoadingModuleInProgress; }
-        }
-        private HashSet<string> _autoLoadingModuleInProgress = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        internal HashSet<String> AutoLoadingModuleInProgress { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// The debugger for the interpreter
@@ -67,11 +56,11 @@ namespace System.Management.Automation
                 _debugger.ResetDebugger();
             }
 
-            if (_eventManager != null)
+            if (Events != null)
             {
-                _eventManager.Dispose();
+                Events.Dispose();
             }
-            _eventManager = new PSLocalEventManager(this);
+            Events = new PSLocalEventManager(this);
             if (this.transactionManager != null)
             {
                 this.transactionManager.Dispose();
@@ -87,7 +76,7 @@ namespace System.Management.Automation
             get
             {
                 // Pretend that tracing is off if ignoreScriptDebug is true
-                return _ignoreScriptDebug ? 0 : _debugTraceLevel;
+                return IgnoreScriptDebug ? 0 : _debugTraceLevel;
             }
             set { _debugTraceLevel = value; }
         }
@@ -102,7 +91,7 @@ namespace System.Management.Automation
             get
             {
                 // Pretend that tracing is off if ignoreScriptDebug is true
-                return !_ignoreScriptDebug && _debugTraceStep;
+                return !IgnoreScriptDebug && _debugTraceStep;
             }
             set { _debugTraceStep = value; }
         }
@@ -157,7 +146,7 @@ namespace System.Management.Automation
             get
             {
                 // Pretend that tracing is off if ignoreScriptDebug is true
-                return !_ignoreScriptDebug && (_debugTraceLevel > 0 || _debugTraceStep);
+                return !IgnoreScriptDebug && (_debugTraceLevel > 0 || _debugTraceStep);
             }
         }
 
@@ -165,12 +154,7 @@ namespace System.Management.Automation
         /// If true, then a script command processor should rethrow the exit exception instead of
         /// simply capturing it. This is used by the -file option on the console host.
         /// </summary>
-        internal bool ScriptCommandProcessorShouldRethrowExit
-        {
-            get { return _scriptCommandProcessorShouldRethrowExit; }
-            set { _scriptCommandProcessorShouldRethrowExit = value; }
-        }
-        private bool _scriptCommandProcessorShouldRethrowExit = false;
+        internal bool ScriptCommandProcessorShouldRethrowExit { get; set; } = false;
 
         /// <summary>
         /// If this flag is set to true, script trace output
@@ -178,36 +162,19 @@ namespace System.Management.Automation
         /// trace flag.
         /// </summary>
         /// <value>The current state of the IgnoreScriptDebug flag.</value>
-        internal bool IgnoreScriptDebug
-        {
-            set { _ignoreScriptDebug = value; }
-            get { return _ignoreScriptDebug; }
-        }
-        private bool _ignoreScriptDebug = true;
+        internal bool IgnoreScriptDebug { set; get; } = true;
 
         /// <summary>
         /// Gets the automation engine instance.
         /// </summary>
-        internal AutomationEngine Engine
-        {
-            get { return _engine; }
-        }
-        private AutomationEngine _engine;
+        internal AutomationEngine Engine { get; private set; }
 
         /// <summary>
         /// Get the RunspaceConfiguration instance
         /// </summary>
-        internal RunspaceConfiguration RunspaceConfiguration
-        {
-            get { return _runspaceConfiguration; }
-        }
-        private RunspaceConfiguration _runspaceConfiguration;
+        internal RunspaceConfiguration RunspaceConfiguration { get; }
 
-        internal InitialSessionState InitialSessionState
-        {
-            get { return _initialSessionState; }
-        }
-        private InitialSessionState _initialSessionState;
+        internal InitialSessionState InitialSessionState { get; }
 
         /// <summary>
         /// True if the RunspaceConfiguration/InitialSessionState is for a single shell or false otherwise.
@@ -227,35 +194,20 @@ namespace System.Management.Automation
         /// Contains the name of the previous module that was processed. This
         /// allows you to skip this module when doing a lookup.
         /// </summary>
-        internal string PreviousModuleProcessed
-        {
-            get { return _previousModuleProcessed; }
-            set { _previousModuleProcessed = value; }
-        }
-        private string _previousModuleProcessed;
+        internal string PreviousModuleProcessed { get; set; }
 
         /// <summary>
         /// Added for 4980967
         /// Contains the name of the latest module that was imported,
         /// Allows "module\function" to call the function from latest imported module instead of randomly choosing the first module in the moduletable.
         /// </summary>
-        internal Hashtable previousModuleImported
-        {
-            get { return _previousModuleImported; }
-            set { _previousModuleImported = value; }
-        }
-        private Hashtable _previousModuleImported = new Hashtable();
+        internal Hashtable previousModuleImported { get; set; } = new Hashtable();
 
         /// <summary>
         /// Contains the name of the module currently being processed. This
         /// allows you to skip this module when doing a lookup.
         /// </summary>
-        internal string ModuleBeingProcessed
-        {
-            get { return _moduleBeingProcessed; }
-            set { _moduleBeingProcessed = value; }
-        }
-        private string _moduleBeingProcessed;
+        internal string ModuleBeingProcessed { get; set; }
 
         private bool _responsibilityForModuleAnalysisAppDomainOwned;
 
@@ -293,14 +245,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Authorization manager for this runspace
         /// </summary>
-        internal AuthorizationManager AuthorizationManager
-        {
-            get
-            {
-                return _authorizationManager;
-            }
-        }
-        private AuthorizationManager _authorizationManager;
+        internal AuthorizationManager AuthorizationManager { get; private set; }
 
         /// <summary>
         /// Gets the appropriate provider names for the default
@@ -331,14 +276,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The module information for this engine...
         /// </summary>
-        internal ModuleIntrinsics Modules
-        {
-            get
-            {
-                return _modules;
-            }
-        }
-        private ModuleIntrinsics _modules;
+        internal ModuleIntrinsics Modules { get; private set; }
 
         /// <summary>
         /// Get the shellID for this runspace...
@@ -351,14 +289,14 @@ namespace System.Management.Automation
                 {
                     // Use the ShellID from PSAuthorizationManager before everything else because that's what's used
                     // to check execution policy...
-                    if (_authorizationManager is PSAuthorizationManager && !String.IsNullOrEmpty(_authorizationManager.ShellId))
+                    if (AuthorizationManager is PSAuthorizationManager && !String.IsNullOrEmpty(AuthorizationManager.ShellId))
                     {
-                        _shellId = _authorizationManager.ShellId;
+                        _shellId = AuthorizationManager.ShellId;
                     }
-                    else if (_runspaceConfiguration != null && !String.IsNullOrEmpty(_runspaceConfiguration.ShellId))
+                    else if (RunspaceConfiguration != null && !String.IsNullOrEmpty(RunspaceConfiguration.ShellId))
                     {
                         // Otherwise fall back to the runspace shell id if it's there...
-                        _shellId = _runspaceConfiguration.ShellId;
+                        _shellId = RunspaceConfiguration.ShellId;
                     }
                     else
                     {
@@ -375,22 +313,13 @@ namespace System.Management.Automation
         /// Session State with which this instance of engine works
         /// </summary>
         ///
-        internal SessionStateInternal EngineSessionState
-        {
-            get { return _engineSessionState; }
-            set { _engineSessionState = value; }
-        }
-        private SessionStateInternal _engineSessionState;
+        internal SessionStateInternal EngineSessionState { get; set; }
 
         /// <summary>
         /// The default or top-level session state instance for the
         /// engine.
         /// </summary>
-        internal SessionStateInternal TopLevelSessionState
-        {
-            get { return _topLevelSessionState; }
-        }
-        private SessionStateInternal _topLevelSessionState;
+        internal SessionStateInternal TopLevelSessionState { get; private set; }
 
         /// <summary>
         /// Get the SessionState facade for the internal session state APIs
@@ -400,7 +329,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _engineSessionState.PublicSessionState;
+                return EngineSessionState.PublicSessionState;
             }
         }
 
@@ -458,7 +387,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _initialSessionState != null ? _initialSessionState.UseFullLanguageModeInDebugger : false;
+                return InitialSessionState != null ? InitialSessionState.UseFullLanguageModeInDebugger : false;
             }
         }
 
@@ -495,14 +424,7 @@ namespace System.Management.Automation
         /// The assemblies that have been loaded for this runspace
         /// </summary>
         /// 
-        internal Dictionary<string, Assembly> AssemblyCache
-        {
-            get
-            {
-                return _assemblyCache;
-            }
-        }
-        private Dictionary<string, Assembly> _assemblyCache;
+        internal Dictionary<string, Assembly> AssemblyCache { get; private set; }
 
         #endregion Properties
 
@@ -515,18 +437,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <value></value>
         ///
-        internal EngineState EngineState
-        {
-            get
-            {
-                return _engineState;
-            }
-            set
-            {
-                _engineState = value;
-            }
-        }
-        private EngineState _engineState = EngineState.None;
+        internal EngineState EngineState { get; set; } = EngineState.None;
 
         #endregion
 
@@ -539,7 +450,7 @@ namespace System.Management.Automation
         {
             CmdletProviderContext context;
             SessionStateScope scope;
-            return _engineSessionState.GetVariableValue(path, out context, out scope);
+            return EngineSessionState.GetVariableValue(path, out context, out scope);
         }
 
         /// <summary>
@@ -550,7 +461,7 @@ namespace System.Management.Automation
         {
             CmdletProviderContext context;
             SessionStateScope scope;
-            return _engineSessionState.GetVariableValue(path, out context, out scope) ?? defaultValue;
+            return EngineSessionState.GetVariableValue(path, out context, out scope) ?? defaultValue;
         }
 
         /// <summary>
@@ -558,7 +469,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void SetVariable(VariablePath path, object newValue)
         {
-            _engineSessionState.SetVariable(path, newValue, true, CommandOrigin.Internal);
+            EngineSessionState.SetVariable(path, newValue, true, CommandOrigin.Internal);
         } // SetVariable
 
         internal T GetEnumPreference<T>(VariablePath preferenceVariablePath, T defaultPref, out bool defaultUsed)
@@ -665,18 +576,8 @@ namespace System.Management.Automation
         #endregion
 
         #region FormatAndOutput
-        internal Object FormatInfo
-        {
-            get
-            {
-                return _formatInfo;
-            }
-            set
-            {
-                _formatInfo = value;
-            }
-        }
-        private object _formatInfo;
+        internal Object FormatInfo { get; set; }
+
         #endregion
 
         internal Dictionary<string, ScriptBlock> CustomArgumentCompleters { get; set; }
@@ -709,18 +610,7 @@ namespace System.Management.Automation
         /// Hold the current command.
         /// </summary>
         /// <value>Reference to command discovery</value>
-        internal CommandProcessorBase CurrentCommandProcessor
-        {
-            get
-            {
-                return _currentCommandProcessor;
-            }
-            set
-            {
-                _currentCommandProcessor = value;
-            }
-        }
-        private CommandProcessorBase _currentCommandProcessor;
+        internal CommandProcessorBase CurrentCommandProcessor { get; set; }
 
 
         /// <summary>
@@ -731,7 +621,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _engine.CommandDiscovery;
+                return Engine.CommandDiscovery;
             }
         }
 
@@ -739,13 +629,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Interface that should be used for interaction with host
         /// </summary>
-        internal InternalHost EngineHostInterface
-        {
-            get { return _myHostInterface; }
+        internal InternalHost EngineHostInterface { get; private set;
 
             // set not provided: it's not meaningful to change the host post-construction.
         }
-        private InternalHost _myHostInterface;
 
         /// <summary>
         /// Interface to be used for interaction with internal
@@ -755,7 +642,7 @@ namespace System.Management.Automation
         /// </summary>
         internal InternalHost InternalHost
         {
-            get { return _myHostInterface; }
+            get { return EngineHostInterface; }
         }
 
 
@@ -778,45 +665,23 @@ namespace System.Management.Automation
         /// <summary>
         /// Log context cache
         /// </summary>
-        internal LogContextCache LogContextCache
-        {
-            get
-            {
-                return _logContextCache;
-            }
-        }
-        private LogContextCache _logContextCache = new LogContextCache();
+        internal LogContextCache LogContextCache { get; } = new LogContextCache();
 
         #region Output pipes
         /// <summary>
         /// The PipelineWriter provided by the connection object for success output
         /// </summary>
-        internal PipelineWriter ExternalSuccessOutput
-        {
-            get { return _externalSuccessOutput; }
-            set { _externalSuccessOutput = value; }
-        }
-        private PipelineWriter _externalSuccessOutput;
+        internal PipelineWriter ExternalSuccessOutput { get; set; }
 
         /// <summary>
         /// The PipelineWriter provided by the connection object for error output
         /// </summary>
-        internal PipelineWriter ExternalErrorOutput
-        {
-            get { return _externalErrorOutput; }
-            set { _externalErrorOutput = value; }
-        }
-        private PipelineWriter _externalErrorOutput;
+        internal PipelineWriter ExternalErrorOutput { get; set; }
 
         /// <summary>
         /// The PipelineWriter provided by the connection object for progress output
         /// </summary>
-        internal PipelineWriter ExternalProgressOutput
-        {
-            get { return _externalProgressOutput; }
-            set { _externalProgressOutput = value; }
-        }
-        private PipelineWriter _externalProgressOutput;
+        internal PipelineWriter ExternalProgressOutput { get; set; }
 
         internal class SavedContextData
         {
@@ -856,20 +721,18 @@ namespace System.Management.Automation
 
         internal void ResetShellFunctionErrorOutputPipe()
         {
-            _shellFunctionErrorOutputPipe = null;
+            ShellFunctionErrorOutputPipe = null;
         }
-
-        private Pipe _shellFunctionErrorOutputPipe;
 
         internal Pipe RedirectErrorPipe(Pipe newPipe)
         {
-            Pipe oldPipe = _shellFunctionErrorOutputPipe;
+            Pipe oldPipe = ShellFunctionErrorOutputPipe;
             ShellFunctionErrorOutputPipe = newPipe;
             return oldPipe;
         }
         internal void RestoreErrorPipe(Pipe pipe)
         {
-            _shellFunctionErrorOutputPipe = pipe;
+            ShellFunctionErrorOutputPipe = pipe;
         }
 
         /// <summary>
@@ -878,7 +741,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void ResetRedirection()
         {
-            _shellFunctionErrorOutputPipe = null;
+            ShellFunctionErrorOutputPipe = null;
         }
 
         /// <summary>
@@ -887,51 +750,27 @@ namespace System.Management.Automation
         /// of the first time this value is set so we can know if it's the default
         /// error output or not.
         /// </summary>
-        internal Pipe ShellFunctionErrorOutputPipe
-        {
-            get { return _shellFunctionErrorOutputPipe; }
-            set { _shellFunctionErrorOutputPipe = value; }
-        }
+        internal Pipe ShellFunctionErrorOutputPipe { get; set; }
 
         /// <summary>
         /// Supports expression Warning output redirection.
         /// </summary>
-        internal Pipe ExpressionWarningOutputPipe
-        {
-            get { return _expressionWarningOutputPipe; }
-            set { _expressionWarningOutputPipe = value; }
-        }
-        private Pipe _expressionWarningOutputPipe;
+        internal Pipe ExpressionWarningOutputPipe { get; set; }
 
         /// <summary>
         /// Supports expression Verbose output redirection.
         /// </summary>
-        internal Pipe ExpressionVerboseOutputPipe
-        {
-            get { return _expressionVerboseOutputPipe; }
-            set { _expressionVerboseOutputPipe = value; }
-        }
-        private Pipe _expressionVerboseOutputPipe;
+        internal Pipe ExpressionVerboseOutputPipe { get; set; }
 
         /// <summary>
         /// Supports expression Verbose output redirection.
         /// </summary>
-        internal Pipe ExpressionDebugOutputPipe
-        {
-            get { return _expressionDebugOutputPipe; }
-            set { _expressionDebugOutputPipe = value; }
-        }
-        private Pipe _expressionDebugOutputPipe;
+        internal Pipe ExpressionDebugOutputPipe { get; set; }
 
         /// <summary>
         /// Supports expression Information output redirection.
         /// </summary>
-        internal Pipe ExpressionInformationOutputPipe
-        {
-            get { return _expressionInformationOutputPipe; }
-            set { _expressionInformationOutputPipe = value; }
-        }
-        private Pipe _expressionInformationOutputPipe;
+        internal Pipe ExpressionInformationOutputPipe { get; set; }
 
         #endregion Output pipes
 
@@ -1116,18 +955,7 @@ namespace System.Management.Automation
         /// Shortcut to get at $?
         /// </summary>
         /// <value>The current value of $? </value>
-        internal bool QuestionMarkVariableValue
-        {
-            get
-            {
-                return _questionMarkVariableValue;
-            }
-            set
-            {
-                _questionMarkVariableValue = value;
-            }
-        }
-        private bool _questionMarkVariableValue = true;
+        internal bool QuestionMarkVariableValue { get; set; } = true;
 
         /// <summary>
         /// Shortcut to get at $error
@@ -1141,7 +969,7 @@ namespace System.Management.Automation
                 SessionStateScope scope = null;
                 object resultItem = null;
 
-                if (!_eventManager.IsExecutingEventAction)
+                if (!Events.IsExecutingEventAction)
                 {
                     resultItem = EngineSessionState.GetVariableValue(
                         SpecialVariables.ErrorVarPath, out context, out scope);
@@ -1318,11 +1146,11 @@ namespace System.Management.Automation
             {
                 _debugger.Dispose();
             }
-            if (_eventManager != null)
+            if (Events != null)
             {
-                _eventManager.Dispose();
+                Events.Dispose();
             }
-            _eventManager = null;
+            Events = null;
             if (this.transactionManager != null)
             {
                 this.transactionManager.Dispose();
@@ -1505,32 +1333,32 @@ namespace System.Management.Automation
             if (loadedAssembly == null)
                 return null;
 
-            if (_assemblyCache.ContainsKey(loadedAssembly.FullName))
+            if (AssemblyCache.ContainsKey(loadedAssembly.FullName))
             {
                 // we should ignore this assembly. 
                 return loadedAssembly;
             }
             // We will cache the assembly by both full name and
             // file name
-            _assemblyCache.Add(loadedAssembly.FullName, loadedAssembly);
+            AssemblyCache.Add(loadedAssembly.FullName, loadedAssembly);
 
-            if (_assemblyCache.ContainsKey(loadedAssembly.GetName().Name))
+            if (AssemblyCache.ContainsKey(loadedAssembly.GetName().Name))
             {
                 // we should ignore this assembly. 
                 return loadedAssembly;
             }
-            _assemblyCache.Add(loadedAssembly.GetName().Name, loadedAssembly);
+            AssemblyCache.Add(loadedAssembly.GetName().Name, loadedAssembly);
             return loadedAssembly;
         }
 
         internal void RemoveAssembly(string name)
         {
             Assembly loadedAssembly;
-            if (_assemblyCache.TryGetValue(name, out loadedAssembly) && loadedAssembly != null)
+            if (AssemblyCache.TryGetValue(name, out loadedAssembly) && loadedAssembly != null)
             {
-                _assemblyCache.Remove(name);
+                AssemblyCache.Remove(name);
 
-                _assemblyCache.Remove(loadedAssembly.GetName().Name);
+                AssemblyCache.Remove(loadedAssembly.GetName().Name);
             }
         }
 
@@ -1811,8 +1639,8 @@ namespace System.Management.Automation
         /// </param>
         internal ExecutionContext(AutomationEngine engine, PSHost hostInterface, RunspaceConfiguration runspaceConfiguration)
         {
-            _runspaceConfiguration = runspaceConfiguration;
-            _authorizationManager = runspaceConfiguration.AuthorizationManager;
+            RunspaceConfiguration = runspaceConfiguration;
+            AuthorizationManager = runspaceConfiguration.AuthorizationManager;
 
             InitializeCommon(engine, hostInterface);
         }
@@ -1832,15 +1660,15 @@ namespace System.Management.Automation
         /// </param>
         internal ExecutionContext(AutomationEngine engine, PSHost hostInterface, InitialSessionState initialSessionState)
         {
-            _initialSessionState = initialSessionState;
-            _authorizationManager = initialSessionState.AuthorizationManager;
+            InitialSessionState = initialSessionState;
+            AuthorizationManager = initialSessionState.AuthorizationManager;
 
             InitializeCommon(engine, hostInterface);
         }
 
         private void InitializeCommon(AutomationEngine engine, PSHost hostInterface)
         {
-            _engine = engine;
+            Engine = engine;
 #if !CORECLR// System.AppDomain is not in CoreCLR
             // Set the assembly resolve handler if it isn't already set...
             if (!_assemblyEventHandlerSet)
@@ -1858,29 +1686,29 @@ namespace System.Management.Automation
                 }
             }
 #endif
-            _eventManager = new PSLocalEventManager(this);
+            Events = new PSLocalEventManager(this);
             transactionManager = new PSTransactionManager();
             _debugger = new ScriptDebugger(this);
 
-            _myHostInterface = hostInterface as InternalHost;
-            if (_myHostInterface == null)
-                _myHostInterface = new InternalHost(hostInterface, this);
+            EngineHostInterface = hostInterface as InternalHost;
+            if (EngineHostInterface == null)
+                EngineHostInterface = new InternalHost(hostInterface, this);
 
             // Hook up the assembly cache
-            _assemblyCache = new Dictionary<string, Assembly>();
+            AssemblyCache = new Dictionary<string, Assembly>();
 
             // Initialize the fixed toplevel session state and the current session state
-            _topLevelSessionState = _engineSessionState = new SessionStateInternal(this);
+            TopLevelSessionState = EngineSessionState = new SessionStateInternal(this);
 
-            if (_authorizationManager == null)
+            if (AuthorizationManager == null)
             {
                 // if authorizationmanager==null, this means the configuration
                 // explicitly asked for dummy authorization manager. 
-                _authorizationManager = new AuthorizationManager(null);
+                AuthorizationManager = new AuthorizationManager(null);
             }
 
             // Set up the module intrinsics
-            _modules = new ModuleIntrinsics(this);
+            Modules = new ModuleIntrinsics(this);
         }
 
 #if !CORECLR // System.AppDomain is not in CoreCLR
@@ -1901,10 +1729,10 @@ namespace System.Management.Automation
             ExecutionContext ecFromTLS = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
             if (ecFromTLS != null)
             {
-                if (ecFromTLS._assemblyCache != null)
+                if (ecFromTLS.AssemblyCache != null)
                 {
                     Assembly assembly;
-                    ecFromTLS._assemblyCache.TryGetValue(args.Name, out assembly);
+                    ecFromTLS.AssemblyCache.TryGetValue(args.Name, out assembly);
                     return assembly;
                 }
             }

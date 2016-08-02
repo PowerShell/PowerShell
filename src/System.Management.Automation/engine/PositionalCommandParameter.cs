@@ -17,28 +17,14 @@ namespace System.Management.Automation
         /// 
         internal PositionalCommandParameter(MergedCompiledCommandParameter parameter)
         {
-            _parameter = parameter;
+            Parameter = parameter;
         }
 
         #endregion ctor
 
-        internal MergedCompiledCommandParameter Parameter
-        {
-            get
-            {
-                return _parameter;
-            }
-        }
-        private MergedCompiledCommandParameter _parameter;
+        internal MergedCompiledCommandParameter Parameter { get; }
 
-        internal Collection<ParameterSetSpecificMetadata> ParameterSetData
-        {
-            get
-            {
-                return _parameterSetData;
-            }
-        }
-        private Collection<ParameterSetSpecificMetadata> _parameterSetData = new Collection<ParameterSetSpecificMetadata>();
+        internal Collection<ParameterSetSpecificMetadata> ParameterSetData { get; } = new Collection<ParameterSetSpecificMetadata>();
     }
 }
 

@@ -787,18 +787,10 @@ namespace System.Management.Automation.Tracing
     /// </summary>
     public sealed class NullWriter : BaseChannelWriter
     {
-        private static readonly BaseChannelWriter nullWriter = new NullWriter();
-
         /// <summary>
         /// Static Instance property
         /// </summary>
-        public static BaseChannelWriter Instance
-        {
-            get
-            {
-                return nullWriter;
-            }
-        }
+        public static BaseChannelWriter Instance { get; } = new NullWriter();
 
         private NullWriter()
         {
@@ -945,13 +937,6 @@ namespace System.Management.Automation.Tracing
     /// </summary>
     public sealed class PowerShellTraceSource : IDisposable
     {
-        private PowerShellTraceKeywords keywords = PowerShellTraceKeywords.None;
-        private PowerShellTraceTask task = PowerShellTraceTask.None;
-
-        private readonly BaseChannelWriter debugChannel;
-        private readonly BaseChannelWriter analyticChannel;
-        private readonly BaseChannelWriter operationsChannel;
-
         private bool disposed;
 
         /// <summary>
@@ -961,21 +946,21 @@ namespace System.Management.Automation.Tracing
         {
             if (IsEtwSupported)
             {
-                debugChannel = new PowerShellChannelWriter(PowerShellTraceChannel.Debug,
+                DebugChannel = new PowerShellChannelWriter(PowerShellTraceChannel.Debug,
                                                            keywords | PowerShellTraceKeywords.UseAlwaysDebug);
-                analyticChannel = new PowerShellChannelWriter(PowerShellTraceChannel.Analytic,
+                AnalyticChannel = new PowerShellChannelWriter(PowerShellTraceChannel.Analytic,
                                                               keywords | PowerShellTraceKeywords.UseAlwaysAnalytic);
-                operationsChannel = new PowerShellChannelWriter(PowerShellTraceChannel.Operational,
+                OperationalChannel = new PowerShellChannelWriter(PowerShellTraceChannel.Operational,
                                                                 keywords | PowerShellTraceKeywords.UseAlwaysOperational);
 
-                this.task = task;
-                this.keywords = keywords;
+                this.Task = task;
+                this.Keywords = keywords;
             }
             else
             {
-                debugChannel = NullWriter.Instance;
-                analyticChannel = NullWriter.Instance;
-                operationsChannel = NullWriter.Instance;
+                DebugChannel = NullWriter.Instance;
+                AnalyticChannel = NullWriter.Instance;
+                OperationalChannel = NullWriter.Instance;
             }
         }
 
@@ -989,37 +974,21 @@ namespace System.Management.Automation.Tracing
                 disposed = true;
                 GC.SuppressFinalize(this);
 
-                debugChannel.Dispose();
-                analyticChannel.Dispose();
-                operationsChannel.Dispose();
+                DebugChannel.Dispose();
+                AnalyticChannel.Dispose();
+                OperationalChannel.Dispose();
             }
         }
 
         /// <summary>
         /// Keywords that were set through constructor when object was instantiated
         /// </summary>
-        public PowerShellTraceKeywords Keywords
-        {
-            get
-            {
-                return keywords;
-            }
-        }
+        public PowerShellTraceKeywords Keywords { get; } = PowerShellTraceKeywords.None;
 
         /// <summary>
         /// Task that was set through constructor
         /// </summary>
-        public PowerShellTraceTask Task
-        {
-            get
-            {
-                return task;
-            }
-            set
-            {
-                task = value;
-            }
-        }
+        public PowerShellTraceTask Task { get; set; } = PowerShellTraceTask.None;
 
         private bool IsEtwSupported
         {
@@ -1050,7 +1019,7 @@ namespace System.Management.Automation.Tracing
                 {
                     message = errorRecord.ErrorDetails.Message;
                 }
-                return debugChannel.TraceError(PowerShellTraceEvent.ErrorRecord,
+                return DebugChannel.TraceError(PowerShellTraceEvent.ErrorRecord,
                                                PowerShellTraceOperationCode.Exception, PowerShellTraceTask.None,
                                                message,
                                                cinfo.Category.ToString(), cinfo.Reason, cinfo.TargetName,
@@ -1059,7 +1028,7 @@ namespace System.Management.Automation.Tracing
             }
             else
             {
-                return debugChannel.TraceError(PowerShellTraceEvent.ErrorRecord,
+                return DebugChannel.TraceError(PowerShellTraceEvent.ErrorRecord,
                                                PowerShellTraceOperationCode.Exception, PowerShellTraceTask.None,
                                                "NULL errorRecord");
             }
@@ -1078,13 +1047,13 @@ namespace System.Management.Automation.Tracing
                     innerException = exception.InnerException.Message;
                 }
 
-                return debugChannel.TraceError(PowerShellTraceEvent.Exception,
+                return DebugChannel.TraceError(PowerShellTraceEvent.Exception,
                                                PowerShellTraceOperationCode.Exception, PowerShellTraceTask.None,
                                            exception.Message, exception.StackTrace, innerException);
             }
             else
             {
-                return debugChannel.TraceError(PowerShellTraceEvent.Exception,
+                return DebugChannel.TraceError(PowerShellTraceEvent.Exception,
                                                PowerShellTraceOperationCode.Exception, PowerShellTraceTask.None,
                                            "NULL exception");
             }
@@ -1095,7 +1064,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         public bool TracePowerShellObject(PSObject powerShellObject)
         {
-            return this.debugChannel.TraceDebug(PowerShellTraceEvent.PowerShellObject,
+            return this.DebugChannel.TraceDebug(PowerShellTraceEvent.PowerShellObject,
                                                 PowerShellTraceOperationCode.Method, PowerShellTraceTask.None);
         }
 
@@ -1106,7 +1075,7 @@ namespace System.Management.Automation.Tracing
         {
             if (job != null)
             {
-                return debugChannel.TraceDebug(PowerShellTraceEvent.Job,
+                return DebugChannel.TraceDebug(PowerShellTraceEvent.Job,
                                                PowerShellTraceOperationCode.Method, PowerShellTraceTask.None,
                                                job.Id.ToString(CultureInfo.InvariantCulture), job.InstanceId.ToString(), job.Name,
                                                job.Location, job.JobStateInfo.State.ToString(),
@@ -1114,7 +1083,7 @@ namespace System.Management.Automation.Tracing
             }
             else
             {
-                return debugChannel.TraceDebug(PowerShellTraceEvent.Job,
+                return DebugChannel.TraceDebug(PowerShellTraceEvent.Job,
                                                PowerShellTraceOperationCode.Method, PowerShellTraceTask.None,
                                                job.Id.ToString(CultureInfo.InvariantCulture), job.InstanceId.ToString(), "NULL job");
             }
@@ -1127,7 +1096,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public bool WriteMessage(String message)
         {
-            return debugChannel.TraceInformational(PowerShellTraceEvent.TraceMessage,
+            return DebugChannel.TraceInformational(PowerShellTraceEvent.TraceMessage,
                                             PowerShellTraceOperationCode.None,
                                             PowerShellTraceTask.None, message);
         }
@@ -1140,7 +1109,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public bool WriteMessage(string message1, string message2)
         {
-            return debugChannel.TraceInformational(PowerShellTraceEvent.TraceMessage2,
+            return DebugChannel.TraceInformational(PowerShellTraceEvent.TraceMessage2,
                                             PowerShellTraceOperationCode.None,
                                             PowerShellTraceTask.None, message1, message2);
         }
@@ -1153,7 +1122,7 @@ namespace System.Management.Automation.Tracing
         /// <returns></returns>
         public bool WriteMessage(string message, Guid instanceId)
         {
-            return debugChannel.TraceInformational(PowerShellTraceEvent.TraceMessageGuid,
+            return DebugChannel.TraceInformational(PowerShellTraceEvent.TraceMessageGuid,
                                             PowerShellTraceOperationCode.None,
                                             PowerShellTraceTask.None, message, instanceId);
         }
@@ -1518,35 +1487,17 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Gives access to Debug channel writer
         /// </summary>
-        public BaseChannelWriter DebugChannel
-        {
-            get
-            {
-                return debugChannel;
-            }
-        }
+        public BaseChannelWriter DebugChannel { get; }
 
         /// <summary>
         /// Gives access to analytical channel writer
         /// </summary>
-        public BaseChannelWriter AnalyticChannel
-        {
-            get
-            {
-                return analyticChannel;
-            }
-        }
+        public BaseChannelWriter AnalyticChannel { get; }
 
         /// <summary>
         /// Gives access to operational channel writer
         /// </summary>
-        public BaseChannelWriter OperationalChannel
-        {
-            get
-            {
-                return operationsChannel;
-            }
-        }
+        public BaseChannelWriter OperationalChannel { get; }
     }
 
     /// <summary>

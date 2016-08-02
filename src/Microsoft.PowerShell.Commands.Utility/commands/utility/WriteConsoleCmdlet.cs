@@ -31,18 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
 
         [Parameter(Position = 0, ValueFromRemainingArguments = true, ValueFromPipeline = true)]
-        public object Object
-        {
-            get
-            {
-                return _objectToEcho;
-            }
-
-            set
-            {
-                _objectToEcho = value;
-            }
-        }
+        public object Object { get; set; } = null;
 
 
         /// <summary>
@@ -74,18 +63,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
 
         [Parameter]
-        public object Separator
-        {
-            get
-            {
-                return _separator;
-            }
-            set
-            {
-                _separator = value;
-            }
-        }
-
+        public object Separator { get; set; } = " ";
 
 
         //
@@ -175,7 +153,5 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Boolean _notAppendNewline = false;
-        private object _objectToEcho = null;
-        private object _separator = " ";
     }
 }   // namespace Microsoft.PowerShell.Commands

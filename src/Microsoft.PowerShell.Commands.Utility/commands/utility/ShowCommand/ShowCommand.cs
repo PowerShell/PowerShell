@@ -54,29 +54,9 @@ namespace Microsoft.PowerShell.Commands
         private PSDataCollection<ErrorRecord> _errors = new PSDataCollection<ErrorRecord>();
 
         /// <summary>
-        /// Field used for the CommandName parameter.
-        /// </summary>
-        private string _commandName;
-
-        /// <summary>
-        /// Field used for the Height parameter.
-        /// </summary>
-        private double _height;
-
-        /// <summary>
-        /// Field used for the Width parameter.
-        /// </summary>
-        private double _width;
-
-        /// <summary>
         /// Field used for the NoCommonParameter parameter.
         /// </summary>
         private SwitchParameter _noCommonParameter;
-
-        /// <summary>
-        /// A value indicating errors should not cause a message window to be displayed
-        /// </summary>
-        private SwitchParameter _errorPopup;
 
         /// <summary>
         /// Object used for ShowCommand with a command name that holds the view model created for the command
@@ -98,33 +78,21 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0)]
         [Alias("CommandName")]
-        public string Name
-        {
-            get { return _commandName; }
-            set { _commandName = value; }
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the Width.
         /// </summary>
         [Parameter]
         [ValidateRange(300, Int32.MaxValue)]
-        public double Height
-        {
-            get { return _height; }
-            set { _height = value; }
-        }
+        public double Height { get; set; }
 
         /// <summary>
         /// Gets or sets the Width.
         /// </summary>
         [Parameter]
         [ValidateRange(300, Int32.MaxValue)]
-        public double Width
-        {
-            get { return _width; }
-            set { _width = value; }
-        }
+        public double Width { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating Common Parameters should not be displayed
@@ -140,11 +108,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets a value indicating errors should not cause a message window to be displayed
         /// </summary>
         [Parameter]
-        public SwitchParameter ErrorPopup
-        {
-            get { return _errorPopup; }
-            set { _errorPopup = value; }
-        }
+        public SwitchParameter ErrorPopup { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating the command should be sent to the pipeline as a string instead of run
@@ -152,15 +116,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter PassThru
         {
-            get
-            {
-                return _passThrough;
-            }
-
-            set
-            {
-                _passThrough = value;
-            }
+            get { return _passThrough; }
+            set { _passThrough = value; }
         } // PassThru
         #endregion
 
@@ -182,7 +139,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (_errorPopup)
+            if (ErrorPopup)
             {
                 this.RunScriptSilentlyAndWithErrorHookup(script);
                 return;
@@ -247,7 +204,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (_commandName == null)
+            if (Name == null)
             {
                 _hasOpenedWindow = this.CanProcessRecordForAllCommands();
             }
@@ -277,7 +234,7 @@ namespace Microsoft.PowerShell.Commands
             this.WaitForWindowClosedOrHelpNeeded();
             this.RunScript(_showCommandProxy.GetScript());
 
-            if (_errors.Count == 0 || !_errorPopup)
+            if (_errors.Count == 0 || !ErrorPopup)
             {
                 return;
             }
@@ -339,8 +296,8 @@ namespace Microsoft.PowerShell.Commands
                 String.Format(
                     CultureInfo.CurrentUICulture,
                     FormatAndOut_out_gridview.CommandNotFound,
-                    _commandName));
-            this.ThrowTerminatingError(new ErrorRecord(errorException, "NoCommand", ErrorCategory.InvalidOperation, _commandName));
+                    Name));
+            this.ThrowTerminatingError(new ErrorRecord(errorException, "NoCommand", ErrorCategory.InvalidOperation, Name));
         }
 
         /// <summary>
@@ -352,9 +309,9 @@ namespace Microsoft.PowerShell.Commands
                 String.Format(
                     CultureInfo.CurrentUICulture,
                     FormatAndOut_out_gridview.MoreThanOneCommand,
-                    _commandName,
+                    Name,
                     "Show-Command"));
-            this.ThrowTerminatingError(new ErrorRecord(errorException, "MoreThanOneCommand", ErrorCategory.InvalidOperation, _commandName));
+            this.ThrowTerminatingError(new ErrorRecord(errorException, "MoreThanOneCommand", ErrorCategory.InvalidOperation, Name));
         }
 
         /// <summary>
@@ -366,7 +323,7 @@ namespace Microsoft.PowerShell.Commands
         {
             command = null;
             modules = null;
-            string commandText = _showCommandProxy.GetShowCommandCommand(_commandName, true);
+            string commandText = _showCommandProxy.GetShowCommandCommand(Name, true);
 
             Collection<PSObject> commandResults = this.InvokeCommand.InvokeScript(commandText);
 
@@ -423,7 +380,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (TargetInvocationException ti)
             {
-                this.WriteError(new ErrorRecord(ti.InnerException, "CannotProcessRecordForOneCommand", ErrorCategory.InvalidOperation, _commandName));
+                this.WriteError(new ErrorRecord(ti.InnerException, "CannotProcessRecordForOneCommand", ErrorCategory.InvalidOperation, Name));
                 return false;
             }
 
@@ -447,7 +404,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (TargetInvocationException ti)
             {
-                this.WriteError(new ErrorRecord(ti.InnerException, "CannotProcessRecordForAllCommands", ErrorCategory.InvalidOperation, _commandName));
+                this.WriteError(new ErrorRecord(ti.InnerException, "CannotProcessRecordForAllCommands", ErrorCategory.InvalidOperation, Name));
                 return false;
             }
 

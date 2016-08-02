@@ -31,8 +31,8 @@ namespace System.Management.Automation
         /// <param name="context">The execution context for this command</param>
         internal CommandLookupEventArgs(string commandName, CommandOrigin commandOrigin, ExecutionContext context)
         {
-            _commandName = commandName;
-            _commandOrigin = commandOrigin;
+            CommandName = commandName;
+            CommandOrigin = commandOrigin;
             _context = context;
         }
 
@@ -41,14 +41,12 @@ namespace System.Management.Automation
         /// <summary>
         /// The name of the command we're looking for
         /// </summary>
-        public string CommandName { get { return _commandName; } }
-        private string _commandName;
+        public string CommandName { get; }
 
         /// <summary>
         /// The origin of the command internal or runspace (external)
         /// </summary>
-        public CommandOrigin CommandOrigin { get { return _commandOrigin; } }
-        private CommandOrigin _commandOrigin;
+        public CommandOrigin CommandOrigin { get; }
 
         /// <summary>
         /// If true on return from event handler, the search is stopped.
@@ -73,7 +71,7 @@ namespace System.Management.Automation
                 _scriptBlock = value;
                 if (_scriptBlock != null)
                 {
-                    string dynamicName = "LookupHandlerReplacementFor<<" + _commandName + ">>";
+                    string dynamicName = "LookupHandlerReplacementFor<<" + CommandName + ">>";
                     Command = new FunctionInfo(dynamicName, _scriptBlock, _context);
                     StopSearch = true;
                 }
@@ -138,7 +136,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("context");
             }
 
-            _context = context;
+            Context = context;
             discoveryTracer.ShowHeaders = false;
 
             // Cache the ScriptInfo for the scripts defined in the RunspaceConfiguration
@@ -180,14 +178,14 @@ namespace System.Management.Automation
 
         private CmdletInfo NewCmdletInfo(CmdletConfigurationEntry entry, SessionStateEntryVisibility visibility)
         {
-            CmdletInfo ci = new CmdletInfo(entry.Name, entry.ImplementingType, entry.HelpFileName, entry.PSSnapIn, _context);
+            CmdletInfo ci = new CmdletInfo(entry.Name, entry.ImplementingType, entry.HelpFileName, entry.PSSnapIn, Context);
             ci.Visibility = visibility;
             return ci;
         }
 
         private CmdletInfo NewCmdletInfo(SessionStateCmdletEntry entry)
         {
-            return NewCmdletInfo(entry, _context);
+            return NewCmdletInfo(entry, Context);
         }
 
         internal static CmdletInfo NewCmdletInfo(SessionStateCmdletEntry entry, ExecutionContext context)
@@ -247,10 +245,10 @@ namespace System.Management.Automation
             {
                 // When cmdlet cache was not scope-based, we used to import cmdlets to the module scope. 
                 // We need to do the same as the default action (setting "isGlobal" is done as a default action in the caller)
-                return _context.EngineSessionState.ModuleScope.AddCmdletToCache(newCmdletInfo.Name, newCmdletInfo, CommandOrigin.Internal, _context);
+                return Context.EngineSessionState.ModuleScope.AddCmdletToCache(newCmdletInfo.Name, newCmdletInfo, CommandOrigin.Internal, Context);
             }
 
-            return _context.EngineSessionState.CurrentScope.AddCmdletToCache(newCmdletInfo.Name, newCmdletInfo, CommandOrigin.Internal, _context);
+            return Context.EngineSessionState.CurrentScope.AddCmdletToCache(newCmdletInfo.Name, newCmdletInfo, CommandOrigin.Internal, Context);
         }
 
         /// <summary>
@@ -278,13 +276,13 @@ namespace System.Management.Automation
 
         private void LoadScriptInfo()
         {
-            if (_context.RunspaceConfiguration != null)
+            if (Context.RunspaceConfiguration != null)
             {
-                foreach (ScriptConfigurationEntry entry in _context.RunspaceConfiguration.Scripts)
+                foreach (ScriptConfigurationEntry entry in Context.RunspaceConfiguration.Scripts)
                 {
                     try
                     {
-                        _cachedScriptInfo.Add(entry.Name, new ScriptInfo(entry.Name, ScriptBlock.Create(_context, entry.Definition), _context));
+                        _cachedScriptInfo.Add(entry.Name, new ScriptInfo(entry.Name, ScriptBlock.Create(Context, entry.Definition), Context));
                     }
                     catch (ArgumentException)
                     {
@@ -381,16 +379,16 @@ namespace System.Management.Automation
                     throw scriptRequiresException;
                 }
 
-                return CreateCommandProcessorForScript(scriptInfo, _context, useLocalScope, sessionState);
+                return CreateCommandProcessorForScript(scriptInfo, Context, useLocalScope, sessionState);
             }
             else
             {
                 if (String.Equals(
-                       _context.ShellID,
+                       Context.ShellID,
                        scriptInfo.RequiresApplicationID,
                        StringComparison.OrdinalIgnoreCase))
                 {
-                    return CreateCommandProcessorForScript(scriptInfo, _context, useLocalScope, sessionState);
+                    return CreateCommandProcessorForScript(scriptInfo, Context, useLocalScope, sessionState);
                 }
                 else
                 {
@@ -488,7 +486,7 @@ namespace System.Management.Automation
                     throw sre;
                 }
             }
-            return CreateCommandProcessorForScript(scriptInfo, _context, useLocalScope, sessionState);
+            return CreateCommandProcessorForScript(scriptInfo, Context, useLocalScope, sessionState);
         }
 
         private static void VerifyRequiredSnapins(IEnumerable<PSSnapInSpecification> requiresPSSnapIns, ExecutionContext context, out Collection<string> requiresMissingPSSnapIns)
@@ -732,7 +730,7 @@ namespace System.Management.Automation
                 // If we didn't have the alias target already resolved, see if it can be loaded.
                 if (commandInfo == null)
                 {
-                    commandInfo = LookupCommandInfo(aliasCommandInfo.Definition, commandOrigin, _context);
+                    commandInfo = LookupCommandInfo(aliasCommandInfo.Definition, commandOrigin, Context);
                 }
 
                 if (commandInfo == null)
@@ -748,22 +746,22 @@ namespace System.Management.Automation
                 }
             }
 
-            ShouldRun(_context, _context.EngineHostInterface, commandInfo, commandOrigin);
+            ShouldRun(Context, Context.EngineHostInterface, commandInfo, commandOrigin);
 
             switch (commandInfo.CommandType)
             {
                 case CommandTypes.Application:
-                    processor = new NativeCommandProcessor((ApplicationInfo)commandInfo, _context);
+                    processor = new NativeCommandProcessor((ApplicationInfo)commandInfo, Context);
                     break;
                 case CommandTypes.Cmdlet:
-                    processor = new CommandProcessor((CmdletInfo)commandInfo, _context);
+                    processor = new CommandProcessor((CmdletInfo)commandInfo, Context);
                     break;
                 case CommandTypes.ExternalScript:
                     ExternalScriptInfo scriptInfo = (ExternalScriptInfo)commandInfo;
                     scriptInfo.SignatureChecked = true;
                     try
                     {
-                        if (!_context.IsSingleShell)
+                        if (!Context.IsSingleShell)
                         {
                             // in minishell mode
                             processor = CreateScriptProcessorForMiniShell(scriptInfo, useLocalScope ?? true, sessionState);
@@ -771,7 +769,7 @@ namespace System.Management.Automation
                         else
                         {
                             // single shell mode
-                            processor = CreateScriptProcessorForSingleShell(scriptInfo, _context, useLocalScope ?? true, sessionState);
+                            processor = CreateScriptProcessorForSingleShell(scriptInfo, Context, useLocalScope ?? true, sessionState);
                         }
                     }
                     catch (ScriptRequiresSyntaxException reqSyntaxException)
@@ -796,10 +794,10 @@ namespace System.Management.Automation
                 case CommandTypes.Workflow:
                 case CommandTypes.Configuration:
                     FunctionInfo functionInfo = (FunctionInfo)commandInfo;
-                    processor = CreateCommandProcessorForScript(functionInfo, _context, useLocalScope ?? true, sessionState);
+                    processor = CreateCommandProcessorForScript(functionInfo, Context, useLocalScope ?? true, sessionState);
                     break;
                 case CommandTypes.Script:
-                    processor = CreateCommandProcessorForScript((ScriptInfo)commandInfo, _context, useLocalScope ?? true, sessionState);
+                    processor = CreateCommandProcessorForScript((ScriptInfo)commandInfo, Context, useLocalScope ?? true, sessionState);
                     break;
                 case CommandTypes.Alias:
                 default:
@@ -936,7 +934,7 @@ namespace System.Management.Automation
 
         internal CommandInfo LookupCommandInfo(string commandName, CommandOrigin commandOrigin)
         {
-            return LookupCommandInfo(commandName, commandOrigin, _context);
+            return LookupCommandInfo(commandName, commandOrigin, Context);
         }
 
         internal static CommandInfo LookupCommandInfo(string commandName, CommandOrigin commandOrigin, ExecutionContext context)
@@ -1510,7 +1508,7 @@ namespace System.Management.Automation
             IEnumerable<string> lookupPathArray = GetLookupDirectoryPaths();
 
             // Construct the CommandPathSearch object and return it.
-            return new CommandPathSearch(patterns, lookupPathArray, _context);
+            return new CommandPathSearch(patterns, lookupPathArray, Context);
         } // GetCommandPathSearcher
 
         /// <summary>
@@ -1697,7 +1695,7 @@ namespace System.Management.Automation
             // if we aren't already at the top level.
 
             SessionStateScopeEnumerator scopeEnumerator =
-                new SessionStateScopeEnumerator(_context.EngineSessionState.CurrentScope);
+                new SessionStateScopeEnumerator(Context.EngineSessionState.CurrentScope);
 
             foreach (SessionStateScope scope in scopeEnumerator)
             {
@@ -1761,7 +1759,7 @@ namespace System.Management.Automation
         {
             if (!_cmdletCacheInitialized)
             {
-                foreach (CmdletConfigurationEntry entry in _context.RunspaceConfiguration.Cmdlets)
+                foreach (CmdletConfigurationEntry entry in Context.RunspaceConfiguration.Cmdlets)
                 {
                     AddCmdletToCache(entry);
                 }
@@ -1771,7 +1769,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            foreach (CmdletConfigurationEntry entry in _context.RunspaceConfiguration.Cmdlets.UpdateList)
+            foreach (CmdletConfigurationEntry entry in Context.RunspaceConfiguration.Cmdlets.UpdateList)
             {
                 if (entry == null)
                 {
@@ -1805,7 +1803,7 @@ namespace System.Management.Automation
         /// 
         private void RemoveCmdletFromCache(CmdletConfigurationEntry entry)
         {
-            IDictionary<string, List<CmdletInfo>> cmdletTable = _context.EngineSessionState.GetCmdletTable();
+            IDictionary<string, List<CmdletInfo>> cmdletTable = Context.EngineSessionState.GetCmdletTable();
             List<CmdletInfo> cacheEntry;
             if (cmdletTable.TryGetValue(entry.Name, out cacheEntry))
             {
@@ -1815,13 +1813,13 @@ namespace System.Management.Automation
                 {
                     string name = cacheEntry[removalIndex].Name;
                     cacheEntry.RemoveAt(removalIndex);
-                    _context.EngineSessionState.RemoveCmdlet(name, removalIndex, true);
+                    Context.EngineSessionState.RemoveCmdlet(name, removalIndex, true);
                 }
 
                 // Remove the entry from the cache if there are no more cmdlets
                 if (cacheEntry.Count == 0)
                 {
-                    _context.EngineSessionState.RemoveCmdletEntry(entry.Name, true);
+                    Context.EngineSessionState.RemoveCmdletEntry(entry.Name, true);
                 }
             }
         }
@@ -1880,11 +1878,7 @@ namespace System.Management.Automation
         /// 
         private Dictionary<string, ScriptInfo> _cachedScriptInfo;
 
-        internal ExecutionContext Context
-        {
-            get { return _context; }
-        }
-        private ExecutionContext _context;
+        internal ExecutionContext Context { get; }
 
         /// <summary>
         /// Reads the path for the appropriate shellID from the registry.

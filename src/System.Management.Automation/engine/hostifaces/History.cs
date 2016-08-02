@@ -1422,22 +1422,11 @@ namespace Microsoft.PowerShell.Commands
     {
         #region parameters
 
-        private PSObject[] _inputObjects;
         /// <summary>
         /// This parameter specifies the current pipeline object 
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
-        public PSObject[] InputObject
-        {
-            set
-            {
-                _inputObjects = value;
-            }
-            get
-            {
-                return _inputObjects;
-            }
-        }
+        public PSObject[] InputObject { set; get; }
 
         private bool _passthru;
         /// <summary>
@@ -1447,14 +1436,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         public SwitchParameter Passthru
         {
-            get
-            {
-                return _passthru;
-            }
-            set
-            {
-                _passthru = value;
-            }
+            get { return _passthru; }
+            set { _passthru = value; }
         }
 
         #endregion parameters

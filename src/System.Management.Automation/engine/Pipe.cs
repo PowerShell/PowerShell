@@ -33,11 +33,7 @@ namespace System.Management.Automation.Internal
 
         // If a pipeline object has been added, then
         // write objects to it, stepping one at a time...
-        internal PipelineProcessor PipelineProcessor
-        {
-            get { return _outputPipeline; }
-        }
-        private PipelineProcessor _outputPipeline;
+        internal PipelineProcessor PipelineProcessor { get; }
 
         /// <summary>
         /// This is the downstream cmdlet in the "streamlet model"
@@ -64,12 +60,7 @@ namespace System.Management.Automation.Internal
         /// PipelineProcessor class and not here.
         /// </remarks>
         /// </summary>
-        internal PipelineReader<object> ExternalReader
-        {
-            get { return _objectReader; }
-            set { _objectReader = value; }
-        }
-        private PipelineReader<object> _objectReader;
+        internal PipelineReader<object> ExternalReader { get; set; }
 
         /// <summary>
         /// This is the downstream object recipient.  If this is set,
@@ -107,12 +98,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// OutBufferCount configures the number of objects to buffer before calling the downstream Cmdlet
         /// </summary>
-        internal int OutBufferCount
-        {
-            get { return _outBufferCount; }
-            set { _outBufferCount = value; }
-        }
-        private int _outBufferCount = 0;
+        internal int OutBufferCount { get; set; } = 0;
 
         /// <summary>
         /// If true, then all input added to this pipe will simply be discarded...
@@ -131,11 +117,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// A queue that is shared between commands on either side of the pipe to transfer objects.
         /// </summary>
-        internal Queue<object> ObjectQueue
-        {
-            get { return _objectQueue; }
-        }
-        private Queue<object> _objectQueue;
+        internal Queue<object> ObjectQueue { get; }
 
         /// <summary>
         /// True if there are items in this pipe that need processing...
@@ -152,8 +134,8 @@ namespace System.Management.Automation.Internal
                 if (_enumeratorToProcess != null)
                     return _enumeratorToProcessIsEmpty;
 
-                if (_objectQueue != null)
-                    return _objectQueue.Count == 0;
+                if (ObjectQueue != null)
+                    return ObjectQueue.Count == 0;
                 return true;
             }
         }
@@ -328,7 +310,7 @@ namespace System.Management.Automation.Internal
         /// </remarks>
         internal Pipe()
         {
-            _objectQueue = new Queue<object>();
+            ObjectQueue = new Queue<object>();
         }
 
         /// <summary>
@@ -369,7 +351,7 @@ namespace System.Management.Automation.Internal
             Diagnostics.Assert(outputPipeline != null, "context cannot be null");
             _isRedirected = true;
             _context = context;
-            _outputPipeline = outputPipeline;
+            PipelineProcessor = outputPipeline;
         }
 
         /// <summary>
@@ -435,11 +417,11 @@ namespace System.Management.Automation.Internal
 
         private void AddToPipe(object obj)
         {
-            if (_outputPipeline != null)
+            if (PipelineProcessor != null)
             {
                 // Put the pipeline on the notification stack for stop.
-                _context.PushPipelineProcessor(_outputPipeline);
-                _outputPipeline.Step(obj);
+                _context.PushPipelineProcessor(PipelineProcessor);
+                PipelineProcessor.Step(obj);
                 _context.PopPipelineProcessor(false);
             }
             else if (_resultCollection != null)
@@ -454,12 +436,12 @@ namespace System.Management.Automation.Internal
             {
                 _externalWriter.Write(obj);
             }
-            else if (_objectQueue != null)
+            else if (ObjectQueue != null)
             {
-                _objectQueue.Enqueue(obj);
+                ObjectQueue.Enqueue(obj);
 
                 // This is the "streamlet" recursive call
-                if (null != _downstreamCmdlet && _objectQueue.Count > _outBufferCount)
+                if (null != _downstreamCmdlet && ObjectQueue.Count > OutBufferCount)
                 {
                     _downstreamCmdlet.DoExecute();
                 }
@@ -527,7 +509,7 @@ namespace System.Management.Automation.Internal
 
             // If there are objects waiting for the downstream command
             // call it now
-            if (_downstreamCmdlet != null && _objectQueue != null && _objectQueue.Count > _outBufferCount)
+            if (_downstreamCmdlet != null && ObjectQueue != null && ObjectQueue.Count > OutBufferCount)
             {
                 _downstreamCmdlet.DoExecute();
             }
@@ -542,9 +524,9 @@ namespace System.Management.Automation.Internal
         /// </returns>
         internal object Retrieve()
         {
-            if (_objectQueue != null && _objectQueue.Count != 0)
+            if (ObjectQueue != null && ObjectQueue.Count != 0)
             {
-                return _objectQueue.Dequeue();
+                return ObjectQueue.Dequeue();
             }
             else if (_enumeratorToProcess != null)
             {
@@ -593,8 +575,8 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal void Clear()
         {
-            if (_objectQueue != null)
-                _objectQueue.Clear();
+            if (ObjectQueue != null)
+                ObjectQueue.Clear();
         }
 
         /// <summary>
@@ -605,10 +587,10 @@ namespace System.Management.Automation.Internal
         /// <returns>possibly empty array of objects, but not null</returns>
         internal object[] ToArray()
         {
-            if (_objectQueue == null || _objectQueue.Count == 0)
+            if (ObjectQueue == null || ObjectQueue.Count == 0)
                 return MshCommandRuntime.StaticEmptyArray;
 
-            return _objectQueue.ToArray();
+            return ObjectQueue.ToArray();
         }
     }
 } // namespace System.Management.Automation.Internal

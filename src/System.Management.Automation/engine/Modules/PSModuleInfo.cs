@@ -37,8 +37,8 @@ namespace System.Management.Automation
         internal static void SetDefaultDynamicNameAndPath(PSModuleInfo module)
         {
             string gs = Guid.NewGuid().ToString();
-            module._path = gs;
-            module._name = "__DynamicModule_" + gs;
+            module.Path = gs;
+            module.Name = "__DynamicModule_" + gs;
         }
 
         /// <summary>
@@ -66,10 +66,10 @@ namespace System.Management.Automation
                 string resolvedPath = ModuleCmdletBase.GetResolvedPath(path, context);
                 // The resolved path might be null if we're building a dynamic module and the path
                 // is just a GUID, not an actual path that can be resolved.
-                _path = resolvedPath ?? path;
+                Path = resolvedPath ?? path;
             }
 
-            _sessionState = sessionState;
+            SessionState = sessionState;
             if (sessionState != null)
             {
                 sessionState.Internal.Module = this;
@@ -78,11 +78,11 @@ namespace System.Management.Automation
             // Use the name of basename of the path as the module name if no module name is supplied.
             if (name == null)
             {
-                _name = ModuleIntrinsics.GetModuleName(_path);
+                Name = ModuleIntrinsics.GetModuleName(Path);
             }
             else
             {
-                _name = name;
+                Name = name;
             }
         }
 
@@ -110,8 +110,8 @@ namespace System.Management.Automation
             // script scope for the ss.
 
             // Allocate the session state instance for this module.
-            _sessionState = new SessionState(context, true, linkToGlobal);
-            _sessionState.Internal.Module = this;
+            SessionState = new SessionState(context, true, linkToGlobal);
+            SessionState.Internal.Module = this;
         }
 
         /// <summary>
@@ -139,20 +139,20 @@ namespace System.Management.Automation
             // script scope for the ss.
 
             // Allocate the session state instance for this module.
-            _sessionState = new SessionState(context, true, true);
-            _sessionState.Internal.Module = this;
+            SessionState = new SessionState(context, true, true);
+            SessionState.Internal.Module = this;
 
             // Now set up the module's session state to be the current session state
             SessionStateInternal oldSessionState = context.EngineSessionState;
             try
             {
-                context.EngineSessionState = _sessionState.Internal;
+                context.EngineSessionState = SessionState.Internal;
 
                 // Set the PSScriptRoot variable...
-                context.SetVariable(SpecialVariables.PSScriptRootVarPath, _path);
+                context.SetVariable(SpecialVariables.PSScriptRootVarPath, Path);
 
                 scriptBlock = scriptBlock.Clone();
-                scriptBlock.SessionState = _sessionState;
+                scriptBlock.SessionState = SessionState;
 
                 Pipe outputPipe = new Pipe { NullPipe = true };
                 // And run the scriptblock...
@@ -172,13 +172,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal bool ModuleHasPrivateMembers
-        {
-            get { return _moduleHasPrivateMembers; }
-            set { _moduleHasPrivateMembers = value; }
-        }
-
-        private bool _moduleHasPrivateMembers;
+        internal bool ModuleHasPrivateMembers { get; set; }
 
         /// <summary>
         /// True if the module had errors during loading
@@ -194,58 +188,29 @@ namespace System.Management.Automation
             return this.Name;
         }
 
-        private bool _logPipelineExecutionDetails = false;
-
         /// <summary> 
         /// Get/set whether to log Pipeline Execution Detail events. 
         /// </summary>
-        public bool LogPipelineExecutionDetails
-        {
-            get
-            {
-                return _logPipelineExecutionDetails;
-            }
-            set
-            {
-                _logPipelineExecutionDetails = value;
-            }
-        }
+        public bool LogPipelineExecutionDetails { get; set; } = false;
 
         /// <summary>
         /// The name of this module.
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-        }
+        public string Name { get; private set; } = String.Empty;
+
         /// <summary>
         /// Sets the name property of the PSModuleInfo object
         /// </summary>
         /// <param name="name">The name to set it to</param>
         internal void SetName(string name)
         {
-            _name = name;
+            Name = name;
         }
-        private string _name = String.Empty;
 
         /// <summary>
         /// The path to the file that defined this module...
         /// </summary>
-        public string Path
-        {
-            get
-            {
-                return _path;
-            }
-            internal set
-            {
-                _path = value;
-            }
-        }
-        private string _path = String.Empty;
+        public string Path { get; internal set; } = String.Empty;
 
         /// <summary>
         /// If the module is a binary module or a script module that defines
@@ -277,31 +242,23 @@ namespace System.Management.Automation
         /// <summary>
         /// The guid for this module if one was defined in the module manifest.
         /// </summary>
-        public Guid Guid
-        {
-            get { return _guid; }
-        }
+        public Guid Guid { get; private set; }
 
         internal void SetGuid(Guid guid)
         {
-            _guid = guid;
+            Guid = guid;
         }
-        private Guid _guid;
 
         /// <summary>
         /// The HelpInfo for this module if one was defined in the module manifest.
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
-        public string HelpInfoUri
-        {
-            get { return _helpInfoUri; }
-        }
+        public string HelpInfoUri { get; private set; }
 
         internal void SetHelpInfoUri(string uri)
         {
-            _helpInfoUri = uri;
+            HelpInfoUri = uri;
         }
-        private string _helpInfoUri;
 
         /// <summary>
         /// Get the module base directory for this module. For modules loaded via a module
@@ -314,7 +271,7 @@ namespace System.Management.Automation
             get
             {
                 return _moduleBase ??
-                       (_moduleBase = !string.IsNullOrEmpty(_path) ? IO.Path.GetDirectoryName(_path) : string.Empty);
+                       (_moduleBase = !string.IsNullOrEmpty(Path) ? IO.Path.GetDirectoryName(Path) : string.Empty);
             }
         }
         internal void SetModuleBase(string moduleBase)
@@ -454,10 +411,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The version of this module
         /// </summary>
-        public Version Version
-        {
-            get { return _version; }
-        }
+        public Version Version { get; private set; } = new Version(0, 0);
 
         /// <summary>
         /// Sets the module version
@@ -465,24 +419,19 @@ namespace System.Management.Automation
         /// <param name="version">the version to set...</param>
         internal void SetVersion(Version version)
         {
-            _version = version;
+            Version = version;
         }
-        private Version _version = new Version(0, 0);
 
         /// <summary>
         /// True if the module was compiled (i.e. a .DLL) instead of
         /// being in PowerShell script...
         /// </summary>
-        public ModuleType ModuleType
-        {
-            get { return _moduleType; }
-        }
-        private ModuleType _moduleType = ModuleType.Script;
+        public ModuleType ModuleType { get; private set; } = ModuleType.Script;
 
         /// <summary>
         /// This this module as being a compiled module...
         /// </summary>
-        internal void SetModuleType(ModuleType moduleType) { _moduleType = moduleType; }
+        internal void SetModuleType(ModuleType moduleType) { ModuleType = moduleType; }
 
         /// <summary>
         /// Module Author
@@ -567,13 +516,13 @@ namespace System.Management.Automation
                 {
                     return exports;
                 }
-                else if (_sessionState != null)
+                else if (SessionState != null)
                 {
                     // If there is no session state object associated with this list, 
                     // just return a null list of exports...
-                    if (_sessionState.Internal.ExportedFunctions != null)
+                    if (SessionState.Internal.ExportedFunctions != null)
                     {
-                        foreach (FunctionInfo fi in _sessionState.Internal.ExportedFunctions)
+                        foreach (FunctionInfo fi in SessionState.Internal.ExportedFunctions)
                         {
                             if (!exports.ContainsKey(fi.Name))
                             {
@@ -864,14 +813,14 @@ namespace System.Management.Automation
                 // If this module has a session state instance and there are any
                 // exported cmdlets in the session state, migrate them to the
                 // module info _compiledCmdlets entry.
-                if (_sessionState != null && _sessionState.Internal.ExportedCmdlets != null &&
-                    _sessionState.Internal.ExportedCmdlets.Count > 0)
+                if (SessionState != null && SessionState.Internal.ExportedCmdlets != null &&
+                    SessionState.Internal.ExportedCmdlets.Count > 0)
                 {
-                    foreach (CmdletInfo ci in _sessionState.Internal.ExportedCmdlets)
+                    foreach (CmdletInfo ci in SessionState.Internal.ExportedCmdlets)
                     {
                         _compiledExports.Add(ci);
                     }
-                    _sessionState.Internal.ExportedCmdlets.Clear();
+                    SessionState.Internal.ExportedCmdlets.Clear();
                 }
                 return _compiledExports;
             }
@@ -887,7 +836,7 @@ namespace System.Management.Automation
         internal void AddExportedAlias(AliasInfo aliasInfo)
         {
             Dbg.Assert(aliasInfo != null, "AddExportedAlias should not be called with a null value");
-            _compiledAliasExports.Add(aliasInfo);
+            CompiledAliasExports.Add(aliasInfo);
         }
 
         /// <summary>
@@ -896,15 +845,7 @@ namespace System.Management.Automation
         /// some aliases come from the module and others come from the nested
         /// module. We need to consolidate the list so it can properly be constrained.
         /// </summary>
-        internal List<AliasInfo> CompiledAliasExports
-        {
-            get
-            {
-                return _compiledAliasExports;
-            }
-        }
-
-        private readonly List<AliasInfo> _compiledAliasExports = new List<AliasInfo>();
+        internal List<AliasInfo> CompiledAliasExports { get; } = new List<AliasInfo>();
 
 
         /// <summary>
@@ -1148,12 +1089,12 @@ namespace System.Management.Automation
                     // If there is no session state object associated with this list, 
                     // just return a null list of exports. This will be true if the
                     // module is a compiled module.
-                    if (_sessionState == null || _sessionState.Internal.ExportedVariables == null)
+                    if (SessionState == null || SessionState.Internal.ExportedVariables == null)
                     {
                         return exportedVariables;
                     }
 
-                    foreach (PSVariable v in _sessionState.Internal.ExportedVariables)
+                    foreach (PSVariable v in SessionState.Internal.ExportedVariables)
                     {
                         exportedVariables[v.Name] = v;
                     }
@@ -1191,7 +1132,7 @@ namespace System.Management.Automation
                 else
                 {
                     // There is no session state object associated with this list.
-                    if (_sessionState == null)
+                    if (SessionState == null)
                     {
                         // Check if we detected any
                         if (_detectedAliasExports.Count > 0)
@@ -1216,7 +1157,7 @@ namespace System.Management.Automation
                     else
                     {
                         // We have a session state
-                        foreach (AliasInfo ai in _sessionState.Internal.ExportedAliases)
+                        foreach (AliasInfo ai in SessionState.Internal.ExportedAliases)
                         {
                             exportedAliases[ai.Name] = ai;
                         }
@@ -1267,7 +1208,7 @@ namespace System.Management.Automation
                     // If there is no session state object associated with this list, 
                     // just return a null list of exports. This will be true if the
                     // module is a compiled module.
-                    if (_sessionState == null)
+                    if (SessionState == null)
                     {
                         foreach (string detectedExport in _detectedWorkflowExports)
                         {
@@ -1280,7 +1221,7 @@ namespace System.Management.Automation
                         return exportedWorkflows;
                     }
 
-                    foreach (WorkflowInfo wi in _sessionState.Internal.ExportedWorkflows)
+                    foreach (WorkflowInfo wi in SessionState.Internal.ExportedWorkflows)
                     {
                         exportedWorkflows[wi.Name] = wi;
                     }
@@ -1309,18 +1250,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The session state instance associated with this module.
         /// </summary>
-        public SessionState SessionState
-        {
-            get
-            {
-                return _sessionState;
-            }
-            set
-            {
-                _sessionState = value;
-            }
-        }
-        private SessionState _sessionState;
+        public SessionState SessionState { get; set; }
 
         /// <summary>
         /// Returns a new scriptblock bound to this module instance.
@@ -1335,7 +1265,7 @@ namespace System.Management.Automation
 
         internal ScriptBlock NewBoundScriptBlock(ScriptBlock scriptBlockToBind, ExecutionContext context)
         {
-            if (_sessionState == null || context == null)
+            if (SessionState == null || context == null)
             {
                 throw PSTraceSource.NewInvalidOperationException(Modules.InvalidOperationOnBinaryModule);
             }
@@ -1349,9 +1279,9 @@ namespace System.Management.Automation
 
                 try
                 {
-                    context.EngineSessionState = _sessionState.Internal;
+                    context.EngineSessionState = SessionState.Internal;
                     newsb = scriptBlockToBind.Clone();
-                    newsb.SessionState = _sessionState;
+                    newsb.SessionState = SessionState;
                 }
                 finally
                 {
@@ -1379,7 +1309,7 @@ namespace System.Management.Automation
             object result;
             try
             {
-                sb.SessionStateInternal = _sessionState.Internal;
+                sb.SessionStateInternal = SessionState.Internal;
                 result = sb.InvokeReturnAsIs(args);
             }
             finally
@@ -1413,7 +1343,7 @@ namespace System.Management.Automation
                     break;
                 }
 
-                if (frameModule.SessionState != _sessionState)
+                if (frameModule.SessionState != SessionState)
                 {
                     callersSessionState = sf.InvocationInfo.MyCommand.Module.SessionState;
                     break;
@@ -1434,7 +1364,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void CaptureLocals()
         {
-            if (_sessionState == null)
+            if (SessionState == null)
             {
                 throw PSTraceSource.NewInvalidOperationException(Modules.InvalidOperationOnBinaryModule);
             }
@@ -1457,7 +1387,7 @@ namespace System.Management.Automation
                     if (v.Options == ScopedItemOptions.None && !(v is NullVariable))
                     {
                         PSVariable newVar = new PSVariable(v.Name, v.Value, v.Options, v.Attributes, v.Description);
-                        _sessionState.Internal.NewVariable(newVar, false);
+                        SessionState.Internal.NewVariable(newVar, false);
                     }
                 }
                 catch (SessionStateException)
@@ -1472,7 +1402,7 @@ namespace System.Management.Automation
         /// <returns>A custom object</returns>
         public PSObject AsCustomObject()
         {
-            if (_sessionState == null)
+            if (SessionState == null)
             {
                 throw PSTraceSource.NewInvalidOperationException(Modules.InvalidOperationOnBinaryModule);
             }
@@ -1507,38 +1437,24 @@ namespace System.Management.Automation
         /// </summary>
         public ScriptBlock OnRemove { get; set; }
 
-        private ReadOnlyCollection<string> _exportedFormatFiles = new ReadOnlyCollection<string>(new List<string>());
-
         /// <summary>
         /// The list of Format files imported by this module.
         /// </summary>
-        public ReadOnlyCollection<string> ExportedFormatFiles
-        {
-            get
-            {
-                return _exportedFormatFiles;
-            }
-        }
+        public ReadOnlyCollection<string> ExportedFormatFiles { get; private set; } = new ReadOnlyCollection<string>(new List<string>());
+
         internal void SetExportedFormatFiles(ReadOnlyCollection<string> files)
         {
-            _exportedFormatFiles = files;
+            ExportedFormatFiles = files;
         }
-
-        private ReadOnlyCollection<string> _exportedTypeFiles = new ReadOnlyCollection<string>(new List<string>());
 
         /// <summary>
         /// The list of types files imported by this module.
         /// </summary>
-        public ReadOnlyCollection<string> ExportedTypeFiles
-        {
-            get
-            {
-                return _exportedTypeFiles;
-            }
-        }
+        public ReadOnlyCollection<string> ExportedTypeFiles { get; private set; } = new ReadOnlyCollection<string>(new List<string>());
+
         internal void SetExportedTypeFiles(ReadOnlyCollection<string> files)
         {
-            _exportedTypeFiles = files;
+            ExportedTypeFiles = files;
         }
 
         /// <summary>
@@ -1575,7 +1491,7 @@ namespace System.Management.Automation
 
             clone._scripts = new List<string>(this.Scripts);
 
-            clone._sessionState = this.SessionState;
+            clone.SessionState = this.SessionState;
 
             return clone;
         }

@@ -21,55 +21,21 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// 
         [Parameter(Position = 0, Mandatory = true, ValueFromPipelineByPropertyName = true)]
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;
-            }
-        }
-        private string _name;
+        public string Name { get; set; }
 
         /// <summary>
         /// The Value parameter for the command
         /// </summary>
         /// 
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
-        public string Value
-        {
-            get
-            {
-                return _aliasValue;
-            }
-            set
-            {
-                _aliasValue = value;
-            }
-        }
-        private string _aliasValue;
+        public string Value { get; set; }
 
         /// <summary>
         /// The description for the alias.
         /// </summary>
         /// 
         [Parameter]
-        public string Description
-        {
-            get
-            {
-                return _description;
-            }
-
-            set
-            {
-                _description = value;
-            }
-        }
-        private string _description = String.Empty;
+        public string Description { get; set; } = String.Empty;
 
         /// <summary>
         /// The Option parameter allows the alias to be set to 
@@ -78,19 +44,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// 
         [Parameter]
-        public ScopedItemOptions Option
-        {
-            get
-            {
-                return _options;
-            }
-
-            set
-            {
-                _options = value;
-            }
-        }
-        private ScopedItemOptions _options = ScopedItemOptions.None;
+        public ScopedItemOptions Option { get; set; } = ScopedItemOptions.None;
 
         /// <summary>
         /// If set to true, the alias that is set is passed to the
@@ -118,19 +72,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// 
         [Parameter]
-        public string Scope
-        {
-            get
-            {
-                return _scope;
-            }
-
-            set
-            {
-                _scope = value;
-            }
-        }
-        private string _scope;
+        public string Scope { get; set; }
 
 
         /// <summary>

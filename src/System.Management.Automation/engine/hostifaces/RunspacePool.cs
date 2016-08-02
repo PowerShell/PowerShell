@@ -262,7 +262,7 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         internal RunspacePoolStateChangedEventArgs(RunspacePoolState state)
         {
-            _stateInfo = new RunspacePoolStateInfo(state, null);
+            RunspacePoolStateInfo = new RunspacePoolStateInfo(state, null);
         }
 
         /// <summary>
@@ -271,7 +271,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="stateInfo"></param>
         internal RunspacePoolStateChangedEventArgs(RunspacePoolStateInfo stateInfo)
         {
-            _stateInfo = stateInfo;
+            RunspacePoolStateInfo = stateInfo;
         }
 
         #endregion
@@ -281,19 +281,11 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets the stateinfo of RunspacePool when this event occurred.
         /// </summary>
-        public RunspacePoolStateInfo RunspacePoolStateInfo
-        {
-            get
-            {
-                return _stateInfo;
-            }
-        }
+        public RunspacePoolStateInfo RunspacePoolStateInfo { get; }
 
         #endregion
 
         #region Private Data
-
-        private RunspacePoolStateInfo _stateInfo;
 
         #endregion
     }
@@ -305,8 +297,6 @@ namespace System.Management.Automation.Runspaces
     {
         #region Private Data
 
-        private Runspace _runspace;
-
         #endregion
 
         #region Constructors
@@ -316,17 +306,14 @@ namespace System.Management.Automation.Runspaces
         /// <param name="runspace"></param>
         internal RunspaceCreatedEventArgs(Runspace runspace)
         {
-            _runspace = runspace;
+            Runspace = runspace;
         }
 
         #endregion
 
         #region Internal Properties
 
-        internal Runspace Runspace
-        {
-            get { return _runspace; }
-        }
+        internal Runspace Runspace { get; }
 
         #endregion
     }
@@ -389,8 +376,6 @@ namespace System.Management.Automation.Runspaces
     {
         #region Private Data
 
-        private bool _isAssociatedWithAsyncOpen;
-
         #endregion
 
         #region Constructor
@@ -415,7 +400,7 @@ namespace System.Management.Automation.Runspaces
             bool isCalledFromOpenAsync)
             : base(ownerId, callback, state)
         {
-            _isAssociatedWithAsyncOpen = isCalledFromOpenAsync;
+            IsAssociatedWithAsyncOpen = isCalledFromOpenAsync;
         }
 
         #endregion
@@ -426,10 +411,7 @@ namespace System.Management.Automation.Runspaces
         /// true if AsyncResult monitors Async Open.
         /// false otherwise
         /// </summary>
-        internal bool IsAssociatedWithAsyncOpen
-        {
-            get { return _isAssociatedWithAsyncOpen; }
-        }
+        internal bool IsAssociatedWithAsyncOpen { get; }
 
         #endregion
     }
@@ -441,7 +423,6 @@ namespace System.Management.Automation.Runspaces
     {
         #region Private Data
 
-        private Runspace _runspace;
         private bool _isActive;
 
         #endregion
@@ -476,17 +457,7 @@ namespace System.Management.Automation.Runspaces
         /// <remarks>
         /// This can be null if the async Get operation is not completed.
         /// </remarks>
-        internal Runspace Runspace
-        {
-            get
-            {
-                return _runspace;
-            }
-            set
-            {
-                _runspace = value;
-            }
-        }
+        internal Runspace Runspace { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this operation
@@ -545,7 +516,6 @@ namespace System.Management.Automation.Runspaces
         private event EventHandler<RunspacePoolStateChangedEventArgs> InternalStateChanged = null;
         private event EventHandler<PSEventArgs> InternalForwardEvent = null;
         private event EventHandler<RunspaceCreatedEventArgs> InternalRunspaceCreated = null;
-        private bool _isRemote = false;
 
         #endregion
 
@@ -655,7 +625,7 @@ namespace System.Management.Automation.Runspaces
                 connectionInfo,
                 name);
 
-            _isRemote = true;
+            IsRemote = true;
         }
 
         /// <summary>
@@ -688,7 +658,7 @@ namespace System.Management.Automation.Runspaces
             _internalPool = new RemoteRunspacePoolInternal(instanceId, name, isDisconnected, connectCommands,
                 connectionInfo, host, typeTable);
 
-            _isRemote = true;
+            IsRemote = true;
         }
 
         #endregion
@@ -1405,13 +1375,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Indicates whether the RunspacePool is a remote one
         /// </summary>
-        internal bool IsRemote
-        {
-            get
-            {
-                return _isRemote;
-            }
-        }
+        internal bool IsRemote { get; } = false;
 
         /// <summary>
         /// RemoteRunspacePoolInternal associated with this

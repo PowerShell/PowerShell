@@ -26,36 +26,14 @@ namespace Microsoft.PowerShell.Commands
         /// This parameter specifies the current pipeline object 
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject
-        {
-            set
-            {
-                _inputObject = value;
-            }
-            get
-            {
-                return _inputObject;
-            }
-        }
-        private PSObject _inputObject = AutomationNull.Value;
+        public PSObject InputObject { set; get; } = AutomationNull.Value;
 
 
         /// <summary>
         /// The script block to apply
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
-        public ScriptBlock Expression
-        {
-            set
-            {
-                _script = value;
-            }
-            get
-            {
-                return _script;
-            }
-        }
-        private ScriptBlock _script;
+        public ScriptBlock Expression { set; get; }
 
         #endregion
 
@@ -86,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
             // Only accumulate the time used by this scriptblock...
             // As results are discarded, write directly to a null pipe instead of accumulating.
             _stopWatch.Start();
-            _script.InvokeWithPipe(
+            Expression.InvokeWithPipe(
                 useLocalScope: false,
                 errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
                 dollarUnder: InputObject,   // $_

@@ -26,22 +26,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (expression == null)
                 throw PSTraceSource.NewArgumentNullException("expression");
 
-            _originatingParameter = parameter;
-            _resolvedExpression = expression;
+            OriginatingParameter = parameter;
+            ResolvedExpression = expression;
         }
 
-        internal MshExpression ResolvedExpression
-        {
-            get { return _resolvedExpression; }
-        }
+        internal MshExpression ResolvedExpression { get; }
 
-        internal MshParameter OriginatingParameter
-        {
-            get { return _originatingParameter; }
-        }
-
-        private MshExpression _resolvedExpression;
-        private MshParameter _originatingParameter;
+        internal MshParameter OriginatingParameter { get; }
     }
 
 

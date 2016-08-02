@@ -464,12 +464,8 @@ namespace System.Management.Automation.Runspaces
                 return _formats;
             }
         }
-        private TypeInfoDataBaseManager _formatDBManger = new TypeInfoDataBaseManager();
 
-        internal TypeInfoDataBaseManager FormatDBManager
-        {
-            get { return _formatDBManger; }
-        }
+        internal TypeInfoDataBaseManager FormatDBManager { get; } = new TypeInfoDataBaseManager();
 
         #endregion
 

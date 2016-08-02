@@ -21,39 +21,38 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public override string ToString()
         {
-            return _definition;
+            return Definition;
         }
         /// <summary>
         /// Initializes a new instance of this class
         /// </summary>
         public MemberDefinition(string typeName, string name, PSMemberTypes memberType, string definition)
         {
-            _name = name;
-            _definition = definition;
-            _memberType = memberType;
-            _typeName = typeName;
+            Name = name;
+            Definition = definition;
+            MemberType = memberType;
+            TypeName = typeName;
         }
-        private string _name;
-        private string _typeName;
-        private string _definition;
-        private PSMemberTypes _memberType;
 
         /// <summary>
         /// type name
         /// </summary>
-        public string TypeName { get { return _typeName; } }
+        public string TypeName { get; }
+
         /// <summary>
         /// member name
         /// </summary>
-        public string Name { get { return _name; } }
+        public string Name { get; }
+
         /// <summary>
         /// member type
         /// </summary>
-        public PSMemberTypes MemberType { get { return _memberType; } }
+        public PSMemberTypes MemberType { get; }
+
         /// <summary>
         /// member definition
         /// </summary>
-        public string Definition { get { return _definition; } }
+        public string Definition { get; }
     }
 
     /// <summary>
@@ -63,55 +62,34 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(MemberDefinition))]
     public class GetMemberCommand : PSCmdlet
     {
-        private PSObject _inputObject;
-
         /// <summary>
         /// The object to retrieve properties from
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject
-        {
-            set { _inputObject = value; }
-            get { return _inputObject; }
-        }
+        public PSObject InputObject { set; get; }
 
 
-        private string[] _name = new string[] { "*" };
         /// <summary>
         /// The member names to be retrieved
         /// </summary>
         [Parameter(Position = 0)]
         [ValidateNotNullOrEmpty]
-        public string[] Name
-        {
-            set { _name = value; }
-            get { return _name; }
-        }
+        public string[] Name { set; get; } = new string[] { "*" };
 
 
-        private PSMemberTypes _memberType = PSMemberTypes.All;
         /// <summary>
         /// The member types to be retrieved
         /// </summary>
         [Parameter]
         [Alias("Type")]
-        public PSMemberTypes MemberType
-        {
-            set { _memberType = value; }
-            get { return _memberType; }
-        }
+        public PSMemberTypes MemberType { set; get; } = PSMemberTypes.All;
 
 
         /// <summary>
         /// View from which the members are retrieved.
         /// </summary>
         [Parameter]
-        public PSMemberViewTypes View
-        {
-            get { return _view; }
-            set { _view = value; }
-        }
-        private PSMemberViewTypes _view = PSMemberViewTypes.Adapted | PSMemberViewTypes.Extended;
+        public PSMemberViewTypes View { get; set; } = PSMemberViewTypes.Adapted | PSMemberViewTypes.Extended;
 
         private bool _staticParameter = false;
         /// <summary>
@@ -206,10 +184,10 @@ namespace Microsoft.PowerShell.Commands
                 _typesAlreadyDisplayed.Add(typeName, "");
             }
 
-            PSMemberTypes memberTypeToSearch = _memberType;
-            PSMemberViewTypes viewToSearch = _view;
+            PSMemberTypes memberTypeToSearch = MemberType;
+            PSMemberViewTypes viewToSearch = View;
 
-            if (((_view & PSMemberViewTypes.Extended) == 0) &&
+            if (((View & PSMemberViewTypes.Extended) == 0) &&
                 (!typeof(PSMemberSet).ToString().Equals(typeName, StringComparison.OrdinalIgnoreCase)))
             {
                 // PSMemberSet is an internal memberset and its properties/methods are  populated differently.
@@ -224,13 +202,13 @@ namespace Microsoft.PowerShell.Commands
                 | PSMemberTypes.ScriptProperty);
             }
 
-            if (((_view & PSMemberViewTypes.Adapted) == 0) && (_view & PSMemberViewTypes.Base) == 0)
+            if (((View & PSMemberViewTypes.Adapted) == 0) && (View & PSMemberViewTypes.Base) == 0)
             {
                 // base and adapted are not mentioned in the view so ignore respective properties
                 memberTypeToSearch ^= (PSMemberTypes.Property | PSMemberTypes.ParameterizedProperty | PSMemberTypes.Method);
             }
 
-            if (((_view & PSMemberViewTypes.Base) == PSMemberViewTypes.Base) &&
+            if (((View & PSMemberViewTypes.Base) == PSMemberViewTypes.Base) &&
                 (InputObject.InternalBaseDotNetAdapter == null))
             {
                 // the input object don't have a custom adapter..

@@ -5116,21 +5116,8 @@ namespace Microsoft.PowerShell.Commands
         /// in the RegistryValueKind enum
         /// </remarks>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public RegistryValueKind Type
-        {
-            get
-            {
-                return _type;
-            }
-
-            set
-            {
-                _type = value;
-            }
-        } // Type
-
-        private RegistryValueKind _type = RegistryValueKind.Unknown;
-    } // class RegistryProviderSetItemDynamicParameter
+        public RegistryValueKind Type { get; set; } = RegistryValueKind.Unknown;
+    }
 } // namespace System.Management.Automation
 
 

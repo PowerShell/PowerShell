@@ -116,14 +116,7 @@ namespace System.Management.Automation
         /// <summary>
         /// List of aliases to export from this session state object...
         /// </summary>
-        internal List<AliasInfo> ExportedAliases
-        {
-            get
-            {
-                return _exportedAliases;
-            }
-        }
-        private List<AliasInfo> _exportedAliases = new List<AliasInfo>();
+        internal List<AliasInfo> ExportedAliases { get; } = new List<AliasInfo>();
 
 
         /// <summary>

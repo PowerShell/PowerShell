@@ -44,12 +44,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "LogName")]
         [Alias("LN")]
-        public string LogName
-        {
-            get { return _logName; }
-            set { _logName = value; }
-        }
-        private string _logName /* = null */;
+        public string LogName { get; set; }
 
         /// <summary>
         /// Read eventlog entries from this computer
@@ -58,24 +53,14 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty()]
         [Alias("Cn")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] ComputerName
-        {
-            get { return _computerName; }
-            set { _computerName = value; }
-        }
-        private string[] _computerName = new string[0];
+        public string[] ComputerName { get; set; } = new string[0];
 
         /// <summary>
         /// Read only this number of entries
         /// </summary>
         [Parameter(ParameterSetName = "LogName")]
         [ValidateRange(0, Int32.MaxValue)]
-        public int Newest
-        {
-            get { return _newest; }
-            set { _newest = value; }
-        }
-        private int _newest = Int32.MaxValue;
+        public int Newest { get; set; } = Int32.MaxValue;
 
         /// <summary>
         /// Return entries "after " this date.
@@ -231,35 +216,13 @@ namespace Microsoft.PowerShell.Commands
         /// returns Log Entry as base object
         /// </summary>
         [Parameter(ParameterSetName = "LogName")]
-        public SwitchParameter AsBaseObject
-        {
-            get
-            { return _asbaseobject; }
-            set
-            {
-                _asbaseobject = value;
-            }
-        }
-        private SwitchParameter _asbaseobject  /* = false */;
+        public SwitchParameter AsBaseObject { get; set; }
 
         /// <summary>
         /// Return the Eventlog objects rather than the log contents
         /// </summary>
         [Parameter(ParameterSetName = "List")]
-        public SwitchParameter List
-        {
-            get
-            {
-                return _list;
-            }
-            set
-            {
-                _list = value;
-            }
-        }
-        private SwitchParameter _list /* = false */;
-
-
+        public SwitchParameter List { get; set; }
 
 
         /// <summary>
@@ -296,9 +259,9 @@ namespace Microsoft.PowerShell.Commands
         {
             if (ParameterSetName == "List")
             {
-                if (_computerName.Length > 0)
+                if (ComputerName.Length > 0)
                 {
-                    foreach (string computerName in _computerName)
+                    foreach (string computerName in ComputerName)
                     {
                         foreach (EventLog log in EventLog.GetEventLogs(computerName))
                         {
@@ -360,7 +323,7 @@ namespace Microsoft.PowerShell.Commands
             bool processing = false;
             try
             {
-                if (_computerName.Length == 0)
+                if (ComputerName.Length == 0)
                 {
                     using (EventLog specificLog = new EventLog(logName))
                     {
@@ -372,7 +335,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     processing = true;
 
-                    foreach (string computerName in _computerName)
+                    foreach (string computerName in ComputerName)
                     {
                         using (EventLog specificLog = new EventLog(logName, computerName))
                         {
@@ -395,7 +358,7 @@ namespace Microsoft.PowerShell.Commands
         private void Process(EventLog log)
         {
             bool matchesfound = false;
-            if (_newest == 0)
+            if (Newest == 0)
             {
                 return;
             }
@@ -407,7 +370,7 @@ namespace Microsoft.PowerShell.Commands
             int lastindex = Int32.MinValue;
             int processed = 0;
 
-            for (int i = count - 1; (i >= 0) && (processed < _newest); i--)
+            for (int i = count - 1; (i >= 0) && (processed < Newest); i--)
             {
                 EventLogEntry entry = null;
                 try
@@ -454,7 +417,7 @@ namespace Microsoft.PowerShell.Commands
                         if (!FiltersMatch(entry))
                             continue;
                     }
-                    if (!_asbaseobject)
+                    if (!AsBaseObject)
                     {
                         //wraping in PSobject to insert into PStypesnames
                         PSObject logentry = new PSObject(entry);
@@ -599,7 +562,7 @@ namespace Microsoft.PowerShell.Commands
         {
             WildcardPattern wildcardPattern = WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase);
             List<EventLog> matchingLogs = new List<EventLog>();
-            if (_computerName.Length == 0)
+            if (ComputerName.Length == 0)
             {
                 foreach (EventLog log in EventLog.GetEventLogs())
                 {
@@ -611,7 +574,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                foreach (string computerName in _computerName)
+                foreach (string computerName in ComputerName)
                 {
                     foreach (EventLog log in EventLog.GetEventLogs(computerName))
                     {
@@ -649,15 +612,7 @@ namespace Microsoft.PowerShell.Commands
         [Alias("LN")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] LogName
-        {
-            get { return _logName; }
-            set
-            {
-                _logName = value;
-            }
-        }
-        private string[] _logName;
+        public string[] LogName { get; set; }
 
 
         /// <summary>
@@ -667,15 +622,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Alias("Cn")]
-        public string[] ComputerName
-        {
-            get { return _computerName; }
-            set
-            {
-                _computerName = value;
-            }
-        }
-        private string[] _computerName = { "." };
+        public string[] ComputerName { get; set; } = { "." };
 
         #endregion Parameters
 
@@ -687,7 +634,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             string computer = string.Empty;
-            foreach (string compName in _computerName)
+            foreach (string compName in ComputerName)
             {
                 if ((compName.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (compName.Equals(".", StringComparison.OrdinalIgnoreCase)))
                 {
@@ -697,7 +644,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     computer = compName;
                 }
-                foreach (string eventString in _logName)
+                foreach (string eventString in LogName)
                 {
                     try
                     {
@@ -757,15 +704,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true)]
         [Alias("LN")]
         [ValidateNotNullOrEmpty]
-        public string LogName
-        {
-            get { return _logName; }
-            set
-            {
-                _logName = value;
-            }
-        }
-        private string _logName;
+        public string LogName { get; set; }
 
 
         /// <summary>
@@ -774,15 +713,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, Mandatory = true)]
         [Alias("SRC")]
         [ValidateNotNullOrEmpty]
-        public string Source
-        {
-            get { return _source; }
-            set
-            {
-                _source = value;
-            }
-        }
-        private string _source;
+        public string Source { get; set; }
 
         /// <summary>
         /// String which represents One of the EventLogEntryType values. 
@@ -791,29 +722,13 @@ namespace Microsoft.PowerShell.Commands
         [Alias("ET")]
         [ValidateNotNullOrEmpty]
         [ValidateSetAttribute(new string[] { "Error", "Information", "FailureAudit", "SuccessAudit", "Warning" })]
-        public EventLogEntryType EntryType
-        {
-            get { return _entryType; }
-            set
-            {
-                _entryType = value;
-            }
-        }
-        private EventLogEntryType _entryType = EventLogEntryType.Information;
+        public EventLogEntryType EntryType { get; set; } = EventLogEntryType.Information;
 
         /// <summary>
         /// The application-specific subcategory associated with the message. 
         /// </summary>
         [Parameter]
-        public Int16 Category
-        {
-            get { return _category; }
-            set
-            {
-                _category = value;
-            }
-        }
-        private Int16 _category = 1;
+        public Int16 Category { get; set; } = 1;
 
         /// <summary>
         /// The application-specific identifier for the event.
@@ -822,15 +737,7 @@ namespace Microsoft.PowerShell.Commands
         [Alias("ID", "EID")]
         [ValidateNotNullOrEmpty]
         [ValidateRange(0, UInt16.MaxValue)]
-        public Int32 EventId
-        {
-            get { return _eventId; }
-            set
-            {
-                _eventId = value;
-            }
-        }
-        private Int32 _eventId;
+        public Int32 EventId { get; set; }
 
         /// <summary>
         /// The message goes here.
@@ -839,15 +746,7 @@ namespace Microsoft.PowerShell.Commands
         [Alias("MSG")]
         [ValidateNotNullOrEmpty]
         [ValidateLength(0, 32766)]
-        public string Message
-        {
-            get { return _message; }
-            set
-            {
-                _message = value;
-            }
-        }
-        private string _message;
+        public string Message { get; set; }
 
 
         /// <summary>
@@ -857,15 +756,8 @@ namespace Microsoft.PowerShell.Commands
         [Alias("RD")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public byte[] RawData
-        {
-            get { return _rawData; }
-            set
-            {
-                _rawData = value;
-            }
-        }
-        private byte[] _rawData;
+        public byte[] RawData { get; set; }
+
         /// <summary>
         /// Write eventlog entries of this log
         /// </summary>
@@ -873,15 +765,7 @@ namespace Microsoft.PowerShell.Commands
         [Alias("CN")]
         [ValidateNotNullOrEmpty]
 
-        public string ComputerName
-        {
-            get { return _compname; }
-            set
-            {
-                _compname = value;
-            }
-        }
-        private string _compname = ".";
+        public string ComputerName { get; set; } = ".";
 
         #endregion Parameters
         # region private
@@ -902,32 +786,32 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             string _computerName = string.Empty;
-            if ((_compname.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (_compname.Equals(".", StringComparison.OrdinalIgnoreCase)))
+            if ((ComputerName.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (ComputerName.Equals(".", StringComparison.OrdinalIgnoreCase)))
             {
                 _computerName = "localhost";
             }
             else
             {
-                _computerName = _compname;
+                _computerName = ComputerName;
             }
             try
             {
-                if (!(EventLog.SourceExists(_source, _compname)))
+                if (!(EventLog.SourceExists(Source, ComputerName)))
                 {
-                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(StringUtil.Format(EventlogResources.SourceDoesNotExist, null, _computerName, _source)), null, ErrorCategory.InvalidOperation, null);
+                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(StringUtil.Format(EventlogResources.SourceDoesNotExist, null, _computerName, Source)), null, ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                 }
                 else
                 {
-                    if (!(EventLog.Exists(_logName, _compname)))
+                    if (!(EventLog.Exists(LogName, ComputerName)))
                     {
-                        ErrorRecord er = new ErrorRecord(new InvalidOperationException(StringUtil.Format(EventlogResources.LogDoesNotExist, _logName, _computerName)), null, ErrorCategory.InvalidOperation, null);
+                        ErrorRecord er = new ErrorRecord(new InvalidOperationException(StringUtil.Format(EventlogResources.LogDoesNotExist, LogName, _computerName)), null, ErrorCategory.InvalidOperation, null);
                         WriteError(er);
                     }
                     else
                     {
-                        EventLog _myevent = new EventLog(_logName, _compname, _source);
-                        _myevent.WriteEntry(_message, _entryType, _eventId, _category, _rawData);
+                        EventLog _myevent = new EventLog(LogName, ComputerName, Source);
+                        _myevent.WriteEntry(Message, EntryType, EventId, Category, RawData);
                     }
                 }
             }
@@ -937,7 +821,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (InvalidOperationException ex)
             {
-                WriteNonTerminatingError(ex, "AccessDenied", StringUtil.Format(EventlogResources.AccessDenied, _logName, null, _source), ErrorCategory.PermissionDenied);
+                WriteNonTerminatingError(ex, "AccessDenied", StringUtil.Format(EventlogResources.AccessDenied, LogName, null, Source), ErrorCategory.PermissionDenied);
             }
             catch (Win32Exception ex)
             {
@@ -945,7 +829,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (System.IO.IOException ex)
             {
-                WriteNonTerminatingError(ex, "PathDoesNotExist", StringUtil.Format(EventlogResources.PathDoesNotExist, null, _compname, null), ErrorCategory.InvalidOperation);
+                WriteNonTerminatingError(ex, "PathDoesNotExist", StringUtil.Format(EventlogResources.PathDoesNotExist, null, ComputerName, null), ErrorCategory.InvalidOperation);
             }
         }//beginprocessing
 
@@ -970,15 +854,8 @@ namespace Microsoft.PowerShell.Commands
         [Alias("LN")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] LogName
-        {
-            get { return _logName; }
-            set
-            {
-                _logName = value;
-            }
-        }
-        private string[] _logName;
+        public string[] LogName { get; set; }
+
         /// <summary>
         /// Limit eventlog entries of this computer.
         /// </summary>
@@ -986,15 +863,8 @@ namespace Microsoft.PowerShell.Commands
         [Alias("CN")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] ComputerName
-        {
-            get { return _computerName; }
-            set
-            {
-                _computerName = value;
-            }
-        }
-        private string[] _computerName = { "." };
+        public string[] ComputerName { get; set; } = { "." };
+
         /// <summary>
         /// Minimum retention days for this log.
         /// </summary>
@@ -1070,7 +940,7 @@ namespace Microsoft.PowerShell.Commands
         BeginProcessing()
         {
             string computer = string.Empty;
-            foreach (string compname in _computerName)
+            foreach (string compname in ComputerName)
             {
                 if ((compname.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (compname.Equals(".", StringComparison.OrdinalIgnoreCase)))
                 {
@@ -1080,7 +950,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     computer = compname;
                 }
-                foreach (string logname in _logName)
+                foreach (string logname in LogName)
                 {
                     try
                     {
@@ -1187,15 +1057,7 @@ namespace Microsoft.PowerShell.Commands
         [Alias("CN")]
         [ValidateNotNullOrEmpty]
 
-        public string ComputerName
-        {
-            get { return _computerName; }
-            set
-            {
-                _computerName = value;
-            }
-        }
-        private string _computerName = ".";
+        public string ComputerName { get; set; } = ".";
 
         #endregion Parameters
 
@@ -1212,7 +1074,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string eventVwrExe = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),
                     "eventvwr.exe");
-                Process.Start(eventVwrExe, _computerName);
+                Process.Start(eventVwrExe, ComputerName);
             }
             catch (Win32Exception e)
             {
@@ -1231,7 +1093,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (SystemException ex)
             {
-                ErrorRecord er = new ErrorRecord(ex, "InvalidComputerName", ErrorCategory.InvalidArgument, _computerName);
+                ErrorRecord er = new ErrorRecord(ex, "InvalidComputerName", ErrorCategory.InvalidArgument, ComputerName);
                 WriteError(er);
             }
         }
@@ -1273,12 +1135,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         [Alias("CRF")]
-        public String CategoryResourceFile
-        {
-            get { return _categoryResourceFile; }
-            set { _categoryResourceFile = value; }
-        }
-        private String _categoryResourceFile;
+        public String CategoryResourceFile { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
@@ -1288,15 +1145,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Alias("CN")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ComputerName
-        {
-            get { return _computerName; }
-            set
-            {
-                _computerName = value;
-            }
-        }
-        private String[] _computerName = { "." };
+        public String[] ComputerName { get; set; } = { "." };
 
         /// <summary>
         /// The following is the definition of the input parameter "LogName".
@@ -1307,12 +1156,7 @@ namespace Microsoft.PowerShell.Commands
                    Position = 0)]
         [ValidateNotNullOrEmpty]
         [Alias("LN")]
-        public String LogName
-        {
-            get { return _logName; }
-            set { _logName = value; }
-        }
-        private String _logName;
+        public String LogName { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "MessageResourceFile".
@@ -1323,12 +1167,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         [Alias("MRF")]
-        public String MessageResourceFile
-        {
-            get { return _messageResourceFile; }
-            set { _messageResourceFile = value; }
-        }
-        private String _messageResourceFile;
+        public String MessageResourceFile { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "ParameterResourceFile".
@@ -1339,12 +1178,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         [Alias("PRF")]
-        public String ParameterResourceFile
-        {
-            get { return _parameterResourceFile; }
-            set { _parameterResourceFile = value; }
-        }
-        private String _parameterResourceFile;
+        public String ParameterResourceFile { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Source".
@@ -1355,15 +1189,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Alias("SRC")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] Source
-        {
-            get { return _source; }
-            set
-            {
-                _source = value;
-            }
-        }
-        private String[] _source;
+        public String[] Source { get; set; }
 
         # endregion Parameter
 
@@ -1384,7 +1210,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             string computer = string.Empty;
-            foreach (string compname in _computerName)
+            foreach (string compname in ComputerName)
             {
                 if ((compname.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (compname.Equals(".", StringComparison.OrdinalIgnoreCase)))
                 {
@@ -1396,18 +1222,18 @@ namespace Microsoft.PowerShell.Commands
                 }
                 try
                 {
-                    foreach (string _sourceName in _source)
+                    foreach (string _sourceName in Source)
                     {
                         if (!EventLog.SourceExists(_sourceName, compname))
                         {
-                            EventSourceCreationData newEventSource = new EventSourceCreationData(_sourceName, _logName);
+                            EventSourceCreationData newEventSource = new EventSourceCreationData(_sourceName, LogName);
                             newEventSource.MachineName = compname;
-                            if (!String.IsNullOrEmpty(_messageResourceFile))
-                                newEventSource.MessageResourceFile = _messageResourceFile;
-                            if (!String.IsNullOrEmpty(_parameterResourceFile))
-                                newEventSource.ParameterResourceFile = _parameterResourceFile;
-                            if (!String.IsNullOrEmpty(_categoryResourceFile))
-                                newEventSource.CategoryResourceFile = _categoryResourceFile;
+                            if (!String.IsNullOrEmpty(MessageResourceFile))
+                                newEventSource.MessageResourceFile = MessageResourceFile;
+                            if (!String.IsNullOrEmpty(ParameterResourceFile))
+                                newEventSource.ParameterResourceFile = ParameterResourceFile;
+                            if (!String.IsNullOrEmpty(CategoryResourceFile))
+                                newEventSource.CategoryResourceFile = CategoryResourceFile;
                             EventLog.CreateEventSource(newEventSource);
                         }
                         else
@@ -1420,7 +1246,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (InvalidOperationException ex)
                 {
-                    WriteNonTerminatingError(ex, EventlogResources.PermissionDenied, "PermissionDenied", ErrorCategory.PermissionDenied, _logName, computer, null, null);
+                    WriteNonTerminatingError(ex, EventlogResources.PermissionDenied, "PermissionDenied", ErrorCategory.PermissionDenied, LogName, computer, null, null);
                     continue;
                 }
                 catch (ArgumentException ex)
@@ -1462,15 +1288,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Alias("CN")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ComputerName
-        {
-            get { return _computername; }
-            set
-            {
-                _computername = value;
-            }
-        }
-        private string[] _computername = { "." };
+        public String[] ComputerName { get; set; } = { "." };
 
         /// <summary>
         /// The following is the definition of the input parameter "LogName".
@@ -1482,15 +1300,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Alias("LN")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] LogName
-        {
-            get { return _logname; }
-            set
-            {
-                _logname = value;
-            }
-        }
-        private String[] _logname;
+        public String[] LogName { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "RemoveSource".
@@ -1506,16 +1316,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Alias("SRC")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] Source
-        {
-            get { return _source; }
-            set
-            {
-                _source = value;
-            }
-        }
-        private String[] _source;
-
+        public String[] Source { get; set; }
 
 
         /// <summary>
@@ -1526,7 +1327,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 string computer = string.Empty;
-                foreach (string compName in _computername)
+                foreach (string compName in ComputerName)
                 {
                     if ((compName.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (compName.Equals(".", StringComparison.OrdinalIgnoreCase)))
                     {
@@ -1538,7 +1339,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     if (ParameterSetName.Equals("Default"))
                     {
-                        foreach (string log in _logname)
+                        foreach (string log in LogName)
                         {
                             try
                             {
@@ -1567,7 +1368,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        foreach (string src in _source)
+                        foreach (string src in Source)
                         {
                             try
                             {

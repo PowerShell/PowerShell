@@ -20,19 +20,10 @@ namespace Microsoft.PowerShell.Commands
     public class OutNullCommand : PSCmdlet
     {
         /// <summary>
-        /// input PSObject
-        /// </summary>
-        private PSObject _inputObject = AutomationNull.Value;
-
-        /// <summary>
         /// This parameter specifies the current pipeline object
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject
-        {
-            set { _inputObject = value; }
-            get { return _inputObject; }
-        }
+        public PSObject InputObject { set; get; } = AutomationNull.Value;
 
         /// 
         /// <summary>

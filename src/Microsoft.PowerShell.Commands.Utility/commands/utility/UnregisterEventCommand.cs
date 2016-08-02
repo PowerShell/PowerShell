@@ -41,36 +41,14 @@ namespace Microsoft.PowerShell.Commands
         /// An identifier for this event subscription
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, ParameterSetName = "ById")]
-        public int SubscriptionId
-        {
-            get
-            {
-                return _subscriptionId;
-            }
-            set
-            {
-                _subscriptionId = value;
-            }
-        }
-        private int _subscriptionId = -1;
+        public int SubscriptionId { get; set; } = -1;
 
         /// <summary>
         /// Flag that determines if we should include subscriptions used to support
         /// other subscriptions
         /// </summary>
         [Parameter()]
-        public SwitchParameter Force
-        {
-            get
-            {
-                return _force;
-            }
-            set
-            {
-                _force = value;
-            }
-        }
-        private SwitchParameter _force;
+        public SwitchParameter Force { get; set; }
 
         #endregion parameters
 

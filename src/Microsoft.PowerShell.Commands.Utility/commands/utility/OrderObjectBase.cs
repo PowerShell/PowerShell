@@ -116,27 +116,15 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// 
         /// </summary>
-        /// <value></value>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject
-        {
-            set { _inputObject = value; }
-            get { return _inputObject; }
-        }
-        private PSObject _inputObject = AutomationNull.Value;
+        public PSObject InputObject { set; get; } = AutomationNull.Value;
 
         /// <summary>
         /// Gets or Sets the Properties that would be used for Grouping, Sorting and Comparison.
         /// </summary>
-        /// <value></value>
         [Parameter(Position = 0)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public object[] Property
-        {
-            get { return _expr; }
-            set { _expr = value; }
-        }
-        private object[] _expr;
+        public object[] Property { get; set; }
 
         #endregion Parameters
     }
@@ -158,13 +146,7 @@ namespace Microsoft.PowerShell.Commands
         }
         private bool _ascending = true;
 
-        internal List<PSObject> InputObjects
-        {
-            get
-            {
-                return _inputObjects;
-            }
-        }
+        internal List<PSObject> InputObjects { get; } = new List<PSObject>();
 
         /// <summary>
         /// CultureInfo converted from the Culture Cmdlet parameter
@@ -188,34 +170,22 @@ namespace Microsoft.PowerShell.Commands
         {
             if (InputObject != null && InputObject != AutomationNull.Value)
             {
-                _inputObjects.Add(InputObject);
+                InputObjects.Add(InputObject);
             }
         }
-
-        /// <summary>
-        /// list of incoming objects to compare
-        /// </summary>
-        private List<PSObject> _inputObjects = new List<PSObject>();
     }
 
     internal sealed class OrderByProperty
     {
         #region Internal properties
-        internal List<OrderByPropertyEntry> OrderMatrix
-        {
-            get
-            {
-                return _orderMatrix;
-            }
-        }
 
-        internal OrderByPropertyComparer Comparer
-        {
-            get
-            {
-                return _comparer;
-            }
-        }
+        /// <summary>
+        /// a logical matrix where each row is an input object and its property values specified by Properties
+        /// </summary>
+        internal List<OrderByPropertyEntry> OrderMatrix { get; } = null;
+
+        internal OrderByPropertyComparer Comparer { get; } = null;
+
         internal List<MshParameter> MshParameterList
         {
             get
@@ -497,8 +467,8 @@ namespace Microsoft.PowerShell.Commands
             Diagnostics.Assert(cmdlet != null, "cmdlet must be an instance");
 
             ProcessExpressionParameter(inputObjects, cmdlet, expr, out _mshParameterList);
-            _orderMatrix = CreateOrderMatrix(cmdlet, inputObjects, _mshParameterList);
-            _comparer = CreateComparer(_orderMatrix, _mshParameterList, ascending, cultureInfo, caseSensitive);
+            OrderMatrix = CreateOrderMatrix(cmdlet, inputObjects, _mshParameterList);
+            Comparer = CreateComparer(OrderMatrix, _mshParameterList, ascending, cultureInfo, caseSensitive);
         }
 
         /// <summary>
@@ -507,7 +477,7 @@ namespace Microsoft.PowerShell.Commands
         internal OrderByProperty()
         {
             _mshParameterList = new List<MshParameter>();
-            _orderMatrix = new List<OrderByPropertyEntry>();
+            OrderMatrix = new List<OrderByPropertyEntry>();
         }
 
         /// <summary>
@@ -548,16 +518,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Utils
-
-        /// <summary>
-        /// comparer for orderMatrix
-        /// </summary>
-        private OrderByPropertyComparer _comparer = null;
-
-        /// <summary>
-        /// a logical matrix where each row is an input object and its property values specified by Properties
-        /// </summary>
-        private List<OrderByPropertyEntry> _orderMatrix = null;
 
         // list of processed parameters obtained from the Expression array
         private List<MshParameter> _mshParameterList = null;

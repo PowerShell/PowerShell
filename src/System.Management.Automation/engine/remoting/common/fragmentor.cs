@@ -28,10 +28,6 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal class FragmentedRemoteObject
     {
-        private long _objectId;
-        private long _fragmentId;
-        private bool _isStartFragment;
-        private bool _isEndFragment;
         private byte[] _blob;
         private int _blobLength;
 
@@ -106,11 +102,11 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(objectId >= 0, "Object Id cannot be < 0");
             Dbg.Assert(fragmentId >= 0, "Fragment Id cannot be < 0");
 
-            _objectId = objectId;
-            _fragmentId = fragmentId;
+            ObjectId = objectId;
+            FragmentId = fragmentId;
 
-            _isStartFragment = (fragmentId == 0) ? true : false;
-            _isEndFragment = isEndFragment;
+            IsStartFragment = (fragmentId == 0) ? true : false;
+            IsEndFragment = isEndFragment;
 
             _blob = blob;
             _blobLength = _blob.Length;
@@ -123,38 +119,22 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// All fragments of the same PSObject have the same ObjectId
         /// </summary>
-        internal long ObjectId
-        {
-            get { return _objectId; }
-            set { _objectId = value; }
-        }
+        internal long ObjectId { get; set; }
 
         /// <summary>
         /// FragmentId starts from 0. It increases sequentially by an increment of 1.
         /// </summary>
-        internal long FragmentId
-        {
-            get { return _fragmentId; }
-            set { _fragmentId = value; }
-        }
+        internal long FragmentId { get; set; }
 
         /// <summary>
         /// The first fragment of a PSObject.
         /// </summary>
-        internal bool IsStartFragment
-        {
-            get { return _isStartFragment; }
-            set { _isStartFragment = value; }
-        }
+        internal bool IsStartFragment { get; set; }
 
         /// <summary>
         /// The last fragment of a PSObject.
         /// </summary>
-        internal bool IsEndFragment
-        {
-            get { return _isEndFragment; }
-            set { _isEndFragment = value; }
-        }
+        internal bool IsEndFragment { get; set; }
 
         /// <summary>
         /// Blob length. This enables scenarios where entire  byte[] is
@@ -988,8 +968,6 @@ namespace System.Management.Automation.Remoting
 
         private int _fragmentSize;
         private SerializationContext _serializationContext;
-        private DeserializationContext _deserializationContext;
-        private TypeTable _typeTable;
 
         #region Constructor
 
@@ -1008,7 +986,7 @@ namespace System.Management.Automation.Remoting
                 SerializationDepthForRemoting,
                 SerializationOptions.RemotingOptions,
                 cryptoHelper);
-            _deserializationContext = new DeserializationContext(
+            DeserializationContext = new DeserializationContext(
                 DeserializationOptions.RemotingOptions,
                 cryptoHelper);
         }
@@ -1050,10 +1028,7 @@ namespace System.Management.Automation.Remoting
         /// The deserialization context used by this fragmentor. DeserializationContext
         /// controls the amount of memory a deserializer can use and other things.
         /// </summary>
-        internal DeserializationContext DeserializationContext
-        {
-            get { return _deserializationContext; }
-        }
+        internal DeserializationContext DeserializationContext { get; }
 
         /// <summary>
         /// The size limit of the fragmented object.
@@ -1074,11 +1049,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// TypeTable used for Serialization/Deserialization.
         /// </summary>
-        internal TypeTable TypeTable
-        {
-            get { return _typeTable; }
-            set { _typeTable = value; }
-        }
+        internal TypeTable TypeTable { get; set; }
 
         /// <summary>
         /// Serialize an PSObject into a byte array.
@@ -1103,7 +1074,7 @@ namespace System.Management.Automation.Remoting
             using (XmlWriter xmlWriter = XmlWriter.Create(streamToWriteTo, xmlSettings))
             {
                 Serializer serializer = new Serializer(xmlWriter, _serializationContext);
-                serializer.TypeTable = _typeTable;
+                serializer.TypeTable = TypeTable;
                 serializer.Serialize(obj);
                 serializer.Done();
                 xmlWriter.Flush();
@@ -1132,8 +1103,8 @@ namespace System.Management.Automation.Remoting
             object result = null;
             using (XmlReader xmlReader = XmlReader.Create(serializedDataStream, InternalDeserializer.XmlReaderSettingsForCliXml))
             {
-                Deserializer deserializer = new Deserializer(xmlReader, _deserializationContext);
-                deserializer.TypeTable = _typeTable;
+                Deserializer deserializer = new Deserializer(xmlReader, DeserializationContext);
+                deserializer.TypeTable = TypeTable;
                 result = deserializer.Deserialize();
                 deserializer.Done();
             }

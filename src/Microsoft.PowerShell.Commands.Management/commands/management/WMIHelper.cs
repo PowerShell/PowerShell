@@ -971,12 +971,7 @@ namespace Microsoft.PowerShell.Commands
         ///<summary>
         /// WMI state
         ///</summary>
-        internal WmiState WmiState
-        {
-            get { return _wmiState; }
-            set { _wmiState = value; }
-        }
-        private WmiState _wmiState;
+        internal WmiState WmiState { get; set; }
     }
 
     /// <summary>
@@ -1035,11 +1030,7 @@ namespace Microsoft.PowerShell.Commands
         /// Perform Async operation
         /// </summary>
         [Parameter]
-        public SwitchParameter AsJob
-        {
-            get { return _async; }
-            set { _async = value; }
-        }
+        public SwitchParameter AsJob { get; set; } = false;
 
         /// <summary>
         /// The Impersonation level to use
@@ -1049,11 +1040,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "WQLQuery")]
         [Parameter(ParameterSetName = "query")]
         [Parameter(ParameterSetName = "list")]
-        public ImpersonationLevel Impersonation
-        {
-            get { return _impersonationLevel; }
-            set { _impersonationLevel = value; }
-        }
+        public ImpersonationLevel Impersonation { get; set; } = ImpersonationLevel.Impersonate;
+
         /// <summary>
         /// The Authentication level to use
         /// </summary>
@@ -1062,11 +1050,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "WQLQuery")]
         [Parameter(ParameterSetName = "query")]
         [Parameter(ParameterSetName = "list")]
-        public AuthenticationLevel Authentication
-        {
-            get { return _authenticationLevel; }
-            set { _authenticationLevel = value; }
-        }
+        public AuthenticationLevel Authentication { get; set; } = AuthenticationLevel.PacketPrivacy;
 
         /// <summary>
         /// The Locale to use
@@ -1076,11 +1060,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "WQLQuery")]
         [Parameter(ParameterSetName = "query")]
         [Parameter(ParameterSetName = "list")]
-        public string Locale
-        {
-            get { return _locale; }
-            set { _locale = value; }
-        }
+        public string Locale { get; set; } = null;
+
         /// <summary>
         /// If all Privileges are enabled
         /// </summary>
@@ -1089,11 +1070,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "WQLQuery")]
         [Parameter(ParameterSetName = "query")]
         [Parameter(ParameterSetName = "list")]
-        public SwitchParameter EnableAllPrivileges
-        {
-            get { return _enableAllPrivileges; }
-            set { _enableAllPrivileges = value; }
-        }
+        public SwitchParameter EnableAllPrivileges { get; set; }
 
         /// <summary>
         /// The Authority to use
@@ -1103,11 +1080,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "WQLQuery")]
         [Parameter(ParameterSetName = "query")]
         [Parameter(ParameterSetName = "list")]
-        public string Authority
-        {
-            get { return _authority; }
-            set { _authority = value; }
-        }
+        public string Authority { get; set; } = null;
+
         /// <summary>
         /// The credential to use
         /// </summary>
@@ -1117,20 +1091,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "query")]
         [Parameter(ParameterSetName = "list")]
         [Credential()]
-        public PSCredential Credential
-        {
-            get { return _credential; }
-            set { _credential = value; }
-        }
+        public PSCredential Credential { get; set; }
+
         /// <summary>
         /// The credential to use
         /// </summary>
         [Parameter]
-        public Int32 ThrottleLimit
-        {
-            get { return _throttleLimit; }
-            set { _throttleLimit = value; }
-        }
+        public Int32 ThrottleLimit { get; set; } = s_DEFAULT_THROTTLE_LIMIT;
+
         /// <summary>
         /// The ComputerName in which to query
         /// </summary>
@@ -1180,38 +1148,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specify if server name was specified or not.
         /// </summary>
         internal bool serverNameSpecified = false;
-        /// <summary>
-        /// The credential to use
-        /// </summary>
-        private PSCredential _credential;
-        /// <summary>
-        /// The Impersonation level to use
-        /// </summary>
-        private ImpersonationLevel _impersonationLevel = ImpersonationLevel.Impersonate;
-        /// <summary>
-        /// The Authentication level to use
-        /// </summary>
-        private AuthenticationLevel _authenticationLevel = AuthenticationLevel.PacketPrivacy;
-        /// <summary>
-        /// The Locale to use
-        /// </summary>
-        private string _locale = null;
-        /// <summary>
-        /// If all Privileges are enabled
-        /// </summary>
-        private SwitchParameter _enableAllPrivileges;
-        /// <summary>
-        /// The Authority to use
-        /// </summary>
-        private string _authority = null;
-        /// <summary>
-        /// To perform async operation
-        /// </summary>        
-        private SwitchParameter _async = false;
-        /// <summary>
-        /// Set throttle limit
-        /// </summary>
-        private Int32 _throttleLimit = s_DEFAULT_THROTTLE_LIMIT;
+
         private static int s_DEFAULT_THROTTLE_LIMIT = 32;    // maximum number of items to be processed at a time
 
         #endregion parameter data
@@ -1792,7 +1729,7 @@ namespace Microsoft.PowerShell.Commands
         : base(null, null)
         {
             UsesResultsCollection = true;
-            _computerName = computerName;
+            Location = computerName;
             _throttleManager = throttleManager;
             _wmiSinkArray = new ArrayList();
             ManagementOperationObserver wmiSink = new ManagementOperationObserver();
@@ -1818,7 +1755,7 @@ namespace Microsoft.PowerShell.Commands
             : base(null, null)
         {
             UsesResultsCollection = true;
-            _computerName = computerName;
+            Location = computerName;
             _throttleManager = throttleManager;
             _wmiSinkArray = new ArrayList();
             ManagementOperationObserver wmiSink = new ManagementOperationObserver();
@@ -1838,7 +1775,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion internal constructor
 
-        private string _computerName;
         private WmiAsyncCmdletHelper _helper;
         //bool _bFinished;
         private ThrottleManager _throttleManager;
@@ -1943,17 +1879,10 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private string _statusMessage = "test";
         /// <summary>
         /// Message indicating status of the job
         /// </summary>
-        public override string StatusMessage
-        {
-            get
-            {
-                return _statusMessage;
-            }
-        }
+        public override string StatusMessage { get; } = "test";
 
 
         /// <summary>
@@ -1972,13 +1901,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns the computer on which this command is
         /// running
         /// </summary>
-        public override string Location
-        {
-            get
-            {
-                return _computerName;
-            }
-        }
+        public override string Location { get; }
 
         /// <summary>
         /// Stops the job

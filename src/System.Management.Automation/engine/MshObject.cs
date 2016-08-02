@@ -2169,9 +2169,7 @@ namespace System.Management.Automation
             #region Private Data
 
             // orginal adapter like Xml, ManagementClass, DirectoryEntry etc.
-            private Adapter _originalAdapter;
             // .net adapter
-            private DotNetAdapter _ultimatedotNetAdapter;
 
             #endregion
 
@@ -2181,16 +2179,9 @@ namespace System.Management.Automation
             /// This property can be accessed only internally and hence
             /// no checks are performed on input.
             /// </summary>
-            internal Adapter OriginalAdapter
-            {
-                get { return _originalAdapter; }
-                set { _originalAdapter = value; }
-            }
+            internal Adapter OriginalAdapter { get; set; }
 
-            internal DotNetAdapter DotNetAdapter
-            {
-                get { return _ultimatedotNetAdapter; }
-            }
+            internal DotNetAdapter DotNetAdapter { get; }
 
             #endregion
 
@@ -2198,8 +2189,8 @@ namespace System.Management.Automation
 
             internal AdapterSet(Adapter adapter, DotNetAdapter dotnetAdapter)
             {
-                _originalAdapter = adapter;
-                _ultimatedotNetAdapter = dotnetAdapter;
+                OriginalAdapter = adapter;
+                DotNetAdapter = dotnetAdapter;
             }
 
             #endregion

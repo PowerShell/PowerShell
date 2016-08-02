@@ -29,18 +29,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         ///
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public long ReadCount
-        {
-            get
-            {
-                return _readCount;
-            } // get
-
-            set
-            {
-                _readCount = value;
-            }
-        } // ReadCount
+        public long ReadCount { get; set; } = 1;
 
         /// <summary>
         /// The number of content items to retrieve. By default this
@@ -108,11 +97,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameters
 
         #region parameter data
-
-        /// <summary>
-        /// The number of content items to retrieve per block.
-        /// </summary>
-        private long _readCount = 1;
 
         /// <summary>
         /// The number of content items to retrieve.

@@ -35,10 +35,6 @@ namespace System.Management.Automation.Help
     [Serializable]
     internal class UpdatableHelpSystemException : Exception
     {
-        private string _errorId;
-        private ErrorCategory _cat;
-        private object _targetObject;
-
         /// <summary>
         /// Class constructor
         /// </summary>
@@ -50,9 +46,9 @@ namespace System.Management.Automation.Help
         internal UpdatableHelpSystemException(string errorId, string message, ErrorCategory cat, object targetObject, Exception innerException)
             : base(message, innerException)
         {
-            _errorId = errorId;
-            _cat = cat;
-            _targetObject = targetObject;
+            FullyQualifiedErrorId = errorId;
+            ErrorCategory = cat;
+            TargetObject = targetObject;
         }
 
 #if !CORECLR
@@ -70,26 +66,17 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Fully qualified error id
         /// </summary>
-        internal string FullyQualifiedErrorId
-        {
-            get { return _errorId; }
-        }
+        internal string FullyQualifiedErrorId { get; }
 
         /// <summary>
         /// Error category
         /// </summary>
-        internal ErrorCategory ErrorCategory
-        {
-            get { return _cat; }
-        }
+        internal ErrorCategory ErrorCategory { get; }
 
         /// <summary>
         /// Target object
         /// </summary>
-        internal object TargetObject
-        {
-            get { return _targetObject; }
-        }
+        internal object TargetObject { get; }
     }
 
     /// <summary>
@@ -97,46 +84,31 @@ namespace System.Management.Automation.Help
     /// </summary>
     internal class UpdatableHelpExceptionContext
     {
-        private UpdatableHelpSystemException _exception;
-        private HashSet<string> _modules;
-        private HashSet<string> _cultures;
-
         /// <summary>
         /// Class constructor
         /// </summary>
         /// <param name="exception">exception to wrap</param>
         internal UpdatableHelpExceptionContext(UpdatableHelpSystemException exception)
         {
-            _exception = exception;
-            _modules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            _cultures = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            Exception = exception;
+            Modules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            Cultures = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
         /// A list of modules
         /// </summary>
-        internal HashSet<string> Modules
-        {
-            get { return _modules; }
-            set { _modules = value; }
-        }
+        internal HashSet<string> Modules { get; set; }
 
         /// <summary>
         /// A list of UI cultures
         /// </summary>
-        internal HashSet<string> Cultures
-        {
-            get { return _cultures; }
-            set { _cultures = value; }
-        }
+        internal HashSet<string> Cultures { get; set; }
 
         /// <summary>
         /// Gets the help system exception
         /// </summary>
-        internal UpdatableHelpSystemException Exception
-        {
-            get { return _exception; }
-        }
+        internal UpdatableHelpSystemException Exception { get; }
 
         /// <summary>
         /// Creates an error record from this context
@@ -145,10 +117,10 @@ namespace System.Management.Automation.Help
         /// <returns>error record</returns>
         internal ErrorRecord CreateErrorRecord(UpdatableHelpCommandType commandType)
         {
-            Debug.Assert(_modules.Count != 0);
+            Debug.Assert(Modules.Count != 0);
 
-            return new ErrorRecord(new Exception(GetExceptionMessage(commandType)), _exception.FullyQualifiedErrorId, _exception.ErrorCategory,
-                _exception.TargetObject);
+            return new ErrorRecord(new Exception(GetExceptionMessage(commandType)), Exception.FullyQualifiedErrorId, Exception.ErrorCategory,
+                Exception.TargetObject);
         }
 
         /// <summary>
@@ -159,31 +131,31 @@ namespace System.Management.Automation.Help
         internal string GetExceptionMessage(UpdatableHelpCommandType commandType)
         {
             string message = "";
-            SortedSet<string> sortedModules = new SortedSet<string>(_modules, StringComparer.CurrentCultureIgnoreCase);
-            SortedSet<string> sortedCultures = new SortedSet<string>(_cultures, StringComparer.CurrentCultureIgnoreCase);
+            SortedSet<string> sortedModules = new SortedSet<string>(Modules, StringComparer.CurrentCultureIgnoreCase);
+            SortedSet<string> sortedCultures = new SortedSet<string>(Cultures, StringComparer.CurrentCultureIgnoreCase);
             string modules = String.Join(", ", sortedModules);
             string cultures = String.Join(", ", sortedCultures);
 
             if (commandType == UpdatableHelpCommandType.UpdateHelpCommand)
             {
-                if (_cultures.Count == 0)
+                if (Cultures.Count == 0)
                 {
-                    message = StringUtil.Format(HelpDisplayStrings.FailedToUpdateHelpForModule, modules, _exception.Message);
+                    message = StringUtil.Format(HelpDisplayStrings.FailedToUpdateHelpForModule, modules, Exception.Message);
                 }
                 else
                 {
-                    message = StringUtil.Format(HelpDisplayStrings.FailedToUpdateHelpForModuleWithCulture, modules, cultures, _exception.Message);
+                    message = StringUtil.Format(HelpDisplayStrings.FailedToUpdateHelpForModuleWithCulture, modules, cultures, Exception.Message);
                 }
             }
             else
             {
-                if (_cultures.Count == 0)
+                if (Cultures.Count == 0)
                 {
-                    message = StringUtil.Format(HelpDisplayStrings.FailedToSaveHelpForModule, modules, _exception.Message);
+                    message = StringUtil.Format(HelpDisplayStrings.FailedToSaveHelpForModule, modules, Exception.Message);
                 }
                 else
                 {
-                    message = StringUtil.Format(HelpDisplayStrings.FailedToSaveHelpForModuleWithCulture, modules, cultures, _exception.Message);
+                    message = StringUtil.Format(HelpDisplayStrings.FailedToSaveHelpForModuleWithCulture, modules, cultures, Exception.Message);
                 }
             }
 
@@ -216,10 +188,10 @@ namespace System.Management.Automation.Help
         {
             Debug.Assert(!String.IsNullOrEmpty(status));
 
-            _type = UpdatableHelpCommandType.UnknownCommand;
-            _progressStatus = status;
-            _progressPercent = percent;
-            _moduleName = moduleName;
+            CommandType = UpdatableHelpCommandType.UnknownCommand;
+            ProgressStatus = status;
+            ProgressPercent = percent;
+            ModuleName = moduleName;
         }
 
         /// <summary>
@@ -233,64 +205,32 @@ namespace System.Management.Automation.Help
         {
             Debug.Assert(!String.IsNullOrEmpty(status));
 
-            _type = type;
-            _progressStatus = status;
-            _progressPercent = percent;
-            _moduleName = moduleName;
+            CommandType = type;
+            ProgressStatus = status;
+            ProgressPercent = percent;
+            ModuleName = moduleName;
         }
 
         /// <summary>
         /// Progress status
         /// </summary>
-        internal string ProgressStatus
-        {
-            get
-            {
-                return _progressStatus;
-            }
-        }
-        private string _progressStatus;
+        internal string ProgressStatus { get; }
 
         /// <summary>
         /// Progress percentage
         /// </summary>
-        internal int ProgressPercent
-        {
-            get
-            {
-                return _progressPercent;
-            }
-        }
-        private int _progressPercent;
+        internal int ProgressPercent { get; }
 
 
         /// <summary>
         /// Module name
         /// </summary>
-        internal string ModuleName
-        {
-            get
-            {
-                return _moduleName;
-            }
-        }
-        private string _moduleName;
+        internal string ModuleName { get; }
 
         /// <summary>
         /// Command type
         /// </summary>
-        internal UpdatableHelpCommandType CommandType
-        {
-            get
-            {
-                return _type;
-            }
-            set
-            {
-                _type = value;
-            }
-        }
-        private UpdatableHelpCommandType _type;
+        internal UpdatableHelpCommandType CommandType { get; set; }
     }
 
     /// <summary>
@@ -304,7 +244,6 @@ namespace System.Management.Automation.Help
         internal const string DefaultSourcePathRegPath = "Software\\Policies\\Microsoft\\Windows\\PowerShell\\UpdatableHelp";
         internal const string DefaultSourcePathRegKey = "DefaultSourcePath";
 
-        private WebClient _webClient;
 #if CORECLR
         private TimeSpan _defaultTimeout;
 #else
@@ -315,35 +254,18 @@ namespace System.Management.Automation.Help
         private bool _stopping;
         private object _syncObject;
         private UpdatableHelpCommandBase _cmdlet;
-        private string _currentModule;
         private CancellationTokenSource _cancelTokenSource;
 
-        internal WebClient WebClient
-        {
-            get
-            {
-                return _webClient;
-            }
-        }
+        internal WebClient WebClient { get; }
 
-        internal string CurrentModule
-        {
-            get
-            {
-                return _currentModule;
-            }
-            set
-            {
-                _currentModule = value;
-            }
-        }
+        internal string CurrentModule { get; set; }
 
         /// <summary>
         /// Class constructor
         /// </summary>
         internal UpdatableHelpSystem(UpdatableHelpCommandBase cmdlet, bool useDefaultCredentials)
         {
-            _webClient = new WebClient();
+            WebClient = new WebClient();
 #if CORECLR
             _defaultTimeout = new TimeSpan(0, 0, 30);
 #else
@@ -351,17 +273,17 @@ namespace System.Management.Automation.Help
             _completed = false;
 #endif
             _progressEvents = new Collection<UpdatableHelpProgressEventArgs>();
-            _errors = new Collection<Exception>();
+            Errors = new Collection<Exception>();
             _stopping = false;
             _syncObject = new object();
             _cmdlet = cmdlet;
             _cancelTokenSource = new CancellationTokenSource();
 
-            _webClient.UseDefaultCredentials = useDefaultCredentials;
+            WebClient.UseDefaultCredentials = useDefaultCredentials;
 
 #if !CORECLR
-            _webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(HandleDownloadProgressChanged);
-            _webClient.DownloadFileCompleted += new AsyncCompletedEventHandler(HandleDownloadFileCompleted);
+            WebClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(HandleDownloadProgressChanged);
+            WebClient.DownloadFileCompleted += new AsyncCompletedEventHandler(HandleDownloadFileCompleted);
 #endif
         }
 
@@ -374,21 +296,14 @@ namespace System.Management.Automation.Help
             _completionEvent.Dispose();
 #endif
             _cancelTokenSource.Dispose();
-            _webClient.Dispose();
+            WebClient.Dispose();
             GC.SuppressFinalize(this);
         }
 
         /// <summary>
         /// Help system errors
         /// </summary>
-        internal Collection<Exception> Errors
-        {
-            get
-            {
-                return _errors;
-            }
-        }
-        private Collection<Exception> _errors;
+        internal Collection<Exception> Errors { get; }
 
         /// <summary>
         /// Gets the current UIculture (includes the fallback chain)
@@ -439,14 +354,14 @@ namespace System.Management.Automation.Help
         {
             try
             {
-                OnProgressChanged(this, new UpdatableHelpProgressEventArgs(_currentModule, commandType, StringUtil.Format(
+                OnProgressChanged(this, new UpdatableHelpProgressEventArgs(CurrentModule, commandType, StringUtil.Format(
                     HelpDisplayStrings.UpdateProgressLocating), 0));
 
 #if CORECLR
                 string xml;
                 using (HttpClientHandler handler = new HttpClientHandler())
                 {
-                    handler.UseDefaultCredentials = _webClient.UseDefaultCredentials;
+                    handler.UseDefaultCredentials = WebClient.UseDefaultCredentials;
                     using (HttpClient client = new HttpClient(handler))
                     {
                         client.Timeout = _defaultTimeout;
@@ -459,7 +374,7 @@ namespace System.Management.Automation.Help
                     }
                 }
 #else
-                string xml = _webClient.DownloadString(uri);
+                string xml = WebClient.DownloadString(uri);
 #endif
                 UpdatableHelpInfo helpInfo = CreateHelpInfo(xml, moduleName, moduleGuid,
                                                             currentCulture: culture, pathOverride: null, verbose: true,
@@ -475,7 +390,7 @@ namespace System.Management.Automation.Help
 #endif
             finally
             {
-                OnProgressChanged(this, new UpdatableHelpProgressEventArgs(_currentModule, commandType, StringUtil.Format(
+                OnProgressChanged(this, new UpdatableHelpProgressEventArgs(CurrentModule, commandType, StringUtil.Format(
                     HelpDisplayStrings.UpdateProgressLocating), 100));
             }
         }
@@ -530,7 +445,7 @@ namespace System.Management.Automation.Help
                     using (HttpClientHandler handler = new HttpClientHandler())
                     {
                         handler.AllowAutoRedirect = false;
-                        handler.UseDefaultCredentials = _webClient.UseDefaultCredentials;
+                        handler.UseDefaultCredentials = WebClient.UseDefaultCredentials;
                         using (HttpClient client = new HttpClient(handler))
                         {
                             client.Timeout = new TimeSpan(0, 0, 30); // Set 30 second timeout
@@ -915,9 +830,9 @@ namespace System.Management.Automation.Help
 #if CORECLR
             _cancelTokenSource.Cancel();
 #else
-            if (_webClient.IsBusy)
+            if (WebClient.IsBusy)
             {
-                _webClient.CancelAsync();
+                WebClient.CancelAsync();
                 _completed = true;
                 _completionEvent.Set();
             }
@@ -980,7 +895,7 @@ namespace System.Management.Automation.Help
                 Directory.CreateDirectory(path);
             }
 
-            OnProgressChanged(this, new UpdatableHelpProgressEventArgs(_currentModule, commandType, StringUtil.Format(
+            OnProgressChanged(this, new UpdatableHelpProgressEventArgs(CurrentModule, commandType, StringUtil.Format(
                 HelpDisplayStrings.UpdateProgressConnecting), 0));
 
             string uri = helpContentUri + fileName;
@@ -1007,7 +922,7 @@ namespace System.Management.Automation.Help
             using (HttpClientHandler handler = new HttpClientHandler())
             {
                 handler.AllowAutoRedirect = false;
-                handler.UseDefaultCredentials = _webClient.UseDefaultCredentials;
+                handler.UseDefaultCredentials = WebClient.UseDefaultCredentials;
                 using (HttpClient client = new HttpClient(handler))
                 {
                     client.Timeout = _defaultTimeout;
@@ -1025,7 +940,7 @@ namespace System.Management.Automation.Help
                     {
                         if (responseMsg.Exception != null)
                         {
-                            _errors.Add(new UpdatableHelpSystemException("HelpContentNotFound",
+                            Errors.Add(new UpdatableHelpSystemException("HelpContentNotFound",
                                 StringUtil.Format(HelpDisplayStrings.HelpContentNotFound),
                                 ErrorCategory.ResourceUnavailable, null, responseMsg.Exception));
                         }
@@ -1033,7 +948,7 @@ namespace System.Management.Automation.Help
                         {
                             lock (_syncObject)
                             {
-                                _progressEvents.Add(new UpdatableHelpProgressEventArgs(_currentModule, StringUtil.Format(
+                                _progressEvents.Add(new UpdatableHelpProgressEventArgs(CurrentModule, StringUtil.Format(
                                     HelpDisplayStrings.UpdateProgressDownloading), 100));
                             }
 
@@ -1045,7 +960,7 @@ namespace System.Management.Automation.Help
                             }
                             else
                             {
-                                _errors.Add(new UpdatableHelpSystemException("HelpContentNotFound",
+                                Errors.Add(new UpdatableHelpSystemException("HelpContentNotFound",
                                     StringUtil.Format(HelpDisplayStrings.HelpContentNotFound),
                                     ErrorCategory.ResourceUnavailable, null, responseMsg.Exception));
                             }
@@ -1054,7 +969,7 @@ namespace System.Management.Automation.Help
                     SendProgressEvents(commandType);
                 }
             }
-            return (_errors.Count == 0);
+            return (Errors.Count == 0);
         }
 
         /// <summary>
@@ -1071,7 +986,7 @@ namespace System.Management.Automation.Help
                 copyStreamOp.Wait();
                 if (copyStreamOp.Exception != null)
                 {
-                    _errors.Add(copyStreamOp.Exception);
+                    Errors.Add(copyStreamOp.Exception);
                 }
             }
         }
@@ -1088,19 +1003,19 @@ namespace System.Management.Automation.Help
         /// <returns></returns>
         private bool DownloadHelpContentWebClient(string uri, string fileName, string culture, UpdatableHelpCommandType commandType)
         {
-            _webClient.DownloadFileAsync(new Uri(uri), fileName, culture);
+            WebClient.DownloadFileAsync(new Uri(uri), fileName, culture);
 
-            OnProgressChanged(this, new UpdatableHelpProgressEventArgs(_currentModule, commandType, StringUtil.Format(
+            OnProgressChanged(this, new UpdatableHelpProgressEventArgs(CurrentModule, commandType, StringUtil.Format(
                 HelpDisplayStrings.UpdateProgressConnecting), 100));
 
-            while (!_completed || _webClient.IsBusy)
+            while (!_completed || WebClient.IsBusy)
             {
                 _completionEvent.WaitOne();
 
                 SendProgressEvents(commandType);
             }
 
-            return (_errors.Count == 0);
+            return (Errors.Count == 0);
         }
 #endif
 
@@ -1297,7 +1212,7 @@ namespace System.Management.Automation.Help
 
             try
             {
-                OnProgressChanged(this, new UpdatableHelpProgressEventArgs(_currentModule, commandType, StringUtil.Format(
+                OnProgressChanged(this, new UpdatableHelpProgressEventArgs(CurrentModule, commandType, StringUtil.Format(
                     HelpDisplayStrings.UpdateProgressInstalling), 0));
 
                 string combinedSourcePath = Path.Combine(sourcePath, fileName);
@@ -1324,7 +1239,7 @@ namespace System.Management.Automation.Help
             }
             finally
             {
-                OnProgressChanged(this, new UpdatableHelpProgressEventArgs(_currentModule, commandType, StringUtil.Format(
+                OnProgressChanged(this, new UpdatableHelpProgressEventArgs(CurrentModule, commandType, StringUtil.Format(
                     HelpDisplayStrings.UpdateProgressInstalling), 100));
 
                 try
@@ -1813,19 +1728,19 @@ namespace System.Management.Automation.Help
                 {
                     if (e.Error is WebException)
                     {
-                        _errors.Add(new UpdatableHelpSystemException("HelpContentNotFound", StringUtil.Format(HelpDisplayStrings.HelpContentNotFound, e.UserState.ToString()),
+                        Errors.Add(new UpdatableHelpSystemException("HelpContentNotFound", StringUtil.Format(HelpDisplayStrings.HelpContentNotFound, e.UserState.ToString()),
                             ErrorCategory.ResourceUnavailable, null, null));
                     }
                     else
                     {
-                        _errors.Add(e.Error);
+                        Errors.Add(e.Error);
                     }
                 }
                 else
                 {
                     lock (_syncObject)
                     {
-                        _progressEvents.Add(new UpdatableHelpProgressEventArgs(_currentModule, StringUtil.Format(
+                        _progressEvents.Add(new UpdatableHelpProgressEventArgs(CurrentModule, StringUtil.Format(
                             HelpDisplayStrings.UpdateProgressDownloading), 100));
                     }
                 }
@@ -1849,7 +1764,7 @@ namespace System.Management.Automation.Help
 
             lock (_syncObject)
             {
-                _progressEvents.Add(new UpdatableHelpProgressEventArgs(_currentModule, StringUtil.Format(
+                _progressEvents.Add(new UpdatableHelpProgressEventArgs(CurrentModule, StringUtil.Format(
                         HelpDisplayStrings.UpdateProgressDownloading), e.ProgressPercentage));
             }
 

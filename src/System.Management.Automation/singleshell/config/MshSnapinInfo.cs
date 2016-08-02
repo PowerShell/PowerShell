@@ -151,16 +151,16 @@ namespace System.Management.Automation
                 vendorFallback = String.Empty;
             }
 
-            _name = name;
-            _isDefault = isDefault;
-            _applicationBase = applicationBase;
-            _assemblyName = assemblyName;
-            _moduleName = moduleName;
-            _psVersion = psVersion;
-            _version = version;
-            _types = types;
-            _formats = formats;
-            _customPSSnapInType = customPSSnapInType;
+            Name = name;
+            IsDefault = isDefault;
+            ApplicationBase = applicationBase;
+            AssemblyName = assemblyName;
+            ModuleName = moduleName;
+            PSVersion = psVersion;
+            Version = version;
+            Types = types;
+            Formats = formats;
+            CustomPSSnapInType = customPSSnapInType;
             _descriptionFallback = descriptionFallback;
             _vendorFallback = vendorFallback;
         }
@@ -216,142 +216,72 @@ namespace System.Management.Automation
             }
         }
 
-        private string _name;
         /// <summary>
         /// Unique Name of the mshsnapin
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-        }
+        public string Name { get; }
 
-        private bool _isDefault;
         /// <summary>
         /// Is this mshsnapin default mshsnapin
         /// </summary>
-        public bool IsDefault
-        {
-            get
-            {
-                return _isDefault;
-            }
-        }
+        public bool IsDefault { get; }
 
-        private string _applicationBase;
         /// <summary>
         /// Retuns applicationbase for mshsnapin
         /// </summary>
-        public string ApplicationBase
-        {
-            get
-            {
-                return _applicationBase;
-            }
-        }
+        public string ApplicationBase { get; }
 
-        private string _assemblyName;
         /// <summary>
         /// Strong name of mshSnapIn assembly
         /// </summary>
-        public string AssemblyName
-        {
-            get
-            {
-                return _assemblyName;
-            }
-        }
+        public string AssemblyName { get; }
 
-        private string _moduleName;
         /// <summary>
         /// Name of PSSnapIn module
         /// </summary>
-        public string ModuleName
-        {
-            get
-            {
-                return _moduleName;
-            }
-        }
+        public string ModuleName { get; }
 
         internal string AbsoluteModulePath
         {
             get
             {
-                if (String.IsNullOrEmpty(_moduleName) || Path.IsPathRooted(_moduleName))
+                if (String.IsNullOrEmpty(ModuleName) || Path.IsPathRooted(ModuleName))
                 {
-                    return _moduleName;
+                    return ModuleName;
                 }
-                else if (!File.Exists(Path.Combine(_applicationBase, _moduleName)))
+                else if (!File.Exists(Path.Combine(ApplicationBase, ModuleName)))
                 {
-                    return Path.GetFileNameWithoutExtension(_moduleName);
+                    return Path.GetFileNameWithoutExtension(ModuleName);
                 }
 
-                return Path.Combine(_applicationBase, _moduleName);
+                return Path.Combine(ApplicationBase, ModuleName);
             }
         }
 
-        private string _customPSSnapInType;
         /// <summary>
         /// Type of custom mshsnapin.
         /// </summary>
-        internal string CustomPSSnapInType
-        {
-            get
-            {
-                return _customPSSnapInType;
-            }
-        }
+        internal string CustomPSSnapInType { get; }
 
-        private Version _psVersion;
         /// <summary>
         /// Monad version used by mshsnapin
         /// </summary>
-        public Version PSVersion
-        {
-            get
-            {
-                return _psVersion;
-            }
-        }
+        public Version PSVersion { get; }
 
-        private Version _version;
         /// <summary>
         /// Version of mshsnapin
         /// </summary>
-        public Version Version
-        {
-            get
-            {
-                return _version;
-            }
-        }
+        public Version Version { get; }
 
-        private Collection<string> _types;
         /// <summary>
         /// Collection of file names containing types information for PSSnapIn.
         /// </summary>
-        public Collection<string> Types
-        {
-            get
-            {
-                return _types;
-            }
-        }
+        public Collection<string> Types { get; }
 
-        private Collection<string> _formats;
         /// <summary>
         /// Collection of file names containing format information for PSSnapIn
         /// </summary>
-        public Collection<string> Formats
-        {
-            get
-            {
-                return _formats;
-            }
-        }
+        public Collection<string> Formats { get; }
 
         private string _descriptionIndirect;
         private string _descriptionFallback = String.Empty;
@@ -389,22 +319,10 @@ namespace System.Management.Automation
             }
         }
 
-        private bool _logPipelineExecutionDetails = false;
-
         /// <summary>
         /// Get/set whether to log Pipeline Execution Detail events.
         /// </summary>
-        public bool LogPipelineExecutionDetails
-        {
-            get
-            {
-                return _logPipelineExecutionDetails;
-            }
-            set
-            {
-                _logPipelineExecutionDetails = value;
-            }
-        }
+        public bool LogPipelineExecutionDetails { get; set; } = false;
 
         /// <summary>
         /// Overrides ToString
@@ -414,7 +332,7 @@ namespace System.Management.Automation
         /// </returns>
         public override string ToString()
         {
-            return _name;
+            return Name;
         }
 
         internal RegistryKey MshSnapinKey
@@ -425,7 +343,7 @@ namespace System.Management.Automation
 
                 try
                 {
-                    mshsnapinKey = PSSnapInReader.GetMshSnapinKey(_name, _psVersion.Major.ToString(CultureInfo.InvariantCulture));
+                    mshsnapinKey = PSSnapInReader.GetMshSnapinKey(Name, PSVersion.Major.ToString(CultureInfo.InvariantCulture));
                 }
                 catch (ArgumentException)
                 {
@@ -456,13 +374,13 @@ namespace System.Management.Automation
                 // For default mshsnapins..resource indirects are hardcoded..
                 // so dont read from the registry
                 _description = resourceReader.GetResourceStringIndirect(
-                    _assemblyName,
-                    _moduleName,
+                    AssemblyName,
+                    ModuleName,
                     _descriptionIndirect);
 
                 _vendor = resourceReader.GetResourceStringIndirect(
-                    _assemblyName,
-                    _moduleName,
+                    AssemblyName,
+                    ModuleName,
                     _vendorIndirect);
             }
             else
@@ -474,15 +392,15 @@ namespace System.Management.Automation
                         resourceReader.GetResourceStringIndirect(
                             mshsnapinKey,
                             RegistryStrings.MshSnapin_DescriptionResource,
-                            _assemblyName,
-                            _moduleName);
+                            AssemblyName,
+                            ModuleName);
 
                     _vendor =
                         resourceReader.GetResourceStringIndirect(
                             mshsnapinKey,
                             RegistryStrings.MshSnapin_VendorResource,
-                            _assemblyName,
-                            _moduleName);
+                            AssemblyName,
+                            ModuleName);
                 }
             }
 
@@ -501,12 +419,12 @@ namespace System.Management.Automation
 
         internal PSSnapInInfo Clone()
         {
-            PSSnapInInfo cloned = new PSSnapInInfo(_name,
-                _isDefault, _applicationBase, _assemblyName,
-                _moduleName, _psVersion, _version, new Collection<string>(Types),
+            PSSnapInInfo cloned = new PSSnapInInfo(Name,
+                IsDefault, ApplicationBase, AssemblyName,
+                ModuleName, PSVersion, Version, new Collection<string>(Types),
                 new Collection<string>(Formats), _description,
                 _descriptionFallback, _descriptionIndirect, _vendor, _vendorFallback, _vendorIndirect,
-                _customPSSnapInType
+                CustomPSSnapInType
                 );
 
             return cloned;

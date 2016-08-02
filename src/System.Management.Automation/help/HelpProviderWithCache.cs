@@ -70,24 +70,12 @@ namespace System.Management.Automation
             }
         }
 
-        private bool _hasCustomMatch = false;
-
         /// <summary>
         /// This is for child class to indicate that it has implemented 
         /// a custom way of match. 
         /// </summary>
         /// <value></value>
-        protected bool HasCustomMatch
-        {
-            get
-            {
-                return _hasCustomMatch;
-            }
-            set
-            {
-                _hasCustomMatch = value;
-            }
-        }
+        protected bool HasCustomMatch { get; set; } = false;
 
         /// <summary>
         /// This is for implementing custom match algorithm.
@@ -218,8 +206,6 @@ namespace System.Management.Automation
             return (HelpInfo)_helpCache[target];
         }
 
-        private bool _cacheFullyLoaded = false;
-
         /// <summary>
         /// Is cached fully loaded?
         /// 
@@ -229,17 +215,7 @@ namespace System.Management.Automation
         /// This indicator is usually set by help providers derived from this class. 
         /// </summary>
         /// <value></value>
-        protected internal bool CacheFullyLoaded
-        {
-            get
-            {
-                return _cacheFullyLoaded;
-            }
-            set
-            {
-                _cacheFullyLoaded = value;
-            }
-        }
+        protected internal bool CacheFullyLoaded { get; set; } = false;
 
         /// <summary>
         /// This will reset the help cache. Normally this corresponds to a 
@@ -250,7 +226,7 @@ namespace System.Management.Automation
             base.Reset();
 
             _helpCache.Clear();
-            _cacheFullyLoaded = false;
+            CacheFullyLoaded = false;
         }
 
         #endregion

@@ -1533,21 +1533,17 @@ namespace Microsoft.PowerShell.Commands
         internal BackReaderEncodingNotSupportedException(string message, string encodingName)
             : base(message)
         {
-            _encodingName = encodingName;
+            EncodingName = encodingName;
         }
 
         internal BackReaderEncodingNotSupportedException(string encodingName)
         {
-            _encodingName = encodingName;
+            EncodingName = encodingName;
         }
 
         /// <summary>
         /// Get the encoding name
         /// </summary>
-        internal string EncodingName
-        {
-            get { return _encodingName; }
-        }
-        private readonly string _encodingName;
+        internal string EncodingName { get; }
     }
 } // namespace System.Management.Automation

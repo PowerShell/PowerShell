@@ -46,12 +46,7 @@ namespace System.Management.Automation
         /// If the user doesn't specify anything, the default is <see cref="System.UInt64.MaxValue"/>.
         /// </summary>
         [Parameter]
-        public UInt64 First
-        {
-            get { return _psFirst; }
-            set { _psFirst = value; }
-        }
-        private ulong _psFirst = UInt64.MaxValue;
+        public UInt64 First { get; set; } = UInt64.MaxValue;
 
         #endregion parameters
 

@@ -43,41 +43,18 @@ namespace Microsoft.PowerShell.Commands
 
         #region Cmdlet Parameters
 
-        private string _name = "";
         /// <summary>
         /// Target to search for help
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;
-            }
-        }
+        public string Name { get; set; } = "";
 
-        private string _path;
         /// <summary>
         /// Path to provider location that user is curious about.
         /// </summary>
         [Parameter]
-        public string Path
-        {
-            get
-            {
-                return _path;
-            }
-            set
-            {
-                _path = value;
-            }
-        }
+        public string Path { get; set; }
 
-        private string[] _category;
         /// <summary>
         /// List of help categories to search for help
         /// </summary>
@@ -85,74 +62,28 @@ namespace Microsoft.PowerShell.Commands
         [ValidateSet(
             "Alias", "Cmdlet", "Provider", "General", "FAQ", "Glossary", "HelpFile", "ScriptCommand", "Function", "Filter", "ExternalScript", "All", "DefaultHelp", "Workflow", "DscResource", "Class", "Configuration",
              IgnoreCase = true)]
-        public string[] Category
-        {
-            get
-            {
-                return _category;
-            }
-            set
-            {
-                _category = value;
-            }
-        }
-
-        private string[] _component = null;
+        public string[] Category { get; set; }
 
         /// <summary>
         /// List of Component's to search on.
         /// </summary>
         /// <value></value>
         [Parameter]
-        public string[] Component
-        {
-            get
-            {
-                return _component;
-            }
-            set
-            {
-                _component = value;
-            }
-        }
-
-        private string[] _functionality = null;
+        public string[] Component { get; set; } = null;
 
         /// <summary>
         /// List of Functionality's to search on.
         /// </summary>
         /// <value></value>
         [Parameter]
-        public string[] Functionality
-        {
-            get
-            {
-                return _functionality;
-            }
-            set
-            {
-                _functionality = value;
-            }
-        }
-
-        private string[] _role = null;
+        public string[] Functionality { get; set; } = null;
 
         /// <summary>
         /// List of Role's to search on.
         /// </summary>
         /// <value></value>
         [Parameter]
-        public string[] Role
-        {
-            get
-            {
-                return _role;
-            }
-            set
-            {
-                _role = value;
-            }
-        }
+        public string[] Role { get; set; } = null;
 
         private string _provider = "";
 
@@ -243,18 +174,7 @@ namespace Microsoft.PowerShell.Commands
         /// Support WildCard strings as supported by WildcardPattern class.
         /// </remarks>
         [Parameter(ParameterSetName = "Parameters", Mandatory = true)]
-        public string Parameter
-        {
-            set
-            {
-                _parameter = value;
-            }
-            get
-            {
-                return _parameter;
-            }
-        }
-        private string _parameter;
+        public string Parameter { set; get; }
 
         /// <summary>
         /// This parameter,if true, will direct get-help cmdlet to
@@ -350,7 +270,7 @@ namespace Microsoft.PowerShell.Commands
                 this.Context.HelpSystem.OnProgress += new HelpSystem.HelpProgressHandler(HelpSystem_OnProgress);
 
                 bool failed = false;
-                HelpCategory helpCategory = ToHelpCategory(_category, ref failed);
+                HelpCategory helpCategory = ToHelpCategory(Category, ref failed);
 
                 if (failed)
                     return;
@@ -361,9 +281,9 @@ namespace Microsoft.PowerShell.Commands
                 HelpRequest helpRequest = new HelpRequest(this.Name, helpCategory);
 
                 helpRequest.Provider = _provider;
-                helpRequest.Component = _component;
-                helpRequest.Role = _role;
-                helpRequest.Functionality = _functionality;
+                helpRequest.Component = Component;
+                helpRequest.Role = Role;
+                helpRequest.Functionality = Functionality;
                 helpRequest.ProviderContext = new ProviderContext(
                     this.Path,
                     this.Context.Engine.Context,
@@ -544,12 +464,12 @@ namespace Microsoft.PowerShell.Commands
         private void GetAndWriteParameterInfo(HelpInfo helpInfo)
         {
             s_tracer.WriteLine("Searching parameters for {0}", helpInfo.Name);
-            PSObject[] pInfos = helpInfo.GetParameter(_parameter);
+            PSObject[] pInfos = helpInfo.GetParameter(Parameter);
 
             if ((pInfos == null) || (pInfos.Length == 0))
             {
                 Exception innerException = PSTraceSource.NewArgumentException("Parameter",
-                    HelpErrors.NoParmsFound, _parameter);
+                    HelpErrors.NoParmsFound, Parameter);
                 WriteError(new ErrorRecord(innerException, "NoParmsFound", ErrorCategory.InvalidArgument, helpInfo));
             }
             else
@@ -582,25 +502,25 @@ namespace Microsoft.PowerShell.Commands
 
             if ((cat & supportedCategories) == 0)
             {
-                if (!string.IsNullOrEmpty(_parameter))
+                if (!string.IsNullOrEmpty(Parameter))
                 {
                     throw PSTraceSource.NewArgumentException("Parameter",
                         HelpErrors.ParamNotSupported, "-Parameter");
                 }
 
-                if (_component != null)
+                if (Component != null)
                 {
                     throw PSTraceSource.NewArgumentException("Component",
                         HelpErrors.ParamNotSupported, "-Component");
                 }
 
-                if (_role != null)
+                if (Role != null)
                 {
                     throw PSTraceSource.NewArgumentException("Role",
                         HelpErrors.ParamNotSupported, "-Role");
                 }
 
-                if (_functionality != null)
+                if (Functionality != null)
                 {
                     throw PSTraceSource.NewArgumentException("Functionality",
                         HelpErrors.ParamNotSupported, "-Functionality");
@@ -649,7 +569,7 @@ namespace Microsoft.PowerShell.Commands
                     // show inline help
                     if (showFullHelp)
                     {
-                        if (!string.IsNullOrEmpty(_parameter))
+                        if (!string.IsNullOrEmpty(Parameter))
                         {
                             GetAndWriteParameterInfo(helpInfo);
                         }
@@ -662,9 +582,9 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        if (!string.IsNullOrEmpty(_parameter))
+                        if (!string.IsNullOrEmpty(Parameter))
                         {
-                            PSObject[] pInfos = helpInfo.GetParameter(_parameter);
+                            PSObject[] pInfos = helpInfo.GetParameter(Parameter);
                             if ((pInfos == null) || (pInfos.Length == 0))
                             {
                                 return;

@@ -121,14 +121,7 @@ namespace System.Management.Automation
             }
         }
 
-        private HelpSystem _helpSystem;
-        internal HelpSystem HelpSystem
-        {
-            get
-            {
-                return _helpSystem;
-            }
-        }
+        internal HelpSystem HelpSystem { get; }
 
         internal HelpErrorTracer(HelpSystem helpSystem)
         {
@@ -137,7 +130,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("HelpSystem");
             }
 
-            _helpSystem = helpSystem;
+            HelpSystem = helpSystem;
         }
 
         /// <summary>

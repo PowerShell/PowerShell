@@ -28,22 +28,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [Alias("NS")]
-        public string Namespace
-        {
-            get { return _nameSpace; }
-            set { _nameSpace = value; }
-        }
+        public string Namespace { get; set; } = "root\\cimv2";
 
         /// <summary>
         /// The credential to use
         /// </summary>
         [Parameter]
         [Credential()]
-        public PSCredential Credential
-        {
-            get { return _credential; }
-            set { _credential = value; }
-        }
+        public PSCredential Credential { get; set; }
 
         /// <summary>
         /// The ComputerName in which to query
@@ -51,32 +43,20 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [Alias("Cn")]
         [ValidateNotNullOrEmpty]
-        public string ComputerName
-        {
-            get { return _computerName; }
-            set { _computerName = value; }
-        }
+        public string ComputerName { get; set; } = "localhost";
 
 
         /// <summary>
         /// The WMI class to use
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "class")]
-        public string Class
-        {
-            get { return _className; }
-            set { _className = value; }
-        }
+        public string Class { get; set; } = null;
 
         /// <summary>
         /// The query string to search for objects
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "query")]
-        public string Query
-        {
-            get { return _objectQuery; }
-            set { _objectQuery = value; }
-        }
+        public string Query { get; set; } = null;
 
         /// <summary>
         /// Timeout in milliseconds
@@ -98,11 +78,6 @@ namespace Microsoft.PowerShell.Commands
 
         private Int64 _timeOut = 0;
         private bool _timeoutSpecified = false;
-        private string _objectQuery = null;
-        private string _className = null;
-        private string _computerName = "localhost";
-        private string _nameSpace = "root\\cimv2";
-        private PSCredential _credential;
 
         #endregion parameters
         #region helper functions
@@ -171,7 +146,7 @@ namespace Microsoft.PowerShell.Commands
                 conOptions.Password = cred.Password;
             }
 
-            ManagementScope scope = new ManagementScope(GetScopeString(_computerName, this.Namespace), conOptions);
+            ManagementScope scope = new ManagementScope(GetScopeString(ComputerName, this.Namespace), conOptions);
             EventWatcherOptions evtOptions = new EventWatcherOptions();
 
             if (_timeoutSpecified)

@@ -57,16 +57,6 @@ namespace System.Management.Automation
             public RunspaceAvailability NewRunspaceAvailability;
         }
 
-        private ManualResetEvent _pipelineFinishedEvent;
-        /// <summary>
-        /// Is method executor stream enabled.
-        /// </summary>
-        private bool _isMethodExecutorStreamEnabled;
-
-        /// <summary>
-        /// Method executor stream.
-        /// </summary>
-        private ObjectStream _methodExecutorStream;
         private bool _performNestedCheck = true;
 
         #endregion Private Members
@@ -100,8 +90,8 @@ namespace System.Management.Automation
             _errorStream = new PSDataCollectionStream<ErrorRecord>(Guid.Empty, _errorCollection);
 
             // Create object stream for method executor objects.
-            _methodExecutorStream = new ObjectStream();
-            _isMethodExecutorStreamEnabled = false;
+            MethodExecutorStream = new ObjectStream();
+            IsMethodExecutorStreamEnabled = false;
 
             SetCommandCollection(_commands);
 
@@ -112,7 +102,7 @@ namespace System.Management.Automation
             //added to list of running pipelines. This avoids the race condition
             //where Close is called after pipeline is added to list of 
             //running pipeline but before event is created.
-            _pipelineFinishedEvent = new ManualResetEvent(false);
+            PipelineFinishedEvent = new ManualResetEvent(false);
         }
 
         /// <summary>
@@ -684,8 +674,8 @@ namespace System.Management.Automation
                     _outputStream.Dispose();
                     _errorCollection.Dispose();
                     _errorStream.Dispose();
-                    _methodExecutorStream.Dispose();
-                    _pipelineFinishedEvent.Dispose();
+                    MethodExecutorStream.Dispose();
+                    PipelineFinishedEvent.Dispose();
                 }
             }
             finally
@@ -953,7 +943,7 @@ namespace System.Management.Automation
                 _powershell.RemotePowerShell.DataStructureHandler.TransportManager,
                 ((RemoteRunspace)_runspace).RunspacePool.RemoteRunspacePoolInternal.Host,
                 _errorStream,
-                _methodExecutorStream,
+                MethodExecutorStream,
                 IsMethodExecutorStreamEnabled,
                 ((RemoteRunspace)_runspace).RunspacePool.RemoteRunspacePoolInternal,
                 _powershell.InstanceId,
@@ -1012,7 +1002,7 @@ namespace System.Management.Automation
                 //pipeline finished event.
                 ((RemoteRunspace)_runspace).RemoveFromRunningPipelineList(this);
 
-                _pipelineFinishedEvent.Set();
+                PipelineFinishedEvent.Set();
             }
             catch (ObjectDisposedException)
             {
@@ -1027,39 +1017,17 @@ namespace System.Management.Automation
         /// ManualResetEvent which is signaled when pipeline execution is 
         /// completed/failed/stoped.
         /// </summary>
-        internal ManualResetEvent PipelineFinishedEvent
-        {
-            get
-            {
-                return _pipelineFinishedEvent;
-            }
-        }
+        internal ManualResetEvent PipelineFinishedEvent { get; }
 
         /// <summary>
         /// Is method executor stream enabled.
         /// </summary>
-        internal bool IsMethodExecutorStreamEnabled
-        {
-            get
-            {
-                return _isMethodExecutorStreamEnabled;
-            }
-            set
-            {
-                _isMethodExecutorStreamEnabled = value;
-            }
-        }
+        internal bool IsMethodExecutorStreamEnabled { get; set; }
 
         /// <summary>
         /// Method executor stream.
         /// </summary>
-        internal ObjectStream MethodExecutorStream
-        {
-            get
-            {
-                return _methodExecutorStream;
-            }
-        }
+        internal ObjectStream MethodExecutorStream { get; }
 
         /// <summary>
         /// Check if anyother pipeline is executing.

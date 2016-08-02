@@ -3036,7 +3036,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentException("propertyAttributes");
             }
 
-            _name = name;
+            Name = name;
             if (propertyType != null)
             {
                 PropertyType = propertyType;
@@ -3064,8 +3064,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The name of the property.
         /// </summary>
-        public override string Name { get { return _name; } }
-        private readonly string _name;
+        public override string Name { get; }
 
         /// <summary>
         /// The ast for the type of the property.  This property may be null if no type was specified.
@@ -4086,12 +4085,7 @@ namespace System.Management.Automation.Language
 
         #region Code Generation Details
 
-        private int _tupleIndex = VariableAnalysis.Unanalyzed;
-        internal int TupleIndex
-        {
-            get { return _tupleIndex; }
-            set { _tupleIndex = value; }
-        }
+        internal int TupleIndex { get; set; } = VariableAnalysis.Unanalyzed;
 
         #endregion Code Generation Details
     }
@@ -8616,7 +8610,6 @@ namespace System.Management.Automation.Language
     {
         private string _cachedFullName;
         private Type _cachedType;
-        private readonly IScriptExtent _extent;
 
         /// <summary>
         /// Construct a generic type name.
@@ -8646,7 +8639,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentException("genericArguments");
             }
 
-            _extent = extent;
+            Extent = extent;
             this.TypeName = genericTypeName;
             this.GenericArguments = new ReadOnlyCollection<ITypeName>(genericArguments.ToArray());
 
@@ -8746,7 +8739,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The extent of the typename.
         /// </summary>
-        public IScriptExtent Extent { get { return _extent; } }
+        public IScriptExtent Extent { get; }
 
         /// <summary>
         /// Returns the <see cref="System.Type"/> that this typename represents, if such a type exists, null otherwise.
@@ -8809,7 +8802,7 @@ namespace System.Management.Automation.Language
             {
                 if (TypeName.FullName.IndexOf("`", StringComparison.OrdinalIgnoreCase) == -1)
                 {
-                    var newTypeName = new TypeName(_extent,
+                    var newTypeName = new TypeName(Extent,
                         string.Format(CultureInfo.InvariantCulture, "{0}`{1}", TypeName.FullName, GenericArguments.Count));
                     generic = newTypeName.GetReflectionType();
                 }
@@ -8837,7 +8830,7 @@ namespace System.Management.Automation.Language
                 {
                     if (TypeName.FullName.IndexOf("`", StringComparison.OrdinalIgnoreCase) == -1)
                     {
-                        var newTypeName = new TypeName(_extent,
+                        var newTypeName = new TypeName(Extent,
                             string.Format(CultureInfo.InvariantCulture, "{0}Attribute`{1}", TypeName.FullName, GenericArguments.Count));
                         generic = newTypeName.GetReflectionType();
                         genericTypeInfo = (generic != null) ? generic.GetTypeInfo() : null;
@@ -8910,7 +8903,6 @@ namespace System.Management.Automation.Language
     {
         private string _cachedFullName;
         private Type _cachedType;
-        private readonly IScriptExtent _extent;
 
         /// <summary>
         /// Construct an ArrayTypeName.
@@ -8936,7 +8928,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentException("rank");
             }
 
-            _extent = extent;
+            Extent = extent;
             this.Rank = rank;
             this.ElementType = elementType;
         }
@@ -9024,7 +9016,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The extent of the typename.
         /// </summary>
-        public IScriptExtent Extent { get { return _extent; } }
+        public IScriptExtent Extent { get; }
 
         /// <summary>
         /// Returns the <see cref="System.Type"/> that this typename represents, if such a type exists, null otherwise.
@@ -9671,13 +9663,7 @@ namespace System.Management.Automation.Language
 
         #region Code Generation Details
 
-        private int _tupleIndex = VariableAnalysis.Unanalyzed;
-
-        internal int TupleIndex
-        {
-            get { return _tupleIndex; }
-            set { _tupleIndex = value; }
-        }
+        internal int TupleIndex { get; set; } = VariableAnalysis.Unanalyzed;
 
         internal bool Automatic { get; set; }
         internal bool Assigned { get; set; }
@@ -9742,12 +9728,12 @@ namespace System.Management.Automation.Language
         internal Type GetVariableType(Compiler compiler, out IEnumerable<PropertyInfo> tupleAccessPath, out bool localInTuple)
         {
             Type targetType = null;
-            localInTuple = _tupleIndex >= 0 &&
-                                (compiler.Optimize || _tupleIndex < (int)AutomaticVariable.NumberOfAutomaticVariables);
+            localInTuple = TupleIndex >= 0 &&
+                                (compiler.Optimize || TupleIndex < (int)AutomaticVariable.NumberOfAutomaticVariables);
             tupleAccessPath = null;
             if (localInTuple)
             {
-                tupleAccessPath = MutableTuple.GetAccessPath(compiler.LocalVariablesTupleType, _tupleIndex);
+                tupleAccessPath = MutableTuple.GetAccessPath(compiler.LocalVariablesTupleType, TupleIndex);
                 targetType = tupleAccessPath.Last().PropertyType;
             }
             else

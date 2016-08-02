@@ -66,72 +66,28 @@ namespace Microsoft.PowerShell.Commands
         /// Allows the user to override the day
         /// </summary>
         [Parameter(ParameterSetName = "Time")]
-        public int Days
-        {
-            get
-            {
-                return _days;
-            }
-            set
-            {
-                _days = value;
-            }
-        }
-        private int _days = 0;
+        public int Days { get; set; } = 0;
 
 
         /// <summary>
         /// Allows the user to override the hour
         /// </summary>
         [Parameter(ParameterSetName = "Time")]
-        public int Hours
-        {
-            get
-            {
-                return _hours;
-            }
-            set
-            {
-                _hours = value;
-            }
-        }
-        private int _hours = 0;
+        public int Hours { get; set; } = 0;
 
 
         /// <summary>
         /// Allows the user to override the minute
         /// </summary>
         [Parameter(ParameterSetName = "Time")]
-        public int Minutes
-        {
-            get
-            {
-                return _minutes;
-            }
-            set
-            {
-                _minutes = value;
-            }
-        }
-        private int _minutes = 0;
+        public int Minutes { get; set; } = 0;
 
 
         /// <summary>
         /// Allows the user to override the second
         /// </summary>
         [Parameter(ParameterSetName = "Time")]
-        public int Seconds
-        {
-            get
-            {
-                return _seconds;
-            }
-            set
-            {
-                _seconds = value;
-            }
-        }
-        private int _seconds = 0;
+        public int Seconds { get; set; } = 0;
 
         #endregion
 

@@ -87,8 +87,6 @@ namespace System.Management.Automation
             get;
         }
 
-        private HelpCategory _forwardHelpCategory = HelpCategory.None;
-
         /// <summary>
         /// Forward help category for this help info
         /// </summary>
@@ -98,19 +96,7 @@ namespace System.Management.Automation
         /// to process this helpInfo before it can be returned to end user.
         /// </remarks>
         /// <value>Help category to forward this helpInfo to</value>
-        internal HelpCategory ForwardHelpCategory
-        {
-            get
-            {
-                return _forwardHelpCategory;
-            }
-            set
-            {
-                _forwardHelpCategory = value;
-            }
-        }
-
-        private string _forwardTarget = "";
+        internal HelpCategory ForwardHelpCategory { get; set; } = HelpCategory.None;
 
         /// <summary>
         /// Target object in forward-help-provider that should process this HelpInfo.
@@ -122,17 +108,7 @@ namespace System.Management.Automation
         /// alias.
         /// </summary>
         /// <value>forward target object name</value>
-        internal string ForwardTarget
-        {
-            get
-            {
-                return _forwardTarget;
-            }
-            set
-            {
-                _forwardTarget = value;
-            }
-        }
+        internal string ForwardTarget { get; set; } = "";
 
         /// <summary>
         /// Full help object for this help item. 
@@ -284,24 +260,12 @@ namespace System.Management.Automation
 
         #region Error handling
 
-        private Collection<ErrorRecord> _errors;
-
         /// <summary>
         /// This is for tracking the set of errors happened during the parsing of 
         /// of this helpinfo.
         /// </summary>
         /// <value></value>
-        internal Collection<ErrorRecord> Errors
-        {
-            get
-            {
-                return _errors;
-            }
-            set
-            {
-                _errors = value;
-            }
-        }
+        internal Collection<ErrorRecord> Errors { get; set; }
 
         #endregion
     }

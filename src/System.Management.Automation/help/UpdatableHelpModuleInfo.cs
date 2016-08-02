@@ -29,23 +29,16 @@ namespace System.Management.Automation.Help
             Debug.Assert(!String.IsNullOrEmpty(path));
             Debug.Assert(!String.IsNullOrEmpty(uri));
 
-            _moduleName = name;
+            ModuleName = name;
             _moduleGuid = guid;
-            _moduleBase = path;
-            _helpInfoUri = uri;
+            ModuleBase = path;
+            HelpInfoUri = uri;
         }
 
         /// <summary>
         /// Module name
         /// </summary>
-        internal string ModuleName
-        {
-            get
-            {
-                return _moduleName;
-            }
-        }
-        private string _moduleName;
+        internal string ModuleName { get; }
 
         /// <summary>
         /// Module GUID
@@ -62,26 +55,12 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Module path
         /// </summary>
-        internal string ModuleBase
-        {
-            get
-            {
-                return _moduleBase;
-            }
-        }
-        private string _moduleBase;
+        internal string ModuleBase { get; }
 
         /// <summary>
         /// HelpInfo URI
         /// </summary>
-        internal string HelpInfoUri
-        {
-            get
-            {
-                return _helpInfoUri;
-            }
-        }
-        private string _helpInfoUri;
+        internal string HelpInfoUri { get; }
 
         /// <summary>
         /// Gets the combined HelpContent.zip name
@@ -92,7 +71,7 @@ namespace System.Management.Automation.Help
         {
             Debug.Assert(culture != null);
 
-            return _moduleName + "_" + _moduleGuid.ToString() + "_" + culture.Name + "_" + HelpContentZipName;
+            return ModuleName + "_" + _moduleGuid.ToString() + "_" + culture.Name + "_" + HelpContentZipName;
         }
 
         /// <summary>
@@ -101,7 +80,7 @@ namespace System.Management.Automation.Help
         /// <returns>HelpInfo name</returns>
         internal string GetHelpInfoName()
         {
-            return _moduleName + "_" + _moduleGuid.ToString() + "_" + HelpIntoXmlName;
+            return ModuleName + "_" + _moduleGuid.ToString() + "_" + HelpIntoXmlName;
         }
     }
 }

@@ -55,14 +55,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal HashtableEntryDefinition(string name, IEnumerable<string> secondaryNames, Type[] types, bool mandatory)
             : this(name, types, mandatory)
         {
-            _secondaryNames = secondaryNames;
+            SecondaryNames = secondaryNames;
         }
 
         internal HashtableEntryDefinition(string name, Type[] types, bool mandatory)
         {
-            _key = name;
-            _allowedTypes = types;
-            _mandatory = mandatory;
+            KeyName = name;
+            AllowedTypes = types;
+            Mandatory = mandatory;
         }
 
         internal HashtableEntryDefinition(string name, Type[] types)
@@ -110,21 +110,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return AutomationNull.Value;
         }
 
-        internal string KeyName { get { return _key; } }
+        internal string KeyName { get; }
 
-        internal Type[] AllowedTypes { get { return _allowedTypes; } }
+        internal Type[] AllowedTypes { get; }
 
-        internal bool Mandatory { get { return _mandatory; } }
+        internal bool Mandatory { get; }
 
-        internal IEnumerable<string> SecondaryNames { get { return _secondaryNames; } }
-
-        private string _key;
-
-        private Type[] _allowedTypes;
-
-        private bool _mandatory;
-
-        private IEnumerable<string> _secondaryNames;
+        internal IEnumerable<string> SecondaryNames { get; }
     }
 
     /// <summary>

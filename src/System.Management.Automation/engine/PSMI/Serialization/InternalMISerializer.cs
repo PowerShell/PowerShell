@@ -38,13 +38,7 @@ namespace System.Management.Automation
 
         #region Properties
 
-        internal CimInstance CimInstance
-        {
-            get { return _cimInstance; }
-            set { _cimInstance = value; }
-        }
-
-        private CimInstance _cimInstance;
+        internal CimInstance CimInstance { get; set; }
 
         /// Used by Remoting infrastructure. This TypeTable instance
         /// will be used by Serializer if ExecutionContext is not

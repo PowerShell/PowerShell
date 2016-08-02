@@ -437,33 +437,19 @@ namespace Microsoft.PowerShell
     {
         internal EncryptionResult(string encrypted, string IV)
         {
-            _encryptedData = encrypted;
-            _iv = IV;
+            EncryptedData = encrypted;
+            this.IV = IV;
         }
 
         /// <summary>
         /// Gets the encrypted data
         /// </summary>
-        internal String EncryptedData
-        {
-            get
-            {
-                return _encryptedData;
-            }
-        }
-        private String _encryptedData;
+        internal String EncryptedData { get; }
 
         /// <summary>
         /// Gets the IV used to encrypt the data
         /// </summary>
-        internal String IV
-        {
-            get
-            {
-                return _iv;
-            }
-        }
-        private String _iv;
+        internal String IV { get; }
     }
 
 #if CORECLR

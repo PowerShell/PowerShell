@@ -187,46 +187,28 @@ namespace Microsoft.PowerShell.Commands
 
         #region Common parameters
 
-        private int? _setSeed;
-
         /// <summary>
         /// Seed used to reinitialize random numbers generator
         /// </summary>
         [Parameter]
         [ValidateNotNull]
-        public int? SetSeed
-        {
-            get { return _setSeed; }
-            set { _setSeed = value; }
-        }
+        public int? SetSeed { get; set; }
 
         #endregion Common parameters
 
         #region Parameters for RandomNumberParameterSet
 
-        private object _maximum;
-
         /// <summary>
         /// Maximum number to generate 
         /// </summary>
         [Parameter(ParameterSetName = RandomNumberParameterSet, Position = 0)]
-        public object Maximum
-        {
-            get { return _maximum; }
-            set { _maximum = value; }
-        }
-
-        private object _minimum;
+        public object Maximum { get; set; }
 
         /// <summary>
         /// Minimum number to generate
         /// </summary>
         [Parameter(ParameterSetName = RandomNumberParameterSet)]
-        public object Minimum
-        {
-            get { return _minimum; }
-            set { _minimum = value; }
-        }
+        public object Minimum { get; set; }
 
         private bool IsInt(object o)
         {
@@ -284,32 +266,20 @@ namespace Microsoft.PowerShell.Commands
         private List<object> _chosenListItems;
         private int _numberOfProcessedListItems;
 
-        private object[] _inputObject;
-
         /// <summary>
         /// List from which random elements are chosen
         /// </summary>
         [Parameter(ParameterSetName = RandomListItemParameterSet, ValueFromPipeline = true, Position = 0, Mandatory = true)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public object[] InputObject
-        {
-            get { return _inputObject; }
-            set { _inputObject = value; }
-        }
-
-        private int _count;
+        public object[] InputObject { get; set; }
 
         /// <summary>
         /// Number of items to output (number of list items or of numbers) 
         /// </summary>
         [Parameter(ParameterSetName = GetRandomCommand.RandomListItemParameterSet)]
         [ValidateRange(1, int.MaxValue)]
-        public int Count
-        {
-            get { return _count; }
-            set { _count = value; }
-        }
+        public int Count { get; set; }
 
         #endregion
 

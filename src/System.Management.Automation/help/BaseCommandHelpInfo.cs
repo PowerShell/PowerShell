@@ -21,7 +21,7 @@ namespace System.Management.Automation
         internal BaseCommandHelpInfo(HelpCategory helpCategory)
             : base()
         {
-            _helpCategory = helpCategory;
+            HelpCategory = helpCategory;
         }
 
         #region Basic Help Properties
@@ -122,15 +122,7 @@ namespace System.Management.Automation
         /// Help category for this command help, which is constantly HelpCategory.Command.
         /// </summary>
         /// <value>Help category for this command help</value>
-        override internal HelpCategory HelpCategory
-        {
-            get
-            {
-                return _helpCategory;
-            }
-        }
-
-        private HelpCategory _helpCategory;
+        override internal HelpCategory HelpCategory { get; }
 
         /// <summary>
         /// Returns the Uri used by get-help cmdlet to show help

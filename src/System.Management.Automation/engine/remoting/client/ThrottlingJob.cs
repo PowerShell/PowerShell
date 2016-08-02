@@ -1234,19 +1234,12 @@ namespace System.Management.Automation
 
     internal class ThrottlingJobChildAddedEventArgs : EventArgs
     {
-        private readonly Job _addedChildJob;
-        internal Job AddedChildJob
-        {
-            get
-            {
-                return _addedChildJob;
-            }
-        }
+        internal Job AddedChildJob { get; }
 
         internal ThrottlingJobChildAddedEventArgs(Job addedChildJob)
         {
             Dbg.Assert(addedChildJob != null, "Caller should verify addedChildJob != null");
-            _addedChildJob = addedChildJob;
+            AddedChildJob = addedChildJob;
         }
     }
 }

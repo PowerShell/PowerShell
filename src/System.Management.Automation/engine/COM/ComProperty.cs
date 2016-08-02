@@ -18,14 +18,11 @@ namespace System.Management.Automation
     {
         private bool _hasSetter = false;
         private bool _hasSetterByRef = false;
-        private bool _hasGetter = false;
         private int _dispId;
         private int _setterIndex;
         private int _setterByRefIndex;
         private int _getterIndex;
         private COM.ITypeInfo _typeInfo;
-        private string _name;
-        private bool _isparameterizied = false;
 
 
         /// <summary>
@@ -36,19 +33,13 @@ namespace System.Management.Automation
         internal ComProperty(COM.ITypeInfo typeinfo, string name)
         {
             _typeInfo = typeinfo;
-            _name = name;
+            Name = name;
         }
 
         /// <summary>
         ///  Defines the name of the property.
         /// </summary>
-        internal string Name
-        {
-            get
-            {
-                return _name;
-            }
-        }
+        internal string Name { get; }
 
         private Type _cachedType;
 
@@ -70,7 +61,7 @@ namespace System.Management.Automation
                         _typeInfo.GetFuncDesc(GetFuncDescIndex(), out pFuncDesc);
                         COM.FUNCDESC funcdesc = ClrFacade.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
 
-                        if (_hasGetter)
+                        if (IsGettable)
                         {
                             // use the return type of the getter
                             _cachedType = ComUtil.GetTypeFromTypeDesc(funcdesc.elemdescFunc.tdesc);
@@ -101,7 +92,7 @@ namespace System.Management.Automation
         /// </summary>
         private int GetFuncDescIndex()
         {
-            if (_hasGetter)
+            if (IsGettable)
             {
                 return _getterIndex;
             }
@@ -119,13 +110,7 @@ namespace System.Management.Automation
         /// <summary>
         ///  Defines whether the property has parameters or not.
         /// </summary>
-        internal bool IsParameterized
-        {
-            get
-            {
-                return _isparameterizied;
-            }
-        }
+        internal bool IsParameterized { get; private set; } = false;
 
 
         /// <summary>
@@ -154,13 +139,7 @@ namespace System.Management.Automation
         /// <summary>
         ///  Defines whether this property is gettable.
         /// </summary>
-        internal bool IsGettable
-        {
-            get
-            {
-                return _hasGetter;
-            }
-        }
+        internal bool IsGettable { get; private set; } = false;
 
 
         /// <summary>
@@ -343,12 +322,12 @@ namespace System.Management.Automation
             switch (desc.invkind)
             {
                 case COM.INVOKEKIND.INVOKE_PROPERTYGET:
-                    _hasGetter = true;
+                    IsGettable = true;
                     _getterIndex = index;
 
                     if (desc.cParams > 0)
                     {
-                        _isparameterizied = true;
+                        IsParameterized = true;
                     }
                     break;
 
@@ -358,7 +337,7 @@ namespace System.Management.Automation
 
                     if (desc.cParams > 1)
                     {
-                        _isparameterizied = true;
+                        IsParameterized = true;
                     }
                     break;
 
@@ -367,7 +346,7 @@ namespace System.Management.Automation
                     _hasSetterByRef = true;
                     if (desc.cParams > 1)
                     {
-                        _isparameterizied = true;
+                        IsParameterized = true;
                     }
                     break;
             }
@@ -382,7 +361,7 @@ namespace System.Management.Automation
                 _typeInfo.GetFuncDesc(GetFuncDescIndex(), out pFuncDesc);
                 COM.FUNCDESC funcdesc = ClrFacade.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
 
-                return ComUtil.GetMethodSignatureFromFuncDesc(_typeInfo, funcdesc, !_hasGetter);
+                return ComUtil.GetMethodSignatureFromFuncDesc(_typeInfo, funcdesc, !IsGettable);
             }
             finally
             {
@@ -402,7 +381,7 @@ namespace System.Management.Automation
             StringBuilder builder = new StringBuilder();
             builder.Append(this.GetDefinition());
             builder.Append(" ");
-            if (_hasGetter)
+            if (IsGettable)
             {
                 builder.Append("{get} ");
             }

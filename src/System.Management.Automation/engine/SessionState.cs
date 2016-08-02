@@ -60,28 +60,28 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("context");
             }
-            _context = context;
+            ExecutionContext = context;
 
             // Create the working directory stack. This
             // is used for the pushd and popd commands
 
             _workingLocationStack = new Dictionary<String, Stack<PathInfo>>(StringComparer.OrdinalIgnoreCase);
 
-            _globalScope = new SessionStateScope(null);
-            _moduleScope = _globalScope;
-            _currentScope = _globalScope;
+            GlobalScope = new SessionStateScope(null);
+            ModuleScope = GlobalScope;
+            _currentScope = GlobalScope;
 
             InitializeSessionStateInternalSpecialVariables(false);
 
             // Create the push the global scope on as
             // the starting script scope.  That way, if you dot-source a script
             // that uses variables qualified by script: it works.
-            _globalScope.ScriptScope = _globalScope;
+            GlobalScope.ScriptScope = GlobalScope;
 
 
             if (parent != null)
             {
-                _globalScope.Parent = parent.GlobalScope;
+                GlobalScope.Parent = parent.GlobalScope;
 
                 // Copy the drives and providers from the parent...
                 CopyProviders(parent);
@@ -95,7 +95,7 @@ namespace System.Management.Automation
                 // Link it to the global scope...
                 if (linkToGlobal)
                 {
-                    _globalScope = parent.GlobalScope;
+                    GlobalScope = parent.GlobalScope;
                 }
             }
             else
@@ -113,15 +113,15 @@ namespace System.Management.Automation
             if (clearVariablesTable)
             {
                 // Clear the variable table
-                _globalScope.Variables.Clear();
+                GlobalScope.Variables.Clear();
 
                 // Add in the per-scope default variables.
-                _globalScope.AddSessionStateScopeDefaultVariables();
+                GlobalScope.AddSessionStateScopeDefaultVariables();
             }
 
             // Set variable $Error
             PSVariable errorvariable = new PSVariable("Error", new ArrayList(), ScopedItemOptions.Constant);
-            _globalScope.SetVariable(errorvariable.Name, errorvariable, false, false, this, fastPath: true);
+            GlobalScope.SetVariable(errorvariable.Name, errorvariable, false, false, this, fastPath: true);
 
 
             // Set variable $PSDefaultParameterValues
@@ -131,7 +131,7 @@ namespace System.Management.Automation
                                                                          new DefaultParameterDictionary(),
                                                                          ScopedItemOptions.None, attributes,
                                                                          RunspaceInit.PSDefaultParameterValuesDescription);
-            _globalScope.SetVariable(psDefaultParameterValuesVariable.Name, psDefaultParameterValuesVariable, false, false, this, fastPath: true);
+            GlobalScope.SetVariable(psDefaultParameterValuesVariable.Name, psDefaultParameterValuesVariable, false, false, this, fastPath: true);
         }
 
 
@@ -149,7 +149,7 @@ namespace System.Management.Automation
             {
                 if (_globberPrivate == null)
                 {
-                    _globberPrivate = _context.LocationGlobber;
+                    _globberPrivate = ExecutionContext.LocationGlobber;
                 }
                 return _globberPrivate;
             }
@@ -159,11 +159,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The context of the runspace to which this session state object belongs.
         /// </summary>
-        internal ExecutionContext ExecutionContext
-        {
-            get { return _context; }
-        }
-        private ExecutionContext _context;
+        internal ExecutionContext ExecutionContext { get; }
 
         /// <summary>
         /// Returns the public session state facade object for this session state instance. 
@@ -202,12 +198,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The module info object associated with this session state
         /// </summary>
-        internal PSModuleInfo Module
-        {
-            get { return _module; }
-            set { _module = value; }
-        }
-        private PSModuleInfo _module = null;
+        internal PSModuleInfo Module { get; set; } = null;
 
         // This is used to maintain the order in which modules were imported. 
         // This is used by Get-Command -All to order by last imported
@@ -216,11 +207,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The private module table for this session state object...
         /// </summary>
-        internal Dictionary<string, PSModuleInfo> ModuleTable
-        {
-            get { return _moduleTable; }
-        }
-        private Dictionary<string, PSModuleInfo> _moduleTable = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
+        internal Dictionary<string, PSModuleInfo> ModuleTable { get; } = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Get/set constraints for this execution environemnt
@@ -229,11 +216,11 @@ namespace System.Management.Automation
         {
             get
             {
-                return _context.LanguageMode;
+                return ExecutionContext.LanguageMode;
             }
             set
             {
-                _context.LanguageMode = value;
+                ExecutionContext.LanguageMode = value;
             }
         }
 
@@ -244,7 +231,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _context.UseFullLanguageModeInDebugger;
+                return ExecutionContext.UseFullLanguageModeInDebugger;
             }
         }
 
@@ -252,11 +239,7 @@ namespace System.Management.Automation
         /// The list of scripts that are allowed to be run. If the name "*"
         /// is in the list, then all scripts can be run. (This is the default.)
         /// </summary>
-        public List<string> Scripts
-        {
-            get { return _scripts; }
-        }
-        private List<String> _scripts = new List<string>(new string[] { "*" });
+        public List<string> Scripts { get; } = new List<string>(new string[] { "*" });
 
         /// <summary>
         /// See if a script is allowed to be run.
@@ -265,31 +248,20 @@ namespace System.Management.Automation
         /// <returns>true if script is allowed</returns>
         internal SessionStateEntryVisibility CheckScriptVisibility(string scriptPath)
         {
-            return checkPathVisibility(_scripts, scriptPath);
+            return checkPathVisibility(Scripts, scriptPath);
         }
 
         /// <summary>
         /// The list of appications that are allowed to be run. If the name "*"
         /// is in the list, then all applications can be run. (This is the default.)
         /// </summary>
-        public List<string> Applications
-        {
-            get { return _applications; }
-        }
-        private List<String> _applications = new List<string>(new string[] { "*" });
+        public List<string> Applications { get; } = new List<string>(new string[] { "*" });
 
 
         /// <summary>
         /// List of functions/filters to export from this session state object...
         /// </summary>
-        internal List<CmdletInfo> ExportedCmdlets
-        {
-            get
-            {
-                return _exportedCmdlets;
-            }
-        }
-        private List<CmdletInfo> _exportedCmdlets = new List<CmdletInfo>();
+        internal List<CmdletInfo> ExportedCmdlets { get; } = new List<CmdletInfo>();
 
         /// <summary>
         /// Defines the default command visibility for this session state. Binding an InitialSessionState instance
@@ -348,7 +320,7 @@ namespace System.Management.Automation
             // $Host
             PSVariable v = new PSVariable(
                     SpecialVariables.Host,
-                    _context.EngineHostInterface,
+                    ExecutionContext.EngineHostInterface,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.PSHostDescription);
             this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
@@ -363,7 +335,7 @@ namespace System.Management.Automation
 
             // $ExecutionContext
             v = new PSVariable(SpecialVariables.ExecutionContext,
-                    _context.EngineIntrinsics,
+                    ExecutionContext.EngineIntrinsics,
                     ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
                     RunspaceInit.ExecutionContextDescription);
             this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
@@ -400,7 +372,7 @@ namespace System.Management.Automation
             this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
 
             // $ShellId - if there is no runspace config, use the default string
-            string shellId = _context.ShellID;
+            string shellId = ExecutionContext.ShellID;
 
             v = new PSVariable(SpecialVariables.ShellId, shellId,
                    ScopedItemOptions.Constant | ScopedItemOptions.AllScope,
@@ -435,7 +407,7 @@ namespace System.Management.Automation
         {
             // $Console - set the console file for this shell, if there is one, "" otherwise...
             string consoleFileName = string.Empty;
-            RunspaceConfigForSingleShell rcss = _context.RunspaceConfiguration as RunspaceConfigForSingleShell;
+            RunspaceConfigForSingleShell rcss = ExecutionContext.RunspaceConfiguration as RunspaceConfigForSingleShell;
             if (rcss != null && rcss.ConsoleInfo != null && !string.IsNullOrEmpty(rcss.ConsoleInfo.Filename))
             {
                 consoleFileName = rcss.ConsoleInfo.Filename;
@@ -503,7 +475,7 @@ namespace System.Management.Automation
         /// <returns>True if application is permitted.</returns>
         internal SessionStateEntryVisibility CheckApplicationVisibility(string applicationPath)
         {
-            return checkPathVisibility(_applications, applicationPath);
+            return checkPathVisibility(Applications, applicationPath);
         }
 
         private SessionStateEntryVisibility checkPathVisibility(List<string> list, string path)
@@ -552,7 +524,7 @@ namespace System.Management.Automation
         /// 
         internal void RunspaceClosingNotification()
         {
-            if (this != _context.TopLevelSessionState && Providers.Count > 0)
+            if (this != ExecutionContext.TopLevelSessionState && Providers.Count > 0)
             {
                 // Remove all providers at the top level...
 
@@ -687,7 +659,7 @@ namespace System.Management.Automation
             // Log a provider health event
 
             MshLog.LogProviderHealthEvent(
-                _context,
+                ExecutionContext,
                 provider.Name,
                 pie,
                 Severity.Warning);

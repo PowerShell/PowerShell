@@ -1091,19 +1091,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class LogContextCache
     {
-        private string _user = null;
-
-        internal string User
-        {
-            get
-            {
-                return _user;
-            }
-            set
-            {
-                _user = value;
-            }
-        }
+        internal string User { get; set; } = null;
     }
 
     #region Command State and Provider State

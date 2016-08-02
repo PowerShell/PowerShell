@@ -325,11 +325,7 @@ namespace System.Management.Automation
         /// is used by PriorityReceivedDataCollection (remoting) to process incoming data from the
         /// remote end. A value of Null means that the max memory is unlimited.
         /// </summary>
-        internal Nullable<int> MaximumAllowedMemory
-        {
-            set { _maxAllowedMemory = value; }
-            get { return _maxAllowedMemory; }
-        }
+        internal Nullable<int> MaximumAllowedMemory { set; get; }
 
         /// <summary>
         /// Logs that memory used by deserialized objects is not related to the size of input xml.
@@ -343,11 +339,11 @@ namespace System.Management.Automation
                 return;
             }
 
-            if (_maxAllowedMemory.HasValue)
+            if (MaximumAllowedMemory.HasValue)
             {
-                if (amountOfExtraMemory > (_maxAllowedMemory.Value - _totalDataProcessedSoFar))
+                if (amountOfExtraMemory > (MaximumAllowedMemory.Value - _totalDataProcessedSoFar))
                 {
-                    string message = StringUtil.Format(Serialization.DeserializationMemoryQuota, ((double)_maxAllowedMemory.Value) / (1 << 20),
+                    string message = StringUtil.Format(Serialization.DeserializationMemoryQuota, ((double)MaximumAllowedMemory.Value) / (1 << 20),
                                                        ConfigurationDataFromXML.MAXRCVDOBJSIZETOKEN_CamelCase,
                                                        ConfigurationDataFromXML.MAXRCVDCMDSIZETOKEN_CamelCase);
                     throw new XmlException(message);
@@ -358,7 +354,6 @@ namespace System.Management.Automation
         }
 
         private int _totalDataProcessedSoFar;
-        private Nullable<int> _maxAllowedMemory;
 
         internal readonly DeserializationOptions options;
         internal readonly PSRemotingCryptoHelper cryptoHelper;
@@ -4019,11 +4014,7 @@ namespace System.Management.Automation
 
         #region Getting XmlReaderSettings
 
-        static private readonly XmlReaderSettings s_xmlReaderSettingsForCliXml = GetXmlReaderSettingsForCliXml();
-        static internal XmlReaderSettings XmlReaderSettingsForCliXml
-        {
-            get { return s_xmlReaderSettingsForCliXml; }
-        }
+        static internal XmlReaderSettings XmlReaderSettingsForCliXml { get; } = GetXmlReaderSettingsForCliXml();
 
         static private XmlReaderSettings GetXmlReaderSettingsForCliXml()
         {
@@ -4050,11 +4041,7 @@ namespace System.Management.Automation
             return xrs;
         }
 
-        static private readonly XmlReaderSettings s_xmlReaderSettingsForUntrustedXmlDocument = GetXmlReaderSettingsForUntrustedXmlDocument();
-        static internal XmlReaderSettings XmlReaderSettingsForUntrustedXmlDocument
-        {
-            get { return s_xmlReaderSettingsForUntrustedXmlDocument; }
-        }
+        static internal XmlReaderSettings XmlReaderSettingsForUntrustedXmlDocument { get; } = GetXmlReaderSettingsForUntrustedXmlDocument();
 
         static private XmlReaderSettings GetXmlReaderSettingsForUntrustedXmlDocument()
         {
@@ -4948,11 +4935,11 @@ namespace System.Management.Automation
         /// <param name="deserializer">TypeDeserializerDelegate for deserializing the type</param>
         internal TypeSerializationInfo(Type type, string itemTag, string propertyTag, TypeSerializerDelegate serializer, TypeDeserializerDelegate deserializer)
         {
-            _type = type;
-            _serializer = serializer;
-            _deserializer = deserializer;
-            _itemTag = itemTag;
-            _propertyTag = propertyTag;
+            Type = type;
+            Serializer = serializer;
+            Deserializer = deserializer;
+            ItemTag = itemTag;
+            PropertyTag = propertyTag;
         }
 
         #region properties
@@ -4960,78 +4947,32 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the type for which this TypeSerializationInfo is created.
         /// </summary>
-        internal Type Type
-        {
-            get
-            {
-                return _type;
-            }
-        }
+        internal Type Type { get; }
 
         /// <summary>
         /// Get the item tag for this type
         /// </summary>
-        internal string ItemTag
-        {
-            get
-            {
-                return _itemTag;
-            }
-        }
+        internal string ItemTag { get; }
 
         /// <summary>
         /// Get the Property tag for this type
         /// </summary>
-        internal string PropertyTag
-        {
-            get
-            {
-                return _propertyTag;
-            }
-        }
+        internal string PropertyTag { get; }
+
         /// <summary>
         /// Gets the delegate to serialize this type
         /// </summary>
-        internal TypeSerializerDelegate Serializer
-        {
-            get
-            {
-                return _serializer;
-            }
-        }
+        internal TypeSerializerDelegate Serializer { get; }
+
         /// <summary>
         /// Gets the delegate to deserialize this type
         /// </summary>
-        internal TypeDeserializerDelegate Deserializer
-        {
-            get
-            {
-                return _deserializer;
-            }
-        }
+        internal TypeDeserializerDelegate Deserializer { get; }
+
         #endregion properties
 
         #region private
-        /// <summary>
-        /// Type for which this entry is created
-        /// </summary>
-        private readonly Type _type;
-        /// <summary>
-        /// ItemTag for the type
-        /// </summary>
-        private readonly string _itemTag;
-        /// <summary>
-        /// PropertyTag for the type
-        /// </summary>
-        private readonly string _propertyTag;
-        /// <summary>
-        /// TypeSerializerDelegate for serializing the type
-        /// </summary>
-        private readonly TypeSerializerDelegate _serializer;
-        /// <summary>
-        /// TypeDeserializerDelegate for deserializing the type
-        /// </summary>
-        private readonly TypeDeserializerDelegate _deserializer;
+
         #endregion private
     }
 

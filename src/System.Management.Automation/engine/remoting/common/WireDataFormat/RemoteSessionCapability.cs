@@ -23,27 +23,13 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal class RemoteSessionCapability
     {
-        private Version _psversion;
-        private Version _serversion;
-        private Version _protocolVersion;
-        internal Version ProtocolVersion
-        {
-            get
-            {
-                return _protocolVersion;
-            }
-            set
-            {
-                _protocolVersion = value;
-            }
-        }
-        internal Version PSVersion { get { return _psversion; } }
-        internal Version SerializationVersion { get { return _serversion; } }
-        private RemotingDestination _remotingDestination;
-        internal RemotingDestination RemotingDestination { get { return _remotingDestination; } }
+        internal Version ProtocolVersion { get; set; }
+
+        internal Version PSVersion { get; }
+        internal Version SerializationVersion { get; }
+        internal RemotingDestination RemotingDestination { get; }
 
 #if !CORECLR // TimeZone Not In CoreCLR
-        private TimeZone _timeZone;
 #endif
 
         private static byte[] s_timeZoneInByteFormat;
@@ -55,13 +41,13 @@ namespace System.Management.Automation.Remoting
         /// </remarks>
         internal RemoteSessionCapability(RemotingDestination remotingDestination)
         {
-            _protocolVersion = RemotingConstants.ProtocolVersion;
+            ProtocolVersion = RemotingConstants.ProtocolVersion;
             // PS Version 3 is fully backward compatible with Version 2
             // In the remoting protocol sense, nothing is changing between PS3 and PS2
             // For negotiation to succeed with old client/servers we have to use 2.
-            _psversion = new Version(2, 0); //PSVersionInfo.PSVersion;
-            _serversion = PSVersionInfo.SerializationVersion;
-            _remotingDestination = remotingDestination;
+            PSVersion = new Version(2, 0); //PSVersionInfo.PSVersion;
+            SerializationVersion = PSVersionInfo.SerializationVersion;
+            RemotingDestination = remotingDestination;
         }
 
         internal RemoteSessionCapability(RemotingDestination remotingDestination,
@@ -69,10 +55,10 @@ namespace System.Management.Automation.Remoting
             Version psVersion,
             Version serVersion)
         {
-            _protocolVersion = protocolVersion;
-            _psversion = psVersion;
-            _serversion = serVersion;
-            _remotingDestination = remotingDestination;
+            ProtocolVersion = protocolVersion;
+            PSVersion = psVersion;
+            SerializationVersion = serVersion;
+            RemotingDestination = remotingDestination;
         }
 
         /// <summary>
@@ -151,11 +137,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Gets the TimeZone of the destination machine. This may be null
         /// </summary>
-        internal TimeZone TimeZone
-        {
-            get { return _timeZone; }
-            set { _timeZone = value; }
-        }
+        internal TimeZone TimeZone { get; set; }
 #endif
 
     }
@@ -358,33 +340,14 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Host default data.
         /// </summary>
-        private HostDefaultData _hostDefaultData;
-
-        /// <summary>
-        /// Host default data.
-        /// </summary>
-        internal HostDefaultData HostDefaultData
-        {
-            get
-            {
-                return _hostDefaultData;
-            }
-        }
-
-        /// <summary>
-        /// Is host null.
-        /// </summary>
-        private bool _isHostNull;
+        internal HostDefaultData HostDefaultData { get; }
 
         /// <summary>
         /// Is host null.
         /// </summary>
         internal bool IsHostNull
         {
-            get
-            {
-                return _isHostNull;
-            }
+            get { return _isHostNull; }
         }
 
         /// <summary>
@@ -408,6 +371,8 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         private bool _isHostRawUINull;
 
+        private readonly bool _isHostNull;
+
         /// <summary>
         /// Is host raw ui null.
         /// </summary>
@@ -422,23 +387,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Use runspace host.
         /// </summary>
-        private bool _useRunspaceHost;
-
-        /// <summary>
-        /// Use runspace host.
-        /// </summary>
-        internal bool UseRunspaceHost
-        {
-            get
-            {
-                return _useRunspaceHost;
-            }
-
-            set
-            {
-                _useRunspaceHost = value;
-            }
-        }
+        internal bool UseRunspaceHost { get; set; }
 
         /// <summary>
         /// Constructor for HostInfo.
@@ -451,7 +400,7 @@ namespace System.Management.Automation.Remoting
             // If raw UI is non-null then get the host-info object.
             if (!_isHostUINull && !_isHostRawUINull)
             {
-                _hostDefaultData = HostDefaultData.Create(host.UI.RawUI);
+                HostDefaultData = HostDefaultData.Create(host.UI.RawUI);
             }
         }
 

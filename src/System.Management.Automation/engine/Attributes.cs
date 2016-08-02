@@ -344,43 +344,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets and sets the cmdlet default parameter set
         /// </summary>
-        public string DefaultParameterSetName
-        {
-            get { return _defaultParameterSetName; }
-            set
-            {
-                _defaultParameterSetName = value;
-            }
-        }
-        private string _defaultParameterSetName;
+        public string DefaultParameterSetName { get; set; }
 
         /// <summary>
         /// Gets and sets a Boolean value that indicates the Cmdlet supports ShouldProcess. By default
         /// the value is false, meaning the cmdlet doesn't support ShouldProcess.
         /// </summary>
-        public bool SupportsShouldProcess
-        {
-            get { return _supportsShouldProcess; }
-            set
-            {
-                _supportsShouldProcess = value;
-            }
-        }
-        private bool _supportsShouldProcess = false;
+        public bool SupportsShouldProcess { get; set; } = false;
 
         /// <summary>
         /// Gets and sets a Boolean value that indicates the Cmdlet supports Paging. By default
         /// the value is false, meaning the cmdlet doesn't support Paging.
         /// </summary>
-        public bool SupportsPaging
-        {
-            get { return _supportsPaging; }
-            set
-            {
-                _supportsPaging = value;
-            }
-        }
-        private bool _supportsPaging = false;
+        public bool SupportsPaging { get; set; } = false;
 
         /// <summary>
         /// Gets and sets a Boolean value that indicates the Cmdlet supports Transactions. By default
@@ -408,15 +384,7 @@ namespace System.Management.Automation
         /// should be confirmed.  This should only be used when
         /// SupportsShouldProcess is specified.
         /// </summary>
-        public ConfirmImpact ConfirmImpact
-        {
-            get { return _confirmImpact; }
-            set
-            {
-                _confirmImpact = value;
-            }
-        }
-        private ConfirmImpact _confirmImpact = ConfirmImpact.Medium;
+        public ConfirmImpact ConfirmImpact { get; set; } = ConfirmImpact.Medium;
 
         /// <summary>
         /// Gets and sets a HelpUri value that indicates
@@ -425,29 +393,13 @@ namespace System.Management.Automation
         /// is specified.
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
-        public string HelpUri
-        {
-            get { return _helpUri; }
-            set
-            {
-                _helpUri = value;
-            }
-        }
-        private string _helpUri = String.Empty;
+        public string HelpUri { get; set; } = String.Empty;
 
         /// <summary>
         /// Gets and sets the RemotingBehavior value that declares how this cmdlet should interact
         /// with ambient remoting.
         /// </summary>
-        public RemotingCapability RemotingCapability
-        {
-            get { return _remotingCapability; }
-            set
-            {
-                _remotingCapability = value;
-            }
-        }
-        private RemotingCapability _remotingCapability = RemotingCapability.PowerShell;
+        public RemotingCapability RemotingCapability { get; set; } = RemotingCapability.PowerShell;
     }
 
     /// <summary>
@@ -456,18 +408,15 @@ namespace System.Management.Automation
     [AttributeUsage(AttributeTargets.Class)]
     public sealed class CmdletAttribute : CmdletCommonMetadataAttribute
     {
-        private string _nounName;
-        private string _verbName;
-
         /// <summary>
         /// Gets the cmdlet noun
         /// </summary>
-        public string NounName { get { return _nounName; } }
+        public string NounName { get; }
 
         /// <summary>
         /// Gets the cmdlet verb
         /// </summary>
-        public string VerbName { get { return _verbName; } }
+        public string VerbName { get; }
 
         /// <summary>
         /// Initializes a new instance of the CmdletAttribute class
@@ -488,8 +437,8 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("verbName");
             }
 
-            _nounName = nounName;
-            _verbName = verbName;
+            NounName = nounName;
+            VerbName = verbName;
         }
     }
 
@@ -505,12 +454,7 @@ namespace System.Management.Automation
         /// parameters if the script hasn't already specified multiple parameter sets or specified positions
         /// explicitly via the <see cref="ParameterAttribute"/>.
         /// </summary>
-        public bool PositionalBinding
-        {
-            get { return _positionalBinding; }
-            set { _positionalBinding = value; }
-        }
-        private bool _positionalBinding = true;
+        public bool PositionalBinding { get; set; } = true;
     }
 
     /// <summary>
@@ -670,11 +614,8 @@ namespace System.Management.Automation
         public ParameterAttribute()
         {
         }
-        private int _position = int.MinValue;
-        private string _parameterSetName = ParameterAttribute.AllParameterSets;
-        private bool _mandatory = false;
 
-        private bool _valueFromRemainingArguments = false;
+        private string _parameterSetName = ParameterAttribute.AllParameterSets;
 
         private string _helpMessage;
         private string _helpMessageBaseName;
@@ -683,14 +624,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets and sets the parameter position. If not set, the parameter is named.
         /// </summary>
-        public int Position
-        {
-            get { return _position; }
-            set
-            {
-                _position = value;
-            }
-        }
+        public int Position { get; set; } = int.MinValue;
 
         /// <summary>
         /// Gets and sets the name of the parameter set this parameter belongs to. When 
@@ -713,57 +647,27 @@ namespace System.Management.Automation
         /// Gets and sets a flag specifying if this parameter is Mandatory. When 
         /// it is not specified, false is assumed and the parameter is considered optional.
         /// </summary>
-        public bool Mandatory
-        {
-            get { return _mandatory; }
-            set
-            {
-                _mandatory = value;
-            }
-        }
+        public bool Mandatory { get; set; } = false;
 
-        private bool _valueFromPipeline;
         /// <summary>
         /// Gets and sets a flag that specifies that this parameter can take values 
         /// from the incoming pipeline object. When it is not specified, false is assumed.
         /// </summary>
-        public bool ValueFromPipeline
-        {
-            get { return _valueFromPipeline; }
-            set
-            {
-                _valueFromPipeline = value;
-            }
-        }
+        public bool ValueFromPipeline { get; set; }
 
-        private bool _valueFromPipelineByPropertyName;
         /// <summary>
         /// Gets and sets a flag that specifies that this parameter can take values from a property
         /// in the incoming pipeline object with the same name as the parameter. When it 
         /// is not specified, false is assumed.
         /// </summary>
-        public bool ValueFromPipelineByPropertyName
-        {
-            get { return _valueFromPipelineByPropertyName; }
-            set
-            {
-                _valueFromPipelineByPropertyName = value;
-            }
-        }
+        public bool ValueFromPipelineByPropertyName { get; set; }
 
         /// <summary>
         /// Gets and sets a flag that specifies that the remaining command line parameters
         /// should be associated with this parameter in the form of an array. When it 
         /// is not specified, false is assumed.
         /// </summary>
-        public bool ValueFromRemainingArguments
-        {
-            get { return _valueFromRemainingArguments; }
-            set
-            {
-                _valueFromRemainingArguments = value;
-            }
-        }
+        public bool ValueFromRemainingArguments { get; set; } = false;
 
         /// <summary>
         /// Gets and sets a short description for this parameter, suitable for presentation as a tool tip.
@@ -920,17 +824,15 @@ namespace System.Management.Automation
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class ValidateLengthAttribute : ValidateEnumeratedArgumentsAttribute
     {
-        private int _minLength;
         /// <summary>
         /// Gets the attribute's minimum length
         /// </summary>
-        public int MinLength { get { return _minLength; } }
+        public int MinLength { get; }
 
-        private int _maxLength;
         /// <summary>
         /// Gets the attribute's maximum length
         /// </summary>
-        public int MaxLength { get { return _maxLength; } }
+        public int MaxLength { get; }
 
         /// <summary>
         /// Validates that the length of each parameter argument's Length falls in the range
@@ -951,18 +853,18 @@ namespace System.Management.Automation
 
             int len = objectString.Length;
 
-            if (len < _minLength)
+            if (len < MinLength)
             {
                 throw new ValidationMetadataException("ValidateLengthMinLengthFailure",
                     null, Metadata.ValidateLengthMinLengthFailure,
-                    _minLength, len);
+                    MinLength, len);
             }
 
-            if (len > _maxLength)
+            if (len > MaxLength)
             {
                 throw new ValidationMetadataException("ValidateLengthMaxLengthFailure",
                     null, Metadata.ValidateLengthMaxLengthFailure,
-                    _maxLength, len);
+                    MaxLength, len);
             }
         }
 
@@ -989,8 +891,8 @@ namespace System.Management.Automation
                 throw new ValidationMetadataException("ValidateLengthMaxLengthSmallerThanMinLength",
                     null, Metadata.ValidateLengthMaxLengthSmallerThanMinLength);
             }
-            _minLength = minLength;
-            _maxLength = maxLength;
+            MinLength = minLength;
+            MaxLength = maxLength;
         }
     }
 
@@ -1001,19 +903,18 @@ namespace System.Management.Automation
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class ValidateRangeAttribute : ValidateEnumeratedArgumentsAttribute
     {
-        private object _minRange;
-
         /// <summary>
         /// Gets the attribute's minimum range
         /// </summary>
-        public object MinRange { get { return _minRange; } }
+        public object MinRange { get; }
+
         private IComparable _minComparable;
 
-        private object _maxRange;
         /// <summary>
         /// Gets the attribute's maximum range
         /// </summary>
-        public object MaxRange { get { return _maxRange; } }
+        public object MaxRange { get; }
+
         private IComparable _maxComparable;
 
         /// <summary>
@@ -1061,7 +962,7 @@ namespace System.Management.Automation
                 {
                     throw new ValidationMetadataException("ValidationRangeElementType",
                         null, Metadata.ValidateRangeElementType,
-                        element.GetType().Name, _minRange.GetType().Name);
+                        element.GetType().Name, MinRange.GetType().Name);
                 }
             }
 
@@ -1070,14 +971,14 @@ namespace System.Management.Automation
             {
                 throw new ValidationMetadataException("ValidateRangeTooSmall",
                     null, Metadata.ValidateRangeSmallerThanMinRangeFailure,
-                    element.ToString(), _minRange.ToString());
+                    element.ToString(), MinRange.ToString());
             }
 
             if (_maxComparable.CompareTo(element) < 0)
             {
                 throw new ValidationMetadataException("ValidateRangeTooBig",
                     null, Metadata.ValidateRangeGreaterThanMaxRangeFailure,
-                    element.ToString(), _maxRange.ToString());
+                    element.ToString(), MaxRange.ToString());
             }
         }
 
@@ -1150,8 +1051,8 @@ namespace System.Management.Automation
                 throw new ValidationMetadataException("MaxRangeSmallerThanMinRange",
                     null, Metadata.ValidateRangeMaxRangeSmallerThanMinRange);
             }
-            _minRange = minRange;
-            _maxRange = maxRange;
+            MinRange = minRange;
+            MaxRange = maxRange;
         }
 
         private static Type GetCommonType(Type minType, Type maxType)
@@ -1202,20 +1103,15 @@ namespace System.Management.Automation
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class ValidatePatternAttribute : ValidateEnumeratedArgumentsAttribute
     {
-        private string _regexPattern;
         /// <summary>
         /// Gets the Regex pattern to be used in the validation
         /// </summary>
-        public string RegexPattern
-        {
-            get { return _regexPattern; }
-        }
+        public string RegexPattern { get; }
 
-        private RegexOptions _options = RegexOptions.IgnoreCase;
         /// <summary>
         /// Gets or sets the Regex options to be used in the validation
         /// </summary>
-        public RegexOptions Options { set { _options = value; } get { return _options; } }
+        public RegexOptions Options { set; get; } = RegexOptions.IgnoreCase;
 
         /// <summary>
         /// Validates that each parameter argument matches the RegexPattern
@@ -1236,13 +1132,13 @@ namespace System.Management.Automation
 
             string objectString = element.ToString();
             Regex regex = null;
-            regex = new Regex(_regexPattern, _options);
+            regex = new Regex(RegexPattern, Options);
             Match match = regex.Match(objectString);
             if (!match.Success)
             {
                 throw new ValidationMetadataException("ValidatePatternFailure",
                         null, Metadata.ValidatePatternFailure,
-                        objectString, _regexPattern);
+                        objectString, RegexPattern);
             }
         }
 
@@ -1258,7 +1154,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("regexPattern");
             }
 
-            _regexPattern = regexPattern;
+            RegexPattern = regexPattern;
         }
     }
 
@@ -1267,15 +1163,10 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class ValidateScriptAttribute : ValidateEnumeratedArgumentsAttribute
     {
-        private ScriptBlock _scriptBlock;
-
         /// <summary>
         /// Gets the scriptblock to be used in the validation
         /// </summary>
-        public ScriptBlock ScriptBlock
-        {
-            get { return _scriptBlock; }
-        }
+        public ScriptBlock ScriptBlock { get; }
 
         /// <summary>
         /// Validates that each parameter argument matches the scriptblock
@@ -1292,7 +1183,7 @@ namespace System.Management.Automation
                         Metadata.ValidateNotNullFailure);
             }
 
-            object result = _scriptBlock.DoInvokeReturnAsIs(
+            object result = ScriptBlock.DoInvokeReturnAsIs(
                 useLocalScope: true,
                 errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
                 dollarUnder: LanguagePrimitives.AsPSObjectOrNull(element),
@@ -1304,7 +1195,7 @@ namespace System.Management.Automation
             {
                 throw new ValidationMetadataException("ValidateScriptFailure",
                         null, Metadata.ValidateScriptFailure,
-                        element, _scriptBlock);
+                        element, ScriptBlock);
             }
         }
 
@@ -1320,7 +1211,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("scriptBlock");
             }
 
-            _scriptBlock = scriptBlock;
+            ScriptBlock = scriptBlock;
         }
     }
 
@@ -1330,16 +1221,15 @@ namespace System.Management.Automation
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class ValidateCountAttribute : ValidateArgumentsAttribute
     {
-        private int _minLength;
-        private int _maxLength;
         /// <summary>
         /// Gets the minimum length of this attribute
         /// </summary>
-        public int MinLength { get { return _minLength; } }
+        public int MinLength { get; }
+
         /// <summary>
         /// Gets the maximum length of this attribute
         /// </summary>
-        public int MaxLength { get { return _maxLength; } }
+        public int MaxLength { get; }
 
         /// <summary>
         /// Validates that the parameter argument count is in the specified range
@@ -1394,18 +1284,18 @@ namespace System.Management.Automation
                     null, Metadata.ValidateCountNotInArray);
             }
 
-            if (len < _minLength)
+            if (len < MinLength)
             {
                 throw new ValidationMetadataException("ValidateCountSmallerThanMin",
                     null, Metadata.ValidateCountMinLengthFailure,
-                    _minLength, len);
+                    MinLength, len);
             }
 
-            if (len > _maxLength)
+            if (len > MaxLength)
             {
                 throw new ValidationMetadataException("ValidateCountGreaterThanMax",
                     null, Metadata.ValidateCountMaxLengthFailure,
-                    _maxLength, len);
+                    MaxLength, len);
             }
         }
 
@@ -1433,8 +1323,8 @@ namespace System.Management.Automation
                 throw new ValidationMetadataException("ValidateRangeMaxLengthSmallerThanMinLength",
                     null, Metadata.ValidateCountMaxLengthSmallerThanMinLength);
             }
-            _minLength = minLength;
-            _maxLength = maxLength;
+            MinLength = minLength;
+            MaxLength = maxLength;
         }
     }
 
@@ -1445,17 +1335,12 @@ namespace System.Management.Automation
     public sealed class ValidateSetAttribute : ValidateEnumeratedArgumentsAttribute
     {
         private string[] _validValues;
-        private bool _ignoreCase = true;
 
         /// <summary>
         /// Gets a flag specifying if we should ignore the case when performing string comparison. The 
         /// default is true.
         /// </summary>
-        public bool IgnoreCase
-        {
-            get { return _ignoreCase; }
-            set { _ignoreCase = value; }
-        }
+        public bool IgnoreCase { get; set; } = true;
 
         /// <summary>
         /// Gets the values in the set
@@ -1493,7 +1378,7 @@ namespace System.Management.Automation
 
                 if (CultureInfo.InvariantCulture.
                         CompareInfo.Compare(setString, objString,
-                                            _ignoreCase
+                                            IgnoreCase
                                                 ? CompareOptions.IgnoreCase
                                                 : CompareOptions.None) == 0)
 

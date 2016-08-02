@@ -28,7 +28,7 @@ namespace System.Management.Automation
     {
         internal PSToken(Token token)
         {
-            _type = GetPSTokenType(token);
+            Type = GetPSTokenType(token);
             _extent = token.Extent;
             if (token is StringToken)
             {
@@ -42,7 +42,7 @@ namespace System.Management.Automation
 
         internal PSToken(IScriptExtent extent)
         {
-            _type = PSTokenType.Position;
+            Type = PSTokenType.Position;
             _extent = extent;
         }
 
@@ -98,18 +98,10 @@ namespace System.Management.Automation
             return s_tokenKindMapping[(int)token.Kind];
         }
 
-        private PSTokenType _type;
-
         /// <summary>
         /// Token type. 
         /// </summary>
-        public PSTokenType Type
-        {
-            get
-            {
-                return _type;
-            }
-        }
+        public PSTokenType Type { get; }
 
         private readonly static PSTokenType[] s_tokenKindMapping = new PSTokenType[]
         {

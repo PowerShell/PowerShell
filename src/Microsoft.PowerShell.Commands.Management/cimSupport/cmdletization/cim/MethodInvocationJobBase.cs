@@ -26,11 +26,10 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             Dbg.Assert(methodSubject != null, "Caller should verify methodSubject != null");
 
             _passThru = passThru;
-            _methodSubject = methodSubject;
+            MethodSubject = methodSubject;
             _methodInvocationInfo = methodInvocationInfo;
         }
 
-        private readonly string _methodSubject;
         private readonly bool _passThru;
         private readonly MethodInvocationInfo _methodInvocationInfo;
 
@@ -108,10 +107,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             return outParameters;
         }
 
-        internal string MethodSubject
-        {
-            get { return _methodSubject; }
-        }
+        internal string MethodSubject { get; }
 
         internal bool ShouldProcess()
         {

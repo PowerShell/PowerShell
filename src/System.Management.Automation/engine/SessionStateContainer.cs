@@ -4598,7 +4598,7 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    providerInstance = _context.SessionState.Internal.GetProviderInstance("FileSystem");
+                    providerInstance = ExecutionContext.SessionState.Internal.GetProviderInstance("FileSystem");
                     providerPaths = new Collection<string>();
                     providerPaths.Add(path);
                 }
@@ -5042,7 +5042,7 @@ namespace System.Management.Automation
                 if (fileSystemProviders.Count > 0)
                 {
                     providerPath = path;
-                    providerInstance = _context.EngineSessionState.GetProviderInstance(
+                    providerInstance = ExecutionContext.EngineSessionState.GetProviderInstance(
                         fileSystemProviders[0]);
                 }
             }

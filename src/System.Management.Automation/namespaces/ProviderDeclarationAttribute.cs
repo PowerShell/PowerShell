@@ -54,8 +54,8 @@ namespace System.Management.Automation.Provider
                     providerName);
             }
 
-            _provider = providerName;
-            _providerCapabilities = providerCapabilities;
+            ProviderName = providerName;
+            ProviderCapabilities = providerCapabilities;
         } // constructor
 
         private char[] _illegalCharacters = new char[] { ':', '\\', '[', ']', '?', '*' };
@@ -63,30 +63,14 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// Gets the name of the provider.
         /// </summary>
-        public string ProviderName
-        {
-            get
-            {
-                return _provider;
-            }
-        } // Provider
-
+        public string ProviderName { get; } = String.Empty;
 
         /// <summary>
         /// Gets the flags that represent the capabilities of the provider.
         /// </summary>
-        public ProviderCapabilities ProviderCapabilities
-        {
-            get
-            {
-                return _providerCapabilities;
-            }
-        } // FriendlyName
+        public ProviderCapabilities ProviderCapabilities { get; } = ProviderCapabilities.None;
 
         #region private data
-
-        private string _provider = String.Empty;
-        private ProviderCapabilities _providerCapabilities = ProviderCapabilities.None;
 
         #endregion private data
     } // class CmdletProviderAttribute

@@ -43,7 +43,6 @@ namespace System.Management.Automation
     {
         #region constructor
 
-        private string _shellId;
         /// <summary>
         /// Creates an instance of authorization manager using specified shellID
         /// </summary>
@@ -51,7 +50,7 @@ namespace System.Management.Automation
         /// </param>
         public AuthorizationManager(string shellId)
         {
-            _shellId = shellId;
+            ShellId = shellId;
         }
 
         #endregion constructor
@@ -160,13 +159,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the shell ID from the authorization manager...
         /// </summary>
-        internal string ShellId
-        {
-            get
-            {
-                return _shellId;
-            }
-        }
+        internal string ShellId { get; }
 
         #endregion methods to use internally
 

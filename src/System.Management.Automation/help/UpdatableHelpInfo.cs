@@ -25,41 +25,19 @@ namespace System.Management.Automation.Help
             Debug.Assert(version != null);
             Debug.Assert(culture != null);
 
-            _culture = culture;
-            _version = version;
+            Culture = culture;
+            Version = version;
         }
 
         /// <summary>
         /// Culture version
         /// </summary>
-        internal Version Version
-        {
-            get
-            {
-                return _version;
-            }
-            set
-            {
-                _version = value;
-            }
-        }
-        private Version _version;
+        internal Version Version { get; set; }
 
         /// <summary>
         /// Supported culture
         /// </summary>
-        internal CultureInfo Culture
-        {
-            get
-            {
-                return _culture;
-            }
-            set
-            {
-                _culture = value;
-            }
-        }
-        private CultureInfo _culture;
+        internal CultureInfo Culture { get; set; }
     }
 
     /// <summary>
@@ -76,46 +54,25 @@ namespace System.Management.Automation.Help
         {
             Debug.Assert(cultures != null);
 
-            _unresolvedUri = unresolvedUri;
-            _helpContentUriCollection = new Collection<UpdatableHelpUri>();
-            _updatableHelpItems = cultures;
+            UnresolvedUri = unresolvedUri;
+            HelpContentUriCollection = new Collection<UpdatableHelpUri>();
+            UpdatableHelpItems = cultures;
         }
 
         /// <summary>
         /// Unresolved URI
         /// </summary>
-        internal string UnresolvedUri
-        {
-            get
-            {
-                return _unresolvedUri;
-            }
-        }
-        private string _unresolvedUri;
+        internal string UnresolvedUri { get; }
 
         /// <summary>
         /// Link to the actual help content
         /// </summary>
-        internal Collection<UpdatableHelpUri> HelpContentUriCollection
-        {
-            get
-            {
-                return _helpContentUriCollection;
-            }
-        }
-        private Collection<UpdatableHelpUri> _helpContentUriCollection;
+        internal Collection<UpdatableHelpUri> HelpContentUriCollection { get; }
 
         /// <summary>
         /// Supported UI cultures
         /// </summary>
-        internal CultureSpecificUpdatableHelp[] UpdatableHelpItems
-        {
-            get
-            {
-                return _updatableHelpItems;
-            }
-        }
-        private CultureSpecificUpdatableHelp[] _updatableHelpItems;
+        internal CultureSpecificUpdatableHelp[] UpdatableHelpItems { get; }
 
         /// <summary>
         /// Checks if the other HelpInfo has a newer version
@@ -149,7 +106,7 @@ namespace System.Management.Automation.Help
         {
             Debug.Assert(culture != null);
 
-            foreach (CultureSpecificUpdatableHelp updatableHelpItem in _updatableHelpItems)
+            foreach (CultureSpecificUpdatableHelp updatableHelpItem in UpdatableHelpItems)
             {
                 if (String.Compare(updatableHelpItem.Culture.Name, culture.Name,
                     StringComparison.OrdinalIgnoreCase) == 0)
@@ -167,18 +124,18 @@ namespace System.Management.Automation.Help
         /// <returns>supported cultures in string</returns>
         internal string GetSupportedCultures()
         {
-            if (_updatableHelpItems.Length == 0)
+            if (UpdatableHelpItems.Length == 0)
             {
                 return StringUtil.Format(HelpDisplayStrings.None);
             }
 
             StringBuilder sb = new StringBuilder();
 
-            for (int i = 0; i < _updatableHelpItems.Length; i++)
+            for (int i = 0; i < UpdatableHelpItems.Length; i++)
             {
-                sb.Append(_updatableHelpItems[i].Culture.Name);
+                sb.Append(UpdatableHelpItems[i].Culture.Name);
 
-                if (i != (_updatableHelpItems.Length - 1))
+                if (i != (UpdatableHelpItems.Length - 1))
                 {
                     sb.Append(" | ");
                 }
@@ -194,7 +151,7 @@ namespace System.Management.Automation.Help
         /// <returns>culture version</returns>
         internal Version GetCultureVersion(CultureInfo culture)
         {
-            foreach (CultureSpecificUpdatableHelp updatableHelpItem in _updatableHelpItems)
+            foreach (CultureSpecificUpdatableHelp updatableHelpItem in UpdatableHelpItems)
             {
                 if (String.Compare(updatableHelpItem.Culture.Name, culture.Name,
                     StringComparison.OrdinalIgnoreCase) == 0)

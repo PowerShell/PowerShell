@@ -47,20 +47,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <param name="parentContextInStack">parent context in the stack, it can be null</param>
             internal OutputContext(OutputContext parentContextInStack)
             {
-                _parentContext = parentContextInStack;
+                ParentContext = parentContextInStack;
             }
-
-            /// <summary>
-            /// accessor for the parent context field
-            /// </summary>
-            internal OutputContext ParentContext { get { return _parentContext; } }
 
             /// <summary>
             /// the outer context: the context object pushed onto the
             /// stack before the current one. For the first object pushed onto
             /// the stack it will be null
             /// </summary>
-            private OutputContext _parentContext;
+            internal OutputContext ParentContext { get; }
         }
 
         /// <summary>

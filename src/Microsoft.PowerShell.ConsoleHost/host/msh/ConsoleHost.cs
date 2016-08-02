@@ -559,14 +559,7 @@ namespace Microsoft.PowerShell
         /// <value></value>
         /// <exception/>
 
-        public override System.Guid InstanceId
-        {
-            get
-            {
-                // const, no lock needed.
-                return _id;
-            }
-        }
+        public override System.Guid InstanceId { get; } = Guid.NewGuid();
 
         /// <summary>
         /// 
@@ -619,7 +612,7 @@ namespace Microsoft.PowerShell
                     remoteRunspace,
                     this.runningCmd,
                     this,
-                    _inDebugMode,
+                    InDebugMode,
                     _runspaceRef.OldRunspace.ExecutionContext);
             }
 
@@ -928,7 +921,7 @@ namespace Microsoft.PowerShell
                 {
                     this.PopRunspace();
                 }
-                else if (_inDebugMode)
+                else if (InDebugMode)
                 {
                     ExitDebugMode(DebuggerResumeAction.Continue);
                 }
@@ -966,9 +959,9 @@ namespace Microsoft.PowerShell
                 Executor.CurrentExecutor = null;
                 lock (hostGlobalLock)
                 {
-                    _isNested = oldCurrent != null || this.ui.IsCommandCompletionRunning;
+                    IsNested = oldCurrent != null || this.ui.IsCommandCompletionRunning;
                 }
-                InputLoop.RunNewInputLoop(this, _isNested);
+                InputLoop.RunNewInputLoop(this, IsNested);
             }
             finally
             {
@@ -990,7 +983,7 @@ namespace Microsoft.PowerShell
         {
             lock (hostGlobalLock)
             {
-                _isNested = InputLoop.ExitCurrentLoop();
+                IsNested = InputLoop.ExitCurrentLoop();
             }
         }
 
@@ -1068,7 +1061,7 @@ namespace Microsoft.PowerShell
             // Thread.
             base.ShouldSetThreadUILanguageToZero = true;
 
-            _inDebugMode = false;
+            InDebugMode = false;
             _displayDebuggerBanner = true;
 
             _configuration = configuration;
@@ -1235,29 +1228,16 @@ namespace Microsoft.PowerShell
             }
         }
 
-        internal WrappedSerializer.DataFormat OutputFormat
-        {
-            get
-            {
-                return _outputFormat;
-            }
-        }
+        internal WrappedSerializer.DataFormat OutputFormat { get; private set; }
 
 
-
-        internal WrappedSerializer.DataFormat InputFormat
-        {
-            get
-            {
-                return _inputFormat;
-            }
-        }
+        internal WrappedSerializer.DataFormat InputFormat { get; private set; }
 
         internal WrappedDeserializer.DataFormat ErrorFormat
         {
             get
             {
-                WrappedDeserializer.DataFormat format = _outputFormat;
+                WrappedDeserializer.DataFormat format = OutputFormat;
 
                 //If this shell is invoked in minishell interop mode and error is redirected,
                 //always write data in error stream in xml format.
@@ -1277,10 +1257,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        internal bool IsNested
-        {
-            get { return _isNested; }
-        }
+        internal bool IsNested { get; private set; }
 
         internal WrappedSerializer OutputSerializer
         {
@@ -1290,7 +1267,7 @@ namespace Microsoft.PowerShell
                 {
                     _outputSerializer =
                         new WrappedSerializer(
-                            _outputFormat,
+                            OutputFormat,
                             "Output",
                             Console.IsOutputRedirected ? Console.Out : ConsoleTextWriter);
                 }
@@ -1380,8 +1357,8 @@ namespace Microsoft.PowerShell
                     break;
                 }
 
-                _outputFormat = cpp.OutputFormat;
-                _inputFormat = cpp.InputFormat;
+                OutputFormat = cpp.OutputFormat;
+                InputFormat = cpp.InputFormat;
                 _wasInitialCommandEncoded = cpp.WasInitialCommandEncoded;
 
                 ui.ReadFromStdin = cpp.ExplicitReadCommandsFromStdin || Console.IsInputRedirected;
@@ -2195,13 +2172,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Returns true if the host is in debug mode
         /// </summary>
-        private bool InDebugMode
-        {
-            get
-            {
-                return _inDebugMode;
-            }
-        }
+        private bool InDebugMode { get; set; }
 
         /// <summary>
         /// True when debugger command is user and available 
@@ -2221,7 +2192,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         private void EnterDebugMode()
         {
-            _inDebugMode = true;
+            InDebugMode = true;
 
             try
             {
@@ -2239,7 +2210,7 @@ namespace Microsoft.PowerShell
             }
             finally
             {
-                _inDebugMode = false;
+                InDebugMode = false;
             }
         }
 
@@ -2898,14 +2869,11 @@ namespace Microsoft.PowerShell
         private bool _isDisposed;
         internal ConsoleHostUserInterface ui;
         private string _savedWindowTitle = "";
-        private Guid _id = Guid.NewGuid();
         private Version _ver = PSVersionInfo.PSVersion;
         private int _exitCodeFromRunspace;
         private bool _noExit = true;
         private bool _isCtrlCDisabled;
         private bool _setShouldExitCalled;
-        private Serialization.DataFormat _outputFormat;
-        private Serialization.DataFormat _inputFormat;
         private bool _isRunningPromptLoop;
         private bool _wasInitialCommandEncoded;
         private RunspaceConfiguration _configuration;
@@ -2925,10 +2893,8 @@ namespace Microsoft.PowerShell
         private ConsoleTextWriter _consoleWriter;
         private WrappedSerializer _outputSerializer;
         private WrappedSerializer _errorSerializer;
-        private bool _inDebugMode;
         private bool _displayDebuggerBanner;
         private DebuggerStopEventArgs _debuggerStopEventArgs;
-        private bool _isNested;
         private bool _inPushedConfiguredSession;
         internal Pipeline runningCmd;
 

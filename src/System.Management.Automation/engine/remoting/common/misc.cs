@@ -9,9 +9,6 @@ namespace System.Management.Automation
 {
     internal sealed class RemoteSessionNegotiationEventArgs : EventArgs
     {
-        private RemoteSessionCapability _remoteSessionCapability;
-        private RemoteDataObject<PSObject> _remoteObject;
-
         #region Constructors
 
         internal RemoteSessionNegotiationEventArgs(RemoteSessionCapability remoteSessionCapability)
@@ -23,7 +20,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("remoteSessionCapability");
             }
 
-            _remoteSessionCapability = remoteSessionCapability;
+            RemoteSessionCapability = remoteSessionCapability;
         }
 
         #endregion Constructors
@@ -31,22 +28,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Data from network converted to type RemoteSessionCapability.
         /// </summary>
-        internal RemoteSessionCapability RemoteSessionCapability
-        {
-            get
-            {
-                return _remoteSessionCapability;
-            }
-        }
+        internal RemoteSessionCapability RemoteSessionCapability { get; }
 
         /// <summary>
         /// Actual data received from the network.
         /// </summary>
-        internal RemoteDataObject<PSObject> RemoteData
-        {
-            get { return _remoteObject; }
-            set { _remoteObject = value; }
-        }
+        internal RemoteDataObject<PSObject> RemoteData { get; set; }
     }
 
 
@@ -56,8 +43,6 @@ namespace System.Management.Automation
     /// </summary>
     internal sealed class RemoteDataEventArgs : EventArgs
     {
-        private RemoteDataObject<PSObject> _rcvdData;
-
         #region Constructors
 
         internal RemoteDataEventArgs(RemoteDataObject<PSObject> receivedData)
@@ -69,7 +54,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("receivedData");
             }
 
-            _rcvdData = receivedData;
+            ReceivedData = receivedData;
         }
 
         #endregion Constructors
@@ -77,13 +62,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Received data.
         /// </summary>
-        public RemoteDataObject<PSObject> ReceivedData
-        {
-            get
-            {
-                return _rcvdData;
-            }
-        }
+        public RemoteDataObject<PSObject> ReceivedData { get; }
     }
 
     /// <summary>
@@ -95,8 +74,6 @@ namespace System.Management.Automation
     {
         #region Private Members
 
-        private T _data;
-
         #endregion Private Members
 
         #region Properties
@@ -104,13 +81,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The data contained within this event
         /// </summary>
-        internal T Data
-        {
-            get
-            {
-                return _data;
-            }
-        }
+        internal T Data { get; }
 
         #endregion Properties
 
@@ -120,7 +91,7 @@ namespace System.Management.Automation
         {
             //Dbg.Assert(data != null, "data passed should not be null");
 
-            _data = (T)data;
+            Data = (T)data;
         }
 
         #endregion Constructor
@@ -299,9 +270,6 @@ namespace System.Management.Automation
     /// </summary>
     internal class RemoteSessionStateInfo
     {
-        private RemoteSessionState _state;
-        private Exception _reason;
-
         #region Constructors
 
         internal RemoteSessionStateInfo(RemoteSessionState state)
@@ -311,14 +279,14 @@ namespace System.Management.Automation
 
         internal RemoteSessionStateInfo(RemoteSessionState state, Exception reason)
         {
-            _state = state;
-            _reason = reason;
+            State = state;
+            Reason = reason;
         }
 
         internal RemoteSessionStateInfo(RemoteSessionStateInfo sessionStateInfo)
         {
-            _state = sessionStateInfo.State;
-            _reason = sessionStateInfo.Reason;
+            State = sessionStateInfo.State;
+            Reason = sessionStateInfo.Reason;
         }
 
 
@@ -329,24 +297,12 @@ namespace System.Management.Automation
         /// <summary>
         /// State of the connection
         /// </summary>
-        internal RemoteSessionState State
-        {
-            get
-            {
-                return _state;
-            }
-        }
+        internal RemoteSessionState State { get; }
 
         /// <summary>
         /// If the connection is closed, this provides reason why it had happened.
         /// </summary>
-        internal Exception Reason
-        {
-            get
-            {
-                return _reason;
-            }
-        }
+        internal Exception Reason { get; }
 
         #endregion Public_Properties
     }
@@ -357,8 +313,6 @@ namespace System.Management.Automation
     /// </summary>
     internal class RemoteSessionStateEventArgs : EventArgs
     {
-        private RemoteSessionStateInfo _remoteSessionStateInfo;
-
         #region Constructors
 
         internal RemoteSessionStateEventArgs(RemoteSessionStateInfo remoteSessionStateInfo)
@@ -370,7 +324,7 @@ namespace System.Management.Automation
                 PSTraceSource.NewArgumentNullException("remoteSessionStateInfo");
             }
 
-            _remoteSessionStateInfo = remoteSessionStateInfo;
+            SessionStateInfo = remoteSessionStateInfo;
         }
 
         #endregion Constructors
@@ -380,24 +334,13 @@ namespace System.Management.Automation
         /// <summary>
         /// State information about the connection.
         /// </summary>
-        public RemoteSessionStateInfo SessionStateInfo
-        {
-            get
-            {
-                return _remoteSessionStateInfo;
-            }
-        }
+        public RemoteSessionStateInfo SessionStateInfo { get; }
 
         #endregion Public_Properties
     }
 
     internal class RemoteSessionStateMachineEventArgs : EventArgs
     {
-        private RemoteSessionEvent _stateEvent;
-        private RemoteSessionCapability _capability;
-        private RemoteDataObject<PSObject> _remoteObject;
-        private Exception _reason;
-
         #region Constructors
 
         internal RemoteSessionStateMachineEventArgs(RemoteSessionEvent stateEvent)
@@ -407,51 +350,19 @@ namespace System.Management.Automation
 
         internal RemoteSessionStateMachineEventArgs(RemoteSessionEvent stateEvent, Exception reason)
         {
-            _stateEvent = stateEvent;
-            _reason = reason;
+            StateEvent = stateEvent;
+            Reason = reason;
         }
 
         #endregion Constructors
 
-        internal RemoteSessionEvent StateEvent
-        {
-            get
-            {
-                return _stateEvent;
-            }
-        }
+        internal RemoteSessionEvent StateEvent { get; }
 
-        internal Exception Reason
-        {
-            get
-            {
-                return _reason;
-            }
-        }
+        internal Exception Reason { get; }
 
-        internal RemoteSessionCapability RemoteSessionCapability
-        {
-            get
-            {
-                return _capability;
-            }
-            set
-            {
-                _capability = value;
-            }
-        }
+        internal RemoteSessionCapability RemoteSessionCapability { get; set; }
 
-        internal RemoteDataObject<PSObject> RemoteData
-        {
-            get
-            {
-                return _remoteObject;
-            }
-            set
-            {
-                _remoteObject = value;
-            }
-        }
+        internal RemoteDataObject<PSObject> RemoteData { get; set; }
     }
 
     /// <summary>

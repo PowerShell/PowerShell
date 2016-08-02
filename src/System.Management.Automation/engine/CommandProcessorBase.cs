@@ -43,7 +43,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("commandInfo");
             }
 
-            _commandInfo = commandInfo;
+            CommandInfo = commandInfo;
         }
 
         #endregion ctor
@@ -70,12 +70,7 @@ namespace System.Management.Automation
         /// Gets the CommandInfo for the command this command processor represents
         /// </summary>
         /// <value></value>
-        internal CommandInfo CommandInfo
-        {
-            get { return _commandInfo; }
-            set { _commandInfo = value; }
-        }
-        private CommandInfo _commandInfo;
+        internal CommandInfo CommandInfo { get; set; }
 
         /// <summary>
         /// This indicates whether this command processor is created from
@@ -104,12 +99,7 @@ namespace System.Management.Automation
         /// (see the comment in Pipeline.RedirectShellErrorOutputPipe for an 
         /// explanation of why this flag is needed)
         /// </summary>
-        internal bool RedirectShellErrorOutputPipe
-        {
-            get { return _redirectShellErrorOutputPipe; }
-            set { _redirectShellErrorOutputPipe = value; }
-        }
-        private bool _redirectShellErrorOutputPipe = false;
+        internal bool RedirectShellErrorOutputPipe { get; set; } = false;
 
         /// <summary>
         /// Gets or sets the command object.
@@ -213,12 +203,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Etw activity for this pipeline
         /// </summary>
-        internal Guid PipelineActivityId
-        {
-            get { return _pipelineActivityId; }
-            set { _pipelineActivityId = value; }
-        }
-        private Guid _pipelineActivityId = Guid.Empty;
+        internal Guid PipelineActivityId { get; set; } = Guid.Empty;
 
         #endregion properties
 
@@ -292,18 +277,7 @@ namespace System.Management.Automation
         /// If you want this command to execute in other than the default session
         /// state, use this API to get and set that session state instance...
         /// </summary>
-        internal SessionStateInternal CommandSessionState
-        {
-            get
-            {
-                return _commandSessionState;
-            }
-            set
-            {
-                _commandSessionState = value;
-            }
-        }
-        private SessionStateInternal _commandSessionState;
+        internal SessionStateInternal CommandSessionState { get; set; }
 
         /// <summary>
         /// Gets sets the session state scope for this command processor object
@@ -327,18 +301,18 @@ namespace System.Management.Automation
             // Make sure we have a session state instance for this command.
             // If one hasn't been explicitly set, then use the session state
             // available on the engine execution context...
-            if (_commandSessionState == null)
+            if (CommandSessionState == null)
             {
-                _commandSessionState = Context.EngineSessionState;
+                CommandSessionState = Context.EngineSessionState;
             }
 
             // Store off the current scope
-            _previousScope = _commandSessionState.CurrentScope;
+            _previousScope = CommandSessionState.CurrentScope;
             _previousCommandSessionState = Context.EngineSessionState;
-            Context.EngineSessionState = _commandSessionState;
+            Context.EngineSessionState = CommandSessionState;
 
             // Set the current scope to the pipeline execution scope
-            _commandSessionState.CurrentScope = CommandScope;
+            CommandSessionState.CurrentScope = CommandScope;
 
             OnSetCurrentScope();
         }
@@ -359,7 +333,7 @@ namespace System.Management.Automation
                 // Restore the scope but use the same session state instance we
                 // got it from because the command may have changed the execution context
                 // session state...
-                _commandSessionState.CurrentScope = _previousScope;
+                CommandSessionState.CurrentScope = _previousScope;
             }
         }
 
@@ -399,10 +373,10 @@ namespace System.Management.Automation
         private void HandleObsoleteCommand(ObsoleteAttribute obsoleteAttr)
         {
             string commandName =
-                String.IsNullOrEmpty(_commandInfo.Name)
+                String.IsNullOrEmpty(CommandInfo.Name)
                     ? "script block"
                     : String.Format(System.Globalization.CultureInfo.InvariantCulture,
-                                    CommandBaseStrings.ObsoleteCommand, _commandInfo.Name);
+                                    CommandBaseStrings.ObsoleteCommand, CommandInfo.Name);
 
             string warningMsg = String.Format(
                 System.Globalization.CultureInfo.InvariantCulture,
@@ -443,7 +417,7 @@ namespace System.Management.Automation
                 {
                     // If we had an exception during Prepare, we're done trying to execute the command
                     // so the scope we created needs to release any resources it hold.s
-                    _commandSessionState.RemoveScope(CommandScope);
+                    CommandSessionState.RemoveScope(CommandScope);
                 }
                 throw;
             }
@@ -639,7 +613,7 @@ namespace System.Management.Automation
                 // Destroy the local scope at this point if there is one...
                 if (_useLocalScope && CommandScope != null)
                 {
-                    _commandSessionState.RemoveScope(CommandScope);
+                    CommandSessionState.RemoveScope(CommandScope);
                 }
 
                 // and the previous scope...
@@ -648,7 +622,7 @@ namespace System.Management.Automation
                     // Restore the scope but use the same session state instance we
                     // got it from because the command may have changed the execution context
                     // session state...
-                    _commandSessionState.CurrentScope = _previousScope;
+                    CommandSessionState.CurrentScope = _previousScope;
                 }
 
                 // Restore the previous session state
@@ -665,8 +639,8 @@ namespace System.Management.Automation
         /// <returns></returns>
         public override string ToString()
         {
-            if (null != _commandInfo)
-                return _commandInfo.ToString();
+            if (null != CommandInfo)
+                return CommandInfo.ToString();
             return "<NullCommandInfo>"; // does not require localization
         }
 

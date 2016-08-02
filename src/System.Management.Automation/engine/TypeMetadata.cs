@@ -1232,7 +1232,7 @@ namespace System.Management.Automation
             }
 
             _type = type;
-            _typeName = type.Name;
+            TypeName = type.Name;
 
             ConstructCompiledParametersUsingReflection(processingDynamicParameters);
         }
@@ -1243,14 +1243,7 @@ namespace System.Management.Automation
         /// Gets the type name of the bindable type
         /// </summary>
         /// 
-        internal string TypeName
-        {
-            get
-            {
-                return _typeName;
-            }
-        }
-        private string _typeName = String.Empty;
+        internal string TypeName { get; } = String.Empty;
 
         /// <summary>
         /// Gets a dictionary of the compiled parameter metadata for this Type. 
@@ -1258,30 +1251,16 @@ namespace System.Management.Automation
         /// the values are the compiled parameter metdata.
         /// </summary>
         /// 
-        internal Dictionary<string, CompiledCommandParameter> BindableParameters
-        {
-            get
-            {
-                return _bindableParameters;
-            }
-        }
-        private Dictionary<string, CompiledCommandParameter> _bindableParameters =
-            new Dictionary<string, CompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
+        internal Dictionary<string, CompiledCommandParameter> BindableParameters { get; }
+            = new Dictionary<string, CompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Gets a dictionary of the parameters that have been aliased to other names. The key is
         /// the alias name and the value is the CompiledCommandParameter metadata.
         /// </summary>
         /// 
-        internal Dictionary<string, CompiledCommandParameter> AliasedParameters
-        {
-            get
-            {
-                return _aliasedParameters;
-            }
-        }
-        private Dictionary<string, CompiledCommandParameter> _aliasedParameters =
-            new Dictionary<string, CompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
+        internal Dictionary<string, CompiledCommandParameter> AliasedParameters { get; }
+            = new Dictionary<string, CompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// The type information for the class that implements the bindable object.
@@ -1418,7 +1397,7 @@ namespace System.Management.Automation
             do // false loop
             {
                 CompiledCommandParameter existingParameter;
-                if (!_bindableParameters.TryGetValue(member.Name, out existingParameter))
+                if (!BindableParameters.TryGetValue(member.Name, out existingParameter))
                 {
                     break;
                 }
@@ -1475,14 +1454,14 @@ namespace System.Management.Automation
                 CheckForReservedParameter(parameter.Name);
             }
 
-            _bindableParameters.Add(parameter.Name, parameter);
+            BindableParameters.Add(parameter.Name, parameter);
 
             // Now add entries in the parameter aliases collection for any aliases.
 
             foreach (string alias in parameter.Aliases)
             {
                 // NTRAID#Windows Out Of Band Releases-917356-JonN
-                if (_aliasedParameters.ContainsKey(alias))
+                if (AliasedParameters.ContainsKey(alias))
                 {
                     throw new MetadataException(
                             "AliasDeclaredMultipleTimes",
@@ -1490,19 +1469,19 @@ namespace System.Management.Automation
                             DiscoveryExceptions.AliasDeclaredMultipleTimes,
                             alias);
                 }
-                _aliasedParameters.Add(alias, parameter);
+                AliasedParameters.Add(alias, parameter);
             }
         }
 
         private void RemoveParameter(CompiledCommandParameter parameter)
         {
-            _bindableParameters.Remove(parameter.Name);
+            BindableParameters.Remove(parameter.Name);
 
             // Now add entries in the parameter aliases collection for any aliases.
 
             foreach (string alias in parameter.Aliases)
             {
-                _aliasedParameters.Remove(alias);
+                AliasedParameters.Remove(alias);
             }
         }
 

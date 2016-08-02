@@ -311,7 +311,7 @@ namespace System.Management.Automation
 
             string result = root;
 
-            SessionState sessionState = new SessionState(_context.TopLevelSessionState);
+            SessionState sessionState = new SessionState(ExecutionContext.TopLevelSessionState);
             Collection<string> resolvedPaths = null;
             ProviderInfo resolvedProvider = null;
 
@@ -521,7 +521,7 @@ namespace System.Management.Automation
                 result = AutomountBuiltInDrive(name);
             }
 
-            if (result == null && this == _context.TopLevelSessionState)
+            if (result == null && this == ExecutionContext.TopLevelSessionState)
             {
                 result = AutomountFileSystemDrive(name);
             }
@@ -640,7 +640,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    if (scope == _globalScope)
+                    if (scope == GlobalScope)
                     {
                         result = AutomountFileSystemDrive(name);
                     }
@@ -760,7 +760,7 @@ namespace System.Management.Automation
                     if (result != null && !context.HasErrors())
                     {
                         // Create the drive in the global scope.
-                        _globalScope.NewDrive(result);
+                        GlobalScope.NewDrive(result);
                     }
                 }
             }
@@ -800,7 +800,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal PSDriveInfo AutomountBuiltInDrive(string name)
         {
-            MountDefaultDrive(name, _context);
+            MountDefaultDrive(name, ExecutionContext);
             PSDriveInfo result = GetDrive(name, false);
 
             return result;
@@ -1538,16 +1538,16 @@ namespace System.Management.Automation
         {
             get
             {
-                if (this != _context.TopLevelSessionState)
-                    return _context.TopLevelSessionState.CurrentDrive;
+                if (this != ExecutionContext.TopLevelSessionState)
+                    return ExecutionContext.TopLevelSessionState.CurrentDrive;
                 else
                     return _currentDrive;
             } // get
 
             set
             {
-                if (this != _context.TopLevelSessionState)
-                    _context.TopLevelSessionState.CurrentDrive = value;
+                if (this != ExecutionContext.TopLevelSessionState)
+                    ExecutionContext.TopLevelSessionState.CurrentDrive = value;
                 else
                     _currentDrive = value;
             } // set

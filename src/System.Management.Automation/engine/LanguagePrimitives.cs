@@ -4112,12 +4112,11 @@ namespace System.Management.Automation
         internal class ConversionData<T> : ConversionData
         {
             private readonly PSConverter<T> _converter;
-            private readonly ConversionRank _rank;
 
             public ConversionData(PSConverter<T> converter, ConversionRank rank)
             {
                 _converter = converter;
-                _rank = rank;
+                Rank = rank;
             }
 
             public object Converter
@@ -4125,10 +4124,7 @@ namespace System.Management.Automation
                 get { return _converter; }
             }
 
-            public ConversionRank Rank
-            {
-                get { return _rank; }
-            }
+            public ConversionRank Rank { get; }
 
             public object Invoke(object valueToConvert, Type resultType, bool recurse, PSObject originalValueToConvert, IFormatProvider formatProvider, TypeTable backupTable)
             {

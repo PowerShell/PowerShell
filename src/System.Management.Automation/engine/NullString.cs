@@ -12,7 +12,6 @@ namespace System.Management.Automation.Language
         #region private_members
 
         // Private member for instance.
-        private static readonly NullString s_value = new NullString();
 
         #endregion private_members
 
@@ -29,10 +28,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// This returns the singleton instance of NullString
         /// </summary>
-        public static NullString Value
-        {
-            get { return s_value; }
-        }
+        public static NullString Value { get; } = new NullString();
 
         #endregion public_property
 

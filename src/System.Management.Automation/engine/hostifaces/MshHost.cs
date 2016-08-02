@@ -359,9 +359,7 @@ namespace System.Management.Automation.Host
         /// </summary>
         /// <seealso cref="System.Management.Automation.Host.PSHost.NotifyBeginApplication"/>
 
-        public abstract
-        void
-        NotifyEndApplication();
+        public abstract void NotifyEndApplication();
 
         /// <summary>
         /// Used by hosting applications to notify PowerShell engine that it is
@@ -370,12 +368,7 @@ namespace System.Management.Automation.Host
         /// used by ConsoleHost only and in future releases we may consider 
         /// exposing this publicly.
         /// </summary>
-        internal bool ShouldSetThreadUILanguageToZero
-        {
-            get { return _shouldSetThreadUILanguageToZero; }
-            set { _shouldSetThreadUILanguageToZero = value; }
-        }
-        private bool _shouldSetThreadUILanguageToZero;
+        internal bool ShouldSetThreadUILanguageToZero { get; set; }
 
         /// <summary>
         /// This property enables and disables the host debugger if debugging is supported.

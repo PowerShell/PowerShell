@@ -15,20 +15,14 @@ namespace System.Management.Automation
     {
         internal ThirdPartyAdapter(Type adaptedType, PSPropertyAdapter externalAdapter)
         {
-            _adaptedType = adaptedType;
+            AdaptedType = adaptedType;
             _externalAdapter = externalAdapter;
         }
 
         /// <summary>
         /// The type this instance is adapting
         /// </summary>
-        internal Type AdaptedType
-        {
-            get
-            {
-                return _adaptedType;
-            }
-        }
+        internal Type AdaptedType { get; }
 
         /// <summary>
         /// The type of the external adapter
@@ -278,7 +272,6 @@ namespace System.Management.Automation
             return propertyTypeName ?? "System.Object";
         }
 
-        private Type _adaptedType;
         private PSPropertyAdapter _externalAdapter;
     }
 

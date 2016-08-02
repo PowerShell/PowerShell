@@ -44,7 +44,7 @@ namespace System.Management.Automation
         internal PSTransaction(RollbackSeverity rollbackPreference, TimeSpan timeout)
         {
             _transaction = new CommittableTransaction(timeout);
-            _rollbackPreference = rollbackPreference;
+            RollbackPreference = rollbackPreference;
             _subscriberCount = 1;
         }
 
@@ -55,7 +55,7 @@ namespace System.Management.Automation
         internal PSTransaction(CommittableTransaction transaction, RollbackSeverity severity)
         {
             _transaction = transaction;
-            _rollbackPreference = severity;
+            RollbackPreference = severity;
             _subscriberCount = 1;
         }
 
@@ -65,11 +65,7 @@ namespace System.Management.Automation
         /// Gets the rollback preference for this transaction
         /// </summary>
         ///
-        public RollbackSeverity RollbackPreference
-        {
-            get { return _rollbackPreference; }
-        }
-        private RollbackSeverity _rollbackPreference;
+        public RollbackSeverity RollbackPreference { get; }
 
         /// <summary>
         /// Gets the number of subscribers to this transaction
@@ -130,7 +126,7 @@ namespace System.Management.Automation
         internal void Commit()
         {
             _transaction.Commit();
-            _isCommitted = true;
+            IsCommitted = true;
         }
 
         /// <summary>
@@ -175,18 +171,7 @@ namespace System.Management.Automation
         /// has been committed or not.
         /// </summary>
         ///
-        internal bool IsCommitted
-        {
-            get
-            {
-                return _isCommitted;
-            }
-            set
-            {
-                _isCommitted = value;
-            }
-        }
-        private bool _isCommitted = false;
+        internal bool IsCommitted { get; set; } = false;
 
         /// <summary>
         /// Destructor for the PSTransaction class

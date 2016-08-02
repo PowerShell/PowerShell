@@ -77,7 +77,7 @@ namespace System.Management.Automation
 
             if (attributes != null)
             {
-                _attributes = attributes;
+                Attributes = attributes;
             }
         } // RuntimeDefinedParameter
 
@@ -169,8 +169,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// This can be any attribute that can be applied to a normal parameter.
         /// </remarks>
-        public Collection<Attribute> Attributes { get { return _attributes; } }
-        private readonly Collection<Attribute> _attributes = new Collection<Attribute>();
+        public Collection<Attribute> Attributes { get; } = new Collection<Attribute>();
     } // class RuntimeDefinedParameter
 
     /// <summary>

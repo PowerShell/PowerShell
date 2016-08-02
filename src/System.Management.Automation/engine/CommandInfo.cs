@@ -127,8 +127,8 @@ namespace System.Management.Automation
                 throw new ArgumentNullException("name");
             }
 
-            _name = name;
-            _type = type;
+            Name = name;
+            CommandType = type;
         } // CommandInfo ctor
 
         /// <summary>
@@ -168,11 +168,11 @@ namespace System.Management.Automation
             //this.parameterSets = other.parameterSets;
             this.Module = other.Module;
             _visibility = other._visibility;
-            _arguments = other._arguments;
+            Arguments = other.Arguments;
             this.Context = other.Context;
-            _name = other._name;
-            _type = other._type;
-            _copiedCommand = other;
+            Name = other.Name;
+            CommandType = other.CommandType;
+            CopiedCommand = other;
             this.DefiningLanguageMode = other.DefiningLanguageMode;
         }
 
@@ -182,7 +182,7 @@ namespace System.Management.Automation
         internal CommandInfo(string name, CommandInfo other)
             : this(other)
         {
-            _name = name;
+            Name = name;
         }
 
         #endregion ctor
@@ -190,26 +190,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the command.
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-        } // Name
-        private string _name = String.Empty;
+        public string Name { get; private set; } = String.Empty;
+
+// Name
 
         /// <summary>
         /// Gets the type of the command
         /// </summary>
-        public CommandTypes CommandType
-        {
-            get
-            {
-                return _type;
-            }
-        }// CommandType
-        private CommandTypes _type = CommandTypes.Application;
+        public CommandTypes CommandType { get; private set; } = CommandTypes.Application;
+
+// CommandType
 
         /// <summary>
         /// Gets the source of the command (shown by default in Get-Command)
@@ -278,12 +268,7 @@ namespace System.Management.Automation
             get { return HelpCategory.None; }
         }
 
-        internal CommandInfo CopiedCommand
-        {
-            get { return _copiedCommand; }
-            set { _copiedCommand = value; }
-        }
-        private CommandInfo _copiedCommand;
+        internal CommandInfo CopiedCommand { get; set; }
 
         /// <summary>
         /// Internal interface to change the type of a CommandInfo object.
@@ -291,7 +276,7 @@ namespace System.Management.Automation
         /// <param name="newType"></param>
         internal void SetCommandType(CommandTypes newType)
         {
-            _type = newType;
+            CommandType = newType;
         }
 
         internal const int HasWorkflowKeyWord = 0x0008;
@@ -328,7 +313,7 @@ namespace System.Management.Automation
                 throw new ArgumentNullException("newName");
             }
 
-            _name = newName;
+            Name = newName;
         }
 
         /// <summary>
@@ -337,7 +322,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         public override string ToString()
         {
-            return ModuleCmdletBase.AddPrefixToCommandName(_name, _prefix);
+            return ModuleCmdletBase.AddPrefixToCommandName(Name, Prefix);
         }
 
         /// <summary>
@@ -348,17 +333,17 @@ namespace System.Management.Automation
         {
             get
             {
-                return _copiedCommand == null ? _visibility : _copiedCommand.Visibility;
+                return CopiedCommand == null ? _visibility : CopiedCommand.Visibility;
             }
             set
             {
-                if (_copiedCommand == null)
+                if (CopiedCommand == null)
                 {
                     _visibility = value;
                 }
                 else
                 {
-                    _copiedCommand.Visibility = value;
+                    CopiedCommand.Visibility = value;
                 }
 
                 if (value == SessionStateEntryVisibility.Private && Module != null)
@@ -673,24 +658,12 @@ namespace System.Management.Automation
         /// Specifies whether this command was imported from a module or not.
         /// This is used in Get-Command to figure out which of the commands in module session state were imported.
         /// </summary>
-        internal bool IsImported
-        {
-            get { return _isImported; }
-            set { _isImported = value; }
-        }
-
-        private bool _isImported = false;
+        internal bool IsImported { get; set; } = false;
 
         /// <summary>
         /// The prefix that was used when importing this command
         /// </summary>
-        internal string Prefix
-        {
-            get { return _prefix; }
-            set { _prefix = value; }
-        }
-
-        private string _prefix = "";
+        internal string Prefix { get; set; } = "";
 
 
         /// <summary>
@@ -756,12 +729,7 @@ namespace System.Management.Automation
         /// which will allow for the dynamic parameters to be retrieved and their
         /// metadata merged into the parameter set information.
         /// </summary>
-        internal object[] Arguments
-        {
-            get { return _arguments; }
-            set { _arguments = value; }
-        }
-        private object[] _arguments;
+        internal object[] Arguments { get; set; }
 
         internal static Collection<CommandParameterSetInfo> GetCacheableMetadata(CommandMetadata metadata)
         {
@@ -827,7 +795,7 @@ namespace System.Management.Automation
             _type = type;
             if (_type != null)
             {
-                _name = _type.FullName;
+                Name = _type.FullName;
             }
         }
 
@@ -837,7 +805,7 @@ namespace System.Management.Automation
         /// <param name="name">The name of the type</param>
         public PSTypeName(string name)
         {
-            _name = name;
+            Name = name;
             _type = null;
         }
 
@@ -853,7 +821,7 @@ namespace System.Management.Automation
             }
 
             TypeDefinitionAst = typeDefinitionAst;
-            _name = typeDefinitionAst.Name;
+            Name = typeDefinitionAst.Name;
         }
 
         /// <summary>
@@ -869,7 +837,7 @@ namespace System.Management.Automation
             _type = typeName.GetReflectionType();
             if (_type != null)
             {
-                _name = _type.FullName;
+                Name = _type.FullName;
             }
             else
             {
@@ -877,12 +845,12 @@ namespace System.Management.Automation
                 if (t != null && t._typeDefinitionAst != null)
                 {
                     TypeDefinitionAst = t._typeDefinitionAst;
-                    _name = TypeDefinitionAst.Name;
+                    Name = TypeDefinitionAst.Name;
                 }
                 else
                 {
                     _type = null;
-                    _name = typeName.FullName;
+                    Name = typeName.FullName;
                 }
             }
         }
@@ -890,11 +858,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Return the name of the type
         /// </summary>
-        public string Name
-        {
-            get { return _name; }
-        }
-        private readonly string _name;
+        public string Name { get; }
 
         /// <summary>
         /// Return the type with metadata, or null if the type is not loaded.
@@ -914,17 +878,17 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            TypeResolver.TryResolveType(_name, out _type);
+                            TypeResolver.TryResolveType(Name, out _type);
                         }
                     }
                     if (_type == null)
                     {
                         // We ignore the exception.
-                        if (_name != null &&
-                            _name.StartsWith("[", StringComparison.OrdinalIgnoreCase) &&
-                            _name.EndsWith("]", StringComparison.OrdinalIgnoreCase))
+                        if (Name != null &&
+                            Name.StartsWith("[", StringComparison.OrdinalIgnoreCase) &&
+                            Name.EndsWith("]", StringComparison.OrdinalIgnoreCase))
                         {
-                            string tmp = _name.Substring(1, _name.Length - 2);
+                            string tmp = Name.Substring(1, Name.Length - 2);
                             TypeResolver.TryResolveType(tmp, out _type);
                         }
                     }
@@ -949,7 +913,7 @@ namespace System.Management.Automation
         /// <returns> String that represents the current PSTypeName.</returns>
         public override string ToString()
         {
-            return _name ?? string.Empty;
+            return Name ?? string.Empty;
         }
     }
 

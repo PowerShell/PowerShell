@@ -806,18 +806,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal FormatOutputContext(FormatMessagesContextManager.OutputContext parentContext, FormatStartData formatData)
                 : base(parentContext)
             {
-                _formatData = formatData;
+                Data = formatData;
             }
 
             /// <summary>
             /// retrieve the format data in the context
             /// </summary>
-            internal FormatStartData Data { get { return _formatData; } }
-
-            /// <summary>
-            /// the active formatting message, as obtained from the stream
-            /// </summary>
-            private FormatStartData _formatData = null;
+            internal FormatStartData Data { get; } = null;
         }
 
         /// <summary>
@@ -833,8 +828,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                     GroupStartData formatData)
                 : base(parentContext)
             {
-                _cmd = cmd;
-                _formatData = formatData;
+                InnerCommand = cmd;
+                Data = formatData;
             }
 
             /// <summary>
@@ -865,23 +860,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// retrieve the format data in the context
             /// </summary>
-            internal GroupStartData Data { get { return _formatData; } }
+            internal GroupStartData Data { get; } = null;
 
 
-            protected OutCommandInner InnerCommand
-            {
-                get { return _cmd; }
-            }
-
-            /// <summary>
-            /// OutCommandInner reference, for accessing context data
-            /// </summary>
-            private OutCommandInner _cmd;
-
-            /// <summary>
-            /// the active formatting message, as obtained from the stream
-            /// </summary>
-            private GroupStartData _formatData = null;
+            protected OutCommandInner InnerCommand { get; }
         }
 
         private class TableOutputContextBase : GroupOutputContext

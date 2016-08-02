@@ -984,11 +984,6 @@ namespace System.Management.Automation.Runspaces.Internal
     /// </summary>
     internal sealed class PSConnectionRetryStatusEventArgs : EventArgs
     {
-        private PSConnectionRetryStatus _notification;
-        private string _computerName;
-        private int _maxRetryConnectionTime;
-        private object _infoRecord;
-
         internal const string FQIDNetworkFailureDetected = "PowerShellNetworkFailureDetected";
         internal const string FQIDConnectionRetryAttempt = "PowerShellConnectionRetryAttempt";
         internal const string FQIDConnectionRetrySucceeded = "PowerShellConnectionRetrySucceeded";
@@ -1002,31 +997,19 @@ namespace System.Management.Automation.Runspaces.Internal
             int maxRetryConnectionTime,
             object infoRecord)
         {
-            _notification = notification;
-            _computerName = computerName;
-            _maxRetryConnectionTime = maxRetryConnectionTime;
-            _infoRecord = infoRecord;
+            Notification = notification;
+            ComputerName = computerName;
+            MaxRetryConnectionTime = maxRetryConnectionTime;
+            InformationRecord = infoRecord;
         }
 
-        internal PSConnectionRetryStatus Notification
-        {
-            get { return _notification; }
-        }
+        internal PSConnectionRetryStatus Notification { get; }
 
-        internal string ComputerName
-        {
-            get { return _computerName; }
-        }
+        internal string ComputerName { get; }
 
-        internal int MaxRetryConnectionTime
-        {
-            get { return _maxRetryConnectionTime; }
-        }
+        internal int MaxRetryConnectionTime { get; }
 
-        internal object InformationRecord
-        {
-            get { return _infoRecord; }
-        }
+        internal object InformationRecord { get; }
     }
 
     #endregion

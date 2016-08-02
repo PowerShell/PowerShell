@@ -21,9 +21,9 @@ namespace System.Management.Automation
         /// <param name="searchMode"></param>
         private MUIFileSearcher(string target, Collection<String> searchPaths, SearchMode searchMode)
         {
-            _target = target;
-            _searchPaths = searchPaths;
-            _searchMode = searchMode;
+            Target = target;
+            SearchPaths = searchPaths;
+            SearchMode = searchMode;
         }
 
         /// <summary>
@@ -38,8 +38,6 @@ namespace System.Management.Automation
 
         #region Basic Properties
 
-        private string _target = null;
-
         /// <summary>
         /// Search target. It can be 
         ///     1. a file name
@@ -47,39 +45,17 @@ namespace System.Management.Automation
         /// It can also include a path, in that case, 
         ///     1. the path will be searched first for the existense of the files.
         /// </summary>
-        internal string Target
-        {
-            get
-            {
-                return _target;
-            }
-        }
-
-        private Collection<String> _searchPaths = null;
+        internal string Target { get; } = null;
 
         /// <summary>
         /// Search path as provided by user.
         /// </summary>
-        internal Collection<String> SearchPaths
-        {
-            get
-            {
-                return _searchPaths;
-            }
-        }
-
-        private SearchMode _searchMode = SearchMode.Unique;
+        internal Collection<String> SearchPaths { get; } = null;
 
         /// <summary>
         /// Search mode for this file search. 
         /// </summary>
-        internal SearchMode SearchMode
-        {
-            get
-            {
-                return _searchMode;
-            }
-        }
+        internal SearchMode SearchMode { get; } = SearchMode.Unique;
 
         private Collection<String> _result = null;
 

@@ -37,7 +37,6 @@ namespace System.Management.Automation.Language
     public sealed class Parser
     {
         private readonly Tokenizer _tokenizer;
-        private readonly List<ParseError> _errorList;
         internal Token _ungotToken;
         private bool _disableCommaOperator;
         private bool _savingTokens;
@@ -54,7 +53,7 @@ namespace System.Management.Automation.Language
         internal Parser()
         {
             _tokenizer = new Tokenizer(this);
-            _errorList = new List<ParseError>();
+            ErrorList = new List<ParseError>();
             _fileName = null;
         }
 
@@ -168,7 +167,7 @@ namespace System.Management.Automation.Language
             }
             finally
             {
-                errors = _errorList.ToArray();
+                errors = ErrorList.ToArray();
             }
         }
 
@@ -183,7 +182,7 @@ namespace System.Management.Automation.Language
             _fileName = fileName;
             _tokenizer.Initialize(fileName, input, tokenList);
             _savingTokens = (tokenList != null);
-            _errorList.Clear();
+            ErrorList.Clear();
 
             try
             {
@@ -287,9 +286,9 @@ namespace System.Management.Automation.Language
             parser._tokenizer.Initialize(null, '"' + str + '"', null);
             var strToken = (StringExpandableToken)parser._tokenizer.NextToken();
             var ast = parser.ExpandableStringRule(strToken);
-            if (parser._errorList.Count > 0)
+            if (parser.ErrorList.Count > 0)
             {
-                throw new ParseException(parser._errorList.ToArray());
+                throw new ParseException(parser.ErrorList.ToArray());
             }
             return ast;
         }
@@ -332,7 +331,7 @@ namespace System.Management.Automation.Language
         }
 
         //public bool V3FeatureUsed { get { return _v3FeatureUsed; } }
-        internal List<ParseError> ErrorList { get { return _errorList; } }
+        internal List<ParseError> ErrorList { get; }
 
         #region Utilities
 
@@ -1949,7 +1948,7 @@ namespace System.Management.Automation.Language
                 case TokenKind.ElseIf:
                 case TokenKind.Catch:
                 case TokenKind.Until:
-                    if (_errorList.Count > 0)
+                    if (ErrorList.Count > 0)
                     {
                         // If we have already seen an error, just eat these tokens.  By eating the token, we won't
                         // generate an odd pipeline with the keyword as a command name, which should provider a better
@@ -6119,7 +6118,7 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    Diagnostics.Assert(_ungotToken == null || _errorList.Count > 0,
+                    Diagnostics.Assert(_ungotToken == null || ErrorList.Count > 0,
                                         "Unexpected lookahead from AttributeListRule.");
                     // If we've looked ahead, don't go looking for a member access token, we've already issued an error,
                     // just assume we're not trying to access a member.
@@ -6540,7 +6539,7 @@ namespace System.Management.Automation.Language
             List<Token> newNestedTokens = _savingTokens ? new List<Token>() : null;
             foreach (var token in expandableStringToken.NestedTokens)
             {
-                Diagnostics.Assert(!token.HasError || _errorList.Any(), "No nested tokens should have unreported errors.");
+                Diagnostics.Assert(!token.HasError || ErrorList.Any(), "No nested tokens should have unreported errors.");
 
                 ExpressionAst exprAst;
                 var varToken = token as VariableToken;
@@ -6805,10 +6804,10 @@ namespace System.Management.Automation.Language
 
         private void SaveError(ParseError error)
         {
-            if (_errorList.Any())
+            if (ErrorList.Any())
             {
                 // Avoiding adding duplicate errors - can happen when the tokenizer resyncs.
-                if (_errorList.Any(err => err.ErrorId.Equals(error.ErrorId, StringComparison.Ordinal)
+                if (ErrorList.Any(err => err.ErrorId.Equals(error.ErrorId, StringComparison.Ordinal)
                                           && err.Extent.EndColumnNumber == error.Extent.EndColumnNumber
                                           && err.Extent.EndLineNumber == error.Extent.EndLineNumber
                                           && err.Extent.StartColumnNumber == error.Extent.StartColumnNumber
@@ -6818,7 +6817,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            _errorList.Add(error);
+            ErrorList.Add(error);
         }
 
         private void SaveError(IScriptExtent extent, Expression<Func<string>> errorExpr, bool incompleteInput, params object[] args)
@@ -6952,11 +6951,6 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class ParseError
     {
-        private readonly IScriptExtent _extent;
-        private readonly string _errorId;
-        private readonly string _message;
-        private readonly bool _incompleteInput;
-
         /// <summary>
         /// Creates a new parse error.
         /// </summary>
@@ -6974,10 +6968,10 @@ namespace System.Management.Automation.Language
             Diagnostics.Assert(!string.IsNullOrEmpty(message), "can't have a null error message");
             Diagnostics.Assert(!string.IsNullOrEmpty(errorId), "can't have a null error id");
 
-            _extent = extent;
-            _errorId = errorId;
-            _message = message;
-            _incompleteInput = incompleteInput;
+            Extent = extent;
+            ErrorId = errorId;
+            Message = message;
+            IncompleteInput = incompleteInput;
         }
 
         /// <summary>
@@ -6986,28 +6980,28 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         public override string ToString()
         {
-            return PositionUtilities.VerboseMessage(_extent) + "\n" + _message;
+            return PositionUtilities.VerboseMessage(Extent) + "\n" + Message;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public IScriptExtent Extent { get { return _extent; } }
+        public IScriptExtent Extent { get; }
 
         /// <summary>
         /// 
         /// </summary>
-        public string ErrorId { get { return _errorId; } }
+        public string ErrorId { get; }
 
         /// <summary>
         /// 
         /// </summary>
-        public string Message { get { return _message; } }
+        public string Message { get; }
 
         /// <summary>
         /// 
         /// </summary>
-        public bool IncompleteInput { get { return _incompleteInput; } }
+        public bool IncompleteInput { get; }
     }
 
     #endregion Error related classes

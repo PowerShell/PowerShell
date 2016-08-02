@@ -12,18 +12,10 @@ namespace System.Management.Automation
     /// </summary>
     internal abstract class RemoteSession
     {
-        private Guid _instanceId = new Guid();
-
         /// <summary>
         /// This is the unique id of a remote session object.
         /// </summary>
-        internal Guid InstanceId
-        {
-            get
-            {
-                return _instanceId;
-            }
-        }
+        internal Guid InstanceId { get; } = new Guid();
 
         /// <summary>
         /// This indicates the remote session object is Client, Server or Listener.
@@ -36,19 +28,7 @@ namespace System.Management.Automation
 
         internal abstract void CompleteKeyExchange();
 
-        private BaseSessionDataStructureHandler _dsHandler;
-
-        internal BaseSessionDataStructureHandler BaseSessionDataStructureHandler
-        {
-            get
-            {
-                return _dsHandler;
-            }
-            set
-            {
-                _dsHandler = value;
-            }
-        }
+        internal BaseSessionDataStructureHandler BaseSessionDataStructureHandler { get; set; }
 
         #endregion KeyExchange
     }

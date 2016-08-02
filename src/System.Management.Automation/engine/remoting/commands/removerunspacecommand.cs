@@ -47,18 +47,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = RemovePSSessionCommand.SessionParameterSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public PSSession[] Session
-        {
-            get
-            {
-                return _remoteRunspaceInfos;
-            }
-            set
-            {
-                _remoteRunspaceInfos = value;
-            }
-        }
-        private PSSession[] _remoteRunspaceInfos;
+        public PSSession[] Session { get; set; }
 
         /// <summary>
         /// ID of target container.
@@ -69,12 +58,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRunspaceCmdlet.ContainerIdParameterSet)]
         [ValidateNotNullOrEmpty]
-        public override string[] ContainerId
-        {
-            get { return _containerId; }
-            set { _containerId = value; }
-        }
-        private string[] _containerId;
+        public override string[] ContainerId { get; set; }
 
         /// <summary>
         /// Guid of target virtual machine.
@@ -86,12 +70,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = PSRunspaceCmdlet.VMIdParameterSet)]
         [ValidateNotNullOrEmpty]
         [Alias("VMGuid")]
-        public override Guid[] VMId
-        {
-            get { return _vmId; }
-            set { _vmId = value; }
-        }
-        private Guid[] _vmId;
+        public override Guid[] VMId { get; set; }
 
         /// <summary>
         /// Name of target virtual machine.
@@ -102,12 +81,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRunspaceCmdlet.VMNameParameterSet)]
         [ValidateNotNullOrEmpty]
-        public override string[] VMName
-        {
-            get { return _vmName; }
-            set { _vmName = value; }
-        }
-        private string[] _vmName;
+        public override string[] VMName { get; set; }
 
         #endregion Parameters
 
@@ -141,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 case RemovePSSessionCommand.SessionParameterSet:
                     {
-                        toRemove = _remoteRunspaceInfos;
+                        toRemove = Session;
                     }
                     break;
                 default:

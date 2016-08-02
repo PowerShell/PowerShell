@@ -53,8 +53,8 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("context");
             }
 
-            _path = path;
-            _extension = System.IO.Path.GetExtension(path);
+            Path = path;
+            Extension = System.IO.Path.GetExtension(path);
             _context = context;
         } // ApplicationInfo ctor
         private ExecutionContext _context;
@@ -63,26 +63,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the path for the application file.
         /// </summary>
-        public string Path
-        {
-            get
-            {
-                return _path;
-            }
-        }// Path
-        private string _path = String.Empty;
+        public string Path { get; } = String.Empty;
 
         /// <summary>
         /// Gets the extension of the application file.
         /// </summary>
-        public string Extension
-        {
-            get
-            {
-                return _extension;
-            }
-        } // Extension
-        private string _extension = String.Empty;
+        public string Extension { get; } = String.Empty;
 
         /// <summary>
         /// Gets the path of the application file.
@@ -112,7 +98,7 @@ namespace System.Management.Automation
             {
                 if (_version == null)
                 {
-                    FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(_path);
+                    FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Path);
                     _version = new Version(versionInfo.ProductMajorPart, versionInfo.ProductMinorPart, versionInfo.ProductBuildPart, versionInfo.ProductPrivatePart);
                 }
 
@@ -129,7 +115,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _context.EngineSessionState.CheckApplicationVisibility(_path);
+                return _context.EngineSessionState.CheckApplicationVisibility(Path);
             }
             set { throw PSTraceSource.NewNotImplementedException(); }
         }

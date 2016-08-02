@@ -38,8 +38,8 @@ namespace System.Management.Automation.Runspaces
             Initialize(runspace, command, addToHistory, isNested);
 
             //Initialize streams
-            _inputStream = new ObjectStream();
-            _outputStream = new ObjectStream();
+            InputStream = new ObjectStream();
+            OutputStream = new ObjectStream();
             ErrorStream = new ObjectStream();
         }
 
@@ -102,15 +102,15 @@ namespace System.Management.Automation.Runspaces
             {
                 // get command text for history..
                 string cmdText = command.GetCommandStringForHistory();
-                _historyString = cmdText;
-                _addToHistory = addToHistory;
+                HistoryString = cmdText;
+                AddToHistory = addToHistory;
             }
 
             //Initialize streams
-            _inputStream = inputStream;
-            _outputStream = outputStream;
+            InputStream = inputStream;
+            OutputStream = outputStream;
             ErrorStream = errorStream;
-            _informationalBuffers = infoBuffers;
+            InformationalBuffers = infoBuffers;
         }
 
         /// <summary>
@@ -136,8 +136,8 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewObjectDisposedException("pipeline");
             }
 
-            _addToHistory = pipeline._addToHistory;
-            _historyString = pipeline._historyString;
+            AddToHistory = pipeline.AddToHistory;
+            HistoryString = pipeline.HistoryString;
             foreach (Command command in pipeline.Commands)
             {
                 Command clone = command.Clone();
@@ -186,22 +186,10 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private bool _isPulsePipeline;
-
         /// <summary>
         ///  Is this a pulse pipeline (created by the EventManager)
         /// </summary>
-        internal bool IsPulsePipeline
-        {
-            get
-            {
-                return _isPulsePipeline;
-            }
-            set
-            {
-                _isPulsePipeline = value;
-            }
-        }
+        internal bool IsPulsePipeline { get; set; }
 
         private PipelineStateInfo _pipelineStateInfo = new PipelineStateInfo(PipelineState.NotStarted);
 
@@ -231,7 +219,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                return _inputStream.ObjectWriter;
+                return InputStream.ObjectWriter;
             }
         }
 
@@ -242,7 +230,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                return _outputStream.PSObjectReader;
+                return OutputStream.PSObjectReader;
             }
         }
 
@@ -438,18 +426,11 @@ namespace System.Management.Automation.Runspaces
             CoreInvoke(null, false);
         }
 
-        private bool _syncInvokeCall;
         /// <summary>
         /// This parameter is true if Invoke is called.
         /// It is false if InvokeAsync is called.
         /// </summary>
-        protected bool SyncInvokeCall
-        {
-            get
-            {
-                return _syncInvokeCall;
-            }
-        }
+        protected bool SyncInvokeCall { get; private set; }
 
         /// <summary>
         /// Invoke the pipeline asynchronously with input. 
@@ -509,7 +490,7 @@ namespace System.Management.Automation.Runspaces
                     throw e;
                 }
 
-                if (syncCall && !(_inputStream is PSDataCollectionStream<PSObject> || _inputStream is PSDataCollectionStream<object>))
+                if (syncCall && !(InputStream is PSDataCollectionStream<PSObject> || InputStream is PSDataCollectionStream<object>))
                 {
                     //Method is called from synchronous invoke.
                     if (input != null)
@@ -521,13 +502,13 @@ namespace System.Management.Automation.Runspaces
                         //ObjectDisposed exception will be thrown
                         foreach (object temp in input)
                         {
-                            _inputStream.Write(temp);
+                            InputStream.Write(temp);
                         }
                     }
-                    _inputStream.Close();
+                    InputStream.Close();
                 }
 
-                _syncInvokeCall = syncCall;
+                SyncInvokeCall = syncCall;
 
                 //Create event which will be signalled when pipeline execution
                 //is completed/failed/stoped. 
@@ -536,7 +517,7 @@ namespace System.Management.Automation.Runspaces
                 //added to list of running pipelines. This avoids the race condition
                 //where Close is called after pipeline is added to list of 
                 //running pipeline but before event is created.
-                _pipelineFinishedEvent = new ManualResetEvent(false);
+                PipelineFinishedEvent = new ManualResetEvent(false);
 
                 //1) Do the check to ensure that pipeline no other 
                 // pipeline is running.
@@ -605,8 +586,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private Thread _nestedPipelineExecutionThread;
-
         /// <summary>
         /// This is the thread on which NestedPipeline can be executed.
         /// In case of LocalPipeline, this is the thread of execution
@@ -615,17 +594,7 @@ namespace System.Management.Automation.Runspaces
         /// RemotePipeline proxy should set it on at the begining of 
         /// EnterNestedPrompt and clear it on return.
         /// </summary>
-        internal Thread NestedPipelineExecutionThread
-        {
-            get
-            {
-                return _nestedPipelineExecutionThread;
-            }
-            set
-            {
-                _nestedPipelineExecutionThread = value;
-            }
-        }
+        internal Thread NestedPipelineExecutionThread { get; set; }
 
         /// <summary>
         /// Check if anyother pipeline is executing.
@@ -920,37 +889,22 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private ManualResetEvent _pipelineFinishedEvent;
-
         /// <summary>
         /// ManualResetEvent which is signaled when pipeline execution is 
         /// completed/failed/stoped.
         /// </summary>
-        internal ManualResetEvent PipelineFinishedEvent
-        {
-            get
-            {
-                return _pipelineFinishedEvent;
-            }
-        }
+        internal ManualResetEvent PipelineFinishedEvent { get; private set; }
 
         #endregion
 
         #region streams
 
-        private ObjectStreamBase _outputStream;
         /// <summary>
         /// OutputStream from PipelineProcessor. Host will read on
         /// ObjectReader of this stream. PipelineProcessor will write to
         /// ObjectWriter of this stream.
         /// </summary>
-        protected ObjectStreamBase OutputStream
-        {
-            get
-            {
-                return _outputStream;
-            }
-        }
+        protected ObjectStreamBase OutputStream { get; }
 
         private ObjectStreamBase _errorStream;
         /// <summary>
@@ -986,7 +940,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private PSInformationalBuffers _informationalBuffers;
         /// <summary>
         /// Informational Buffers that represent verbose, debug, progress,
         /// warning emanating from the command execution.
@@ -995,27 +948,14 @@ namespace System.Management.Automation.Runspaces
         /// Informational buffers are introduced after 1.0. This can be 
         /// null if executing command as part of 1.0 hosting interfaces.
         /// </remarks>
-        protected PSInformationalBuffers InformationalBuffers
-        {
-            get
-            {
-                return _informationalBuffers;
-            }
-        }
+        protected PSInformationalBuffers InformationalBuffers { get; }
 
-        private ObjectStreamBase _inputStream;
         /// <summary>
         /// Stream for providing input to PipelineProcessor. Host will write on
         /// ObjectWriter of this stream. PipelineProcessor will read from 
         /// ObjectReader of this stream.
         /// </summary>
-        protected ObjectStreamBase InputStream
-        {
-            get
-            {
-                return _inputStream;
-            }
-        }
+        protected ObjectStreamBase InputStream { get; }
 
         #endregion streams
 
@@ -1023,41 +963,18 @@ namespace System.Management.Automation.Runspaces
 
         //History information is internal so that Pipeline serialization code
         //can access it.
-        private bool _addToHistory;
 
         /// <summary>
         /// if true, this pipeline is added in history
         /// </summary>
-        internal bool AddToHistory
-        {
-            get
-            {
-                return _addToHistory;
-            }
-            set
-            {
-                _addToHistory = value;
-            }
-        }
-
-        private string _historyString;
+        internal bool AddToHistory { get; set; }
 
         /// <summary>
         /// String which is added in the history
         /// </summary>
         /// <remarks>This needs to be internal so that it can be replaced
         /// by invoke-cmd to place correct string in history.</remarks>
-        internal string HistoryString
-        {
-            get
-            {
-                return _historyString;
-            }
-            set
-            {
-                _historyString = value;
-            }
-        }
+        internal string HistoryString { get; set; }
 
         #endregion history
 
@@ -1090,10 +1007,10 @@ namespace System.Management.Automation.Runspaces
                 Commands.Add(new Command(command, true, false));
             }
 
-            _addToHistory = addToHistory;
-            if (_addToHistory)
+            AddToHistory = addToHistory;
+            if (AddToHistory)
             {
-                _historyString = command;
+                HistoryString = command;
             }
         }
 
@@ -1106,18 +1023,10 @@ namespace System.Management.Automation.Runspaces
         }
 
 
-        private object _syncRoot = new object();
-
         /// <summary>
         /// Object used for synchronization
         /// </summary>
-        protected internal object SyncRoot
-        {
-            get
-            {
-                return _syncRoot;
-            }
-        }
+        protected internal object SyncRoot { get; } = new object();
 
         #endregion misc
 
@@ -1143,8 +1052,8 @@ namespace System.Management.Automation.Runspaces
                     _disposed = true;
                     if (disposing)
                     {
-                        _inputStream.Close();
-                        _outputStream.Close();
+                        InputStream.Close();
+                        OutputStream.Close();
 
                         _errorStream.DataReady -= new EventHandler(OnErrorStreamDataReady);
                         _errorStream.Close();

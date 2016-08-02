@@ -33,7 +33,7 @@ namespace System.Management.Automation
             _fullHelpObject = mamlNode.PSObject;
             this.Errors = mamlNode.Errors;
 
-            _name = GetTerm();
+            Name = GetTerm();
 
             _fullHelpObject.TypeNames.Clear();
             _fullHelpObject.TypeNames.Add(string.Format(Globalization.CultureInfo.InvariantCulture,
@@ -44,18 +44,11 @@ namespace System.Management.Automation
 
         #region Basic Help Properties
 
-        private string _name = "";
         /// <summary>
         /// Name of glossary. 
         /// </summary>
         /// <value>Name of glossary</value>
-        override internal string Name
-        {
-            get
-            {
-                return _name;
-            }
-        }
+        override internal string Name { get; } = "";
 
         private string GetTerm()
         {

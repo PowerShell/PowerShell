@@ -91,39 +91,23 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private string[] _types = new string[] { "types.ps1xml" };
-
         /// <summary>
         /// Get type files to be used for this mshsnapin.
         /// </summary>
-        public override string[] Types
-        {
-            get
-            {
-                return _types;
-            }
-        }
-
-        private string[] _formats = new string[] {
-                                                    "Certificate.format.ps1xml",
-                                                    "DotNetTypes.format.ps1xml",
-                                                    "FileSystem.format.ps1xml",
-                                                    "Help.format.ps1xml",
-                                                    "HelpV3.format.ps1xml",
-                                                    "PowerShellCore.format.ps1xml",
-                                                    "PowerShellTrace.format.ps1xml",
-                                                    "Registry.format.ps1xml"
-                                                 };
+        public override string[] Types { get; } = new string[] { "types.ps1xml" };
 
         /// <summary>
         /// Get format files to be used for this mshsnapin.
         /// </summary>
-        public override string[] Formats
-        {
-            get
-            {
-                return _formats;
-            }
-        }
+        public override string[] Formats { get; } = new string[] {
+            "Certificate.format.ps1xml",
+            "DotNetTypes.format.ps1xml",
+            "FileSystem.format.ps1xml",
+            "Help.format.ps1xml",
+            "HelpV3.format.ps1xml",
+            "PowerShellCore.format.ps1xml",
+            "PowerShellTrace.format.ps1xml",
+            "Registry.format.ps1xml"
+        };
     }
 }

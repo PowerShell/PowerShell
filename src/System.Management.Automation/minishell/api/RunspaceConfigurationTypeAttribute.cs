@@ -25,20 +25,12 @@ namespace System.Management.Automation.Runspaces
         /// <param name="runspaceConfigurationType">Runspace configuration type</param>
         public RunspaceConfigurationTypeAttribute(string runspaceConfigurationType)
         {
-            _runspaceConfigType = runspaceConfigurationType;
+            RunspaceConfigurationType = runspaceConfigurationType;
         }
-
-        private string _runspaceConfigType;
 
         /// <summary>
         /// Get runspace configuration type
         /// </summary>
-        public string RunspaceConfigurationType
-        {
-            get
-            {
-                return _runspaceConfigType;
-            }
-        }
+        public string RunspaceConfigurationType { get; }
     }
 }

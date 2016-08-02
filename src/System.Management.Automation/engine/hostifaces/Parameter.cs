@@ -54,13 +54,13 @@ namespace System.Management.Automation.Runspaces
                     throw PSTraceSource.NewArgumentException("name");
                 }
 
-                _name = name;
+                Name = name;
             }
             else
             {
-                _name = name;
+                Name = name;
             }
-            _value = value;
+            Value = value;
         }
 
 
@@ -71,37 +71,16 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// gets the parameter name
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-        }
+        public string Name { get; }
 
         /// <summary>
         /// gets the value of the parameter
         /// </summary>
-        public object Value
-        {
-            get
-            {
-                return _value;
-            }
-        }
+        public object Value { get; }
 
         #endregion Public properties
 
         #region Private Fields
-
-        /// <summary>
-        /// The parameter name
-        /// </summary>
-        private string _name;
-        /// <summary>
-        /// The parameter value.
-        /// </summary>
-        private object _value;
 
         #endregion Private Fields
 

@@ -18,41 +18,28 @@ namespace System.Management.Automation.ComInterop
     /// </summary>
     internal sealed class DispCallable : IPseudoComObject
     {
-        private readonly IDispatchComObject _dispatch;
-        private readonly string _memberName;
-        private readonly int _dispId;
-
         internal DispCallable(IDispatchComObject dispatch, string memberName, int dispId)
         {
-            _dispatch = dispatch;
-            _memberName = memberName;
-            _dispId = dispId;
+            DispatchComObject = dispatch;
+            MemberName = memberName;
+            DispId = dispId;
         }
 
         public override string ToString()
         {
-            return String.Format(CultureInfo.CurrentCulture, "<bound dispmethod {0}>", _memberName);
+            return String.Format(CultureInfo.CurrentCulture, "<bound dispmethod {0}>", MemberName);
         }
 
-        public IDispatchComObject DispatchComObject
-        {
-            get { return _dispatch; }
-        }
+        public IDispatchComObject DispatchComObject { get; }
 
         public IDispatch DispatchObject
         {
-            get { return _dispatch.DispatchObject; }
+            get { return DispatchComObject.DispatchObject; }
         }
 
-        public string MemberName
-        {
-            get { return _memberName; }
-        }
+        public string MemberName { get; }
 
-        public int DispId
-        {
-            get { return _dispId; }
-        }
+        public int DispId { get; }
 
         public DynamicMetaObject GetMetaObject(Expression parameter)
         {
@@ -62,12 +49,12 @@ namespace System.Management.Automation.ComInterop
         public override bool Equals(object obj)
         {
             var other = obj as DispCallable;
-            return other != null && other._dispatch == _dispatch && other._dispId == _dispId;
+            return other != null && other.DispatchComObject == DispatchComObject && other.DispId == DispId;
         }
 
         public override int GetHashCode()
         {
-            return _dispatch.GetHashCode() ^ _dispId;
+            return DispatchComObject.GetHashCode() ^ DispId;
         }
     }
 }

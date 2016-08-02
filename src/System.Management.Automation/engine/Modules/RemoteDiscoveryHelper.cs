@@ -684,21 +684,13 @@ namespace System.Management.Automation
                     Dbg.Assert(fileName != null, "Caller should make sure fileName != null");
                     Dbg.Assert(rawFileData != null, "Caller should make sure rawFileData != null");
 
-                    _fileName = fileName;
-                    _rawFileData = rawFileData;
+                    FileName = fileName;
+                    RawFileDataCore = rawFileData;
                 }
 
-                public override string FileName
-                {
-                    get { return _fileName; }
-                }
-                private readonly string _fileName;
+                public override string FileName { get; }
 
-                internal override byte[] RawFileDataCore
-                {
-                    get { return _rawFileData; }
-                }
-                private readonly byte[] _rawFileData;
+                internal override byte[] RawFileDataCore { get; }
             }
 
             private class CimModuleImplementationFile : CimModuleFile

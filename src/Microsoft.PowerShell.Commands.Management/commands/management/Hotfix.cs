@@ -48,15 +48,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Alias("HFID")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] Id
-        {
-            get { return _id; }
-            set
-            {
-                _id = value;
-            }
-        }
-        private string[] _id;
+        public string[] Id { get; set; }
 
         /// <summary>
         /// To search on description of Hotfixes
@@ -64,15 +56,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Description")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] Description
-        {
-            get { return _description; }
-            set
-            {
-                _description = value;
-            }
-        }
-        private string[] _description;
+        public string[] Description { get; set; }
 
         /// <summary>
         /// Parameter to pass the Computer Name
@@ -81,15 +65,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Alias("CN", "__Server", "IPAddress")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] ComputerName
-        {
-            get { return _computername; }
-            set
-            {
-                _computername = value;
-            }
-        }
-        private string[] _computername = new string[] { "localhost" };
+        public string[] ComputerName { get; set; } = new string[] { "localhost" };
 
         /// <summary>
         /// Parameter to pass the Credentials.
@@ -97,15 +73,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [Credential]
         [ValidateNotNullOrEmpty]
-        public PSCredential Credential
-        {
-            get { return _credential; }
-            set
-            {
-                _credential = value;
-            }
-        }
-        private PSCredential _credential;
+        public PSCredential Credential { get; set; }
 
         #endregion Parameters
 
@@ -120,22 +88,22 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            foreach (string computer in _computername)
+            foreach (string computer in ComputerName)
             {
                 bool foundRecord = false;
                 StringBuilder QueryString = new StringBuilder();
                 ConnectionOptions conOptions = ComputerWMIHelper.GetConnectionOptions(AuthenticationLevel.Packet, ImpersonationLevel.Impersonate, this.Credential);
                 ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), conOptions);
                 scope.Connect();
-                if (_id != null)
+                if (Id != null)
                 {
                     QueryString.Append("Select * from Win32_QuickFixEngineering where (");
-                    for (int i = 0; i <= _id.Length - 1; i++)
+                    for (int i = 0; i <= Id.Length - 1; i++)
                     {
                         QueryString.Append("HotFixID= '");
-                        QueryString.Append(_id[i].ToString().Replace("'", "\\'"));
+                        QueryString.Append(Id[i].ToString().Replace("'", "\\'"));
                         QueryString.Append("'");
-                        if (i < _id.Length - 1)
+                        if (i < Id.Length - 1)
                             QueryString.Append(" Or ");
                     }
                     QueryString.Append(")");
@@ -148,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
                 _searchProcess = new ManagementObjectSearcher(scope, new ObjectQuery(QueryString.ToString()));
                 foreach (ManagementObject obj in _searchProcess.Get())
                 {
-                    if (_description != null)
+                    if (Description != null)
                     {
                         if (!FilterMatch(obj))
                             continue;
@@ -219,7 +187,7 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
-                foreach (string desc in _description)
+                foreach (string desc in Description)
                 {
                     WildcardPattern wildcardpattern = WildcardPattern.Get(desc, WildcardOptions.IgnoreCase);
                     if (wildcardpattern.IsMatch((string)obj["Description"]))

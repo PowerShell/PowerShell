@@ -68,20 +68,12 @@ namespace System.Management.Automation
         //
         // wildcard pattern
         //
-        private readonly string _pattern;
-        internal string Pattern
-        {
-            get { return _pattern; }
-        }
+        internal string Pattern { get; }
 
         //
         // options that control match behavior
         // 
-        private readonly WildcardOptions _options = WildcardOptions.None;
-        internal WildcardOptions Options
-        {
-            get { return _options; }
-        }
+        internal WildcardOptions Options { get; } = WildcardOptions.None;
 
         /// <summary>
         /// wildcard pattern converted to regex pattern.
@@ -109,7 +101,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("pattern");
             }
 
-            _pattern = pattern;
+            Pattern = pattern;
         }
 
         /// <summary>
@@ -129,8 +121,8 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("pattern");
             }
 
-            _pattern = pattern;
-            _options = options;
+            Pattern = pattern;
+            Options = options;
         }
 
         private static readonly WildcardPattern s_matchAllIgnoreCasePattern = new WildcardPattern("*", WildcardOptions.None);
@@ -164,7 +156,7 @@ namespace System.Management.Automation
         {
             if (_isMatch == null)
             {
-                if (_pattern.Length == 1 && _pattern[0] == '*')
+                if (Pattern.Length == 1 && Pattern[0] == '*')
                 {
                     _isMatch = _ => true;
                 }

@@ -41,11 +41,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Represents the interface to the PowerShell event queue.
         /// </summary>
-        public PSEventArgsCollection ReceivedEvents
-        {
-            get { return _receivedEvents; }
-        }
-        private PSEventArgsCollection _receivedEvents = new PSEventArgsCollection();
+        public PSEventArgsCollection ReceivedEvents { get; } = new PSEventArgsCollection();
 
         /// <summary>
         /// Gets the list of event subscribers.
@@ -2007,12 +2003,12 @@ namespace System.Management.Automation
         {
             _context = context;
 
-            _subscriptionId = id;
-            _sourceObject = source;
-            _eventName = eventName;
-            _sourceIdentifier = sourceIdentifier;
-            _supportEvent = supportEvent;
-            _forwardEvent = forwardEvent;
+            SubscriptionId = id;
+            SourceObject = source;
+            EventName = eventName;
+            SourceIdentifier = sourceIdentifier;
+            SupportEvent = supportEvent;
+            ForwardEvent = forwardEvent;
 
             IsBeingUnsubscribed = false;
             RemainingActionsToProcess = 0;
@@ -2041,19 +2037,19 @@ namespace System.Management.Automation
             if (action != null)
             {
                 ScriptBlock newAction = CreateBoundScriptBlock(action);
-                _action = new PSEventJob(context.Events, this, newAction, sourceIdentifier);
+                Action = new PSEventJob(context.Events, this, newAction, sourceIdentifier);
             }
         }
 
         internal void RegisterJob()
         {
             // And this event subscriber to the job repository if it's not a support event.
-            if (!_supportEvent)
+            if (!SupportEvent)
             {
                 if (this.Action != null)
                 {
                     JobRepository jobRepository = ((LocalRunspace)_context.CurrentRunspace).JobRepository;
-                    jobRepository.Add(_action);
+                    jobRepository.Add(Action);
                 }
             }
         }
@@ -2066,7 +2062,7 @@ namespace System.Management.Automation
             string eventName, string sourceIdentifier, PSEventReceivedEventHandler handlerDelegate, bool supportEvent, bool forwardEvent, int maxTriggerCount) :
             this(context, id, source, eventName, sourceIdentifier, supportEvent, forwardEvent, maxTriggerCount)
         {
-            _handlerDelegate = handlerDelegate;
+            HandlerDelegate = handlerDelegate;
         }
 
         private ExecutionContext _context;
@@ -2090,95 +2086,48 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the identifier of this event subscription
         /// </summary>
-        public int SubscriptionId
-        {
-            get
-            {
-                return _subscriptionId;
-            }
-            set
-            {
-                _subscriptionId = value;
-            }
-        }
-        private int _subscriptionId;
+        public int SubscriptionId { get; set; }
 
         /// <summary>
         /// The object to which this event subscription applies
         /// </summary>
-        public Object SourceObject
-        {
-            get { return _sourceObject; }
-        }
-        private Object _sourceObject;
+        public Object SourceObject { get; }
 
         /// <summary>
         /// The event object to which this event subscription applies
         /// </summary>
-        public string EventName
-        {
-            get { return _eventName; }
-        }
-        private string _eventName;
+        public string EventName { get; }
 
         /// <summary>
         /// The identifier that identifies the source of these events
         /// </summary>
-        public string SourceIdentifier
-        {
-            get { return _sourceIdentifier; }
-        }
-        private string _sourceIdentifier;
+        public string SourceIdentifier { get; }
 
         /// <summary>
         /// The action invoked when this event arrives
         /// </summary>
-        public PSEventJob Action
-        {
-            get { return _action; }
-        }
-        private PSEventJob _action;
+        public PSEventJob Action { get; }
 
         /// <summary>
         /// The delegate invoked when this event arrives
         /// </summary>
-        public PSEventReceivedEventHandler HandlerDelegate
-        {
-            get { return _handlerDelegate; }
-        }
-        private PSEventReceivedEventHandler _handlerDelegate = null;
+        public PSEventReceivedEventHandler HandlerDelegate { get; } = null;
 
 
         /// <summary>
         /// Get the flag that marks this event as a supporting event
         /// </summary>
-        public bool SupportEvent
-        {
-            get
-            {
-                return _supportEvent;
-            }
-        }
-        private bool _supportEvent;
+        public bool SupportEvent { get; }
 
         /// <summary>
         /// Gets whether to forward the event to the PowerShell client during a remote execution
         /// </summary>
-        public bool ForwardEvent
-        {
-            get { return _forwardEvent; }
-        }
-        private bool _forwardEvent;
+        public bool ForwardEvent { get; }
 
         /// <summary>
         /// Gets whether the event should be processed in the pipeline execution thread.
         /// </summary>
-        internal bool ShouldProcessInExecutionThread
-        {
-            get { return _shouldProcessInExecutionThread; }
-            set { _shouldProcessInExecutionThread = value; }
-        }
-        private bool _shouldProcessInExecutionThread;
+        internal bool ShouldProcessInExecutionThread { get; set; }
 
         /// <summary>
         /// Gets whether the event should be unregistered
@@ -2318,23 +2267,15 @@ namespace System.Management.Automation
     /// </summary>
     public class ForwardedEventArgs : EventArgs
     {
-        private PSObject _serializedRemoteEventArgs;
-
         internal ForwardedEventArgs(PSObject serializedRemoteEventArgs)
         {
-            _serializedRemoteEventArgs = serializedRemoteEventArgs;
+            SerializedRemoteEventArgs = serializedRemoteEventArgs;
         }
 
         /// <summary>
         /// Serialized event arguments from the event fired in a remote runspace
         /// </summary>
-        public PSObject SerializedRemoteEventArgs
-        {
-            get
-            {
-                return _serializedRemoteEventArgs;
-            }
-        }
+        public PSObject SerializedRemoteEventArgs { get; }
 
         static internal bool IsRemoteSourceEventArgs(object argument)
         {
@@ -2404,136 +2345,88 @@ namespace System.Management.Automation
                     EventArgs sourceEventArgs = argument as EventArgs;
                     if (sourceEventArgs != null)
                     {
-                        _sourceEventArgs = sourceEventArgs;
+                        SourceEventArgs = sourceEventArgs;
                         break;
                     }
 
                     if (ForwardedEventArgs.IsRemoteSourceEventArgs(argument))
                     {
-                        _sourceEventArgs = new ForwardedEventArgs((PSObject)argument);
+                        SourceEventArgs = new ForwardedEventArgs((PSObject)argument);
                         break;
                     }
                 }
             }
 
-            _computerName = computerName;
-            _runspaceId = runspaceId;
-            _eventIdentifier = eventIdentifier;
-            _sender = sender;
-            _sourceArgs = originalArgs;
-            _sourceIdentifier = sourceIdentifier;
-            _timeGenerated = DateTime.Now;
-            _data = additionalData;
-            _forwardEvent = false;
+            ComputerName = computerName;
+            RunspaceId = runspaceId;
+            EventIdentifier = eventIdentifier;
+            Sender = sender;
+            SourceArgs = originalArgs;
+            SourceIdentifier = sourceIdentifier;
+            TimeGenerated = DateTime.Now;
+            MessageData = additionalData;
+            ForwardEvent = false;
         }
 
         /// <summary>
         /// Gets the name of the computer on which this event was generated; the value of this property is null for events generated on the local machine.
         /// </summary>
-        public string ComputerName
-        {
-            get { return _computerName; }
-            internal set { _computerName = value; }
-        }
-        private string _computerName;
+        public string ComputerName { get; internal set; }
 
         /// <summary>
         /// Gets the unique identifier of this event
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
-        public Guid RunspaceId
-        {
-            get { return _runspaceId; }
-            internal set { _runspaceId = value; }
-        }
-        private Guid _runspaceId;
+        public Guid RunspaceId { get; internal set; }
 
         /// <summary>
         /// Gets the unique identifier of this event
         /// </summary>
-        public int EventIdentifier
-        {
-            get { return _eventIdentifier; }
-            internal set { _eventIdentifier = value; }
-        }
-        private int _eventIdentifier;
+        public int EventIdentifier { get; internal set; }
 
         /// <summary>
         /// Gets the object that generated this event
         /// </summary>
-        public Object Sender
-        {
-            get { return _sender; }
-        }
-        private Object _sender;
+        public Object Sender { get; }
 
         /// <summary>
         /// Gets the first argument from the original event source that
         /// derives from EventArgs
         /// </summary>
-        public EventArgs SourceEventArgs
-        {
-            get { return _sourceEventArgs; }
-        }
-        private EventArgs _sourceEventArgs;
+        public EventArgs SourceEventArgs { get; }
 
         /// <summary>
         /// Gets the list of arguments captured by the original event source
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public Object[] SourceArgs
-        {
-            get { return _sourceArgs; }
-        }
-        private Object[] _sourceArgs;
+        public Object[] SourceArgs { get; }
 
         /// <summary>
         /// Gets the identifier associated with the source of this event
         /// </summary>
-        public String SourceIdentifier
-        {
-            get { return _sourceIdentifier; }
-        }
-        private String _sourceIdentifier;
+        public String SourceIdentifier { get; }
 
         /// <summary>
         /// Gets the time and date that this event was generated
         /// </summary>
-        public DateTime TimeGenerated
-        {
-            get { return _timeGenerated; }
-            internal set { _timeGenerated = value; } // internal setter using during deserialization
+        public DateTime TimeGenerated { get; internal set;
+// internal setter using during deserialization
         }
-        private DateTime _timeGenerated;
 
         /// <summary>
         /// Gets the additional user data associated with this event
         /// </summary>
-        public PSObject MessageData
-        {
-            get { return _data; }
-        }
-        private PSObject _data;
+        public PSObject MessageData { get; }
 
         /// <summary>
         /// Gets whether to forward the event to the PowerShell client during a remote execution
         /// </summary>
-        internal bool ForwardEvent
-        {
-            get { return _forwardEvent; }
-            set { _forwardEvent = value; }
-        }
-        private bool _forwardEvent;
+        internal bool ForwardEvent { get; set; }
 
         /// <summary>
         /// When processing synchronous events, this mutex is set so we know when we can safely return.
         /// </summary>
-        internal ManualResetEventSlim EventProcessed
-        {
-            get { return _eventProcessed; }
-            set { _eventProcessed = value; }
-        }
-        private ManualResetEventSlim _eventProcessed;
+        internal ManualResetEventSlim EventProcessed { get; set; }
     }
 
     /// <summary>
@@ -2557,18 +2450,13 @@ namespace System.Management.Automation
         /// </param>
         internal PSEventUnsubscribedEventArgs(PSEventSubscriber eventSubscriber)
         {
-            _eventSubscriber = eventSubscriber;
+            EventSubscriber = eventSubscriber;
         }
 
         /// <summary>
         /// The event subscriber being unregistered
         /// </summary>
-        public PSEventSubscriber EventSubscriber
-        {
-            get { return _eventSubscriber; }
-            internal set { _eventSubscriber = value; }
-        }
-        private PSEventSubscriber _eventSubscriber;
+        public PSEventSubscriber EventSubscriber { get; internal set; }
     }
 
     /// <summary>
@@ -2588,7 +2476,6 @@ namespace System.Management.Automation
         /// </summary>
         public event PSEventReceivedEventHandler PSEventReceived;
         private List<PSEventArgs> _eventCollection = new List<PSEventArgs>();
-        private object _syncRoot = new object();
 
         /// <summary>
         /// Add add an event to the collection
@@ -2668,10 +2555,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the synchronization root for this collection
         /// </summary>
-        public object SyncRoot
-        {
-            get { return _syncRoot; }
-        }
+        public object SyncRoot { get; } = new object();
     }
 
     /// <summary>
@@ -2683,27 +2567,19 @@ namespace System.Management.Automation
     {
         public EventAction(PSEventSubscriber sender, PSEventArgs args)
         {
-            _sender = sender;
-            _args = args;
+            Sender = sender;
+            Args = args;
         }
 
         /// <summary>
         /// Get the sender of this event (the event subscriber)
         /// </summary>
-        public PSEventSubscriber Sender
-        {
-            get { return _sender; }
-        }
-        private PSEventSubscriber _sender;
+        public PSEventSubscriber Sender { get; }
 
         /// <summary>
         /// Get the arguments of this event (the event that was fired)
         /// </summary>
-        public PSEventArgs Args
-        {
-            get { return _args; }
-        }
-        private PSEventArgs _args;
+        public PSEventArgs Args { get; }
     }
 
     /// <summary>
@@ -2736,7 +2612,7 @@ namespace System.Management.Automation
                 throw new ArgumentNullException("subscriber");
 
             UsesResultsCollection = true;
-            _action = action;
+            ScriptBlock = action;
             _eventManager = eventManager;
             _subscriber = subscriber;
         }
@@ -2750,7 +2626,7 @@ namespace System.Management.Automation
         /// </summary>
         public PSModuleInfo Module
         {
-            get { return _action.Module; }
+            get { return ScriptBlock.Module; }
         }
 
         /// <summary>
@@ -2764,14 +2640,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Message indicating status of the job
         /// </summary>
-        public override string StatusMessage
-        {
-            get
-            {
-                return _statusMessage;
-            }
-        }
-        private string _statusMessage = null;
+        public override string StatusMessage { get; } = null;
 
         /// <summary>
         /// indicates if more data is available
@@ -2803,11 +2672,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The scriptblock that defines the action
         /// </summary>
-        internal ScriptBlock ScriptBlock
-        {
-            get { return _action; }
-        }
-        private ScriptBlock _action;
+        internal ScriptBlock ScriptBlock { get; }
 
         /// <summary>
         /// Invoke the script block
@@ -2827,7 +2692,7 @@ namespace System.Management.Automation
             SetJobState(JobState.Running);
 
             // Prepare the automatic variables
-            SessionState actionState = _action.SessionStateInternal.PublicSessionState;
+            SessionState actionState = ScriptBlock.SessionStateInternal.PublicSessionState;
 
             // $psEventSubscriber = The subscriber
             // that generated this event
@@ -2846,7 +2711,7 @@ namespace System.Management.Automation
             try
             {
                 Pipe outputPipe = new Pipe(results);
-                _action.InvokeWithPipe(
+                ScriptBlock.InvokeWithPipe(
                     useLocalScope: false,
                     errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
                     dollarUnder: AutomationNull.Value,

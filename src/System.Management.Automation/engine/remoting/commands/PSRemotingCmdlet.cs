@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (!_skipWinRMCheck)
+            if (!SkipWinRMCheck)
             {
                 RemotingCommandUtil.CheckRemotingCmdletPrerequisites();
             }
@@ -195,22 +195,11 @@ namespace Microsoft.PowerShell.Commands
 
         #region Internal Members
 
-        private bool _skipWinRMCheck = false;
-
         /// <summary>
         /// Skip checking for WinRM
         /// </summary>
-        internal bool SkipWinRMCheck
-        {
-            get
-            {
-                return _skipWinRMCheck;
-            }
-            set
-            {
-                _skipWinRMCheck = value;
-            }
-        }
+        internal bool SkipWinRMCheck { get; set; } = false;
+
         #endregion Internal Members
 
         #region Protected Methods
@@ -438,19 +427,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = PSRemotingBaseCmdlet.SessionParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public virtual PSSession[] Session
-        {
-            get
-            {
-                return _remoteRunspaceInfos;
-            }
-            set
-            {
-                _remoteRunspaceInfos = value;
-            }
-        }
-
-        private PSSession[] _remoteRunspaceInfos;
+        public virtual PSSession[] Session { get; set; }
 
         /// <summary>
         /// This parameter represents the address(es) of the remote
@@ -464,19 +441,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRemotingBaseCmdlet.ComputerNameParameterSet)]
         [Alias("Cn")]
-        public virtual String[] ComputerName
-        {
-            get
-            {
-                return _computerNames;
-            }
-            set
-            {
-                _computerNames = value;
-            }
-        }
-
-        private String[] _computerNames;
+        public virtual String[] ComputerName { get; set; }
 
         /// <summary>
         /// Computer names after they have been resolved
@@ -485,18 +450,7 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>If Null or empty string is specified, then localhost is assumed.
         /// The ResolveComputerNames will include this.
         /// </remarks>
-        protected String[] ResolvedComputerNames
-        {
-            get
-            {
-                return _resolvedComputerNames;
-            }
-            set
-            {
-                _resolvedComputerNames = value;
-            }
-        }
-        private String[] _resolvedComputerNames;
+        protected String[] ResolvedComputerNames { get; set; }
 
         /// <summary>
         /// Guid of target virtual machine.
@@ -509,18 +463,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = PSRemotingBaseCmdlet.VMIdParameterSet)]
         [ValidateNotNullOrEmpty]
         [Alias("VMGuid")]
-        public virtual Guid[] VMId
-        {
-            get
-            {
-                return _vmId;
-            }
-            set
-            {
-                _vmId = value;
-            }
-        }
-        private Guid[] _vmId;
+        public virtual Guid[] VMId { get; set; }
 
         /// <summary>
         /// Name of target virtual machine.
@@ -531,18 +474,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRemotingBaseCmdlet.VMNameParameterSet)]
         [ValidateNotNullOrEmpty]
-        public virtual string[] VMName
-        {
-            get
-            {
-                return _vmName;
-            }
-            set
-            {
-                _vmName = value;
-            }
-        }
-        private string[] _vmName;
+        public virtual string[] VMName { get; set; }
 
         /// <summary>
         /// Specifies the credentials of the user to impersonate in the 
@@ -582,18 +514,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRemotingBaseCmdlet.ContainerIdParameterSet)]
         [ValidateNotNullOrEmpty]
-        public virtual string[] ContainerId
-        {
-            get
-            {
-                return _containerId;
-            }
-            set
-            {
-                _containerId = value;
-            }
-        }
-        private string[] _containerId;
+        public virtual string[] ContainerId { get; set; }
 
         /// <summary>
         /// When set, PowerShell process inside container will be launched with
@@ -602,18 +523,7 @@ namespace Microsoft.PowerShell.Commands
         /// with low privileged account.
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.ContainerIdParameterSet)]
-        public virtual SwitchParameter RunAsAdministrator
-        {
-            get
-            {
-                return _runAsAdministrator;
-            }
-            set
-            {
-                _runAsAdministrator = value;
-            }
-        }
-        private SwitchParameter _runAsAdministrator;
+        public virtual SwitchParameter RunAsAdministrator { get; set; }
 
         /// <summary>
         /// Port specifies the alternate port to be used in case the 
@@ -628,18 +538,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.ComputerNameParameterSet)]
         [ValidateRange((Int32)1, (Int32)UInt16.MaxValue)]
-        public virtual Int32 Port
-        {
-            get
-            {
-                return _port;
-            }
-            set
-            {
-                _port = value;
-            }
-        }
-        private Int32 _port;
+        public virtual Int32 Port { get; set; }
 
         /// <summary>
         /// This parameter suggests that the transport scheme to be used for
@@ -650,18 +549,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.ComputerNameParameterSet)]
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSL")]
-        public virtual SwitchParameter UseSSL
-        {
-            get
-            {
-                return _useSSL;
-            }
-            set
-            {
-                _useSSL = value;
-            }
-        }
-        private SwitchParameter _useSSL;
+        public virtual SwitchParameter UseSSL { get; set; }
 
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
@@ -696,19 +584,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.ContainerIdParameterSet)]
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.VMIdParameterSet)]
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.VMNameParameterSet)]
-        public virtual Int32 ThrottleLimit
-        {
-            set
-            {
-                _throttleLimit = value;
-            }
-            get
-            {
-                return _throttleLimit;
-            }
-        }
-
-        private int _throttleLimit = 0;
+        public virtual Int32 ThrottleLimit { set; get; } = 0;
 
         /// <summary>
         /// A complete URI(s) specified for the remote computer and shell to 
@@ -719,18 +595,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = PSRemotingBaseCmdlet.UriParameterSet)]
         [ValidateNotNullOrEmpty]
         [Alias("URI", "CU")]
-        public virtual Uri[] ConnectionUri
-        {
-            get
-            {
-                return _uris;
-            }
-            set
-            {
-                _uris = value;
-            }
-        }
-        private Uri[] _uris;
+        public virtual Uri[] ConnectionUri { get; set; }
 
         /// <summary>
         /// The AllowRediraction parameter enables the implicit redirection functionality
@@ -1010,19 +875,7 @@ namespace Microsoft.PowerShell.Commands
         /// this cmdlet which will bind with a ValueFromPipeline=true
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public virtual PSObject InputObject
-        {
-            get
-            {
-                return _inputObject;
-            }
-            set
-            {
-                _inputObject = value;
-            }
-        }
-
-        private PSObject _inputObject = AutomationNull.Value;
+        public virtual PSObject InputObject { get; set; } = AutomationNull.Value;
 
         /// <summary>
         /// Command to execute specified as a string. This can be a single
@@ -1100,23 +953,13 @@ namespace Microsoft.PowerShell.Commands
         /// right have invocation of job/command.
         /// </summary>
         ///
-        protected bool InvokeAndDisconnect
-        {
-            get { return _invokeAndDisconnect; }
-            set { _invokeAndDisconnect = value; }
-        }
-        private bool _invokeAndDisconnect = false;
+        protected bool InvokeAndDisconnect { get; set; } = false;
 
         /// <summary>
         /// Session names optionally provided for Disconnected parameter.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        protected string[] DisconnectedSessionName
-        {
-            get { return _sessionName; }
-            set { _sessionName = value; }
-        }
-        private string[] _sessionName;
+        protected string[] DisconnectedSessionName { get; set; }
 
         /// <summary>
         /// When set and in loopback scenario (localhost) this enables creation of WSMan
@@ -1124,12 +967,7 @@ namespace Microsoft.PowerShell.Commands
         /// i.e., allows going off box.  When this property is true and a PSSession is disconnected, 
         /// reconnection is allowed only if reconnecting from a PowerShell session on the same box.
         /// </summary>
-        public virtual SwitchParameter EnableNetworkAccess
-        {
-            get { return _enableNetworkAccess; }
-            set { _enableNetworkAccess = value; }
-        }
-        private SwitchParameter _enableNetworkAccess;
+        public virtual SwitchParameter EnableNetworkAccess { get; set; }
 
         /// <summary>
         /// Guid of target virtual machine.
@@ -1144,12 +982,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [ValidateNotNullOrEmpty]
         [Alias("VMGuid")]
-        public override Guid[] VMId
-        {
-            get { return _vmId; }
-            set { _vmId = value; }
-        }
-        private Guid[] _vmId;
+        public override Guid[] VMId { get; set; }
 
         /// <summary>
         /// Name of target virtual machine.
@@ -1163,12 +996,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
         [ValidateNotNullOrEmpty]
-        public override string[] VMName
-        {
-            get { return _vmName; }
-            set { _vmName = value; }
-        }
-        private string[] _vmName;
+        public override string[] VMName { get; set; }
 
         /// <summary>
         /// ID of target container.
@@ -1182,12 +1010,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
         [ValidateNotNullOrEmpty]
-        public override string[] ContainerId
-        {
-            get { return _containerId; }
-            set { _containerId = value; }
-        }
-        private string[] _containerId;
+        public override string[] ContainerId { get; set; }
 
         /// <summary>
         /// For WSMan session:
@@ -1218,20 +1041,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
-        public virtual String ConfigurationName
-        {
-            get
-            {
-                return _shell;
-            }
-            set
-            {
-                // Only InvokeCommandCommand may enter here,
-                // which will call ResolveShell() if needed.
-                _shell = value;
-            }
-        }
-        private String _shell;
+        public virtual String ConfigurationName { get; set; }
 
         #endregion Parameters
 
@@ -1297,7 +1107,7 @@ namespace Microsoft.PowerShell.Commands
                 Pipeline pipeline = CreatePipeline(remoteRunspace);
 
                 IThrottleOperation operation =
-                    new ExecutionCmdletHelperComputerName(remoteRunspace, pipeline, _invokeAndDisconnect);
+                    new ExecutionCmdletHelperComputerName(remoteRunspace, pipeline, InvokeAndDisconnect);
 
                 Operations.Add(operation);
             }
@@ -1396,7 +1206,7 @@ namespace Microsoft.PowerShell.Commands
                 Pipeline pipeline = CreatePipeline(remoteRunspace);
 
                 IThrottleOperation operation =
-                    new ExecutionCmdletHelperComputerName(remoteRunspace, pipeline, _invokeAndDisconnect);
+                    new ExecutionCmdletHelperComputerName(remoteRunspace, pipeline, InvokeAndDisconnect);
 
                 Operations.Add(operation);
             }
@@ -1767,16 +1577,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// List of operations
         /// </summary>
-        internal List<IThrottleOperation> Operations
-        {
-            get
-            {
-                return _operations;
-            }
-        }
-
-        private List<IThrottleOperation> _operations =
-                new List<IThrottleOperation>();
+        internal List<IThrottleOperation> Operations { get; } = new List<IThrottleOperation>();
 
 
         /// <summary>
@@ -2313,19 +2114,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = PSRunspaceCmdlet.IdParameterSet)]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public int[] Id
-        {
-            get
-            {
-                return _sessionIds;
-            }
-            set
-            {
-                _sessionIds = value;
-            }
-        }
-
-        private int[] _sessionIds;
+        public int[] Id { get; set; }
 
         /// <summary>
         /// Name of the remote runspaceinfo object
@@ -2383,12 +2172,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRunspaceCmdlet.ContainerIdInstanceIdParameterSet)]
         [ValidateNotNullOrEmpty]
-        public virtual string[] ContainerId
-        {
-            get { return _containerId; }
-            set { _containerId = value; }
-        }
-        private string[] _containerId;
+        public virtual string[] ContainerId { get; set; }
 
         /// <summary>
         /// Guid of target virtual machine.
@@ -2403,12 +2187,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = PSRunspaceCmdlet.VMIdInstanceIdParameterSet)]
         [ValidateNotNullOrEmpty]
         [Alias("VMGuid")]
-        public virtual Guid[] VMId
-        {
-            get { return _vmId; }
-            set { _vmId = value; }
-        }
-        private Guid[] _vmId;
+        public virtual Guid[] VMId { get; set; }
 
         /// <summary>
         /// Name of target virtual machine.
@@ -2422,12 +2201,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = PSRunspaceCmdlet.VMNameInstanceIdParameterSet)]
         [ValidateNotNullOrEmpty]
-        public virtual string[] VMName
-        {
-            get { return _vmName; }
-            set { _vmName = value; }
-        }
-        private string[] _vmName;
+        public virtual string[] VMName { get; set; }
 
         #endregion Parameters
 
@@ -2747,7 +2521,7 @@ namespace Microsoft.PowerShell.Commands
             List<PSSession> remoteRunspaceInfos = this.RunspaceRepository.Runspaces;
 
             // Loop through all computer-name patterns and runspaces to find matches.
-            foreach (int sessionId in _sessionIds)
+            foreach (int sessionId in Id)
             {
                 // Match the computer-name patterns against all the runspaces and remember the matches.
                 bool found = false;
@@ -3268,14 +3042,7 @@ namespace Microsoft.PowerShell.Commands
         /// The remote runspace created using the computer name
         /// parameter set details
         /// </summary>
-        internal RemoteRunspace RemoteRunspace
-        {
-            get
-            {
-                return _remoteRunspace;
-            }
-        }
-        private RemoteRunspace _remoteRunspace;
+        internal RemoteRunspace RemoteRunspace { get; private set; }
 
         /// <summary>
         /// Constructor
@@ -3292,7 +3059,7 @@ namespace Microsoft.PowerShell.Commands
 
             _invokeAndDisconnect = invokeAndDisconnect;
 
-            _remoteRunspace = remoteRunspace;
+            RemoteRunspace = remoteRunspace;
             remoteRunspace.StateChanged +=
                 new EventHandler<RunspaceStateEventArgs>(HandleRunspaceStateChanged);
 
@@ -3311,7 +3078,7 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
-                _remoteRunspace.OpenAsync();
+                RemoteRunspace.OpenAsync();
             }
             catch (PSRemotingTransportException e)
             {
@@ -3386,12 +3153,12 @@ namespace Microsoft.PowerShell.Commands
                         }
                         catch (InvalidPipelineStateException)
                         {
-                            _remoteRunspace.CloseAsync();
+                            RemoteRunspace.CloseAsync();
                         }
                         catch (InvalidRunspaceStateException e)
                         {
                             internalException = e;
-                            _remoteRunspace.CloseAsync();
+                            RemoteRunspace.CloseAsync();
                         }
                     }
                     break;
@@ -3438,9 +3205,9 @@ namespace Microsoft.PowerShell.Commands
                 case PipelineState.Completed:
                 case PipelineState.Stopped:
                 case PipelineState.Failed:
-                    if (_remoteRunspace != null)
+                    if (RemoteRunspace != null)
                     {
-                        _remoteRunspace.CloseAsync();
+                        RemoteRunspace.CloseAsync();
                     }
                     break;
             } // switch(state...
@@ -3470,11 +3237,11 @@ namespace Microsoft.PowerShell.Commands
                 pipeline.Dispose();
             }
 
-            if (_remoteRunspace != null)
+            if (RemoteRunspace != null)
             {
                 // Dispose of the runspace object.
-                _remoteRunspace.Dispose();
-                _remoteRunspace = null;
+                RemoteRunspace.Dispose();
+                RemoteRunspace = null;
             }
 
             OperationStateEventArgs operationStateEventArgs =

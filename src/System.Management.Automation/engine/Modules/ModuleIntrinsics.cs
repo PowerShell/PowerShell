@@ -34,20 +34,13 @@ namespace System.Management.Automation
         private readonly ExecutionContext _context;
 
         // Holds the module collection...
-        internal Dictionary<string, PSModuleInfo> ModuleTable
-        {
-            get
-            {
-                return _moduleTable;
-            }
-        }
-        private readonly Dictionary<string, PSModuleInfo> _moduleTable = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
+        internal Dictionary<string, PSModuleInfo> ModuleTable { get; } = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
 
         private const int MaxModuleNestingDepth = 10;
 
         internal void IncrementModuleNestingDepth(PSCmdlet cmdlet, string path)
         {
-            if (++_moduleNestingDepth > MaxModuleNestingDepth)
+            if (++ModuleNestingDepth > MaxModuleNestingDepth)
             {
                 string message = StringUtil.Format(Modules.ModuleTooDeeplyNested, path, MaxModuleNestingDepth);
                 InvalidOperationException ioe = new InvalidOperationException(message);
@@ -59,15 +52,10 @@ namespace System.Management.Automation
         }
         internal void DecrementModuleNestingCount()
         {
-            --_moduleNestingDepth;
+            --ModuleNestingDepth;
         }
 
-        internal int ModuleNestingDepth
-        {
-            get { return _moduleNestingDepth; }
-        }
-
-        private int _moduleNestingDepth;
+        internal int ModuleNestingDepth { get; private set; }
 
         /// <summary>
         /// Create a new module object from a scriptblock specifying the path to set for the module

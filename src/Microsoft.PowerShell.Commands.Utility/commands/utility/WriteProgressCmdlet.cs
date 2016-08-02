@@ -33,19 +33,7 @@ namespace Microsoft.PowerShell.Commands
             Mandatory = true,
             HelpMessageBaseName = HelpMessageBaseName,
             HelpMessageResourceId = "ActivityParameterHelpMessage")]
-        public
-        string
-        Activity
-        {
-            get
-            {
-                return _activity;
-            }
-            set
-            {
-                _activity = value;
-            }
-        }
+        public string Activity { get; set; }
 
 
         /// <summary>
@@ -60,20 +48,7 @@ namespace Microsoft.PowerShell.Commands
             HelpMessageBaseName = HelpMessageBaseName,
             HelpMessageResourceId = "StatusParameterHelpMessage")]
         [ValidateNotNullOrEmpty]
-        public
-        string
-        Status
-        {
-            get
-            {
-                return _status;
-            }
-            set
-            {
-                _status = value;
-            }
-        }
-
+        public string Status { get; set; } = WriteProgressResourceStrings.Processing;
 
 
         /// <summary>
@@ -85,20 +60,7 @@ namespace Microsoft.PowerShell.Commands
 
         [Parameter(Position = 2)]
         [ValidateRange(0, Int32.MaxValue)]
-        public
-        int
-        Id
-        {
-            get
-            {
-                return _activityId;
-            }
-            set
-            {
-                _activityId = value;
-            }
-        }
-
+        public int Id { get; set; } = 0;
 
 
         /// <summary>
@@ -110,21 +72,7 @@ namespace Microsoft.PowerShell.Commands
 
         [Parameter]
         [ValidateRange(-1, 100)]
-        public
-        int
-        PercentComplete
-        {
-            get
-            {
-                return _percentComplete;
-            }
-            set
-            {
-                _percentComplete = value;
-            }
-        }
-
-
+        public int PercentComplete { get; set; } = -1;
 
 
         /// <summary>
@@ -135,20 +83,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
 
         [Parameter]
-        public
-        int
-        SecondsRemaining
-        {
-            get
-            {
-                return _secondsRemaining;
-            }
-            set
-            {
-                _secondsRemaining = value;
-            }
-        }
-
+        public int SecondsRemaining { get; set; } = -1;
 
 
         /// <summary>
@@ -159,20 +94,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
 
         [Parameter]
-        public
-        string
-        CurrentOperation
-        {
-            get
-            {
-                return _currentOperation;
-            }
-            set
-            {
-                _currentOperation = value;
-            }
-        }
-
+        public string CurrentOperation { get; set; }
 
 
         /// <summary>
@@ -184,20 +106,7 @@ namespace Microsoft.PowerShell.Commands
 
         [Parameter]
         [ValidateRange(-1, Int32.MaxValue)]
-        public
-        int
-        ParentId
-        {
-            get
-            {
-                return _parentId;
-            }
-            set
-            {
-                _parentId = value;
-            }
-        }
-
+        public int ParentId { get; set; } = -1;
 
 
         /// <summary>
@@ -209,9 +118,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
 
         [Parameter]
-        public
-        SwitchParameter
-        Completed
+        public SwitchParameter Completed
         {
             get
             {
@@ -233,20 +140,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
 
         [Parameter]
-        public
-        int
-        SourceId
-        {
-            get
-            {
-                return _sourceId;
-            }
-            set
-            {
-                _sourceId = value;
-            }
-        }
-
+        public int SourceId { get; set; }
 
 
         /// <summary>
@@ -270,21 +164,10 @@ namespace Microsoft.PowerShell.Commands
         }
 
 
-
-        private int _activityId = 0;
-        private string _activity;
-        private string _status = WriteProgressResourceStrings.Processing;
-        private int _percentComplete = -1;
-        private int _secondsRemaining = -1;
-        private string _currentOperation;
-        private int _parentId = -1;
-        private int _sourceId;
         private bool _completed;
 
 
         private const string HelpMessageBaseName = "WriteProgressResourceStrings";
     }
 }
-
-
 

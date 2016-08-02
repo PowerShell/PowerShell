@@ -13,18 +13,14 @@ namespace Microsoft.PowerShell.Commands
     {
         internal CSVHelper(char delimiter)
         {
-            _delimiter = delimiter;
+            Delimiter = delimiter;
         }
 
         /// <summary>
         /// Gets or sets the delimiter that separates the values
         /// </summary>
         /// 
-        internal char Delimiter
-        {
-            get { return _delimiter; }
-        }
-        private char _delimiter = ',';
+        internal char Delimiter { get; } = ',';
 
         /// <summary>
         /// Parse a CSV String.

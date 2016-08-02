@@ -43,8 +43,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Return true if the console supports a VT100 like virtual terminal
         /// </summary>
-        public override bool SupportsVirtualTerminal { get { return _supportsVirtualTerminal; } }
-        private readonly bool _supportsVirtualTerminal;
+        public override bool SupportsVirtualTerminal { get; }
 
         /// <summary>
         /// 
@@ -62,7 +61,7 @@ namespace Microsoft.PowerShell
             _rawui = new ConsoleHostRawUserInterface(this);
 
 #if UNIX
-            _supportsVirtualTerminal = true;
+            SupportsVirtualTerminal = true;
 #else
             try
             {
@@ -76,7 +75,7 @@ namespace Microsoft.PowerShell
                     // We only know if vt100 is supported if the previous call actually set the new flag, older
                     // systems ignore the setting.
                     m = ConsoleControl.GetMode(handle);
-                    this._supportsVirtualTerminal = (m & ConsoleControl.ConsoleModes.VirtualTerminal) != 0;
+                    this.SupportsVirtualTerminal = (m & ConsoleControl.ConsoleModes.VirtualTerminal) != 0;
                 }
             }
             catch
@@ -159,17 +158,7 @@ namespace Microsoft.PowerShell
         /// 
         /// </summary>
 
-        internal bool NoPrompt
-        {
-            get
-            {
-                return _noPrompt;
-            }
-            set
-            {
-                _noPrompt = value;
-            }
-        }
+        internal bool NoPrompt { get; set; }
 
         #region Line-oriented interaction
 
@@ -1260,8 +1249,8 @@ namespace Microsoft.PowerShell
             {
                 // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...
                 WriteWrappedLine(
-                    _debugForegroundColor,
-                    _debugBackgroundColor,
+                    DebugForegroundColor,
+                    DebugBackgroundColor,
                     StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message));
             }
         }
@@ -1321,8 +1310,8 @@ namespace Microsoft.PowerShell
             else
             {
                 WriteWrappedLine(
-                    _verboseForegroundColor,
-                    _verboseBackgroundColor,
+                    VerboseForegroundColor,
+                    VerboseBackgroundColor,
                     StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message));
             }
         }
@@ -1433,125 +1422,31 @@ namespace Microsoft.PowerShell
             else
             {
                 if (writer == _parent.ConsoleTextWriter)
-                    WriteLine(_errorForegroundColor, _errorBackgroundColor, value);
+                    WriteLine(ErrorForegroundColor, ErrorBackgroundColor, value);
                 else
                     Console.Error.Write(value + Crlf);
             }
         }
 
         // Error colors
-        private ConsoleColor _errorForegroundColor = ConsoleColor.Red;
-        public ConsoleColor ErrorForegroundColor
-        {
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get
-            { return _errorForegroundColor; }
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set
-            { _errorForegroundColor = value; }
-        }
-
-        private ConsoleColor _errorBackgroundColor = Console.BackgroundColor;
-        public ConsoleColor ErrorBackgroundColor
-        {
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get
-            { return _errorBackgroundColor; }
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set
-            { _errorBackgroundColor = value; }
-        }
+        public ConsoleColor ErrorForegroundColor { get; set; } = ConsoleColor.Red;
+        public ConsoleColor ErrorBackgroundColor { get; set; } = Console.BackgroundColor;
 
         // Warning colors
-        private ConsoleColor _warningForegroundColor = ConsoleColor.Yellow;
-        public ConsoleColor WarningForegroundColor
-        {
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get
-            { return _warningForegroundColor; }
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set
-            { _warningForegroundColor = value; }
-        }
-
-        private ConsoleColor _warningBackgroundColor = Console.BackgroundColor;
-        public ConsoleColor WarningBackgroundColor
-        {
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get
-            { return _warningBackgroundColor; }
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set
-            { _warningBackgroundColor = value; }
-        }
+        public ConsoleColor WarningForegroundColor { get; set; } = ConsoleColor.Yellow;
+        public ConsoleColor WarningBackgroundColor { get; set; } = Console.BackgroundColor;
 
         // Debug colors
-        private ConsoleColor _debugForegroundColor = ConsoleColor.Yellow;
-        public ConsoleColor DebugForegroundColor
-        {
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get
-            { return _debugForegroundColor; }
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set
-            { _debugForegroundColor = value; }
-        }
-
-        private ConsoleColor _debugBackgroundColor = Console.BackgroundColor;
-        public ConsoleColor DebugBackgroundColor
-        {
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get
-            { return _debugBackgroundColor; }
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set
-            { _debugBackgroundColor = value; }
-        }
+        public ConsoleColor DebugForegroundColor { get; set; } = ConsoleColor.Yellow;
+        public ConsoleColor DebugBackgroundColor { get; set; } = Console.BackgroundColor;
 
         // Verbose colors
-        private ConsoleColor _verboseForegroundColor = ConsoleColor.Yellow;
-        public ConsoleColor VerboseForegroundColor
-        {
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get
-            { return _verboseForegroundColor; }
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set
-            { _verboseForegroundColor = value; }
-        }
-
-        private ConsoleColor _verboseBackgroundColor = Console.BackgroundColor;
-        public ConsoleColor VerboseBackgroundColor
-        {
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get
-            { return _verboseBackgroundColor; }
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set
-            { _verboseBackgroundColor = value; }
-        }
+        public ConsoleColor VerboseForegroundColor { get; set; } = ConsoleColor.Yellow;
+        public ConsoleColor VerboseBackgroundColor { get; set; } = Console.BackgroundColor;
 
         // Progress colors
-        private ConsoleColor _progressForegroundColor = ConsoleColor.Yellow;
-        public ConsoleColor ProgressForegroundColor
-        {
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get
-            { return _progressForegroundColor; }
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set
-            { _progressForegroundColor = value; }
-        }
-        private ConsoleColor _progressBackgroundColor = ConsoleColor.DarkCyan;
-        public ConsoleColor ProgressBackgroundColor
-        {
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            get
-            { return _progressBackgroundColor; }
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            set
-            { _progressBackgroundColor = value; }
-        }
+        public ConsoleColor ProgressForegroundColor { get; set; } = ConsoleColor.Yellow;
+        public ConsoleColor ProgressBackgroundColor { get; set; } = ConsoleColor.DarkCyan;
 
         #endregion Line-oriented interaction
 
@@ -2351,8 +2246,6 @@ namespace Microsoft.PowerShell
         // used to serialize access to instance data
 
         private object _instanceLock = new object();
-
-        private bool _noPrompt;
 
         //If this is true, class throws on read or prompt method which require
         //access to console.

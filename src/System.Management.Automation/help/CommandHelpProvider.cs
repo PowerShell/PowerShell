@@ -1344,15 +1344,7 @@ namespace System.Management.Automation
         {
         }
 
-        private readonly Dictionary<String, String> _properties = new Dictionary<String, String>(StringComparer.OrdinalIgnoreCase);
-
-        internal Dictionary<String, String> Properties
-        {
-            get
-            {
-                return _properties;
-            }
-        }
+        internal Dictionary<String, String> Properties { get; } = new Dictionary<String, String>(StringComparer.OrdinalIgnoreCase);
 
         private string _name = null;
 

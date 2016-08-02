@@ -33,48 +33,20 @@ namespace System.Management.Automation
         /// </summary>
         internal class WMIMethodCacheEntry
         {
-            public string Name
-            {
-                get
-                {
-                    return _name;
-                }
-            }
-            private string _name;
+            public string Name { get; }
 
-            public string ClassPath
-            {
-                get
-                {
-                    return _classPath;
-                }
-            }
-            private string _classPath;
+            public string ClassPath { get; }
 
-            public MethodInformation MethodInfoStructure
-            {
-                get
-                {
-                    return _methodInfoStructure;
-                }
-            }
-            private MethodInformation _methodInfoStructure;
+            public MethodInformation MethodInfoStructure { get; }
 
-            public string MethodDefinition
-            {
-                get
-                {
-                    return _methodDefinition;
-                }
-            }
-            private string _methodDefinition;
+            public string MethodDefinition { get; }
 
             internal WMIMethodCacheEntry(string n, string cPath, MethodData mData)
             {
-                _name = n;
-                _classPath = cPath;
-                _methodInfoStructure = ManagementObjectAdapter.GetMethodInformation(mData);
-                _methodDefinition = ManagementObjectAdapter.GetMethodDefinition(mData);
+                Name = n;
+                ClassPath = cPath;
+                MethodInfoStructure = ManagementObjectAdapter.GetMethodInformation(mData);
+                MethodDefinition = ManagementObjectAdapter.GetMethodDefinition(mData);
             }
         }
 
@@ -84,18 +56,11 @@ namespace System.Management.Automation
 
         internal class WMIParameterInformation : ParameterInformation
         {
-            public string Name
-            {
-                get
-                {
-                    return _name;
-                }
-            }
-            private string _name;
+            public string Name { get; }
 
             public WMIParameterInformation(string name, Type ty) : base(ty, true, null, false)
             {
-                _name = name;
+                Name = name;
             }
         }
 

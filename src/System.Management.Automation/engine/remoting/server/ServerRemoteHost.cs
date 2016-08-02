@@ -18,11 +18,6 @@ namespace System.Management.Automation.Remoting
         #region Private Members
 
         /// <summary>
-        /// Instance id.
-        /// </summary>
-        private Guid _instanceId = Guid.NewGuid();
-
-        /// <summary>
         /// Remote host user interface.
         /// </summary>
         private ServerRemoteHostUserInterface _remoteHostUserInterface;
@@ -43,19 +38,9 @@ namespace System.Management.Automation.Remoting
         private Guid _clientPowerShellId;
 
         /// <summary>
-        /// Host info.
-        /// </summary>
-        private HostInfo _hostInfo;
-
-        /// <summary>
         /// Transport manager.
         /// </summary>
         protected AbstractServerTransportManager _transportManager;
-
-        /// <summary>
-        /// Runspace
-        /// </summary>
-        private Runspace _runspace;
 
         /// <summary>
         /// ServerDriverRemoteHost
@@ -83,7 +68,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(transportManager != null, "Expected transportManager != null");
 
             // Set host-info and the transport-manager.
-            _hostInfo = hostInfo;
+            HostInfo = hostInfo;
             _transportManager = transportManager;
             _serverDriverRemoteHost = serverDriverRemoteHost;
 
@@ -94,7 +79,7 @@ namespace System.Management.Automation.Remoting
             // Use HostInfo to create host-UI as null or non-null based on the client's host-UI.
             _remoteHostUserInterface = hostInfo.IsHostUINull ? null : new ServerRemoteHostUserInterface(this);
 
-            _runspace = runspace;
+            Runspace = runspace;
         }
 
         #endregion
@@ -106,10 +91,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal ServerMethodExecutor ServerMethodExecutor
         {
-            get
-            {
-                return _serverMethodExecutor;
-            }
+            get { return _serverMethodExecutor; }
         }
 
         /// <summary>
@@ -117,10 +99,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override PSHostUserInterface UI
         {
-            get
-            {
-                return _remoteHostUserInterface;
-            }
+            get { return _remoteHostUserInterface; }
         }
 
         /// <summary>
@@ -128,10 +107,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override string Name
         {
-            get
-            {
-                return "ServerRemoteHost";
-            }
+            get { return "ServerRemoteHost"; }
         }
 
         /// <summary>
@@ -139,22 +115,13 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override Version Version
         {
-            get
-            {
-                return RemotingConstants.HostVersion;
-            }
+            get { return RemotingConstants.HostVersion; }
         }
 
         /// <summary>
         /// Instance id.
         /// </summary>
-        public override Guid InstanceId
-        {
-            get
-            {
-                return _instanceId;
-            }
-        }
+        public override Guid InstanceId { get; } = Guid.NewGuid();
 
         /// <summary>
         /// Is runspace pushed.
@@ -177,29 +144,12 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Runspace.
         /// </summary>
-        public Runspace Runspace
-        {
-            get
-            {
-                return _runspace;
-            }
-
-            internal set
-            {
-                _runspace = value;
-            }
-        }
+        public Runspace Runspace { get; internal set; }
 
         /// <summary>
         /// Host info.
         /// </summary>
-        internal HostInfo HostInfo
-        {
-            get
-            {
-                return _hostInfo;
-            }
-        }
+        internal HostInfo HostInfo { get; }
 
         /// <summary>
         /// Allows a push runspace on this remote server host instance, regardless of

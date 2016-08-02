@@ -82,12 +82,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ParameterSet_ViaPsrpSession, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [Parameter(ParameterSetName = ParameterSet_ViaCimSession, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
-        public string[] Name
-        {
-            set { _name = value; }
-            get { return _name; }
-        }
-        private string[] _name = Utils.EmptyArray<string>();
+        public string[] Name { set; get; } = Utils.EmptyArray<string>();
 
         /// <summary>
         /// This parameter specifies the current pipeline object 
@@ -294,12 +289,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_ModuleInfo, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
-        public PSModuleInfo[] ModuleInfo
-        {
-            set { _moduleInfo = value; }
-            get { return _moduleInfo; }
-        }
-        private PSModuleInfo[] _moduleInfo = Utils.EmptyArray<PSModuleInfo>();
+        public PSModuleInfo[] ModuleInfo { set; get; } = Utils.EmptyArray<PSModuleInfo>();
 
         /// <summary>
         /// The arguments to pass to the module script.
@@ -1686,7 +1676,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Process all of the specified PSModuleInfo objects. These would typically be coming in as a result
                 // of doing Get-Module -list
-                foreach (PSModuleInfo module in _moduleInfo)
+                foreach (PSModuleInfo module in ModuleInfo)
                 {
                     RemoteDiscoveryHelper.DispatchModuleInfoProcessing(
                         module,
