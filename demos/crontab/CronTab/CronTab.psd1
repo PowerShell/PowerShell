@@ -7,7 +7,7 @@ RootModule = 'CronTab.psm1'
 ModuleVersion = '0.1.0.0'
 
 # Supported PSEditions
-CompatiblePSEditions = @('Linux')
+CompatiblePSEditions = @('Core')
 
 # ID used to uniquely identify this module
 GUID = '508bb97f-de2e-482e-aae2-01caec0be8c7'

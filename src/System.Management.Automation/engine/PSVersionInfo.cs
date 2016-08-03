@@ -51,8 +51,6 @@ namespace System.Management.Automation
         /// </remarks>
 #if !CORECLR
         internal const string PSEditionValue = "Desktop";
-#elif LINUX
-        internal const string PSEditionValue = "Linux";
 #else
         internal const string PSEditionValue = "Core";
 #endif
