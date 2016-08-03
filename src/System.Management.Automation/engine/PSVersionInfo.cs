@@ -81,6 +81,14 @@ namespace System.Management.Automation
             return s_psVersionTable;
         }
 
+        internal static Hashtable GetPSVersionTableForDownLevel()
+        {
+            var result = (Hashtable)s_psVersionTable.Clone();
+            // Downlevel systems don't support SemanticVersion, but Version is most likely good enough anyway.
+            result[PSVersionInfo.PSVersionName] = (Version)(SemanticVersion)s_psVersionTable[PSVersionInfo.PSVersionName];
+            return result;
+        }
+
         internal static Version GetBuildVersion()
         {
             string assemblyPath = typeof(PSVersionInfo).GetTypeInfo().Assembly.Location;
