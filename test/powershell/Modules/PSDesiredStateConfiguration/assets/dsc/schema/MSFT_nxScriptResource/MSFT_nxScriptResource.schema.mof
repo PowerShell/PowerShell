@@ -1,0 +1,10 @@
+[ClassVersion("1.0.0"),FriendlyName("nxScript")]
+class MSFT_nxScriptResource : OMI_BaseResource 
+{
+	[Key] string GetScript;
+	[Key] string SetScript;
+	[Key] string TestScript;
+	[write] string User;
+	[write] string Group;
+	[Read] string Result;
+};
