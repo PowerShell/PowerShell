@@ -1820,7 +1820,7 @@ function Start-CrossGen {
         [String]
         $PublishPath
     )
-    
+
     function Generate-CrossGenAssembly {
         param (
             [Parameter(Mandatory= $true)]
@@ -1838,16 +1838,15 @@ function Start-CrossGen {
         $crossgenFolder = Split-Path $CrossgenPath
         $niAssemblyName = Split-Path $outputAssembly -Leaf
 
-        try
-        {
+        try {
             Push-Location $crossgenFolder
 
             # Generate the ngen assembly
-            Write-Host "Generating assembly $niAssemblyName ..."
+            Write-Verbose "Generating assembly $niAssemblyName"
             Start-NativeExecution {
                 & $CrossgenPath /MissingDependenciesOK /in $AssemblyPath /out $outputAssembly /Platform_Assemblies_Paths $platformAssembliesPath
             } | Write-Verbose
-    
+
             <#
             # TODO: Generate the pdb for the ngen binary - currently, there is a hard dependency on diasymreader.dll, which is available at %windir%\Microsoft.NET\Framework\v4.0.30319.
             # However, we still need to figure out the prerequisites on Linux.
@@ -1855,25 +1854,16 @@ function Start-CrossGen {
                 & $CrossgenPath /Platform_Assemblies_Paths $platformAssembliesPath  /CreatePDB $platformAssembliesPath /lines $platformAssembliesPath $niAssemblyName
             } | Write-Verbose
             #>
-        }
-        finally
-        {
+        } finally {
             Pop-Location
         }
     }
 
-    if (-not (Test-Path $PublishPath))
-    {
+    if (-not (Test-Path $PublishPath)) {
         throw "Path '$PublishPath' does not exist."
     }
 
-    $runtime = (New-PSOptions).Runtime
-    if (-not $runtime)
-    {
-        throw "Unable to determine Runtime Identifier, please update dotnet."
-    }
-
-    # Get the path to crossgen.exe on Windows and crossgen on Linux.
+    # Get the path to crossgen
     $crossGenSearchPath = if ($IsWindows) {
         "$PSScriptRoot\Packages\*crossgen.exe"
     } else {
@@ -1905,30 +1895,26 @@ function Start-CrossGen {
     # Crossgen.exe requires the following assemblies:
     # mscorlib.dll
     # System.Private.CoreLib.dll
-    # clrjit.dll on Windows or libclrjit.so on Linux
-    #
+    # clrjit.dll on Windows or libclrjit.so/dylib on Linux/OS X
     $crossGenRequiredAssemblies = @("mscorlib.dll", "System.Private.CoreLib.dll")
-    
-    if ($IsWindows)
-    {
-        $crossGenRequiredAssemblies += "clrjit.dll"
+
+    $crossGenRequiredAssemblies += if ($IsWindows) {
+         "clrjit.dll"
+    } elseif ($IsLinux) {
+        "libclrjit.so"
+    } elseif ($IsOSX) {
+        "libclrjit.dylib"
     }
-    else
-    {
-        $crossGenRequiredAssemblies += "libclrjit.so"
-    }
-    
-    # Make sure that all dependencies required by crossgen.exe are at the directory.
+
+    # Make sure that all dependencies required by crossgen are at the directory.
     $crossGenFolder = Split-Path $crossGenPath
-    foreach ($assemblyName in $crossGenRequiredAssemblies)
-    {
-        if (-not (Test-Path "$crossGenFolder\$assemblyName"))
-        {
+    foreach ($assemblyName in $crossGenRequiredAssemblies) {
+        if (-not (Test-Path "$crossGenFolder\$assemblyName")) {
             Copy-Item -Path "$PublishPath\$assemblyName" -Destination $crossGenFolder -Force -ErrorAction Stop
         }
     }
 
-    # The list of ps assemblies to ngen.
+    # Common PowerShell libraries to crossgen
     $psCoreAssemblyList = @(
         "Microsoft.PowerShell.Commands.Utility.dll",
         "Microsoft.PowerShell.Commands.Management.dll",
@@ -1941,9 +1927,8 @@ function Start-CrossGen {
         "System.Management.Automation.dll"
     )
 
-    if ($IsWindows)
-    {
-        # These are not present on Linux yet.
+    # Add Windows specific libraries
+    if ($IsWindows) {
         $psCoreAssemblyList += @(
             "Microsoft.WSMan.Management.dll",
             "Microsoft.WSMan.Runtime.dll",
@@ -1953,15 +1938,13 @@ function Start-CrossGen {
         )
     }
 
-    foreach ($assemblyName in $psCoreAssemblyList)
-    {
+    foreach ($assemblyName in $psCoreAssemblyList) {
         $assemblyPath = Join-Path $PublishPath $assemblyName
         Generate-CrossGenAssembly -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath
     }
 
     Write-Verbose "PowerShell Ngen assemblies have been generated, deleting ILs..." -Verbose
-    foreach ($assemblyName in $psCoreAssemblyList)
-    {
+    foreach ($assemblyName in $psCoreAssemblyList) {
         # Remove the IL assembly and its symbols.
         $symbolsPath = $assemblyPath.Replace(".dll", ".pdb")
         Remove-Item $assemblyPath -Force -ErrorAction SilentlyContinue
