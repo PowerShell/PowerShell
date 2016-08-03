@@ -137,6 +137,13 @@ namespace System.Management.Automation
         private const string configDirectoryName = "Configuration";
         private const string configFileName = "PowerShellProperties.json";
 
+        /// <summary>
+        /// Lock used to enable multiple concurrent readers and singular write locks within a
+        /// single process.
+        /// TODO: This solution only works for IO from a single process. A more robust solution is needed to enable ReaderWriterLockSlim behavior between proceses.
+        /// </summary>
+        private ReaderWriterLockSlim fileLock = new ReaderWriterLockSlim();
+
         internal JsonConfigFileAccessor()
         {
             //
@@ -328,6 +335,7 @@ namespace System.Management.Automation
 
         private T ReadValueFromFile<T>(string fileName, string key)
         {
+            fileLock.EnterReadLock();
             try
             {
                 // Open file for reading, but allow multiple readers
@@ -343,9 +351,15 @@ namespace System.Management.Automation
                     }
                 }
             }
-            // The file doesn't exist. Treat this the same way as if the 
-            // key was not present in the file.
-            catch (FileNotFoundException) { }
+            catch (FileNotFoundException)
+            {
+                // The file doesn't exist. Treat this the same way as if the 
+                // key was not present in the file.
+            }
+            finally
+            {
+                fileLock.ExitReadLock();
+            }
 
             return default(T);
         }
@@ -360,89 +374,97 @@ namespace System.Management.Automation
         /// <param name="addValue">Whether the key-value pair should be added to or removed from the file</param>
         private void UpdateValueInFile<T>(string fileName, string key, T value, bool addValue)
         {
-            // Since multiple properties can be in a single file, replacement
-            // is required instead of overwrite if a file already exists.
-            // Handling the read and write operations within a single FileStream
-            // prevents other processes from reading or writing the file while
-            // the update is in progress. It also locks out readers during write
-            // operations.
-            using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
-            { 
-                JObject jsonObject = null;
-
-                // UTF8, BOM detection, and bufferSize are the same as the basic stream constructor.
-                // The most important parameter here is the last one, which keeps the StreamReader 
-                // (and FileStream) open during Dispose so that it can be reused for the write
-                // operation.
-                using (StreamReader streamRdr = new StreamReader(fs, Encoding.UTF8, true, 1024, true)) 
-                using (JsonTextReader jsonReader = new JsonTextReader(streamRdr))
+            fileLock.EnterWriteLock();
+            try
+            {
+                // Since multiple properties can be in a single file, replacement
+                // is required instead of overwrite if a file already exists.
+                // Handling the read and write operations within a single FileStream
+                // prevents other processes from reading or writing the file while
+                // the update is in progress. It also locks out readers during write
+                // operations.
+                using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
                 {
-                    // Safely determines whether there is content to read from the file
-                    bool isReadSuccess = jsonReader.Read();
-                    if (isReadSuccess)
-                    {
-                        // Read the stream into a root JObject for manipulation
-                        jsonObject = (JObject) JToken.ReadFrom(jsonReader);
-                        JProperty propertyToModify = jsonObject.Property(key);
+                    JObject jsonObject = null;
 
-                        if (null == propertyToModify)
+                    // UTF8, BOM detection, and bufferSize are the same as the basic stream constructor.
+                    // The most important parameter here is the last one, which keeps the StreamReader 
+                    // (and FileStream) open during Dispose so that it can be reused for the write
+                    // operation.
+                    using (StreamReader streamRdr = new StreamReader(fs, Encoding.UTF8, true, 1024, true))
+                    using (JsonTextReader jsonReader = new JsonTextReader(streamRdr))
+                    {
+                        // Safely determines whether there is content to read from the file
+                        bool isReadSuccess = jsonReader.Read();
+                        if (isReadSuccess)
                         {
-                            // The property doesn't exist, so add it
-                            if (addValue)
+                            // Read the stream into a root JObject for manipulation
+                            jsonObject = (JObject) JToken.ReadFrom(jsonReader);
+                            JProperty propertyToModify = jsonObject.Property(key);
+
+                            if (null == propertyToModify)
                             {
-                                jsonObject.Add(new JProperty(key, value));
+                                // The property doesn't exist, so add it
+                                if (addValue)
+                                {
+                                    jsonObject.Add(new JProperty(key, value));
+                                }
+                                // else the property doesn't exist so there is nothing to remove
                             }
-                            // else the property doesn't exist so there is nothing to remove
+                            // The property exists
+                            else
+                            {
+                                if (addValue)
+                                {
+                                    propertyToModify.Replace(new JProperty(key, value));
+                                }
+                                else
+                                {
+                                    propertyToModify.Remove();
+                                }
+                            }
                         }
-                        // The property exists
                         else
                         {
+                            // The file doesn't already exist and we want to write to it 
+                            // or it exists with no content.
+                            // A new file will be created that contains only this value.
+                            // If the file doesn't exist and a we don't want to write to it, no
+                            // action is necessary.
                             if (addValue)
                             {
-                                propertyToModify.Replace(new JProperty(key, value));
+                                jsonObject = new JObject(new JProperty(key, value));
                             }
                             else
                             {
-                                propertyToModify.Remove();
+                                return;
                             }
                         }
                     }
-                    else
+
+                    // Reset the stream position to the beginning so that the 
+                    // changes to the file can be written to disk
+                    fs.Seek(0, SeekOrigin.Begin);
+
+                    // Update the file with new content
+                    using (StreamWriter streamWriter = new StreamWriter(fs))
+                    using (JsonTextWriter jsonWriter = new JsonTextWriter(streamWriter))
                     {
-                        // The file doesn't already exist and we want to write to it 
-                        // or it exists with no content.
-                        // A new file will be created that contains only this value.
-                        // If the file doesn't exist and a we don't want to write to it, no
-                        // action is necessary.
-                        if (addValue)
-                        {
-                            jsonObject = new JObject(new JProperty(key, value));
-                        }
-                        else
-                        {
-                            return;
-                        }
+                        // The entire document exists within the root JObject.
+                        // I just need to write that object to produce the document.
+                        jsonObject.WriteTo(jsonWriter);
+
+                        // This trims the file if the file shrank. If the file grew,
+                        // it is a no-op. The purpose is to trim extraneous characters 
+                        // from the file stream when the resultant JObject is smaller
+                        // than the input JObject.
+                        fs.SetLength(fs.Position);
                     }
                 }
-
-                // Reset the stream position to the beginning so that the 
-                // changes to the file can be written to disk
-                fs.Seek(0, SeekOrigin.Begin);
-
-                // Update the file with new content
-                using (StreamWriter streamWriter = new StreamWriter(fs))
-                using (JsonTextWriter jsonWriter = new JsonTextWriter(streamWriter))
-                {
-                    // The entire document exists within the root JObject.
-                    // I just need to write that object to produce the document.
-                    jsonObject.WriteTo(jsonWriter);
-
-                    // This trims the file if the file shrank. If the file grew,
-                    // it is a no-op. The purpose is to trim extraneous characters 
-                    // from the file stream when the resultant JObject is smaller
-                    // than the input JObject.
-                    fs.SetLength(fs.Position);
-                }
+            }
+            finally
+            {
+                fileLock.ExitWriteLock();
             }
         }
 
