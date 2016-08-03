@@ -1,12 +1,14 @@
-$originalPSModulePath = $env:PSModulePath
-
-try
-{
-    $env:DSC_HOME = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath dsc
-#   $env:PSMODULEPATH = $env:PSMODULEPATH + ";" + $env:DEVPATH + "Modules"
-#    $env:PSModulePath = "$($env:DEVPATH)\Modules"
-
 Describe "DSC MOF Compilation" -tags "CI" {
+
+    AfterAll {
+        $env:PSMODULEPATH = $_modulePath
+    }
+    BeforeAll {
+        $env:DSC_HOME = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath dsc
+        $_modulePath = $env:PSMODULEPATH
+        $powershellexe = (get-process -pid $PID).MainModule.FileName
+        $env:PSMODULEPATH = join-path ([io.path]::GetDirectoryName($powershellexe)) Modules
+    }
 
     It "Should be able to compile a MOF from a basic configuration" -Skip:$IsWindows {
         [Scriptblock]::Create(@"
@@ -161,9 +163,4 @@ Describe "DSC MOF Compilation" -tags "CI" {
         Remove-Item -Force -Recurse -Path WordPressServer
     }
 
-}
-}
-finally
-{
-    $env:PSModulePath = $originalPSModulePath
 }
