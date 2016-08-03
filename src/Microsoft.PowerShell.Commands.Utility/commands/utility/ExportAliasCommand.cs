@@ -51,21 +51,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByPath")]
         public string Path
         {
-            get
-            {
-                return _path;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    _path = ".";
-                }
-                else
-                {
-                    _path = value;
-                }
-            }
+            get { return _path; }
+            set { _path = value ?? "."; }
         }
         private string _path = ".";
 
@@ -77,10 +64,7 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSPath")]
         public string LiteralPath
         {
-            get
-            {
-                return _path;
-            }
+            get { return _path; }
             set
             {
                 if (value == null)
@@ -103,21 +87,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true)]
         public string[] Name
         {
-            get
-            {
-                return _names;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    _names = new string[] { "*" };
-                }
-                else
-                {
-                    _names = value;
-                }
-            }
+            get { return _names; }
+            set { _names = value ?? new string[] { "*" }; }
         }
         private string[] _names = new string[] { "*" };
 

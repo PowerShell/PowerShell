@@ -1976,9 +1976,7 @@ namespace Microsoft.PowerShell.Commands
 
             // confirm the operation first
             // this is always false if WhatIf is set
-            if (!ShouldProcessServiceOperation(
-                (null == DisplayName) ? "" : DisplayName,
-                Name))
+            if (!ShouldProcessServiceOperation(DisplayName ?? "", Name))
             {
                 return;
             }

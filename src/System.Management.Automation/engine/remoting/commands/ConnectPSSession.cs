@@ -1392,7 +1392,7 @@ namespace Microsoft.PowerShell.Commands
             catch (System.Xml.XmlException)
             { }
 
-            return (rtnMsg != null) ? rtnMsg : e.Message;
+            return rtnMsg ?? e.Message;
         }
 
         /// <summary>

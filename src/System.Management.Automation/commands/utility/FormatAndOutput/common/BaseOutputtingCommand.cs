@@ -958,7 +958,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 int k = 0;
                 foreach (TableColumnInfo tci in this.CurrentTableHeaderInfo.tableColumnInfoList)
                 {
-                    properties[k++] = (tci.label != null) ? tci.label : tci.propertyName;
+                    properties[k++] = tci.label ?? tci.propertyName;
                 }
                 this.Writer.GenerateHeader(properties, this.InnerCommand._lo);
             }
@@ -1042,7 +1042,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 StringCollection props = new StringCollection();
                 foreach (ListViewField lvf in lve.listViewFieldList)
                 {
-                    props.Add((lvf.label != null) ? lvf.label : lvf.propertyName);
+                    props.Add(lvf.label ?? lvf.propertyName);
                 }
                 if (props.Count == 0)
                     return null;

@@ -154,11 +154,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 staticAdapter = PSObject.dotNetStaticAdapter;
                 object baseObject = this.InputObject.BaseObject;
-                baseObjectAsType = baseObject as System.Type;
-                if (baseObjectAsType == null)
-                {
-                    baseObjectAsType = baseObject.GetType();
-                }
+                baseObjectAsType = baseObject as System.Type ?? baseObject.GetType();
                 typeName = baseObjectAsType.FullName;
             }
             else

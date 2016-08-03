@@ -883,7 +883,7 @@ namespace System.Management.Automation
                 }
                 catch (TargetInvocationException ex)
                 {
-                    Exception inner = (ex.InnerException == null) ? ex : ex.InnerException;
+                    Exception inner = ex.InnerException ?? ex;
                     throw new GetValueInvocationException("CatchFromCodePropertyGetTI",
                         inner,
                         ExtendedTypeSystem.ExceptionWhenGetting,
@@ -917,7 +917,7 @@ namespace System.Management.Automation
                 }
                 catch (TargetInvocationException ex)
                 {
-                    Exception inner = (ex.InnerException == null) ? ex : ex.InnerException;
+                    Exception inner = ex.InnerException ?? ex;
                     throw new SetValueInvocationException("CatchFromCodePropertySetTI",
                         inner,
                         ExtendedTypeSystem.ExceptionWhenSetting,

@@ -114,9 +114,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!_pathSet)
                     return s_inputStream;
-                if (_filename == null)
-                    _filename = System.IO.Path.GetFileName(_path);
-                return _filename;
+                return _filename ?? (_filename = System.IO.Path.GetFileName(_path));
             }
         }
         private string _filename;
@@ -1714,7 +1712,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Matches should be an empty list, rather than null,
                 // in the cases of notMatch and simpleMatch.
-                matchResult.Matches = (matches != null) ? matches : new Match[] { };
+                matchResult.Matches = matches ?? new Match[] { };
 
                 return true;
             }

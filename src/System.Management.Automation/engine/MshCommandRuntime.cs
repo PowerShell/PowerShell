@@ -126,15 +126,7 @@ namespace System.Management.Automation
         /// <value>The invocation object for this command.</value>
         internal InvocationInfo MyInvocation
         {
-            get
-            {
-                if (_myInvocation == null)
-                {
-                    _myInvocation = _thisCommand.MyInvocation;
-                }
-
-                return _myInvocation;
-            }
+            get { return _myInvocation ?? (_myInvocation = _thisCommand.MyInvocation); }
         }
 
         /// <summary>
@@ -934,14 +926,7 @@ namespace System.Management.Automation
                 IList oldValue = null;
                 oldValue = PSObject.Base(_state.PSVariable.GetValue(this.OutVariable)) as IList;
 
-                if (oldValue == null)
-                {
-                    _outVarList = new ArrayList();
-                }
-                else
-                {
-                    _outVarList = oldValue;
-                }
+                _outVarList = oldValue ?? new ArrayList();
 
                 if (!(_thisCommand is PSScriptCmdlet))
                 {
@@ -2186,12 +2171,7 @@ namespace System.Management.Automation
         /// </summary>
         internal Pipe InputPipe
         {
-            get
-            {
-                if (_inputPipe == null)
-                    _inputPipe = new Pipe();
-                return _inputPipe;
-            }
+            get { return _inputPipe ?? (_inputPipe = new Pipe()); }
             set { _inputPipe = value; }
         }
 
@@ -2200,12 +2180,7 @@ namespace System.Management.Automation
         /// </summary>
         internal Pipe OutputPipe
         {
-            get
-            {
-                if (_outputPipe == null)
-                    _outputPipe = new Pipe();
-                return _outputPipe;
-            }
+            get { return _outputPipe ?? (_outputPipe = new Pipe()); }
             set { _outputPipe = value; }
         }
 
@@ -2227,12 +2202,7 @@ namespace System.Management.Automation
         /// </summary>
         internal Pipe ErrorOutputPipe
         {
-            get
-            {
-                if (_errorOutputPipe == null)
-                    _errorOutputPipe = new Pipe();
-                return _errorOutputPipe;
-            }
+            get { return _errorOutputPipe ?? (_errorOutputPipe = new Pipe()); }
             set { _errorOutputPipe = value; }
         }
 

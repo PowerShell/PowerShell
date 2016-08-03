@@ -28,21 +28,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Default", Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Name
         {
-            get
-            {
-                return _names;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    _names = new string[] { "*" };
-                }
-                else
-                {
-                    _names = value;
-                }
-            }
+            get { return _names; }
+            set { _names = value ?? new string[] { "*" }; }
         }
         private string[] _names = new string[] { "*" };
 
@@ -53,21 +40,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public string[] Exclude
         {
-            get
-            {
-                return _excludes;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    _excludes = new string[0];
-                }
-                else
-                {
-                    _excludes = value;
-                }
-            }
+            get { return _excludes; }
+            set { _excludes = value ?? new string[0]; }
         }
         private string[] _excludes = new string[0];
 
@@ -77,19 +51,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// 
         [Parameter]
-        public string Scope
-        {
-            get
-            {
-                return _scope;
-            }
-
-            set
-            {
-                _scope = value;
-            }
-        }
-        private string _scope;
+        public string Scope { get; set; }
 
         /// <summary>
         /// Parameter definition to retrieve aliases based on their definitions.
@@ -97,13 +59,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Definition")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] Definition
-        {
-            get { return _definition; }
-            set { _definition = value; }
-        }
-        private string[] _definition;
-
+        public String[] Definition { get; set; }
 
         #endregion Parameters
 
@@ -117,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (ParameterSetName.Equals("Definition"))
             {
-                foreach (string defn in _definition)
+                foreach (string defn in Definition)
                 {
                     WriteMatches(defn, "Definition");
                 }
@@ -140,13 +96,13 @@ namespace Microsoft.PowerShell.Commands
             //get the command origin
             CommandOrigin origin = MyInvocation.CommandOrigin;
             string displayString = "name";
-            if (!String.IsNullOrEmpty(_scope))
+            if (!String.IsNullOrEmpty(Scope))
             {
                 // This can throw PSArgumentException and PSArgumentOutOfRangeException
                 // but just let them go as this is terminal for the pipeline and the
                 // exceptions are already properly adorned with an ErrorRecord.
 
-                aliasTable = SessionState.Internal.GetAliasTableAtScope(_scope);
+                aliasTable = SessionState.Internal.GetAliasTableAtScope(Scope);
             }
             else
             {

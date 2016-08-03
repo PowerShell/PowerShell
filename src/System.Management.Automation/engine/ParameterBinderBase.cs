@@ -184,12 +184,7 @@ namespace System.Management.Automation
         {
             // Setter is needed to pass into RuntimeParameterBinder instances
             set { _commandLineParameters = value; }
-            get
-            {
-                if (_commandLineParameters == null)
-                    _commandLineParameters = new CommandLineParameters();
-                return _commandLineParameters;
-            }
+            get { return _commandLineParameters ?? (_commandLineParameters = new CommandLineParameters()); }
         }
         private CommandLineParameters _commandLineParameters;
 
@@ -1309,7 +1304,7 @@ namespace System.Management.Automation
                 {
                     bindingTracer.TraceError(
                         "ERROR: COERCE FAILED: arg [{0}] could not be converted to the parameter type [{1}]",
-                        (result == null) ? "null" : result,
+                        result ?? "null",
                         toType);
 
                     ParameterBindingException pbe =
@@ -1323,7 +1318,7 @@ namespace System.Management.Automation
                             argumentType,
                             ParameterBinderStrings.CannotConvertArgument,
                             "CannotConvertArgument",
-                            (result == null) ? "null" : result,
+                            result ?? "null",
                             notSupported.Message);
 
                     throw pbe;

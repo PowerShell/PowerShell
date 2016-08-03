@@ -1066,12 +1066,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public Collection<Attribute> Attributes
         {
-            get
-            {
-                if (_attributes == null)
-                    _attributes = new Collection<Attribute>();
-                return _attributes;
-            }
+            get { return _attributes ?? (_attributes = new Collection<Attribute>()); }
         }
         private Collection<Attribute> _attributes;
     }
@@ -1280,9 +1275,7 @@ namespace System.Management.Automation.Runspaces
 
                 if (type != null)
                 {
-                    objType = type as Type;
-                    if (objType == null)
-                        objType = type.GetType();
+                    objType = type as Type ?? type.GetType();
                 }
 
                 // Work backwards through the collection...

@@ -195,12 +195,7 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                CultureInfo ci = _externalHostRef.Value.CurrentCulture;
-
-                if (ci == null)
-                {
-                    ci = CultureInfo.InvariantCulture;
-                }
+                CultureInfo ci = _externalHostRef.Value.CurrentCulture ?? CultureInfo.InvariantCulture;
 
                 return ci;
             }

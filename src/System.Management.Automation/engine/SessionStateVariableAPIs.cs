@@ -185,13 +185,9 @@ namespace System.Management.Automation
         /// 
         internal object GetVariableValue(string name, object defaultValue)
         {
-            object returnObject = GetVariableValue(name);
-            if (returnObject == null)
-            {
-                returnObject = defaultValue;
-            }
+            object returnObject = GetVariableValue(name) ?? defaultValue;
             return returnObject;
-        } // GetVariableValue
+        }
 
         /// <summary>
         /// Looks up the specified variable and returns the context under which 
@@ -1473,11 +1469,7 @@ namespace System.Management.Automation
 
                 IContentWriter writer = writers[0];
 
-                IList content = newValue as IList;
-                if (content == null)
-                {
-                    content = new object[] { newValue };
-                }
+                IList content = newValue as IList ?? new object[] { newValue };
 
                 try
                 {

@@ -228,18 +228,7 @@ namespace System.Management.Automation.Runspaces.Internal
         internal string Name
         {
             get { return _friendlyName; }
-
-            set
-            {
-                if (value == null)
-                {
-                    _friendlyName = string.Empty;
-                }
-                else
-                {
-                    _friendlyName = value;
-                }
-            }
+            set { _friendlyName = value ?? string.Empty; }
         }
 
         /// <summary>

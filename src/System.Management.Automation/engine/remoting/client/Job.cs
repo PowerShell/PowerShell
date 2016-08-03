@@ -672,7 +672,7 @@ namespace System.Management.Automation
             get { return _jobTypeName; }
             protected internal set
             {
-                _jobTypeName = (value != null) ? value : this.GetType().ToString();
+                _jobTypeName = value ?? this.GetType().ToString();
             }
         }
 

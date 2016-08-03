@@ -712,9 +712,7 @@ namespace System.Management.Automation
                 }
 
                 EventInfo eventInfo = null;
-                Type sourceType = source as Type;
-                if (sourceType == null)
-                    sourceType = source.GetType();
+                Type sourceType = source as Type ?? source.GetType();
 
                 //PowerShell does not support WinRT events.
                 if (WinRTHelper.IsWinRTType(sourceType))
@@ -895,9 +893,7 @@ namespace System.Management.Automation
 
                 EventInfo eventInfo = null;
 
-                Type sourceType = subscriber.SourceObject as Type;
-                if (sourceType == null)
-                    sourceType = subscriber.SourceObject.GetType();
+                Type sourceType = subscriber.SourceObject as Type ?? subscriber.SourceObject.GetType();
 
                 BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase;
                 eventInfo = sourceType.GetEvent(subscriber.EventName, bindingFlags);

@@ -127,11 +127,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            string result = ProcessObject(Object);
-            if (result == null)
-            {
-                result = "";
-            }
+            string result = ProcessObject(Object) ?? "";
 
             HostInformationMessage informationMessage = new HostInformationMessage();
             informationMessage.Message = result;

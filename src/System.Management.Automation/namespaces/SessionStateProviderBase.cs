@@ -1224,11 +1224,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (getItemValueResult != null)
                     {
-                        result = getItemValueResult as IList;
-                        if (result == null)
-                        {
-                            result = new object[] { getItemValueResult };
-                        }
+                        result = getItemValueResult as IList ?? new object[] { getItemValueResult };
                     }
                     _contentRead = true;
                 }

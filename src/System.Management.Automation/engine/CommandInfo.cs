@@ -601,15 +601,7 @@ namespace System.Management.Automation
 
         internal CommandMetadata ExternalCommandMetadata
         {
-            get
-            {
-                if (_externalCommandMetadata == null)
-                {
-                    _externalCommandMetadata = new CommandMetadata(this, true);
-                }
-
-                return _externalCommandMetadata;
-            }
+            get { return _externalCommandMetadata ?? (_externalCommandMetadata = new CommandMetadata(this, true)); }
             set { _externalCommandMetadata = value; }
         }
         private CommandMetadata _externalCommandMetadata;

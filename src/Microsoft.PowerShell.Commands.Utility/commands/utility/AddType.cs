@@ -449,18 +449,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public String[] ReferencedAssemblies
         {
-            get
-            {
-                return referencedAssemblies;
-            }
+            get { return referencedAssemblies; }
             set
             {
-                if (value == null)
-                    referencedAssemblies = Utils.EmptyArray<string>();
-                else
-                {
-                    referencedAssemblies = value;
-                }
+                referencedAssemblies = value ?? Utils.EmptyArray<string>();
                 referencedAssembliesSpecified = true;
             }
         }

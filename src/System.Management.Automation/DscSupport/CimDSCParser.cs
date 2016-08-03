@@ -642,11 +642,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 // Load the base schema files.
                 //
                 ClearCache();
-                var dscConfigurationDirectory = Environment.GetEnvironmentVariable("DSC_HOME");
-                if (dscConfigurationDirectory == null)
-                {
-                    dscConfigurationDirectory = "/etc/opt/omi/conf/dsc/configuration";
-                }
+                var dscConfigurationDirectory = Environment.GetEnvironmentVariable("DSC_HOME") ??
+                                                "/etc/opt/omi/conf/dsc/configuration";
 
                 Debug.Assert(Directory.Exists(dscConfigurationDirectory), dscConfigurationDirectory + " does not exist.");
 
@@ -3587,12 +3584,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             get
             {
-                if (s_cimKeywordImlementationFunction == null)
-                {
-                    // The scriptblock cache will handle mutual exclusion
-                    s_cimKeywordImlementationFunction = ScriptBlock.Create(CimKeywordImlementationFunctionText);
-                }
-                return s_cimKeywordImlementationFunction;
+                // The scriptblock cache will handle mutual exclusion
+                return s_cimKeywordImlementationFunction ??
+                       (s_cimKeywordImlementationFunction = ScriptBlock.Create(CimKeywordImlementationFunctionText));
             }
         }
         private static ScriptBlock s_cimKeywordImlementationFunction;

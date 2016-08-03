@@ -159,12 +159,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // not found, scan the loaded assemblies
 
                 // first look for the full name
-                Assembly retVal = ResolveAssemblyNameInLoadedAssemblies(assemblyName, true);
-                if (retVal == null)
-                {
-                    // as a fallback, use the plain name
-                    retVal = ResolveAssemblyNameInLoadedAssemblies(assemblyName, false);
-                }
+                Assembly retVal = ResolveAssemblyNameInLoadedAssemblies(assemblyName, true) ??
+                                  ResolveAssemblyNameInLoadedAssemblies(assemblyName, false);
                 // NOTE: we cache the result (both for success and failure)
 
                 // Porting note: this won't be hit in normal usage, but can be hit with bad build setup

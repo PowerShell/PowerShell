@@ -48,13 +48,9 @@ namespace System.Management.Automation
         private Collection<CollectionEntry<PSPropertyInfo>> _allPropertiesCollection;
         private Collection<CollectionEntry<PSPropertyInfo>> AllPropertiesCollection
         {
-            get
-            {
-                if (_allPropertiesCollection == null)
-                {
-                    _allPropertiesCollection = PSObject.GetPropertyCollection(PSMemberViewTypes.All, _typeTable);
-                }
-                return _allPropertiesCollection;
+            get {
+                return _allPropertiesCollection ??
+                       (_allPropertiesCollection = PSObject.GetPropertyCollection(PSMemberViewTypes.All, _typeTable));
             }
         }
 

@@ -145,14 +145,7 @@ namespace System.Management.Automation
         /// 
         internal LocationGlobber Globber
         {
-            get
-            {
-                if (_globberPrivate == null)
-                {
-                    _globberPrivate = ExecutionContext.LocationGlobber;
-                }
-                return _globberPrivate;
-            }
+            get { return _globberPrivate ?? (_globberPrivate = ExecutionContext.LocationGlobber); }
         }
         private LocationGlobber _globberPrivate;
 
@@ -166,18 +159,8 @@ namespace System.Management.Automation
         /// </summary>
         internal SessionState PublicSessionState
         {
-            get
-            {
-                if (_publicSessionState == null)
-                {
-                    _publicSessionState = new SessionState(this);
-                }
-                return _publicSessionState;
-            }
-            set
-            {
-                _publicSessionState = value;
-            }
+            get { return _publicSessionState ?? (_publicSessionState = new SessionState(this)); }
+            set { _publicSessionState = value; }
         }
         private SessionState _publicSessionState;
 
@@ -186,13 +169,8 @@ namespace System.Management.Automation
         /// </summary>
         internal ProviderIntrinsics InvokeProvider
         {
-            get
-            {
-                if (_invokeProvider == null)
-                    _invokeProvider = new ProviderIntrinsics(this);
-                return _invokeProvider;
-            } // get
-        } // InvokeProvider
+            get { return _invokeProvider ?? (_invokeProvider = new ProviderIntrinsics(this)); } // get
+        }
         private ProviderIntrinsics _invokeProvider;
 
         /// <summary>

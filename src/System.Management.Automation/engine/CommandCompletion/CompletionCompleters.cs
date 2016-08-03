@@ -1876,11 +1876,8 @@ namespace System.Management.Automation
             {
                 if (argumentValue != null)
                 {
-                    IEnumerable enumerable = LanguagePrimitives.GetEnumerable(argumentValue);
-                    if (enumerable == null)
-                    {
-                        enumerable = new object[] { argumentValue };
-                    }
+                    IEnumerable enumerable = LanguagePrimitives.GetEnumerable(argumentValue) ??
+                                             new object[] { argumentValue };
                     foreach (var element in enumerable)
                     {
                         if (element == null)

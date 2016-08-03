@@ -416,14 +416,7 @@ namespace System.Management.Automation
         /// </remarks>
         public Collection<Attribute> Attributes
         {
-            get
-            {
-                if (_attributes == null)
-                {
-                    _attributes = new PSVariableAttributeCollection(this);
-                }
-                return _attributes;
-            }
+            get { return _attributes ?? (_attributes = new PSVariableAttributeCollection(this)); }
         }
         private PSVariableAttributeCollection _attributes;
 
@@ -886,20 +879,8 @@ namespace System.Management.Automation
         /// </summary>
         public override string Description
         {
-            get
-            {
-                if (_description == null)
-                {
-                    _description =
-                        SessionStateStrings.DollarNullDescription;
-                }
-                return _description;
-            }
-
-            set
-            {
-                // Do nothing
-            }
+            get { return _description ?? (_description = SessionStateStrings.DollarNullDescription); }
+            set { /* Do nothing */ }
         }
         private string _description;
 
@@ -908,15 +889,8 @@ namespace System.Management.Automation
         /// </summary>
         public override ScopedItemOptions Options
         {
-            get
-            {
-                return ScopedItemOptions.None;
-            }
-
-            set
-            {
-                // Do nothing
-            }
+            get { return ScopedItemOptions.None; }
+            set { /* Do nothing */ }
         }
     }
 

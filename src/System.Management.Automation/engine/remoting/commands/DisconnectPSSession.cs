@@ -108,11 +108,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // no need to lock as the cmdlet parameters will not be assigned
                 // from multiple threads.
-                if (null == _sessionOption)
-                {
-                    _sessionOption = new PSSessionOption();
-                }
-                return _sessionOption;
+                return _sessionOption ?? (_sessionOption = new PSSessionOption());
             }
         }
         private PSSessionOption _sessionOption;

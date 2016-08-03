@@ -663,11 +663,7 @@ namespace System.Management.Automation
             string secondString;
             if (firstString != null)
             {
-                secondString = second as string;
-                if (secondString == null)
-                {
-                    secondString = (string)LanguagePrimitives.ConvertTo(second, typeof(string), culture);
-                }
+                secondString = second as string ?? (string)LanguagePrimitives.ConvertTo(second, typeof(string), culture);
                 return (culture.CompareInfo.Compare(firstString, secondString,
                                                     ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0);
             }
@@ -2470,11 +2466,7 @@ namespace System.Management.Automation
 
         private static CultureInfo GetCultureFromFormatProvider(IFormatProvider formatProvider)
         {
-            CultureInfo returnValue = formatProvider as CultureInfo;
-            if (returnValue == null)
-            {
-                returnValue = CultureInfo.InvariantCulture;
-            }
+            CultureInfo returnValue = formatProvider as CultureInfo ?? CultureInfo.InvariantCulture;
             return returnValue;
         }
 
@@ -5126,11 +5118,8 @@ namespace System.Management.Automation
                 castOperator = FindCastOperator("op_Explicit", toType, fromType, toType);
                 if (castOperator == null)
                 {
-                    castOperator = FindCastOperator("op_Implicit", fromType, fromType, toType);
-                    if (castOperator == null)
-                    {
-                        castOperator = FindCastOperator("op_Explicit", fromType, fromType, toType);
-                    }
+                    castOperator = FindCastOperator("op_Implicit", fromType, fromType, toType) ??
+                                   FindCastOperator("op_Explicit", fromType, fromType, toType);
                 }
             }
 

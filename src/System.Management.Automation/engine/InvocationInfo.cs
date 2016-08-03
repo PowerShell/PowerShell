@@ -206,11 +206,9 @@ namespace System.Management.Automation
         /// </summary>
         public Dictionary<string, object> BoundParameters
         {
-            get
-            {
-                if (_boundParameters == null)
-                    _boundParameters = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-                return _boundParameters;
+            get {
+                return _boundParameters ??
+                       (_boundParameters = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase));
             }
             internal set { _boundParameters = value; }
         }
@@ -220,16 +218,8 @@ namespace System.Management.Automation
         /// </summary>
         public List<object> UnboundArguments
         {
-            get
-            {
-                if (_unboundArguments == null)
-                    _unboundArguments = new List<object>();
-                return _unboundArguments;
-            }
-            internal set
-            {
-                _unboundArguments = value;
-            }
+            get { return _unboundArguments ?? (_unboundArguments = new List<object>()); }
+            internal set { _unboundArguments = value; }
         }
 
         /// <summary>

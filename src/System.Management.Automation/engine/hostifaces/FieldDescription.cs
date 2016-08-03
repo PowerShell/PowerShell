@@ -339,17 +339,8 @@ namespace System.Management.Automation.Host
         Collection<Attribute>
         Attributes
         {
-            get
-            {
-                if (_metadata == null)
-                {
-                    _metadata = new Collection<Attribute>();
-                }
-                return _metadata;
-            }
+            get { return _metadata ?? (_metadata = new Collection<Attribute>()); }
         }
-
-
 
         /// <summary>
         /// 

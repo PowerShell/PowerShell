@@ -487,18 +487,9 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            IEnumerable<string> cultures;
-
-            if (_language == null)
-            {
-                // Win8: 572882 When the system locale is English and the UI is JPN, 
-                // running "update-help" still downs English help content.
-                cultures = _helpSystem.GetCurrentUICulture();
-            }
-            else
-            {
-                cultures = _language;
-            }
+            // Win8: 572882 When the system locale is English and the UI is JPN, 
+            // running "update-help" still downs English help content.
+            var cultures = _language ?? _helpSystem.GetCurrentUICulture();
 
             foreach (string culture in cultures)
             {

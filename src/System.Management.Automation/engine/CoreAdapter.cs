@@ -669,7 +669,7 @@ namespace System.Management.Automation
             }
             catch (TargetInvocationException ex)
             {
-                Exception inner = (ex.InnerException == null) ? ex : ex.InnerException;
+                Exception inner = ex.InnerException ?? ex;
                 throw new GetValueInvocationException("CatchFromBaseAdapterParameterizedPropertyGetValueTI",
                     inner,
                     ExtendedTypeSystem.ExceptionWhenGetting,
@@ -3792,7 +3792,7 @@ namespace System.Management.Automation
             }
             catch (TargetInvocationException ex)
             {
-                Exception inner = (ex.InnerException == null) ? ex : ex.InnerException;
+                Exception inner = ex.InnerException ?? ex;
                 throw new MethodInvocationException(
                     "DotNetconstructorTargetInvocation",
                     inner,
@@ -3844,7 +3844,7 @@ namespace System.Management.Automation
                 if (ex.InnerException is ParameterBindingException)
                     throw ex.InnerException;
 
-                Exception inner = (ex.InnerException == null) ? ex : ex.InnerException;
+                Exception inner = ex.InnerException ?? ex;
 
                 throw new MethodInvocationException(
                     "DotNetMethodTargetInvocation",

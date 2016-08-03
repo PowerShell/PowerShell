@@ -62,23 +62,9 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSProperty")]
         public string[] Name
         {
-            get
-            {
-                return _property;
-            } // get
-
-            set
-            {
-                if (value == null)
-                {
-                    _property = new string[0];
-                }
-                else
-                {
-                    _property = value;
-                }
-            }
-        } // Property
+            get { return _property; }
+            set { _property = value ?? Utils.EmptyArray<string>(); }
+        }
 
         /// <summary>
         /// Gets or sets the force property
@@ -97,15 +83,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override SwitchParameter Force
         {
-            get
-            {
-                return base.Force;
-            }
-            set
-            {
-                base.Force = value;
-            }
-        } // Force
+            get { return base.Force; }
+            set { base.Force = value; }
+        }
 
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets

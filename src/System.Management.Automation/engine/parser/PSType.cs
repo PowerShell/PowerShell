@@ -394,12 +394,7 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                if (baseClass == null)
-                {
-                    baseClass = typeof(object);
-                }
-
-                return baseClass;
+                return baseClass ?? typeof(object);
             }
 
             public void DefineMembers()

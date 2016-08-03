@@ -985,11 +985,7 @@ namespace System.Management.Automation
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    if (_invokeCommand == null)
-                    {
-                        _invokeCommand = new CommandInvocationIntrinsics(Context, this);
-                    }
-                    return _invokeCommand;
+                    return _invokeCommand ?? (_invokeCommand = new CommandInvocationIntrinsics(Context, this));
                 }
             }
         } //InvokeCommand

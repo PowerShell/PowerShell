@@ -76,14 +76,7 @@ namespace System.Management.Automation
             }
 
             // Use the name of basename of the path as the module name if no module name is supplied.
-            if (name == null)
-            {
-                Name = ModuleIntrinsics.GetModuleName(Path);
-            }
-            else
-            {
-                Name = name;
-            }
+            Name = name ?? ModuleIntrinsics.GetModuleName(Path);
         }
 
         /// <summary>

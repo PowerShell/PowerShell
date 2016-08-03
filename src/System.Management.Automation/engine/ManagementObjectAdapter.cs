@@ -458,11 +458,7 @@ namespace System.Management.Automation
                     // is fixed)
                     typeTable = new CacheTable();
                     // Construct a ManagementClass object for this object to get the member metadata
-                    ManagementClass mgmtClass = wmiObject as ManagementClass;
-                    if (null == mgmtClass)
-                    {
-                        mgmtClass = CreateClassFrmObject(wmiObject);
-                    }
+                    ManagementClass mgmtClass = wmiObject as ManagementClass ?? CreateClassFrmObject(wmiObject);
                     PopulateMethodTable(mgmtClass, typeTable, staticBinding);
                     s_instanceMethodCacheTable[key] = typeTable;
                 }

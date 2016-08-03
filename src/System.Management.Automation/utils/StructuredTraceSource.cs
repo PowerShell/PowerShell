@@ -1455,14 +1455,7 @@ namespace System.Management.Automation
         /// 
         internal TraceSource TraceSource
         {
-            get
-            {
-                if (_traceSource == null)
-                {
-                    _traceSource = new MonadTraceSource(_name);
-                }
-                return _traceSource;
-            }
+            get { return _traceSource ?? (_traceSource = new MonadTraceSource(_name)); }
         }
         private TraceSource _traceSource;
 

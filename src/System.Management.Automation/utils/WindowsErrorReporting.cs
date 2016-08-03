@@ -668,11 +668,7 @@ namespace System.Management.Automation
 
         private static string GetThreadName()
         {
-            string threadName = System.Threading.Thread.CurrentThread.Name;
-            if (threadName == null)
-            {
-                threadName = string.Empty;
-            }
+            string threadName = System.Threading.Thread.CurrentThread.Name ?? string.Empty;
             return threadName;
         }
 

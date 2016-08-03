@@ -709,14 +709,8 @@ namespace System.Management.Automation
         /// </summary>
         public override string Message
         {
-            get
-            {
-                if (null == _message)
-                {
-                    _message = (null != _wrapperException) ? _wrapperException.Message : String.Empty;
-                }
-
-                return _message;
+            get {
+                return _message ?? (_message = (null != _wrapperException) ? _wrapperException.Message : String.Empty);
             }
         }
 

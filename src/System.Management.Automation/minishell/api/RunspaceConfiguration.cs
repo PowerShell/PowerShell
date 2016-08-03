@@ -360,14 +360,8 @@ namespace System.Management.Automation.Runspaces
         /// </remarks>
         public virtual RunspaceConfigurationEntryCollection<CmdletConfigurationEntry> Cmdlets
         {
-            get
-            {
-                if (_cmdlets == null)
-                {
-                    _cmdlets = new RunspaceConfigurationEntryCollection<CmdletConfigurationEntry>();
-                }
-
-                return _cmdlets;
+            get {
+                return _cmdlets ?? (_cmdlets = new RunspaceConfigurationEntryCollection<CmdletConfigurationEntry>());
             }
         }
 
@@ -381,14 +375,9 @@ namespace System.Management.Automation.Runspaces
         /// </remarks>
         public virtual RunspaceConfigurationEntryCollection<ProviderConfigurationEntry> Providers
         {
-            get
-            {
-                if (_providers == null)
-                {
-                    _providers = new RunspaceConfigurationEntryCollection<ProviderConfigurationEntry>();
-                }
-
-                return _providers;
+            get {
+                return _providers ??
+                       (_providers = new RunspaceConfigurationEntryCollection<ProviderConfigurationEntry>());
             }
         }
 
@@ -412,12 +401,7 @@ namespace System.Management.Automation.Runspaces
         /// 
         internal TypeTable TypeTable
         {
-            get
-            {
-                if (_typeTable == null)
-                    _typeTable = new TypeTable();
-                return _typeTable;
-            }
+            get { return _typeTable ?? (_typeTable = new TypeTable()); }
         }
         private TypeTable _typeTable;
 
@@ -432,15 +416,7 @@ namespace System.Management.Automation.Runspaces
         /// </remarks>
         public virtual RunspaceConfigurationEntryCollection<TypeConfigurationEntry> Types
         {
-            get
-            {
-                if (_types == null)
-                {
-                    _types = new RunspaceConfigurationEntryCollection<TypeConfigurationEntry>();
-                }
-
-                return _types;
-            }
+            get { return _types ?? (_types = new RunspaceConfigurationEntryCollection<TypeConfigurationEntry>()); }
         }
 
         private RunspaceConfigurationEntryCollection<FormatConfigurationEntry> _formats;
@@ -454,14 +430,8 @@ namespace System.Management.Automation.Runspaces
         /// </remarks>
         public virtual RunspaceConfigurationEntryCollection<FormatConfigurationEntry> Formats
         {
-            get
-            {
-                if (_formats == null)
-                {
-                    _formats = new RunspaceConfigurationEntryCollection<FormatConfigurationEntry>();
-                }
-
-                return _formats;
+            get {
+                return _formats ?? (_formats = new RunspaceConfigurationEntryCollection<FormatConfigurationEntry>());
             }
         }
 
@@ -482,14 +452,8 @@ namespace System.Management.Automation.Runspaces
         /// </remarks>
         public virtual RunspaceConfigurationEntryCollection<ScriptConfigurationEntry> Scripts
         {
-            get
-            {
-                if (_scripts == null)
-                {
-                    _scripts = new RunspaceConfigurationEntryCollection<ScriptConfigurationEntry>();
-                }
-
-                return _scripts;
+            get {
+                return _scripts ?? (_scripts = new RunspaceConfigurationEntryCollection<ScriptConfigurationEntry>());
             }
         }
 
@@ -508,14 +472,9 @@ namespace System.Management.Automation.Runspaces
         /// </remarks>
         public virtual RunspaceConfigurationEntryCollection<ScriptConfigurationEntry> InitializationScripts
         {
-            get
-            {
-                if (_initializationScripts == null)
-                {
-                    _initializationScripts = new RunspaceConfigurationEntryCollection<ScriptConfigurationEntry>();
-                }
-
-                return _initializationScripts;
+            get {
+                return _initializationScripts ??
+                       (_initializationScripts = new RunspaceConfigurationEntryCollection<ScriptConfigurationEntry>());
             }
         }
 
@@ -534,14 +493,9 @@ namespace System.Management.Automation.Runspaces
         /// </remarks>
         public virtual RunspaceConfigurationEntryCollection<AssemblyConfigurationEntry> Assemblies
         {
-            get
-            {
-                if (_assemblies == null)
-                {
-                    _assemblies = new RunspaceConfigurationEntryCollection<AssemblyConfigurationEntry>();
-                }
-
-                return _assemblies;
+            get {
+                return _assemblies ??
+                       (_assemblies = new RunspaceConfigurationEntryCollection<AssemblyConfigurationEntry>());
             }
         }
 
@@ -560,14 +514,9 @@ namespace System.Management.Automation.Runspaces
         /// </remarks>
         public virtual AuthorizationManager AuthorizationManager
         {
-            get
-            {
-                if (_authorizationManager == null)
-                {
-                    _authorizationManager = new Microsoft.PowerShell.PSAuthorizationManager(this.ShellId);
-                }
-
-                return _authorizationManager;
+            get {
+                return _authorizationManager ??
+                       (_authorizationManager = new Microsoft.PowerShell.PSAuthorizationManager(this.ShellId));
             }
         }
 

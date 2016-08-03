@@ -725,13 +725,10 @@ namespace System.Management.Automation
                 processedAliases.Add(commandInfo.Name);
 
                 AliasInfo aliasCommandInfo = (AliasInfo)commandInfo;
-                commandInfo = aliasCommandInfo.ResolvedCommand;
+                commandInfo = aliasCommandInfo.ResolvedCommand ??
+                              LookupCommandInfo(aliasCommandInfo.Definition, commandOrigin, Context);
 
                 // If we didn't have the alias target already resolved, see if it can be loaded.
-                if (commandInfo == null)
-                {
-                    commandInfo = LookupCommandInfo(aliasCommandInfo.Definition, commandOrigin, Context);
-                }
 
                 if (commandInfo == null)
                 {
@@ -1567,13 +1564,7 @@ namespace System.Management.Automation
             }
 
             // Cache the new lookup paths
-
-            if (_cachedLookupPaths == null)
-            {
-                _cachedLookupPaths = result;
-            }
-
-            return _cachedLookupPaths;
+            return _cachedLookupPaths ?? (_cachedLookupPaths = result);
         } // GetLookupDirectoryPaths
 
         /// <summary>

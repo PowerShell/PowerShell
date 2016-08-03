@@ -4754,22 +4754,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
         public string[] PSProvider
         {
-            get
-            {
-                return _provider;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    _provider = new string[0];
-                }
-                else
-                {
-                    _provider = value;
-                }
-            }
-        } // Provider
+            get { return _provider; }
+            set { _provider = value ?? Utils.EmptyArray<string>(); }
+        }
 
         #endregion Command parameters
 

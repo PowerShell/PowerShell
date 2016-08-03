@@ -376,8 +376,7 @@ namespace System.Management.Automation
             if (ct == ContainerType.None)
                 return false;
 
-            WriteStartOfPSObject(mshSource != null ? mshSource : PSObject.AsPSObject(source),
-                                                 property, true);
+            WriteStartOfPSObject(mshSource ?? PSObject.AsPSObject(source), property, true);
             switch (ct)
             {
                 case ContainerType.Dictionary:

@@ -164,10 +164,8 @@ namespace Microsoft.PowerShell.Commands
                         // Export all functions and variables if no exports were specified...
                         if (!localModule.SessionState.Internal.UseExportList)
                         {
-                            List<WildcardPattern> cmdletPatterns =
-                                BaseCmdletPatterns != null ? BaseCmdletPatterns : MatchAll;
-                            List<WildcardPattern> functionPatterns =
-                                BaseFunctionPatterns != null ? BaseFunctionPatterns : MatchAll;
+                            List<WildcardPattern> cmdletPatterns = BaseCmdletPatterns ?? MatchAll;
+                            List<WildcardPattern> functionPatterns = BaseFunctionPatterns ?? MatchAll;
 
                             ModuleIntrinsics.ExportModuleMembers(this,
                                 localModule.SessionState.Internal,

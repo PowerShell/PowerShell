@@ -424,14 +424,7 @@ namespace System.Management.Automation
         /// </summary>
         public override string Message
         {
-            get
-            {
-                if (_message == null)
-                {
-                    _message = BuildMessage();
-                }
-                return _message;
-            }
+            get { return _message ?? (_message = BuildMessage()); }
         }
 
         private string _message;

@@ -194,14 +194,7 @@ namespace System.Management.Automation.PerformanceData
         /// </summary>
         public CounterSetInstanceBase CounterSetInstance
         {
-            get
-            {
-                if (this._counterSetInstanceBase == null)
-                {
-                    this._counterSetInstanceBase = this.CreateCounterSetInstance();
-                }
-                return this._counterSetInstanceBase;
-            }
+            get { return _counterSetInstanceBase ?? (_counterSetInstanceBase = CreateCounterSetInstance()); }
         }
 
         #endregion

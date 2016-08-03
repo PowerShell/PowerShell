@@ -387,16 +387,7 @@ namespace Microsoft.PowerShell
             Aes aes = Aes.Create();
             encryptedData = ByteArrayFromString(input);
 
-            ICryptoTransform decryptor = null;
-
-            if (IV != null)
-            {
-                decryptor = aes.CreateDecryptor(key, IV);
-            }
-            else
-            {
-                decryptor = aes.CreateDecryptor(key, aes.IV);
-            }
+            var decryptor = aes.CreateDecryptor(key, IV ?? aes.IV);
 
             MemoryStream ms = new MemoryStream(encryptedData);
 

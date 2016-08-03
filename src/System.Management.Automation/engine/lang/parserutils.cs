@@ -521,12 +521,7 @@ namespace System.Management.Automation
         // more details.
         private static IEnumerable<string> enumerateContent(ExecutionContext context, IScriptExtent errorPosition, SplitImplOptions implOptions, object tuple)
         {
-            IEnumerator enumerator = LanguagePrimitives.GetEnumerator(tuple);
-            if (enumerator == null)
-            {
-                // Single value. Treat as a 1-tuple.
-                enumerator = new object[] { tuple }.GetEnumerator();
-            }
+            IEnumerator enumerator = LanguagePrimitives.GetEnumerator(tuple) ?? new object[] { tuple }.GetEnumerator();
 
             while (ParserOps.MoveNext(context, errorPosition, enumerator))
             {
@@ -865,7 +860,7 @@ namespace System.Management.Automation
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)
             {
-                string lvalString = ((lval == null) ? String.Empty : lval).ToString();
+                string lvalString = lval?.ToString() ?? String.Empty;
 
                 // Find a single match in the string.
                 return rr.Replace(lvalString, replacement);

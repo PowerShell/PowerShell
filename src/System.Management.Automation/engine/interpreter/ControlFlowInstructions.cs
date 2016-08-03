@@ -68,14 +68,7 @@ namespace System.Management.Automation.Interpreter
 
         public override Instruction[] Cache
         {
-            get
-            {
-                if (s_cache == null)
-                {
-                    s_cache = new Instruction[CacheSize];
-                }
-                return s_cache;
-            }
+            get { return s_cache ?? (s_cache = new Instruction[CacheSize]); }
         }
 
         internal BranchFalseInstruction()
@@ -103,14 +96,7 @@ namespace System.Management.Automation.Interpreter
 
         public override Instruction[] Cache
         {
-            get
-            {
-                if (s_cache == null)
-                {
-                    s_cache = new Instruction[CacheSize];
-                }
-                return s_cache;
-            }
+            get { return s_cache ?? (s_cache = new Instruction[CacheSize]); }
         }
 
         internal BranchTrueInstruction()
@@ -138,14 +124,7 @@ namespace System.Management.Automation.Interpreter
 
         public override Instruction[] Cache
         {
-            get
-            {
-                if (s_cache == null)
-                {
-                    s_cache = new Instruction[CacheSize];
-                }
-                return s_cache;
-            }
+            get { return s_cache ?? (s_cache = new Instruction[CacheSize]); }
         }
 
         internal CoalescingBranchInstruction()

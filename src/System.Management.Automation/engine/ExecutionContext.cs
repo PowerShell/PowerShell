@@ -563,13 +563,7 @@ namespace System.Management.Automation
         /// <value></value>
         internal HelpSystem HelpSystem
         {
-            get
-            {
-                if (_helpSystem == null)
-                    _helpSystem = new HelpSystem(this);
-
-                return _helpSystem;
-            }
+            get { return _helpSystem ?? (_helpSystem = new HelpSystem(this)); }
         }
         private HelpSystem _helpSystem;
 
@@ -651,14 +645,7 @@ namespace System.Management.Automation
         /// </summary>
         internal EngineIntrinsics EngineIntrinsics
         {
-            get
-            {
-                if (_engineIntrinsics == null)
-                {
-                    _engineIntrinsics = new EngineIntrinsics(this);
-                }
-                return _engineIntrinsics;
-            }
+            get { return _engineIntrinsics ?? (_engineIntrinsics = new EngineIntrinsics(this)); }
         }
         private EngineIntrinsics _engineIntrinsics;
 
@@ -1690,9 +1677,7 @@ namespace System.Management.Automation
             transactionManager = new PSTransactionManager();
             _debugger = new ScriptDebugger(this);
 
-            EngineHostInterface = hostInterface as InternalHost;
-            if (EngineHostInterface == null)
-                EngineHostInterface = new InternalHost(hostInterface, this);
+            EngineHostInterface = hostInterface as InternalHost ?? new InternalHost(hostInterface, this);
 
             // Hook up the assembly cache
             AssemblyCache = new Dictionary<string, Assembly>();

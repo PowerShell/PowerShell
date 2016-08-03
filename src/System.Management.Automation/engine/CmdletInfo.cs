@@ -534,13 +534,9 @@ namespace System.Management.Automation
         /// 
         internal override CommandMetadata CommandMetadata
         {
-            get
-            {
-                if (_cmdletMetadata == null)
-                {
-                    _cmdletMetadata = CommandMetadata.Get(this.Name, this.ImplementingType, Context);
-                }
-                return _cmdletMetadata;
+            get {
+                return _cmdletMetadata ??
+                       (_cmdletMetadata = CommandMetadata.Get(this.Name, this.ImplementingType, Context));
             }
         }
         private CommandMetadata _cmdletMetadata;

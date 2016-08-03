@@ -622,7 +622,7 @@ namespace System.Management.Automation
         private PowerShell(PSCommand command, Collection<PSCommand> extraCommands, object rsConnection)
         {
             Dbg.Assert(command != null, "command must not be null");
-            ExtraCommands = (extraCommands == null) ? new Collection<PSCommand>() : extraCommands;
+            ExtraCommands = extraCommands ?? new Collection<PSCommand>();
             RunningExtraCommands = false;
             _psCommand = command;
             _psCommand.Owner = this;
@@ -3207,12 +3207,7 @@ namespace System.Management.Automation
 
             try
             {
-                objs = EndInvoke(result);
-
-                if (objs == null)
-                {
-                    objs = _batchAsyncResult.Output;
-                }
+                objs = EndInvoke(result) ?? _batchAsyncResult.Output;
 
                 DoRemainingBatchCommands(objs);
             }

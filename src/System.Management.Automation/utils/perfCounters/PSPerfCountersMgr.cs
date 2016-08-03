@@ -57,14 +57,7 @@ namespace System.Management.Automation.PerformanceData
         /// </summary>
         public static PSPerfCountersMgr Instance
         {
-            get
-            {
-                if (s_PSPerfCountersMgrInstance == null)
-                {
-                    s_PSPerfCountersMgrInstance = new PSPerfCountersMgr();
-                }
-                return s_PSPerfCountersMgrInstance;
-            }
+            get { return s_PSPerfCountersMgrInstance ?? (s_PSPerfCountersMgrInstance = new PSPerfCountersMgr()); }
         }
 
         /// <summary>

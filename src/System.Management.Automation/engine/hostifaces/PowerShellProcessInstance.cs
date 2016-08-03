@@ -77,11 +77,6 @@ namespace System.Management.Automation.Runspaces
             // PSConsoleFile parameters before parsing other parameters.
             // The other parameters get parsed in the managed layer.
             Version tempVersion = powerShellVersion ?? PSVersionInfo.PSVersion;
-            // tempVersion can never get to null..but FxCop thinks otherwise.
-            if (null == tempVersion)
-            {
-                tempVersion = PSVersionInfo.PSVersion;
-            }
             processArguments = string.Format(CultureInfo.InvariantCulture,
                        "-Version {0}", new Version(tempVersion.Major, tempVersion.Minor));
 

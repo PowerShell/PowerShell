@@ -40,8 +40,8 @@ namespace System.Management.Automation
         /// <param name="addItems">The items to add</param>
         public PSListModifier(Collection<object> removeItems, Collection<object> addItems)
         {
-            _itemsToAdd = (addItems != null) ? addItems : new Collection<object>();
-            _itemsToRemove = (removeItems != null) ? removeItems : new Collection<object>();
+            _itemsToAdd = addItems ?? new Collection<object>();
+            _itemsToRemove = removeItems ?? new Collection<object>();
             _replacementItems = new Collection<object>();
         }
 

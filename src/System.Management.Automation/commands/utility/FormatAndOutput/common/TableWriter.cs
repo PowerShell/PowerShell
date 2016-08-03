@@ -358,10 +358,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static string GenerateRowField(string val, int width, int alignment, DisplayCells dc)
         {
             // make sure the string does not have any embedded <CR> in it
-            string s = StringManipulationHelper.TruncateAtNewLine(val);
-
-            if (s == null)
-                s = "";
+            string s = StringManipulationHelper.TruncateAtNewLine(val) ?? "";
 
             string currentValue = s;
             int currentValueDisplayLength = dc.Length(currentValue);

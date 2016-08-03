@@ -1485,11 +1485,7 @@ namespace System.Management.Automation
                     result = msjObjFormattable.ToString(format, formatProvider);
                 }
 
-                if (result == null)
-                {
-                    result = String.Empty;
-                }
-                return result;
+                return result ?? String.Empty;
             }
             catch (Exception e)
             {
@@ -1912,7 +1908,7 @@ namespace System.Management.Automation
         {
             SerializationMethod result = TypeTable.defaultSerializationMethod;
 
-            TypeTable typeTable = backupTypeTable != null ? backupTypeTable : this.GetTypeTable();
+            TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
             if (null != typeTable)
             {
                 PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(this,
@@ -1947,7 +1943,7 @@ namespace System.Management.Automation
         {
             PSMemberInfo result = null;
 
-            TypeTable typeTable = backupTypeTable != null ? backupTypeTable : this.GetTypeTable();
+            TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
             if (typeTable != null)
             {
                 PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(
@@ -1963,12 +1959,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (result == null)
-            {
-                result = this.InstanceMembers[TypeTable.PSStandardMembers] as PSMemberSet;
-            }
-
-            return result;
+            return result ?? InstanceMembers[TypeTable.PSStandardMembers] as PSMemberSet;
         }
 
         /// <summary>
@@ -2004,7 +1995,7 @@ namespace System.Management.Automation
         /// <returns>A collection with only the specific properties to serialize</returns>
         internal Collection<string> GetSpecificPropertiesToSerialize(TypeTable backupTypeTable)
         {
-            TypeTable typeTable = backupTypeTable != null ? backupTypeTable : this.GetTypeTable();
+            TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
             if (null != typeTable)
             {
                 Collection<string> tmp = typeTable.GetSpecificProperties(this.InternalTypeNames);

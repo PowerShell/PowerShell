@@ -1874,26 +1874,19 @@ namespace System.Management.Automation
         private Collection<CollectionEntry<PSMemberInfo>> _extendedMembersCollection;
         private Collection<CollectionEntry<PSMemberInfo>> ExtendedMembersCollection
         {
-            get
-            {
-                if (_extendedMembersCollection == null)
-                {
-                    _extendedMembersCollection = PSObject.GetMemberCollection(PSMemberViewTypes.Extended, _typeTable);
-                }
-                return _extendedMembersCollection;
+            get {
+                return _extendedMembersCollection ??
+                       (_extendedMembersCollection =
+                           PSObject.GetMemberCollection(PSMemberViewTypes.Extended, _typeTable));
             }
         }
 
         private Collection<CollectionEntry<PSPropertyInfo>> _allPropertiesCollection;
         private Collection<CollectionEntry<PSPropertyInfo>> AllPropertiesCollection
         {
-            get
-            {
-                if (_allPropertiesCollection == null)
-                {
-                    _allPropertiesCollection = PSObject.GetPropertyCollection(PSMemberViewTypes.All, _typeTable);
-                }
-                return _allPropertiesCollection;
+            get {
+                return _allPropertiesCollection ??
+                       (_allPropertiesCollection = PSObject.GetPropertyCollection(PSMemberViewTypes.All, _typeTable));
             }
         }
 
@@ -4782,12 +4775,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (ex == null)
-            {
-                ex = new XmlException(message, innerException);
-            }
-
-            return ex;
+            return ex ?? new XmlException(message, innerException);
         }
 
         private string ReadNameAttribute()

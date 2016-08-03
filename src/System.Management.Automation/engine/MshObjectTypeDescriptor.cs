@@ -547,11 +547,8 @@ namespace System.Management.Automation
                 return new TypeConverter();
             }
             object baseObject = this.Instance.BaseObject;
-            TypeConverter retValue = LanguagePrimitives.GetConverter(baseObject.GetType(), null) as TypeConverter;
-            if (retValue == null)
-            {
-                retValue = TypeDescriptor.GetConverter(baseObject);
-            }
+            TypeConverter retValue = LanguagePrimitives.GetConverter(baseObject.GetType(), null) as TypeConverter ??
+                                     TypeDescriptor.GetConverter(baseObject);
             return retValue;
         }
 

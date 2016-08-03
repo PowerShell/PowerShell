@@ -117,13 +117,9 @@ namespace System.Management.Automation.ComInterop
 
         private ParameterExpression ParamVariantsVariable
         {
-            get
-            {
-                if (_paramVariants == null)
-                {
-                    _paramVariants = Expression.Variable(VariantArray.GetStructType(_args.Length), "paramVariants");
-                }
-                return _paramVariants;
+            get {
+                return _paramVariants ??
+                       (_paramVariants = Expression.Variable(VariantArray.GetStructType(_args.Length), "paramVariants"));
             }
         }
 

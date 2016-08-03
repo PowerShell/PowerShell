@@ -1307,8 +1307,8 @@ namespace System.Management.Automation
             }
 
             //Get FullyQualifiedErrorId
-            string fullyQualifiedErrorId = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, "FullyQualifiedErrorId");
-            if (fullyQualifiedErrorId == null) fullyQualifiedErrorId = "fullyQualifiedErrorId";
+            string fullyQualifiedErrorId = RemotingDecoder.GetPropertyValue<string>(serializedErrorRecord, "FullyQualifiedErrorId") ??
+                                           "fullyQualifiedErrorId";
 
             //Get ErrorCategory...
             ErrorCategory errorCategory = RemotingDecoder.GetPropertyValue<ErrorCategory>(serializedErrorRecord, "errorCategory_Category");
@@ -1478,12 +1478,7 @@ namespace System.Management.Automation
         /// <value>never null</value>
         public ErrorCategoryInfo CategoryInfo
         {
-            get
-            {
-                if (null == _categoryInfo)
-                    _categoryInfo = new ErrorCategoryInfo(this);
-                return _categoryInfo;
-            }
+            get { return _categoryInfo ?? (_categoryInfo = new ErrorCategoryInfo(this)); }
         }
         private ErrorCategoryInfo _categoryInfo;
 
@@ -1669,7 +1664,7 @@ namespace System.Management.Automation
 
         internal static string NotNull(string s)
         {
-            return (null != s) ? s : "";
+            return s ?? "";
         }
 
         private string GetInvocationTypeName()

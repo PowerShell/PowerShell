@@ -37,11 +37,8 @@ namespace System.Management.Automation
         {
             var converterInstance = Utils.GetAstToWorkflowConverterAndEnsureWorkflowModuleLoaded(null);
 
-            var workflowInfo = entry.WorkflowInfo;
-            if (workflowInfo == null)
-            {
-                workflowInfo = converterInstance.CompileWorkflow(entry.Name, entry.Definition, initialSessionState);
-            }
+            var workflowInfo = entry.WorkflowInfo ??
+                               converterInstance.CompileWorkflow(entry.Name, entry.Definition, initialSessionState);
 
             WorkflowInfo wf = new WorkflowInfo(workflowInfo);
 

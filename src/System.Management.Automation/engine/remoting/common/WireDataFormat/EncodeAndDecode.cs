@@ -1585,11 +1585,8 @@ namespace System.Management.Automation
         {
             Dbg.Assert(exception != null, "Caller should validate the data");
 
-            ErrorRecord er = GetErrorRecordFromException(exception);
-            if (er == null)
-            {
-                er = new ErrorRecord(exception, errorId, category, null);
-            }
+            ErrorRecord er = GetErrorRecordFromException(exception) ??
+                             new ErrorRecord(exception, errorId, category, null);
             return new PSNoteProperty(RemoteDataNameStrings.ExceptionAsErrorRecord, er);
         }
 

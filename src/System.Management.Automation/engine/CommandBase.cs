@@ -76,15 +76,7 @@ namespace System.Management.Automation.Internal
         /// <value>The invocation object for this command.</value>
         internal InvocationInfo MyInvocation
         {
-            get
-            {
-                if (_myInvocation == null)
-                {
-                    _myInvocation = new InvocationInfo(this);
-                }
-
-                return _myInvocation;
-            }
+            get { return _myInvocation ?? (_myInvocation = new InvocationInfo(this)); }
         }
 
         /// <summary>
@@ -448,11 +440,7 @@ namespace System.Management.Automation
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    if (_invokeProvider == null)
-                    {
-                        _invokeProvider = new ProviderIntrinsics(this);
-                    }
-                    return _invokeProvider;
+                    return _invokeProvider ?? (_invokeProvider = new ProviderIntrinsics(this));
                 }
             }
         } // InvokeProvider
