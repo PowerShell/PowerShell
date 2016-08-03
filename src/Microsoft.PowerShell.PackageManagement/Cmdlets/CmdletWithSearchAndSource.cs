@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
         internal readonly OrderedDictionary<string, List<SoftwareIdentity>> _resultsPerName = new OrderedDictionary<string, List<SoftwareIdentity>>();
         protected List<PackageProvider> _providersNotFindingAnything = new List<PackageProvider>();
 #if CORECLR
-        internal static readonly string[] ProviderFilters = new[] { "Packagemanagement", "Provider", "PSEdition_PowerShellCore" };
+        internal static readonly string[] ProviderFilters = new[] { "Packagemanagement", "Provider", "PSEdition_Core" };
 #else
         internal static readonly string[] ProviderFilters = new[] { "Packagemanagement", "Provider" };
 #endif
