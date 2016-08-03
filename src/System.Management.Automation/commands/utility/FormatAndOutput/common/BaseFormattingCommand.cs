@@ -603,7 +603,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             Nullable<EnumerableExpansion> retVal = null;
             if (string.IsNullOrEmpty(Expand))
             {
-                return retVal;
+                return null;
             }
 
             EnumerableExpansion temp;

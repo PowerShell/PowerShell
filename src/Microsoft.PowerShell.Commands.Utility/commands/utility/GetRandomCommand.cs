@@ -232,7 +232,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (o == null)
             {
-                return o;
+                return null;
             }
 
             PSObject pso = PSObject.AsPSObject(o);

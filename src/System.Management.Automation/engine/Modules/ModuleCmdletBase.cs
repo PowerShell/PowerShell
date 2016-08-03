@@ -665,13 +665,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // No extension so we'll have to search using the extensions
                     // 
-                    if (VerifyIfNestedModuleIsAvailable(moduleSpecification, rootedPath, extension, out tempModuleInfoFromVerification))
+                    if (VerifyIfNestedModuleIsAvailable(moduleSpecification, rootedPath, /*extension*/null, out tempModuleInfoFromVerification))
                     {
                         module = LoadUsingExtensions(
                             parentModule,
                             moduleSpecification.Name,
                             rootedPath, // fileBaseName
-                            extension,
+                            /*extension*/null,
                             moduleBase, // not using base from tempModuleInfoFromVerification as we are looking under moduleBase directory
                             prefix,
                             ss,
@@ -689,13 +689,13 @@ namespace Microsoft.PowerShell.Commands
                     {
                         string newRootedPath = Path.Combine(rootedPath, moduleSpecification.Name);
                         string newModuleBase = Path.Combine(moduleBase, moduleSpecification.Name);
-                        if (VerifyIfNestedModuleIsAvailable(moduleSpecification, newRootedPath, extension, out tempModuleInfoFromVerification))
+                        if (VerifyIfNestedModuleIsAvailable(moduleSpecification, newRootedPath, /*extension*/null, out tempModuleInfoFromVerification))
                         {
                             module = LoadUsingExtensions(
                                 parentModule,
                                 moduleSpecification.Name,
                                 newRootedPath, // fileBaseName
-                                extension,
+                                /*extension*/ null,
                                 newModuleBase, // not using base from tempModuleInfoFromVerification as we are looking under moduleBase directory
                                 prefix,
                                 ss,

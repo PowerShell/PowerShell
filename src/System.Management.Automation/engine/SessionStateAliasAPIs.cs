@@ -139,7 +139,7 @@ namespace System.Management.Automation
             AliasInfo result = null;
             if (String.IsNullOrEmpty(aliasName))
             {
-                return result;
+                return null;
             }
 
 
@@ -226,7 +226,7 @@ namespace System.Management.Automation
             AliasInfo result = null;
             if (String.IsNullOrEmpty(aliasName))
             {
-                return result;
+                return null;
             }
 
             SessionStateScope scope = GetScopeByID(scopeID);

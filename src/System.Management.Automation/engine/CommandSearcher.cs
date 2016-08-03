@@ -1004,7 +1004,7 @@ namespace System.Management.Automation
 
                     if (PSSnapinQualifiedCommandName == null)
                     {
-                        return result;
+                        return null;
                     }
 
                     WildcardPattern cmdletMatcher =

@@ -1650,7 +1650,7 @@ namespace System.Management.Automation
                 Object deserialized = PSSerializer.Deserialize(PSSerializer.Serialize(value));
                 if (deserialized == null)
                 {
-                    return (PSObject)deserialized;
+                    return null;
                 }
                 else
                 {

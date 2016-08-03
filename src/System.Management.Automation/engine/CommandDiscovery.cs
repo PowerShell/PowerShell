@@ -1001,8 +1001,7 @@ namespace System.Management.Automation
                     // Try the module-qualified auto-loading (unless module auto-loading has been entirely disabled)
                     if (moduleAutoLoadingPreference != PSModuleAutoLoadingPreference.None)
                     {
-                        result = TryModuleAutoLoading(commandName, context, originalCommandName, commandOrigin, result,
-                                                      ref lastError);
+                        result = TryModuleAutoLoading(commandName, context, originalCommandName, commandOrigin, ref lastError);
                     }
 
                     if (result != null)
@@ -1019,8 +1018,7 @@ namespace System.Management.Automation
                     // Otherwise, invoke the CommandNotFound handler
                     if (result == null)
                     {
-                        result = InvokeCommandNotFoundHandler(commandName, context, originalCommandName, commandOrigin,
-                                                              result);
+                        result = InvokeCommandNotFoundHandler(commandName, context, originalCommandName, commandOrigin);
                     }
                 } while (false);
             }
@@ -1148,8 +1146,9 @@ namespace System.Management.Automation
         }
 
 
-        private static CommandInfo InvokeCommandNotFoundHandler(string commandName, ExecutionContext context, string originalCommandName, CommandOrigin commandOrigin, CommandInfo result)
+        private static CommandInfo InvokeCommandNotFoundHandler(string commandName, ExecutionContext context, string originalCommandName, CommandOrigin commandOrigin)
         {
+            CommandInfo result = null;
             CommandLookupEventArgs eventArgs;
             System.EventHandler<CommandLookupEventArgs> cmdNotFoundHandler = context.EngineIntrinsics.InvokeCommand.CommandNotFoundAction;
             if (cmdNotFoundHandler != null)
@@ -1349,8 +1348,10 @@ namespace System.Management.Automation
             return result;
         }
 
-        private static CommandInfo TryModuleAutoLoading(string commandName, ExecutionContext context, string originalCommandName, CommandOrigin commandOrigin, CommandInfo result, ref Exception lastError)
+        private static CommandInfo TryModuleAutoLoading(string commandName, ExecutionContext context, string originalCommandName, CommandOrigin commandOrigin, ref Exception lastError)
         {
+            CommandInfo result = null;
+
             // If commandName was module-qualified. In that case, we should load the module.
             var colonOrBackslash = commandName.IndexOfAny(Utils.Separators.ColonOrBackslash);
 

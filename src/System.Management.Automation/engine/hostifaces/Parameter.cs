@@ -58,7 +58,7 @@ namespace System.Management.Automation.Runspaces
             }
             else
             {
-                Name = name;
+                Name = null;
             }
             Value = value;
         }

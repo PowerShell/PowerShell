@@ -167,7 +167,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal ManagementObjectSearcher GetObjectList(ManagementScope scope)
         {
-            ManagementObjectSearcher searcher = null;
             StringBuilder queryStringBuilder = new StringBuilder();
             if (string.IsNullOrEmpty(this.Class))
             {
@@ -177,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string filterClass = GetFilterClassName();
                 if (filterClass == null)
-                    return searcher;
+                    return null;
                 queryStringBuilder.Append("select * from meta_class where __class like '");
                 queryStringBuilder.Append(filterClass);
                 queryStringBuilder.Append("'");
@@ -187,7 +186,7 @@ namespace Microsoft.PowerShell.Commands
             EnumerationOptions enumOptions = new EnumerationOptions();
             enumOptions.EnumerateDeep = true;
             enumOptions.UseAmendedQualifiers = this.Amended;
-            searcher = new ManagementObjectSearcher(scope, classQuery, enumOptions);
+            var searcher = new ManagementObjectSearcher(scope, classQuery, enumOptions);
             return searcher;
         }
         /// <summary>

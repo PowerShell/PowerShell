@@ -213,12 +213,10 @@ namespace System.Management.Automation
             Dbg.Assert(classInfo != null, "Caller should verify that classInfo != null");
             Dbg.Assert(helpFileToFind != null, "Caller should verify that helpFileToFind != null");
 
-            HelpInfo result = null;
-
             helpFile = MUIFileSearcher.LocateFile(helpFileToFind, searchPaths);
 
             if (!File.Exists(helpFile))
-                return result;
+                return null;
 
             if (!String.IsNullOrEmpty(helpFile))
             {
@@ -228,10 +226,10 @@ namespace System.Management.Automation
                     LoadHelpFile(helpFile, helpFile, classInfo.Name, reportErrors);
                 }
 
-                result = GetFromPSClasseHelpCache(helpFile, Automation.HelpCategory.Class);
+                return GetFromPSClasseHelpCache(helpFile, Automation.HelpCategory.Class);
             }
 
-            return result;
+            return null;
         }
 
         /// <summary>

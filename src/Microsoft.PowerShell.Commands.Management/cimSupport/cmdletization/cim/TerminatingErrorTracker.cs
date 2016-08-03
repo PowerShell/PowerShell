@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             else
             {
                 sessionWasAlreadyTerminated = false;
-                return sessionException;
+                return null;
             }
         }
 

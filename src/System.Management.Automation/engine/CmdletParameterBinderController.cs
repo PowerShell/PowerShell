@@ -3910,7 +3910,7 @@ namespace System.Management.Automation
                 {
                     ParameterBindingException bindingException =
                         new ParameterBindingException(
-                            error,
+                            null,
                             ErrorCategory.InvalidArgument,
                             this.Command.MyInvocation,
                             GetErrorExtent(argument),

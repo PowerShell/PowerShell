@@ -696,7 +696,7 @@ namespace System.Management.Automation
             if (!IsProviderLoaded(this.ExecutionContext.ProviderNames.FileSystem))
             {
                 s_tracer.WriteLine("The {0} provider is not loaded", this.ExecutionContext.ProviderNames.FileSystem);
-                return result;
+                return null;
             }
 
             // Since the drive does exist, add it.

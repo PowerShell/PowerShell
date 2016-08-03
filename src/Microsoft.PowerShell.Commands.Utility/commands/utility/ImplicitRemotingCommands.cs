@@ -2535,8 +2535,6 @@ function Get-PSImplicitRemotingSession
         /// <returns></returns>
         private string GenerateConnectionStringForNewRunspace()
         {
-            string connectionString = null;
-
             WSManConnectionInfo connectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
             if (null == connectionInfo)
             {
@@ -2556,7 +2554,7 @@ function Get-PSImplicitRemotingSession
                         CodeGeneration.EscapeSingleQuotedStringContent(containerConnectionInfo.ContainerProc.ContainerId));
                 }
 
-                return connectionString;
+                return null;
             }
 
             if (connectionInfo.UseDefaultWSManPort)
