@@ -111,7 +111,7 @@ namespace System.Management.Automation
         /// Proposed value = existing default. Probably "1"
         /// </summary>
         /// <returns>Whether console prompting should happen.</returns>
-        internal abstract bool GetConsolePrompting(ref Exception exception);
+        internal abstract bool GetConsolePrompting();
         internal abstract void SetConsolePrompting(bool shouldPrompt);
 
         /// <summary>
@@ -134,8 +134,6 @@ namespace System.Management.Automation
     }
 
 #if CORECLR
-    // TODO: JSON .Net should not be a required component for inbox PowerShell. We need to decide on the long term plan.
-
     /// <summary>
     /// JSON configuration file accessor
     ///
@@ -273,7 +271,7 @@ namespace System.Management.Automation
         /// }
         /// </summary>
         /// <returns>Whether console prompting should happen. If the value cannot be read it defaults to false.</returns>
-        internal override bool GetConsolePrompting(ref Exception exception)
+        internal override bool GetConsolePrompting()
         {
             string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
             return ReadValueFromFile<bool>(fileName, "ConsolePrompting");
@@ -341,7 +339,8 @@ namespace System.Management.Automation
         {
             try
             {
-                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                // Open file for reading, but allow multiple readers
+                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                 using (StreamReader streamRdr = new StreamReader(fs))
                 using (JsonTextReader jsonReader = new JsonTextReader(streamRdr))
                 {
@@ -353,12 +352,9 @@ namespace System.Management.Automation
                     }
                 }
             }
-            catch (ArgumentException) { }
-            catch (NotSupportedException) { }
+            // The file doesn't exist. Treat this the same way as if the 
+            // key was not present in the file.
             catch (FileNotFoundException) { }
-            catch (IOException) { }
-            catch (System.Security.SecurityException) { }
-            catch (UnauthorizedAccessException) { }
 
             return default(T);
         }
@@ -373,37 +369,26 @@ namespace System.Management.Automation
         /// <param name="addValue">Whether the key-value pair should be added to or removed from the file</param>
         private void UpdateValueInFile<T>(string fileName, string key, T value, bool addValue)
         {
-            try
-            {
-                // Since multiple properties can be in a single file, replacement
-                // is required instead of overwrite if a file already exists.
-                // Handling the read and write operations within a single FileStream
-                // prevents other processes from reading or writing the file while
-                // the update is in progress.
-                using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
-                using (StreamReader streamRdr = new StreamReader(fs))
+            // Since multiple properties can be in a single file, replacement
+            // is required instead of overwrite if a file already exists.
+            // Handling the read and write operations within a single FileStream
+            // prevents other processes from reading or writing the file while
+            // the update is in progress. It also locks out readers during write
+            // operations.
+            using (FileStream fs = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+            { 
+                JObject jsonObject = null;
+
+                // UTF8, BOM detection, and bufferSize are the same as the basic stream constructor.
+                // The most important parameter here is the last one, which keeps the StreamReader 
+                // (and FileStream) open during Dispose so that it can be reused for the write
+                // operation.
+                using (StreamReader streamRdr = new StreamReader(fs, Encoding.UTF8, true, 1024, true)) 
                 using (JsonTextReader jsonReader = new JsonTextReader(streamRdr))
                 {
-                    JObject jsonObject = null;
-                    bool isReadSuccess = jsonReader.Read(); // Safely determines whether there is content to read from the file
-
-                    if ( ! isReadSuccess)
-                    {
-                        // The file doesn't already exist and we want to write to it or 
-                        // exists with no content.
-                        // A new file will be created that contains only this value.
-                        // If the file doesn't exist and a we don't want to write to it, no
-                        // action is necessary.
-                        if (addValue)
-                        {
-                            jsonObject = new JObject(new JProperty(key, value));
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
-                    else
+                    // Safely determines whether there is content to read from the file
+                    bool isReadSuccess = jsonReader.Read();
+                    if (isReadSuccess)
                     {
                         // Read the stream into a root JObject for manipulation
                         jsonObject = (JObject) JToken.ReadFrom(jsonReader);
@@ -431,33 +416,43 @@ namespace System.Management.Automation
                             }
                         }
                     }
-
-                    // Reset the stream position to the beginning so that the 
-                    // changes to the file can be written to disk
-                    fs.Seek(0, SeekOrigin.Begin);
-
-                    // Update the file with new content
-                    using (StreamWriter streamWriter = new StreamWriter(fs))
-                    using (JsonTextWriter jsonWriter = new JsonTextWriter(streamWriter))
+                    else
                     {
-                        // The entire document exists within the root JObject.
-                        // I just need to write that object to produce the document.
-                        jsonObject.WriteTo(jsonWriter);
-
-                        // This trims the file if the file shrank. If the file grew,
-                        // it is a no-op. The purpose is to trim extraneous characters 
-                        // from the file stream when the resultant JObject is smaller
-                        // than the input JObject.
-                        fs.SetLength(fs.Position);
+                        // The file doesn't already exist and we want to write to it 
+                        // or it exists with no content.
+                        // A new file will be created that contains only this value.
+                        // If the file doesn't exist and a we don't want to write to it, no
+                        // action is necessary.
+                        if (addValue)
+                        {
+                            jsonObject = new JObject(new JProperty(key, value));
+                        }
+                        else
+                        {
+                            return;
+                        }
                     }
                 }
+
+                // Reset the stream position to the beginning so that the 
+                // changes to the file can be written to disk
+                fs.Seek(0, SeekOrigin.Begin);
+
+                // Update the file with new content
+                using (StreamWriter streamWriter = new StreamWriter(fs))
+                using (JsonTextWriter jsonWriter = new JsonTextWriter(streamWriter))
+                {
+                    // The entire document exists within the root JObject.
+                    // I just need to write that object to produce the document.
+                    jsonObject.WriteTo(jsonWriter);
+
+                    // This trims the file if the file shrank. If the file grew,
+                    // it is a no-op. The purpose is to trim extraneous characters 
+                    // from the file stream when the resultant JObject is smaller
+                    // than the input JObject.
+                    fs.SetLength(fs.Position);
+                }
             }
-            catch (ArgumentException) { }
-            catch (NotSupportedException) { }
-            catch (FileNotFoundException) { }
-            catch (IOException) { }
-            catch (System.Security.SecurityException) { }
-            catch (UnauthorizedAccessException) { }
         }
 
         /// <summary>
@@ -576,15 +571,13 @@ namespace System.Management.Automation
         /// Proposed value = existing default. Probably "1"
         /// </summary>
         /// <returns>Whether console prompting should happen.</returns>
-        internal override bool GetConsolePrompting(ref Exception exception)
+        internal override bool GetConsolePrompting()
         {
             string policyKeyName = Utils.GetRegistryConfigurationPrefix();
-            string tempPrompt = GetRegistryString(Registry.LocalMachine, policyKeyName, "ConsolePrompting", ref exception);
+            string tempPrompt = GetRegistryString(Registry.LocalMachine, policyKeyName, "ConsolePrompting");
 
             if (null != tempPrompt)
             {
-                // TODO: It is difficult to tell from the original code how this value is actually stored in the registry.
-                // I am inferring that it is a "true" or "false" string based on the original code.
                 return Convert.ToBoolean(tempPrompt, CultureInfo.InvariantCulture); 
             }
             else
@@ -638,26 +631,21 @@ namespace System.Management.Automation
         internal override void SetDisablePromptToUpdateHelp(bool prompt)
         {
             int valueToSet = prompt ? 1 : 0;
-            try
+            using (RegistryKey hklm = Registry.LocalMachine.OpenSubKey(DisablePromptToUpdateHelpRegPath, true))
             {
-                using (RegistryKey hklm = Registry.LocalMachine.OpenSubKey(DisablePromptToUpdateHelpRegPath, true))
+                if (hklm != null)
                 {
-                    if (hklm != null)
-                    {
-                        hklm.SetValue(DisablePromptToUpdateHelpRegKey, valueToSet, RegistryValueKind.DWord);
-                    }
-                }
-
-                using (RegistryKey hklm = Registry.LocalMachine.OpenSubKey(DisablePromptToUpdateHelpRegPath32, true))
-                {
-                    if (hklm != null)
-                    {
-                        hklm.SetValue(DisablePromptToUpdateHelpRegKey, valueToSet, RegistryValueKind.DWord);
-                    }
+                    hklm.SetValue(DisablePromptToUpdateHelpRegKey, valueToSet, RegistryValueKind.DWord);
                 }
             }
-            catch (UnauthorizedAccessException) {}
-            catch (System.Security.SecurityException) {}
+
+            using (RegistryKey hklm = Registry.LocalMachine.OpenSubKey(DisablePromptToUpdateHelpRegPath32, true))
+            {
+                if (hklm != null)
+                {
+                    hklm.SetValue(DisablePromptToUpdateHelpRegKey, valueToSet, RegistryValueKind.DWord);
+                }
+            }
         }
 
         /// <summary>
@@ -675,133 +663,114 @@ namespace System.Management.Automation
             SetRegistryString(Registry.LocalMachine, DefaultSourcePathRegPath, DefaultSourcePathRegKey, defaultPath);
         }
 
+        /// <summary>
+        /// Reads a DWORD from the Registry. Excpetions are intentionally allowed to pass through to 
+        /// the caller because different classes and methods within the code base handle Registry 
+        /// exceptions differently. Some suppress exceptions and others pass them to the user.
+        /// </summary>
+        /// <param name="rootKey"></param>
+        /// <param name="pathToKey"></param>
+        /// <param name="valueName"></param>
+        /// <returns></returns>
         private int? GetRegistryDword(RegistryKey rootKey, string pathToKey, string valueName)
         {
-            try
+            using (RegistryKey regKey = rootKey.OpenSubKey(pathToKey))
             {
-                using (RegistryKey regKey = rootKey.OpenSubKey(pathToKey))
+                if (null == regKey)
                 {
-                    if (null == regKey)
-                    {
-                        // Key not found
-                        return null;
-                    }
+                    // Key not found
+                    return null;
+                }
 
-                    // verify the value kind as a string
-                    RegistryValueKind kind = regKey.GetValueKind(valueName);
+                // verify the value kind as a string
+                RegistryValueKind kind = regKey.GetValueKind(valueName);
 
-                    if (kind == RegistryValueKind.DWord)
-                    {
-                        return regKey.GetValue(valueName) as int?;
-                    }
-                    else
-                    {
-                        // The function expected a DWORD, but got another type. This is a coding error or a registry key typing error.
-                        return null;
-                    }
+                if (kind == RegistryValueKind.DWord)
+                {
+                    return regKey.GetValue(valueName) as int?;
+                }
+                else
+                {
+                    // The function expected a DWORD, but got another type. This is a coding error or a registry key typing error.
+                    return null;
                 }
             }
-            catch (ObjectDisposedException) { }
-            catch (System.Security.SecurityException) { }
-            catch (ArgumentException) { }
-            catch (IOException) { }
-            catch (UnauthorizedAccessException) { }
-            catch (FormatException) { }
-            catch (OverflowException) { }
-            catch (InvalidCastException) { }
-
-            return null;
         }
 
+        /// <summary>
+        /// Excpetions are intentionally allowed to pass through to 
+        /// the caller because different classes and methods within the code base handle Registry 
+        /// exceptions differently. Some suppress exceptions and others pass them to the user.
+        /// </summary>
+        /// <param name="rootKey"></param>
+        /// <param name="pathToKey"></param>
+        /// <param name="valueName"></param>
+        /// <param name="value"></param>
         private void SetRegistryDword(RegistryKey rootKey, string pathToKey, string valueName, int value)
         {
-            try
+            using (RegistryKey regKey = rootKey.OpenSubKey(pathToKey))
             {
-                using (RegistryKey regKey = rootKey.OpenSubKey(pathToKey))
+                if (null != regKey)
                 {
-                    if (null != regKey)
-                    {
-                        regKey.SetValue(valueName, value, RegistryValueKind.DWord);
-                    }
+                    regKey.SetValue(valueName, value, RegistryValueKind.DWord);
                 }
             }
-            catch (ObjectDisposedException) { }
-            catch (System.Security.SecurityException) { }
-            catch (ArgumentException) { }
-            catch (IOException) { }
-            catch (UnauthorizedAccessException) { }
-            catch (FormatException) { }
-            catch (OverflowException) { }
-            catch (InvalidCastException) { }
         }
 
+        /// <summary>
+        /// Excpetions are intentionally allowed to pass through to 
+        /// the caller because different classes and methods within the code base handle Registry 
+        /// exceptions differently. Some suppress exceptions and others pass them to the user.
+        /// </summary>
+        /// <param name="rootKey"></param>
+        /// <param name="pathToKey"></param>
+        /// <param name="valueName"></param>
+        /// <returns></returns>
         private string GetRegistryString(RegistryKey rootKey, string pathToKey, string valueName)
         {
-            Exception e = null;
-            return GetRegistryString(rootKey, pathToKey, valueName, ref e);
-        }
-
-        private string GetRegistryString(RegistryKey rootKey, string pathToKey, string valueName, ref Exception exception)
-        {
-            try
+            using (RegistryKey regKey = rootKey.OpenSubKey(pathToKey))
             {
-                using (RegistryKey regKey = rootKey.OpenSubKey(pathToKey))
+                if (null == regKey)
                 {
-                    if (null == regKey)
-                    {
-                        // Key not found
-                        return null;
-                    }
+                    // Key not found
+                    return null;
+                }
 
-                    // verify the value kind as a string
-                    RegistryValueKind kind = regKey.GetValueKind(valueName);
+                // verify the value kind as a string
+                RegistryValueKind kind = regKey.GetValueKind(valueName);
 
-                    if (kind == RegistryValueKind.ExpandString ||
-                        kind == RegistryValueKind.String)
-                    {
-                        return regKey.GetValue(valueName) as string;
-                    }
-                    else
-                    {
-                        // The function expected a string, but got another type. This is a coding error or a registry key typing error.
-                        return null;
-                    }
+                if (kind == RegistryValueKind.ExpandString ||
+                    kind == RegistryValueKind.String)
+                {
+                    return regKey.GetValue(valueName) as string;
+                }
+                else
+                {
+                    // The function expected a string, but got another type. This is a coding error or a registry key typing error.
+                    return null;
                 }
             }
-            catch (ObjectDisposedException e) { exception = e; }
-            catch (System.Security.SecurityException e) { exception = e; }
-            catch (ArgumentException e) { exception = e; }
-            catch (IOException e) { exception = e; }
-            catch (UnauthorizedAccessException e) { exception = e; }
-            catch (FormatException e) { exception = e; }
-            catch (OverflowException e) { exception = e; }
-            catch (InvalidCastException e) { exception = e; }
-
-            return null;
         }
 
-        private string SetRegistryString(RegistryKey rootKey, string pathToKey, string valueName, string value)
+        /// <summary>
+        /// Excpetions are intentionally allowed to pass through to 
+        /// the caller because different classes and methods within the code base handle Registry 
+        /// exceptions differently. Some suppress exceptions and others pass them to the user.
+        /// </summary>
+        /// <param name="rootKey"></param>
+        /// <param name="pathToKey"></param>
+        /// <param name="valueName"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private void SetRegistryString(RegistryKey rootKey, string pathToKey, string valueName, string value)
         {
-            try
+            using (RegistryKey key = rootKey.CreateSubKey(pathToKey))
             {
-                using (RegistryKey key = rootKey.CreateSubKey(pathToKey))
+                if (null != key)
                 {
-                    if (null != key)
-                    {
-                        key.SetValue(valueName, value, RegistryValueKind.String);
-                    }
+                    key.SetValue(valueName, value, RegistryValueKind.String);
                 }
             }
-            catch (ObjectDisposedException) { }
-            catch (System.Security.SecurityException) { }
-            catch (ArgumentException) { }
-            catch (IOException) { }
-            catch (UnauthorizedAccessException) { }
-            catch (FormatException) { }
-            catch (OverflowException) { }
-            catch (InvalidCastException) { }
-
-            return null;
         }
     }
 } // Namespace System.Management.Automation

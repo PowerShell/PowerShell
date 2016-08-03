@@ -178,14 +178,12 @@ namespace System.Management.Automation.Internal
                     // They want to remove it
                     if (policy == ExecutionPolicy.Undefined)
                     {
-                        ConfigPropertyAccessor.Instance.RemoveExecutionPolicy(
-                            ConfigPropertyAccessor.PropertyScope.CurrentUser, shellId);
+                        ConfigPropertyAccessor.Instance.RemoveExecutionPolicy(ConfigPropertyAccessor.PropertyScope.CurrentUser, shellId);
                         CleanKeyParents(Registry.CurrentUser, preferenceKey);
                     }
                     else
                     {
-                        ConfigPropertyAccessor.Instance.SetExecutionPolicy(
-                            ConfigPropertyAccessor.PropertyScope.CurrentUser, shellId, executionPolicy);
+                        ConfigPropertyAccessor.Instance.SetExecutionPolicy(ConfigPropertyAccessor.PropertyScope.CurrentUser, shellId, executionPolicy);
                     }
                     break;
                 }
@@ -195,14 +193,12 @@ namespace System.Management.Automation.Internal
                     // They want to remove it
                     if (policy == ExecutionPolicy.Undefined)
                     {
-                        ConfigPropertyAccessor.Instance.RemoveExecutionPolicy(
-                            ConfigPropertyAccessor.PropertyScope.SystemWide, shellId);
+                        ConfigPropertyAccessor.Instance.RemoveExecutionPolicy(ConfigPropertyAccessor.PropertyScope.SystemWide, shellId);
                         CleanKeyParents(Registry.LocalMachine, preferenceKey);
                     }
                     else
                     {
-                        ConfigPropertyAccessor.Instance.SetExecutionPolicy(
-                            ConfigPropertyAccessor.PropertyScope.SystemWide, shellId, executionPolicy);
+                        ConfigPropertyAccessor.Instance.SetExecutionPolicy(ConfigPropertyAccessor.PropertyScope.SystemWide, shellId, executionPolicy);
                     }
                     break;
                 }

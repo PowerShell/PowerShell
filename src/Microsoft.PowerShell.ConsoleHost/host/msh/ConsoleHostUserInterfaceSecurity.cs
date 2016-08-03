@@ -174,18 +174,30 @@ namespace Microsoft.PowerShell
             // on Nano there is no other way to prompt except by using console
             return true;
 #else
-            Exception exception = null;
-            bool promptUsingConsole = ConfigPropertyAccessor.Instance.GetConsolePrompting(ref exception);
-            if (null != exception)
+            bool promptUsingConsole = false;
+            // Get the configuration setting
+            try
             {
-                s_tracer.TraceError("Could not read CredUI registry key: " + exception.Message);
-                return false;
+                promptUsingConsole = ConfigPropertyAccessor.Instance.GetConsolePrompting();
             }
-            else
+            catch (System.Security.SecurityException e)
             {
-                s_tracer.WriteLine("DetermineCredUIPolicy: policy == {0}", promptUsingConsole);
+                s_tracer.TraceError("Could not read CredUI registry key: " + e.Message);
                 return promptUsingConsole;
             }
+            catch (InvalidCastException e)
+            {
+                s_tracer.TraceError("Could not parse CredUI registry key: " + e.Message);
+                return promptUsingConsole;
+            }
+            catch (FormatException e)
+            {
+                s_tracer.TraceError("Could not parse CredUI registry key: " + e.Message);
+                return promptUsingConsole;
+            }
+
+            s_tracer.WriteLine("DetermineCredUIPolicy: policy == {0}", promptUsingConsole);
+            return promptUsingConsole;
 #endif
         }
     }

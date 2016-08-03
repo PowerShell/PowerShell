@@ -1593,7 +1593,14 @@ namespace System.Management.Automation.Help
         /// <returns></returns>
         internal string GetDefaultSourcePath()
         {
-            return ConfigPropertyAccessor.Instance.GetDefaultSourcePath();
+            try
+            {
+                return ConfigPropertyAccessor.Instance.GetDefaultSourcePath();
+            }
+            catch (SecurityException)
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -1601,7 +1608,18 @@ namespace System.Management.Automation.Help
         /// </summary>
         internal static void SetDisablePromptToUpdateHelp()
         {
-            ConfigPropertyAccessor.Instance.SetDisablePromptToUpdateHelp(true);
+            try
+            {
+                ConfigPropertyAccessor.Instance.SetDisablePromptToUpdateHelp(true);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Ignore AccessDenied related exceptions
+            }
+            catch (SecurityException)
+            {
+                // Ignore AccessDenied related exceptions
+            }
         }
 
         /// <summary>
