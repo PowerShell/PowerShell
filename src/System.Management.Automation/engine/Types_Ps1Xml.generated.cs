@@ -52,18 +52,15 @@ namespace System.Management.Automation.Runspaces
           if($this.Provider.ImplementingType -eq
           [Microsoft.PowerShell.Commands.FileSystemProvider])
           {
-          $driveRoot = ([System.IO.DirectoryInfo] $this.Root).Name.Replace('\','')
-          $drive = Get-CimInstance Win32_LogicalDisk -Filter ""DeviceId='$driveRoot'""
-          $drive.Size - $drive.FreeSpace
+          $driveInfo = [System.IO.DriveInfo]::New($this.Root)
+          if ( $driveInfo.IsReady ) { $driveInfo.TotalSize - $driveInfo.AvailableFreeSpace }
           }"), null));
             td4.Members.Add("Free",
                 new ScriptPropertyData(@"Free", GetScriptBlock(@"## Ensure that this is a FileSystem drive
           if($this.Provider.ImplementingType -eq
           [Microsoft.PowerShell.Commands.FileSystemProvider])
           {
-          $driveRoot = ([System.IO.DirectoryInfo] $this.Root).Root.Name.Replace('\','')
-          $drive = Get-CimInstance Win32_LogicalDisk -Filter ""DeviceId='$driveRoot'""
-          $drive.FreeSpace
+          [System.IO.DriveInfo]::New($this.Root).AvailableFreeSpace
           }"), null));
             yield return td4;
 

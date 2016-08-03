@@ -44,4 +44,12 @@ Describe "Get-PSDrive" -Tags "CI" {
 	!(Get-PSDrive fake -ErrorAction SilentlyContinue) | Should Be $True
 	Get-PSDrive fake -ErrorAction SilentlyContinue    | Should BeNullOrEmpty
     }
+    It "Should be able to determine the amount of free space of a drive" {
+        $dInfo = Get-PSDrive TESTDRIVE
+        $dInfo.Free -ge 0 | Should be $true
+    }
+    It "Should be able to determine the amount of Used space of a drive" {
+        $dInfo = Get-PSDrive TESTDRIVE
+        $dInfo.Used -ge 0 | Should be $true
+    }
 }
