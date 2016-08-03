@@ -28,7 +28,7 @@ build_script:
         $result.Warnings
         throw "Tags must be CI, Feature, Scenario, or Slow"
       }
-      Start-PSBuild -Publish
+      Start-PSBuild -CrossGen
       Start-PSBuild -FullCLR
 
 test_script:
