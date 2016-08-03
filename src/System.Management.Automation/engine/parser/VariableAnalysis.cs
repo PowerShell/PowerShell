@@ -13,7 +13,7 @@ namespace System.Management.Automation.Language
 {
     internal static class VariablePathExtentions
     {
-        static internal bool IsAnyLocal(this VariablePath variablePath)
+        internal static bool IsAnyLocal(this VariablePath variablePath)
         {
             return variablePath.IsUnscopedVariable || variablePath.IsLocal || variablePath.IsPrivate;
         }
@@ -481,7 +481,7 @@ namespace System.Management.Automation.Language
         // constant though - it only contains variable names known to _always_ be allscope.  For other names, we need a special
         // check before choosing to run the optimized code or unoptimized (dotted) version which will correctly handle allscope
         // assignments.
-        private readonly static ConcurrentDictionary<string, bool> s_allScopeVariables = new ConcurrentDictionary<string, bool>(1, 16, StringComparer.OrdinalIgnoreCase);
+        private static readonly ConcurrentDictionary<string, bool> s_allScopeVariables = new ConcurrentDictionary<string, bool>(1, 16, StringComparer.OrdinalIgnoreCase);
 
         internal static void NoteAllScopeVariable(string variableName)
         {

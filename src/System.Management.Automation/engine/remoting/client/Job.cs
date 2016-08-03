@@ -501,7 +501,7 @@ namespace System.Management.Automation
             InstanceId = instanceId;
         }
 
-        static internal string GetCommandTextFromInvocationInfo(InvocationInfo invocationInfo)
+        internal static string GetCommandTextFromInvocationInfo(InvocationInfo invocationInfo)
         {
             if (invocationInfo == null)
             {

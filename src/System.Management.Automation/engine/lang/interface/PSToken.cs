@@ -24,7 +24,7 @@ namespace System.Management.Automation
     /// This class wraps the internal Token class for providing limited information
     /// to syntax editor. 
     /// </remarks>
-    sealed public class PSToken
+    public sealed class PSToken
     {
         internal PSToken(Token token)
         {
@@ -103,7 +103,7 @@ namespace System.Management.Automation
         /// </summary>
         public PSTokenType Type { get; }
 
-        private readonly static PSTokenType[] s_tokenKindMapping = new PSTokenType[]
+        private static readonly PSTokenType[] s_tokenKindMapping = new PSTokenType[]
         {
             #region Flags for unclassified tokens
 

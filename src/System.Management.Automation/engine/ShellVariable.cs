@@ -728,7 +728,7 @@ namespace System.Management.Automation
             _value = newValue;
         }
 
-        virtual internal void SetValueRaw(object newValue, bool preserveValueTypeSemantics)
+        internal virtual void SetValueRaw(object newValue, bool preserveValueTypeSemantics)
         {
             SetValueRawImpl(newValue, preserveValueTypeSemantics);
         }

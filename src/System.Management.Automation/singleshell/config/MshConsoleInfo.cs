@@ -82,7 +82,7 @@ namespace System.Management.Automation.Runspaces
 
         #region tracer
 
-        static private readonly PSTraceSource s_mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
+        private static readonly PSTraceSource s_mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
         #endregion
 
         #region Static Methods
@@ -99,7 +99,7 @@ namespace System.Management.Automation.Runspaces
         /// <!--
         /// Caller should not pass a null value for path.
         /// -->
-        static internal void WriteToFile(string path, Version version, IEnumerable<PSSnapInInfo> snapins)
+        internal static void WriteToFile(string path, Version version, IEnumerable<PSSnapInInfo> snapins)
         {
             Diagnostics.Assert(path != null, "Filename should not be null");
 
@@ -152,7 +152,7 @@ namespace System.Management.Automation.Runspaces
         /// <!--
         /// Caller should not pass a null value for path.
         /// -->
-        static internal PSConsoleFileElement CreateFromFile(string path)
+        internal static PSConsoleFileElement CreateFromFile(string path)
         {
             Diagnostics.Assert(path != null, "Filename should not be null");
 
@@ -326,7 +326,7 @@ namespace System.Management.Automation.Runspaces
 
         #region Class specific data
 
-        static private readonly PSTraceSource s_mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
+        private static readonly PSTraceSource s_mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
 
         #endregion
 
@@ -436,7 +436,7 @@ namespace System.Management.Automation.Runspaces
         /// One or more default mshsnapins cannot be loaded because the
         /// registry is not populated correctly.
         /// </exception>
-        static internal MshConsoleInfo CreateDefaultConfiguration()
+        internal static MshConsoleInfo CreateDefaultConfiguration()
         {
             // Steps:
             // 1. Get the current Monad Version
@@ -498,7 +498,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="XmlException">
         /// Unable to load/parse the file specified by fileName.
         /// </exception>
-        static internal MshConsoleInfo CreateFromConsoleFile(string fileName, out PSConsoleLoadException cle)
+        internal static MshConsoleInfo CreateFromConsoleFile(string fileName, out PSConsoleLoadException cle)
         {
             s_mshsnapinTracer.WriteLine("Creating console info from file {0}", fileName);
 

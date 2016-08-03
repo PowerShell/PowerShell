@@ -346,7 +346,7 @@ function __cmdletization_BindCommonParameters
             return commonParameters;
         }
 
-        static private List<string> GetCommonParameterSets(Dictionary<string, ParameterMetadata> commonParameters)
+        private static List<string> GetCommonParameterSets(Dictionary<string, ParameterMetadata> commonParameters)
         {
             Dictionary<string, object> parameterSetNames = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             foreach (ParameterMetadata parameter in commonParameters.Values)

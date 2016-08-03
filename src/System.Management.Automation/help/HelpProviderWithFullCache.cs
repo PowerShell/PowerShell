@@ -17,7 +17,7 @@ namespace System.Management.Automation
     /// a way to load and initialize help cache. 
     /// 
     /// </summary>
-    abstract internal class HelpProviderWithFullCache : HelpProviderWithCache
+    internal abstract class HelpProviderWithFullCache : HelpProviderWithCache
     {
         /// <summary>
         /// Constructor for HelpProviderWithFullCache
@@ -32,7 +32,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpRequest">help request object</param>
         /// <returns>The HelpInfo found. Null if nothing is found</returns>
-        internal override sealed IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
+        internal sealed override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             // If the current invocation is a singleshell based
             // then we have to constantly update the cache as
@@ -51,7 +51,7 @@ namespace System.Management.Automation
         /// children class don't need to override this member.
         /// </summary>
         /// <param name="helpRequest">help request object</param>
-        override sealed internal void DoExactMatchHelp(HelpRequest helpRequest)
+        internal sealed override void DoExactMatchHelp(HelpRequest helpRequest)
         {
         }
 
@@ -67,7 +67,7 @@ namespace System.Management.Automation
         /// If false, seraches for pattern in the command names.
         /// </param> 
         /// <returns>a collection of help info objects</returns> 
-        internal override sealed IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
+        internal sealed override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
             // If the current invocation is a singleshell based
             // then we have to constantly update the cache as
@@ -87,7 +87,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpRequest">help request object</param>
         /// <returns>a collection of help info objects</returns>
-        internal override sealed IEnumerable<HelpInfo> DoSearchHelp(HelpRequest helpRequest)
+        internal sealed override IEnumerable<HelpInfo> DoSearchHelp(HelpRequest helpRequest)
         {
             return null;
         }

@@ -795,7 +795,7 @@ namespace System.Management.Automation.Runspaces
         #endregion
 
         [TraceSource("RunspaceInit", "Initialization code for Runspace")]
-        static private PSTraceSource s_runspaceInitTracer = PSTraceSource.GetTracer("RunspaceInit", "Initialization code for Runspace", false);
+        private static PSTraceSource s_runspaceInitTracer = PSTraceSource.GetTracer("RunspaceInit", "Initialization code for Runspace", false);
     }
 
     /// <summary>

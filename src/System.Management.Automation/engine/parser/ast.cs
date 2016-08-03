@@ -215,7 +215,7 @@ namespace System.Management.Automation.Language
         /// <typeparam name="T">The actual AST type</typeparam>
         /// <param name="elements">Collection of ASTs</param>
         /// <returns></returns>
-        static internal T[] CopyElements<T>(ReadOnlyCollection<T> elements) where T : Ast
+        internal static T[] CopyElements<T>(ReadOnlyCollection<T> elements) where T : Ast
         {
             if (elements == null || elements.Count == 0) { return null; }
             var result = new T[elements.Count];
@@ -232,7 +232,7 @@ namespace System.Management.Automation.Language
         /// <typeparam name="T">The actual AST type</typeparam>
         /// <param name="element">An AST instance</param>
         /// <returns></returns>
-        static internal T CopyElement<T>(T element) where T : Ast
+        internal static T CopyElement<T>(T element) where T : Ast
         {
             if (element == null) { return null; }
             return (T)element.Copy();
@@ -2962,7 +2962,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// An abstract base class for type members.
     /// </summary>
-    abstract public class MemberAst : Ast
+    public abstract class MemberAst : Ast
     {
         /// <summary>
         /// Initialize the common fields of a type member.
@@ -4772,7 +4772,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class CatchClauseAst : Ast
     {
-        private readonly static ReadOnlyCollection<TypeConstraintAst> s_emptyCatchTypes =
+        private static readonly ReadOnlyCollection<TypeConstraintAst> s_emptyCatchTypes =
             Utils.EmptyReadOnlyCollection<TypeConstraintAst>();
 
         /// <summary>
@@ -4869,7 +4869,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class TryStatementAst : StatementAst
     {
-        private readonly static ReadOnlyCollection<CatchClauseAst> s_emptyCatchClauses =
+        private static readonly ReadOnlyCollection<CatchClauseAst> s_emptyCatchClauses =
             Utils.EmptyReadOnlyCollection<CatchClauseAst>();
 
         /// <summary>

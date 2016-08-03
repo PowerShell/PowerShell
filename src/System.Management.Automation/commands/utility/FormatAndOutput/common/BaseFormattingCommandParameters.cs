@@ -301,7 +301,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         #endregion
 
-        private readonly static string[] s_legalValues = new string[] { LeftAlign, CenterAlign, RightAlign };
+        private static readonly string[] s_legalValues = new string[] { LeftAlign, CenterAlign, RightAlign };
 
         private const string LeftAlign = "left";
         private const string CenterAlign = "center";

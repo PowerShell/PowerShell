@@ -727,7 +727,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public static class TokenTraits
     {
-        private readonly static TokenFlags[] s_staticTokenFlags = new TokenFlags[]
+        private static readonly TokenFlags[] s_staticTokenFlags = new TokenFlags[]
         {
             #region Flags for unclassified tokens
 

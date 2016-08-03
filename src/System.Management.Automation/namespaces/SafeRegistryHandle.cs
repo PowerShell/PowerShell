@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands.Internal
          ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         internal static extern int RegCloseKey(IntPtr hKey);
 
-        override protected bool ReleaseHandle()
+        protected override bool ReleaseHandle()
         {
 #if UNIX
             return true;

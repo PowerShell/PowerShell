@@ -37,7 +37,7 @@ namespace System.Management.Automation
         private readonly Hashtable _helpFiles = new Hashtable();
 
         [TraceSource("DscResourceHelpProvider", "DscResourceHelpProvider")]
-        static private readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("DscResourceHelpProvider", "DscResourceHelpProvider");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("DscResourceHelpProvider", "DscResourceHelpProvider");
 
         #region common properties
 
@@ -65,7 +65,7 @@ namespace System.Management.Automation
         /// <param name="helpRequest">Help request.</param>
         /// <param name="searchOnlyContent">Not used.</param>
         /// <returns></returns>
-        override internal IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
+        internal override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
             Debug.Assert(helpRequest != null, "helpRequest cannot be null.");
 
@@ -98,7 +98,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpRequest">Help Request for the search.</param>
         /// <returns>Enumerable of HelpInfo objects.</returns>
-        override internal IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
+        internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             Debug.Assert(helpRequest != null, "helpRequest cannot be null.");
 

@@ -302,7 +302,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Access the output reader for this pipeline.
         /// </summary>
-        override public PipelineReader<PSObject> Output
+        public override PipelineReader<PSObject> Output
         {
             get
             {
@@ -318,7 +318,7 @@ namespace System.Management.Automation
         /// In this release, the objects read from this PipelineReader
         /// are PSObjects wrapping ErrorRecords.
         /// </remarks>
-        override public PipelineReader<object> Error
+        public override PipelineReader<object> Error
         {
             get
             {
@@ -391,7 +391,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// Results are returned through the <see cref="Pipeline.Output"/> reader.
         /// </remarks>
-        override public void InvokeAsync()
+        public override void InvokeAsync()
         {
             InitPowerShell(false);
             CoreInvokeAsync();

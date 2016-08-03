@@ -1133,7 +1133,7 @@ end
 
         internal const string isSafeNameOrIdentifierRegex = @"^[-._:\\\p{Ll}\p{Lu}\p{Lt}\p{Lo}\p{Nd}\p{Lm}]{1,100}$";
 
-        static private CommandMetadata GetRestrictedCmdlet(string cmdletName, string defaultParameterSet, string helpUri, params ParameterMetadata[] parameters)
+        private static CommandMetadata GetRestrictedCmdlet(string cmdletName, string defaultParameterSet, string helpUri, params ParameterMetadata[] parameters)
         {
             Dictionary<string, ParameterMetadata> parametersDictionary = new Dictionary<string, ParameterMetadata>(StringComparer.OrdinalIgnoreCase);
             foreach (ParameterMetadata parameter in parameters)
@@ -1167,7 +1167,7 @@ end
             return metadata;
         }
 
-        static private CommandMetadata GetRestrictedGetCommand()
+        private static CommandMetadata GetRestrictedGetCommand()
         {
             // remote Get-Command called by Import/Export-PSSession to get metadata for remote commands that user wants to import
 
@@ -1213,7 +1213,7 @@ end
                 showCommandInfo);
         }
 
-        static private CommandMetadata GetRestrictedGetFormatData()
+        private static CommandMetadata GetRestrictedGetFormatData()
         {
             // remote Get-FormatData called by Import/Export-PSSession to get F&O metadata from remote session
 
@@ -1226,7 +1226,7 @@ end
             return GetRestrictedCmdlet("Get-FormatData", null, "http://go.microsoft.com/fwlink/?LinkID=144303", typeNameParameter);
         }
 
-        static private CommandMetadata GetRestrictedGetHelp()
+        private static CommandMetadata GetRestrictedGetHelp()
         {
             // remote Get-Help is called when help for implicit remoting proxy tries to fetch help content for a remote command
 
@@ -1245,7 +1245,7 @@ end
             return GetRestrictedCmdlet("Get-Help", null, "http://go.microsoft.com/fwlink/?LinkID=113316", nameParameter, categoryParameter);
         }
 
-        static private CommandMetadata GetRestrictedSelectObject()
+        private static CommandMetadata GetRestrictedSelectObject()
         {
             // remote Select-Object is called by Import/Export-PSSession to 
             // 1) restrict what properties are serialized
@@ -1271,7 +1271,7 @@ end
             return GetRestrictedCmdlet("Select-Object", null, "http://go.microsoft.com/fwlink/?LinkID=113387", propertyParameter, inputParameter);
         }
 
-        static private CommandMetadata GetRestrictedMeasureObject()
+        private static CommandMetadata GetRestrictedMeasureObject()
         {
             // remote Measure-Object is called by Import/Export-PSSession to measure how many objects
             // it is going to receive and to display a nice progress bar
@@ -1288,7 +1288,7 @@ end
             return GetRestrictedCmdlet("Measure-Object", null, "http://go.microsoft.com/fwlink/?LinkID=113349", inputParameter);
         }
 
-        static private CommandMetadata GetRestrictedOutDefault()
+        private static CommandMetadata GetRestrictedOutDefault()
         {
             // remote Out-Default is called by interactive remoting (without any parameters, only using pipelines to pass data)
 
@@ -1304,7 +1304,7 @@ end
             return GetRestrictedCmdlet("Out-Default", null, "http://go.microsoft.com/fwlink/?LinkID=113362", inputParameter);
         }
 
-        static private CommandMetadata GetRestrictedExitPSSession()
+        private static CommandMetadata GetRestrictedExitPSSession()
         {
             // remote Exit-PSSession is not called by PowerShell, but is needed so that users
             // can exit an interactive remoting session
@@ -1329,7 +1329,7 @@ end
         /// </summary>
         /// <returns></returns>
         /// <seealso cref="System.Management.Automation.Runspaces.InitialSessionState.CreateRestricted(SessionCapabilities)"/>
-        static public Dictionary<string, CommandMetadata> GetRestrictedCommands(SessionCapabilities sessionCapabilities)
+        public static Dictionary<string, CommandMetadata> GetRestrictedCommands(SessionCapabilities sessionCapabilities)
         {
             List<CommandMetadata> restrictedCommands = new List<CommandMetadata>();
 
@@ -1357,7 +1357,7 @@ end
             return result;
         }
 
-        static private Collection<CommandMetadata> GetRestrictedRemotingCommands()
+        private static Collection<CommandMetadata> GetRestrictedRemotingCommands()
         {
             Collection<CommandMetadata> remotingCommands = new Collection<CommandMetadata>
                                                            {
@@ -1374,7 +1374,7 @@ end
         }
 
 #if !CORECLR    // Not referenced on CSS
-        static private Collection<CommandMetadata> GetRestrictedJobCommands()
+        private static Collection<CommandMetadata> GetRestrictedJobCommands()
         {
             // all the job cmdlets take a Name parameter. This needs to be 
             // restricted to safenames in order to allow only valid wildcards

@@ -1233,9 +1233,7 @@ namespace Microsoft.PowerShell.Commands
         /// Validate the names of properties
         /// </summary>
         /// <param name="names"></param>
-        static private
-        void
-        ValidatePropertyNames(IList<string> names)
+        private static void ValidatePropertyNames(IList<string> names)
         {
             if (names != null)
             {
@@ -1623,7 +1621,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Helper class for CSV conversion
     /// </summary>
-    static internal class ImportExportCSVHelper
+    internal static class ImportExportCSVHelper
     {
         internal const char CSVDelimiter = ',';
         internal const string CSVTypePrefix = "CSV:";

@@ -1556,7 +1556,7 @@ namespace System.Management.Automation.Help
         /// <param name="path">path to load</param>
         /// <param name="credential">credential</param>
         /// <returns>string loaded</returns>
-        static internal string LoadStringFromPath(PSCmdlet cmdlet, string path, PSCredential credential)
+        internal static string LoadStringFromPath(PSCmdlet cmdlet, string path, PSCredential credential)
         {
             Debug.Assert(path != null);
 
@@ -1625,7 +1625,7 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Sets the DisablePromptToUpdatableHelp regkey
         /// </summary>
-        static internal void SetDisablePromptToUpdateHelp()
+        internal static void SetDisablePromptToUpdateHelp()
         {
             try
             {
@@ -1659,7 +1659,7 @@ namespace System.Management.Automation.Help
         /// Checks if it is necessary to prompt to update help
         /// </summary>
         /// <returns></returns>
-        static internal bool ShouldPromptToUpdateHelp()
+        internal static bool ShouldPromptToUpdateHelp()
         {
             try
             {

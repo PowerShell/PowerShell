@@ -474,7 +474,7 @@ namespace System.Management.Automation.Security
         bool CryptReleaseContext(IntPtr hProv, int dwFlags);
 
         [DllImport(PinvokeDllNames.CryptSetProvParamDllName, SetLastError = true)]
-        internal unsafe static extern
+        internal static extern unsafe
         bool CryptSetProvParam(IntPtr hProv, ProviderParam dwParam, void* pbData, int dwFlags);
 
         [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
@@ -491,7 +491,7 @@ namespace System.Management.Automation.Security
                           uint dwLegacySpec,
                           uint dwFlags);
         [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
-        internal unsafe static extern
+        internal static extern unsafe
         int NCryptSetProperty(IntPtr hProv, String pszProperty, void* pbInput, int cbInput, int dwFlags);
 
         [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]

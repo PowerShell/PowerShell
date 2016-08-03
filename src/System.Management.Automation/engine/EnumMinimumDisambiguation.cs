@@ -119,6 +119,6 @@ namespace System.Management.Automation
             return returnValue.ToString();
         }
 
-        static private Dictionary<Type, string[]> s_specialDisambiguateCases = new Dictionary<Type, string[]>();
+        private static Dictionary<Type, string[]> s_specialDisambiguateCases = new Dictionary<Type, string[]>();
     }
 }

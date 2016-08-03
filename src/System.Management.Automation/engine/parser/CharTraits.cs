@@ -64,7 +64,7 @@ namespace System.Management.Automation.Language
         ForceStartNewTokenAfterNumber = 0x0800,
     }
 
-    static internal class CharExtensions
+    internal static class CharExtensions
     {
         static CharExtensions()
         {

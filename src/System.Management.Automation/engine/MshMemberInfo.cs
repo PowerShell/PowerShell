@@ -150,7 +150,7 @@ namespace System.Management.Automation
         internal string name;
         internal bool ShouldSerialize { get; set; }
 
-        virtual internal void ReplicateInstance(object particularInstance)
+        internal virtual void ReplicateInstance(object particularInstance)
         {
             this.instance = particularInstance;
         }
@@ -1954,7 +1954,7 @@ namespace System.Management.Automation
 
         private readonly Type[] _parameterTypes;
 
-        static internal bool EqualsForCollection<T>(ICollection<T> xs, ICollection<T> ys)
+        internal static bool EqualsForCollection<T>(ICollection<T> xs, ICollection<T> ys)
         {
             if (xs == null)
             {

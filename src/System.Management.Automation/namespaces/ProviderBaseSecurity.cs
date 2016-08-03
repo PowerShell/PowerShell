@@ -98,7 +98,7 @@ namespace System.Management.Automation.Provider
             permissionProvider.SetSecurityDescriptor(path, securityDescriptor);
         } // SetSecurityDescriptor
 
-        static private void CheckIfSecurityDescriptorInterfaceIsSupported(ISecurityDescriptorCmdletProvider permissionProvider)
+        private static void CheckIfSecurityDescriptorInterfaceIsSupported(ISecurityDescriptorCmdletProvider permissionProvider)
         {
             if (permissionProvider == null)
             {

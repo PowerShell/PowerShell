@@ -1397,7 +1397,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Property to access the indent level in thread local storage.
         /// </summary>
-        static internal int ThreadIndentLevel
+        internal static int ThreadIndentLevel
         {
             get
             {

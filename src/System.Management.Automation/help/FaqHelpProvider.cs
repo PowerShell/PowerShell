@@ -34,7 +34,7 @@ namespace System.Management.Automation
         /// Name of this provider
         /// </summary>
         /// <value>Name of this provider</value>
-        override internal string Name
+        internal override string Name
         {
             get
             {
@@ -46,7 +46,7 @@ namespace System.Management.Automation
         /// Help category for this provider, which is a constant: HelpCategory.FAQ.
         /// </summary>
         /// <value>Help category for this provider</value>
-        override internal HelpCategory HelpCategory
+        internal override HelpCategory HelpCategory
         {
             get
             {
@@ -209,7 +209,7 @@ namespace System.Management.Automation
         /// This will reset the help cache. Normally this corresponds to a 
         /// help culture change. 
         /// </summary>
-        override internal void Reset()
+        internal override void Reset()
         {
             base.Reset();
 

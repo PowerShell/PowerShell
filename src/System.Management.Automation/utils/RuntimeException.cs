@@ -157,7 +157,7 @@ namespace System.Management.Automation
         /// Note that ErrorRecord.Exception is
         /// <see cref="System.Management.Automation.ParentContainsErrorRecordException"/>.
         /// </remarks>
-        virtual public ErrorRecord ErrorRecord
+        public virtual ErrorRecord ErrorRecord
         {
             get
             {

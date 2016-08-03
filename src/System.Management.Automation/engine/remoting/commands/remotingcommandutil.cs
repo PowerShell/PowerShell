@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
             return false;
         }
 
-        static internal bool ExceedMaximumAllowableRunspaces(PSSession[] runspaceInfos)
+        internal static bool ExceedMaximumAllowableRunspaces(PSSession[] runspaceInfos)
         {
             if (runspaceInfos == null)
             {

@@ -5396,7 +5396,7 @@ namespace System.Management.Automation
             return false;
         }
 
-        static private bool IsEqualGenericTypeDefinition(Type parameterType, Type argumentType)
+        private static bool IsEqualGenericTypeDefinition(Type parameterType, Type argumentType)
         {
             Dbg.Assert(parameterType.GetTypeInfo().IsGenericType, "Caller should verify parameterType.IsGenericType before calling this method");
 

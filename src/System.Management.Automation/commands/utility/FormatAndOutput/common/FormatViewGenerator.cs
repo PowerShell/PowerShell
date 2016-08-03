@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return startFormat;
         }
 
-        abstract internal FormatEntryData GeneratePayload(PSObject so, int enumerationLimit);
+        internal abstract FormatEntryData GeneratePayload(PSObject so, int enumerationLimit);
 
         internal GroupStartData GenerateGroupStartData(PSObject firstObjectInGroup, int enumerationLimit)
         {

@@ -427,10 +427,10 @@ namespace System.Management.Automation.Remoting
     internal class SerializedDataStream : Stream, IDisposable
     {
         [TraceSourceAttribute("SerializedDataStream", "SerializedDataStream")]
-        static private PSTraceSource s_trace = PSTraceSource.GetTracer("SerializedDataStream", "SerializedDataStream");
+        private static PSTraceSource s_trace = PSTraceSource.GetTracer("SerializedDataStream", "SerializedDataStream");
         #region Global Constants
 
-        static private long s_objectIdSequenceNumber = 0;
+        private static long s_objectIdSequenceNumber = 0;
 
         #endregion
 
@@ -961,7 +961,7 @@ namespace System.Management.Automation.Remoting
     internal class Fragmentor
     {
         #region Global Constants
-        static private UTF8Encoding s_utf8Encoding = new UTF8Encoding();
+        private static UTF8Encoding s_utf8Encoding = new UTF8Encoding();
         // This const defines the default depth to be used for serializing objects for remoting.
         private const int SerializationDepthForRemoting = 1;
         #endregion

@@ -33,7 +33,7 @@ namespace System.Management.Automation.ComInterop
         /// </summary>
         internal object RuntimeCallableWrapper { get; }
 
-        private readonly static object s_comObjectInfoKey = new object();
+        private static readonly object s_comObjectInfoKey = new object();
 
         /// <summary>
         /// This is the factory method to get the ComObject corresponding to an RCW

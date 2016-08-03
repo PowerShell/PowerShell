@@ -105,12 +105,12 @@ namespace Microsoft.PowerShell.Commands
 
         #region Random generator state
 
-        static private ReaderWriterLockSlim s_runspaceGeneratorMapLock = new ReaderWriterLockSlim();
+        private static ReaderWriterLockSlim s_runspaceGeneratorMapLock = new ReaderWriterLockSlim();
 
         // 1-to-1 mapping of runspaces and random number generators
-        static private Dictionary<Guid, PolymorphicRandomNumberGenerator> s_runspaceGeneratorMap = new Dictionary<Guid, PolymorphicRandomNumberGenerator>();
+        private static Dictionary<Guid, PolymorphicRandomNumberGenerator> s_runspaceGeneratorMap = new Dictionary<Guid, PolymorphicRandomNumberGenerator>();
 
-        static private void CurrentRunspace_StateChanged(object sender, RunspaceStateEventArgs e)
+        private static void CurrentRunspace_StateChanged(object sender, RunspaceStateEventArgs e)
         {
             switch (e.RunspaceStateInfo.State)
             {

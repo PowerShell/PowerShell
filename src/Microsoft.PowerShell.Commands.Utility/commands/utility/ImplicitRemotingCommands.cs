@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
         /// 1. the script needs to be regenerated because a bug fix made previous versions incompatible with the rest of the system (i.e. with ObjectModelWrapper)
         /// 2. ths script needs to be regenerated because a security vulnerability was found inside generated code (there is no way to service generated code, but we can service the dll that reports the version that the generated script checks against)
         /// </summary>
-        static public Version VersionOfScriptGenerator { get { return ImplicitRemotingCodeGenerator.VersionOfScriptWriter; } }
+        public static Version VersionOfScriptGenerator { get { return ImplicitRemotingCodeGenerator.VersionOfScriptWriter; } }
 
         #region Parameters
 
@@ -1891,7 +1891,7 @@ namespace Microsoft.PowerShell.Commands
 
     internal class ImplicitRemotingCodeGenerator
     {
-        static internal readonly Version VersionOfScriptWriter = new Version(1, 0);
+        internal static readonly Version VersionOfScriptWriter = new Version(1, 0);
 
         #region Constructor and shared private data
 

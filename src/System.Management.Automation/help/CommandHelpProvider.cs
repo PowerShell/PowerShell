@@ -61,7 +61,7 @@ namespace System.Management.Automation
         /// Name of this provider
         /// </summary>
         /// <value>Name of this provider</value>
-        override internal string Name
+        internal override string Name
         {
             get
             {
@@ -73,7 +73,7 @@ namespace System.Management.Automation
         /// Help category for this provider, which is a constant: HelpCategory.Command.
         /// </summary>
         /// <value>Help category for this provider</value>
-        override internal HelpCategory HelpCategory
+        internal override HelpCategory HelpCategory
         {
             get
             {
@@ -410,7 +410,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <param name="helpRequest">help request object</param>
         /// <returns></returns>
-        override internal IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
+        internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             int countHelpInfosFound = 0;
             string target = helpRequest.Target;
@@ -459,7 +459,7 @@ namespace System.Management.Automation
             }
         }
 
-        static private string GetCmdletAssemblyPath(CmdletInfo cmdletInfo)
+        private static string GetCmdletAssemblyPath(CmdletInfo cmdletInfo)
         {
             if (cmdletInfo == null)
                 return null;
@@ -985,7 +985,7 @@ namespace System.Management.Automation
         /// Otherwise, seraches for pattern in the cmdlet names.
         /// </param>
         /// <returns></returns>
-        override internal IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
+        internal override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
             string target = helpRequest.Target;
             Collection<string> patternList = new Collection<string>();
@@ -1144,7 +1144,7 @@ namespace System.Management.Automation
         /// <param name="helpRequest"></param>
         /// <param name="commandInfo"></param>
         /// <returns></returns>
-        static private bool Match(HelpInfo helpInfo, HelpRequest helpRequest, CommandInfo commandInfo)
+        private static bool Match(HelpInfo helpInfo, HelpRequest helpRequest, CommandInfo commandInfo)
         {
             if (helpRequest == null)
                 return true;
@@ -1175,7 +1175,7 @@ namespace System.Management.Automation
             return true;
         }
 
-        static private bool Match(string target, string pattern)
+        private static bool Match(string target, string pattern)
         {
             if (String.IsNullOrEmpty(pattern))
                 return true;
@@ -1199,7 +1199,7 @@ namespace System.Management.Automation
         /// present in <paramref name="patterns"/>
         /// false otherwise.
         /// </returns>
-        static private bool Match(string target, ICollection<string> patterns)
+        private static bool Match(string target, ICollection<string> patterns)
         {
             // patterns should never be null as shell never accepts
             // empty inputs. Keeping this check as a safe measure.
@@ -1226,7 +1226,7 @@ namespace System.Management.Automation
         /// <param name="helpInfo">HelpInfo that is forwarded over</param>
         /// <param name="helpRequest">Help request object</param>        
         /// <returns>The result helpInfo objects after processing</returns>
-        override internal IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
+        internal override IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
             HelpCategory categoriesHandled = (HelpCategory.Alias
                 | HelpCategory.ExternalScript | HelpCategory.Filter | HelpCategory.Function | HelpCategory.ScriptCommand | HelpCategory.Workflow);
@@ -1274,7 +1274,7 @@ namespace System.Management.Automation
         /// This will reset the help cache. Normally this corresponds to a 
         /// help culture change. 
         /// </summary>
-        override internal void Reset()
+        internal override void Reset()
         {
             base.Reset();
 
@@ -1326,7 +1326,7 @@ namespace System.Management.Automation
         #region tracer
 
         [TraceSource("CommandHelpProvider", "CommandHelpProvider")]
-        static private readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("CommandHelpProvider", "CommandHelpProvider");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("CommandHelpProvider", "CommandHelpProvider");
 
         #endregion tracer
     }
@@ -1356,7 +1356,7 @@ namespace System.Management.Automation
             }
         }
 
-        static internal UserDefinedHelpData Load(XmlNode dataNode)
+        internal static UserDefinedHelpData Load(XmlNode dataNode)
         {
             if (dataNode == null)
                 return null;

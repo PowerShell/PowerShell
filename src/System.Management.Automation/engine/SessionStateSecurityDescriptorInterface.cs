@@ -38,7 +38,7 @@ namespace System.Management.Automation
         /// that is derived from ISecurityDescriptorCmdletProvider.
         /// </throws>
         /// 
-        static internal ISecurityDescriptorCmdletProvider GetPermissionProviderInstance(CmdletProvider providerInstance)
+        internal static ISecurityDescriptorCmdletProvider GetPermissionProviderInstance(CmdletProvider providerInstance)
         {
             if (providerInstance == null)
             {

@@ -24,7 +24,7 @@ namespace System.Management.Automation
     /// In general, there will be a specific helpInfo child class for each kind of help provider.
     /// 
     /// </summary>
-    abstract internal class HelpInfo
+    internal abstract class HelpInfo
     {
         /// <summary>
         /// Constructor for HelpInfo
@@ -37,7 +37,7 @@ namespace System.Management.Automation
         /// Name for help info
         /// </summary>
         /// <value>Name for help info</value>
-        abstract internal string Name
+        internal abstract string Name
         {
             get;
         }
@@ -46,7 +46,7 @@ namespace System.Management.Automation
         /// Synopsis for help info
         /// </summary>
         /// <value>Synopsis for help info</value>
-        abstract internal string Synopsis
+        internal abstract string Synopsis
         {
             get;
         }
@@ -55,7 +55,7 @@ namespace System.Management.Automation
         /// Component for help info.
         /// </summary>
         /// <value>Component for help info</value>
-        virtual internal string Component
+        internal virtual string Component
         {
             get { return string.Empty; }
         }
@@ -64,7 +64,7 @@ namespace System.Management.Automation
         /// Role for help info.
         /// </summary>
         /// <value>Role for help ino</value>
-        virtual internal string Role
+        internal virtual string Role
         {
             get { return string.Empty; }
         }
@@ -73,7 +73,7 @@ namespace System.Management.Automation
         /// Functionality for help info.
         /// </summary>
         /// <value>Functionality for help info</value>
-        virtual internal string Functionality
+        internal virtual string Functionality
         {
             get { return string.Empty; }
         }
@@ -82,7 +82,7 @@ namespace System.Management.Automation
         /// Help category for help info
         /// </summary>
         /// <value>Help category for help info</value>
-        abstract internal HelpCategory HelpCategory
+        internal abstract HelpCategory HelpCategory
         {
             get;
         }
@@ -114,7 +114,7 @@ namespace System.Management.Automation
         /// Full help object for this help item. 
         /// </summary>
         /// <value>Full help object for this help item</value>
-        abstract internal PSObject FullHelp
+        internal abstract PSObject FullHelp
         {
             get;
         }

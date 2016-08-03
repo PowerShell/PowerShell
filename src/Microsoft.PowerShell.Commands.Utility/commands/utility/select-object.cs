@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            new public void Enqueue(PSObject obj)
+            public new void Enqueue(PSObject obj)
             {
                 if (_last > 0 && this.Count >= (_last + _skip) && _first == 0)
                 {

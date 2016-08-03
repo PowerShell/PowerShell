@@ -2419,7 +2419,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="runspace">runspace instance</param>
         /// <returns>true if batch invocation is supported, false if not</returns>
-        static internal bool ServerSupportsBatchInvocation(Runspace runspace)
+        internal static bool ServerSupportsBatchInvocation(Runspace runspace)
         {
             if (runspace == null || runspace.RunspaceStateInfo.State == RunspaceState.BeforeOpen)
             {

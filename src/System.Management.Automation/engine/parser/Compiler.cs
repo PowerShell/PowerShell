@@ -5933,7 +5933,7 @@ namespace System.Management.Automation.Language
             return ExpressionCache.Empty;
         }
 
-        new internal PowerShellLoopExpression Loop { get; set; }
+        internal new PowerShellLoopExpression Loop { get; set; }
         internal EnterLoopInstruction EnterLoopInstruction { get; private set; }
         internal int LoopStatementCount { get; set; }
 

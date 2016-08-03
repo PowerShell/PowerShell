@@ -38,7 +38,7 @@ namespace System.Management.Automation.Internal
         } // ctor
         #endregion ctor
 
-        static internal string[] CommonWorkflowParameters = { "PSComputerName", "JobName", "PSApplicationName", "PSCredential", "PSPort", "PSConfigurationName",
+        internal static string[] CommonWorkflowParameters = { "PSComputerName", "JobName", "PSApplicationName", "PSCredential", "PSPort", "PSConfigurationName",
                                                               "PSConnectionURI", "PSSessionOption", "PSAuthentication", "PSAuthenticationLevel", "PSCertificateThumbprint",
                                                               "PSConnectionRetryCount", "PSConnectionRetryIntervalSec", "PSRunningTimeoutSec", "PSElapsedTimeoutSec",
                                                               "PSPersist", "PSPrivateMetadata", "InputObject", "PSParameterCollection",

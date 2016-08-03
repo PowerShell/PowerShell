@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
         [Dbg.TraceSourceAttribute(
              "SessionStateProvider",
              "Providers that produce a view of session state data.")]
-        private readonly static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("SessionStateProvider",
              "Providers that produce a view of session state data.");
 

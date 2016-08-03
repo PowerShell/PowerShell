@@ -718,8 +718,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return new string(' ', count) + val;
         }
 
-        static readonly private char[] s_newLineChar = new char[] { '\n' };
-        static readonly private char[] s_lineBreakChars = new char[] { '\n', '\r' };
+        private static readonly char[] s_newLineChar = new char[] { '\n' };
+        private static readonly char[] s_lineBreakChars = new char[] { '\n', '\r' };
     }
 }
 

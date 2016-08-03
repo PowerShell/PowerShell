@@ -1273,7 +1273,7 @@ namespace System.Management.Automation
         /// Thrown if mshObject parameter is null.
         /// </exception>
         /// 
-        static internal ErrorRecord FromPSObjectForRemoting
+        internal static ErrorRecord FromPSObjectForRemoting
         (
             PSObject serializedErrorRecord
         )

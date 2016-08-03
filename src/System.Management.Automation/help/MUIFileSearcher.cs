@@ -214,7 +214,7 @@ namespace System.Management.Automation
         /// <param name="target"></param>
         /// <param name="searchPaths"></param>
         /// <returns></returns>
-        static private Collection<String> NormalizeSearchPaths(string target, Collection<String> searchPaths)
+        private static Collection<String> NormalizeSearchPaths(string target, Collection<String> searchPaths)
         {
             Collection<String> result = new Collection<String>();
 
@@ -288,7 +288,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pattern"></param>
         /// <returns></returns>
-        static internal Collection<String> SearchFiles(string pattern)
+        internal static Collection<String> SearchFiles(string pattern)
         {
             return SearchFiles(pattern, new Collection<String>());
         }
@@ -299,7 +299,7 @@ namespace System.Management.Automation
         /// <param name="pattern"></param>
         /// <param name="searchPaths"></param>
         /// <returns></returns>
-        static internal Collection<String> SearchFiles(string pattern, Collection<String> searchPaths)
+        internal static Collection<String> SearchFiles(string pattern, Collection<String> searchPaths)
         {
             MUIFileSearcher searcher = new MUIFileSearcher(pattern, searchPaths);
 
@@ -311,7 +311,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
-        static internal string LocateFile(string file)
+        internal static string LocateFile(string file)
         {
             return LocateFile(file, new Collection<String>());
         }
@@ -327,7 +327,7 @@ namespace System.Management.Automation
         /// <param name="file">This is the path to the file. If it has a path, we need to search under that path first</param>
         /// <param name="searchPaths">Additional search paths</param>
         /// <returns></returns>
-        static internal string LocateFile(string file, Collection<String> searchPaths)
+        internal static string LocateFile(string file, Collection<String> searchPaths)
         {
             MUIFileSearcher searcher = new MUIFileSearcher(file, searchPaths, SearchMode.First);
 

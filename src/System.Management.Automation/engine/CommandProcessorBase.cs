@@ -234,7 +234,7 @@ namespace System.Management.Automation
         /// <param name="helpTarget">help target</param>
         /// <param name="helpCategory">help category</param>
         /// <returns>command processor for "get-help [helpTarget]"</returns>
-        static internal CommandProcessorBase CreateGetHelpCommandProcessor(
+        internal static CommandProcessorBase CreateGetHelpCommandProcessor(
             ExecutionContext context,
             string helpTarget,
             HelpCategory helpCategory)

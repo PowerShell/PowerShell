@@ -61,7 +61,7 @@ namespace System.Management.Automation
     //      c. translate parsing result from internal Token and RuntimeException type
     //         into public PSToken and PSParseError type. 
     //
-    sealed public class PSParser
+    public sealed class PSParser
     {
         /// <summary>
         /// Constructor

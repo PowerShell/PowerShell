@@ -123,7 +123,7 @@ namespace System.Management.Automation.Runspaces
         /// <remarks>
         /// Results are returned through the <see cref="Pipeline.Output"/> reader.
         /// </remarks>
-        override protected void StartPipelineExecution()
+        protected override void StartPipelineExecution()
         {
             // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
             if (_disposed)
@@ -797,7 +797,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="syncCall">If true pipeline is stoped synchronously
         /// else asynchronously.</param>
-        override protected void ImplementStop(bool syncCall)
+        protected override void ImplementStop(bool syncCall)
         {
             if (syncCall)
             {
@@ -1131,7 +1131,7 @@ namespace System.Management.Automation.Runspaces
         /// ExecutionContext, if it available in TLS
         /// Null, if ExecutionContext is not availalbe in TLS
         /// </returns>
-        static internal System.Management.Automation.ExecutionContext GetExecutionContextFromTLS()
+        internal static System.Management.Automation.ExecutionContext GetExecutionContextFromTLS()
         {
             System.Management.Automation.Runspaces.Runspace runspace = Runspace.DefaultRunspace;
             if (runspace == null)

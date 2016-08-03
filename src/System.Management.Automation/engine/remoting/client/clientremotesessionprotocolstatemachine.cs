@@ -32,7 +32,7 @@ namespace System.Management.Automation.Remoting
     internal class ClientRemoteSessionDSHandlerStateMachine
     {
         [TraceSourceAttribute("CRSessionFSM", "CRSessionFSM")]
-        static private PSTraceSource s_trace = PSTraceSource.GetTracer("CRSessionFSM", "CRSessionFSM");
+        private static PSTraceSource s_trace = PSTraceSource.GetTracer("CRSessionFSM", "CRSessionFSM");
 
         /// <summary>
         /// Event handling matrix. It defines what action to take when an event occur.

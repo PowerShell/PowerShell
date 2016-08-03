@@ -1985,7 +1985,7 @@ namespace System.Management.Automation
         /// <summary>
         /// A HashSet that contains all engine event names
         /// </summary>
-        internal readonly static HashSet<string> EngineEvents = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { Exiting, OnIdle, OnScriptBlockInvoke };
+        internal static readonly HashSet<string> EngineEvents = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { Exiting, OnIdle, OnScriptBlockInvoke };
     }
 
 
@@ -2277,7 +2277,7 @@ namespace System.Management.Automation
         /// </summary>
         public PSObject SerializedRemoteEventArgs { get; }
 
-        static internal bool IsRemoteSourceEventArgs(object argument)
+        internal static bool IsRemoteSourceEventArgs(object argument)
         {
             return Deserializer.IsDeserializedInstanceOfType(argument, typeof(EventArgs));
         }

@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// 
         /// </summary>
-        internal override sealed string RegKey
+        internal sealed override string RegKey
         {
             get
             {
@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// 
         /// </summary>
-        internal override sealed Dictionary<String, object> RegValues
+        internal sealed override Dictionary<String, object> RegValues
         {
             get
             {

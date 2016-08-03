@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
         /// Options set during module import
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]
-        internal protected struct ImportModuleOptions
+        protected internal struct ImportModuleOptions
         {
             /// <summary>
             /// Holds the value of NoClobber parameter in Import-Module
@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
         internal static string[] PermittedCmdlets = new string[] {
             "Import-LocalizedData", "ConvertFrom-StringData", "Write-Host", "Out-Host", "Join-Path" };
 
-        static internal string[] ModuleManifestMembers = new string[] {
+        internal static string[] ModuleManifestMembers = new string[] {
             "ModuleToProcess",
             "NestedModules",
             "GUID",
@@ -3860,7 +3860,7 @@ namespace Microsoft.PowerShell.Commands
         }
 #endif
 
-        static private void UpdateCommandCollection<T>(List<T> list, List<WildcardPattern> patterns) where T : CommandInfo
+        private static void UpdateCommandCollection<T>(List<T> list, List<WildcardPattern> patterns) where T : CommandInfo
         {
             List<T> updated = new List<T>();
             foreach (T element in list)
@@ -3874,7 +3874,7 @@ namespace Microsoft.PowerShell.Commands
             list.AddRange(updated);
         }
 
-        static private void UpdateCommandCollection(Collection<string> list, List<WildcardPattern> patterns)
+        private static void UpdateCommandCollection(Collection<string> list, List<WildcardPattern> patterns)
         {
             if (list == null)
             {
@@ -3912,7 +3912,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        static private void WriteInvalidManifestMemberError(
+        private static void WriteInvalidManifestMemberError(
             PSCmdlet cmdlet,
             string manifestElement,
             string moduleManifestPath,
@@ -4932,7 +4932,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        static internal bool IsRooted(string filePath)
+        internal static bool IsRooted(string filePath)
         {
             return (Path.IsPathRooted(filePath) ||
                 filePath.StartsWith(@".\", StringComparison.Ordinal) ||
@@ -4951,7 +4951,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="filePath">The filename to resolve</param>
         /// <param name="context">Execution context</param>
         /// <returns>The resolved filename</returns>
-        static internal String ResolveRootedFilePath(string filePath, ExecutionContext context)
+        internal static String ResolveRootedFilePath(string filePath, ExecutionContext context)
         {
             // If the path is not fully qualified or relative rooted, then
             // we need to do path-based resolution...
@@ -5002,7 +5002,7 @@ namespace Microsoft.PowerShell.Commands
             return filePaths[0];
         }
 
-        static internal string GetResolvedPath(string filePath, ExecutionContext context)
+        internal static string GetResolvedPath(string filePath, ExecutionContext context)
         {
             ProviderInfo provider = null;
 
@@ -5041,7 +5041,7 @@ namespace Microsoft.PowerShell.Commands
             return filePaths[0];
         }
 
-        static internal Collection<string> GetResolvedPathCollection(string filePath, ExecutionContext context)
+        internal static Collection<string> GetResolvedPathCollection(string filePath, ExecutionContext context)
         {
             ProviderInfo provider = null;
 
@@ -7296,7 +7296,7 @@ namespace Microsoft.PowerShell.Commands
             return isPrefixed;
         }
 
-        static internal void AddModuleToModuleTables(ExecutionContext context, SessionStateInternal targetSessionState, PSModuleInfo module)
+        internal static void AddModuleToModuleTables(ExecutionContext context, SessionStateInternal targetSessionState, PSModuleInfo module)
         {
             Dbg.Assert(context != null, "Caller should verify that context != null");
             Dbg.Assert(targetSessionState != null, "Caller should verify that targetSessionState != null");
@@ -7340,7 +7340,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="sourceModule">The session state instance to use as the source of the functions</param>
         /// <param name="prefix">Command name prefix</param>
-        internal protected void ImportModuleMembers(PSModuleInfo sourceModule, string prefix)
+        protected internal void ImportModuleMembers(PSModuleInfo sourceModule, string prefix)
         {
             ImportModuleOptions importModuleOptions = new ImportModuleOptions();
             ImportModuleMembers(
@@ -7362,7 +7362,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="sourceModule">The session state instance to use as the source of the functions</param>
         /// <param name="prefix">Command name prefix</param>
         /// <param name="options">The set of options that are used while importing a module</param>
-        internal protected void ImportModuleMembers(PSModuleInfo sourceModule, string prefix, ImportModuleOptions options)
+        protected internal void ImportModuleMembers(PSModuleInfo sourceModule, string prefix, ImportModuleOptions options)
         {
             ImportModuleMembers(
                 this,

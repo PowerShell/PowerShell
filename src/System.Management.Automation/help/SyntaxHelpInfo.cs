@@ -27,19 +27,19 @@ namespace System.Management.Automation
         /// Name for the help info
         /// </summary>
         /// <value>Name for the help info</value>
-        override internal string Name { get; } = "";
+        internal override string Name { get; } = "";
 
         /// <summary>
         /// Synopsis for the help info
         /// </summary>
         /// <value>Synopsis for the help info</value>
-        override internal string Synopsis { get; } = "";
+        internal override string Synopsis { get; } = "";
 
         /// <summary>
         /// Full help object for this help info
         /// </summary>
         /// <value>Full help object for this help info</value>
-        override internal PSObject FullHelp { get; }
+        internal override PSObject FullHelp { get; }
 
         /// <summary>
         /// Get help info based on name, text and filename

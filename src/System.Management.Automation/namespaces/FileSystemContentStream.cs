@@ -1237,7 +1237,7 @@ namespace Microsoft.PowerShell.Commands
         /// the base stream do not match. These positions can become mismatch when the user read the data
         /// into the buffer and then seek a new position in the underlying stream.
         /// </summary>
-        new internal void DiscardBufferedData()
+        internal new void DiscardBufferedData()
         {
             base.DiscardBufferedData();
             _currentPosition = _stream.Position;

@@ -482,7 +482,7 @@ namespace System.Management.Automation.Interpreter
     /// </summary>
     internal sealed class EnterFinallyInstruction : IndexedBranchInstruction
     {
-        private readonly static EnterFinallyInstruction[] s_cache = new EnterFinallyInstruction[CacheSize];
+        private static readonly EnterFinallyInstruction[] s_cache = new EnterFinallyInstruction[CacheSize];
 
         public override int ProducedStack { get { return 2; } }
         public override int ConsumedContinuations { get { return 1; } }

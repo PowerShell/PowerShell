@@ -105,7 +105,7 @@ namespace System.Management.Automation
         /// Full help object for this help item.
         /// </summary>
         /// <value>Full help object for this help item.</value>
-        override internal PSObject FullHelp
+        internal override PSObject FullHelp
         {
             get
             {
@@ -171,7 +171,7 @@ namespace System.Management.Automation
         /// Component for this command.
         /// </summary>
         /// <value></value>
-        override internal string Component
+        internal override string Component
         {
             get
             {
@@ -184,7 +184,7 @@ namespace System.Management.Automation
         /// Role for this command
         /// </summary>
         /// <value></value>
-        override internal string Role
+        internal override string Role
         {
             get
             {
@@ -197,7 +197,7 @@ namespace System.Management.Automation
         /// Functionality for this command
         /// </summary>
         /// <value></value>
-        override internal string Functionality
+        internal override string Functionality
         {
             get
             {

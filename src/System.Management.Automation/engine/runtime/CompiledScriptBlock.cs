@@ -1106,7 +1106,7 @@ namespace System.Management.Automation
             return locals;
         }
 
-        static internal object[] BindArgumentsForScripblockInvoke(
+        internal static object[] BindArgumentsForScripblockInvoke(
             RuntimeDefinedParameter[] parameters,
             object[] args,
             ExecutionContext context,

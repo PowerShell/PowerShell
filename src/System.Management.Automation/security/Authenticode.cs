@@ -62,7 +62,7 @@ namespace System.Management.Automation
         /// </summary>
         [Dbg.TraceSource("SignatureHelper",
                           "tracer for SignatureHelper")]
-        private readonly static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("SignatureHelper",
                           "tracer for SignatureHelper");
 

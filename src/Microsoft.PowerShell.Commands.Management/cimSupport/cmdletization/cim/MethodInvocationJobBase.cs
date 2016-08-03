@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// <summary>
     /// Job wrapping invocation of an extrinsic CIM method
     /// </summary>
-    abstract internal class MethodInvocationJobBase<T> : CimChildJobBase<T>
+    internal abstract class MethodInvocationJobBase<T> : CimChildJobBase<T>
     {
         internal MethodInvocationJobBase(CimJobContext jobContext, bool passThru, string methodSubject, MethodInvocationInfo methodInvocationInfo)
                 : base(jobContext)

@@ -52,19 +52,19 @@ namespace System.Management.Automation
         /// Returns the name of alias help.
         /// </summary>
         /// <value>Name of alias help.</value>
-        override internal string Name { get; } = "";
+        internal override string Name { get; } = "";
 
         /// <summary>
         /// Returns synopsis of alias help.
         /// </summary>
         /// <value>Synopsis of alias help.</value>        
-        override internal string Synopsis { get; } = "";
+        internal override string Synopsis { get; } = "";
 
         /// <summary>
         /// Help category for alias help. This is always HelpCategory.Alias
         /// </summary>
         /// <value>Help category for alias help</value>
-        override internal HelpCategory HelpCategory
+        internal override HelpCategory HelpCategory
         {
             get
             {
@@ -78,7 +78,7 @@ namespace System.Management.Automation
         /// Returns full help object for alias help.
         /// </summary>
         /// <value>Full help object of alias help.</value>
-        override internal PSObject FullHelp
+        internal override PSObject FullHelp
         {
             get
             {

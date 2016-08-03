@@ -361,7 +361,7 @@ namespace System.Management.Automation.Runspaces
         /// Note:Input must be closed after Pipeline.InvokeAsync for InvokeAsync to
         /// finish.
         /// </remarks>
-        abstract public PipelineWriter Input { get; }
+        public abstract PipelineWriter Input { get; }
 
         /// <summary>
         /// Gets the output reader for this pipeline.
@@ -371,7 +371,7 @@ namespace System.Management.Automation.Runspaces
         /// output of the pipeline.  Thus, <paramref name="Output"/>
         /// is a PipelineReader or "thing which can be read from".
         /// </remarks>
-        abstract public PipelineReader<PSObject> Output { get; }
+        public abstract PipelineReader<PSObject> Output { get; }
 
         /// <summary>
         /// gets the error output reader for this pipeline.
@@ -385,7 +385,7 @@ namespace System.Management.Automation.Runspaces
         /// In this release, the objects read from this PipelineReader
         /// are PSObjects wrapping ErrorRecords.
         /// </remarks>
-        abstract public PipelineReader<object> Error { get; }
+        public abstract PipelineReader<object> Error { get; }
 
         /// <summary>
         /// Gets Info about current state of the pipeline.

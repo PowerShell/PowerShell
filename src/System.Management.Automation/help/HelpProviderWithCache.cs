@@ -14,7 +14,7 @@ namespace System.Management.Automation
     /// faster.
     /// 
     /// </summary>
-    abstract internal class HelpProviderWithCache : HelpProvider
+    internal abstract class HelpProviderWithCache : HelpProvider
     {
         /// <summary>
         /// Constructor for HelpProviderWithCache
@@ -98,7 +98,7 @@ namespace System.Management.Automation
         /// logic in DoExactMatchHelp is in place.
         /// </remarks>
         /// <param name="helpRequest">help request object</param>
-        virtual internal void DoExactMatchHelp(HelpRequest helpRequest)
+        internal virtual void DoExactMatchHelp(HelpRequest helpRequest)
         {
         }
 
@@ -164,7 +164,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="target">target string</param>
         /// <returns>wild card pattern created</returns>
-        virtual internal string GetWildCardPattern(string target)
+        internal virtual string GetWildCardPattern(string target)
         {
             if (WildcardPattern.ContainsWildcardCharacters(target))
                 return target;
@@ -181,7 +181,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <param name="helpRequest">help request object</param>
         /// <returns>a collection of help info objects</returns>
-        virtual internal IEnumerable<HelpInfo> DoSearchHelp(HelpRequest helpRequest)
+        internal virtual IEnumerable<HelpInfo> DoSearchHelp(HelpRequest helpRequest)
         {
             yield break;
         }
@@ -221,7 +221,7 @@ namespace System.Management.Automation
         /// This will reset the help cache. Normally this corresponds to a 
         /// help culture change. 
         /// </summary>
-        override internal void Reset()
+        internal override void Reset()
         {
             base.Reset();
 

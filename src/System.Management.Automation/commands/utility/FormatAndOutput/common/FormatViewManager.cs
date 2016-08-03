@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             s_defaultScalarTypesHash.Add("System.Numerics.BigInteger");
         }
 
-        private readonly static HashSet<string> s_defaultScalarTypesHash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private static readonly HashSet<string> s_defaultScalarTypesHash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     }
 
     /// <summary>

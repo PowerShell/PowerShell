@@ -502,9 +502,9 @@ namespace System.Management.Automation.Language
     [DebuggerDisplay("Mode = {Mode}; Script = {_script}")]
     internal class Tokenizer
     {
-        readonly private static Dictionary<string, TokenKind> s_keywordTable
+        private static readonly Dictionary<string, TokenKind> s_keywordTable
             = new Dictionary<string, TokenKind>(StringComparer.OrdinalIgnoreCase);
-        readonly private static Dictionary<string, TokenKind> s_operatorTable
+        private static readonly Dictionary<string, TokenKind> s_operatorTable
             = new Dictionary<string, TokenKind>(StringComparer.OrdinalIgnoreCase);
 
         private readonly Parser _parser;
@@ -526,7 +526,7 @@ namespace System.Management.Automation.Language
 
         #region Tables for initialization
 
-        readonly private static string[] s_keywordText = new string[] {
+        private static readonly string[] s_keywordText = new string[] {
         /*1*/    "elseif",                  "if",               "else",             "switch",                     /*1*/
         /*2*/    "foreach",                 "from",             "in",               "for",                        /*2*/
         /*3*/    "while",                   "until",            "do",               "try",                        /*3*/
@@ -542,7 +542,7 @@ namespace System.Management.Automation.Language
         /*D*/    "base",                                                                                          /*D*/
         };
 
-        readonly private static TokenKind[] s_keywordTokenKind = new TokenKind[] {
+        private static readonly TokenKind[] s_keywordTokenKind = new TokenKind[] {
         /*1*/    TokenKind.ElseIf,          TokenKind.If,       TokenKind.Else,     TokenKind.Switch,             /*1*/
         /*2*/    TokenKind.Foreach,         TokenKind.From,     TokenKind.In,       TokenKind.For,                /*2*/
         /*3*/    TokenKind.While,           TokenKind.Until,    TokenKind.Do,       TokenKind.Try,                /*3*/
@@ -558,7 +558,7 @@ namespace System.Management.Automation.Language
         /*D*/    TokenKind.Base,                                                                                  /*D*/
         };
 
-        internal readonly static string[] _operatorText = new string[] {
+        internal static readonly string[] _operatorText = new string[] {
         /*1*/   "bnot",                 "not",                  "eq",                   "ieq",                    /*1*/ 
         /*2*/   "ceq",                  "ne",                   "ine",                  "cne",                    /*2*/ 
         /*3*/   "ge",                   "ige",                  "cge",                  "gt",                     /*3*/ 
@@ -577,7 +577,7 @@ namespace System.Management.Automation.Language
         /*16*/  "join",                 "shl",                  "shr",                                            /*16*/
         };
 
-        private readonly static TokenKind[] s_operatorTokenKind = new TokenKind[] {
+        private static readonly TokenKind[] s_operatorTokenKind = new TokenKind[] {
         /*1*/   TokenKind.Bnot,         TokenKind.Not,          TokenKind.Ieq,          TokenKind.Ieq,            /*1*/ 
         /*2*/   TokenKind.Ceq,          TokenKind.Ine,          TokenKind.Ine,          TokenKind.Cne,            /*2*/ 
         /*3*/   TokenKind.Ige,          TokenKind.Ige,          TokenKind.Cge,          TokenKind.Igt,            /*3*/ 
@@ -2992,7 +2992,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        static private bool TryGetNumberValue(string strNum, bool hex, bool real, char suffix, long multiplier, out object result)
+        private static bool TryGetNumberValue(string strNum, bool hex, bool real, char suffix, long multiplier, out object result)
         {
             checked
             {

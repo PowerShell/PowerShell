@@ -226,7 +226,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="InvalidRunspaceStateException">
         /// RunspaceState is not BeforeOpen
         /// </exception>
-        override public void Open()
+        public override void Open()
         {
             CoreOpen(true);
         }
@@ -237,7 +237,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="InvalidRunspaceStateException">
         /// RunspaceState is not BeforeOpen
         /// </exception>
-        override public void OpenAsync()
+        public override void OpenAsync()
         {
             CoreOpen(false);
         }
@@ -309,7 +309,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="InvalidRunspaceStateException">
         /// RunspaceState is BeforeOpen or Opening
         /// </exception>
-        override public void Close()
+        public override void Close()
         {
             CoreClose(true);
         }
@@ -324,7 +324,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="InvalidRunspaceStateException">
         /// RunspaceState is BeforeOpen or Opening
         /// </exception>
-        override public void CloseAsync()
+        public override void CloseAsync()
         {
             CoreClose(false);
         }

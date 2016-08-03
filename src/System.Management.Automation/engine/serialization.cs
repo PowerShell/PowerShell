@@ -1293,7 +1293,7 @@ namespace System.Management.Automation
             _writer.WriteEndElement();
         }
 
-        static private bool PSObjectHasModifiedTypesCollection(PSObject pso)
+        private static bool PSObjectHasModifiedTypesCollection(PSObject pso)
         {
             ConsolidatedString currentTypes = pso.InternalTypeNames;
             Collection<string> originalTypes = pso.InternalAdapter.BaseGetTypeNameHierarchy(pso.ImmediateBaseObject);
@@ -4014,9 +4014,9 @@ namespace System.Management.Automation
 
         #region Getting XmlReaderSettings
 
-        static internal XmlReaderSettings XmlReaderSettingsForCliXml { get; } = GetXmlReaderSettingsForCliXml();
+        internal static XmlReaderSettings XmlReaderSettingsForCliXml { get; } = GetXmlReaderSettingsForCliXml();
 
-        static private XmlReaderSettings GetXmlReaderSettingsForCliXml()
+        private static XmlReaderSettings GetXmlReaderSettingsForCliXml()
         {
             XmlReaderSettings xrs = new XmlReaderSettings();
 
@@ -4041,9 +4041,9 @@ namespace System.Management.Automation
             return xrs;
         }
 
-        static internal XmlReaderSettings XmlReaderSettingsForUntrustedXmlDocument { get; } = GetXmlReaderSettingsForUntrustedXmlDocument();
+        internal static XmlReaderSettings XmlReaderSettingsForUntrustedXmlDocument { get; } = GetXmlReaderSettingsForUntrustedXmlDocument();
 
-        static private XmlReaderSettings GetXmlReaderSettingsForUntrustedXmlDocument()
+        private static XmlReaderSettings GetXmlReaderSettingsForUntrustedXmlDocument()
         {
             XmlReaderSettings settings = new XmlReaderSettings();
 
@@ -4333,7 +4333,7 @@ namespace System.Management.Automation
             return deserializer.ReadDecodedElementString(SerializationStrings.StringTag);
         }
 
-        static internal object DeserializeTimeSpan(InternalDeserializer deserializer)
+        internal static object DeserializeTimeSpan(InternalDeserializer deserializer)
         {
             Dbg.Assert(deserializer != null, "Caller should validate the parameter");
             try
@@ -5676,7 +5676,7 @@ namespace System.Management.Automation
             }
         }
 
-        static private KeyValuePair<WeakReference, T> WeakKeyValuePair(KeyValuePair<object, T> publicKeyValuePair)
+        private static KeyValuePair<WeakReference, T> WeakKeyValuePair(KeyValuePair<object, T> publicKeyValuePair)
         {
             return new KeyValuePair<WeakReference, T>(new WeakReference(publicKeyValuePair.Key), publicKeyValuePair.Value);
         }
@@ -6418,7 +6418,7 @@ namespace System.Management.Automation
         /// <param name="result"></param>
         /// <param name="keys">A chain of keys leading from the root dictionary (<paramref name="data"/>) to the value</param>
         /// <returns><c>true</c> if the value was found and was of the correct type; <c>false</c> otherwise</returns>
-        static internal bool TryPathGet<T>(IDictionary data, out T result, params string[] keys)
+        internal static bool TryPathGet<T>(IDictionary data, out T result, params string[] keys)
         {
             Dbg.Assert(keys != null, "Caller should verify that keys != null");
             Dbg.Assert(keys.Length >= 1, "Caller should verify that keys.Length >= 1");

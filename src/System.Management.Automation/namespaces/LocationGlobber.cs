@@ -2731,7 +2731,7 @@ namespace System.Management.Automation
         /// has either a an include, or an exclude expression). False otherwise.
         /// </returns>
         ///
-        static internal bool ShouldPerformGlobbing(string path, CmdletProviderContext context)
+        internal static bool ShouldPerformGlobbing(string path, CmdletProviderContext context)
         {
             bool pathContainsGlobCharacters = false;
 
@@ -3254,7 +3254,7 @@ namespace System.Management.Automation
         /// The path with the Msh qualifier removed.
         /// </returns>
         ///
-        static internal string RemoveMshQualifier(string path, PSDriveInfo drive)
+        internal static string RemoveMshQualifier(string path, PSDriveInfo drive)
         {
             Dbg.Diagnostics.Assert(
                 drive != null,

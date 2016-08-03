@@ -5455,7 +5455,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Management.Automation.Remoting.PSRemotingDataStructureException">
         /// Thrown when the PSObject is not in the expected format
         /// </exception>
-        static internal PowerShell FromPSObjectForRemoting(PSObject powerShellAsPSObject)
+        internal static PowerShell FromPSObjectForRemoting(PSObject powerShellAsPSObject)
         {
             if (powerShellAsPSObject == null)
             {

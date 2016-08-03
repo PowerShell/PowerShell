@@ -6059,7 +6059,7 @@ $result
     /// <summary>
     /// the static class for calling the the NetJoinDomain function.
     /// </summary>
-    static internal class SAMAPI
+    internal static class SAMAPI
     {
         /// <summary>
         /// Structure for the LSA unicode string
@@ -6361,7 +6361,7 @@ $result
     /// Helper Class used by Stop-Computer,Restart-Computer and Test-Connection
     /// Also Contain constants used by System Restore related Cmdlets.
     /// </summary>
-    static internal class ComputerWMIHelper
+    internal static class ComputerWMIHelper
     {
         /// <summary>
         /// The maximum length of a valid NetBIOS name

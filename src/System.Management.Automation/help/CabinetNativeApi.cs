@@ -609,7 +609,7 @@ namespace System.Management.Automation.Internal
             {
             }
 
-            override protected bool ReleaseHandle()
+            protected override bool ReleaseHandle()
             {
                 return CabinetNativeApi.FDIDestroy(this.handle);
             }

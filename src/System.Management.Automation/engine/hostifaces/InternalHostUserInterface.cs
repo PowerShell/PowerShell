@@ -762,7 +762,7 @@ namespace System.Management.Automation.Internal.Host
             }
         }
 
-        static internal Type GetFieldType(FieldDescription field)
+        internal static Type GetFieldType(FieldDescription field)
         {
             Type result;
             if (TypeResolver.TryResolveType(field.ParameterAssemblyFullName, out result) ||
@@ -774,7 +774,7 @@ namespace System.Management.Automation.Internal.Host
             return null;
         }
 
-        static internal bool IsSecuritySensitiveType(string typeName)
+        internal static bool IsSecuritySensitiveType(string typeName)
         {
             if (typeName.Equals(typeof(PSCredential).Name, StringComparison.OrdinalIgnoreCase))
             {

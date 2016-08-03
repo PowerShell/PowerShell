@@ -606,7 +606,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="syncCall">
         /// paramter which control if Open is done synchronously or asynchronously
         /// </param>
-        override protected void OpenHelper(bool syncCall)
+        protected override void OpenHelper(bool syncCall)
         {
             if (syncCall)
             {
@@ -814,7 +814,7 @@ namespace System.Management.Automation.Runspaces
 
         private PipelineThread _pipelineThread = null;
 
-        override protected void CloseHelper(bool syncCall)
+        protected override void CloseHelper(bool syncCall)
         {
             if (syncCall)
             {
@@ -1293,7 +1293,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Close the runspace
         /// </summary>
-        override public void Close()
+        public override void Close()
         {
             // Do not put cleanup activities in here, as they aren't
             // captured in CloseAsync() case. Instead, put them in

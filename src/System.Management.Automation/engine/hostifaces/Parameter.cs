@@ -86,7 +86,7 @@ namespace System.Management.Automation.Runspaces
 
         #region Conversion from and to CommandParameterInternal
 
-        static internal CommandParameter FromCommandParameterInternal(CommandParameterInternal internalParameter)
+        internal static CommandParameter FromCommandParameterInternal(CommandParameterInternal internalParameter)
         {
             if (internalParameter == null)
             {
@@ -120,7 +120,7 @@ namespace System.Management.Automation.Runspaces
             return new CommandParameter(null, internalParameter.ArgumentValue);
         }
 
-        static internal CommandParameterInternal ToCommandParameterInternal(CommandParameter publicParameter, bool forNativeCommand)
+        internal static CommandParameterInternal ToCommandParameterInternal(CommandParameter publicParameter, bool forNativeCommand)
         {
             if (publicParameter == null)
             {
@@ -206,7 +206,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="System.Management.Automation.Remoting.PSRemotingDataStructureException">
         /// Thrown when the PSObject is not in the expected format
         /// </exception>
-        static internal CommandParameter FromPSObjectForRemoting(PSObject parameterAsPSObject)
+        internal static CommandParameter FromPSObjectForRemoting(PSObject parameterAsPSObject)
         {
             if (parameterAsPSObject == null)
             {

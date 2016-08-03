@@ -21,7 +21,7 @@ namespace System.Management.Automation
         internal const string PSVersionName = "PSVersion";
         internal const string SerializationVersionName = "SerializationVersion";
         internal const string WSManStackVersionName = "WSManStackVersion";
-        static private Hashtable s_psVersionTable = null;
+        private static Hashtable s_psVersionTable = null;
 
         /// <summary>
         /// A constant to track current PowerShell Version.
@@ -76,12 +76,12 @@ namespace System.Management.Automation
 #endif
         }
 
-        static internal Hashtable GetPSVersionTable()
+        internal static Hashtable GetPSVersionTable()
         {
             return s_psVersionTable;
         }
 
-        static internal Version GetBuildVersion()
+        internal static Version GetBuildVersion()
         {
             string assemblyPath = typeof(PSVersionInfo).GetTypeInfo().Assembly.Location;
             string buildVersion = FileVersionInfo.GetVersionInfo(assemblyPath).FileVersion;
@@ -89,7 +89,7 @@ namespace System.Management.Automation
         }
 
         // Get the commit id from the powershell.version file. If the powershell.version file doesn't exist, use the string "N/A"
-        static internal string GetCommitInfo()
+        internal static string GetCommitInfo()
         {
             try
             {
@@ -142,7 +142,7 @@ namespace System.Management.Automation
 
         #region Programmer APIs
 
-        static internal Version PSVersion
+        internal static Version PSVersion
         {
             get
             {
@@ -150,7 +150,7 @@ namespace System.Management.Automation
             }
         }
 
-        static internal Version CLRVersion
+        internal static Version CLRVersion
         {
             get
             {
@@ -158,7 +158,7 @@ namespace System.Management.Automation
             }
         }
 
-        static internal Version BuildVersion
+        internal static Version BuildVersion
         {
             get
             {
@@ -166,7 +166,7 @@ namespace System.Management.Automation
             }
         }
 
-        static internal Version[] PSCompatibleVersions
+        internal static Version[] PSCompatibleVersions
         {
             get
             {
@@ -174,7 +174,7 @@ namespace System.Management.Automation
             }
         }
 
-        static internal string PSEdition
+        internal static string PSEdition
         {
             get
             {
@@ -182,7 +182,7 @@ namespace System.Management.Automation
             }
         }
 
-        static internal Version SerializationVersion
+        internal static Version SerializationVersion
         {
             get
             {
@@ -198,7 +198,7 @@ namespace System.Management.Automation
         /// For >=3.0 PowerShell, we still use "1" as the registry version key for 
         /// Snapin and Custom shell lookup/discovery.
         /// </remarks>
-        static internal string RegistryVersion1Key
+        internal static string RegistryVersion1Key
         {
             get
             {
@@ -215,7 +215,7 @@ namespace System.Management.Automation
         /// For 3.0 PowerShell, we still use "1" as the registry version key for 
         /// Snapin and Custom shell lookup/discovery. 
         /// </remarks>
-        static internal string RegistryVersionKey
+        internal static string RegistryVersionKey
         {
             get
             {
@@ -225,7 +225,7 @@ namespace System.Management.Automation
         }
 
 
-        static internal string GetRegisteryVersionKeyForSnapinDiscovery(string majorVersion)
+        internal static string GetRegisteryVersionKeyForSnapinDiscovery(string majorVersion)
         {
             int tempMajorVersion = 0;
             LanguagePrimitives.TryConvertTo<int>(majorVersion, out tempMajorVersion);
@@ -243,7 +243,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        static internal string FeatureVersionString
+        internal static string FeatureVersionString
         {
             get
             {
@@ -251,7 +251,7 @@ namespace System.Management.Automation
             }
         }
 
-        static internal bool IsValidPSVersion(Version version)
+        internal static bool IsValidPSVersion(Version version)
         {
             if (version.Major == s_psV6Version.Major)
             {
@@ -281,22 +281,22 @@ namespace System.Management.Automation
             return false;
         }
 
-        static internal Version PSV4Version
+        internal static Version PSV4Version
         {
             get { return s_psV4Version; }
         }
 
-        static internal Version PSV5Version
+        internal static Version PSV5Version
         {
             get { return s_psV5Version; }
         }
 
-        static internal Version PSV51Version
+        internal static Version PSV51Version
         {
             get { return s_psV51Version; }
         }
 
-        static internal SemanticVersion PSV6Version
+        internal static SemanticVersion PSV6Version
         {
             get { return s_psV6Version; }
         }

@@ -57,7 +57,7 @@ namespace System.Management.Automation.Remoting
     internal abstract class ClientRemoteSession : RemoteSession
     {
         [TraceSourceAttribute("CRSession", "ClientRemoteSession")]
-        static private PSTraceSource s_trace = PSTraceSource.GetTracer("CRSession", "ClientRemoteSession");
+        private static PSTraceSource s_trace = PSTraceSource.GetTracer("CRSession", "ClientRemoteSession");
 
         #region Public_Method_API
 
@@ -180,7 +180,7 @@ namespace System.Management.Automation.Remoting
     internal class ClientRemoteSessionImpl : ClientRemoteSession, IDisposable
     {
         [TraceSourceAttribute("CRSessionImpl", "ClientRemoteSessionImpl")]
-        static private PSTraceSource s_trace = PSTraceSource.GetTracer("CRSessionImpl", "ClientRemoteSessionImpl");
+        private static PSTraceSource s_trace = PSTraceSource.GetTracer("CRSessionImpl", "ClientRemoteSessionImpl");
 
         private PSRemotingCryptoHelperClient _cryptoHelper = null;
 

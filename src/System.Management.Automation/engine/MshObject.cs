@@ -737,7 +737,7 @@ namespace System.Management.Automation
         /// </summary>
         internal bool immediateBaseObjectIsEmpty;
 
-        static internal PSTraceSource memberResolution = PSTraceSource.GetTracer("MemberResolution", "Traces the resolution from member name to the member. A member can be a property, method, etc.", false);
+        internal static PSTraceSource memberResolution = PSTraceSource.GetTracer("MemberResolution", "Traces the resolution from member name to the member. A member can be a property, method, etc.", false);
 
         #endregion instance fields
 

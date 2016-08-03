@@ -35,7 +35,7 @@ namespace System.Management.Automation
         /// Name of the provider for which this provider help info is for.
         /// </summary>
         /// <value>Name of the provider</value>
-        override internal string Name
+        internal override string Name
         {
             get
             {
@@ -60,7 +60,7 @@ namespace System.Management.Automation
         /// Synopsis in the provider help info
         /// </summary>
         /// <value>Synopsis in the provider help info</value>
-        override internal string Synopsis
+        internal override string Synopsis
         {
             get
             {
@@ -131,7 +131,7 @@ namespace System.Management.Automation
         /// Help category for this provider help info, which is constantly HelpCategory.Provider
         /// </summary>
         /// <value>Help category for this provider help info</value>
-        override internal HelpCategory HelpCategory
+        internal override HelpCategory HelpCategory
         {
             get
             {
@@ -145,7 +145,7 @@ namespace System.Management.Automation
         /// Full help object for this provider help info
         /// </summary>
         /// <value>Full help object for this provider help info</value>
-        override internal PSObject FullHelp
+        internal override PSObject FullHelp
         {
             get
             {

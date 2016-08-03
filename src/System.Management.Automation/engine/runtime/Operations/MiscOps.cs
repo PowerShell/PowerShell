@@ -343,7 +343,7 @@ namespace System.Management.Automation
             return CommandParameterInternal.CreateArgument(splatExtent, splattedArgument);
         }
 
-        static private string GetParameterText(string parameterName)
+        private static string GetParameterText(string parameterName)
         {
             Diagnostics.Assert(parameterName != null, "caller makes sure the parameterName is not null");
             int endPosition = parameterName.Length;

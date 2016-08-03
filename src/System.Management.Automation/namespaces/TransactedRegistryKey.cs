@@ -2003,7 +2003,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
         }
 
-        static private void ValidateKeyName(string name)
+        private static void ValidateKeyName(string name)
         {
             if (name == null)
             {
@@ -2025,7 +2025,7 @@ namespace Microsoft.PowerShell.Commands.Internal
                 throw new ArgumentException(RegistryProviderStrings.Arg_RegKeyStrLenBug);
         }
 
-        static private void ValidateKeyMode(RegistryKeyPermissionCheck mode)
+        private static void ValidateKeyMode(RegistryKeyPermissionCheck mode)
         {
             if (mode < RegistryKeyPermissionCheck.Default || mode > RegistryKeyPermissionCheck.ReadWriteSubTree)
             {
@@ -2033,7 +2033,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
         }
 
-        static private void ValidateKeyRights(int rights)
+        private static void ValidateKeyRights(int rights)
         {
             if (0 != (rights & ~((int)RegistryRights.FullControl)))
             {

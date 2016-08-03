@@ -307,7 +307,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
-        internal protected void SafeInvokeSessionClosed(Object sender, EventArgs eventArgs)
+        protected internal void SafeInvokeSessionClosed(Object sender, EventArgs eventArgs)
         {
             SessionClosed.SafeInvoke(sender, eventArgs);
         }

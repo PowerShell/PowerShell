@@ -842,7 +842,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="id"></param>
         /// <param name="capacity"></param>
         /// <returns></returns>
-        static private int GetIndexFromId(long id, int capacity)
+        private static int GetIndexFromId(long id, int capacity)
         {
             return (int)((id - 1) % capacity);
         }

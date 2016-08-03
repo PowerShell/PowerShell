@@ -1494,7 +1494,7 @@ namespace System.Management.Automation
                 new ReadOnlyCollection<T>(EmptyArray<T>());
         }
 
-        static internal class Separators
+        internal static class Separators
         {
             internal static readonly char[] Backslash = new char[] { '\\' };
             internal static readonly char[] Directory = new char[] { '\\', '/' };

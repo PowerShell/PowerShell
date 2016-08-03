@@ -506,7 +506,7 @@ namespace System.Management.Automation.Language
 
     #region "Empty" Positions
 
-    sealed internal class EmptyScriptPosition : IScriptPosition
+    internal sealed class EmptyScriptPosition : IScriptPosition
     {
         public string File { get { return null; } }
         public int LineNumber { get { return 0; } }
@@ -516,7 +516,7 @@ namespace System.Management.Automation.Language
         public string GetFullScript() { return null; }
     }
 
-    sealed internal class EmptyScriptExtent : IScriptExtent
+    internal sealed class EmptyScriptExtent : IScriptExtent
     {
         public string File { get { return null; } }
         public IScriptPosition StartScriptPosition { get { return PositionUtilities.EmptyPosition; } }
@@ -563,7 +563,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Represents a single point in a script.  The script may come from a file or interactive input.
     /// </summary>
-    sealed public class ScriptPosition : IScriptPosition
+    public sealed class ScriptPosition : IScriptPosition
     {
         private readonly string _fullScript;
 
@@ -645,7 +645,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// A script extent used to customize the display of error location information
     /// </summary>
-    sealed public class ScriptExtent : IScriptExtent
+    public sealed class ScriptExtent : IScriptExtent
     {
         private ScriptPosition _startPosition;
         private ScriptPosition _endPosition;

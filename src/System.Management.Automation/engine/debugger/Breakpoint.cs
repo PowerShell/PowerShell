@@ -13,7 +13,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Holds the information for a given breakpoint 
     /// </summary>
-    abstract public class Breakpoint
+    public abstract class Breakpoint
     {
         #region properties
 
@@ -109,7 +109,7 @@ namespace System.Management.Automation
             return BreakpointAction.Continue;
         }
 
-        virtual internal void RemoveSelf(ScriptDebugger debugger)
+        internal virtual void RemoveSelf(ScriptDebugger debugger)
         {
         }
 
@@ -501,7 +501,7 @@ namespace System.Management.Automation
             this.BreakpointBitArray.Set(SequencePointIndex, true);
         }
 
-        override internal void RemoveSelf(ScriptDebugger debugger)
+        internal override void RemoveSelf(ScriptDebugger debugger)
         {
             if (this.SequencePoints != null)
             {

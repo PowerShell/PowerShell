@@ -17,7 +17,7 @@ namespace System.Management.Automation
     /// <summary>
     /// This is a class that represents a syntax error from parsing. 
     /// </summary>
-    sealed public class PSParseError
+    public sealed class PSParseError
     {
         internal PSParseError(RuntimeException rte)
         {

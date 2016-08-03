@@ -532,7 +532,7 @@ namespace System.Management.Automation
         /// If the attributes could not be read from a property or field.
         /// </exception>
         /// 
-        override internal CommandMetadata CommandMetadata
+        internal override CommandMetadata CommandMetadata
         {
             get
             {

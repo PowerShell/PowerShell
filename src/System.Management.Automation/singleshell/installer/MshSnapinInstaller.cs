@@ -117,7 +117,7 @@ namespace System.Management.Automation
         /// <summary>
         /// 
         /// </summary>
-        internal override sealed string RegKey
+        internal sealed override string RegKey
         {
             get
             {

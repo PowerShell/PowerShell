@@ -297,7 +297,7 @@ namespace System.Management.Automation
     public static class LanguagePrimitives
     {
         [TraceSource("ETS", "Extended Type System")]
-        static private PSTraceSource s_tracer = PSTraceSource.GetTracer("ETS", "Extended Type System");
+        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("ETS", "Extended Type System");
 
         internal delegate void MemberNotFoundError(PSObject pso, DictionaryEntry property, Type resultType);
 
@@ -1321,7 +1321,7 @@ namespace System.Management.Automation
 
         #region type converter
 
-        static internal PSTraceSource typeConversion = PSTraceSource.GetTracer("TypeConversion", "Traces the type conversion algorithm", false);
+        internal static PSTraceSource typeConversion = PSTraceSource.GetTracer("TypeConversion", "Traces the type conversion algorithm", false);
 
         private static TypeConverter GetIntegerSystemConverter(Type type)
         {
@@ -2617,7 +2617,7 @@ namespace System.Management.Automation
             }
         }
 
-        static private object ConvertNumericChar(object valueToConvert,
+        private static object ConvertNumericChar(object valueToConvert,
                                                  Type resultType,
                                                  bool recursion,
                                                  PSObject originalValueToConvert,
@@ -2642,7 +2642,7 @@ namespace System.Management.Automation
             }
         }
 
-        static private object ConvertNumeric(object valueToConvert,
+        private static object ConvertNumeric(object valueToConvert,
                                              Type resultType,
                                              bool recursion,
                                              PSObject originalValueToConvert,
@@ -2665,7 +2665,7 @@ namespace System.Management.Automation
             }
         }
 
-        static private char[] ConvertStringToCharArray(object valueToConvert,
+        private static char[] ConvertStringToCharArray(object valueToConvert,
                                                        Type resultType,
                                                        bool recursion,
                                                        PSObject originalValueToConvert,
@@ -2679,7 +2679,7 @@ namespace System.Management.Automation
             return ((string)valueToConvert).ToCharArray();
         }
 
-        static private Regex ConvertStringToRegex(object valueToConvert,
+        private static Regex ConvertStringToRegex(object valueToConvert,
                                                   Type resultType,
                                                   bool recursion,
                                                   PSObject originalValueToConvert,
@@ -2702,7 +2702,7 @@ namespace System.Management.Automation
             }
         }
 
-        static private Microsoft.Management.Infrastructure.CimSession ConvertStringToCimSession(object valueToConvert,
+        private static Microsoft.Management.Infrastructure.CimSession ConvertStringToCimSession(object valueToConvert,
                                                   Type resultType,
                                                   bool recursion,
                                                   PSObject originalValueToConvert,
@@ -4190,7 +4190,7 @@ namespace System.Management.Automation
         private static Type[] s_realTypes = new Type[] { typeof(Single), typeof(Double), typeof(Decimal) };
 
 
-        static internal void RebuildConversionCache()
+        internal static void RebuildConversionCache()
         {
             lock (s_converterCache)
             {

@@ -118,7 +118,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The command metadata for the script.
         /// </summary>
-        override internal CommandMetadata CommandMetadata
+        internal override CommandMetadata CommandMetadata
         {
             get
             {

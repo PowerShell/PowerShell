@@ -48,7 +48,7 @@ namespace System.Management.Automation
         /// <param name="exception"></param>
         /// <param name="additionalInfo"></param>
         /// 
-        abstract internal void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo);
+        internal abstract void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo);
 
         /// <summary>
         /// Provider interface function for logging engine lifecycle event
@@ -57,14 +57,14 @@ namespace System.Management.Automation
         /// <param name="newState"></param>
         /// <param name="previousState"></param>
         /// 
-        abstract internal void LogEngineLifecycleEvent(LogContext logContext, EngineState newState, EngineState previousState);
+        internal abstract void LogEngineLifecycleEvent(LogContext logContext, EngineState newState, EngineState previousState);
 
         /// <summary>
         /// Provider interface function for logging command health event
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="exception"></param>
-        abstract internal void LogCommandHealthEvent(LogContext logContext, Exception exception);
+        internal abstract void LogCommandHealthEvent(LogContext logContext, Exception exception);
 
         /// <summary>
         /// Provider interface function for logging command lifecycle event
@@ -72,14 +72,14 @@ namespace System.Management.Automation
         /// <param name="getLogContext"></param>
         /// <param name="newState"></param>
         /// 
-        abstract internal void LogCommandLifecycleEvent(Func<LogContext> getLogContext, CommandState newState);
+        internal abstract void LogCommandLifecycleEvent(Func<LogContext> getLogContext, CommandState newState);
 
         /// <summary>
         /// Provider interface function for logging pipeline execution detail.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="pipelineExecutionDetail"></param>
-        abstract internal void LogPipelineExecutionDetailEvent(LogContext logContext, List<String> pipelineExecutionDetail);
+        internal abstract void LogPipelineExecutionDetailEvent(LogContext logContext, List<String> pipelineExecutionDetail);
 
         /// <summary>
         /// Provider interface function for logging provider health event
@@ -88,7 +88,7 @@ namespace System.Management.Automation
         /// <param name="providerName"></param>
         /// <param name="exception"></param>
         /// 
-        abstract internal void LogProviderHealthEvent(LogContext logContext, string providerName, Exception exception);
+        internal abstract void LogProviderHealthEvent(LogContext logContext, string providerName, Exception exception);
 
         /// <summary>
         /// Provider interface function for logging provider lifecycle event
@@ -97,7 +97,7 @@ namespace System.Management.Automation
         /// <param name="providerName"></param>
         /// <param name="newState"></param>
         /// 
-        abstract internal void LogProviderLifecycleEvent(LogContext logContext, string providerName, ProviderState newState);
+        internal abstract void LogProviderLifecycleEvent(LogContext logContext, string providerName, ProviderState newState);
 
         /// <summary>
         /// Provider interface function for logging settings event
@@ -107,13 +107,13 @@ namespace System.Management.Automation
         /// <param name="value"></param>
         /// <param name="previousValue"></param>
         /// 
-        abstract internal void LogSettingsEvent(LogContext logContext, string variableName, string value, string previousValue);
+        internal abstract void LogSettingsEvent(LogContext logContext, string variableName, string value, string previousValue);
 
         /// <summary>
         /// True if the log provider needs to use logging variables
         /// </summary>
         /// <returns></returns>
-        virtual internal bool UseLoggingVariables()
+        internal virtual bool UseLoggingVariables()
         {
             return true;
         }
@@ -143,7 +143,7 @@ namespace System.Management.Automation
         /// <param name="exception"></param>
         /// <param name="additionalInfo"></param>
         /// 
-        override internal void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo)
+        internal override void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo)
         {
         }
 
@@ -154,7 +154,7 @@ namespace System.Management.Automation
         /// <param name="newState"></param>
         /// <param name="previousState"></param>
         /// 
-        override internal void LogEngineLifecycleEvent(LogContext logContext, EngineState newState, EngineState previousState)
+        internal override void LogEngineLifecycleEvent(LogContext logContext, EngineState newState, EngineState previousState)
         {
         }
 
@@ -164,7 +164,7 @@ namespace System.Management.Automation
         /// <param name="logContext"></param>
         /// <param name="exception"></param>
         /// 
-        override internal void LogCommandHealthEvent(LogContext logContext, Exception exception)
+        internal override void LogCommandHealthEvent(LogContext logContext, Exception exception)
         {
         }
 
@@ -174,7 +174,7 @@ namespace System.Management.Automation
         /// <param name="getLogContext"></param>
         /// <param name="newState"></param>
         /// 
-        override internal void LogCommandLifecycleEvent(Func<LogContext> getLogContext, CommandState newState)
+        internal override void LogCommandLifecycleEvent(Func<LogContext> getLogContext, CommandState newState)
         {
         }
 
@@ -183,7 +183,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="pipelineExecutionDetail"></param>
-        override internal void LogPipelineExecutionDetailEvent(LogContext logContext, List<String> pipelineExecutionDetail)
+        internal override void LogPipelineExecutionDetailEvent(LogContext logContext, List<String> pipelineExecutionDetail)
         {
         }
 
@@ -194,7 +194,7 @@ namespace System.Management.Automation
         /// <param name="providerName"></param>
         /// <param name="exception"></param>
         /// 
-        override internal void LogProviderHealthEvent(LogContext logContext, string providerName, Exception exception)
+        internal override void LogProviderHealthEvent(LogContext logContext, string providerName, Exception exception)
         {
         }
 
@@ -205,7 +205,7 @@ namespace System.Management.Automation
         /// <param name="providerName"></param>
         /// <param name="newState"></param>
         /// 
-        override internal void LogProviderLifecycleEvent(LogContext logContext, string providerName, ProviderState newState)
+        internal override void LogProviderLifecycleEvent(LogContext logContext, string providerName, ProviderState newState)
         {
         }
 
@@ -217,7 +217,7 @@ namespace System.Management.Automation
         /// <param name="value"></param>
         /// <param name="previousValue"></param>
         /// 
-        override internal void LogSettingsEvent(LogContext logContext, string variableName, string value, string previousValue)
+        internal override void LogSettingsEvent(LogContext logContext, string variableName, string value, string previousValue)
         {
         }
 

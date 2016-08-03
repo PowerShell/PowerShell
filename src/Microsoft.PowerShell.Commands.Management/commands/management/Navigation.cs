@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The context for the command that is passed to the core command providers.
         /// </summary>
-        virtual internal CmdletProviderContext CmdletProviderContext
+        internal virtual CmdletProviderContext CmdletProviderContext
         {
             get
             {
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
             }
         } // CmdletProviderContext
 
-        virtual internal SwitchParameter SuppressWildcardExpansion
+        internal virtual SwitchParameter SuppressWildcardExpansion
         {
             get
             {
@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         /// are none.
         /// </returns>
         /// 
-        virtual internal object GetDynamicParameters(CmdletProviderContext context)
+        internal virtual object GetDynamicParameters(CmdletProviderContext context)
         {
             return null;
         }
@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
         /// if the provider supports ShouldProcess
         /// </summary>
         /// <value></value>
-        virtual protected bool ProviderSupportsShouldProcess
+        protected virtual bool ProviderSupportsShouldProcess
         {
             get
             {
@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell.Commands
         /// the base class to simplify the creation of the CmdletProviderContext.
         /// </remarks>
         /// 
-        virtual public string Filter { get; set; }
+        public virtual string Filter { get; set; }
 
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands
         /// the base class to simplify the creation of the CmdletProviderContext.
         /// </remarks>
         /// 
-        virtual public string[] Include { get;
+        public virtual string[] Include { get;
 // get
             set;
 // set
@@ -236,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
         /// the base class to simplify the creation of the CmdletProviderContext.
         /// </remarks>
         /// 
-        virtual public string[] Exclude { get;
+        public virtual string[] Exclude { get;
 // get
             set;
 // set
@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell.Commands
         /// the base class to simplify the creation of the CmdletProviderContext.
         /// </remarks>
         /// 
-        virtual public SwitchParameter Force
+        public virtual SwitchParameter Force
         {
             get
             {

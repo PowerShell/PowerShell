@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// Converts <paramref name="wildcardPattern"/> into a value of a right-hand-side operand of LIKE operator of a WQL query.  
         /// Return value still has to be string-escaped (i.e. by doubling '\'' character), before embedding it into a query.
         /// </summary>
-        static internal string Parse(WildcardPattern wildcardPattern, out bool needsClientSideFiltering)
+        internal static string Parse(WildcardPattern wildcardPattern, out bool needsClientSideFiltering)
         {
             var parser = new WildcardPatternToCimQueryParser();
             WildcardPatternParser.Parse(wildcardPattern, parser);

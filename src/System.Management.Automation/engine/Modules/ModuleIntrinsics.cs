@@ -939,7 +939,7 @@ namespace System.Management.Automation
             }
         }
 
-        static private string ProcessOneModulePath(ExecutionContext context, string envPath, HashSet<string> processedPathSet)
+        private static string ProcessOneModulePath(ExecutionContext context, string envPath, HashSet<string> processedPathSet)
         {
             string trimmedenvPath = envPath.Trim();
 
@@ -1009,7 +1009,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        static private void SortAndRemoveDuplicates<T>(List<T> input, Func<T, string> keyGetter)
+        private static void SortAndRemoveDuplicates<T>(List<T> input, Func<T, string> keyGetter)
         {
             Dbg.Assert(input != null, "Caller should verify that input != null");
 
@@ -1052,7 +1052,7 @@ namespace System.Management.Automation
         /// <param name="variablePatterns">Patterns describing the variables to export</param>
         /// <param name="doNotExportCmdlets">List of Cmdlets that will not be exported,  
         ///     even if they match in cmdletPatterns.</param>
-        static internal void ExportModuleMembers(PSCmdlet cmdlet, SessionStateInternal sessionState,
+        internal static void ExportModuleMembers(PSCmdlet cmdlet, SessionStateInternal sessionState,
             List<WildcardPattern> functionPatterns, List<WildcardPattern> cmdletPatterns,
             List<WildcardPattern> aliasPatterns, List<WildcardPattern> variablePatterns, List<string> doNotExportCmdlets)
         {
@@ -1213,7 +1213,7 @@ namespace System.Management.Automation
             }
         }
 
-        static private AliasInfo NewAliasInfo(AliasInfo alias, SessionStateInternal sessionState)
+        private static AliasInfo NewAliasInfo(AliasInfo alias, SessionStateInternal sessionState)
         {
             Dbg.Assert(alias != null, "alias should not be null");
             Dbg.Assert(sessionState != null, "sessionState should not be null");

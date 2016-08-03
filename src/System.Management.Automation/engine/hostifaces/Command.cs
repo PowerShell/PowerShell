@@ -578,7 +578,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="System.Management.Automation.Remoting.PSRemotingDataStructureException">
         /// Thrown when the PSObject is not in the expected format
         /// </exception>
-        static internal Command FromPSObjectForRemoting(PSObject commandAsPSObject)
+        internal static Command FromPSObjectForRemoting(PSObject commandAsPSObject)
         {
             if (commandAsPSObject == null)
             {

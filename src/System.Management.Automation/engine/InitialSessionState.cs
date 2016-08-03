@@ -1377,7 +1377,7 @@ namespace System.Management.Automation.Runspaces
     {
         #region Helper methods for restricting commands needed by implicit and interactive remoting
 
-        static private void RemoveDisallowedEntries<T>(InitialSessionStateEntryCollection<T> list, List<string> allowedNames, Func<T, string> nameGetter)
+        private static void RemoveDisallowedEntries<T>(InitialSessionStateEntryCollection<T> list, List<string> allowedNames, Func<T, string> nameGetter)
             where T : InitialSessionStateEntry
         {
             List<string> namesToRemove = new List<string>();
@@ -1398,7 +1398,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        static private void MakeDisallowedEntriesPrivate<T>(InitialSessionStateEntryCollection<T> list, List<string> allowedNames, Func<T, string> nameGetter)
+        private static void MakeDisallowedEntriesPrivate<T>(InitialSessionStateEntryCollection<T> list, List<string> allowedNames, Func<T, string> nameGetter)
             where T : ConstrainedSessionStateEntry
         {
             foreach (T entry in list)
@@ -1459,7 +1459,7 @@ namespace System.Management.Automation.Runspaces
         /// What capabilities the session should have.
         /// </param>
         /// <returns></returns>
-        static public InitialSessionState CreateRestricted(SessionCapabilities sessionCapabilities)
+        public static InitialSessionState CreateRestricted(SessionCapabilities sessionCapabilities)
         {
             // only remote server has been requested
             if (SessionCapabilities.RemoteServer == sessionCapabilities)
@@ -1493,7 +1493,7 @@ namespace System.Management.Automation.Runspaces
             return Create();
         }
 
-        static private InitialSessionState CreateRestrictedForRemoteServer()
+        private static InitialSessionState CreateRestrictedForRemoteServer()
         {
             InitialSessionState iss = Create();
             iss.LanguageMode = PSLanguageMode.NoLanguage;
@@ -1631,7 +1631,7 @@ namespace System.Management.Automation.Runspaces
                                               "where"
                                           };
 
-        static private InitialSessionState CreateRestrictedForWorkflowServer()
+        private static InitialSessionState CreateRestrictedForWorkflowServer()
         {
             InitialSessionState iss = CreateDefault();
             iss.LanguageMode = PSLanguageMode.NoLanguage;
@@ -1700,7 +1700,7 @@ namespace System.Management.Automation.Runspaces
             return iss;
         }
 
-        static private InitialSessionState CreateRestrictedForWorkflowServerWithFullLanguage()
+        private static InitialSessionState CreateRestrictedForWorkflowServerWithFullLanguage()
         {
             InitialSessionState iss = CreateDefault();
 
@@ -1778,7 +1778,7 @@ namespace System.Management.Automation.Runspaces
             return iss;
         }
 
-        static private InitialSessionState CreateRestrictedForWorkflowServerMinimum()
+        private static InitialSessionState CreateRestrictedForWorkflowServerMinimum()
         {
             InitialSessionState iss = CreateDefault();
             iss.LanguageMode = PSLanguageMode.NoLanguage;
@@ -5408,7 +5408,7 @@ if($paths) {
                 string.Concat("$null = Read-Host '", CodeGeneration.EscapeSingleQuotedStringContent(RunspaceInit.PauseDefinitionString),"'"), isProductCode: true)
         };
 
-        static internal void RemoveAllDrivesForProvider(ProviderInfo pi, SessionStateInternal ssi)
+        internal static void RemoveAllDrivesForProvider(ProviderInfo pi, SessionStateInternal ssi)
         {
             foreach (PSDriveInfo di in ssi.GetDrivesForProvider(pi.FullName))
             {
@@ -5423,7 +5423,7 @@ if($paths) {
             }
         }
 
-        static private PSTraceSource s_PSSnapInTracer = PSTraceSource.GetTracer("PSSnapInLoadUnload", "Loading and unloading mshsnapins", false);
+        private static PSTraceSource s_PSSnapInTracer = PSTraceSource.GetTracer("PSSnapInLoadUnload", "Loading and unloading mshsnapins", false);
 
         internal static string CoreSnapin = "Microsoft.PowerShell.Core";
         internal static string CoreModule = "Microsoft.PowerShell.Core";
@@ -5440,7 +5440,7 @@ if($paths) {
                                                                 "Microsoft.WSMan.Management"
                                                             };
 
-        static internal HashSet<string> NestedEngineModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        internal static HashSet<string> NestedEngineModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                        {
                            "Microsoft.PowerShell.Commands.Utility",
                            "Microsoft.PowerShell.Commands.Management",
@@ -6092,14 +6092,14 @@ if($paths) {
         }
 
         // cmdletCache holds the list of cmdlets along with its aliases per each assembly.
-        static private Lazy<ConcurrentDictionary<Assembly, Dictionary<string, Tuple<SessionStateCmdletEntry, List<SessionStateAliasEntry>>>>> s_cmdletCache =
+        private static Lazy<ConcurrentDictionary<Assembly, Dictionary<string, Tuple<SessionStateCmdletEntry, List<SessionStateAliasEntry>>>>> s_cmdletCache =
             new Lazy<ConcurrentDictionary<Assembly, Dictionary<string, Tuple<SessionStateCmdletEntry, List<SessionStateAliasEntry>>>>>();
-        static private Lazy<ConcurrentDictionary<Assembly, Dictionary<string, SessionStateProviderEntry>>> s_providerCache =
+        private static Lazy<ConcurrentDictionary<Assembly, Dictionary<string, SessionStateProviderEntry>>> s_providerCache =
             new Lazy<ConcurrentDictionary<Assembly, Dictionary<string, SessionStateProviderEntry>>>();
         // Using a ConcurrentDictionary for this so that we can avoid having a private lock variable. We use only the keys for checking.
         private static Lazy<ConcurrentDictionary<Assembly, bool>> s_assembliesWithModuleInitializerCache = new Lazy<ConcurrentDictionary<Assembly, bool>>();
 
-        static private string GetCmdletName(CmdletAttribute cmdletAttribute)
+        private static string GetCmdletName(CmdletAttribute cmdletAttribute)
         {
             string verb = cmdletAttribute.VerbName;
 
@@ -6108,12 +6108,12 @@ if($paths) {
             return verb + "-" + noun;
         }
 
-        static private string GetProviderName(CmdletProviderAttribute providerAttribute)
+        private static string GetProviderName(CmdletProviderAttribute providerAttribute)
         {
             return providerAttribute.ProviderName;
         }
 
-        static private bool IsCmdletClass(Type type)
+        private static bool IsCmdletClass(Type type)
         {
             if (type == null)
                 return false;
@@ -6121,7 +6121,7 @@ if($paths) {
             return type.IsSubclassOf(typeof(System.Management.Automation.Cmdlet));
         }
 
-        static private bool IsProviderClass(Type type)
+        private static bool IsProviderClass(Type type)
         {
             if (type == null)
                 return false;
@@ -6129,7 +6129,7 @@ if($paths) {
             return type.IsSubclassOf(typeof(System.Management.Automation.Provider.CmdletProvider));
         }
 
-        static internal bool IsModuleAssemblyInitializerClass(Type type)
+        internal static bool IsModuleAssemblyInitializerClass(Type type)
         {
             if (type == null)
             {
@@ -6139,17 +6139,17 @@ if($paths) {
             return type.IsSubclassOf(typeof(System.Management.Automation.IModuleAssemblyInitializer));
         }
 
-        static private bool HasDefaultConstructor(Type type)
+        private static bool HasDefaultConstructor(Type type)
         {
             return !(type.GetConstructor(PSTypeExtensions.EmptyTypes) == null);
         }
 
-        static private string GetHelpFile(string assemblyPath)
+        private static string GetHelpFile(string assemblyPath)
         {
             return Path.GetFileName(assemblyPath) + StringLiterals.HelpFileExtension;
         }
 
-        static private PSTraceSource s_PSSnapInTracer = PSTraceSource.GetTracer("PSSnapInLoadUnload", "Loading and unloading mshsnapins", false);
+        private static PSTraceSource s_PSSnapInTracer = PSTraceSource.GetTracer("PSSnapInLoadUnload", "Loading and unloading mshsnapins", false);
     }
 
     // Guid is {15d4c170-2f29-5689-a0e2-d95b0c7b4ea0}

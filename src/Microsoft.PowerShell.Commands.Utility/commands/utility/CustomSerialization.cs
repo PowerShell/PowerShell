@@ -1125,7 +1125,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="writer"></param>
         /// <param name="elementTag">tag of element</param>
-        static internal void WriteStartElement(XmlWriter writer, string elementTag)
+        internal static void WriteStartElement(XmlWriter writer, string elementTag)
         {
             writer.WriteStartElement(elementTag);
         }
@@ -1136,7 +1136,7 @@ namespace System.Management.Automation
         /// <param name="writer"></param>
         /// <param name="name">name of attribute</param>
         /// <param name="value">value of attribute</param>
-        static internal void WriteAttribute(XmlWriter writer, string name, string value)
+        internal static void WriteAttribute(XmlWriter writer, string name, string value)
         {
             writer.WriteAttributeString(name, value);
         }

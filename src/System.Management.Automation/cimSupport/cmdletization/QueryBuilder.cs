@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Cmdletization
     /// <summary>
     /// QueryBuilder supports building of object model queries in an object-model-agnostic way
     /// </summary>
-    abstract public class QueryBuilder
+    public abstract class QueryBuilder
     {
         /// <summary>
         /// Modifies the query, so that it only returns objects with a given property value

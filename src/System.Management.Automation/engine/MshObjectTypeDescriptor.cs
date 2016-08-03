@@ -323,7 +323,7 @@ namespace System.Management.Automation
     /// </summary>
     public class PSObjectTypeDescriptor : CustomTypeDescriptor
     {
-        static internal PSTraceSource typeDescriptor = PSTraceSource.GetTracer("TypeDescriptor", "Traces the behavior of PSObjectTypeDescriptor, PSObjectTypeDescriptionProvider and PSObjectPropertyDescriptor.", false);
+        internal static PSTraceSource typeDescriptor = PSTraceSource.GetTracer("TypeDescriptor", "Traces the behavior of PSObjectTypeDescriptor, PSObjectTypeDescriptionProvider and PSObjectPropertyDescriptor.", false);
 
         /// <summary>
         /// Occurs when there was an exception setting the value of a property.

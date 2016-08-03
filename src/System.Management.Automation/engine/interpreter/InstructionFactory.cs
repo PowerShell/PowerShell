@@ -71,13 +71,13 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-        internal protected abstract Instruction GetArrayItem();
-        internal protected abstract Instruction SetArrayItem();
-        internal protected abstract Instruction TypeIs();
-        internal protected abstract Instruction TypeAs();
-        internal protected abstract Instruction DefaultValue();
-        internal protected abstract Instruction NewArray();
-        internal protected abstract Instruction NewArrayInit(int elementCount);
+        protected internal abstract Instruction GetArrayItem();
+        protected internal abstract Instruction SetArrayItem();
+        protected internal abstract Instruction TypeIs();
+        protected internal abstract Instruction TypeAs();
+        protected internal abstract Instruction DefaultValue();
+        protected internal abstract Instruction NewArray();
+        protected internal abstract Instruction NewArrayInit(int elementCount);
     }
 
     internal sealed class InstructionFactory<T> : InstructionFactory
@@ -94,37 +94,37 @@ namespace System.Management.Automation.Interpreter
 
         private InstructionFactory() { }
 
-        internal protected override Instruction GetArrayItem()
+        protected internal override Instruction GetArrayItem()
         {
             return _getArrayItem ?? (_getArrayItem = new GetArrayItemInstruction<T>());
         }
 
-        internal protected override Instruction SetArrayItem()
+        protected internal override Instruction SetArrayItem()
         {
             return _setArrayItem ?? (_setArrayItem = new SetArrayItemInstruction<T>());
         }
 
-        internal protected override Instruction TypeIs()
+        protected internal override Instruction TypeIs()
         {
             return _typeIs ?? (_typeIs = new TypeIsInstruction<T>());
         }
 
-        internal protected override Instruction TypeAs()
+        protected internal override Instruction TypeAs()
         {
             return _typeAs ?? (_typeAs = new TypeAsInstruction<T>());
         }
 
-        internal protected override Instruction DefaultValue()
+        protected internal override Instruction DefaultValue()
         {
             return _defaultValue ?? (_defaultValue = new DefaultValueInstruction<T>());
         }
 
-        internal protected override Instruction NewArray()
+        protected internal override Instruction NewArray()
         {
             return _newArray ?? (_newArray = new NewArrayInstruction<T>());
         }
 
-        internal protected override Instruction NewArrayInit(int elementCount)
+        protected internal override Instruction NewArrayInit(int elementCount)
         {
             return new NewArrayInitInstruction<T>(elementCount);
         }

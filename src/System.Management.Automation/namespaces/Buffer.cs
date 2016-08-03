@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         // It is however cross platform as the CRT hasn't ported their fast version to 64-bit
         // platforms.
         //
-        internal unsafe static int IndexOfByte(byte* src, byte value, int index, int count)
+        internal static unsafe int IndexOfByte(byte* src, byte value, int index, int count)
         {
             BCLDebug.Assert(src != null, "src should not be null");
 
@@ -96,14 +96,14 @@ namespace Microsoft.PowerShell.Commands.Internal
             return -1;
         }
 
-        internal unsafe static void ZeroMemory(byte* src, long len)
+        internal static unsafe void ZeroMemory(byte* src, long len)
         {
             while (len-- > 0)
                 *(src + len) = 0;
         }
 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-        internal unsafe static void memcpy(byte* src, int srcIndex, byte[] dest, int destIndex, int len)
+        internal static unsafe void memcpy(byte* src, int srcIndex, byte[] dest, int destIndex, int len)
         {
             BCLDebug.Assert((srcIndex >= 0) && (destIndex >= 0) && (len >= 0), "Index and length must be non-negative!");
             BCLDebug.Assert(dest.Length - destIndex >= len, "not enough bytes in dest");
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-        internal unsafe static void memcpy(byte[] src, int srcIndex, byte* pDest, int destIndex, int len)
+        internal static unsafe void memcpy(byte[] src, int srcIndex, byte* pDest, int destIndex, int len)
         {
             BCLDebug.Assert((srcIndex >= 0) && (destIndex >= 0) && (len >= 0), "Index and length must be non-negative!");
             BCLDebug.Assert(src.Length - srcIndex >= len, "not enough bytes in src");
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-        internal unsafe static void memcpy(char* pSrc, int srcIndex, char* pDest, int destIndex, int len)
+        internal static unsafe void memcpy(char* pSrc, int srcIndex, char* pDest, int destIndex, int len)
         {
             BCLDebug.Assert((srcIndex >= 0) && (destIndex >= 0) && (len >= 0), "Index and length must be non-negative!");
 
@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         // Note - using a long instead of an int for the length parameter
         // slows this method down by ~18%.
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-        internal unsafe static void memcpyimpl(byte* src, byte* dest, int len)
+        internal static unsafe void memcpyimpl(byte* src, byte* dest, int len)
         {
             BCLDebug.Assert(len >= 0, "Negative length in memcopy!");
 

@@ -1499,12 +1499,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Enables or disables the appdomain module path cache 
         /// </summary>
-        static public bool UseAppDomainLevelModuleCache { get; set; }
+        public static bool UseAppDomainLevelModuleCache { get; set; }
 
         /// <summary>
         /// Clear out the appdomain-level module path cache.
         /// </summary>
-        static public void ClearAppDomainLevelModulePathCache()
+        public static void ClearAppDomainLevelModulePathCache()
         {
             s_appdomainModulePathCache.Clear();
         }
@@ -1515,7 +1515,7 @@ namespace System.Management.Automation
         /// A method available in debug mode providing access to the module path cache.
         /// </summary>
         /// <returns></returns>
-        static public object GetAppDomainLevelModuleCache()
+        public static object GetAppDomainLevelModuleCache()
         {
             return s_appdomainModulePathCache;
         }
@@ -1525,7 +1525,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="moduleName">Module name to look up.</param>
         /// <returns>The path to the matched module</returns>
-        static internal string ResolveUsingAppDomainLevelModuleCache(string moduleName)
+        internal static string ResolveUsingAppDomainLevelModuleCache(string moduleName)
         {
             string path;
             if (s_appdomainModulePathCache.TryGetValue(moduleName, out path))
@@ -1545,7 +1545,7 @@ namespace System.Management.Automation
         /// <param name="moduleName"></param>
         /// <param name="path"></param>
         /// <param name="force"></param>
-        static internal void AddToAppDomainLevelModuleCache(string moduleName, string path, bool force)
+        internal static void AddToAppDomainLevelModuleCache(string moduleName, string path, bool force)
         {
             if (force)
             {
@@ -1562,13 +1562,13 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="moduleName">The name of the module to remove from the cache</param>
         /// <returns>True if the module was remove.</returns>
-        static internal bool RemoveFromAppDomainLevelCache(string moduleName)
+        internal static bool RemoveFromAppDomainLevelCache(string moduleName)
         {
             string outString;
             return s_appdomainModulePathCache.TryRemove(moduleName, out outString);
         }
 
-        private readonly static System.Collections.Concurrent.ConcurrentDictionary<string, string> s_appdomainModulePathCache =
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> s_appdomainModulePathCache =
             new System.Collections.Concurrent.ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
     } // PSModuleInfo
 

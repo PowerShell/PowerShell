@@ -37,7 +37,7 @@ namespace System.Management.Automation
         /// Name of this help provider.
         /// </summary>
         /// <value>Name of this help provider.</value>
-        override internal string Name
+        internal override string Name
         {
             get
             {
@@ -49,7 +49,7 @@ namespace System.Management.Automation
         /// Help category of this provider.
         /// </summary>
         /// <value>Help category of this provider</value>
-        override internal HelpCategory HelpCategory
+        internal override HelpCategory HelpCategory
         {
             get
             {
@@ -65,7 +65,7 @@ namespace System.Management.Automation
         /// Do exact match help based on the target. 
         /// </summary>
         /// <param name="helpRequest">help request object</param>
-        override internal IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
+        internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             Collection<ProviderInfo> matchingProviders = null;
 
@@ -120,7 +120,7 @@ namespace System.Management.Automation
         }
 
 
-        static private string GetProviderAssemblyPath(ProviderInfo providerInfo)
+        private static string GetProviderAssemblyPath(ProviderInfo providerInfo)
         {
             if (providerInfo == null)
                 return null;
@@ -267,7 +267,7 @@ namespace System.Management.Automation
         /// If false, seraches for pattern in the command names.
         /// </param>        
         /// <returns></returns>
-        override internal IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
+        internal override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
             int countOfHelpInfoObjectsFound = 0;
             string target = helpRequest.Target;
@@ -359,7 +359,7 @@ namespace System.Management.Automation
             }
         }
 
-        override internal IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
+        internal override IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
             ProviderCommandHelpInfo providerCommandHelpInfo = new ProviderCommandHelpInfo(
                 helpInfo, helpRequest.ProviderContext);
@@ -416,7 +416,7 @@ namespace System.Management.Automation
         /// This will reset the help cache. Normally this corresponds to a 
         /// help culture change. 
         /// </summary>
-        override internal void Reset()
+        internal override void Reset()
         {
             base.Reset();
 

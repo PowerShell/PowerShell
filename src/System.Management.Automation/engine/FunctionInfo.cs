@@ -503,7 +503,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The command metadata for the function or filter
         /// </summary>
-        override internal CommandMetadata CommandMetadata
+        internal override CommandMetadata CommandMetadata
         {
             get
             {

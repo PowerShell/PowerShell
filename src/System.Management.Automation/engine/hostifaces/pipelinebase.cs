@@ -215,7 +215,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Access the input writer for this pipeline.
         /// </summary>
-        override public PipelineWriter Input
+        public override PipelineWriter Input
         {
             get
             {
@@ -226,7 +226,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Access the output reader for this pipeline.
         /// </summary>
-        override public PipelineReader<PSObject> Output
+        public override PipelineReader<PSObject> Output
         {
             get
             {
@@ -242,7 +242,7 @@ namespace System.Management.Automation.Runspaces
         /// In this release, the objects read from this PipelineReader
         /// are PSObjects wrapping ErrorRecords.
         /// </remarks>
-        override public PipelineReader<object> Error
+        public override PipelineReader<object> Error
         {
             get
             {
@@ -266,7 +266,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Synchronous call to stop the running pipeline.
         /// </summary>
-        override public void Stop()
+        public override void Stop()
         {
             CoreStop(true);
         }
@@ -274,7 +274,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Asynchronous call to stop the running pipeline.
         /// </summary>
-        override public void StopAsync()
+        public override void StopAsync()
         {
             CoreStop(false);
         }
@@ -373,7 +373,7 @@ namespace System.Management.Automation.Runspaces
         /// On Synchronous Invoke if output is throttled and no one is reading from
         /// output pipe, Execution will block after buffer is full.
         /// </remarks>
-        override public Collection<PSObject> Invoke(IEnumerable input)
+        public override Collection<PSObject> Invoke(IEnumerable input)
         {
             // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
             if (_disposed)
@@ -421,7 +421,7 @@ namespace System.Management.Automation.Runspaces
         /// <remarks>
         /// Results are returned through the <see cref="Pipeline.Output"/> reader.
         /// </remarks>
-        override public void InvokeAsync()
+        public override void InvokeAsync()
         {
             CoreInvoke(null, false);
         }

@@ -58,10 +58,10 @@ namespace System.Management.Automation
     {
         #region tracer
         [TraceSource("ParameterBinderBase", "A abstract helper class for the CommandProcessor that binds parameters to the specified object.")]
-        static private PSTraceSource s_tracer = PSTraceSource.GetTracer("ParameterBinderBase", "A abstract helper class for the CommandProcessor that binds parameters to the specified object.");
+        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("ParameterBinderBase", "A abstract helper class for the CommandProcessor that binds parameters to the specified object.");
 
         [TraceSource("ParameterBinding", "Traces the process of binding the arguments to the parameters of cmdlets, scripts, and applications.")]
-        static internal PSTraceSource bindingTracer =
+        internal static PSTraceSource bindingTracer =
             PSTraceSource.GetTracer(
                 "ParameterBinding",
                 "Traces the process of binding the arguments to the parameters of cmdlets, scripts, and applications.",

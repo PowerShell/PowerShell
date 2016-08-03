@@ -1185,7 +1185,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>
         /// A generic Func{} object to convert an int to the specified enum type.
         /// </returns>
-        static internal Func<int, T?> MakeConverter()
+        internal static Func<int, T?> MakeConverter()
         {
             var param = Expression.Parameter(typeof(int));
             var method = Expression.Lambda<Func<int, T?>>

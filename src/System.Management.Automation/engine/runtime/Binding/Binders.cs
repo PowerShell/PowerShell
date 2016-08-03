@@ -463,7 +463,7 @@ namespace System.Management.Automation.Language
     {
         private static readonly PSEnumerableBinder s_binder = new PSEnumerableBinder();
 
-        static internal PSEnumerableBinder Get()
+        internal static PSEnumerableBinder Get()
         {
             return s_binder;
         }
@@ -643,7 +643,7 @@ namespace System.Management.Automation.Language
         /// Check if the statically known type is potentially enumerable.  We can avoid some dynamic sites if we know the
         /// type is never enumerable.
         /// </summary>
-        static internal bool IsStaticTypePossiblyEnumerable(Type type)
+        internal static bool IsStaticTypePossiblyEnumerable(Type type)
         {
             if (type == typeof(object) || type == typeof(PSObject) || type.IsArray)
             {
@@ -665,7 +665,7 @@ namespace System.Management.Automation.Language
 
         // Binders normally cannot return null, but we want a way to detect if something is enumerable,
         // so we return null if the target is not enumerable.
-        static internal DynamicMetaObject IsEnumerable(DynamicMetaObject target)
+        internal static DynamicMetaObject IsEnumerable(DynamicMetaObject target)
         {
             var binder = PSEnumerableBinder.Get();
             var result = binder.FallbackConvert(target, DynamicMetaObjectExtensions.FakeError);
@@ -743,7 +743,7 @@ namespace System.Management.Automation.Language
     {
         private static readonly PSToObjectArrayBinder s_binder = new PSToObjectArrayBinder();
 
-        static internal PSToObjectArrayBinder Get()
+        internal static PSToObjectArrayBinder Get()
         {
             return s_binder;
         }
@@ -799,7 +799,7 @@ namespace System.Management.Automation.Language
     {
         private static readonly PSPipeWriterBinder s_binder = new PSPipeWriterBinder();
 
-        static internal PSPipeWriterBinder Get()
+        internal static PSPipeWriterBinder Get()
         {
             return s_binder;
         }
@@ -1011,7 +1011,7 @@ namespace System.Management.Automation.Language
     {
         private static readonly PSToStringBinder s_binder = new PSToStringBinder();
 
-        static internal PSToStringBinder Get()
+        internal static PSToStringBinder Get()
         {
             return s_binder;
         }
@@ -1076,7 +1076,7 @@ namespace System.Management.Automation.Language
     {
         private static readonly PSPipelineResultToBoolBinder s_binder = new PSPipelineResultToBoolBinder();
 
-        static internal PSPipelineResultToBoolBinder Get()
+        internal static PSPipelineResultToBoolBinder Get()
         {
             return s_binder;
         }
