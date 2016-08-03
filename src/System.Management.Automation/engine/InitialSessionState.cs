@@ -1635,7 +1635,7 @@ namespace System.Management.Automation.Runspaces
             //
             foreach (SessionStateCommandEntry entry in iss.Commands)
             {
-                if (entry.GetType() == typeof(SessionStateApplicationEntry))
+                if (entry is SessionStateApplicationEntry)
                 {
                     iss.Commands.Remove(entry.Name, entry);
                     break;
@@ -1660,7 +1660,7 @@ namespace System.Management.Automation.Runspaces
 
             foreach (SessionStateCommandEntry entry in iss.Commands)
             {
-                if (entry.GetType() == typeof(SessionStateAliasEntry))
+                if (entry is SessionStateAliasEntry)
                 {
                     if (allowedAliases.Contains(entry.Name, StringComparer.OrdinalIgnoreCase))
                     {
@@ -1705,7 +1705,7 @@ namespace System.Management.Automation.Runspaces
             //
             foreach (SessionStateCommandEntry entry in iss.Commands)
             {
-                if (entry.GetType() == typeof(SessionStateApplicationEntry))
+                if (entry is SessionStateApplicationEntry)
                 {
                     iss.Commands.Remove(entry.Name, entry);
                     break;
@@ -1735,7 +1735,7 @@ namespace System.Management.Automation.Runspaces
 
             foreach (SessionStateCommandEntry entry in iss.Commands)
             {
-                if (entry.GetType() == typeof(SessionStateAliasEntry))
+                if (entry is SessionStateAliasEntry)
                 {
                     if (allowedAliases.Contains(entry.Name, StringComparer.OrdinalIgnoreCase))
                     {

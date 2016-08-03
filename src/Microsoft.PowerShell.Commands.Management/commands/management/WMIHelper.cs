@@ -140,11 +140,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 thread = new Thread(new ThreadStart(ConnectRemoveWmi));
             }
-            else if (_wmiObject.GetType() == typeof(InvokeWmiMethod))
+            else if (_wmiObject is InvokeWmiMethod)
             {
                 thread = new Thread(new ThreadStart(ConnectInvokeWmi));
             }
-            else if (_wmiObject.GetType() == typeof(SetWmiInstance))
+            else if (_wmiObject is SetWmiInstance)
             {
                 thread = new Thread(new ThreadStart(ConnectSetWmi));
             }
@@ -1183,9 +1183,9 @@ namespace Microsoft.PowerShell.Commands
         {
             ConnectionOptions options = GetConnectionOption();
             ManagementObject mObject = null;
-            if (this.GetType() == typeof(SetWmiInstance))
+            var setObject = this as SetWmiInstance;
+            if (setObject != null)
             {
-                SetWmiInstance setObject = (SetWmiInstance)this;
                 if (setObject.Path != null)
                 {
                     mPath.Server = serverName;
@@ -1255,9 +1255,9 @@ namespace Microsoft.PowerShell.Commands
         internal ManagementPath SetWmiInstanceBuildManagementPath()
         {
             ManagementPath mPath = null;
-            if (this.GetType() == typeof(SetWmiInstance))
+            var wmiInstance = this as SetWmiInstance;
+            if (wmiInstance != null)
             {
-                SetWmiInstance wmiInstance = (SetWmiInstance)this;
                 //If Class is specified only CreateOnly flag is supported
                 if (wmiInstance.Class != null)
                 {
@@ -1342,9 +1342,9 @@ namespace Microsoft.PowerShell.Commands
         {
             //Should only be called from Set-WMIInstance cmdlet
             ManagementObject mObj = null;
-            if (this.GetType() == typeof(SetWmiInstance))
+            var wmiInstance = this as SetWmiInstance;
+            if (wmiInstance != null)
             {
-                SetWmiInstance wmiInstance = (SetWmiInstance)this;
                 //Extra check
                 if (wmiInstance.InputObject != null)
                 {

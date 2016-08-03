@@ -328,19 +328,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 StartData sdObj = obj as StartData;
                 if (sdObj != null)
                 {
-                    if (sdObj.shapeInfo.GetType() == typeof(WideViewHeaderInfo))
+                    if (sdObj.shapeInfo is WideViewHeaderInfo)
                     {
                         violatingCommand = "format-wide";
                     }
-                    else if (sdObj.shapeInfo.GetType() == typeof(TableHeaderInfo))
+                    else if (sdObj.shapeInfo is TableHeaderInfo)
                     {
                         violatingCommand = "format-table";
                     }
-                    else if (sdObj.shapeInfo.GetType() == typeof(ListViewHeaderInfo))
+                    else if (sdObj.shapeInfo is ListViewHeaderInfo)
                     {
                         violatingCommand = "format-list";
                     }
-                    else if (sdObj.shapeInfo.GetType() == typeof(ComplexViewHeaderInfo))
+                    else if (sdObj.shapeInfo is ComplexViewHeaderInfo)
                     {
                         violatingCommand = "format-complex";
                     }

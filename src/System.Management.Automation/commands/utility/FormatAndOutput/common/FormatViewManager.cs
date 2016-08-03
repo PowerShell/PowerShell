@@ -280,19 +280,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                     else if (String.Equals(viewName, currentViewDefinition.name, StringComparison.OrdinalIgnoreCase))
                                     {
                                         string cmdletFormatName = null;
-                                        if (currentViewDefinition.mainControl.GetType() == typeof(TableControlBody))
+                                        if (currentViewDefinition.mainControl is TableControlBody)
                                         {
                                             cmdletFormatName = "Format-Table";
                                         }
-                                        else if (currentViewDefinition.mainControl.GetType() == typeof(ListControlBody))
+                                        else if (currentViewDefinition.mainControl is ListControlBody)
                                         {
                                             cmdletFormatName = "Format-List";
                                         }
-                                        else if (currentViewDefinition.mainControl.GetType() == typeof(WideControlBody))
+                                        else if (currentViewDefinition.mainControl is WideControlBody)
                                         {
                                             cmdletFormatName = "Format-Wide";
                                         }
-                                        else if (currentViewDefinition.mainControl.GetType() == typeof(ComplexControlBody))
+                                        else if (currentViewDefinition.mainControl is ComplexControlBody)
                                         {
                                             cmdletFormatName = "Format-Custom";
                                         }
