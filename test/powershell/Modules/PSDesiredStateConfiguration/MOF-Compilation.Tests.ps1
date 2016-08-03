@@ -14,6 +14,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         [Scriptblock]::Create(@"
         configuration DSCTestConfig
         {
+            Import-DscResource -ModuleName PSDesiredStateConfiguration
             Node "localhost" {
                 nxFile f1
                 {
@@ -32,6 +33,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         [Scriptblock]::Create(@"
         configuration DSCTestConfig
         {
+            Import-DscResource -ModuleName PSDesiredStateConfiguration
             Node "localhost" {
                 nxScript f1
                 {
@@ -53,7 +55,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         [Scriptblock]::Create(@"
 	Configuration WordPressServer{
 
-		
+                Import-DscResource -ModuleName PSDesiredStateConfiguration		
 
 		Node CentOS{
 		
