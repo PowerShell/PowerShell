@@ -1,3 +1,5 @@
+# Issue Management
+
 ## Long-living issue labels
 
 ### Feature areas
@@ -38,5 +40,7 @@ Issues can be in one of the following states:
 The assignee(s) are responsible for signing off before the PR will be merged.
 
 * `help wanted` : We are looking for someone to work on this issue.
-* `need review` : This Pull Request is being reviewed.  Please see [Pull Request - Code Review](../../.github/CONTRIBUTING.md#pull-request-code-review)
+* `need review` : This pull request is being reviewed.  Please see [Pull Request - Code Review](../../.github/CONTRIBUTING.md#pull-request-code-review)
 * `waiting for author`: The issue or pull request needs 
+* `add to changelog`: The PR requires an addition to the changelog. 
+Should be removed when it has been added. 

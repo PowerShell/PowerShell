@@ -3,13 +3,13 @@
 ## Terms
 
 * [**PowerShell Committee**](#powershell-committee): A committee of project owners who are responsible for design decisions, approving [RFCs][RFC-repo], and approving new maintainers/committee members 
-* **Project Leads**: Project Leads supports the PowerShell Committee, engineering teams, and community by communicating with other Microsoft teams and leadership as well as other companies to resolve disputes.  
+* **Project Leads**: Project Leads support the PowerShell Committee, engineering teams, and community by working across Microsoft teams and leadership, and working through industry issues with other companies.
 They also have optional votes on the PowerShell Committee when they choose to invoke them.
 * [**Repository maintainer**](#repository-maintainers): An individual responsible for merging pull requests (PRs) into `master` when all requirements are met (code review, tests, docs, and RFC approval as applicable).
 Repository Maintainers are the only people with write permissions into `master`.
 * [**Area experts**](#area-experts): People who are experts for specific components (e.g. PSReadline, the parser) or technologies (e.g. security, performance). 
 Area experts are responsible for code reviews, issue triage, and providing their expertise to others. 
-* **Corporation**: The Corporation owns the PowerShell repository and, under extreme circumstances, reserves the right to dissolve or reform the PowerShell Committee.
+* **Corporation**: The Corporation owns the PowerShell repository and, under extreme circumstances, reserves the right to dissolve or reform the PowerShell Committee, the Project Leads, and the Corporate Maintainer.
 The Corporation for PowerShell is Microsoft.
 * **Corporate Maintainer**: The Corporate Maintainer is an entity, person or set of persons, with the ability to veto decisions made by the PowerShell Committee or any other collaborators on the PowerShell project.
 This veto power will be used with restraint since it is intended that the community drive the project. 
@@ -83,59 +83,9 @@ After the RFC has been discussed, a unanimous vote will be required for the new 
 ## Repository Maintainers
 
 Repository Maintainers are trusted stewards of the PowerShell repository responsible for maintaining consistency and quality of PowerShell code. 
-One of their primary responsibilities is merging pull requests after all requirements have been fulfilled. 
+One of their primary responsibilities is merging pull requests after all requirements have been fulfilled.
 
-Repository Maintainers have [write access](https://help.github.com/articles/repository-permission-levels-for-an-organization/) to the PowerShell repository which gives them the power to:
-
-1. Merge pull requests to all branches *including* `master`.
-1. `git push` to all branches *including* `master`.
-1. Correctly assigning labels, milestones, and contributors to [issues](https://guides.github.com/features/issues/)
-
-### Current Repository Maintainers
-
-* Sergei Vorobev ([vors](https://github.com/vors))
-* Jason Shirk ([lzybkr](https://github.com/lzybkr))
-* Dongbo Wang ([daxian-dbw](https://github.com/daxian-dbw))
-* Travis Plunk ([TravisEz123](https://github.com/TravisEz123))
-* Mike Richmond ([mirichmo](https://github.com/mirichmo))
-
-### Repository Maintainer Responsibilities
-
-Repository Maintainers enable rapid contributions while maintaining a high level of quality in PowerShell by ensuring that all development processes are being followed correctly. 
-
-If you are a Repository Maintainer:
-
-1. **DO** add [the correct labels](../dev-process/issue-label-descriptions.md) to issues and pull requests 
-1. **DO** make sure that [any change requiring approval from the PowerShell Committee](#changes-that-require-an-rfc) has gone through the proper [RFC][RFC-repo] or approval process
-1. **DO** make sure the correct [Area Experts](#area-experts) are assigned to relevant pull requests and issues.
-This includes adding extra reviewers when it makes sense
-(e.g. a pull request that adds remoting capabilities might require a security expert)
-1. **DO** validate that code reviews have been performed before merging a pull request
-1. **DO** validate that applicable tests and documentation have been written before merging a pull request
-1. **DO** make sure contributors are following the [contributor guidelines](../../.github/CONTRIBUTING.md)
-1. **DO** ask people to resend a pull request, if it [doesn't target `master`](../../.github/CONTRIBUTING.md#lifecycle-of-a-pull-request).
-1. **DO** wait for the [CI system][ci-system] build to pass for pull requests.
-1. **DO** encourage contributors to refer to issues in their pull request description per the [issue template](../../.github/ISSUE_TEMPLATE) (e.g. `Resolves issue #123`) 
-1. **DO** encourage contributors to create meaningful titles for all PRs.
-Edit the title if necessary to provide clarity on the problem
-1. **DO** verify that all contributors are following the [Coding Guidlines](../dev-process/coding-guidelines.md)
-1. **DO** ensure that each contributor has signed a valid Contributor License Agreement (CLA)
-1. **DO** verify compliance with any third party code license terms (e.g., requiring attribution, etc.) if the contribution contains third party code
-
-1. **DON'T** merge pull requests with a failed CI build into `master`
-1. **DON'T** merge pull requests without the label `cla-signed` or `cla-not-required` from the Microsoft CLA bot
-1. **DON'T** merge pull requests that do not [include all meaningful changes](../../.github/CONTRIBUTING.md#lifecycle-of-a-pull-request) under the **Unreleased** section in the repository's `CHANGELOG.md`
-1. **DON'T** merge your own pull requests.
-If a Repository Maintainer opens a pull request, another Maintainer must merge it 
-
-### Becoming a Repository Maintainer
-
-(TODO: paste from CM) Repository Maintainers currently consist entirely of Microsoft employees, it's expected that trusted, regular contributors to the PowerShell repository will become maintainers themselves.
-Eligibility is heavily dependent on the level of contribution and expertise: individuals who contribute in meaningful ways to the project will be recognized accordingly. 
-
-At any point in time, a Repository Maintainers can nominate a strong community member to become a Repository Maintainer. 
-Nominations should be submitted in the form of [RFCs][RFC-repo] detailing why that individual is qualified and how they will contribute.
-After the RFC has been discussed, a unanimous vote by the PowerShell Committee will be required for the new Repository Maintainer to be confirmed. 
+For more information on Repository Maintainers--their responsibilities, who they are, and how one becomes a Maintainer--see the [README for Repository Maintainers][maintainers].
 
 ## Area Experts
 
@@ -183,3 +133,4 @@ See our [Pull Request Process][pull-request-process]
 [issue-process]: ../dev-process/issue-label-descriptions.md
 [pull-request-process]: ../dev-process/pull-request-process.md
 [docs-contributing]: https://github.com/PowerShell/PowerShell-Docs/blob/staging/CONTRIBUTING.md
+[maintainers]: ../maintainers/README.md
