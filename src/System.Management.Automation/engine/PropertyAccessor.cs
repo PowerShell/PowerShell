@@ -72,16 +72,6 @@ namespace System.Management.Automation
             CurrentUser = 1
         }
 
-        /// <summary>
-        /// Describes the desired module path during a GetModulePath call.
-        /// </summary>
-        internal enum ModulePathTarget
-        {
-            CurrentUser = 0,
-            SharedCommon = 1,
-            VersionSpecific = 2
-        }
-
         #endregion // Enums
 
         #region Interface Methods
@@ -93,7 +83,7 @@ namespace System.Management.Automation
         /// Note: There is no setter because this value is immutable.
         /// </summary>
         /// <returns>Module path values from the config file.</returns>
-        internal abstract string GetModulePath(ModulePathTarget target);
+        internal abstract string GetModulePath(PropertyScope scope);
 
         /// <summary>
         /// Existing Key = HKCU and HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell
@@ -172,27 +162,28 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Note: This value is not writable, so it MUST be set during post-install configuration.
-        /// Also, it will only be written to the $PSHOME configuration file (not the per-user file).
+        /// This value is not writable via the API and must be set using a text editor.
         /// </summary>
-        /// <param name="target"></param>
-        /// <returns>Value if found, null otherwise. The behavior matches Environment.GetEnvironmentVariable().</returns>
-        internal override string GetModulePath(ModulePathTarget target)
+        /// <param name="scope"></param>
+        /// <returns>Value if found, null otherwise. The behavior matches ModuleIntrinsics.GetExpandedEnvironmentVariable().</returns>
+        internal override string GetModulePath(PropertyScope scope)
         {
-            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
-            if (ModulePathTarget.CurrentUser == target)
+            string scopeDirectory = psHomeConfigDirectory;
+            
+            // Defaults to system wide.
+            if (PropertyScope.CurrentUser == scope)
             {
-                // TODO: This feels unnecessary since it can be calculated based on the current user...
-                return ReadValueFromFile<string>(fileName, "UserModulePath");
+                scopeDirectory = appDataConfigDirectory;
             }
-            else if (ModulePathTarget.SharedCommon == target)
+
+            string fileName = Path.Combine(scopeDirectory, configFileName);
+
+            string modulePath = ReadValueFromFile<string>(fileName, "PsModulePath");
+            if (!string.IsNullOrEmpty(modulePath))
             {
-                return ReadValueFromFile<string>(fileName, "SharedCommonModulePath");
+                modulePath = Environment.ExpandEnvironmentVariables(modulePath);
             }
-            else
-            {
-                return null; 
-            }
+            return modulePath;
         }
 
         /// <summary>
@@ -497,12 +488,25 @@ namespace System.Management.Automation
         /// This method is not supported for systems when reading from the registry. Its value is
         /// known at compile time for inbox PowerShell.
         /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        internal override string GetModulePath(ModulePathTarget target)
+        /// <param name="scope"></param>
+        /// <returns>The specified module path. Null if not present.</returns>
+        internal override string GetModulePath(PropertyScope scope)
         {
-            // TODO: Better way to handle this?
-            throw new ArgumentException();
+            RegistryKey scopedKey = Registry.LocalMachine;
+            string regKeyName = @"System\CurrentControlSet\Control\Session Manager\Environment";
+
+            if (scope == PropertyScope.CurrentUser)
+            {
+                scopedKey = Registry.CurrentUser;
+                regKeyName = "Environment";
+            }
+
+            string modulePath = GetRegistryString(scopedKey, regKeyName, "PSMODULEPATH");
+            if ( ! string.IsNullOrEmpty(modulePath))
+            {
+                modulePath = Environment.ExpandEnvironmentVariables(modulePath);
+            }
+            return modulePath;
         }
 
         /// <summary>
