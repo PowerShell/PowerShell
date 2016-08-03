@@ -26,64 +26,40 @@ namespace Microsoft.PowerShell.Commands
     public sealed class NewObjectCommand : PSCmdlet
     {
         #region parameters
-        private string _typeName = null;
+
         /// <summary> the number</summary>
         [Parameter(ParameterSetName = netSetName, Mandatory = true, Position = 0)]
-        public string TypeName
-        {
-            get { return _typeName; }
-            set { _typeName = value; }
-        }
+        public string TypeName { get; set; } = null;
 
 
-        private string _comObject = null;
         private Guid _comObjectClsId = Guid.Empty;
         /// <summary> the ProgID of the Com object</summary>
         [Parameter(ParameterSetName = "Com", Mandatory = true, Position = 0)]
-        public string ComObject
-        {
-            get { return _comObject; }
-            set { _comObject = value; }
-        }
+        public string ComObject { get; set; } = null;
 
 
-        private object[] _arguments = null;
         /// <summary>
         /// The parameters for the constructor
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = netSetName, Mandatory = false, Position = 1)]
         [Alias("Args")]
-        public object[] ArgumentList
-        {
-            get { return _arguments; }
-            set { _arguments = value; }
-        }
-
-        private SwitchParameter _strict /* = false */;
+        public object[] ArgumentList { get; set; } = null;
 
         /// <summary>
         /// True if we should have an error when Com objects will use an interop assembly
         /// </summary>
         [Parameter(ParameterSetName = "Com")]
-        public SwitchParameter Strict
-        {
-            get { return _strict; }
-            set { _strict = value; }
-        }
+        public SwitchParameter Strict { get; set; }
 
         // Updated from Hashtable to IDictionary to support the work around ordered hashtables.
-        private IDictionary _property;
         /// <summary>
         /// gets the properties to be set.
         /// </summary>
         [Parameter]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public IDictionary Property
-        {
-            get { return _property; }
-            set { _property = value; }
-        }
+        public IDictionary Property { get; set; }
+
         # endregion parameters
 
         #region private
@@ -157,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
                 object _newObject = null;
                 try
                 {
-                    type = LanguagePrimitives.ConvertTo(_typeName, typeof(Type), CultureInfo.InvariantCulture) as Type;
+                    type = LanguagePrimitives.ConvertTo(TypeName, typeof(Type), CultureInfo.InvariantCulture) as Type;
                 }
                 catch (Exception e)
                 {
@@ -176,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
                         mshArgE = PSTraceSource.NewArgumentException(
                         "TypeName",
                         NewObjectStrings.TypeNotFound,
-                        _typeName);
+                        TypeName);
                         ThrowTerminatingError(
                             new ErrorRecord(
                                 mshArgE,
@@ -205,13 +181,13 @@ namespace Microsoft.PowerShell.Commands
                         "CannotInstantiateWinRTType", ErrorCategory.InvalidOperation, null));
                 }
 
-                if (_arguments == null || _arguments.Length == 0)
+                if (ArgumentList == null || ArgumentList.Length == 0)
                 {
                     ConstructorInfo ci = type.GetConstructor(PSTypeExtensions.EmptyTypes);
                     if (ci != null && ci.IsPublic)
                     {
                         _newObject = CallConstructor(type, new ConstructorInfo[] { ci }, new object[] { });
-                        if (_newObject != null && _property != null)
+                        if (_newObject != null && Property != null)
                         {
                             // The method invocation is disabled for "Hashtable to Object conversion" (Win8:649519), but we need to keep it enabled for New-Object for compatibility to PSv2
                             _newObject = LanguagePrimitives.SetObjectProperties(_newObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);
@@ -226,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
                         try
                         {
                             _newObject = Activator.CreateInstance(type);
-                            if (_newObject != null && _property != null)
+                            if (_newObject != null && Property != null)
                             {
                                 // Win8:649519
                                 _newObject = LanguagePrimitives.SetObjectProperties(_newObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);
@@ -250,8 +226,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (ctorInfos.Length != 0)
                     {
-                        _newObject = CallConstructor(type, ctorInfos, _arguments);
-                        if (_newObject != null && _property != null)
+                        _newObject = CallConstructor(type, ctorInfos, ArgumentList);
+                        if (_newObject != null && Property != null)
                         {
                             // Win8:649519
                             _newObject = LanguagePrimitives.SetObjectProperties(_newObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);
@@ -262,7 +238,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 mshArgE = PSTraceSource.NewArgumentException(
-                    "TypeName", NewObjectStrings.CannotFindAppropriateCtor, _typeName);
+                    "TypeName", NewObjectStrings.CannotFindAppropriateCtor, TypeName);
                 ThrowTerminatingError(
                   new ErrorRecord(
                       mshArgE,
@@ -271,7 +247,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else // Parameterset -Com
             {
-                int result = NewObjectNativeMethods.CLSIDFromProgID(_comObject, out _comObjectClsId);
+                int result = NewObjectNativeMethods.CLSIDFromProgID(ComObject, out _comObjectClsId);
 
                 // If we're in ConstrainedLanguage, do additional restrictions
                 if (Context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
@@ -312,7 +288,7 @@ namespace Microsoft.PowerShell.Commands
                          ErrorCategory.InvalidArgument, comObject));
                     }
                 }
-                if (comObject != null && _property != null)
+                if (comObject != null && Property != null)
                 {
                     // Win8:649519
                     comObject = LanguagePrimitives.SetObjectProperties(comObject, Property, type, CreateMemberNotFoundError, CreateMemberSetValueError, enableMethodCall: true);
@@ -414,13 +390,13 @@ namespace Microsoft.PowerShell.Commands
                     mshArgE = PSTraceSource.NewArgumentException(
                         "ComObject",
                         NewObjectStrings.CannotLoadComObjectType,
-                        _comObject);
+                        ComObject);
 
                     info.e = mshArgE;
                     info.success = false;
                     return;
                 }
-                info.objectCreated = SafeCreateInstance(type, _arguments);
+                info.objectCreated = SafeCreateInstance(type, ArgumentList);
                 info.success = true;
             }
             catch (Exception e)
@@ -442,11 +418,11 @@ namespace Microsoft.PowerShell.Commands
                 type = Marshal.GetTypeFromCLSID(_comObjectClsId);
                 if (type == null)
                 {
-                    mshArgE = PSTraceSource.NewArgumentException("ComObject", NewObjectStrings.CannotLoadComObjectType, _comObject);
+                    mshArgE = PSTraceSource.NewArgumentException("ComObject", NewObjectStrings.CannotLoadComObjectType, ComObject);
                     ThrowTerminatingError(
                         new ErrorRecord(mshArgE, "CannotLoadComObjectType", ErrorCategory.InvalidType, null));
                 }
-                return SafeCreateInstance(type, _arguments);
+                return SafeCreateInstance(type, ArgumentList);
             }
             catch (COMException e)
             {

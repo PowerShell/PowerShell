@@ -1132,7 +1132,7 @@ namespace System.Management.Automation
             List<CompletionResult> result = null;
             var expandableString = lastAst as ExpandableStringExpressionAst;
             var constantString = lastAst as StringConstantExpressionAst;
-            if (constantString == null && expandableString == null) { return result; }
+            if (constantString == null && expandableString == null) { return null; }
 
             string strValue = constantString != null ? constantString.Value : expandableString.Value;
             StringConstantType strType = constantString != null ? constantString.StringConstantType : expandableString.StringConstantType;

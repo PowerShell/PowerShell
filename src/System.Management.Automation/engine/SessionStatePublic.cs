@@ -2,13 +2,7 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Management.Automation;
-using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation;
 
@@ -106,74 +100,40 @@ namespace System.Management.Automation
         /// </summary>
         public DriveManagementIntrinsics Drive
         {
-            get
-            {
-                if (_drive == null)
-                {
-                    _drive = new DriveManagementIntrinsics(_sessionState);
-                }
-                return _drive;
-            }
-        } // Drive
+            get { return _drive ?? (_drive = new DriveManagementIntrinsics(_sessionState)); }
+        }
 
         /// <summary>
         /// Gets the APIs to access providers
         /// </summary>
         public CmdletProviderManagementIntrinsics Provider
         {
-            get
-            {
-                if (_provider == null)
-                {
-                    _provider = new CmdletProviderManagementIntrinsics(_sessionState);
-                }
-                return _provider;
-            } // get
-        } // Provider
+            get { return _provider ?? (_provider = new CmdletProviderManagementIntrinsics(_sessionState)); } // get
+        }
 
         /// <summary>
         /// Gets the APIs to access paths and location
         /// </summary>
         public PathIntrinsics Path
         {
-            get
-            {
-                if (_path == null)
-                {
-                    _path = new PathIntrinsics(_sessionState);
-                }
-                return _path;
-            } // get
-        } // Path
+            get { return _path ?? (_path = new PathIntrinsics(_sessionState)); }
+        }
 
         /// <summary>
         /// Gets the APIs to access variables in session state.
         /// </summary>
         public PSVariableIntrinsics PSVariable
         {
-            get
-            {
-                if (_variable == null)
-                {
-                    _variable = new PSVariableIntrinsics(_sessionState);
-                }
-                return _variable;
-            } // get
-        } // PSVariable
+            get { return _variable ?? (_variable = new PSVariableIntrinsics(_sessionState)); } // get
+        }
 
         /// <summary>
         /// Get/set constraints for this execution environemnt
         /// </summary>
         public PSLanguageMode LanguageMode
         {
-            get
-            {
-                return _sessionState.LanguageMode;
-            }
-            set
-            {
-                _sessionState.LanguageMode = value;
-            }
+            get { return _sessionState.LanguageMode; }
+            set { _sessionState.LanguageMode = value; }
         }
 
         /// <summary>
@@ -181,10 +141,7 @@ namespace System.Management.Automation
         /// </summary>
         public bool UseFullLanguageModeInDebugger
         {
-            get
-            {
-                return _sessionState.UseFullLanguageModeInDebugger;
-            }
+            get { return _sessionState.UseFullLanguageModeInDebugger; }
         }
 
         /// <summary>

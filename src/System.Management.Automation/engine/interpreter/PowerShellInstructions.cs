@@ -13,10 +13,6 @@
  *
  * ***************************************************************************/
 
-using System;
-using System.Diagnostics;
-using System.Management.Automation.Language;
-
 namespace System.Management.Automation.Interpreter
 {
     internal class UpdatePositionInstruction : Instruction

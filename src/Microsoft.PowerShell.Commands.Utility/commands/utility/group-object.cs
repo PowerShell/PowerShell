@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal override void Add(PSObject groupValue)
         {
-            count++;
+            Count++;
         }
     }
 
@@ -95,19 +95,18 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class GroupInfo
     {
-        internal int count;
         internal GroupInfo(OrderByPropertyEntry groupValue)
         {
-            group = new Collection<PSObject>();
+            Group = new Collection<PSObject>();
             this.Add(groupValue.inputObject);
-            _groupValue = groupValue;
-            _name = BuildName(groupValue.orderValues);
+            GroupValue = groupValue;
+            Name = BuildName(groupValue.orderValues);
         }
 
         internal virtual void Add(PSObject groupValue)
         {
-            group.Add(groupValue);
-            count++;
+            Group.Add(groupValue);
+            Count++;
         }
 
 
@@ -153,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 ArrayList values = new ArrayList();
-                foreach (ObjectCommandPropertyValue propValue in _groupValue.orderValues)
+                foreach (ObjectCommandPropertyValue propValue in GroupValue.orderValues)
                 {
                     values.Add(propValue.PropertyValue);
                 }
@@ -166,43 +165,28 @@ namespace Microsoft.PowerShell.Commands
         /// Number of objects in the group
         ///
         /// </summary>
-        public int Count
-        {
-            get { return this.count; }
-        }
+        public int Count { get; internal set; }
 
         /// <summary>
         ///
         /// The list of objects in this group
         ///
         /// </summary>
-        public Collection<PSObject> Group
-        {
-            get { return group; }
-        }
-        internal Collection<PSObject> group = null;
+        public Collection<PSObject> Group { get; } = null;
 
         /// <summary>
         ///
         /// The name of the group
         ///
         /// </summary>
-        public string Name
-        {
-            get { return _name; }
-        }
-        private string _name = null;
+        public string Name { get; } = null;
 
         /// <summary>
         ///
         /// The OrderByPropertyEntry used to build this group object
         ///
         /// </summary>
-        internal OrderByPropertyEntry GroupValue
-        {
-            get { return _groupValue; }
-        }
-        private OrderByPropertyEntry _groupValue = null;
+        internal OrderByPropertyEntry GroupValue { get; } = null;
     }
 
     /// <summary>
@@ -250,23 +234,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "HashTable")]
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "HashTable")]
         [Alias("AHT")]
-        public SwitchParameter AsHashTable
-        {
-            get { return _ashashtable; }
-            set { _ashashtable = value; }
-        }
-        private SwitchParameter _ashashtable;
+        public SwitchParameter AsHashTable { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "HashTable")]
-        public SwitchParameter AsString
-        {
-            get { return _asstring; }
-            set { _asstring = value; }
-        }
-        private SwitchParameter _asstring;
+        public SwitchParameter AsString { get; set; }
 
         private List<GroupInfo> _groups = new List<GroupInfo>();
         private OrderByProperty _orderByProperty = new OrderByProperty();
@@ -382,14 +357,14 @@ namespace Microsoft.PowerShell.Commands
             s_tracer.WriteLine(_groups.Count);
             if (_groups.Count > 0)
             {
-                if (_ashashtable)
+                if (AsHashTable)
                 {
                     Hashtable _table = CollectionsUtil.CreateCaseInsensitiveHashtable();
                     try
                     {
                         foreach (GroupInfo _grp in _groups)
                         {
-                            if (_asstring)
+                            if (AsString)
                             {
                                 _table.Add(_grp.Name, _grp.Group);
                             }
@@ -417,10 +392,10 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    if (_asstring)
+                    if (AsString)
                     {
                         ArgumentException ex = new ArgumentException(UtilityCommonStrings.GroupObjectWithHashTable);
-                        ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, _asstring);
+                        ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, AsString);
                         ThrowTerminatingError(er);
                     }
                     else

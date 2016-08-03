@@ -13,16 +13,7 @@
  *
  * ***************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Dynamic;
-using System.Globalization;
-using System.IO;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Collections.ObjectModel;
-using System.Linq.Expressions;
+
 #if ENABLE_BINDER_DEBUG_LOGGING && !CORECLR
 namespace System.Management.Automation.Language {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]

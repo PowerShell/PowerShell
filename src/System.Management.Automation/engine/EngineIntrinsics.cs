@@ -2,8 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Management.Automation;
 using System.Management.Automation.Host;
 using Dbg = System.Management.Automation;
 
@@ -106,13 +104,8 @@ namespace System.Management.Automation
         /// </summary>
         public CommandInvocationIntrinsics InvokeCommand
         {
-            get
-            {
-                if (_invokeCommand == null)
-                    _invokeCommand = new CommandInvocationIntrinsics(_context);
-                return _invokeCommand;
-            }
-        } // InvokeCommand
+            get { return _invokeCommand ?? (_invokeCommand = new CommandInvocationIntrinsics(_context)); }
+        }
 
         #endregion Public methods
 

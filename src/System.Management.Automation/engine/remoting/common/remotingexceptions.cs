@@ -631,7 +631,7 @@ namespace System.Management.Automation.Remoting
                 throw new PSArgumentNullException("info");
             }
 
-            _redirectLocation = info.GetString("RedirectLocation");
+            RedirectLocation = info.GetString("RedirectLocation");
         }
 
         /// <summary>
@@ -652,7 +652,7 @@ namespace System.Management.Automation.Remoting
         internal PSRemotingTransportRedirectException(string redirectLocation, PSRemotingErrorId errorId, string resourceString, params object[] args)
             : base(errorId, resourceString, args)
         {
-            _redirectLocation = redirectLocation;
+            RedirectLocation = redirectLocation;
         }
 
         #endregion
@@ -674,7 +674,7 @@ namespace System.Management.Automation.Remoting
 
             base.GetObjectData(info, context);
             // If there are simple fields, serialize them with info.AddValue
-            info.AddValue("RedirectLocation", _redirectLocation);
+            info.AddValue("RedirectLocation", RedirectLocation);
         }
 
         #endregion
@@ -683,15 +683,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// String specifying a redirect location.
         /// </summary>
-        public string RedirectLocation
-        {
-            get
-            {
-                return _redirectLocation;
-            }
-        }
-
-        private string _redirectLocation;
+        public string RedirectLocation { get; }
 
         #endregion
     }

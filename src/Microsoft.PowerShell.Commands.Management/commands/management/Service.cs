@@ -367,12 +367,7 @@ namespace Microsoft.PowerShell.Commands
         /// The computer from which to retrieve processes.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        protected string[] SuppliedComputerName
-        {
-            get { return _computerName; }
-            set { _computerName = value; }
-        }
-        private string[] _computerName = new string[0];
+        protected string[] SuppliedComputerName { get; set; } = Utils.EmptyArray<string>();
 
         /// <summary>
         /// Retrieve the list of all services matching the ServiceName,
@@ -653,18 +648,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [Alias("DS")]
-        public SwitchParameter DependentServices
-        {
-            get
-            {
-                return _dependentservices;
-            }
-            set
-            {
-                _dependentservices = value;
-            }
-        }
-        private SwitchParameter _dependentservices;
+        public SwitchParameter DependentServices { get; set; }
 
 
         /// <summary>
@@ -672,18 +656,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [Alias("SDO", "ServicesDependedOn")]
-        public SwitchParameter RequiredServices
-        {
-            get
-            {
-                return _requiredservices;
-            }
-            set
-            {
-                _requiredservices = value;
-            }
-        }
-        private SwitchParameter _requiredservices;
+        public SwitchParameter RequiredServices { get; set; }
 
         #endregion Parameters
 
@@ -695,20 +668,20 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (ServiceController service in MatchingServices())
             {
-                if (!_dependentservices.IsPresent && !_requiredservices.IsPresent)
+                if (!DependentServices.IsPresent && !RequiredServices.IsPresent)
                 {
                     WriteObject(service);
                 }
                 else
                 {
-                    if (_dependentservices.IsPresent)
+                    if (DependentServices.IsPresent)
                     {
                         foreach (ServiceController dependantserv in service.DependentServices)
                         {
                             WriteObject(dependantserv);
                         }
                     }
-                    if (_requiredservices.IsPresent)
+                    if (RequiredServices.IsPresent)
                     {
                         foreach (ServiceController servdependedon in service.ServicesDependedOn)
                         {
@@ -776,18 +749,8 @@ namespace Microsoft.PowerShell.Commands
         /// to the success stream.
         /// </summary>
         [Parameter]
-        public SwitchParameter PassThru
-        {
-            get
-            {
-                return _passThru;
-            }
-            set
-            {
-                _passThru = value;
-            }
-        }
-        private SwitchParameter _passThru;
+        public SwitchParameter PassThru { get; set; }
+
         #endregion Parameters
 
         #region Internal
@@ -1256,35 +1219,13 @@ namespace Microsoft.PowerShell.Commands
         /// even if it has dependent services.
         /// </summary>
         [Parameter]
-        public SwitchParameter Force
-        {
-            get
-            {
-                return _force;
-            }
-            set
-            {
-                _force = value;
-            }
-        }
-        private SwitchParameter _force;
+        public SwitchParameter Force { get; set; }
 
         /// <summary>
         /// Specifies whether to wait for a service to reach the stopped state before returning
         /// </summary>
         [Parameter]
-        public SwitchParameter NoWait
-        {
-            get
-            {
-                return _nowait;
-            }
-            set
-            {
-                _nowait = value;
-            }
-        }
-        private SwitchParameter _nowait;
+        public SwitchParameter NoWait { get; set; }
 
         /// <summary>
         /// Stop the services.
@@ -1429,18 +1370,7 @@ namespace Microsoft.PowerShell.Commands
         /// even if it has dependent services.
         /// </summary>
         [Parameter]
-        public SwitchParameter Force
-        {
-            get
-            {
-                return _force;
-            }
-            set
-            {
-                _force = value;
-            }
-        }
-        private SwitchParameter _force;
+        public SwitchParameter Force { get; set; }
 
         /// <summary>
         /// Stop and restart the services.
@@ -1504,15 +1434,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Alias("cn")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ComputerName
-        {
-            get { return _computername; }
-            set
-            {
-                _computername = value;
-            }
-        }
-        private String[] _computername = new string[] { "." };
+        public String[] ComputerName { get; set; } = new string[] { "." };
 
         /// <summary>
         /// service name
@@ -1623,15 +1545,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipeline = true,
                    ParameterSetName = "InputObject")]
-        public new ServiceController InputObject
-        {
-            get { return _inputobject; }
-            set
-            {
-                _inputobject = value;
-            }
-        }
-        private ServiceController _inputobject;
+        public new ServiceController InputObject { get; set; }
 
         /// <summary>
         /// This is not a parameter for this cmdlet.
@@ -1679,14 +1593,14 @@ namespace Microsoft.PowerShell.Commands
         {
             ServiceController service = null;
             string ServiceComputerName = null;
-            foreach (string computer in _computername)
+            foreach (string computer in ComputerName)
             {
                 bool objServiceShouldBeDisposed = false;
                 try
                 {
-                    if (_ParameterSetName.Equals("InputObject", StringComparison.OrdinalIgnoreCase) && _inputobject != null)
+                    if (_ParameterSetName.Equals("InputObject", StringComparison.OrdinalIgnoreCase) && InputObject != null)
                     {
-                        service = _inputobject;
+                        service = InputObject;
                         Name = service.ServiceName;
                         ServiceComputerName = service.MachineName;
                         //computer = service.MachineName;
@@ -2062,9 +1976,7 @@ namespace Microsoft.PowerShell.Commands
 
             // confirm the operation first
             // this is always false if WhatIf is set
-            if (!ShouldProcessServiceOperation(
-                (null == DisplayName) ? "" : DisplayName,
-                Name))
+            if (!ShouldProcessServiceOperation(DisplayName ?? "", Name))
             {
                 return;
             }

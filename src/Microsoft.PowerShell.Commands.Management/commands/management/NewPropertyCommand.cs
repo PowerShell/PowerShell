@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
 
@@ -60,18 +59,7 @@ namespace Microsoft.PowerShell.Commands
         ///
         [Parameter(Mandatory = true, Position = 1, ValueFromPipelineByPropertyName = true)]
         [Alias("PSProperty")]
-        public string Name
-        {
-            get
-            {
-                return _property;
-            } // get
-
-            set
-            {
-                _property = value;
-            }
-        } // Property
+        public string Name { get; set; }
 
         /// <summary>
         /// The type of the property to create on the item.
@@ -79,36 +67,14 @@ namespace Microsoft.PowerShell.Commands
         /// 
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("Type")]
-        public string PropertyType
-        {
-            get
-            {
-                return _type;
-            } // get
-
-            set
-            {
-                _type = value;
-            }
-        } // Type
+        public string PropertyType { get; set; }
 
         /// <summary>
         /// The value of the property to create on the item.
         /// </summary>
         /// 
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public object Value
-        {
-            get
-            {
-                return _propertyValue;
-            } // get
-
-            set
-            {
-                _propertyValue = value;
-            }
-        } // Value
+        public object Value { get; set; }
 
         /// <summary>
         /// Gets or sets the force property
@@ -164,21 +130,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameters
 
         #region parameter data
-
-        /// <summary>
-        /// The property to be created.
-        /// </summary>
-        private string _property;
-
-        /// <summary>
-        /// The type of the property to be created.
-        /// </summary>
-        private string _type;
-
-        /// <summary>
-        /// The value of the property to be created.
-        /// </summary>
-        private object _propertyValue;
 
         #endregion parameter data
 

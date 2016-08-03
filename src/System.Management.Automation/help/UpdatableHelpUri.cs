@@ -25,58 +25,30 @@ namespace System.Management.Automation.Help
             Debug.Assert(moduleGuid != null);
             Debug.Assert(!String.IsNullOrEmpty(resolvedUri));
 
-            _moduleName = moduleName;
-            _moduleGuid = moduleGuid;
-            _culture = culture;
-            _resolvedUri = resolvedUri;
+            ModuleName = moduleName;
+            ModuleGuid = moduleGuid;
+            Culture = culture;
+            ResolvedUri = resolvedUri;
         }
 
         /// <summary>
         /// Module name
         /// </summary>
-        internal string ModuleName
-        {
-            get
-            {
-                return _moduleName;
-            }
-        }
-        private string _moduleName;
+        internal string ModuleName { get; }
 
         /// <summary>
         /// Module GUID
         /// </summary>
-        internal Guid ModuleGuid
-        {
-            get
-            {
-                return _moduleGuid;
-            }
-        }
-        private Guid _moduleGuid;
+        internal Guid ModuleGuid { get; }
 
         /// <summary>
         /// UI Culture
         /// </summary>
-        internal CultureInfo Culture
-        {
-            get
-            {
-                return _culture;
-            }
-        }
-        private CultureInfo _culture;
+        internal CultureInfo Culture { get; }
 
         /// <summary>
         /// Resolved URI
         /// </summary>
-        internal string ResolvedUri
-        {
-            get
-            {
-                return _resolvedUri;
-            }
-        }
-        private string _resolvedUri;
+        internal string ResolvedUri { get; }
     }
 }

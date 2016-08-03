@@ -3,13 +3,14 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
-using System.Threading;
 using System.Reflection;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
+#if CORECLR
 using System.Runtime.InteropServices;
+#endif
 
 namespace Microsoft.PowerShell
 {

@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation;
@@ -117,14 +116,7 @@ namespace System.Management.Automation
         /// <summary>
         /// List of aliases to export from this session state object...
         /// </summary>
-        internal List<AliasInfo> ExportedAliases
-        {
-            get
-            {
-                return _exportedAliases;
-            }
-        }
-        private List<AliasInfo> _exportedAliases = new List<AliasInfo>();
+        internal List<AliasInfo> ExportedAliases { get; } = new List<AliasInfo>();
 
 
         /// <summary>
@@ -147,7 +139,7 @@ namespace System.Management.Automation
             AliasInfo result = null;
             if (String.IsNullOrEmpty(aliasName))
             {
-                return result;
+                return null;
             }
 
 
@@ -234,7 +226,7 @@ namespace System.Management.Automation
             AliasInfo result = null;
             if (String.IsNullOrEmpty(aliasName))
             {
-                return result;
+                return null;
             }
 
             SessionStateScope scope = GetScopeByID(scopeID);

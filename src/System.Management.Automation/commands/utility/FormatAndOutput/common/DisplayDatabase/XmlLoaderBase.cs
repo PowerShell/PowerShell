@@ -722,11 +722,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         protected DisplayResourceManagerCache displayResourceManagerCache;
 
 
-        internal bool VerifyStringResources
-        {
-            get { return _verifyStringResources; }
-        }
-        private bool _verifyStringResources = true;
+        internal bool VerifyStringResources { get; } = true;
 
         private int _maxNumberOfErrors = 30;
 

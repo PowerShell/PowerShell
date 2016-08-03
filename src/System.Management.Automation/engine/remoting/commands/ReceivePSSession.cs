@@ -11,8 +11,6 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Client;
 using System.Management.Automation.Runspaces;
-using System.Management.Automation.Runspaces.Internal;
-using System.Management.Automation.Host;
 using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -88,12 +86,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipeline = true,
                    ParameterSetName = ReceivePSSessionCommand.SessionParameterSet)]
         [ValidateNotNullOrEmpty]
-        public PSSession Session
-        {
-            get { return _remotePSSessionInfo; }
-            set { _remotePSSessionInfo = value; }
-        }
-        private PSSession _remotePSSessionInfo;
+        public PSSession Session { get; set; }
 
 
         /// <summary>
@@ -104,12 +97,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ValueFromPipeline = true,
                    ParameterSetName = ReceivePSSessionCommand.IdParameterSet)]
-        public Int32 Id
-        {
-            get { return _id; }
-            set { _id = value; }
-        }
-        private Int32 _id;
+        public Int32 Id { get; set; }
 
 
         /// <summary>
@@ -125,12 +113,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ReceivePSSessionCommand.ComputerInstanceIdParameterSet)]
         [ValidateNotNullOrEmpty]
         [Alias("Cn")]
-        public String ComputerName
-        {
-            get { return _computerName; }
-            set { _computerName = value; }
-        }
-        private String _computerName;
+        public String ComputerName { get; set; }
 
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
@@ -187,12 +170,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ReceivePSSessionCommand.ConnectionUriInstanceIdParameterSet)]
         [ValidateNotNullOrEmpty]
         [Alias("URI", "CU")]
-        public Uri ConnectionUri
-        {
-            get { return _uris; }
-            set { _uris = value; }
-        }
-        private Uri _uris;
+        public Uri ConnectionUri { get; set; }
 
         /// <summary>
         /// The AllowRedirection parameter enables the implicit redirection functionality.
@@ -219,12 +197,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true,
                    ParameterSetName = ReceivePSSessionCommand.ConnectionUriInstanceIdParameterSet)]
         [ValidateNotNullOrEmpty]
-        public Guid InstanceId
-        {
-            get { return _instanceId; }
-            set { _instanceId = value; }
-        }
-        private Guid _instanceId;
+        public Guid InstanceId { get; set; }
 
 
         /// <summary>
@@ -240,12 +213,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true,
                    ParameterSetName = ReceivePSSessionCommand.ConnectionUriSessionNameParameterSet)]
         [ValidateNotNullOrEmpty]
-        public string Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
-        private string _name;
+        public string Name { get; set; }
 
 
         /// <summary>
@@ -259,12 +227,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ComputerSessionNameParameterSet)]
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ConnectionUriSessionNameParameterSet)]
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ConnectionUriInstanceIdParameterSet)]
-        public OutTarget OutTarget
-        {
-            get { return _outputMode; }
-            set { _outputMode = value; }
-        }
-        private OutTarget _outputMode = OutTarget.Default;
+        public OutTarget OutTarget { get; set; } = OutTarget.Default;
 
         /// <summary>
         /// Provides job name when job is created for returned data.
@@ -278,12 +241,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ConnectionUriSessionNameParameterSet)]
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ConnectionUriInstanceIdParameterSet)]
         [ValidateNotNullOrEmpty]
-        public string JobName
-        {
-            get { return _jobName; }
-            set { _jobName = value; }
-        }
-        private string _jobName = string.Empty;
+        public string JobName { get; set; } = string.Empty;
 
 
         /// <summary>
@@ -364,18 +322,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ComputerInstanceIdParameterSet)]
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ComputerSessionNameParameterSet)]
         [ValidateRange((Int32)1, (Int32)UInt16.MaxValue)]
-        public Int32 Port
-        {
-            get
-            {
-                return _port;
-            }
-            set
-            {
-                _port = value;
-            }
-        }
-        private Int32 _port;
+        public Int32 Port { get; set; }
 
 
         /// <summary>
@@ -388,18 +335,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ComputerInstanceIdParameterSet)]
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ComputerSessionNameParameterSet)]
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSL")]
-        public SwitchParameter UseSSL
-        {
-            get
-            {
-                return _useSSL;
-            }
-            set
-            {
-                _useSSL = value;
-            }
-        }
-        private SwitchParameter _useSSL;
+        public SwitchParameter UseSSL { get; set; }
 
         /// <summary>
         /// Session options.
@@ -408,12 +344,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ComputerSessionNameParameterSet)]
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ConnectionUriSessionNameParameterSet)]
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ConnectionUriInstanceIdParameterSet)]
-        public PSSessionOption SessionOption
-        {
-            get { return _sessionOption; }
-            set { _sessionOption = value; }
-        }
-        private PSSessionOption _sessionOption;
+        public PSSessionOption SessionOption { get; set; }
 
         #endregion
 

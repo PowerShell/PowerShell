@@ -63,18 +63,8 @@ namespace System.Management.Automation.Remoting
         /// -1 = no limit
         ///  0 = no redirection
         /// </summary>
-        public int MaximumConnectionRedirectionCount
-        {
-            get
-            {
-                return _maximumConnectionRedirectionCount;
-            }
-            set
-            {
-                _maximumConnectionRedirectionCount = value;
-            }
-        }
-        private int _maximumConnectionRedirectionCount = WSManConnectionInfo.defaultMaximumConnectionRedirectionCount;
+        public int MaximumConnectionRedirectionCount { get; set; } = WSManConnectionInfo.defaultMaximumConnectionRedirectionCount;
+
         /// <summary>
         /// If false, underlying WSMan infrastructure will compress data sent on the network.
         /// If true, data will not be compressed. Compression improves performance by 
@@ -83,47 +73,20 @@ namespace System.Management.Automation.Remoting
         /// set this property to "true".
         /// By default the value of this property is "false".
         /// </summary>
-        public bool NoCompression
-        {
-            get
-            {
-                return _noCompression;
-            }
-            set
-            {
-                _noCompression = value;
-            }
-        }
-        private bool _noCompression = false;
+        public bool NoCompression { get; set; } = false;
 
         /// <summary>
         /// If <c>true</c> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
         /// which can result in a faster session creation time.  This option won't have any effect if the remote machine has
         /// already loaded the profile (i.e. in another session). 
         /// </summary>
-        public bool NoMachineProfile
-        {
-            get
-            {
-                return _noMachineProfile;
-            }
-            set
-            {
-                _noMachineProfile = value;
-            }
-        }
-        private bool _noMachineProfile = false;
+        public bool NoMachineProfile { get; set; } = false;
 
         /// <summary>
         /// By default, ProxyAccessType is None, that means Proxy information (ProxyAccessType, 
         /// ProxyAuthenticationMechanism and ProxyCredential)is not passed to WSMan at all.
         /// </summary>
-        public ProxyAccessType ProxyAccessType
-        {
-            get { return _proxyAcessType; }
-            set { _proxyAcessType = value; }
-        }
-        private ProxyAccessType _proxyAcessType = ProxyAccessType.None;
+        public ProxyAccessType ProxyAccessType { get; set; } = ProxyAccessType.None;
 
         /// <summary>
         /// The following is the definition of the input parameter "ProxyAuthentication".
@@ -163,12 +126,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// The following is the definition of the input parameter "ProxyCredential".
         /// </summary>
-        public PSCredential ProxyCredential
-        {
-            get { return _proxyCredential; }
-            set { _proxyCredential = value; }
-        }
-        private PSCredential _proxyCredential;
+        public PSCredential ProxyCredential { get; set; }
 
 
         /// <summary>
@@ -178,36 +136,21 @@ namespace System.Management.Automation.Remoting
         /// computer is part of a network that is physically secure and isolated or the 
         /// remote computer is listed as a trusted host in WinRM configuration
         /// </summary>
-        public bool SkipCACheck
-        {
-            get { return _skipCACheck; }
-            set { _skipCACheck = value; }
-        }
-        private bool _skipCACheck;
+        public bool SkipCACheck { get; set; }
 
         /// <summary>
         /// Indicates that certificate common name (CN) of the server need not match the 
         /// hostname of the server. Used only in remote operations using https. This 
         /// option should only be used for trusted machines.
         /// </summary>
-        public bool SkipCNCheck
-        {
-            get { return _skipCNCheck; }
-            set { _skipCNCheck = value; }
-        }
-        private bool _skipCNCheck;
+        public bool SkipCNCheck { get; set; }
 
         /// <summary>
         /// Indicates that certificate common name (CN) of the server need not match the 
         /// hostname of the server. Used only in remote operations using https. This 
         /// option should only be used for trusted machines
         /// </summary>
-        public bool SkipRevocationCheck
-        {
-            get { return _skipRevocationCheck; }
-            set { _skipRevocationCheck = value; }
-        }
-        private bool _skipRevocationCheck;
+        public bool SkipRevocationCheck { get; set; }
 
         /// <summary>
         /// The duration for which PowerShell remoting waits before timing out 
@@ -217,48 +160,27 @@ namespace System.Management.Automation.Remoting
         /// 
         /// Default: 3*60*1000 == 3minutes
         /// </summary>
-        public TimeSpan OperationTimeout
-        {
-            get { return _operationTimeout; }
-            set { _operationTimeout = value; }
-        }
-        private TimeSpan _operationTimeout =
-            TimeSpan.FromMilliseconds(BaseTransportManager.ClientDefaultOperationTimeoutMs);
+        public TimeSpan OperationTimeout { get; set; } = TimeSpan.FromMilliseconds(BaseTransportManager.ClientDefaultOperationTimeoutMs);
 
         /// <summary>
         /// Specifies that no encryption will be used when doing remote operations over 
         /// http. Unencrypted traffix is not allowed by default and must be enabled in 
         /// the local configuration
         /// </summary>
-        public bool NoEncryption
-        {
-            get { return _noEncryption; }
-            set { _noEncryption = value; }
-        }
-        private bool _noEncryption;
+        public bool NoEncryption { get; set; }
 
         /// <summary>
         /// Indicates the request is encoded in UTF16 format rather than UTF8 format; 
         /// UTF8 is the default.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "UTF")]
-        public bool UseUTF16
-        {
-            get { return _useUtf16; }
-            set { _useUtf16 = value; }
-        }
-        private bool _useUtf16;
+        public bool UseUTF16 { get; set; }
 
         /// <summary>
         /// Uses Service Principal Name (SPN) along with the Port number during authentication.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SPN")]
-        public bool IncludePortInSPN
-        {
-            get { return _includePortInSPN; }
-            set { _includePortInSPN = value; }
-        }
-        private bool _includePortInSPN;
+        public bool IncludePortInSPN { get; set; }
 
         /// <summary>
         /// Determines how server in disconnected state deals with cached output
@@ -266,92 +188,42 @@ namespace System.Management.Automation.Remoting
         /// Default value is 'block mode' where command execution is blocked after
         /// the server side data cache becomes filled.
         /// </summary>
-        public OutputBufferingMode OutputBufferingMode
-        {
-            get { return _outputBufferingMode; }
-            set { _outputBufferingMode = value; }
-        }
-        private OutputBufferingMode _outputBufferingMode = WSManConnectionInfo.DefaultOutputBufferingMode;
+        public OutputBufferingMode OutputBufferingMode { get; set; } = WSManConnectionInfo.DefaultOutputBufferingMode;
 
         /// <summary>
         /// Number of times a connection will be re-attempted when a connection fails due to network
         /// issues.
         /// </summary>
-        public int MaxConnectionRetryCount
-        {
-            get { return _maxConnectionRetryCount; }
-            set { _maxConnectionRetryCount = value; }
-        }
-        private int _maxConnectionRetryCount = WSManConnectionInfo.DefaultMaxConnectionRetryCount;
+        public int MaxConnectionRetryCount { get; set; } = WSManConnectionInfo.DefaultMaxConnectionRetryCount;
 
         /// <summary>
         /// Culture that the remote session should use
         /// </summary>
-        public CultureInfo Culture
-        {
-            get
-            {
-                return _culture;
-            }
-            set
-            {
-                _culture = value;
-            }
-        }
-        private CultureInfo _culture;
+        public CultureInfo Culture { get; set; }
 
         /// <summary>
         /// UI culture that the remote session should use
         /// </summary>
-        public CultureInfo UICulture
-        {
-            get
-            {
-                return _uiCulture;
-            }
-            set
-            {
-                _uiCulture = value;
-            }
-        }
-        private CultureInfo _uiCulture;
+        public CultureInfo UICulture { get; set; }
 
         /// <summary>
         /// Total data (in bytes) that can be received from a remote machine
         /// targeted towards a command. If null, then the size is unlimited.
         /// Default is unlimited data.
         /// </summary>
-        public Nullable<int> MaximumReceivedDataSizePerCommand
-        {
-            get { return _maxRecvdDataSizePerCommand; }
-            set { _maxRecvdDataSizePerCommand = value; }
-        }
-        private Nullable<int> _maxRecvdDataSizePerCommand;
+        public Nullable<int> MaximumReceivedDataSizePerCommand { get; set; }
 
         /// <summary>
         /// Maximum size (in bytes) of a deserialized object received from a remote machine.
         /// If null, then the size is unlimited. Default is 200MB object size.
         /// </summary>
-        public Nullable<int> MaximumReceivedObjectSize
-        {
-            get { return _maxRecvdObjectSize; }
-            set { _maxRecvdObjectSize = value; }
-        }
-        private Nullable<int> _maxRecvdObjectSize = 200 << 20; // Default: 200MB. Bug Win8: 44870. This is to protect client from malicious server attacks.
+        public Nullable<int> MaximumReceivedObjectSize { get; set; } = 200 << 20;
 
         /// <summary>
         /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public PSPrimitiveDictionary ApplicationArguments
-        {
-            get { return _applicationArguments; }
-            set
-            {
-                _applicationArguments = value;
-            }
-        }
-        private PSPrimitiveDictionary _applicationArguments;
+        public PSPrimitiveDictionary ApplicationArguments { get; set; }
 
         /// <summary>
         /// The duration for which PowerShell remoting waits before timing out on a connection to a remote machine. 
@@ -361,12 +233,7 @@ namespace System.Management.Automation.Remoting
         /// 
         /// Default: 3 * 60 * 1000 = 3 minutes
         /// </summary>
-        public TimeSpan OpenTimeout
-        {
-            get { return _openTimeout; }
-            set { _openTimeout = value; }
-        }
-        private TimeSpan _openTimeout = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultOpenTimeout);
+        public TimeSpan OpenTimeout { get; set; } = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultOpenTimeout);
 
         /// <summary>
         /// The duration for which PowerShell should wait before it times out on cancel operations 
@@ -377,12 +244,7 @@ namespace System.Management.Automation.Remoting
         /// 
         /// Default: 60 * 1000 = 1 minute
         /// </summary>
-        public TimeSpan CancelTimeout
-        {
-            get { return _cancelTimeout; }
-            set { _cancelTimeout = value; }
-        }
-        private TimeSpan _cancelTimeout = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.defaultCancelTimeout);
+        public TimeSpan CancelTimeout { get; set; } = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.defaultCancelTimeout);
 
         /// <summary>
         /// The duration for which a Runspace on server needs to wait before it declares the client dead and closes itself down. 
@@ -391,12 +253,7 @@ namespace System.Management.Automation.Remoting
         /// 
         /// Default: -1 -> Use current server value for IdleTimeout.
         /// </summary>
-        public TimeSpan IdleTimeout
-        {
-            get { return _idleTimeout; }
-            set { _idleTimeout = value; }
-        }
-        private TimeSpan _idleTimeout = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultIdleTimeout);
+        public TimeSpan IdleTimeout { get; set; } = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultIdleTimeout);
     }
 }
 
@@ -434,12 +291,7 @@ namespace Microsoft.PowerShell.Commands
         /// By default the value of this property is "false".
         /// </summary>
         [Parameter]
-        public SwitchParameter NoCompression
-        {
-            get { return _noCompression; }
-            set { _noCompression = value; }
-        }
-        private SwitchParameter _noCompression;
+        public SwitchParameter NoCompression { get; set; }
 
         /// <summary>
         /// If <c>true</c> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
@@ -447,54 +299,21 @@ namespace Microsoft.PowerShell.Commands
         /// already loaded the profile (i.e. in another session). 
         /// </summary>
         [Parameter]
-        public SwitchParameter NoMachineProfile
-        {
-            get
-            {
-                return _noMachineProfile;
-            }
-            set
-            {
-                _noMachineProfile = value;
-            }
-        }
-        private SwitchParameter _noMachineProfile;
+        public SwitchParameter NoMachineProfile { get; set; }
 
         /// <summary>
         /// Culture that the remote session should use
         /// </summary>
         [Parameter]
         [ValidateNotNull]
-        public CultureInfo Culture
-        {
-            get
-            {
-                return _culture;
-            }
-            set
-            {
-                _culture = value;
-            }
-        }
-        private CultureInfo _culture;
+        public CultureInfo Culture { get; set; }
 
         /// <summary>
         /// UI culture that the remote session should use
         /// </summary>
         [Parameter]
         [ValidateNotNull]
-        public CultureInfo UICulture
-        {
-            get
-            {
-                return _uiCulture;
-            }
-            set
-            {
-                _uiCulture = value;
-            }
-        }
-        private CultureInfo _uiCulture;
+        public CultureInfo UICulture { get; set; }
 
         /// <summary>
         /// Total data (in bytes) that can be received from a remote machine
@@ -526,12 +345,7 @@ namespace Microsoft.PowerShell.Commands
         /// and its output data cache becomes full.
         /// </summary>
         [Parameter]
-        public OutputBufferingMode OutputBufferingMode
-        {
-            get { return _outputBufferingMode; }
-            set { _outputBufferingMode = value; }
-        }
-        private OutputBufferingMode _outputBufferingMode;
+        public OutputBufferingMode OutputBufferingMode { get; set; }
 
         /// <summary>
         /// Maximum number of times a connection will be re-attempted when a connection fails due to network
@@ -539,12 +353,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateRange(0, Int32.MaxValue)]
-        public int MaxConnectionRetryCount
-        {
-            get { return _maxConnectionRetryCount; }
-            set { _maxConnectionRetryCount = value; }
-        }
-        private int _maxConnectionRetryCount;
+        public int MaxConnectionRetryCount { get; set; }
 
         /// <summary>
         /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
@@ -552,12 +361,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public PSPrimitiveDictionary ApplicationArguments
-        {
-            get { return _applicationArguments; }
-            set { _applicationArguments = value; }
-        }
-        private PSPrimitiveDictionary _applicationArguments;
+        public PSPrimitiveDictionary ApplicationArguments { get; set; }
 
         /// <summary>
         /// The duration for which PowerShell remoting waits (in milliseconds) before timing 
@@ -634,12 +438,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        public ProxyAccessType ProxyAccessType
-        {
-            get { return _proxyacesstype; }
-            set { _proxyacesstype = value; }
-        }
-        private ProxyAccessType _proxyacesstype = ProxyAccessType.None;
+        public ProxyAccessType ProxyAccessType { get; set; } = ProxyAccessType.None;
 
         /// <summary>
         /// The following is the definition of the input parameter "ProxyAuthentication".
@@ -651,12 +450,7 @@ namespace Microsoft.PowerShell.Commands
         /// - Digest: Use Digest authentication for establishing a remote connection
         /// </summary>
         [Parameter]
-        public AuthenticationMechanism ProxyAuthentication
-        {
-            get { return _proxyauthentication; }
-            set { _proxyauthentication = value; }
-        }
-        private AuthenticationMechanism _proxyauthentication = AuthenticationMechanism.Negotiate;
+        public AuthenticationMechanism ProxyAuthentication { get; set; } = AuthenticationMechanism.Negotiate;
 
         /// <summary>
         /// The following is the definition of the input parameter "ProxyCredential".
@@ -664,12 +458,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         [Credential]
-        public PSCredential ProxyCredential
-        {
-            get { return _proxycredential; }
-            set { _proxycredential = value; }
-        }
-        private PSCredential _proxycredential;
+        public PSCredential ProxyCredential { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "SkipCACheck".
@@ -837,9 +626,9 @@ namespace Microsoft.PowerShell.Commands
                 result.IdleTimeout = TimeSpan.FromMilliseconds(_idleTimeout.Value);
             }
 
-            result.OutputBufferingMode = _outputBufferingMode;
+            result.OutputBufferingMode = OutputBufferingMode;
 
-            result.MaxConnectionRetryCount = _maxConnectionRetryCount;
+            result.MaxConnectionRetryCount = MaxConnectionRetryCount;
 
             if (this.ApplicationArguments != null)
             {

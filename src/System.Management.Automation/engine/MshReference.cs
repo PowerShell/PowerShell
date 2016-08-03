@@ -72,10 +72,10 @@ namespace System.Management.Automation
             }
         }
 
-        static internal readonly CallSite<Func<CallSite, object, object, object>> CreatePsReferenceInstance =
+        internal static readonly CallSite<Func<CallSite, object, object, object>> CreatePsReferenceInstance =
                 CallSite<Func<CallSite, object, object, object>>.Create(PSCreateInstanceBinder.Get(new CallInfo(1), null));
 
-        static internal PSReference CreateInstance(object value, Type typeOfValue)
+        internal static PSReference CreateInstance(object value, Type typeOfValue)
         {
             Type psReferType = typeof(PSReference<>).MakeGenericType(typeOfValue);
             return (PSReference)CreatePsReferenceInstance.Target.Invoke(CreatePsReferenceInstance, psReferType, value);

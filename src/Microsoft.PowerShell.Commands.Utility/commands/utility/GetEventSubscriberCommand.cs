@@ -44,36 +44,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true, ParameterSetName = "ById")]
         [Alias("Id")]
-        public int SubscriptionId
-        {
-            get
-            {
-                return _subscriptionId;
-            }
-            set
-            {
-                _subscriptionId = value;
-            }
-        }
-        private int _subscriptionId = -1;
+        public int SubscriptionId { get; set; } = -1;
 
 
         /// <summary>
         /// Also show supporting events
         /// </summary>
         [Parameter(Position = 1)]
-        public SwitchParameter Force
-        {
-            get
-            {
-                return _force;
-            }
-            set
-            {
-                _force = value;
-            }
-        }
-        private SwitchParameter _force;
+        public SwitchParameter Force { get; set; }
 
         #endregion parameters
 
@@ -99,8 +77,8 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // If they specified a subscription identifier and we don't match, continue
-                if ((_subscriptionId >= 0) &&
-                    (subscriber.SubscriptionId != _subscriptionId))
+                if ((SubscriptionId >= 0) &&
+                    (subscriber.SubscriptionId != SubscriptionId))
                 {
                     continue;
                 }
@@ -121,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool lookingForSource = (_sourceIdentifier != null) &&
                     (!WildcardPattern.ContainsWildcardCharacters(_sourceIdentifier));
-                bool lookingForId = (_subscriptionId >= 0);
+                bool lookingForId = (SubscriptionId >= 0);
 
                 if (lookingForSource || lookingForId)
                 {
@@ -135,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else if (lookingForId)
                     {
-                        identifier = _subscriptionId;
+                        identifier = SubscriptionId;
                         error = EventingStrings.EventSubscriptionNotFound;
                     }
 

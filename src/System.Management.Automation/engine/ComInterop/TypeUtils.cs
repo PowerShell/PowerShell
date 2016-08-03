@@ -3,14 +3,9 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 #if !CLR2
-using System.Linq.Expressions;
 #else
 using Microsoft.Scripting.Ast;
 #endif
-
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
 
 namespace System.Management.Automation.ComInterop
@@ -113,11 +108,8 @@ namespace System.Management.Automation.ComInterop
             // try lifted conversion
             if (nnExprType != convertFrom || nnConvType != convertToType)
             {
-                method = FindConversionOperator(eMethods, nnExprType, nnConvType, implicitOnly);
-                if (method == null)
-                {
-                    method = FindConversionOperator(cMethods, nnExprType, nnConvType, implicitOnly);
-                }
+                method = FindConversionOperator(eMethods, nnExprType, nnConvType, implicitOnly) ??
+                         FindConversionOperator(cMethods, nnExprType, nnConvType, implicitOnly);
                 if (method != null)
                 {
                     return method;

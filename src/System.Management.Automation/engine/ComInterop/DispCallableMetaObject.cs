@@ -9,12 +9,8 @@ using System.Linq.Expressions;
 #else
 using Microsoft.Scripting.Ast;
 #endif
-
-using System;
 using System.Linq;
 using System.Dynamic;
-using System.Security;
-using System.Security.Permissions;
 using System.Collections.Generic;
 using System.Management.Automation.Language;
 

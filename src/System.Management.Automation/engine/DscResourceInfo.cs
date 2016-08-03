@@ -4,9 +4,6 @@
 //-----------------------------------------------------------------------
 
 using System.Collections.Generic;
-using System;
-using System.Management.Automation;
-using System.IO;
 using System.Collections.ObjectModel;
 
 namespace System.Management.Automation
@@ -121,18 +118,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the help file path for the cmdlet.
         /// </summary>
-        public string HelpFile
-        {
-            get
-            {
-                return _helpFilePath;
-            }
-            internal set
-            {
-                _helpFilePath = value;
-            }
-        } // HelpFile
-        private string _helpFilePath = String.Empty;
+        public string HelpFile { get; internal set; } = String.Empty;
+
+// HelpFile
     }
 
 

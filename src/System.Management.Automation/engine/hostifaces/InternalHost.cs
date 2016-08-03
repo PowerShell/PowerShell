@@ -49,7 +49,7 @@ namespace System.Management.Automation.Internal.Host
             Dbg.Assert(executionContext != null, "must supply an ExecutionContext");
 
             _externalHostRef = new ObjectRef<PSHost>(externalHost);
-            _executionContext = executionContext;
+            Context = executionContext;
 
             PSHostUserInterface ui = externalHost.UI;
 
@@ -195,12 +195,7 @@ namespace System.Management.Automation.Internal.Host
         {
             get
             {
-                CultureInfo ci = _externalHostRef.Value.CurrentCulture;
-
-                if (ci == null)
-                {
-                    ci = CultureInfo.InvariantCulture;
-                }
+                CultureInfo ci = _externalHostRef.Value.CurrentCulture ?? CultureInfo.InvariantCulture;
 
                 return ci;
             }
@@ -291,7 +286,7 @@ namespace System.Management.Automation.Internal.Host
             // should include setting a bit that indicates that the initialization is complete, and code should be 
             // added here to throw an exception if this function is called before that bit is set.
 
-            if (_nestedPromptCount < 0)
+            if (NestedPromptCount < 0)
             {
                 Dbg.Assert(false, "nested prompt counter should never be negative.");
                 throw PSTraceSource.NewInvalidOperationException(
@@ -302,17 +297,17 @@ namespace System.Management.Automation.Internal.Host
             // of the same name.  This is good, as any existing value is either 1) ours, and we have claim to replace it, or
             // 2) is a squatter, and we have claim to clobber it.
 
-            ++_nestedPromptCount;
-            _executionContext.SetVariable(SpecialVariables.NestedPromptCounterVarPath, _nestedPromptCount);
+            ++NestedPromptCount;
+            Context.SetVariable(SpecialVariables.NestedPromptCounterVarPath, NestedPromptCount);
 
             // On entering a subshell, save and reset values of certain bits of session state
 
             PromptContextData contextData = new PromptContextData();
-            contextData.SavedContextData = _executionContext.SaveContextData();
-            contextData.SavedCurrentlyExecutingCommandVarValue = _executionContext.GetVariableValue(SpecialVariables.CurrentlyExecutingCommandVarPath);
-            contextData.SavedPSBoundParametersVarValue = _executionContext.GetVariableValue(SpecialVariables.PSBoundParametersVarPath);
+            contextData.SavedContextData = Context.SaveContextData();
+            contextData.SavedCurrentlyExecutingCommandVarValue = Context.GetVariableValue(SpecialVariables.CurrentlyExecutingCommandVarPath);
+            contextData.SavedPSBoundParametersVarValue = Context.GetVariableValue(SpecialVariables.PSBoundParametersVarPath);
             contextData.RunspaceAvailability = this.Context.CurrentRunspace.RunspaceAvailability;
-            contextData.LanguageMode = _executionContext.LanguageMode;
+            contextData.LanguageMode = Context.LanguageMode;
 
             PSPropertyInfo commandInfoProperty = null;
             PSPropertyInfo stackTraceProperty = null;
@@ -320,7 +315,7 @@ namespace System.Management.Automation.Internal.Host
             object oldStackTrace = null;
             if (callingCommand != null)
             {
-                Dbg.Assert(callingCommand.Context == _executionContext, "I expect that the contexts should match");
+                Dbg.Assert(callingCommand.Context == Context, "I expect that the contexts should match");
 
                 // Populate $CurrentlyExecutingCommand to facilitate debugging.  One of the gotchas is that we are going to want
                 // to expose more and more debug info. We could just populate more and more local variables but that is probably
@@ -353,20 +348,20 @@ namespace System.Management.Automation.Internal.Host
                 }
 #endif
 
-                _executionContext.SetVariable(SpecialVariables.CurrentlyExecutingCommandVarPath, newValue);
+                Context.SetVariable(SpecialVariables.CurrentlyExecutingCommandVarPath, newValue);
             }
 
             _contextStack.Push(contextData);
-            Dbg.Assert(_contextStack.Count == _nestedPromptCount, "number of saved contexts should equal nesting count");
+            Dbg.Assert(_contextStack.Count == NestedPromptCount, "number of saved contexts should equal nesting count");
 
-            _executionContext.PSDebugTraceStep = false;
-            _executionContext.PSDebugTraceLevel = 0;
-            _executionContext.ResetShellFunctionErrorOutputPipe();
+            Context.PSDebugTraceStep = false;
+            Context.PSDebugTraceLevel = 0;
+            Context.ResetShellFunctionErrorOutputPipe();
 
             // Lock down the language in the nested prompt
-            if (_executionContext.HasRunspaceEverUsedConstrainedLanguageMode)
+            if (Context.HasRunspaceEverUsedConstrainedLanguageMode)
             {
-                _executionContext.LanguageMode = PSLanguageMode.ConstrainedLanguage;
+                Context.LanguageMode = PSLanguageMode.ConstrainedLanguage;
             }
 
             this.Context.CurrentRunspace.UpdateRunspaceAvailability(RunspaceAvailability.AvailableForNestedCommand, true);
@@ -398,13 +393,13 @@ namespace System.Management.Automation.Internal.Host
                 }
             }
 
-            Dbg.Assert(_nestedPromptCount >= 0, "nestedPromptCounter should be greater than or equal to 0");
+            Dbg.Assert(NestedPromptCount >= 0, "nestedPromptCounter should be greater than or equal to 0");
         }
 
         private void ExitNestedPromptHelper()
         {
-            --_nestedPromptCount;
-            _executionContext.SetVariable(SpecialVariables.NestedPromptCounterVarPath, _nestedPromptCount);
+            --NestedPromptCount;
+            Context.SetVariable(SpecialVariables.NestedPromptCounterVarPath, NestedPromptCount);
 
             // restore the saved context
 
@@ -414,14 +409,14 @@ namespace System.Management.Automation.Internal.Host
             {
                 PromptContextData pcd = _contextStack.Pop();
 
-                pcd.SavedContextData.RestoreContextData(_executionContext);
-                _executionContext.LanguageMode = pcd.LanguageMode;
-                _executionContext.SetVariable(SpecialVariables.CurrentlyExecutingCommandVarPath, pcd.SavedCurrentlyExecutingCommandVarValue);
-                _executionContext.SetVariable(SpecialVariables.PSBoundParametersVarPath, pcd.SavedPSBoundParametersVarValue);
+                pcd.SavedContextData.RestoreContextData(Context);
+                Context.LanguageMode = pcd.LanguageMode;
+                Context.SetVariable(SpecialVariables.CurrentlyExecutingCommandVarPath, pcd.SavedCurrentlyExecutingCommandVarValue);
+                Context.SetVariable(SpecialVariables.PSBoundParametersVarPath, pcd.SavedPSBoundParametersVarValue);
                 this.Context.CurrentRunspace.UpdateRunspaceAvailability(pcd.RunspaceAvailability, true);
             }
 
-            Dbg.Assert(_contextStack.Count == _nestedPromptCount, "number of saved contexts should equal nesting count");
+            Dbg.Assert(_contextStack.Count == NestedPromptCount, "number of saved contexts should equal nesting count");
         }
 
         /// <summary>
@@ -432,9 +427,9 @@ namespace System.Management.Automation.Internal.Host
         /// </summary>
         public override void ExitNestedPrompt()
         {
-            Dbg.Assert(_nestedPromptCount >= 0, "nestedPromptCounter should be greater than or equal to 0");
+            Dbg.Assert(NestedPromptCount >= 0, "nestedPromptCounter should be greater than or equal to 0");
 
-            if (_nestedPromptCount == 0)
+            if (NestedPromptCount == 0)
                 return;
 
             try
@@ -488,11 +483,7 @@ namespace System.Management.Automation.Internal.Host
         /// <summary>
         /// This property enables and disables the host debugger if debugging is supported.
         /// </summary>
-        public override bool DebuggerEnabled
-        {
-            get { return _isDebuggingEnabled; }
-            set { _isDebuggingEnabled = value; }
-        }
+        public override bool DebuggerEnabled { get; set; } = true;
 
         /// <summary>
         /// Gets the external host as an IHostSupportsInteractiveSession if it implements this interface;
@@ -559,7 +550,7 @@ namespace System.Management.Automation.Internal.Host
         /// false, otherwise</returns>
         internal bool HostInNestedPrompt()
         {
-            if (_nestedPromptCount > 0)
+            if (NestedPromptCount > 0)
             {
                 return true;
             }
@@ -603,13 +594,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
 
-        internal ExecutionContext Context
-        {
-            get
-            {
-                return _executionContext;
-            }
-        }
+        internal ExecutionContext Context { get; }
 
         internal PSHost ExternalHost
         {
@@ -619,23 +604,17 @@ namespace System.Management.Automation.Internal.Host
             }
         }
 
-        internal int NestedPromptCount
-        {
-            get { return _nestedPromptCount; }
-        }
+        internal int NestedPromptCount { get; private set; }
 
         // Masked variables.
         private ObjectRef<PSHost> _externalHostRef;
         private ObjectRef<InternalHostUserInterface> _internalUIRef;
 
         // Private variables.
-        private ExecutionContext _executionContext;
         private string _nameResult;
         private Version _versionResult;
         private Guid _idResult;
-        private int _nestedPromptCount;
         private Stack<PromptContextData> _contextStack = new Stack<PromptContextData>();
-        private bool _isDebuggingEnabled = true;
 
         private readonly Guid _zeroGuid;
     }

@@ -2,9 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Management.Automation;
-
 namespace System.Management.Automation.Internal
 {
     /// <summary>
@@ -22,7 +19,6 @@ namespace System.Management.Automation.Internal
         #region private_members
 
         // Private member for Value.
-        private static readonly PSObject s_value1 = new PSObject();
 
         #endregion private_members
 
@@ -31,14 +27,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Returns the singleton instance of this object.
         /// </summary>
-        public static PSObject Value
-        {
-            get
-            {
-                return s_value1;
-            }
-            // no setter. It is a readonly; So, Value can not be modified. (Immutable).
-        }
+        public static PSObject Value { get; } = new PSObject();
 
         #endregion public_property
     }

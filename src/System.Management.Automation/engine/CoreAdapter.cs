@@ -669,7 +669,7 @@ namespace System.Management.Automation
             }
             catch (TargetInvocationException ex)
             {
-                Exception inner = (ex.InnerException == null) ? ex : ex.InnerException;
+                Exception inner = ex.InnerException ?? ex;
                 throw new GetValueInvocationException("CatchFromBaseAdapterParameterizedPropertyGetValueTI",
                     inner,
                     ExtendedTypeSystem.ExceptionWhenGetting,
@@ -3792,7 +3792,7 @@ namespace System.Management.Automation
             }
             catch (TargetInvocationException ex)
             {
-                Exception inner = (ex.InnerException == null) ? ex : ex.InnerException;
+                Exception inner = ex.InnerException ?? ex;
                 throw new MethodInvocationException(
                     "DotNetconstructorTargetInvocation",
                     inner,
@@ -3844,7 +3844,7 @@ namespace System.Management.Automation
                 if (ex.InnerException is ParameterBindingException)
                     throw ex.InnerException;
 
-                Exception inner = (ex.InnerException == null) ? ex : ex.InnerException;
+                Exception inner = ex.InnerException ?? ex;
 
                 throw new MethodInvocationException(
                     "DotNetMethodTargetInvocation",
@@ -5396,7 +5396,7 @@ namespace System.Management.Automation
             return false;
         }
 
-        static private bool IsEqualGenericTypeDefinition(Type parameterType, Type argumentType)
+        private static bool IsEqualGenericTypeDefinition(Type parameterType, Type argumentType)
         {
             Dbg.Assert(parameterType.GetTypeInfo().IsGenericType, "Caller should verify parameterType.IsGenericType before calling this method");
 

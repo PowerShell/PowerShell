@@ -15,7 +15,6 @@
 // Enables instruction counting and displaying stats at process exit.
 // #define STATS
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;

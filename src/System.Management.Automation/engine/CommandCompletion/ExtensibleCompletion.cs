@@ -6,9 +6,12 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using System.Linq;
 using System.Management.Automation.Language;
+
+#if CORECLR
+using System.Reflection;
+#endif
 
 namespace System.Management.Automation
 {

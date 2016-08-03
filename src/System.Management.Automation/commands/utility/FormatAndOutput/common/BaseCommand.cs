@@ -4,9 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
 using System.Management.Automation;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 
@@ -155,12 +153,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// This parameter specifies the current pipeline object 
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject
-        {
-            set { _inputObject = value; }
-            get { return _inputObject; }
-        }
-        private PSObject _inputObject = AutomationNull.Value;
+        public PSObject InputObject { set; get; } = AutomationNull.Value;
 
         #endregion
 
@@ -346,20 +339,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return this.OuterCmdletCall();
         }
 
-        protected TerminatingErrorContext TerminatingErrorContext
-        {
-            get
-            {
-                return _terminatingErrorContext;
-            }
-        }
+        protected TerminatingErrorContext TerminatingErrorContext { get; private set; }
 
         internal void CreateTerminatingErrorContext()
         {
-            _terminatingErrorContext = new TerminatingErrorContext(this.OuterCmdlet());
+            TerminatingErrorContext = new TerminatingErrorContext(this.OuterCmdlet());
         }
-
-        private TerminatingErrorContext _terminatingErrorContext;
 
         /// <summary>
         /// delegate definition to get to the outer command-let

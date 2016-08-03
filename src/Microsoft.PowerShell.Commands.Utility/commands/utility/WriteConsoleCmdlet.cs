@@ -5,7 +5,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System;
 using System.Management.Automation;
 using System.Collections;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Microsoft.PowerShell.Commands
@@ -32,18 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
 
         [Parameter(Position = 0, ValueFromRemainingArguments = true, ValueFromPipeline = true)]
-        public object Object
-        {
-            get
-            {
-                return _objectToEcho;
-            }
-
-            set
-            {
-                _objectToEcho = value;
-            }
-        }
+        public object Object { get; set; } = null;
 
 
         /// <summary>
@@ -75,18 +63,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
 
         [Parameter]
-        public object Separator
-        {
-            get
-            {
-                return _separator;
-            }
-            set
-            {
-                _separator = value;
-            }
-        }
-
+        public object Separator { get; set; } = " ";
 
 
         //
@@ -150,11 +127,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            string result = ProcessObject(Object);
-            if (result == null)
-            {
-                result = "";
-            }
+            string result = ProcessObject(Object) ?? "";
 
             HostInformationMessage informationMessage = new HostInformationMessage();
             informationMessage.Message = result;
@@ -176,7 +149,5 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Boolean _notAppendNewline = false;
-        private object _objectToEcho = null;
-        private object _separator = " ";
     }
 }   // namespace Microsoft.PowerShell.Commands

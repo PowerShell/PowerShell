@@ -1237,7 +1237,7 @@ namespace Microsoft.PowerShell.Commands
         /// the base stream do not match. These positions can become mismatch when the user read the data
         /// into the buffer and then seek a new position in the underlying stream.
         /// </summary>
-        new internal void DiscardBufferedData()
+        internal new void DiscardBufferedData()
         {
             base.DiscardBufferedData();
             _currentPosition = _stream.Position;
@@ -1533,21 +1533,17 @@ namespace Microsoft.PowerShell.Commands
         internal BackReaderEncodingNotSupportedException(string message, string encodingName)
             : base(message)
         {
-            _encodingName = encodingName;
+            EncodingName = encodingName;
         }
 
         internal BackReaderEncodingNotSupportedException(string encodingName)
         {
-            _encodingName = encodingName;
+            EncodingName = encodingName;
         }
 
         /// <summary>
         /// Get the encoding name
         /// </summary>
-        internal string EncodingName
-        {
-            get { return _encodingName; }
-        }
-        private readonly string _encodingName;
+        internal string EncodingName { get; }
     }
 } // namespace System.Management.Automation

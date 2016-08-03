@@ -1253,12 +1253,7 @@ namespace System.Management.Automation.Internal
                     RaiseEvents();
                 }
             }
-            if (results == null)
-            {
-                results = new Collection<object>();
-            }
-
-            return results;
+            return results ?? new Collection<object>();
         } // NonBlockingRead
 
         /// <summary>

@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Provider;
-using System.Threading;
 using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
@@ -37,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The context for the command that is passed to the core command providers.
         /// </summary>
-        virtual internal CmdletProviderContext CmdletProviderContext
+        internal virtual CmdletProviderContext CmdletProviderContext
         {
             get
             {
@@ -60,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
             }
         } // CmdletProviderContext
 
-        virtual internal SwitchParameter SuppressWildcardExpansion
+        internal virtual SwitchParameter SuppressWildcardExpansion
         {
             get
             {
@@ -88,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         /// are none.
         /// </returns>
         /// 
-        virtual internal object GetDynamicParameters(CmdletProviderContext context)
+        internal virtual object GetDynamicParameters(CmdletProviderContext context)
         {
             return null;
         }
@@ -100,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
         /// if the provider supports ShouldProcess
         /// </summary>
         /// <value></value>
-        virtual protected bool ProviderSupportsShouldProcess
+        protected virtual bool ProviderSupportsShouldProcess
         {
             get
             {
@@ -205,18 +204,7 @@ namespace Microsoft.PowerShell.Commands
         /// the base class to simplify the creation of the CmdletProviderContext.
         /// </remarks>
         /// 
-        virtual public string Filter
-        {
-            get
-            {
-                return _filter;
-            }
-            set
-            {
-                _filter = value;
-            }
-        }
-        private string _filter;
+        public virtual string Filter { get; set; }
 
 
         /// <summary>
@@ -229,19 +217,13 @@ namespace Microsoft.PowerShell.Commands
         /// the base class to simplify the creation of the CmdletProviderContext.
         /// </remarks>
         /// 
-        virtual public string[] Include
-        {
-            get
-            {
-                return _include;
-            } // get
+        public virtual string[] Include { get;
+// get
+            set;
+// set
+        } = new string[0];
 
-            set
-            {
-                _include = value;
-            } // set
-        } // Include
-        private string[] _include = new string[0];
+// Include
 
 
         /// <summary>
@@ -254,19 +236,13 @@ namespace Microsoft.PowerShell.Commands
         /// the base class to simplify the creation of the CmdletProviderContext.
         /// </remarks>
         /// 
-        virtual public string[] Exclude
-        {
-            get
-            {
-                return _exclude;
-            } // get
+        public virtual string[] Exclude { get;
+// get
+            set;
+// set
+        } = new string[0];
 
-            set
-            {
-                _exclude = value;
-            } // set
-        } // Exclude
-        private string[] _exclude = new string[0];
+// Exclude
 
 
         /// <summary>
@@ -287,7 +263,7 @@ namespace Microsoft.PowerShell.Commands
         /// the base class to simplify the creation of the CmdletProviderContext.
         /// </remarks>
         /// 
-        virtual public SwitchParameter Force
+        public virtual SwitchParameter Force
         {
             get
             {
@@ -365,19 +341,11 @@ namespace Microsoft.PowerShell.Commands
         ///
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Credential()]
-        public PSCredential Credential
-        {
-            get { return _credential; }
-            set { _credential = value; }
-        }
+        public PSCredential Credential { get; set; }
+
         #endregion Parameters
 
         #region parameter data
-
-        /// <summary>
-        /// The credentials to be used for the command.
-        /// </summary>
-        private PSCredential _credential;
 
         #endregion parameter data
 
@@ -459,41 +427,16 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = locationSet, ValueFromPipelineByPropertyName = true)]
         public string[] PSProvider
         {
-            get
-            {
-                return _provider;
-            } // get
-
-            set
-            {
-                if (value == null)
-                {
-                    _provider = new string[0];
-                }
-                else
-                {
-                    _provider = value;
-                }
-            } // set
-        } // Provider
+            get { return _provider; }
+            set { _provider = value ?? Utils.EmptyArray<string>(); }
+        }
 
         /// <summary>
         /// Gets or sets the drive from which to get the current location.
         /// </summary>
         ///
         [Parameter(ParameterSetName = locationSet, ValueFromPipelineByPropertyName = true)]
-        public string[] PSDrive
-        {
-            get
-            {
-                return _drives;
-            } // get
-
-            set
-            {
-                _drives = value;
-            } // set
-        } // Drive
+        public string[] PSDrive { get; set; }
 
         #endregion Location parameter set parameters
 
@@ -550,11 +493,6 @@ namespace Microsoft.PowerShell.Commands
         /// The name of the provider from which to return the current location.
         /// </summary>
         private string[] _provider = new string[0];
-
-        /// <summary>
-        /// The name of the drive from which to return the current location.
-        /// </summary>
-        private string[] _drives;
 
         #endregion Location parameter set data
 
@@ -863,15 +801,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter PassThru
         {
-            get
-            {
-                return _passThrough;
-            } // get
-            set
-            {
-                _passThrough = value;
-            } //set
-        } // PassThru
+            get { return _passThrough; }
+            set { _passThrough = value; }
+        }
 
         /// <summary>
         /// Gets or sets the StackName parameter which determines which location stack
@@ -879,17 +811,7 @@ namespace Microsoft.PowerShell.Commands
         /// location stack is used.
         /// </summary>
         [Parameter(ParameterSetName = stackSet, ValueFromPipelineByPropertyName = true)]
-        public string StackName
-        {
-            get
-            {
-                return _stackName;
-            } // get
-            set
-            {
-                _stackName = value;
-            } //set
-        } // StackName
+        public string StackName { get; set; }
 
 #if RELATIONSHIP_SUPPORTED
         // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
@@ -967,11 +889,6 @@ namespace Microsoft.PowerShell.Commands
         /// set-location.
         /// </summary>
         private bool _passThrough;
-
-        /// <summary>
-        /// The ID of the stack to use for the pop. 
-        /// </summary>
-        private string _stackName;
 
         #endregion Command data
 
@@ -1573,10 +1490,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string Name
         {
-            get
-            {
-                return _name;
-            }
+            get { return _name; }
             set
             {
                 if (value == null)
@@ -1586,7 +1500,7 @@ namespace Microsoft.PowerShell.Commands
 
                 _name = value;
             }
-        } // public string Name
+        }
 
         /// <summary>
         /// Gets or sets the provider ID
@@ -1595,10 +1509,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string PSProvider
         {
-            get
-            {
-                return _provider;
-            }
+            get { return _provider; }
             set
             {
                 if (value == null)
@@ -1608,7 +1519,7 @@ namespace Microsoft.PowerShell.Commands
 
                 _provider = value;
             }
-        } // public string Provider
+        }
 
         /// <summary>
         /// Gets or sets the root of the drive. This path should be
@@ -1619,10 +1530,7 @@ namespace Microsoft.PowerShell.Commands
         [AllowEmptyString]
         public string Root
         {
-            get
-            {
-                return _root;
-            }
+            get { return _root; }
             set
             {
                 if (value == null)
@@ -1632,7 +1540,7 @@ namespace Microsoft.PowerShell.Commands
 
                 _root = value;
             }
-        } // public string Root
+        }
 
         /// <summary>
         /// Gets or sets the description of the drive
@@ -1640,10 +1548,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public string Description
         {
-            get
-            {
-                return _description;
-            }
+            get { return _description; }
             set
             {
                 if (value == null)
@@ -1653,24 +1558,13 @@ namespace Microsoft.PowerShell.Commands
 
                 _description = value;
             }
-        } // public string Description
+        }
 
         /// <summary>
         /// Gets or sets the scope identifier for the drive being created.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public string Scope
-        {
-            get
-            {
-                return _scope;
-            } // get
-
-            set
-            {
-                _scope = value;
-            } // set
-        } // Scope
+        public string Scope { get; set; }
 
         /// <summary>
         /// Gets or sets the Persist Switch parameter.
@@ -1701,7 +1595,7 @@ namespace Microsoft.PowerShell.Commands
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             return SessionState.Drive.NewDriveDynamicParameters(PSProvider, context);
-        } // GetDynamicParameters
+        }
 
         /// <summary>
         /// new-psdrive always supports ShouldProcess
@@ -1709,10 +1603,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         protected override bool ProviderSupportsShouldProcess
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
         #endregion Command parameters
 
@@ -1737,12 +1628,6 @@ namespace Microsoft.PowerShell.Commands
         /// A description for the drive
         /// </summary>
         private string _description;
-
-        /// <summary>
-        /// The scope identifier for the scope to create the drive in.
-        /// If null or empty the drive will be created in the current scope.
-        /// </summary>
-        private string _scope;
 
         #endregion Command data
 
@@ -2079,19 +1964,16 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public string[] PSProvider
         {
-            get
-            {
-                return _provider;
-            }
+            get { return _provider; }
             set
             {
                 if (value == null)
                 {
-                    value = new string[0];
+                    value = Utils.EmptyArray<string>();
                 }
                 _provider = value;
             }
-        } // Provider
+        }
 
         /// <summary>
         /// Gets or sets the scope identifier from which to remove the drive.
@@ -2100,18 +1982,7 @@ namespace Microsoft.PowerShell.Commands
         /// global scope until a drive of the given name is found to remove.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public string Scope
-        {
-            get
-            {
-                return _scope;
-            } // get
-
-            set
-            {
-                _scope = value;
-            } // set
-        } // Scope
+        public string Scope { get; set; }
 
         /// <summary>
         /// Gets or sets the force property which determines if the drive
@@ -2121,16 +1992,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override SwitchParameter Force
         {
-            get
-            {
-                return base.Force;
-            } // get
-
-            set
-            {
-                base.Force = value;
-            } // set
-        } // Force
+            get { return base.Force; }
+            set { base.Force = value; }
+        }
 
         /// <summary>
         /// Determines if the provider for the specified path supports ShouldProcess
@@ -2138,10 +2002,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         protected override bool ProviderSupportsShouldProcess
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         #endregion Command parameters
@@ -2157,15 +2018,6 @@ namespace Microsoft.PowerShell.Commands
         /// The name of the provider(s) for which to remove all drives.
         /// </summary>
         private string[] _provider = new string[0];
-
-        /// <summary>
-        /// The scope identifier for the scope to remove the drive from.
-        /// If null or empty the scope hierarchy will be searched starting
-        /// from the current scope through the parents to the global scope
-        /// until a drive of the specified name is found and removed.
-        /// </summary>
-        private string _scope;
-
 
         #endregion Command data
 
@@ -2277,10 +2129,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string[] Name
         {
-            get
-            {
-                return _name;
-            }
+            get { return _name; }
             set
             {
                 if (value == null)
@@ -2289,7 +2138,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 _name = value;
             }
-        } // Name
+        }
 
         /// <summary>
         /// Gets or sets the literal name parameter to the command
@@ -2298,35 +2147,20 @@ namespace Microsoft.PowerShell.Commands
                    Mandatory = true, ValueFromPipeline = false, ValueFromPipelineByPropertyName = true)]
         public string[] LiteralName
         {
-            get
-            {
-                return _name;
-            } // get
-
+            get { return _name; }
             set
             {
                 base.SuppressWildcardExpansion = true;
                 _name = value;
-            } // set
-        } // LiteralName
+            }
+        }
 
         /// <summary>
         /// Gets or sets the scope parameter to the command.
         /// </summary>
         ///
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public string Scope
-        {
-            get
-            {
-                return _scope;
-            } //get
-
-            set
-            {
-                _scope = value;
-            }
-        } // Scope
+        public string Scope { get; set; }
 
         /// <summary>
         /// Gets or sets the provider name for the
@@ -2342,19 +2176,16 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public string[] PSProvider
         {
-            get
-            {
-                return _provider;
-            }
+            get { return _provider; }
             set
             {
                 if (value == null)
                 {
-                    value = new string[0];
+                    value = Utils.EmptyArray<string>();
                 }
                 _provider = value;
             }
-        } // Provider
+        }
 
         #endregion Command parameters
 
@@ -2369,11 +2200,6 @@ namespace Microsoft.PowerShell.Commands
         /// The provider ID for the drives you want to see.
         /// </summary>
         private string[] _provider = new string[0];
-
-        /// <summary>
-        /// The scope to get the drive(s) from.
-        /// </summary>
-        private string _scope;
 
         #endregion Command data
 
@@ -2700,17 +2526,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "pathSet", Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [Parameter(Position = 0, ParameterSetName = "nameSet", Mandatory = false, ValueFromPipelineByPropertyName = true)]
-        public string[] Path
-        {
-            get
-            {
-                return _paths;
-            }
-            set
-            {
-                _paths = value;
-            }
-        } // Path
+        public string[] Path { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the item to create
@@ -2718,52 +2534,21 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "nameSet", Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [AllowNull]
         [AllowEmptyString]
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;
-            }
-        } // Name
+        public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the type of the item to create
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("Type")]
-        public string ItemType
-        {
-            get
-            {
-                return _type;
-            }
-            set
-            {
-                _type = value;
-            }
-        } // Type
+        public string ItemType { get; set; }
 
         /// <summary>
         /// Gets or sets the content of the item to create
         /// </summary>
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("Target")]
-        public object Value
-
-        {
-            get
-            {
-                return _content;
-            }
-            set
-            {
-                _content = value;
-            }
-        } // Content
+        public object Value { get; set; }
 
         /// <summary>
         /// Gets or sets the force property
@@ -2782,15 +2567,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override SwitchParameter Force
         {
-            get
-            {
-                return base.Force;
-            }
-            set
-            {
-                base.Force = value;
-            }
-        } // Force
+            get { return base.Force; }
+            set { base.Force = value; }
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the new-item cmdlet.
@@ -2816,7 +2595,7 @@ namespace Microsoft.PowerShell.Commands
                     return InvokeProvider.Item.NewItemDynamicParameters(Path[0], ItemType, Value, context);
             }
             return InvokeProvider.Item.NewItemDynamicParameters(".", ItemType, Value, context);
-        } // GetDynamicParameters
+        }
 
         /// <summary>
         /// Determines if the provider for the specified path supports ShouldProcess
@@ -2826,33 +2605,13 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return base.DoesProviderSupportShouldProcess(_paths);
+                return base.DoesProviderSupportShouldProcess(Path);
             }
         }
 
         #endregion Command parameters
 
         #region Command data
-        /// <summary>
-        /// The path of the container to create the item in. It may
-        /// contain glob characters.
-        /// </summary>
-        private string[] _paths;
-
-        /// <summary>
-        /// The name of the item to create. It may not contain glob characters.
-        /// </summary>
-        private string _name;
-
-        /// <summary>
-        /// The type of the item to create. 
-        /// </summary>
-        private string _type;
-
-        /// <summary>
-        /// The content to create the new item with.
-        /// </summary>
-        private object _content;
 
         #endregion Command Data
 
@@ -2863,13 +2622,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (_paths == null ||
-                (_paths != null && _paths.Length == 0))
+            if (Path == null ||
+                (Path != null && Path.Length == 0))
             {
-                _paths = new string[] { String.Empty };
+                Path = new string[] { String.Empty };
             }
 
-            foreach (string path in _paths)
+            foreach (string path in Path)
             {
                 try
                 {
@@ -2946,34 +2705,19 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSPath")]
         public string[] LiteralPath
         {
-            get
-            {
-                return _paths;
-            } // get
-
+            get { return _paths; }
             set
             {
                 base.SuppressWildcardExpansion = true;
                 _paths = value;
-            } // set
-        } // LiteralPath
-
+            }
+        }
 
         /// <summary>
         /// Gets or sets the value of the item to be set
         /// </summary>
         [Parameter(Position = 1, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        public object Value
-        {
-            get
-            {
-                return _newValue;
-            }
-            set
-            {
-                _newValue = value;
-            }
-        }
+        public object Value { get; set; }
 
         /// <summary>
         /// Gets or sets the force property
@@ -2992,15 +2736,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override SwitchParameter Force
         {
-            get
-            {
-                return base.Force;
-            }
-            set
-            {
-                base.Force = value;
-            }
-        } // Force
+            get { return base.Force; }
+            set { base.Force = value; }
+        }
 
         /// <summary>
         /// Gets or sets the pass through property which determines
@@ -3011,16 +2749,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter PassThru
         {
-            get
-            {
-                return _passThrough;
-            }
-
-            set
-            {
-                _passThrough = value;
-            }
-        } // PassThru
+            get { return _passThrough; }
+            set { _passThrough = value; }
+        }
 
         /// <summary>
         /// Gets or sets the filter property
@@ -3028,14 +2759,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override string Filter
         {
-            get
-            {
-                return base.Filter;
-            }
-            set
-            {
-                base.Filter = value;
-            }
+            get { return base.Filter; }
+            set { base.Filter = value; }
         }
 
         /// <summary>
@@ -3044,15 +2769,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override string[] Include
         {
-            get
-            {
-                return base.Include;
-            } // get
-
-            set
-            {
-                base.Include = value;
-            } // set
+            get { return base.Include; }
+            set { base.Include = value; }
         } // Include
 
         /// <summary>
@@ -3061,16 +2779,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override string[] Exclude
         {
-            get
-            {
-                return base.Exclude;
-            } // get
-
-            set
-            {
-                base.Exclude = value;
-            } // set
-        } // Exclude
+            get { return base.Exclude; }
+            set { base.Exclude = value; }
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the set-item cmdlet.
@@ -3092,7 +2803,7 @@ namespace Microsoft.PowerShell.Commands
                 return InvokeProvider.Item.SetItemDynamicParameters(Path[0], Value, context);
             }
             return InvokeProvider.Item.SetItemDynamicParameters(".", Value, context);
-        } // GetDynamicParameters      
+        }
 
         /// <summary>
         /// Determines if the provider for the specified path supports ShouldProcess
@@ -3112,11 +2823,6 @@ namespace Microsoft.PowerShell.Commands
         /// The path of the item to set.
         /// </summary>
         private string[] _paths;
-
-        /// <summary>
-        /// The value of the item to be set.
-        /// </summary>
-        private object _newValue;
 
         /// <summary>
         /// Determines if the object being set should be written to the pipeline.
@@ -3673,33 +3379,19 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSPath")]
         public string[] LiteralPath
         {
-            get
-            {
-                return _paths;
-            } // get
-
+            get { return _paths; }
             set
             {
                 base.SuppressWildcardExpansion = true;
                 _paths = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
         /// Gets or sets the destination property
         /// </summary>
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true)]
-        public string Destination
-        {
-            get
-            {
-                return _destination;
-            }
-            set
-            {
-                _destination = value;
-            }
-        } // Destination
+        public string Destination { get; set; } = ".";
 
         /// <summary>
         /// Gets or sets the force property
@@ -3718,15 +3410,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override SwitchParameter Force
         {
-            get
-            {
-                return base.Force;
-            }
-            set
-            {
-                base.Force = value;
-            }
-        } // Force
+            get { return base.Force; }
+            set { base.Force = value; }
+        }
 
         /// <summary>
         /// Gets or sets the filter property
@@ -3734,15 +3420,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override string Filter
         {
-            get
-            {
-                return base.Filter;
-            }
-            set
-            {
-                base.Filter = value;
-            }
-        } // Filter
+            get { return base.Filter; }
+            set { base.Filter = value; }
+        }
 
         /// <summary>
         /// Gets or sets the include property
@@ -3750,16 +3430,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override string[] Include
         {
-            get
-            {
-                return base.Include;
-            } // get
-
-            set
-            {
-                base.Include = value;
-            } // set
-        } // Include
+            get { return base.Include; }
+            set { base.Include = value; }
+        }
 
         /// <summary>
         /// Gets or sets the exclude property
@@ -3767,16 +3440,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override string[] Exclude
         {
-            get
-            {
-                return base.Exclude;
-            } // get
-
-            set
-            {
-                base.Exclude = value;
-            } // set
-        } // Exclude
+            get { return base.Exclude; }
+            set { base.Exclude = value; }
+        }
 
         /// <summary>
         /// Gets or sets the pass through property which determines
@@ -3787,16 +3453,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter PassThru
         {
-            get
-            {
-                return _passThrough;
-            }
-
-            set
-            {
-                _passThrough = value;
-            }
-        } // PassThru
+            get { return _passThrough; }
+            set { _passThrough = value; }
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the move-item cmdlet.
@@ -3818,7 +3477,7 @@ namespace Microsoft.PowerShell.Commands
                 return InvokeProvider.Item.MoveItemDynamicParameters(Path[0], Destination, context);
             }
             return InvokeProvider.Item.MoveItemDynamicParameters(".", Destination, context);
-        } // GetDynamicParameters
+        }
 
         /// <summary>
         /// Determines if the provider for the specified path supports ShouldProcess
@@ -3840,11 +3499,6 @@ namespace Microsoft.PowerShell.Commands
         /// the Path property.
         /// </summary>
         private string[] _paths;
-
-        /// <summary>
-        /// The destination of the move
-        /// </summary>
-        private string _destination = ".";
 
         /// <summary>
         /// Determines if the object being set should be written to the pipeline.
@@ -4105,15 +3759,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
         public string Path
         {
-            get
-            {
-                return _path;
-            }
-            set
-            {
-                _path = value;
-            }
-        } // Path
+            get { return _path; }
+            set { _path = value; }
+        }
 
         /// <summary>
         /// Gets or sets the literal path property
@@ -4122,32 +3770,19 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSPath")]
         public string LiteralPath
         {
-            get
-            {
-                return _path;
-            }
+            get { return _path; }
             set
             {
                 _path = value;
                 base.SuppressWildcardExpansion = true;
             }
-        } // Path
+        }
 
         /// <summary>
         /// Gets or sets the newName property
         /// </summary>
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
-        public string NewName
-        {
-            get
-            {
-                return _newName;
-            }
-            set
-            {
-                _newName = value;
-            }
-        } // Name
+        public string NewName { get; set; }
 
         /// <summary>
         /// Gets or sets the force property
@@ -4166,15 +3801,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override SwitchParameter Force
         {
-            get
-            {
-                return base.Force;
-            }
-            set
-            {
-                base.Force = value;
-            }
-        } // Force
+            get { return base.Force; }
+            set { base.Force = value; }
+        }
 
 
         /// <summary>
@@ -4186,16 +3815,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter PassThru
         {
-            get
-            {
-                return _passThrough;
-            }
-
-            set
-            {
-                _passThrough = value;
-            }
-        } // PassThru
+            get { return _passThrough; }
+            set { _passThrough = value; }
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the rename-item cmdlet.
@@ -4213,7 +3835,7 @@ namespace Microsoft.PowerShell.Commands
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             return InvokeProvider.Item.RenameItemDynamicParameters(Path, NewName, context);
-        } // GetDynamicParameters
+        }
 
         /// <summary>
         /// Determines if the provider for the specified path supports ShouldProcess
@@ -4235,11 +3857,6 @@ namespace Microsoft.PowerShell.Commands
         /// the Path property.
         /// </summary>
         private string _path;
-
-        /// <summary>
-        /// The new name of the item being renamed
-        /// </summary>
-        private string _newName;
 
         /// <summary>
         /// Determines if the object being set should be written to the pipeline.
@@ -4448,33 +4065,19 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSPath")]
         public string[] LiteralPath
         {
-            get
-            {
-                return _paths;
-            } // get
-
+            get { return _paths; }
             set
             {
                 base.SuppressWildcardExpansion = true;
                 _paths = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         /// <summary>
         /// Gets or sets the destination property
         /// </summary>
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true)]
-        public string Destination
-        {
-            get
-            {
-                return _destination;
-            }
-            set
-            {
-                _destination = value;
-            }
-        } // Destination
+        public string Destination { get; set; }
 
         /// <summary>
         /// Gets or sets the container property
@@ -4482,16 +4085,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter Container
         {
-            get
-            {
-                return _container;
-            }
+            get { return _container; }
             set
             {
                 _containerSpecified = true;
                 _container = value;
             }
-        } // Container
+        }
 
         /// <summary>
         /// Gets or sets the force property
@@ -4510,15 +4110,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override SwitchParameter Force
         {
-            get
-            {
-                return base.Force;
-            }
-            set
-            {
-                base.Force = value;
-            }
-        } // Force
+            get { return base.Force; }
+            set { base.Force = value; }
+        }
 
         /// <summary>
         /// Gets or sets the filter property
@@ -4526,15 +4120,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override string Filter
         {
-            get
-            {
-                return base.Filter;
-            }
-            set
-            {
-                base.Filter = value;
-            }
-        } // Filter
+            get { return base.Filter; }
+            set { base.Filter = value; }
+        }
 
         /// <summary>
         /// Gets or sets the include property
@@ -4542,16 +4130,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override string[] Include
         {
-            get
-            {
-                return base.Include;
-            } // get
-
-            set
-            {
-                base.Include = value;
-            } // set
-        } // Include
+            get { return base.Include; }
+            set { base.Include = value; }
+        }
 
         /// <summary>
         /// Gets or sets the exclude property
@@ -4559,16 +4140,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override string[] Exclude
         {
-            get
-            {
-                return base.Exclude;
-            } // get
-
-            set
-            {
-                base.Exclude = value;
-            } // set
-        } // Exclude
+            get { return base.Exclude; }
+            set { base.Exclude = value; }
+        }
 
         /// <summary>
         /// Gets or sets the recurse property
@@ -4576,10 +4150,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter Recurse
         {
-            get
-            {
-                return _recurse;
-            }
+            get { return _recurse; }
             set
             {
                 _recurse = value;
@@ -4593,7 +4164,7 @@ namespace Microsoft.PowerShell.Commands
                     _container = _recurse;
                 }
             }
-        } // Recurse
+        }
 
         /// <summary>
         /// Gets or sets the pass through property which determines
@@ -4604,16 +4175,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter PassThru
         {
-            get
-            {
-                return _passThrough;
-            }
-
-            set
-            {
-                _passThrough = value;
-            }
-        } // PassThru
+            get { return _passThrough; }
+            set { _passThrough = value; }
+        }
 
         /// <summary>
         /// Gets the dynamic parameters for the copy-item cmdlet.
@@ -4657,11 +4221,6 @@ namespace Microsoft.PowerShell.Commands
         /// the Path property.
         /// </summary>
         private string[] _paths;
-
-        /// <summary>
-        /// The destination of the item being copied
-        /// </summary>
-        private string _destination;
 
         /// <summary>
         /// Determines if the containers should be copied with the items or not.
@@ -5195,22 +4754,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
         public string[] PSProvider
         {
-            get
-            {
-                return _provider;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    _provider = new string[0];
-                }
-                else
-                {
-                    _provider = value;
-                }
-            }
-        } // Provider
+            get { return _provider; }
+            set { _provider = value ?? Utils.EmptyArray<string>(); }
+        }
 
         #endregion Command parameters
 

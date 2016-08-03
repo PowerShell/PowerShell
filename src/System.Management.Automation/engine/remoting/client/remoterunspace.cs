@@ -30,15 +30,11 @@ namespace System.Management.Automation
     {
         #region Private Members
 
-        private RunspacePool _runspacePool;
         private ArrayList _runningPipelines = new ArrayList();
         private object _syncRoot = new object();
         private RunspaceStateInfo _runspaceStateInfo = new RunspaceStateInfo(RunspaceState.BeforeOpen);
-        private Version _version = PSVersionInfo.PSVersion;
-        private Version _serverVersion;
         private bool _bSessionStateProxyCallInProgress = false;
         private RunspaceConnectionInfo _connectionInfo;
-        private RunspaceConnectionInfo _originalConnectionInfo;
         private RemoteDebugger _remoteDebugger;
         private PSPrimitiveDictionary _applicationPrivateData;
 
@@ -99,17 +95,11 @@ namespace System.Management.Automation
             }
         }
 
-        private bool _shouldCloseOnPop = false;
-
         /// <summary>
         /// Temporary place to remember whether to close this runspace on pop or not.
         /// Used by Start-PSSession.
         /// </summary>
-        internal bool ShouldCloseOnPop
-        {
-            get { return _shouldCloseOnPop; }
-            set { _shouldCloseOnPop = value; }
-        }
+        internal bool ShouldCloseOnPop { get; set; } = false;
 
         #endregion Private Members
 
@@ -145,9 +135,9 @@ namespace System.Management.Automation
                         InstanceId.ToString());
 
             _connectionInfo = connectionInfo.InternalCopy();
-            _originalConnectionInfo = connectionInfo.InternalCopy();
+            OriginalConnectionInfo = connectionInfo.InternalCopy();
 
-            _runspacePool = new RunspacePool(1, 1, typeTable, host, applicationArguments, connectionInfo, name);
+            RunspacePool = new RunspacePool(1, 1, typeTable, host, applicationArguments, connectionInfo, name);
 
             this.PSSessionId = id;
 
@@ -169,13 +159,13 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewInvalidOperationException(RunspaceStrings.InvalidRunspacePool);
             }
 
-            _runspacePool = runspacePool;
+            RunspacePool = runspacePool;
 
             // The remote runspace pool object can only have the value one set for min/max pools.
             // This sets the runspace pool object min/max pool values to one.  The PSRP/WSMan stack
             // will fail during connection if the min/max pool values do not match.
-            _runspacePool.RemoteRunspacePoolInternal.SetMinRunspaces(1);
-            _runspacePool.RemoteRunspacePoolInternal.SetMaxRunspaces(1);
+            RunspacePool.RemoteRunspacePoolInternal.SetMinRunspaces(1);
+            RunspacePool.RemoteRunspacePoolInternal.SetMaxRunspaces(1);
 
             _connectionInfo = runspacePool.ConnectionInfo.InternalCopy();
 
@@ -188,7 +178,7 @@ namespace System.Management.Automation
             // Normal Availability for a disconnected runspace is "None", which means it can be connected.
             // However, we can also have disconnected runspace objects that are *not* avaialable for 
             // connection and in this case the Availability is set to "Busy".
-            _runspaceAvailability = _runspacePool.RemoteRunspacePoolInternal.AvailableForConnection ?
+            _runspaceAvailability = RunspacePool.RemoteRunspacePoolInternal.AvailableForConnection ?
                 Runspaces.RunspaceAvailability.None : Runspaces.RunspaceAvailability.Busy;
 
             SetEventHandlers();
@@ -206,20 +196,20 @@ namespace System.Management.Automation
         {
             // RemoteRunspace must have the same instanceID as its contained RunspacePool instance because
             // the PSRP/WinRS layer tracks remote runspace Ids.
-            this.InstanceId = _runspacePool.InstanceId;
+            this.InstanceId = RunspacePool.InstanceId;
 
             _eventManager = new PSRemoteEventManager(_connectionInfo.ComputerName, this.InstanceId);
 
-            _runspacePool.StateChanged +=
+            RunspacePool.StateChanged +=
                 new EventHandler<RunspacePoolStateChangedEventArgs>(HandleRunspacePoolStateChanged);
-            _runspacePool.RemoteRunspacePoolInternal.HostCallReceived +=
+            RunspacePool.RemoteRunspacePoolInternal.HostCallReceived +=
                 new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCallReceived);
-            _runspacePool.RemoteRunspacePoolInternal.URIRedirectionReported +=
+            RunspacePool.RemoteRunspacePoolInternal.URIRedirectionReported +=
                 new EventHandler<RemoteDataEventArgs<Uri>>(HandleURIDirectionReported);
-            _runspacePool.ForwardEvent +=
+            RunspacePool.ForwardEvent +=
                 new EventHandler<PSEventArgs>(HandleRunspacePoolForwardEvent);
 
-            _runspacePool.RemoteRunspacePoolInternal.SessionCreateCompleted +=
+            RunspacePool.RemoteRunspacePoolInternal.SessionCreateCompleted +=
                 new EventHandler<CreateCompleteEventArgs>(HandleSessionCreateCompleted);
         }
 
@@ -281,21 +271,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Return version of this runspace
         /// </summary>
-        public override Version Version
-        {
-            get
-            {
-                return _version;
-            }
-        }
+        public override Version Version { get; } = PSVersionInfo.PSVersion;
 
         /// <summary>
         /// PS Version running on server.
         /// </summary>
-        internal Version ServerVersion
-        {
-            get { return _serverVersion; }
-        }
+        internal Version ServerVersion { get; private set; }
 
         /// <summary>
         /// Retrieve information about current state of the runspace
@@ -411,10 +392,7 @@ namespace System.Management.Automation
         /// <summary>
         /// ConnectionInfo originally supplied by the user
         /// </summary>
-        public override RunspaceConnectionInfo OriginalConnectionInfo
-        {
-            get { return _originalConnectionInfo; }
-        }
+        public override RunspaceConnectionInfo OriginalConnectionInfo { get; }
 
         /// <summary>
         /// Gets the event manager
@@ -470,7 +448,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    return _runspacePool.RemoteRunspacePoolInternal.DataStructureHandler.RemoteSession;
+                    return RunspacePool.RemoteRunspacePoolInternal.DataStructureHandler.RemoteSession;
                 }
                 catch (InvalidRunspacePoolStateException e)
                 {
@@ -487,15 +465,15 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_runspacePool.RemoteRunspacePoolInternal.ConnectCommands == null)
+                if (RunspacePool.RemoteRunspacePoolInternal.ConnectCommands == null)
                 {
                     return null;
                 }
 
-                Dbg.Assert(_runspacePool.RemoteRunspacePoolInternal.ConnectCommands.Length < 2, "RemoteRunspace should have no more than one remote running command.");
-                if (_runspacePool.RemoteRunspacePoolInternal.ConnectCommands.Length > 0)
+                Dbg.Assert(RunspacePool.RemoteRunspacePoolInternal.ConnectCommands.Length < 2, "RemoteRunspace should have no more than one remote running command.");
+                if (RunspacePool.RemoteRunspacePoolInternal.ConnectCommands.Length > 0)
                 {
-                    return _runspacePool.RemoteRunspacePoolInternal.ConnectCommands[0];
+                    return RunspacePool.RemoteRunspacePoolInternal.ConnectCommands[0];
                 }
                 else
                 {
@@ -509,26 +487,21 @@ namespace System.Management.Automation
         /// </summary>
         internal string PSSessionName
         {
-            get { return _runspacePool.RemoteRunspacePoolInternal.Name; }
-            set { _runspacePool.RemoteRunspacePoolInternal.Name = value; }
+            get { return RunspacePool.RemoteRunspacePoolInternal.Name; }
+            set { RunspacePool.RemoteRunspacePoolInternal.Name = value; }
         }
 
         /// <summary>
         /// Gets the Id value for the remote PSSession.
         /// </summary>
-        internal int PSSessionId
-        {
-            get { return _id; }
-            set { _id = value; }
-        }
-        private int _id = -1;
+        internal int PSSessionId { get; set; } = -1;
 
         /// <summary>
         /// Returns true if Runspace supports disconnect.
         /// </summary>
         internal bool CanDisconnect
         {
-            get { return _runspacePool.RemoteRunspacePoolInternal.CanDisconnect; }
+            get { return RunspacePool.RemoteRunspacePoolInternal.CanDisconnect; }
         }
 
         /// <summary>
@@ -536,7 +509,7 @@ namespace System.Management.Automation
         /// </summary>
         internal bool CanConnect
         {
-            get { return _runspacePool.RemoteRunspacePoolInternal.AvailableForConnection; }
+            get { return RunspacePool.RemoteRunspacePoolInternal.AvailableForConnection; }
         }
 
         /// <summary>
@@ -566,7 +539,7 @@ namespace System.Management.Automation
 
             try
             {
-                _runspacePool.BeginOpen(null, null);
+                RunspacePool.BeginOpen(null, null);
             }
             catch (InvalidRunspacePoolStateException e)
             {
@@ -586,11 +559,11 @@ namespace System.Management.Automation
 
             try
             {
-                _runspacePool.ThreadOptions = this.ThreadOptions;
+                RunspacePool.ThreadOptions = this.ThreadOptions;
 #if !CORECLR // No ApartmentState In CoreCLR
-                _runspacePool.ApartmentState = this.ApartmentState;
+                RunspacePool.ApartmentState = this.ApartmentState;
 #endif
-                _runspacePool.Open();
+                RunspacePool.Open();
             }
             catch (InvalidRunspacePoolStateException e)
             {
@@ -609,7 +582,7 @@ namespace System.Management.Automation
         {
             try
             {
-                _runspacePool.BeginClose(null, null);
+                RunspacePool.BeginClose(null, null);
             }
             catch (InvalidRunspacePoolStateException e)
             {
@@ -627,7 +600,7 @@ namespace System.Management.Automation
         {
             try
             {
-                IAsyncResult result = _runspacePool.BeginClose(null, null);
+                IAsyncResult result = RunspacePool.BeginClose(null, null);
 
                 WaitForFinishofPipelines();
 
@@ -635,7 +608,7 @@ namespace System.Management.Automation
                 // pool is already being closed from a server initiated close event.
                 if (result != null)
                 {
-                    _runspacePool.EndClose(result);
+                    RunspacePool.EndClose(result);
                 }
             }
             catch (InvalidRunspacePoolStateException e)
@@ -691,21 +664,21 @@ namespace System.Management.Automation
 
                     try
                     {
-                        _runspacePool.StateChanged -=
+                        RunspacePool.StateChanged -=
                                         new EventHandler<RunspacePoolStateChangedEventArgs>(HandleRunspacePoolStateChanged);
-                        _runspacePool.RemoteRunspacePoolInternal.HostCallReceived -=
+                        RunspacePool.RemoteRunspacePoolInternal.HostCallReceived -=
                             new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCallReceived);
-                        _runspacePool.RemoteRunspacePoolInternal.URIRedirectionReported -=
+                        RunspacePool.RemoteRunspacePoolInternal.URIRedirectionReported -=
                             new EventHandler<RemoteDataEventArgs<Uri>>(HandleURIDirectionReported);
-                        _runspacePool.ForwardEvent -=
+                        RunspacePool.ForwardEvent -=
                             new EventHandler<PSEventArgs>(HandleRunspacePoolForwardEvent);
 
-                        _runspacePool.RemoteRunspacePoolInternal.SessionCreateCompleted -=
+                        RunspacePool.RemoteRunspacePoolInternal.SessionCreateCompleted -=
                             new EventHandler<CreateCompleteEventArgs>(HandleSessionCreateCompleted);
 
                         _eventManager = null;
 
-                        _runspacePool.Dispose();
+                        RunspacePool.Dispose();
                         //_runspacePool = null;
                     }
                     catch (InvalidRunspacePoolStateException e)
@@ -749,7 +722,7 @@ namespace System.Management.Automation
             }
             else
             {
-                bool success = _runspacePool.RemoteRunspacePoolInternal.ResetRunspaceState();
+                bool success = RunspacePool.RemoteRunspacePoolInternal.ResetRunspaceState();
                 if (!success)
                 {
                     invalidOperation = PSTraceSource.NewInvalidOperationException();
@@ -845,7 +818,7 @@ namespace System.Management.Automation
 
             try
             {
-                _runspacePool.Disconnect();
+                RunspacePool.Disconnect();
             }
             catch (InvalidRunspacePoolStateException e)
             {
@@ -880,7 +853,7 @@ namespace System.Management.Automation
 
             try
             {
-                _runspacePool.BeginDisconnect(null, null);
+                RunspacePool.BeginDisconnect(null, null);
             }
             catch (InvalidRunspacePoolStateException e)
             {
@@ -911,7 +884,7 @@ namespace System.Management.Automation
 
             try
             {
-                _runspacePool.Connect();
+                RunspacePool.Connect();
             }
             catch (InvalidRunspacePoolStateException e)
             {
@@ -942,7 +915,7 @@ namespace System.Management.Automation
 
             try
             {
-                _runspacePool.BeginConnect(null, null);
+                RunspacePool.BeginConnect(null, null);
             }
             catch (InvalidRunspacePoolStateException e)
             {
@@ -1021,7 +994,7 @@ namespace System.Management.Automation
         /// </summary>
         private void UpdatePoolDisconnectOptions()
         {
-            WSManConnectionInfo runspaceWSManConnectionInfo = _runspacePool.ConnectionInfo as WSManConnectionInfo;
+            WSManConnectionInfo runspaceWSManConnectionInfo = RunspacePool.ConnectionInfo as WSManConnectionInfo;
             WSManConnectionInfo wsManconnectionInfo = ConnectionInfo as WSManConnectionInfo;
 
             Dbg.Assert(runspaceWSManConnectionInfo != null, "Disconnect-Connect feature is currently only supported for WSMan transport");
@@ -1247,11 +1220,9 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal override SessionStateProxy GetSessionStateProxy()
         {
-            if (_sessionStateProxy == null)
-                _sessionStateProxy = new RemoteSessionStateProxy(this);
-
-            return _sessionStateProxy;
+            return _sessionStateProxy ?? (_sessionStateProxy = new RemoteSessionStateProxy(this));
         }
+
         private RemoteSessionStateProxy _sessionStateProxy = null;
 
         #endregion SessionState Proxy
@@ -1315,7 +1286,7 @@ namespace System.Management.Automation
             try
             {
                 IHostSupportsInteractiveSession interactiveHost =
-                    _runspacePool.RemoteRunspacePoolInternal.Host as IHostSupportsInteractiveSession;
+                    RunspacePool.RemoteRunspacePoolInternal.Host as IHostSupportsInteractiveSession;
                 if (interactiveHost != null &&
                     interactiveHost.Runspace != null &&
                     interactiveHost.Runspace.Debugger != null)
@@ -1378,7 +1349,7 @@ namespace System.Management.Automation
                     var psVersionTable = psApplicationPrivateData[PSVersionInfo.PSVersionTableName] as PSPrimitiveDictionary;
                     if (psVersionTable.ContainsKey(PSVersionInfo.PSVersionName))
                     {
-                        _serverVersion = psVersionTable[PSVersionInfo.PSVersionName] as Version;
+                        ServerVersion = psVersionTable[PSVersionInfo.PSVersionName] as Version;
                     }
                 }
             }
@@ -1391,7 +1362,7 @@ namespace System.Management.Automation
                 _remoteDebugger = new RemoteDebugger(this);
 
                 // Set initial debugger state.
-                _remoteDebugger.SetClientDebugInfo(debugMode, inDebugger, breakpointCount, breakAll, unhandledBreakpointMode, _serverVersion);
+                _remoteDebugger.SetClientDebugInfo(debugMode, inDebugger, breakpointCount, breakAll, unhandledBreakpointMode, ServerVersion);
 
                 return true;
             }
@@ -1606,12 +1577,12 @@ namespace System.Management.Automation
         private void HandleHostCallReceived(object sender, RemoteDataEventArgs<RemoteHostCall> eventArgs)
         {
             ClientMethodExecutor.Dispatch(
-                _runspacePool.RemoteRunspacePoolInternal.DataStructureHandler.TransportManager,
-                _runspacePool.RemoteRunspacePoolInternal.Host,
+                RunspacePool.RemoteRunspacePoolInternal.DataStructureHandler.TransportManager,
+                RunspacePool.RemoteRunspacePoolInternal.Host,
                 null,       /* error stream */
                 null,       /* method executor stream */
                 false,      /* is method stream enabled */
-                _runspacePool.RemoteRunspacePoolInternal,
+                RunspacePool.RemoteRunspacePoolInternal,
                 Guid.Empty, /* powershell id */
                 eventArgs.Data);
         }
@@ -1680,7 +1651,7 @@ namespace System.Management.Automation
         /// </summary>
         private void UpdateDisconnectExpiresOn()
         {
-            WSManConnectionInfo wsmanConnectionInfo = _runspacePool.RemoteRunspacePoolInternal.ConnectionInfo as WSManConnectionInfo;
+            WSManConnectionInfo wsmanConnectionInfo = RunspacePool.RemoteRunspacePoolInternal.ConnectionInfo as WSManConnectionInfo;
             if (wsmanConnectionInfo != null)
             {
                 this.DisconnectedOn = wsmanConnectionInfo.DisconnectedOn;
@@ -1777,7 +1748,7 @@ namespace System.Management.Automation
         internal void AbortOpen()
         {
             System.Management.Automation.Remoting.Client.NamedPipeClientSessionTransportManager transportManager =
-                _runspacePool.RemoteRunspacePoolInternal.DataStructureHandler.TransportManager as System.Management.Automation.Remoting.Client.NamedPipeClientSessionTransportManager;
+                RunspacePool.RemoteRunspacePoolInternal.DataStructureHandler.TransportManager as System.Management.Automation.Remoting.Client.NamedPipeClientSessionTransportManager;
 
             if (transportManager != null)
             {
@@ -1792,13 +1763,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The runspace pool that this remote runspace wraps
         /// </summary>
-        internal RunspacePool RunspacePool
-        {
-            get
-            {
-                return _runspacePool;
-            }
-        }
+        internal RunspacePool RunspacePool { get; }
 
         /// <summary>
         /// EventHandler used to report connecion URI redirections to the application
@@ -1821,7 +1786,7 @@ namespace System.Management.Automation
         {
             try
             {
-                return _runspacePool.GetApplicationPrivateData();
+                return RunspacePool.GetApplicationPrivateData();
             }
             catch (InvalidRunspacePoolStateException e)
             {

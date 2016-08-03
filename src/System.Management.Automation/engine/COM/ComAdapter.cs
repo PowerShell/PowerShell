@@ -6,8 +6,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.ComponentModel;
-using System.Reflection;
 using Microsoft.PowerShell;
+
+#if CORECLR
+using System.Reflection;
+#endif
 
 namespace System.Management.Automation
 {

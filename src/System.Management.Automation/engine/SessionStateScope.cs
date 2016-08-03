@@ -2,12 +2,10 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
 
 namespace System.Management.Automation
 {
@@ -2047,14 +2045,7 @@ namespace System.Management.Automation
         // performance degradation, so we use lazy initialization for all of them.
         private Dictionary<string, PSDriveInfo> GetDrives()
         {
-            if (_drives == null)
-            {
-                // Create the drives collection with the default parameters
-                _drives =
-                    new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase);
-            }
-
-            return _drives;
+            return _drives ?? (_drives = new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase));
         }
 
         private Dictionary<String, PSDriveInfo> _drives;
@@ -2066,15 +2057,10 @@ namespace System.Management.Automation
         // performance degradation, so we use lazy initialization for all of them.
         private Dictionary<string, PSDriveInfo> GetAutomountedDrives()
         {
-            if (_automountedDrives == null)
-            {
-                // Create the drives collection with the default parameters
-                _automountedDrives =
-                    new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase);
-            }
-
-            return _automountedDrives;
+            return _automountedDrives ??
+                   (_automountedDrives = new Dictionary<string, PSDriveInfo>(StringComparer.OrdinalIgnoreCase));
         }
+
         private Dictionary<String, PSDriveInfo> _automountedDrives;
 
         private Dictionary<string, PSVariable> _variables;

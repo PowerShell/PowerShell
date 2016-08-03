@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections.Generic;
 using Dbg = System.Management.Automation;
 
@@ -54,7 +53,7 @@ namespace System.Management.Automation
             CmdletInfo result = null;
             if (String.IsNullOrEmpty(cmdletName))
             {
-                return result;
+                return null;
             }
 
             // Use the scope enumerator to find the alias using the
@@ -123,7 +122,7 @@ namespace System.Management.Automation
             CmdletInfo result = null;
             if (String.IsNullOrEmpty(cmdletName))
             {
-                return result;
+                return null;
             }
 
             SessionStateScope scope = GetScopeByID(scopeID);

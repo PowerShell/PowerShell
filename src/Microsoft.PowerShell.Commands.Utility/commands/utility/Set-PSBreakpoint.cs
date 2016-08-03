@@ -26,18 +26,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Command")]
         [Parameter(ParameterSetName = "Line")]
         [Parameter(ParameterSetName = "Variable")]
-        public ScriptBlock Action
-        {
-            get
-            {
-                return _action;
-            }
-            set
-            {
-                _action = value;
-            }
-        }
-        private ScriptBlock _action = null;
+        public ScriptBlock Action { get; set; } = null;
 
         /// <summary>
         /// The column to set the breakpoint on
@@ -64,36 +53,14 @@ namespace Microsoft.PowerShell.Commands
         [Alias("C")]
         [Parameter(ParameterSetName = "Command", Mandatory = true)]
         [ValidateNotNull]
-        public string[] Command
-        {
-            get
-            {
-                return _command;
-            }
-            set
-            {
-                _command = value;
-            }
-        }
-        private string[] _command = null;
+        public string[] Command { get; set; } = null;
 
         /// <summary>
         /// the line to set the breakpoint on
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = "Line", Mandatory = true)]
         [ValidateNotNull]
-        public int[] Line
-        {
-            get
-            {
-                return _line;
-            }
-            set
-            {
-                _line = value;
-            }
-        }
-        private int[] _line = null;
+        public int[] Line { get; set; } = null;
 
         /// <summary>
         /// the script to set the breakpoint on
@@ -102,18 +69,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Line", Mandatory = true, Position = 0)]
         [Parameter(ParameterSetName = "Variable", Position = 0)]
         [ValidateNotNull]
-        public string[] Script
-        {
-            get
-            {
-                return _script;
-            }
-            set
-            {
-                _script = value;
-            }
-        }
-        private string[] _script = null;
+        public string[] Script { get; set; } = null;
 
         /// <summary>
         /// the variables to set the breakpoint(s) on
@@ -121,30 +77,13 @@ namespace Microsoft.PowerShell.Commands
         [Alias("V")]
         [Parameter(ParameterSetName = "Variable", Mandatory = true)]
         [ValidateNotNull]
-        public string[] Variable
-        {
-            get
-            {
-                return _variable;
-            }
-            set
-            {
-                _variable = value;
-            }
-        }
-        private string[] _variable = null;
+        public string[] Variable { get; set; } = null;
 
         /// <summary>
         /// 
         /// </summary>
         [Parameter(ParameterSetName = "Variable")]
-        public VariableAccessMode Mode
-        {
-            get { return _accessMode; }
-            set { _accessMode = value; }
-        }
-
-        private VariableAccessMode _accessMode = VariableAccessMode.Write;
+        public VariableAccessMode Mode { get; set; } = VariableAccessMode.Write;
 
         #endregion parameters
 
@@ -198,9 +137,9 @@ namespace Microsoft.PowerShell.Commands
             //
             Collection<string> scripts = new Collection<string>();
 
-            if (_script != null)
+            if (Script != null)
             {
-                foreach (string script in _script)
+                foreach (string script in Script)
                 {
                     Collection<PathInfo> scriptPaths = SessionState.Path.GetResolvedPSPathFromPSPath(script);
 

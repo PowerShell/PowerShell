@@ -74,18 +74,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = NewPSSessionCommand.ComputerNameParameterSet)]
         [Alias("Cn")]
         [ValidateNotNullOrEmpty]
-        public override String[] ComputerName
-        {
-            get
-            {
-                return _computerNames;
-            }
-            set
-            {
-                _computerNames = value;
-            }
-        }
-        private String[] _computerNames;
+        public override String[] ComputerName { get; set; }
 
         /// <summary>
         /// Specifies the credentials of the user to impersonate in the 
@@ -139,18 +128,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] Name
-        {
-            get
-            {
-                return _names;
-            }
-            set
-            {
-                _names = value;
-            }
-        }
-        private String[] _names;
+        public String[] Name { get; set; }
 
         /// <summary>
         /// When set and in loopback scenario (localhost) this enables creation of WSMan
@@ -161,12 +139,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = NewPSSessionCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = NewPSSessionCommand.SessionParameterSet)]
         [Parameter(ParameterSetName = NewPSSessionCommand.UriParameterSet)]
-        public SwitchParameter EnableNetworkAccess
-        {
-            get { return _enableNetworkAccess; }
-            set { _enableNetworkAccess = value; }
-        }
-        private SwitchParameter _enableNetworkAccess;
+        public SwitchParameter EnableNetworkAccess { get; set; }
 
         /// <summary>
         /// For WSMan sessions:
@@ -187,18 +160,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = NewPSSessionCommand.VMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = NewPSSessionCommand.VMNameParameterSet)]
-        public String ConfigurationName
-        {
-            get
-            {
-                return _shell;
-            }
-            set
-            {
-                _shell = value;
-            }
-        }
-        private String _shell;
+        public String ConfigurationName { get; set; }
 
         #endregion Parameters
 
@@ -1103,9 +1065,9 @@ namespace Microsoft.PowerShell.Commands
             // runspace pool object, which in turn passes it on to the server during
             // construction.  This way the friendly name can be returned when querying
             // the sever for disconnected sessions/runspaces.
-            if (_names != null && rsIndex < _names.Length)
+            if (Name != null && rsIndex < Name.Length)
             {
-                rsName = _names[rsIndex];
+                rsName = Name[rsIndex];
             }
 
             return rsName;
@@ -1229,21 +1191,14 @@ namespace Microsoft.PowerShell.Commands
 
         private object _syncObject = new object();
 
-        internal RemoteRunspace OperatedRunspace
-        {
-            get
-            {
-                return _runspace;
-            }
-        }
-        private RemoteRunspace _runspace;
+        internal RemoteRunspace OperatedRunspace { get; }
 
         internal OpenRunspaceOperation(RemoteRunspace runspace)
         {
             _startComplete = true;
             _stopComplete = true;
-            _runspace = runspace;
-            _runspace.StateChanged +=
+            OperatedRunspace = runspace;
+            OperatedRunspace.StateChanged +=
                 new EventHandler<RunspaceStateEventArgs>(HandleRunspaceStateChanged);
         }
 
@@ -1256,7 +1211,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _startComplete = false;
             }
-            _runspace.OpenAsync();
+            OperatedRunspace.OpenAsync();
         } // StartOperation
 
         /// <summary>
@@ -1274,7 +1229,7 @@ namespace Microsoft.PowerShell.Commands
                     _stopComplete = true;
                     _startComplete = true;
                     operationStateEventArgs = new OperationStateEventArgs();
-                    operationStateEventArgs.BaseEvent = new RunspaceStateEventArgs(_runspace.RunspaceStateInfo);
+                    operationStateEventArgs.BaseEvent = new RunspaceStateEventArgs(OperatedRunspace.RunspaceStateInfo);
                     operationStateEventArgs.OperationState = OperationState.StopComplete;
                 }
                 else
@@ -1289,7 +1244,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                _runspace.CloseAsync();
+                OperatedRunspace.CloseAsync();
             }
         }
 
@@ -1409,7 +1364,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Must remove the event callback from the new runspace or it will block other event
             // handling by throwing an exception on the event thread.
-            _runspace.StateChanged -= HandleRunspaceStateChanged;
+            OperatedRunspace.StateChanged -= HandleRunspaceStateChanged;
 
             GC.SuppressFinalize(this);
         }

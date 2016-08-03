@@ -2,9 +2,7 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections;
-using System.Management.Automation;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
 
@@ -40,7 +38,7 @@ namespace System.Management.Automation.Internal
         } // ctor
         #endregion ctor
 
-        static internal string[] CommonWorkflowParameters = { "PSComputerName", "JobName", "PSApplicationName", "PSCredential", "PSPort", "PSConfigurationName",
+        internal static string[] CommonWorkflowParameters = { "PSComputerName", "JobName", "PSApplicationName", "PSCredential", "PSPort", "PSConfigurationName",
                                                               "PSConnectionURI", "PSSessionOption", "PSAuthentication", "PSAuthenticationLevel", "PSCertificateThumbprint",
                                                               "PSConnectionRetryCount", "PSConnectionRetryIntervalSec", "PSRunningTimeoutSec", "PSElapsedTimeoutSec",
                                                               "PSPersist", "PSPrivateMetadata", "InputObject", "PSParameterCollection",

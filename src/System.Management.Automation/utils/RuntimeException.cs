@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Management.Automation.Language;
 using System.Runtime.Serialization;
 
@@ -158,7 +157,7 @@ namespace System.Management.Automation
         /// Note that ErrorRecord.Exception is
         /// <see cref="System.Management.Automation.ParentContainsErrorRecordException"/>.
         /// </remarks>
-        virtual public ErrorRecord ErrorRecord
+        public virtual ErrorRecord ErrorRecord
         {
             get
             {

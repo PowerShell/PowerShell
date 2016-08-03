@@ -2,11 +2,8 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Management.Automation.Internal;
 
 namespace System.Management.Automation
 {
@@ -192,7 +189,7 @@ namespace System.Management.Automation
                         // points to, remember the defintion so that we can
                         // provide better error reporting.
 
-                        _unresolvedCommandName = commandNameToResolve;
+                        UnresolvedCommandName = commandNameToResolve;
                     }
                 }
 
@@ -355,19 +352,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the description for the alias
         /// </summary>
-        public string Description
-        {
-            get
-            {
-                return _description;
-            }
-
-            set
-            {
-                _description = value;
-            }
-        }
-        private string _description = String.Empty;
+        public string Description { get; set; } = String.Empty;
 
 
         /// <summary>
@@ -377,14 +362,7 @@ namespace System.Management.Automation
         /// to resolve the command, this this property will return null.
         /// </summary>
         /// 
-        internal string UnresolvedCommandName
-        {
-            get
-            {
-                return _unresolvedCommandName;
-            }
-        }
-        private string _unresolvedCommandName;
+        internal string UnresolvedCommandName { get; private set; }
 
         /// <summary>
         /// The objects output from an alias are the objects output from the resolved

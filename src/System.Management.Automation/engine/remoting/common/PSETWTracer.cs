@@ -2,12 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Internal

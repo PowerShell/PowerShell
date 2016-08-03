@@ -34,36 +34,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateRange(1, int.MaxValue)]
-        public int Depth
-        {
-            get
-            {
-                return _depth;
-            }
-            set
-            {
-                _depth = value;
-            }
-        }
-        private int _depth = 0;
+        public int Depth { get; set; } = 0;
 
         /// <summary>
         /// mandatory file name to write to
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByPath")]
-        public string Path
-        {
-            get
-            {
-                return _path;
-            }
-            set
-            {
-                _path = value;
-            }
-        }
-
-        private string _path;
+        public string Path { get; set; }
 
         /// <summary>
         /// mandatory file name to write to
@@ -74,11 +51,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return _path;
+                return Path;
             }
             set
             {
-                _path = value;
+                Path = value;
                 _isLiteralPath = true;
             }
         }
@@ -89,18 +66,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipeline = true, Mandatory = true)]
         [AllowNull]
-        public PSObject InputObject
-        {
-            get
-            {
-                return _object;
-            }
-            set
-            {
-                _object = value;
-            }
-        }
-        private PSObject _object;
+        public PSObject InputObject { get; set; }
 
         /// <summary>
         /// Property that sets force parameter.
@@ -143,19 +109,7 @@ namespace Microsoft.PowerShell.Commands
         /// 
         [Parameter]
         [ValidateSetAttribute(new string[] { "Unicode", "UTF7", "UTF8", "ASCII", "UTF32", "BigEndianUnicode", "Default", "OEM" })]
-        public string Encoding
-        {
-            get
-            {
-                return _encoding;
-            }
-            set
-            {
-                _encoding = value;
-            }
-        }
-
-        private string _encoding = "Unicode";
+        public string Encoding { get; set; } = "Unicode";
 
         #endregion Command Line Parameters
 
@@ -181,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (null != _serializer)
             {
-                _serializer.Serialize(_object);
+                _serializer.Serialize(InputObject);
                 _xw.Flush();
             }
         }
@@ -236,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void CreateFileStream()
         {
-            Dbg.Assert(_path != null, "FileName is mandatory parameter");
+            Dbg.Assert(Path != null, "FileName is mandatory parameter");
 
             if (!ShouldProcess(Path)) return;
 
@@ -262,13 +216,13 @@ namespace Microsoft.PowerShell.Commands
             xmlSettings.Indent = true;
             xmlSettings.OmitXmlDeclaration = true;
             _xw = XmlWriter.Create(sw, xmlSettings);
-            if (_depth == 0)
+            if (Depth == 0)
             {
                 _serializer = new Serializer(_xw);
             }
             else
             {
-                _serializer = new Serializer(_xw, _depth, true);
+                _serializer = new Serializer(_xw, Depth, true);
             }
         }
 
@@ -332,18 +286,7 @@ namespace Microsoft.PowerShell.Commands
         /// mandatory file name to read from
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
-        public String[] Path
-        {
-            get
-            {
-                return _paths;
-            }
-            set
-            {
-                _paths = value;
-            }
-        }
-        private string[] _paths;
+        public String[] Path { get; set; }
 
         /// <summary>
         /// mandatory file name to read from
@@ -355,11 +298,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return _paths;
+                return Path;
             }
             set
             {
-                _paths = value;
+                Path = value;
                 _isLiteralPath = true;
             }
         }
@@ -398,9 +341,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (_paths != null)
+            if (Path != null)
             {
-                foreach (string path in _paths)
+                foreach (string path in Path)
                 {
                     _helper = new ImportXmlHelper(path, this, _isLiteralPath);
                     _helper.Import();
@@ -435,18 +378,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(HelpMessage = "Specifies how many levels of contained objects should be included in the XML representation")]
         [ValidateRange(1, int.MaxValue)]
-        public int Depth
-        {
-            get
-            {
-                return _depth;
-            }
-            set
-            {
-                _depth = value;
-            }
-        }
-        private int _depth = 0;
+        public int Depth { get; set; } = 0;
 
 
         /// <summary>
@@ -454,18 +386,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, Mandatory = true)]
         [AllowNull]
-        public PSObject InputObject
-        {
-            get
-            {
-                return _object;
-            }
-            set
-            {
-                _object = value;
-            }
-        }
-        private PSObject _object;
+        public PSObject InputObject { get; set; }
 
 
         /// <summary>
@@ -491,18 +412,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         [ValidateSet("Stream", "String", "Document")]
-        public string As
-        {
-            get
-            {
-                return _as;
-            }
-            set
-            {
-                _as = value;
-            }
-        }
-        private string _as = "Document";
+        public string As { get; set; } = "Document";
 
         #endregion Command Line Parameters
 
@@ -514,7 +424,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (!_as.Equals("Stream", StringComparison.OrdinalIgnoreCase))
+            if (!As.Equals("Stream", StringComparison.OrdinalIgnoreCase))
             {
                 CreateMemoryStream();
             }
@@ -531,12 +441,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (_as.Equals("Stream", StringComparison.OrdinalIgnoreCase))
+            if (As.Equals("Stream", StringComparison.OrdinalIgnoreCase))
             {
                 CreateMemoryStream();
 
                 if (null != _serializer)
-                    _serializer.SerializeAsStream(_object);
+                    _serializer.SerializeAsStream(InputObject);
 
 
                 if (null != _serializer)
@@ -556,7 +466,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 if (null != _serializer)
-                    _serializer.Serialize(_object);
+                    _serializer.Serialize(InputObject);
             }
         }
 
@@ -571,7 +481,7 @@ namespace Microsoft.PowerShell.Commands
                 _serializer = null;
             }
 
-            if (_as.Equals("Stream", StringComparison.OrdinalIgnoreCase))
+            if (As.Equals("Stream", StringComparison.OrdinalIgnoreCase))
             {
                 WriteObject("</Objects>");
             }
@@ -579,14 +489,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 //Loading to the XML Document 
                 _ms.Position = 0;
-                if (_as.Equals("Document", StringComparison.OrdinalIgnoreCase))
+                if (As.Equals("Document", StringComparison.OrdinalIgnoreCase))
                 {
                     // this is a trusted xml doc - the cmdlet generated the doc into a private memory stream
                     XmlDocument xmldoc = new XmlDocument();
                     xmldoc.Load(_ms);
                     WriteObject(xmldoc);
                 }
-                else if (_as.Equals("String", StringComparison.OrdinalIgnoreCase))
+                else if (As.Equals("String", StringComparison.OrdinalIgnoreCase))
                 {
                     StreamReader read = new StreamReader(_ms);
                     string data = read.ReadToEnd();
@@ -652,7 +562,7 @@ namespace Microsoft.PowerShell.Commands
             xmlSettings.CloseOutput = true;
             xmlSettings.Indent = true;
 
-            if (_as.Equals("Stream", StringComparison.OrdinalIgnoreCase))
+            if (As.Equals("Stream", StringComparison.OrdinalIgnoreCase))
             {
                 // Omit xml declaration in this case becuase we will write out the declaration string in BeginProcess.
                 xmlSettings.OmitXmlDeclaration = true;
@@ -660,13 +570,13 @@ namespace Microsoft.PowerShell.Commands
 
             _xw = XmlWriter.Create(_ms, xmlSettings);
 
-            if (_depth == 0)
+            if (Depth == 0)
             {
                 _serializer = new CustomSerialization(_xw, _notypeinformation);
             }
             else
             {
-                _serializer = new CustomSerialization(_xw, _notypeinformation, _depth);
+                _serializer = new CustomSerialization(_xw, _notypeinformation, Depth);
             }
         }
 
@@ -923,15 +833,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "Path")]
         [ValidateNotNullOrEmpty]
-        public String[] Path
-        {
-            get { return _path; }
-            set
-            {
-                _path = value;
-            }
-        }
-        private String[] _path;
+        public String[] Path { get; set; }
 
         /// <summary>
         /// Specifies the literal path which contains the xml files. The default is the current 
@@ -943,10 +845,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSPath")]
         public String[] LiteralPath
         {
-            get { return _path; }
+            get { return Path; }
             set
             {
-                _path = value;
+                Path = value;
                 _isLiteralPath = true;
             }
         }
@@ -962,15 +864,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode")]
         [Alias("Node")]
-        public System.Xml.XmlNode[] Xml
-        {
-            get { return _xml; }
-            set
-            {
-                _xml = value;
-            }
-        }
-        private System.Xml.XmlNode[] _xml;
+        public System.Xml.XmlNode[] Xml { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter in string format.
@@ -980,15 +874,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ValueFromPipeline = true,
                    ParameterSetName = "Content")]
         [ValidateNotNullOrEmpty]
-        public string[] Content
-        {
-            get { return _content; }
-            set
-            {
-                _content = value;
-            }
-        }
-        private string[] _content;
+        public string[] Content { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Xpath".
@@ -997,15 +883,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
-        public string XPath
-        {
-            get { return _xpath; }
-            set
-            {
-                _xpath = value;
-            }
-        }
-        private string _xpath;
+        public string XPath { get; set; }
 
         /// <summary>
         /// The following definition used to specify the 
@@ -1014,18 +892,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public Hashtable Namespace
-        {
-            get
-            {
-                return _namespace;
-            }
-            set
-            {
-                _namespace = value;
-            }
-        }
-        private Hashtable _namespace;
+        public Hashtable Namespace { get; set; }
 
         # endregion parameters
 
@@ -1039,7 +906,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 SelectXmlInfo selectXmlInfo = new SelectXmlInfo();
                 selectXmlInfo.Node = foundXmlNode;
-                selectXmlInfo.Pattern = _xpath;
+                selectXmlInfo.Pattern = XPath;
                 selectXmlInfo.Path = filePath;
 
                 this.WriteObject(selectXmlInfo);
@@ -1051,14 +918,14 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert(xmlNode != null, "Caller should verify xmlNode != null");
 
             XmlNodeList xList;
-            if (_namespace != null)
+            if (Namespace != null)
             {
-                XmlNamespaceManager xmlns = AddNameSpaceTable(this.ParameterSetName, xmlNode as XmlDocument, _namespace);
-                xList = xmlNode.SelectNodes(_xpath, xmlns);
+                XmlNamespaceManager xmlns = AddNameSpaceTable(this.ParameterSetName, xmlNode as XmlDocument, Namespace);
+                xList = xmlNode.SelectNodes(XPath, xmlns);
             }
             else
             {
-                xList = xmlNode.SelectNodes(_xpath);
+                xList = xmlNode.SelectNodes(XPath);
             }
             this.WriteResults(xList, filePath);
         }
@@ -1178,7 +1045,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 //If any file not resolved, execution stops. this is to make consistent with select-string.
                 List<string> fullresolvedPaths = new List<string>();
-                foreach (string fpath in _path)
+                foreach (string fpath in Path)
                 {
                     if (_isLiteralPath)
                     {
@@ -1208,7 +1075,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (ParameterSetName.Equals("Content", StringComparison.OrdinalIgnoreCase))
             {
-                foreach (string xmlstring in _content)
+                foreach (string xmlstring in Content)
                 {
                     XmlDocument xmlDocument;
                     try
@@ -1249,18 +1116,7 @@ namespace Microsoft.PowerShell.Commands
         /// The XmlNode that matches search
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode")]
-        public XmlNode Node
-        {
-            get
-            {
-                return _node;
-            }
-            set
-            {
-                _node = value;
-            }
-        }
-        private XmlNode _node;
+        public XmlNode Node { get; set; }
 
         /// <summary>
         /// The FileName from which the match is found.
@@ -1288,18 +1144,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The pattern used to search
         /// </summary>
-        public string Pattern
-        {
-            get
-            {
-                return _pattern;
-            }
-            set
-            {
-                _pattern = value;
-            }
-        }
-        private string _pattern;
+        public string Pattern { get; set; }
 
         /// <summary>
         /// Returns the string representation of this object. The format
@@ -1329,15 +1174,15 @@ namespace Microsoft.PowerShell.Commands
         internal string GetNodeText()
         {
             string nodeText = String.Empty;
-            if (_node != null)
+            if (Node != null)
             {
-                if (_node.Value != null)
+                if (Node.Value != null)
                 {
-                    nodeText = _node.Value.Trim();
+                    nodeText = Node.Value.Trim();
                 }
                 else
                 {
-                    nodeText = _node.InnerXml.Trim();
+                    nodeText = Node.InnerXml.Trim();
                 }
             }
             return nodeText;

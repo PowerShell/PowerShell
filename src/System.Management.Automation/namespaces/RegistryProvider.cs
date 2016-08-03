@@ -268,8 +268,6 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldProcess(resource, action))
             {
-                string valueName = null;
-
                 // Get the registry item
 
                 IRegistryWrapper key = GetRegkeyForPathWriteIfError(path, true);
@@ -295,12 +293,12 @@ namespace Microsoft.PowerShell.Commands
 
                             RegistryValueKind kind = dynParams.Type;
 
-                            key.SetValue(valueName, value, kind);
+                            key.SetValue(null, value, kind);
                             valueSet = true;
                         }
                         catch (ArgumentException argException)
                         {
-                            WriteError(new ErrorRecord(argException, argException.GetType().FullName, ErrorCategory.InvalidArgument, valueName));
+                            WriteError(new ErrorRecord(argException, argException.GetType().FullName, ErrorCategory.InvalidArgument, null));
                             key.Close();
                             return;
                         }
@@ -338,7 +336,7 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         // Set the value
-                        key.SetValue(valueName, value);
+                        key.SetValue(null, value);
                     }
                     catch (System.IO.IOException ioException)
                     {
@@ -375,7 +373,7 @@ namespace Microsoft.PowerShell.Commands
                 // Since SetValue can munge the data to a specified 
                 // type (RegistryValueKind), retrieve the value again
                 // to output it in the correct form to the user.
-                result = ReadExistingKeyValue(key, valueName);
+                result = ReadExistingKeyValue(key, null);
                 key.Close();
 
                 WriteItemObject(result, path, false);
@@ -4377,7 +4375,7 @@ namespace Microsoft.PowerShell.Commands
                         RegistryProviderStrings.KeyDoesNotExist);
                     WriteError(new ErrorRecord(exception, exception.GetType().FullName, ErrorCategory.InvalidArgument, path));
 
-                    return result;
+                    return null;
                 }
             }
             catch (ArgumentException argumentException)
@@ -5116,21 +5114,8 @@ namespace Microsoft.PowerShell.Commands
         /// in the RegistryValueKind enum
         /// </remarks>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public RegistryValueKind Type
-        {
-            get
-            {
-                return _type;
-            }
-
-            set
-            {
-                _type = value;
-            }
-        } // Type
-
-        private RegistryValueKind _type = RegistryValueKind.Unknown;
-    } // class RegistryProviderSetItemDynamicParameter
+        public RegistryValueKind Type { get; set; } = RegistryValueKind.Unknown;
+    }
 } // namespace System.Management.Automation
 
 

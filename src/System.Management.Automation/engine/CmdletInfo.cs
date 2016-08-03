@@ -2,15 +2,10 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using System.Management.Automation;
-using System.Management.Automation.Runspaces;
-using System.Management.Automation.Internal;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 
 namespace System.Management.Automation
 {
@@ -537,15 +532,11 @@ namespace System.Management.Automation
         /// If the attributes could not be read from a property or field.
         /// </exception>
         /// 
-        override internal CommandMetadata CommandMetadata
+        internal override CommandMetadata CommandMetadata
         {
-            get
-            {
-                if (_cmdletMetadata == null)
-                {
-                    _cmdletMetadata = CommandMetadata.Get(this.Name, this.ImplementingType, Context);
-                }
-                return _cmdletMetadata;
+            get {
+                return _cmdletMetadata ??
+                       (_cmdletMetadata = CommandMetadata.Get(this.Name, this.ImplementingType, Context));
             }
         }
         private CommandMetadata _cmdletMetadata;

@@ -30,12 +30,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "AddRemoveSet")]
         [ValidateNotNullOrEmpty()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
-        public object[] Add
-        {
-            get { return _add; }
-            set { _add = value; }
-        }
-        private object[] _add;
+        public object[] Add { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Remove".
@@ -44,12 +39,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "AddRemoveSet")]
         [ValidateNotNullOrEmpty()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
-        public object[] Remove
-        {
-            get { return _remove; }
-            set { _remove = value; }
-        }
-        private object[] _remove;
+        public object[] Remove { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Replace".
@@ -58,12 +48,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = "ReplaceSet")]
         [ValidateNotNullOrEmpty()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
-        public object[] Replace
-        {
-            get { return _replace; }
-            set { _replace = value; }
-        }
-        private object[] _replace;
+        public object[] Replace { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
@@ -74,12 +59,7 @@ namespace Microsoft.PowerShell.Commands
         //[Parameter(ValueFromPipeline = true, ParameterSetName = "ReplaceSet")]
         [Parameter(ValueFromPipeline = true)]
         [ValidateNotNullOrEmpty()]
-        public PSObject InputObject
-        {
-            get { return _inputobject; }
-            set { _inputobject = value; }
-        }
-        private PSObject _inputobject;
+        public PSObject InputObject { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Property".
@@ -90,12 +70,7 @@ namespace Microsoft.PowerShell.Commands
         //[Parameter(Position = 0, ParameterSetName = "ReplaceSet")]
         [Parameter(Position = 0)]
         [ValidateNotNullOrEmpty()]
-        public string Property
-        {
-            get { return _property; }
-            set { _property = value; }
-        }
-        private string _property;
+        public string Property { get; set; }
 
         private PSListModifier _listModifier;
 

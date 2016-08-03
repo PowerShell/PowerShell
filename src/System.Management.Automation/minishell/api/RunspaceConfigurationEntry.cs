@@ -5,18 +5,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 #pragma warning disable 1634, 1691
 #pragma warning disable 56506
 
-using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Resources;
-using System.Globalization;
-using System.Management.Automation;
-using System.Xml;
-using System.Reflection;
-using System.Threading;
-
 namespace System.Management.Automation.Runspaces
 {
     /// <summary>
@@ -49,7 +37,7 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentNullException("name");
             }
 
-            _name = name.Trim();
+            Name = name.Trim();
         }
 
         /// <summary>
@@ -68,43 +56,26 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentNullException("name");
             }
 
-            _name = name.Trim();
+            Name = name.Trim();
 
             if (psSnapin == null)
             {
                 throw PSTraceSource.NewArgumentException("psSnapin");
             }
 
-            _PSSnapin = psSnapin;
+            PSSnapIn = psSnapin;
         }
 
-
-
-        private string _name;
 
         /// <summary>
         /// Gets name of configuration entry
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-        }
-
-        private PSSnapInInfo _PSSnapin = null;
+        public string Name { get; }
 
         /// <summary>
         /// Gets name of PSSnapin that this configuration entry belongs to. 
         /// </summary>
-        public PSSnapInInfo PSSnapIn
-        {
-            get
-            {
-                return _PSSnapin;
-            }
-        }
+        public PSSnapInInfo PSSnapIn { get; } = null;
 
         internal bool _builtIn = false;
         /// <summary>
@@ -152,7 +123,7 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentException("fileName");
             }
 
-            _fileName = fileName.Trim();
+            FileName = fileName.Trim();
         }
 
         /// <summary>
@@ -168,8 +139,8 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentException("typeData");
             }
 
-            _typeData = typeData;
-            _isRemove = isRemove;
+            TypeData = typeData;
+            IsRemove = isRemove;
         }
 
         /// <summary>
@@ -187,7 +158,7 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentException("fileName");
             }
 
-            _fileName = fileName.Trim();
+            FileName = fileName.Trim();
         }
 
         /// <summary>
@@ -203,42 +174,24 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentException("fileName");
             }
 #pragma warning suppress 56506
-            _fileName = fileName.Trim();
+            FileName = fileName.Trim();
         }
-
-        private string _fileName;
 
         /// <summary>
         /// Gets file name that contains the types configuration information.
         /// </summary>
         /// <value></value>
-        public string FileName
-        {
-            get
-            {
-                return _fileName;
-            }
-        }
-
-        private TypeData _typeData;
+        public string FileName { get; }
 
         /// <summary>
         /// Get the strong type data contains the type configuration information
         /// </summary>
-        public TypeData TypeData
-        {
-            get { return _typeData; }
-        }
-
-        private bool _isRemove;
+        public TypeData TypeData { get; }
 
         /// <summary>
         /// Set to true if the strong type data is to be removed
         /// </summary>
-        public bool IsRemove
-        {
-            get { return _isRemove; }
-        }
+        public bool IsRemove { get; }
     }
 
     /// <summary>
@@ -265,7 +218,7 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentException("fileName");
             }
 
-            _fileName = fileName.Trim();
+            FileName = fileName.Trim();
         }
 
         /// <summary>
@@ -283,7 +236,7 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentException("fileName");
             }
 
-            _fileName = fileName.Trim();
+            FileName = fileName.Trim();
         }
 
         /// <summary>
@@ -299,7 +252,7 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentException("fileName");
             }
 #pragma warning suppress 56506
-            _fileName = fileName.Trim();
+            FileName = fileName.Trim();
         }
 
         /// <summary>
@@ -313,31 +266,19 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("typeDefinition");
             }
-            _typeDefinition = typeDefinition;
+            FormatData = typeDefinition;
         }
-
-        private string _fileName;
 
         /// <summary>
         /// Gets file name that contains the format configuration information.
         /// </summary>
         /// <value>File name that contains the format configuration information.</value>
-        public string FileName
-        {
-            get
-            {
-                return _fileName;
-            }
-        }
+        public string FileName { get; }
 
-        private ExtendedTypeDefinition _typeDefinition;
         /// <summary>
         /// Get the typeDefinition that contains the format configuration information
         /// </summary>
-        public ExtendedTypeDefinition FormatData
-        {
-            get { return _typeDefinition; }
-        }
+        public ExtendedTypeDefinition FormatData { get; }
     }
 
     /// <summary>
@@ -364,15 +305,15 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentNullException("implementingType");
             }
 
-            _type = implementingType;
+            ImplementingType = implementingType;
 
             if (!String.IsNullOrEmpty(helpFileName))
             {
-                _helpFileName = helpFileName.Trim();
+                HelpFileName = helpFileName.Trim();
             }
             else
             {
-                _helpFileName = helpFileName;
+                HelpFileName = helpFileName;
             }
         }
 
@@ -391,44 +332,28 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentNullException("implementingType");
             }
 
-            _type = implementingType;
+            ImplementingType = implementingType;
 
             if (!String.IsNullOrEmpty(helpFileName))
             {
-                _helpFileName = helpFileName.Trim();
+                HelpFileName = helpFileName.Trim();
             }
             else
             {
-                _helpFileName = helpFileName;
+                HelpFileName = helpFileName;
             }
         }
-
-        private Type _type;
 
         /// <summary>
         /// Get class that include implementation of the cmdlet
         /// </summary>
-        public Type ImplementingType
-        {
-            get
-            {
-                return _type;
-            }
-        }
-
-        private string _helpFileName;
+        public Type ImplementingType { get; }
 
         /// <summary>
         /// Get name of the help file that include help information for the cmdlet
         /// </summary>
         /// <value></value>
-        public string HelpFileName
-        {
-            get
-            {
-                return _helpFileName;
-            }
-        }
+        public string HelpFileName { get; }
     }
 
     /// <summary>
@@ -455,15 +380,15 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentNullException("implementingType");
             }
 
-            _type = implementingType;
+            ImplementingType = implementingType;
 
             if (!String.IsNullOrEmpty(helpFileName))
             {
-                _helpFileName = helpFileName.Trim();
+                HelpFileName = helpFileName.Trim();
             }
             else
             {
-                _helpFileName = helpFileName;
+                HelpFileName = helpFileName;
             }
         }
 
@@ -482,43 +407,28 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentNullException("implementingType");
             }
 
-            _type = implementingType;
+            ImplementingType = implementingType;
 
             if (!String.IsNullOrEmpty(helpFileName))
             {
-                _helpFileName = helpFileName.Trim();
+                HelpFileName = helpFileName.Trim();
             }
             else
             {
-                _helpFileName = helpFileName;
+                HelpFileName = helpFileName;
             }
         }
-        private Type _type;
 
         /// <summary>
         /// Get class that include implementation of the provider.
         /// </summary>
         /// <value></value>
-        public Type ImplementingType
-        {
-            get
-            {
-                return _type;
-            }
-        }
-
-        private string _helpFileName;
+        public Type ImplementingType { get; }
 
         /// <summary>
         /// Get name of the help file that include help information for the provider
         /// </summary>
-        public string HelpFileName
-        {
-            get
-            {
-                return _helpFileName;
-            }
-        }
+        public string HelpFileName { get; }
     }
 
     /// <summary>
@@ -544,21 +454,13 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentNullException("definition");
             }
 
-            _definition = definition.Trim();
+            Definition = definition.Trim();
         }
-
-        private string _definition;
 
         /// <summary>
         /// Get content for the script.
         /// </summary>
-        public string Definition
-        {
-            get
-            {
-                return _definition;
-            }
-        }
+        public string Definition { get; }
     }
 
     /// <summary>
@@ -584,7 +486,7 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentNullException("fileName");
             }
 
-            _fileName = fileName.Trim();
+            FileName = fileName.Trim();
         }
 
         /// <summary>
@@ -602,22 +504,14 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentNullException("fileName");
             }
 
-            _fileName = fileName.Trim();
+            FileName = fileName.Trim();
         }
-
-        private string _fileName;
 
         /// <summary>
         /// Get name of the assembly file
         /// </summary>
         /// <value>Name of the assembly file</value>
-        public string FileName
-        {
-            get
-            {
-                return _fileName;
-            }
-        }
+        public string FileName { get; }
     }
 
     internal enum UpdateAction

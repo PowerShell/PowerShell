@@ -407,7 +407,7 @@ namespace System.Management.Automation.Remoting
         {
             if (obj == null)
             {
-                return obj;
+                return null;
             }
 
             Dbg.Assert(type != null, "Expected type != null");

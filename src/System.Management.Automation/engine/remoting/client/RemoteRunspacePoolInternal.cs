@@ -7,10 +7,8 @@ using System.Globalization;
 using System.Management.Automation.Tracing;
 using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Management.Automation;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces.Internal;
 using System.Management.Automation.Host;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Remoting.Client;
@@ -83,9 +81,9 @@ namespace System.Management.Automation.Runspaces.Internal
             _connectionInfo = connectionInfo.InternalCopy();
 
             this.host = host;
-            _applicationArguments = applicationArguments;
-            _availableForConnection = false;
-            _dispatchTable = new DispatchTable<object>();
+            ApplicationArguments = applicationArguments;
+            AvailableForConnection = false;
+            DispatchTable = new DispatchTable<object>();
             _runningPowerShells = new System.Collections.Concurrent.ConcurrentStack<PowerShell>();
 
             if (!string.IsNullOrEmpty(name))
@@ -147,10 +145,10 @@ namespace System.Management.Automation.Runspaces.Internal
                     minPoolSz.ToString(CultureInfo.InvariantCulture),
                     maxPoolSz.ToString(CultureInfo.InvariantCulture));
 
-            _connectCommands = connectCommands;
+            ConnectCommands = connectCommands;
             this.Name = name;
             this.host = host;
-            _dispatchTable = new DispatchTable<object>();
+            DispatchTable = new DispatchTable<object>();
             _runningPowerShells = new System.Collections.Concurrent.ConcurrentStack<PowerShell>();
 
             // Create this object in the disconnected state.
@@ -158,7 +156,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             CreateDSHandler(typeTable);
 
-            _availableForConnection = isDisconnected;
+            AvailableForConnection = isDisconnected;
         }
 
         /// <summary>
@@ -166,34 +164,34 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         private void CreateDSHandler(TypeTable typeTable)
         {
-            _dataStructureHandler = new ClientRunspacePoolDataStructureHandler(this, typeTable);
+            DataStructureHandler = new ClientRunspacePoolDataStructureHandler(this, typeTable);
 
             // register for events from the data structure handler
-            _dataStructureHandler.RemoteHostCallReceived +=
+            DataStructureHandler.RemoteHostCallReceived +=
                 new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleRemoteHostCalls);
-            _dataStructureHandler.StateInfoReceived +=
+            DataStructureHandler.StateInfoReceived +=
                 new EventHandler<RemoteDataEventArgs<RunspacePoolStateInfo>>(HandleStateInfoReceived);
-            _dataStructureHandler.RSPoolInitInfoReceived +=
+            DataStructureHandler.RSPoolInitInfoReceived +=
                 new EventHandler<RemoteDataEventArgs<RunspacePoolInitInfo>>(HandleInitInfoReceived);
-            _dataStructureHandler.ApplicationPrivateDataReceived +=
+            DataStructureHandler.ApplicationPrivateDataReceived +=
                 new EventHandler<RemoteDataEventArgs<PSPrimitiveDictionary>>(HandleApplicationPrivateDataReceived);
-            _dataStructureHandler.SessionClosing +=
+            DataStructureHandler.SessionClosing +=
                 new EventHandler<RemoteDataEventArgs<Exception>>(HandleSessionClosing);
-            _dataStructureHandler.SessionClosed +=
+            DataStructureHandler.SessionClosed +=
                 new EventHandler<RemoteDataEventArgs<Exception>>(HandleSessionClosed);
-            _dataStructureHandler.SetMaxMinRunspacesResponseRecieved +=
+            DataStructureHandler.SetMaxMinRunspacesResponseRecieved +=
                 new EventHandler<RemoteDataEventArgs<PSObject>>(HandleResponseReceived);
-            _dataStructureHandler.URIRedirectionReported +=
+            DataStructureHandler.URIRedirectionReported +=
                 new EventHandler<RemoteDataEventArgs<Uri>>(HandleURIDirectionReported);
-            _dataStructureHandler.PSEventArgsReceived +=
+            DataStructureHandler.PSEventArgsReceived +=
                 new EventHandler<RemoteDataEventArgs<PSEventArgs>>(HandlePSEventArgsReceived);
-            _dataStructureHandler.SessionDisconnected +=
+            DataStructureHandler.SessionDisconnected +=
                 new EventHandler<RemoteDataEventArgs<Exception>>(HandleSessionDisconnected);
-            _dataStructureHandler.SessionReconnected +=
+            DataStructureHandler.SessionReconnected +=
                 new EventHandler<RemoteDataEventArgs<Exception>>(HandleSessionReconnected);
-            _dataStructureHandler.SessionRCDisconnecting +=
+            DataStructureHandler.SessionRCDisconnecting +=
                 new EventHandler<RemoteDataEventArgs<Exception>>(HandleSessionRCDisconnecting);
-            _dataStructureHandler.SessionCreateCompleted +=
+            DataStructureHandler.SessionCreateCompleted +=
                 new EventHandler<CreateCompleteEventArgs>(HandleSessionCreateCompleted);
         }
 
@@ -216,23 +214,13 @@ namespace System.Management.Automation.Runspaces.Internal
         /// The ClientRunspacePoolDataStructureHandler associated with this
         /// runspace pool
         /// </summary>
-        internal ClientRunspacePoolDataStructureHandler DataStructureHandler
-        {
-            get
-            {
-                return _dataStructureHandler;
-            }
-        }
+        internal ClientRunspacePoolDataStructureHandler DataStructureHandler { get; private set; }
 
         /// <summary>
         /// List of CommandConnectInfo objects for each remote running command 
         /// associated with this remote runspace pool.
         /// </summary>
-        internal ConnectCommandInfo[] ConnectCommands
-        {
-            get { return _connectCommands; }
-            set { _connectCommands = value; }
-        }
+        internal ConnectCommandInfo[] ConnectCommands { get; set; } = null;
 
         /// <summary>
         /// Gets and sets the name string for this runspace pool object.
@@ -240,27 +228,13 @@ namespace System.Management.Automation.Runspaces.Internal
         internal string Name
         {
             get { return _friendlyName; }
-
-            set
-            {
-                if (value == null)
-                {
-                    _friendlyName = string.Empty;
-                }
-                else
-                {
-                    _friendlyName = value;
-                }
-            }
+            set { _friendlyName = value ?? string.Empty; }
         }
 
         /// <summary>
         /// Indicates whether this runspace pools viable/available for connection.
         /// </summary>
-        internal bool AvailableForConnection
-        {
-            get { return _availableForConnection; }
-        }
+        internal bool AvailableForConnection { get; private set; }
 
         /// <summary>
         /// Returns robust connection maximum retry time in milliseconds.
@@ -269,7 +243,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             get
             {
-                return (_dataStructureHandler != null) ? _dataStructureHandler.MaxRetryConnectionTime : 0;
+                return (DataStructureHandler != null) ? DataStructureHandler.MaxRetryConnectionTime : 0;
             }
         }
 
@@ -334,7 +308,7 @@ namespace System.Management.Automation.Runspaces.Internal
             lock (syncObject)
             {
                 callId = DispatchTable.CreateNewCallId();
-                _dataStructureHandler.SendResetRunspaceStateToServer(callId);
+                DataStructureHandler.SendResetRunspaceStateToServer(callId);
             }
 
             // This call blocks until the response is received.
@@ -386,7 +360,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 // they were called in the client
                 callId = DispatchTable.CreateNewCallId();
 
-                _dataStructureHandler.SendSetMaxRunspacesToServer(maxRunspaces, callId);
+                DataStructureHandler.SendSetMaxRunspacesToServer(maxRunspaces, callId);
             } // lock ...
 
             // this call blocks until the response is received
@@ -449,7 +423,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 // they were called in the client
                 callId = DispatchTable.CreateNewCallId();
 
-                _dataStructureHandler.SendSetMinRunspacesToServer(minRunspaces, callId);
+                DataStructureHandler.SendSetMinRunspacesToServer(minRunspaces, callId);
             } // lock ...
 
             // this call blocks until the response is received
@@ -500,11 +474,11 @@ namespace System.Management.Automation.Runspaces.Internal
                     return maxPoolSz;
                 }
 
-                _dataStructureHandler.SendGetAvailableRunspacesToServer(callId);
+                DataStructureHandler.SendGetAvailableRunspacesToServer(callId);
             } // lock ...
 
             // this call blocks until the response is received
-            object response = _dispatchTable.GetResponse(callId, 0);
+            object response = DispatchTable.GetResponse(callId, 0);
             availableRunspaces = (int)response;
 
             return availableRunspaces;
@@ -613,7 +587,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     if (null == _closeAsyncResult)
                     {
                         // Close the local resources.
-                        _dataStructureHandler.CloseRunspacePoolAsync();
+                        DataStructureHandler.CloseRunspacePoolAsync();
                     }
 
                     // Delay notifying upper layers of finished state change event
@@ -646,7 +620,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 else
                 {
                     RemoteHostResponse remoteHostResponse = hostCall.ExecuteNonVoidMethod(host);
-                    _dataStructureHandler.SendHostResponseToServer(remoteHostResponse);
+                    DataStructureHandler.SendHostResponseToServer(remoteHostResponse);
                 }
             }
         }
@@ -662,15 +636,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Application arguments to use when opening a remote session
         /// </summary>
-        internal PSPrimitiveDictionary ApplicationArguments
-        {
-            get
-            {
-                return _applicationArguments;
-            }
-        }
-
-        private PSPrimitiveDictionary _applicationArguments;
+        internal PSPrimitiveDictionary ApplicationArguments { get; }
 
         /// <summary>
         /// Private data to be used by applications built on top of PowerShell.  
@@ -744,7 +710,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="shell"></param>
         internal void CreatePowerShellOnServerAndInvoke(ClientRemotePowerShell shell)
         {
-            _dataStructureHandler.CreatePowerShellOnServerAndInvoke(shell);
+            DataStructureHandler.CreatePowerShellOnServerAndInvoke(shell);
 
             // send any input that may be available
             if (!shell.NoInput)
@@ -760,7 +726,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="psDSHandler">ClientPowerShellDataStructureHandler for PowerShell.</param>
         internal void AddRemotePowerShellDSHandler(Guid psShellInstanceId, ClientPowerShellDataStructureHandler psDSHandler)
         {
-            _dataStructureHandler.AddRemotePowerShellDSHandler(psShellInstanceId, psDSHandler);
+            DataStructureHandler.AddRemotePowerShellDSHandler(psShellInstanceId, psDSHandler);
         }
 
         /// <summary>
@@ -771,12 +737,12 @@ namespace System.Management.Automation.Runspaces.Internal
             get
             {
                 Version remoteProtocolVersionDeclaredByServer = PSRemotingProtocolVersion;
-                if (remoteProtocolVersionDeclaredByServer != null && _dataStructureHandler != null)
+                if (remoteProtocolVersionDeclaredByServer != null && DataStructureHandler != null)
                 {
                     // Disconnect/Connect support is currently only provided by the WSMan transport
                     // that is running PSRP protocol version 2.2 and greater.
                     return (remoteProtocolVersionDeclaredByServer >= RemotingConstants.ProtocolVersionWin8RTM &&
-                            _dataStructureHandler.EndpointSupportsDisconnect);
+                            DataStructureHandler.EndpointSupportsDisconnect);
                 }
 
                 return false;
@@ -906,7 +872,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             // send a message using the data structure handler to open the RunspacePool
             // on the remote server
-            _dataStructureHandler.CreateRunspacePoolAndOpenAsync();
+            DataStructureHandler.CreateRunspacePoolAndOpenAsync();
 
             return asyncResult;
         }
@@ -1016,7 +982,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
                 // send a message using the data structure handler to close the RunspacePool
                 // on the remote server
-                _dataStructureHandler.CloseRunspacePoolAsync();
+                DataStructureHandler.CloseRunspacePoolAsync();
             }
             else
             {
@@ -1076,7 +1042,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     instanceId, callback, state, false);
 
                 _disconnectAsyncResult = asyncResult;
-                _dataStructureHandler.DisconnectPoolAsync();
+                DataStructureHandler.DisconnectPoolAsync();
 
                 // Return local reference to async object since the class member can
                 // be asynchronously nulled if the session closes suddenly.
@@ -1175,14 +1141,14 @@ namespace System.Management.Automation.Runspaces.Internal
                     // This indicates a reconnect scenario where this object instance was previously
                     // disconnected.
                     _reconnectAsyncResult = ret;
-                    _dataStructureHandler.ReconnectPoolAsync();
+                    DataStructureHandler.ReconnectPoolAsync();
                 }
                 else
                 {
                     // This indicates a reconstruction scenario where this object was created
                     // in the disconnect state and is being connected for the first time.
                     _openAsyncResult = ret;
-                    _dataStructureHandler.ConnectPoolAsync();
+                    DataStructureHandler.ConnectPoolAsync();
                 }
 
                 if (raiseEvents)
@@ -1587,7 +1553,7 @@ namespace System.Management.Automation.Runspaces.Internal
             stateInfo = newStateInfo;
 
             // Update the availableForConnection variable based on state change.
-            _availableForConnection = (stateInfo.State == RunspacePoolState.Disconnected ||
+            AvailableForConnection = (stateInfo.State == RunspacePoolState.Disconnected ||
                                            stateInfo.State == RunspacePoolState.Opened);
 
             if (raiseEvents)
@@ -1788,7 +1754,7 @@ namespace System.Management.Automation.Runspaces.Internal
             PSObject data = eventArgs.Data;
             object response = RemotingDecoder.GetPropertyValue<object>(data, RemoteDataNameStrings.RunspacePoolOperationResponse);
             long callId = RemotingDecoder.GetPropertyValue<long>(data, RemoteDataNameStrings.CallId);
-            _dispatchTable.SetResponse(callId, response);
+            DispatchTable.SetResponse(callId, response);
         }
 
         /// <summary>
@@ -1915,7 +1881,6 @@ namespace System.Management.Automation.Runspaces.Internal
 
         private RunspaceConnectionInfo _connectionInfo;     // connection info with which this 
         // runspace is created
-        private ClientRunspacePoolDataStructureHandler _dataStructureHandler;    // runspace pool data structure handler for all
         // data structure handler handling
         private RunspacePoolAsyncResult _openAsyncResult;// async result object generated on
         // CoreOpen
@@ -1925,20 +1890,11 @@ namespace System.Management.Automation.Runspaces.Internal
         private RunspacePoolAsyncResult _disconnectAsyncResult; // async result object generated on CoreDisconnect
         private RunspacePoolAsyncResult _reconnectAsyncResult;  // async result object generated on CoreReconnect
         private bool _isDisposed;
-        private DispatchTable<object> _dispatchTable;
 
-        private DispatchTable<Object> DispatchTable
-        {
-            get
-            {
-                return _dispatchTable;
-            }
-        }
+        private DispatchTable<Object> DispatchTable { get; }
 
-        private ConnectCommandInfo[] _connectCommands = null;
         private bool _canReconnect;
         private string _friendlyName = string.Empty;
-        private bool _availableForConnection;
 
         private System.Collections.Concurrent.ConcurrentStack<PowerShell> _runningPowerShells;
 
@@ -1967,7 +1923,7 @@ namespace System.Management.Automation.Runspaces.Internal
             if (!_isDisposed)
             {
                 _isDisposed = true;
-                _dataStructureHandler.Dispose(disposing);
+                DataStructureHandler.Dispose(disposing);
                 _applicationPrivateDataReceived.Dispose();
             }
         }
@@ -1982,24 +1938,15 @@ namespace System.Management.Automation.Runspaces.Internal
     /// </summary>
     internal class ConnectCommandInfo
     {
-        private Guid _cmdId = Guid.Empty;
-        private string _cmdStr = String.Empty;
-
         /// <summary>
         /// Remote command instance Id.
         /// </summary>
-        public Guid CommandId
-        {
-            get { return _cmdId; }
-        }
+        public Guid CommandId { get; } = Guid.Empty;
 
         /// <summary>
         /// Remote command string.
         /// </summary>
-        public string Command
-        {
-            get { return _cmdStr; }
-        }
+        public string Command { get; } = String.Empty;
 
         /// <summary>
         /// Constructs a remote command object.
@@ -2008,8 +1955,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="cmdStr">Command string.</param>
         public ConnectCommandInfo(Guid cmdId, string cmdStr)
         {
-            _cmdId = cmdId;
-            _cmdStr = cmdStr;
+            CommandId = cmdId;
+            Command = cmdStr;
         }
     }
 

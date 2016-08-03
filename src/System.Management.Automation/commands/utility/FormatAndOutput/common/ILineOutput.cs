@@ -269,7 +269,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             _displayCells = displayCells;
             _writeLineCall = wlc;
-            _writeCall = (wc != null) ? wc : wlc;
+            _writeCall = wc ?? wlc;
             _lineWrap = lineWrap;
         }
 

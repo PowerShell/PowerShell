@@ -45,7 +45,7 @@ namespace System.Management.Automation
         /// Name of help content. 
         /// </summary>
         /// <value>Name of help content</value>
-        override internal string Name
+        internal override string Name
         {
             get
             {
@@ -70,7 +70,7 @@ namespace System.Management.Automation
         /// Synopsis for this general help.
         /// </summary>
         /// <value>Synopsis for this general help</value>
-        override internal string Synopsis
+        internal override string Synopsis
         {
             get
             {
@@ -82,7 +82,7 @@ namespace System.Management.Automation
         /// Help category for this general help, which is constantly HelpCategory.General.
         /// </summary>
         /// <value>Help category for general help</value>
-        override internal HelpCategory HelpCategory
+        internal override HelpCategory HelpCategory
         {
             get
             {
@@ -96,7 +96,7 @@ namespace System.Management.Automation
         /// Full help object for this help item.
         /// </summary>
         /// <value>Full help object for this help item.</value>
-        override internal PSObject FullHelp
+        internal override PSObject FullHelp
         {
             get
             {

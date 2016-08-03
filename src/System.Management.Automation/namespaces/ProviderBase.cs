@@ -244,7 +244,7 @@ namespace System.Management.Automation.Provider
         } // Stop
 
         /// <Content contentref="System.Management.Automation.Cmdlet.StopProcessing" />
-        internal protected virtual void StopProcessing()
+        protected internal virtual void StopProcessing()
         {
         } // StopProcessing
 

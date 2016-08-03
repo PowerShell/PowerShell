@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
         [Dbg.TraceSourceAttribute(
              "SessionStateProvider",
              "Providers that produce a view of session state data.")]
-        private readonly static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("SessionStateProvider",
              "Providers that produce a view of session state data.");
 
@@ -1224,11 +1224,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (getItemValueResult != null)
                     {
-                        result = getItemValueResult as IList;
-                        if (result == null)
-                        {
-                            result = new object[] { getItemValueResult };
-                        }
+                        result = getItemValueResult as IList ?? new object[] { getItemValueResult };
                     }
                     _contentRead = true;
                 }

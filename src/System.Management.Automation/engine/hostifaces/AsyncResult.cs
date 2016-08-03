@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -16,15 +15,9 @@ namespace System.Management.Automation.Runspaces
     {
         #region Private Data
 
-        private Guid _ownerId;
-        private bool _isCompleted;
         private ManualResetEvent _completedWaitHandle;
         // exception occured in the async thread.
-        private Exception _exception;
-        private AsyncCallback _callback;
         // user supplied state object
-        private object _state;
-        private object _syncObject = new object();
 
         // Invoke on thread (remote debugging support).
         private AutoResetEvent _invokeOnThreadEvent;
@@ -50,9 +43,9 @@ namespace System.Management.Automation.Runspaces
         internal AsyncResult(Guid ownerId, AsyncCallback callback, object state)
         {
             Dbg.Assert(Guid.Empty != ownerId, "ownerId cannot be empty");
-            _ownerId = ownerId;
-            _callback = callback;
-            _state = state;
+            OwnerId = ownerId;
+            Callback = callback;
+            AsyncState = state;
         }
 
         #endregion
@@ -74,21 +67,12 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets an indication whether the asynchronous operation has completed.
         /// </summary>
-        public bool IsCompleted
-        {
-            get
-            {
-                return _isCompleted;
-            }
-        }
+        public bool IsCompleted { get; private set; }
 
         /// <summary>
         /// This is not supported and returns null. 
         /// </summary>
-        public object AsyncState
-        {
-            get { return _state; }
-        }
+        public object AsyncState { get; }
 
         /// <summary>
         /// Gets a System.Threading.WaitHandle that is used to wait for an asynchronous
@@ -100,11 +84,11 @@ namespace System.Management.Automation.Runspaces
             {
                 if (null == _completedWaitHandle)
                 {
-                    lock (_syncObject)
+                    lock (SyncObject)
                     {
                         if (null == _completedWaitHandle)
                         {
-                            _completedWaitHandle = new ManualResetEvent(_isCompleted);
+                            _completedWaitHandle = new ManualResetEvent(IsCompleted);
                         }
                     }
                 }
@@ -120,35 +104,23 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Instance Id of the object owning this async result.
         /// </summary>
-        internal Guid OwnerId
-        {
-            get { return _ownerId; }
-        }
+        internal Guid OwnerId { get; }
 
         /// <summary>
         /// Gets the exception that occurred while processing the
         /// async operation.
         /// </summary>
-        internal Exception Exception
-        {
-            get { return _exception; }
-        }
+        internal Exception Exception { get; private set; }
 
         /// <summary>
         /// User supplied callback.
         /// </summary>
-        internal AsyncCallback Callback
-        {
-            get { return _callback; }
-        }
+        internal AsyncCallback Callback { get; }
 
         /// <summary>
         /// SyncObject
         /// </summary>
-        internal object SyncObject
-        {
-            get { return _syncObject; }
-        }
+        internal object SyncObject { get; } = new object();
 
         /// <summary>
         /// Marks the async operation as completed.
@@ -159,21 +131,21 @@ namespace System.Management.Automation.Runspaces
         internal void SetAsCompleted(Exception exception)
         {
             //Dbg.Assert(!isCompleted, "AsynResult already completed");
-            if (_isCompleted)
+            if (IsCompleted)
             {
                 return;
             }
 
-            lock (_syncObject)
+            lock (SyncObject)
             {
-                if (_isCompleted)
+                if (IsCompleted)
                 {
                     return;
                 }
                 else
                 {
-                    _exception = exception;
-                    _isCompleted = true;
+                    Exception = exception;
+                    IsCompleted = true;
 
                     // release the threads waiting on this operation.
                     SignalWaitHandle();
@@ -181,9 +153,9 @@ namespace System.Management.Automation.Runspaces
             }
 
             // call the user supplied callback
-            if (null != _callback)
+            if (null != Callback)
             {
-                _callback(this);
+                Callback(this);
             }
         }
 
@@ -192,9 +164,9 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal void Release()
         {
-            if (!_isCompleted)
+            if (!IsCompleted)
             {
-                _isCompleted = true;
+                IsCompleted = true;
                 SignalWaitHandle();
             }
         }
@@ -208,7 +180,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal void SignalWaitHandle()
         {
-            lock (_syncObject)
+            lock (SyncObject)
             {
                 if (null != _completedWaitHandle)
                 {
@@ -256,9 +228,9 @@ namespace System.Management.Automation.Runspaces
             _invokeOnThreadEvent = null;  // Allow early GC
 
             // Operation is done: if an exception occured, throw it
-            if (null != _exception)
+            if (null != Exception)
             {
-                throw _exception;
+                throw Exception;
             }
         }
 

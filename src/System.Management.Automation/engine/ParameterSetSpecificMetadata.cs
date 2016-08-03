@@ -2,10 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Management.Automation;
-
-
 namespace System.Management.Automation
 {
     internal class ParameterSetSpecificMetadata
@@ -33,14 +29,14 @@ namespace System.Management.Automation
             }
 
             _attribute = attribute;
-            _isMandatory = attribute.Mandatory;
-            _position = attribute.Position;
-            _valueFromRemainingArguments = attribute.ValueFromRemainingArguments;
+            IsMandatory = attribute.Mandatory;
+            Position = attribute.Position;
+            ValueFromRemainingArguments = attribute.ValueFromRemainingArguments;
             this.valueFromPipeline = attribute.ValueFromPipeline;
             this.valueFromPipelineByPropertyName = attribute.ValueFromPipelineByPropertyName;
-            _helpMessage = attribute.HelpMessage;
-            _helpMessageBaseName = attribute.HelpMessageBaseName;
-            _helpMessageResourceId = attribute.HelpMessageResourceId;
+            HelpMessage = attribute.HelpMessage;
+            HelpMessageBaseName = attribute.HelpMessageBaseName;
+            HelpMessageResourceId = attribute.HelpMessageResourceId;
         }
 
         internal ParameterSetSpecificMetadata(
@@ -53,14 +49,14 @@ namespace System.Management.Automation
             string helpMessageResourceId,
             string helpMessage)
         {
-            _isMandatory = isMandatory;
-            _position = position;
-            _valueFromRemainingArguments = valueFromRemainingArguments;
+            IsMandatory = isMandatory;
+            Position = position;
+            ValueFromRemainingArguments = valueFromRemainingArguments;
             this.valueFromPipeline = valueFromPipeline;
             this.valueFromPipelineByPropertyName = valueFromPipelineByPropertyName;
-            _helpMessageBaseName = helpMessageBaseName;
-            _helpMessageResourceId = helpMessageResourceId;
-            _helpMessage = helpMessage;
+            HelpMessageBaseName = helpMessageBaseName;
+            HelpMessageResourceId = helpMessageResourceId;
+            HelpMessage = helpMessage;
         }
 
         #endregion ctor
@@ -69,28 +65,14 @@ namespace System.Management.Automation
         /// Returns true if the parameter is mandatory for this parameterset, false otherwise.
         /// </summary>
         /// <value></value>
-        internal bool IsMandatory
-        {
-            get
-            {
-                return _isMandatory;
-            }
-        }
-        private bool _isMandatory;
+        internal bool IsMandatory { get; }
 
         /// <summary>
         /// If the parameter is allowed to be positional for this parameter set, this returns
         /// the position it is allowed to be in. If it is not positional, this returns int.MinValue.
         /// </summary>
         /// <value></value>
-        internal int Position
-        {
-            get
-            {
-                return _position;
-            }
-        }
-        private int _position = int.MinValue;
+        internal int Position { get; } = int.MinValue;
 
         /// <summary>
         /// Returns true if the parameter is positional for this parameter set, or false otherwise.
@@ -100,7 +82,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _position != int.MinValue;
+                return Position != int.MinValue;
             }
         }
 
@@ -109,14 +91,7 @@ namespace System.Management.Automation
         /// or false otherwise.
         /// </summary>
         /// <value></value>
-        internal bool ValueFromRemainingArguments
-        {
-            get
-            {
-                return _valueFromRemainingArguments;
-            }
-        }
-        private bool _valueFromRemainingArguments;
+        internal bool ValueFromRemainingArguments { get; }
 
         internal bool valueFromPipeline;
         /// <summary>
@@ -143,41 +118,20 @@ namespace System.Management.Automation
             }
         }
 
-        private string _helpMessage;
         /// <summary>
         /// A short description for this parameter, suitable for presentation as a tool tip.
         /// </summary>
-        internal string HelpMessage
-        {
-            get
-            {
-                return _helpMessage;
-            }
-        }
+        internal string HelpMessage { get; }
 
-        private string _helpMessageBaseName;
         /// <summary>
         /// The base name of the resource for a help message.
         /// </summary>
-        internal string HelpMessageBaseName
-        {
-            get
-            {
-                return _helpMessageBaseName;
-            }
-        }
+        internal string HelpMessageBaseName { get; }
 
-        private string _helpMessageResourceId = null;
         /// <summary>
         /// The Id of the resource for a help message.
         /// </summary>
-        internal string HelpMessageResourceId
-        {
-            get
-            {
-                return _helpMessageResourceId;
-            }
-        }
+        internal string HelpMessageResourceId { get; } = null;
 
 
         /// <summary>
@@ -185,36 +139,14 @@ namespace System.Management.Automation
         /// data is for the "all" parameter set
         /// </summary>
         /// 
-        internal bool IsInAllSets
-        {
-            get
-            {
-                return _isInAllSets;
-            }
-            set
-            {
-                _isInAllSets = value;
-            }
-        }
-        private bool _isInAllSets;
+        internal bool IsInAllSets { get; set; }
 
         /// <summary>
         /// Gets the parameter set flag that represents the parameter set
         /// that this data is valid for.
         /// </summary>
         /// 
-        internal uint ParameterSetFlag
-        {
-            get
-            {
-                return _parameterSetFlag;
-            }
-
-            set
-            {
-                _parameterSetFlag = value;
-            }
-        }
+        internal uint ParameterSetFlag { get; set; }
 
         /// <summary>
         /// If HelpMessageBaseName and HelpMessageResourceId are set, the help info is
@@ -288,8 +220,6 @@ namespace System.Management.Automation
             return helpInfo;
         }
 
-
-        private uint _parameterSetFlag;
 
         private ParameterAttribute _attribute;
     } // ParameterSetSpecificMetadata

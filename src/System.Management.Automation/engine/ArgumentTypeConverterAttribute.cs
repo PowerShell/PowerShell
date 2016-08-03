@@ -2,8 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Dbg = System.Management.Automation.Diagnostics;
@@ -198,7 +196,7 @@ namespace System.Management.Automation
             }
         }
 
-        static internal void ThrowPSInvalidBooleanArgumentCastException(Type resultType, Type convertType)
+        internal static void ThrowPSInvalidBooleanArgumentCastException(Type resultType, Type convertType)
         {
             throw new PSInvalidCastException("InvalidCastExceptionUnsupportedParameterType", null,
                                   ExtendedTypeSystem.InvalidCastExceptionForBooleanArgumentValue,

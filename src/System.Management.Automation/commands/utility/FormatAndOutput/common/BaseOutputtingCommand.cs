@@ -3,10 +3,8 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
-using System.Collections;
 using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
@@ -330,19 +328,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 StartData sdObj = obj as StartData;
                 if (sdObj != null)
                 {
-                    if (sdObj.shapeInfo.GetType() == typeof(WideViewHeaderInfo))
+                    if (sdObj.shapeInfo is WideViewHeaderInfo)
                     {
                         violatingCommand = "format-wide";
                     }
-                    else if (sdObj.shapeInfo.GetType() == typeof(TableHeaderInfo))
+                    else if (sdObj.shapeInfo is TableHeaderInfo)
                     {
                         violatingCommand = "format-table";
                     }
-                    else if (sdObj.shapeInfo.GetType() == typeof(ListViewHeaderInfo))
+                    else if (sdObj.shapeInfo is ListViewHeaderInfo)
                     {
                         violatingCommand = "format-list";
                     }
-                    else if (sdObj.shapeInfo.GetType() == typeof(ComplexViewHeaderInfo))
+                    else if (sdObj.shapeInfo is ComplexViewHeaderInfo)
                     {
                         violatingCommand = "format-complex";
                     }
@@ -808,18 +806,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal FormatOutputContext(FormatMessagesContextManager.OutputContext parentContext, FormatStartData formatData)
                 : base(parentContext)
             {
-                _formatData = formatData;
+                Data = formatData;
             }
 
             /// <summary>
             /// retrieve the format data in the context
             /// </summary>
-            internal FormatStartData Data { get { return _formatData; } }
-
-            /// <summary>
-            /// the active formatting message, as obtained from the stream
-            /// </summary>
-            private FormatStartData _formatData = null;
+            internal FormatStartData Data { get; } = null;
         }
 
         /// <summary>
@@ -835,8 +828,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                     GroupStartData formatData)
                 : base(parentContext)
             {
-                _cmd = cmd;
-                _formatData = formatData;
+                InnerCommand = cmd;
+                Data = formatData;
             }
 
             /// <summary>
@@ -867,23 +860,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// <summary>
             /// retrieve the format data in the context
             /// </summary>
-            internal GroupStartData Data { get { return _formatData; } }
+            internal GroupStartData Data { get; } = null;
 
 
-            protected OutCommandInner InnerCommand
-            {
-                get { return _cmd; }
-            }
-
-            /// <summary>
-            /// OutCommandInner reference, for accessing context data
-            /// </summary>
-            private OutCommandInner _cmd;
-
-            /// <summary>
-            /// the active formatting message, as obtained from the stream
-            /// </summary>
-            private GroupStartData _formatData = null;
+            protected OutCommandInner InnerCommand { get; }
         }
 
         private class TableOutputContextBase : GroupOutputContext
@@ -978,7 +958,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 int k = 0;
                 foreach (TableColumnInfo tci in this.CurrentTableHeaderInfo.tableColumnInfoList)
                 {
-                    properties[k++] = (tci.label != null) ? tci.label : tci.propertyName;
+                    properties[k++] = tci.label ?? tci.propertyName;
                 }
                 this.Writer.GenerateHeader(properties, this.InnerCommand._lo);
             }
@@ -1062,7 +1042,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 StringCollection props = new StringCollection();
                 foreach (ListViewField lvf in lve.listViewFieldList)
                 {
-                    props.Add((lvf.label != null) ? lvf.label : lvf.propertyName);
+                    props.Add(lvf.label ?? lvf.propertyName);
                 }
                 if (props.Count == 0)
                     return null;

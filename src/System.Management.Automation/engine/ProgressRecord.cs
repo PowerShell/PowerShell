@@ -2,8 +2,8 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Runtime.Serialization;
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
@@ -363,7 +363,7 @@ namespace System.Management.Automation
 
         #region Helper methods
 
-        static internal int? GetSecondsRemaining(DateTime startTime, double percentageComplete)
+        internal static int? GetSecondsRemaining(DateTime startTime, double percentageComplete)
         {
             Dbg.Assert(percentageComplete >= 0.0, "Caller should verify percentageComplete >= 0.0");
             Dbg.Assert(percentageComplete <= 1.0, "Caller should verify percentageComplete <= 1.0");
@@ -411,7 +411,7 @@ namespace System.Management.Automation
         /// 1) <paramref name="startTime"/> is in the future
         /// 2) <paramref name="expectedDuration"/> is negative or zero
         /// </exception>
-        static internal int GetPercentageComplete(DateTime startTime, TimeSpan expectedDuration)
+        internal static int GetPercentageComplete(DateTime startTime, TimeSpan expectedDuration)
         {
             DateTime now = DateTime.UtcNow;
 
@@ -514,7 +514,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Management.Automation.Remoting.PSRemotingDataStructureException">
         /// Thrown when the PSObject is not in the expected format
         /// </exception>
-        static internal ProgressRecord FromPSObjectForRemoting(PSObject progressAsPSObject)
+        internal static ProgressRecord FromPSObjectForRemoting(PSObject progressAsPSObject)
         {
             if (progressAsPSObject == null)
             {

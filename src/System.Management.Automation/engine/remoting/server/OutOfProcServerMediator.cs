@@ -587,7 +587,7 @@ namespace System.Management.Automation.Remoting.Server
 
         internal override void WriteLine(string data)
         {
-            string dataToWrite = (data != null) ? _errorPrepend + data : data;
+            string dataToWrite = (data != null) ? _errorPrepend + data : null;
             base.WriteLine(dataToWrite);
         }
 
@@ -679,7 +679,7 @@ namespace System.Management.Automation.Remoting.Server
 
         internal override void WriteLine(string data)
         {
-            string dataToWrite = (data != null) ? _errorPrepend + data : data;
+            string dataToWrite = (data != null) ? _errorPrepend + data : null;
             base.WriteLine(dataToWrite);
         }
 

@@ -18,9 +18,7 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 using Microsoft.PowerShell.Cmdletization;
-using Microsoft.Win32;
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Management.Automation.Language;
 
 #if CORECLR
 // Some APIs are missing from System.Environment. We use System.Management.Automation.Environment as a proxy type:
@@ -85,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
         /// Options set during module import
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]
-        internal protected struct ImportModuleOptions
+        protected internal struct ImportModuleOptions
         {
             /// <summary>
             /// Holds the value of NoClobber parameter in Import-Module
@@ -109,32 +107,17 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameter specified a prefix used to modify names of imported commands
         /// </summary>
-        internal string BasePrefix
-        {
-            set { _prefix = value; }
-            get { return _prefix; }
-        }
-        private string _prefix = string.Empty;
+        internal string BasePrefix { set; get; } = string.Empty;
 
         /// <summary>
         /// Flags -force operations
         /// </summary>
-        internal bool BaseForce
-        {
-            get { return _force; }
-            set { _force = value; }
-        }
-        private bool _force;
+        internal bool BaseForce { get; set; }
 
         /// <summary>
         /// Flags -global operations (affects what gets returned by TargetSessionState)
         /// </summary>
-        internal bool BaseGlobal
-        {
-            get { return _global; }
-            set { _global = value; }
-        }
-        private bool _global;
+        internal bool BaseGlobal { get; set; }
 
         internal SessionState TargetSessionState
         {
@@ -154,141 +137,77 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Flags -passthru operations
         /// </summary>
-        internal bool BasePassThru
-        {
-            get { return _passThru; }
-            set { _passThru = value; }
-        }
-        private bool _passThru;
+        internal bool BasePassThru { get; set; }
 
         /// <summary>
         /// Flags -passthru operations
         /// </summary>
-        internal bool BaseAsCustomObject
-        {
-            get { return _baseAsCustomObject; }
-            set { _baseAsCustomObject = value; }
-        }
-        private bool _baseAsCustomObject;
+        internal bool BaseAsCustomObject { get; set; }
 
         /// <summary>
         /// Wildcard patterns for the function to import
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Cmdlet parameters.")]
-        internal List<WildcardPattern> BaseFunctionPatterns
-        {
-            get { return _functionPatterns; }
-            set { _functionPatterns = value; }
-        }
-        private List<WildcardPattern> _functionPatterns;
+        internal List<WildcardPattern> BaseFunctionPatterns { get; set; }
 
         /// <summary>
         /// Wildcard patterns for the cmdlets to import
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Cmdlet parameters.")]
-        internal List<WildcardPattern> BaseCmdletPatterns
-        {
-            get { return _cmdletPatterns; }
-            set { _cmdletPatterns = value; }
-        }
-        private List<WildcardPattern> _cmdletPatterns;
+        internal List<WildcardPattern> BaseCmdletPatterns { get; set; }
 
         /// <summary>
         /// Wildcard patterns for the variables to import
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Cmdlet parameters.")]
-        internal List<WildcardPattern> BaseVariablePatterns
-        {
-            get { return _variablePatterns; }
-            set { _variablePatterns = value; }
-        }
-        private List<WildcardPattern> _variablePatterns;
+        internal List<WildcardPattern> BaseVariablePatterns { get; set; }
 
         /// <summary>
         /// Wildcard patterns for the aliases to import
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Cmdlet parameters.")]
-        internal List<WildcardPattern> BaseAliasPatterns
-        {
-            get { return _aliasPatterns; }
-            set { _aliasPatterns = value; }
-        }
-        private List<WildcardPattern> _aliasPatterns;
+        internal List<WildcardPattern> BaseAliasPatterns { get; set; }
 
         /// <summary>
         /// The minimum version number to check the module against. Used the underlying property
         /// for derived cmdlet paramters.
         /// </summary>
-        internal Version BaseMinimumVersion
-        {
-            get { return _minimumVersion; }
-            set { _minimumVersion = value; }
-        }
-        private Version _minimumVersion;
+        internal Version BaseMinimumVersion { get; set; }
 
         /// <summary>
         /// The maximum version number to check the module against. Used the underlying property
         /// for derived cmdlet paramters.
         /// </summary>
-        internal Version BaseMaximumVersion
-        {
-            get { return _maximumVersion; }
-            set { _maximumVersion = value; }
-        }
-        private Version _maximumVersion;
+        internal Version BaseMaximumVersion { get; set; }
 
         /// <summary>
         /// The version number to check the module against. Used the underlying property
         /// for derived cmdlet paramters.
         /// </summary>
-        internal Version BaseRequiredVersion
-        {
-            get { return _requiredVersion; }
-            set { _requiredVersion = value; }
-        }
-        private Version _requiredVersion;
+        internal Version BaseRequiredVersion { get; set; }
 
         /// <summary>
         /// The Guid to check the module against. Used the underlying property
         /// for derived cmdlet paramters.
         /// </summary>
-        internal Guid? BaseGuid
-        {
-            get;
-            set;
-        }
+        internal Guid? BaseGuid { get; set; }
 
         /// <summary>
         /// The arguments to pass to the scriptblock used to create the module
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
-        protected object[] BaseArgumentList
-        {
-            get { return _arguments; }
-            set { _arguments = value; }
-        }
-        private object[] _arguments;
+        protected object[] BaseArgumentList { get; set; }
 
         /// <summary>
         /// Disable warnings on cmdlet and function names that have non-standard verbs
         /// or non-standard characters in the noun.
         /// </summary>
-        protected bool BaseDisableNameChecking
-        {
-            get { return _disableNameChecking; }
-            set { _disableNameChecking = value; }
-        }
-        private bool _disableNameChecking = true;
+        protected bool BaseDisableNameChecking { get; set; } = true;
 
         /// <summary>
         /// Add module path to app domain level module path cache if name is not rooted
         /// </summary>
-        protected bool AddToAppDomainLevelCache
-        {
-            get { return _addToAppDomainLevelCache; }
-            set { _addToAppDomainLevelCache = value; }
-        }
-        private bool _addToAppDomainLevelCache = false;
+        protected bool AddToAppDomainLevelCache { get; set; } = false;
 
         /// <summary>
         /// A handy match all pattern used to initialize various import and export lists...
@@ -311,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
         internal static string[] PermittedCmdlets = new string[] {
             "Import-LocalizedData", "ConvertFrom-StringData", "Write-Host", "Out-Host", "Join-Path" };
 
-        static internal string[] ModuleManifestMembers = new string[] {
+        internal static string[] ModuleManifestMembers = new string[] {
             "ModuleToProcess",
             "NestedModules",
             "GUID",
@@ -746,13 +665,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // No extension so we'll have to search using the extensions
                     // 
-                    if (VerifyIfNestedModuleIsAvailable(moduleSpecification, rootedPath, extension, out tempModuleInfoFromVerification))
+                    if (VerifyIfNestedModuleIsAvailable(moduleSpecification, rootedPath, /*extension*/null, out tempModuleInfoFromVerification))
                     {
                         module = LoadUsingExtensions(
                             parentModule,
                             moduleSpecification.Name,
                             rootedPath, // fileBaseName
-                            extension,
+                            /*extension*/null,
                             moduleBase, // not using base from tempModuleInfoFromVerification as we are looking under moduleBase directory
                             prefix,
                             ss,
@@ -770,13 +689,13 @@ namespace Microsoft.PowerShell.Commands
                     {
                         string newRootedPath = Path.Combine(rootedPath, moduleSpecification.Name);
                         string newModuleBase = Path.Combine(moduleBase, moduleSpecification.Name);
-                        if (VerifyIfNestedModuleIsAvailable(moduleSpecification, newRootedPath, extension, out tempModuleInfoFromVerification))
+                        if (VerifyIfNestedModuleIsAvailable(moduleSpecification, newRootedPath, /*extension*/null, out tempModuleInfoFromVerification))
                         {
                             module = LoadUsingExtensions(
                                 parentModule,
                                 moduleSpecification.Name,
                                 newRootedPath, // fileBaseName
-                                extension,
+                                /*extension*/ null,
                                 newModuleBase, // not using base from tempModuleInfoFromVerification as we are looking under moduleBase directory
                                 prefix,
                                 ss,
@@ -3941,7 +3860,7 @@ namespace Microsoft.PowerShell.Commands
         }
 #endif
 
-        static private void UpdateCommandCollection<T>(List<T> list, List<WildcardPattern> patterns) where T : CommandInfo
+        private static void UpdateCommandCollection<T>(List<T> list, List<WildcardPattern> patterns) where T : CommandInfo
         {
             List<T> updated = new List<T>();
             foreach (T element in list)
@@ -3955,7 +3874,7 @@ namespace Microsoft.PowerShell.Commands
             list.AddRange(updated);
         }
 
-        static private void UpdateCommandCollection(Collection<string> list, List<WildcardPattern> patterns)
+        private static void UpdateCommandCollection(Collection<string> list, List<WildcardPattern> patterns)
         {
             if (list == null)
             {
@@ -3993,7 +3912,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        static private void WriteInvalidManifestMemberError(
+        private static void WriteInvalidManifestMemberError(
             PSCmdlet cmdlet,
             string manifestElement,
             string moduleManifestPath,
@@ -5013,7 +4932,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        static internal bool IsRooted(string filePath)
+        internal static bool IsRooted(string filePath)
         {
             return (Path.IsPathRooted(filePath) ||
                 filePath.StartsWith(@".\", StringComparison.Ordinal) ||
@@ -5032,7 +4951,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="filePath">The filename to resolve</param>
         /// <param name="context">Execution context</param>
         /// <returns>The resolved filename</returns>
-        static internal String ResolveRootedFilePath(string filePath, ExecutionContext context)
+        internal static String ResolveRootedFilePath(string filePath, ExecutionContext context)
         {
             // If the path is not fully qualified or relative rooted, then
             // we need to do path-based resolution...
@@ -5083,7 +5002,7 @@ namespace Microsoft.PowerShell.Commands
             return filePaths[0];
         }
 
-        static internal string GetResolvedPath(string filePath, ExecutionContext context)
+        internal static string GetResolvedPath(string filePath, ExecutionContext context)
         {
             ProviderInfo provider = null;
 
@@ -5122,7 +5041,7 @@ namespace Microsoft.PowerShell.Commands
             return filePaths[0];
         }
 
-        static internal Collection<string> GetResolvedPathCollection(string filePath, ExecutionContext context)
+        internal static Collection<string> GetResolvedPathCollection(string filePath, ExecutionContext context)
         {
             ProviderInfo provider = null;
 
@@ -5989,7 +5908,7 @@ namespace Microsoft.PowerShell.Commands
                             // Create the module object...
                             try
                             {
-                                module = Context.Modules.CreateModule(fileName, scriptInfo, MyInvocation.ScriptPosition, ss, privateData, _arguments);
+                                module = Context.Modules.CreateModule(fileName, scriptInfo, MyInvocation.ScriptPosition, ss, privateData, BaseArgumentList);
                                 module.SetModuleBase(moduleBase);
 
                                 SetModuleLoggingInformation(module);
@@ -6305,7 +6224,7 @@ namespace Microsoft.PowerShell.Commands
 
                                 // proceed with regular module import
                                 List<object> results;
-                                module = Context.Modules.CreateModule(moduleName, fileName, sb, ss, out results, _arguments);
+                                module = Context.Modules.CreateModule(moduleName, fileName, sb, ss, out results, BaseArgumentList);
                                 module.SetModuleBase(moduleBase);
                                 scriptWriter.PopulatePSModuleInfo(module);
                                 scriptWriter.ReportExportedCommands(module, prefix);
@@ -7238,8 +7157,8 @@ namespace Microsoft.PowerShell.Commands
 
             // WriteVerbose all of the imported cmdlets ...
             string snapInPrefix = module.Name + "\\";
-            bool checkVerb = !_disableNameChecking;
-            bool checkNoun = !_disableNameChecking;
+            bool checkVerb = !BaseDisableNameChecking;
+            bool checkNoun = !BaseDisableNameChecking;
             foreach (SessionStateCommandEntry ssce in iss.Commands)
             {
                 if (ssce._isImported)
@@ -7377,7 +7296,7 @@ namespace Microsoft.PowerShell.Commands
             return isPrefixed;
         }
 
-        static internal void AddModuleToModuleTables(ExecutionContext context, SessionStateInternal targetSessionState, PSModuleInfo module)
+        internal static void AddModuleToModuleTables(ExecutionContext context, SessionStateInternal targetSessionState, PSModuleInfo module)
         {
             Dbg.Assert(context != null, "Caller should verify that context != null");
             Dbg.Assert(targetSessionState != null, "Caller should verify that targetSessionState != null");
@@ -7421,7 +7340,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="sourceModule">The session state instance to use as the source of the functions</param>
         /// <param name="prefix">Command name prefix</param>
-        internal protected void ImportModuleMembers(PSModuleInfo sourceModule, string prefix)
+        protected internal void ImportModuleMembers(PSModuleInfo sourceModule, string prefix)
         {
             ImportModuleOptions importModuleOptions = new ImportModuleOptions();
             ImportModuleMembers(
@@ -7443,7 +7362,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="sourceModule">The session state instance to use as the source of the functions</param>
         /// <param name="prefix">Command name prefix</param>
         /// <param name="options">The set of options that are used while importing a module</param>
-        internal protected void ImportModuleMembers(PSModuleInfo sourceModule, string prefix, ImportModuleOptions options)
+        protected internal void ImportModuleMembers(PSModuleInfo sourceModule, string prefix, ImportModuleOptions options)
         {
             ImportModuleMembers(
                 this,

@@ -333,18 +333,7 @@ else
         [Alias("PA")]
         [ValidateNotNullOrEmpty]
         [ValidateSet("x86", "amd64")]
-        public string ProcessorArchitecture
-        {
-            get
-            {
-                return _architecture;
-            }
-            set
-            {
-                _architecture = value;
-            }
-        }
-        private string _architecture;
+        public string ProcessorArchitecture { get; set; }
 
         /// <summary>
         /// SessionType
@@ -1124,10 +1113,10 @@ else
             }
 
             string architectureParameter = string.Empty;
-            if (!string.IsNullOrEmpty(_architecture))
+            if (!string.IsNullOrEmpty(ProcessorArchitecture))
             {
                 string tempValue = "32";
-                switch (_architecture.ToLowerInvariant())
+                switch (ProcessorArchitecture.ToLowerInvariant())
                 {
                     case "x86":
                         tempValue = "32";
@@ -2422,46 +2411,21 @@ else
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = SessionConfigurationFileParameterSetName)]
         [ValidateNotNullOrEmpty]
-        public string Path
-        {
-            get
-            {
-                return _configPath;
-            }
-            set
-            {
-                _configPath = value;
-            }
-        }
-        private string _configPath;
+        public string Path { get; set; }
 
         // Other helper variables that come along with the path
         /// <summary>
         /// </summary>
-        protected bool RunAsVirtualAccount
-        {
-            get { return _runAsVirtualAccount; }
-            set { _runAsVirtualAccount = value; }
-        }
-        private bool _runAsVirtualAccount = false;
+        protected bool RunAsVirtualAccount { get; set; } = false;
 
         /// <summary>
         /// </summary>
-        protected bool RunAsVirtualAccountSpecified
-        {
-            get { return _runAsVirtualAccountSpecified; }
-            set { _runAsVirtualAccountSpecified = value; }
-        }
-        private bool _runAsVirtualAccountSpecified = false;
+        protected bool RunAsVirtualAccountSpecified { get; set; } = false;
 
         /// <summary>
         /// Comma delimited string specifying groups a virtual account is associated with
         /// </summary>
-        protected string RunAsVirtualAccountGroups
-        {
-            get;
-            set;
-        }
+        protected string RunAsVirtualAccountGroups { get; set; }
 
         #endregion
 
@@ -2572,18 +2536,7 @@ else
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        public string Name
-        {
-            get
-            {
-                return _shellName;
-            }
-            set
-            {
-                _shellName = value;
-            }
-        }
-        private string _shellName;
+        public string Name { get; set; }
 
         /// <summary>
         /// Property that sets force parameter. This will allow
@@ -2685,7 +2638,7 @@ else
                 input: Utils.EmptyArray<object>(),
                 scriptThis: AutomationNull.Value,
                 args: new object[] {
-                                           _shellName,
+                                           Name,
                                            whatIf,
                                            confirm,
                                            action,
@@ -2871,18 +2824,7 @@ $args[0] | foreach {{
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Position = 0, Mandatory = false)]
-        public string[] Name
-        {
-            get
-            {
-                return _shellName;
-            }
-            set
-            {
-                _shellName = value;
-            }
-        }
-        private string[] _shellName;
+        public string[] Name { get; set; }
 
         /// <summary>
         /// Force parameter
@@ -2922,9 +2864,9 @@ $args[0] | foreach {{
 
             string csNotFoundMessageFormat = RemotingErrorIdStrings.CustomShellNotFound;
             object arguments = "*";
-            if (null != _shellName)
+            if (null != Name)
             {
-                arguments = _shellName;
+                arguments = Name;
             }
 
             ActionPreference backupPreference = Context.ErrorActionPreferenceVariable;
@@ -4334,18 +4276,8 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        public string[] Name
-        {
-            get
-            {
-                return _shellName;
-            }
-            set
-            {
-                _shellName = value;
-            }
-        }
-        private string[] _shellName;
+        public string[] Name { get; set; }
+
         private Collection<string> _shellsToEnable = new Collection<string>();
 
         /// <summary>
@@ -4448,9 +4380,9 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (_shellName != null)
+            if (Name != null)
             {
-                foreach (string shell in _shellName)
+                foreach (string shell in Name)
                 {
                     _shellsToEnable.Add(shell);
                 }
@@ -4628,18 +4560,8 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        public string[] Name
-        {
-            get
-            {
-                return _shellName;
-            }
-            set
-            {
-                _shellName = value;
-            }
-        }
-        private string[] _shellName;
+        public string[] Name { get; set; }
+
         private Collection<string> _shellsToDisable = new Collection<string>();
 
         /// <summary>
@@ -4697,9 +4619,9 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (_shellName != null)
+            if (Name != null)
             {
-                foreach (string shell in _shellName)
+                foreach (string shell in Name)
                 {
                     _shellsToDisable.Add(shell);
                 }

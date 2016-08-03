@@ -17,7 +17,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.ComponentModel;
-using System.Management.Automation.Language;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Text;
@@ -1495,7 +1494,7 @@ namespace System.Management.Automation
                 new ReadOnlyCollection<T>(EmptyArray<T>());
         }
 
-        static internal class Separators
+        internal static class Separators
         {
             internal static readonly char[] Backslash = new char[] { '\\' };
             internal static readonly char[] Directory = new char[] { '\\', '/' };

@@ -4,26 +4,19 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 #if !SILVERLIGHT // ComObject
 
-using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices.ComTypes;
-using System.Text;
-using System.Globalization;
-using Marshal = System.Runtime.InteropServices.Marshal;
-using VarEnum = System.Runtime.InteropServices.VarEnum;
 
 namespace System.Management.Automation.ComInterop
 {
     internal class ComMethodDesc
     {
-        private readonly int _memid;  // this is the member id extracted from FUNCDESC.memid
         private readonly string _name;
         internal readonly INVOKEKIND InvokeKind;
-        private readonly int _paramCnt;
 
         private ComMethodDesc(int dispId)
         {
-            _memid = dispId;
+            DispId = dispId;
         }
 
         internal ComMethodDesc(string name, int dispId)
@@ -46,7 +39,7 @@ namespace System.Management.Automation.ComInterop
 
             int cNames;
             string[] rgNames = new string[1 + funcDesc.cParams];
-            typeInfo.GetNames(_memid, rgNames, rgNames.Length, out cNames);
+            typeInfo.GetNames(DispId, rgNames, rgNames.Length, out cNames);
 
             bool skipLast = false;
             if (IsPropertyPut && rgNames[rgNames.Length - 1] == null)
@@ -58,7 +51,7 @@ namespace System.Management.Automation.ComInterop
             Debug.Assert(cNames == rgNames.Length);
             _name = rgNames[0];
 
-            _paramCnt = funcDesc.cParams;
+            ParamCount = funcDesc.cParams;
 
             ReturnType = ComUtil.GetTypeFromTypeDesc(funcDesc.elemdescFunc.tdesc);
             ParameterInformation = ComUtil.GetParameterInformation(funcDesc, skipLast);
@@ -73,10 +66,7 @@ namespace System.Management.Automation.ComInterop
             }
         }
 
-        public int DispId
-        {
-            get { return _memid; }
-        }
+        public int DispId { get; }
 
         public bool IsPropertyGet
         {
@@ -97,7 +87,7 @@ namespace System.Management.Automation.ComInterop
                 }
 
                 //must have no parameters
-                return _paramCnt == 0;
+                return ParamCount == 0;
             }
         }
 
@@ -117,13 +107,7 @@ namespace System.Management.Automation.ComInterop
             }
         }
 
-        internal int ParamCount
-        {
-            get
-            {
-                return _paramCnt;
-            }
-        }
+        internal int ParamCount { get; }
 
         public Type ReturnType { get; set; }
         public Type InputType { get; set; }

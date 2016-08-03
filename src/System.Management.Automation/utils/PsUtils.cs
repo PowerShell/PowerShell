@@ -936,14 +936,14 @@ namespace System.Management.Automation
     /// This class provides helper methods for converting to/fro from
     /// string to base64string
     /// </summary>
-    static internal class StringToBase64Converter
+    internal static class StringToBase64Converter
     {
         /// <summary>
         /// Converts string to base64 encoded string
         /// </summary>
         /// <param name="input">string to encode</param>
         /// <returns>base64 encoded string</returns>
-        static internal string StringToBase64String(string input)
+        internal static string StringToBase64String(string input)
         {
             // NTRAID#Windows Out Of Band Releases-926471-2005/12/27-JonN
             // shell crashes if you pass an empty script block to a native command
@@ -963,7 +963,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="base64">base64 string to decode</param>
         /// <returns>decoded string</returns>
-        static internal string Base64ToString(string base64)
+        internal static string Base64ToString(string base64)
         {
             if (string.IsNullOrEmpty(base64))
             {
@@ -978,7 +978,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="base64"></param>
         /// <returns></returns>
-        static internal object[] Base64ToArgsConverter(string base64)
+        internal static object[] Base64ToArgsConverter(string base64)
         {
             if (string.IsNullOrEmpty(base64))
             {

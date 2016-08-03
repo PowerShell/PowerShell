@@ -6,14 +6,11 @@ namespace Microsoft.PowerShell.Commands
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.IO;
     using System.Threading;
     using System.Reflection;
     using System.Management.Automation;
     using System.Management.Automation.Internal;
-    using System.Management.Automation.Runspaces;
-
     using Microsoft.PowerShell.Commands.Internal.Format;
 
     internal class OutWindowProxy : IDisposable

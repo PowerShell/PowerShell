@@ -32,7 +32,6 @@ namespace System.Management.Automation
     {
         private Collection<int> _methods = new Collection<int>();
         private COM.ITypeInfo _typeInfo;
-        private string _name;
 
         /// <summary>
         /// Initializes new instance of ComMethod class.
@@ -40,19 +39,13 @@ namespace System.Management.Automation
         internal ComMethod(COM.ITypeInfo typeinfo, string name)
         {
             _typeInfo = typeinfo;
-            _name = name;
+            Name = name;
         }
 
         /// <summary>
         ///  Defines the name of the method.
         /// </summary>
-        internal string Name
-        {
-            get
-            {
-                return _name;
-            }
-        }
+        internal string Name { get; }
 
         /// <summary>
         /// Updates funcdesc for method information.

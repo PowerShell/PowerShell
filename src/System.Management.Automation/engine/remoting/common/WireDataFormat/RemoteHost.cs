@@ -5,7 +5,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Reflection;
 using System.Management.Automation.Host;
 using Dbg = System.Management.Automation.Diagnostics;
@@ -33,26 +32,12 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Method id.
         /// </summary>
-        internal RemoteHostMethodId MethodId
-        {
-            get
-            {
-                return _methodId;
-            }
-        }
-        private RemoteHostMethodId _methodId;
+        internal RemoteHostMethodId MethodId { get; }
 
         /// <summary>
         /// Parameters.
         /// </summary>
-        internal object[] Parameters
-        {
-            get
-            {
-                return _parameters;
-            }
-        }
-        private object[] _parameters;
+        internal object[] Parameters { get; }
 
         /// <summary>
         /// Method info.
@@ -87,8 +72,8 @@ namespace System.Management.Automation.Remoting
         {
             Dbg.Assert(parameters != null, "Expected parameters != null");
             _callId = callId;
-            _methodId = methodId;
-            _parameters = parameters;
+            MethodId = methodId;
+            Parameters = parameters;
             _methodInfo = RemoteHostMethodInfo.LookUp(methodId);
         }
 
@@ -135,11 +120,11 @@ namespace System.Management.Automation.Remoting
             PSObject data = RemotingEncoder.CreateEmptyPSObject();
 
             // Encode the parameters for transport.
-            PSObject parametersPSObject = EncodeParameters(_parameters);
+            PSObject parametersPSObject = EncodeParameters(Parameters);
 
             // Embed everything into the main PSobject.
             data.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.CallId, _callId));
-            data.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MethodId, _methodId));
+            data.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MethodId, MethodId));
             data.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MethodParameters, parametersPSObject));
 
             return data;
@@ -199,7 +184,7 @@ namespace System.Management.Automation.Remoting
             try
             {
                 object targetObject = this.SelectTargetObject(clientHost);
-                MyMethodBase.Invoke(targetObject, _parameters);
+                MyMethodBase.Invoke(targetObject, Parameters);
             }
             finally
             {
@@ -275,13 +260,13 @@ namespace System.Management.Automation.Remoting
             // Invoke the method and store its return values.
             try
             {
-                if (_methodId == RemoteHostMethodId.GetBufferContents)
+                if (MethodId == RemoteHostMethodId.GetBufferContents)
                 {
                     throw new PSRemotingDataStructureException(RemotingErrorIdStrings.RemoteHostGetBufferContents,
                         _computerName.ToUpper());
                 }
 
-                returnValue = MyMethodBase.Invoke(instance, _parameters);
+                returnValue = MyMethodBase.Invoke(instance, Parameters);
             }
             catch (Exception e)
             {
@@ -291,7 +276,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // Create a RemoteHostResponse object to store the return value and exceptions.
-            return new RemoteHostResponse(_callId, _methodId, returnValue, exception);
+            return new RemoteHostResponse(_callId, MethodId, returnValue, exception);
         }
 
         /// <summary>
@@ -315,7 +300,7 @@ namespace System.Management.Automation.Remoting
         {
             get
             {
-                return _methodId == RemoteHostMethodId.SetShouldExit;
+                return MethodId == RemoteHostMethodId.SetShouldExit;
             }
         }
 
@@ -327,8 +312,8 @@ namespace System.Management.Automation.Remoting
             get
             {
                 return
-                    _methodId == RemoteHostMethodId.SetShouldExit ||
-                    _methodId == RemoteHostMethodId.PopRunspace;
+                    MethodId == RemoteHostMethodId.SetShouldExit ||
+                    MethodId == RemoteHostMethodId.PopRunspace;
             }
         }
 
@@ -354,17 +339,17 @@ namespace System.Management.Automation.Remoting
             // if so, do the following:
             //       (a) prepend "Windows PowerShell Credential Request" in the title
             //       (b) prepend "Message from Server XXXXX" to the text message
-            if (_methodId == RemoteHostMethodId.PromptForCredential1 ||
-                _methodId == RemoteHostMethodId.PromptForCredential2)
+            if (MethodId == RemoteHostMethodId.PromptForCredential1 ||
+                MethodId == RemoteHostMethodId.PromptForCredential2)
             {
                 // modify the caption which is _parameters[0]
-                string modifiedCaption = ModifyCaption((string)_parameters[0]);
+                string modifiedCaption = ModifyCaption((string)Parameters[0]);
 
                 // modify the message which is _parameters[1]
-                string modifiedMessage = ModifyMessage((string)_parameters[1], computerName);
+                string modifiedMessage = ModifyMessage((string)Parameters[1], computerName);
 
-                _parameters[0] = modifiedCaption;
-                _parameters[1] = modifiedMessage;
+                Parameters[0] = modifiedCaption;
+                Parameters[1] = modifiedMessage;
             }
 
             // Check if the incoming message is a Prompt message
@@ -374,14 +359,14 @@ namespace System.Management.Automation.Remoting
             //        (b) if field descriptions correspond to 
             //            PSCredential modify the caption and 
             //            message as in the previous case above
-            else if (_methodId == RemoteHostMethodId.Prompt)
+            else if (MethodId == RemoteHostMethodId.Prompt)
             {
                 // check if any of the field descriptions is for type
                 // PSCredential
-                if (_parameters.Length == 3)
+                if (Parameters.Length == 3)
                 {
                     Collection<FieldDescription> fieldDescs =
-                        (Collection<FieldDescription>)_parameters[2];
+                        (Collection<FieldDescription>)Parameters[2];
 
                     bool havePSCredential = false;
 
@@ -408,13 +393,13 @@ namespace System.Management.Automation.Remoting
                     if (havePSCredential)
                     {
                         // modify the caption which is parameter[0]
-                        string modifiedCaption = ModifyCaption((string)_parameters[0]);
+                        string modifiedCaption = ModifyCaption((string)Parameters[0]);
 
                         // modify the message which is parameter[1]
-                        string modifiedMessage = ModifyMessage((string)_parameters[1], computerName);
+                        string modifiedMessage = ModifyMessage((string)Parameters[1], computerName);
 
-                        _parameters[0] = modifiedCaption;
-                        _parameters[1] = modifiedMessage;
+                        Parameters[0] = modifiedCaption;
+                        Parameters[1] = modifiedMessage;
                     }
                 }// end of if (parameters ...
             }// if (remoteHostCall.MethodId ...
@@ -423,7 +408,7 @@ namespace System.Management.Automation.Remoting
             // if so do the following:
             //      (a) Specify a warning message that the server is
             //          attempting to read something securely on the client
-            else if (_methodId == RemoteHostMethodId.ReadLineAsSecureString)
+            else if (MethodId == RemoteHostMethodId.ReadLineAsSecureString)
             {
                 prerequisiteCalls.Add(ConstructWarningMessageForSecureString(
                                     computerName, RemotingErrorIdStrings.RemoteHostReadLineAsSecureStringPrompt));
@@ -435,7 +420,7 @@ namespace System.Management.Automation.Remoting
             //          attemping to read the screen buffer contents 
             //          on screen and it has been blocked
             //      (b) Modify the message so that call is not executed
-            else if (_methodId == RemoteHostMethodId.GetBufferContents)
+            else if (MethodId == RemoteHostMethodId.GetBufferContents)
             {
                 prerequisiteCalls.Add(ConstructWarningMessageForGetBufferContents(computerName));
             }

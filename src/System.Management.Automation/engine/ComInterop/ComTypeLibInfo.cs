@@ -9,45 +9,38 @@ using System.Linq.Expressions;
 #else
 using Microsoft.Scripting.Ast;
 #endif
-
-using System;
 using System.Dynamic;
 
 namespace System.Management.Automation.ComInterop
 {
     internal sealed class ComTypeLibInfo : IDynamicMetaObjectProvider
     {
-        private readonly ComTypeLibDesc _typeLibDesc;
-
         internal ComTypeLibInfo(ComTypeLibDesc typeLibDesc)
         {
-            _typeLibDesc = typeLibDesc;
+            TypeLibDesc = typeLibDesc;
         }
 
         public string Name
         {
-            get { return _typeLibDesc.Name; }
+            get { return TypeLibDesc.Name; }
         }
 
         public Guid Guid
         {
-            get { return _typeLibDesc.Guid; }
+            get { return TypeLibDesc.Guid; }
         }
 
         public short VersionMajor
         {
-            get { return _typeLibDesc.VersionMajor; }
+            get { return TypeLibDesc.VersionMajor; }
         }
 
         public short VersionMinor
         {
-            get { return _typeLibDesc.VersionMinor; }
+            get { return TypeLibDesc.VersionMinor; }
         }
 
-        public ComTypeLibDesc TypeLibDesc
-        {
-            get { return _typeLibDesc; }
-        }
+        public ComTypeLibDesc TypeLibDesc { get; }
 
         // TODO: internal
         public string[] GetMemberNames()

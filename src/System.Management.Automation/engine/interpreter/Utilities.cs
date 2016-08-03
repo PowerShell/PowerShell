@@ -2,7 +2,6 @@
 //    Copyright (C) Microsoft.  All rights reserved.
 //
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
@@ -277,19 +276,15 @@ namespace System.Management.Automation.Interpreter
         private readonly int _first;
 
         // the number of items in _arguments that represent the arguments:
-        private readonly int _count;
 
         internal ArgumentArray(object[] arguments, int first, int count)
         {
             _arguments = arguments;
             _first = first;
-            _count = count;
+            Count = count;
         }
 
-        public int Count
-        {
-            get { return _count; }
-        }
+        public int Count { get; }
 
         public object GetArgument(int index)
         {

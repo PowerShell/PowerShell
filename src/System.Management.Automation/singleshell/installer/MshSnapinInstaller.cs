@@ -105,19 +105,13 @@ namespace System.Management.Automation
         /// </summary>
         private string PSVersion
         {
-            get
-            {
-                if (_psVersion == null)
-                    _psVersion = PSVersionInfo.FeatureVersionString;
-
-                return _psVersion;
-            }
+            get { return _psVersion ?? (_psVersion = PSVersionInfo.FeatureVersionString); }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        internal override sealed string RegKey
+        internal sealed override string RegKey
         {
             get
             {

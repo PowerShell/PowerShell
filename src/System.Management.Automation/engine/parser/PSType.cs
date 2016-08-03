@@ -11,7 +11,6 @@ using System.Reflection.Emit;
 using Microsoft.PowerShell;
 using System.Threading;
 using System.Management.Automation.Internal;
-using System.Text;
 
 namespace System.Management.Automation.Language
 {
@@ -395,12 +394,7 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                if (baseClass == null)
-                {
-                    baseClass = typeof(object);
-                }
-
-                return baseClass;
+                return baseClass ?? typeof(object);
             }
 
             public void DefineMembers()

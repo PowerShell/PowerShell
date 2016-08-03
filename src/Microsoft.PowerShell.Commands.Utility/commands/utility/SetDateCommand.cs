@@ -25,18 +25,7 @@ namespace Microsoft.PowerShell.Commands
         /// Allows user to override the date/time object that will be processed
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Date", ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        public DateTime Date
-        {
-            get
-            {
-                return _to;
-            }
-            set
-            {
-                _to = value;
-            }
-        }
-        private DateTime _to;
+        public DateTime Date { get; set; }
 
 
         /// <summary>
@@ -44,36 +33,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Adjust", ValueFromPipelineByPropertyName = true)]
         [AllowNull]
-        public TimeSpan Adjust
-        {
-            get
-            {
-                return _adjust;
-            }
-            set
-            {
-                _adjust = value;
-            }
-        }
-        private TimeSpan _adjust;
+        public TimeSpan Adjust { get; set; }
 
 
         /// <summary>
         /// This option determines the default output format used to display the object set-date emits
         /// </summary>
         [Parameter]
-        public DisplayHintType DisplayHint
-        {
-            get
-            {
-                return _displayHint;
-            }
-            set
-            {
-                _displayHint = value;
-            }
-        }
-        private DisplayHintType _displayHint = DisplayHintType.DateTime;
+        public DisplayHintType DisplayHint { get; set; } = DisplayHintType.DateTime;
 
         #endregion
 

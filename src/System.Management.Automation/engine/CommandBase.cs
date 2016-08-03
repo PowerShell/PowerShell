@@ -2,19 +2,11 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Collections;
 using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Management.Automation;
 using System.Management.Automation.Language;
-using System.Reflection;
-using System.Text;
 using System.Diagnostics;
-using System.Resources;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal.Host;
-using System.Threading;
 using System.Management.Automation.Internal;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Runspaces;
@@ -84,15 +76,7 @@ namespace System.Management.Automation.Internal
         /// <value>The invocation object for this command.</value>
         internal InvocationInfo MyInvocation
         {
-            get
-            {
-                if (_myInvocation == null)
-                {
-                    _myInvocation = new InvocationInfo(this);
-                }
-
-                return _myInvocation;
-            }
+            get { return _myInvocation ?? (_myInvocation = new InvocationInfo(this)); }
         }
 
         /// <summary>
@@ -456,11 +440,7 @@ namespace System.Management.Automation
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    if (_invokeProvider == null)
-                    {
-                        _invokeProvider = new ProviderIntrinsics(this);
-                    }
-                    return _invokeProvider;
+                    return _invokeProvider ?? (_invokeProvider = new ProviderIntrinsics(this));
                 }
             }
         } // InvokeProvider

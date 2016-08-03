@@ -9,8 +9,6 @@ using System.Linq.Expressions;
 #else
 using Microsoft.Scripting.Ast;
 #endif
-
-using System;
 using System.Runtime.InteropServices;
 using System.Dynamic;
 using System.Globalization;

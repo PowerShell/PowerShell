@@ -204,9 +204,9 @@ namespace System.Management.Automation
             return commandResults;
         }
 
-        static private readonly HashSet<string> s_keywordsToExcludeFromAddingAmpersand
+        private static readonly HashSet<string> s_keywordsToExcludeFromAddingAmpersand
             = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { TokenKind.InlineScript.ToString(), TokenKind.Configuration.ToString() };
-        static internal CompletionResult GetCommandNameCompletionResult(string name, object command, bool addAmpersandIfNecessary, string quote)
+        internal static CompletionResult GetCommandNameCompletionResult(string name, object command, bool addAmpersandIfNecessary, string quote)
         {
             string syntax = name, listItem = name;
 
@@ -261,7 +261,7 @@ namespace System.Management.Automation
             return new CompletionResult(name, listItem, CompletionResultType.Command, syntax);
         }
 
-        static internal List<CompletionResult> MakeCommandsUnique(IEnumerable<PSObject> commandInfoPsObjs, bool includeModulePrefix, bool addAmpersandIfNecessary, string quote, CompletionContext context)
+        internal static List<CompletionResult> MakeCommandsUnique(IEnumerable<PSObject> commandInfoPsObjs, bool includeModulePrefix, bool addAmpersandIfNecessary, string quote, CompletionContext context)
         {
             List<CompletionResult> results = new List<CompletionResult>();
             if (commandInfoPsObjs == null || !commandInfoPsObjs.Any())
@@ -405,9 +405,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Contains the pseudo commands that only work in the script workflow.
         /// </summary>
-        static internal readonly List<string> PseudoWorkflowCommands
+        internal static readonly List<string> PseudoWorkflowCommands
             = new List<string> { "Checkpoint-Workflow", "Suspend-Workflow", "InlineScript" };
-        static private Collection<PSObject> CompleteWorkflowCommand(string command, Ast lastAst, Collection<PSObject> commandInfos)
+        private static Collection<PSObject> CompleteWorkflowCommand(string command, Ast lastAst, Collection<PSObject> commandInfos)
         {
             if (!lastAst.IsInWorkflow())
                 return commandInfos;
@@ -1876,11 +1876,8 @@ namespace System.Management.Automation
             {
                 if (argumentValue != null)
                 {
-                    IEnumerable enumerable = LanguagePrimitives.GetEnumerable(argumentValue);
-                    if (enumerable == null)
-                    {
-                        enumerable = new object[] { argumentValue };
-                    }
+                    IEnumerable enumerable = LanguagePrimitives.GetEnumerable(argumentValue) ??
+                                             new object[] { argumentValue };
                     foreach (var element in enumerable)
                     {
                         if (element == null)
@@ -4529,7 +4526,7 @@ namespace System.Management.Automation
             '-', '`', '&', '@', '\'', '"', '#', '{', '}', '(', ')', '$', ',', ';', '|', '<', '>', ' ', '.', '\\', '/', '\t', '^',
         };
 
-        static internal List<CompletionResult> CompleteVariable(CompletionContext context)
+        internal static List<CompletionResult> CompleteVariable(CompletionContext context)
         {
             HashSet<string> hashedResults = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             List<CompletionResult> results = new List<CompletionResult>();
@@ -4937,14 +4934,14 @@ namespace System.Management.Automation
         #region Members
 
         // List of extension methods <MethodName, Signature>
-        static private readonly List<Tuple<string, string>> s_extensionMethods =
+        private static readonly List<Tuple<string, string>> s_extensionMethods =
             new List<Tuple<string, string>>
                 {
                     new Tuple<string, string>("Where", "Where({ expression } [, mode [, numberToReturn]])"),
                     new Tuple<string, string>("ForEach", "ForEach(expression [, arguments...])")
                 };
         // List of DSC collection-value variables
-        static private readonly HashSet<string> s_dscCollectionVariables =
+        private static readonly HashSet<string> s_dscCollectionVariables =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "SelectedNodes", "AllNodes" };
 
         internal static List<CompletionResult> CompleteMember(CompletionContext context, bool @static)
@@ -5370,7 +5367,7 @@ namespace System.Management.Automation
             return false;
         }
 
-        static internal IEnumerable<object> GetMembersByInferredType(PSTypeName typename, CompletionContext context, bool @static, Func<object, bool> filter)
+        internal static IEnumerable<object> GetMembersByInferredType(PSTypeName typename, CompletionContext context, bool @static, Func<object, bool> filter)
         {
             List<object> results = new List<object>();
 

@@ -28,20 +28,13 @@ namespace Microsoft.PowerShell.Commands
         [Alias("ClassName")]
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "query")]
         [Parameter(Position = 1, ParameterSetName = "list")]
-        public string Class
-        {
-            get { return _wmiClass; }
-            set { _wmiClass = value; }
-        }
+        public string Class { get; set; }
+
         /// <summary>
         /// To specify whether to get the results recursively
         /// </summary>
         [Parameter(ParameterSetName = "list")]
-        public SwitchParameter Recurse
-        {
-            get { return _recurse; }
-            set { _recurse = value; }
-        }
+        public SwitchParameter Recurse { get; set; } = false;
 
         /// <summary>
         /// The WMI properties to retrieve
@@ -57,64 +50,38 @@ namespace Microsoft.PowerShell.Commands
         /// The filter to be used in the search
         /// </summary>
         [Parameter(ParameterSetName = "query")]
-        public string Filter
-        {
-            get { return _filter; }
-            set { _filter = value; }
-        }
+        public string Filter { get; set; }
 
         /// <summary>
         /// If Amended qualifier to use
         /// </summary>
         [Parameter]
-        public SwitchParameter Amended
-        {
-            get { return _amended; }
-            set { _amended = value; }
-        }
+        public SwitchParameter Amended { get; set; }
 
         /// <summary>
         /// If Enumerate Deep flag to use. When 'list' parameter is specified 'EnumerateDeep' parameter is ignored.
         /// </summary>
         [Parameter(ParameterSetName = "WQLQuery")]
         [Parameter(ParameterSetName = "query")]
-        public SwitchParameter DirectRead
-        {
-            get { return _directRead; }
-            set { _directRead = value; }
-        }
+        public SwitchParameter DirectRead { get; set; }
 
         /// <summary>
         /// The list of classes
         /// </summary>
         [Parameter(ParameterSetName = "list")]
-        public SwitchParameter List
-        {
-            get { return _list; }
-            set { _list = value; }
-        }
+        public SwitchParameter List { get; set; } = false;
 
         /// <summary>
         /// The query string to search for objects
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "WQLQuery")]
-        public string Query
-        {
-            get { return _objectQuery; }
-            set { _objectQuery = value; }
-        }
+        public string Query { get; set; }
 
         #endregion Parameters
 
         #region parameter data
-        private string _wmiClass;
+
         private string[] _property = new string[] { "*" };
-        private string _filter;
-        private SwitchParameter _amended;
-        private SwitchParameter _directRead;
-        private string _objectQuery;
-        private SwitchParameter _list = false;
-        private SwitchParameter _recurse = false;
 
         #endregion parameter data
 
@@ -128,11 +95,11 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder returnValue = new StringBuilder("select ");
             returnValue.Append(String.Join(", ", _property));
             returnValue.Append(" from ");
-            returnValue.Append(_wmiClass);
-            if (!String.IsNullOrEmpty(_filter))
+            returnValue.Append(Class);
+            if (!String.IsNullOrEmpty(Filter))
             {
                 returnValue.Append(" where ");
-                returnValue.Append(_filter);
+                returnValue.Append(Filter);
             }
             return returnValue.ToString();
         }
@@ -200,7 +167,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal ManagementObjectSearcher GetObjectList(ManagementScope scope)
         {
-            ManagementObjectSearcher searcher = null;
             StringBuilder queryStringBuilder = new StringBuilder();
             if (string.IsNullOrEmpty(this.Class))
             {
@@ -210,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string filterClass = GetFilterClassName();
                 if (filterClass == null)
-                    return searcher;
+                    return null;
                 queryStringBuilder.Append("select * from meta_class where __class like '");
                 queryStringBuilder.Append(filterClass);
                 queryStringBuilder.Append("'");
@@ -220,7 +186,7 @@ namespace Microsoft.PowerShell.Commands
             EnumerationOptions enumOptions = new EnumerationOptions();
             enumOptions.EnumerateDeep = true;
             enumOptions.UseAmendedQualifiers = this.Amended;
-            searcher = new ManagementObjectSearcher(scope, classQuery, enumOptions);
+            var searcher = new ManagementObjectSearcher(scope, classQuery, enumOptions);
             return searcher;
         }
         /// <summary>
@@ -236,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                if (_list.IsPresent)
+                if (List.IsPresent)
                 {
                     if (!this.ValidateClassFormat())
                     {
@@ -372,7 +338,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // When -List is not specified and -Recurse is specified, we need the -Class parameter to compose the right query string
-                if (this.Recurse.IsPresent && string.IsNullOrEmpty(_wmiClass))
+                if (this.Recurse.IsPresent && string.IsNullOrEmpty(Class))
                 {
                     string errormMsg = string.Format(CultureInfo.InvariantCulture, WmiResources.WmiParameterMissing, "-Class");
                     ErrorRecord er = new ErrorRecord(new InvalidOperationException(errormMsg), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
@@ -389,8 +355,8 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ManagementScope scope = new ManagementScope(WMIHelper.GetScopeString(name, this.Namespace), options);
                         EnumerationOptions enumOptions = new EnumerationOptions();
-                        enumOptions.UseAmendedQualifiers = _amended;
-                        enumOptions.DirectRead = _directRead;
+                        enumOptions.UseAmendedQualifiers = Amended;
+                        enumOptions.DirectRead = DirectRead;
                         ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query, enumOptions);
                         foreach (ManagementBaseObject obj in searcher.Get())
                         {
@@ -447,9 +413,9 @@ namespace Microsoft.PowerShell.Commands
             System.Management.Automation.Diagnostics.Assert(query.Contains("from"),
                                                             "Only get called when ErrorCode is InvalidClass, which means the query string contains 'from' and the class name");
 
-            if (_wmiClass != null)
+            if (Class != null)
             {
-                return _wmiClass;
+                return Class;
             }
 
             int fromIndex = query.IndexOf(" from ", StringComparison.OrdinalIgnoreCase);

@@ -8,14 +8,10 @@ using System.Linq.Expressions;
 #else
 using Microsoft.Scripting.Ast;
 #endif
-
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Security;
-using System.Security.Permissions;
 using System.Dynamic;
 
 namespace System.Management.Automation.ComInterop
@@ -26,26 +22,18 @@ namespace System.Management.Automation.ComInterop
     /// </summary>
     internal class ComObject : IDynamicMetaObjectProvider
     {
-        /// <summary>
-        /// The runtime-callable wrapper
-        /// </summary>
-        private readonly object _rcw;
-
         internal ComObject(object rcw)
         {
             Debug.Assert(ComObject.IsComObject(rcw));
-            _rcw = rcw;
+            RuntimeCallableWrapper = rcw;
         }
 
-        internal object RuntimeCallableWrapper
-        {
-            get
-            {
-                return _rcw;
-            }
-        }
+        /// <summary>
+        /// The runtime-callable wrapper
+        /// </summary>
+        internal object RuntimeCallableWrapper { get; }
 
-        private readonly static object s_comObjectInfoKey = new object();
+        private static readonly object s_comObjectInfoKey = new object();
 
         /// <summary>
         /// This is the factory method to get the ComObject corresponding to an RCW

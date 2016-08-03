@@ -8,8 +8,6 @@ using System.Linq.Expressions;
 #else
 using Microsoft.Scripting.Ast;
 #endif
-
-using System;
 using System.Diagnostics;
 
 namespace System.Management.Automation.ComInterop
@@ -21,27 +19,22 @@ namespace System.Management.Automation.ComInterop
     /// </summary>
     internal class SimpleArgBuilder : ArgBuilder
     {
-        private readonly Type _parameterType;
-
         internal SimpleArgBuilder(Type parameterType)
         {
-            _parameterType = parameterType;
+            ParameterType = parameterType;
         }
 
-        internal Type ParameterType
-        {
-            get { return _parameterType; }
-        }
+        internal Type ParameterType { get; }
 
         internal override Expression Marshal(Expression parameter)
         {
             Debug.Assert(parameter != null);
-            return Helpers.Convert(parameter, _parameterType);
+            return Helpers.Convert(parameter, ParameterType);
         }
 
         internal override Expression UnmarshalFromRef(Expression newValue)
         {
-            Debug.Assert(newValue != null && newValue.Type.IsAssignableFrom(_parameterType));
+            Debug.Assert(newValue != null && newValue.Type.IsAssignableFrom(ParameterType));
 
             return base.UnmarshalFromRef(newValue);
         }

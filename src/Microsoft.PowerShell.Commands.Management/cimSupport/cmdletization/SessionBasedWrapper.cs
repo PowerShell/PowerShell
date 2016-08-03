@@ -75,14 +75,7 @@ namespace Microsoft.PowerShell.Cmdletization
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         protected TSession[] Session
         {
-            get
-            {
-                if (_session == null)
-                {
-                    _session = new TSession[] { this.DefaultSession };
-                }
-                return _session;
-            }
+            get { return _session ?? (_session = new TSession[] {this.DefaultSession}); }
             set
             {
                 if (value == null)

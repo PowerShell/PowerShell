@@ -8,14 +8,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.IO;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
-using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Diagnostics;
-using Microsoft.Win32;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell

@@ -719,15 +719,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override RunspaceConfigurationEntryCollection<TypeConfigurationEntry> Types
         {
-            get
-            {
-                if (_types == null)
-                {
-                    _types = new RunspaceConfigurationEntryCollection<TypeConfigurationEntry>();
-                }
-
-                return _types;
-            }
+            get { return _types ?? (_types = new RunspaceConfigurationEntryCollection<TypeConfigurationEntry>()); }
         }
 
         private RunspaceConfigurationEntryCollection<FormatConfigurationEntry> _formats;
@@ -737,14 +729,8 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override RunspaceConfigurationEntryCollection<FormatConfigurationEntry> Formats
         {
-            get
-            {
-                if (_formats == null)
-                {
-                    _formats = new RunspaceConfigurationEntryCollection<FormatConfigurationEntry>();
-                }
-
-                return _formats;
+            get {
+                return _formats ?? (_formats = new RunspaceConfigurationEntryCollection<FormatConfigurationEntry>());
             }
         }
 
@@ -755,19 +741,14 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override RunspaceConfigurationEntryCollection<ScriptConfigurationEntry> InitializationScripts
         {
-            get
-            {
-                if (_initializationScripts == null)
-                {
-                    _initializationScripts = new RunspaceConfigurationEntryCollection<ScriptConfigurationEntry>();
-                }
-
-                return _initializationScripts;
+            get {
+                return _initializationScripts ??
+                       (_initializationScripts = new RunspaceConfigurationEntryCollection<ScriptConfigurationEntry>());
             }
         }
 
         #endregion
 
-        static private PSTraceSource s_mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
+        private static PSTraceSource s_mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
     }
 }

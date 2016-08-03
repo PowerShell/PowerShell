@@ -2,12 +2,8 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.PerformanceData;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 
 namespace System.Management.Automation.PerformanceData
 {
@@ -19,18 +15,6 @@ namespace System.Management.Automation.PerformanceData
     public struct CounterInfo
     {
         #region Private Members
-        /// <summary>
-        /// Counter Name
-        /// </summary>
-        private string _Name;
-        /// <summary>
-        /// Counter Id
-        /// </summary>
-        private int _Id;
-        /// <summary>
-        /// Counter Type
-        /// </summary>
-        private CounterType _Type;
 
         #endregion
 
@@ -40,9 +24,9 @@ namespace System.Management.Automation.PerformanceData
         /// </summary>
         public CounterInfo(int id, CounterType type, string name)
         {
-            _Id = id;
-            _Type = type;
-            _Name = name;
+            Id = id;
+            Type = type;
+            Name = name;
         }
 
         /// <summary>
@@ -50,9 +34,9 @@ namespace System.Management.Automation.PerformanceData
         /// </summary>
         public CounterInfo(int id, CounterType type)
         {
-            _Id = id;
-            _Type = type;
-            _Name = null;
+            Id = id;
+            Type = type;
+            Name = null;
         }
         #endregion
 
@@ -60,36 +44,18 @@ namespace System.Management.Automation.PerformanceData
         /// <summary>
         /// Getter for Counter Name property
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                return _Name;
-            }
-        }
+        public string Name { get; }
 
         /// <summary>
         /// Getter for Counter Id property.
         /// </summary>
-        public int Id
-        {
-            get
-            {
-                return _Id;
-            }
-        }
+        public int Id { get; }
 
         /// <summary>
         /// Getter for Counter Type property.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
-        public CounterType Type
-        {
-            get
-            {
-                return _Type;
-            }
-        }
+        public CounterType Type { get; }
 
         #endregion
     }
@@ -106,11 +72,6 @@ namespace System.Management.Automation.PerformanceData
     public abstract class CounterSetRegistrarBase
     {
         #region Private Members
-        private readonly Guid _providerId;
-        private readonly Guid _counterSetId;
-        private readonly string _counterSetName;
-        private readonly CounterSetInstanceType _counterSetInstanceType;
-        private readonly CounterInfo[] _counterInfoArray;
 
         #endregion
 
@@ -145,21 +106,21 @@ namespace System.Management.Automation.PerformanceData
             CounterInfo[] counterInfoArray,
             string counterSetName = null)
         {
-            _providerId = providerId;
-            _counterSetId = counterSetId;
-            _counterSetInstanceType = counterSetInstType;
-            _counterSetName = counterSetName;
+            ProviderId = providerId;
+            CounterSetId = counterSetId;
+            CounterSetInstType = counterSetInstType;
+            CounterSetName = counterSetName;
             if ((counterInfoArray == null)
                 || (counterInfoArray.Length == 0))
             {
                 throw new ArgumentNullException("counterInfoArray");
             }
 
-            _counterInfoArray = new CounterInfo[counterInfoArray.Length];
+            CounterInfoArray = new CounterInfo[counterInfoArray.Length];
 
             for (int i = 0; i < counterInfoArray.Length; i++)
             {
-                _counterInfoArray[i] =
+                CounterInfoArray[i] =
                     new CounterInfo(
                         counterInfoArray[i].Id,
                         counterInfoArray[i].Type,
@@ -179,17 +140,17 @@ namespace System.Management.Automation.PerformanceData
             {
                 throw new ArgumentNullException("srcCounterSetRegistrarBase");
             }
-            _providerId = srcCounterSetRegistrarBase._providerId;
-            _counterSetId = srcCounterSetRegistrarBase._counterSetId;
-            _counterSetInstanceType = srcCounterSetRegistrarBase._counterSetInstanceType;
-            _counterSetName = srcCounterSetRegistrarBase._counterSetName;
+            ProviderId = srcCounterSetRegistrarBase.ProviderId;
+            CounterSetId = srcCounterSetRegistrarBase.CounterSetId;
+            CounterSetInstType = srcCounterSetRegistrarBase.CounterSetInstType;
+            CounterSetName = srcCounterSetRegistrarBase.CounterSetName;
 
-            CounterInfo[] counterInfoArrayRef = srcCounterSetRegistrarBase._counterInfoArray;
-            _counterInfoArray = new CounterInfo[counterInfoArrayRef.Length];
+            CounterInfo[] counterInfoArrayRef = srcCounterSetRegistrarBase.CounterInfoArray;
+            CounterInfoArray = new CounterInfo[counterInfoArrayRef.Length];
 
             for (int i = 0; i < counterInfoArrayRef.Length; i++)
             {
-                _counterInfoArray[i] =
+                CounterInfoArray[i] =
                     new CounterInfo(
                         counterInfoArrayRef[i].Id,
                         counterInfoArrayRef[i].Type,
@@ -203,58 +164,28 @@ namespace System.Management.Automation.PerformanceData
         /// <summary>
         /// Getter method for ProviderId property
         /// </summary>
-        public Guid ProviderId
-        {
-            get
-            {
-                return _providerId;
-            }
-        }
+        public Guid ProviderId { get; }
 
         /// <summary>
         /// Getter method for CounterSetId property
         /// </summary>
-        public Guid CounterSetId
-        {
-            get
-            {
-                return _counterSetId;
-            }
-        }
+        public Guid CounterSetId { get; }
 
         /// <summary>
         /// Getter method for CounterSetName property
         /// </summary>
-        public string CounterSetName
-        {
-            get
-            {
-                return _counterSetName;
-            }
-        }
+        public string CounterSetName { get; }
 
         /// <summary>
         /// Getter method for CounterSetInstanceType property
         /// </summary>
-        public CounterSetInstanceType CounterSetInstType
-        {
-            get
-            {
-                return _counterSetInstanceType;
-            }
-        }
+        public CounterSetInstanceType CounterSetInstType { get; }
 
         /// <summary>
         /// Getter method for array of counters information property
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public CounterInfo[] CounterInfoArray
-        {
-            get
-            {
-                return _counterInfoArray;
-            }
-        }
+        public CounterInfo[] CounterInfoArray { get; }
 
 
         /// <summary>
@@ -263,14 +194,7 @@ namespace System.Management.Automation.PerformanceData
         /// </summary>
         public CounterSetInstanceBase CounterSetInstance
         {
-            get
-            {
-                if (this._counterSetInstanceBase == null)
-                {
-                    this._counterSetInstanceBase = this.CreateCounterSetInstance();
-                }
-                return this._counterSetInstanceBase;
-            }
+            get { return _counterSetInstanceBase ?? (_counterSetInstanceBase = CreateCounterSetInstance()); }
         }
 
         #endregion

@@ -10,7 +10,6 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
-using System.Management.Automation.Runspaces.Internal;
 using System.Management.Automation.Remoting.Client;
 using System.Management.Automation.Host;
 using System.Threading;
@@ -68,12 +67,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ConnectPSSessionCommand.SessionParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public PSSession[] Session
-        {
-            get { return _remotePSSessionInfo; }
-            set { _remotePSSessionInfo = value; }
-        }
-        private PSSession[] _remotePSSessionInfo;
+        public PSSession[] Session { get; set; }
 
         /// <summary>
         /// Computer names to connect to.
@@ -85,12 +79,7 @@ namespace Microsoft.PowerShell.Commands
                    Mandatory = true)]
         [ValidateNotNullOrEmpty]
         [Alias("Cn")]
-        public override String[] ComputerName
-        {
-            get { return _computerNames; }
-            set { _computerNames = value; }
-        }
-        private String[] _computerNames;
+        public override String[] ComputerName { get; set; }
 
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
@@ -148,12 +137,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Alias("URI", "CU")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public Uri[] ConnectionUri
-        {
-            get { return _uris; }
-            set { _uris = value; }
-        }
-        private Uri[] _uris;
+        public Uri[] ConnectionUri { get; set; }
 
         /// <summary>
         /// The AllowRedirection parameter enables the implicit redirection functionality.
@@ -276,18 +260,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameGuidParameterSet)]
         [ValidateRange((Int32)1, (Int32)UInt16.MaxValue)]
-        public Int32 Port
-        {
-            get
-            {
-                return _port;
-            }
-            set
-            {
-                _port = value;
-            }
-        }
-        private Int32 _port;
+        public Int32 Port { get; set; }
 
 
         /// <summary>
@@ -300,18 +273,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameGuidParameterSet)]
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSL")]
-        public SwitchParameter UseSSL
-        {
-            get
-            {
-                return _useSSL;
-            }
-            set
-            {
-                _useSSL = value;
-            }
-        }
-        private SwitchParameter _useSSL;
+        public SwitchParameter UseSSL { get; set; }
 
 
         /// <summary>
@@ -321,12 +283,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameGuidParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
-        public PSSessionOption SessionOption
-        {
-            get { return _sessionOption; }
-            set { _sessionOption = value; }
-        }
-        private PSSessionOption _sessionOption;
+        public PSSessionOption SessionOption { get; set; }
 
 
         /// <summary>
@@ -342,12 +299,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.NameParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.InstanceIdParameterSet)]
-        public Int32 ThrottleLimit
-        {
-            get { return _throttleLimit; }
-            set { _throttleLimit = value; }
-        }
-        private Int32 _throttleLimit = 0;
+        public Int32 ThrottleLimit { get; set; } = 0;
 
         /// <summary>
         /// Overriding to suppress this parameter
@@ -810,7 +762,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Collection<WSManConnectionInfo> connectionInfos = GetConnectionObjects();
             Collection<PSSession> psSessions = _queryRunspaces.GetDisconnectedSessions(connectionInfos, this.Host, _stream,
-                                                    this.RunspaceRepository, _throttleLimit,
+                                                    this.RunspaceRepository, ThrottleLimit,
                                                     SessionFilterState.Disconnected, this.InstanceId, this.Name, ConfigurationName);
 
             // Write any error output from stream object.
@@ -835,9 +787,9 @@ namespace Microsoft.PowerShell.Commands
             // Get all remote runspaces to disconnect.
             if (ParameterSetName == DisconnectPSSessionCommand.SessionParameterSet)
             {
-                if (_remotePSSessionInfo != null)
+                if (Session != null)
                 {
-                    foreach (PSSession psSession in _remotePSSessionInfo)
+                    foreach (PSSession psSession in Session)
                     {
                         psSessions.Add(psSession);
                     }
@@ -1440,7 +1392,7 @@ namespace Microsoft.PowerShell.Commands
             catch (System.Xml.XmlException)
             { }
 
-            return (rtnMsg != null) ? rtnMsg : e.Message;
+            return rtnMsg ?? e.Message;
         }
 
         /// <summary>

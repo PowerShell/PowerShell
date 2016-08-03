@@ -2,18 +2,9 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Management.Automation;
 using System.Management.Automation.Host;
-using System.Management.Automation.Remoting;
-using System.Management.Automation.Internal;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
@@ -107,66 +98,22 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Interface type.
         /// </summary>
-        private Type _interfaceType;
-
-        /// <summary>
-        /// Interface type.
-        /// </summary>
-        internal Type InterfaceType
-        {
-            get
-            {
-                return _interfaceType;
-            }
-        }
+        internal Type InterfaceType { get; }
 
         /// <summary>
         /// Name.
         /// </summary>
-        private string _name;
-
-        /// <summary>
-        /// Name.
-        /// </summary>
-        internal string Name
-        {
-            get
-            {
-                return _name;
-            }
-        }
+        internal string Name { get; }
 
         /// <summary>
         /// Return type.
         /// </summary>
-        private Type _returnType;
-
-        /// <summary>
-        /// Return type.
-        /// </summary>
-        internal Type ReturnType
-        {
-            get
-            {
-                return _returnType;
-            }
-        }
+        internal Type ReturnType { get; }
 
         /// <summary>
         /// Parameter types.
         /// </summary>
-        private Type[] _parameterTypes;
-
-        /// <summary>
-        /// Parameter types.
-        /// </summary>
-        internal Type[] ParameterTypes
-        {
-            get
-            {
-                return _parameterTypes;
-            }
-        }
+        internal Type[] ParameterTypes { get; }
 
         /// <summary>
         /// Create a new instance of RemoteHostMethodInfo.
@@ -177,10 +124,10 @@ namespace System.Management.Automation.Remoting
             Type returnType,
             Type[] parameterTypes)
         {
-            _interfaceType = interfaceType;
-            _name = name;
-            _returnType = returnType;
-            _parameterTypes = parameterTypes;
+            InterfaceType = interfaceType;
+            Name = name;
+            ReturnType = returnType;
+            ParameterTypes = parameterTypes;
         }
 
         /// <summary>

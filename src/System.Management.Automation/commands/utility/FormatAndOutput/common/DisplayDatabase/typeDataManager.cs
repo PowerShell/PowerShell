@@ -3,17 +3,10 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Xml;
-using System.Reflection;
 using System.IO;
-using System.Diagnostics;
-using System.Text;
-
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
@@ -32,14 +25,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// instance of the object holding the format.ps1xml in memory database
         /// </summary>
-        private TypeInfoDataBase _dataBase;
-        internal TypeInfoDataBase Database
-        {
-            get
-            {
-                return _dataBase;
-            }
-        }
+        internal TypeInfoDataBase Database { get; private set; }
 
         // for locking the F&O database
         internal object databaseLock = new object();
@@ -50,19 +36,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal bool isShared;
         private List<string> _formatFileList;
 
-        /// <summary>
-        /// If set to true, disables any updates to format table. This includes disabling 
-        /// format table updates throught Update-FormatData, Import-Module etc. 
-        /// All the disabling happens silently ie., the user will not get any exception.
-        /// By default, this is set to False.
-        /// </summary>
-        private bool _disableFormatTableUpdates;
-        internal bool DisableFormatTableUpdates
-        {
-            get { return _disableFormatTableUpdates; }
-            set { _disableFormatTableUpdates = value; }
-        }
-
+        internal bool DisableFormatTableUpdates { get; set; }
 
         #endregion
 
@@ -134,7 +108,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal TypeInfoDataBase GetTypeInfoDataBase()
         {
-            return _dataBase;
+            return Database;
         }
 
         /// <summary>
@@ -363,7 +337,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 lock (databaseLock)
                 {
                     if (acceptLoadingErrors || success)
-                        _dataBase = newDataBase;
+                        Database = newDataBase;
                 }
             }
             finally
@@ -372,12 +346,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // data base to an empty instance
                 lock (databaseLock)
                 {
-                    if (_dataBase == null)
+                    if (Database == null)
                     {
                         TypeInfoDataBase tempDataBase = new TypeInfoDataBase();
                         AddPreLoadInstrinsics(tempDataBase);
                         AddPostLoadInstrinsics(tempDataBase);
-                        _dataBase = tempDataBase;
+                        Database = tempDataBase;
                     }
                 }
             }

@@ -4,17 +4,12 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 #if !SILVERLIGHT // ComObject
 
-using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.InteropServices;
-using System.Security;
-using System.Security.Permissions;
 //using Microsoft.Scripting.Utils;
-using System.Reflection;
 //using Microsoft.Scripting.Generation;
-using System.Reflection.Emit;
 using Assert = System.Management.Automation.Interpreter.Assert;
 
 namespace System.Management.Automation.ComInterop

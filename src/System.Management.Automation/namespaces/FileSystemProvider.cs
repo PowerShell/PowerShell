@@ -20,7 +20,6 @@ using System.Text;
 using System.Xml;
 using System.Xml.XPath;
 using Microsoft.Win32.SafeHandles;
-using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation;
 using System.Runtime.InteropServices;
 using System.Management.Automation.Runspaces;
@@ -7414,18 +7413,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the attribute filtering enum evaluator
         /// </summary>
         [Parameter]
-        public FlagsExpression<FileAttributes> Attributes
-        {
-            get
-            {
-                return _evaluator;
-            }
-            set
-            {
-                _evaluator = value;
-            }
-        }
-        private FlagsExpression<FileAttributes> _evaluator;
+        public FlagsExpression<FileAttributes> Attributes { get; set; }
 
         /// <summary>
         /// Gets or sets the filter directory flag
@@ -7434,14 +7422,8 @@ namespace Microsoft.PowerShell.Commands
         [Alias("ad", "d")]
         public SwitchParameter Directory
         {
-            get
-            {
-                return _attributeDirectory;
-            }
-            set
-            {
-                _attributeDirectory = value;
-            }
+            get { return _attributeDirectory; }
+            set { _attributeDirectory = value; }
         }
         private bool _attributeDirectory;
 
@@ -7452,14 +7434,8 @@ namespace Microsoft.PowerShell.Commands
         [Alias("af")]
         public SwitchParameter File
         {
-            get
-            {
-                return _attributeFile;
-            }
-            set
-            {
-                _attributeFile = value;
-            }
+            get { return _attributeFile; }
+            set { _attributeFile = value; }
         }
         private bool _attributeFile;
 
@@ -7470,14 +7446,8 @@ namespace Microsoft.PowerShell.Commands
         [Alias("ah", "h")]
         public SwitchParameter Hidden
         {
-            get
-            {
-                return _attributeHidden;
-            }
-            set
-            {
-                _attributeHidden = value;
-            }
+            get { return _attributeHidden; }
+            set { _attributeHidden = value; }
         }
         private bool _attributeHidden;
 
@@ -7488,14 +7458,8 @@ namespace Microsoft.PowerShell.Commands
         [Alias("ar")]
         public SwitchParameter ReadOnly
         {
-            get
-            {
-                return _attributeReadOnly;
-            }
-            set
-            {
-                _attributeReadOnly = value;
-            }
+            get { return _attributeReadOnly; }
+            set { _attributeReadOnly = value; }
         }
         private bool _attributeReadOnly;
 
@@ -7506,14 +7470,8 @@ namespace Microsoft.PowerShell.Commands
         [Alias("as")]
         public SwitchParameter System
         {
-            get
-            {
-                return _attributeSystem;
-            }
-            set
-            {
-                _attributeSystem = value;
-            }
+            get { return _attributeSystem; }
+            set { _attributeSystem = value; }
         }
         private bool _attributeSystem;
     }
@@ -7528,18 +7486,7 @@ namespace Microsoft.PowerShell.Commands
         /// reading data from the file.
         /// </summary>
         [Parameter]
-        public FileSystemCmdletProviderEncoding Encoding
-        {
-            get
-            {
-                return _streamType;
-            } // get
-
-            set
-            {
-                _streamType = value;
-            } // set
-        } // Encoding
+        public FileSystemCmdletProviderEncoding Encoding { get; set; } = FileSystemCmdletProviderEncoding.String;
 
         /// <summary>
         /// A parameter to return a stream of an item.
@@ -7549,18 +7496,13 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// Default to getting a unicode string
-        /// </summary>
-        private FileSystemCmdletProviderEncoding _streamType = FileSystemCmdletProviderEncoding.String;
-
-        /// <summary>
         /// Gets the encoding from the specified StreamType parameter.
         /// </summary>
         public Encoding EncodingType
         {
             get
             {
-                return GetEncodingFromEnum(_streamType);
+                return GetEncodingFromEnum(Encoding);
             }
         } // EncodingType
 
@@ -7649,7 +7591,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return _streamType == FileSystemCmdletProviderEncoding.Byte;
+                return Encoding == FileSystemCmdletProviderEncoding.Byte;
             } // get
         } // UsingByteEncoding
 
@@ -7661,7 +7603,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (_streamType != FileSystemCmdletProviderEncoding.String);
+                return (Encoding != FileSystemCmdletProviderEncoding.String);
             } // get
         } // WasStreamTypeSpecified
 
@@ -7728,7 +7670,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _delimiterSpecified = true;
+                DelimiterSpecified = true;
                 _delimiter = value;
             } // set
         }
@@ -7776,14 +7718,9 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the status of the delimiter parameter.  Returns true
         /// if the delimiter was explicitly specified by the user, false otherwise.
         /// </summary>
-        public bool DelimiterSpecified
-        {
-            get
-            {
-                return _delimiterSpecified;
-            } // get
+        public bool DelimiterSpecified { get; private set;
+// get
         } // DelimiterSpecified
-        private bool _delimiterSpecified;
     } // class FileSystemContentReaderDynamicParameters
 
 

@@ -22,12 +22,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 // preserve the information.
 //
 
-using System;
-using System.Globalization;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Management.Automation;
 
 
 namespace Microsoft.PowerShell.Commands.Internal.Format

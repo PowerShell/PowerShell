@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Security;
 using System.Globalization;
-using Microsoft.Win32;
 using System.Management.Automation.Runspaces;
 using Microsoft.PowerShell.Commands;
 using System.Threading.Tasks;

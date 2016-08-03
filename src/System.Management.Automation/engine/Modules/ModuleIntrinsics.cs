@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
-using System.Management.Automation.Runspaces;
 using Microsoft.PowerShell.Commands;
 using System.Linq;
 using System.Threading;
@@ -35,20 +34,13 @@ namespace System.Management.Automation
         private readonly ExecutionContext _context;
 
         // Holds the module collection...
-        internal Dictionary<string, PSModuleInfo> ModuleTable
-        {
-            get
-            {
-                return _moduleTable;
-            }
-        }
-        private readonly Dictionary<string, PSModuleInfo> _moduleTable = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
+        internal Dictionary<string, PSModuleInfo> ModuleTable { get; } = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
 
         private const int MaxModuleNestingDepth = 10;
 
         internal void IncrementModuleNestingDepth(PSCmdlet cmdlet, string path)
         {
-            if (++_moduleNestingDepth > MaxModuleNestingDepth)
+            if (++ModuleNestingDepth > MaxModuleNestingDepth)
             {
                 string message = StringUtil.Format(Modules.ModuleTooDeeplyNested, path, MaxModuleNestingDepth);
                 InvalidOperationException ioe = new InvalidOperationException(message);
@@ -60,15 +52,10 @@ namespace System.Management.Automation
         }
         internal void DecrementModuleNestingCount()
         {
-            --_moduleNestingDepth;
+            --ModuleNestingDepth;
         }
 
-        internal int ModuleNestingDepth
-        {
-            get { return _moduleNestingDepth; }
-        }
-
-        private int _moduleNestingDepth;
+        internal int ModuleNestingDepth { get; private set; }
 
         /// <summary>
         /// Create a new module object from a scriptblock specifying the path to set for the module
@@ -952,7 +939,7 @@ namespace System.Management.Automation
             }
         }
 
-        static private string ProcessOneModulePath(ExecutionContext context, string envPath, HashSet<string> processedPathSet)
+        private static string ProcessOneModulePath(ExecutionContext context, string envPath, HashSet<string> processedPathSet)
         {
             string trimmedenvPath = envPath.Trim();
 
@@ -1022,7 +1009,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        static private void SortAndRemoveDuplicates<T>(List<T> input, Func<T, string> keyGetter)
+        private static void SortAndRemoveDuplicates<T>(List<T> input, Func<T, string> keyGetter)
         {
             Dbg.Assert(input != null, "Caller should verify that input != null");
 
@@ -1065,7 +1052,7 @@ namespace System.Management.Automation
         /// <param name="variablePatterns">Patterns describing the variables to export</param>
         /// <param name="doNotExportCmdlets">List of Cmdlets that will not be exported,  
         ///     even if they match in cmdletPatterns.</param>
-        static internal void ExportModuleMembers(PSCmdlet cmdlet, SessionStateInternal sessionState,
+        internal static void ExportModuleMembers(PSCmdlet cmdlet, SessionStateInternal sessionState,
             List<WildcardPattern> functionPatterns, List<WildcardPattern> cmdletPatterns,
             List<WildcardPattern> aliasPatterns, List<WildcardPattern> variablePatterns, List<string> doNotExportCmdlets)
         {
@@ -1226,7 +1213,7 @@ namespace System.Management.Automation
             }
         }
 
-        static private AliasInfo NewAliasInfo(AliasInfo alias, SessionStateInternal sessionState)
+        private static AliasInfo NewAliasInfo(AliasInfo alias, SessionStateInternal sessionState)
         {
             Dbg.Assert(alias != null, "alias should not be null");
             Dbg.Assert(sessionState != null, "sessionState should not be null");

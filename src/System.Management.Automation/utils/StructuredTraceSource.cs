@@ -287,7 +287,7 @@ namespace System.Management.Automation
 
             try
             {
-                _fullName = fullName;
+                FullName = fullName;
                 _name = name;
 
 #if !CORECLR // TraceSource.Attributes is not in CoreCLR
@@ -305,8 +305,8 @@ namespace System.Management.Automation
                     }
                 }
 #endif
-                _showHeaders = traceHeaders;
-                _description = description;
+                ShowHeaders = traceHeaders;
+                Description = description;
             }
             catch (System.Xml.XmlException)
             {
@@ -1352,7 +1352,7 @@ namespace System.Management.Automation
 
                 StringBuilder lineBuilder = new StringBuilder();
 
-                if (_showHeaders)
+                if (ShowHeaders)
                 {
                     // Get the line prefix string which includes things
                     // like App name, clock tick, thread ID, etc.
@@ -1397,7 +1397,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Property to access the indent level in thread local storage.
         /// </summary>
-        static internal int ThreadIndentLevel
+        internal static int ThreadIndentLevel
         {
             get
             {
@@ -1433,33 +1433,20 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the description for this trace sources
         /// </summary>
-        public string Description
-        {
-            get { return _description; }
-            set { _description = value; }
-        }
-        private string _description = String.Empty;
+        public string Description { get; set; } = String.Empty;
 
         /// <summary>
         /// Determines if the line and switch headers should be shown
         /// </summary>
         /// <value></value>
-        internal bool ShowHeaders
-        {
-            get { return _showHeaders; }
-            set { _showHeaders = value; }
-        }
-        private bool _showHeaders = true;
+        internal bool ShowHeaders { get; set; } = true;
 
         /// <summary>
         /// Gets the full name of the trace source category
         /// </summary>
         /// 
-        internal string FullName
-        {
-            get { return _fullName; }
-        }
-        private string _fullName = String.Empty;
+        internal string FullName { get; } = String.Empty;
+
         private string _name;
 
         /// <summary>
@@ -1468,14 +1455,7 @@ namespace System.Management.Automation
         /// 
         internal TraceSource TraceSource
         {
-            get
-            {
-                if (_traceSource == null)
-                {
-                    _traceSource = new MonadTraceSource(_name);
-                }
-                return _traceSource;
-            }
+            get { return _traceSource ?? (_traceSource = new MonadTraceSource(_name)); }
         }
         private TraceSource _traceSource;
 
@@ -1564,12 +1544,7 @@ namespace System.Management.Automation
         /// Storage for all the PSTraceSource instances.
         /// </summary>
         /// <value></value>
-        internal static Dictionary<String, PSTraceSource> TraceCatalog
-        {
-            get { return s_traceCatalog; }
-        }
-        private static Dictionary<String, PSTraceSource> s_traceCatalog =
-            new Dictionary<String, PSTraceSource>(StringComparer.OrdinalIgnoreCase);
+        internal static Dictionary<String, PSTraceSource> TraceCatalog { get; } = new Dictionary<String, PSTraceSource>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Storage for trace source instances which have not been instantiated but for which
@@ -1579,12 +1554,7 @@ namespace System.Management.Automation
         /// to look in this dictionary to see if the PSTraceSource has been pre-configured.
         /// </summary>
         /// 
-        internal static Dictionary<String, PSTraceSource> PreConfiguredTraceSource
-        {
-            get { return s_preConfiguredTraceSource; }
-        }
-        private static Dictionary<String, PSTraceSource> s_preConfiguredTraceSource =
-            new Dictionary<String, PSTraceSource>(StringComparer.OrdinalIgnoreCase);
+        internal static Dictionary<String, PSTraceSource> PreConfiguredTraceSource { get; } = new Dictionary<String, PSTraceSource>(StringComparer.OrdinalIgnoreCase);
 
         #endregion TraceCatalog
     }      // class PSTraceSource : Switch
@@ -1890,36 +1860,19 @@ namespace System.Management.Automation
             string category,
             string description)
         {
-            _category = category;
-            _description = description;
+            Category = category;
+            Description = description;
         }
 
         /// <summary>
         /// The category to be used for the TraceSource
         /// </summary>
-        private string _category;
-
-        /// <summary>
-        /// The category to be used for the TraceSource
-        /// </summary>
-        internal string Category
-        {
-            get { return _category; }
-        }
+        internal string Category { get; }
 
         /// <summary>
         /// The description for the category to be used for the TraceSource
         /// </summary>
-        private string _description;
-
-        /// <summary>
-        /// The description for the category to be used for the TraceSource
-        /// </summary>
-        internal string Description
-        {
-            get { return _description; }
-            set { _description = value; }
-        }
+        internal string Description { get; set; }
     }
     #endregion TraceSourceAttribute
 

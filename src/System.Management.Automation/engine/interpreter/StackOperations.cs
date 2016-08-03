@@ -14,8 +14,6 @@
  * ***************************************************************************/
 
 using System.Collections.Generic;
-using System;
-using System.Diagnostics;
 using System.Globalization;
 
 namespace System.Management.Automation.Interpreter
@@ -93,7 +91,7 @@ namespace System.Management.Automation.Interpreter
 
     internal sealed class DupInstruction : Instruction
     {
-        internal readonly static DupInstruction Instance = new DupInstruction();
+        internal static readonly DupInstruction Instance = new DupInstruction();
 
         private DupInstruction() { }
 

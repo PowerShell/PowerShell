@@ -7,7 +7,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
@@ -2881,10 +2880,6 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class JobDataAddedEventArgs : EventArgs
     {
-        private readonly Job _job;
-        private readonly PowerShellStreamType _dataType;
-        private readonly int _index;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -2895,27 +2890,27 @@ namespace System.Management.Automation
         /// </param>
         internal JobDataAddedEventArgs(Job job, PowerShellStreamType dataType, int index)
         {
-            _job = job;
-            _dataType = dataType;
-            _index = index;
+            SourceJob = job;
+            DataType = dataType;
+            Index = index;
         }
 
         /// <summary>
         /// The job that contains the PSDataCollection which is the sender.
         /// </summary>
-        public Job SourceJob { get { return _job; } }
+        public Job SourceJob { get; }
 
         /// <summary>
         /// Identifies the type of the sending collection as one of the six collections
         /// associated with a job.
         /// If data type = output, sender is PSDataCollection of PSObject, Error is of ErrorRecord, etc.
         /// </summary>
-        public PowerShellStreamType DataType { get { return _dataType; } }
+        public PowerShellStreamType DataType { get; }
 
         /// <summary>
         /// Index at which the data is added.
         /// </summary>
-        public int Index { get { return _index; } }
+        public int Index { get; }
     }
 
     /// <summary>

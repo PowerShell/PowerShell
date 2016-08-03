@@ -22,12 +22,7 @@ namespace Microsoft.PowerShell.Commands
         /// property name
         /// 
         /// </summary>
-        public string Property
-        {
-            get { return _property; }
-            set { _property = value; }
-        }
-        private string _property = null;
+        public string Property { get; set; } = null;
     }
 
     /// <summary>
@@ -40,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public GenericMeasureInfo()
         {
-            _average = _sum = _max = _min = null;
+            Average = Sum = Maximum = Minimum = null;
         }
 
         /// <summary>
@@ -48,60 +43,35 @@ namespace Microsoft.PowerShell.Commands
         /// Keeping track of number of objects with a certain property
         /// 
         /// </summary>
-        public int Count
-        {
-            get { return _count; }
-            set { _count = value; }
-        }
-        private int _count;
+        public int Count { get; set; }
 
         /// <summary>
         /// 
         /// The average of property values
         /// 
         /// </summary>
-        public double? Average
-        {
-            get { return _average; }
-            set { _average = value; }
-        }
-        private double? _average;
+        public double? Average { get; set; }
 
         /// <summary>
         /// 
         /// The sum of property values
         /// 
         /// </summary>
-        public double? Sum
-        {
-            get { return _sum; }
-            set { _sum = value; }
-        }
-        private double? _sum;
+        public double? Sum { get; set; }
 
         /// <summary>
         /// 
         /// The max of property values
         /// 
         /// </summary>
-        public double? Maximum
-        {
-            get { return _max; }
-            set { _max = value; }
-        }
-        private double? _max;
+        public double? Maximum { get; set; }
 
         /// <summary>
         /// 
         /// The min of property values
         /// 
         /// </summary>
-        public double? Minimum
-        {
-            get { return _min; }
-            set { _min = value; }
-        }
-        private double? _min;
+        public double? Minimum { get; set; }
     }
 
     /// <summary>
@@ -121,8 +91,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public GenericObjectMeasureInfo()
         {
-            _average = _sum = null;
-            _max = _min = null;
+            Average = Sum = null;
+            Maximum = Minimum = null;
         }
 
         /// <summary>
@@ -130,60 +100,35 @@ namespace Microsoft.PowerShell.Commands
         /// Keeping track of number of objects with a certain property
         /// 
         /// </summary>
-        public int Count
-        {
-            get { return _count; }
-            set { _count = value; }
-        }
-        private int _count;
+        public int Count { get; set; }
 
         /// <summary>
         /// 
         /// The average of property values
         /// 
         /// </summary>
-        public double? Average
-        {
-            get { return _average; }
-            set { _average = value; }
-        }
-        private double? _average;
+        public double? Average { get; set; }
 
         /// <summary>
         /// 
         /// The sum of property values
         /// 
         /// </summary>
-        public double? Sum
-        {
-            get { return _sum; }
-            set { _sum = value; }
-        }
-        private double? _sum;
+        public double? Sum { get; set; }
 
         /// <summary>
         /// 
         /// The max of property values
         /// 
         /// </summary>
-        public object Maximum
-        {
-            get { return _max; }
-            set { _max = value; }
-        }
-        private object _max;
+        public object Maximum { get; set; }
 
         /// <summary>
         /// 
         /// The min of property values
         /// 
         /// </summary>
-        public object Minimum
-        {
-            get { return _min; }
-            set { _min = value; }
-        }
-        private object _min;
+        public object Minimum { get; set; }
     }
 
 
@@ -197,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public TextMeasureInfo()
         {
-            _lines = _words = _characters = null;
+            Lines = Words = Characters = null;
         }
 
         /// <summary>
@@ -205,36 +150,21 @@ namespace Microsoft.PowerShell.Commands
         /// Keeping track of number of objects with a certain property
         /// 
         /// </summary>
-        public int? Lines
-        {
-            get { return _lines; }
-            set { _lines = value; }
-        }
-        private int? _lines;
+        public int? Lines { get; set; }
 
         /// <summary>
         /// 
         /// The average of property values
         /// 
         /// </summary>
-        public int? Words
-        {
-            get { return _words; }
-            set { _words = value; }
-        }
-        private int? _words;
+        public int? Words { get; set; }
 
         /// <summary>
         /// 
         /// The sum of property values
         /// 
         /// </summary>
-        public int? Characters
-        {
-            get { return _characters; }
-            set { _characters = value; }
-        }
-        private int? _characters;
+        public int? Characters { get; set; }
     }
 
     /// <summary>
@@ -323,12 +253,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject
-        {
-            set { _inputObject = value; }
-            get { return _inputObject; }
-        }
-        private PSObject _inputObject = AutomationNull.Value;
+        public PSObject InputObject { set; get; } = AutomationNull.Value;
 
         /// <summary>
         /// Properties to be examined
@@ -336,18 +261,8 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [ValidateNotNullOrEmpty]
         [Parameter(Position = 0)]
-        public string[] Property
-        {
-            get
-            {
-                return _property;
-            }
-            set
-            {
-                _property = value;
-            }
-        }
-        private string[] _property = null;
+        public string[] Property { get; set; } = null;
+
         #endregion Common parameters in both sets
 
         /// <summary>
@@ -516,7 +431,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (_inputObject == null || _inputObject == AutomationNull.Value)
+            if (InputObject == null || InputObject == AutomationNull.Value)
             {
                 return;
             }
@@ -524,9 +439,9 @@ namespace Microsoft.PowerShell.Commands
             _totalRecordCount++;
 
             if (Property == null)
-                AnalyzeValue(null, _inputObject.BaseObject);
+                AnalyzeValue(null, InputObject.BaseObject);
             else
-                AnalyzeObjectProperties(_inputObject);
+                AnalyzeObjectProperties(InputObject);
         }
 
         /// <summary>
@@ -807,7 +722,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="errorId">The error ID to write.</param>
         private void WritePropertyNotFoundError(string propertyName, string errorId)
         {
-            Diagnostics.Assert(_property != null, "no property and no InputObject should have been addressed");
+            Diagnostics.Assert(Property != null, "no property and no InputObject should have been addressed");
             ErrorRecord errorRecord = new ErrorRecord(
                     PSTraceSource.NewArgumentException("Property"),
                     errorId,

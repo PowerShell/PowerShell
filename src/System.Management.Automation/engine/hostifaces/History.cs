@@ -3,7 +3,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -13,7 +12,6 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation.Diagnostics;
-using PipelineResultTypes = System.Management.Automation.Runspaces.PipelineResultTypes;
 
 
 namespace Microsoft.PowerShell.Commands
@@ -844,7 +842,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="id"></param>
         /// <param name="capacity"></param>
         /// <returns></returns>
-        static private int GetIndexFromId(long id, int capacity)
+        private static int GetIndexFromId(long id, int capacity)
         {
             return (int)((id - 1) % capacity);
         }
@@ -1424,22 +1422,11 @@ namespace Microsoft.PowerShell.Commands
     {
         #region parameters
 
-        private PSObject[] _inputObjects;
         /// <summary>
         /// This parameter specifies the current pipeline object 
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
-        public PSObject[] InputObject
-        {
-            set
-            {
-                _inputObjects = value;
-            }
-            get
-            {
-                return _inputObjects;
-            }
-        }
+        public PSObject[] InputObject { set; get; }
 
         private bool _passthru;
         /// <summary>
@@ -1449,14 +1436,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         public SwitchParameter Passthru
         {
-            get
-            {
-                return _passthru;
-            }
-            set
-            {
-                _passthru = value;
-            }
+            get { return _passthru; }
+            set { _passthru = value; }
         }
 
         #endregion parameters

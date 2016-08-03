@@ -5,10 +5,8 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.ComponentModel;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
@@ -303,7 +301,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         #endregion
 
-        private readonly static string[] s_legalValues = new string[] { LeftAlign, CenterAlign, RightAlign };
+        private static readonly string[] s_legalValues = new string[] { LeftAlign, CenterAlign, RightAlign };
 
         private const string LeftAlign = "left";
         private const string CenterAlign = "center";

@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Management.Automation.Runspaces;
 using System.Collections.ObjectModel;
 
@@ -119,7 +118,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The command metadata for the script.
         /// </summary>
-        override internal CommandMetadata CommandMetadata
+        internal override CommandMetadata CommandMetadata
         {
             get
             {

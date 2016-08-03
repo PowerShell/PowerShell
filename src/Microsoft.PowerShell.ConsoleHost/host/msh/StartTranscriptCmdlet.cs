@@ -9,8 +9,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Internal.Host;
-
 
 
 namespace Microsoft.PowerShell.Commands

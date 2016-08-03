@@ -68,17 +68,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Default depth of serialization
-        /// </summary>
-        private static int s_mshDefaultSerializationDepth = 1;
-
-        /// <summary>
         /// Default depth of serializaiton
         /// </summary>
-        public static int MshDefaultSerializationDepth
-        {
-            get { return s_mshDefaultSerializationDepth; }
-        }
+        public static int MshDefaultSerializationDepth { get; } = 1;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -383,8 +376,7 @@ namespace System.Management.Automation
             if (ct == ContainerType.None)
                 return false;
 
-            WriteStartOfPSObject(mshSource != null ? mshSource : PSObject.AsPSObject(source),
-                                                 property, true);
+            WriteStartOfPSObject(mshSource ?? PSObject.AsPSObject(source), property, true);
             switch (ct)
             {
                 case ContainerType.Dictionary:
@@ -1132,7 +1124,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="writer"></param>
         /// <param name="elementTag">tag of element</param>
-        static internal void WriteStartElement(XmlWriter writer, string elementTag)
+        internal static void WriteStartElement(XmlWriter writer, string elementTag)
         {
             writer.WriteStartElement(elementTag);
         }
@@ -1143,7 +1135,7 @@ namespace System.Management.Automation
         /// <param name="writer"></param>
         /// <param name="name">name of attribute</param>
         /// <param name="value">value of attribute</param>
-        static internal void WriteAttribute(XmlWriter writer, string name, string value)
+        internal static void WriteAttribute(XmlWriter writer, string name, string value)
         {
             writer.WriteAttributeString(name, value);
         }

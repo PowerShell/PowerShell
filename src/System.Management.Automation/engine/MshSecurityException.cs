@@ -2,8 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Reflection;
 using System.Runtime.Serialization;
 
 #if CORECLR

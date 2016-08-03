@@ -7,22 +7,10 @@
 //  host powershell in a WSMan service.
 // ----------------------------------------------------------------------
 
-using System;
 using System.Threading;
-using System.Globalization;
 using System.Runtime.InteropServices;
-using System.Security.Principal;
-using System.IO;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-
-using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Remoting;
-using System.Management.Automation.Remoting.Client;
-using System.Management.Automation.Remoting.Server;
-using System.Management.Automation.Remoting.WSMan;
-using System.Management.Automation.Tracing;
 
 namespace System.Management.Automation.Remoting
 {

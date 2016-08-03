@@ -516,11 +516,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static MshExpression GetDefaultNameExpression(PSObject so)
         {
-            MshExpression retVal = GetDefaultNameExpression(so.PSStandardMembers);
-            if (retVal == null)
-            {
-                retVal = GetDefaultNameExpression(MaskDeserializedAndGetStandardMembers(so));
-            }
+            MshExpression retVal = GetDefaultNameExpression(so.PSStandardMembers) ??
+                                   GetDefaultNameExpression(MaskDeserializedAndGetStandardMembers(so));
 
             return retVal;
         }

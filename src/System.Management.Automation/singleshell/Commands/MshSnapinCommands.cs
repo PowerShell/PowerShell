@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
         /// See if the snapin is already loaded..returns load snapin info if true, null otherwise.
         /// </summary>
         /// <returns></returns>
-        static internal PSSnapInInfo IsSnapInLoaded(Collection<PSSnapInInfo> loadedSnapins, PSSnapInInfo psSnapInInfo)
+        internal static PSSnapInInfo IsSnapInLoaded(Collection<PSSnapInInfo> loadedSnapins, PSSnapInInfo psSnapInInfo)
         {
             if (null == loadedSnapins)
             {
@@ -248,13 +248,8 @@ namespace Microsoft.PowerShell.Commands
         /// 
         internal RegistryStringResourceIndirect ResourceReader
         {
-            get
-            {
-                if (_resourceReader == null)
-                {
-                    _resourceReader = RegistryStringResourceIndirect.GetResourceIndirectReader();
-                }
-                return _resourceReader;
+            get {
+                return _resourceReader ?? (_resourceReader = RegistryStringResourceIndirect.GetResourceIndirectReader());
             }
         }
         private RegistryStringResourceIndirect _resourceReader;

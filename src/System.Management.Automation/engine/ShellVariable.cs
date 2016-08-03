@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Runtime.CompilerServices;
@@ -191,7 +190,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("name");
             }
 
-            _name = name;
+            Name = name;
 
             _attributes = new PSVariableAttributeCollection(this);
 
@@ -223,7 +222,7 @@ namespace System.Management.Automation
         // the derived class isn't fully constructed yet.
         internal PSVariable(string name, bool dummy)
         {
-            _name = name;
+            Name = name;
         }
 
         #endregion ctor
@@ -231,14 +230,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the variable.
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-        }
-        private string _name = String.Empty;
+        public string Name { get; } = String.Empty;
 
         /// <summary>
         /// Gets or sets the description of the variable.
@@ -259,8 +251,8 @@ namespace System.Management.Automation
 
         internal void DebuggerCheckVariableRead()
         {
-            var context = _sessionState != null
-                              ? _sessionState.ExecutionContext
+            var context = SessionState != null
+                              ? SessionState.ExecutionContext
                               : LocalPipeline.GetExecutionContextFromTLS();
             if (null != context && context._debuggingMode > 0)
             {
@@ -270,8 +262,8 @@ namespace System.Management.Automation
 
         internal void DebuggerCheckVariableWrite()
         {
-            var context = _sessionState != null
-                              ? _sessionState.ExecutionContext
+            var context = SessionState != null
+                              ? SessionState.ExecutionContext
                               : LocalPipeline.GetExecutionContextFromTLS();
             if (null != context && context._debuggingMode > 0)
             {
@@ -309,24 +301,16 @@ namespace System.Management.Automation
         /// <summary>
         /// If true, then this variable is visible outside the runspace.
         /// </summary>
-        public SessionStateEntryVisibility Visibility
-        {
-            get { return _visibility; }
-            set { _visibility = value; }
-        }
-        private SessionStateEntryVisibility _visibility = SessionStateEntryVisibility.Public; // default to public to preserve V1 semantics.
+        public SessionStateEntryVisibility Visibility { get; set; } = SessionStateEntryVisibility.Public;
 
         /// <summary>
         /// The module where this variable was defined.
         /// </summary>
-        public PSModuleInfo Module
-        {
-            get { return _module; }
-        }
-        private PSModuleInfo _module;
+        public PSModuleInfo Module { get; private set; }
+
         internal void SetModule(PSModuleInfo module)
         {
-            _module = module;
+            Module = module;
         }
 
         /// <summary>
@@ -336,8 +320,8 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_module != null)
-                    return _module.Name;
+                if (Module != null)
+                    return Module.Name;
                 return string.Empty;
             }
         }
@@ -372,7 +356,7 @@ namespace System.Management.Automation
             {
                 SessionStateUnauthorizedAccessException e =
                     new SessionStateUnauthorizedAccessException(
-                            _name,
+                            Name,
                             SessionStateCategory.Variable,
                             "VariableNotWritable",
                             SessionStateStrings.VariableNotWritable);
@@ -391,7 +375,7 @@ namespace System.Management.Automation
 
                 SessionStateUnauthorizedAccessException e =
                     new SessionStateUnauthorizedAccessException(
-                            _name,
+                            Name,
                             SessionStateCategory.Variable,
                             "VariableCannotBeMadeConstant",
                             SessionStateStrings.VariableCannotBeMadeConstant);
@@ -410,7 +394,7 @@ namespace System.Management.Automation
 
                 SessionStateUnauthorizedAccessException e =
                     new SessionStateUnauthorizedAccessException(
-                            _name,
+                            Name,
                             SessionStateCategory.Variable,
                             "VariableAllScopeOptionCannotBeRemoved",
                             SessionStateStrings.VariableAllScopeOptionCannotBeRemoved);
@@ -432,14 +416,7 @@ namespace System.Management.Automation
         /// </remarks>
         public Collection<Attribute> Attributes
         {
-            get
-            {
-                if (_attributes == null)
-                {
-                    _attributes = new PSVariableAttributeCollection(this);
-                }
-                return _attributes;
-            }
+            get { return _attributes ?? (_attributes = new PSVariableAttributeCollection(this)); }
         }
         private PSVariableAttributeCollection _attributes;
 
@@ -666,18 +643,7 @@ namespace System.Management.Automation
         }
         private bool _wasRemoved;
 
-        internal SessionStateInternal SessionState
-        {
-            get
-            {
-                return _sessionState;
-            }
-            set
-            {
-                _sessionState = value;
-            }
-        }
-        private SessionStateInternal _sessionState;
+        internal SessionStateInternal SessionState { get; set; }
 
         #endregion internal members
 
@@ -706,7 +672,7 @@ namespace System.Management.Automation
             {
                 SessionStateUnauthorizedAccessException e =
                     new SessionStateUnauthorizedAccessException(
-                            _name,
+                            Name,
                             SessionStateCategory.Variable,
                             "VariableNotWritable",
                             SessionStateStrings.VariableNotWritable);
@@ -728,7 +694,7 @@ namespace System.Management.Automation
                         "ValidateSetFailure",
                         null,
                         Metadata.InvalidValueFailure,
-                        _name,
+                        Name,
                         ((transformedValue != null) ? transformedValue.ToString() : "$null"));
 
                     throw e;
@@ -755,7 +721,7 @@ namespace System.Management.Automation
             _value = newValue;
         }
 
-        virtual internal void SetValueRaw(object newValue, bool preserveValueTypeSemantics)
+        internal virtual void SetValueRaw(object newValue, bool preserveValueTypeSemantics)
         {
             SetValueRawImpl(newValue, preserveValueTypeSemantics);
         }
@@ -913,20 +879,8 @@ namespace System.Management.Automation
         /// </summary>
         public override string Description
         {
-            get
-            {
-                if (_description == null)
-                {
-                    _description =
-                        SessionStateStrings.DollarNullDescription;
-                }
-                return _description;
-            }
-
-            set
-            {
-                // Do nothing
-            }
+            get { return _description ?? (_description = SessionStateStrings.DollarNullDescription); }
+            set { /* Do nothing */ }
         }
         private string _description;
 
@@ -935,15 +889,8 @@ namespace System.Management.Automation
         /// </summary>
         public override ScopedItemOptions Options
         {
-            get
-            {
-                return ScopedItemOptions.None;
-            }
-
-            set
-            {
-                // Do nothing
-            }
+            get { return ScopedItemOptions.None; }
+            set { /* Do nothing */ }
         }
     }
 

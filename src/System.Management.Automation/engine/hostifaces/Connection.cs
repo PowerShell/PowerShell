@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Threading;
@@ -262,8 +261,8 @@ namespace System.Management.Automation.Runspaces
         internal RunspaceStateInfo(RunspaceState state, Exception reason)
             : base()
         {
-            _state = state;
-            _reason = reason;
+            State = state;
+            Reason = reason;
         }
 
         /// <summary>
@@ -274,8 +273,8 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         internal RunspaceStateInfo(RunspaceStateInfo runspaceStateInfo)
         {
-            _state = runspaceStateInfo.State;
-            _reason = runspaceStateInfo.Reason;
+            State = runspaceStateInfo.State;
+            Reason = runspaceStateInfo.Reason;
         }
         #endregion constructors
 
@@ -284,13 +283,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// The state of the runspace.
         /// </summary>
-        public RunspaceState State
-        {
-            get
-            {
-                return _state;
-            }
-        }
+        public RunspaceState State { get; }
 
         /// <summary>
         /// The reason for the state change, if caused by an error.
@@ -300,13 +293,7 @@ namespace System.Management.Automation.Runspaces
         /// changed due to an error. Otherwise, the value of this 
         /// property is null.
         /// </remarks>
-        public Exception Reason
-        {
-            get
-            {
-                return _reason;
-            }
-        }
+        public Exception Reason { get; }
 
         #endregion public_properties
 
@@ -316,7 +303,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public override string ToString()
         {
-            return _state.ToString();
+            return State.ToString();
         }
 
         /// <summary>
@@ -329,16 +316,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         #region private_fields
-
-        /// <summary>
-        /// State of runspace
-        /// </summary>
-        private RunspaceState _state;
-
-        /// <summary>
-        /// The reason for the state change, if caused by an error.
-        /// </summary>
-        private Exception _reason;
 
         #endregion private_fields
     }
@@ -364,7 +341,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("runspaceStateInfo");
             }
-            _runspaceStateInfo = runspaceStateInfo;
+            RunspaceStateInfo = runspaceStateInfo;
         }
 
         #endregion constructors
@@ -378,19 +355,9 @@ namespace System.Management.Automation.Runspaces
         /// This value indicates the state of the runspace after the 
         /// change. 
         /// </remarks>
-        public RunspaceStateInfo RunspaceStateInfo
-        {
-            get
-            {
-                return _runspaceStateInfo;
-            }
-        }
-        #endregion public_properties
+        public RunspaceStateInfo RunspaceStateInfo { get; }
 
-        /// <summary>
-        /// RunspaceStateInfo when event raised.
-        /// </summary>
-        private RunspaceStateInfo _runspaceStateInfo;
+        #endregion public_properties
     }
 
     /// <summary>
@@ -433,20 +400,13 @@ namespace System.Management.Automation.Runspaces
     {
         internal RunspaceAvailabilityEventArgs(RunspaceAvailability runspaceAvailability)
         {
-            _runspaceAvailability = runspaceAvailability;
+            RunspaceAvailability = runspaceAvailability;
         }
 
         /// <summary>
         /// Whether the Runspace is available to execute commands
         /// </summary>
-        public RunspaceAvailability RunspaceAvailability
-        {
-            get
-            {
-                return _runspaceAvailability;
-            }
-        }
-        private RunspaceAvailability _runspaceAvailability;
+        public RunspaceAvailability RunspaceAvailability { get; }
     }
 
     #endregion Runspace state
@@ -687,8 +647,6 @@ namespace System.Management.Automation.Runspaces
             protected set;
         }
 
-        private Guid _instanceId = Guid.NewGuid();
-
         /// <summary>
         /// RunspaceConfiguration information for this runspace.
         /// </summary>
@@ -714,21 +672,12 @@ namespace System.Management.Automation.Runspaces
         /// Get unqiue id for this instance of runspace. It is primarily used 
         /// for logging purposes
         /// </summary>
-        public Guid InstanceId
-        {
-            get
-            {
-                return _instanceId;
-            }
+        public Guid InstanceId { get;
 
             // This id is also used to identify proxy and remote runspace objects.
             // We need to set this when reconstructing a remote runspace to connect
             // to an existing remote runspace.
-            internal set
-            {
-                _instanceId = value;
-            }
-        }
+            internal set; } = Guid.NewGuid();
 
         /// <summary>
         /// Gets execution context.
@@ -743,21 +692,10 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private bool _skipUserProfile = false;
         /// <summary>
         /// Skip user profile on engine initialization
         /// </summary>
-        internal bool SkipUserProfile
-        {
-            get
-            {
-                return _skipUserProfile;
-            }
-            set
-            {
-                _skipUserProfile = value;
-            }
-        }
+        internal bool SkipUserProfile { get; set; } = false;
 
         /// <summary>
         /// Connection information for remote Runspaces, null for local Runspaces
@@ -837,12 +775,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Engine activity id (for ETW tracing)
         /// </summary>
-        internal Guid EngineActivityId
-        {
-            get { return _engineActivityId; }
-            set { _engineActivityId = value; }
-        }
-        private Guid _engineActivityId = Guid.Empty;
+        internal Guid EngineActivityId { get; set; } = Guid.Empty;
 
         /// <summary>
         /// Returns a read only runspace dictionary.

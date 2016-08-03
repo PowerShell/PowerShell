@@ -2,10 +2,8 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Management.Automation;
 
 namespace System.Management.Automation
 {
@@ -42,10 +40,10 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("parameter");
             }
 
-            _name = parameter.Name;
-            _parameterType = parameter.Type;
-            _isDynamic = parameter.IsDynamic;
-            _aliases = new ReadOnlyCollection<string>(parameter.Aliases);
+            Name = parameter.Name;
+            ParameterType = parameter.Type;
+            IsDynamic = parameter.IsDynamic;
+            Aliases = new ReadOnlyCollection<string>(parameter.Aliases);
 
             SetAttributes(parameter.CompiledAttributes);
             SetParameterSetData(parameter.GetParameterSetData(parameterSetFlag));
@@ -58,26 +56,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the parameter.
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-        }
-        private string _name = String.Empty;
+        public string Name { get; } = String.Empty;
 
         /// <summary>
         /// Gets the type of the parameter.
         /// </summary>
-        public Type ParameterType
-        {
-            get
-            {
-                return _parameterType;
-            }
-        }
-        private Type _parameterType;
+        public Type ParameterType { get; }
 
         /// <summary>
         /// Gets whether or not the parameter is a dynamic parameter.
@@ -86,14 +70,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// True if the parameter is dynamic, or false otherwise.
         /// </remarks>
-        public bool IsMandatory
-        {
-            get
-            {
-                return _isMandatory;
-            }
-        }
-        private bool _isMandatory;
+        public bool IsMandatory { get; private set; }
 
         /// <summary>
         /// Gets whether or not the parameter is mandatory.
@@ -102,100 +79,44 @@ namespace System.Management.Automation
         /// <remarks>
         /// True if the parameter is mandatory, or false otherwise.
         /// </remarks>
-        public bool IsDynamic
-        {
-            get
-            {
-                return _isDynamic;
-            }
-        }
-        private bool _isDynamic;
+        public bool IsDynamic { get; }
 
         /// <summary>
         /// Gets the position in which the parameter can be specified on the command line
         /// if not named. If the returned value is int.MinValue then the parameter must be named.
         /// </summary>
-        public int Position
-        {
-            get
-            {
-                return _position;
-            }
-        }
-        private int _position = int.MinValue;
+        public int Position { get; private set; } = int.MinValue;
 
-        private bool _valueFromPipeline;
         /// <summary>
         /// Gets whether the parameter can take values from the incoming pipeline object.
         /// </summary>
-        public bool ValueFromPipeline
-        {
-            get
-            {
-                return _valueFromPipeline;
-            }
-        }
+        public bool ValueFromPipeline { get; private set; }
 
-        private bool _valueFromPipelineByPropertyName;
         /// <summary>
         /// Gets whether the parameter can take values from a property inn the incoming
         /// pipeline object with the same name as the parameter.
         /// </summary>
-        public bool ValueFromPipelineByPropertyName
-        {
-            get
-            {
-                return _valueFromPipelineByPropertyName;
-            }
-        }
+        public bool ValueFromPipelineByPropertyName { get; private set; }
 
         /// <summary>
         /// Gets whether the parameter will take any argument that isn't bound to another parameter.
         /// </summary>
-        public bool ValueFromRemainingArguments
-        {
-            get
-            {
-                return _valueFromRemainingArguments;
-            }
-        }
-        private bool _valueFromRemainingArguments;
+        public bool ValueFromRemainingArguments { get; private set; }
 
         /// <summary>
         /// Gets the help message for this parameter.
         /// </summary>
-        public string HelpMessage
-        {
-            get
-            {
-                return _helpMessage;
-            }
-        }
-        private string _helpMessage = String.Empty;
+        public string HelpMessage { get; private set; } = String.Empty;
 
         /// <summary>
         /// Gets the aliases by which this parameter can be referenced.
         /// </summary>
-        public ReadOnlyCollection<string> Aliases
-        {
-            get
-            {
-                return _aliases;
-            }
-        }
-        private ReadOnlyCollection<string> _aliases;
+        public ReadOnlyCollection<string> Aliases { get; }
 
         /// <summary>
         /// Gets the attributes that are specified on the parameter.
         /// </summary>
-        public ReadOnlyCollection<Attribute> Attributes
-        {
-            get
-            {
-                return _attributes;
-            }
-        }
-        private ReadOnlyCollection<Attribute> _attributes;
+        public ReadOnlyCollection<Attribute> Attributes { get; private set; }
 
         #endregion public members
 
@@ -214,18 +135,18 @@ namespace System.Management.Automation
                 processedAttributes.Add(attribute);
             }
 
-            _attributes = new ReadOnlyCollection<Attribute>(processedAttributes);
+            Attributes = new ReadOnlyCollection<Attribute>(processedAttributes);
         }
 
 
         private void SetParameterSetData(ParameterSetSpecificMetadata parameterMetadata)
         {
-            _isMandatory = parameterMetadata.IsMandatory;
-            _position = parameterMetadata.Position;
-            _valueFromPipeline = parameterMetadata.valueFromPipeline;
-            _valueFromPipelineByPropertyName = parameterMetadata.valueFromPipelineByPropertyName;
-            _valueFromRemainingArguments = parameterMetadata.ValueFromRemainingArguments;
-            _helpMessage = parameterMetadata.HelpMessage;
+            IsMandatory = parameterMetadata.IsMandatory;
+            Position = parameterMetadata.Position;
+            ValueFromPipeline = parameterMetadata.valueFromPipeline;
+            ValueFromPipelineByPropertyName = parameterMetadata.valueFromPipelineByPropertyName;
+            ValueFromRemainingArguments = parameterMetadata.ValueFromRemainingArguments;
+            HelpMessage = parameterMetadata.HelpMessage;
         }
 
         #endregion private members

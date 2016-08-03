@@ -5,8 +5,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -122,8 +120,6 @@ namespace System.Management.Automation
         /// <returns>Next DscResource Info object or null if none are found.</returns>
         private DscResourceInfo GetNextDscResource()
         {
-            DscResourceInfo returnValue = null;
-
             var ps = PowerShell.Create(RunspaceMode.CurrentRunspace).AddCommand("Get-DscResource");
 
             WildcardPattern resourceMatcher = WildcardPattern.Get(_resourceName, WildcardOptions.IgnoreCase);
@@ -197,7 +193,7 @@ namespace System.Management.Automation
                 if (matchFound)
                     _matchingResource = _matchingResourceList.GetEnumerator();
                 else
-                    return returnValue;
+                    return null;
             }//if
 
             if (!_matchingResource.MoveNext())
@@ -206,10 +202,10 @@ namespace System.Management.Automation
             }
             else
             {
-                returnValue = _matchingResource.Current;
+                return _matchingResource.Current;
             }
 
-            return returnValue;
+            return null;
         }
 
         #endregion

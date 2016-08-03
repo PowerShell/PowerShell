@@ -2,11 +2,7 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Collections;
 using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Management.Automation;
 using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
@@ -1605,11 +1601,7 @@ namespace System.Management.Automation
                     _sessionState != null,
                     "The only constructor for this class should always set the sessionState field");
 
-                if (_pathResolver == null)
-                {
-                    _pathResolver = _sessionState.ExecutionContext.LocationGlobber;
-                }
-                return _pathResolver;
+                return _pathResolver ?? (_pathResolver = _sessionState.ExecutionContext.LocationGlobber);
             } // get
         } // PathResolver
 

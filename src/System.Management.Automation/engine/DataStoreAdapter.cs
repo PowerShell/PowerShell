@@ -4,8 +4,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 #pragma warning disable 1634, 1691
 
-using System;
-using System.Runtime.InteropServices;
 using System.Threading;
 using Dbg = System.Management.Automation;
 
@@ -138,7 +136,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("path");
             }
 
-            if (!_driveBeingCreated)
+            if (!DriveBeingCreated)
             {
                 NotSupportedException e =
                     PSTraceSource.NewNotSupportedException();
@@ -156,48 +154,17 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the description for the drive.
         /// </summary>
-        public string Description
-        {
-            get
-            {
-                return _description;
-            }
-
-            set
-            {
-                _description = value;
-            }
-        }
-
-        /// <summary>
-        /// The description for this virtual drive
-        /// </summary>
-        private string _description;
+        public string Description { get; set; }
 
         /// <summary>
         /// When supported by provider this specifies a maximum drive size.
         /// </summary>
-        public long? MaximumSize
-        {
-            get;
-            internal set;
-        }
+        public long? MaximumSize { get; internal set; }
 
         /// <summary>
         /// Gets the credential to use with the drive.
         /// </summary>
-        public PSCredential Credential
-        {
-            get
-            {
-                return _credentials;
-            }
-        }
-
-        /// <summary>
-        /// The user name to use with this drive.
-        /// </summary>
-        private PSCredential _credentials = PSCredential.Empty;
+        public PSCredential Credential { get; } = PSCredential.Empty;
 
         /// <summary>
         /// Determines if the root of the drive can
@@ -211,92 +178,40 @@ namespace System.Management.Automation
         /// False otherwise.
         /// </value>
         ///
-        internal bool DriveBeingCreated
-        {
-            set
-            {
-                _driveBeingCreated = value;
-            } // set
-        } // DriveBeingCreated
-
-        /// <summary>
-        /// This flag is used to determine if we should allow
-        /// the drive root to be changed through the SetRoot
-        /// method.
-        /// </summary>
-        private bool _driveBeingCreated;
-
+        internal bool DriveBeingCreated { get; set; }
 
         /// <summary>
         /// True if the drive was automounted by the system,
         /// false otherwise.
         /// </summary>
         /// <value></value>
-        internal bool IsAutoMounted
-        {
-            get
-            {
-                return _isAutoMounted;
-            }
-
-            set
-            {
-                _isAutoMounted = value;
-            }
-        }
-        private bool _isAutoMounted;
+        internal bool IsAutoMounted { get; set; }
 
         /// <summary>
         /// True if the drive was automounted by the system,
         /// and then manually removed by the user.
         /// </summary>
         /// 
-        internal bool IsAutoMountedManuallyRemoved
-        {
-            get
-            {
-                return _isAutoMountedManuallyRemoved;
-            }
-
-            set
-            {
-                _isAutoMountedManuallyRemoved = value;
-            }
-        }
-        private bool _isAutoMountedManuallyRemoved;
+        internal bool IsAutoMountedManuallyRemoved { get; set; }
 
         /// <summary>
         /// Gets or sets the Persist Switch parameter.
         /// If this switch parmter is set then the created PSDrive
         /// would be persisted across PowerShell sessions.
         /// </summary>
-        internal bool Persist
-        {
-            get { return _persist; }
-        }
-        private bool _persist = false;
+        internal bool Persist { get; } = false;
 
         /// <summary>
         /// Get or sets the value indicating if the created drive is a network drive.
         /// </summary>
-        internal bool IsNetworkDrive
-        {
-            get { return _isNetworkDrive; }
-            set { _isNetworkDrive = value; }
-        }
-        private bool _isNetworkDrive = false;
+        internal bool IsNetworkDrive { get; set; } = false;
 
         /// <summary>
         /// Gets or sets the UNC path of the drive. This property would be populated only
         /// if the cereated PSDrive is targeting a network drive or else this property
         /// would be null.
         /// </summary>
-        public string DisplayRoot
-        {
-            get { return _displayRoot; }
-            internal set { _displayRoot = value; }
-        }
-        private string _displayRoot = null;
+        public string DisplayRoot { get; internal set; } = null;
 
         /// <summary>
         /// Gets or sets if the drive-root relative paths on this drive are separated by a
@@ -342,13 +257,7 @@ namespace System.Management.Automation
         /// for "/"
         ///
         /// </summary>
-        public bool VolumeSeparatedByColon
-        {
-            get { return _volumeSeparatedByColon; }
-            internal set { _volumeSeparatedByColon = value; }
-        }
-        private bool _volumeSeparatedByColon = true;
-
+        public bool VolumeSeparatedByColon { get; internal set; } = true;
 
         #region ctor
 
@@ -380,15 +289,15 @@ namespace System.Management.Automation
 
             _name = driveInfo.Name;
             _provider = driveInfo.Provider;
-            _credentials = driveInfo.Credential;
+            Credential = driveInfo.Credential;
             _currentWorkingDirectory = driveInfo.CurrentLocation;
-            _description = driveInfo.Description;
+            Description = driveInfo.Description;
             this.MaximumSize = driveInfo.MaximumSize;
-            _driveBeingCreated = driveInfo._driveBeingCreated;
+            DriveBeingCreated = driveInfo.DriveBeingCreated;
             _hidden = driveInfo._hidden;
-            _isAutoMounted = driveInfo._isAutoMounted;
+            IsAutoMounted = driveInfo.IsAutoMounted;
             _root = driveInfo._root;
-            _persist = driveInfo.Persist;
+            Persist = driveInfo.Persist;
             this.Trace();
         }
 
@@ -454,11 +363,11 @@ namespace System.Management.Automation
             _name = name;
             _provider = provider;
             _root = root;
-            _description = description;
+            Description = description;
 
             if (credential != null)
             {
-                _credentials = credential;
+                Credential = credential;
             }
 
             // Set the current working directory to the empty
@@ -520,7 +429,7 @@ namespace System.Management.Automation
             PSCredential credential, string displayRoot)
             : this(name, provider, root, description, credential)
         {
-            _displayRoot = displayRoot;
+            DisplayRoot = displayRoot;
         }
 
         /// <summary>
@@ -569,7 +478,7 @@ namespace System.Management.Automation
             bool persist)
             : this(name, provider, root, description, credential)
         {
-            _persist = persist;
+            Persist = persist;
         }
 
         #endregion ctor

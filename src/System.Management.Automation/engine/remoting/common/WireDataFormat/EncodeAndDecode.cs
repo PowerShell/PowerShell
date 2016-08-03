@@ -16,7 +16,6 @@ using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Reflection;
-using System.Xml.Serialization;
 
 namespace System.Management.Automation
 {
@@ -1586,11 +1585,8 @@ namespace System.Management.Automation
         {
             Dbg.Assert(exception != null, "Caller should validate the data");
 
-            ErrorRecord er = GetErrorRecordFromException(exception);
-            if (er == null)
-            {
-                er = new ErrorRecord(exception, errorId, category, null);
-            }
+            ErrorRecord er = GetErrorRecordFromException(exception) ??
+                             new ErrorRecord(exception, errorId, category, null);
             return new PSNoteProperty(RemoteDataNameStrings.ExceptionAsErrorRecord, er);
         }
 
@@ -2420,7 +2416,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="runspace">runspace instance</param>
         /// <returns>true if batch invocation is supported, false if not</returns>
-        static internal bool ServerSupportsBatchInvocation(Runspace runspace)
+        internal static bool ServerSupportsBatchInvocation(Runspace runspace)
         {
             if (runspace == null || runspace.RunspaceStateInfo.State == RunspaceState.BeforeOpen)
             {

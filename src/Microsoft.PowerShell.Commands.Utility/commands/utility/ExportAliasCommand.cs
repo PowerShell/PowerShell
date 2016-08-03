@@ -51,21 +51,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByPath")]
         public string Path
         {
-            get
-            {
-                return _path;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    _path = ".";
-                }
-                else
-                {
-                    _path = value;
-                }
-            }
+            get { return _path; }
+            set { _path = value ?? "."; }
         }
         private string _path = ".";
 
@@ -77,10 +64,7 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSPath")]
         public string LiteralPath
         {
-            get
-            {
-                return _path;
-            }
+            get { return _path; }
             set
             {
                 if (value == null)
@@ -103,21 +87,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true)]
         public string[] Name
         {
-            get
-            {
-                return _names;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    _names = new string[] { "*" };
-                }
-                else
-                {
-                    _names = value;
-                }
-            }
+            get { return _names; }
+            set { _names = value ?? new string[] { "*" }; }
         }
         private string[] _names = new string[] { "*" };
 
@@ -146,18 +117,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         ///
         [Parameter]
-        public ExportAliasFormat As
-        {
-            get
-            {
-                return _asFormat;
-            }
-            set
-            {
-                _asFormat = value;
-            }
-        }
-        private ExportAliasFormat _asFormat = ExportAliasFormat.Csv;
+        public ExportAliasFormat As { get; set; } = ExportAliasFormat.Csv;
 
         /// <summary>
         /// Property that sets append parameter.
@@ -216,18 +176,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter]
-        public string Description
-        {
-            get
-            {
-                return _description;
-            }
-            set
-            {
-                _description = value;
-            }
-        }
-        private string _description;
+        public string Description { get; set; }
 
         /// <summary>
         /// The scope parameter for the command determines
@@ -235,19 +184,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// 
         [Parameter]
-        public string Scope
-        {
-            get
-            {
-                return _scope;
-            }
+        public string Scope { get; set; }
 
-            set
-            {
-                _scope = value;
-            }
-        }
-        private string _scope;
         #endregion Parameters
 
         #region Command code
@@ -261,13 +199,13 @@ namespace Microsoft.PowerShell.Commands
             // First get the alias table (from the proper scope if necessary)
             IDictionary<string, AliasInfo> aliasTable = null;
 
-            if (!String.IsNullOrEmpty(_scope))
+            if (!String.IsNullOrEmpty(Scope))
             {
                 // This can throw PSArgumentException and PSArgumentOutOfRangeException
                 // but just let them go as this is terminal for the pipeline and the
                 // exceptions are already properly adorned with an ErrorRecord.
 
-                aliasTable = SessionState.Internal.GetAliasTableAtScope(_scope);
+                aliasTable = SessionState.Internal.GetAliasTableAtScope(Scope);
             }
             else
             {
@@ -412,17 +350,17 @@ namespace Microsoft.PowerShell.Commands
 
             // Now write the description if there is one
 
-            if (_description != null)
+            if (Description != null)
             {
                 // First we need to break up the description on newlines and add a
                 // # for each line.
 
-                _description = _description.Replace("\n", "\n# ");
+                Description = Description.Replace("\n", "\n# ");
 
                 // Now write out the description
                 writer.WriteLine("#");
                 writer.Write("# ");
-                writer.WriteLine(_description);
+                writer.WriteLine(Description);
             }
         }
 

@@ -2,8 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System.Globalization;
-
 namespace System.Management.Automation.Language
 {
     internal static class SpecialChars
@@ -66,7 +64,7 @@ namespace System.Management.Automation.Language
         ForceStartNewTokenAfterNumber = 0x0800,
     }
 
-    static internal class CharExtensions
+    internal static class CharExtensions
     {
         static CharExtensions()
         {

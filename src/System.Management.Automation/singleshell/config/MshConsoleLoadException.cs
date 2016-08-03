@@ -4,7 +4,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System.Runtime.Serialization;
 using System.Text;
-using System.Reflection;
 using System.Collections.ObjectModel;
 
 #if CORECLR

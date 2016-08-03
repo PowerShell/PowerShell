@@ -38,7 +38,7 @@ namespace System.Management.Automation
         /// that is derived from ISecurityDescriptorCmdletProvider.
         /// </throws>
         /// 
-        static internal ISecurityDescriptorCmdletProvider GetPermissionProviderInstance(CmdletProvider providerInstance)
+        internal static ISecurityDescriptorCmdletProvider GetPermissionProviderInstance(CmdletProvider providerInstance)
         {
             if (providerInstance == null)
             {
@@ -93,12 +93,7 @@ namespace System.Management.Automation
 
             context.ThrowFirstErrorOrDoNothing();
 
-            Collection<PSObject> contextResults = context.GetAccumulatedObjects();
-
-            if (contextResults == null)
-            {
-                contextResults = new Collection<PSObject>();
-            }
+            Collection<PSObject> contextResults = context.GetAccumulatedObjects() ?? new Collection<PSObject>();
 
             return contextResults;
         } // GetSecurityDescriptor
@@ -245,14 +240,8 @@ namespace System.Management.Automation
 
             context.ThrowFirstErrorOrDoNothing();
 
-            Collection<PSObject> contextResults = context.GetAccumulatedObjects();
-
             // Return an empty array instead of null
-
-            if (contextResults == null)
-            {
-                contextResults = new Collection<PSObject>();
-            }
+            Collection<PSObject> contextResults = context.GetAccumulatedObjects() ?? new Collection<PSObject>();
 
             return contextResults;
         } // SetSecurityDescriptor

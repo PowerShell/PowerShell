@@ -10,9 +10,7 @@
 
 --********************************************************************/
 
-using System;
 using System.Management.Automation.Language;
-using System.Collections.Generic;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -26,11 +24,11 @@ namespace System.Management.Automation
     /// This class wraps the internal Token class for providing limited information
     /// to syntax editor. 
     /// </remarks>
-    sealed public class PSToken
+    public sealed class PSToken
     {
         internal PSToken(Token token)
         {
-            _type = GetPSTokenType(token);
+            Type = GetPSTokenType(token);
             _extent = token.Extent;
             if (token is StringToken)
             {
@@ -44,7 +42,7 @@ namespace System.Management.Automation
 
         internal PSToken(IScriptExtent extent)
         {
-            _type = PSTokenType.Position;
+            Type = PSTokenType.Position;
             _extent = extent;
         }
 
@@ -100,20 +98,12 @@ namespace System.Management.Automation
             return s_tokenKindMapping[(int)token.Kind];
         }
 
-        private PSTokenType _type;
-
         /// <summary>
         /// Token type. 
         /// </summary>
-        public PSTokenType Type
-        {
-            get
-            {
-                return _type;
-            }
-        }
+        public PSTokenType Type { get; }
 
-        private readonly static PSTokenType[] s_tokenKindMapping = new PSTokenType[]
+        private static readonly PSTokenType[] s_tokenKindMapping = new PSTokenType[]
         {
             #region Flags for unclassified tokens
 

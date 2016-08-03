@@ -3,16 +3,12 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
-using System.Management.Automation.Runspaces.Internal;
-using System.Management.Automation.Host;
-using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -69,12 +65,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = GetPSSessionCommand.ComputerInstanceIdParameterSet)]
         [ValidateNotNullOrEmpty]
         [Alias("Cn")]
-        public override String[] ComputerName
-        {
-            get { return _computerNames; }
-            set { _computerNames = value; }
-        }
-        private String[] _computerNames;
+        public override String[] ComputerName { get; set; }
 
         /// <summary>
         /// This parameters specifies the appname which identifies the connection
@@ -109,12 +100,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Alias("URI", "CU")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public Uri[] ConnectionUri
-        {
-            get { return _uris; }
-            set { _uris = value; }
-        }
-        private Uri[] _uris;
+        public Uri[] ConnectionUri { get; set; }
 
         /// <summary>
         /// For WSMan sessions:
@@ -145,12 +131,7 @@ namespace Microsoft.PowerShell.Commands
                            ParameterSetName = GetPSSessionCommand.VMNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                            ParameterSetName = GetPSSessionCommand.VMNameInstanceIdParameterSet)]
-        public String ConfigurationName
-        {
-            get { return _shell; }
-            set { _shell = value; }
-        }
-        private String _shell;
+        public String ConfigurationName { get; set; }
 
         /// <summary>
         /// The AllowRediraction parameter enables the implicit redirection functionality.
@@ -282,18 +263,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = GetPSSessionCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.ComputerInstanceIdParameterSet)]
         [ValidateRange((Int32)1, (Int32)UInt16.MaxValue)]
-        public Int32 Port
-        {
-            get
-            {
-                return _port;
-            }
-            set
-            {
-                _port = value;
-            }
-        }
-        private Int32 _port;
+        public Int32 Port { get; set; }
 
 
         /// <summary>
@@ -306,18 +276,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = GetPSSessionCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.ComputerInstanceIdParameterSet)]
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSL")]
-        public SwitchParameter UseSSL
-        {
-            get
-            {
-                return _useSSL;
-            }
-            set
-            {
-                _useSSL = value;
-            }
-        }
-        private SwitchParameter _useSSL;
+        public SwitchParameter UseSSL { get; set; }
 
         /// <summary>
         /// Allows the user of the cmdlet to specify a throttling value
@@ -328,12 +287,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = GetPSSessionCommand.ComputerInstanceIdParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.ConnectionUriParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.ConnectionUriInstanceIdParameterSet)]
-        public Int32 ThrottleLimit
-        {
-            get { return _throttleLimit; }
-            set { _throttleLimit = value; }
-        }
-        private Int32 _throttleLimit = 0;
+        public Int32 ThrottleLimit { get; set; } = 0;
 
 
         /// <summary>
@@ -349,12 +303,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = GetPSSessionCommand.VMIdInstanceIdParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.VMNameParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.VMNameInstanceIdParameterSet)]
-        public SessionFilterState State
-        {
-            get { return _filterState; }
-            set { _filterState = value; }
-        }
-        private SessionFilterState _filterState;
+        public SessionFilterState State { get; set; }
 
 
         /// <summary>
@@ -364,12 +313,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = GetPSSessionCommand.ComputerInstanceIdParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.ConnectionUriParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.ConnectionUriInstanceIdParameterSet)]
-        public PSSessionOption SessionOption
-        {
-            get { return _sessionOption; }
-            set { _sessionOption = value; }
-        }
-        private PSSessionOption _sessionOption;
+        public PSSessionOption SessionOption { get; set; }
 
         #endregion
 
@@ -446,8 +390,8 @@ namespace Microsoft.PowerShell.Commands
 
             // Query for sessions.
             Collection<PSSession> results = _queryRunspaces.GetDisconnectedSessions(connectionInfos, this.Host, _stream,
-                                                                                        this.RunspaceRepository, _throttleLimit,
-                                                                                        _filterState, InstanceId, Name, ConfigurationName);
+                                                                                        this.RunspaceRepository, ThrottleLimit,
+                                                                                        State, InstanceId, Name, ConfigurationName);
 
             // Write any error output from stream object.
             Collection<object> streamObjects = _stream.ObjectReader.NonBlockingRead();

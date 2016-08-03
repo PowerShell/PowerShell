@@ -16,8 +16,6 @@
 #if !CLR2
 using System.Linq.Expressions;
 #endif
-
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management.Automation.Language;
@@ -70,14 +68,7 @@ namespace System.Management.Automation.Interpreter
 
         public override Instruction[] Cache
         {
-            get
-            {
-                if (s_cache == null)
-                {
-                    s_cache = new Instruction[CacheSize];
-                }
-                return s_cache;
-            }
+            get { return s_cache ?? (s_cache = new Instruction[CacheSize]); }
         }
 
         internal BranchFalseInstruction()
@@ -105,14 +96,7 @@ namespace System.Management.Automation.Interpreter
 
         public override Instruction[] Cache
         {
-            get
-            {
-                if (s_cache == null)
-                {
-                    s_cache = new Instruction[CacheSize];
-                }
-                return s_cache;
-            }
+            get { return s_cache ?? (s_cache = new Instruction[CacheSize]); }
         }
 
         internal BranchTrueInstruction()
@@ -140,14 +124,7 @@ namespace System.Management.Automation.Interpreter
 
         public override Instruction[] Cache
         {
-            get
-            {
-                if (s_cache == null)
-                {
-                    s_cache = new Instruction[CacheSize];
-                }
-                return s_cache;
-            }
+            get { return s_cache ?? (s_cache = new Instruction[CacheSize]); }
         }
 
         internal CoalescingBranchInstruction()
@@ -484,7 +461,7 @@ namespace System.Management.Automation.Interpreter
     /// </summary>
     internal sealed class EnterFinallyInstruction : IndexedBranchInstruction
     {
-        private readonly static EnterFinallyInstruction[] s_cache = new EnterFinallyInstruction[CacheSize];
+        private static readonly EnterFinallyInstruction[] s_cache = new EnterFinallyInstruction[CacheSize];
 
         public override int ProducedStack { get { return 2; } }
         public override int ConsumedContinuations { get { return 1; } }

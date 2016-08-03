@@ -26,8 +26,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal ObjectCommandPropertyValue(object propVal)
         {
-            _propertyValue = propVal;
-            _isExistingProperty = true;
+            PropertyValue = propVal;
+            IsExistingProperty = true;
         }
 
         /// <summary>
@@ -44,20 +44,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
 
-        internal object PropertyValue
-        {
-            get
-            {
-                return _propertyValue;
-            }
-        }
-        internal bool IsExistingProperty
-        {
-            get
-            {
-                return _isExistingProperty;
-            }
-        }
+        internal object PropertyValue { get; }
+
+        internal bool IsExistingProperty { get; }
 
         /// <summary>
         /// Indicates if the Property Value comparion has to be Case sensitive or not.
@@ -78,10 +67,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private object _propertyValue;
-        private bool _isExistingProperty;
-        internal readonly static ObjectCommandPropertyValue NonExistingProperty = new ObjectCommandPropertyValue();
-        internal readonly static ObjectCommandPropertyValue ExistingNullProperty = new ObjectCommandPropertyValue(null);
+        internal static readonly ObjectCommandPropertyValue NonExistingProperty = new ObjectCommandPropertyValue();
+        internal static readonly ObjectCommandPropertyValue ExistingNullProperty = new ObjectCommandPropertyValue(null);
         private bool _caseSensitive;
         internal CultureInfo cultureInfo = null;
 
@@ -96,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
             if (objectCommandPropertyValueObject == null)
                 return false;
 
-            object baseObject = PSObject.Base(_propertyValue);
+            object baseObject = PSObject.Base(PropertyValue);
             object inComingbaseObjectPropertyValue = PSObject.Base(objectCommandPropertyValueObject.PropertyValue);
 
             IComparable baseObjectComparable = baseObject as IComparable;
@@ -127,10 +114,10 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Hashcode in the form of an integer.</returns>
         public override int GetHashCode()
         {
-            if (_propertyValue == null)
+            if (PropertyValue == null)
                 return 0;
 
-            object baseObject = PSObject.Base(_propertyValue);
+            object baseObject = PSObject.Base(PropertyValue);
             IComparable baseObjectComparable = baseObject as IComparable;
 
             if (baseObjectComparable != null)

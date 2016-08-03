@@ -74,18 +74,10 @@ namespace System.Management.Automation.Internal
             return PSCryptoNativeUtils.CryptDestroyKey(handle);
         }
 
-        private static PSSafeCryptKey s_zero = new PSSafeCryptKey();
-
         /// <summary>
         /// Equivalent of IntPtr.Zero for the safe crypt key
         /// </summary>
-        internal static PSSafeCryptKey Zero
-        {
-            get
-            {
-                return s_zero;
-            }
-        }
+        internal static PSSafeCryptKey Zero { get; } = new PSSafeCryptKey();
     }
 
     /// <summary>
@@ -1320,12 +1312,6 @@ namespace System.Management.Automation.Internal
     {
         #region Private Members
 
-        /// <summary>
-        /// This is the instance of runspace pool data structure handler
-        /// to use for negotiations
-        /// </summary>
-        private RemoteSession _session;
-
         #endregion Private Members
 
         #region Constructors
@@ -1423,17 +1409,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Represents the session to be used for requesting public key
         /// </summary>
-        internal override RemoteSession Session
-        {
-            get
-            {
-                return _session;
-            }
-            set
-            {
-                _session = value;
-            }
-        }
+        internal override RemoteSession Session { get; set; }
 
         /// <summary>
         /// Gets a helper with a test session

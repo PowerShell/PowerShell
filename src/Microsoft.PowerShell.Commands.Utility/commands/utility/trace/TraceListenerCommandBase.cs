@@ -27,12 +27,7 @@ namespace Microsoft.PowerShell.Commands
         /// operation will take place on.
         /// </summary>
         /// 
-        internal string[] NameInternal
-        {
-            get { return _names; }
-            set { _names = value; }
-        }
-        private string[] _names = new string[0];
+        internal string[] NameInternal { get; set; } = new string[0];
 
 
         /// <summary>
@@ -80,12 +75,7 @@ namespace Microsoft.PowerShell.Commands
         /// Adds the file trace listener using the specified file
         /// </summary>
         /// <value></value>
-        internal string FileListener
-        {
-            get { return _file; }
-            set { _file = value; }
-        } // File
-        private string _file;
+        internal string FileListener { get; set; } // File
 
         /// <summary>
         /// Property that sets force parameter.  This will clear the
@@ -94,25 +84,14 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>
         /// Note that we do not attempt to reset the read-only attribute.
         /// </remarks>
-        public bool ForceWrite
-        {
-            get { return _forceWrite; }
-            set { _forceWrite = value; }
-        } // Force
-
-        private bool _forceWrite;
+        public bool ForceWrite { get; set; } // Force
 
         /// <summary>
         /// If this parameter is specified the Debugger trace listener
         /// will be added.
         /// </summary>
         /// <value></value>
-        internal bool DebuggerListener
-        {
-            get { return _debugger; }
-            set { _debugger = value; }
-        } // Debugger
-        private bool _debugger;
+        internal bool DebuggerListener { get; set; } // Debugger
 
         /// <summary>
         /// If this parameter is specified the Msh Host trace listener
@@ -246,7 +225,7 @@ namespace Microsoft.PowerShell.Commands
                 if (_fileListeners == null)
                 {
                     _fileListeners = new Collection<TextWriterTraceListener>();
-                    _fileStreams = new Collection<FileStream>();
+                    FileStreams = new Collection<FileStream>();
 
                     Exception error = null;
 
@@ -257,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Resolve the file path
                             ProviderInfo provider = null;
-                            resolvedPaths = this.SessionState.Path.GetResolvedProviderPathFromPSPath(_file, out provider);
+                            resolvedPaths = this.SessionState.Path.GetResolvedProviderPathFromPSPath(FileListener, out provider);
 
                             // We can only export aliases to the file system
                             if (!provider.NameEquals(this.Context.ProviderNames.FileSystem))
@@ -265,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
                                 throw
                                     new PSNotSupportedException(
                                         StringUtil.Format(TraceCommandStrings.TraceFileOnly,
-                                            _file,
+                                            FileListener,
                                             provider.FullName));
                             }
                         }
@@ -278,7 +257,7 @@ namespace Microsoft.PowerShell.Commands
                             ProviderInfo provider = null;
                             string path =
                                 this.SessionState.Path.GetUnresolvedProviderPathFromPSPath(
-                                    _file,
+                                    FileListener,
                                     new CmdletProviderContext(this.Context),
                                     out provider,
                                     out driveInfo);
@@ -289,7 +268,7 @@ namespace Microsoft.PowerShell.Commands
                                 throw
                                     new PSNotSupportedException(
                                         StringUtil.Format(TraceCommandStrings.TraceFileOnly,
-                                            _file,
+                                            FileListener,
                                             provider.FullName));
                             }
                             resolvedPaths.Add(path);
@@ -298,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
                         if (resolvedPaths.Count > 1)
                         {
                             throw
-                                new PSNotSupportedException(StringUtil.Format(TraceCommandStrings.TraceSingleFileOnly, _file));
+                                new PSNotSupportedException(StringUtil.Format(TraceCommandStrings.TraceSingleFileOnly, FileListener));
                         }
 
                         string resolvedPath = resolvedPaths[0];
@@ -323,14 +302,14 @@ namespace Microsoft.PowerShell.Commands
 
                             // Trace commands always append..So there is no need to set overwrite with force..
                             FileStream fileStream = new FileStream(resolvedPath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
-                            _fileStreams.Add(fileStream);
+                            FileStreams.Add(fileStream);
 
                             // Open the file stream
 
                             TextWriterTraceListener fileListener =
                                     new TextWriterTraceListener(fileStream, resolvedPath);
 
-                            fileListener.Name = _file;
+                            fileListener.Name = FileListener;
 
                             _fileListeners.Add(fileListener);
                         }
@@ -379,7 +358,7 @@ namespace Microsoft.PowerShell.Commands
                                 error,
                                 "FileListenerPathResolutionFailed",
                                 ErrorCategory.InvalidArgument,
-                                _file);
+                                FileListener);
 
                         WriteError(errorRecord);
                     }
@@ -399,11 +378,7 @@ namespace Microsoft.PowerShell.Commands
         /// The file streams that were open by this command
         /// </summary>
         /// 
-        internal Collection<FileStream> FileStreams
-        {
-            get { return _fileStreams; }
-        }
-        private Collection<FileStream> _fileStreams;
+        internal Collection<FileStream> FileStreams { get; private set; }
 
         private static void AddListenerToSources(Collection<PSTraceSource> matchingSources, TraceListener listener)
         {

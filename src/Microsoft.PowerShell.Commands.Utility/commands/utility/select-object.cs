@@ -82,13 +82,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject
-        {
-            set { _inputObject = value; }
-            get { return _inputObject; }
-        }
-
-        private PSObject _inputObject = AutomationNull.Value;
+        public PSObject InputObject { set; get; } = AutomationNull.Value;
 
 
         /// <summary>
@@ -97,13 +91,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter(Position = 0, ParameterSetName = "DefaultParameter")]
         [Parameter(Position = 0, ParameterSetName = "SkipLastParameter")]
-        public object[] Property
-        {
-            get { return _expr; }
-            set { _expr = value; }
-        }
-
-        private object[] _expr;
+        public object[] Property { get; set; }
 
         /// <summary>
         /// 
@@ -111,12 +99,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
         [Parameter(ParameterSetName = "SkipLastParameter")]
-        public string[] ExcludeProperty
-        {
-            get { return _excludeArray; }
-            set { _excludeArray = value; }
-        }
-        private string[] _excludeArray = null;
+        public string[] ExcludeProperty { get; set; } = null;
 
         /// <summary>
         /// 
@@ -124,12 +107,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
         [Parameter(ParameterSetName = "SkipLastParameter")]
-        public string ExpandProperty
-        {
-            get { return _expand; }
-            set { _expand = value; }
-        }
-        private string _expand = null;
+        public string ExpandProperty { get; set; } = null;
 
         /// <summary>
         /// 
@@ -181,24 +159,14 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
         [ValidateRange(0, int.MaxValue)]
-        public int Skip
-        {
-            get { return _skip; }
-            set { _skip = value; }
-        }
-        private int _skip = 0;
+        public int Skip { get; set; } = 0;
 
         /// <summary>
         /// Skip the specified number of items from end.
         /// </summary>
         [Parameter(ParameterSetName = "SkipLastParameter")]
         [ValidateRange(0, int.MaxValue)]
-        public int SkipLast
-        {
-            get { return _skipLast; }
-            set { _skipLast = value; }
-        }
-        private int _skipLast = 0;
+        public int SkipLast { get; set; } = 0;
 
         /// <summary>
         /// With this switch present, the cmdlet won't "short-circuit" 
@@ -254,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            new public void Enqueue(PSObject obj)
+            public new void Enqueue(PSObject obj)
             {
                 if (_last > 0 && this.Count >= (_last + _skip) && _first == 0)
                 {
@@ -339,14 +307,10 @@ namespace Microsoft.PowerShell.Commands
             internal UniquePSObjectHelper(PSObject o, int notePropertyCount)
             {
                 WrittenObject = o;
-                _notePropertyCount = notePropertyCount;
+                NotePropertyCount = notePropertyCount;
             }
             internal readonly PSObject WrittenObject;
-            internal int NotePropertyCount
-            {
-                get { return _notePropertyCount; }
-            }
-            private int _notePropertyCount;
+            internal int NotePropertyCount { get; }
         }
 
         private List<UniquePSObjectHelper> _uniques = null;
@@ -356,29 +320,29 @@ namespace Microsoft.PowerShell.Commands
             TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
             ParameterProcessor processor =
                 new ParameterProcessor(new SelectObjectExpressionParameterDefinition());
-            if ((_expr != null) && (_expr.Length != 0))
+            if ((Property != null) && (Property.Length != 0))
             {
-                _propertyMshParameterList = processor.ProcessParameters(_expr, invocationContext);
+                _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
             }
             else
             {
                 _propertyMshParameterList = new List<MshParameter>();
             }
 
-            if (!string.IsNullOrEmpty(_expand))
+            if (!string.IsNullOrEmpty(ExpandProperty))
             {
-                _expandMshParameterList = processor.ProcessParameters(new string[] { _expand }, invocationContext);
+                _expandMshParameterList = processor.ProcessParameters(new string[] { ExpandProperty }, invocationContext);
             }
 
-            if (_excludeArray != null)
+            if (ExcludeProperty != null)
             {
-                _exclusionFilter = new MshExpressionFilter(_excludeArray);
+                _exclusionFilter = new MshExpressionFilter(ExcludeProperty);
             }
         }
 
         private void ProcessObject(PSObject inputObject)
         {
-            if ((_expr == null || _expr.Length == 0) && string.IsNullOrEmpty(_expand))
+            if ((Property == null || Property.Length == 0) && string.IsNullOrEmpty(ExpandProperty))
             {
                 FilteredWriteObject(inputObject, new List<PSNoteProperty>());
                 return;
@@ -392,7 +356,7 @@ namespace Microsoft.PowerShell.Commands
                 ProcessParameter(p, inputObject, matchedProperties);
             }
 
-            if (string.IsNullOrEmpty(_expand))
+            if (string.IsNullOrEmpty(ExpandProperty))
             {
                 PSObject result = new PSObject();
                 if (matchedProperties.Count != 0)
@@ -518,7 +482,7 @@ namespace Microsoft.PowerShell.Commands
             if (expressionResults.Count == 0)
             {
                 ErrorRecord errorRecord = new ErrorRecord(
-                    PSTraceSource.NewArgumentException("ExpandProperty", SelectObjectStrings.PropertyNotFound, _expand),
+                    PSTraceSource.NewArgumentException("ExpandProperty", SelectObjectStrings.PropertyNotFound, ExpandProperty),
                     "ExpandPropertyNotFound",
                      ErrorCategory.InvalidArgument,
                     inputObject);
@@ -527,7 +491,7 @@ namespace Microsoft.PowerShell.Commands
             if (expressionResults.Count > 1)
             {
                 ErrorRecord errorRecord = new ErrorRecord(
-                    PSTraceSource.NewArgumentException("ExpandProperty", SelectObjectStrings.MutlipleExpandProperties, _expand),
+                    PSTraceSource.NewArgumentException("ExpandProperty", SelectObjectStrings.MutlipleExpandProperties, ExpandProperty),
                     "MutlipleExpandProperties",
                     ErrorCategory.InvalidArgument,
                     inputObject);
@@ -668,7 +632,7 @@ namespace Microsoft.PowerShell.Commands
         private void SetPSCustomObject(PSObject psObj)
         {
             if (psObj.ImmediateBaseObject is PSCustomObject)
-                psObj.TypeNames.Insert(0, "Selected." + _inputObject.BaseObject.GetType().ToString());
+                psObj.TypeNames.Insert(0, "Selected." + InputObject.BaseObject.GetType().ToString());
         }
 
         private void ProcessObjectAndHandleErrors(PSObject pso)
@@ -697,7 +661,7 @@ namespace Microsoft.PowerShell.Commands
                 _uniques = new List<UniquePSObjectHelper>();
             }
 
-            _selectObjectQueue = new SelectObjectQueue(_first, _last, _skip, _skipLast, _firstOrLastSpecified);
+            _selectObjectQueue = new SelectObjectQueue(_first, _last, Skip, SkipLast, _firstOrLastSpecified);
         }
 
         private int _indexOfCurrentObject = 0;
@@ -707,11 +671,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (_inputObject != AutomationNull.Value && _inputObject != null)
+            if (InputObject != AutomationNull.Value && InputObject != null)
             {
                 if (!_indexSpecified)
                 {
-                    _selectObjectQueue.Enqueue(_inputObject);
+                    _selectObjectQueue.Enqueue(InputObject);
                     PSObject streamingInputObject = _selectObjectQueue.StreamingDequeue();
                     if (streamingInputObject != null)
                     {
@@ -730,7 +694,7 @@ namespace Microsoft.PowerShell.Commands
                         int currentlyRequestedIndex = _index[_indexOfCurrentObject];
                         if (_indexCount == currentlyRequestedIndex)
                         {
-                            ProcessObjectAndHandleErrors(_inputObject);
+                            ProcessObjectAndHandleErrors(InputObject);
                             while ((_indexOfCurrentObject < _index.Length) && (_index[_indexOfCurrentObject] == currentlyRequestedIndex))
                             {
                                 _indexOfCurrentObject++;
@@ -771,7 +735,7 @@ namespace Microsoft.PowerShell.Commands
                     while ((_selectObjectQueue.Count > 0))
                     {
                         int lenQueue = _selectObjectQueue.Count;
-                        if (lenQueue > _skip)
+                        if (lenQueue > Skip)
                         {
                             ProcessObjectAndHandleErrors(_selectObjectQueue.Dequeue());
                         }
@@ -806,17 +770,11 @@ namespace Microsoft.PowerShell.Commands
     [SuppressMessage("Microsoft.Design", "CA1064:ExceptionsShouldBePublic", Justification = "This exception is internal and never thrown by any public API")]
     internal class SelectObjectException : SystemException
     {
-        private ErrorRecord _errorRecord;
-        internal ErrorRecord ErrorRecord
-        {
-            get
-            {
-                return _errorRecord;
-            }
-        }
+        internal ErrorRecord ErrorRecord { get; }
+
         internal SelectObjectException(ErrorRecord errorRecord)
         {
-            _errorRecord = errorRecord;
+            ErrorRecord = errorRecord;
         }
     }
 }

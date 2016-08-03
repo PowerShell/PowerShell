@@ -2,9 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.Threading;
 using Dbg = System.Management.Automation;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -61,7 +58,7 @@ namespace System.Management.Automation
                         StringLiterals.Global,
                         StringComparison.OrdinalIgnoreCase))
                 {
-                    result = _globalScope;
+                    result = GlobalScope;
                 }
                 else if (String.Equals(
                             scopeID,
@@ -162,15 +159,13 @@ namespace System.Management.Automation
         /// The global scope of session state.  Can be accessed
         /// using $global in the shell.
         /// </summary>
-        internal SessionStateScope GlobalScope { get { return _globalScope; } }
-        private readonly SessionStateScope _globalScope;
+        internal SessionStateScope GlobalScope { get; }
 
         /// <summary>
         /// The module scope of a session state. This is only used internally
         /// by the engine. There is no module scope qualifier. 
         /// </summary>
-        internal SessionStateScope ModuleScope { get { return _moduleScope; } }
-        private readonly SessionStateScope _moduleScope;
+        internal SessionStateScope ModuleScope { get; }
 
         /// <summary>
         /// Gets the session state current scope.
@@ -200,7 +195,7 @@ namespace System.Management.Automation
 
                 while (scope != null)
                 {
-                    if (scope == _globalScope)
+                    if (scope == GlobalScope)
                     {
                         inGlobalScopeLineage = true;
                         break;
@@ -272,7 +267,7 @@ namespace System.Management.Automation
                 _currentScope != null,
                 "The currentScope should always be set.");
 
-            if (scope == _globalScope)
+            if (scope == GlobalScope)
             {
                 SessionStateUnauthorizedAccessException e =
                     new SessionStateUnauthorizedAccessException(

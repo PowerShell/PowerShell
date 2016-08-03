@@ -8,16 +8,12 @@ using System.Linq.Expressions;
 #else
 using Microsoft.Scripting.Ast;
 #endif
-
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Security;
-using System.Security.Permissions;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
 using System.Dynamic;
 
@@ -92,14 +88,13 @@ namespace System.Management.Automation.ComInterop
 
     internal sealed class IDispatchComObject : ComObject, IDynamicMetaObjectProvider
     {
-        private readonly IDispatch _dispatchObject;
         private ComTypeDesc _comTypeDesc;
         private static readonly Dictionary<Guid, ComTypeDesc> s_cacheComTypeDesc = new Dictionary<Guid, ComTypeDesc>();
 
         internal IDispatchComObject(IDispatch rcw)
             : base(rcw)
         {
-            _dispatchObject = rcw;
+            DispatchObject = rcw;
         }
 
         public override string ToString()
@@ -129,13 +124,7 @@ namespace System.Management.Automation.ComInterop
             }
         }
 
-        public IDispatch DispatchObject
-        {
-            get
-            {
-                return _dispatchObject;
-            }
-        }
+        public IDispatch DispatchObject { get; }
 
         private static int GetIDsOfNames(IDispatch dispatch, string name, out int dispId)
         {
@@ -250,7 +239,7 @@ namespace System.Management.Automation.ComInterop
             EnsureScanDefinedMethods();
 
             int dispId;
-            int hresult = GetIDsOfNames(_dispatchObject, name, out dispId);
+            int hresult = GetIDsOfNames(DispatchObject, name, out dispId);
 
             if (hresult == ComHresults.S_OK)
             {
@@ -275,7 +264,7 @@ namespace System.Management.Automation.ComInterop
             EnsureScanDefinedMethods();
 
             int dispId;
-            int hresult = GetIDsOfNames(_dispatchObject, name, out dispId);
+            int hresult = GetIDsOfNames(DispatchObject, name, out dispId);
 
             if (hresult == ComHresults.S_OK)
             {
@@ -393,7 +382,7 @@ namespace System.Management.Automation.ComInterop
             }
 
             // check type info in the type descriptions cache
-            ComTypes.ITypeInfo typeInfo = ComRuntimeHelpers.GetITypeInfoFromIDispatch(_dispatchObject, true);
+            ComTypes.ITypeInfo typeInfo = ComRuntimeHelpers.GetITypeInfoFromIDispatch(DispatchObject, true);
             if (typeInfo == null)
             {
                 _comTypeDesc = ComTypeDesc.CreateEmptyTypeDesc();
@@ -575,7 +564,7 @@ namespace System.Management.Automation.ComInterop
                 return;
             }
 
-            ComTypes.ITypeInfo typeInfo = ComRuntimeHelpers.GetITypeInfoFromIDispatch(_dispatchObject, true);
+            ComTypes.ITypeInfo typeInfo = ComRuntimeHelpers.GetITypeInfoFromIDispatch(DispatchObject, true);
             if (typeInfo == null)
             {
                 _comTypeDesc = ComTypeDesc.CreateEmptyTypeDesc();

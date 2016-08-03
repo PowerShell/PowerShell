@@ -14,12 +14,9 @@
  * ***************************************************************************/
 
 #if !CLR2
-using System.Linq.Expressions;
 #else
 using Microsoft.Scripting.Ast;
 #endif
-
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management.Automation.Language;

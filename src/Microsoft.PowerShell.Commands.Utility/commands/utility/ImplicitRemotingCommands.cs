@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
         /// 1. the script needs to be regenerated because a bug fix made previous versions incompatible with the rest of the system (i.e. with ObjectModelWrapper)
         /// 2. ths script needs to be regenerated because a security vulnerability was found inside generated code (there is no way to service generated code, but we can service the dll that reports the version that the generated script checks against)
         /// </summary>
-        static public Version VersionOfScriptGenerator { get { return ImplicitRemotingCodeGenerator.VersionOfScriptWriter; } }
+        public static Version VersionOfScriptGenerator { get { return ImplicitRemotingCodeGenerator.VersionOfScriptWriter; } }
 
         #region Parameters
 
@@ -53,19 +53,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, Position = 1)]
         [ValidateNotNullOrEmpty]
         [Alias("PSPath", "ModuleName")]
-        public string OutputModule
-        {
-            get
-            {
-                return _moduleName;
-            }
-            set
-            {
-                _moduleName = value;
-            }
-        }
-
-        private string _moduleName;
+        public string OutputModule { get; set; }
 
         /// <summary>
         /// Property that sets force parameter.
@@ -387,18 +375,7 @@ namespace Microsoft.PowerShell.Commands
         /// Allows shadowing and/or overwriting of existing local/client commands
         /// </summary>
         [Parameter]
-        public SwitchParameter AllowClobber
-        {
-            get
-            {
-                return _allowClobber;
-            }
-            set
-            {
-                _allowClobber = value;
-            }
-        }
-        private SwitchParameter _allowClobber = new SwitchParameter(false); // no clobber by default
+        public SwitchParameter AllowClobber { get; set; } = new SwitchParameter(false);
 
         /// <summary>
         /// The parameter that all additional arguments get bound to. These arguments are used
@@ -534,31 +511,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameter specified a prefix used to modify names of imported commands
         /// </summary>
-        internal string Prefix
-        {
-            set { _prefix = value; }
-            get { return _prefix; }
-        }
-
-        private string _prefix = string.Empty;
+        internal string Prefix { set; get; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the certificate with which to sign the format file and psm1 file.
         /// </summary>
         [Parameter]
-        public X509Certificate2 Certificate
-        {
-            get
-            {
-                return _certificate;
-            }
-
-            set
-            {
-                _certificate = value;
-            }
-        }
-        private X509Certificate2 _certificate;
+        public X509Certificate2 Certificate { get; set; }
 
         #endregion
 
@@ -569,18 +528,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, Position = 0)]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
-        public PSSession Session
-        {
-            get
-            {
-                return _remoteRunspaceInfo;
-            }
-            set
-            {
-                _remoteRunspaceInfo = value;
-            }
-        }
-        private PSSession _remoteRunspaceInfo;
+        public PSSession Session { get; set; }
 
         #endregion Parameters
 
@@ -1614,14 +1562,14 @@ namespace Microsoft.PowerShell.Commands
             powerShell.AddParameter("TypeName", this.FormatTypeName);
 
             // For remote PS version 5.1 and greater, we need to include the new -PowerShellVersion parameter
-            RemoteRunspace remoteRunspace = _remoteRunspaceInfo.Runspace as RemoteRunspace;
+            RemoteRunspace remoteRunspace = Session.Runspace as RemoteRunspace;
             if ((remoteRunspace != null) && (remoteRunspace.ServerVersion != null) &&
                 (remoteRunspace.ServerVersion >= new Version(5, 1)))
             {
                 powerShell.AddParameter("PowerShellVersion", PSVersionInfo.PSVersion);
             }
 
-            powerShell.Runspace = _remoteRunspaceInfo.Runspace;
+            powerShell.Runspace = Session.Runspace;
 
             return powerShell;
         }
@@ -1711,7 +1659,7 @@ namespace Microsoft.PowerShell.Commands
             }
             powerShell.AddParameter("ArgumentList", this.ArgumentList);
 
-            powerShell.Runspace = _remoteRunspaceInfo.Runspace;
+            powerShell.Runspace = Session.Runspace;
             powerShell.RemotePowerShell.HostCallReceived += new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCallReceived);
             return powerShell;
         }
@@ -1885,15 +1833,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Generating a proxy module
 
-        private Guid _moduleGuid = Guid.NewGuid();
-
-        internal Guid ModuleGuid
-        {
-            get
-            {
-                return _moduleGuid;
-            }
-        }
+        internal Guid ModuleGuid { get; } = Guid.NewGuid();
 
         /// <summary>
         /// Generates a proxy module in the given directory.
@@ -1951,7 +1891,7 @@ namespace Microsoft.PowerShell.Commands
 
     internal class ImplicitRemotingCodeGenerator
     {
-        static internal readonly Version VersionOfScriptWriter = new Version(1, 0);
+        internal static readonly Version VersionOfScriptWriter = new Version(1, 0);
 
         #region Constructor and shared private data
 
@@ -2595,8 +2535,6 @@ function Get-PSImplicitRemotingSession
         /// <returns></returns>
         private string GenerateConnectionStringForNewRunspace()
         {
-            string connectionString = null;
-
             WSManConnectionInfo connectionInfo = _remoteRunspaceInfo.Runspace.ConnectionInfo as WSManConnectionInfo;
             if (null == connectionInfo)
             {
@@ -2616,7 +2554,7 @@ function Get-PSImplicitRemotingSession
                         CodeGeneration.EscapeSingleQuotedStringContent(containerConnectionInfo.ContainerProc.ContainerId));
                 }
 
-                return connectionString;
+                return null;
             }
 
             if (connectionInfo.UseDefaultWSManPort)

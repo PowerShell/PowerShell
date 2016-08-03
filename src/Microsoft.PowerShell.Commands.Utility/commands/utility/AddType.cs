@@ -174,18 +174,7 @@ namespace Microsoft.PowerShell.Commands
         /// The name of the type used for auto-generated types
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "FromMember")]
-        public String Name
-        {
-            get
-            {
-                return _typename;
-            }
-            set
-            {
-                _typename = value;
-            }
-        }
-        private string _typename;
+        public String Name { get; set; }
 
         /// <summary>
         /// The source code of this method / member
@@ -244,19 +233,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "FromMember")]
         [Alias("Using")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] UsingNamespace
-        {
-            get
-            {
-                return _usingNamespace;
-            }
-            set
-            {
-                _usingNamespace = value;
-            }
-        }
-        private string[] _usingNamespace = Utils.EmptyArray<string>();
-
+        public String[] UsingNamespace { get; set; } = Utils.EmptyArray<string>();
 
 
         /// <summary>
@@ -472,18 +449,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public String[] ReferencedAssemblies
         {
-            get
-            {
-                return referencedAssemblies;
-            }
+            get { return referencedAssemblies; }
             set
             {
-                if (value == null)
-                    referencedAssemblies = Utils.EmptyArray<string>();
-                else
-                {
-                    referencedAssemblies = value;
-                }
+                referencedAssemblies = value ?? Utils.EmptyArray<string>();
                 referencedAssembliesSpecified = true;
             }
         }
@@ -1447,18 +1416,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "FromPath")]
         [Parameter(ParameterSetName = "FromLiteralPath")]
         [Alias("CP")]
-        public CompilerParameters CompilerParameters
-        {
-            get
-            {
-                return compilerParameters;
-            }
-            set
-            {
-                compilerParameters = value;
-            }
-        }
-        private CompilerParameters compilerParameters = null;
+        public CompilerParameters CompilerParameters { get; set; } = null;
 
         /// <summary>
         /// Generate the type(s)
@@ -1485,7 +1443,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Generate if user has specified CompilerParmeters and
             // (referencedAssemblies | ignoreWarnings | outputAssembly | outputType)
-            if (null != compilerParameters)
+            if (null != CompilerParameters)
             {
                 if (referencedAssembliesSpecified)
                 {
@@ -1497,7 +1455,7 @@ namespace Microsoft.PowerShell.Commands
                             "CompilerParameters", "ReferencedAssemblies")),
                     "COMPILERPARAMETERS_AND_REFERENCEDASSEMBLIES",
                     ErrorCategory.InvalidArgument,
-                    compilerParameters);
+                    CompilerParameters);
 
                     ThrowTerminatingError(errorRecord);
                     return;
@@ -1513,7 +1471,7 @@ namespace Microsoft.PowerShell.Commands
                             "CompilerParameters", "IgnoreWarnings")),
                     "COMPILERPARAMETERS_AND_IGNOREWARNINGS",
                     ErrorCategory.InvalidArgument,
-                    compilerParameters);
+                    CompilerParameters);
 
                     ThrowTerminatingError(errorRecord);
                     return;
@@ -1529,7 +1487,7 @@ namespace Microsoft.PowerShell.Commands
                             "CompilerParameters", "OutputAssembly")),
                     "COMPILERPARAMETERS_AND_OUTPUTASSEMBLY",
                     ErrorCategory.InvalidArgument,
-                    compilerParameters);
+                    CompilerParameters);
 
                     ThrowTerminatingError(errorRecord);
                     return;
@@ -1545,7 +1503,7 @@ namespace Microsoft.PowerShell.Commands
                             "CompilerParameters", "OutputType")),
                     "COMPILERPARAMETERS_AND_OUTPUTTYPE",
                     ErrorCategory.InvalidArgument,
-                    compilerParameters);
+                    CompilerParameters);
 
                     ThrowTerminatingError(errorRecord);
                     return;
@@ -1654,18 +1612,18 @@ namespace Microsoft.PowerShell.Commands
                     CodeDomProvider provider = codeDomProvider;
 
                     // Configure the compiler parameters 
-                    if (compilerParameters == null)
+                    if (CompilerParameters == null)
                     {
-                        compilerParameters = new CompilerParameters();
+                        CompilerParameters = new CompilerParameters();
 
                         // Turn off debug information and turn on compiler optimizations by default.
-                        compilerParameters.IncludeDebugInformation = false;
+                        CompilerParameters.IncludeDebugInformation = false;
                         if (Language == Language.CSharp || Language == Language.VisualBasic || Language == Language.CSharpVersion2 || Language == Language.CSharpVersion3)
                         {
-                            compilerParameters.CompilerOptions = "/optimize+";
+                            CompilerParameters.CompilerOptions = "/optimize+";
                         }
 
-                        compilerParameters.ReferencedAssemblies.AddRange(defaultAssemblies.ToArray());
+                        CompilerParameters.ReferencedAssemblies.AddRange(defaultAssemblies.ToArray());
 
                         foreach (string referencedAssembly in referencedAssemblies)
                         {
@@ -1674,9 +1632,9 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 bool add = true;
                                 bool resolvedIsRooted = System.IO.Path.IsPathRooted(resolvedAssembly);
-                                for (int i = 0; i < compilerParameters.ReferencedAssemblies.Count; ++i)
+                                for (int i = 0; i < CompilerParameters.ReferencedAssemblies.Count; ++i)
                                 {
-                                    var existing = compilerParameters.ReferencedAssemblies[i];
+                                    var existing = CompilerParameters.ReferencedAssemblies[i];
 
                                     // We don't want to add duplicates.  We have a duplicate if the resolved file is identical,
                                     // and we also have a duplicate if the specified file is not rooted (is a simple filename) and
@@ -1694,7 +1652,7 @@ namespace Microsoft.PowerShell.Commands
                                         System.IO.Path.GetFileName(resolvedAssembly).Equals(existing, StringComparison.OrdinalIgnoreCase))
                                     {
                                         // Replace the existing reference with one that's resolved.
-                                        compilerParameters.ReferencedAssemblies[i] = resolvedAssembly;
+                                        CompilerParameters.ReferencedAssemblies[i] = resolvedAssembly;
                                         add = false;
                                         break;
                                     }
@@ -1702,21 +1660,21 @@ namespace Microsoft.PowerShell.Commands
 
                                 if (add)
                                 {
-                                    compilerParameters.ReferencedAssemblies.Add(resolvedAssembly);
+                                    CompilerParameters.ReferencedAssemblies.Add(resolvedAssembly);
                                 }
                             }
                         }
 
-                        compilerParameters.TreatWarningsAsErrors = !((bool)ignoreWarnings);
+                        CompilerParameters.TreatWarningsAsErrors = !((bool)ignoreWarnings);
 
                         if (String.IsNullOrEmpty(outputAssembly))
                         {
-                            compilerParameters.GenerateInMemory = true;
+                            CompilerParameters.GenerateInMemory = true;
                         }
                         else
                         {
-                            compilerParameters.GenerateInMemory = false;
-                            compilerParameters.OutputAssembly = outputAssembly;
+                            CompilerParameters.GenerateInMemory = false;
+                            CompilerParameters.OutputAssembly = outputAssembly;
 
                             // If it's an executable, update the compiler
                             // parameters for them.
@@ -1725,12 +1683,12 @@ namespace Microsoft.PowerShell.Commands
                                 ".exe",
                                 StringComparison.OrdinalIgnoreCase))
                             {
-                                compilerParameters.GenerateExecutable = true;
+                                CompilerParameters.GenerateExecutable = true;
 
                                 // They might want to generate a windows executable
                                 if (outputType == OutputAssemblyType.WindowsApplication)
                                 {
-                                    compilerParameters.CompilerOptions = "/target:winexe";
+                                    CompilerParameters.CompilerOptions = "/target:winexe";
                                 }
                             }
                         }
@@ -1749,13 +1707,13 @@ namespace Microsoft.PowerShell.Commands
                             String.Equals(ParameterSetName, "FromLiteralPath", StringComparison.OrdinalIgnoreCase)
                             )
                         {
-                            compilerResults = provider.CompileAssemblyFromFile(compilerParameters, paths);
+                            compilerResults = provider.CompileAssemblyFromFile(CompilerParameters, paths);
                         }
                         // Otherwise, this is code generated. Use the
                         // source code
                         else
                         {
-                            compilerResults = provider.CompileAssemblyFromSource(compilerParameters, sourceCode);
+                            compilerResults = provider.CompileAssemblyFromSource(CompilerParameters, sourceCode);
                         }
                     }
                     catch (InvalidOperationException ex)

@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Globalization;
@@ -394,12 +393,7 @@ namespace System.Management.Automation
         /// <summary>
         /// DebuggerMode
         /// </summary>
-        public DebugModes DebugMode
-        {
-            get { return _debugMode; }
-            protected set { _debugMode = value; }
-        }
-        private DebugModes _debugMode = DebugModes.Default;
+        public DebugModes DebugMode { get; protected set; } = DebugModes.Default;
 
         /// <summary>
         /// Returns true if debugger has breakpoints set and
@@ -4860,10 +4854,10 @@ namespace System.Management.Automation
     {
         public DebuggerCommand(string command, DebuggerResumeAction? action, bool repeatOnEnter, bool executedByDebugger)
         {
-            _resumeAction = action;
-            _command = command;
-            _repeatOnEnter = repeatOnEnter;
-            _executedByDebugger = executedByDebugger;
+            ResumeAction = action;
+            Command = command;
+            RepeatOnEnter = repeatOnEnter;
+            ExecutedByDebugger = executedByDebugger;
         }
 
         /// <summary>
@@ -4872,40 +4866,23 @@ namespace System.Management.Automation
         /// value of this property to decide how to resume the pipeline (i.e. step into,
         /// step-over, continue, etc)
         /// </summary>
-        public DebuggerResumeAction? ResumeAction
-        {
-            get { return _resumeAction; }
-        }
+        public DebuggerResumeAction? ResumeAction { get; }
 
         /// <summary>
         /// When ResumeAction is null, this property indicates the command that the
         /// host should pass to the PowerShell engine
         /// </summary>
-        public string Command
-        {
-            get { return _command; }
-        }
+        public string Command { get; }
 
         /// <summary>
         /// If true, the host should repeat this command if the next command in an empty line (enter)
         /// </summary>
-        public bool RepeatOnEnter
-        {
-            get { return _repeatOnEnter; }
-        }
+        public bool RepeatOnEnter { get; }
 
         /// <summary>
         /// If true, the command was executed by the debugger and the host should ignore the command
         /// </summary>
-        public bool ExecutedByDebugger
-        {
-            get { return _executedByDebugger; }
-        }
-
-        private DebuggerResumeAction? _resumeAction;
-        private string _command;
-        private bool _repeatOnEnter;
-        private bool _executedByDebugger;
+        public bool ExecutedByDebugger { get; }
     }
 
     #endregion
@@ -4954,8 +4931,6 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class CallStackFrame
     {
-        readonly private FunctionContext _functionContext;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -4980,7 +4955,7 @@ namespace System.Management.Automation
             if (functionContext != null)
             {
                 this.InvocationInfo = invocationInfo;
-                _functionContext = functionContext;
+                FunctionContext = functionContext;
                 this.Position = functionContext.CurrentPosition;
             }
             else
@@ -4988,8 +4963,8 @@ namespace System.Management.Automation
                 // WF functions do not have functionContext.  Use InvocationInfo.
                 this.InvocationInfo = invocationInfo;
                 this.Position = invocationInfo.ScriptPosition;
-                _functionContext = new FunctionContext();
-                _functionContext._functionName = invocationInfo.ScriptName;
+                FunctionContext = new FunctionContext();
+                FunctionContext._functionName = invocationInfo.ScriptName;
             }
         }
 
@@ -5023,9 +4998,9 @@ namespace System.Management.Automation
         /// <summary>
         /// The name of the function associated with this frame.
         /// </summary>
-        public string FunctionName { get { return _functionContext._functionName; } }
+        public string FunctionName { get { return FunctionContext._functionName; } }
 
-        internal FunctionContext FunctionContext { get { return _functionContext; } }
+        internal FunctionContext FunctionContext { get; }
 
         /// <summary>
         /// Returns a formatted string containing the ScriptName and ScriptLineNumber
@@ -5049,18 +5024,18 @@ namespace System.Management.Automation
         {
             var result = new Dictionary<string, PSVariable>(StringComparer.OrdinalIgnoreCase);
 
-            if (_functionContext._executionContext == null) { return result; }
+            if (FunctionContext._executionContext == null) { return result; }
 
-            var scope = _functionContext._executionContext.EngineSessionState.CurrentScope;
+            var scope = FunctionContext._executionContext.EngineSessionState.CurrentScope;
             while (scope != null)
             {
-                if (scope.LocalsTuple == _functionContext._localsTuple)
+                if (scope.LocalsTuple == FunctionContext._localsTuple)
                 {
                     // We can ignore any dotted scopes.
                     break;
                 }
 
-                if (scope.DottedScopes != null && scope.DottedScopes.Where(s => s == _functionContext._localsTuple).Any())
+                if (scope.DottedScopes != null && scope.DottedScopes.Where(s => s == FunctionContext._localsTuple).Any())
                 {
                     var dottedScopes = scope.DottedScopes.ToArray();
 
@@ -5068,7 +5043,7 @@ namespace System.Management.Automation
                     // Skip dotted scopes above the current scope
                     for (i = 0; i < dottedScopes.Length; ++i)
                     {
-                        if (dottedScopes[i] == _functionContext._localsTuple)
+                        if (dottedScopes[i] == FunctionContext._localsTuple)
                             break;
                     }
 
@@ -5083,7 +5058,7 @@ namespace System.Management.Automation
                 scope = scope.Parent;
             }
 
-            _functionContext._localsTuple.GetVariableTable(result, true);
+            FunctionContext._localsTuple.GetVariableTable(result, true);
 
             return result;
         }

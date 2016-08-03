@@ -34,24 +34,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
 
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] PreContext
-        {
-            get { return _preContext; }
-            set { _preContext = value; }
-        }
-        private string[] _preContext;
+        public string[] PreContext { get; set; }
 
         /// <summary>
         /// Lines found after a match.
         /// </summary>
 
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] PostContext
-        {
-            get { return _postContext; }
-            set { _postContext = value; }
-        }
-        private string[] _postContext;
+        public string[] PostContext { get; set; }
 
         /// <summary>
         /// Lines found before a match. Does not include
@@ -60,12 +50,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
 
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] DisplayPreContext
-        {
-            get { return _displayPreContext; }
-            set { _displayPreContext = value; }
-        }
-        private string[] _displayPreContext;
+        public string[] DisplayPreContext { get; set; }
 
         /// <summary>
         /// Lines found after a match. Does not include
@@ -74,12 +59,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
 
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] DisplayPostContext
-        {
-            get { return _displayPostContext; }
-            set { _displayPostContext = value; }
-        }
-        private string[] _displayPostContext;
+        public string[] DisplayPostContext { get; set; }
 
         /// <summary>
         /// Produce a deep copy of this object.
@@ -106,52 +86,19 @@ namespace Microsoft.PowerShell.Commands
         /// Indicates if the match was done ignoring case.
         /// </summary>
         /// <value>True if case was ignored.</value>
-        public bool IgnoreCase
-        {
-            get
-            {
-                return _ignoreCase;
-            }
-            set
-            {
-                _ignoreCase = value;
-            }
-        }
-        private bool _ignoreCase;
+        public bool IgnoreCase { get; set; }
 
         /// <summary>
         /// Returns the number of the matching line.
         /// </summary>
         /// <value>The number of the matching line.</value>
-        public int LineNumber
-        {
-            get
-            {
-                return _lineNumber;
-            }
-            set
-            {
-                _lineNumber = value;
-            }
-        }
-        private int _lineNumber;
+        public int LineNumber { get; set; }
 
         /// <summary>
         /// Returns the text of the matching line.
         /// </summary>
         /// <value>The text of the matching line.</value>
-        public string Line
-        {
-            get
-            {
-                return _line;
-            }
-            set
-            {
-                _line = value;
-            }
-        }
-        private string _line = "";
+        public string Line { get; set; } = "";
 
         /// <summary>
         /// Returns the base name of the file containing the matching line.
@@ -167,9 +114,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!_pathSet)
                     return s_inputStream;
-                if (_filename == null)
-                    _filename = System.IO.Path.GetFileName(_path);
-                return _filename;
+                return _filename ?? (_filename = System.IO.Path.GetFileName(_path));
             }
         }
         private string _filename;
@@ -203,35 +148,13 @@ namespace Microsoft.PowerShell.Commands
         /// Returns the pattern that was used in the match.
         /// </summary>
         /// <value>The pattern string</value>
-        public string Pattern
-        {
-            get
-            {
-                return _pattern;
-            }
-            set
-            {
-                _pattern = value;
-            }
-        }
-        private string _pattern;
+        public string Pattern { get; set; }
 
         /// <summary>
         /// The context for the match, or null if -context was not
         /// specified.
         /// </summary>
-        public MatchInfoContext Context
-        {
-            get
-            {
-                return _context;
-            }
-            set
-            {
-                _context = value;
-            }
-        }
-        private MatchInfoContext _context;
+        public MatchInfoContext Context { get; set; }
 
         /// <summary>
         /// Returns the path of the matching file truncated relative to the <paramref name="directory"/> parameter.
@@ -304,7 +227,7 @@ namespace Microsoft.PowerShell.Commands
             // enable context-tracking.
             if (Context == null)
             {
-                return FormatLine(_line, this.LineNumber, displayPath, EmptyPrefix);
+                return FormatLine(Line, this.LineNumber, displayPath, EmptyPrefix);
             }
 
             // Otherwise, render the full context.
@@ -316,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
                 lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
             }
 
-            lines.Add(FormatLine(_line, displayLineNumber++, displayPath, MatchPrefix));
+            lines.Add(FormatLine(Line, displayLineNumber++, displayPath, MatchPrefix));
 
             foreach (string contextLine in Context.DisplayPostContext)
             {
@@ -346,18 +269,7 @@ namespace Microsoft.PowerShell.Commands
         /// A list of all Regex matches on the matching line.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public Match[] Matches
-        {
-            get
-            {
-                return _matches;
-            }
-            set
-            {
-                _matches = value;
-            }
-        }
-        private Match[] _matches = new Match[] { };
+        public Match[] Matches { get; set; } = new Match[] { };
 
         /// <summary>
         /// Create a deep copy of this MatchInfo instance.
@@ -396,7 +308,6 @@ namespace Microsoft.PowerShell.Commands
             // Ring of items
             private T[] _items;
             // Current length, as opposed to the total capacity
-            private int _length;
             // Current start of the list. Starts at 0, but may
             // move forwards or wrap around back to 0 due to
             // rotation.
@@ -437,7 +348,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 get
                 {
-                    return _length == Capacity;
+                    return Count == Capacity;
                 }
             }
 
@@ -464,7 +375,7 @@ namespace Microsoft.PowerShell.Commands
             #region IEnumerable<T> implementation.
             public IEnumerator<T> GetEnumerator()
             {
-                for (int i = 0; i < _length; i++)
+                for (int i = 0; i < Count; i++)
                 {
                     yield return _items[WrapIndex(i)];
                 }
@@ -477,13 +388,7 @@ namespace Microsoft.PowerShell.Commands
             #endregion
 
             #region ICollection<T> implementation
-            public int Count
-            {
-                get
-                {
-                    return _length;
-                }
-            }
+            public int Count { get; private set; }
 
             public bool IsReadOnly
             {
@@ -515,8 +420,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    itemIndex = _firstIndex + _length;
-                    _length++;
+                    itemIndex = _firstIndex + Count;
+                    Count++;
                 }
 
                 _items[itemIndex] = item;
@@ -525,7 +430,7 @@ namespace Microsoft.PowerShell.Commands
             public void Clear()
             {
                 _firstIndex = 0;
-                _length = 0;
+                Count = 0;
             }
 
             public bool Contains(T item)
@@ -543,7 +448,7 @@ namespace Microsoft.PowerShell.Commands
                 if (arrayIndex < 0)
                     throw new ArgumentOutOfRangeException("arrayIndex");
 
-                if (_length > (array.Length - arrayIndex))
+                if (Count > (array.Length - arrayIndex))
                     throw new ArgumentException("arrayIndex");
 
                 // Iterate through the buffer in correct order.
@@ -1004,18 +909,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 _displayTracker = new DisplayContextTracker(preContext, postContext);
                 _logicalTracker = new LogicalContextTracker(preContext, postContext);
-                _emitQueue = new List<MatchInfo>();
+                EmitQueue = new List<MatchInfo>();
             }
 
             #region IContextTracker implementation
-            public IList<MatchInfo> EmitQueue
-            {
-                get
-                {
-                    return _emitQueue;
-                }
-            }
-            private IList<MatchInfo> _emitQueue;
+            public IList<MatchInfo> EmitQueue { get; }
 
             public void TrackLine(string line)
             {
@@ -1056,7 +954,7 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (MatchInfo match in _logicalTracker.EmitQueue)
                 {
-                    _emitQueue.Add(match);
+                    EmitQueue.Add(match);
                 }
 
                 _logicalTracker.EmitQueue.Clear();
@@ -1091,18 +989,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         ///
         [Parameter(Mandatory = true, Position = 0)]
-        public string[] Pattern
-        {
-            get
-            {
-                return _pattern;
-            }
-            set
-            {
-                _pattern = value;
-            }
-        }
-        private string[] _pattern;
+        public string[] Pattern { get; set; }
+
         private Regex[] _regexPattern;
 
         /// <summary>
@@ -1111,18 +999,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "File")]
         [FileinfoToString]
-        public string[] Path
-        {
-            get
-            {
-                return _fullName;
-            }
-            set
-            {
-                _fullName = value;
-            }
-        }
-        private string[] _fullName;
+        public string[] Path { get; set; }
 
         /// <summary>
         /// Literal file to read from 
@@ -1136,11 +1013,11 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return _fullName;
+                return Path;
             }
             set
             {
-                _fullName = value;
+                Path = value;
                 _isLiteralPath = true;
             }
         }
@@ -1338,18 +1215,8 @@ namespace Microsoft.PowerShell.Commands
             EncodingConversion.BigEndianUnicode,
             EncodingConversion.Default,
             EncodingConversion.OEM })]
-        public string Encoding
-        {
-            get
-            {
-                return _encoding;
-            }
-            set
-            {
-                _encoding = value;
-            }
-        }
-        private string _encoding;
+        public string Encoding { get; set; }
+
         private System.Text.Encoding _textEncoding;
 
         /// <summary>
@@ -1420,9 +1287,9 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             // Process encoding switch.
-            if (_encoding != null)
+            if (Encoding != null)
             {
-                _textEncoding = EncodingConversion.Convert(this, _encoding);
+                _textEncoding = EncodingConversion.Convert(this, Encoding);
             }
             else
             {
@@ -1432,16 +1299,16 @@ namespace Microsoft.PowerShell.Commands
             if (!_simpleMatch)
             {
                 RegexOptions regexOptions = (_caseSensitive) ? RegexOptions.None : RegexOptions.IgnoreCase;
-                _regexPattern = new Regex[_pattern.Length];
-                for (int i = 0; i < _pattern.Length; i++)
+                _regexPattern = new Regex[Pattern.Length];
+                for (int i = 0; i < Pattern.Length; i++)
                 {
                     try
                     {
-                        _regexPattern[i] = new Regex(_pattern[i], regexOptions);
+                        _regexPattern[i] = new Regex(Pattern[i], regexOptions);
                     }
                     catch (Exception e)
                     {
-                        this.ThrowTerminatingError(BuildErrorRecord(MatchStringStrings.InvalidRegex, _pattern[i], e.Message, "InvalidRegex", e));
+                        this.ThrowTerminatingError(BuildErrorRecord(MatchStringStrings.InvalidRegex, Pattern[i], e.Message, "InvalidRegex", e));
                         throw;
                     }
                 }
@@ -1465,9 +1332,9 @@ namespace Microsoft.PowerShell.Commands
                 return;
 
             List<string> expandedPaths = null;
-            if (_fullName != null)
+            if (Path != null)
             {
-                expandedPaths = ResolveFilePaths(_fullName, _isLiteralPath);
+                expandedPaths = ResolveFilePaths(Path, _isLiteralPath);
                 if (expandedPaths == null)
                     return;
             }
@@ -1742,7 +1609,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!_simpleMatch)
             {
-                while (patternIndex < _pattern.Length)
+                while (patternIndex < Pattern.Length)
                 {
                     Regex r = _regexPattern[patternIndex];
 
@@ -1780,9 +1647,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 StringComparison compareOption = _caseSensitive ?
                     StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
-                while (patternIndex < _pattern.Length)
+                while (patternIndex < Pattern.Length)
                 {
-                    string pat = _pattern[patternIndex];
+                    string pat = Pattern[patternIndex];
 
                     if (operandString.IndexOf(pat, compareOption) >= 0)
                     {
@@ -1836,7 +1703,7 @@ namespace Microsoft.PowerShell.Commands
                 matchResult = new MatchInfo();
                 matchResult.IgnoreCase = !_caseSensitive;
                 matchResult.Line = operandString;
-                matchResult.Pattern = _pattern[patternIndex];
+                matchResult.Pattern = Pattern[patternIndex];
 
                 if (_preContext > 0 || _postContext > 0)
                 {
@@ -1845,7 +1712,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // Matches should be an empty list, rather than null,
                 // in the cases of notMatch and simpleMatch.
-                matchResult.Matches = (matches != null) ? matches : new Match[] { };
+                matchResult.Matches = matches ?? new Match[] { };
 
                 return true;
             }

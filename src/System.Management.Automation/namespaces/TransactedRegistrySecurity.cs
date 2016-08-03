@@ -14,15 +14,11 @@
 ===========================================================*/
 
 using System;
-using System.Collections;
 using System.Security.Permissions;
 using System.Security.Principal;
-using Microsoft.Win32;
-using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Security.AccessControl;
-using System.Management.Automation;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.PowerShell.Commands.Internal

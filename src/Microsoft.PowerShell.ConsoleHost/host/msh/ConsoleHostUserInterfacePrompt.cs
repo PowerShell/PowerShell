@@ -14,8 +14,6 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
 using System.Security;
-using System.Reflection;
-
 using Dbg = System.Management.Automation.Diagnostics;
 using InternalHostUserInterface = System.Management.Automation.Internal.Host.InternalHostUserInterface;
 

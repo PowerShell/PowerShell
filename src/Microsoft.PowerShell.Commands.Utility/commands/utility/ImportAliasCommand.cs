@@ -33,19 +33,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// 
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
-        public string Path
-        {
-            get
-            {
-                return _path;
-            }
-
-            set
-            {
-                _path = value;
-            }
-        }
-        private string _path;
+        public string Path { get; set; }
 
         /// <summary>
         /// The literal path from which to import the aliases
@@ -57,12 +45,12 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return _path;
+                return Path;
             }
 
             set
             {
-                _path = value;
+                Path = value;
             }
         }
 
@@ -72,19 +60,7 @@ namespace Microsoft.PowerShell.Commands
         /// 
         [Parameter]
         [ValidateNotNullOrEmpty]
-        public string Scope
-        {
-            get
-            {
-                return _scope;
-            }
-
-            set
-            {
-                _scope = value;
-            }
-        }
-        private string _scope;
+        public string Scope { get; set; }
 
         /// <summary>
         /// If set to true, the alias that is set is passed to the

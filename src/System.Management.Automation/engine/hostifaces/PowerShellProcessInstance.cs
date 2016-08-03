@@ -20,11 +20,9 @@ namespace System.Management.Automation.Runspaces
         #region Private Members
 
         private readonly ProcessStartInfo _startInfo;
-        private Process _process;
         private static readonly string s_PSExePath;
         private RunspacePool _runspacePool;
         private readonly object _syncObject = new object();
-        private OutOfProcessTextWriter _textWriter;
         private bool _started;
         private bool _isDisposed;
         private bool _processExited;
@@ -79,11 +77,6 @@ namespace System.Management.Automation.Runspaces
             // PSConsoleFile parameters before parsing other parameters.
             // The other parameters get parsed in the managed layer.
             Version tempVersion = powerShellVersion ?? PSVersionInfo.PSVersion;
-            // tempVersion can never get to null..but FxCop thinks otherwise.
-            if (null == tempVersion)
-            {
-                tempVersion = PSVersionInfo.PSVersion;
-            }
             processArguments = string.Format(CultureInfo.InvariantCulture,
                        "-Version {0}", new Version(tempVersion.Major, tempVersion.Minor));
 
@@ -129,7 +122,7 @@ namespace System.Management.Automation.Runspaces
 #endif
             }
 
-            _process = new Process { StartInfo = _startInfo, EnableRaisingEvents = true };
+            Process = new Process { StartInfo = _startInfo, EnableRaisingEvents = true };
         }
 
         /// <summary>
@@ -150,7 +143,7 @@ namespace System.Management.Automation.Runspaces
                 // When process is exited, there is some delay in receiving ProcesExited event and HasExited property on process object.
                 // Using HasExited property on started process object to determine if powershell process has exited. 
                 //                
-                return _processExited || (_started && _process != null && _process.HasExited);
+                return _processExited || (_started && Process != null && Process.HasExited);
             }
         }
 
@@ -182,8 +175,8 @@ namespace System.Management.Automation.Runspaces
             {
                 try
                 {
-                    if (_process != null && !_process.HasExited)
-                        _process.Kill();
+                    if (Process != null && !Process.HasExited)
+                        Process.Kill();
                 }
                 catch (InvalidOperationException)
                 {
@@ -203,10 +196,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// 
         /// </summary>
-        public Process Process
-        {
-            get { return _process; }
-        }
+        public Process Process { get; }
 
         #endregion Public Properties
 
@@ -230,11 +220,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        internal OutOfProcessTextWriter StdInWriter
-        {
-            get { return _textWriter; }
-            set { _textWriter = value; }
-        }
+        internal OutOfProcessTextWriter StdInWriter { get; set; }
 
         internal void Start()
         {
@@ -253,9 +239,9 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 _started = true;
-                _process.Exited += ProcessExited;
+                Process.Exited += ProcessExited;
             }
-            _process.Start();
+            Process.Start();
         }
 
         private void ProcessExited(object sender, EventArgs e)

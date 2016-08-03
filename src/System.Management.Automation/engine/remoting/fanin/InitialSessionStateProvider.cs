@@ -17,7 +17,6 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Collections;
-using System;
 
 
 namespace System.Management.Automation.Remoting

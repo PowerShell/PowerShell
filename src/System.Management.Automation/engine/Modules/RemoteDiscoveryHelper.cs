@@ -285,7 +285,7 @@ namespace System.Management.Automation
             }
         }
 
-        static private void CopyParameterFromCmdletToPowerShell(Cmdlet cmdlet, PowerShell powerShell, string parameterName)
+        private static void CopyParameterFromCmdletToPowerShell(Cmdlet cmdlet, PowerShell powerShell, string parameterName)
         {
             object parameterValue;
             if (!cmdlet.MyInvocation.BoundParameters.TryGetValue(parameterName, out parameterValue))
@@ -684,21 +684,13 @@ namespace System.Management.Automation
                     Dbg.Assert(fileName != null, "Caller should make sure fileName != null");
                     Dbg.Assert(rawFileData != null, "Caller should make sure rawFileData != null");
 
-                    _fileName = fileName;
-                    _rawFileData = rawFileData;
+                    FileName = fileName;
+                    RawFileDataCore = rawFileData;
                 }
 
-                public override string FileName
-                {
-                    get { return _fileName; }
-                }
-                private readonly string _fileName;
+                public override string FileName { get; }
 
-                internal override byte[] RawFileDataCore
-                {
-                    get { return _rawFileData; }
-                }
-                private readonly byte[] _rawFileData;
+                internal override byte[] RawFileDataCore { get; }
             }
 
             private class CimModuleImplementationFile : CimModuleFile
@@ -1017,7 +1009,7 @@ namespace System.Management.Automation
 
         #region Protocol/transport agnostic functionality
 
-        static internal string GetModulePath(string remoteModuleName, Version remoteModuleVersion, string computerName, Runspace localRunspace)
+        internal static string GetModulePath(string remoteModuleName, Version remoteModuleVersion, string computerName, Runspace localRunspace)
         {
             computerName = computerName ?? string.Empty;
 
@@ -1034,17 +1026,17 @@ namespace System.Management.Automation
             return modulePath;
         }
 
-        static internal void AssociatePSModuleInfoWithSession(PSModuleInfo moduleInfo, CimSession cimSession, Uri resourceUri, string cimNamespace)
+        internal static void AssociatePSModuleInfoWithSession(PSModuleInfo moduleInfo, CimSession cimSession, Uri resourceUri, string cimNamespace)
         {
             AssociatePSModuleInfoWithSession(moduleInfo, (object)new Tuple<CimSession, Uri, string>(cimSession, resourceUri, cimNamespace));
         }
 
-        static internal void AssociatePSModuleInfoWithSession(PSModuleInfo moduleInfo, PSSession psSession)
+        internal static void AssociatePSModuleInfoWithSession(PSModuleInfo moduleInfo, PSSession psSession)
         {
             AssociatePSModuleInfoWithSession(moduleInfo, (object)psSession);
         }
 
-        static private void AssociatePSModuleInfoWithSession(PSModuleInfo moduleInfo, object weaklyTypedSession)
+        private static void AssociatePSModuleInfoWithSession(PSModuleInfo moduleInfo, object weaklyTypedSession)
         {
             s_moduleInfoToSession.Add(moduleInfo, weaklyTypedSession);
         }

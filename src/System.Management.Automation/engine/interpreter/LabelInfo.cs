@@ -20,11 +20,7 @@ using System.Linq.Expressions;
 #else
 using Microsoft.Scripting.Ast;
 #endif
-
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Reflection.Emit;
 using System.Diagnostics;
 
 namespace System.Management.Automation.Interpreter

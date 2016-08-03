@@ -4,7 +4,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
 using System.Management.Automation;
-using Microsoft.PowerShell.Commands;
 using System.Management.Automation.Internal;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,29 +19,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal MshExpressionResult(object res, MshExpression re, Exception e)
         {
-            _result = res;
-            _resolvedExpression = re;
-            _exception = e;
+            Result = res;
+            ResolvedExpression = re;
+            Exception = e;
         }
 
-        internal object Result
-        {
-            get { return _result; }
-        }
+        internal object Result { get; } = null;
 
-        internal MshExpression ResolvedExpression
-        {
-            get { return _resolvedExpression; }
-        }
+        internal MshExpression ResolvedExpression { get; } = null;
 
-        internal Exception Exception
-        {
-            get { return _exception; }
-        }
-
-        private object _result = null;
-        private MshExpression _resolvedExpression = null;
-        private Exception _exception = null;
+        internal Exception Exception { get; } = null;
     }
 
 
@@ -85,18 +71,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 throw PSTraceSource.NewArgumentNullException("scriptBlock");
             }
-            _script = scriptBlock;
+            Script = scriptBlock;
         }
 
-        public ScriptBlock Script
-        {
-            get { return _script; }
-        }
+        public ScriptBlock Script { get; } = null;
 
         public override string ToString()
         {
-            if (_script != null)
-                return _script.ToString();
+            if (Script != null)
+                return Script.ToString();
 
             return _stringValue;
         }
@@ -110,7 +93,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             get
             {
-                if (_script != null)
+                if (Script != null)
                     return false;
                 return WildcardPattern.ContainsWildcardCharacters(_stringValue);
             }
@@ -126,10 +109,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return retVal;
             }
 
-            if (_script != null)
+            if (Script != null)
             {
                 // script block, just add it to the list and be done
-                MshExpression ex = new MshExpression(_script);
+                MshExpression ex = new MshExpression(Script);
 
                 ex._isResolved = true;
                 retVal.Add(ex);
@@ -222,9 +205,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             List<MshExpressionResult> retVal = new List<MshExpressionResult>();
 
             // process the script case
-            if (_script != null)
+            if (Script != null)
             {
-                MshExpression scriptExpression = new MshExpression(_script);
+                MshExpression scriptExpression = new MshExpression(Script);
                 MshExpressionResult r = scriptExpression.GetValue(target, eatExceptions);
                 retVal.Add(r);
                 return retVal;
@@ -250,9 +233,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 object result;
 
-                if (_script != null)
+                if (Script != null)
                 {
-                    result = _script.DoInvokeReturnAsIs(
+                    result = Script.DoInvokeReturnAsIs(
                         useLocalScope: true,
                         errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
                         dollarUnder: target,
@@ -288,7 +271,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         // private members
         private string _stringValue;
-        private ScriptBlock _script = null;
         private bool _isResolved = false;
 
         #endregion Private Members

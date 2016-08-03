@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 
 namespace System.Management.Automation.Language
@@ -728,7 +727,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public static class TokenTraits
     {
-        private readonly static TokenFlags[] s_staticTokenFlags = new TokenFlags[]
+        private static readonly TokenFlags[] s_staticTokenFlags = new TokenFlags[]
         {
             #region Flags for unclassified tokens
 
@@ -1336,18 +1335,16 @@ namespace System.Management.Automation.Language
     /// </summary>
     public abstract class StringToken : Token
     {
-        private readonly string _value;
-
         internal StringToken(InternalScriptExtent scriptExtent, TokenKind kind, TokenFlags tokenFlags, string value)
             : base(scriptExtent, kind, tokenFlags)
         {
-            _value = value;
+            Value = value;
         }
 
         /// <summary>
         /// The string value without quotes or leading newlines in the case of a here string.
         /// </summary>
-        public string Value { get { return _value; } }
+        public string Value { get; }
 
         internal override string ToDebugString(int indent)
         {
@@ -1372,7 +1369,6 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class StringExpandableToken : StringToken
     {
-        private readonly string _formatString;
         private ReadOnlyCollection<Token> _nestedTokens;
 
         internal StringExpandableToken(InternalScriptExtent scriptExtent, TokenKind tokenKind, string value, string formatString, List<Token> nestedTokens, TokenFlags flags)
@@ -1383,7 +1379,7 @@ namespace System.Management.Automation.Language
                 _nestedTokens = new ReadOnlyCollection<Token>(nestedTokens.ToArray());
             }
 
-            _formatString = formatString;
+            FormatString = formatString;
         }
 
         internal static void ToDebugString(ReadOnlyCollection<Token> nestedTokens,
@@ -1410,7 +1406,7 @@ namespace System.Management.Automation.Language
             internal set { _nestedTokens = value; }
         }
 
-        internal string FormatString { get { return _formatString; } }
+        internal string FormatString { get; }
 
         internal override string ToDebugString(int indent)
         {
@@ -1430,18 +1426,16 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class LabelToken : Token
     {
-        private readonly string _labelText;
-
         internal LabelToken(InternalScriptExtent scriptExtent, TokenFlags tokenFlags, string labelText)
             : base(scriptExtent, TokenKind.Label, tokenFlags)
         {
-            _labelText = labelText;
+            LabelText = labelText;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public string LabelText { get { return _labelText; } }
+        public string LabelText { get; }
     }
 
     /// <summary>

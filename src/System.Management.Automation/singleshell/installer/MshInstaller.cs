@@ -90,7 +90,7 @@ namespace System.Management.Automation
         /// 
         /// </summary>
         /// <param name="stateSaver"></param>
-        public override sealed void Install(IDictionary stateSaver)
+        public sealed override void Install(IDictionary stateSaver)
         {
             base.Install(stateSaver);
 
@@ -170,7 +170,7 @@ namespace System.Management.Automation
         /// Uninstall this msh component
         /// </summary>
         /// <param name="savedState"></param>
-        public override sealed void Uninstall(IDictionary savedState)
+        public sealed override void Uninstall(IDictionary savedState)
         {
             base.Uninstall(savedState);
 
@@ -212,7 +212,7 @@ namespace System.Management.Automation
         /// Rollback this msh component
         /// </summary>
         /// <param name="savedState"></param>
-        public override sealed void Rollback(IDictionary savedState)
+        public sealed override void Rollback(IDictionary savedState)
         {
             Uninstall(savedState);
         }

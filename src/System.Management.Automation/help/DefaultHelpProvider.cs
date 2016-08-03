@@ -30,7 +30,7 @@ namespace System.Management.Automation
         /// 
         /// </summary>
         /// <value></value>
-        override internal string Name
+        internal override string Name
         {
             get
             {
@@ -42,7 +42,7 @@ namespace System.Management.Automation
         /// 
         /// </summary>
         /// <value></value>
-        override internal HelpCategory HelpCategory
+        internal override HelpCategory HelpCategory
         {
             get
             {
@@ -59,7 +59,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpRequest">help request object</param>
         /// <returns></returns>
-        override internal IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
+        internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             HelpRequest defaultHelpRequest = helpRequest.Clone();
             defaultHelpRequest.Target = "default";

@@ -4,7 +4,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 #if !SILVERLIGHT // ComObject
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
@@ -17,17 +16,11 @@ namespace System.Management.Automation.ComInterop
     {
         private string _typeName;
         private string _documentation;
-        private Guid _guid;
         //Hashtable is threadsafe for multiple readers single writer. 
         //Enumerating and writing is mutually exclusive so require locking.
-        private Hashtable _funcs;
-        private Hashtable _puts;
         private Hashtable _putRefs;
         private ComMethodDesc _getItem;
         private ComMethodDesc _setItem;
-        private Dictionary<string, ComEventDesc> _events;
-        private readonly ComTypeLibDesc _typeLibDesc;
-        private static readonly Dictionary<string, ComEventDesc> s_emptyEventsDict = new Dictionary<string, ComEventDesc>();
 
         internal ComTypeDesc(ITypeInfo typeInfo, ComType memberType, ComTypeLibDesc typeLibDesc) : base(memberType)
         {
@@ -35,7 +28,7 @@ namespace System.Management.Automation.ComInterop
             {
                 ComRuntimeHelpers.GetInfoFromType(typeInfo, out _typeName, out _documentation);
             }
-            _typeLibDesc = typeLibDesc;
+            TypeLib = typeLibDesc;
         }
 
 
@@ -64,48 +57,33 @@ namespace System.Management.Automation.ComInterop
         internal static ComTypeDesc CreateEmptyTypeDesc()
         {
             ComTypeDesc typeDesc = new ComTypeDesc(null, ComType.Interface, null);
-            typeDesc._funcs = new Hashtable();
-            typeDesc._puts = new Hashtable();
+            typeDesc.Funcs = new Hashtable();
+            typeDesc.Puts = new Hashtable();
             typeDesc._putRefs = new Hashtable();
-            typeDesc._events = s_emptyEventsDict;
+            typeDesc.Events = EmptyEvents;
 
             return typeDesc;
         }
 
-        internal static Dictionary<string, ComEventDesc> EmptyEvents
-        {
-            get { return s_emptyEventsDict; }
-        }
+        internal static Dictionary<string, ComEventDesc> EmptyEvents { get; } = new Dictionary<string, ComEventDesc>();
 
-        internal Hashtable Funcs
-        {
-            get { return _funcs; }
-            set { _funcs = value; }
-        }
+        internal Hashtable Funcs { get; set; }
 
-        internal Hashtable Puts
-        {
-            get { return _puts; }
-            set { _puts = value; }
-        }
+        internal Hashtable Puts { get; set; }
 
         internal Hashtable PutRefs
         {
             set { _putRefs = value; }
         }
 
-        internal Dictionary<string, ComEventDesc> Events
-        {
-            get { return _events; }
-            set { _events = value; }
-        }
+        internal Dictionary<string, ComEventDesc> Events { get; set; }
 
         internal bool TryGetFunc(string name, out ComMethodDesc method)
         {
             name = name.ToUpper(System.Globalization.CultureInfo.InvariantCulture);
-            if (_funcs.ContainsKey(name))
+            if (Funcs.ContainsKey(name))
             {
-                method = _funcs[name] as ComMethodDesc;
+                method = Funcs[name] as ComMethodDesc;
                 return true;
             }
             method = null;
@@ -115,18 +93,18 @@ namespace System.Management.Automation.ComInterop
         internal void AddFunc(string name, ComMethodDesc method)
         {
             name = name.ToUpper(System.Globalization.CultureInfo.InvariantCulture);
-            lock (_funcs)
+            lock (Funcs)
             {
-                _funcs[name] = method;
+                Funcs[name] = method;
             }
         }
 
         internal bool TryGetPut(string name, out ComMethodDesc method)
         {
             name = name.ToUpper(System.Globalization.CultureInfo.InvariantCulture);
-            if (_puts.ContainsKey(name))
+            if (Puts.ContainsKey(name))
             {
-                method = _puts[name] as ComMethodDesc;
+                method = Puts[name] as ComMethodDesc;
                 return true;
             }
             method = null;
@@ -136,9 +114,9 @@ namespace System.Management.Automation.ComInterop
         internal void AddPut(string name, ComMethodDesc method)
         {
             name = name.ToUpper(System.Globalization.CultureInfo.InvariantCulture);
-            lock (_puts)
+            lock (Puts)
             {
-                _puts[name] = method;
+                Puts[name] = method;
             }
         }
 
@@ -165,16 +143,16 @@ namespace System.Management.Automation.ComInterop
         internal bool TryGetEvent(string name, out ComEventDesc @event)
         {
             name = name.ToUpper(System.Globalization.CultureInfo.InvariantCulture);
-            return _events.TryGetValue(name, out @event);
+            return Events.TryGetValue(name, out @event);
         }
 
         internal string[] GetMemberNames(bool dataOnly)
         {
             var names = new Dictionary<string, object>();
 
-            lock (_funcs)
+            lock (Funcs)
             {
-                foreach (ComMethodDesc func in _funcs.Values)
+                foreach (ComMethodDesc func in Funcs.Values)
                 {
                     if (!dataOnly || func.IsDataMember)
                     {
@@ -185,9 +163,9 @@ namespace System.Management.Automation.ComInterop
 
             if (!dataOnly)
             {
-                lock (_puts)
+                lock (Puts)
                 {
-                    foreach (ComMethodDesc func in _puts.Values)
+                    foreach (ComMethodDesc func in Puts.Values)
                     {
                         if (!names.ContainsKey(func.Name))
                         {
@@ -207,9 +185,9 @@ namespace System.Management.Automation.ComInterop
                     }
                 }
 
-                if (_events != null && _events.Count > 0)
+                if (Events != null && Events.Count > 0)
                 {
-                    foreach (string name in _events.Keys)
+                    foreach (string name in Events.Keys)
                     {
                         if (!names.ContainsKey(name))
                         {
@@ -237,16 +215,9 @@ namespace System.Management.Automation.ComInterop
         }
 
         // this property is public - accessed by an AST
-        public ComTypeLibDesc TypeLib
-        {
-            get { return _typeLibDesc; }
-        }
+        public ComTypeLibDesc TypeLib { get; }
 
-        internal Guid Guid
-        {
-            get { return _guid; }
-            set { _guid = value; }
-        }
+        internal Guid Guid { get; set; }
 
         internal ComMethodDesc GetItem
         {

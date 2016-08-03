@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Linq;
 using System.Management.Automation.Host;
 using System.Management.Automation.Language;
@@ -24,27 +23,13 @@ namespace System.Management.Automation
         /// Returns the handle to the execution context
         /// for this instance of the automation engine.
         /// </summary>
-        internal ExecutionContext Context
-        {
-            get
-            {
-                return _context;
-            }
-        }
-        private ExecutionContext _context;
+        internal ExecutionContext Context { get; }
 
         /// <summary>
         /// Gets the CommandDiscovery instance for the current engine
         /// </summary>
         /// 
-        internal CommandDiscovery CommandDiscovery
-        {
-            get
-            {
-                return _commandDiscovery;
-            }
-        }
-        private CommandDiscovery _commandDiscovery;
+        internal CommandDiscovery CommandDiscovery { get; }
 
 
         /// <summary>
@@ -82,15 +67,15 @@ namespace System.Management.Automation
 #endif
             if (runspaceConfiguration != null)
             {
-                _context = new ExecutionContext(this, hostInterface, runspaceConfiguration);
+                Context = new ExecutionContext(this, hostInterface, runspaceConfiguration);
             }
             else
             {
-                _context = new ExecutionContext(this, hostInterface, iss);
+                Context = new ExecutionContext(this, hostInterface, iss);
             }
 
             EngineParser = new Language.Parser();
-            _commandDiscovery = new CommandDiscovery(_context);
+            CommandDiscovery = new CommandDiscovery(Context);
 
             // Initialize providers before loading types so that any ScriptBlocks in the
             // types.ps1xml file can be parsed.
@@ -99,17 +84,17 @@ namespace System.Management.Automation
             // This has the side effect of initializing cmdlet cache and providers from runspace configuration.
             if (runspaceConfiguration != null)
             {
-                runspaceConfiguration.Bind(_context);
+                runspaceConfiguration.Bind(Context);
             }
             else
             {
                 // Load the iss, resetting everything to it's defaults...
-                iss.Bind(_context, /*updateOnly*/ false);
+                iss.Bind(Context, /*updateOnly*/ false);
             }
 
-            InitialSessionState.SetSessionStateDrive(_context, true);
+            InitialSessionState.SetSessionStateDrive(Context, true);
 
-            InitialSessionState.CreateQuestionVariable(_context);
+            InitialSessionState.CreateQuestionVariable(Context);
         }
 
         /// <summary>
@@ -141,7 +126,7 @@ namespace System.Management.Automation
 
             if (interactiveCommand)
             {
-                EngineParser.SetPreviousFirstLastToken(_context);
+                EngineParser.SetPreviousFirstLastToken(Context);
             }
 
             if (errors.Any())

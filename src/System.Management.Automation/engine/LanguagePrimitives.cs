@@ -297,7 +297,7 @@ namespace System.Management.Automation
     public static class LanguagePrimitives
     {
         [TraceSource("ETS", "Extended Type System")]
-        static private PSTraceSource s_tracer = PSTraceSource.GetTracer("ETS", "Extended Type System");
+        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("ETS", "Extended Type System");
 
         internal delegate void MemberNotFoundError(PSObject pso, DictionaryEntry property, Type resultType);
 
@@ -663,11 +663,7 @@ namespace System.Management.Automation
             string secondString;
             if (firstString != null)
             {
-                secondString = second as string;
-                if (secondString == null)
-                {
-                    secondString = (string)LanguagePrimitives.ConvertTo(second, typeof(string), culture);
-                }
+                secondString = second as string ?? (string)LanguagePrimitives.ConvertTo(second, typeof(string), culture);
                 return (culture.CompareInfo.Compare(firstString, secondString,
                                                     ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0);
             }
@@ -1321,7 +1317,7 @@ namespace System.Management.Automation
 
         #region type converter
 
-        static internal PSTraceSource typeConversion = PSTraceSource.GetTracer("TypeConversion", "Traces the type conversion algorithm", false);
+        internal static PSTraceSource typeConversion = PSTraceSource.GetTracer("TypeConversion", "Traces the type conversion algorithm", false);
 
         private static TypeConverter GetIntegerSystemConverter(Type type)
         {
@@ -2470,11 +2466,7 @@ namespace System.Management.Automation
 
         private static CultureInfo GetCultureFromFormatProvider(IFormatProvider formatProvider)
         {
-            CultureInfo returnValue = formatProvider as CultureInfo;
-            if (returnValue == null)
-            {
-                returnValue = CultureInfo.InvariantCulture;
-            }
+            CultureInfo returnValue = formatProvider as CultureInfo ?? CultureInfo.InvariantCulture;
             return returnValue;
         }
 
@@ -2617,7 +2609,7 @@ namespace System.Management.Automation
             }
         }
 
-        static private object ConvertNumericChar(object valueToConvert,
+        private static object ConvertNumericChar(object valueToConvert,
                                                  Type resultType,
                                                  bool recursion,
                                                  PSObject originalValueToConvert,
@@ -2642,7 +2634,7 @@ namespace System.Management.Automation
             }
         }
 
-        static private object ConvertNumeric(object valueToConvert,
+        private static object ConvertNumeric(object valueToConvert,
                                              Type resultType,
                                              bool recursion,
                                              PSObject originalValueToConvert,
@@ -2665,7 +2657,7 @@ namespace System.Management.Automation
             }
         }
 
-        static private char[] ConvertStringToCharArray(object valueToConvert,
+        private static char[] ConvertStringToCharArray(object valueToConvert,
                                                        Type resultType,
                                                        bool recursion,
                                                        PSObject originalValueToConvert,
@@ -2679,7 +2671,7 @@ namespace System.Management.Automation
             return ((string)valueToConvert).ToCharArray();
         }
 
-        static private Regex ConvertStringToRegex(object valueToConvert,
+        private static Regex ConvertStringToRegex(object valueToConvert,
                                                   Type resultType,
                                                   bool recursion,
                                                   PSObject originalValueToConvert,
@@ -2702,7 +2694,7 @@ namespace System.Management.Automation
             }
         }
 
-        static private Microsoft.Management.Infrastructure.CimSession ConvertStringToCimSession(object valueToConvert,
+        private static Microsoft.Management.Infrastructure.CimSession ConvertStringToCimSession(object valueToConvert,
                                                   Type resultType,
                                                   bool recursion,
                                                   PSObject originalValueToConvert,
@@ -4112,12 +4104,11 @@ namespace System.Management.Automation
         internal class ConversionData<T> : ConversionData
         {
             private readonly PSConverter<T> _converter;
-            private readonly ConversionRank _rank;
 
             public ConversionData(PSConverter<T> converter, ConversionRank rank)
             {
                 _converter = converter;
-                _rank = rank;
+                Rank = rank;
             }
 
             public object Converter
@@ -4125,10 +4116,7 @@ namespace System.Management.Automation
                 get { return _converter; }
             }
 
-            public ConversionRank Rank
-            {
-                get { return _rank; }
-            }
+            public ConversionRank Rank { get; }
 
             public object Invoke(object valueToConvert, Type resultType, bool recurse, PSObject originalValueToConvert, IFormatProvider formatProvider, TypeTable backupTable)
             {
@@ -4194,7 +4182,7 @@ namespace System.Management.Automation
         private static Type[] s_realTypes = new Type[] { typeof(Single), typeof(Double), typeof(Decimal) };
 
 
-        static internal void RebuildConversionCache()
+        internal static void RebuildConversionCache()
         {
             lock (s_converterCache)
             {
@@ -5130,11 +5118,8 @@ namespace System.Management.Automation
                 castOperator = FindCastOperator("op_Explicit", toType, fromType, toType);
                 if (castOperator == null)
                 {
-                    castOperator = FindCastOperator("op_Implicit", fromType, fromType, toType);
-                    if (castOperator == null)
-                    {
-                        castOperator = FindCastOperator("op_Explicit", fromType, fromType, toType);
-                    }
+                    castOperator = FindCastOperator("op_Implicit", fromType, fromType, toType) ??
+                                   FindCastOperator("op_Explicit", fromType, fromType, toType);
                 }
             }
 

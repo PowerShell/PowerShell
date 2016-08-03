@@ -2,28 +2,15 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
-using System.Runtime.CompilerServices;
-using System.Security;
-using System.Text;
-using System.Xml;
 using Microsoft.Management.Infrastructure;
-using Microsoft.Management.Infrastructure.Serialization;
-using Microsoft.PowerShell;
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Management.Automation.Remoting;
 
 namespace System.Management.Automation
 {
@@ -51,13 +38,7 @@ namespace System.Management.Automation
 
         #region Properties
 
-        internal CimInstance CimInstance
-        {
-            get { return _cimInstance; }
-            set { _cimInstance = value; }
-        }
-
-        private CimInstance _cimInstance;
+        internal CimInstance CimInstance { get; set; }
 
         /// Used by Remoting infrastructure. This TypeTable instance
         /// will be used by Serializer if ExecutionContext is not
@@ -67,13 +48,9 @@ namespace System.Management.Automation
         private Collection<CollectionEntry<PSPropertyInfo>> _allPropertiesCollection;
         private Collection<CollectionEntry<PSPropertyInfo>> AllPropertiesCollection
         {
-            get
-            {
-                if (_allPropertiesCollection == null)
-                {
-                    _allPropertiesCollection = PSObject.GetPropertyCollection(PSMemberViewTypes.All, _typeTable);
-                }
-                return _allPropertiesCollection;
+            get {
+                return _allPropertiesCollection ??
+                       (_allPropertiesCollection = PSObject.GetPropertyCollection(PSMemberViewTypes.All, _typeTable));
             }
         }
 

@@ -1144,7 +1144,7 @@ namespace System.Management.Automation
         /// </summary>
         private class LastWordFinder
         {
-            static internal string FindLastWord(string sentence, out int replacementIndexOut, out char closingQuote)
+            internal static string FindLastWord(string sentence, out int replacementIndexOut, out char closingQuote)
             {
                 return (new LastWordFinder(sentence)).FindLastWord(out replacementIndexOut, out closingQuote);
             }

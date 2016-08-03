@@ -21,7 +21,7 @@ namespace System.Management.Automation
         /// <param name="helpCategory"></param>
         internal MamlClassHelpInfo(PSObject helpObject, HelpCategory helpCategory)
         {
-            _helpCategory = helpCategory;
+            HelpCategory = helpCategory;
             _fullHelpObject = helpObject;
         }
 
@@ -32,7 +32,7 @@ namespace System.Management.Automation
         /// <param name="helpCategory"></param>
         private MamlClassHelpInfo(XmlNode xmlNode, HelpCategory helpCategory)
         {
-            _helpCategory = helpCategory;
+            HelpCategory = helpCategory;
 
             MamlNode mamlNode = new MamlNode(xmlNode);
             _fullHelpObject = mamlNode.PSObject;
@@ -41,11 +41,6 @@ namespace System.Management.Automation
             _fullHelpObject.TypeNames.Clear();
             _fullHelpObject.TypeNames.Add("PSClassHelpInfo");
         }
-
-        /// <summary>
-        /// HelpCategory of the Help object.
-        /// </summary>
-        private HelpCategory _helpCategory;
 
         /// <summary>
         /// PSObject representation on help.
@@ -130,20 +125,11 @@ namespace System.Management.Automation
             }
         }
 
-        internal override HelpCategory HelpCategory
-        {
-            get
-            {
-                return _helpCategory;
-            }
-        }
+        internal override HelpCategory HelpCategory { get; }
 
         internal override PSObject FullHelp
         {
-            get
-            {
-                return _fullHelpObject;
-            }
+            get { return _fullHelpObject; }
         }
 
         #endregion

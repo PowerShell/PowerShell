@@ -56,31 +56,15 @@ namespace System.Management.Automation.Runspaces
 
         #region Data
 
-        private readonly string _monadVersion;
-
         /// <summary>
         /// MonadVersion from the console file
         /// </summary>
-        internal string MonadVersion
-        {
-            get
-            {
-                return _monadVersion;
-            }
-        }
-
-        private readonly Collection<string> _mshsnapins;
+        internal string MonadVersion { get; }
 
         /// <summary>
         /// List of MshSnapin IDs from the console file
         /// </summary>
-        internal Collection<string> PSSnapIns
-        {
-            get
-            {
-                return _mshsnapins;
-            }
-        }
+        internal Collection<string> PSSnapIns { get; }
 
         #endregion
 
@@ -88,17 +72,17 @@ namespace System.Management.Automation.Runspaces
 
         private PSConsoleFileElement(string version)
         {
-            _monadVersion = version;
+            MonadVersion = version;
             // Dont make collections null...
             // making them null, wont be good for foreach statements
-            _mshsnapins = new Collection<string>();
+            PSSnapIns = new Collection<string>();
         }
 
         #endregion
 
         #region tracer
 
-        static private readonly PSTraceSource s_mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
+        private static readonly PSTraceSource s_mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
         #endregion
 
         #region Static Methods
@@ -115,7 +99,7 @@ namespace System.Management.Automation.Runspaces
         /// <!--
         /// Caller should not pass a null value for path.
         /// -->
-        static internal void WriteToFile(string path, Version version, IEnumerable<PSSnapInInfo> snapins)
+        internal static void WriteToFile(string path, Version version, IEnumerable<PSSnapInInfo> snapins)
         {
             Diagnostics.Assert(path != null, "Filename should not be null");
 
@@ -168,7 +152,7 @@ namespace System.Management.Automation.Runspaces
         /// <!--
         /// Caller should not pass a null value for path.
         /// -->
-        static internal PSConsoleFileElement CreateFromFile(string path)
+        internal static PSConsoleFileElement CreateFromFile(string path)
         {
             Diagnostics.Assert(path != null, "Filename should not be null");
 
@@ -300,7 +284,7 @@ namespace System.Management.Automation.Runspaces
                         throw new XmlException(ConsoleInfoErrorStrings.IDNotFound);
                     }
 
-                    consoleFileElement._mshsnapins.Add(id);
+                    consoleFileElement.PSSnapIns.Add(id);
 
                     s_mshsnapinTracer.WriteLine("Found in mshsnapin {0} in console file {1}", id, path);
                 }
@@ -331,21 +315,18 @@ namespace System.Management.Automation.Runspaces
         #region Private Data
 
         // Monad Version that this console file depends on.
-        private readonly Version _psVersion;
         // MshSnapins that are not shipped with monad.
         private readonly Collection<PSSnapInInfo> _externalPSSnapIns;
         // Monad specific mshsnapins
         private Collection<PSSnapInInfo> _defaultPSSnapIns;
         // An internal representation that tells whether a console file is modified.
-        private bool _isDirty;
         // A string that stores fileName of the current consoleinfo object
-        private string _fileName;
 
         #endregion
 
         #region Class specific data
 
-        static private readonly PSTraceSource s_mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
+        private static readonly PSTraceSource s_mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
 
         #endregion
 
@@ -354,13 +335,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Monad Version that the console file depends on.
         /// </summary>
-        internal Version PSVersion
-        {
-            get
-            {
-                return _psVersion;
-            }
-        }
+        internal Version PSVersion { get; }
 
         /// <summary>
         /// Returns the major version of current console.
@@ -369,10 +344,10 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                Diagnostics.Assert(_psVersion != null,
+                Diagnostics.Assert(PSVersion != null,
                     "PSVersion is null");
 
-                return _psVersion.Major.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                return PSVersion.Major.ToString(System.Globalization.CultureInfo.InvariantCulture);
             }
         }
 
@@ -416,13 +391,7 @@ namespace System.Management.Automation.Runspaces
         /// <remarks>
         /// Modification refers to addition/deletion operations of the external mshsnapins.
         /// </remarks>
-        internal bool IsDirty
-        {
-            get
-            {
-                return _isDirty;
-            }
-        }
+        internal bool IsDirty { get; private set; }
 
         /// <summary>
         /// A string representing the console file name of the current MshConsoleInfo object.
@@ -434,13 +403,7 @@ namespace System.Management.Automation.Runspaces
         /// adding,removing mshsnapins. These operations directly effect the state of the 
         /// MshConsoleInfo object but not update the console file.
         /// </remarks>
-        internal string Filename
-        {
-            get
-            {
-                return _fileName;
-            }
-        }
+        internal string Filename { get; private set; }
 
         #endregion
 
@@ -452,9 +415,9 @@ namespace System.Management.Automation.Runspaces
         /// <param name="version">Monad Version.</param>
         private MshConsoleInfo(Version version)
         {
-            _psVersion = version;
-            _isDirty = false;
-            _fileName = null;
+            PSVersion = version;
+            IsDirty = false;
+            Filename = null;
 
             // Intialize list of mshsnapins..
             _defaultPSSnapIns = new Collection<PSSnapInInfo>();
@@ -473,7 +436,7 @@ namespace System.Management.Automation.Runspaces
         /// One or more default mshsnapins cannot be loaded because the
         /// registry is not populated correctly.
         /// </exception>
-        static internal MshConsoleInfo CreateDefaultConfiguration()
+        internal static MshConsoleInfo CreateDefaultConfiguration()
         {
             // Steps:
             // 1. Get the current Monad Version
@@ -535,7 +498,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="XmlException">
         /// Unable to load/parse the file specified by fileName.
         /// </exception>
-        static internal MshConsoleInfo CreateFromConsoleFile(string fileName, out PSConsoleLoadException cle)
+        internal static MshConsoleInfo CreateFromConsoleFile(string fileName, out PSConsoleLoadException cle)
         {
             s_mshsnapinTracer.WriteLine("Creating console info from file {0}", fileName);
 
@@ -544,7 +507,7 @@ namespace System.Management.Automation.Runspaces
 
             // Check whether the filename specified is an absolute path.
             string absolutePath = Path.GetFullPath(fileName);
-            consoleInfo._fileName = absolutePath;
+            consoleInfo.Filename = absolutePath;
 
             // Construct externalPSSnapIns by loading file.
             consoleInfo.Load(absolutePath, out cle);
@@ -587,7 +550,7 @@ namespace System.Management.Automation.Runspaces
 
             if (!Path.IsPathRooted(absolutePath))
             {
-                absolutePath = Path.GetFullPath(_fileName);
+                absolutePath = Path.GetFullPath(Filename);
             }
 
             // Ignore case when looking for file extension.
@@ -600,8 +563,8 @@ namespace System.Management.Automation.Runspaces
             //ConsoleFileElement will write to file
             PSConsoleFileElement.WriteToFile(absolutePath, this.PSVersion, this.ExternalPSSnapIns);
             //update the console file variable
-            _fileName = absolutePath;
-            _isDirty = false;
+            Filename = absolutePath;
+            IsDirty = false;
         }
 
         /// <summary>
@@ -613,13 +576,13 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         internal void Save()
         {
-            if (null == _fileName)
+            if (null == Filename)
             {
                 throw PSTraceSource.NewInvalidOperationException(ConsoleInfoErrorStrings.SaveDefaultError);
             }
 
-            PSConsoleFileElement.WriteToFile(_fileName, this.PSVersion, this.ExternalPSSnapIns);
-            _isDirty = false;
+            PSConsoleFileElement.WriteToFile(Filename, this.PSVersion, this.ExternalPSSnapIns);
+            IsDirty = false;
         }
 
         /// <summary>
@@ -672,7 +635,7 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentException("mshSnapInID",
                                                          ConsoleInfoErrorStrings.AddPSSnapInBadMonadVersion,
                                                          newPSSnapIn.PSVersion.ToString(),
-                                                         _psVersion.ToString());
+                                                         PSVersion.ToString());
             }
 
             // new mshsnapin will never be null
@@ -680,7 +643,7 @@ namespace System.Management.Automation.Runspaces
             _externalPSSnapIns.Add(newPSSnapIn);
             s_mshsnapinTracer.WriteLine("MshSnapin {0} successfully added to consoleinfo list.", mshSnapInID);
             //Set IsDirty to true
-            _isDirty = true;
+            IsDirty = true;
 
             return newPSSnapIn;
         }
@@ -723,7 +686,7 @@ namespace System.Management.Automation.Runspaces
 
                     // The state of console file is changing..so set
                     // dirty flag.
-                    _isDirty = true;
+                    IsDirty = true;
                     break;
                 }
             }
@@ -887,7 +850,7 @@ namespace System.Management.Automation.Runspaces
                 s_mshsnapinTracer.TraceError("Console version {0} is not supported in current monad session.", consoleFileElement.MonadVersion);
 
                 throw PSTraceSource.NewArgumentException("PSVersion", ConsoleInfoErrorStrings.BadMonadVersion, consoleFileElement.MonadVersion,
-                    _psVersion.ToString());
+                    PSVersion.ToString());
             }
 
             // Create a store for exceptions
@@ -924,7 +887,7 @@ namespace System.Management.Automation.Runspaces
 
             // We are able to load console file and currently monad engine
             // can service this. So mark the isdirty flag.
-            _isDirty = false;
+            IsDirty = false;
 
             return _externalPSSnapIns;
         }

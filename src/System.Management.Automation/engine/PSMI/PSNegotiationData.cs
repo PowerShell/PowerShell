@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using Microsoft.Management.Infrastructure;
 
 namespace System.Management.Automation
@@ -14,7 +13,7 @@ namespace System.Management.Automation
         internal string PSVersion;
     }
 
-    static internal class PSNegotiationHandler
+    internal static class PSNegotiationHandler
     {
         internal static CimInstance CreatePSNegotiationData(Version powerShellVersion)
         {

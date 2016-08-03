@@ -11,7 +11,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 // nor ASSERTIONS_TRACE is defined.
 #define DEBUG
 
-using System;
 using System.Diagnostics;
 using System.Text;
 
@@ -34,20 +33,14 @@ namespace System.Management.Automation
         internal AssertException(string message) : base(message)
         {
             // 3 will skip the assertion caller, this method and AssertException.StackTrace
-            _stackTrace = Diagnostics.StackTrace(3);
+            StackTrace = Diagnostics.StackTrace(3);
         }
-        private string _stackTrace;
+
         /// <summary>
         /// returns the stack trace set in the constructor
         /// </summary>
         /// <value>the constructor's stackTrace</value>
-        public override string StackTrace
-        {
-            get
-            {
-                return _stackTrace;
-            }
-        }
+        public override string StackTrace { get; }
     }
 
     /// <summary>

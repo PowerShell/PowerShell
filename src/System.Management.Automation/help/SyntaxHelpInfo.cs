@@ -18,41 +18,28 @@ namespace System.Management.Automation
         private SyntaxHelpInfo(string name, string text, HelpCategory category)
             : base(category)
         {
-            _fullHelpObject = PSObject.AsPSObject(text);
-            _name = name;
-            _synopsis = text;
+            FullHelp = PSObject.AsPSObject(text);
+            Name = name;
+            Synopsis = text;
         }
 
-        private string _name = "";
         /// <summary>
         /// Name for the help info
         /// </summary>
         /// <value>Name for the help info</value>
-        override internal string Name
-        {
-            get { return _name; }
-        }
+        internal override string Name { get; } = "";
 
-        private string _synopsis = "";
         /// <summary>
         /// Synopsis for the help info
         /// </summary>
         /// <value>Synopsis for the help info</value>
-        override internal string Synopsis
-        {
-            get { return _synopsis; }
-        }
-
-        private PSObject _fullHelpObject;
+        internal override string Synopsis { get; } = "";
 
         /// <summary>
         /// Full help object for this help info
         /// </summary>
         /// <value>Full help object for this help info</value>
-        override internal PSObject FullHelp
-        {
-            get { return _fullHelpObject; }
-        }
+        internal override PSObject FullHelp { get; }
 
         /// <summary>
         /// Get help info based on name, text and filename

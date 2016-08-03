@@ -7,15 +7,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System;
 using System.Text;
 using System.IO;
-using System.Management.Automation;
-using System.Management.Automation.Host;
-using System.Management.Automation.Internal;
-using Microsoft.PowerShell;
-using System.Threading;
-using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
-
-
 using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 using HRESULT = System.UInt32;

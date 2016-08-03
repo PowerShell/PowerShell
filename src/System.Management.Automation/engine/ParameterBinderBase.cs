@@ -58,10 +58,10 @@ namespace System.Management.Automation
     {
         #region tracer
         [TraceSource("ParameterBinderBase", "A abstract helper class for the CommandProcessor that binds parameters to the specified object.")]
-        static private PSTraceSource s_tracer = PSTraceSource.GetTracer("ParameterBinderBase", "A abstract helper class for the CommandProcessor that binds parameters to the specified object.");
+        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("ParameterBinderBase", "A abstract helper class for the CommandProcessor that binds parameters to the specified object.");
 
         [TraceSource("ParameterBinding", "Traces the process of binding the arguments to the parameters of cmdlets, scripts, and applications.")]
-        static internal PSTraceSource bindingTracer =
+        internal static PSTraceSource bindingTracer =
             PSTraceSource.GetTracer(
                 "ParameterBinding",
                 "Traces the process of binding the arguments to the parameters of cmdlets, scripts, and applications.",
@@ -184,12 +184,7 @@ namespace System.Management.Automation
         {
             // Setter is needed to pass into RuntimeParameterBinder instances
             set { _commandLineParameters = value; }
-            get
-            {
-                if (_commandLineParameters == null)
-                    _commandLineParameters = new CommandLineParameters();
-                return _commandLineParameters;
-            }
+            get { return _commandLineParameters ?? (_commandLineParameters = new CommandLineParameters()); }
         }
         private CommandLineParameters _commandLineParameters;
 
@@ -1309,7 +1304,7 @@ namespace System.Management.Automation
                 {
                     bindingTracer.TraceError(
                         "ERROR: COERCE FAILED: arg [{0}] could not be converted to the parameter type [{1}]",
-                        (result == null) ? "null" : result,
+                        result ?? "null",
                         toType);
 
                     ParameterBindingException pbe =
@@ -1323,7 +1318,7 @@ namespace System.Management.Automation
                             argumentType,
                             ParameterBinderStrings.CannotConvertArgument,
                             "CannotConvertArgument",
-                            (result == null) ? "null" : result,
+                            result ?? "null",
                             notSupported.Message);
 
                     throw pbe;
@@ -1991,8 +1986,6 @@ namespace System.Management.Automation
 
         // Private member for Value.
 
-        private static readonly object s_singletonValue = new object();
-
         #endregion private_members
 
         #region public_property
@@ -2000,7 +1993,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Represents an object of the same class (singleton class).
         /// </summary>
-        internal static object Value { get { return s_singletonValue; } }
+        internal static object Value { get; } = new object();
 
         #endregion public_property
     }

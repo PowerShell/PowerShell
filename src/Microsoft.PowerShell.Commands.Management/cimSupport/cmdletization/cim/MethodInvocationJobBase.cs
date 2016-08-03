@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// <summary>
     /// Job wrapping invocation of an extrinsic CIM method
     /// </summary>
-    abstract internal class MethodInvocationJobBase<T> : CimChildJobBase<T>
+    internal abstract class MethodInvocationJobBase<T> : CimChildJobBase<T>
     {
         internal MethodInvocationJobBase(CimJobContext jobContext, bool passThru, string methodSubject, MethodInvocationInfo methodInvocationInfo)
                 : base(jobContext)
@@ -26,11 +26,10 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             Dbg.Assert(methodSubject != null, "Caller should verify methodSubject != null");
 
             _passThru = passThru;
-            _methodSubject = methodSubject;
+            MethodSubject = methodSubject;
             _methodInvocationInfo = methodInvocationInfo;
         }
 
-        private readonly string _methodSubject;
         private readonly bool _passThru;
         private readonly MethodInvocationInfo _methodInvocationInfo;
 
@@ -108,10 +107,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             return outParameters;
         }
 
-        internal string MethodSubject
-        {
-            get { return _methodSubject; }
-        }
+        internal string MethodSubject { get; }
 
         internal bool ShouldProcess()
         {

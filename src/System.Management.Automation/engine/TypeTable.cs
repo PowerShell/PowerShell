@@ -16,7 +16,6 @@ using System.Management.Automation.Language;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security;
-using System.Threading.Tasks;
 using System.Xml;
 using Dbg = System.Diagnostics.Debug;
 #if !CORECLR
@@ -2152,7 +2151,7 @@ namespace System.Management.Automation.Runspaces
             return newNote;
         }
 
-        override internal void Process(ConcurrentBag<string> errors, string typeName, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
+        internal override void Process(ConcurrentBag<string> errors, string typeName, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
             TypeTable.ProcessNoteData(errors, typeName, this, membersCollection, isOverride);
         }
@@ -2217,7 +2216,7 @@ namespace System.Management.Automation.Runspaces
             return newAlias;
         }
 
-        override internal void Process(ConcurrentBag<string> errors, string typeName, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
+        internal override void Process(ConcurrentBag<string> errors, string typeName, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
             TypeTable.ProcessAliasData(errors, typeName, this, membersCollection, isOverride);
         }
@@ -2281,7 +2280,7 @@ namespace System.Management.Automation.Runspaces
             return newScriptProperty;
         }
 
-        override internal void Process(ConcurrentBag<string> errors, string typeName, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
+        internal override void Process(ConcurrentBag<string> errors, string typeName, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
             TypeTable.ProcessScriptPropertyData(errors, typeName, this, membersCollection, isOverride);
         }
@@ -2344,7 +2343,7 @@ namespace System.Management.Automation.Runspaces
             return newCodeProperty;
         }
 
-        override internal void Process(ConcurrentBag<string> errors, string typeName, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
+        internal override void Process(ConcurrentBag<string> errors, string typeName, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
             TypeTable.ProcessCodePropertyData(errors, typeName, this, membersCollection, isOverride);
         }
@@ -2383,7 +2382,7 @@ namespace System.Management.Automation.Runspaces
             return newScriptMethod;
         }
 
-        override internal void Process(ConcurrentBag<string> errors, string typeName, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
+        internal override void Process(ConcurrentBag<string> errors, string typeName, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
             TypeTable.ProcessScriptMethodData(errors, typeName, this, membersCollection, isOverride);
         }
@@ -2421,7 +2420,7 @@ namespace System.Management.Automation.Runspaces
             return newCodeMethod;
         }
 
-        override internal void Process(ConcurrentBag<string> errors, string typeName, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
+        internal override void Process(ConcurrentBag<string> errors, string typeName, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
             TypeTable.ProcessCodeMethodData(errors, typeName, this, membersCollection, isOverride);
         }
@@ -2459,7 +2458,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// The PropertySet name
         /// </summary>
-        new internal string Name { get { return base.Name; } set { base.Name = value; } }
+        internal new string Name { get { return base.Name; } set { base.Name = value; } }
 
         /// <summary>
         /// Set true if the member is supposed to be hidden
@@ -2480,7 +2479,7 @@ namespace System.Management.Automation.Runspaces
             return newPropertySet;
         }
 
-        override internal void Process(ConcurrentBag<string> errors, string typeName, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
+        internal override void Process(ConcurrentBag<string> errors, string typeName, PSMemberInfoInternalCollection<PSMemberInfo> membersCollection, bool isOverride)
         {
             TypeTable.ProcessPropertySetData(errors, typeName, this, membersCollection, isOverride);
         }

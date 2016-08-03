@@ -6,7 +6,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 #pragma warning disable 56506
 
 
-using System;
 using System.Runtime.Serialization;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Internal;
@@ -710,14 +709,8 @@ namespace System.Management.Automation
         /// </summary>
         public override string Message
         {
-            get
-            {
-                if (null == _message)
-                {
-                    _message = (null != _wrapperException) ? _wrapperException.Message : String.Empty;
-                }
-
-                return _message;
+            get {
+                return _message ?? (_message = (null != _wrapperException) ? _wrapperException.Message : String.Empty);
             }
         }
 

@@ -112,24 +112,16 @@ namespace System.Management.Automation
     /// </summary>
     internal class ProcessOutputObject
     {
-        private object _data;
         /// <summary>
         /// Get the data from this object
         /// </summary>
         /// <value>The data</value>
-        internal object Data { get { return _data; } }
+        internal object Data { get; }
 
         /// <summary>
         /// Stream to which data belongs
         /// </summary>
-        private MinishellStream _stream;
-        internal MinishellStream Stream
-        {
-            get
-            {
-                return _stream;
-            }
-        }
+        internal MinishellStream Stream { get; }
 
         /// <summary>
         /// Build an output object
@@ -138,8 +130,8 @@ namespace System.Management.Automation
         /// <param name="stream">stream to which data belongs</param>
         internal ProcessOutputObject(object data, MinishellStream stream)
         {
-            _data = data;
-            _stream = stream;
+            Data = data;
+            Stream = stream;
         }
     }
 
@@ -1342,18 +1334,7 @@ namespace System.Management.Automation
 
         #endregion Minishell Interop
 
-        static private bool s_isServerSide;
-        internal static bool IsServerSide
-        {
-            get
-            {
-                return s_isServerSide;
-            }
-            set
-            {
-                s_isServerSide = value;
-            }
-        }
+        internal static bool IsServerSide { get; set; }
     }
 
     /// <summary>
@@ -1429,11 +1410,8 @@ namespace System.Management.Automation
             //Get the encoding for writing to native command. Note we get the Encoding 
             //from the current scope so a script or function can use a different encoding
             //than global value.
-            Encoding pipeEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as System.Text.Encoding;
-            if (pipeEncoding == null)
-            {
-                pipeEncoding = Encoding.ASCII;
-            }
+            Encoding pipeEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as System.Text.Encoding ??
+                                    Encoding.ASCII;
 
             _streamWriter = new StreamWriter(process.StandardInput.BaseStream,
                                             pipeEncoding);
@@ -2040,12 +2018,7 @@ namespace System.Management.Automation
         /// <summary>
         /// If set to true, then native commands will always be run redirected...
         /// </summary>
-        public static bool AlwaysCaptureApplicationIO
-        {
-            get { return _alwaysCaptureApplicationIO; }
-            set { _alwaysCaptureApplicationIO = value; }
-        }
-        private static bool _alwaysCaptureApplicationIO;
+        public static bool AlwaysCaptureApplicationIO { get; set; }
 
         [DllImport("Kernel32.dll")]
         internal static extern IntPtr GetConsoleWindow();

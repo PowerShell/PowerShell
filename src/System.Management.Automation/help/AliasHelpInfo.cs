@@ -33,12 +33,12 @@ namespace System.Management.Automation
 
             if (!String.IsNullOrEmpty(aliasInfo.Name))
             {
-                _name = aliasInfo.Name.Trim();
+                Name = aliasInfo.Name.Trim();
             }
 
             if (!String.IsNullOrEmpty(name))
             {
-                _synopsis = name.Trim();
+                Synopsis = name.Trim();
             }
 
             _fullHelpObject.TypeNames.Clear();
@@ -48,37 +48,23 @@ namespace System.Management.Automation
             _fullHelpObject.TypeNames.Add("HelpInfo");
         }
 
-        private string _name = "";
         /// <summary>
         /// Returns the name of alias help.
         /// </summary>
         /// <value>Name of alias help.</value>
-        override internal string Name
-        {
-            get
-            {
-                return _name;
-            }
-        }
+        internal override string Name { get; } = "";
 
-        private string _synopsis = "";
         /// <summary>
         /// Returns synopsis of alias help.
         /// </summary>
         /// <value>Synopsis of alias help.</value>        
-        override internal string Synopsis
-        {
-            get
-            {
-                return _synopsis;
-            }
-        }
+        internal override string Synopsis { get; } = "";
 
         /// <summary>
         /// Help category for alias help. This is always HelpCategory.Alias
         /// </summary>
         /// <value>Help category for alias help</value>
-        override internal HelpCategory HelpCategory
+        internal override HelpCategory HelpCategory
         {
             get
             {
@@ -92,7 +78,7 @@ namespace System.Management.Automation
         /// Returns full help object for alias help.
         /// </summary>
         /// <value>Full help object of alias help.</value>
-        override internal PSObject FullHelp
+        internal override PSObject FullHelp
         {
             get
             {

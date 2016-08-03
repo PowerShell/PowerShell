@@ -2,27 +2,8 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Language;
-using System.Management.Automation.Runspaces;
-using System.Management.Automation.Tracing;
-using System.Runtime.CompilerServices;
-using System.Security;
-using System.Text;
-using System.Xml;
 using Microsoft.Management.Infrastructure;
-using Microsoft.Management.Infrastructure.Serialization;
-using Microsoft.PowerShell;
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Management.Automation.Remoting;
 
 namespace System.Management.Automation
 {
@@ -46,10 +27,10 @@ namespace System.Management.Automation
         internal MITypeSerializationInfo(Type type, MITypeSerializerDelegate serializer,
                                          string cimClassName)
         {
-            _type = type;
-            _serializer = serializer;
-            _cimType = CimConverter.GetCimType(type);
-            _cimClassName = cimClassName;
+            Type = type;
+            Serializer = serializer;
+            CimType = CimConverter.GetCimType(type);
+            CimClassName = cimClassName;
         }
 
         /// <summary>
@@ -63,7 +44,7 @@ namespace System.Management.Automation
         internal MITypeSerializationInfo(Type type, MITypeSerializerDelegate serializer,
                                          Microsoft.Management.Infrastructure.CimType cimType, string cimClassName) : this(type, serializer, cimClassName)
         {
-            _cimType = cimType;
+            CimType = cimType;
         }
 
         #region properties
@@ -71,58 +52,26 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the type for which this TypeSerializationInfo is created.
         /// </summary>
-        internal Type Type
-        {
-            get { return _type; }
-        }
+        internal Type Type { get; }
 
         /// <summary>
         /// Gets the delegate to serialize this type
         /// </summary>
-        internal MITypeSerializerDelegate Serializer
-        {
-            get { return _serializer; }
-        }
+        internal MITypeSerializerDelegate Serializer { get; }
 
         /// <summary>
         /// The CimType corresponding to the .NET type 
         /// </summary>
-        internal Microsoft.Management.Infrastructure.CimType CimType
-        {
-            get { return _cimType; }
-        }
+        internal Microsoft.Management.Infrastructure.CimType CimType { get; }
 
         /// <summary>
         /// The CimClass name whose instance needs to be created for this type
         /// </summary>
-        internal String CimClassName
-        {
-            get { return _cimClassName; }
-        }
+        internal String CimClassName { get; }
 
         #endregion properties
 
         #region private
-
-        /// <summary>
-        /// Type for which this entry is created
-        /// </summary>
-        private readonly Type _type;
-
-        /// <summary>
-        /// TypeSerializerDelegate for serializing the type
-        /// </summary>
-        private readonly MITypeSerializerDelegate _serializer;
-
-        /// <summary>
-        /// The CimType corresponding to the .NET type 
-        /// </summary>
-        private readonly Microsoft.Management.Infrastructure.CimType _cimType;
-
-        /// <summary>
-        /// The CimClass name whose instance needs to be created for this type
-        /// </summary>
-        private string _cimClassName;
 
         #endregion private
     }

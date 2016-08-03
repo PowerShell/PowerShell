@@ -14,10 +14,8 @@ using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Server;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Threading;
-using Microsoft.PowerShell;
 using System.Management.Automation.Security;
 using System.Diagnostics;
-using System.Collections.ObjectModel;
 using System.Security.Principal;
 
 namespace System.Management.Automation
@@ -42,7 +40,6 @@ namespace System.Management.Automation
         #region Private Members
 
         // local runspace pool at the server
-        private RunspacePool _localRunspacePool;
 
         // Script to run after a RunspacePool/Runspace is created in this session.
         private ConfigurationDataFromXML _configData;
@@ -52,11 +49,9 @@ namespace System.Management.Automation
 
         // the client runspacepool's guid that is
         // associated with this runspace pool driver
-        private Guid _clientRunspacePoolId;
 
         // data structure handler object to handle all communications
         // with the client
-        private ServerRunspacePoolDataStructureHandler _dsHandler;
 
         // powershell's associated with this runspace pool
         private Dictionary<Guid, ServerPowerShellDriver> _associatedShells
@@ -195,7 +190,7 @@ namespace System.Management.Automation
 
             _configData = configData;
             _applicationPrivateData = applicationPrivateData;
-            _localRunspacePool = RunspaceFactory.CreateRunspacePool(
+            RunspacePool = RunspaceFactory.CreateRunspacePool(
                   minRunspaces, maxRunspaces, initialSessionState, _remoteHost);
 
             // Set ThreadOptions for this RunspacePool
@@ -205,7 +200,7 @@ namespace System.Management.Automation
             PSThreadOptions serverThreadOptions = configData.ShellThreadOptions.HasValue ? configData.ShellThreadOptions.Value : PSThreadOptions.UseCurrentThread;
             if (threadOptions == PSThreadOptions.Default || threadOptions == serverThreadOptions)
             {
-                _localRunspacePool.ThreadOptions = serverThreadOptions;
+                RunspacePool.ThreadOptions = serverThreadOptions;
             }
             else
             {
@@ -214,7 +209,7 @@ namespace System.Management.Automation
                     throw new InvalidOperationException(PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.MustBeAdminToOverrideThreadOptions));
                 }
 
-                _localRunspacePool.ThreadOptions = threadOptions;
+                RunspacePool.ThreadOptions = threadOptions;
             }
 
 #if !CORECLR // No ApartmentState In CoreCLR
@@ -223,50 +218,50 @@ namespace System.Management.Automation
 
             if (apartmentState == ApartmentState.Unknown || apartmentState == serverApartmentState)
             {
-                _localRunspacePool.ApartmentState = serverApartmentState;
+                RunspacePool.ApartmentState = serverApartmentState;
             }
             else
             {
-                _localRunspacePool.ApartmentState = apartmentState;
+                RunspacePool.ApartmentState = apartmentState;
             }
 #endif
 
             // If we have a runspace pool with a single runspace then we can run nested pipelines on
             // on it in a single pipeline invoke thread.
             if (maxRunspaces == 1 &&
-                (_localRunspacePool.ThreadOptions == PSThreadOptions.Default ||
-                 _localRunspacePool.ThreadOptions == PSThreadOptions.UseCurrentThread))
+                (RunspacePool.ThreadOptions == PSThreadOptions.Default ||
+                 RunspacePool.ThreadOptions == PSThreadOptions.UseCurrentThread))
             {
                 _driverNestedInvoker = new PowerShellDriverInvoker();
             }
 
-            _clientRunspacePoolId = clientRunspacePoolId;
-            _dsHandler = new ServerRunspacePoolDataStructureHandler(this, transportManager);
+            InstanceId = clientRunspacePoolId;
+            DataStructureHandler = new ServerRunspacePoolDataStructureHandler(this, transportManager);
 
             // handle the StateChanged event of the runspace pool
-            _localRunspacePool.StateChanged +=
+            RunspacePool.StateChanged +=
                 new EventHandler<RunspacePoolStateChangedEventArgs>(HandleRunspacePoolStateChanged);
 
             // listen for events on the runspace pool
-            _localRunspacePool.ForwardEvent +=
+            RunspacePool.ForwardEvent +=
                 new EventHandler<PSEventArgs>(HandleRunspacePoolForwardEvent);
 
-            _localRunspacePool.RunspaceCreated += HandleRunspaceCreated;
+            RunspacePool.RunspaceCreated += HandleRunspaceCreated;
 
             // register for all the events from the data structure handler
-            _dsHandler.CreateAndInvokePowerShell +=
+            DataStructureHandler.CreateAndInvokePowerShell +=
                 new EventHandler<RemoteDataEventArgs<RemoteDataObject<PSObject>>>(HandleCreateAndInvokePowerShell);
-            _dsHandler.GetCommandMetadata +=
+            DataStructureHandler.GetCommandMetadata +=
                 new EventHandler<RemoteDataEventArgs<RemoteDataObject<PSObject>>>(HandleGetCommandMetadata);
-            _dsHandler.HostResponseReceived +=
+            DataStructureHandler.HostResponseReceived +=
                 new EventHandler<RemoteDataEventArgs<RemoteHostResponse>>(HandleHostResponseReceived);
-            _dsHandler.SetMaxRunspacesReceived +=
+            DataStructureHandler.SetMaxRunspacesReceived +=
                 new EventHandler<RemoteDataEventArgs<PSObject>>(HandleSetMaxRunspacesReceived);
-            _dsHandler.SetMinRunspacesReceived +=
+            DataStructureHandler.SetMinRunspacesReceived +=
                 new EventHandler<RemoteDataEventArgs<PSObject>>(HandleSetMinRunspacesReceived);
-            _dsHandler.GetAvailableRunspacesReceived +=
+            DataStructureHandler.GetAvailableRunspacesReceived +=
                 new EventHandler<RemoteDataEventArgs<PSObject>>(HandleGetAvailalbeRunspacesReceived);
-            _dsHandler.ResetRunspaceState +=
+            DataStructureHandler.ResetRunspaceState +=
                 new EventHandler<RemoteDataEventArgs<PSObject>>(HandleResetRunspaceState);
         }
 
@@ -277,13 +272,7 @@ namespace System.Management.Automation
         /// <summary>
         /// data structure handler for communicating with client
         /// </summary>
-        internal ServerRunspacePoolDataStructureHandler DataStructureHandler
-        {
-            get
-            {
-                return _dsHandler;
-            }
-        }
+        internal ServerRunspacePoolDataStructureHandler DataStructureHandler { get; }
 
         /// <summary>
         /// The server host associated with the runspace pool.
@@ -296,25 +285,13 @@ namespace System.Management.Automation
         /// <summary>
         /// the client runspacepool id
         /// </summary>
-        internal Guid InstanceId
-        {
-            get
-            {
-                return _clientRunspacePoolId;
-            }
-        }
+        internal Guid InstanceId { get; }
 
         /// <summary>
         /// The local runspace pool associated with 
         /// this driver
         /// </summary>
-        internal RunspacePool RunspacePool
-        {
-            get
-            {
-                return _localRunspacePool;
-            }
-        }
+        internal RunspacePool RunspacePool { get; private set; }
 
         /// <summary>
         /// Start the RunspacePoolDriver. This will open the 
@@ -323,7 +300,7 @@ namespace System.Management.Automation
         internal void Start()
         {
             // open the runspace pool
-            _localRunspacePool.Open();
+            RunspacePool.Open();
         }
 
         /// <summary>
@@ -397,7 +374,7 @@ namespace System.Management.Automation
                 }
             }
 
-            _dsHandler.SendApplicationPrivateDataToClient(_applicationPrivateData, _serverCapability);
+            DataStructureHandler.SendApplicationPrivateDataToClient(_applicationPrivateData, _serverCapability);
         }
 
         /// <summary>
@@ -421,13 +398,13 @@ namespace System.Management.Automation
 
                 DisposeRemoteDebugger();
 
-                _localRunspacePool.Close();
-                _localRunspacePool.StateChanged -=
+                RunspacePool.Close();
+                RunspacePool.StateChanged -=
                                 new EventHandler<RunspacePoolStateChangedEventArgs>(HandleRunspacePoolStateChanged);
-                _localRunspacePool.ForwardEvent -=
+                RunspacePool.ForwardEvent -=
                                 new EventHandler<PSEventArgs>(HandleRunspacePoolForwardEvent);
-                _localRunspacePool.Dispose();
-                _localRunspacePool = null;
+                RunspacePool.Dispose();
+                RunspacePool = null;
 
                 if (_rsToUseForSteppablePipeline != null)
                 {
@@ -501,7 +478,7 @@ namespace System.Management.Automation
         /// <param name="args"></param>
         private void HandleRunspaceCreatedForTypeTable(object sender, RunspaceCreatedEventArgs args)
         {
-            _dsHandler.TypeTable = args.Runspace.ExecutionContext.TypeTable;
+            DataStructureHandler.TypeTable = args.Runspace.ExecutionContext.TypeTable;
             _rsToUseForSteppablePipeline = args.Runspace;
 
             SetupRemoteDebugger(_rsToUseForSteppablePipeline);
@@ -710,7 +687,7 @@ namespace System.Management.Automation
 
                 // if startup script set $PSApplicationPrivateData, then use that value as ApplicationPrivateData
                 // instead of using results from PSSessionConfiguration.GetApplicationPrivateData()
-                if (_localRunspacePool.RunspacePoolStateInfo.State == RunspacePoolState.Opening)
+                if (RunspacePool.RunspacePoolStateInfo.State == RunspacePoolState.Opening)
                 {
                     object privateDataVariable = args.Runspace.SessionStateProxy.PSVariable.GetValue("global:PSApplicationPrivateData");
                     if (privateDataVariable != null)
@@ -744,14 +721,14 @@ namespace System.Management.Automation
                 case RunspacePoolState.Closing:
                 case RunspacePoolState.Closed:
                     {
-                        _dsHandler.SendStateInfoToClient(new RunspacePoolStateInfo(state, reason));
+                        DataStructureHandler.SendStateInfoToClient(new RunspacePoolStateInfo(state, reason));
                     }
                     break;
 
                 case RunspacePoolState.Opened:
                     {
                         SendApplicationPrivateDataToClient();
-                        _dsHandler.SendStateInfoToClient(new RunspacePoolStateInfo(state, reason));
+                        DataStructureHandler.SendStateInfoToClient(new RunspacePoolStateInfo(state, reason));
                     }
                     break;
             }
@@ -764,7 +741,7 @@ namespace System.Management.Automation
         {
             if (e.ForwardEvent)
             {
-                _dsHandler.SendPSEventArgsToClient(e);
+                DataStructureHandler.SendPSEventArgsToClient(e);
             }
         }
 
@@ -882,7 +859,7 @@ namespace System.Management.Automation
             }
             else if (isNested)
             {
-                if (_localRunspacePool.GetMaxRunspaces() == 1)
+                if (RunspacePool.GetMaxRunspaces() == 1)
                 {
                     if (_driverNestedInvoker != null && _driverNestedInvoker.IsActive)
                     {
@@ -947,7 +924,7 @@ namespace System.Management.Automation
                         throw new PSInvalidOperationException();
                     }
 
-                    ServerPowerShellDataStructureHandler psHandler = _dsHandler.GetPowerShellDataStructureHandler();
+                    ServerPowerShellDataStructureHandler psHandler = DataStructureHandler.GetPowerShellDataStructureHandler();
                     if (psHandler != null)
                     {
                         // Have steppable invocation request.
@@ -1140,8 +1117,8 @@ namespace System.Management.Automation
             int maxRunspaces = (int)((PSNoteProperty)data.Properties[RemoteDataNameStrings.MaxRunspaces]).Value;
             long callId = (long)((PSNoteProperty)data.Properties[RemoteDataNameStrings.CallId]).Value;
 
-            bool response = _localRunspacePool.SetMaxRunspaces(maxRunspaces);
-            _dsHandler.SendResponseToClient(callId, response);
+            bool response = RunspacePool.SetMaxRunspaces(maxRunspaces);
+            DataStructureHandler.SendResponseToClient(callId, response);
         }
 
         /// <summary>
@@ -1156,8 +1133,8 @@ namespace System.Management.Automation
             int minRunspaces = (int)((PSNoteProperty)data.Properties[RemoteDataNameStrings.MinRunspaces]).Value;
             long callId = (long)((PSNoteProperty)data.Properties[RemoteDataNameStrings.CallId]).Value;
 
-            bool response = _localRunspacePool.SetMinRunspaces(minRunspaces);
-            _dsHandler.SendResponseToClient(callId, response);
+            bool response = RunspacePool.SetMinRunspaces(minRunspaces);
+            DataStructureHandler.SendResponseToClient(callId, response);
         }
 
         /// <summary>
@@ -1171,9 +1148,9 @@ namespace System.Management.Automation
             PSObject data = eventArgs.Data;
             long callId = (long)((PSNoteProperty)data.Properties[RemoteDataNameStrings.CallId]).Value;
 
-            int availableRunspaces = _localRunspacePool.GetAvailableRunspaces();
+            int availableRunspaces = RunspacePool.GetAvailableRunspaces();
 
-            _dsHandler.SendResponseToClient(callId, availableRunspaces);
+            DataStructureHandler.SendResponseToClient(callId, availableRunspaces);
         }
 
         /// <summary>
@@ -1186,7 +1163,7 @@ namespace System.Management.Automation
             long callId = (long)((PSNoteProperty)(eventArgs.Data).Properties[RemoteDataNameStrings.CallId]).Value;
             bool response = ResetRunspaceState();
 
-            _dsHandler.SendResponseToClient(callId, response);
+            DataStructureHandler.SendResponseToClient(callId, response);
         }
 
         /// <summary>
@@ -1196,7 +1173,7 @@ namespace System.Management.Automation
         private bool ResetRunspaceState()
         {
             LocalRunspace runspaceToReset = _rsToUseForSteppablePipeline as LocalRunspace;
-            if ((runspaceToReset == null) || (_localRunspacePool.GetMaxRunspaces() > 1))
+            if ((runspaceToReset == null) || (RunspacePool.GetMaxRunspaces() > 1))
             {
                 return false;
             }
@@ -1612,7 +1589,6 @@ namespace System.Management.Automation
                 private ManualResetEvent _processDrivers;
                 private object _syncObject;
                 private bool _stopPump;
-                private bool _busy;
                 private bool _isDisposed;
 
                 public InvokePump()
@@ -1655,7 +1631,7 @@ namespace System.Management.Automation
                             {
                                 try
                                 {
-                                    _busy = true;
+                                    IsBusy = true;
                                     driver.InvokeMain();
                                 }
                                 catch (Exception e)
@@ -1664,7 +1640,7 @@ namespace System.Management.Automation
                                 }
                                 finally
                                 {
-                                    _busy = false;
+                                    IsBusy = false;
                                 }
                             }
                         }
@@ -1698,10 +1674,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                public bool IsBusy
-                {
-                    get { return _busy; }
-                }
+                public bool IsBusy { get; private set; }
 
                 private void CheckDisposed()
                 {

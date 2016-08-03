@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections.Generic;
 
 namespace System.Management.Automation
@@ -44,7 +43,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("stackName");
             }
 
-            _stackName = stackName;
+            Name = stackName;
 
             // Since the Stack<T> constructor takes an IEnumerable and
             // not a Stack<T> the stack actually gets enumerated in the
@@ -63,10 +62,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the name of the stack
         /// </summary>
-        public string Name
-        {
-            get { return _stackName; }
-        }
-        private string _stackName = null;
+        public string Name { get; } = null;
     } // PathInfoStack
 } // namespace System.Management.Automation

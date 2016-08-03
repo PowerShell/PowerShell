@@ -68,20 +68,12 @@ namespace System.Management.Automation
         //
         // wildcard pattern
         //
-        private readonly string _pattern;
-        internal string Pattern
-        {
-            get { return _pattern; }
-        }
+        internal string Pattern { get; }
 
         //
         // options that control match behavior
         // 
-        private readonly WildcardOptions _options = WildcardOptions.None;
-        internal WildcardOptions Options
-        {
-            get { return _options; }
-        }
+        internal WildcardOptions Options { get; } = WildcardOptions.None;
 
         /// <summary>
         /// wildcard pattern converted to regex pattern.
@@ -109,7 +101,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("pattern");
             }
 
-            _pattern = pattern;
+            Pattern = pattern;
         }
 
         /// <summary>
@@ -129,8 +121,8 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("pattern");
             }
 
-            _pattern = pattern;
-            _options = options;
+            Pattern = pattern;
+            Options = options;
         }
 
         private static readonly WildcardPattern s_matchAllIgnoreCasePattern = new WildcardPattern("*", WildcardOptions.None);
@@ -164,7 +156,7 @@ namespace System.Management.Automation
         {
             if (_isMatch == null)
             {
-                if (_pattern.Length == 1 && _pattern[0] == '*')
+                if (Pattern.Length == 1 && Pattern[0] == '*')
                 {
                     _isMatch = _ => true;
                 }
@@ -604,7 +596,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pattern">Pattern to parse</param>
         /// <param name="parser">Parser to call back</param>
-        static public void Parse(WildcardPattern pattern, WildcardPatternParser parser)
+        public static void Parse(WildcardPattern pattern, WildcardPatternParser parser)
         {
             parser.BeginWildcardPattern(pattern);
 
@@ -872,7 +864,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="wildcardPattern">Wildcard pattern to parse</param>
         /// <returns>Regular expression equivalent to <paramref name="wildcardPattern"/></returns>
-        static public Regex Parse(WildcardPattern wildcardPattern)
+        public static Regex Parse(WildcardPattern wildcardPattern)
         {
             WildcardPatternToRegexParser parser = new WildcardPatternToRegexParser();
             WildcardPatternParser.Parse(wildcardPattern, parser);
@@ -1158,7 +1150,7 @@ namespace System.Management.Automation
             private RegexOptions _regexOptions;
             private StringBuilder _bracketExpressionBuilder;
 
-            static public PatternElement[] Parse(
+            public static PatternElement[] Parse(
                             WildcardPattern pattern,
                             CharacterNormalizer characterNormalizer)
             {
@@ -1294,7 +1286,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Converts <paramref name="wildcardPattern"/> into a DOS wildcard
         /// </summary>
-        static internal string Parse(WildcardPattern wildcardPattern)
+        internal static string Parse(WildcardPattern wildcardPattern)
         {
             var parser = new WildcardPatternToDosWildcardParser();
             WildcardPatternParser.Parse(wildcardPattern, parser);

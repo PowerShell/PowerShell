@@ -2,14 +2,11 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System.Xml;
-using System.Data;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Collections.Specialized;
-using System.Management;
 using System.Globalization;
 using System.ComponentModel;
 using System.Management.Automation.Internal;
@@ -36,48 +33,20 @@ namespace System.Management.Automation
         /// </summary>
         internal class WMIMethodCacheEntry
         {
-            public string Name
-            {
-                get
-                {
-                    return _name;
-                }
-            }
-            private string _name;
+            public string Name { get; }
 
-            public string ClassPath
-            {
-                get
-                {
-                    return _classPath;
-                }
-            }
-            private string _classPath;
+            public string ClassPath { get; }
 
-            public MethodInformation MethodInfoStructure
-            {
-                get
-                {
-                    return _methodInfoStructure;
-                }
-            }
-            private MethodInformation _methodInfoStructure;
+            public MethodInformation MethodInfoStructure { get; }
 
-            public string MethodDefinition
-            {
-                get
-                {
-                    return _methodDefinition;
-                }
-            }
-            private string _methodDefinition;
+            public string MethodDefinition { get; }
 
             internal WMIMethodCacheEntry(string n, string cPath, MethodData mData)
             {
-                _name = n;
-                _classPath = cPath;
-                _methodInfoStructure = ManagementObjectAdapter.GetMethodInformation(mData);
-                _methodDefinition = ManagementObjectAdapter.GetMethodDefinition(mData);
+                Name = n;
+                ClassPath = cPath;
+                MethodInfoStructure = ManagementObjectAdapter.GetMethodInformation(mData);
+                MethodDefinition = ManagementObjectAdapter.GetMethodDefinition(mData);
             }
         }
 
@@ -87,18 +56,11 @@ namespace System.Management.Automation
 
         internal class WMIParameterInformation : ParameterInformation
         {
-            public string Name
-            {
-                get
-                {
-                    return _name;
-                }
-            }
-            private string _name;
+            public string Name { get; }
 
             public WMIParameterInformation(string name, Type ty) : base(ty, true, null, false)
             {
-                _name = name;
+                Name = name;
             }
         }
 
@@ -496,11 +458,7 @@ namespace System.Management.Automation
                     // is fixed)
                     typeTable = new CacheTable();
                     // Construct a ManagementClass object for this object to get the member metadata
-                    ManagementClass mgmtClass = wmiObject as ManagementClass;
-                    if (null == mgmtClass)
-                    {
-                        mgmtClass = CreateClassFrmObject(wmiObject);
-                    }
+                    ManagementClass mgmtClass = wmiObject as ManagementClass ?? CreateClassFrmObject(wmiObject);
                     PopulateMethodTable(mgmtClass, typeTable, staticBinding);
                     s_instanceMethodCacheTable[key] = typeTable;
                 }

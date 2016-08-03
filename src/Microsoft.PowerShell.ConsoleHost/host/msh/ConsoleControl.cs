@@ -3295,7 +3295,7 @@ namespace Microsoft.PowerShell
         /// <param name="category"></param>
         /// <param name="resourceStr"></param>
         /// <returns></returns>
-        static private HostException CreateHostException(
+        private static HostException CreateHostException(
             int win32Error, string errorId, ErrorCategory category, string resourceStr)
         {
             Win32Exception innerException = new Win32Exception(win32Error);

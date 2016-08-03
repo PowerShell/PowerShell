@@ -29,29 +29,20 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// 
         [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "object")]
-        public ManagementObject InputObject
-        {
-            get { return _inputObject; }
-            set { _inputObject = value; }
-        }
+        public ManagementObject InputObject { get; set; } = null;
+
         /// <summary>
         /// The WMI Path to use
         /// </summary>
         [Parameter(ParameterSetName = "path", Mandatory = true)]
-        public string Path
-        {
-            get { return _path; }
-            set { _path = value; }
-        }
+        public string Path { get; set; } = null;
+
         /// <summary>
         /// The WMI class to use
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "class")]
-        public string Class
-        {
-            get { return _className; }
-            set { _className = value; }
-        }
+        public string Class { get; set; } = null;
+
         /// <summary>
         /// The property name /value pair
         /// </summary>
@@ -60,11 +51,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "object")]
         [Alias("Args", "Property")]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public Hashtable Arguments
-        {
-            get { return _propertyBag; }
-            set { _propertyBag = value; }
-        }
+        public Hashtable Arguments { get; set; } = null;
 
         /// <summary>
         /// The Flag to use
@@ -79,10 +66,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameters
         #region parameter data
         internal bool flagSpecified = false;
-        private string _path = null;
-        private string _className = null;
-        private ManagementObject _inputObject = null;
-        private Hashtable _propertyBag = null;
         private PutType _putType = PutType.None;
 
         #endregion parameter data
@@ -98,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
                 RunAsJob("Set-WMIInstance");
                 return;
             }
-            if (_inputObject != null)
+            if (InputObject != null)
             {
                 object result = null;
                 ManagementObject mObj = null;

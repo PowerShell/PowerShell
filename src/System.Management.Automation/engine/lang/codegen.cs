@@ -2,18 +2,7 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Management.Automation;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Internal.Host;
-using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Language

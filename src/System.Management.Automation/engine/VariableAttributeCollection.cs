@@ -2,12 +2,8 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using Dbg = System.Management.Automation;
-using System.Collections;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Threading;
 
 namespace System.Management.Automation
 {

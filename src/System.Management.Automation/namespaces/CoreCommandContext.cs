@@ -2,15 +2,7 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Globalization;
-using System.Management.Automation;
-using System.Management.Automation.Host;
-using System.Text;
 using Dbg = System.Management.Automation;
 
 namespace System.Management.Automation
@@ -68,9 +60,9 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("executionContext");
             }
 
-            _executionContext = executionContext;
-            _origin = CommandOrigin.Internal;
-            _drive = executionContext.EngineSessionState.CurrentDrive;
+            ExecutionContext = executionContext;
+            Origin = CommandOrigin.Internal;
+            Drive = executionContext.EngineSessionState.CurrentDrive;
             if ((executionContext.CurrentCommandProcessor != null) &&
                 (executionContext.CurrentCommandProcessor.Command is Cmdlet))
             {
@@ -102,8 +94,8 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("executionContext");
             }
 
-            _executionContext = executionContext;
-            _origin = origin;
+            ExecutionContext = executionContext;
+            Origin = origin;
         } // CmdletProviderContext constructor
 
         /// <summary>
@@ -143,14 +135,14 @@ namespace System.Management.Automation
             }
 
             _command = command;
-            _origin = command.CommandOrigin;
+            Origin = command.CommandOrigin;
 
             if (credentials != null)
             {
                 _credentials = credentials;
             }
 
-            _drive = drive;
+            Drive = drive;
 
             if (command.Host == null)
             {
@@ -161,11 +153,11 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentException("command.Context");
             }
-            _executionContext = command.Context;
+            ExecutionContext = command.Context;
 
             // Stream will default to true because command methods will be used.
 
-            _streamObjects = true;
+            PassThru = true;
             _streamErrors = true;
         } // CmdletProviderContext constructor
 
@@ -201,7 +193,7 @@ namespace System.Management.Automation
             }
 
             _command = command;
-            _origin = command.CommandOrigin;
+            Origin = command.CommandOrigin;
 
             if (credentials != null)
             {
@@ -217,11 +209,11 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentException("command.Context");
             }
-            _executionContext = command.Context;
+            ExecutionContext = command.Context;
 
             // Stream will default to true because command methods will be used.
 
-            _streamObjects = true;
+            PassThru = true;
             _streamErrors = true;
         } // CmdletProviderContext constructor
 
@@ -252,17 +244,17 @@ namespace System.Management.Automation
             }
 
             _command = command;
-            _origin = command.CommandOrigin;
+            Origin = command.CommandOrigin;
 
             if (command.Context == null)
             {
                 throw PSTraceSource.NewArgumentException("command.Context");
             }
-            _executionContext = command.Context;
+            ExecutionContext = command.Context;
 
             // Stream will default to true because command methods will be used.
 
-            _streamObjects = true;
+            PassThru = true;
             _streamErrors = true;
         } // CmdletProviderContext constructor
 
@@ -288,7 +280,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("contextToCopyFrom");
             }
-            _executionContext = contextToCopyFrom.ExecutionContext;
+            ExecutionContext = contextToCopyFrom.ExecutionContext;
 
             _command = contextToCopyFrom._command;
 
@@ -297,17 +289,17 @@ namespace System.Management.Automation
                 _credentials = contextToCopyFrom.Credential;
             }
 
-            _drive = contextToCopyFrom.Drive;
+            Drive = contextToCopyFrom.Drive;
             _force = contextToCopyFrom.Force;
             this.CopyFilters(contextToCopyFrom);
-            _suppressWildcardExpansion = contextToCopyFrom.SuppressWildcardExpansion;
-            _dynamicParameters = contextToCopyFrom.DynamicParameters;
-            _origin = contextToCopyFrom._origin;
+            SuppressWildcardExpansion = contextToCopyFrom.SuppressWildcardExpansion;
+            DynamicParameters = contextToCopyFrom.DynamicParameters;
+            Origin = contextToCopyFrom.Origin;
 
             // Copy the stopping state incase the source context
             // has already been signaled for stopping
 
-            _stopping = contextToCopyFrom.Stopping;
+            Stopping = contextToCopyFrom.Stopping;
 
             // add this context to the stop referral on the copied
             // context
@@ -327,19 +319,9 @@ namespace System.Management.Automation
         private CmdletProviderContext _copiedContext;
 
         /// <summary>
-        /// The execution context of the engine.
-        /// </summary>
-        private ExecutionContext _executionContext;
-
-        /// <summary>
         /// The credentials under which the operation should run.
         /// </summary>
         private PSCredential _credentials = PSCredential.Empty;
-
-        /// <summary>
-        /// The drive under which this context is operating.
-        /// </summary>
-        private PSDriveInfo _drive;
 
         /// <summary>
         /// The force parameter gives guidance to providers on how vigorously they
@@ -347,26 +329,6 @@ namespace System.Management.Automation
         /// </summary>
         ///
         private bool _force;
-
-        /// <summary>
-        /// The provider specific filter used to determine which items to act upon.
-        /// </summary>
-        private string _filter;
-
-        /// <summary>
-        /// A glob string used to include items upon which to act.
-        /// </summary>
-        private Collection<string> _include;
-
-        /// <summary>
-        /// A glob string used to exclude items upon which to act.
-        /// </summary>
-        private Collection<string> _exclude;
-
-        /// <summary>
-        /// A flag that determines if the provider should glob the paths or not
-        /// </summary>
-        private bool _suppressWildcardExpansion;
 
 
         /// <summary>
@@ -379,26 +341,8 @@ namespace System.Management.Automation
         /// <summary>
         /// This makes the origin of the provider request visible to the internals
         /// </summary>
-        internal CommandOrigin Origin
-        {
-            get
-            {
-                return _origin;
-            }
-        }
-        private CommandOrigin _origin = CommandOrigin.Internal;
+        internal CommandOrigin Origin { get; } = CommandOrigin.Internal;
 
-
-        /// <summary>
-        /// This defines the default behavior for the WriteObject method. 
-        /// If it is true, a call to either of these
-        /// methods will result in an immediate call to the command 
-        /// WriteObject(s) method, or to the write(s)ObjectDelegate if
-        /// one has been supplied.
-        /// If it is false, the objects will be accumulated until the
-        /// GetObjects method is called.
-        /// </summary>
-        private bool _streamObjects;
 
         /// <summary>
         /// This defines the default behavior for the WriteError method. 
@@ -412,13 +356,13 @@ namespace System.Management.Automation
 
         /// <summary>
         /// A collection in which objects that are written using the WriteObject(s)
-        /// methods are accumulated if <see cref="_streamObjects" /> is false.
+        /// methods are accumulated if <see cref="PassThru" /> is false.
         /// </summary>
         private Collection<PSObject> _accumulatedObjects = new Collection<PSObject>();
 
         /// <summary>
         /// A collection in which objects that are written using the WriteError
-        /// method are accumulated if <see cref="_streamObjects" /> is false.
+        /// method are accumulated if <see cref="PassThru" /> is false.
         /// </summary>
         private Collection<ErrorRecord> _accumulatedErrorObjects = new Collection<ErrorRecord>();
 
@@ -426,11 +370,6 @@ namespace System.Management.Automation
         /// The instance of the provider that is currently executing in this context.
         /// </summary>
         private System.Management.Automation.Provider.CmdletProvider _providerInstance;
-
-        /// <summary>
-        /// The dynamic parameters for the provider that is currently executing in this context.
-        /// </summary>
-        private object _dynamicParameters;
 
         #endregion private properties
 
@@ -440,13 +379,7 @@ namespace System.Management.Automation
         /// Gets the execution context of the engine
         /// </summary>
         /// 
-        internal ExecutionContext ExecutionContext
-        {
-            get
-            {
-                return _executionContext;
-            }
-        } // ExecutionContext
+        internal ExecutionContext ExecutionContext { get; }
 
         /// <summary>
         /// Gets or sets the provider instance for the current
@@ -481,9 +414,9 @@ namespace System.Management.Automation
                 context != null,
                 "The caller should have verified the context");
 
-            _include = context.Include;
-            _exclude = context.Exclude;
-            _filter = context.Filter;
+            Include = context.Include;
+            Exclude = context.Exclude;
+            Filter = context.Filter;
         } // CopyFilters
 
         internal void RemoveStopReferral()
@@ -501,18 +434,7 @@ namespace System.Management.Automation
         /// Gets or sets the dynamic parameters for the context
         /// </summary>
         /// 
-        internal object DynamicParameters
-        {
-            get
-            {
-                return _dynamicParameters;
-            } // get
-
-            set
-            {
-                _dynamicParameters = value;
-            } // set
-        } // DynamicParameters
+        internal object DynamicParameters { get; set; }
 
         /// <summary>
         /// Returns MyInvocation from the underlying cmdlet
@@ -537,18 +459,7 @@ namespace System.Management.Automation
         /// instance if there is one.  The default value is true.
         /// </summary>
         /// 
-        internal bool PassThru
-        {
-            get
-            {
-                return _streamObjects;
-            } // get
-
-            set
-            {
-                _streamObjects = value;
-            } // set
-        } // PassThru
+        internal bool PassThru { get; set; }
 
         /// <summary>
         /// The drive associated with this context.
@@ -558,18 +469,7 @@ namespace System.Management.Automation
         /// If <paramref name="value"/> is null on set.
         /// </exception>
         /// 
-        internal PSDriveInfo Drive
-        {
-            get
-            {
-                return _drive;
-            } // get
-
-            set
-            {
-                _drive = value;
-            } // set
-        } // Drive
+        internal PSDriveInfo Drive { get; set; }
 
         /// <summary>
         /// Gets the user name under which the operation should run.
@@ -582,9 +482,9 @@ namespace System.Management.Automation
 
                 // If the username wasn't specified, use the drive credentials
 
-                if (_credentials == null && _drive != null)
+                if (_credentials == null && Drive != null)
                 {
-                    result = _drive.Credential;
+                    result = Drive.Credential;
                 }
 
                 return result;
@@ -652,60 +552,30 @@ namespace System.Management.Automation
         /// 
         internal SwitchParameter Force
         {
-            get
-            {
-                return _force;
-            } // get
-
-            set
-            {
-                _force = value;
-            } // set
-        } // Force
+            get { return _force; }
+            set { _force = value; }
+        }
 
         /// <summary>
         /// The provider specific filter that should be used when determining
         /// which items an action should take place on.
         /// </summary>
         /// 
-        internal string Filter
-        {
-            get
-            {
-                return _filter;
-            } // get
-
-            set
-            {
-                _filter = value;
-            } // set
-        } // Filter
+        internal string Filter { get; set; }
 
         /// <summary>
         /// A glob string that signifies which items should be included when determining
         /// which items the action should occur on.
         /// </summary>
         /// 
-        internal Collection<string> Include
-        {
-            get
-            {
-                return _include;
-            } // get
-        } // Include
+        internal Collection<string> Include { get; private set; }
 
         /// <summary>
         /// A glob string that signifies which items should be excluded when determining
         /// which items the action should occur on.
         /// </summary>
         /// 
-        internal Collection<string> Exclude
-        {
-            get
-            {
-                return _exclude;
-            } // get
-        } // Exclude
+        internal Collection<string> Exclude { get; private set; }
 
         /// <summary>
         /// Gets or sets the property that tells providers (that
@@ -714,18 +584,7 @@ namespace System.Management.Automation
         /// -LiteralPath parameter to one of the core commands.
         /// </summary>
         /// 
-        public bool SuppressWildcardExpansion
-        {
-            get
-            {
-                return (bool)_suppressWildcardExpansion;
-            } // get
-
-            internal set
-            {
-                _suppressWildcardExpansion = value;
-            } // set
-        } // SuppressWildcardExpansion
+        public bool SuppressWildcardExpansion { get; internal set; }
 
         #region User feedback mechanisms
 
@@ -1055,9 +914,9 @@ namespace System.Management.Automation
         ///
         internal void SetFilters(Collection<string> include, Collection<string> exclude, string filter)
         {
-            _include = include;
-            _exclude = exclude;
-            _filter = filter;
+            Include = include;
+            Exclude = exclude;
+            Filter = filter;
         } // SetFilters
 
         /// <summary>
@@ -1249,7 +1108,7 @@ namespace System.Management.Automation
                 throw stopPipeline;
             }
 
-            if (_streamObjects)
+            if (PassThru)
             {
                 if (_command != null)
                 {
@@ -1376,7 +1235,7 @@ namespace System.Management.Automation
         /// 
         internal void StopProcessing()
         {
-            _stopping = true;
+            Stopping = true;
 
             if (_providerInstance != null)
             {
@@ -1395,26 +1254,14 @@ namespace System.Management.Automation
             }
         } // StopProcessing
 
-        internal bool Stopping
-        {
-            get
-            {
-                return _stopping;
-            }
-        }
-        private bool _stopping;
+        internal bool Stopping { get; private set; }
 
         /// <summary>
         /// The list of contexts to which the StopProcessing calls
         /// should be referred.
         /// </summary>
         /// 
-        internal Collection<CmdletProviderContext> StopReferrals
-        {
-            get { return _stopReferrals; }
-        }
-        private Collection<CmdletProviderContext> _stopReferrals =
-            new Collection<CmdletProviderContext>();
+        internal Collection<CmdletProviderContext> StopReferrals { get; } = new Collection<CmdletProviderContext>();
 
         internal bool HasIncludeOrExclude
         {

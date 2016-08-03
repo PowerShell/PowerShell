@@ -7,17 +7,11 @@
 //  host powershell in a WSMan service.
 // ----------------------------------------------------------------------
 
-using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.IO;
 using Microsoft.Win32.SafeHandles;
-
-using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Client;
 using System.Management.Automation.Remoting.Server;
 using System.Management.Automation.Tracing;
@@ -313,7 +307,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
-        internal protected void SafeInvokeSessionClosed(Object sender, EventArgs eventArgs)
+        protected internal void SafeInvokeSessionClosed(Object sender, EventArgs eventArgs)
         {
             SessionClosed.SafeInvoke(sender, eventArgs);
         }

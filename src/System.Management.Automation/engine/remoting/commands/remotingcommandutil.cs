@@ -3,19 +3,11 @@
 //
 
 using System;
-using System.Threading;
-using System.Collections.ObjectModel;
 using System.Management.Automation;
-using System.Management.Automation.Remoting;
-
 using System.Management.Automation.Runspaces;
-using System.Management.Automation.Host;
-using System.IO;
-using System.Diagnostics;
 using Microsoft.Win32;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Remoting.Client;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -75,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
             return false;
         }
 
-        static internal bool ExceedMaximumAllowableRunspaces(PSSession[] runspaceInfos)
+        internal static bool ExceedMaximumAllowableRunspaces(PSSession[] runspaceInfos)
         {
             if (runspaceInfos == null)
             {

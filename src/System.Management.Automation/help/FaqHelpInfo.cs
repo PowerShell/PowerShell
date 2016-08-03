@@ -46,7 +46,7 @@ namespace System.Management.Automation
         /// Name of faq. 
         /// </summary>
         /// <value>Name of faq</value>
-        override internal string Name
+        internal override string Name
         {
             get
             {
@@ -71,7 +71,7 @@ namespace System.Management.Automation
         /// Synopsis for this faq help.
         /// </summary>
         /// <value>Synopsis for this faq help</value>
-        override internal string Synopsis
+        internal override string Synopsis
         {
             get
             {
@@ -96,7 +96,7 @@ namespace System.Management.Automation
         /// Help category for this faq help, which is constantly HelpCategory.FAQ.
         /// </summary>
         /// <value>Help category for this faq help</value>
-        override internal HelpCategory HelpCategory
+        internal override HelpCategory HelpCategory
         {
             get
             {
@@ -110,7 +110,7 @@ namespace System.Management.Automation
         /// Full help object for this help item.
         /// </summary>
         /// <value>Full help object for this help item.</value>
-        override internal PSObject FullHelp
+        internal override PSObject FullHelp
         {
             get
             {

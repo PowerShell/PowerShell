@@ -2,19 +2,10 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.IO;
-using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Management.Automation;
 using System.Management.Automation.Host;
-using System.Management.Automation.Remoting;
-using System.Management.Automation.Internal;
 using System.Security;
 using Dbg = System.Management.Automation.Diagnostics;
 using InternalHostUserInterface = System.Management.Automation.Internal.Host.InternalHostUserInterface;
@@ -27,16 +18,6 @@ namespace System.Management.Automation.Remoting
     internal class ServerRemoteHostUserInterface : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
     {
         /// <summary>
-        /// Raw ui.
-        /// </summary>
-        private PSHostRawUserInterface _rawUI;
-
-        /// <summary>
-        /// Remote host.
-        /// </summary>
-        private ServerRemoteHost _remoteHost;
-
-        /// <summary>
         /// Server method executor.
         /// </summary>
         private ServerMethodExecutor _serverMethodExecutor;
@@ -47,36 +28,24 @@ namespace System.Management.Automation.Remoting
         internal ServerRemoteHostUserInterface(ServerRemoteHost remoteHost)
         {
             Dbg.Assert(remoteHost != null, "Expected remoteHost != null");
-            _remoteHost = remoteHost;
+            ServerRemoteHost = remoteHost;
             Dbg.Assert(!remoteHost.HostInfo.IsHostUINull, "Expected !remoteHost.HostInfo.IsHostUINull");
 
             _serverMethodExecutor = remoteHost.ServerMethodExecutor;
 
             // Use HostInfo to duplicate host-RawUI as null or non-null based on the client's host-RawUI.
-            _rawUI = remoteHost.HostInfo.IsHostRawUINull ? null : new ServerRemoteHostRawUserInterface(this);
+            RawUI = remoteHost.HostInfo.IsHostRawUINull ? null : new ServerRemoteHostRawUserInterface(this);
         }
 
         /// <summary>
         /// Raw ui.
         /// </summary>
-        public override PSHostRawUserInterface RawUI
-        {
-            get
-            {
-                return _rawUI;
-            }
-        }
+        public override PSHostRawUserInterface RawUI { get; }
 
         /// <summary>
         /// Server remote host.
         /// </summary>
-        internal ServerRemoteHost ServerRemoteHost
-        {
-            get
-            {
-                return _remoteHost;
-            }
-        }
+        internal ServerRemoteHost ServerRemoteHost { get; }
 
         /// <summary>
         /// Read line.

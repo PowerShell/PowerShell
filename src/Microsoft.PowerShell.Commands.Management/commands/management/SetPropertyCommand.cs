@@ -31,16 +31,9 @@ namespace Microsoft.PowerShell.Commands
                    Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string[] Path
         {
-            get
-            {
-                return paths;
-            } // get
-
-            set
-            {
-                paths = value;
-            } // set
-        } // Path
+            get { return paths; }
+            set { paths = value; }
+        }
 
         /// <summary>
         /// Gets or sets the literal path parameter to the command
@@ -52,17 +45,13 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSPath")]
         public string[] LiteralPath
         {
-            get
-            {
-                return paths;
-            } // get
-
+            get { return paths; }
             set
             {
                 base.SuppressWildcardExpansion = true;
                 paths = value;
-            } // set
-        } // LiteralPath
+            }
+        }
 
         #region Property Value set
 
@@ -79,19 +68,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, ParameterSetName = propertyValueLiteralPathSet,
                    Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [Alias("PSProperty")]
-        public string Name
-        {
-            get
-            {
-                return _property;
-            } // get
-
-            set
-            {
-                _property = value;
-            }
-        } // Property
-
+        public string Name { get; set; } = String.Empty;
 
         /// <summary>
         /// The value of the property to set.
@@ -106,18 +83,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 2, ParameterSetName = propertyValueLiteralPathSet,
                    Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [AllowNull]
-        public object Value
-        {
-            get
-            {
-                return _content;
-            } // get
-
-            set
-            {
-                _content = value;
-            }
-        } // Value
+        public object Value { get; set; }
 
         #endregion Property Value set
 
@@ -133,18 +99,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = propertyPSObjectLiteralPathSet, Mandatory = true,
                    ValueFromPipelineByPropertyName = true,
                    ValueFromPipeline = true)]
-        public PSObject InputObject
-        {
-            get
-            {
-                return _propertyTable;
-            } //get
+        public PSObject InputObject { get; set; }
 
-            set
-            {
-                _propertyTable = value;
-            } // set
-        } // PropertyTable
         #endregion Shell Object set
 
         /// <summary>
@@ -192,21 +148,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameters
 
         #region parameter data
-
-        /// <summary>
-        /// The value of the property to be set.
-        /// </summary>
-        private object _content;
-
-        /// <summary>
-        /// The name of the property to be set.
-        /// </summary>
-        private string _property = String.Empty;
-
-        /// <summary>
-        /// The properties to be set contained within a PSObject
-        /// </summary>
-        private PSObject _propertyTable;
 
         #endregion parameter data
 

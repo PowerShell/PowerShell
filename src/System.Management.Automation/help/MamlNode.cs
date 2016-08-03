@@ -383,7 +383,7 @@ namespace System.Management.Automation
         /// <param name="properties">property hastable</param>
         /// <param name="name">property name</param>
         /// <param name="mshObject">property value</param>
-        static private void AddProperty(Hashtable properties, string name, PSObject mshObject)
+        private static void AddProperty(Hashtable properties, string name, PSObject mshObject)
         {
             ArrayList propertyValues = (ArrayList)properties[name];
 
@@ -424,7 +424,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="properties"></param>
         /// <returns></returns>
-        static private Hashtable SimplifyProperties(Hashtable properties)
+        private static Hashtable SimplifyProperties(Hashtable properties)
         {
             if (properties == null)
                 return null;
@@ -465,7 +465,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
-        static private bool IsAtomic(XmlNode xmlNode)
+        private static bool IsAtomic(XmlNode xmlNode)
         {
             if (xmlNode == null)
                 return false;
@@ -495,7 +495,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
-        static private bool IncludeMamlFormatting(XmlNode xmlNode)
+        private static bool IncludeMamlFormatting(XmlNode xmlNode)
         {
             if (xmlNode == null)
                 return false;
@@ -522,7 +522,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
-        static private bool IsMamlFormattingNode(XmlNode xmlNode)
+        private static bool IsMamlFormattingNode(XmlNode xmlNode)
         {
             if (xmlNode.LocalName.Equals("para", StringComparison.OrdinalIgnoreCase))
                 return true;
@@ -541,7 +541,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="mshObject"></param>
         /// <returns></returns>
-        static private bool IsMamlFormattingPSObject(PSObject mshObject)
+        private static bool IsMamlFormattingPSObject(PSObject mshObject)
         {
             Collection<string> typeNames = mshObject.TypeNames;
 
@@ -754,7 +754,7 @@ namespace System.Management.Automation
         /// <param name="xmlNode"></param>
         /// <param name="newLine"></param>
         /// <returns></returns>
-        static private PSObject GetParaPSObject(XmlNode xmlNode, bool newLine)
+        private static PSObject GetParaPSObject(XmlNode xmlNode, bool newLine)
         {
             if (xmlNode == null)
                 return null;
@@ -850,7 +850,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
-        static private bool IsOrderedList(XmlNode xmlNode)
+        private static bool IsOrderedList(XmlNode xmlNode)
         {
             if (xmlNode == null)
                 return false;
@@ -1109,7 +1109,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        static private string GetPreformattedText(string text)
+        private static string GetPreformattedText(string text)
         {
             //we are assuming tabsize=4 here.
             //It is discouraged to use tab in preformatted text.
@@ -1150,7 +1150,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="lines">lines to trim</param>
         /// <returns>an string array with empty lines trimed on either end</returns>
-        static private string[] TrimLines(string[] lines)
+        private static string[] TrimLines(string[] lines)
         {
             if (lines == null || lines.Length == 0)
                 return null;
@@ -1189,7 +1189,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
-        static private int GetMinIndentation(string[] lines)
+        private static int GetMinIndentation(string[] lines)
         {
             int minIndentation = -1;
 
@@ -1213,7 +1213,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="line"></param>
         /// <returns></returns>
-        static private int GetIndentation(string line)
+        private static int GetIndentation(string line)
         {
             if (IsEmptyLine(line))
                 return 0;
@@ -1230,7 +1230,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="line"></param>
         /// <returns></returns>
-        static private bool IsEmptyLine(string line)
+        private static bool IsEmptyLine(string line)
         {
             if (String.IsNullOrEmpty(line))
                 return true;
@@ -1246,20 +1246,12 @@ namespace System.Management.Automation
 
         #region Error handling
 
-        private Collection<ErrorRecord> _errors = new Collection<ErrorRecord>();
-
         /// <summary>
         /// This is for tracking the set of errors happened during the parsing of 
         /// maml text.
         /// </summary>
         /// <value></value>
-        internal Collection<ErrorRecord> Errors
-        {
-            get
-            {
-                return _errors;
-            }
-        }
+        internal Collection<ErrorRecord> Errors { get; } = new Collection<ErrorRecord>();
 
         #endregion
     }

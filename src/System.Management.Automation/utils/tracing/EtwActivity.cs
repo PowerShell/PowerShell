@@ -18,27 +18,19 @@ namespace System.Management.Automation.Tracing
     [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     public sealed class EtwEvent : Attribute
     {
-        private long eventId;
-
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="eventId"></param>
         public EtwEvent(long eventId)
         {
-            this.eventId = eventId;
+            this.EventId = eventId;
         }
 
         /// <summary>
         /// EventId
         /// </summary>
-        public long EventId
-        {
-            get
-            {
-                return eventId;
-            }
-        }
+        public long EventId { get; }
     }
 
     /// <summary>

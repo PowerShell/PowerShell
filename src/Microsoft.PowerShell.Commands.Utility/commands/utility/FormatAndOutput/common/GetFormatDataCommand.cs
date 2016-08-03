@@ -8,7 +8,6 @@ using System.Management.Automation;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Runspaces;
-using System.Management.Automation.Tracing;
 using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands

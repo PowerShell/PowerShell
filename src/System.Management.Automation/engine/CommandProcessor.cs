@@ -2,18 +2,18 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Language;
 using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation.Diagnostics;
+
+#if CORECLR
+using System.Reflection;
+#endif
 
 namespace System.Management.Automation
 {
@@ -23,7 +23,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class CommandProcessor : CommandProcessorBase
     {
-        #region ctor
+#region ctor
 
         static CommandProcessor()
         {
@@ -92,9 +92,9 @@ namespace System.Management.Automation
 
         // CommandProcessor
 
-        #endregion ctor
+#endregion ctor
 
-        #region internal members
+#region internal members
         /// <summary>
         /// Returns a CmdletParameterBinderController for the specified command
         /// </summary>
@@ -380,9 +380,9 @@ namespace System.Management.Automation
             }
         }
 
-        #endregion public_methods
+#endregion public_methods
 
-        #region helper_methods
+#region helper_methods
 
         /// <summary>
         /// Tells whether it is the first call to Read 
@@ -837,7 +837,7 @@ namespace System.Management.Automation
             return base.IsHelpRequested(out helpTarget, out helpCategory);
         }
 
-        #endregion helper_methods
+#endregion helper_methods
     }
 }
 

@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text;
 using System.Management.Automation.Host;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Management.Automation.Internal;
 
@@ -18,53 +17,45 @@ namespace System.Management.Automation.Runspaces
     {
         public string psSnapinName;
         // only one of fullPath or formatTable or typeData or typeDefinition should be specified..
-        private string _fullPath;
-        private FormatTable _formatTable;
         // typeData and isRemove should be used together
-        private TypeData _typeData;
-        private bool _isRemove;
-        private ExtendedTypeDefinition _typeDefinition;
-        private ConcurrentBag<string> _errors;
 
         internal PSSnapInTypeAndFormatErrors(string psSnapinName, string fullPath)
         {
             this.psSnapinName = psSnapinName;
-            _fullPath = fullPath;
-            _errors = new ConcurrentBag<string>();
+            FullPath = fullPath;
+            Errors = new ConcurrentBag<string>();
         }
 
         internal PSSnapInTypeAndFormatErrors(string psSnapinName, FormatTable formatTable)
         {
             this.psSnapinName = psSnapinName;
-            _formatTable = formatTable;
-            _errors = new ConcurrentBag<string>();
+            FormatTable = formatTable;
+            Errors = new ConcurrentBag<string>();
         }
 
         internal PSSnapInTypeAndFormatErrors(string psSnapinName, TypeData typeData, bool isRemove)
         {
             this.psSnapinName = psSnapinName;
-            _typeData = typeData;
-            _isRemove = isRemove;
-            _errors = new ConcurrentBag<string>();
+            TypeData = typeData;
+            IsRemove = isRemove;
+            Errors = new ConcurrentBag<string>();
         }
 
         internal PSSnapInTypeAndFormatErrors(string psSnapinName, ExtendedTypeDefinition typeDefinition)
         {
             this.psSnapinName = psSnapinName;
-            _typeDefinition = typeDefinition;
-            _errors = new ConcurrentBag<string>();
+            FormatData = typeDefinition;
+            Errors = new ConcurrentBag<string>();
         }
 
-        internal ExtendedTypeDefinition FormatData { get { return _typeDefinition; } }
-        internal TypeData TypeData { get { return _typeData; } }
-        internal bool IsRemove { get { return _isRemove; } }
-        internal string FullPath { get { return _fullPath; } }
-        internal FormatTable FormatTable { get { return _formatTable; } }
-        internal ConcurrentBag<string> Errors
-        {
-            get { return _errors; }
-            set { _errors = value; }
-        }
+        internal ExtendedTypeDefinition FormatData { get; }
+        internal TypeData TypeData { get; }
+        internal bool IsRemove { get; }
+        internal string FullPath { get; }
+        internal FormatTable FormatTable { get; }
+
+        internal ConcurrentBag<string> Errors { get; set; }
+
         internal string PSSnapinName { get { return psSnapinName; } }
         internal bool FailToLoadFile;
     }

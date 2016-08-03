@@ -2,15 +2,7 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Configuration.Install;
-using System.Reflection;
-using Microsoft.Win32;
-using System.IO;
 using System.Management.Automation;
 
 namespace Microsoft.PowerShell

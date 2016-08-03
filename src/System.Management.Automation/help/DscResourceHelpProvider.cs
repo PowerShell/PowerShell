@@ -6,7 +6,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Xml;
 using Dbg = System.Management.Automation.Diagnostics;
@@ -38,7 +37,7 @@ namespace System.Management.Automation
         private readonly Hashtable _helpFiles = new Hashtable();
 
         [TraceSource("DscResourceHelpProvider", "DscResourceHelpProvider")]
-        static private readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("DscResourceHelpProvider", "DscResourceHelpProvider");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("DscResourceHelpProvider", "DscResourceHelpProvider");
 
         #region common properties
 
@@ -66,7 +65,7 @@ namespace System.Management.Automation
         /// <param name="helpRequest">Help request.</param>
         /// <param name="searchOnlyContent">Not used.</param>
         /// <returns></returns>
-        override internal IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
+        internal override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
             Debug.Assert(helpRequest != null, "helpRequest cannot be null.");
 
@@ -99,7 +98,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpRequest">Help Request for the search.</param>
         /// <returns>Enumerable of HelpInfo objects.</returns>
-        override internal IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
+        internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             Debug.Assert(helpRequest != null, "helpRequest cannot be null.");
 
@@ -209,12 +208,10 @@ namespace System.Management.Automation
             Dbg.Assert(resourceInfo != null, "Caller should verify that resourceInfo != null");
             Dbg.Assert(helpFileToFind != null, "Caller should verify that helpFileToFind != null");
 
-            HelpInfo result = null;
-
             helpFile = MUIFileSearcher.LocateFile(helpFileToFind, searchPaths);
 
             if (!File.Exists(helpFile))
-                return result;
+                return null;
 
             if (!String.IsNullOrEmpty(helpFile))
             {
@@ -224,10 +221,10 @@ namespace System.Management.Automation
                     LoadHelpFile(helpFile, helpFile, resourceInfo.Name, reportErrors);
                 }
 
-                result = GetFromResourceHelpCache(helpFile, Automation.HelpCategory.DscResource);
+                return GetFromResourceHelpCache(helpFile, Automation.HelpCategory.DscResource);
             }
 
-            return result;
+            return null;
         }
 
         /// <summary>

@@ -69,12 +69,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = SourceParameterSet)]
         [Parameter(ParameterSetName = RegularParameterSet)]
-        public SwitchParameter AsJob
-        {
-            get { return asjob; }
-            set { asjob = value; }
-        }
-        private SwitchParameter asjob = false;
+        public SwitchParameter AsJob { get; set; } = false;
 
         /// <summary>
         /// The following is the definition of the input parameter "DcomAuthentication".
@@ -93,15 +88,7 @@ namespace Microsoft.PowerShell.Commands
 
         [Parameter]
         [Alias("Authentication")]
-        public AuthenticationLevel DcomAuthentication
-        {
-            get { return _authentication; }
-            set
-            {
-                _authentication = value;
-            }
-        }
-        private AuthenticationLevel _authentication = AuthenticationLevel.Packet;
+        public AuthenticationLevel DcomAuthentication { get; set; } = AuthenticationLevel.Packet;
 
         /// <summary>
         /// The authentication options for CIM_WSMan connection
@@ -115,33 +102,20 @@ namespace Microsoft.PowerShell.Commands
             "Digest",
             "Kerberos")] // can be used with and without credential (not sure about implications)
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        public string WsmanAuthentication
-        {
-            get { return _wsmanAuthentication; }
-            set { _wsmanAuthentication = value; }
-        }
-        private string _wsmanAuthentication = "Default";
+        public string WsmanAuthentication { get; set; } = "Default";
 
         /// <summary>
         /// Specify the protocol to use
         /// </summary>
         [Parameter]
         [ValidateSet(ComputerWMIHelper.DcomProtocol, ComputerWMIHelper.WsmanProtocol)]
-        public string Protocol
-        {
-            get { return _protocol; }
-            set
-            {
-                _protocol = value;
-            }
-        }
-
-        //CoreClr does not support DCOM protocol
-        // This change makes sure that the the command works seamlessly if user did not explicitly entered the protocol
+        public string Protocol { get; set; } =
 #if CORECLR
-        private string _protocol = ComputerWMIHelper.WsmanProtocol;
+            //CoreClr does not support DCOM protocol
+            // This change makes sure that the the command works seamlessly if user did not explicitly entered the protocol
+            ComputerWMIHelper.WsmanProtocol;
 #else
-        private string _protocol = ComputerWMIHelper.DcomProtocol;
+            ComputerWMIHelper.DcomProtocol;
 #endif
 
         /// <summary>
@@ -151,12 +125,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [Alias("Size", "Bytes", "BS")]
         [ValidateRange((int)0, (int)65500)]
-        public Int32 BufferSize
-        {
-            get { return buffersize; }
-            set { buffersize = value; }
-        }
-        private Int32 buffersize = 32;
+        public Int32 BufferSize { get; set; } = 32;
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
@@ -170,12 +139,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Alias("CN", "IPAddress", "__SERVER", "Server", "Destination")]
-        public String[] ComputerName
-        {
-            get { return destination; }
-            set { destination = value; }
-        }
-        private String[] destination;
+        public String[] ComputerName { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Count".
@@ -183,12 +147,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateRange(1, UInt32.MaxValue)]
-        public Int32 Count
-        {
-            get { return count; }
-            set { count = value; }
-        }
-        private Int32 count = 4;
+        public Int32 Count { get; set; } = 4;
 
         /// <summary>
         /// The following is the definition of the input parameter "Credential".
@@ -199,12 +158,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = SourceParameterSet, Mandatory = false)]
         [ValidateNotNullOrEmpty]
         [Credential]
-        public PSCredential Credential
-        {
-            get { return credential; }
-            set { credential = value; }
-        }
-        private PSCredential credential;
+        public PSCredential Credential { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "FromComputerName".
@@ -214,12 +168,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Alias("FCN", "SRC")]
-        public String[] Source
-        {
-            get { return source; }
-            set { source = value; }
-        }
-        private String[] source = new string[] { "." };
+        public String[] Source { get; set; } = new string[] { "." };
 
         /// <summary>
         /// The following is the definition of the input parameter "Impersonation".
@@ -233,12 +182,7 @@ namespace Microsoft.PowerShell.Commands
         /// Delegate = 4.
         /// </summary>
         [Parameter]
-        public ImpersonationLevel Impersonation
-        {
-            get { return impersonation; }
-            set { impersonation = value; }
-        }
-        private ImpersonationLevel impersonation = ImpersonationLevel.Impersonate;
+        public ImpersonationLevel Impersonation { get; set; } = ImpersonationLevel.Impersonate;
 
         /// <summary>
         /// The following is the definition of the input parameter "ThrottleLimit".
@@ -270,24 +214,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateRange(1, (int)255)]
         [Alias("TTL")]
-        public Int32 TimeToLive
-        {
-            get { return timetolive; }
-            set { timetolive = value; }
-        }
-        private Int32 timetolive = 80;
+        public Int32 TimeToLive { get; set; } = 80;
 
         /// <summary>
         /// delay parameter
         /// </summary>
         [Parameter]
         [ValidateRange(1, 60)]
-        public Int32 Delay
-        {
-            get { return delay; }
-            set { delay = value; }
-        }
-        private Int32 delay = 1;
+        public Int32 Delay { get; set; } = 1;
 
         /// <summary>
         /// quiet parameter
@@ -461,10 +395,10 @@ namespace Microsoft.PowerShell.Commands
             FilterString.Append(")");
             FilterString.Append(" And ");
             FilterString.Append("TimeToLive=");
-            FilterString.Append(timetolive);
+            FilterString.Append(TimeToLive);
             FilterString.Append(" And ");
             FilterString.Append("BufferSize=");
-            FilterString.Append(buffersize);
+            FilterString.Append(BufferSize);
             FilterString.Append(")");
             return FilterString.ToString();
         }
@@ -552,25 +486,25 @@ namespace Microsoft.PowerShell.Commands
 #if !CORECLR
         private void processDCOMProtocolForTestConnection()
         {
-            ConnectionOptions options = ComputerWMIHelper.GetConnectionOptions(_authentication, this.Impersonation, this.Credential);
-            if (asjob)
+            ConnectionOptions options = ComputerWMIHelper.GetConnectionOptions(DcomAuthentication, this.Impersonation, this.Credential);
+            if (AsJob)
             {
-                string filter = QueryString(destination, true, false);
+                string filter = QueryString(ComputerName, true, false);
                 GetWmiObjectCommand WMICmd = new GetWmiObjectCommand();
                 WMICmd.Filter = filter.ToString();
                 WMICmd.Class = ComputerWMIHelper.WMI_Class_PingStatus;
-                WMICmd.ComputerName = source;
-                WMICmd.Authentication = _authentication;
+                WMICmd.ComputerName = Source;
+                WMICmd.Authentication = DcomAuthentication;
                 WMICmd.Impersonation = Impersonation;
                 WMICmd.ThrottleLimit = throttlelimit;
-                PSWmiJob wmiJob = new PSWmiJob(WMICmd, source, throttlelimit, this.MyInvocation.MyCommand.Name, count);
+                PSWmiJob wmiJob = new PSWmiJob(WMICmd, Source, throttlelimit, this.MyInvocation.MyCommand.Name, Count);
                 this.JobRepository.Add(wmiJob);
                 WriteObject(wmiJob);
             }
             else
             {
                 int sourceCount = 0;
-                foreach (string fromcomp in source)
+                foreach (string fromcomp in Source)
                 {
                     try
                     {
@@ -580,7 +514,7 @@ namespace Microsoft.PowerShell.Commands
                         enumOptions.DirectRead = true;
 
                         int destCount = 0;
-                        foreach (var tocomp in destination)
+                        foreach (var tocomp in ComputerName)
                         {
                             destCount++;
                             string querystring = QueryString(new string[] { tocomp }, true, true);
@@ -591,7 +525,7 @@ namespace Microsoft.PowerShell.Commands
 
                             using (searcher = new ManagementObjectSearcher(scope, query, enumOptions))
                             {
-                                for (int j = 0; j <= count - 1; j++)
+                                for (int j = 0; j <= Count - 1; j++)
                                 {
                                     using (ManagementObjectCollection mobj = searcher.Get())
                                     {
@@ -605,8 +539,8 @@ namespace Microsoft.PowerShell.Commands
                                                 ProcessPingStatus(obj);
 
                                                 // to delay the request, if case to avoid the delay for the last pingrequest
-                                                if (mobjCount < mobj.Count || j < count - 1 || sourceCount < Source.Length || destCount < destination.Length)
-                                                    Thread.Sleep(delay * 1000);
+                                                if (mobjCount < mobj.Count || j < Count - 1 || sourceCount < Source.Length || destCount < ComputerName.Length)
+                                                    Thread.Sleep(Delay * 1000);
                                             }
                                         }
                                     }
@@ -632,7 +566,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (quiet)
             {
-                foreach (string destinationAddress in this.destination)
+                foreach (string destinationAddress in this.ComputerName)
                 {
                     bool destinationResult = false;
                     this.quietResults.TryGetValue(destinationAddress, out destinationResult);
@@ -643,7 +577,7 @@ namespace Microsoft.PowerShell.Commands
 #endif
         private void ProcessWSManProtocolForTestConnection()
         {
-            if (asjob)
+            if (AsJob)
             {
                 // TODO:  Need job for MI.Net WSMan protocol
                 // Early return of job object.
@@ -657,7 +591,7 @@ namespace Microsoft.PowerShell.Commands
             };
             int destCount = 0;
             int sourceCount = 0;
-            foreach (string sourceComp in source)
+            foreach (string sourceComp in Source)
             {
                 try
                 {
@@ -671,14 +605,14 @@ namespace Microsoft.PowerShell.Commands
                     {
                         sourceMachine = sourceComp;
                     }
-                    foreach (var tocomp in destination)
+                    foreach (var tocomp in ComputerName)
                     {
                         destCount++;
                         string querystring = QueryString(new string[] { tocomp }, true, true);
 
-                        using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(sourceComp, this.Credential, _wsmanAuthentication, cancel.Token, this))
+                        using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(sourceComp, this.Credential, WsmanAuthentication, cancel.Token, this))
                         {
-                            for (int echoRequestCount = 0; echoRequestCount < count; echoRequestCount++)
+                            for (int echoRequestCount = 0; echoRequestCount < Count; echoRequestCount++)
                             {
                                 IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(
                                                                      ComputerWMIHelper.CimOperatingSystemNamespace,
@@ -692,8 +626,8 @@ namespace Microsoft.PowerShell.Commands
                                     ProcessPingStatus(obj);
                                     cimInsCount++;
                                     // to delay the request, if case to avoid the delay for the last pingrequest
-                                    if (cimInsCount < total || echoRequestCount < count - 1 || sourceCount < Source.Length || destCount < destination.Length)
-                                        Thread.Sleep(delay * 1000);
+                                    if (cimInsCount < total || echoRequestCount < Count - 1 || sourceCount < Source.Length || destCount < ComputerName.Length)
+                                        Thread.Sleep(Delay * 1000);
                                 }
                             }
                         }
@@ -715,7 +649,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (quiet)
             {
-                foreach (string destinationAddress in this.destination)
+                foreach (string destinationAddress in this.ComputerName)
                 {
                     bool destinationResult = false;
                     this.quietResults.TryGetValue(destinationAddress, out destinationResult);
@@ -745,17 +679,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] Drive
-        {
-            get { return _drive; }
-            set
-            {
-                _drive = value;
-            }
-        }
-        private string[] _drive;
+        public string[] Drive { get; set; }
 
-#endregion Parameters
+        #endregion Parameters
         private const string ErrorBase = "ComputerResources";
         private ManagementClass WMIClass;
 #region "IDisposable Members"
@@ -811,7 +737,7 @@ namespace Microsoft.PowerShell.Commands
             sysdrive = String.Concat(new string[] { sysdrive, "\\" });
 
 
-            if (ComputerWMIHelper.ContainsSystemDrive(_drive, sysdrive))
+            if (ComputerWMIHelper.ContainsSystemDrive(Drive, sysdrive))
             {
                 object[] input = { sysdrive };
                 try
@@ -821,7 +747,7 @@ namespace Microsoft.PowerShell.Commands
                     if ((retValue.Equals(0)) || (retValue.Equals(ComputerWMIHelper.ErrorCode_Service)))
                     {
                         string driveNew;
-                        foreach (string drive in _drive) //for each input drive
+                        foreach (string drive in Drive) //for each input drive
                         {
                             if (!ShouldProcess(drive))
                             {
@@ -933,17 +859,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] Drive
-        {
-            get { return _drive; }
-            set
-            {
-                _drive = value;
-            }
-        }
-        private string[] _drive;
+        public string[] Drive { get; set; }
 
-#endregion Parameters
+        #endregion Parameters
 
         private ManagementClass WMIClass;
         private const string ErrorBase = "ComputerResources";
@@ -995,7 +913,7 @@ namespace Microsoft.PowerShell.Commands
             WMIClass = new ManagementClass(ComputerWMIHelper.WMI_Class_SystemRestore);
             WMIClass.Scope = scope;
             string driveNew;
-            foreach (string drive in _drive)
+            foreach (string drive in Drive)
             {
                 if (!ShouldProcess(drive))
                 {
@@ -1091,15 +1009,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
         [ValidateNotNullOrEmpty]
-        public string Description
-        {
-            get { return _description; }
-            set
-            {
-                _description = value;
-            }
-        }
-        private string _description;
+        public string Description { get; set; }
 
 
         /// <summary>
@@ -1204,7 +1114,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (ret == 0)
                     {
-                        if (this.IsRestorePointCreated(_description, this.startLocalTime))
+                        if (this.IsRestorePointCreated(Description, this.startLocalTime))
                         {
                             break;
                         }
@@ -1237,7 +1147,7 @@ namespace Microsoft.PowerShell.Commands
 
                 //create restore point
                 ManagementBaseObject inParams = WMIClass.GetMethodParameters("CreateRestorePoint");
-                object[] param = { _description, intRestorePoint, 100 }; // the event type will be always 100,Begin_System_Change
+                object[] param = { Description, intRestorePoint, 100 }; // the event type will be always 100,Begin_System_Change
                 ret = Convert.ToInt32(WMIClass.InvokeMethod("CreateRestorePoint", param), System.Globalization.CultureInfo.CurrentCulture);
             }
             catch (Exception ex)
@@ -1500,29 +1410,16 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [ValidateRangeAttribute((int)1, int.MaxValue)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public int[] RestorePoint
-        {
-            get { return _restorepoint; }
-            set
-            {
-                _restorepoint = value;
-            }
-        }
-        private int[] _restorepoint;
+        public int[] RestorePoint { get; set; }
 
         /// <summary>
         /// This cmdlet is to get Computer Restore points.
         /// </summary>
         [Parameter(ParameterSetName = "LastStatus", Mandatory = true)]
         [ValidateNotNull]
-        public SwitchParameter LastStatus
-        {
-            get { return _laststatus; }
-            set { _laststatus = value; }
-        }
-        private SwitchParameter _laststatus;
+        public SwitchParameter LastStatus { get; set; }
 
-#endregion
+        #endregion
 
         private ManagementClass WMIClass;
 
@@ -1593,7 +1490,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     ObjectQuery objquery = new ObjectQuery();
                     // Dictionary<int,string>  sequenceList = new Dictionary<int,string>();
-                    if (_restorepoint == null)
+                    if (RestorePoint == null)
                     {
                         objquery.QueryString = "select * from " + ComputerWMIHelper.WMI_Class_SystemRestore;
                     }
@@ -1603,13 +1500,13 @@ namespace Microsoft.PowerShell.Commands
                         StringBuilder sb = new StringBuilder("select * from ");
                         sb.Append(ComputerWMIHelper.WMI_Class_SystemRestore);
                         sb.Append(" where  SequenceNumber = ");
-                        for (int i = 0; i <= _restorepoint.Length - 1; i++)
+                        for (int i = 0; i <= RestorePoint.Length - 1; i++)
                         {
-                            sb.Append(_restorepoint[i]);
-                            if (i < _restorepoint.Length - 1)
+                            sb.Append(RestorePoint[i]);
+                            if (i < RestorePoint.Length - 1)
                                 sb.Append(" OR SequenceNumber = ");
-                            if (!sequenceList.ContainsKey(_restorepoint[i]))
-                                sequenceList.Add(_restorepoint[i], "true");
+                            if (!sequenceList.ContainsKey(RestorePoint[i]))
+                                sequenceList.Add(RestorePoint[i], "true");
                         }
                         objquery.QueryString = sb.ToString();
                     }
@@ -1621,7 +1518,7 @@ namespace Microsoft.PowerShell.Commands
                             using (obj)
                             {
                                 WriteObject(obj);
-                                if (_restorepoint != null)
+                                if (RestorePoint != null)
                                 {
                                     int sequenceNo = Convert.ToInt32(obj.Properties["SequenceNumber"].Value, System.Globalization.CultureInfo.CurrentCulture);
                                     sequenceList.Remove(sequenceNo);
@@ -1841,12 +1738,7 @@ namespace Microsoft.PowerShell.Commands
         /// and stored in the global cache on the client machine. 
         /// </summary>
         [Parameter(ParameterSetName = AsJobParameterSet)]
-        public SwitchParameter AsJob
-        {
-            get { return _asjob; }
-            set { _asjob = value; }
-        }
-        private SwitchParameter _asjob = false;
+        public SwitchParameter AsJob { get; set; } = false;
 
         /// <summary>
         /// The following is the definition of the input parameter "Authentication".
@@ -1950,12 +1842,8 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Alias("CN", "__SERVER", "Server", "IPAddress")]
-        public String[] ComputerName
-        {
-            get { return _computername; }
-            set { _computername = value; }
-        }
-        private String[] _computername = new string[] { "." };
+        public String[] ComputerName { get; set; } = new string[] { "." };
+
         private List<string> _validatedComputerNames = new List<string>();
         private readonly List<string> _waitOnComputers = new List<string>();
         private readonly HashSet<string> _uniqueComputerNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -2190,7 +2078,7 @@ $result
             bool containLocalhost = false;
             _validatedComputerNames.Clear();
 
-            foreach (string name in _computername)
+            foreach (string name in ComputerName)
             {
                 ErrorRecord error = null;
                 string targetComputerName = ComputerWMIHelper.ValidateComputerName(name, _shortLocalMachineName, _fullLocalMachineName, ref error);
@@ -3319,15 +3207,7 @@ $result
         /// parameter
         /// </summary>
         [Parameter]
-        public SwitchParameter AsJob
-        {
-            get { return _asjob; }
-            set
-            {
-                _asjob = value;
-            }
-        }
-        private SwitchParameter _asjob = false;
+        public SwitchParameter AsJob { get; set; } = false;
 
         /// <summary>
         /// The following is the definition of the input parameter "DcomAuthentication".
@@ -3345,15 +3225,7 @@ $result
         /// </summary>
         [Parameter]
         [Alias("Authentication")]
-        public AuthenticationLevel DcomAuthentication
-        {
-            get { return _authentication; }
-            set
-            {
-                _authentication = value;
-            }
-        }
-        private AuthenticationLevel _authentication = AuthenticationLevel.Packet;
+        public AuthenticationLevel DcomAuthentication { get; set; } = AuthenticationLevel.Packet;
 
         /// <summary>
         /// The authentication options for CIM_WSMan connection
@@ -3367,33 +3239,20 @@ $result
             "Digest",
             "Kerberos")] // can be used with and without credential (not sure about implications)
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        public string WsmanAuthentication
-        {
-            get { return _wsmanAuthentication; }
-            set { _wsmanAuthentication = value; }
-        }
-        private string _wsmanAuthentication = "Default";
+        public string WsmanAuthentication { get; set; } = "Default";
 
         /// <summary>
         /// Specify the protocol to use
         /// </summary>
         [Parameter]
         [ValidateSet(ComputerWMIHelper.DcomProtocol, ComputerWMIHelper.WsmanProtocol)]
-        public string Protocol
-        {
-            get { return _protocol; }
-            set
-            {
-                _protocol = value;
-            }
-        }
-
-        //CoreClr does not support DCOM protocol
-        // This change makes sure that the the command works seamlessly if user did not explicitly entered the protocol
+        public string Protocol { get; set; } = 
 #if CORECLR
-        private string _protocol = ComputerWMIHelper.WsmanProtocol;
+            //CoreClr does not support DCOM protocol
+            // This change makes sure that the the command works seamlessly if user did not explicitly entered the protocol
+            ComputerWMIHelper.WsmanProtocol;
 #else
-        private string _protocol = ComputerWMIHelper.DcomProtocol;
+            ComputerWMIHelper.DcomProtocol;
 #endif
 
         /// <summary>
@@ -3406,15 +3265,7 @@ $result
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Alias("CN", "__SERVER", "Server", "IPAddress")]
-        public String[] ComputerName
-        {
-            get { return _computername; }
-            set
-            {
-                _computername = value;
-            }
-        }
-        private String[] _computername = new string[] { "." };
+        public String[] ComputerName { get; set; } = new string[] { "." };
 
 
         /// <summary>
@@ -3426,15 +3277,7 @@ $result
         [Parameter(Position = 1)]
         [ValidateNotNullOrEmpty]
         [Credential]
-        public PSCredential Credential
-        {
-            get { return _credential; }
-            set
-            {
-                _credential = value;
-            }
-        }
-        private PSCredential _credential;
+        public PSCredential Credential { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Impersonation".
@@ -3448,15 +3291,7 @@ $result
         /// Delegate = 4.
         /// </summary>
         [Parameter]
-        public ImpersonationLevel Impersonation
-        {
-            get { return _impersonation; }
-            set
-            {
-                _impersonation = value;
-            }
-        }
-        private ImpersonationLevel _impersonation = ImpersonationLevel.Impersonate;
+        public ImpersonationLevel Impersonation { get; set; } = ImpersonationLevel.Impersonate;
 
         /// <summary>
         /// The following is the definition of the input parameter "ThrottleLimit".
@@ -3483,17 +3318,9 @@ $result
         /// execute
         /// </summary>
         [Parameter]
-        public SwitchParameter Force
-        {
-            get { return _force; }
-            set
-            {
-                _force = value;
-            }
-        }
-        private SwitchParameter _force = false;
+        public SwitchParameter Force { get; set; } = false;
 
-#endregion "parameters"
+        #endregion "parameters"
 
 #region "IDisposable Members"
 
@@ -3591,7 +3418,7 @@ $result
         protected override void ProcessRecord()
         {
             object[] flags = new object[] { 1, 0 };
-            if (_force.IsPresent)
+            if (Force.IsPresent)
                 flags[0] = 5;
 
             switch (_transportProtocol)
@@ -3640,22 +3467,22 @@ $result
 #if !CORECLR
         private void ProcessDCOMProtocol(object[] flags)
         {
-            if (_asjob.IsPresent)
+            if (AsJob.IsPresent)
             {
                 string strComputers = ComputerWMIHelper.GetMachineNames(ComputerName);
                 if (!ShouldProcess(strComputers))
                     return;
                 InvokeWmiMethod WmiInvokeCmd = new InvokeWmiMethod();
                 WmiInvokeCmd.Path = ComputerWMIHelper.WMI_Class_OperatingSystem + "=@";
-                WmiInvokeCmd.ComputerName = _computername;
-                WmiInvokeCmd.Authentication = _authentication;
-                WmiInvokeCmd.Impersonation = _impersonation;
-                WmiInvokeCmd.Credential = _credential;
+                WmiInvokeCmd.ComputerName = ComputerName;
+                WmiInvokeCmd.Authentication = DcomAuthentication;
+                WmiInvokeCmd.Impersonation = Impersonation;
+                WmiInvokeCmd.Credential = Credential;
                 WmiInvokeCmd.ThrottleLimit = _throttlelimit;
                 WmiInvokeCmd.Name = "Win32Shutdown";
                 WmiInvokeCmd.EnableAllPrivileges = SwitchParameter.Present;
                 WmiInvokeCmd.ArgumentList = flags;
-                PSWmiJob wmiJob = new PSWmiJob(WmiInvokeCmd, _computername, _throttlelimit, Job.GetCommandTextFromInvocationInfo(this.MyInvocation));
+                PSWmiJob wmiJob = new PSWmiJob(WmiInvokeCmd, ComputerName, _throttlelimit, Job.GetCommandTextFromInvocationInfo(this.MyInvocation));
                 this.JobRepository.Add(wmiJob);
                 WriteObject(wmiJob);
             }
@@ -3664,7 +3491,7 @@ $result
                 string compname = string.Empty;
                 string strLocal = string.Empty;
 
-                foreach (string computer in _computername)
+                foreach (string computer in ComputerName)
                 {
                     if ((computer.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (computer.Equals(".", StringComparison.OrdinalIgnoreCase)))
                     {
@@ -3684,7 +3511,7 @@ $result
                     {
                         try
                         {
-                            ConnectionOptions options = ComputerWMIHelper.GetConnectionOptions(_authentication, this.Impersonation, this.Credential);
+                            ConnectionOptions options = ComputerWMIHelper.GetConnectionOptions(DcomAuthentication, this.Impersonation, this.Credential);
                             ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), options);
                             EnumerationOptions enumOptions = new EnumerationOptions();
                             enumOptions.UseAmendedQualifiers = true;
@@ -3727,14 +3554,14 @@ $result
 
         private void ProcessWSManProtocol(object[] flags)
         {
-            if (_asjob.IsPresent)
+            if (AsJob.IsPresent)
             {
                 // TODO:  Need job for MI.Net WSMan protocol
                 // Early return of job object.
                 throw new PSNotSupportedException();
             }
 
-            foreach (string computer in _computername)
+            foreach (string computer in ComputerName)
             {
                 string compname = string.Empty;
                 string strLocal = string.Empty;
@@ -3797,17 +3624,9 @@ $result
         [ValidateNotNull]
         [ValidateRangeAttribute((int)1, int.MaxValue)]
         [Alias("SequenceNumber", "SN", "RP")]
-        public int RestorePoint
-        {
-            get { return _restorepoint; }
-            set
-            {
-                _restorepoint = value;
-            }
-        }
-        private int _restorepoint;
+        public int RestorePoint { get; set; }
 
-#endregion
+        #endregion
 
         private ManagementClass WMIClass;
 
@@ -3864,13 +3683,13 @@ $result
                 WMIClass.Scope = scope;
 
                 //query to get the list of restore points
-                ObjectQuery oquery = new ObjectQuery("select * from " + ComputerWMIHelper.WMI_Class_SystemRestore + " where SequenceNumber = " + _restorepoint);
+                ObjectQuery oquery = new ObjectQuery("select * from " + ComputerWMIHelper.WMI_Class_SystemRestore + " where SequenceNumber = " + RestorePoint);
                 using (ManagementObjectSearcher R_results = new ManagementObjectSearcher(scope, oquery))
                 {
                     //check if the entered restore point is a valid one
                     if (R_results.Get().Count == 0)
                     {
-                        string message = StringUtil.Format(ComputerResources.InvalidRestorePoint, _restorepoint);
+                        string message = StringUtil.Format(ComputerResources.InvalidRestorePoint, RestorePoint);
                         ArgumentException e = new ArgumentException(message);
                         ErrorRecord errorrecord = new ErrorRecord(e, "InvalidRestorePoint", ErrorCategory.InvalidArgument, null);
                         WriteError(errorrecord);
@@ -3886,7 +3705,7 @@ $result
                 else
                 {
                     //add the restorepoint parameter and invoke th emethod
-                    Object[] arr = new Object[] { _restorepoint };
+                    Object[] arr = new Object[] { RestorePoint };
                     WMIClass.InvokeMethod("Restore", arr);
                     //Restore requires a Reboot and while reboot only the restore actually happens
                     //code to restart computer
@@ -4027,12 +3846,7 @@ $result
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] ComputerName
-        {
-            get { return _computerName; }
-            set { _computerName = value; }
-        }
-        private string[] _computerName = { "localhost" };
+        public string[] ComputerName { get; set; } = { "localhost" };
 
         /// <summary>
         /// The local admin credential to the target computer
@@ -4040,12 +3854,7 @@ $result
         [Parameter]
         [Credential]
         [ValidateNotNullOrEmpty]
-        public PSCredential LocalCredential
-        {
-            get { return _localCredential; }
-            set { _localCredential = value; }
-        }
-        private PSCredential _localCredential;
+        public PSCredential LocalCredential { get; set; }
 
         /// <summary>
         /// The domain credential used to unjoin a domain
@@ -4054,12 +3863,7 @@ $result
         [Credential]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        public PSCredential UnjoinDomainCredential
-        {
-            get { return _unjoinDomainCredential; }
-            set { _unjoinDomainCredential = value; }
-        }
-        private PSCredential _unjoinDomainCredential;
+        public PSCredential UnjoinDomainCredential { get; set; }
 
         /// <summary>
         /// The domain credential.
@@ -4071,12 +3875,7 @@ $result
         [Alias("DomainCredential")]
         [Credential]
         [ValidateNotNullOrEmpty]
-        public PSCredential Credential
-        {
-            get { return _domainCredential; }
-            set { _domainCredential = value; }
-        }
-        private PSCredential _domainCredential;
+        public PSCredential Credential { get; set; }
 
         /// <summary>
         /// Name of the domain to join
@@ -4084,12 +3883,7 @@ $result
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = DomainParameterSet)]
         [Alias("DN", "Domain")]
         [ValidateNotNullOrEmpty]
-        public String DomainName
-        {
-            get { return _domainName; }
-            set { _domainName = value; }
-        }
-        private String _domainName;
+        public String DomainName { get; set; }
 
         /// <summary>
         /// The organization unit (OU). It's the path on the AD under which the new account will
@@ -4098,12 +3892,7 @@ $result
         [Parameter(ParameterSetName = DomainParameterSet)]
         [Alias("OU")]
         [ValidateNotNullOrEmpty]
-        public string OUPath
-        {
-            get { return _ouPath; }
-            set { _ouPath = value; }
-        }
-        private string _ouPath;
+        public string OUPath { get; set; }
 
         /// <summary>
         /// The name of a domain controller that performs the add.
@@ -4111,35 +3900,20 @@ $result
         [Parameter(ParameterSetName = DomainParameterSet)]
         [Alias("DC")]
         [ValidateNotNullOrEmpty]
-        public string Server
-        {
-            get { return _server; }
-            set { _server = value; }
-        }
-        private string _server;
+        public string Server { get; set; }
 
         /// <summary>
         /// Perform an unsecure join.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         [Parameter(ParameterSetName = DomainParameterSet)]
-        public SwitchParameter Unsecure
-        {
-            get { return _unsecure; }
-            set { _unsecure = value; }
-        }
-        private SwitchParameter _unsecure;
+        public SwitchParameter Unsecure { get; set; }
 
         /// <summary>
         /// Additional options for the "join domain" operation
         /// </summary>
         [Parameter(ParameterSetName = DomainParameterSet)]
-        public JoinOptions Options
-        {
-            get { return _joinOptions; }
-            set { _joinOptions = value; }
-        }
-        private JoinOptions _joinOptions = JoinOptions.AccountCreate;
+        public JoinOptions Options { get; set; } = JoinOptions.AccountCreate;
 
         /// <summary>
         /// Name of the workgroup to join in.
@@ -4148,46 +3922,26 @@ $result
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = WorkgroupParameterSet)]
         [Alias("WGN")]
         [ValidateNotNullOrEmpty]
-        public string WorkgroupName
-        {
-            get { return _workgroupName; }
-            set { _workgroupName = value; }
-        }
-        private string _workgroupName;
+        public string WorkgroupName { get; set; }
 
         /// <summary>
         /// Restart the target computer
         /// </summary>
         [Parameter]
-        public SwitchParameter Restart
-        {
-            get { return _restart; }
-            set { _restart = value; }
-        }
-        private SwitchParameter _restart = false;
+        public SwitchParameter Restart { get; set; } = false;
 
         /// <summary>
         /// Emit the output.
         /// </summary>
         [Parameter]
-        public SwitchParameter PassThru
-        {
-            get { return _passThru; }
-            set { _passThru = value; }
-        }
-        private SwitchParameter _passThru;
+        public SwitchParameter PassThru { get; set; }
 
         /// <summary>
         /// New names for the target computers
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        public string NewName
-        {
-            get { return _newName; }
-            set { _newName = value; }
-        }
-        private string _newName;
+        public string NewName { get; set; }
 
         /// <summary>
         /// To suppress ShouldContinue
@@ -4270,10 +4024,10 @@ $result
             string joinDomainPassword = Credential != null ? Utils.GetStringFromSecureString(Credential.Password) : null;
 
             ManagementBaseObject joinDomainParameter = computerSystem.GetMethodParameters("JoinDomainOrWorkgroup");
-            joinDomainParameter.SetPropertyValue("Name", _domainName);
+            joinDomainParameter.SetPropertyValue("Name", DomainName);
             joinDomainParameter.SetPropertyValue("UserName", joinDomainUserName);
             joinDomainParameter.SetPropertyValue("Password", joinDomainPassword);
-            joinDomainParameter.SetPropertyValue("AccountOU", _ouPath);
+            joinDomainParameter.SetPropertyValue("AccountOU", OUPath);
             joinDomainParameter.SetPropertyValue("FJoinOptions", _joinDomainflags);
 
             ManagementBaseObject result = computerSystem.InvokeMethod("JoinDomainOrWorkgroup", joinDomainParameter, null);
@@ -4287,13 +4041,13 @@ $result
                 if (oldDomainName != null)
                 {
                     errMsg = StringUtil.Format(ComputerResources.FailToJoinNewDomainAfterUnjoinOldDomain,
-                                                   computerName, oldDomainName, _domainName, ex.Message);
+                                                   computerName, oldDomainName, DomainName, ex.Message);
                     errorId = "FailToJoinNewDomainAfterUnjoinOldDomain";
                 }
                 else
                 {
                     errMsg = StringUtil.Format(ComputerResources.FailToJoinDomainFromWorkgroup, computerName,
-                                                   _domainName, curWorkgroupName, ex.Message);
+                                                   DomainName, curWorkgroupName, ex.Message);
                     errorId = "FailToJoinDomainFromWorkgroup";
                 }
 
@@ -4312,7 +4066,7 @@ $result
         private int JoinWorkgroup(ManagementObject computerSystem, string computerName, string oldDomainName)
         {
             ManagementBaseObject joinWorkgroupParam = computerSystem.GetMethodParameters("JoinDomainOrWorkgroup");
-            joinWorkgroupParam.SetPropertyValue("Name", _workgroupName);
+            joinWorkgroupParam.SetPropertyValue("Name", WorkgroupName);
             joinWorkgroupParam.SetPropertyValue("UserName", null);
             joinWorkgroupParam.SetPropertyValue("Password", null);
             joinWorkgroupParam.SetPropertyValue("FJoinOptions", 0); // join a workgroup
@@ -4328,11 +4082,11 @@ $result
                 {
                     errMsg =
                         StringUtil.Format(ComputerResources.FailToSwitchFromDomainToWorkgroup, computerName,
-                                          oldDomainName, _workgroupName, ex.Message);
+                                          oldDomainName, WorkgroupName, ex.Message);
                 }
                 else
                 {
-                    errMsg = StringUtil.Format(ComputerResources.FailToJoinWorkGroup, computerName, _workgroupName,
+                    errMsg = StringUtil.Format(ComputerResources.FailToJoinWorkGroup, computerName, WorkgroupName,
                                                ex.Message);
                 }
 
@@ -4353,7 +4107,7 @@ $result
             string domainUserName = null;
             string domainPassword = null;
 
-            if (_domainName != null && Credential != null)
+            if (DomainName != null && Credential != null)
             {
                 // The rename operation happens after the computer is joined to the new domain, so we should provide
                 // the domain user name and password to the rename operation
@@ -4374,15 +4128,15 @@ $result
                 var ex = new Win32Exception(returnCode);
                 string errMsg;
                 string errorId;
-                if (_workgroupName != null)
+                if (WorkgroupName != null)
                 {
                     errMsg = StringUtil.Format(ComputerResources.FailToRenameAfterJoinWorkgroup, computerName,
-                                               _workgroupName, newName, ex.Message);
+                                               WorkgroupName, newName, ex.Message);
                     errorId = "FailToRenameAfterJoinWorkgroup";
                 }
                 else
                 {
-                    errMsg = StringUtil.Format(ComputerResources.FailToRenameAfterJoinDomain, computerName, _domainName,
+                    errMsg = StringUtil.Format(ComputerResources.FailToRenameAfterJoinDomain, computerName, DomainName,
                                                newName, ex.Message);
                     errorId = "FailToRenameAfterJoinDomain";
                 }
@@ -4439,7 +4193,7 @@ $result
 
             if (ParameterSetName == DomainParameterSet)
             {
-                string action = StringUtil.Format(ComputerResources.AddComputerActionDomain, _domainName);
+                string action = StringUtil.Format(ComputerResources.AddComputerActionDomain, DomainName);
                 if (!ShouldProcess(computerName, action))
                 {
                     return;
@@ -4447,7 +4201,7 @@ $result
             }
             else
             {
-                string action = StringUtil.Format(ComputerResources.AddComputerActionWorkgroup, _workgroupName);
+                string action = StringUtil.Format(ComputerResources.AddComputerActionWorkgroup, WorkgroupName);
                 if (!ShouldProcess(computerName, action))
                 {
                     return;
@@ -4533,11 +4287,11 @@ $result
                                     }
 
                                     // If the target computer is already in the specified domain, throw an error
-                                    if (curDomainName.Equals(_domainName, StringComparison.OrdinalIgnoreCase) || shortDomainName.Equals(_domainName, StringComparison.OrdinalIgnoreCase))
+                                    if (curDomainName.Equals(DomainName, StringComparison.OrdinalIgnoreCase) || shortDomainName.Equals(DomainName, StringComparison.OrdinalIgnoreCase))
                                     {
                                         WriteErrorHelper(ComputerResources.AddComputerToSameDomain,
                                                          "AddComputerToSameDomain", computerName,
-                                                         ErrorCategory.InvalidOperation, false, computerName, _domainName);
+                                                         ErrorCategory.InvalidOperation, false, computerName, DomainName);
                                         continue;
                                     }
 
@@ -4612,11 +4366,11 @@ $result
                                 else // in workgroup
                                 {
                                     string curWorkgroup = (string)LanguagePrimitives.ConvertTo(computerSystem["Domain"], typeof(string), CultureInfo.InvariantCulture);
-                                    if (curWorkgroup.Equals(_workgroupName, StringComparison.OrdinalIgnoreCase))
+                                    if (curWorkgroup.Equals(WorkgroupName, StringComparison.OrdinalIgnoreCase))
                                     {
                                         WriteErrorHelper(ComputerResources.AddComputerToSameWorkgroup,
                                                          "AddComputerToSameWorkgroup", computerName,
-                                                         ErrorCategory.InvalidOperation, false, computerName, _workgroupName);
+                                                         ErrorCategory.InvalidOperation, false, computerName, WorkgroupName);
                                         continue;
                                     }
 
@@ -4631,7 +4385,7 @@ $result
                                 }
                             }// end of else -- WorkgroupParameterSet
 
-                            if (_passThru)
+                            if (PassThru)
                             {
                                 WriteObject(ComputerWMIHelper.GetComputerStatusObject(returnCode, computerName));
                             }
@@ -4639,14 +4393,14 @@ $result
                     }// end of foreach
 
                     // If successful and the Restart parameter is specified, restart the computer
-                    if (success && _restart)
+                    if (success && Restart)
                     {
                         object[] flags = new object[] { 6, 0 };
                         RestartComputerCommand.RestartOneComputerUsingDcom(this, isLocalhost, computerName, flags, options);
                     }
 
                     // If successful and the Restart parameter is not specified, write out warning
-                    if (success && !_restart)
+                    if (success && !Restart)
                     {
                         WriteWarning(StringUtil.Format(ComputerResources.RestartNeeded, null, computerName));
                     }
@@ -4684,17 +4438,17 @@ $result
 
             bool isLocalhost = targetComputer.Equals(ComputerWMIHelper.localhostStr, StringComparison.OrdinalIgnoreCase);
 
-            if (validateNewName && _newName != null)
+            if (validateNewName && NewName != null)
             {
-                if (!ComputerWMIHelper.IsComputerNameValid(_newName))
+                if (!ComputerWMIHelper.IsComputerNameValid(NewName))
                 {
                     WriteErrorHelper(
                         ComputerResources.InvalidNewName,
                         "InvalidNewName",
-                        _newName,
+                        NewName,
                         ErrorCategory.InvalidArgument,
                         false,
-                        isLocalhost ? _shortLocalMachineName : targetComputer, _newName);
+                        isLocalhost ? _shortLocalMachineName : targetComputer, NewName);
 
                     return null;
                 }
@@ -4714,65 +4468,65 @@ $result
         {
             if (ParameterSetName == DomainParameterSet)
             {
-                if ((_joinOptions & JoinOptions.PasswordPass) != 0 && (_joinOptions & JoinOptions.UnsecuredJoin) == 0)
+                if ((Options & JoinOptions.PasswordPass) != 0 && (Options & JoinOptions.UnsecuredJoin) == 0)
                 {
-                    WriteErrorHelper(ComputerResources.InvalidJoinOptions, "InvalidJoinOptions", _joinOptions,
+                    WriteErrorHelper(ComputerResources.InvalidJoinOptions, "InvalidJoinOptions", Options,
                                      ErrorCategory.InvalidArgument, true, JoinOptions.PasswordPass.ToString(),
                                      JoinOptions.UnsecuredJoin.ToString());
                 }
 
-                if ((_joinOptions & JoinOptions.AccountCreate) != 0)
+                if ((Options & JoinOptions.AccountCreate) != 0)
                 {
                     _joinDomainflags |= (int)JoinOptions.AccountCreate;
                 }
-                if ((_joinOptions & JoinOptions.Win9XUpgrade) != 0)
+                if ((Options & JoinOptions.Win9XUpgrade) != 0)
                 {
                     _joinDomainflags |= (int)JoinOptions.Win9XUpgrade;
                 }
-                if ((_joinOptions & JoinOptions.UnsecuredJoin) != 0)
+                if ((Options & JoinOptions.UnsecuredJoin) != 0)
                 {
                     _joinDomainflags |= (int)JoinOptions.UnsecuredJoin;
                 }
-                if ((_joinOptions & JoinOptions.PasswordPass) != 0)
+                if ((Options & JoinOptions.PasswordPass) != 0)
                 {
                     _joinDomainflags |= (int)JoinOptions.PasswordPass;
                 }
-                if ((_joinOptions & JoinOptions.DeferSPNSet) != 0)
+                if ((Options & JoinOptions.DeferSPNSet) != 0)
                 {
                     _joinDomainflags |= (int)JoinOptions.DeferSPNSet;
                 }
-                if ((_joinOptions & JoinOptions.JoinWithNewName) != 0)
+                if ((Options & JoinOptions.JoinWithNewName) != 0)
                 {
                     _joinDomainflags |= (int)JoinOptions.JoinWithNewName;
                 }
-                if ((_joinOptions & JoinOptions.JoinReadOnly) != 0)
+                if ((Options & JoinOptions.JoinReadOnly) != 0)
                 {
                     _joinDomainflags |= (int)JoinOptions.JoinReadOnly;
                 }
-                if ((_joinOptions & JoinOptions.InstallInvoke) != 0)
+                if ((Options & JoinOptions.InstallInvoke) != 0)
                 {
                     _joinDomainflags |= (int)JoinOptions.InstallInvoke;
                 }
 
-                if (_unsecure)
+                if (Unsecure)
                 {
                     _joinDomainflags |= (int)(JoinOptions.UnsecuredJoin | JoinOptions.PasswordPass);
                 }
 
-                if (_server != null)
+                if (Server != null)
                 {
                     // It's the name of a domain controller. We need to check if the specified domain controller actually exists
                     try
                     {
-                        Dns.GetHostEntry(_server);
+                        Dns.GetHostEntry(Server);
                     }
                     catch (Exception ex)
                     {
                         CommandsCommon.CheckForSevereException(this, ex);
                         WriteErrorHelper(ComputerResources.CannotResolveServerName, "AddressResolutionException",
-                                         _server, ErrorCategory.InvalidArgument, true, _server);
+                                         Server, ErrorCategory.InvalidArgument, true, Server);
                     }
-                    _domainName = _domainName + "\\" + _server;
+                    DomainName = DomainName + "\\" + Server;
                 }
             }
         }
@@ -4782,10 +4536,10 @@ $result
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (_newName != null && _computerName.Length != 1)
+            if (NewName != null && ComputerName.Length != 1)
             {
                 WriteErrorHelper(ComputerResources.CannotRenameMultipleComputers, "CannotRenameMultipleComputers",
-                                 _newName, ErrorCategory.InvalidArgument, false);
+                                 NewName, ErrorCategory.InvalidArgument, false);
                 return;
             }
 
@@ -4801,7 +4555,7 @@ $result
             ObjectQuery computerSystemQuery = new ObjectQuery("select * from " + ComputerWMIHelper.WMI_Class_ComputerSystem);
 
             int oldJoinDomainFlags = _joinDomainflags;
-            if (_newName != null && ParameterSetName == DomainParameterSet)
+            if (NewName != null && ParameterSetName == DomainParameterSet)
             {
                 // We rename the computer after it's joined to the target domain, so writing SPN and DNSHostName attributes 
                 // on the computer object should be deferred until the rename operation that follows the join operation
@@ -4810,9 +4564,9 @@ $result
 
             try
             {
-                foreach (string computer in _computerName)
+                foreach (string computer in ComputerName)
                 {
-                    string targetComputer = ValidateComputerName(computer, _newName != null);
+                    string targetComputer = ValidateComputerName(computer, NewName != null);
                     if (targetComputer == null)
                     {
                         continue;
@@ -4823,18 +4577,18 @@ $result
                     {
                         if (!_containsLocalHost)
                             _containsLocalHost = true;
-                        _newNameForLocalHost = _newName;
+                        _newNameForLocalHost = NewName;
 
                         continue;
                     }
 
-                    DoAddComputerAction(targetComputer, _newName, false, options, enumOptions, computerSystemQuery);
+                    DoAddComputerAction(targetComputer, NewName, false, options, enumOptions, computerSystemQuery);
                 }// end of foreach
             }
             finally
             {
                 // Reverting the domainflags to previous status if DeferSPNSet is added to the domain flags.
-                if (_newName != null && ParameterSetName == DomainParameterSet)
+                if (NewName != null && ParameterSetName == DomainParameterSet)
                 {
                     _joinDomainflags = oldJoinDomainFlags;
                 }
@@ -4892,12 +4646,7 @@ $result
         [ValidateNotNullOrEmpty]
         [Credential]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        public PSCredential UnjoinDomainCredential
-        {
-            get { return _unjoinDomainCredential; }
-            set { _unjoinDomainCredential = value; }
-        }
-        private PSCredential _unjoinDomainCredential;
+        public PSCredential UnjoinDomainCredential { get; set; }
 
         /// <summary>
         /// The local admin credential for authenticating to the target computer
@@ -4905,35 +4654,20 @@ $result
         [Parameter(ParameterSetName = RemoteParameterSet)]
         [ValidateNotNullOrEmpty]
         [Credential]
-        public PSCredential LocalCredential
-        {
-            get { return _localCredential; }
-            set { _localCredential = value; }
-        }
-        private PSCredential _localCredential;
+        public PSCredential LocalCredential { get; set; }
 
         /// <summary>
         /// Restart parameter
         /// </summary>
         [Parameter]
-        public SwitchParameter Restart
-        {
-            get { return _restart; }
-            set { _restart = value; }
-        }
-        private SwitchParameter _restart = false;
+        public SwitchParameter Restart { get; set; } = false;
 
         /// <summary>
         /// The target computer names to remove from the domain
         /// </summary>
         [Parameter(ParameterSetName = RemoteParameterSet, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] ComputerName
-        {
-            get { return _computerName; }
-            set { _computerName = value; }
-        }
-        private string[] _computerName = { "localhost" };
+        public string[] ComputerName { get; set; } = { "localhost" };
 
         /// <summary>
         /// Force parameter (to suppress the shouldprocess and shouldcontinue)
@@ -4951,12 +4685,7 @@ $result
         /// computer that was joined. Bool = success/failure. String = ComputerName.
         /// </summary>
         [Parameter]
-        public SwitchParameter PassThru
-        {
-            get { return _passThru; }
-            set { _passThru = value; }
-        }
-        private SwitchParameter _passThru;
+        public SwitchParameter PassThru { get; set; }
 
         /// <summary>
         /// Specify the workgroup name to join in if the target machine is removed from
@@ -4964,12 +4693,7 @@ $result
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        public string WorkgroupName
-        {
-            get { return _workGroup; }
-            set { _workGroup = value; }
-        }
-        private string _workGroup = "WORKGROUP";
+        public string WorkgroupName { get; set; } = "WORKGROUP";
 
         private bool _containsLocalHost = false;
         private readonly string _shortLocalMachineName = Dns.GetHostName();
@@ -5070,10 +4794,10 @@ $result
                             {
                                 // Join into the specified workgroup if it's given
                                 successful = true;
-                                if (_workGroup != null)
+                                if (WorkgroupName != null)
                                 {
                                     ManagementBaseObject joinParameter = computerSystem.GetMethodParameters("JoinDomainOrWorkgroup");
-                                    joinParameter.SetPropertyValue("Name", _workGroup);
+                                    joinParameter.SetPropertyValue("Name", WorkgroupName);
                                     joinParameter.SetPropertyValue("Password", null);
                                     joinParameter.SetPropertyValue("UserName", null);
                                     joinParameter.SetPropertyValue("FJoinOptions", 0); // Join in a workgroup
@@ -5084,14 +4808,14 @@ $result
                                     if (returnCode != 0)
                                     {
                                         var ex = new Win32Exception(returnCode);
-                                        string errMsg = StringUtil.Format(ComputerResources.FailToSwitchFromDomainToWorkgroup, computerName, curDomainName, _workGroup, ex.Message);
+                                        string errMsg = StringUtil.Format(ComputerResources.FailToSwitchFromDomainToWorkgroup, computerName, curDomainName, WorkgroupName, ex.Message);
                                         ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "FailToJoinWorkGroup", ErrorCategory.OperationStopped, computerName);
                                         WriteError(error);
                                     }
                                 }
                             }
 
-                            if (_passThru)
+                            if (PassThru)
                             {
                                 WriteObject(ComputerWMIHelper.GetComputerStatusObject(returnCode, computerName));
                             }
@@ -5100,14 +4824,14 @@ $result
                 }
 
                 // If successful and the Restart parameter is specified, restart the computer
-                if (successful && _restart)
+                if (successful && Restart)
                 {
                     object[] flags = new object[] { 6, 0 };
                     RestartComputerCommand.RestartOneComputerUsingDcom(this, isLocalhost, computerName, flags, options);
                 }
 
                 // If successful and the Restart parameter is not specified, write out warning
-                if (successful && !_restart)
+                if (successful && !Restart)
                 {
                     WriteWarning(StringUtil.Format(ComputerResources.RestartNeeded, null, computerName));
                 }
@@ -5178,7 +4902,7 @@ $result
             EnumerationOptions enumOptions = new EnumerationOptions { UseAmendedQualifiers = true, DirectRead = true };
             ObjectQuery computerSystemQuery = new ObjectQuery("select * from " + ComputerWMIHelper.WMI_Class_ComputerSystem);
 
-            foreach (string computer in _computerName)
+            foreach (string computer in ComputerName)
             {
                 string targetComputer = ValidateComputerName(computer);
                 if (targetComputer == null)
@@ -5268,27 +4992,14 @@ $result
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        public string ComputerName
-        {
-            get { return _computerName; }
-            set { _computerName = value; }
-        }
-        private string _computerName = "localhost";
+        public string ComputerName { get; set; } = "localhost";
 
         /// <summary>
         /// Emit the output.
         /// </summary>
         //[Alias("Restart")]
         [Parameter]
-        public SwitchParameter PassThru
-        {
-            get { return _passThru; }
-            set
-            {
-                _passThru = value;
-            }
-        }
-        private SwitchParameter _passThru;
+        public SwitchParameter PassThru { get; set; }
 
         /// <summary>
         /// The domain credential of the domain the target computer joined
@@ -5296,15 +5007,7 @@ $result
         [Parameter]
         [ValidateNotNullOrEmpty]
         [Credential]
-        public PSCredential DomainCredential
-        {
-            get { return _domainCredential; }
-            set
-            {
-                _domainCredential = value;
-            }
-        }
-        private PSCredential _domainCredential;
+        public PSCredential DomainCredential { get; set; }
 
         /// <summary>
         /// The administrator credential of the target computer
@@ -5312,27 +5015,14 @@ $result
         [Parameter]
         [ValidateNotNullOrEmpty]
         [Credential]
-        public PSCredential LocalCredential
-        {
-            get { return _localCredential; }
-            set { _localCredential = value; }
-        }
-        private PSCredential _localCredential;
+        public PSCredential LocalCredential { get; set; }
 
         /// <summary>
         /// New names for the target computers
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        public string NewName
-        {
-            get { return _newComputerName; }
-            set
-            {
-                _newComputerName = value;
-            }
-        }
-        private string _newComputerName;
+        public string NewName { get; set; }
 
         /// <summary>
         /// Suppress the ShouldContinue
@@ -5368,33 +5058,20 @@ $result
             "Digest",
             "Kerberos")] // can be used with and without credential (not sure about implications)
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        public string WsmanAuthentication
-        {
-            get { return _wsmanAuthentication; }
-            set { _wsmanAuthentication = value; }
-        }
-        private string _wsmanAuthentication = "Default";
+        public string WsmanAuthentication { get; set; } = "Default";
 
         /// <summary>
         /// Specify the protocol to use
         /// </summary>
         [Parameter]
         [ValidateSet(ComputerWMIHelper.DcomProtocol, ComputerWMIHelper.WsmanProtocol)]
-        public string Protocol
-        {
-            get { return _protocol; }
-            set
-            {
-                _protocol = value;
-            }
-        }
-
-        //CoreClr does not support DCOM protocol
-        // This change makes sure that the the command works seamlessly if user did not explicitly entered the protocol
+        public string Protocol { get; set; } =
 #if CORECLR
-        private string _protocol = ComputerWMIHelper.WsmanProtocol;
+            //CoreClr does not support DCOM protocol
+            // This change makes sure that the the command works seamlessly if user did not explicitly entered the protocol
+            ComputerWMIHelper.WsmanProtocol;
 #else
-        private string _protocol = ComputerWMIHelper.DcomProtocol;
+             ComputerWMIHelper.DcomProtocol;
 #endif
 
 #endregion
@@ -5408,7 +5085,7 @@ $result
         {
             // Validate target name.
             ErrorRecord targetError = null;
-            string targetComputer = ComputerWMIHelper.ValidateComputerName(_computerName, _shortLocalMachineName, _fullLocalMachineName, ref targetError);
+            string targetComputer = ComputerWMIHelper.ValidateComputerName(ComputerName, _shortLocalMachineName, _fullLocalMachineName, ref targetError);
             if (targetComputer == null)
             {
                 if (targetError != null)
@@ -5420,13 +5097,13 @@ $result
 
             // Validate *new* name. Validate the format of the new name. Check if the old name is the same as the
             // new name later.
-            if (!ComputerWMIHelper.IsComputerNameValid(_newComputerName))
+            if (!ComputerWMIHelper.IsComputerNameValid(NewName))
             {
                 bool isLocalhost = targetComputer.Equals(ComputerWMIHelper.localhostStr, StringComparison.OrdinalIgnoreCase);
-                string errMsg = StringUtil.Format(ComputerResources.InvalidNewName, isLocalhost ? _shortLocalMachineName : targetComputer, _newComputerName);
+                string errMsg = StringUtil.Format(ComputerResources.InvalidNewName, isLocalhost ? _shortLocalMachineName : targetComputer, NewName);
                 ErrorRecord error = new ErrorRecord(
                         new InvalidOperationException(errMsg), "InvalidNewName",
-                        ErrorCategory.InvalidArgument, _newComputerName);
+                        ErrorCategory.InvalidArgument, NewName);
                 WriteError(error);
                 return null;
             }
@@ -5476,7 +5153,7 @@ $result
             try
             {
                 using (CancellationTokenSource cancelTokenSource = new CancellationTokenSource())
-                using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credToUse, _wsmanAuthentication, cancelTokenSource.Token, this))
+                using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credToUse, WsmanAuthentication, cancelTokenSource.Token, this))
                 {
                     var operationOptions = new CimOperationOptions
                     {
@@ -5557,7 +5234,7 @@ $result
                             successful = true;
                         }
 
-                        if (_passThru)
+                        if (PassThru)
                         {
                             WriteObject(ComputerWMIHelper.GetRenameComputerStatusObject(retVal, newName, computerName));
                         }
@@ -5574,7 +5251,7 @@ $result
                                     computerName,
                                     flags,
                                     credToUse,
-                                    _wsmanAuthentication,
+                                    WsmanAuthentication,
                                     ComputerResources.RestartcomputerFailed,
                                     "RestartcomputerFailed",
                                     cancelTokenSource.Token);
@@ -5689,7 +5366,7 @@ $result
                                 successful = true;
                             }
 
-                            if (_passThru)
+                            if (PassThru)
                             {
                                 WriteObject(ComputerWMIHelper.GetRenameComputerStatusObject(retVal, newName, computerName));
                             }
@@ -5785,12 +5462,12 @@ $result
             {
                 if (!_containsLocalHost)
                     _containsLocalHost = true;
-                _newNameForLocalHost = _newComputerName;
+                _newNameForLocalHost = NewName;
 
                 return;
             }
 
-            DoRenameComputerAction(targetComputer, _newComputerName, false);
+            DoRenameComputerAction(targetComputer, NewName, false);
         }
 
         /// <summary>
@@ -6382,7 +6059,7 @@ $result
     /// <summary>
     /// the static class for calling the the NetJoinDomain function.
     /// </summary>
-    static internal class SAMAPI
+    internal static class SAMAPI
     {
         /// <summary>
         /// Structure for the LSA unicode string
@@ -6606,34 +6283,12 @@ $result
         /// <summary>
         /// The HasSuceeded which shows the operation was success or not
         /// </summary>
-        public bool HasSucceeded
-        {
-            get
-            {
-                return hasSucceeded;
-            }
-            set
-            {
-                hasSucceeded = value;
-            }
-        }
-        private bool hasSucceeded;
+        public bool HasSucceeded { get; set; }
 
         /// <summary>
         /// The ComputerName on which the operation is done.
         /// </summary>
-        public string ComputerName
-        {
-            get
-            {
-                return computername;
-            }
-            set
-            {
-                computername = value;
-            }
-        }
-        private string computername;
+        public string ComputerName { get; set; }
 
         /// <summary>
         /// Returns the string representation of this object.
@@ -6641,7 +6296,7 @@ $result
         /// <returns></returns>
         public override string ToString()
         {
-            return FormatLine(this.HasSucceeded.ToString(), this.computername);
+            return FormatLine(this.HasSucceeded.ToString(), this.ComputerName);
         }
 
         /// <summary>
@@ -6666,50 +6321,17 @@ $result
         /// <summary>
         /// The status which shows the operation was success or failure.
         /// </summary>
-        public bool HasSucceeded
-        {
-            get
-            {
-                return hasSucceeded;
-            }
-            set
-            {
-                hasSucceeded = value;
-            }
-        }
-        private bool hasSucceeded;
+        public bool HasSucceeded { get; set; }
 
         /// <summary>
         /// The NewComputerName which represents the target machine.
         /// </summary>
-        public string NewComputerName
-        {
-            get
-            {
-                return newcomputername;
-            }
-            set
-            {
-                newcomputername = value;
-            }
-        }
-        private string newcomputername;
+        public string NewComputerName { get; set; }
 
         /// <summary>
         /// The OldComputerName which represented the target machine.
         /// </summary>
-        public string OldComputerName
-        {
-            get
-            {
-                return oldcomputername;
-            }
-            set
-            {
-                oldcomputername = value;
-            }
-        }
-        private string oldcomputername;
+        public string OldComputerName { get; set; }
 
         /// <summary>
         /// Returns the string representation of this object.
@@ -6717,7 +6339,7 @@ $result
         /// <returns></returns>
         public override string ToString()
         {
-            return FormatLine(this.HasSucceeded.ToString(), this.newcomputername, this.oldcomputername);
+            return FormatLine(this.HasSucceeded.ToString(), this.NewComputerName, this.OldComputerName);
         }
 
         /// <summary>
@@ -6739,7 +6361,7 @@ $result
     /// Helper Class used by Stop-Computer,Restart-Computer and Test-Connection
     /// Also Contain constants used by System Restore related Cmdlets.
     /// </summary>
-    static internal class ComputerWMIHelper
+    internal static class ComputerWMIHelper
     {
         /// <summary>
         /// The maximum length of a valid NetBIOS name

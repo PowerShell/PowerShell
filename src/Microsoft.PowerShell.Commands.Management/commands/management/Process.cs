@@ -80,12 +80,7 @@ namespace Microsoft.PowerShell.Commands
         /// The computer from which to retrieve processes.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        protected string[] SuppliedComputerName
-        {
-            get { return _computerName; }
-            set { _computerName = value; }
-        }
-        private string[] _computerName = new string[0];
+        protected string[] SuppliedComputerName { get; set; } = Utils.EmptyArray<string>();
 
         /// <remarks>
         /// The Name parameter is declared in subclasses,
@@ -598,18 +593,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = IdParameterSet)]
         [Parameter(ParameterSetName = InputObjectParameterSet)]
         [ValidateNotNull]
-        public SwitchParameter Module
-        {
-            get
-            {
-                return _module;
-            }
-            set
-            {
-                _module = value;
-            }
-        }
-        private SwitchParameter _module;
+        public SwitchParameter Module { get; set; }
 
         ///<summary>
         ///To display the fileversioninfo of the main module of a process
@@ -619,18 +603,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InputObjectParameterSet)]
         [Alias("FV", "FVI")]
         [ValidateNotNull]
-        public SwitchParameter FileVersionInfo
-        {
-            get
-            {
-                return _fileversioninfo;
-            }
-            set
-            {
-                _fileversioninfo = value;
-            }
-        }
-        private SwitchParameter _fileversioninfo;
+        public SwitchParameter FileVersionInfo { get; set; }
 
         #endregion Parameters
 
@@ -655,7 +628,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (ComputerName.Length > 0 && (_fileversioninfo.IsPresent || _module.IsPresent))
+            if (ComputerName.Length > 0 && (FileVersionInfo.IsPresent || Module.IsPresent))
             {
                 Exception ex = new InvalidOperationException(ProcessResources.NoComputerNameWithFileVersion);
                 ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.InvalidOperation, ComputerName);
@@ -665,7 +638,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (Process process in MatchingProcesses())
             {
                 //if module and fileversion are to be displayed
-                if (_module.IsPresent && _fileversioninfo.IsPresent)
+                if (Module.IsPresent && FileVersionInfo.IsPresent)
                 {
                     ProcessModule tempmodule = null;
                     try
@@ -710,7 +683,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteNonTerminatingError(process, exception, ProcessResources.CouldnotEnumerateModuleFileVer, "CouldnotEnumerateModuleFileVer", ErrorCategory.PermissionDenied);
                     }
                 }
-                else if (_module.IsPresent)
+                else if (Module.IsPresent)
                 {
                     //if only modules are to be displayed 
                     try
@@ -741,7 +714,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteNonTerminatingError(process, exception, ProcessResources.CouldnotEnumerateModules, "CouldnotEnumerateModules", ErrorCategory.PermissionDenied);
                     }
                 }
-                else if (_fileversioninfo.IsPresent)
+                else if (FileVersionInfo.IsPresent)
                 {
                     //if fileversion of each process is to be displayed
                     try
@@ -1282,18 +1255,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        public SwitchParameter Force
-        {
-            get
-            {
-                return _force;
-            }
-            set
-            {
-                _force = value;
-            }
-        }
-        private SwitchParameter _force;
+        public SwitchParameter Force { get; set; }
 
         #endregion Parameters
 
@@ -1762,15 +1724,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
         [Alias("PSPath")]
-        public string FilePath
-        {
-            get { return _path; }
-            set
-            {
-                _path = value;
-            }
-        }
-        private string _path;
+        public string FilePath { get; set; }
 
 
         /// <summary>
@@ -1780,15 +1734,7 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Args")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] ArgumentList
-        {
-            get { return _argumentlist; }
-            set
-            {
-                _argumentlist = value;
-            }
-        }
-        private string[] _argumentlist;
+        public string[] ArgumentList { get; set; }
 
 
         /// <summary>
@@ -1814,16 +1760,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        public string WorkingDirectory
-        {
-            get { return _workingdirectory; }
-            set
-            {
-                _workingdirectory = value;
-            }
-        }
-        private string _workingdirectory;
-
+        public string WorkingDirectory { get; set; }
 
 
         /// <summary>
@@ -1862,15 +1799,7 @@ namespace Microsoft.PowerShell.Commands
         /// passthru parameter
         /// </summary>
         [Parameter]
-        public SwitchParameter PassThru
-        {
-            get { return _passthru; }
-            set
-            {
-                _passthru = value;
-            }
-        }
-        private SwitchParameter _passthru;
+        public SwitchParameter PassThru { get; set; }
 
 
         /// <summary>
@@ -1936,15 +1865,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         [Parameter(ParameterSetName = "UseShellExecute")]
         [ValidateNotNullOrEmpty]
-        public string Verb
-        {
-            get { return _verb; }
-            set
-            {
-                _verb = value;
-            }
-        }
-        private string _verb;
+        public string Verb { get; set; }
 
 
         /// <summary>
@@ -1972,15 +1893,7 @@ namespace Microsoft.PowerShell.Commands
         ///  wait for th eprocess to terminate
         /// </summary>
         [Parameter]
-        public SwitchParameter Wait
-        {
-            get { return _wait; }
-            set
-            {
-                _wait = value;
-            }
-        }
-        private SwitchParameter _wait;
+        public SwitchParameter Wait { get; set; }
 
         /// <summary>
         ///  Default Environment
@@ -2017,20 +1930,20 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 CommandInfo cmdinfo = CommandDiscovery.LookupCommandInfo(
-                    _path, CommandTypes.Application | CommandTypes.ExternalScript,
+                    FilePath, CommandTypes.Application | CommandTypes.ExternalScript,
                     SearchResolutionOptions.None, CommandOrigin.Internal, this.Context);
 
                 startInfo.FileName = cmdinfo.Definition;
             }
             catch (CommandNotFoundException)
             {
-                startInfo.FileName = _path;
+                startInfo.FileName = FilePath;
             }
             //Arguments
-            if (_argumentlist != null)
+            if (ArgumentList != null)
             {
                 StringBuilder sb = new StringBuilder();
-                foreach (string str in _argumentlist)
+                foreach (string str in ArgumentList)
                 {
                     sb.Append(str);
                     sb.Append(' ');
@@ -2040,18 +1953,18 @@ namespace Microsoft.PowerShell.Commands
 
 
             //WorkingDirectory
-            if (_workingdirectory != null)
+            if (WorkingDirectory != null)
             {
                 //WorkingDirectory -> Not Exist -> Throw Error
-                _workingdirectory = ResolveFilePath(_workingdirectory);
-                if (!Directory.Exists(_workingdirectory))
+                WorkingDirectory = ResolveFilePath(WorkingDirectory);
+                if (!Directory.Exists(WorkingDirectory))
                 {
                     message = StringUtil.Format(ProcessResources.InvalidInput, "WorkingDirectory");
                     ErrorRecord er = new ErrorRecord(new DirectoryNotFoundException(message), "DirectoryNotFoundException", ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }
-                startInfo.WorkingDirectory = _workingdirectory;
+                startInfo.WorkingDirectory = WorkingDirectory;
             }
             else
             {
@@ -2178,9 +2091,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 startInfo.UseShellExecute = true;
                 //Verb
-                if (_verb != null)
+                if (Verb != null)
                 {
-                    startInfo.Verb = _verb;
+                    startInfo.Verb = Verb;
                 }
 
                 //WindowStyle
@@ -2214,7 +2127,7 @@ namespace Microsoft.PowerShell.Commands
             }
             //Wait and Passthru Implementation.
 
-            if (_passthru.IsPresent)
+            if (PassThru.IsPresent)
             {
                 if (process != null)
                 {
@@ -2228,7 +2141,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (_wait.IsPresent)
+            if (Wait.IsPresent)
             {
                 if (process != null)
                 {
@@ -2545,7 +2458,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (error == 0xc1)
                             {
-                                message = StringUtil.Format(ProcessResources.InvalidApplication, _path);
+                                message = StringUtil.Format(ProcessResources.InvalidApplication, FilePath);
                             }
                             else if (error == 0x424)
                             {

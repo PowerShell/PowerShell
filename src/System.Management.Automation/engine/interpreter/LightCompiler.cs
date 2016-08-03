@@ -23,8 +23,6 @@ using System.Linq.Expressions;
 // Use stubs for Serializable attribute and SystemException
 using Microsoft.PowerShell.CoreClr.Stubs;
 #endif
-
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;

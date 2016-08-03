@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.Management.Automation.Internal;

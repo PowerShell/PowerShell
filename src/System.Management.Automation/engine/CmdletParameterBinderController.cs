@@ -1383,11 +1383,8 @@ namespace System.Management.Automation
 
                     // We need to delay binding of this argument to the parameter
 
-                    DelayedScriptBlockArgument delayedArg = argumentValue as DelayedScriptBlockArgument;
-                    if (delayedArg == null)
-                    {
-                        delayedArg = new DelayedScriptBlockArgument { _argument = argument, _parameterBinder = this };
-                    }
+                    DelayedScriptBlockArgument delayedArg = argumentValue as DelayedScriptBlockArgument ??
+                                                            new DelayedScriptBlockArgument { _argument = argument, _parameterBinder = this };
                     if (!_delayBindScriptBlocks.ContainsKey(parameter))
                     {
                         _delayBindScriptBlocks.Add(parameter, delayedArg);
@@ -3913,7 +3910,7 @@ namespace System.Management.Automation
                 {
                     ParameterBindingException bindingException =
                         new ParameterBindingException(
-                            error,
+                            null,
                             ErrorCategory.InvalidArgument,
                             this.Command.MyInvocation,
                             GetErrorExtent(argument),

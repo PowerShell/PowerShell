@@ -2,10 +2,6 @@
  * Copyright (c) Microsoft Corporation.  All rights reserved.
  * --********************************************************************/
 
-using System.Threading;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Management.Automation;
 using Dbg = System.Management.Automation.Diagnostics;
 
 using System.Management.Automation.Remoting.Server;

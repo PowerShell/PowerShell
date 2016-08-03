@@ -13,7 +13,7 @@ namespace System.Management.Automation.Tracing
     /// </summary>
     internal static class PSEtwLog
     {
-        static private PSEtwLogProvider provider;
+        private static PSEtwLogProvider provider;
 
         /// <summary>
         /// Class constructor
@@ -31,7 +31,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="exception"></param>
         /// <param name="additionalInfo"></param>
         /// 
-        static internal void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo)
+        internal static void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo)
         {
             provider.LogEngineHealthEvent(logContext, eventId, exception, additionalInfo);
         }
@@ -43,7 +43,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="newState"></param>
         /// <param name="previousState"></param>
         /// 
-        static internal void LogEngineLifecycleEvent(LogContext logContext, EngineState newState, EngineState previousState)
+        internal static void LogEngineLifecycleEvent(LogContext logContext, EngineState newState, EngineState previousState)
         {
             provider.LogEngineLifecycleEvent(logContext, newState, previousState);
         }
@@ -53,7 +53,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="exception"></param>
-        static internal void LogCommandHealthEvent(LogContext logContext, Exception exception)
+        internal static void LogCommandHealthEvent(LogContext logContext, Exception exception)
         {
             provider.LogCommandHealthEvent(logContext, exception);
         }
@@ -64,7 +64,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="logContext"></param>
         /// <param name="newState"></param>
         /// 
-        static internal void LogCommandLifecycleEvent(LogContext logContext, CommandState newState)
+        internal static void LogCommandLifecycleEvent(LogContext logContext, CommandState newState)
         {
             provider.LogCommandLifecycleEvent(() => logContext, newState);
         }
@@ -74,7 +74,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="pipelineExecutionDetail"></param>
-        static internal void LogPipelineExecutionDetailEvent(LogContext logContext, List<String> pipelineExecutionDetail)
+        internal static void LogPipelineExecutionDetailEvent(LogContext logContext, List<String> pipelineExecutionDetail)
         {
             provider.LogPipelineExecutionDetailEvent(logContext, pipelineExecutionDetail);
         }
@@ -85,7 +85,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="logContext"></param>
         /// <param name="providerName"></param>
         /// <param name="exception"></param>
-        static internal void LogProviderHealthEvent(LogContext logContext, string providerName, Exception exception)
+        internal static void LogProviderHealthEvent(LogContext logContext, string providerName, Exception exception)
         {
             provider.LogProviderHealthEvent(logContext, providerName, exception);
         }
@@ -97,7 +97,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="providerName"></param>
         /// <param name="newState"></param>
         /// 
-        static internal void LogProviderLifecycleEvent(LogContext logContext, string providerName, ProviderState newState)
+        internal static void LogProviderLifecycleEvent(LogContext logContext, string providerName, ProviderState newState)
         {
             provider.LogProviderLifecycleEvent(logContext, providerName, newState);
         }
@@ -110,7 +110,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="value"></param>
         /// <param name="previousValue"></param>
         /// 
-        static internal void LogSettingsEvent(LogContext logContext, string variableName, string value, string previousValue)
+        internal static void LogSettingsEvent(LogContext logContext, string variableName, string value, string previousValue)
         {
             provider.LogSettingsEvent(logContext, variableName, value, previousValue);
         }
@@ -123,7 +123,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="task"></param>
         /// <param name="keyword"></param>
         /// <param name="args"></param>
-        static internal void LogOperationalInformation(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
+        internal static void LogOperationalInformation(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
         {
             provider.WriteEvent(id, PSChannel.Operational, opcode, PSLevel.Informational, task, keyword, args);
         }
@@ -136,7 +136,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="task"></param>
         /// <param name="keyword"></param>
         /// <param name="args"></param>
-        static internal void LogOperationalWarning(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
+        internal static void LogOperationalWarning(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
         {
             provider.WriteEvent(id, PSChannel.Operational, opcode, PSLevel.Warning, task, keyword, args);
         }
@@ -149,7 +149,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="task"></param>
         /// <param name="keyword"></param>
         /// <param name="args"></param>
-        static internal void LogOperationalVerbose(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
+        internal static void LogOperationalVerbose(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
         {
             provider.WriteEvent(id, PSChannel.Operational, opcode, PSLevel.Verbose, task, keyword, args);
         }
@@ -162,7 +162,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="task"></param>
         /// <param name="keyword"></param>
         /// <param name="args"></param>
-        static internal void LogAnalyticError(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
+        internal static void LogAnalyticError(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
         {
             provider.WriteEvent(id, PSChannel.Analytic, opcode, PSLevel.Error, task, keyword, args);
         }
@@ -175,7 +175,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="task"></param>
         /// <param name="keyword"></param>
         /// <param name="args"></param>
-        static internal void LogAnalyticWarning(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
+        internal static void LogAnalyticWarning(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
         {
             provider.WriteEvent(id, PSChannel.Analytic, opcode, PSLevel.Warning, task, keyword, args);
         }
@@ -193,7 +193,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="isEndFragment"></param>
         /// <param name="fragmentLength"></param>
         /// <param name="fragmentData"></param>
-        static internal void LogAnalyticVerbose(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword,
+        internal static void LogAnalyticVerbose(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword,
             Int64 objectId,
             Int64 fragmentId,
             int isStartFragment,
@@ -220,7 +220,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="task"></param>
         /// <param name="keyword"></param>
         /// <param name="args"></param>
-        static internal void LogAnalyticVerbose(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
+        internal static void LogAnalyticVerbose(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
         {
             provider.WriteEvent(id, PSChannel.Analytic, opcode, PSLevel.Verbose, task, keyword, args);
         }
@@ -233,7 +233,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="task"></param>
         /// <param name="keyword"></param>
         /// <param name="args"></param>
-        static internal void LogAnalyticInformational(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
+        internal static void LogAnalyticInformational(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
         {
             provider.WriteEvent(id, PSChannel.Analytic, opcode, PSLevel.Informational, task, keyword, args);
         }
@@ -246,7 +246,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="task"></param>
         /// <param name="keyword"></param>
         /// <param name="args"></param>
-        static internal void LogOperationalError(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
+        internal static void LogOperationalError(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
         {
             provider.WriteEvent(id, PSChannel.Operational, opcode, PSLevel.Error, task, keyword, args);
         }
@@ -259,18 +259,18 @@ namespace System.Management.Automation.Tracing
         /// <param name="task"></param>
         /// <param name="logContext"></param>
         /// <param name="payLoad"></param>
-        static internal void LogOperationalError(PSEventId id, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad)
+        internal static void LogOperationalError(PSEventId id, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad)
         {
             provider.WriteEvent(id, PSChannel.Operational, opcode, task, logContext, payLoad);
         }
 
 
-        static internal void SetActivityIdForCurrentThread(Guid newActivityId)
+        internal static void SetActivityIdForCurrentThread(Guid newActivityId)
         {
             provider.SetActivityIdForCurrentThread(newActivityId);
         }
 
-        static internal void ReplaceActivityIdForCurrentThread(Guid newActivityId,
+        internal static void ReplaceActivityIdForCurrentThread(Guid newActivityId,
             PSEventId eventForOperationalChannel, PSEventId eventForAnalyticChannel, PSKeyword keyword, PSTask task)
         {
             // set the new activity id
@@ -291,7 +291,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="eventForAnalyticChannel"></param>
         /// <param name="keyword"></param>
         /// <param name="task"></param>
-        static internal void WriteTransferEvent(Guid relatedActivityId, PSEventId eventForOperationalChannel,
+        internal static void WriteTransferEvent(Guid relatedActivityId, PSEventId eventForOperationalChannel,
                             PSEventId eventForAnalyticChannel, PSKeyword keyword, PSTask task)
         {
             provider.WriteEvent(eventForOperationalChannel, PSChannel.Operational, PSOpcode.Method, PSLevel.Informational, task,
@@ -305,7 +305,7 @@ namespace System.Management.Automation.Tracing
         /// Writes a transfer event
         /// </summary>
         /// <param name="parentActivityId"></param>
-        static internal void WriteTransferEvent(Guid parentActivityId)
+        internal static void WriteTransferEvent(Guid parentActivityId)
         {
             provider.WriteTransferEvent(parentActivityId);
         }

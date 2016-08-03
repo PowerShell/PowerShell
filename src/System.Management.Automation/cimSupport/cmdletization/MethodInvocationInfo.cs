@@ -26,8 +26,8 @@ namespace Microsoft.PowerShell.Cmdletization
             if (parameters == null) throw new ArgumentNullException("parameters");
             // returnValue can be null
 
-            _methodName = name;
-            _returnValue = returnValue;
+            MethodName = name;
+            ReturnValue = returnValue;
 
             KeyedCollection<string, MethodParameter> mpk = new MethodParametersCollection();
             foreach (var parameter in parameters)
@@ -35,35 +35,23 @@ namespace Microsoft.PowerShell.Cmdletization
                 mpk.Add(parameter);
             }
 
-            _parameters = mpk;
+            Parameters = mpk;
         }
 
         /// <summary>
         /// Name of the method to invoke
         /// </summary>
-        public string MethodName
-        {
-            get { return _methodName; }
-        }
-        private readonly string _methodName;
+        public string MethodName { get; }
 
         /// <summary>
         /// Method parameters
         /// </summary>
-        public KeyedCollection<string, MethodParameter> Parameters
-        {
-            get { return _parameters; }
-        }
-        private readonly KeyedCollection<string, MethodParameter> _parameters;
+        public KeyedCollection<string, MethodParameter> Parameters { get; }
 
         /// <summary>
         /// Return value of the method.  Can be <c>null</c> if the method doesn't return anything.
         /// </summary>
-        public MethodParameter ReturnValue
-        {
-            get { return _returnValue; }
-        }
-        private readonly MethodParameter _returnValue;
+        public MethodParameter ReturnValue { get; }
 
         internal IEnumerable<T> GetArgumentsOfType<T>() where T : class
         {

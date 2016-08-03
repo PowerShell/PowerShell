@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,7 +15,7 @@ namespace System.Management.Automation
     /// <summary>
     /// A common base class for code shared between an interpreted (old) script block and a compiled (new) script block.
     /// </summary>
-    abstract internal class ScriptCommandProcessorBase : CommandProcessorBase
+    internal abstract class ScriptCommandProcessorBase : CommandProcessorBase
     {
         protected ScriptCommandProcessorBase(ScriptBlock scriptBlock, ExecutionContext context, bool useLocalScope, CommandOrigin origin, SessionStateInternal sessionState)
         {

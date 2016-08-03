@@ -51,13 +51,7 @@ namespace Microsoft.PowerShell.Commands
             ValueFromPipelineByPropertyName = true, ParameterSetName = ComputerNameParameterSet)]
         [Alias("Cn")]
         [ValidateNotNullOrEmpty]
-        public new string ComputerName
-        {
-            get { return _computerName; }
-            set { _computerName = value; }
-        }
-
-        private string _computerName;
+        public new string ComputerName { get; set; }
 
         /// <summary>
         /// Runspace parameter.
@@ -66,13 +60,7 @@ namespace Microsoft.PowerShell.Commands
             ValueFromPipeline = true, ParameterSetName = SessionParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
-        public new PSSession Session
-        {
-            get { return _remoteRunspaceInfo; }
-            set { _remoteRunspaceInfo = value; }
-        }
-
-        private PSSession _remoteRunspaceInfo;
+        public new PSSession Session { get; set; }
 
         /// <summary>
         /// ConnectionUri parameter.
@@ -81,13 +69,7 @@ namespace Microsoft.PowerShell.Commands
             ParameterSetName = UriParameterSet)]
         [ValidateNotNullOrEmpty]
         [Alias("URI", "CU")]
-        public new Uri ConnectionUri
-        {
-            get { return _connectionUri; }
-            set { _connectionUri = value; }
-        }
-
-        private Uri _connectionUri;
+        public new Uri ConnectionUri { get; set; }
 
         /// <summary>
         /// RemoteRunspaceId of the remote runspace info object.
@@ -96,13 +78,7 @@ namespace Microsoft.PowerShell.Commands
         ParameterSetName = InstanceIdParameterSet)]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
-        public Guid InstanceId
-        {
-            get { return _remoteRunspaceId; }
-            set { _remoteRunspaceId = value; }
-        }
-
-        private Guid _remoteRunspaceId;
+        public Guid InstanceId { get; set; }
 
         /// <summary>
         /// SessionId of the remote runspace info object.
@@ -111,26 +87,14 @@ namespace Microsoft.PowerShell.Commands
             ValueFromPipelineByPropertyName = true,
              ParameterSetName = IdParameterSet)]
         [ValidateNotNull]
-        public int Id
-        {
-            get { return _sessionId; }
-            set { _sessionId = value; }
-        }
-
-        private int _sessionId;
+        public int Id { get; set; }
 
         /// <summary>
         /// Name of the remote runspace info object.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
         ParameterSetName = NameParameterSet)]
-        public String Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
-
-        private String _name;
+        public String Name { get; set; }
 
         /// <summary>
         /// When set and in loopback scenario (localhost) this enables creation of WSMan
@@ -140,12 +104,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = ComputerNameParameterSet)]
         [Parameter(ParameterSetName = UriParameterSet)]
-        public SwitchParameter EnableNetworkAccess
-        {
-            get { return _enableNetworkAccess; }
-            set { _enableNetworkAccess = value; }
-        }
-        private SwitchParameter _enableNetworkAccess;
+        public SwitchParameter EnableNetworkAccess { get; set; }
 
         /// <summary>
         /// Virtual machine ID.
@@ -154,12 +113,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true,
             ValueFromPipelineByPropertyName = true, ParameterSetName = VMIdParameterSet)]
         [Alias("VMGuid")]
-        public new Guid VMId
-        {
-            get { return _vmId; }
-            set { _vmId = value; }
-        }
-        private Guid _vmId;
+        public new Guid VMId { get; set; }
 
         /// <summary>
         /// Virtual machine name.
@@ -167,12 +121,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true,
             ValueFromPipelineByPropertyName = true, ParameterSetName = VMNameParameterSet)]
-        public new string VMName
-        {
-            get { return _vmName; }
-            set { _vmName = value; }
-        }
-        private string _vmName;
+        public new string VMName { get; set; }
 
         /// <summary>
         /// Specifies the credentials of the user to impersonate in the 
@@ -200,12 +149,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true,
             ValueFromPipelineByPropertyName = true, ParameterSetName = ContainerIdParameterSet)]
-        public new string ContainerId
-        {
-            get { return _containerId; }
-            set { _containerId = value; }
-        }
-        private string _containerId;
+        public new string ContainerId { get; set; }
 
         /// <summary>
         /// For WSMan sessions:
@@ -226,18 +170,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = EnterPSSessionCommand.VMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = EnterPSSessionCommand.VMNameParameterSet)]
-        public String ConfigurationName
-        {
-            get
-            {
-                return _shell;
-            }
-            set
-            {
-                _shell = value;
-            }
-        }
-        private String _shell;
+        public String ConfigurationName { get; set; }
 
         #endregion
 
@@ -341,7 +274,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
 
                 case SessionParameterSet:
-                    remoteRunspace = (RemoteRunspace)_remoteRunspaceInfo.Runspace;
+                    remoteRunspace = (RemoteRunspace)Session.Runspace;
                     break;
 
                 case InstanceIdParameterSet:
@@ -421,7 +354,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ParameterSetName == SessionParameterSet)
                 {
-                    string sessionName = (_remoteRunspaceInfo != null) ? _remoteRunspaceInfo.Name : string.Empty;
+                    string sessionName = (Session != null) ? Session.Name : string.Empty;
                     WriteError(
                         new ErrorRecord(
                             new ArgumentException(GetMessage(RemotingErrorIdStrings.EnterPSSessionBrokenSession,
@@ -470,7 +403,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteError(
                             new ErrorRecord(
                                 new RuntimeException(message), "EnterPSSessionConnectSessionNotAvailable",
-                                    ErrorCategory.InvalidOperation, _remoteRunspaceInfo));
+                                    ErrorCategory.InvalidOperation, Session));
 
                         // Leave session in original disconnected state.
                         remoteRunspace.DisconnectAsync();
@@ -516,9 +449,9 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Make sure any PSSession object passed in is saved in the local runspace repository.
-            if (_remoteRunspaceInfo != null)
+            if (Session != null)
             {
-                this.RunspaceRepository.AddOrReplace(_remoteRunspaceInfo);
+                this.RunspaceRepository.AddOrReplace(Session);
             }
 
             // prepare runspace for prompt
@@ -705,7 +638,7 @@ namespace Microsoft.PowerShell.Commands
         private RemoteRunspace CreateRunspaceWhenComputerNameParameterSpecified()
         {
             RemoteRunspace remoteRunspace = null;
-            string resolvedComputerName = ResolveComputerName(_computerName);
+            string resolvedComputerName = ResolveComputerName(ComputerName);
             try
             {
                 WSManConnectionInfo connectionInfo = null;

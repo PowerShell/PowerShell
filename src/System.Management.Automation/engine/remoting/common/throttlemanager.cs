@@ -35,35 +35,13 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// operation state
         /// </summary>
-        internal OperationState OperationState
-        {
-            get
-            {
-                return _operationState;
-            }
-            set
-            {
-                _operationState = value;
-            }
-        }
-        private OperationState _operationState;
+        internal OperationState OperationState { get; set; }
 
         /// <summary>
         /// the original event which actually resulted in this
         /// event being raised
         /// </summary>
-        internal EventArgs BaseEvent
-        {
-            get
-            {
-                return _baseEvent;
-            }
-            set
-            {
-                _baseEvent = value;
-            }
-        }
-        private EventArgs _baseEvent;
+        internal EventArgs BaseEvent { get; set; }
     }
 
     #endregion OperationState
@@ -658,25 +636,15 @@ namespace System.Management.Automation.Remoting
         private ThreadStart workerThreadDelegate;
         private Thread workerThreadStart;
         private Thread workerThreadStop;
-        private int sleepTime = 100;
-        private bool done;
 
-        public bool Done
-        {
-            set { done = value; }
-            get { return done; }
-        }
+        public bool Done { set; get; }
 
-        public int SleepTime
-        {
-            set { sleepTime = value; }
-            get { return sleepTime; }
-        }
+        public int SleepTime { set; get; } = 100;
 
         private void WorkerThreadMethodStart()
         {
-            Thread.Sleep(sleepTime);
-            done = true;
+            Thread.Sleep(SleepTime);
+            Done = true;
             OperationStateEventArgs operationStateEventArgs =
                     new OperationStateEventArgs();
             operationStateEventArgs.OperationState = OperationState.StartComplete;
@@ -695,7 +663,7 @@ namespace System.Management.Automation.Remoting
 
         internal Operation()
         {
-            done = false;
+            Done = false;
             workerThreadDelegate = new ThreadStart(WorkerThreadMethodStart);
             workerThreadStart = new Thread(workerThreadDelegate);
             workerThreadDelegate = new ThreadStart(WorkerThreadMethodStop);

@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
 
@@ -61,36 +60,14 @@ namespace Microsoft.PowerShell.Commands
         ///
         [Parameter(Mandatory = true, Position = 1, ValueFromPipelineByPropertyName = true)]
         [Alias("PSProperty")]
-        public string Name
-        {
-            get
-            {
-                return _property;
-            } // get
-
-            set
-            {
-                _property = value;
-            }
-        } // Property
+        public string Name { get; set; }
 
         /// <summary>
         /// The new name of the property on the item
         /// </summary>
         ///
         [Parameter(Mandatory = true, Position = 2, ValueFromPipelineByPropertyName = true)]
-        public string NewName
-        {
-            get
-            {
-                return _newName;
-            } // get
-
-            set
-            {
-                _newName = value;
-            }
-        } // NewName
+        public string NewName { get; set; }
 
         /// <summary>
         /// A virtual method for retrieving the dynamic parameters for a cmdlet. Derived cmdlets
@@ -124,16 +101,6 @@ namespace Microsoft.PowerShell.Commands
         /// The path to rename the property on.
         /// </summary>
         private string _path;
-
-        /// <summary>
-        /// The property to be renamed.
-        /// </summary>
-        private string _property;
-
-        /// <summary>
-        /// The new name of the item.
-        /// </summary>
-        private string _newName;
 
         #endregion parameter data
 

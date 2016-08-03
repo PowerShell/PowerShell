@@ -10,7 +10,6 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
-using System.Management.Automation.Runspaces.Internal;
 using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -57,12 +56,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = DisconnectPSSessionCommand.SessionParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public PSSession[] Session
-        {
-            get { return _remotePSSessionInfo; }
-            set { _remotePSSessionInfo = value; }
-        }
-        private PSSession[] _remotePSSessionInfo;
+        public PSSession[] Session { get; set; }
 
         /// <summary>
         /// Idle Timeout session option in seconds.  Used in this cmdlet to set server disconnect idletimeout option.
@@ -100,22 +94,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = PSRunspaceCmdlet.NameParameterSet)]
         [Parameter(ParameterSetName = PSRunspaceCmdlet.IdParameterSet)]
         [Parameter(ParameterSetName = PSRunspaceCmdlet.InstanceIdParameterSet)]
-        public Int32 ThrottleLimit
-        {
-            get { return _throttleLimit; }
-            set { _throttleLimit = value; }
-        }
-        private Int32 _throttleLimit = 0;
+        public Int32 ThrottleLimit { get; set; } = 0;
 
         /// <summary>
         /// Disconnect-PSSession does not support ComputerName parameter set.
         /// This may change for later versions.
         /// </summary>
-        public override String[] ComputerName
-        {
-            get;
-            set;
-        }
+        public override String[] ComputerName { get; set; }
 
         private PSSessionOption PSSessionOption
         {
@@ -123,11 +108,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // no need to lock as the cmdlet parameters will not be assigned
                 // from multiple threads.
-                if (null == _sessionOption)
-                {
-                    _sessionOption = new PSSessionOption();
-                }
-                return _sessionOption;
+                return _sessionOption ?? (_sessionOption = new PSSessionOption());
             }
         }
         private PSSessionOption _sessionOption;
@@ -193,13 +174,13 @@ namespace Microsoft.PowerShell.Commands
                 // Get all remote runspaces to disconnect.
                 if (ParameterSetName == DisconnectPSSessionCommand.SessionParameterSet)
                 {
-                    if (_remotePSSessionInfo == null || _remotePSSessionInfo.Length == 0)
+                    if (Session == null || Session.Length == 0)
                     {
                         return;
                     }
 
                     psSessions = new Dictionary<Guid, PSSession>();
-                    foreach (PSSession psSession in _remotePSSessionInfo)
+                    foreach (PSSession psSession in Session)
                     {
                         psSessions.Add(psSession.InstanceId, psSession);
                     }

@@ -4,10 +4,8 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Management.Automation;
 using System.Management.Automation.Host;
 
 namespace System.Management.Automation
@@ -30,16 +28,11 @@ namespace System.Management.Automation
             _output = outputList;
         }
 
-        private PSHost _host;
-
         /// <summary>
         /// Return the instance of PSHost - null by default.
         /// </summary>
-        public PSHost Host
-        {
-            set { _host = value; }
-            get { return _host; }
-        }
+        public PSHost Host { set; get; }
+
         #region Write
         /// <summary>
         /// Implementation of WriteDebug - just discards the input.

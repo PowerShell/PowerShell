@@ -34,7 +34,6 @@ namespace System.Management.Automation.Internal
         private PipelineWriter _externalSuccessOutput;
         private PipelineWriter _externalErrorOutput;
         private bool _executionStarted = false;
-        private bool _topLevel = false;
         private bool _stopping = false;
         private SessionStateScope _executionScope;
 
@@ -1540,11 +1539,7 @@ namespace System.Management.Automation.Internal
             set { _localPipeline = value; }
         }
 
-        internal bool TopLevel
-        {
-            get { return _topLevel; }
-            set { _topLevel = value; }
-        }
+        internal bool TopLevel { get; set; } = false;
 
         /// <summary>
         /// The scope the pipeline should execute in.

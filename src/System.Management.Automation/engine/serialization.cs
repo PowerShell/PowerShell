@@ -21,7 +21,6 @@ using System.Text;
 using System.Xml;
 using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Serialization;
-using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Remoting;
@@ -326,11 +325,7 @@ namespace System.Management.Automation
         /// is used by PriorityReceivedDataCollection (remoting) to process incoming data from the
         /// remote end. A value of Null means that the max memory is unlimited.
         /// </summary>
-        internal Nullable<int> MaximumAllowedMemory
-        {
-            set { _maxAllowedMemory = value; }
-            get { return _maxAllowedMemory; }
-        }
+        internal Nullable<int> MaximumAllowedMemory { set; get; }
 
         /// <summary>
         /// Logs that memory used by deserialized objects is not related to the size of input xml.
@@ -344,11 +339,11 @@ namespace System.Management.Automation
                 return;
             }
 
-            if (_maxAllowedMemory.HasValue)
+            if (MaximumAllowedMemory.HasValue)
             {
-                if (amountOfExtraMemory > (_maxAllowedMemory.Value - _totalDataProcessedSoFar))
+                if (amountOfExtraMemory > (MaximumAllowedMemory.Value - _totalDataProcessedSoFar))
                 {
-                    string message = StringUtil.Format(Serialization.DeserializationMemoryQuota, ((double)_maxAllowedMemory.Value) / (1 << 20),
+                    string message = StringUtil.Format(Serialization.DeserializationMemoryQuota, ((double)MaximumAllowedMemory.Value) / (1 << 20),
                                                        ConfigurationDataFromXML.MAXRCVDOBJSIZETOKEN_CamelCase,
                                                        ConfigurationDataFromXML.MAXRCVDCMDSIZETOKEN_CamelCase);
                     throw new XmlException(message);
@@ -359,7 +354,6 @@ namespace System.Management.Automation
         }
 
         private int _totalDataProcessedSoFar;
-        private Nullable<int> _maxAllowedMemory;
 
         internal readonly DeserializationOptions options;
         internal readonly PSRemotingCryptoHelper cryptoHelper;
@@ -1299,7 +1293,7 @@ namespace System.Management.Automation
             _writer.WriteEndElement();
         }
 
-        static private bool PSObjectHasModifiedTypesCollection(PSObject pso)
+        private static bool PSObjectHasModifiedTypesCollection(PSObject pso)
         {
             ConsolidatedString currentTypes = pso.InternalTypeNames;
             Collection<string> originalTypes = pso.InternalAdapter.BaseGetTypeNameHierarchy(pso.ImmediateBaseObject);
@@ -1880,26 +1874,19 @@ namespace System.Management.Automation
         private Collection<CollectionEntry<PSMemberInfo>> _extendedMembersCollection;
         private Collection<CollectionEntry<PSMemberInfo>> ExtendedMembersCollection
         {
-            get
-            {
-                if (_extendedMembersCollection == null)
-                {
-                    _extendedMembersCollection = PSObject.GetMemberCollection(PSMemberViewTypes.Extended, _typeTable);
-                }
-                return _extendedMembersCollection;
+            get {
+                return _extendedMembersCollection ??
+                       (_extendedMembersCollection =
+                           PSObject.GetMemberCollection(PSMemberViewTypes.Extended, _typeTable));
             }
         }
 
         private Collection<CollectionEntry<PSPropertyInfo>> _allPropertiesCollection;
         private Collection<CollectionEntry<PSPropertyInfo>> AllPropertiesCollection
         {
-            get
-            {
-                if (_allPropertiesCollection == null)
-                {
-                    _allPropertiesCollection = PSObject.GetPropertyCollection(PSMemberViewTypes.All, _typeTable);
-                }
-                return _allPropertiesCollection;
+            get {
+                return _allPropertiesCollection ??
+                       (_allPropertiesCollection = PSObject.GetPropertyCollection(PSMemberViewTypes.All, _typeTable));
             }
         }
 
@@ -4020,13 +4007,9 @@ namespace System.Management.Automation
 
         #region Getting XmlReaderSettings
 
-        static private readonly XmlReaderSettings s_xmlReaderSettingsForCliXml = GetXmlReaderSettingsForCliXml();
-        static internal XmlReaderSettings XmlReaderSettingsForCliXml
-        {
-            get { return s_xmlReaderSettingsForCliXml; }
-        }
+        internal static XmlReaderSettings XmlReaderSettingsForCliXml { get; } = GetXmlReaderSettingsForCliXml();
 
-        static private XmlReaderSettings GetXmlReaderSettingsForCliXml()
+        private static XmlReaderSettings GetXmlReaderSettingsForCliXml()
         {
             XmlReaderSettings xrs = new XmlReaderSettings();
 
@@ -4051,13 +4034,9 @@ namespace System.Management.Automation
             return xrs;
         }
 
-        static private readonly XmlReaderSettings s_xmlReaderSettingsForUntrustedXmlDocument = GetXmlReaderSettingsForUntrustedXmlDocument();
-        static internal XmlReaderSettings XmlReaderSettingsForUntrustedXmlDocument
-        {
-            get { return s_xmlReaderSettingsForUntrustedXmlDocument; }
-        }
+        internal static XmlReaderSettings XmlReaderSettingsForUntrustedXmlDocument { get; } = GetXmlReaderSettingsForUntrustedXmlDocument();
 
-        static private XmlReaderSettings GetXmlReaderSettingsForUntrustedXmlDocument()
+        private static XmlReaderSettings GetXmlReaderSettingsForUntrustedXmlDocument()
         {
             XmlReaderSettings settings = new XmlReaderSettings();
 
@@ -4347,7 +4326,7 @@ namespace System.Management.Automation
             return deserializer.ReadDecodedElementString(SerializationStrings.StringTag);
         }
 
-        static internal object DeserializeTimeSpan(InternalDeserializer deserializer)
+        internal static object DeserializeTimeSpan(InternalDeserializer deserializer)
         {
             Dbg.Assert(deserializer != null, "Caller should validate the parameter");
             try
@@ -4796,12 +4775,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (ex == null)
-            {
-                ex = new XmlException(message, innerException);
-            }
-
-            return ex;
+            return ex ?? new XmlException(message, innerException);
         }
 
         private string ReadNameAttribute()
@@ -4949,11 +4923,11 @@ namespace System.Management.Automation
         /// <param name="deserializer">TypeDeserializerDelegate for deserializing the type</param>
         internal TypeSerializationInfo(Type type, string itemTag, string propertyTag, TypeSerializerDelegate serializer, TypeDeserializerDelegate deserializer)
         {
-            _type = type;
-            _serializer = serializer;
-            _deserializer = deserializer;
-            _itemTag = itemTag;
-            _propertyTag = propertyTag;
+            Type = type;
+            Serializer = serializer;
+            Deserializer = deserializer;
+            ItemTag = itemTag;
+            PropertyTag = propertyTag;
         }
 
         #region properties
@@ -4961,78 +4935,32 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the type for which this TypeSerializationInfo is created.
         /// </summary>
-        internal Type Type
-        {
-            get
-            {
-                return _type;
-            }
-        }
+        internal Type Type { get; }
 
         /// <summary>
         /// Get the item tag for this type
         /// </summary>
-        internal string ItemTag
-        {
-            get
-            {
-                return _itemTag;
-            }
-        }
+        internal string ItemTag { get; }
 
         /// <summary>
         /// Get the Property tag for this type
         /// </summary>
-        internal string PropertyTag
-        {
-            get
-            {
-                return _propertyTag;
-            }
-        }
+        internal string PropertyTag { get; }
+
         /// <summary>
         /// Gets the delegate to serialize this type
         /// </summary>
-        internal TypeSerializerDelegate Serializer
-        {
-            get
-            {
-                return _serializer;
-            }
-        }
+        internal TypeSerializerDelegate Serializer { get; }
+
         /// <summary>
         /// Gets the delegate to deserialize this type
         /// </summary>
-        internal TypeDeserializerDelegate Deserializer
-        {
-            get
-            {
-                return _deserializer;
-            }
-        }
+        internal TypeDeserializerDelegate Deserializer { get; }
+
         #endregion properties
 
         #region private
-        /// <summary>
-        /// Type for which this entry is created
-        /// </summary>
-        private readonly Type _type;
-        /// <summary>
-        /// ItemTag for the type
-        /// </summary>
-        private readonly string _itemTag;
-        /// <summary>
-        /// PropertyTag for the type
-        /// </summary>
-        private readonly string _propertyTag;
-        /// <summary>
-        /// TypeSerializerDelegate for serializing the type
-        /// </summary>
-        private readonly TypeSerializerDelegate _serializer;
-        /// <summary>
-        /// TypeDeserializerDelegate for deserializing the type
-        /// </summary>
-        private readonly TypeDeserializerDelegate _deserializer;
+
         #endregion private
     }
 
@@ -5736,7 +5664,7 @@ namespace System.Management.Automation
             }
         }
 
-        static private KeyValuePair<WeakReference, T> WeakKeyValuePair(KeyValuePair<object, T> publicKeyValuePair)
+        private static KeyValuePair<WeakReference, T> WeakKeyValuePair(KeyValuePair<object, T> publicKeyValuePair)
         {
             return new KeyValuePair<WeakReference, T>(new WeakReference(publicKeyValuePair.Key), publicKeyValuePair.Value);
         }
@@ -6478,7 +6406,7 @@ namespace System.Management.Automation
         /// <param name="result"></param>
         /// <param name="keys">A chain of keys leading from the root dictionary (<paramref name="data"/>) to the value</param>
         /// <returns><c>true</c> if the value was found and was of the correct type; <c>false</c> otherwise</returns>
-        static internal bool TryPathGet<T>(IDictionary data, out T result, params string[] keys)
+        internal static bool TryPathGet<T>(IDictionary data, out T result, params string[] keys)
         {
             Dbg.Assert(keys != null, "Caller should verify that keys != null");
             Dbg.Assert(keys.Length >= 1, "Caller should verify that keys.Length >= 1");

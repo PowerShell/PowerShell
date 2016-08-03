@@ -24,18 +24,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Path",
                    Mandatory = true, ValueFromPipelineByPropertyName = true)]
-        public string[] Path
-        {
-            get
-            {
-                return _paths;
-            } // get
-
-            set
-            {
-                _paths = value;
-            } // set
-        } // Path
+        public string[] Path { get; set; }
 
         /// <summary>
         /// Gets or sets the literal path parameter to the command
@@ -45,17 +34,13 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSPath")]
         public string[] LiteralPath
         {
-            get
-            {
-                return _paths;
-            } // get
-
+            get { return Path; }
             set
             {
                 base.SuppressWildcardExpansion = true;
-                _paths = value;
-            } // set
-        } // LiteralPath
+                Path = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the filter property
@@ -63,16 +48,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override string Filter
         {
-            get
-            {
-                return base.Filter;
-            } // get
-
-            set
-            {
-                base.Filter = value;
-            } // set
-        } // Filter
+            get { return base.Filter; }
+            set { base.Filter = value; }
+        }
 
         /// <summary>
         /// Gets or sets the include property
@@ -80,16 +58,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override string[] Include
         {
-            get
-            {
-                return base.Include;
-            } // get
-
-            set
-            {
-                base.Include = value;
-            } // set
-        } // Include
+            get { return base.Include; }
+            set { base.Include = value; }
+        }
 
         /// <summary>
         /// Gets or sets the exclude property
@@ -97,16 +68,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override string[] Exclude
         {
-            get
-            {
-                return base.Exclude;
-            } // get
-
-            set
-            {
-                base.Exclude = value;
-            } // set
-        } // Exclude
+            get { return base.Exclude; }
+            set { base.Exclude = value; }
+        }
 
         /// <summary>
         /// Gets or sets the force property
@@ -125,25 +89,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public override SwitchParameter Force
         {
-            get
-            {
-                return base.Force;
-            }
-            set
-            {
-                base.Force = value;
-            }
-        } // Force
-
+            get { return base.Force; }
+            set { base.Force = value; }
+        }
 
         #endregion Parameters
 
         #region parameter data
-
-        /// <summary>
-        /// The path to the item to ping
-        /// </summary>
-        private string[] _paths;
 
         #endregion parameter data
 
@@ -306,112 +258,44 @@ namespace Microsoft.PowerShell.Commands
             /// 
             public ContentPathsCache(PathInfo pathInfo)
             {
-                _pathInfo = pathInfo;
+                PathInfo = pathInfo;
             }
 
             /// <summary>
             /// The path information for the cached item.
             /// </summary>
             /// 
-            public PathInfo PathInfo
-            {
-                get
-                {
-                    return _pathInfo;
-                }
-            } // PathInfo
-            private PathInfo _pathInfo;
+            public PathInfo PathInfo { get; }
 
             /// <summary>
             /// The cached PSPath of the item.
             /// </summary>
             /// 
-            public String PSPath
-            {
-                get
-                {
-                    return _psPath;
-                }
-
-                set
-                {
-                    _psPath = value;
-                }
-            } // PSPath
-            private string _psPath;
+            public String PSPath { get; set; }
 
             /// <summary>
             /// The cached parent path of the item.
             /// </summary>
             /// 
-            public String ParentPath
-            {
-                get
-                {
-                    return _parentPath;
-                }
-
-                set
-                {
-                    _parentPath = value;
-                }
-            } // ParentPath
-            private string _parentPath;
+            public String ParentPath { get; set; }
 
             /// <summary>
             /// The cached drive for the item.
             /// </summary>
             /// 
-            public PSDriveInfo Drive
-            {
-                get
-                {
-                    return _drive;
-                }
-
-                set
-                {
-                    _drive = value;
-                }
-            } // Drive
-            private PSDriveInfo _drive;
+            public PSDriveInfo Drive { get; set; }
 
             /// <summary>
             /// The cached provider of the item.
             /// </summary>
             /// 
-            public ProviderInfo Provider
-            {
-                get
-                {
-                    return _provider;
-                }
-
-                set
-                {
-                    _provider = value;
-                }
-            } // Provider
-            private ProviderInfo _provider;
-
+            public ProviderInfo Provider { get; set; }
 
             /// <summary>
             /// The cached child name of the item.
             /// </summary>
             /// 
-            public String ChildName
-            {
-                get
-                {
-                    return _childName;
-                }
-
-                set
-                {
-                    _childName = value;
-                }
-            } // ChildName
-            private string _childName;
+            public String ChildName { get; set; }
 
             /// <summary>
             /// Attaches the cached notes to the specified PSObject.
@@ -447,7 +331,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // PSDriveInfo
 
-                if (_pathInfo.Drive != null)
+                if (PathInfo.Drive != null)
                 {
                     note = new PSNoteProperty("PSDrive", Drive);
                     content.Properties.Add(note, true);
@@ -482,28 +366,16 @@ namespace Microsoft.PowerShell.Commands
                     throw PSTraceSource.NewArgumentNullException("pathInfo");
                 }
 
-                _pathInfo = pathInfo;
-                _reader = reader;
-                _writer = writer;
+                PathInfo = pathInfo;
+                Reader = reader;
+                Writer = writer;
             } // constructor
 
-            internal PathInfo PathInfo
-            {
-                get { return _pathInfo; }
-            }
-            private PathInfo _pathInfo;
+            internal PathInfo PathInfo { get; }
 
-            internal IContentReader Reader
-            {
-                get { return _reader; }
-            }
-            private IContentReader _reader;
+            internal IContentReader Reader { get; }
 
-            internal IContentWriter Writer
-            {
-                get { return _writer; }
-            }
-            private IContentWriter _writer;
+            internal IContentWriter Writer { get; }
         } // struct ContentHolder
 
         /// <summary>

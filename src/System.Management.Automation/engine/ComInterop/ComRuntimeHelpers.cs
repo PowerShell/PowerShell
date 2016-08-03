@@ -4,7 +4,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 #if !SILVERLIGHT // ComObject
 
-using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;

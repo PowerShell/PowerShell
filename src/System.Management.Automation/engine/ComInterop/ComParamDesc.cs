@@ -4,7 +4,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 #if !SILVERLIGHT // ComObject
 
-using System;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using Marshal = System.Runtime.InteropServices.Marshal;
@@ -19,14 +18,8 @@ namespace System.Management.Automation.ComInterop
     {
         # region private fields
 
-        private readonly bool _isOut; // is an output parameter?
-        private readonly bool _isOpt; // is an optional parameter?
-        private readonly bool _byRef; // is a reference or pointer parameter?
-        private readonly bool _isArray;
         private readonly VarEnum _vt;
         private readonly string _name;
-        private readonly Type _type;
-        private readonly object _defaultValue;
 
         # endregion
 
@@ -40,13 +33,13 @@ namespace System.Management.Automation.ComInterop
             // Ensure _defaultValue is set to DBNull.Value regardless of whether or not the 
             // default value is extracted from the parameter description.  Failure to do so
             // yields a runtime exception in the ToString() function.
-            _defaultValue = DBNull.Value;
+            DefaultValue = DBNull.Value;
 
             if (!String.IsNullOrEmpty(name))
             {
                 // This is a parameter, not a return value
-                _isOut = (elemDesc.desc.paramdesc.wParamFlags & PARAMFLAG.PARAMFLAG_FOUT) != 0;
-                _isOpt = (elemDesc.desc.paramdesc.wParamFlags & PARAMFLAG.PARAMFLAG_FOPT) != 0;
+                IsOut = (elemDesc.desc.paramdesc.wParamFlags & PARAMFLAG.PARAMFLAG_FOUT) != 0;
+                IsOptional = (elemDesc.desc.paramdesc.wParamFlags & PARAMFLAG.PARAMFLAG_FOPT) != 0;
                 // TODO: The PARAMDESCEX struct has a memory issue that needs to be resolved.  For now, we ignore it.
                 //_defaultValue = PARAMDESCEX.GetDefaultValue(ref elemDesc.desc.paramdesc);
             }
@@ -58,11 +51,11 @@ namespace System.Management.Automation.ComInterop
             {
                 if (_vt == VarEnum.VT_PTR)
                 {
-                    _byRef = true;
+                    ByReference = true;
                 }
                 else if (_vt == VarEnum.VT_ARRAY)
                 {
-                    _isArray = true;
+                    IsArray = true;
                 }
                 else
                 {
@@ -78,10 +71,10 @@ namespace System.Management.Automation.ComInterop
             if ((_vt & VarEnum.VT_BYREF) != 0)
             {
                 vtWithoutByref = (_vt & ~VarEnum.VT_BYREF);
-                _byRef = true;
+                ByReference = true;
             }
 
-            _type = VarEnumSelector.GetTypeForVarEnum(vtWithoutByref);
+            ParameterType = VarEnumSelector.GetTypeForVarEnum(vtWithoutByref);
         }
 
         /// <summary>
@@ -96,24 +89,24 @@ namespace System.Management.Automation.ComInterop
         public override string ToString()
         {
             StringBuilder result = new StringBuilder();
-            if (_isOpt)
+            if (IsOptional)
             {
                 result.Append("[Optional] ");
             }
 
-            if (_isOut)
+            if (IsOut)
             {
                 result.Append("[out]");
             }
 
-            result.Append(_type.Name);
+            result.Append(ParameterType.Name);
 
-            if (_isArray)
+            if (IsArray)
             {
                 result.Append("[]");
             }
 
-            if (_byRef)
+            if (ByReference)
             {
                 result.Append("&");
             }
@@ -121,10 +114,10 @@ namespace System.Management.Automation.ComInterop
             result.Append(" ");
             result.Append(_name);
 
-            if (_defaultValue != DBNull.Value)
+            if (DefaultValue != DBNull.Value)
             {
                 result.Append("=");
-                result.Append(_defaultValue.ToString());
+                result.Append(DefaultValue.ToString());
             }
 
             return result.ToString();
@@ -134,44 +127,20 @@ namespace System.Management.Automation.ComInterop
 
         # region properties
 
-        public bool IsOut
-        {
-            get { return _isOut; }
-        }
+        public bool IsOut { get; }
 
-        public bool IsOptional
-        {
-            get { return _isOpt; }
-        }
+        public bool IsOptional { get; }
 
-        public bool ByReference
-        {
-            get { return _byRef; }
-        }
+        public bool ByReference { get; }
 
-        public bool IsArray
-        {
-            get { return _isArray; }
-        }
+        public bool IsArray { get; }
 
-        public Type ParameterType
-        {
-            get
-            {
-                return _type;
-            }
-        }
+        public Type ParameterType { get; }
 
         /// <summary>
         /// DBNull.Value if there is no default value
         /// </summary>
-        internal object DefaultValue
-        {
-            get
-            {
-                return _defaultValue;
-            }
-        }
+        internal object DefaultValue { get; }
 
         # endregion
     }

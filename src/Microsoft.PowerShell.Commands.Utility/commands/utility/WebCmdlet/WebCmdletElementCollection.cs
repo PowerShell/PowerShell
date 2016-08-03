@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Collections.Generic;
@@ -27,11 +26,7 @@ namespace Microsoft.PowerShell.Commands
         public PSObject Find(string nameOrId)
         {
             // try Id first
-            PSObject result = FindById(nameOrId);
-            if (null == result)
-            {
-                result = FindByName(nameOrId);
-            }
+            PSObject result = FindById(nameOrId) ?? FindByName(nameOrId);
 
             return (result);
         }

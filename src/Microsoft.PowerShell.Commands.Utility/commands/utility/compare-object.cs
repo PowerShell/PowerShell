@@ -23,48 +23,28 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
         [AllowEmptyCollection]
-        public PSObject[] ReferenceObject
-        {
-            get { return _referenceObject; }
-            set { _referenceObject = value; }
-        }
-        private PSObject[] _referenceObject;
+        public PSObject[] ReferenceObject { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         [Parameter(Position = 1, Mandatory = true, ValueFromPipeline = true)]
         [AllowEmptyCollection]
-        public PSObject[] DifferenceObject
-        {
-            get { return _differenceObject; }
-            set { _differenceObject = value; }
-        }
-        private PSObject[] _differenceObject;
+        public PSObject[] DifferenceObject { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         [Parameter]
         [ValidateRange(0, Int32.MaxValue)]
-        public int SyncWindow
-        {
-            get { return _syncWindow; }
-            set { _syncWindow = value; }
-        }
-        private int _syncWindow = Int32.MaxValue;
+        public int SyncWindow { get; set; } = Int32.MaxValue;
 
         /// <summary>
         /// 
         /// </summary>
         /// <value></value>
         [Parameter]
-        public object[] Property
-        {
-            get { return _property; }
-            set { _property = value; }
-        }
-        private object[] _property;
+        public object[] Property { get; set; }
 
         /* not implemented
         /// <summary>

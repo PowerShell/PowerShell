@@ -2,16 +2,12 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
 using System.Management.Automation.Tracing;
-using System.Text;
 
 namespace System.Management.Automation.PerformanceData
 {
@@ -61,14 +57,7 @@ namespace System.Management.Automation.PerformanceData
         /// </summary>
         public static PSPerfCountersMgr Instance
         {
-            get
-            {
-                if (s_PSPerfCountersMgrInstance == null)
-                {
-                    s_PSPerfCountersMgrInstance = new PSPerfCountersMgr();
-                }
-                return s_PSPerfCountersMgrInstance;
-            }
+            get { return s_PSPerfCountersMgrInstance ?? (s_PSPerfCountersMgrInstance = new PSPerfCountersMgr()); }
         }
 
         /// <summary>

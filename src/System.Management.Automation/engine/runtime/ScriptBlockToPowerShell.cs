@@ -8,7 +8,6 @@ using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
-using System.Management.Automation.Internal;
 
 namespace System.Management.Automation
 {

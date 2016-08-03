@@ -3,7 +3,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management.Automation.Internal;
@@ -12,7 +11,6 @@ using System.Management.Automation;
 using System.Management.Automation.Language;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.PowerShell.Telemetry.Internal;
 #if CORECLR
 using Environment = System.Management.Automation.Environment;
 #else

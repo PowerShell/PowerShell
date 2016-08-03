@@ -47,7 +47,7 @@ namespace System.Management.Automation
 
             CheckSyntaxError(tokenList);
 
-            _root = ConstructExpressionTree(tokenList);
+            Root = ConstructExpressionTree(tokenList);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace System.Management.Automation
 
             CheckSyntaxError(tokenList);
 
-            _root = ConstructExpressionTree(tokenList);
+            Root = ConstructExpressionTree(tokenList);
         }
 
         #endregion
@@ -112,47 +112,23 @@ namespace System.Management.Automation
 
         internal class Token
         {
-            private string _text;
+            public string Text { get; set; }
 
-            public string Text
-            {
-                get
-                {
-                    return _text;
-                }
-                set
-                {
-                    _text = value;
-                }
-            }
-
-            private TokenKind _kind;
-
-            public TokenKind Kind
-            {
-                get
-                {
-                    return _kind;
-                }
-                set
-                {
-                    _kind = value;
-                }
-            }
+            public TokenKind Kind { get; set; }
 
             internal Token(TokenKind kind)
             {
-                _kind = kind;
+                Kind = kind;
                 switch (kind)
                 {
                     case TokenKind.Or:
-                        _text = "OR";
+                        Text = "OR";
                         break;
                     case TokenKind.And:
-                        _text = "AND";
+                        Text = "AND";
                         break;
                     case TokenKind.Not:
-                        _text = "NOT";
+                        Text = "NOT";
                         break;
                     default:
                         Debug.Assert(false, "Invalid token kind passed in.");
@@ -177,19 +153,8 @@ namespace System.Management.Automation
         internal abstract class Node
         {
             // Only used in internal nodes holding operators. 
-            private Node _operand1;
 
-            public Node Operand1
-            {
-                get
-                {
-                    return _operand1;
-                }
-                set
-                {
-                    _operand1 = value;
-                }
-            }
+            public Node Operand1 { get; set; }
 
             internal abstract bool Eval(object val);
             internal abstract bool ExistEnum(object enumVal);
@@ -200,23 +165,11 @@ namespace System.Management.Automation
         /// </summary>
         internal class OrNode : Node
         {
-            private Node _operand2;
-
-            public Node Operand2
-            {
-                get
-                {
-                    return _operand2;
-                }
-                set
-                {
-                    _operand2 = value;
-                }
-            }
+            public Node Operand2 { get; set; }
 
             public OrNode(Node n)
             {
-                _operand2 = n;
+                Operand2 = n;
             }
 
             internal override bool Eval(object val)
@@ -238,23 +191,11 @@ namespace System.Management.Automation
         /// </summary>
         internal class AndNode : Node
         {
-            private Node _operand2;
-
-            public Node Operand2
-            {
-                get
-                {
-                    return _operand2;
-                }
-                set
-                {
-                    _operand2 = value;
-                }
-            }
+            public Node Operand2 { get; set; }
 
             public AndNode(Node n)
             {
-                _operand2 = n;
+                Operand2 = n;
             }
 
             internal override bool Eval(object val)
@@ -375,23 +316,12 @@ namespace System.Management.Automation
         #region private members
 
         private Type _underType = null;
-        private Node _root = null;
 
         #endregion
 
         #region properties
 
-        internal Node Root
-        {
-            get
-            {
-                return _root;
-            }
-            set
-            {
-                _root = value;
-            }
-        }
+        internal Node Root { get; set; } = null;
 
         #endregion
 
@@ -409,7 +339,7 @@ namespace System.Management.Automation
         public bool Evaluate(T value)
         {
             object val = LanguagePrimitives.ConvertTo(value, _underType, CultureInfo.InvariantCulture);
-            return _root.Eval(val);
+            return Root.Eval(val);
         }
 
         #endregion
@@ -434,7 +364,7 @@ namespace System.Management.Automation
         {
             bool exist = false;
             object val = LanguagePrimitives.ConvertTo(flagName, _underType, CultureInfo.InvariantCulture);
-            exist = _root.ExistEnum(val);
+            exist = Root.ExistEnum(val);
             return exist;
         }
 

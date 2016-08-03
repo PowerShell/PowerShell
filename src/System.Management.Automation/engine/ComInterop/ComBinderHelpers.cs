@@ -8,16 +8,11 @@ using System.Linq.Expressions;
 #else
 using Microsoft.Scripting.Ast;
 #endif
-
-using System;
 using System.Diagnostics;
 using System.Dynamic;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Management.Automation;
 using System.Management.Automation.Language;
 
 namespace System.Management.Automation.ComInterop

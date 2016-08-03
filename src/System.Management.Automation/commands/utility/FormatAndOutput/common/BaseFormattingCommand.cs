@@ -529,12 +529,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// group by property
         /// </summary>
         [Parameter]
-        public object GroupBy
-        {
-            get { return _groupByParameter; }
-            set { _groupByParameter = value; }
-        }
-        private object _groupByParameter = null;
+        public object GroupBy { get; set; } = null;
 
 
         /// <summary>
@@ -542,12 +537,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <value></value>
         [Parameter]
-        public string View
-        {
-            get { return _viewName; }
-            set { _viewName = value; }
-        }
-        private string _viewName = null;
+        public string View { get; set; } = null;
 
         /// <summary>
         /// optional, non positional parameter
@@ -604,30 +594,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         [ValidateSet(EnumerableExpansionConversion.CoreOnlyString,
                         EnumerableExpansionConversion.EnumOnlyString,
                         EnumerableExpansionConversion.BothString, IgnoreCase = true)]
-        public string Expand
-        {
-            get
-            {
-                return _expansionString;
-            }
-            set
-            {
-                _expansionString = value;
-            }
-        }
-        private string _expansionString = null;
+        public string Expand { get; set; } = null;
+
         internal Nullable<EnumerableExpansion> expansion = null;
 
         internal Nullable<EnumerableExpansion> ProcessExpandParameter()
         {
             Nullable<EnumerableExpansion> retVal = null;
-            if (string.IsNullOrEmpty(_expansionString))
+            if (string.IsNullOrEmpty(Expand))
             {
-                return retVal;
+                return null;
             }
 
             EnumerableExpansion temp;
-            bool success = EnumerableExpansionConversion.Convert(_expansionString, out temp);
+            bool success = EnumerableExpansionConversion.Convert(Expand, out temp);
             if (!success)
             {
                 // this should never happen, since we use the [ValidateSet] attribute
@@ -640,13 +620,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal MshParameter ProcessGroupByParameter()
         {
-            if (_groupByParameter != null)
+            if (GroupBy != null)
             {
                 TerminatingErrorContext invocationContext =
                         new TerminatingErrorContext(this);
                 ParameterProcessor processor = new ParameterProcessor(new FormatGroupByParameterDefinition());
                 List<MshParameter> groupParameterList =
-                    processor.ProcessParameters(new object[] { _groupByParameter },
+                    processor.ProcessParameters(new object[] { GroupBy },
                                                 invocationContext);
 
                 if (groupParameterList.Count != 0)
@@ -715,13 +695,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// will be determined using property sets, etc.
         /// </summary>
         [Parameter(Position = 0)]
-        public object[] Property
-        {
-            get { return _props; }
-            set { _props = value; }
-        }
-
-        private object[] _props;
+        public object[] Property { get; set; }
 
         #endregion
 
@@ -745,7 +719,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal void GetCommandLineProperties(FormattingCommandLineParameters parameters, bool isTable)
         {
-            if (_props != null)
+            if (Property != null)
             {
                 CommandParameterDefinition def;
 
@@ -756,7 +730,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 ParameterProcessor processor = new ParameterProcessor(def);
                 TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
 
-                parameters.mshParameterList = processor.ProcessParameters(_props, invocationContext);
+                parameters.mshParameterList = processor.ProcessParameters(Property, invocationContext);
             }
 
             if (!string.IsNullOrEmpty(this.View))

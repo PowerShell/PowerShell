@@ -90,7 +90,7 @@ namespace System.Management.Automation
         /// 
         /// <param name="shellId"></param>
         /// <returns></returns>
-        static private IEnumerable<LogProvider> GetLogProvider(string shellId)
+        private static IEnumerable<LogProvider> GetLogProvider(string shellId)
         {
             return s_logProviders.GetOrAdd(shellId, CreateLogProvider);
         }
@@ -101,7 +101,7 @@ namespace System.Management.Automation
         /// 
         /// <param name="executionContext"></param>
         /// <returns></returns>
-        static private IEnumerable<LogProvider> GetLogProvider(ExecutionContext executionContext)
+        private static IEnumerable<LogProvider> GetLogProvider(ExecutionContext executionContext)
         {
             if (executionContext == null)
             {
@@ -119,7 +119,7 @@ namespace System.Management.Automation
         /// 
         /// <param name="logContext"></param>
         /// <returns></returns>
-        static private IEnumerable<LogProvider> GetLogProvider(LogContext logContext)
+        private static IEnumerable<LogProvider> GetLogProvider(LogContext logContext)
         {
             System.Diagnostics.Debug.Assert(logContext != null);
             System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(logContext.ShellId));
@@ -132,7 +132,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="shellId"></param>
         /// <returns></returns>
-        static private Collection<LogProvider> CreateLogProvider(string shellId)
+        private static Collection<LogProvider> CreateLogProvider(string shellId)
         {
 #if V2
             try
@@ -208,7 +208,7 @@ namespace System.Management.Automation
         /// </summary>
         /// 
         /// <param name="shellId"></param>
-        static internal void SetDummyLog(string shellId)
+        internal static void SetDummyLog(string shellId)
         {
             Collection<LogProvider> providers = new Collection<LogProvider> { new DummyLogProvider() };
             s_logProviders.AddOrUpdate(shellId, providers, (key, value) => providers);
@@ -233,7 +233,7 @@ namespace System.Management.Automation
         /// <param name="severity">Severity of this event</param>
         /// <param name="additionalInfo">Additional information for this event</param>
         /// <param name="newEngineState">New engine state</param>
-        static internal void LogEngineHealthEvent(ExecutionContext executionContext,
+        internal static void LogEngineHealthEvent(ExecutionContext executionContext,
                                                 int eventId,
                                                 Exception exception,
                                                 Severity severity,
@@ -278,7 +278,7 @@ namespace System.Management.Automation
         /// <param name="eventId"></param>
         /// <param name="exception"></param>
         /// <param name="severity"></param>
-        static internal void LogEngineHealthEvent(ExecutionContext executionContext,
+        internal static void LogEngineHealthEvent(ExecutionContext executionContext,
                                                 int eventId,
                                                 Exception exception,
                                                 Severity severity)
@@ -295,7 +295,7 @@ namespace System.Management.Automation
         /// <param name="executionContext"></param>
         /// <param name="exception"></param>
         /// <param name="severity"></param>
-        static internal void LogEngineHealthEvent(ExecutionContext executionContext,
+        internal static void LogEngineHealthEvent(ExecutionContext executionContext,
                                                 Exception exception,
                                                 Severity severity)
         {
@@ -311,7 +311,7 @@ namespace System.Management.Automation
         /// <param name="exception"></param>
         /// <param name="severity"></param>
         /// <param name="additionalInfo"></param>
-        static internal void LogEngineHealthEvent(ExecutionContext executionContext,
+        internal static void LogEngineHealthEvent(ExecutionContext executionContext,
                                                 int eventId,
                                                 Exception exception,
                                                 Severity severity,
@@ -329,7 +329,7 @@ namespace System.Management.Automation
         /// <param name="exception"></param>
         /// <param name="severity"></param>
         /// <param name="newEngineState"></param>
-        static internal void LogEngineHealthEvent(ExecutionContext executionContext,
+        internal static void LogEngineHealthEvent(ExecutionContext executionContext,
                                                 int eventId,
                                                 Exception exception,
                                                 Severity severity,
@@ -349,7 +349,7 @@ namespace System.Management.Automation
         /// <param name="eventId">EventId for the event to be logged</param>
         /// <param name="exception">Exception associated with this event</param>
         /// <param name="additionalInfo">Additional information for this event</param>
-        static internal void LogEngineHealthEvent(LogContext logContext,
+        internal static void LogEngineHealthEvent(LogContext logContext,
                                                 int eventId,
                                                 Exception exception,
                                                 Dictionary<String, String> additionalInfo
@@ -390,7 +390,7 @@ namespace System.Management.Automation
         /// <param name="executionContext">execution context for current engine instance</param>
         /// <param name="engineState">new engine state</param>
         /// <param name="invocationInfo">invocationInfo for current command that is running</param>
-        static internal void LogEngineLifecycleEvent(ExecutionContext executionContext,
+        internal static void LogEngineLifecycleEvent(ExecutionContext executionContext,
                                                 EngineState engineState,
                                                 InvocationInfo invocationInfo)
         {
@@ -421,7 +421,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="executionContext"></param>
         /// <param name="engineState"></param>
-        static internal void LogEngineLifecycleEvent(ExecutionContext executionContext,
+        internal static void LogEngineLifecycleEvent(ExecutionContext executionContext,
                                                 EngineState engineState)
         {
             LogEngineLifecycleEvent(executionContext, engineState, null);
@@ -438,7 +438,7 @@ namespace System.Management.Automation
         /// <param name="executionContext">Execution context for the engine that is running</param>
         /// <param name="exception">Exception associated with this event</param>
         /// <param name="severity">Severity of this event</param>
-        static internal void LogCommandHealthEvent(ExecutionContext executionContext,
+        internal static void LogCommandHealthEvent(ExecutionContext executionContext,
                                                 Exception exception,
                                                 Severity severity
                                                 )
@@ -480,7 +480,7 @@ namespace System.Management.Automation
         /// <param name="executionContext">Execution Context for the current running engine</param>
         /// <param name="commandState">new command state</param>
         /// <param name="invocationInfo">invocation data for current command that is running</param>
-        static internal void LogCommandLifecycleEvent(ExecutionContext executionContext,
+        internal static void LogCommandLifecycleEvent(ExecutionContext executionContext,
                                                 CommandState commandState,
                                                 InvocationInfo invocationInfo)
         {
@@ -522,7 +522,7 @@ namespace System.Management.Automation
         /// <param name="executionContext">Execution Context for the current running engine</param>
         /// <param name="commandState">new command state</param>
         /// <param name="commandName">current command that is running</param>
-        static internal void LogCommandLifecycleEvent(ExecutionContext executionContext,
+        internal static void LogCommandLifecycleEvent(ExecutionContext executionContext,
                                                 CommandState commandState,
                                                 string commandName)
         {
@@ -562,7 +562,7 @@ namespace System.Management.Automation
         /// <param name="executionContext">Execution Context for the current running engine</param>
         /// <param name="detail">detail to be logged for this pipeline execution detail</param>
         /// <param name="invocationInfo">invocation data for current command that is running</param>
-        static internal void LogPipelineExecutionDetailEvent(ExecutionContext executionContext,
+        internal static void LogPipelineExecutionDetailEvent(ExecutionContext executionContext,
                                                             List<String> detail,
                                                             InvocationInfo invocationInfo)
 
@@ -593,7 +593,7 @@ namespace System.Management.Automation
         /// <param name="detail">detail to be logged for this pipeline execution detail</param>
         /// <param name="scriptName">script that is currently running</param>
         /// <param name="commandLine">command line that is currently running</param>
-        static internal void LogPipelineExecutionDetailEvent(ExecutionContext executionContext,
+        internal static void LogPipelineExecutionDetailEvent(ExecutionContext executionContext,
                                                             List<String> detail,
                                                             string scriptName,
                                                             string commandLine)
@@ -629,7 +629,7 @@ namespace System.Management.Automation
         /// <param name="providerName">Name of the provider</param>
         /// <param name="exception">Exception associated with this event</param>
         /// <param name="severity">Severity of this event</param>
-        static internal void LogProviderHealthEvent(ExecutionContext executionContext,
+        internal static void LogProviderHealthEvent(ExecutionContext executionContext,
                                                 string providerName,
                                                 Exception exception,
                                                 Severity severity
@@ -672,7 +672,7 @@ namespace System.Management.Automation
         /// <param name="executionContext">Execution Context for current engine that is running</param>
         /// <param name="providerName">Provider name</param>
         /// <param name="providerState">New provider state</param>
-        static internal void LogProviderLifecycleEvent(ExecutionContext executionContext,
+        internal static void LogProviderLifecycleEvent(ExecutionContext executionContext,
                                                      string providerName,
                                                      ProviderState providerState)
         {
@@ -706,7 +706,7 @@ namespace System.Management.Automation
         /// <param name="newValue">New value for the variable</param>
         /// <param name="previousValue">Previous value for the variable</param>
         /// <param name="invocationInfo">Invocation data for the command that is currently running</param>
-        static internal void LogSettingsEvent(ExecutionContext executionContext,
+        internal static void LogSettingsEvent(ExecutionContext executionContext,
                                             string variableName,
                                             string newValue,
                                             string previousValue,
@@ -734,7 +734,7 @@ namespace System.Management.Automation
         /// <param name="variableName"></param>
         /// <param name="newValue"></param>
         /// <param name="previousValue"></param>
-        static internal void LogSettingsEvent(ExecutionContext executionContext,
+        internal static void LogSettingsEvent(ExecutionContext executionContext,
                                             string variableName,
                                             string newValue,
                                             string previousValue)
@@ -754,7 +754,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="executionContext"></param>
         /// <returns></returns>
-        static private EngineState GetEngineState(ExecutionContext executionContext)
+        private static EngineState GetEngineState(ExecutionContext executionContext)
         {
             return executionContext.EngineState;
         }
@@ -767,7 +767,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="executionContext"></param>
         /// <param name="engineState"></param>
-        static private void SetEngineState(ExecutionContext executionContext, EngineState engineState)
+        private static void SetEngineState(ExecutionContext executionContext, EngineState engineState)
         {
             executionContext.EngineState = engineState;
         }
@@ -780,7 +780,7 @@ namespace System.Management.Automation
         /// <param name="executionContext"></param>
         /// <param name="invocationInfo"></param>
         /// <returns></returns>
-        static internal LogContext GetLogContext(ExecutionContext executionContext, InvocationInfo invocationInfo)
+        internal static LogContext GetLogContext(ExecutionContext executionContext, InvocationInfo invocationInfo)
         {
             return GetLogContext(executionContext, invocationInfo, Severity.Informational);
         }
@@ -900,7 +900,7 @@ namespace System.Management.Automation
         /// <param name="logProvider"></param>
         /// <param name="executionContext"></param>
         /// <returns></returns>
-        static private bool NeedToLogEngineHealthEvent(LogProvider logProvider, ExecutionContext executionContext)
+        private static bool NeedToLogEngineHealthEvent(LogProvider logProvider, ExecutionContext executionContext)
         {
             if (!logProvider.UseLoggingVariables())
             {
@@ -918,7 +918,7 @@ namespace System.Management.Automation
         /// <param name="logProvider"></param>
         /// <param name="executionContext"></param>
         /// <returns></returns>
-        static private bool NeedToLogEngineLifecycleEvent(LogProvider logProvider, ExecutionContext executionContext)
+        private static bool NeedToLogEngineLifecycleEvent(LogProvider logProvider, ExecutionContext executionContext)
         {
             if (!logProvider.UseLoggingVariables())
             {
@@ -936,7 +936,7 @@ namespace System.Management.Automation
         /// <param name="logProvider"></param>
         /// <param name="executionContext"></param>
         /// <returns></returns>
-        static private bool NeedToLogCommandHealthEvent(LogProvider logProvider, ExecutionContext executionContext)
+        private static bool NeedToLogCommandHealthEvent(LogProvider logProvider, ExecutionContext executionContext)
         {
             if (!logProvider.UseLoggingVariables())
             {
@@ -954,7 +954,7 @@ namespace System.Management.Automation
         /// <param name="logProvider"></param>
         /// <param name="executionContext"></param>
         /// <returns></returns>
-        static private bool NeedToLogCommandLifecycleEvent(LogProvider logProvider, ExecutionContext executionContext)
+        private static bool NeedToLogCommandLifecycleEvent(LogProvider logProvider, ExecutionContext executionContext)
         {
             if (!logProvider.UseLoggingVariables())
             {
@@ -977,7 +977,7 @@ namespace System.Management.Automation
         /// <param name="logProvider"></param>
         /// <param name="executionContext"></param>
         /// <returns></returns>
-        static private bool NeedToLogPipelineExecutionDetailEvent(LogProvider logProvider, ExecutionContext executionContext)
+        private static bool NeedToLogPipelineExecutionDetailEvent(LogProvider logProvider, ExecutionContext executionContext)
         {
             if (!logProvider.UseLoggingVariables())
             {
@@ -996,7 +996,7 @@ namespace System.Management.Automation
         /// <param name="logProvider"></param>
         /// <param name="executionContext"></param>
         /// <returns></returns>
-        static private bool NeedToLogProviderHealthEvent(LogProvider logProvider, ExecutionContext executionContext)
+        private static bool NeedToLogProviderHealthEvent(LogProvider logProvider, ExecutionContext executionContext)
         {
             if (!logProvider.UseLoggingVariables())
             {
@@ -1014,7 +1014,7 @@ namespace System.Management.Automation
         /// <param name="logProvider"></param>
         /// <param name="executionContext"></param>
         /// <returns></returns>
-        static private bool NeedToLogProviderLifecycleEvent(LogProvider logProvider, ExecutionContext executionContext)
+        private static bool NeedToLogProviderLifecycleEvent(LogProvider logProvider, ExecutionContext executionContext)
         {
             if (!logProvider.UseLoggingVariables())
             {
@@ -1032,7 +1032,7 @@ namespace System.Management.Automation
         /// <param name="logProvider"></param>
         /// <param name="executionContext"></param>
         /// <returns></returns>
-        static private bool NeedToLogSettingsEvent(LogProvider logProvider, ExecutionContext executionContext)
+        private static bool NeedToLogSettingsEvent(LogProvider logProvider, ExecutionContext executionContext)
         {
             if (!logProvider.UseLoggingVariables())
             {
@@ -1091,19 +1091,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class LogContextCache
     {
-        private string _user = null;
-
-        internal string User
-        {
-            get
-            {
-                return _user;
-            }
-            set
-            {
-                _user = value;
-            }
-        }
+        internal string User { get; set; } = null;
     }
 
     #region Command State and Provider State

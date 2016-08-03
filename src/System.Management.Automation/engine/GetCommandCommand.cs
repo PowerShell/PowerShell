@@ -202,18 +202,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// 
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public int TotalCount
-        {
-            get
-            {
-                return _totalCount;
-            }
-            set
-            {
-                _totalCount = value;
-            }
-        }
-        private int _totalCount = -1;
+        public int TotalCount { get; set; } = -1;
 
         /// <summary>
         /// The parameter that determines if the CommandInfo or the string
@@ -240,11 +229,7 @@ namespace Microsoft.PowerShell.Commands
         /// needed to display GUI command information.
         /// </summary>
         [Parameter()]
-        public SwitchParameter ShowCommandInfo
-        {
-            get;
-            set;
-        }
+        public SwitchParameter ShowCommandInfo { get; set; }
 
         /// <summary>
         /// The parameter that all additional arguments get bound to. These arguments are used
@@ -255,18 +240,7 @@ namespace Microsoft.PowerShell.Commands
         [AllowNull]
         [AllowEmptyCollection]
         [Alias("Args")]
-        public object[] ArgumentList
-        {
-            get
-            {
-                return _commandArgs;
-            }
-            set
-            {
-                _commandArgs = value;
-            }
-        }
-        private object[] _commandArgs;
+        public object[] ArgumentList { get; set; }
 
         /// <summary>
         /// The parameter that determines if additional matching commands should be returned. 
@@ -276,15 +250,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public SwitchParameter All
         {
-            get
-            {
-                return _all;
-            }
-
-            set
-            {
-                _all = value;
-            }
+            get { return _all; }
+            set { _all = value; }
         }
         private bool _all;
 
@@ -445,7 +412,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // We do not show the pithy aliases (not of the format Verb-Noun) and applications by default. 
             // We will show them only if the Name, All and totalCount are not specified.
-            if ((this.Name == null) && (!_all) && _totalCount == -1)
+            if ((this.Name == null) && (!_all) && TotalCount == -1)
             {
                 CommandTypes commandTypesToIgnore = 0;
 
@@ -931,7 +898,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Only for this case, the loop should exit
                     // Get-Command Foo
-                    if (isPattern || All || _totalCount != -1 || _isCommandTypeSpecified || _isModuleSpecified || _isFullyQualifiedModuleSpecified)
+                    if (isPattern || All || TotalCount != -1 || _isCommandTypeSpecified || _isModuleSpecified || _isFullyQualifiedModuleSpecified)
                     {
                         continue;
                     }

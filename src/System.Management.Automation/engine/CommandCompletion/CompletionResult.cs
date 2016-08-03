@@ -9,8 +9,6 @@
 namespace System.Management.Automation
 {
     using System;
-    using Microsoft.PowerShell.Commands;
-    using System.Management.Automation;
 
     /// <summary>
     /// Possible types of CompletionResults

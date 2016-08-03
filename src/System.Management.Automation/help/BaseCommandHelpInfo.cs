@@ -21,7 +21,7 @@ namespace System.Management.Automation
         internal BaseCommandHelpInfo(HelpCategory helpCategory)
             : base()
         {
-            _helpCategory = helpCategory;
+            HelpCategory = helpCategory;
         }
 
         #region Basic Help Properties
@@ -47,7 +47,7 @@ namespace System.Management.Automation
         /// Name of command. 
         /// </summary>
         /// <value>Name of command</value>
-        override internal string Name
+        internal override string Name
         {
             get
             {
@@ -75,7 +75,7 @@ namespace System.Management.Automation
         /// Synopsis for this command help.
         /// </summary>
         /// <value>Synopsis for this command help</value>
-        override internal string Synopsis
+        internal override string Synopsis
         {
             get
             {
@@ -122,15 +122,7 @@ namespace System.Management.Automation
         /// Help category for this command help, which is constantly HelpCategory.Command.
         /// </summary>
         /// <value>Help category for this command help</value>
-        override internal HelpCategory HelpCategory
-        {
-            get
-            {
-                return _helpCategory;
-            }
-        }
-
-        private HelpCategory _helpCategory;
+        internal override HelpCategory HelpCategory { get; }
 
         /// <summary>
         /// Returns the Uri used by get-help cmdlet to show help
@@ -144,7 +136,7 @@ namespace System.Management.Automation
         /// <exception cref="InvalidOperationException">
         /// Specified Uri is not valid.
         /// </exception>
-        override internal Uri GetUriForOnlineHelp()
+        internal override Uri GetUriForOnlineHelp()
         {
             Uri result = null;
             UriFormatException uriFormatException = null;
@@ -383,7 +375,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pattern">pattern to search for parameters</param>
         /// <returns>A collection of parameters that match pattern</returns>        
-        override internal PSObject[] GetParameter(string pattern)
+        internal override PSObject[] GetParameter(string pattern)
         {
             // this object knows Maml format...
             // So retrieve parameter information as per the format..

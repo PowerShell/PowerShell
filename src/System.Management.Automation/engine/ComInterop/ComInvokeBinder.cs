@@ -8,15 +8,11 @@ using System.Linq.Expressions;
 #else
 using Microsoft.Scripting.Ast;
 #endif
-
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Dynamic;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
-using System.Linq;
-using System.Management.Automation.Language;
 
 namespace System.Management.Automation.ComInterop
 {
@@ -121,13 +117,9 @@ namespace System.Management.Automation.ComInterop
 
         private ParameterExpression ParamVariantsVariable
         {
-            get
-            {
-                if (_paramVariants == null)
-                {
-                    _paramVariants = Expression.Variable(VariantArray.GetStructType(_args.Length), "paramVariants");
-                }
-                return _paramVariants;
+            get {
+                return _paramVariants ??
+                       (_paramVariants = Expression.Variable(VariantArray.GetStructType(_args.Length), "paramVariants"));
             }
         }
 

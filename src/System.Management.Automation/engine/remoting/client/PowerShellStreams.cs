@@ -82,14 +82,7 @@ namespace System.Management.Automation
         public PowerShellStreams(PSDataCollection<TInput> pipelineInput)
         {
             // Populate the input collection if there is any...
-            if (pipelineInput == null)
-            {
-                _inputStream = new PSDataCollection<TInput>();
-            }
-            else
-            {
-                _inputStream = pipelineInput;
-            }
+            _inputStream = pipelineInput ?? new PSDataCollection<TInput>();
 
             _inputStream.Complete();
 

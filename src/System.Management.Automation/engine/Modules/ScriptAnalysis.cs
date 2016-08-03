@@ -4,12 +4,10 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System.Collections;
 using System.Globalization;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Management.Automation.Language;
-using System.Reflection;
 using System.Text.RegularExpressions;
 
 #if CORECLR

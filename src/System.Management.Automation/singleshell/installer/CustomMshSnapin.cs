@@ -56,15 +56,7 @@ namespace System.Management.Automation
         /// </remarks>
         public virtual Collection<CmdletConfigurationEntry> Cmdlets
         {
-            get
-            {
-                if (_cmdlets == null)
-                {
-                    _cmdlets = new Collection<CmdletConfigurationEntry>();
-                }
-
-                return _cmdlets;
-            }
+            get { return _cmdlets ?? (_cmdlets = new Collection<CmdletConfigurationEntry>()); }
         }
 
         private Collection<ProviderConfigurationEntry> _providers;
@@ -77,15 +69,7 @@ namespace System.Management.Automation
         /// </remarks>
         public virtual Collection<ProviderConfigurationEntry> Providers
         {
-            get
-            {
-                if (_providers == null)
-                {
-                    _providers = new Collection<ProviderConfigurationEntry>();
-                }
-
-                return _providers;
-            }
+            get { return _providers ?? (_providers = new Collection<ProviderConfigurationEntry>()); }
         }
 
         private Collection<TypeConfigurationEntry> _types;
@@ -98,15 +82,7 @@ namespace System.Management.Automation
         /// </remarks>
         public virtual Collection<TypeConfigurationEntry> Types
         {
-            get
-            {
-                if (_types == null)
-                {
-                    _types = new Collection<TypeConfigurationEntry>();
-                }
-
-                return _types;
-            }
+            get { return _types ?? (_types = new Collection<TypeConfigurationEntry>()); }
         }
 
         private Collection<FormatConfigurationEntry> _formats;
@@ -119,15 +95,7 @@ namespace System.Management.Automation
         /// </remarks>
         public virtual Collection<FormatConfigurationEntry> Formats
         {
-            get
-            {
-                if (_formats == null)
-                {
-                    _formats = new Collection<FormatConfigurationEntry>();
-                }
-
-                return _formats;
-            }
+            get { return _formats ?? (_formats = new Collection<FormatConfigurationEntry>()); }
         }
 
         private Dictionary<String, object> _regValues = null;

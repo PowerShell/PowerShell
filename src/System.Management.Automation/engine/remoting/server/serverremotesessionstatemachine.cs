@@ -4,9 +4,6 @@
 
 using System.Threading;
 using System.Collections.Generic;
-using System.Management.Automation;
-using System.Management.Automation.Runspaces;
-
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
@@ -35,7 +32,7 @@ namespace System.Management.Automation.Remoting
     internal class ServerRemoteSessionDSHandlerStateMachine
     {
         [TraceSourceAttribute("ServerRemoteSessionDSHandlerStateMachine", "ServerRemoteSessionDSHandlerStateMachine")]
-        static private PSTraceSource s_trace = PSTraceSource.GetTracer("ServerRemoteSessionDSHandlerStateMachine", "ServerRemoteSessionDSHandlerStateMachine");
+        private static PSTraceSource s_trace = PSTraceSource.GetTracer("ServerRemoteSessionDSHandlerStateMachine", "ServerRemoteSessionDSHandlerStateMachine");
 
         private ServerRemoteSession _session;
         private object _syncObject;

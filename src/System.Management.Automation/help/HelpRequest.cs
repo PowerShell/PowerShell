@@ -29,9 +29,9 @@ namespace System.Management.Automation
         /// <param name="helpCategory"></param>
         internal HelpRequest(string target, HelpCategory helpCategory)
         {
-            _target = target;
-            _helpCategory = helpCategory;
-            _origin = CommandOrigin.Runspace;
+            Target = target;
+            HelpCategory = helpCategory;
+            CommandOrigin = CommandOrigin.Runspace;
         }
 
         /// <summary>
@@ -56,50 +56,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Defines which provider the user seeking help is curious about.
         /// </summary>
-        internal ProviderContext ProviderContext
-        {
-            get { return _providerContext; }
-            set { _providerContext = value; }
-        }
-        private ProviderContext _providerContext;
-
-        private string _target;
+        internal ProviderContext ProviderContext { get; set; }
 
         /// <summary>
         /// Target for help.
         /// </summary>
         /// <value></value>
-        internal string Target
-        {
-            get
-            {
-                return _target;
-            }
-            set
-            {
-                _target = value;
-            }
-        }
-
-        private HelpCategory _helpCategory = HelpCategory.None;
+        internal string Target { get; set; }
 
         /// <summary>
         /// Help category filter
         /// </summary>
         /// <value></value>
-        internal HelpCategory HelpCategory
-        {
-            get
-            {
-                return _helpCategory;
-            }
-            set
-            {
-                _helpCategory = value;
-            }
-        }
-
-        private string _provider;
+        internal HelpCategory HelpCategory { get; set; } = HelpCategory.None;
 
         /// <summary>
         /// Provider for this help.
@@ -112,100 +81,37 @@ namespace System.Management.Automation
         /// 
         /// </summary>
         /// <value></value>
-        internal string Provider
-        {
-            get
-            {
-                return _provider;
-            }
-            set
-            {
-                _provider = value;
-            }
-        }
-
-        private int _maxResults = -1;
+        internal string Provider { get; set; }
 
         /// <summary>
         /// Maximum number of result to return for this request.
         /// </summary>
         /// <value></value>
-        internal int MaxResults
-        {
-            get
-            {
-                return _maxResults;
-            }
-            set
-            {
-                _maxResults = value;
-            }
-        }
-
-        private string[] _component;
+        internal int MaxResults { get; set; } = -1;
 
         /// <summary>
         /// Component filter for command help. 
         /// </summary>
         /// <value></value>
-        internal string[] Component
-        {
-            get
-            {
-                return _component;
-            }
-            set
-            {
-                _component = value;
-            }
-        }
-
-        private string[] _role;
+        internal string[] Component { get; set; }
 
         /// <summary>
         /// Role filter for command help. 
         /// </summary>
         /// <value></value>
-        internal string[] Role
-        {
-            get
-            {
-                return _role;
-            }
-            set
-            {
-                _role = value;
-            }
-        }
-
-        private string[] _functionality;
+        internal string[] Role { get; set; }
 
         /// <summary>
         /// Functionality filter for command help. 
         /// </summary>
         /// <value></value>
-        internal string[] Functionality
-        {
-            get
-            {
-                return _functionality;
-            }
-            set
-            {
-                _functionality = value;
-            }
-        }
+        internal string[] Functionality { get; set; }
 
         /// <summary>
         /// Keeps track of get-help cmdlet call origin. It can be called 
         /// directly by the user or indirectly by a script that a user calls.
         /// </summary>
-        internal CommandOrigin CommandOrigin
-        {
-            get { return _origin; }
-            set { _origin = value; }
-        }
-        private CommandOrigin _origin;
+        internal CommandOrigin CommandOrigin { get; set; }
 
         /// <summary>
         /// Following validation will be done, (in order)
@@ -220,54 +126,54 @@ namespace System.Management.Automation
         /// </summary>
         internal void Validate()
         {
-            if (String.IsNullOrEmpty(_target)
-                && _helpCategory == HelpCategory.None
-                && String.IsNullOrEmpty(_provider)
-                && _component == null
-                && _role == null
-                && _functionality == null
+            if (String.IsNullOrEmpty(Target)
+                && HelpCategory == HelpCategory.None
+                && String.IsNullOrEmpty(Provider)
+                && Component == null
+                && Role == null
+                && Functionality == null
             )
             {
-                _target = "default";
-                _helpCategory = HelpCategory.DefaultHelp;
+                Target = "default";
+                HelpCategory = HelpCategory.DefaultHelp;
                 return;
             }
 
-            if (String.IsNullOrEmpty(_target))
+            if (String.IsNullOrEmpty(Target))
             {
-                if (!String.IsNullOrEmpty(_provider) &&
-                    (_helpCategory == HelpCategory.None || _helpCategory == HelpCategory.Provider)
+                if (!String.IsNullOrEmpty(Provider) &&
+                    (HelpCategory == HelpCategory.None || HelpCategory == HelpCategory.Provider)
                 )
                 {
-                    _target = _provider;
+                    Target = Provider;
                 }
                 else
                 {
-                    _target = "*";
+                    Target = "*";
                 }
             }
 
             // if either of component/role/functionality is specified then look in the
             // following help categories
-            if ((!(_component == null && _role == null && _functionality == null)) &&
-                (_helpCategory == HelpCategory.None))
+            if ((!(Component == null && Role == null && Functionality == null)) &&
+                (HelpCategory == HelpCategory.None))
             {
-                _helpCategory = HelpCategory.Alias | HelpCategory.Cmdlet | HelpCategory.Function | HelpCategory.Filter | HelpCategory.ExternalScript | HelpCategory.ScriptCommand | HelpCategory.Workflow;
+                HelpCategory = HelpCategory.Alias | HelpCategory.Cmdlet | HelpCategory.Function | HelpCategory.Filter | HelpCategory.ExternalScript | HelpCategory.ScriptCommand | HelpCategory.Workflow;
 
                 return;
             }
 
-            if ((_helpCategory & HelpCategory.Cmdlet) > 0)
+            if ((HelpCategory & HelpCategory.Cmdlet) > 0)
             {
-                _helpCategory |= HelpCategory.Alias;
+                HelpCategory |= HelpCategory.Alias;
             }
 
-            if (_helpCategory == HelpCategory.None)
+            if (HelpCategory == HelpCategory.None)
             {
-                _helpCategory = HelpCategory.All;
+                HelpCategory = HelpCategory.All;
             }
 
-            _helpCategory &= ~HelpCategory.DefaultHelp;
+            HelpCategory &= ~HelpCategory.DefaultHelp;
 
             return;
         }

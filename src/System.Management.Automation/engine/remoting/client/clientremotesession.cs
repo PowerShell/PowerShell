@@ -2,13 +2,7 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Threading;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Security;
-using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Runspaces.Internal;
@@ -28,86 +22,31 @@ namespace System.Management.Automation.Remoting
     {
         #region properties
 
-        private Uri _remoteAddress;
         /// <summary>
         /// Remote computer address in URI format.
         /// </summary>
-        internal Uri RemoteAddress
-        {
-            get
-            {
-                return _remoteAddress;
-            }
-            set
-            {
-                _remoteAddress = value;
-            }
-        }
+        internal Uri RemoteAddress { get; set; }
 
-        private PSCredential _userCredential;
         /// <summary>
         /// User credential to be used on the remote computer.
         /// </summary>
-        internal PSCredential UserCredential
-        {
-            get
-            {
-                return _userCredential;
-            }
-            set
-            {
-                _userCredential = value;
-            }
-        }
+        internal PSCredential UserCredential { get; set; }
 
-        private RemoteSessionCapability _clientCapability;
         /// <summary>
         /// Capability information for the client side.
         /// </summary>
-        internal RemoteSessionCapability ClientCapability
-        {
-            get
-            {
-                return _clientCapability;
-            }
-            set
-            {
-                _clientCapability = value;
-            }
-        }
+        internal RemoteSessionCapability ClientCapability { get; set; }
 
-        private RemoteSessionCapability _serverCapability;
         /// <summary>
         /// Capability information received from the server side.
         /// </summary>
-        internal RemoteSessionCapability ServerCapability
-        {
-            get
-            {
-                return _serverCapability;
-            }
-            set
-            {
-                _serverCapability = value;
-            }
-        }
+        internal RemoteSessionCapability ServerCapability { get; set; }
 
-        private string _shellName;
         /// <summary>
         /// This is the shellName which indentifies the PowerShell configuration to launch
         /// on remote machine.        
         /// </summary>
-        internal string ShellName
-        {
-            get
-            {
-                return _shellName;
-            }
-            set
-            {
-                _shellName = value;
-            }
-        }
+        internal string ShellName { get; set; }
 
         #endregion Public_Properties
     }
@@ -118,7 +57,7 @@ namespace System.Management.Automation.Remoting
     internal abstract class ClientRemoteSession : RemoteSession
     {
         [TraceSourceAttribute("CRSession", "ClientRemoteSession")]
-        static private PSTraceSource s_trace = PSTraceSource.GetTracer("CRSession", "ClientRemoteSession");
+        private static PSTraceSource s_trace = PSTraceSource.GetTracer("CRSession", "ClientRemoteSession");
 
         #region Public_Method_API
 
@@ -162,15 +101,7 @@ namespace System.Management.Automation.Remoting
 
         #region Public_Properties
 
-        private ClientRemoteSessionContext _context = new ClientRemoteSessionContext();
-
-        internal ClientRemoteSessionContext Context
-        {
-            get
-            {
-                return _context;
-            }
-        }
+        internal ClientRemoteSessionContext Context { get; } = new ClientRemoteSessionContext();
 
         #endregion Public_Properties
 
@@ -186,21 +117,10 @@ namespace System.Management.Automation.Remoting
 
         #endregion
 
-        private ClientRemoteSessionDataStructureHandler _sessionDSHandler;
         /// <summary>
         /// ServerRemoteSessionDataStructureHandler instance for this session
         /// </summary>
-        internal ClientRemoteSessionDataStructureHandler SessionDataStructureHandler
-        {
-            get
-            {
-                return _sessionDSHandler;
-            }
-            set
-            {
-                _sessionDSHandler = value;
-            }
-        }
+        internal ClientRemoteSessionDataStructureHandler SessionDataStructureHandler { get; set; }
 
         protected Version _serverProtocolVersion;
         /// <summary>
@@ -260,7 +180,7 @@ namespace System.Management.Automation.Remoting
     internal class ClientRemoteSessionImpl : ClientRemoteSession, IDisposable
     {
         [TraceSourceAttribute("CRSessionImpl", "ClientRemoteSessionImpl")]
-        static private PSTraceSource s_trace = PSTraceSource.GetTracer("CRSessionImpl", "ClientRemoteSessionImpl");
+        private static PSTraceSource s_trace = PSTraceSource.GetTracer("CRSessionImpl", "ClientRemoteSessionImpl");
 
         private PSRemotingCryptoHelperClient _cryptoHelper = null;
 
@@ -291,7 +211,7 @@ namespace System.Management.Automation.Remoting
             Context.ShellName = WSManConnectionInfo.ExtractPropertyAsWsManConnectionInfo<string>(rsPool.ConnectionInfo,
                 "ShellUri", string.Empty);
 
-            _mySelf = RemotingDestination.Client;
+            MySelf = RemotingDestination.Client;
             //Create session data structure handler for this session
             SessionDataStructureHandler = new ClientRemoteSessionDSHandlerImpl(this,
                 _cryptoHelper,
@@ -649,15 +569,7 @@ namespace System.Management.Automation.Remoting
 
         #endregion negotioation
 
-        private RemotingDestination _mySelf;
-
-        internal override RemotingDestination MySelf
-        {
-            get
-            {
-                return _mySelf;
-            }
-        }
+        internal override RemotingDestination MySelf { get; }
 
         #region IDisposable
 

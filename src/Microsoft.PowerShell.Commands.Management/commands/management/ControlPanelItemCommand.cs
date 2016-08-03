@@ -6,7 +6,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.Win32;
-using Shell32;
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -23,48 +22,28 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Control panel applet name
         /// </summary>
-        public string Name
-        {
-            get { return _name; }
-        }
-        private string _name;
+        public string Name { get; }
 
         /// <summary>
         /// Control panel applet canonical name
         /// </summary>
-        public string CanonicalName
-        {
-            get { return _canonicalName; }
-        }
-        private string _canonicalName;
+        public string CanonicalName { get; }
 
         /// <summary>
         /// Control panel applet category
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] Category
-        {
-            get { return _category; }
-        }
-        private string[] _category;
+        public string[] Category { get; }
 
         /// <summary>
         /// Control panel applet description
         /// </summary>
-        public string Description
-        {
-            get { return _description; }
-        }
-        private string _description;
+        public string Description { get; }
 
         /// <summary>
         /// Control panel applet path
         /// </summary>
-        internal string Path
-        {
-            get { return _path; }
-        }
-        private string _path;
+        internal string Path { get; }
 
         /// <summary>
         /// Internal constructor for ControlPanelItem
@@ -76,11 +55,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path"></param>
         internal ControlPanelItem(string name, string canonicalName, string[] category, string description, string path)
         {
-            _name = name;
-            _path = path;
-            _canonicalName = canonicalName;
-            _category = category;
-            _description = description;
+            Name = name;
+            Path = path;
+            CanonicalName = canonicalName;
+            Category = category;
+            Description = description;
         }
 
         /// <summary>

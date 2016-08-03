@@ -46,18 +46,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Seconds", ValueFromPipeline = true,
                    ValueFromPipelineByPropertyName = true)]
         [ValidateRangeAttribute(0, int.MaxValue / 1000)]
-        public int Seconds
-        {
-            get
-            {
-                return _seconds;
-            }
-            set
-            {
-                _seconds = value;
-            }
-        }
-        private int _seconds;
+        public int Seconds { get; set; }
 
 
         /// <summary>
@@ -65,18 +54,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Milliseconds", ValueFromPipelineByPropertyName = true)]
         [ValidateRangeAttribute(0, int.MaxValue)]
-        public int Milliseconds
-        {
-            get
-            {
-                return _milliseconds;
-            }
-            set
-            {
-                _milliseconds = value;
-            }
-        }
-        private int _milliseconds;
+        public int Milliseconds { get; set; }
 
         #endregion
 

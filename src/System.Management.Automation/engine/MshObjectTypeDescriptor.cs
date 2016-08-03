@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.ComponentModel;
 using System.Management.Automation.Runspaces;
 
@@ -19,7 +18,6 @@ namespace System.Management.Automation
     /// </remarks>
     public class SettingValueExceptionEventArgs : EventArgs
     {
-        private bool _shouldThrow;
         /// <summary>
         /// Gets and sets a <see cref="System.Boolean"/> indicating if the SetValue method of <see cref="PSObjectPropertyDescriptor"/>
         /// should throw the exception associated with this event.
@@ -27,13 +25,12 @@ namespace System.Management.Automation
         /// <remarks>
         /// The default value is true, indicating that the Exception associated with this event will be thrown.
         /// </remarks>
-        public bool ShouldThrow { get { return _shouldThrow; } set { _shouldThrow = value; } }
+        public bool ShouldThrow { get; set; }
 
-        private Exception _exception;
         /// <summary>
         /// Gets the exception that triggered the associated event.
         /// </summary>
-        public Exception Exception { get { return _exception; } }
+        public Exception Exception { get; }
 
         /// <summary>
         /// Initializes a new instance of <see cref="SettingValueExceptionEventArgs"/> setting the value of of the exception that triggered the associated event.
@@ -41,8 +38,8 @@ namespace System.Management.Automation
         /// <param name="exception">Exception that triggered the associated event</param>
         internal SettingValueExceptionEventArgs(Exception exception)
         {
-            _exception = exception;
-            _shouldThrow = true;
+            Exception = exception;
+            ShouldThrow = true;
         }
     }
 
@@ -57,18 +54,16 @@ namespace System.Management.Automation
     /// </remarks>
     public class GettingValueExceptionEventArgs : EventArgs
     {
-        private bool _shouldThrow;
         /// <summary>
         /// Gets and sets a <see cref="System.Boolean"/> indicating if the GetValue method of <see cref="PSObjectPropertyDescriptor"/>
         /// should throw the exception associated with this event.
         /// </summary>
-        public bool ShouldThrow { get { return _shouldThrow; } set { _shouldThrow = value; } }
+        public bool ShouldThrow { get; set; }
 
-        private Exception _exception;
         /// <summary>
         /// Gets the Exception that triggered the associated event.
         /// </summary>
-        public Exception Exception { get { return _exception; } }
+        public Exception Exception { get; }
 
         /// <summary>
         /// Initializes a new instance of <see cref="GettingValueExceptionEventArgs"/> setting the value of of the exception that triggered the associated event.
@@ -76,22 +71,17 @@ namespace System.Management.Automation
         /// <param name="exception">Exception that triggered the associated event</param>
         internal GettingValueExceptionEventArgs(Exception exception)
         {
-            _exception = exception;
-            _valueReplacement = null;
-            _shouldThrow = true;
+            Exception = exception;
+            ValueReplacement = null;
+            ShouldThrow = true;
         }
 
-        private object _valueReplacement;
         /// <summary>
         /// Gets and sets the value that will serve as a replacement to the return of the GetValue 
         /// method of <see cref="PSObjectPropertyDescriptor"/>. If this property is not set
         /// to a value other than null then the exception associated with this event is thrown.
         /// </summary>
-        public object ValueReplacement
-        {
-            get { return _valueReplacement; }
-            set { _valueReplacement = value; }
-        }
+        public object ValueReplacement { get; set; }
     }
 
     /// <summary>
@@ -103,10 +93,6 @@ namespace System.Management.Automation
     /// </remarks>
     public class PSObjectPropertyDescriptor : PropertyDescriptor
     {
-        private bool _isReadOnly;
-        private AttributeCollection _propertyAttributes;
-        private Type _propertyType;
-
         internal event EventHandler<SettingValueExceptionEventArgs> SettingValueException;
         internal event EventHandler<GettingValueExceptionEventArgs> GettingValueException;
 
@@ -114,26 +100,20 @@ namespace System.Management.Automation
         internal PSObjectPropertyDescriptor(string propertyName, Type propertyType, bool isReadOnly, AttributeCollection propertyAttributes)
             : base(propertyName, Utils.EmptyArray<Attribute>())
         {
-            _isReadOnly = isReadOnly;
-            _propertyAttributes = propertyAttributes;
-            _propertyType = propertyType;
+            IsReadOnly = isReadOnly;
+            Attributes = propertyAttributes;
+            PropertyType = propertyType;
         }
 
         /// <summary>
         /// Gets the collection of attributes for this member.
         /// </summary>
-        public override AttributeCollection Attributes
-        {
-            get
-            {
-                return _propertyAttributes;
-            }
-        }
+        public override AttributeCollection Attributes { get; }
 
         /// <summary>
         /// Gets a value indicating whether this property is read-only.
         /// </summary>
-        public override bool IsReadOnly { get { return _isReadOnly; } }
+        public override bool IsReadOnly { get; }
 
         /// <summary>
         /// This method has no effect for <see cref="PSObjectPropertyDescriptor"/>. 
@@ -171,7 +151,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the type of the property value.
         /// </summary>
-        public override Type PropertyType { get { return _propertyType; } }
+        public override Type PropertyType { get; }
 
         /// <summary>
         /// Gets the current value of the property on a component.
@@ -343,7 +323,7 @@ namespace System.Management.Automation
     /// </summary>
     public class PSObjectTypeDescriptor : CustomTypeDescriptor
     {
-        static internal PSTraceSource typeDescriptor = PSTraceSource.GetTracer("TypeDescriptor", "Traces the behavior of PSObjectTypeDescriptor, PSObjectTypeDescriptionProvider and PSObjectPropertyDescriptor.", false);
+        internal static PSTraceSource typeDescriptor = PSTraceSource.GetTracer("TypeDescriptor", "Traces the behavior of PSObjectTypeDescriptor, PSObjectTypeDescriptionProvider and PSObjectPropertyDescriptor.", false);
 
         /// <summary>
         /// Occurs when there was an exception setting the value of a property.
@@ -370,14 +350,13 @@ namespace System.Management.Automation
         /// <param name="instance">The <see cref="PSObject"/> this class retrieves property information from.</param>
         public PSObjectTypeDescriptor(PSObject instance)
         {
-            _instance = instance;
+            Instance = instance;
         }
 
-        private PSObject _instance;
         /// <summary>
         /// Gets the <see cref="PSObject"/> this class retrieves property information from.
         /// </summary>
-        public PSObject Instance { get { return _instance; } }
+        public PSObject Instance { get; }
 
         private void CheckAndAddProperty(PSPropertyInfo propertyInfo, Attribute[] attributes, ref PropertyDescriptorCollection returnValue)
         {
@@ -459,12 +438,12 @@ namespace System.Management.Automation
             using (typeDescriptor.TraceScope("Getting properties."))
             {
                 PropertyDescriptorCollection returnValue = new PropertyDescriptorCollection(null);
-                if (_instance == null)
+                if (Instance == null)
                 {
                     return returnValue;
                 }
 
-                foreach (PSPropertyInfo property in _instance.Properties)
+                foreach (PSPropertyInfo property in Instance.Properties)
                 {
                     CheckAndAddProperty(property, attributes, ref returnValue);
                 }
@@ -568,11 +547,8 @@ namespace System.Management.Automation
                 return new TypeConverter();
             }
             object baseObject = this.Instance.BaseObject;
-            TypeConverter retValue = LanguagePrimitives.GetConverter(baseObject.GetType(), null) as TypeConverter;
-            if (retValue == null)
-            {
-                retValue = TypeDescriptor.GetConverter(baseObject);
-            }
+            TypeConverter retValue = LanguagePrimitives.GetConverter(baseObject.GetType(), null) as TypeConverter ??
+                                     TypeDescriptor.GetConverter(baseObject);
             return retValue;
         }
 

@@ -4,15 +4,13 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 #if !SILVERLIGHT // ComObject
 
-using System;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Proxies;
-using System.Security;
-using System.Security.Permissions;
+
 //using Microsoft.Scripting.Utils;
 
 namespace System.Management.Automation.ComInterop

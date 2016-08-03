@@ -8,10 +8,6 @@ using System.Linq.Expressions;
 #else
 using Microsoft.Scripting.Ast;
 #endif
-
-using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 //using Microsoft.Scripting.Utils;
 using System.Management.Automation.Interpreter;
 

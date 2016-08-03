@@ -7,9 +7,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Internal.Host;
-
-
 
 
 namespace Microsoft.PowerShell.Commands

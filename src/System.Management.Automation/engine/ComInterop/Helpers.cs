@@ -8,8 +8,6 @@ using System.Linq.Expressions;
 using Microsoft.Scripting.Ast;
 #endif
 
-using System;
-
 namespace System.Management.Automation.ComInterop
 {
     // Miscellaneous helpers that don't belong anywhere else

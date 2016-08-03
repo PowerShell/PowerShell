@@ -2,9 +2,6 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Management.Automation.Runspaces;
-
 namespace System.Management.Automation
 {
     /// <summary>

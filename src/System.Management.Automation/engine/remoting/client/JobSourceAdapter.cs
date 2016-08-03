@@ -40,20 +40,12 @@ namespace System.Management.Automation
             set { _name = value; }
         }
 
-        private readonly Type _jobSourceAdapterType;
-
         /// <summary>
         /// The type that derives from JobSourceAdapter
         /// that contains the logic for invocation and
         /// management of this type of job.
         /// </summary>
-        public Type JobSourceAdapterType
-        {
-            get
-            {
-                return _jobSourceAdapterType;
-            }
-        }
+        public Type JobSourceAdapterType { get; }
 
         private string _moduleName;
 
@@ -78,19 +70,11 @@ namespace System.Management.Automation
             set { _jobSourceAdapterTypeName = value; }
         }
 
-        private readonly string _command;
-
         /// <summary>
         /// Name of the job that needs to be loaded
         /// from the specified module
         /// </summary>
-        public String Command
-        {
-            get
-            {
-                return _command;
-            }
-        }
+        public String Command { get; }
 
         private Guid _instanceId;
 
@@ -149,12 +133,12 @@ namespace System.Management.Automation
         /// <param name="name">the job name.</param>
         public JobDefinition(Type jobSourceAdapterType, string command, string name)
         {
-            _jobSourceAdapterType = jobSourceAdapterType;
+            JobSourceAdapterType = jobSourceAdapterType;
             if (jobSourceAdapterType != null)
             {
                 _jobSourceAdapterTypeName = jobSourceAdapterType.Name;
             }
-            _command = command;
+            Command = command;
             _name = name;
             _instanceId = Guid.NewGuid();
         }
@@ -256,17 +240,10 @@ namespace System.Management.Automation
             get { return _parameters ?? (_parameters = new List<CommandParameterCollection>()); }
         }
 
-        private readonly Guid _instanceId = Guid.NewGuid();
         /// <summary>
         /// Unique identifies for this specification
         /// </summary>
-        public Guid InstanceId
-        {
-            get
-            {
-                return _instanceId;
-            }
-        }
+        public Guid InstanceId { get; } = Guid.NewGuid();
 
         /// <summary>
         /// Save this specification to a file
@@ -404,12 +381,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Name for this store
         /// </summary>
-        public String Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
-        private string _name = String.Empty;
+        public String Name { get; set; } = String.Empty;
 
         /// <summary>
         /// Get a token that allows for construction of a job with a previously assigned

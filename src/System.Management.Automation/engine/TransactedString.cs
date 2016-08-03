@@ -3,13 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
-using System.Diagnostics;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
 using System.Transactions;
-using System.Threading;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Microsoft.PowerShell.Commands.Management

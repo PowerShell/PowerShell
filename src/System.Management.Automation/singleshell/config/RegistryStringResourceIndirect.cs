@@ -2,14 +2,12 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Resources;
 using System.Security;
-using System.Management.Automation;
 using Microsoft.Win32;
 using Dbg = System.Management.Automation.Diagnostics;
 

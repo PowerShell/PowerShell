@@ -2,17 +2,7 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Reflection;
-using System.Globalization;
 using System.Management.Automation;
-using System.IO;
-
-using System.Drawing;
-using System.Drawing.Printing;
-
 using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace Microsoft.PowerShell.Commands
