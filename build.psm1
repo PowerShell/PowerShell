@@ -1874,16 +1874,31 @@ function Start-CrossGen {
     }
 
     # Get the path to crossgen.exe on Windows and crossgen on Linux.
-    $crossGenPath = if ($IsWindows) {
-        Get-ChildItem "$PSScriptRoot\Packages\*crossgen.exe" -Recurse | Where-Object {$_.FullName -like '*win*x64*'} | select -First 1 | % {$_.FullName}
-    } elseif ($IsOSX) {
-        Get-ChildItem "~/.nuget/packages/*crossgen" -Recurse | Where-Object {$_.FullName -match 'osx.10.10-x64'} | select -First 1 | % {$_.FullName}
+    $crossGenSearchPath = if ($IsWindows) {
+        "$PSScriptRoot\Packages\*crossgen.exe"
     } else {
-        Get-ChildItem "~/.nuget/packages/*crossgen" -Recurse | Where-Object {$_.FullName -match $runtime} | select -First 1 | % {$_.FullName}
+        "~/.nuget/packages/*crossgen"
     }
 
-    if (-not $crossGenPath)
-    {
+    # The crossgen tool is only published for these particular runtimes
+    $crossGenRuntime = if ($IsWindows) {
+        "win7-x64"
+    } elseif ($IsLinux) {
+        if ($IsUbuntu) {
+            "ubuntu.14.04-x64"
+        } elseif ($IsCentOS) {
+            "rhel.7-x64"
+        }
+    } elseif ($IsOSX) {
+        "osx.10.10-x64"
+    }
+
+    if (-not $crossGenRuntime) {
+        throw "crossgen is not available for this platform"
+    }
+
+    $crossGenPath = Get-ChildItem $crossGenSearchPath -Recurse | ? { $_.FullName -match $crossGenRuntime } | select -First 1 | % { $_.FullName }
+    if (-not $crossGenPath) {
         throw "Unable to find latest version of crossgen.exe. 'Please run Start-PSBuild -Clean' first, and then try again."
     }
 
