@@ -784,10 +784,13 @@ Built upon .NET Core, it is also a C# REPL.
     $Source = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
     Write-Verbose "Packaging $Source"
 
+    Write-Verbose "Copy license and third party notice to $Source"
+    Copy-Item "$PSScriptRoot\LICENSE.txt" "$Source" -Force -ErrorAction SilentlyContinue
+
     if ($IsWindows) {
         # Product Guid needs to be unique for every PowerShell version to allow SxS install
         $productGuid = [guid]::NewGuid()
-        $msiPackagePath = New-MSIPackage -ProductSourcePath $Source -ProductVersion $Version -AssetsPath "$PSScriptRoot\Assets" -ProductGuid $productGuid
+                $msiPackagePath = New-MSIPackage -ProductSourcePath $Source -ProductVersion $Version -AssetsPath "$PSScriptRoot\assets" -LicenseFilePath "$PSScriptRoot\assets\license.rtf" -ProductGuid $productGuid
         $appxPackagePath = New-AppxPackage -PackageVersion $Version -SourcePath $Source -AssetsPath "$PSScriptRoot\Assets"
 
         $packages = @($msiPackagePath, $appxPackagePath)
@@ -1526,9 +1529,10 @@ function New-MSIPackage
 {
     [CmdletBinding()]
     param (
+    
         # Name of the Product
         [ValidateNotNullOrEmpty()]
-        [string] $ProductName = 'PowerShell',
+        [string] $ProductName = 'PowerShell', 
 
         # Version of the Product
         [Parameter(Mandatory = $true)]
@@ -1551,14 +1555,20 @@ function New-MSIPackage
         # Path to Assets folder containing artifacts such as icons, images
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $AssetsPath
+        [string] $AssetsPath, 
 
-    )
+        # Path to license.rtf file - for the EULA
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $LicenseFilePath
+
+    )    
 
     $wixToolsetBinPath = "${env:ProgramFiles(x86)}\WiX Toolset v3.10\bin"
 
     Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
-    if (-not (Test-Path $wixToolsetBinPath)) {
+    if (-not (Test-Path $wixToolsetBinPath))
+    {
         throw "Install Wix Toolset prior to running this script - https://wix.codeplex.com/downloads/get/1540240"
     }
 
@@ -1568,15 +1578,15 @@ function New-MSIPackage
     $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
 
     $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion -Verbose
-
+    
     $assetsInSourcePath = "$ProductSourcePath" + '\assets'
     New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
 
     $assetsInSourcePath = Join-Path $ProductSourcePath 'assets'
 
-    Write-Verbose "Place dependencies such as icons to $assetsInSourcePath"
+    Write-Verbose "Place dependencies such as icons to $assetsInSourcePath" 
     Copy-Item "$AssetsPath\*.ico" $assetsInSourcePath -Force
-
+    
     $productVersionWithName = $ProductName + "_" + $ProductVersion
     Write-Verbose "Create MSI for Product $productVersionWithName"
 
@@ -1589,14 +1599,14 @@ function New-MSIPackage
     $wixFragmentPath = (Join-path $env:Temp "Fragment.wxs")
     $wixObjProductPath = (Join-path $env:Temp "Product.wixobj")
     $wixObjFragmentPath = (Join-path $env:Temp "Fragment.wixobj")
-
-    $msiLocationPath = Join-Path $pwd "$productVersionWithName.msi"
+    
+    $msiLocationPath = Join-Path $pwd "$productVersionWithName.msi"    
     Remove-Item -ErrorAction SilentlyContinue $msiLocationPath -Force
 
     & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v | Write-Verbose
     & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -arch x64 -v | Write-Verbose
-    & $wixLightExePath -out "$productVersionWithName.msi" $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -v | Write-Verbose
-
+    & $wixLightExePath -out "$productVersionWithName.msi" $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -dWixUILicenseRtf="$LicenseFilePath" -v | Write-Verbose
+    
     Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
 
     Write-Verbose "You can find the MSI @ $msiLocationPath"
