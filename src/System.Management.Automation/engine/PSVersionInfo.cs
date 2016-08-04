@@ -45,11 +45,6 @@ namespace System.Management.Automation
         /// <summary>
         /// A constant to track current PowerShell Edition
         /// </summary>
-        /// <remarks>
-        /// Desktop -- "full" PowerShell that runs on Server and Desktop SKUs. Contains all features.
-        /// Core -- Covers Nano Server and IoT SKUs since they are identical from a built-in feature and CLR perspective.
-        /// Linux -- All PS on Linux flavors. This may need to be subdivided based on compatibility between distros.
-        /// </remarks>
 #if !CORECLR
         internal const string PSEditionValue = "WindowsPowerShell";
 #else
