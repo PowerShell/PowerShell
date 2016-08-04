@@ -1739,7 +1739,7 @@ function Start-CrossGen {
             Push-Location $crossgenFolder
 
             # Generate the ngen assembly
-            Write-Verbose "Generating assembly $niAssemblyName"
+            Write-Verbose "Generating assembly $niAssemblyName" -Verbose
             Start-NativeExecution {
                 & $CrossgenPath /MissingDependenciesOK /in $AssemblyPath /out $outputAssembly /Platform_Assemblies_Paths $platformAssembliesPath
             } | Write-Verbose
@@ -1843,6 +1843,7 @@ function Start-CrossGen {
     Write-Verbose "PowerShell Ngen assemblies have been generated, deleting ILs..." -Verbose
     foreach ($assemblyName in $psCoreAssemblyList) {
         # Remove the IL assembly and its symbols.
+        $assemblyPath = Join-Path $PublishPath $assemblyName
         $symbolsPath = $assemblyPath.Replace(".dll", ".pdb")
         Remove-Item $assemblyPath -Force -ErrorAction SilentlyContinue
         Remove-Item $symbolsPath -Force -ErrorAction SilentlyContinue
