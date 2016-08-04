@@ -433,7 +433,7 @@ namespace Microsoft.PowerShell.Diagnostics
 "@
 
 
-if ($psedition.ToLower() -eq "powershellcore")
+if ($psedition -eq 'Core')
  {
     # Currently we only support these cmdlets as logman.exe is not working on Nano/Lot system.
     Export-ModuleMember Enable-PSTrace, Disable-PSTrace, Get-LogProperties, Set-LogProperties

@@ -46,9 +46,9 @@ namespace System.Management.Automation
         /// A constant to track current PowerShell Edition
         /// </summary>
 #if !CORECLR
-        internal const string PSEditionValue = "WindowsPowerShell";
+        internal const string PSEditionValue = "Desktop";
 #else
-        internal const string PSEditionValue = "PowerShellCore";
+        internal const string PSEditionValue = "Core";
 #endif
 
         // Static Constructor.

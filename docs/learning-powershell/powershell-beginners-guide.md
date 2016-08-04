@@ -186,7 +186,7 @@ Type **$PSVersionTable** in your PowerShell session, you will see something like
 Name                           Value
 ----                           -----
 PSVersion                      5.1.10032.0
-PSEdition                      Linux
+PSEdition                      Core
 PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0...}
 BuildVersion                   3.0.0.0
 CLRVersion                     

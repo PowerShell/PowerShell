@@ -12545,7 +12545,7 @@ function Update-ModuleManifest
         $ProcessorArchitecture,
 
         [Parameter()]
-        [ValidateSet('WindowsPowerShell','PowerShellCore')]
+        [ValidateSet('Desktop','Core')]
         [string[]]
         $CompatiblePSEditions,
 
@@ -14147,8 +14147,6 @@ function Test-MicrosoftCertificate
         $AuthenticodeSignature
     )
 
-    $result = $false
-
     if($AuthenticodeSignature.SignerCertificate)
     {
         try
@@ -14162,11 +14160,10 @@ function Test-MicrosoftCertificate
         }
 
         $SafeX509ChainHandle = [Microsoft.PowerShell.Commands.PowerShellGet.Win32Helpers]::CertDuplicateCertificateChain($X509Chain.ChainContext)
-        $result = [Microsoft.PowerShell.Commands.PowerShellGet.Win32Helpers]::IsMicrosoftCertificate($SafeX509ChainHandle)
-        $SafeX509ChainHandle.Close()
+        return [Microsoft.PowerShell.Commands.PowerShellGet.Win32Helpers]::IsMicrosoftCertificate($SafeX509ChainHandle)
     }
 
-    return $result
+    return $false
 }
 
 function Test-ValidManifestModule
