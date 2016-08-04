@@ -94,7 +94,7 @@ Area Experts are people with knowledge of specific components or technologies in
 They have [write access](https://help.github.com/articles/permission-levels-for-an-organization-repository/) to the PowerShell repository which gives them the power to:
 
 1. `git push` to all branches *except* `master`.
-1. Merge pull requests to all branches *except* `master` (though this should not be common given that [`master`is the only long-living branch](../git/powershell-repository-101.md#understand-branches)).
+1. Merge pull requests to all branches *except* `master` (though this should not be common given that [`master`is the only long-living branch](../git/README.md#understand-branches)).
 1. Assign labels, milestones, and people to [issues](https://guides.github.com/features/issues/).
 
 ### Area Expert Responsibilities
@@ -112,7 +112,7 @@ If you are an Area Expert:
 1. **DO** ask people to resend a pull request, if it [doesn't target `master`](../../.github/CONTRIBUTING.md#lifecycle-of-a-pull-request).
 1. **DO** ensure that contributors [write Pester tests][pester] for all new/changed functionality
 1. **DO** ensure that contributors [write documentation][docs-contributing] for all new-/changed functionality
-1. **DO** encourage contributors to refer to issues in their pull request description per the [issue template](../../.github/ISSUE_TEMPLATE) (e.g. `Resolves issue #123`)
+1. **DO** encourage contributors to refer to issues in their pull request description per the [issue template](../../.github/ISSUE_TEMPLATE.md) (e.g. `Resolves issue #123`)
 1. **DO** encourage contributors to create meaningful titles for all PRs. Edit title if necessary.
 1. **DO** verify that all contributors are following the [Coding Guidelines](../dev-process/coding-guidelines.md).
 
@@ -130,7 +130,7 @@ See our [Pull Request Process][pull-request-process]
 [pester]: ../testing-guidelines/WritingPesterTests.md 
 [ci-system]: ../testing-guidelines/testing-guidelines.md#ci-system
 [breaking-changes]: ../dev-process/breaking-change-contract.md
-[issue-process]: ../dev-process/issue-label-descriptions.md
-[pull-request-process]: ../dev-process/pull-request-process.md
+[issue-process]: ../maintainers/issue-management.md
+[pull-request-process]: ../maintainers/pull-request-process.md
 [docs-contributing]: https://github.com/PowerShell/PowerShell-Docs/blob/staging/CONTRIBUTING.md
 [maintainers]: ../maintainers/README.md

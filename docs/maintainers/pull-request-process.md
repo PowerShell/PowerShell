@@ -30,7 +30,7 @@ In these cases:
   - If the changes required to merge the pull request are significant but needed, create a new branch with the changes and open an issue to merge the code into the dev branch. Mention the original pull request ID in the description of the new issue and close the abandoned pull request. 
   - If the changes in an abandoned pull request are no longer needed (e.g. due to refactoring of the code base or a design change), simply close the pull request.
 
-[pr-template]: ../.github/PULL_REQUEST_TEMPLATE.md
+[pr-template]: ../../.github/PULL_REQUEST_TEMPLATE.md
 [code-review]: code-review-guidelines.md
 [governance]: ../community/governance.md
 [repository-maintainer]: ../community/governance.md#repository-maintainers
