@@ -213,6 +213,13 @@ function Start-PSBuild {
         $RestoreArguments += "$PSScriptRoot"
 
         Start-NativeExecution { dotnet restore $RestoreArguments }
+
+        # .NET Core's crypto library needs brew's OpenSSL libraries added to its rpath
+        if ($IsOSX) {
+            # This is the restored library used to build
+            # This is allowed to fail since the user may have already restored
+            find $env:HOME/.nuget -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
+        }
     }
 
     # handle ResGen
@@ -630,8 +637,6 @@ function Start-PSBootstrap {
             if ($Package) { $Deps += "ruby" }
             # Install dependencies
             brew install $Deps
-            # OpenSSL libraries must be updated
-            brew link --force openssl
         }
 
         # Install [fpm](https://github.com/jordansissel/fpm)
@@ -663,6 +668,13 @@ function Start-PSBootstrap {
             curl -s $obtainUrl/$installScript -o $installScript
             chmod +x $installScript
             bash ./$installScript -c $Channel -v $Version
+
+            # .NET Core's crypto library needs brew's OpenSSL libraries added to its rpath
+            if ($IsOSX) {
+                # This is the library shipped with .NET Core
+                # This is allowed to fail as the user may have installed other versions of dotnet
+                find $env:HOME/.dotnet -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
+            }
         }
 
         # Install for Windows
