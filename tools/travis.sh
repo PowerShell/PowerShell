@@ -1,3 +1,4 @@
+set -x
 ulimit -n 4096
 # Only build packages for branches, not pull requests
 if [[ $TRAVIS_PULL_REQUEST == false ]]; then
