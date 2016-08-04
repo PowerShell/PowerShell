@@ -162,8 +162,55 @@ namespace System.Management.Automation
                     arg = PSObject.ToStringParser(context, ParserOps.Current(null, list));
                 }
 
+#if UNIX
+                Collection<string> resolvedPaths = null;
+#endif
                 if (!String.IsNullOrEmpty(arg))
                 {
+                    // This implements globbing of arguments given to native tools on UNIX.
+                    // Conversely, Windows tools implement their own globbing,
+                    // and so this should not take place.
+#if UNIX
+                    // Perform globbing if verbatim marker wasn't specified.
+
+                    // Note that there is no way to escape globbing characters,
+                    // and so no way to mix arguments with and without globbing.
+                    // It's all or nothing.
+                    if (!sawVerbatimArgumentMarker)
+                    {
+                        CmdletProviderContext cmdletProviderContext = new CmdletProviderContext(context);
+                        // this enables globbing all (including hidden) files
+                        cmdletProviderContext.Force = true;
+                        Provider.CmdletProvider providerInstance;
+                        ProviderInfo provider;
+                        try
+                        {
+                            resolvedPaths =
+                                context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(
+                                    arg, false, cmdletProviderContext, out provider, out providerInstance);
+                        }
+                        catch
+                        {
+                            resolvedPaths = null;
+                        }
+                    }
+
+                    // either no there was no globbing to perform, or it failed, so add the original argument
+                    if (resolvedPaths == null)
+                    {
+                        resolvedPaths = new Collection<string>() { arg };
+                    }
+                    // globber may have returned an empty collection
+                    if (resolvedPaths.Count == 0)
+                    {
+                        resolvedPaths.Add(arg);
+                    }
+                }
+
+                foreach (string path in resolvedPaths)
+                {
+                    arg = path;
+#endif
                     if (needSeparator)
                     {
                         _arguments.Append(separator);
