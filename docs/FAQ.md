@@ -35,11 +35,10 @@ Things that operate in the current scope:
 Why didn't an error throw an exception?
 =======================================
 
-Error handling in PowerShell is a bit weird, as not all errors result in
-catchable exceptions by default. Setting `$ErrorActionPreference = 'Stop'` will
-likely do what you want; that is, cause non-terminating errors to instead
-terminate. Read [An Introduction To Error Handling in PowerShell][error] for
-more information.
+Error handling in PowerShell is a bit weird, as not all errors result in catchable exceptions by default. 
+Setting `$ErrorActionPreference = 'Stop'` will likely do what you want; 
+that is, cause non-terminating errors to instead terminate. 
+Read [An Introduction To Error Handling in PowerShell][error] for more information.
 
 [error]: https://blogs.msdn.microsoft.com/kebab/2013/06/09/an-introduction-to-error-handling-in-powershell/
 
@@ -52,8 +51,8 @@ The easiest way to resolve most issues with the build is to run `Start-PSBuild -
 ### Dependency changed
 
 If package dependencies were changed in any `project.json`, you need to manually
-run `dotnet restore` to update your local dependency graphs. `Start-PSBuild
--Restore` can automatically do this.
+run `dotnet restore` to update your local dependency graphs. 
+`Start-PSBuild -Restore` can automatically do this.
 
 ### Resource changed
 
@@ -66,21 +65,20 @@ Try it, when you see compilation error about *strings.
 
 ### TypeGen
 
-Similar to `-ResGen` parameter, there is `-TypeGen` parameter that trigger re-generation of type catalog.
+Similar to `-ResGen` parameter, there is `-TypeGen` parameter that triggers re-generation of type catalog.
 
 Why did `Start-PSBuild` tell me to update `dotnet`?
 ===================================================
 
 We depend on the latest version of the .NET CLI, as we use the output of `dotnet
---info` to determine the current runtime identifier. Without this information,
-our build function can't know where `dotnet` is going to place the build
-artifacts.
+--info` to determine the current runtime identifier. 
+Without this information, our build function can't know where `dotnet` is going to place the build artifacts.
 
 You can automatically install this using `Start-PSBootstrap`.
 
 **However, you must first manually uninstall other versions of the CLI.**
 
-If you have installed via any of the following means:
+If you have installed by using any of the following means:
 
 - MSI
 - `exe`
@@ -98,7 +96,8 @@ Why is my submodule empty?
 ==========================
 
 If a submodule (such as `src/Modules/Pester`) is empty, that means it is
-uninitialized. If you've already cloned, you can do this with:
+uninitialized. 
+If you've already cloned, you can do this with:
 
 ```sh
 git submodule init
@@ -118,8 +117,7 @@ If they're initialized, it will look like this:
  c99458533a9b4c743ed51537e25989ea55944908 src/libpsl-native/test/googletest (release-1.7.0)
 ```
 
-If they're not, there will be minuses in front (and the folders will
-be empty):
+If they're not, there will be minuses in front (and the folders will be empty):
 
 ```
 -f23641488f8d7bf8630ca3496e61562aa3a64009 src/Modules/Pester (f23641488)
@@ -134,11 +132,11 @@ Why does my submodule say "HEAD detached at" some commit?
 
 When a submodule is first initialized and updated, it is not checked out to a
 branch, but the very exact commit that the superproject (this PowerShell
-repository) has recorded for the submodule. This is the intended behavior.
+repository) has recorded for the submodule. 
+This is the intended behavior.
 
-If you want to check out an actual branch, just do so with `git checkout
-<branch>`. A submodule is just a Git repository; it just happens to be nested
-inside another repository.
+If you want to check out an actual branch, just do so with `git checkout <branch>`. 
+A submodule is just a Git repository; it just happens to be nested inside another repository.
 
 Please read the Git Book chapter on [submodules][].
 
@@ -147,7 +145,8 @@ Please read the Git Book chapter on [submodules][].
 Why does AppVeyor say "Project not found or access denied" when opening a build?
 ================================================================================
 
-This means you're not signed into AppVeyor. Follow these steps carefully:
+This means you're not signed into AppVeyor. 
+Follow these steps carefully:
 
 1. Click "SIGN IN" link in upper right corner
 2. Click the blue "GitHub" button under "Login with your developer account" on the left
@@ -162,15 +161,14 @@ Why did my Travis CI build fail with `GITHUB_TOKEN variable is undefined, please
 ================================================================================================
 
 Travis CI uses an encrypted environment variable to authorize with GitHub and
-download PowerShell (which it then uses to build and test through the
-`build.psm1` module). However, the following caveat applies:
+download PowerShell (which it then uses to build and test through the `build.psm1` module). 
+However, the following caveat applies:
 
 > Encrypted variables are not added to untrusted builds such as pull requests
 > coming from another repository.
 
 Thus a pull request made from a fork of the PowerShell repository will not pass
-the Travis CI as it will be unable to build. Please instead push your branch to
-the upstream PowerShell repository on GitHub (that is,
-https://github.com/PowerShell/PowerShell), and issue a new Pull Request. If you
-cannot do this, please get in contact with us to obtain the necessary
-permissions.
+the Travis CI as it will be unable to build. 
+Please instead push your branch to the upstream PowerShell repository on GitHub (that is,
+https://github.com/PowerShell/PowerShell), and issue a new Pull Request. 
+If you cannot do this, please get in contact with us to obtain the necessary permissions.
