@@ -10,7 +10,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         $env:PSMODULEPATH = join-path ([io.path]::GetDirectoryName($powershellexe)) Modules
     }
 
-    It "Should be able to compile a MOF from a basic configuration" -Skip:$IsWindows {
+    It "Should be able to compile a MOF from a basic configuration" -Skip:($IsOSX -or $IsWindows) {
         [Scriptblock]::Create(@"
         configuration DSCTestConfig
         {
@@ -29,7 +29,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         Remove-Item -Force -Recurse -Path DSCTestConfig 
     }
 
-    It "Should be able to compile a MOF from another basic configuration" -Skip:$IsWindows {
+    It "Should be able to compile a MOF from another basic configuration" -Skip:($IsOSX -or $IsWindows) {
         [Scriptblock]::Create(@"
         configuration DSCTestConfig
         {
@@ -51,7 +51,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         Remove-Item -Force -Recurse -Path DSCTestConfig 
     }
 
-    It "Should be able to compile a MOF from a complex configuration" -Skip:$IsWindows {
+    It "Should be able to compile a MOF from a complex configuration" -Skip:($IsOSX -or $IsWindows) {
         [Scriptblock]::Create(@"
 	Configuration WordPressServer{
 
