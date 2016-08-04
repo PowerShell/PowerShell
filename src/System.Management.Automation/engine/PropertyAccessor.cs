@@ -507,28 +507,20 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This method is not supported for systems when reading from the registry. Its value is
-        /// known at compile time for inbox PowerShell.
+        /// Gets the specified module path from the appropriate Environment entry in the registry.
         /// </summary>
         /// <param name="scope"></param>
         /// <returns>The specified module path. Null if not present.</returns>
         internal override string GetModulePath(PropertyScope scope)
         {
-            RegistryKey scopedKey = Registry.LocalMachine;
-            string regKeyName = @"System\CurrentControlSet\Control\Session Manager\Environment";
-
-            if (scope == PropertyScope.CurrentUser)
+            if (PropertyScope.CurrentUser == scope)
             {
-                scopedKey = Registry.CurrentUser;
-                regKeyName = "Environment";
+                return ModuleIntrinsics.GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.User);
             }
-
-            string modulePath = GetRegistryString(scopedKey, regKeyName, "PSMODULEPATH");
-            if ( ! string.IsNullOrEmpty(modulePath))
+            else
             {
-                modulePath = Environment.ExpandEnvironmentVariables(modulePath);
+                return ModuleIntrinsics.GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.Machine);
             }
-            return modulePath;
         }
 
         /// <summary>

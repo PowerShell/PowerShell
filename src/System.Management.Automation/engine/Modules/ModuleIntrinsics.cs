@@ -641,7 +641,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static string GetExpandedEnvironmentVariable(string name, EnvironmentVariableTarget target)
+        internal static string GetExpandedEnvironmentVariable(string name, EnvironmentVariableTarget target)
         {
             string result = Environment.GetEnvironmentVariable(name, target);
             if (!string.IsNullOrEmpty(result))
