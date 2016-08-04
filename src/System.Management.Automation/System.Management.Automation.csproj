@@ -390,6 +390,7 @@
     <Compile Include="engine\pipeline.cs" />
     <Compile Include="engine\PositionalCommandParameter.cs" />
     <Compile Include="engine\ProgressRecord.cs" />
+    <Compile Include="engine\PropertyAccessor.cs" />
     <Compile Include="engine\PropertyCmdletProviderInterfaces.cs" />
     <Compile Include="engine\ProviderInterfaces.cs" />
     <Compile Include="engine\ProviderNames.cs" />

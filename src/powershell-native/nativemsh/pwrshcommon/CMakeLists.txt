@@ -11,14 +11,12 @@ add_library(pwrshcommon
 target_include_directories(pwrshcommon PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 if (BUILD_ONECORE)
-    message("Building OneCore version of pwrshcommon.lib")
     # Libraries to use when creating this binary for Windows on OneCore-based SKUs
     set(PWRSHCOMMON_WINDOWS_LIBS 
         #        onecore.lib
         )
     set_target_properties(pwrshcommon PROPERTIES COMPILE_DEFINITIONS "CORECLR")
 else () # NOT BUILD_ONECORE
-    message("Building Full version of pwrshcommon.lib")
     # Libraries to use when creating this binary for Windows on full SKUs
     # Note: The appropriate libs get added automatically by VS
     set(PWRSHCOMMON_WINDOWS_LIBS

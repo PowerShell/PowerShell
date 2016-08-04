@@ -146,7 +146,6 @@ namespace System.Management.Automation.Internal
 #else
             string executionPolicy = "Restricted";
             string preferenceKey = Utils.GetRegistryConfigurationPath(shellId);
-            const string PolicyKeyValueName = "ExecutionPolicy";
 
             switch (policy)
             {
@@ -166,67 +165,43 @@ namespace System.Management.Automation.Internal
             switch (scope)
             {
                 case ExecutionPolicyScope.Process:
-                    {
-                        if (policy == ExecutionPolicy.Undefined)
-                            executionPolicy = null;
+                {
+                    if (policy == ExecutionPolicy.Undefined)
+                        executionPolicy = null;
 
-                        Environment.SetEnvironmentVariable("PSExecutionPolicyPreference", executionPolicy);
-                        break;
-                    }
+                    Environment.SetEnvironmentVariable("PSExecutionPolicyPreference", executionPolicy);
+                    break;
+                }
 
                 case ExecutionPolicyScope.CurrentUser:
+                {
+                    // They want to remove it
+                    if (policy == ExecutionPolicy.Undefined)
                     {
-                        // They want to remove it
-                        if (policy == ExecutionPolicy.Undefined)
-                        {
-                            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(preferenceKey, true))
-                            {
-                                if (key != null)
-                                {
-                                    if (key.GetValue(PolicyKeyValueName) != null)
-                                        key.DeleteValue(PolicyKeyValueName);
-                                }
-                            }
-
-                            CleanKeyParents(Registry.CurrentUser, preferenceKey);
-                        }
-                        else
-                        {
-                            using (RegistryKey key = Registry.CurrentUser.CreateSubKey(preferenceKey))
-                            {
-                                key.SetValue(PolicyKeyValueName, executionPolicy, RegistryValueKind.String);
-                            }
-                        }
-
-                        break;
+                        ConfigPropertyAccessor.Instance.RemoveExecutionPolicy(ConfigPropertyAccessor.PropertyScope.CurrentUser, shellId);
+                        CleanKeyParents(Registry.CurrentUser, preferenceKey);
                     }
+                    else
+                    {
+                        ConfigPropertyAccessor.Instance.SetExecutionPolicy(ConfigPropertyAccessor.PropertyScope.CurrentUser, shellId, executionPolicy);
+                    }
+                    break;
+                }
 
                 case ExecutionPolicyScope.LocalMachine:
+                {
+                    // They want to remove it
+                    if (policy == ExecutionPolicy.Undefined)
                     {
-                        // They want to remove it
-                        if (policy == ExecutionPolicy.Undefined)
-                        {
-                            using (RegistryKey key = Registry.LocalMachine.OpenSubKey(preferenceKey, true))
-                            {
-                                if (key != null)
-                                {
-                                    if (key.GetValue(PolicyKeyValueName) != null)
-                                        key.DeleteValue(PolicyKeyValueName);
-                                }
-                            }
-
-                            CleanKeyParents(Registry.LocalMachine, preferenceKey);
-                        }
-                        else
-                        {
-                            using (RegistryKey key = Registry.LocalMachine.CreateSubKey(preferenceKey))
-                            {
-                                key.SetValue(PolicyKeyValueName, executionPolicy, RegistryValueKind.String);
-                            }
-                        }
-
-                        break;
+                        ConfigPropertyAccessor.Instance.RemoveExecutionPolicy(ConfigPropertyAccessor.PropertyScope.SystemWide, shellId);
+                        CleanKeyParents(Registry.LocalMachine, preferenceKey);
                     }
+                    else
+                    {
+                        ConfigPropertyAccessor.Instance.SetExecutionPolicy(ConfigPropertyAccessor.PropertyScope.SystemWide, shellId, executionPolicy);
+                    }
+                    break;
+                }
             }
 #endif
         }
@@ -235,6 +210,10 @@ namespace System.Management.Automation.Internal
         // contain at most a single child
         private static void CleanKeyParents(RegistryKey baseKey, string keyPath)
         {
+#if CORECLR
+            // if ( ! Platform.Inbox) // Modify this to support registry checks for inbox CoreCLR
+            return;
+#else // Windows && FullCLR
             using (RegistryKey key = baseKey.OpenSubKey(keyPath, true))
             {
                 // Verify the child key has no children
@@ -269,6 +248,7 @@ namespace System.Management.Automation.Internal
                     return;
                 }
             }
+#endif
         }
 
         internal static ExecutionPolicy GetExecutionPolicy(string shellId)
@@ -311,6 +291,8 @@ namespace System.Management.Automation.Internal
                             return ExecutionPolicy.Undefined;
                     }
 
+                // TODO: Group Policy is only supported on Full systems, but !LINUX && CORECLR 
+                // will run there as well, so I don't think we should remove it.
                 case ExecutionPolicyScope.UserPolicy:
                 case ExecutionPolicyScope.MachinePolicy:
                     {
@@ -604,48 +586,21 @@ namespace System.Management.Automation.Internal
         /// <returns>NULL if it is not defined at this level</returns>
         private static string GetLocalPreferenceValue(string shellId, ExecutionPolicyScope scope)
         {
-            const string PolicyValueName = "ExecutionPolicy";
-            string LocalPreferenceKey = Utils.GetRegistryConfigurationPath(shellId);
-
             switch (scope)
             {
                 // 1: Look up the current-user preference
                 case ExecutionPolicyScope.CurrentUser:
-                    {
-                        using (RegistryKey key = Registry.CurrentUser.OpenSubKey(LocalPreferenceKey))
-                        {
-                            if (key != null)
-                            {
-                                object temp = key.GetValue(PolicyValueName);
-                                string policy = temp as string;
-                                key.Dispose();
+                    return ConfigPropertyAccessor.Instance.GetExecutionPolicy(ConfigPropertyAccessor.PropertyScope.CurrentUser, shellId);
 
-                                return policy;
-                            }
-                        }
-                    }; break;
-
-                // 1: Look up the system-wide preference
+                // 2: Look up the system-wide preference
                 case ExecutionPolicyScope.LocalMachine:
-                    {
-                        using (RegistryKey key = Registry.LocalMachine.OpenSubKey(LocalPreferenceKey))
-                        {
-                            if (key != null)
-                            {
-                                object temp = key.GetValue(PolicyValueName);
-                                string policy = temp as string;
-                                key.Dispose();
-
-                                return policy;
-                            }
-                        }
-                    }; break;
+                    return ConfigPropertyAccessor.Instance.GetExecutionPolicy(ConfigPropertyAccessor.PropertyScope.SystemWide, shellId);
             }
 
             return null;
         }
 
-        #endregion execution policy
+#endregion execution policy
 
         /// <summary>
         /// throw if file does not exist

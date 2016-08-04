@@ -641,7 +641,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static string GetExpandedEnvironmentVariable(string name, EnvironmentVariableTarget target)
+        internal static string GetExpandedEnvironmentVariable(string name, EnvironmentVariableTarget target)
         {
             string result = Environment.GetEnvironmentVariable(name, target);
             if (!string.IsNullOrEmpty(result))
@@ -886,8 +886,8 @@ namespace System.Management.Automation
         internal static string SetModulePath()
         {
             string currentModulePath = GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.Process);
-            string systemWideModulePath = GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.Machine);
-            string personalModulePath = GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.User);
+            string systemWideModulePath = ConfigPropertyAccessor.Instance.GetModulePath(ConfigPropertyAccessor.PropertyScope.SystemWide);
+            string personalModulePath = ConfigPropertyAccessor.Instance.GetModulePath(ConfigPropertyAccessor.PropertyScope.CurrentUser);
 
             string newModulePathString = GetModulePath(currentModulePath, systemWideModulePath, personalModulePath);
 
@@ -929,7 +929,7 @@ namespace System.Management.Automation
                     if (processedPath != null)
                         yield return processedPath;
                 }
-            }
+                }
 
             if (includeSystemModulePath)
             {

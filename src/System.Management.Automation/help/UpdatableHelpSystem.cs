@@ -238,12 +238,6 @@ namespace System.Management.Automation.Help
     /// </summary>
     internal class UpdatableHelpSystem : IDisposable
     {
-        internal const string DisablePromptToUpdateHelpRegPath = "Software\\Microsoft\\PowerShell";
-        internal const string DisablePromptToUpdateHelpRegPath32 = "Software\\Wow6432Node\\Microsoft\\PowerShell";
-        internal const string DisablePromptToUpdateHelpRegKey = "DisablePromptToUpdateHelp";
-        internal const string DefaultSourcePathRegPath = "Software\\Policies\\Microsoft\\Windows\\PowerShell\\UpdatableHelp";
-        internal const string DefaultSourcePathRegKey = "DefaultSourcePath";
-
 #if CORECLR
         private TimeSpan _defaultTimeout;
 #else
@@ -1601,25 +1595,12 @@ namespace System.Management.Automation.Help
         {
             try
             {
-                using (RegistryKey hklm = Registry.LocalMachine.OpenSubKey(DefaultSourcePathRegPath))
-                {
-                    if (hklm != null)
-                    {
-                        object defaultSourcePath = hklm.GetValue(DefaultSourcePathRegKey, null, RegistryValueOptions.None);
-
-                        if (defaultSourcePath != null)
-                        {
-                            return defaultSourcePath as string;
-                        }
-                    }
-                }
+                return ConfigPropertyAccessor.Instance.GetDefaultSourcePath();
             }
             catch (SecurityException)
             {
                 return null;
             }
-
-            return null;
         }
 
         /// <summary>
@@ -1629,21 +1610,7 @@ namespace System.Management.Automation.Help
         {
             try
             {
-                using (RegistryKey hklm = Registry.LocalMachine.OpenSubKey(DisablePromptToUpdateHelpRegPath, true))
-                {
-                    if (hklm != null)
-                    {
-                        hklm.SetValue(DisablePromptToUpdateHelpRegKey, 1, RegistryValueKind.DWord);
-                    }
-                }
-
-                using (RegistryKey hklm = Registry.LocalMachine.OpenSubKey(DisablePromptToUpdateHelpRegPath32, true))
-                {
-                    if (hklm != null)
-                    {
-                        hklm.SetValue(DisablePromptToUpdateHelpRegKey, 1, RegistryValueKind.DWord);
-                    }
-                }
+                ConfigPropertyAccessor.Instance.SetDisablePromptToUpdateHelp(true);
             }
             catch (UnauthorizedAccessException)
             {
@@ -1668,33 +1635,7 @@ namespace System.Management.Automation.Help
                     return false;
                 }
 
-                using (RegistryKey hklm = Registry.LocalMachine.OpenSubKey(DisablePromptToUpdateHelpRegPath))
-                {
-                    if (hklm != null)
-                    {
-                        object disablePromptToUpdateHelp = hklm.GetValue(DisablePromptToUpdateHelpRegKey, null, RegistryValueOptions.None);
-
-                        if (disablePromptToUpdateHelp == null)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            int result;
-
-                            if (LanguagePrimitives.TryConvertTo<int>(disablePromptToUpdateHelp, out result))
-                            {
-                                return (result != 1);
-                            }
-
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
+                return ConfigPropertyAccessor.Instance.GetDisablePromptToUpdateHelp();
             }
             catch (SecurityException)
             {

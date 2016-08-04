@@ -267,11 +267,12 @@ function Start-PSBuild {
             Push-Location "$PSScriptRoot\src\powershell-native"
 
             # Compile native resources
+            $currentLocation = Get-Location
             @("nativemsh/pwrshplugin") | % {
                 $nativeResourcesFolder = $_
                 Get-ChildItem $nativeResourcesFolder -Filter "*.mc" | % {
                     $command = @"
-cmd.exe /C cd /d "(Get-Location)" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" "$mcexe" -o -d -c -U $($_.FullName) -h "$nativeResourcesFolder" -r "$nativeResourcesFolder"
+cmd.exe /C cd /d "$currentLocation" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" mc.exe -o -d -c -U $($_.FullName) -h "$nativeResourcesFolder" -r "$nativeResourcesFolder"
 "@
                     log "  Executing mc.exe Command: $command"
                     Start-NativeExecution { Invoke-Expression -Command:$command }
@@ -526,6 +527,7 @@ function Start-PSPester {
         [string[]]$Tag = "CI",
         [string]$Path = "$PSScriptRoot/test/powershell"
     )
+
     $tagString = "-outputFormat ${OutputFormat} -outputFile ${outputFile} "
     if ( ! $DisableExit ) { $tagString += " -EnableExit" }
     if ( $ExcludeTag -and ($ExcludeTag -ne "")) { $tagString += " -ExcludeTag @('" + (${ExcludeTag} -join "','") + "')" }
@@ -537,7 +539,7 @@ function Start-PSPester {
 
     Write-Verbose "Import-Module '$moduleDir'; Invoke-Pester $tagString $Path"
     $powershellexe = get-psoutput
-    & $powershell -noprofile -c "Import-Module '$moduleDir'; Invoke-Pester $tagString $Path"
+    & $powershell -noprofile -c "Set-ExecutionPolicy -Scope Process Unrestricted; Import-Module '$moduleDir'; Invoke-Pester $tagString $Path"
     if ($LASTEXITCODE -ne 0) {
         throw "$LASTEXITCODE Pester tests failed"
     }

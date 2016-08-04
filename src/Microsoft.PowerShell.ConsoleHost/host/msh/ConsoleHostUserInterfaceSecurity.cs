@@ -170,58 +170,33 @@ namespace Microsoft.PowerShell
         // APIs
         private bool PromptUsingConsole()
         {
-#if CORECLR  // on Nano there is no other way to prompt except by using console
+#if CORECLR
+            // on Nano there is no other way to prompt except by using console
             return true;
 #else
-            string PolicyKeyName = Utils.GetRegistryConfigurationPrefix();
-            const string PromptValueName = "ConsolePrompting";
             bool promptUsingConsole = false;
-            RegistryKey key;
-
-            // Open the registry key that holds the configuration setting
-            try
-            {
-                key = Registry.LocalMachine.OpenSubKey(PolicyKeyName);
-            }
-            catch (System.Security.SecurityException)
-            {
-                s_tracer.TraceError("User doesn't have access to read CredUI registry key.");
-                return promptUsingConsole;
-            }
-
-            if (key == null)
-            {
-                return promptUsingConsole;
-            }
-
             // Get the configuration setting
             try
             {
-                object consolePromptingKey = key.GetValue(PromptValueName);
-                if (consolePromptingKey != null) { promptUsingConsole = Convert.ToBoolean(consolePromptingKey.ToString(), CultureInfo.InvariantCulture); }
+                promptUsingConsole = ConfigPropertyAccessor.Instance.GetConsolePrompting();
             }
             catch (System.Security.SecurityException e)
             {
                 s_tracer.TraceError("Could not read CredUI registry key: " + e.Message);
-                if (key != null) { key.Dispose(); } // No RegistryKey.Close() on CoreCLR
                 return promptUsingConsole;
             }
             catch (InvalidCastException e)
             {
                 s_tracer.TraceError("Could not parse CredUI registry key: " + e.Message);
-                if (key != null) { key.Dispose(); } // No RegistryKey.Close() on CoreCLR
                 return promptUsingConsole;
             }
             catch (FormatException e)
             {
                 s_tracer.TraceError("Could not parse CredUI registry key: " + e.Message);
-                if (key != null) { key.Dispose(); } // No RegistryKey.Close() on CoreCLR
                 return promptUsingConsole;
             }
 
             s_tracer.WriteLine("DetermineCredUIPolicy: policy == {0}", promptUsingConsole);
-
-            if (key != null) { key.Dispose(); } // No RegistryKey.Close() on CoreCLR
             return promptUsingConsole;
 #endif
         }
