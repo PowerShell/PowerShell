@@ -762,19 +762,21 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                // verify the value kind as a string
-                RegistryValueKind kind = regKey.GetValueKind(valueName);
+                object regValue = regKey.GetValue(valueName);
+                if (null != regValue)
+                {
+                    // verify the value kind as a string
+                    RegistryValueKind kind = regKey.GetValueKind(valueName);
 
-                if (kind == RegistryValueKind.ExpandString ||
-                    kind == RegistryValueKind.String)
-                {
-                    return regKey.GetValue(valueName) as string;
+                    if (kind == RegistryValueKind.ExpandString ||
+                        kind == RegistryValueKind.String)
+                    {
+                        return regValue as string;
+                    }
                 }
-                else
-                {
-                    // The function expected a string, but got another type. This is a coding error or a registry key typing error.
-                    return null;
-                }
+
+                // The function expected a string, but got another type or the value doesn't exist.
+                return null;
             }
         }
 
