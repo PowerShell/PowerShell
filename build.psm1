@@ -635,8 +635,6 @@ function Start-PSBootstrap {
             $Deps += "curl", "cmake"
             # .NET Core required runtime libraries
             $Deps += "openssl"
-            # Packaging tools
-            if ($Package) { $Deps += "ruby" }
             # Install dependencies
             brew install $Deps
         }
