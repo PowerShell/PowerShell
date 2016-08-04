@@ -115,16 +115,15 @@ function Start-PSBuild {
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
+    # verify we have all tools in place to do the build
+    $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see: https://dotnet.github.io/getting-started/"
+
     if ($IsWindows) {
         # use custom package store - this value is also defined in nuget.config under config/repositoryPath
         # dotnet restore uses this value as the target for installing the assemblies for referenced nuget packages.
         # dotnet build does not currently consume the  config value but will consume env:NUGET_PACKAGES to resolve these dependencies
         $env:NUGET_PACKAGES="$PSScriptRoot\Packages"
-    }
 
-    # verify we have all tools in place to do the build
-    $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see: https://dotnet.github.io/getting-started/"
-    if ($FullCLR) {
         # cmake is needed to build powershell.exe
         $precheck = $precheck -and (precheck 'cmake' 'cmake not found. Run Start-PSBootstrap. You can also install it from https://chocolatey.org/packages/cmake.portable')
 
@@ -261,8 +260,8 @@ function Start-PSBuild {
         if (-not (Test-Path $Lib)) {
             throw "Compilation of $Lib failed"
         }
-    } elseif ($FullCLR -and (-not $SMAOnly)) {
-        log "Start building native powershell.exe"
+    } elseif ($IsWindows -and (-not $SMAOnly)) {
+        log "Start building native Windows binaries"
 
         try {
             Push-Location "$PSScriptRoot\src\powershell-native"
@@ -280,37 +279,58 @@ cmd.exe /C cd /d "$currentLocation" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeH
                 }
             }
 
-# Disabling until I figure out if it is necessary
-#            $overrideFlags = "-DCMAKE_USER_MAKE_RULES_OVERRIDE=$PSScriptRoot\src\powershell-native\windows-compiler-override.txt"
-            $overrideFlags = ""
-            $location = Get-Location
-            #
-            # BUILD_ONECORE
-            #
+            function Build-NativeWindowsBinaries {
+                param(
+                    # Describes wither it should build the CoreCLR or FullCLR version
+                    [ValidateSet("ON", "OFF")]
+                    [string]$OneCoreValue,
+                    
+                    # Array of file names to copy from the local build directory to the packaging directory
+                    [string[]]$FilesToCopy
+                )
 
-            $BuildOneCoreValues = @("ON","OFF")
-            foreach ($oneCoreValue in $BuildOneCoreValues) {
+# Disabling until I figure out if it is necessary
+#                $overrideFlags = "-DCMAKE_USER_MAKE_RULES_OVERRIDE=$PSScriptRoot\src\powershell-native\windows-compiler-override.txt"
+                $overrideFlags = ""
+                $location = Get-Location
+
                 $command = @"
-cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=$oneCoreValue -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$msbuildConfiguration"
+cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=$OneCoreValue -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$msbuildConfiguration"
 "@
                 log "  Executing Build Command: $command"
                 Start-NativeExecution { Invoke-Expression -Command:$command }
+
+                $clrTarget = "FullClr"
+                if ($OneCoreValue -eq "ON")
+                {
+                    $clrTarget = "CoreClr"
+                }
+
+                # Copy the binaries from the local build directory to the packaging directory
+                $dstPath = ($script:Options).Top
+                $FilesToCopy | % {
+                    $srcPath = Join-Path (Join-Path (Join-Path (Get-Location) "bin") $msbuildConfiguration) "$clrTarget/$_"
+                    log "  Copying $srcPath to $dstPath"
+                    Copy-Item $srcPath $dstPath
+                }
             }
-
-            # Copy the executable binary from the local build directory to the expected destination to enable Start-DevPowerShell to work
-            #
-            # TODO: This should be updated to handle per-architecture builds gracefully.
-
-            $dstPath = ($script:Options).Top
-            @(
-                'powershell.exe',
-                'powershell.pdb',
-                'pwrshplugin.dll',
-                'pwrshplugin.pdb'
-            ) | % {
-                $srcPath = Join-Path (Join-Path (Join-Path (Get-Location) "bin") $msbuildConfiguration) "FullCLR/$_"
-                log "  Copying $srcPath to $dstPath"
-                Copy-Item $srcPath $dstPath
+        
+            if ($FullCLR) {
+                $fullBinaries = @(  
+                    'powershell.exe',
+                    'powershell.pdb',
+                    'pwrshplugin.dll',
+                    'pwrshplugin.pdb'
+                )
+                Build-NativeWindowsBinaries "OFF" $fullBinaries 
+            }
+            else
+            {
+                $coreClrBinaries = @(  
+                    'pwrshplugin.dll',
+                    'pwrshplugin.pdb'
+                )
+                Build-NativeWindowsBinaries "ON" $coreClrBinaries
             }
         } finally {
             Pop-Location
