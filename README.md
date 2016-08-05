@@ -36,6 +36,7 @@ You can download and install a PowerShell package for any of the following platf
 [in-centos]: docs/installation/linux.md#centos-7
 [in-osx]: docs/installation/linux.md#os-x-1011
 
+To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).
 
 Building the Repository
 -----------------------
