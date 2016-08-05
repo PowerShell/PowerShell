@@ -20,8 +20,7 @@
     "Microsoft.PackageManagement.NuGetProvider": "1.0.0-*",
     "Microsoft.PackageManagement.CoreProviders": "1.0.0-*",
     "Microsoft.PackageManagement.MetaProvider.PowerShell": "1.0.0-*",
-    "Microsoft.PackageManagement.ArchiverProviders": "1.0.0-*",
-    "Microsoft.PackageManagement.PackageSourceListProvider": "1.0.0-*"
+    "Microsoft.PackageManagement.ArchiverProviders": "1.0.0-*"
   },
 
 	"frameworks": {
