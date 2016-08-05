@@ -314,11 +314,6 @@ namespace System.Management.Automation
             return string.Empty;
         }
 
-        internal static string NonWindowsGetUserName()
-        {
-            return Unix.UserName;
-        }
-
         // Hostname in this context seems to be the FQDN
         internal static string NonWindowsGetHostName()
         {

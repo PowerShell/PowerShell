@@ -1026,25 +1026,8 @@ namespace System.Management.Automation
                 {
                     return Platform.NonWindowsGetDomainName();
                 }
-            }
-        }
 
-        internal static string WinGetUserName()
-        {
-            StringBuilder domainName = new StringBuilder(1024);
-            uint domainNameLen = (uint)domainName.Capacity;
-
-            byte ret = Win32Native.GetUserNameEx(Win32Native.NameSamCompatible, domainName, ref domainNameLen);
-            if (ret == 1)
-            {
-                string samName = domainName.ToString();
-                int index = samName.IndexOf('\\');
-                if (index != -1)
-                {
-                    return samName.Substring(index + 1);
-                }
             }
-            return string.Empty;
         }
 
         /// <summary>
@@ -1054,14 +1037,24 @@ namespace System.Management.Automation
         {
             get
             {
-                if (Platform.IsWindows)
+                #if UNIX
+                return Platform.Unix.UserName;
+                #else
+                StringBuilder domainName = new StringBuilder(1024);
+                uint domainNameLen = (uint)domainName.Capacity;
+
+                byte ret = Win32Native.GetUserNameEx(Win32Native.NameSamCompatible, domainName, ref domainNameLen);
+                if (ret == 1)
                 {
-                    return WinGetUserName();
+                    string samName = domainName.ToString();
+                    int index = samName.IndexOf('\\');
+                    if (index != -1)
+                    {
+                        return samName.Substring(index + 1);
+                    }
                 }
-                else
-                {
-                    return Platform.NonWindowsGetUserName();
-                }
+                return string.Empty;
+                #endif
             }
         }
 
