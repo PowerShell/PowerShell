@@ -1284,7 +1284,7 @@ namespace System.Management.Automation
                         {
                             s_defaultMshSnapins = new List<DefaultPSSnapInInformation>()
                             {
-#if !PORTABLE // Microsoft.PowerShell.Commands.Diagnostics.dll needs to be ported
+#if !UNIX
                                 new DefaultPSSnapInInformation("Microsoft.PowerShell.Diagnostics", "Microsoft.PowerShell.Commands.Diagnostics", null,
                                     "GetEventResources,Description", "GetEventResources,Vendor"),
 #endif
@@ -1303,7 +1303,7 @@ namespace System.Management.Automation
                                     "SecurityMshSnapInResources,Description","SecurityMshSnapInResources,Vendor")
                             };
 
-#if !PORTABLE
+#if !UNIX
                             if (!Utils.IsWinPEHost())
                             {
                                 s_defaultMshSnapins.Add(new DefaultPSSnapInInformation("Microsoft.WSMan.Management", "Microsoft.WSMan.Management", null,
