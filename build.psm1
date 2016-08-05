@@ -539,7 +539,12 @@ function Start-PSPester {
 
     Write-Verbose "Import-Module '$moduleDir'; Invoke-Pester $tagString $Path"
     $powershellexe = get-psoutput
-    & $powershell -noprofile -c "Set-ExecutionPolicy -Scope Process Unrestricted; Import-Module '$moduleDir'; Invoke-Pester $tagString $Path"
+    $execPolicy = ""
+    if ($IsWindows)
+    {
+        $execPolicy = "Set-ExecutionPolicy -Scope Process Unrestricted; "
+    }
+    & $powershell -noprofile -c "$execPolicy Import-Module '$moduleDir'; Invoke-Pester $tagString $Path"
     if ($LASTEXITCODE -ne 0) {
         throw "$LASTEXITCODE Pester tests failed"
     }
