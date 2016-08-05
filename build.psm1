@@ -1739,7 +1739,7 @@ function Start-CrossGen {
             Push-Location $crossgenFolder
 
             # Generate the ngen assembly
-            Write-Verbose "Generating assembly $niAssemblyName" -Verbose
+            Write-Verbose "Generating assembly $niAssemblyName"
             Start-NativeExecution {
                 & $CrossgenPath /MissingDependenciesOK /in $AssemblyPath /out $outputAssembly /Platform_Assemblies_Paths $platformAssembliesPath
             } | Write-Verbose
