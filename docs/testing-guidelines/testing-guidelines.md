@@ -101,7 +101,7 @@ If these tests find regressions, you'll be notified that your PR is not ready, a
 We have taken a functional approach to the layout of our Pester tests. 
 You should place new tests in their appropriate location. 
 If you are making a fix to a cmdlet in a module, the test belongs in the module directory.
-If you are unsure; you can make it part of your PR, or create an issue. 
+If you are unsure, you can make it part of your PR, or create an issue. 
 The current layout of tests is:
 * test/powershell/engine
 * test/powershell/engine/Api
