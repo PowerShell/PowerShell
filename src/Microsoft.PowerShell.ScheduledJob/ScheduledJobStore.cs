@@ -424,8 +424,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <returns>Directory Path</returns>
         public static string GetJobDefinitionLocation()
         {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                                ScheduledJobsPath);
+            return (Platform.IsWindows
+                    ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                                    ScheduledJobsPath)
+                    : Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "ScheduledJobs"));
         }
 
         public static void CreateDirectoryIfNotExists()
@@ -444,8 +446,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <returns>Directory Path</returns>
         private static string GetDirectoryPath()
         {
-            string pathName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                                           ScheduledJobsPath);
+            string pathName = (Platform.IsWindows
+                                ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                                                ScheduledJobsPath)
+                                : Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "ScheduledJobs"));
 
             if (!Directory.Exists(pathName))
             {
@@ -499,9 +503,11 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <returns>Directory Path</returns>
         private static string GetJobDefinitionPath(string definitionName)
         {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                                ScheduledJobsPath,
-                                definitionName);
+            return (Platform.IsWindows
+                                ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                                                ScheduledJobsPath,
+                                                definitionName)
+                                : Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "ScheduledJobs", definitionName));
         }
 
         /// <summary>
