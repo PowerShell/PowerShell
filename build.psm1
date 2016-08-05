@@ -1858,6 +1858,7 @@ function Start-CrossGen {
     Write-Verbose "PowerShell Ngen assemblies have been generated, deleting ILs..." -Verbose
     foreach ($assemblyName in $psCoreAssemblyList) {
         # Remove the IL assembly and its symbols.
+        $assemblyPath = Join-Path $PublishPath $assemblyName
         $symbolsPath = $assemblyPath.Replace(".dll", ".pdb")
         Remove-Item $assemblyPath -Force -ErrorAction SilentlyContinue
         Remove-Item $symbolsPath -Force -ErrorAction SilentlyContinue
