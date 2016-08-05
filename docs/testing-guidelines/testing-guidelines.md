@@ -10,7 +10,7 @@ intent to continue to release more and more of our tests until we have the cover
 
 For creating new tests, please review the 
 [documents](https://github.com/PowerShell/PowerShell/tree/master/docs/testing-guidelines) on how to
-create tests for OpenPowerShell
+create tests for PowerShell.
 
 ## CI System
 
