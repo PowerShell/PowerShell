@@ -14,11 +14,6 @@ using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
 using System.IO;
 
-#if CORECLR
-// SMA.Environment is only available on CoreCLR
-using SpecialFolder = System.Management.Automation.Environment.SpecialFolder;
-#endif
-
 namespace System.Management.Automation
 {
     /// <summary>
@@ -271,13 +266,6 @@ namespace System.Management.Automation
             return Unix.NativeMethods.GetUserFromPid(path);
         }
 
-#if CORECLR
-        internal static string NonWindowsGetFolderPath(SpecialFolder folder)
-        {
-            return Unix.GetFolderPath(folder);
-        }
-#endif
-
         internal static string NonWindowsInternalGetLinkType(FileSystemInfo fileInfo)
         {
             if (NonWindowsIsSymLink(fileInfo))
@@ -392,41 +380,6 @@ namespace System.Management.Automation
                 return "/tmp";
             }
         }
-
-#if CORECLR
-        public static string GetFolderPath(SpecialFolder folder)
-        {
-            string s = null;
-            switch (folder)
-            {
-                case SpecialFolder.ProgramFiles:
-                    s = "/bin";
-                    break;
-                case SpecialFolder.ProgramFilesX86:
-                    s = "/usr/bin";
-                    break;
-                case SpecialFolder.System:
-                    s = "/sbin";
-                    break;
-                case SpecialFolder.SystemX86:
-                    s = "/sbin";
-                    break;
-                case SpecialFolder.Personal:
-                    s = System.Environment.GetEnvironmentVariable("HOME");
-                    break;
-                case SpecialFolder.LocalApplicationData:
-                    s = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("HOME"), ".config");
-                    if (!System.IO.Directory.Exists(s))
-                    {
-                        System.IO.Directory.CreateDirectory(s);
-                    }
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
-            return s;
-        }
-#endif
 
         public static bool IsHardLink(ref IntPtr handle)
         {
