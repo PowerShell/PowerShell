@@ -312,20 +312,18 @@ namespace System.Management.Automation
 
         internal static string NonWindowsGetDomainName()
         {
-            string fullyQualifiedName = Unix.NativeMethods.GetFullyQualifiedName();
-            if (string.IsNullOrEmpty(fullyQualifiedName))
+            string name = Unix.NativeMethods.GetFullyQualifiedName();
+            if (!string.IsNullOrEmpty(name))
             {
-                int lastError = Marshal.GetLastWin32Error();
-                throw new InvalidOperationException("Unix.NonWindowsGetDomainName error: " + lastError);
+                // name is hostname.domainname, so extract domainname
+                int index = name.IndexOf('.');
+                if (index >= 0)
+                {
+                    return name.Substring(index + 1);
+                }
             }
-
-            int index = fullyQualifiedName.IndexOf('.');
-            if (index >= 0)
-            {
-                return fullyQualifiedName.Substring(index + 1);
-            }
-
-            return "";
+            // if the domain name could not be found, do not throw, just return empty
+            return string.Empty;
         }
 
         internal static string NonWindowsGetUserName()
@@ -336,13 +334,7 @@ namespace System.Management.Automation
         // Hostname in this context seems to be the FQDN
         internal static string NonWindowsGetHostName()
         {
-            string hostName = Unix.NativeMethods.GetFullyQualifiedName();
-            if (string.IsNullOrEmpty(hostName))
-            {
-                int lastError = Marshal.GetLastWin32Error();
-                throw new InvalidOperationException("Unix.NonWindowsHostName error: " + lastError);
-            }
-            return hostName;
+            return Unix.NativeMethods.GetFullyQualifiedName() ?? string.Empty;
         }
 
         internal static bool NonWindowsIsFile(string path)
@@ -377,13 +369,8 @@ namespace System.Management.Automation
                 if (string.IsNullOrEmpty(s_userName))
                 {
                     s_userName = NativeMethods.GetUserName();
-                    if (string.IsNullOrEmpty(s_userName))
-                    {
-                        int lastError = Marshal.GetLastWin32Error();
-                        throw new InvalidOperationException("Unix.UserName error: " + lastError);
-                    }
                 }
-                return s_userName;
+                return s_userName ?? string.Empty;
             }
         }
 
