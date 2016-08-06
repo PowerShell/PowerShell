@@ -37,7 +37,7 @@ Why didn't an error throw an exception?
 
 Error handling in PowerShell is a bit weird, as not all errors result in catchable exceptions by default. 
 Setting `$ErrorActionPreference = 'Stop'` will likely do what you want; 
-that is, cause non-terminating errors to instead terminate. 
+that is, cause non-terminating errors instead to terminate. 
 Read [An Introduction To Error Handling in PowerShell][error] for more information.
 
 [error]: https://blogs.msdn.microsoft.com/kebab/2013/06/09/an-introduction-to-error-handling-in-powershell/
@@ -65,7 +65,7 @@ Try it, when you see compilation error about *strings.
 
 ### TypeGen
 
-Similar to `-ResGen` parameter, there is `-TypeGen` parameter that triggers re-generation of type catalog.
+Similar to `-ResGen` parameter, there is `-TypeGen` parameter that triggers regeneration of type catalog.
 
 Why did `Start-PSBuild` tell me to update `dotnet`?
 ===================================================
@@ -131,9 +131,9 @@ Why does my submodule say "HEAD detached at" some commit?
 =========================================================
 
 When a submodule is first initialized and updated, it is not checked out to a
-branch, but the very exact commit that the superproject (this PowerShell
+branch, but the very exact commit that the super-project (this PowerShell
 repository) has recorded for the submodule. 
-This is the intended behavior.
+This behavior is intended.
 
 If you want to check out an actual branch, just do so with `git checkout <branch>`. 
 A submodule is just a Git repository; it just happens to be nested inside another repository.
@@ -145,7 +145,7 @@ Please read the Git Book chapter on [submodules][].
 Why does AppVeyor say "Project not found or access denied" when opening a build?
 ================================================================================
 
-This means you're not signed into AppVeyor. 
+This error means you're not signed into AppVeyor. 
 Follow these steps carefully:
 
 1. Click "SIGN IN" link in upper right corner
