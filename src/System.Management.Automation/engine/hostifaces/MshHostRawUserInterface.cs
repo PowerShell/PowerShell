@@ -25,21 +25,31 @@ namespace System.Management.Automation.Host
     public
     struct Coordinates
     {
+        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting
+        private int x;
+        private int y;
+
         /// <summary>
         /// 
         /// Gets and sets the X coordinate
         /// 
         /// </summary>
-
-        public int X { get; set; }
+        public int X
+        {
+            get { return x; }
+            set { x = value; }
+        }
 
         /// <summary>
         /// 
         /// Gets and sets the Y coordinate 
         /// 
         /// </summary>
-
-        public int Y { get; set; }
+        public int Y
+        {
+            get { return y; }
+            set { y = value; }
+        }
 
 
         /// <summary>
@@ -57,12 +67,11 @@ namespace System.Management.Automation.Host
         /// The Y coordinate 
         /// 
         /// </param>
-
         public
         Coordinates(int x, int y)
         {
-            X = x;
-            Y = y;
+            this.x = x;
+            this.y = y;
         }
 
 
@@ -258,21 +267,31 @@ namespace System.Management.Automation.Host
     public
     struct Size
     {
+        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting
+        private int width;
+        private int height;
+
         /// <summary>
         /// 
         /// Gets and sets the Width
         /// 
         /// </summary>
-
-        public int Width { get; set; }
+        public int Width
+        {
+            get { return width; }
+            set { width = value; }
+        }
 
         /// <summary>
         /// 
         /// Gets and sets the Height
         /// 
         /// </summary>
-
-        public int Height { get; set; }
+        public int Height
+        {
+            get { return height; }
+            set { height = value; }
+        }
 
 
         /// <summary>
@@ -290,12 +309,11 @@ namespace System.Management.Automation.Host
         /// The Height
         /// 
         /// </param>
-
         public
         Size(int width, int height)
         {
-            Width = width;
-            Height = height;
+            this.width = width;
+            this.height = height;
         }
 
 
