@@ -167,14 +167,15 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Data.
         /// </summary>
-        private Dictionary<HostDefaultDataId, object> _data;
+        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting
+        private Dictionary<HostDefaultDataId, object> data;
 
         /// <summary>
         /// Private constructor to force use of Create.
         /// </summary>
         private HostDefaultData()
         {
-            _data = new Dictionary<HostDefaultDataId, object>();
+            data = new Dictionary<HostDefaultDataId, object>();
         }
 
         /// <summary>
@@ -193,7 +194,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal bool HasValue(HostDefaultDataId id)
         {
-            return _data.ContainsKey(id);
+            return data.ContainsKey(id);
         }
 
         /// <summary>
@@ -201,7 +202,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void SetValue(HostDefaultDataId id, object dataValue)
         {
-            _data[id] = dataValue;
+            data[id] = dataValue;
         }
 
         /// <summary>
@@ -210,7 +211,7 @@ namespace System.Management.Automation.Remoting
         internal object GetValue(HostDefaultDataId id)
         {
             object result;
-            _data.TryGetValue(id, out result);
+            data.TryGetValue(id, out result);
             return result;
         }
 
@@ -340,7 +341,10 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Host default data.
         /// </summary>
-        internal HostDefaultData HostDefaultData { get; }
+        internal HostDefaultData HostDefaultData
+        {
+            get { return _hostDefaultData; }
+        }
 
         /// <summary>
         /// Is host null.
@@ -373,6 +377,10 @@ namespace System.Management.Automation.Remoting
 
         private readonly bool _isHostNull;
 
+        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting
+        private readonly HostDefaultData _hostDefaultData;
+        private bool _useRunspaceHost;
+
         /// <summary>
         /// Is host raw ui null.
         /// </summary>
@@ -387,7 +395,11 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Use runspace host.
         /// </summary>
-        internal bool UseRunspaceHost { get; set; }
+        internal bool UseRunspaceHost
+        {
+            get { return _useRunspaceHost; }
+            set { _useRunspaceHost = value; }
+        }
 
         /// <summary>
         /// Constructor for HostInfo.
@@ -400,7 +412,7 @@ namespace System.Management.Automation.Remoting
             // If raw UI is non-null then get the host-info object.
             if (!_isHostUINull && !_isHostRawUINull)
             {
-                HostDefaultData = HostDefaultData.Create(host.UI.RawUI);
+                _hostDefaultData = HostDefaultData.Create(host.UI.RawUI);
             }
         }
 
