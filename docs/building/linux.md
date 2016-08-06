@@ -14,7 +14,7 @@ Git Setup
 ---------
 
 Using Git requires it to be set up correctly; 
-refer to the [Working with the PowerShell Repository](../git/powershell-repository-101.md),
+refer to the [Working with the PowerShell Repository](../git/README.md),
 [README](../../README.md), and [Contributing Guidelines](../../.github/CONTRIBUTING.md).
 
 **This guide assumes that you have recursively cloned the PowerShell repository and `cd`ed into it.**

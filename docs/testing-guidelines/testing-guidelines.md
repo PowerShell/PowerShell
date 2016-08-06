@@ -33,7 +33,7 @@ From there you can easily navigate to the build history.
 Travis CI works similarly to AppVeyor. 
 For Travis CI there will be multiple badges.
 The badges indicate the last build status of `master` branch for different platforms.
-Hopefully, each badge is green:
+Hopefully, it's green:
 
 ![Travis-CI-Badge-Green.png](Images/Travis-CI-Badge-Green.png)
 
