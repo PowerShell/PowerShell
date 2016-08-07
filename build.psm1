@@ -331,6 +331,10 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
                     'pwrshplugin.pdb'
                 )
                 Build-NativeWindowsBinaries "ON" $coreClrBinaries
+
+                # Place the remoting configuration script in the same directory
+                # as the binary so it will get published.
+                Copy-Item .\Install-PowerShellRemoting.ps1 ($script:Options).Top
             }
         } finally {
             Pop-Location
