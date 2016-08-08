@@ -8,17 +8,17 @@ if (BUILD_ONECORE)
         CssMainEntry.cpp
         )
     set(PWRSHEXE_WINDOWS_LIBS
-###        ${STATIC_MT_CRT_LIB}
-###        ${STATIC_MT_VCRT_LIB}
-###        ${STATIC_UCRT_LIB}
         onecore.lib
-        vcruntime.lib
-        ucrtd.lib
-        msvcrt.lib
-        msvcrt.lib
-        msvcprtd.lib
-        user32.lib
-        atls.lib
+        ${STATIC_MT_CRT_LIB} # use for coreclr_defs
+        ${STATIC_MT_VCRT_LIB} # use for coreclr_defs
+###        ${STATIC_UCRT_LIB}
+        #vcruntime.lib# use for nano_defs
+        #ucrtd.li# use for nano_defs
+        #msvcrt.lib# use for nano_defs
+        #msvcrt.lib# use for nano_defs
+        #msvcprtd.lib# use for nano_defs
+        #user32.lib # use for nano_defs
+        #atls.lib# use for nano_defs
         )
      set(powershell_definitions 
          _CONSOLE

@@ -171,13 +171,6 @@ add_compile_options($<$<OR:$<CONFIG:Debug>,$<CONFIG:Checked>>:/MTd>)
 #  clr_unknown_arch()
 #endif (CLR_CMAKE_TARGET_ARCH_AMD64)
 
-#
-# TODO: Are these needed???????????
-#
-#add_definitions(-D_BLD_CLR)
-#add_definitions(-DDEBUGGING_SUPPORTED)
-#add_definitions(-DPROFILING_SUPPORTED)
-
 add_definitions(-DWIN32)
 add_definitions(-D_WIN32)
 add_definitions(-DWINVER=${WIN_VERSION_WIN8})# 0x0601 for Win7, was 0x0602
