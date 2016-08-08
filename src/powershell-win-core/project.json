@@ -46,6 +46,9 @@
             }
         },
         "include": [
+            "pwrshplugin.dll",
+            "pwrshplugin.pdb",
+            "Install-PowerShellRemoting.ps1",
             "../../powershell.version"
         ],
     },
