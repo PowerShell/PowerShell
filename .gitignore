@@ -51,3 +51,6 @@ gen
 
 #VS Code files
 .vscode
+
+# OS X
+.DS_Store
