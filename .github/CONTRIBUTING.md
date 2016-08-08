@@ -1,4 +1,4 @@
-Contribute to PowerShell
+Contributing to PowerShell
 ========================
 
 We welcome and appreciate contributions from the community.
