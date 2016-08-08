@@ -645,7 +645,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 var dscConfigurationDirectory = Environment.GetEnvironmentVariable("DSC_HOME") ??
                                                 "/etc/opt/omi/conf/dsc/configuration";
 
-                Debug.Assert(Directory.Exists(dscConfigurationDirectory), dscConfigurationDirectory + " does not exist.");
+                if (!Directory.Exists(dscConfigurationDirectory))
+                {
+                    throw new DirectoryNotFoundException("Unable to find DSC schema store at " + dscConfigurationDirectory + ". Please ensure PS DSC for Linux is installed.");
+                }
 
                 var resourceBaseFile = Path.Combine(dscConfigurationDirectory, "baseregistration/baseresource.schema.mof");
                 ImportClasses(resourceBaseFile, s_defaultModuleInfoForResource, errors);
