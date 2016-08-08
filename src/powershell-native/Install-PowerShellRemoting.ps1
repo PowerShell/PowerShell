@@ -122,7 +122,7 @@ $pluginRawPath = Join-Path $resolvedPluginAbsolutePath "pwrshplugin.dll"
 $fixedPluginPath = $pluginRawPath -replace '\\','\\'
 
 # This is forced to ensure the the file is placed correctly
-copy-item $PSHOME\pwrshplugin.dll $resolvedPluginAbsolutePath -Force -Verbose
+Copy-Item $PSHOME\pwrshplugin.dll $resolvedPluginAbsolutePath -Force -Verbose
 
 $pluginFile = Join-Path $resolvedPluginAbsolutePath "RemotePowerShellConfig.txt"
 Generate-PluginConfigFile $pluginFile
