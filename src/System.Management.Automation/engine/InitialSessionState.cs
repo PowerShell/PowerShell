@@ -3148,7 +3148,13 @@ namespace System.Management.Automation.Runspaces
             // otherwise use the current user name.
             var userName = (!string.IsNullOrEmpty(this.UserDriveUserName)) ?
                 this.UserDriveUserName :
-                System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+                // domain\user on Windows, just user on Unix
+                #if UNIX
+                Platform.Unix.UserName
+                #else
+                System.Security.Principal.WindowsIdentity.GetCurrent().Name
+                #endif
+                ;
 
             // Ensure that user name contains no invalid path characters.
             // MSDN indicates that logon names cannot contain any of these invalid characters,

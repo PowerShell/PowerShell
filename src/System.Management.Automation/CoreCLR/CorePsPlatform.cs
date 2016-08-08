@@ -14,18 +14,10 @@ using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
 using System.IO;
 
-#if CORECLR
-// SMA.Environment is only available on CoreCLR
-using SpecialFolder = System.Management.Automation.Environment.SpecialFolder;
-#endif
-
 namespace System.Management.Automation
 {
     /// <summary>
     /// These are platform abstractions and platform specific implementations
-    ///
-    /// All these properties are calling into platform specific static classes, to make
-    /// sure the platform implementations are switched at runtime (including pinvokes).
     /// </summary>
     public static class Platform
     {
@@ -36,11 +28,11 @@ namespace System.Management.Automation
         {
             get
             {
-#if CORECLR
+                #if CORECLR
                 return RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-#else
+                #else
                 return false;
-#endif
+                #endif
             }
         }
 
@@ -51,11 +43,11 @@ namespace System.Management.Automation
         {
             get
             {
-#if CORECLR
+                #if CORECLR
                 return RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-#else
+                #else
                 return false;
-#endif
+                #endif
             }
         }
 
@@ -66,11 +58,11 @@ namespace System.Management.Automation
         {
             get
             {
-#if CORECLR
+                #if CORECLR
                 return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-#else
+                #else
                 return true;
-#endif
+                #endif
             }
         }
 
@@ -81,11 +73,11 @@ namespace System.Management.Automation
         {
             get
             {
-#if CORECLR
+                #if CORECLR
                 return true;
-#else
+                #else
                 return false;
-#endif
+                #endif
             }
         }
 
@@ -271,13 +263,6 @@ namespace System.Management.Automation
             return Unix.NativeMethods.GetUserFromPid(path);
         }
 
-#if CORECLR
-        internal static string NonWindowsGetFolderPath(SpecialFolder folder)
-        {
-            return Unix.GetFolderPath(folder);
-        }
-#endif
-
         internal static string NonWindowsInternalGetLinkType(FileSystemInfo fileInfo)
         {
             if (NonWindowsIsSymLink(fileInfo))
@@ -312,37 +297,24 @@ namespace System.Management.Automation
 
         internal static string NonWindowsGetDomainName()
         {
-            string fullyQualifiedName = Unix.NativeMethods.GetFullyQualifiedName();
-            if (string.IsNullOrEmpty(fullyQualifiedName))
+            string name = Unix.NativeMethods.GetFullyQualifiedName();
+            if (!string.IsNullOrEmpty(name))
             {
-                int lastError = Marshal.GetLastWin32Error();
-                throw new InvalidOperationException("Unix.NonWindowsGetDomainName error: " + lastError);
+                // name is hostname.domainname, so extract domainname
+                int index = name.IndexOf('.');
+                if (index >= 0)
+                {
+                    return name.Substring(index + 1);
+                }
             }
-
-            int index = fullyQualifiedName.IndexOf('.');
-            if (index >= 0)
-            {
-                return fullyQualifiedName.Substring(index + 1);
-            }
-
-            return "";
-        }
-
-        internal static string NonWindowsGetUserName()
-        {
-            return Unix.UserName;
+            // if the domain name could not be found, do not throw, just return empty
+            return string.Empty;
         }
 
         // Hostname in this context seems to be the FQDN
         internal static string NonWindowsGetHostName()
         {
-            string hostName = Unix.NativeMethods.GetFullyQualifiedName();
-            if (string.IsNullOrEmpty(hostName))
-            {
-                int lastError = Marshal.GetLastWin32Error();
-                throw new InvalidOperationException("Unix.NonWindowsHostName error: " + lastError);
-            }
-            return hostName;
+            return Unix.NativeMethods.GetFullyQualifiedName() ?? string.Empty;
         }
 
         internal static bool NonWindowsIsFile(string path)
@@ -365,211 +337,171 @@ namespace System.Management.Automation
             // TODO:PSL clean this up
             return 0;
         }
-    }
 
-    internal static class Unix
-    {
-        private static string s_userName;
-        public static string UserName
+        internal static class Unix
         {
-            get
+            private static string s_userName;
+            public static string UserName
             {
-                if (string.IsNullOrEmpty(s_userName))
+                get
                 {
-                    s_userName = NativeMethods.GetUserName();
                     if (string.IsNullOrEmpty(s_userName))
                     {
-                        int lastError = Marshal.GetLastWin32Error();
-                        throw new InvalidOperationException("Unix.UserName error: " + lastError);
+                        s_userName = NativeMethods.GetUserName();
                     }
+                    return s_userName ?? string.Empty;
                 }
-                return s_userName;
             }
-        }
 
-        public static string TemporaryDirectory
-        {
-            get
+            public static string TemporaryDirectory
             {
-                // POSIX temporary directory environment variables
-                string[] environmentVariables = { "TMPDIR", "TMP", "TEMP", "TEMPDIR" };
-                string dir = string.Empty;
-                foreach (string s in environmentVariables)
+                get
                 {
-                    dir = System.Environment.GetEnvironmentVariable(s);
-                    if (!string.IsNullOrEmpty(dir))
+                    // POSIX temporary directory environment variables
+                    string[] environmentVariables = { "TMPDIR", "TMP", "TEMP", "TEMPDIR" };
+                    string dir = string.Empty;
+                    foreach (string s in environmentVariables)
                     {
-                        return dir;
+                        dir = System.Environment.GetEnvironmentVariable(s);
+                        if (!string.IsNullOrEmpty(dir))
+                        {
+                            return dir;
+                        }
                     }
+                    return "/tmp";
                 }
-                return "/tmp";
             }
-        }
 
-#if CORECLR
-        public static string GetFolderPath(SpecialFolder folder)
-        {
-            string s = null;
-            switch (folder)
+            public static bool IsHardLink(ref IntPtr handle)
             {
-                case SpecialFolder.ProgramFiles:
-                    s = "/bin";
-                    break;
-                case SpecialFolder.ProgramFilesX86:
-                    s = "/usr/bin";
-                    break;
-                case SpecialFolder.System:
-                    s = "/sbin";
-                    break;
-                case SpecialFolder.SystemX86:
-                    s = "/sbin";
-                    break;
-                case SpecialFolder.Personal:
-                    s = System.Environment.GetEnvironmentVariable("HOME");
-                    break;
-                case SpecialFolder.LocalApplicationData:
-                    s = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("HOME"), ".config");
-                    if (!System.IO.Directory.Exists(s))
-                    {
-                        System.IO.Directory.CreateDirectory(s);
-                    }
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
-            return s;
-        }
-#endif
-
-        public static bool IsHardLink(ref IntPtr handle)
-        {
-            // TODO:PSL implement using fstat to query inode refcount to see if it is a hard link
-            return false;
-        }
-
-
-        public static bool IsHardLink(FileSystemInfo fs)
-        {
-            if (!fs.Exists || (fs.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
-            {
+                // TODO:PSL implement using fstat to query inode refcount to see if it is a hard link
                 return false;
             }
 
-            int count;
-            string filePath = fs.FullName;
-            int ret = NativeMethods.GetLinkCount(filePath, out count);
-            if (ret == 1)
-            {
-                return count > 1;
-            }
-            else
-            {
-                int lastError = Marshal.GetLastWin32Error();
-                throw new InvalidOperationException("Unix.IsHardLink error: " + lastError);
-            }
-        }
 
-        public static void SetDate(SetDateInfoInternal info)
-        {
-            int ret = NativeMethods.SetDate(info);
-            if (ret == -1)
+            public static bool IsHardLink(FileSystemInfo fs)
             {
-                int lastError = Marshal.GetLastWin32Error();
-                throw new InvalidOperationException("Unix.NonWindowsSetDate error: " + lastError);
-            }
-        }
+                if (!fs.Exists || (fs.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
+                {
+                    return false;
+                }
 
-        public static bool CreateHardLink(string path, string strTargetPath)
-        {
-            int ret = NativeMethods.CreateHardLink(path, strTargetPath);
-            return ret == 1 ? true : false;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal class SetDateInfoInternal
-        {
-            public int Year;
-            public int Month;
-            public int Day;
-            public int Hour;
-            public int Minute;
-            public int Second;
-            public int Millisecond;
-            public int DST;
-
-            public SetDateInfoInternal(DateTime d)
-            {
-                Year = d.Year;
-                Month = d.Month;
-                Day = d.Day;
-                Hour = d.Hour;
-                Minute = d.Minute;
-                Second = d.Second;
-                Millisecond = d.Millisecond;
-                DST = d.IsDaylightSavingTime() ? 1 : 0;
+                int count;
+                string filePath = fs.FullName;
+                int ret = NativeMethods.GetLinkCount(filePath, out count);
+                if (ret == 1)
+                {
+                    return count > 1;
+                }
+                else
+                {
+                    int lastError = Marshal.GetLastWin32Error();
+                    throw new InvalidOperationException("Unix.IsHardLink error: " + lastError);
+                }
             }
 
-            public override string ToString()
+            public static void SetDate(SetDateInfoInternal info)
             {
-                string ret = String.Format("Year = {0}; Month = {1}; Day = {2}; Hour = {3}; Minute = {4}; Second = {5}; Millisec = {6}; DST = {7}", Year, Month, Day, Hour, Minute, Second, Millisecond, DST);
-                return ret;
+                int ret = NativeMethods.SetDate(info);
+                if (ret == -1)
+                {
+                    int lastError = Marshal.GetLastWin32Error();
+                    throw new InvalidOperationException("Unix.NonWindowsSetDate error: " + lastError);
+                }
             }
-        }
 
-        internal static class NativeMethods
-        {
-            private const string psLib = "libpsl-native";
+            public static bool CreateHardLink(string path, string strTargetPath)
+            {
+                int ret = NativeMethods.CreateHardLink(path, strTargetPath);
+                return ret == 1 ? true : false;
+            }
 
-            // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and OS X
+            [StructLayout(LayoutKind.Sequential)]
+            internal class SetDateInfoInternal
+            {
+                public int Year;
+                public int Month;
+                public int Day;
+                public int Hour;
+                public int Minute;
+                public int Second;
+                public int Millisecond;
+                public int DST;
 
-            // C bools are 1 byte and so must be marshaled as I1
+                public SetDateInfoInternal(DateTime d)
+                {
+                    Year = d.Year;
+                    Month = d.Month;
+                    Day = d.Day;
+                    Hour = d.Hour;
+                    Minute = d.Minute;
+                    Second = d.Second;
+                    Millisecond = d.Millisecond;
+                    DST = d.IsDaylightSavingTime() ? 1 : 0;
+                }
 
-            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.LPStr)]
-            internal static extern string GetUserName();
+                public override string ToString()
+                {
+                    string ret = String.Format("Year = {0}; Month = {1}; Day = {2}; Hour = {3}; Minute = {4}; Second = {5}; Millisec = {6}; DST = {7}", Year, Month, Day, Hour, Minute, Second, Millisecond, DST);
+                    return ret;
+                }
+            }
 
-            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            internal static extern int GetLinkCount([MarshalAs(UnmanagedType.LPStr)]string filePath, out int linkCount);
+            internal static class NativeMethods
+            {
+                private const string psLib = "libpsl-native";
 
-            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.I1)]
-            internal static extern bool IsSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath);
+                // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and OS X
 
-            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.I1)]
-            internal static extern bool IsExecutable([MarshalAs(UnmanagedType.LPStr)]string filePath);
+                // C bools are 1 byte and so must be marshaled as I1
 
-            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.LPStr)]
-            internal static extern string GetFullyQualifiedName();
+                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [return: MarshalAs(UnmanagedType.LPStr)]
+                internal static extern string GetUserName();
 
-            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            internal static extern int SetDate(SetDateInfoInternal info);
+                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                internal static extern int GetLinkCount([MarshalAs(UnmanagedType.LPStr)]string filePath, out int linkCount);
 
-            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.I1)]
-            internal static extern bool CreateSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath,
-                                                     [MarshalAs(UnmanagedType.LPStr)]string target);
+                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [return: MarshalAs(UnmanagedType.I1)]
+                internal static extern bool IsSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath);
 
-            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            internal static extern int CreateHardLink([MarshalAs(UnmanagedType.LPStr)]string filePath,
-                                                      [MarshalAs(UnmanagedType.LPStr)]string target);
+                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [return: MarshalAs(UnmanagedType.I1)]
+                internal static extern bool IsExecutable([MarshalAs(UnmanagedType.LPStr)]string filePath);
 
-            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.LPStr)]
-            internal static extern string FollowSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath);
+                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [return: MarshalAs(UnmanagedType.LPStr)]
+                internal static extern string GetFullyQualifiedName();
 
-            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.LPStr)]
-            internal static extern string GetUserFromPid(int pid);
+                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                internal static extern int SetDate(SetDateInfoInternal info);
 
-            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.I1)]
-            internal static extern bool IsFile([MarshalAs(UnmanagedType.LPStr)]string filePath);
+                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [return: MarshalAs(UnmanagedType.I1)]
+                internal static extern bool CreateSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath,
+                                                          [MarshalAs(UnmanagedType.LPStr)]string target);
 
-            [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-            [return: MarshalAs(UnmanagedType.I1)]
-            internal static extern bool IsDirectory([MarshalAs(UnmanagedType.LPStr)]string filePath);
+                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                internal static extern int CreateHardLink([MarshalAs(UnmanagedType.LPStr)]string filePath,
+                                                          [MarshalAs(UnmanagedType.LPStr)]string target);
+
+                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [return: MarshalAs(UnmanagedType.LPStr)]
+                internal static extern string FollowSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath);
+
+                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [return: MarshalAs(UnmanagedType.LPStr)]
+                internal static extern string GetUserFromPid(int pid);
+
+                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [return: MarshalAs(UnmanagedType.I1)]
+                internal static extern bool IsFile([MarshalAs(UnmanagedType.LPStr)]string filePath);
+
+                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [return: MarshalAs(UnmanagedType.I1)]
+                internal static extern bool IsDirectory([MarshalAs(UnmanagedType.LPStr)]string filePath);
+            }
         }
     }
 } // namespace System.Management.Automation

@@ -1026,25 +1026,8 @@ namespace System.Management.Automation
                 {
                     return Platform.NonWindowsGetDomainName();
                 }
-            }
-        }
 
-        internal static string WinGetUserName()
-        {
-            StringBuilder domainName = new StringBuilder(1024);
-            uint domainNameLen = (uint)domainName.Capacity;
-
-            byte ret = Win32Native.GetUserNameEx(Win32Native.NameSamCompatible, domainName, ref domainNameLen);
-            if (ret == 1)
-            {
-                string samName = domainName.ToString();
-                int index = samName.IndexOf('\\');
-                if (index != -1)
-                {
-                    return samName.Substring(index + 1);
-                }
             }
-            return string.Empty;
         }
 
         /// <summary>
@@ -1054,14 +1037,24 @@ namespace System.Management.Automation
         {
             get
             {
-                if (Platform.IsWindows)
+                #if UNIX
+                return Platform.Unix.UserName;
+                #else
+                StringBuilder domainName = new StringBuilder(1024);
+                uint domainNameLen = (uint)domainName.Capacity;
+
+                byte ret = Win32Native.GetUserNameEx(Win32Native.NameSamCompatible, domainName, ref domainNameLen);
+                if (ret == 1)
                 {
-                    return WinGetUserName();
+                    string samName = domainName.ToString();
+                    int index = samName.IndexOf('\\');
+                    if (index != -1)
+                    {
+                        return samName.Substring(index + 1);
+                    }
                 }
-                else
-                {
-                    return Platform.NonWindowsGetUserName();
-                }
+                return string.Empty;
+                #endif
             }
         }
 
@@ -1146,13 +1139,36 @@ namespace System.Management.Automation
         /// </returns>
         private static string InternalGetFolderPath(SpecialFolder folder)
         {
-            if (!Platform.IsWindows)
-            {
-                return Platform.NonWindowsGetFolderPath(folder);
-            }
-
             // The API 'SHGetFolderPath' is not available on OneCore, so we have to rely on environment variables
             string folderPath = null;
+
+            #if UNIX
+            switch (folder)
+            {
+                case SpecialFolder.ProgramFiles:
+                    folderPath = "/bin";
+                    if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
+                    break;
+                case SpecialFolder.ProgramFilesX86:
+                    folderPath = "/usr/bin";
+                    if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
+                    break;
+                case SpecialFolder.System:
+                case SpecialFolder.SystemX86:
+                    folderPath = "/sbin";
+                    if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
+                    break;
+                case SpecialFolder.Personal:
+                    folderPath = System.Environment.GetEnvironmentVariable("HOME");
+                    break;
+                case SpecialFolder.LocalApplicationData:
+                    folderPath = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("HOME"), ".config");
+                    if (!System.IO.Directory.Exists(folderPath)) { System.IO.Directory.CreateDirectory(folderPath); }
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
+            #else
             string systemRoot = null;
             string userProfile = null;
 
@@ -1219,6 +1235,7 @@ namespace System.Management.Automation
                 default:
                     throw new NotSupportedException();
             }
+            #endif
 
             return folderPath ?? string.Empty;
         }
