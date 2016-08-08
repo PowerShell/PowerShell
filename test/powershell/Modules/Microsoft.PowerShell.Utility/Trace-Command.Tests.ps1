@@ -1,5 +1,5 @@
 # This came from monad/tests/ci/PowerShell/tests/Commands/Cmdlets/pester.utility.command.tests.ps1
-Describe "Trace-Command" -tags "Feature" {
+Describe "Trace-Command" -tags "CI" {
     
     Context "Listner options" {
         BeforeAll {
