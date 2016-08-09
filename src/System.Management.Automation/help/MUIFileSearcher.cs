@@ -113,11 +113,31 @@ namespace System.Management.Automation
             }
         }
 
+        private string[] GetFiles(string path, string pattern)
+        {
+#if UNIX
+            // On Linux, file names are case sensitive, so we need to add
+            // extra logic to select the files that match the given pattern.
+            ArrayList result = new ArrayList();
+            string[] files = Directory.GetFiles(path);
+            foreach (string filePath in files)
+            {
+                if (filePath.IndexOf(pattern, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    result.Add(filePath);
+                }
+            }
+            return (String[])result.ToArray(typeof(string));
+#else
+            return Directory.GetFiles(path, pattern);
+#endif
+        }
+
         private void AddFiles(string muiDirectory, string directory, string pattern)
         {
             if (Directory.Exists(muiDirectory))
             {
-                string[] files = Directory.GetFiles(muiDirectory, pattern);
+                string[] files = GetFiles(muiDirectory, pattern);
 
                 if (files == null)
                     return;

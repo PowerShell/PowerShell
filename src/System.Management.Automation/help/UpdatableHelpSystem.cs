@@ -1489,7 +1489,7 @@ namespace System.Management.Automation.Help
 
                         fileStream.Read(firstTwoBytes, 0, 2);
 
-                        // Check for Mark Zbikowski’s magic initials
+                        // Check for Mark Zbikowski's magic initials
                         if (firstTwoBytes[0] == 'M' && firstTwoBytes[1] == 'Z')
                         {
                             throw new UpdatableHelpSystemException("HelpContentContainsInvalidFiles",
@@ -1628,6 +1628,11 @@ namespace System.Management.Automation.Help
         /// <returns></returns>
         internal static bool ShouldPromptToUpdateHelp()
         {
+#if UNIX
+            // TODO: This workaround needs to be removed once updatable help
+            //       works on Linux.
+            return false;
+#else
             try
             {
                 if (!Utils.IsAdministrator())
@@ -1641,6 +1646,7 @@ namespace System.Management.Automation.Help
             {
                 return false;
             }
+#endif
         }
 
         #endregion
