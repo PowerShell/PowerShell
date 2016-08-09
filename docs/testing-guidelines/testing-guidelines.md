@@ -1,7 +1,7 @@
 
 # Testing Guidelines
 
-Testing is a critical and require part of the PowerShell project. 
+Testing is a critical and required part of the PowerShell project. 
 
 The Microsoft PowerShell team created nearly 100,000 tests over the last 12 years which we run as part of the release process for PowerShell in Windows.
 Having all of those tests available for the initial release of OPS was not feasible, and we have targeted those tests which
