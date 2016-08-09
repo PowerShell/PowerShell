@@ -37,7 +37,7 @@ The PowerShell jobs fail, see [#1010][].
 
 ## xUnit
 
-The xUnit tests can only be run on Linux.
+The xUnit tests are disabled pending implementation of a new runner.
 
 ## Console Output
 
@@ -66,47 +66,19 @@ and 3582bb421 for the merge.
 
 [#929]: https://github.com/PowerShell/PowerShell/issues/929
 
-## Unavailable cmdlets
+### ExecutionPolicy unavailable on non-Windows platforms
 
-This project includes the CoreCLR versions of the `Commands.Management`,
-`Commands.Utility`, `Security`, and `PSDiagnostics` modules.
-
-The `Archive`, `Diagnostics`, `PSGet`, and `Host` modules are not yet included.
-
-The `WSMan.Management` module cannot be included unless the
-`Management.Infrastructure.Native` library is ported.
-
-The CoreCLR version of the `Commands.Utility` module does not contain the
-following cmdlets that exist in the FullCLR version:
-
-- ConvertFrom-String
-- ConvertTo-Html
-- Export-PSSession
-- Import-PSSession
-- Invoke-RestMethod
-- Invoke-WebRequest
-- Out-GridView
-- Out-Printer
-- Send-MailMessage
-- Show-Command
-- Update-List
-
-### ExecutionPolicy unavailable on non-Windows platform
-
-ExecutionPolicy is not implemented on non-Windows platforms and the following related CmdLets will return the error below.
- 
-- Get-ExecutionPolicy
-- Set-ExecutionPolicy
+ExecutionPolicy is not implemented on non-Windows platforms.
+`Get-ExecutionPolicy` will always return `Unrestricted` which is the correct operating mode.
+`Set-ExecutionPolicy` will throw `PlatformNotSupported`.
 
 ```
 Set-ExecutionPolicy : Operation is not supported on this platform.
 At line:1 char:1
 + Set-ExecutionPolicy AllSigned
 + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (:) [Set-ExecutionPolicy], Platfor
-   mNotSupportedException
-    + FullyQualifiedErrorId : System.PlatformNotSupportedException,Microsoft.P
-   owerShell.Commands.SetExecutionPolicyCommand
+    + CategoryInfo          : NotSpecified: (:) [Set-ExecutionPolicy], PlatformNotSupportedException
+    + FullyQualifiedErrorId : System.PlatformNotSupportedException,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand
 
 ```
 
