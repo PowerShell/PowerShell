@@ -34,7 +34,7 @@ build_script:
 test_script:
   - ps: |
       # fail tests execution, if any PS error detected
-      $ErrorActionPreference = 'Stop'
+      $ErrorActionPreference = 'Continue'
       #
       # CoreCLR
       $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
