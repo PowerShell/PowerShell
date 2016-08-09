@@ -7,7 +7,6 @@ ModuleVersion="3.1.0.0"
 PowerShellVersion="3.0"
 NestedModules="Microsoft.PowerShell.Commands.Management.dll"
 HelpInfoURI = 'http://go.microsoft.com/fwlink/?linkid=390785'
-AliasesToExport = @("gin", "gtz", "stz")
 FunctionsToExport = @()
 CmdletsToExport=@("Add-Content",
     "Clear-Content",
@@ -48,21 +47,6 @@ CmdletsToExport=@("Add-Content",
     "Remove-ItemProperty",
     "Rename-ItemProperty",
     "Resolve-Path",
-    "Get-Service",
-    "Stop-Service",
-    "Start-Service",
-    "Suspend-Service",
-    "Resume-Service",
-    "Restart-Service",
-    "Set-Service",
-    "New-Service",
     "Set-Content",
-    "Set-ItemProperty",
-    "Test-Connection",
-    "Restart-Computer",
-    "Stop-Computer",
-    "Rename-Computer",
-    "Get-ComputerInfo",
-    "Get-TimeZone",
-    "Set-TimeZone")
+    "Set-ItemProperty")
 }
