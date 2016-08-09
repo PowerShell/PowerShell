@@ -83,14 +83,27 @@ To use the tool please read [ Pester Guides](https://github.com/pester/Pester) a
 Map Book for Experienced Bash users
 ----
 
-TODO: Don & JP to fill in
+The table below lists the usage of some basic commands to help you get started on PowerShell faster.
+Note that all bash commands should continue working on PowerShell session.
 
-| Bash           | PowerShell    | Description     |
-|:---------------|:--------------|:----------------|
-| ls             |dir            |List files and folders
-| cd             |cd             |Change directory
-| mkdir          |mkdir          |Create a new folder
-| Clear, Ctrl+L, Reset | cls | Clear screen
+
+| Bash                | PowerShell                  | Description
+|:--------------------|:----------------------------|:---------------------
+| ls                  |dir, Get-ChildItem           |List files and folders
+| tree                |dir -Recurse                 |List all files and folders
+| cd                  |cd, Set-Location             |Change directory
+| pwd                 |pwd, $pwd, Get-Location      |Show working directory
+| clear, Ctrl+L, reset| cls, clear                  |Clear screen
+| mkdir               |New-Item -ItemType Directory |Create a new folder
+| touch test.txt      |New-Item -Path test.txt      |Create a new empty file
+| cat test1.txt test2.txt         |Get-Content test1.txt, test2.txt       |Display files contents
+| cp ./source.txt ./dest/dest.txt |Copy-Item source.txt dest/dest.txt     |Copy a file
+| cp -r ./source ./dest           |Copy-Item ./source ./dest -Recurse     |Recursively copy from one folder to another
+| mv ./source.txt ./dest/dest.txt |Move-Item ./source.txt ./dest/dest.txt |Move a file to other folder
+| rm test.txt                     |Remove-Item test.txt                   |Delete a file
+| rm -r &lt;folderName>           |Remove-Item &lt;folderName> -Recurse   |Delete a folder
+| find -name build*               |Get-ChildItem build* -Recurse          |Find a file or folder starting with 'build'
+| grep -Rin "sometext" --include="*.cs" |Get-ChildItem -Recurse -Filter *.cs <br> &#124; Select-String -Pattern "sometext" | Recursively case-insensitive search for text in files
 
 
 Recommended Training and Reading
@@ -103,7 +116,7 @@ Recommended Training and Reading
 - [Learn PowerShell Video Library][powershell.com-learn-powershell] from PowerShell.com
 - [PowerShell Quick Reference Guides][quick-reference] by PowerShellMagazine.com
 - [PowerShell 5 How-To Videos][script-guy-how-to] by Ed Wilson
-- [PowerShell TechNet Resources][https://technet.microsoft.com/en-us/scriptcenter/dd742419.aspx] from ScriptCenter
+- [PowerShell TechNet Resources](https://technet.microsoft.com/en-us/scriptcenter/dd742419.aspx) from ScriptCenter
 
 
 Commercial Resources
