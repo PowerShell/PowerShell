@@ -3106,13 +3106,14 @@ namespace System.Management.Automation.Runspaces
                 // Or for virtual accounts
                 // WinDir\System32\Microsoft\Windows\PowerShell\DriveRoots\[UserName]
                 string directoryName = MakeUserNamePath();
-                string userDrivePath = (Platform.IsWindows
-                    ? Path.Combine(
+#if UNIX
+                string userDrivePath = Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "DriveRoots", directoryName);
+#else
+                string userDrivePath = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     @"Microsoft\Windows\PowerShell\DriveRoots",
-                    directoryName)
-                    : Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "DriveRoots",
-                    directoryName));
+                    directoryName);
+#endif
 
                 // Create directory if it doesn't exist.
                 if (!System.IO.Directory.Exists(userDrivePath))
@@ -4653,7 +4654,7 @@ param(
     [switch]
     ${ShowWindow})
 
-    #Set the outputencoding to Console::OutputEncoding. More.com doesn't work well with Unicode.
+# Set the outputencoding to Console::OutputEncoding. More.com doesn't work well with Unicode.
     $outputEncoding=[System.Console]::OutputEncoding
 
     Get-Help @PSBoundParameters | more
@@ -4951,7 +4952,7 @@ end
                 ScopedItemOptions.None),
             // End: Variables which control remoting behavior
 
-            #region Platform
+#region Platform
             new SessionStateVariableEntry(
                 SpecialVariables.IsLinux,
                 Platform.IsLinux,
@@ -4975,7 +4976,7 @@ end
                 Platform.IsCoreCLR,
                 String.Empty,
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-            #endregion
+#endregion
         };
 
         /// <summary>
@@ -5359,14 +5360,14 @@ if($paths) {
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("more", DefaultMoreFunctionText, isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("help", GetHelpPagingFunctionText(), isProductCode: true),
             // Porting note: we remove mkdir on Linux because it is a conflict
-            #if !UNIX
+#if !UNIX
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("mkdir", GetMkdirFunctionText(), isProductCode: true),
-            #endif
+#endif
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Get-Verb", GetGetVerbText(), isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("oss", GetOSTFunctionText(), isProductCode: true),
 
             // Porting note: we remove the drive functions from Linux because they make no sense
-            #if !UNIX
+#if !UNIX
             // Default drives
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("A:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("B:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
@@ -5394,7 +5395,7 @@ if($paths) {
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("X:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Y:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Z:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
-            #endif
+#endif
 
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd..", "Set-Location ..", isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd\\", "Set-Location \\", isProductCode: true),
