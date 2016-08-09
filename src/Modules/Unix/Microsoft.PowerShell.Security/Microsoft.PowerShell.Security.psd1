@@ -7,7 +7,7 @@ ModuleVersion="3.0.0.0"
 PowerShellVersion="3.0"
 AliasesToExport = @()
 FunctionsToExport = @()
-CmdletsToExport="Get-Credential", "ConvertFrom-SecureString", "ConvertTo-SecureString"
+CmdletsToExport="Get-Credential", "Get-ExecutionPolicy", "Set-ExecutionPolicy", "ConvertFrom-SecureString", "ConvertTo-SecureString"
 NestedModules="Microsoft.PowerShell.Security.dll"
 HelpInfoURI = 'http://go.microsoft.com/fwlink/?linkid=390786'
 }
