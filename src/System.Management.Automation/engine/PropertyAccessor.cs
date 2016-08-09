@@ -147,25 +147,15 @@ namespace System.Management.Automation
         internal JsonConfigFileAccessor()
         {
             //
-            // Initialize (and create if necessary) the system-wide configuration directory
+            // Sets the system-wide configuration directory
             //
             Assembly assembly = typeof(PSObject).GetTypeInfo().Assembly;
-            psHomeConfigDirectory = Path.Combine(Path.GetDirectoryName(assembly.Location), configDirectoryName);
-
-            if (!Directory.Exists(psHomeConfigDirectory))
-            {
-                Directory.CreateDirectory(psHomeConfigDirectory);
-            }
+            psHomeConfigDirectory = Path.GetDirectoryName(assembly.Location);
 
             //
-            // Initialize (and create if necessary) the per-user configuration directory
+            // Sets the per-user configuration directory
             //
-            appDataConfigDirectory = Path.Combine(Utils.GetUserSettingsDirectory(), configDirectoryName);
-
-            if (!Directory.Exists(appDataConfigDirectory))
-            {
-                Directory.CreateDirectory(appDataConfigDirectory);
-            }
+            appDataConfigDirectory = Utils.GetUserSettingsDirectory();
         }
 
         /// <summary>
