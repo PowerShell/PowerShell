@@ -802,9 +802,8 @@ function Start-PSPackage {
     )
 
     $Description = @"
-Open PowerShell on .NET Core
-PowerShell is an open-source, cross-platform, scripting language and rich object shell.
-Built upon .NET Core, it is also a C# REPL.
+PowerShell is an automation and configuration management platform. 
+It consists of a cross-platform command-line shell and associated scripting language.
 "@
 
     # Use Git tag if not given a version
@@ -899,10 +898,10 @@ Built upon .NET Core, it is also a C# REPL.
         "--name", "powershell",
         "--version", $Version,
         "--iteration", $Iteration,
-        "--maintainer", "Andrew Schwartzmeyer <andschwa@microsoft.com>",
-        "--vendor", "Microsoft <mageng@microsoft.com>",
-        "--url", "https://github.com/PowerShell/PowerShell",
-        "--license", "Unlicensed",
+        "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
+        "--vendor", "Microsoft Corporation",
+        "--url", "https://microsoft.com/powershell",
+        "--license", "MIT License",
         "--description", $Description,
         "--category", "shells",
         "--rpm-os", "linux",
