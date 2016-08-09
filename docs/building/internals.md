@@ -5,7 +5,7 @@ The purpose of this document is to explain build process **internals** with subt
 This document is not by any means complete.
 The ultimate source of truth is the code in `.\build.psm1` that's getting executed on the corresponding CI system.
 
-This document assumes that you can successfully build PowerShell from sources for your platform.  For more information on how to build PowerShell, please follow the below these instructions:
+This document assumes that you can successfully build PowerShell from sources for your platform. If not, follow instructions below:
 
 | Platform     | Releases           | How to Install                 |
 |--------------|--------------------|--------------------------------|
