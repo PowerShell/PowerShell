@@ -134,7 +134,6 @@ namespace System.Management.Automation
     {
         private string psHomeConfigDirectory;
         private string appDataConfigDirectory;
-        private const string configDirectoryName = "Configuration";
         private const string configFileName = "PowerShellProperties.json";
 
         /// <summary>
@@ -156,6 +155,38 @@ namespace System.Management.Automation
             // Sets the per-user configuration directory
             //
             appDataConfigDirectory = Utils.GetUserSettingsDirectory();
+            if (!Directory.Exists(appDataConfigDirectory))
+            {
+                try
+                {
+                    Directory.CreateDirectory(appDataConfigDirectory);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    // Do nothing now. This failure shouldn't block initialization
+                    appDataConfigDirectory = null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Enables delayed creation of the user settings directory so it does not interfere with PowerShell initialization
+        /// </summary>
+        /// <returns>Returns the directory if present or creatable. Throws otherwise.</returns>
+        private string GetAppDataConfigDirectory()
+        {
+            if (null == appDataConfigDirectory)
+            {
+                string tempAppDataConfigDir = Utils.GetUserSettingsDirectory();
+                if (!Directory.Exists(tempAppDataConfigDir))
+                {
+                    Directory.CreateDirectory(tempAppDataConfigDir);
+                    // Only assign it if creation succeeds. It will throw if it fails.
+                    appDataConfigDirectory = tempAppDataConfigDir;
+                }
+                // Do not catch exceptions here. Let them flow up.
+            }
+            return appDataConfigDirectory;
         }
 
         /// <summary>
@@ -170,7 +201,7 @@ namespace System.Management.Automation
             // Defaults to system wide.
             if (PropertyScope.CurrentUser == scope)
             {
-                scopeDirectory = appDataConfigDirectory;
+                scopeDirectory = GetAppDataConfigDirectory();
             }
 
             string fileName = Path.Combine(scopeDirectory, configFileName);
@@ -205,7 +236,7 @@ namespace System.Management.Automation
             // Defaults to system wide.
             if(PropertyScope.CurrentUser == scope)
             {
-                scopeDirectory = appDataConfigDirectory;
+                scopeDirectory = GetAppDataConfigDirectory();
             }
 
             string fileName = Path.Combine(scopeDirectory, configFileName);
@@ -226,7 +257,7 @@ namespace System.Management.Automation
             // Defaults to system wide.
             if (PropertyScope.CurrentUser == scope)
             {
-                scopeDirectory = appDataConfigDirectory;
+                scopeDirectory = GetAppDataConfigDirectory();
             }
 
             string fileName = Path.Combine(scopeDirectory, configFileName);
@@ -241,7 +272,7 @@ namespace System.Management.Automation
             // Defaults to system wide.
             if (PropertyScope.CurrentUser == scope)
             {
-                scopeDirectory = appDataConfigDirectory;
+                scopeDirectory = GetAppDataConfigDirectory();
             }
 
             string fileName = Path.Combine(scopeDirectory, configFileName);
