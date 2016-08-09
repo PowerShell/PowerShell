@@ -1355,14 +1355,29 @@ namespace NativeMsh
         LPCSTR vals[nMaxProps];
         int nProps = 0;
 
-        // If I do not include my managed enload point dll in this list, I get a security error. 
+        // The TPA list is the required list of CoreCLR assemblies that comprise
+        // the trusted platform upon which PowerShell will run.
         std::stringstream assemblyList;
         bool listEmpty = true;
         this->GetTrustedAssemblyList(hostEnvironment.GetCoreCLRDirectoryPath(), assemblyList, listEmpty);
 
-        char coreCLRPowerShellExtInstallPath[MAX_PATH];
-        ::ExpandEnvironmentStringsA(coreCLRPowerShellExtInstallDirectory, coreCLRPowerShellExtInstallPath, MAX_PATH);
-        this->GetTrustedAssemblyList(coreCLRPowerShellExtInstallPath, assemblyList, listEmpty);
+        // Fall back to attempt to load the CLR from the alternate inbox location
+        // or if the ALC was not located in the CoreCLR directory.
+        std::string assemblyListToSearch = assemblyList.str();
+        if (listEmpty ||
+            (std::string::npos == assemblyListToSearch.rfind("Microsoft.PowerShell.CoreCLR.AssemblyLoadContext")))
+        {
+            char coreCLRPowerShellExtInstallPath[MAX_PATH];
+            ::ExpandEnvironmentStringsA(coreCLRPowerShellExtInstallDirectory, coreCLRPowerShellExtInstallPath, MAX_PATH);
+            this->GetTrustedAssemblyList(coreCLRPowerShellExtInstallPath, assemblyList, listEmpty);
+        }
+        if (listEmpty)
+        {
+            // No CoreCLR assemblies were found in either location. There is no 
+            // point in continuing.
+            this->output->DisplayMessage(false, g_STARTING_CLR_FAILED, GetLastError());
+            return EXIT_CODE_INIT_FAILURE;
+        }
 
         props[nProps] = "TRUSTED_PLATFORM_ASSEMBLIES";        
         std::string tempStr = assemblyList.str();
