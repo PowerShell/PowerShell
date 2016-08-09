@@ -10,16 +10,16 @@ Our [pull request template][pr-template] includes the bare minimum requirements 
 
 1. A contributor opens a pull request.
 1. The contributor ensures that their pull request passes the [CI system][ci-system] build.
-  - If the build fails, a [Repository Maintainer][repository-maintainer] adds the ```waiting for author``` label to the pull request. 
+  - If the build fails, a [Repository Maintainer][repository-maintainer] adds the `Review - waiting on author` label to the pull request. 
   The contributor can then continue to update the pull request until the build passes.
-1. Once the build passes, the maintainer either reviews the pull request immediately or adds the ```need review``` label.
+1. Once the build passes, the maintainer either reviews the pull request immediately or adds the `Review - needed` label.
 1. An [Area Expert][area-expert] reviews the pull request code.
-  - If the contributor does not meet the reviewer's standards, the reviewer makes comments. A maintainer then removes the ```need review``` label and adds the ```waiting for author``` label. The contributor must address the comments and repeat from step 2.
-  - If the contributor meets the reviewer's standards, the reviewer comments that they are satisfied. A maintainer then removes the ```need review``` label.
+  - If the contributor does not meet the reviewer's standards, the reviewer makes comments. A maintainer then removes the `Review - needed` label and adds the `Review - waiting on author` label. The contributor must address the comments and repeat from step 2.
+  - If the contributor meets the reviewer's standards, the reviewer comments that they are satisfied. A maintainer then removes the `need review` label.
 1. Once the code review is completed, a maintainer merges the pull request.
 
 ### Abandoned Pull Requests
-A pull request with the label ```waiting for the author``` for **more than two weeks** without a word from the author is considered abandoned.
+A pull request with the label `Review - waiting on author` for **more than two weeks** without a word from the author is considered abandoned.
 
 In these cases:
 

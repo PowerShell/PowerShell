@@ -44,7 +44,7 @@ Contributing to Documentation
 
 Please see the [Contributor Guide in `PowerShell/PowerShell-Docs`](https://github.com/PowerShell/PowerShell-Docs/blob/staging/CONTRIBUTING.md).
 
-### Contributing to documentation related to contributing or maintaining the PowerShell Project
+### Contributing to documentation related to maintaining or contributing to the PowerShell project
 
 * When writing Markdown documentation, use [semantic linefeeds][].
   In most cases, it means "once clause / idea per line".

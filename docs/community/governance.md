@@ -105,14 +105,14 @@ If you are an Area Expert:
 
 1. **DO** assign the [correct labels][issue-process]
 1. **DO** assign yourself to issues labeled with your area of expertise
-1. **DO** [code reviews][TODO] for issues where you're assigned or in your areas of expertise
+1. **DO** code reviews for issues where you're assigned or in your areas of expertise.
 1. **DO** reply to new issues and pull requests that are related to your area of expertise 
 (while reviewing PRs, leave your comment even if everything looks good - a simple "Looks good to me" or "LGTM" will suffice, so that we know someone has already taken a look at it).
 1. **DO** make sure contributors are following the [contributor guidelines](../../.github/CONTRIBUTING.md).
 1. **DO** ask people to resend a pull request, if it [doesn't target `master`](../../.github/CONTRIBUTING.md#lifecycle-of-a-pull-request).
 1. **DO** ensure that contributors [write Pester tests][pester] for all new/changed functionality
 1. **DO** ensure that contributors [write documentation][docs-contributing] for all new-/changed functionality
-1. **DO** encourage contributors to refer to issues in their pull request description per the [issue template](../../.github/ISSUE_TEMPLATE.md) (e.g. `Resolves issue #123`)
+1. **DO** encourage contributors to refer to issues in their pull request description per the [pull request template](../../.github/PULL_REQUEST_TEMPLATE.md) (e.g. `Resolves issue #123`)
 1. **DO** encourage contributors to create meaningful titles for all PRs. Edit title if necessary.
 1. **DO** verify that all contributors are following the [Coding Guidelines](../dev-process/coding-guidelines.md).
 
