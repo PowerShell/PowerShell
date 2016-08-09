@@ -1,8 +1,8 @@
 ![logo][] PowerShell
 ====================
 
-Wellcome to the PowerShell GitHub Commmunity! PowerShell is an automation and configuration management platform.
-It consists of a cross-platform (Windows, Linux and OSX) command-line shell and associated scripting language. 
+Welcome to the PowerShell GitHub Commmunity! PowerShell is an automation and configuration management platform.
+It consists of a cross-platform (Windows, Linux and OS X) command-line shell and associated scripting language. 
 
 [logo]: assets/Powershell_64.png
 
