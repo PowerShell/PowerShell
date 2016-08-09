@@ -554,23 +554,43 @@ function Start-PSPester {
         [string]$Path = "$PSScriptRoot/test/powershell"
     )
 
-    $tagString = "-outputFormat ${OutputFormat} -outputFile ${outputFile} "
-    if ( ! $DisableExit ) { $tagString += " -EnableExit" }
-    if ( $ExcludeTag -and ($ExcludeTag -ne "")) { $tagString += " -ExcludeTag @('" + (${ExcludeTag} -join "','") + "')" }
-    if ( $Tag )           { $tagString +=        " -Tag @('" + (${Tag} -join "','") + "')" }
+    $powershell = Get-PSOutput
 
-    $powershell = get-psoutput
-    $psdir = [io.path]::GetDirectoryName($powershell)
-    $moduleDir = [io.path]::Combine($psdir,"Modules","Pester")
+    # All concatenated commands/arguments are suffixed with the delimiter (space)
+    $Command = ""
 
-    Write-Verbose "Import-Module '$moduleDir'; Invoke-Pester $tagString $Path"
-    $powershellexe = get-psoutput
-    $execPolicy = ""
-    if ($IsWindows)
-    {
-        $execPolicy = "Set-ExecutionPolicy -Scope Process Unrestricted; "
+    # Windows needs the execution policy adjusted
+    if ($IsWindows) {
+        $Command += "Set-ExecutionPolicy -Scope Process Unrestricted; "
     }
-    & $powershell -noprofile -c "$execPolicy Import-Module '$moduleDir'; Invoke-Pester $tagString $Path"
+
+    $PesterModule = [IO.Path]::Combine((Split-Path $powershell), "Modules", "Pester")
+    $Command += "Import-Module $PesterModule; "
+    $Command += "Invoke-Pester "
+
+    $Command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
+    if (!$DisableExit) {
+        $Command += "-EnableExit "
+    }
+    if ($ExcludeTag -and ($ExcludeTag -ne "")) {
+        $Command += "-ExcludeTag @('" + (${ExcludeTag} -join "','") + "') "
+    }
+    if ($Tag) {
+        $Command += "-Tag @('" + (${Tag} -join "','") + "') "
+    }
+
+    $Command += $Path
+
+    Write-Verbose $Command
+    # To ensure proper testing, the module path must not be inherited by the spawned process
+    try {
+        $originalModulePath = $env:PSMODULEPATH
+        $env:PSMODULEPATH = ""
+        & $powershell -noprofile -c $Command
+    } finally {
+        $env:PSMODULEPATH = $originalModulePath
+    }
+
     if ($LASTEXITCODE -ne 0) {
         throw "$LASTEXITCODE Pester tests failed"
     }
