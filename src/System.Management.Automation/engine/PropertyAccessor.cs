@@ -170,7 +170,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Enables delayed creation of the user settings directory so it does not interfere with PowerShell initialization
+        /// Enables delayed creation of the user settings directory so it does 
+        /// not interfere with PowerShell initialization
         /// </summary>
         /// <returns>Returns the directory if present or creatable. Throws otherwise.</returns>
         private string GetAppDataConfigDirectory()
