@@ -68,9 +68,9 @@ The build contains the following steps:
 What can you do with the produced binaries?
 =========================================
 
-**Important**: "We don’t support production deployments of these binaries on any platform". For PowerShell .NET (aka: FulCLR PowerShell) our recommendation is to continue using the PowerShell .NET version already shipping in Windows Client and Windows Server.
+**Important**: "We don’t support production deployments of these binaries on any platform". For PowerShell .NET (aka: FullCLR PowerShell) our recommendation is to continue using the PowerShell .NET version already shipping in Windows Client and Windows Server.
 
-The primary reason to build the PowerShell FulCLR binaries is to test backward compatibility, and interoperability between .NET and CoreCLR.  It is also important to mention some features like PowerShell Workflows are not currently available in the CoreCLR version. So we want to provide the ability for the Community to test CoreCLR PowerShell code changes while validating that these changes don't introduce regressions in .NET PowerShell (aka: as FullCLR PowerShell)
+The primary reason to build the PowerShell FullCLR binaries is to test backward compatibility, and interoperability between .NET and CoreCLR.  It is also important to mention some features like PowerShell Workflows are not currently available in the CoreCLR version. So we want to provide the ability for the Community to test CoreCLR PowerShell code changes while validating that these changes don't introduce regressions in .NET PowerShell (aka: as FullCLR PowerShell)
 
 To run (for test purposes) the dev version of these binaries please follow the following steps:
 
