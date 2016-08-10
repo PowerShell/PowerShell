@@ -9,16 +9,8 @@ if (BUILD_ONECORE)
         )
     set(PWRSHEXE_WINDOWS_LIBS
         onecore.lib
-        ${STATIC_MT_CRT_LIB} # use for coreclr_defs
-        ${STATIC_MT_VCRT_LIB} # use for coreclr_defs
-###        ${STATIC_UCRT_LIB}
-        #vcruntime.lib# use for nano_defs
-        #ucrtd.li# use for nano_defs
-        #msvcrt.lib# use for nano_defs
-        #msvcrt.lib# use for nano_defs
-        #msvcprtd.lib# use for nano_defs
-        #user32.lib # use for nano_defs
-        #atls.lib# use for nano_defs
+        ${STATIC_MT_CRT_LIB}
+        ${STATIC_MT_VCRT_LIB}
         )
      set(powershell_definitions 
          _CONSOLE
@@ -34,11 +26,6 @@ else ()
         # CoreCLR libs
         ${STATIC_MT_CRT_LIB}
         ${STATIC_MT_VCRT_LIB}
-        #        ${STATIC_UCRT_LIB}
-#        ole32.lib
-#        oleaut32.lib
-#        uuid.lib
-#        user32.lib
         MUILoad.lib
         msxml6.lib
         mscoree.lib
