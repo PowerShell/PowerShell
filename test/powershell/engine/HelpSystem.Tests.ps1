@@ -44,6 +44,5 @@ Describe "Validate that get-help <cmdletName> works" -Tags "CI" {
 
 Describe "Validate Get-Help for all cmdlets in 'Microsoft.PowerShell.Core'" -Tags "Feature" {
 
-    RunTestCase
-
+    RunTestCase -tag "Feature"
 }
