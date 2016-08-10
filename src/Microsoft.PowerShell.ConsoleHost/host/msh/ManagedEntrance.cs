@@ -114,12 +114,37 @@ namespace Microsoft.PowerShell
                 int exitCode = 0;
                 try
                 {
+#if CORECLR
+                    string assemblyPath = typeof(PSVersionInfo).GetTypeInfo().Assembly.Location;
+                    string buildVersion = FileVersionInfo.GetVersionInfo(assemblyPath).FileVersion;
+                    string shellBanner;
+                    if (Platform.IsWindows)
+                    {
+                        // the Powershell branding should be different with Nano builtin Powershell versus Open Powershell.
+                        if (assemblyPath.StartsWith(System.Environment.ExpandEnvironmentVariables("%systemroot%"), StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            shellBanner = ManagedEntranceStrings.ShellBanner;
+                        }
+                        else
+                        {
+                            shellBanner = String.Format(CultureInfo.InvariantCulture, ManagedEntranceStrings.ShellBannerNonWindowsPowerShell, buildVersion);
+                        }
+                    }
+                    exitCode = Microsoft.PowerShell.ConsoleShell.Start(
+                        null,
+                        shellBanner,
+                        ManagedEntranceStrings.ShellHelp,
+                        warning == null ? null : warning.Message,
+                        args);
+#else       
+
                     exitCode = Microsoft.PowerShell.ConsoleShell.Start(
                         configuration,
                         ManagedEntranceStrings.ShellBanner,
                         ManagedEntranceStrings.ShellHelp,
                         warning == null ? null : warning.Message,
                         args);
+#endif
                 }
                 catch (System.Management.Automation.Host.HostException e)
                 {
