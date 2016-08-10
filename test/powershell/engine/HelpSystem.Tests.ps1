@@ -5,15 +5,35 @@ function RunTestCase
 {
     param ([string]$tag = "CI")
 
-    $cmdlets = get-command -module "Microsoft.PowerShell.Core"
+    $moduleName = "Microsoft.PowerShell.Core"
+
+    if ($IsWindows)
+    {
+        if ($tag -eq "CI")
+        {
+            $helpContentPath = join-path $PSScriptRoot "HelpContent"
+            $helpFiles = @(Get-ChildItem "$helpContentPath\*" -ea SilentlyContinue)
+
+            if ($helpFiles.Count -eq 0)
+            {
+                throw "unable to find help content at '$helpContentPath'"
+            }
+            Update-Help -Module $moduleName -SourcePath $helpContentPath -Force -ErrorAction Stop -Verbose
+        }
+
+        else
+        {
+            Update-Help -Module $moduleName -Force -Verbose -ErrorAction Stop
+        }
+    }
+
+    $cmdlets = get-command -module $moduleName
 
     $cmdletsToSkip = @(
         "Get-PSHostProcessInfo",
         "Out-Default",
         "Register-ArgumentCompleter"
     )
-
-    $testCaseExecuted = $false
 
     foreach ($cmdletName in $cmdlets)
     {
@@ -24,10 +44,9 @@ function RunTestCase
                 $help = get-help -name $cmdletName
                 $help.Description | Out-String | Should Match $cmdletName
                 $help.Examples | Out-String | Should Match $cmdletName
-                $testCaseExecuted = $true
             }
 
-            if (($tag -eq "CI") -and $testCaseExecuted)
+            if ($tag -eq "CI")
             {
                 # For a CI test run, we are only interested in validating one cmdlet to ensure that
                 # get-help <cmdletName> works.
