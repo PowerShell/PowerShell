@@ -816,6 +816,7 @@ function Start-PSPackage {
         [string]$Version,
 
         # Package name
+        [ValidatePattern("^powershell")]
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, and OS X, and Windows packages are supported
@@ -827,6 +828,8 @@ function Start-PSPackage {
     if (-not $Version) {
         $Version = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
     }
+
+    Write-Warning "Please ensure you have previously run Start-PSBuild -Clean -CrossGen!"
 
     $Source = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
     Write-Verbose "Packaging $Source"
@@ -891,7 +894,9 @@ function New-UnixPackage {
         [Parameter(Mandatory)]
         [string]$Source,
 
+        # Must start with 'powershell' but may have any suffix
         [Parameter(Mandatory)]
+        [ValidatePattern("^powershell")]
         [string]$Name,
 
         [Parameter(Mandatory)]
@@ -912,11 +917,38 @@ PowerShell is an automation and configuration management platform.
 It consists of a cross-platform command-line shell and associated scripting language.
 "@
 
+    # Suffix is used for side-by-side package installation
+    $Suffix = $Name -replace "^powershell"
+    if (!$Suffix) {
+        Write-Warning "Suffix not given, building primary PowerShell package!"
+        $Suffix = $Version
+    }
+
+    # Setup staging directory so we don't change the original source directory
+    $Staging = "$PSScriptRoot/staging"
+    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $Staging
+    Copy-Item -Recurse $Source $Staging
+
+    # Rename files to given name if not "powershell"
+    if ($Name -ne "powershell") {
+        $Files = @("powershell",
+                   "powershell.dll",
+                   "powershell.deps.json",
+                   "powershell.pdb",
+                   "powershell.runtimeconfig.json",
+                   "powershell.xml")
+
+        foreach ($File in $Files) {
+            $NewName = $File -replace "^powershell", $Name
+            Move-Item "$Staging/$File" "$Staging/$NewName"
+        }
+    }
+
     # Follow the Filesystem Hierarchy Standard for Linux and OS X
     $Destination = if ($IsLinux) {
-        "/opt/microsoft/powershell"
+        "/opt/microsoft/powershell/$Suffix"
     } elseif ($IsOSX) {
-        "/usr/local/microsoft/powershell"
+        "/usr/local/microsoft/powershell/$Suffix"
     }
 
     # Destination for symlink to powershell executable
@@ -926,13 +958,13 @@ It consists of a cross-platform command-line shell and associated scripting lang
         "/usr/local/bin"
     }
 
-    New-Item -Force -ItemType SymbolicLink -Path /tmp/powershell -Target $Destination/powershell >$null
+    New-Item -Force -ItemType SymbolicLink -Path "/tmp/$Name" -Target "$Destination/$Name" >$null
 
     # there is a weird bug in fpm
     # if the target of the powershell symlink exists, `fpm` aborts
     # with a `utime` error on OS X.
     # so we move it to make symlink broken
-    $symlink_dest = "$Destination/powershell"
+    $symlink_dest = "$Destination/$Name"
     $hack_dest = "./_fpm_symlink_hack_powershell"
     if ($IsOSX) {
         if (Test-Path $symlink_dest) {
@@ -942,19 +974,27 @@ It consists of a cross-platform command-line shell and associated scripting lang
     }
 
     # run ronn to convert man page to roff
-    $RoffFile = Join-Path $PSScriptRoot "/assets/powershell.1"
-    $RonnFile = "$RoffFile.ronn"
-    $GzipFile = "$RoffFile.gz"
-    $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
+    $RonnFile = Join-Path $PSScriptRoot "/assets/powershell.1.ronn"
+    $RoffFile = $RonnFile -replace "\.ronn$"
 
     # Run ronn on assets file
+    # Run does not play well with files named powershell6.0.1, so we generate and then rename
     Start-NativeExecution { ronn --roff $RonnFile }
 
+    # Setup for side-by-side man pages (noop if primary package)
+    $FixedRoffFile = $RoffFile -replace "powershell.1$", "$Name.1"
+    if ($Name -ne "powershell") {
+        Move-Item $RoffFile $FixedRoffFile
+    }
+
     # gzip in assets directory
-    Start-NativeExecution { gzip -f $RoffFile }
+    $GzipFile = "$FixedRoffFile.gz"
+    Start-NativeExecution { gzip -f $FixedRoffFile }
+
+    $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
 
     # Change permissions for packaging
-    Start-NativeExecution { chmod -R go=u $Source $GzipFile }
+    Start-NativeExecution { chmod -R go=u $Staging $GzipFile }
 
     $libunwind = switch ($Type) {
         "deb" { "libunwind8" }
@@ -985,9 +1025,9 @@ It consists of a cross-platform command-line shell and associated scripting lang
         "--deb-build-depends", "g++",
         "-t", $Type,
         "-s", "dir",
-        "$Source/=$Destination/",
+        "$Staging/=$Destination/",
         "$GzipFile=$ManFile",
-        "/tmp/powershell=$Link"
+        "/tmp/$Name=$Link"
     )
 
     # Build package
