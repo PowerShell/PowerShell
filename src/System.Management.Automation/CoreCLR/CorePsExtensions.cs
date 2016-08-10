@@ -741,6 +741,7 @@ namespace System.Management.Automation
     #endregion Reflection and Type related extensions
 
     #region Environment Extensions
+
     // TODO:CORECLR - Environment Extensions need serious work to refine.
     internal enum EnvironmentVariableTarget
     {
@@ -824,37 +825,7 @@ namespace System.Management.Automation
 
         public static string GetEnvironmentVariable(string variable)
         {
-            string value = System.Environment.GetEnvironmentVariable(variable);
-
-            // Porting note: if not otherwise defined, map Windows environment
-            // variables to their corresponding Linux counterparts
-            if (!Platform.IsWindows && String.IsNullOrEmpty(value))
-            {
-                switch (variable)
-                {
-                    case "OS":
-                        return "Linux";
-
-                    case "COMPUTERNAME":
-                        return System.Environment.GetEnvironmentVariable("HOSTNAME");
-
-                    case "USERNAME":
-                        return System.Environment.GetEnvironmentVariable("USER");
-
-                    case "HOMEPATH":
-                    case "USERPROFILE":
-                        return System.Environment.GetEnvironmentVariable("HOME");
-
-                    case "TMP":
-                    case "TEMP":
-                        return System.Environment.GetEnvironmentVariable("TMPDIR");
-
-                    default:
-                        break;
-                }
-            }
-
-            return value;
+            return System.Environment.GetEnvironmentVariable(variable);
         }
 
         public static IDictionary GetEnvironmentVariables()
@@ -896,7 +867,6 @@ namespace System.Management.Automation
 #if UNIX
             return null;
 #else
-
             if( target == EnvironmentVariableTarget.Machine)
             {
                 using (RegistryKey environmentKey =
@@ -957,7 +927,6 @@ namespace System.Management.Automation
 #if UNIX
             return null;
 #else
-
             if (target == EnvironmentVariableTarget.Machine)
             {
                 using (RegistryKey environmentKey =
@@ -986,31 +955,6 @@ namespace System.Management.Automation
 
         #region Property_Extensions
 
-        internal static string WinGetUserDomainName()
-        {
-            StringBuilder domainName = new StringBuilder(1024);
-            uint domainNameLen = (uint)domainName.Capacity;
-
-            byte ret = Win32Native.GetUserNameEx(Win32Native.NameSamCompatible, domainName, ref domainNameLen);
-            if (ret == 1)
-            {
-                string samName = domainName.ToString();
-                int index = samName.IndexOf('\\');
-                if (index != -1)
-                {
-                    return samName.Substring(0, index);
-                }
-            }
-            else
-            {
-                int errorCode = Marshal.GetLastWin32Error();
-                throw new InvalidOperationException(Win32Native.GetMessage(errorCode));
-            }
-
-            // Cannot use LookupAccountNameW to get DomainName because 'GetUserName' is not available in CSS and thus we cannot get the account.
-            throw new InvalidOperationException(CoreClrStubResources.CannotGetDomainName);
-        }
-
         /// <summary>
         /// UserDomainName
         /// </summary>
@@ -1018,15 +962,11 @@ namespace System.Management.Automation
         {
             get
             {
-                if (Platform.IsWindows)
-                {
-                    return WinGetUserDomainName();
-                }
-                else
-                {
-                    return Platform.NonWindowsGetDomainName();
-                }
-
+#if UNIX
+                return Platform.NonWindowsGetDomainName();
+#else
+                return WinGetUserDomainName();
+#endif
             }
         }
 
@@ -1040,20 +980,7 @@ namespace System.Management.Automation
                 #if UNIX
                 return Platform.Unix.UserName;
                 #else
-                StringBuilder domainName = new StringBuilder(1024);
-                uint domainNameLen = (uint)domainName.Capacity;
-
-                byte ret = Win32Native.GetUserNameEx(Win32Native.NameSamCompatible, domainName, ref domainNameLen);
-                if (ret == 1)
-                {
-                    string samName = domainName.ToString();
-                    int index = samName.IndexOf('\\');
-                    if (index != -1)
-                    {
-                        return samName.Substring(index + 1);
-                    }
-                }
-                return string.Empty;
+                return WinGetUserName();
                 #endif
             }
         }
@@ -1078,44 +1005,18 @@ namespace System.Management.Automation
             {
                 if (s_os == null)
                 {
-                    if (Platform.IsWindows)
-                    {
-                        s_os = WinOSVersion;
-                    }
-                    else
-                    {
-                        // TODO:PSL use P/Invoke to provide proper version
-
-                        // Porting note: cannot put this in CorePsPlatform since
-                        // System.Management.Automation.Environment only exists in CoreCLR
-                        // builds of monad.
-                        s_os = new Environment.OperatingSystem(new Version(1, 0, 0, 0), "");
-                    }
+#if UNIX
+                    // TODO:PSL use P/Invoke to provide proper version
+                    // OSVersion will be back in CoreCLR 1.1
+                    s_os = new Environment.OperatingSystem(new Version(1, 0, 0, 0), "");
+#else
+                    s_os = WinGetOSVersion();
+#endif
                 }
                 return s_os;
             }
         }
         private static volatile OperatingSystem s_os;
-
-        /// <summary>
-        /// Windows OSVersion implementation
-        /// </summary>
-        private static OperatingSystem WinOSVersion
-        {
-            get
-            {
-                Win32Native.OSVERSIONINFOEX osviex = new Win32Native.OSVERSIONINFOEX();
-                osviex.OSVersionInfoSize = Marshal.SizeOf(osviex);
-                if (!Win32Native.GetVersionEx(ref osviex))
-                {
-                    int errorCode = Marshal.GetLastWin32Error();
-                    throw new Win32Exception(errorCode);
-                }
-
-                Version v = new Version(osviex.MajorVersion, osviex.MinorVersion, osviex.BuildNumber, (osviex.ServicePackMajor << 16) | osviex.ServicePackMinor);
-                return new OperatingSystem(v, osviex.CSDVersion);
-            }
-        }
 
         #endregion Property_Extensions
 
@@ -1242,13 +1143,79 @@ namespace System.Management.Automation
 
         #endregion SpecialFolder_Extensions
 
-        #region NativeMethods
+        #region WinPlatform_Specific_Methods
+#if !UNIX
+        /// <summary>
+        /// Windows UserDomainName implementation
+        /// </summary>
+        private static string WinGetUserDomainName()
+        {
+            StringBuilder domainName = new StringBuilder(1024);
+            uint domainNameLen = (uint)domainName.Capacity;
+
+            byte ret = Win32Native.GetUserNameEx(Win32Native.NameSamCompatible, domainName, ref domainNameLen);
+            if (ret == 1)
+            {
+                string samName = domainName.ToString();
+                int index = samName.IndexOf('\\');
+                if (index != -1)
+                {
+                    return samName.Substring(0, index);
+                }
+            }
+            else
+            {
+                int errorCode = Marshal.GetLastWin32Error();
+                throw new InvalidOperationException(Win32Native.GetMessage(errorCode));
+            }
+
+            // Cannot use LookupAccountNameW to get DomainName because 'GetUserName' is not available in CSS and thus we cannot get the account.
+            throw new InvalidOperationException(CoreClrStubResources.CannotGetDomainName);
+        }
+
+        /// <summary>
+        /// Windows UserName implementation
+        /// </summary>
+        private static string WinGetUserName()
+        {
+            StringBuilder domainName = new StringBuilder(1024);
+            uint domainNameLen = (uint)domainName.Capacity;
+
+            byte ret = Win32Native.GetUserNameEx(Win32Native.NameSamCompatible, domainName, ref domainNameLen);
+            if (ret == 1)
+            {
+                string samName = domainName.ToString();
+                int index = samName.IndexOf('\\');
+                if (index != -1)
+                {
+                    return samName.Substring(index + 1);
+                }
+            }
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Windows OSVersion implementation
+        /// </summary>
+        private static OperatingSystem WinGetOSVersion()
+        {
+            Win32Native.OSVERSIONINFOEX osviex = new Win32Native.OSVERSIONINFOEX();
+            osviex.OSVersionInfoSize = Marshal.SizeOf(osviex);
+            if (!Win32Native.GetVersionEx(ref osviex))
+            {
+                int errorCode = Marshal.GetLastWin32Error();
+                throw new Win32Exception(errorCode);
+            }
+
+            Version v = new Version(osviex.MajorVersion, osviex.MinorVersion, osviex.BuildNumber, (osviex.ServicePackMajor << 16) | osviex.ServicePackMinor);
+            return new OperatingSystem(v, osviex.CSDVersion);
+        }
 
         /// <summary>
         /// DllImport uses the ApiSet dll that is available on CSS, since this code
         /// will only be included when building targeting CoreCLR.
         /// </summary>
-        internal static class Win32Native
+        private static class Win32Native
         {
             internal const int NameSamCompatible = 2;             // EXTENDED_NAME_FORMAT - NameSamCompatible
 
@@ -1307,8 +1274,8 @@ namespace System.Management.Automation
                 }
             }
         }
-
-        #endregion NativeMethods
+#endif
+        #endregion WinPlatform_Specific_Methods
 
         #region NestedTypes
 
