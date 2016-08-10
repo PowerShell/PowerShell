@@ -12,7 +12,6 @@
             "mappings": {
                 "Modules/" : {
                     "include": [
-                        "../Modules/Windows+Unix-Core",
                         "../Modules/Unix",
                         "../Modules/Shared"
                     ],
@@ -36,7 +35,6 @@
         "mappings": {
             "Modules/" : {
                 "include": [
-                    "../Modules/Windows+Unix-Core",
                     "../Modules/Unix",
                     "../Modules/Shared"
                 ],
@@ -49,7 +47,7 @@
             "*.so",
             "*.dylib",
             "../../powershell.version"
-        ],
+        ]
     },
 
     "dependencies": {

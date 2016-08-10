@@ -13,7 +13,6 @@
                 "Modules/" : {
                     "include": [
                         "../Modules/Windows-Core",
-                        "../Modules/Windows+Unix-Core",
                         "../Modules/Windows-Core+Full",
                         "../Modules/Shared"
                     ],
@@ -36,7 +35,6 @@
             "Modules/" : {
                 "include": [
                     "../Modules/Windows-Core",
-                    "../Modules/Windows+Unix-Core",
                     "../Modules/Windows-Core+Full",
                     "../Modules/Shared"
                 ],
@@ -50,7 +48,7 @@
             "pwrshplugin.pdb",
             "Install-PowerShellRemoting.ps1",
             "../../powershell.version"
-        ],
+        ]
     },
 
     "dependencies": {
