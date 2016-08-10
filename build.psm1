@@ -840,9 +840,6 @@ It consists of a cross-platform command-line shell and associated scripting lang
     $Source = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
     Write-Verbose "Packaging $Source"
 
-    Write-Verbose "Copy license and third party notice to $Source"
-    Copy-Item "$PSScriptRoot\LICENSE.txt" "$Source" -Force -ErrorAction SilentlyContinue
-
     if ($IsWindows) {
         # Product Guid needs to be unique for every PowerShell version to allow SxS install
         $productGuid = [guid]::NewGuid()
