@@ -690,7 +690,7 @@ function Start-PSBootstrap {
             brew install $Deps
         }
 
-        # Install [fpm](https://github.com/jordansissel/fpm)
+        # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
         if ($Package) {
             gem install fpm ronn
         }
@@ -814,23 +814,14 @@ function Start-PSPackage {
     [CmdletBinding()]param(
         # PowerShell packages use Semantic Versioning http://semver.org/
         [string]$Version,
-        # Package iteration version (rarely changed)
-        [int]$Iteration = 1,
-        # Ubuntu, CentOS, and OS X packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm")]
-        [string]$Type
+
+        # Package name
+        [string]$Name = "powershell",
+
+        # Ubuntu, CentOS, and OS X, and Windows packages are supported
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "appx")]
+        [string[]]$Types
     )
-
-    $Description = @"
-PowerShell is an automation and configuration management platform. 
-It consists of a cross-platform command-line shell and associated scripting language.
-"@
-
-    #runn ronn to convert man page to roff 
-    $manorigfile = $PSScriptRoot + "/assets/powershellorig"
-    $mantxtfile = $PSScriptRoot + "/assets/powershell"
-    $manronnfile = $PSScriptRoot + "/assets/powershell.1"
-    $gzipmanfile = $PSScriptRoot + "/assets/powershell.1.gz"
 
     # Use Git tag if not given a version
     if (-not $Version) {
@@ -840,36 +831,86 @@ It consists of a cross-platform command-line shell and associated scripting lang
     $Source = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
     Write-Verbose "Packaging $Source"
 
-    if ($IsWindows) {
-        # Product Guid needs to be unique for every PowerShell version to allow SxS install
-        $productGuid = [guid]::NewGuid()
-                $msiPackagePath = New-MSIPackage -ProductSourcePath $Source -ProductVersion $Version -AssetsPath "$PSScriptRoot\assets" -LicenseFilePath "$PSScriptRoot\assets\license.rtf" -ProductGuid $productGuid
-        $appxPackagePath = New-AppxPackage -PackageVersion $Version -SourcePath $Source -AssetsPath "$PSScriptRoot\Assets"
-
-        $packages = @($msiPackagePath, $appxPackagePath)
-
-        return $packages
-    }
-
-    if (-not (Get-Command "fpm" -ErrorAction SilentlyContinue)) {
-        throw "Build dependency 'fpm' not found in PATH! See: https://github.com/jordansissel/fpm"
-    }
-
     # Decide package output type
-    if (-not $Type) {
-        $Type = if ($IsLinux) {
-            if ($LinuxInfo.ID -match 'ubuntu') {
+    if (-not $Types) {
+        $Types = if ($IsLinux) {
+            if ($LinuxInfo.ID -match "ubuntu") {
                 "deb"
-            } elseif ($LinuxInfo.ID -match 'centos') {
+            } elseif ($LinuxInfo.ID -match "centos") {
                 "rpm"
             } else {
                 throw "Building packages for $($LinuxInfo.PRETTY_NAME) is unsupported!"
             }
         } elseif ($IsOSX) {
-            'osxpkg'
+            "osxpkg"
+        } elseif ($IsWindows) {
+            "msi", "appx"
         }
-        Write-Warning "-Type was not specified, continuing with $Type"
+        Write-Warning "-Types was not specified, continuing with $Types"
     }
+
+    switch ($Types) {
+        "msi" {
+            $Arguments = @{
+                ProductSourcePath = $Source;
+                ProductVersion = $Version;
+                AssetsPath = "$PSScriptRoot\assets";
+                LicenseFilePath = "$PSScriptRoot\assets\license.rtf";
+                # Product Guid needs to be unique for every PowerShell version to allow SxS install
+                ProductGuid = [Guid]::NewGuid()
+            }
+            New-MSIPackage @Arguments
+        }
+        "appx" {
+            $Arguments = @{
+                PackageVersion = $Version;
+                SourcePath = $Source;
+                AssetsPath = "$PSScriptRoot\assets"
+            }
+            New-AppxPackage @Arguments
+        }
+        default {
+            $Arguments = @{
+                Type = $_;
+                Source = $Source;
+                Name = $Name;
+                Version = $Version
+            }
+            New-UnixPackage @Arguments
+        }
+    }
+}
+
+
+function New-UnixPackage {
+    [CmdletBinding()]param(
+        [Parameter(Mandatory)]
+        [ValidateSet("deb", "osxpkg", "rpm")]
+        [string]$Type,
+
+        [Parameter(Mandatory)]
+        [string]$Source,
+
+        [Parameter(Mandatory)]
+        [string]$Name,
+
+        [Parameter(Mandatory)]
+        [string]$Version,
+
+        # Package iteration version (rarely changed)
+        [int]$Iteration = 1
+    )
+
+    foreach ($Dependency in "fpm", "ronn") {
+        if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Publish")) {
+            throw "Dependency precheck failed!"
+        }
+    }
+
+    $Description = @"
+PowerShell is an automation and configuration management platform.
+It consists of a cross-platform command-line shell and associated scripting language.
+"@
 
     # Follow the Filesystem Hierarchy Standard for Linux and OS X
     $Destination = if ($IsLinux) {
@@ -887,35 +928,33 @@ It consists of a cross-platform command-line shell and associated scripting lang
 
     New-Item -Force -ItemType SymbolicLink -Path /tmp/powershell -Target $Destination/powershell >$null
 
-    # there is a weired bug in fpm
+    # there is a weird bug in fpm
     # if the target of the powershell symlink exists, `fpm` aborts
     # with a `utime` error on OS X.
     # so we move it to make symlink broken
     $symlink_dest = "$Destination/powershell"
     $hack_dest = "./_fpm_symlink_hack_powershell"
-    if ($IsOSX)
-    {
-        if (Test-Path $symlink_dest)
-        {
+    if ($IsOSX) {
+        if (Test-Path $symlink_dest) {
             Write-Warning "Move $symlink_dest to $hack_dest (fpm utime bug)"
             Move-Item $symlink_dest $hack_dest
         }
     }
 
-    #copy backup to new file 
-    cp $manorigfile $mantxtfile
-    
-    #run ronn on assets file 
-    ronn $mantxtfile 
+    # run ronn to convert man page to roff
+    $RoffFile = Join-Path $PSScriptRoot "/assets/powershell.1"
+    $RonnFile = "$RoffFile.ronn"
+    $GzipFile = "$RoffFile.gz"
+    $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
 
-    #rename ronn file 
-    mv $mantxtfile $manronnfile 
+    # Run ronn on assets file
+    Start-NativeExecution { ronn --roff $RonnFile }
 
-    #gzip in assets directory 
-    gzip -f $manronnfile 
+    # gzip in assets directory
+    Start-NativeExecution { gzip -f $RoffFile }
 
     # Change permissions for packaging
-    chmod -R go=u $Source /tmp/powershell
+    Start-NativeExecution { chmod -R go=u $Source $GzipFile }
 
     $libunwind = switch ($Type) {
         "deb" { "libunwind8" }
@@ -927,10 +966,9 @@ It consists of a cross-platform command-line shell and associated scripting lang
         "rpm" { "libicu" }
     }
 
-
     $Arguments = @(
         "--force", "--verbose",
-        "--name", "powershell",
+        "--name", $Name,
         "--version", $Version,
         "--iteration", $Iteration,
         "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
@@ -948,23 +986,24 @@ It consists of a cross-platform command-line shell and associated scripting lang
         "-t", $Type,
         "-s", "dir",
         "$Source/=$Destination/",
-	"assets/powershell.1.gz=/usr/local/share/man/man1/powershell.1.gz",
+        "$GzipFile=$ManFile",
         "/tmp/powershell=$Link"
     )
 
     # Build package
-    fpm $Arguments
-
-    if ($IsOSX)
-    {
-        # this is continuation of a fpm hack for a weired bug
-        if (Test-Path $hack_dest)
-        {
-            Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
-            Move-Item $hack_dest $symlink_dest
+    try {
+        Start-NativeExecution { fpm $Arguments }
+    } finally {
+        if ($IsOSX) {
+            # this is continuation of a fpm hack for a weird bug
+            if (Test-Path $hack_dest) {
+                Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
+                Move-Item $hack_dest $symlink_dest
+            }
         }
     }
 }
+
 
 function Publish-NuGetFeed
 {

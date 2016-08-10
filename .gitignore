@@ -43,6 +43,10 @@ powershell.version
 # default location for produced nuget packages
 /nuget-artifacts
 
+# generated man files
+/assets/powershell.1
+/assets/powershell.1.gz
+
 # resgen output
 gen
 
