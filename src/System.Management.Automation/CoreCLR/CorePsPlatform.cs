@@ -207,7 +207,7 @@ namespace System.Management.Automation
         /// <summary>
         /// X Desktop Group configuration type enum.
         /// </summary>
-        internal enum XDG_Type
+        public enum XDG_Type
         {
             /// <summary> XDG_CONFIG_HOME/powershell </summary>
             CONFIG,
@@ -226,7 +226,7 @@ namespace System.Management.Automation
         /// <summary>
         /// function for choosing directory location of PowerShell for profile loading
         /// </summary>
-        internal static string SelectProductNameForDirectory(Platform.XDG_Type dirpath)
+        public static string SelectProductNameForDirectory(Platform.XDG_Type dirpath)
         {
             //TODO: XDG_DATA_DIRS implementation as per GitHub issue #1060
 
