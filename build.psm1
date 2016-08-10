@@ -692,7 +692,7 @@ function Start-PSBootstrap {
 
         # Install [fpm](https://github.com/jordansissel/fpm)
         if ($Package) {
-            gem install fpm
+            gem install fpm ronn
         }
 
         $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain"
@@ -826,6 +826,12 @@ PowerShell is an automation and configuration management platform.
 It consists of a cross-platform command-line shell and associated scripting language.
 "@
 
+    #runn ronn to convert man page to roff 
+    $manorigfile = $PSScriptRoot + "/assets/powershellorig"
+    $mantxtfile = $PSScriptRoot + "/assets/powershell"
+    $manronnfile = $PSScriptRoot + "/assets/powershell.1"
+    $gzipmanfile = $PSScriptRoot + "/assets/powershell.1.gz"
+
     # Use Git tag if not given a version
     if (-not $Version) {
         $Version = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
@@ -899,6 +905,18 @@ It consists of a cross-platform command-line shell and associated scripting lang
         }
     }
 
+    #copy backup to new file 
+    cp $manorigfile $mantxtfile
+    
+    #run ronn on assets file 
+    ronn $mantxtfile 
+
+    #rename ronn file 
+    mv $mantxtfile $manronnfile 
+
+    #gzip in assets directory 
+    gzip -f $manronnfile 
+
     # Change permissions for packaging
     chmod -R go=u $Source /tmp/powershell
 
@@ -933,6 +951,7 @@ It consists of a cross-platform command-line shell and associated scripting lang
         "-t", $Type,
         "-s", "dir",
         "$Source/=$Destination/",
+	"assets/powershell.1.gz=/usr/local/share/man/man1/powershell.1.gz",
         "/tmp/powershell=$Link"
     )
 
