@@ -22,7 +22,9 @@ try {
 if ($IsLinux) {
     $LinuxInfo = Get-Content /etc/os-release | ConvertFrom-StringData
 
-    $IsUbuntu = $LinuxInfo.ID -match 'ubuntu' -and $LinuxInfo.VERSION_ID -match '14.04'
+    $IsUbuntu = $LinuxInfo.ID -match 'ubuntu'
+    $IsUbuntu14 = $IsUbuntu -and $LinuxInfo.VERSION_ID -match '14.04'
+    $IsUbuntu16 = $IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'
     $IsCentOS = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'
 }
 
@@ -218,6 +220,7 @@ function Start-PSBuild {
         if ($IsOSX) {
             # This is the restored library used to build
             # This is allowed to fail since the user may have already restored
+            Write-Warning ".NET Core links the incorrect OpenSSL, correcting NuGet package libraries..."
             find $env:HOME/.nuget -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
         }
     }
@@ -665,32 +668,43 @@ function Start-PSBootstrap {
         if ($IsUbuntu) {
             # Build tools
             $Deps += "curl", "g++", "cmake", "make"
+
             # .NET Core required runtime libraries
-            $Deps += "libicu52", "libunwind8"
+            $Deps += "libunwind8"
+            if ($IsUbuntu14) { $Deps += "libicu52" }
+            elseif ($IsUbuntu16) { $Deps += "libicu55" }
+
             # Packaging tools
             if ($Package) { $Deps += "ruby-dev" }
+
             # Install dependencies
             sudo apt-get install -y -qq $Deps
-        } elseif ($IsCentos) {
+        } elseif ($IsCentOS) {
             # Build tools
             $Deps += "curl", "gcc-c++", "cmake", "make"
+
             # .NET Core required runtime libraries
             $Deps += "libicu", "libunwind"
+
             # Packaging tools
             if ($Package) { $Deps += "ruby-devel", "rpmbuild" }
+
             # Install dependencies
             sudo yum install -y -q $Deps
         } elseif ($IsOSX) {
             precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
+
             # Build tools
             $Deps += "curl", "cmake"
+
             # .NET Core required runtime libraries
             $Deps += "openssl"
+
             # Install dependencies
             brew install $Deps
         }
 
-        # Install [fpm](https://github.com/jordansissel/fpm)
+        # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
         if ($Package) {
             gem install fpm ronn
         }
@@ -724,6 +738,7 @@ function Start-PSBootstrap {
             if ($IsOSX) {
                 # This is the library shipped with .NET Core
                 # This is allowed to fail as the user may have installed other versions of dotnet
+                Write-Warning ".NET Core links the incorrect OpenSSL, correcting .NET CLI libraries..."
                 find $env:HOME/.dotnet -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
             }
         }
@@ -814,71 +829,166 @@ function Start-PSPackage {
     [CmdletBinding()]param(
         # PowerShell packages use Semantic Versioning http://semver.org/
         [string]$Version,
-        # Package iteration version (rarely changed)
-        [int]$Iteration = 1,
-        # Ubuntu, CentOS, and OS X packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm")]
-        [string]$Type
+
+        # Package name
+        [ValidatePattern("^powershell")]
+        [string]$Name = "powershell",
+
+        # Ubuntu, CentOS, and OS X, and Windows packages are supported
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "appx")]
+        [string[]]$Types
     )
-
-    $Description = @"
-PowerShell is an automation and configuration management platform. 
-It consists of a cross-platform command-line shell and associated scripting language.
-"@
-
-    #runn ronn to convert man page to roff 
-    $manorigfile = $PSScriptRoot + "/assets/powershellorig"
-    $mantxtfile = $PSScriptRoot + "/assets/powershell"
-    $manronnfile = $PSScriptRoot + "/assets/powershell.1"
-    $gzipmanfile = $PSScriptRoot + "/assets/powershell.1.gz"
 
     # Use Git tag if not given a version
     if (-not $Version) {
         $Version = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
     }
 
+    Write-Warning "Please ensure you have previously run Start-PSBuild -Clean -CrossGen!"
+
     $Source = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
     Write-Verbose "Packaging $Source"
 
-    Write-Verbose "Copy license and third party notice to $Source"
-    Copy-Item "$PSScriptRoot\LICENSE.txt" "$Source" -Force -ErrorAction SilentlyContinue
-
-    if ($IsWindows) {
-        # Product Guid needs to be unique for every PowerShell version to allow SxS install
-        $productGuid = [guid]::NewGuid()
-                $msiPackagePath = New-MSIPackage -ProductSourcePath $Source -ProductVersion $Version -AssetsPath "$PSScriptRoot\assets" -LicenseFilePath "$PSScriptRoot\assets\license.rtf" -ProductGuid $productGuid
-        $appxPackagePath = New-AppxPackage -PackageVersion $Version -SourcePath $Source -AssetsPath "$PSScriptRoot\Assets"
-
-        $packages = @($msiPackagePath, $appxPackagePath)
-
-        return $packages
-    }
-
-    if (-not (Get-Command "fpm" -ErrorAction SilentlyContinue)) {
-        throw "Build dependency 'fpm' not found in PATH! See: https://github.com/jordansissel/fpm"
-    }
-
     # Decide package output type
-    if (-not $Type) {
-        $Type = if ($IsLinux) {
-            if ($LinuxInfo.ID -match 'ubuntu') {
+    if (-not $Types) {
+        $Types = if ($IsLinux) {
+            if ($LinuxInfo.ID -match "ubuntu") {
                 "deb"
-            } elseif ($LinuxInfo.ID -match 'centos') {
+            } elseif ($LinuxInfo.ID -match "centos") {
                 "rpm"
             } else {
                 throw "Building packages for $($LinuxInfo.PRETTY_NAME) is unsupported!"
             }
         } elseif ($IsOSX) {
-            'osxpkg'
+            "osxpkg"
+        } elseif ($IsWindows) {
+            "msi", "appx"
         }
-        Write-Warning "-Type was not specified, continuing with $Type"
+        Write-Warning "-Types was not specified, continuing with $Types!"
+    }
+
+    switch ($Types) {
+        "msi" {
+            $Arguments = @{
+                ProductSourcePath = $Source;
+                ProductVersion = $Version;
+                AssetsPath = "$PSScriptRoot\assets";
+                LicenseFilePath = "$PSScriptRoot\assets\license.rtf";
+                # Product Guid needs to be unique for every PowerShell version to allow SxS install
+                ProductGuid = [Guid]::NewGuid()
+            }
+            New-MSIPackage @Arguments
+        }
+        "appx" {
+            $Arguments = @{
+                PackageVersion = $Version;
+                SourcePath = $Source;
+                AssetsPath = "$PSScriptRoot\assets"
+            }
+            New-AppxPackage @Arguments
+        }
+        default {
+            $Arguments = @{
+                Type = $_;
+                Source = $Source;
+                Name = $Name;
+                Version = $Version
+            }
+            New-UnixPackage @Arguments
+        }
+    }
+}
+
+
+function New-UnixPackage {
+    [CmdletBinding()]param(
+        [Parameter(Mandatory)]
+        [ValidateSet("deb", "osxpkg", "rpm")]
+        [string]$Type,
+
+        [Parameter(Mandatory)]
+        [string]$Source,
+
+        # Must start with 'powershell' but may have any suffix
+        [Parameter(Mandatory)]
+        [ValidatePattern("^powershell")]
+        [string]$Name,
+
+        [Parameter(Mandatory)]
+        [string]$Version,
+
+        # Package iteration version (rarely changed)
+        [int]$Iteration = 1
+    )
+
+    # Validate platform
+    $ErrorMessage = "Must be on {0} to build '$Type' packages!"
+    switch ($Type) {
+        "deb" {
+            $WarningMessage = "Building for Ubuntu {0}.04!"
+            if (!$IsUbuntu) {
+                    throw ($ErrorMessage -f "Ubuntu")
+                } elseif ($IsUbuntu14) {
+                    Write-Warning ($WarningMessage -f "14")
+                } elseif ($IsUbuntu16) {
+                    Write-Warning ($WarningMessage -f "16")
+                }
+        }
+        "rpm" {
+            if (!$IsCentOS) {
+                throw ($ErrorMessage -f "CentOS")
+            }
+        }
+        "osxpkg" {
+            if (!$IsOSX) {
+                throw ($ErrorMessage -f "OS X")
+            }
+        }
+    }
+
+    foreach ($Dependency in "fpm", "ronn") {
+        if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Publish")) {
+            throw "Dependency precheck failed!"
+        }
+    }
+
+    $Description = @"
+PowerShell is an automation and configuration management platform.
+It consists of a cross-platform command-line shell and associated scripting language.
+"@
+
+    # Suffix is used for side-by-side package installation
+    $Suffix = $Name -replace "^powershell"
+    if (!$Suffix) {
+        Write-Warning "Suffix not given, building primary PowerShell package!"
+        $Suffix = $Version
+    }
+
+    # Setup staging directory so we don't change the original source directory
+    $Staging = "$PSScriptRoot/staging"
+    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $Staging
+    Copy-Item -Recurse $Source $Staging
+
+    # Rename files to given name if not "powershell"
+    if ($Name -ne "powershell") {
+        $Files = @("powershell",
+                   "powershell.dll",
+                   "powershell.deps.json",
+                   "powershell.pdb",
+                   "powershell.runtimeconfig.json",
+                   "powershell.xml")
+
+        foreach ($File in $Files) {
+            $NewName = $File -replace "^powershell", $Name
+            Move-Item "$Staging/$File" "$Staging/$NewName"
+        }
     }
 
     # Follow the Filesystem Hierarchy Standard for Linux and OS X
     $Destination = if ($IsLinux) {
-        "/opt/microsoft/powershell"
+        "/opt/microsoft/powershell/$Suffix"
     } elseif ($IsOSX) {
-        "/usr/local/microsoft/powershell"
+        "/usr/local/microsoft/powershell/$Suffix"
     }
 
     # Destination for symlink to powershell executable
@@ -888,37 +998,48 @@ It consists of a cross-platform command-line shell and associated scripting lang
         "/usr/local/bin"
     }
 
-    New-Item -Force -ItemType SymbolicLink -Path /tmp/powershell -Target $Destination/powershell >$null
+    New-Item -Force -ItemType SymbolicLink -Path "/tmp/$Name" -Target "$Destination/$Name" >$null
 
-    # there is a weired bug in fpm
+    # there is a weird bug in fpm
     # if the target of the powershell symlink exists, `fpm` aborts
     # with a `utime` error on OS X.
     # so we move it to make symlink broken
-    $symlink_dest = "$Destination/powershell"
+    $symlink_dest = "$Destination/$Name"
     $hack_dest = "./_fpm_symlink_hack_powershell"
-    if ($IsOSX)
-    {
-        if (Test-Path $symlink_dest)
-        {
+    if ($IsOSX) {
+        if (Test-Path $symlink_dest) {
             Write-Warning "Move $symlink_dest to $hack_dest (fpm utime bug)"
             Move-Item $symlink_dest $hack_dest
         }
     }
 
-    #copy backup to new file 
-    cp $manorigfile $mantxtfile
-    
-    #run ronn on assets file 
-    ronn $mantxtfile 
+    # run ronn to convert man page to roff
+    $RonnFile = Join-Path $PSScriptRoot "/assets/powershell.1.ronn"
+    $RoffFile = $RonnFile -replace "\.ronn$"
 
-    #rename ronn file 
-    mv $mantxtfile $manronnfile 
+    # Run ronn on assets file
+    # Run does not play well with files named powershell6.0.1, so we generate and then rename
+    Start-NativeExecution { ronn --roff $RonnFile }
 
-    #gzip in assets directory 
-    gzip -f $manronnfile 
+    # Setup for side-by-side man pages (noop if primary package)
+    $FixedRoffFile = $RoffFile -replace "powershell.1$", "$Name.1"
+    if ($Name -ne "powershell") {
+        Move-Item $RoffFile $FixedRoffFile
+    }
+
+    # gzip in assets directory
+    $GzipFile = "$FixedRoffFile.gz"
+    Start-NativeExecution { gzip -f $FixedRoffFile }
+
+    $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
 
     # Change permissions for packaging
-    chmod -R go=u $Source /tmp/powershell
+    Start-NativeExecution {
+        find $Staging -type d | xargs chmod 755
+        find $Staging -type f | xargs chmod 644
+        chmod 644 $GzipFile
+        chmod 755 "$Staging/$Name" # only the executable should be executable
+    }
 
     $libunwind = switch ($Type) {
         "deb" { "libunwind8" }
@@ -926,14 +1047,16 @@ It consists of a cross-platform command-line shell and associated scripting lang
     }
 
     $libicu = switch ($Type) {
-        "deb" { "libicu52" }
+        "deb" {
+            if ($IsUbuntu14) { "libicu52" }
+            elseif ($IsUbuntu16) { "libicu55" }
+        }
         "rpm" { "libicu" }
     }
 
-
     $Arguments = @(
         "--force", "--verbose",
-        "--name", "powershell",
+        "--name", $Name,
         "--version", $Version,
         "--iteration", $Iteration,
         "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
@@ -945,29 +1068,40 @@ It consists of a cross-platform command-line shell and associated scripting lang
         "--rpm-os", "linux",
         "--depends", $libunwind,
         "--depends", $libicu,
-        "--deb-build-depends", "dotnet",
-        "--deb-build-depends", "cmake",
-        "--deb-build-depends", "g++",
         "-t", $Type,
         "-s", "dir",
-        "$Source/=$Destination/",
-	"assets/powershell.1.gz=/usr/local/share/man/man1/powershell.1.gz",
-        "/tmp/powershell=$Link"
+        "$Staging/=$Destination/",
+        "$GzipFile=$ManFile",
+        "/tmp/$Name=$Link"
     )
 
     # Build package
-    fpm $Arguments
-
-    if ($IsOSX)
-    {
-        # this is continuation of a fpm hack for a weired bug
-        if (Test-Path $hack_dest)
-        {
-            Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
-            Move-Item $hack_dest $symlink_dest
+    try {
+        $Output = Start-NativeExecution { fpm $Arguments }
+    } finally {
+        if ($IsOSX) {
+            # this is continuation of a fpm hack for a weird bug
+            if (Test-Path $hack_dest) {
+                Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
+                Move-Item $hack_dest $symlink_dest
+            }
         }
     }
+
+    # Magic to get path output
+    $Package = Get-Item (Join-Path $PSScriptRoot (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
+
+    # Add runtime-identifier to package name.
+    # This information cannot be part of the package,
+    # but without a repository to host these,
+    # we need to differentiate distributions by the package's filename.
+    $PackageWithRuntime = "$($Package.BaseName)-$((New-PSOptions).Runtime)$($Package.Extension)"
+
+    Move-Item -Force $Package $PackageWithRuntime
+
+    return $PackageWithRuntime
 }
+
 
 function Publish-NuGetFeed
 {

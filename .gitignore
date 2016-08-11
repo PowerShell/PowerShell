@@ -1,9 +1,10 @@
 bin/
 obj/
-debug/
-Packages/
 project.lock.json
 *-tests.xml
+/debug/
+/staging/
+/Packages/
 
 # dotnet cli install/uninstall scripts
 dotnet-install.ps1
@@ -42,6 +43,9 @@ powershell.version
 
 # default location for produced nuget packages
 /nuget-artifacts
+
+# generated man files
+/assets/powershell.1*
 
 # resgen output
 gen
