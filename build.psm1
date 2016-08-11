@@ -22,7 +22,9 @@ try {
 if ($IsLinux) {
     $LinuxInfo = Get-Content /etc/os-release | ConvertFrom-StringData
 
-    $IsUbuntu = $LinuxInfo.ID -match 'ubuntu' -and $LinuxInfo.VERSION_ID -match '14.04'
+    $IsUbuntu = $LinuxInfo.ID -match 'ubuntu'
+    $IsUbuntu14 = $IsUbuntu -and $LinuxInfo.VERSION_ID -match '14.04'
+    $IsUbuntu16 = $IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'
     $IsCentOS = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'
 }
 
@@ -218,6 +220,7 @@ function Start-PSBuild {
         if ($IsOSX) {
             # This is the restored library used to build
             # This is allowed to fail since the user may have already restored
+            Write-Warning ".NET Core links the incorrect OpenSSL, correcting NuGet package libraries..."
             find $env:HOME/.nuget -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
         }
     }
@@ -665,27 +668,38 @@ function Start-PSBootstrap {
         if ($IsUbuntu) {
             # Build tools
             $Deps += "curl", "g++", "cmake", "make"
+
             # .NET Core required runtime libraries
-            $Deps += "libicu52", "libunwind8"
+            $Deps += "libunwind8"
+            if ($IsUbuntu14) { $Deps += "libicu52" }
+            elseif ($IsUbuntu16) { $Deps += "libicu55" }
+
             # Packaging tools
             if ($Package) { $Deps += "ruby-dev" }
+
             # Install dependencies
             sudo apt-get install -y -qq $Deps
-        } elseif ($IsCentos) {
+        } elseif ($IsCentOS) {
             # Build tools
             $Deps += "curl", "gcc-c++", "cmake", "make"
+
             # .NET Core required runtime libraries
             $Deps += "libicu", "libunwind"
+
             # Packaging tools
             if ($Package) { $Deps += "ruby-devel", "rpmbuild" }
+
             # Install dependencies
             sudo yum install -y -q $Deps
         } elseif ($IsOSX) {
             precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
+
             # Build tools
             $Deps += "curl", "cmake"
+
             # .NET Core required runtime libraries
             $Deps += "openssl"
+
             # Install dependencies
             brew install $Deps
         }
@@ -724,6 +738,7 @@ function Start-PSBootstrap {
             if ($IsOSX) {
                 # This is the library shipped with .NET Core
                 # This is allowed to fail as the user may have installed other versions of dotnet
+                Write-Warning ".NET Core links the incorrect OpenSSL, correcting .NET CLI libraries..."
                 find $env:HOME/.dotnet -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
             }
         }
@@ -849,7 +864,7 @@ function Start-PSPackage {
         } elseif ($IsWindows) {
             "msi", "appx"
         }
-        Write-Warning "-Types was not specified, continuing with $Types"
+        Write-Warning "-Types was not specified, continuing with $Types!"
     }
 
     switch ($Types) {
@@ -905,6 +920,31 @@ function New-UnixPackage {
         # Package iteration version (rarely changed)
         [int]$Iteration = 1
     )
+
+    # Validate platform
+    $ErrorMessage = "Must be on {0} to build '$Type' packages!"
+    switch ($Type) {
+        "deb" {
+            $WarningMessage = "Building for Ubuntu {0}.04!"
+            if (!$IsUbuntu) {
+                    throw ($ErrorMessage -f "Ubuntu")
+                } elseif ($IsUbuntu14) {
+                    Write-Warning ($WarningMessage -f "14")
+                } elseif ($IsUbuntu16) {
+                    Write-Warning ($WarningMessage -f "16")
+                }
+        }
+        "rpm" {
+            if (!$IsCentOS) {
+                throw ($ErrorMessage -f "CentOS")
+            }
+        }
+        "osxpkg" {
+            if (!$IsOSX) {
+                throw ($ErrorMessage -f "OS X")
+            }
+        }
+    }
 
     foreach ($Dependency in "fpm", "ronn") {
         if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Publish")) {
@@ -1007,7 +1047,10 @@ It consists of a cross-platform command-line shell and associated scripting lang
     }
 
     $libicu = switch ($Type) {
-        "deb" { "libicu52" }
+        "deb" {
+            if ($IsUbuntu14) { "libicu52" }
+            elseif ($IsUbuntu16) { "libicu55" }
+        }
         "rpm" { "libicu" }
     }
 
