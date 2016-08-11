@@ -18,7 +18,7 @@ Get PowerShell
 
 You can download and install a PowerShell package for any of the following platforms.
 
-| Platform     | Releases           | How to Install                 |
+| Platform     | Release / Download | How to Install                 |
 |--------------|--------------------|--------------------------------|
 | Windows      | [.msi][rl-windows] | [Instructions][in-windows] |
 | Ubuntu 14.04 | [.deb][rl-ubuntu]  | [Instructions][in-ubuntu]  |
