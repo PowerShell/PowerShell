@@ -535,7 +535,7 @@ namespace System.Management.Automation
         internal static string GetPersonalModulePath()
         {
 #if UNIX
-            return Platform.SelectProductNameForDirectory(Platform.XDG_Type.MODULES);
+            return Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
 #else
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Utils.ModuleDirectory);
 #endif
@@ -582,7 +582,7 @@ namespace System.Management.Automation
         internal static string GetDscModulePath()
         {
 #if UNIX
-            return string.Empty;
+            return Platform.SelectProductNameForDirectory(Platform.XDG_Type.SHARED_MODULES);
 #else
             string dscModulePath = null;
             string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
@@ -707,12 +707,11 @@ namespace System.Management.Automation
             return result.ToString();
         }
         
-        private static bool NeedToClearCurrentProcessModulePath(string currentProcessModulePath, string personalModulePath, string programFilesModulePath, bool runningOps)
+        private static bool NeedToClearProcessModulePath(string currentProcessModulePath, string personalModulePath, string programFilesModulePath, bool runningOps)
         {
 #if UNIX
             return false;
 #else
-            Dbg.Assert(!string.IsNullOrEmpty(currentProcessModulePath), "caller makes sure it's not null or empty");
             Dbg.Assert(!string.IsNullOrEmpty(personalModulePath), "caller makes sure it's not null or empty");
             Dbg.Assert(!string.IsNullOrEmpty(programFilesModulePath), "caller makes sure it's not null or empty");
 
@@ -792,7 +791,8 @@ namespace System.Management.Automation
 #else
             bool runningOps = false;
 #endif
-            if (NeedToClearCurrentProcessModulePath(currentProcessModulePath, personalModulePath, programFilesModulePath, runningOps))
+            if (!string.IsNullOrEmpty(currentProcessModulePath) && 
+                NeedToClearProcessModulePath(currentProcessModulePath, personalModulePath, programFilesModulePath, runningOps))
             {
                 // Clear the current process module path in the following cases
                 //  - start ops on windows [machine-wide env:psmodulepath will influence]

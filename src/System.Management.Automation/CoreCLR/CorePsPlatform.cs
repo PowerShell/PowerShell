@@ -203,10 +203,11 @@ namespace System.Management.Automation
 #endif
         }
 
+#if UNIX
         /// <summary>
         /// X Desktop Group configuration type enum.
         /// </summary>
-        public enum XDG_Type
+        internal enum XDG_Type
         {
             /// <summary> XDG_CONFIG_HOME/powershell </summary>
             CONFIG,
@@ -215,7 +216,9 @@ namespace System.Management.Automation
             /// <summary> XDG_DATA_HOME/powershell </summary>
             DATA,
             /// <summary> XDG_DATA_HOME/powershell/Modules </summary>
-            MODULES,
+            USER_MODULES,
+            /// <summary> /usr/local/share/powershell/Modules </summary>
+            SHARED_MODULES,
             /// <summary> XDG_CONFIG_HOME/powershell </summary>
             DEFAULT
         }
@@ -223,7 +226,7 @@ namespace System.Management.Automation
         /// <summary>
         /// function for choosing directory location of PowerShell for profile loading
         /// </summary>
-        public static string SelectProductNameForDirectory(Platform.XDG_Type dirpath)
+        internal static string SelectProductNameForDirectory(Platform.XDG_Type dirpath)
         {
             //TODO: XDG_DATA_DIRS implementation as per GitHub issue #1060
 
@@ -266,7 +269,7 @@ namespace System.Management.Automation
                         return Path.Combine(xdgdatahome, "powershell");
                     }
 
-                case Platform.XDG_Type.MODULES:
+                case Platform.XDG_Type.USER_MODULES:
                     //the user has set XDG_DATA_HOME corresponding to module path
                     if (String.IsNullOrEmpty(xdgdatahome))
                     {
@@ -281,6 +284,9 @@ namespace System.Management.Automation
                     {
                         return Path.Combine(xdgdatahome, "powershell", "Modules");
                     }
+
+                case Platform.XDG_Type.SHARED_MODULES:
+                    return "/usr/local/share/powershell/Modules";
 
                 case Platform.XDG_Type.CACHE:
                     //the user has set XDG_CACHE_HOME
@@ -327,6 +333,7 @@ namespace System.Management.Automation
                     return xdgConfigHomeDefault;
             }
         }
+#endif
 
         // Platform methods prefixed NonWindows are:
         // - non-windows by the definition of the IsWindows method above
