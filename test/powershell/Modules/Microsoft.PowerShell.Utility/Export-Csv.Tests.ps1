@@ -1,6 +1,6 @@
 Describe "Export-Csv" -Tags "CI" {
     $testObject = @("test","object","array")
-    $testCsv = "output.csv"
+    $testCsv = Join-Path -Path $TestDrive -ChildPath "output.csv"
 
     AfterEach {
 	Remove-Item $testCsv -Force -ErrorAction SilentlyContinue
@@ -51,7 +51,7 @@ Describe "Export-Csv" -Tags "CI" {
     It "Should have the same information when using the alias vs the cmdlet" {
 	$testObject | Export-Csv -Path $testCsv
 
-	$aliasObject = "alias.csv"
+	$aliasObject = Join-Path -Path $TestDrive -ChildPath "alias.csv"
 
 	$testObject | epcsv -Path $aliasObject
 

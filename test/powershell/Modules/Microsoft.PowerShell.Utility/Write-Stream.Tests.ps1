@@ -1,5 +1,5 @@
 Describe "Stream writer tests" -Tags "CI" {
-    $targetfile = "writeoutput.txt"
+    $targetfile = Join-Path -Path $TestDrive -ChildPath "writeoutput.txt"
 
     # A custom function is defined here do handle the debug stream dealing with the confirm prompt
     # that would normally

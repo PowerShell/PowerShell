@@ -24,7 +24,7 @@ Describe 'using module' -Tags "CI" {
 
             $resolvedTestDrivePath = Split-Path ((get-childitem "${TestDrive}\$ModulePathPrefix")[0].FullName)
             if (-not ($env:PSMODULEPATH -like "*$resolvedTestDrivePath*")) {
-                $env:PSMODULEPATH += ";$resolvedTestDrivePath"
+                $env:PSMODULEPATH += "$([System.IO.Path]::PathSeparator)$resolvedTestDrivePath"
             }
         }
 
