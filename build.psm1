@@ -994,7 +994,12 @@ It consists of a cross-platform command-line shell and associated scripting lang
     $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
 
     # Change permissions for packaging
-    Start-NativeExecution { chmod -R go=u $Staging $GzipFile }
+    Start-NativeExecution {
+        find $Staging -type d | xargs chmod 755
+        find $Staging -type f | xargs chmod 644
+        chmod 644 $GzipFile
+        chmod 755 "$Staging/$Name" # only the executable should be executable
+    }
 
     $libunwind = switch ($Type) {
         "deb" { "libunwind8" }
@@ -1020,9 +1025,6 @@ It consists of a cross-platform command-line shell and associated scripting lang
         "--rpm-os", "linux",
         "--depends", $libunwind,
         "--depends", $libicu,
-        "--deb-build-depends", "dotnet",
-        "--deb-build-depends", "cmake",
-        "--deb-build-depends", "g++",
         "-t", $Type,
         "-s", "dir",
         "$Staging/=$Destination/",
