@@ -12,10 +12,25 @@ if (BUILD_ONECORE)
         ${STATIC_MT_CRT_LIB}
         ${STATIC_MT_VCRT_LIB}
         )
-     set(powershell_definitions 
-         _CONSOLE
-         CORECLR
-         )
+    set(powershell_definitions
+        _CONSOLE
+        CORECLR
+        )
+
+    #
+    # Configure lib directories so that CI picks up onecore.lib
+    #
+    SET (WindowsSdkDir $ENV{WindowsSdkDir})
+    SET (WindowsSDKVersion $ENV{WindowsSDKVersion})
+    SET (WindowsSDKLibBase "${WindowsSdkDir}/Lib/${WindowsSDKVersion}")
+    SET (OneCoreLibBase "$ENV{VCInstallDir}lib/onecore/amd64")
+
+    SET (LibraryPath)
+    list (APPEND LibraryPath "${OneCoreLibBase}")
+    list (APPEND LibraryPath "${WindowsSDKLibBase}ucrt/${WindowsSDKPlatform}")
+    list (APPEND LibraryPath "${WindowsSDKLibBase}um/${WindowsSDKPlatform}" )
+    link_directories(${LibraryPath})
+
 else ()
     # Settings to use when creating PowerShell.exe for Windows on full SKUs or downlevel platforms
     set(PWRSHEXE_WINDOWS_SOURCES 
