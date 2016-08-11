@@ -1034,7 +1034,7 @@ It consists of a cross-platform command-line shell and associated scripting lang
 
     # Build package
     try {
-        Start-NativeExecution { fpm $Arguments }
+        $Output = Start-NativeExecution { fpm $Arguments }
     } finally {
         if ($IsOSX) {
             # this is continuation of a fpm hack for a weird bug
@@ -1044,6 +1044,19 @@ It consists of a cross-platform command-line shell and associated scripting lang
             }
         }
     }
+
+    # Magic to get path output
+    $Package = Get-Item (Join-Path $PSScriptRoot (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
+
+    # Add runtime-identifier to package name.
+    # This information cannot be part of the package,
+    # but without a repository to host these,
+    # we need to differentiate distributions by the package's filename.
+    $PackageWithRuntime = "$($Package.BaseName)-$((New-PSOptions).Runtime)$($Package.Extension)"
+
+    Move-Item -Force $Package $PackageWithRuntime
+
+    return $PackageWithRuntime
 }
 
 
