@@ -106,7 +106,10 @@ add_compile_options(/Zc:wchar_t-) # C++ language conformance: wchar_t is NOT the
 add_compile_options(/Zc:forScope) # C++ language conformance: enforce Standard C++ for scoping rules
 add_compile_options(/GR-) # disable C++ RTTI
 add_compile_options(/FC) # use full pathnames in diagnostics
-add_compile_options(/MP) # Build with Multiple Processes (number of processes equal to the number of processors)
+if (BUILD_CORECLR)
+    # This option is not supported for "FullClr" because it triggers: error C2813: #import is not supported with /MP
+    add_compile_options(/MP) # Build with Multiple Processes (number of processes equal to the number of processors)
+endif (BUILD_CORECLR)
 add_compile_options(/GS) # Buffer Security Check
 add_compile_options(/Zm200) # Specify Precompiled Header Memory Allocation Limit of 150MB
 #add_compile_options(/wd4960 /wd4961 /wd4603 /wd4627 /wd4838 /wd4456 /wd4457 /wd4458 /wd4459 /wd4091 /we4640)

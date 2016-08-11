@@ -178,3 +178,6 @@ catch [Microsoft.PowerShell.Commands.WriteErrorException]
     Write-Error "No remoting session configuration matches the name $pluginEndpointName."
 }
 
+Write-Host "Restarting WinRM to ensure that the plugin configuration change takes effect. This is required in WinRM pre-Windows 10"
+Restart-Service winrm
+
