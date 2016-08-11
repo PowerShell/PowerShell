@@ -69,7 +69,8 @@
                 "define": [ "CORECLR" ]
             },
             "dependencies": {
-                "Microsoft.NETCore.App": "1.0.0"
+                "Microsoft.NETCore.App": "1.0.0",
+                "Microsoft.NETCore.Runtime.CoreCLR": "1.0.4"
             }
         }
     },
