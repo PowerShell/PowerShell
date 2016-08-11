@@ -179,21 +179,17 @@ namespace Microsoft.PowerShell
             try
             {
                 string profileDir;
-                if (Platform.IsWindows)
-                {
-                    profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) +
-                        @"\Microsoft\Windows\PowerShell";
+#if UNIX
+                profileDir = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
+#else
+                profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + 
+                    @"\Microsoft\Windows\PowerShell";
 
-                    if (!Directory.Exists(profileDir))
-                    {
-                        Directory.CreateDirectory(profileDir);
-                    }
-                }
-                else
+                if (!Directory.Exists(profileDir))
                 {
-                    profileDir = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
+                    Directory.CreateDirectory(profileDir);
                 }
-
+#endif
                 ClrFacade.SetProfileOptimizationRoot(profileDir);
             }
             catch
