@@ -45,7 +45,7 @@
                 }
             },
             "dependencies": {
-                "Newtonsoft.Json": "7.0.1",
+                "Newtonsoft.Json": "9.0.1",
                 "System.Xml.XDocument": "4.0.11",
                 "System.IO.MemoryMappedFiles": "4.0.0"
             }
