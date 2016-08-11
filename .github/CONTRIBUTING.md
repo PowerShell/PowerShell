@@ -29,22 +29,22 @@ Quick Start Checklist
 Contributing to Issues
 ----------------------
 
-* Review the [Issue Label Descriptions](../docs/dev-process/issue-label-descriptions.md).
+* Review [Issue Management][issue-management].
 * Check if the issue you are going to file already exists in our [GitHub issues][open-issue].
 * If you can't find your issue already,
   [open a new issue](https://github.com/PowerShell/PowerShell/issues/new),
   making sure to follow the directions as best you can.
-* If the issue is marked as [`Help Wanted`][help-wanted-issue],
+* If the issue is marked as [`help wanted`][help-wanted-issue],
   the PowerShell maintainers are looking for help with the issue.
 
 Contributing to Documentation
 -----------------------------
 
-### Contributing to documentation related to the PowerShell the product
+### Contributing to documentation related to PowerShell
 
 Please see the [Contributor Guide in `PowerShell/PowerShell-Docs`](https://github.com/PowerShell/PowerShell-Docs/blob/staging/CONTRIBUTING.md).
 
-### Contributing to documentation related to contributing or maintaining the PowerShell Project
+### Contributing to documentation related to maintaining or contributing to the PowerShell project
 
 * When writing Markdown documentation, use [semantic linefeeds][].
   In most cases, it means "once clause / idea per line".
@@ -86,9 +86,8 @@ Additional references:
 
 ![Github-PR-dev.png](Images/Github-PR-dev.png)
 
-* If your contribution in a way that changes the user or developer experience,
-  you are expected to document those changes.
-  See [Contributing to documentation related to the PowerShell the product](#contributing-to-documentation-related-to-the-powershell-the-product).
+* If you're contributing in a way that changes the user or developer experience, you are expected to document those changes.
+See [Contributing to documentation related to PowerShell](#contributing-to-documentation-related-to-powershell).
 
 * Add a meaningful title of the PR describing what change you want to check in.
   Don't simply put: "Fixes issue #5".
@@ -251,7 +250,7 @@ Once you sign a CLA, all your existing and future pull requests will be labeled 
 
 [testing-guidelines]: ../docs/testing-guidelines/testing-guidelines.md
 [running-tests-outside-of-ci]: ../docs/testing-guidelines/testing-guidelines.md#running-tests-outside-of-ci
-[issue-triage]: ../docs/dev-process/issue-management-process.md
+[issue-management]: ../docs/maintainers/issue-management.md
 [governance]: ../docs/community/governance.md
 [using-prs]: https://help.github.com/articles/using-pull-requests/
 [fork-a-repo]: https://help.github.com/articles/fork-a-repo/
