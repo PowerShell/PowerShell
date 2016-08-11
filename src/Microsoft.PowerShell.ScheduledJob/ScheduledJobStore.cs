@@ -424,8 +424,12 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <returns>Directory Path</returns>
         public static string GetJobDefinitionLocation()
         {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                                ScheduledJobsPath);
+#if UNIX
+            return Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "ScheduledJobs"));
+#else
+
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ScheduledJobsPath);
+#endif
         }
 
         public static void CreateDirectoryIfNotExists()
@@ -433,9 +437,9 @@ namespace Microsoft.PowerShell.ScheduledJob
             GetDirectoryPath();
         }
 
-        #endregion
+#endregion
 
-        #region Private Methods
+#region Private Methods
 
         /// <summary>
         /// Gets the directory path for Scheduled Jobs.  Will create the directory if
@@ -444,8 +448,12 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <returns>Directory Path</returns>
         private static string GetDirectoryPath()
         {
-            string pathName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                                           ScheduledJobsPath);
+            string pathName;
+#if UNIX
+            pathName = Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "ScheduledJobs"));
+#else
+            pathName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ScheduledJobsPath);
+#endif
 
             if (!Directory.Exists(pathName))
             {
@@ -499,9 +507,14 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <returns>Directory Path</returns>
         private static string GetJobDefinitionPath(string definitionName)
         {
+#if UNIX
+            return Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "ScheduledJobs", definitionName);
+#else
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                                ScheduledJobsPath,
-                                definitionName);
+                                                            ScheduledJobsPath,
+                                                            definitionName);
+#endif
+
         }
 
         /// <summary>
@@ -564,7 +577,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <param name="runItem">Result type</param>
         /// <param name="runStart">Run date</param>
         /// <returns></returns>
-        private static string GetRunFilePathNameFromPath(
+        private static string GetRunFilePathNameFromPath( 
             string outputPath,
             JobRunItem runItem,
             DateTime runStart)
@@ -668,6 +681,6 @@ namespace Microsoft.PowerShell.ScheduledJob
             return success;
         }
 
-        #endregion
+#endregion
     }
 }
