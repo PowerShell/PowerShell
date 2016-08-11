@@ -121,6 +121,10 @@
     <value>Windows PowerShell 
 Copyright (C) 2016 Microsoft Corporation. All rights reserved.</value>
   </data>
+  <data name="ShellBannerNonWindowsPowerShell" xml:space="preserve">
+    <value>PowerShell 
+Copyright (C) 2016 Microsoft Corporation. All rights reserved.</value>
+  </data>
   <data name="ShellHelp" xml:space="preserve">
     <value>PowerShell[.exe] [-PSConsoleFile &lt;file&gt; | -Version &lt;version&gt;]
     [-NoLogo] [-NoExit] [-Sta] [-Mta] [-NoProfile] [-NonInteractive]
