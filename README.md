@@ -18,21 +18,24 @@ Get PowerShell
 
 You can download and install a PowerShell package for any of the following platforms.
 
-| Platform     | Releases           | How to Install                 |
-|--------------|--------------------|--------------------------------|
-| Windows      | [.msi][rl-windows] | [Instructions][in-windows] |
-| Ubuntu 14.04 | [.deb][rl-ubuntu]  | [Instructions][in-ubuntu]  |
-| CentOS 7     | [.rpm][rl-centos]  | [Instructions][in-centos]  |
-| OS X 10.11   | [.pkg][rl-osx]     | [Instructions][in-osx]     |
+| Platform     | Downloads           | How to Install              |
+|--------------|---------------------|-----------------------------|
+| Windows      | [.msi][rl-windows]  | [Instructions][in-windows]  |
+| Ubuntu 14.04 | [.deb][rl-ubuntu14] | [Instructions][in-ubuntu14] |
+| Ubuntu 16.04 | [.deb][rl-ubuntu16] | [Instructions][in-ubuntu16] |
+| CentOS 7     | [.rpm][rl-centos]   | [Instructions][in-centos]   |
+| OS X 10.11   | [.pkg][rl-osx]      | [Instructions][in-osx]      |
 
-[rl-windows]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.7/PowerShell_6.0.0.7.msi
-[rl-ubuntu]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.7/powershell_6.0.0-alpha.7-1_amd64.deb
-[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.7/powershell-6.0.0_alpha.7-1.x86_64.rpm
-[rl-osx]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.7/powershell-6.0.0-alpha.7.pkg
+[rl-windows]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.8/PowerShell_6.0.0.8.msi
+[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.8/powershell_6.0.0-alpha.8-1_amd64-ubuntu.14.04-x64.deb
+[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.8/powershell_6.0.0-alpha.8-1_amd64-ubuntu.16.04-x64.deb
+[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.8/powershell-6.0.0_alpha.8-1.x86_64-centos.7-x64.rpm
+[rl-osx]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.8/powershell-6.0.0-alpha.8-osx.10.11-x64.pkg
 
 [installation]: docs/installation
 [in-windows]: docs/installation/windows.md#msi
-[in-ubuntu]: docs/installation/linux.md#ubuntu-1404
+[in-ubuntu14]: docs/installation/linux.md#ubuntu-1404
+[in-ubuntu16]: docs/installation/linux.md#ubuntu-1604
 [in-centos]: docs/installation/linux.md#centos-7
 [in-osx]: docs/installation/linux.md#os-x-1011
 
