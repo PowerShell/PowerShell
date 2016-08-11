@@ -9,7 +9,7 @@ Environment
 ===========
 
 In addition to the dependencies specified in the .NET Core
-instructions, we need:
+instructions, you'll need to:
 
 Install the Visual C++ Compiler via Visual Studio 2015.
 -------------------------------------------------------
@@ -65,16 +65,15 @@ The build contains the following steps:
 - building managed DLLs: `dotnet publish --runtime net451`
 
 
-What I can do with the produced binaries?
+What can you do with the produced binaries?
 =========================================
 
-Creating a deployable package out of them is **not a supported scenario**.
+**Important**: "We don’t support production deployments of these binaries on any platform". For PowerShell .NET (aka: FullCLR PowerShell) our recommendation is to continue using the PowerShell .NET version already shipping in Windows Client and Windows Server.
 
-The reason why we are building these binaries is
-we have components (i.e. workflows) that are not currently available in the CoreCLR version.
-We want to make sure that CoreCLR PowerShell changes don't introduce regressions in FullCLR PowerShell.
+The primary reason to build the PowerShell FullCLR binaries is to test backward compatibility, and interoperability between .NET and CoreCLR.  It is also important to mention some features like PowerShell Workflows are not currently available in the CoreCLR version. So we want to provide the ability for the Community to test CoreCLR PowerShell code changes while validating that these changes don't introduce regressions in .NET PowerShell (aka: as FullCLR PowerShell)
 
-It's possible to run (for test purposes) the dev version of these binaries as follows.
+To run (for test purposes) the dev version of these binaries please follow the following steps:
+
 
 Running Dev version of FullCLR PowerShell
 -----------------------------------------
