@@ -2,7 +2,7 @@ Describe "Module Path Basic Tests" -tags "CI" {
     
     It "validate module path on windows" -Skip:(!$IsWindows) {
         
-        $paths = $env:PSModulePath -split [System.IO.Path]::PathSeparator
+        $paths = $env:PSMODULEPATH -split [System.IO.Path]::PathSeparator
         $paths.Count | Should Be 3
 
         $expectedUserPath = Join-Path -Path $HOME -ChildPath 'Documents\PowerShell\Modules'
@@ -17,7 +17,7 @@ Describe "Module Path Basic Tests" -tags "CI" {
 
     It "validate module path on unix" -Skip:($IsWindows) {
     
-        $paths = $env:PSModulePath -split [System.IO.Path]::PathSeparator
+        $paths = $env:PSMODULEPATH -split [System.IO.Path]::PathSeparator
         $paths.Count | Should Be 3
 
         $expectedUserPath = [System.Management.Automation.Platform]::SelectProductNameForDirectory("USER_MODULES")
