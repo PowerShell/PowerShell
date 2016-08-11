@@ -69,7 +69,7 @@ Downloading the Source Code
 
 The PowerShell repository has a number of other repositories embedded as submodules.
 
-To make things easy, we can just clone recursively:
+To make things easy, you can just clone recursively:
 
 ```sh
 git clone --recursive https://github.com/PowerShell/PowerShell.git
