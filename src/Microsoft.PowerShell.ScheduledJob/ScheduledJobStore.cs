@@ -577,7 +577,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <param name="runItem">Result type</param>
         /// <param name="runStart">Run date</param>
         /// <returns></returns>
-        private static string GetRunFilePathNameFromPath(
+        private static string GetRunFilePathNameFromPath( 
             string outputPath,
             JobRunItem runItem,
             DateTime runStart)
