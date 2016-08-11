@@ -18,12 +18,16 @@ endif ()
 #
 # Normalize the platform name
 #
-# TODO: Only x64 and x86 are supported right now. This needs to be expanded to arm as well
+# TODO: Only x64 and x86 are supported right now. This needs to be expanded to arm and arm64 to match CoreCLR
 #
+SET(BUILD_ARCH_ARM 0)
+SET(BUILD_ARCH_ARM64 0)
 if (WindowsSDKPlatform STREQUAL "x64" OR WindowsSDKPlatform STREQUAL "X64" OR WindowsSDKPlatform STREQUAL "amd64" OR WindowsSDKPlatform STREQUAL "AMD64")
     SET(WindowsSDKPlatform "x64")
+    SET(BUILD_ARCH_AMD64 1)
 elseif (WindowsSDKPlatform STREQUAL "x86" OR WindowsSDKPlatform STREQUAL "X86")
     SET(WindowsSDKPlatform "x86")
+    SET(BUILD_ARCH_X86 1)
 else()
     message(FATAL_ERROR "Unsupported WindowsSDKPlatform ${WindowsSDKPlatform}")
 endif ()
@@ -60,16 +64,10 @@ SET (WIN_VERSION_LONGHORN      0x0600)
 SET (WIN_VERSION_WS03          0x0502)
 SET (WIN_VERSION_WINXP         0x0501)
 
-#include(dsc_defs.cmake)
-if (BUILD_ONECORE)
-    include(nano_defs.cmake)
-else ()
-    include(coreclr_defs.cmake)
-endif (BUILD_ONECORE)
+include(coreclr_defs.cmake)
 
 # Default of BUILD_ONECORE should be ON once it is supported 
 option(BUILD_ONECORE "Compile the OneCore version of the binaries" ON)
-option(BUILD_DOWNLEVEL "Compile the downlevel version of the binaries" OFF)
 
 # Build the common library that powershell.exe and pwrshplugin.dll depend on
 add_subdirectory(nativemsh/pwrshcommon)

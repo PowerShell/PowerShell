@@ -13,7 +13,15 @@
 
 param
 (
-    [Switch]$Verbose
+    [parameter(ParameterSetName = "ByPath")]
+    [ValidateNotNullOrEmpty()]
+    [string]
+    $PowerShellHome,
+
+    [parameter(ParameterSetName = "ByPath")]
+    [ValidateNotNullOrEmpty()]
+    [string]
+    $PowerShellVersion
 )
 
 function Register-WinRmPlugin
@@ -74,13 +82,18 @@ function Generate-PluginConfigFile
         [string]
         [parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        $pluginFile
+        $pluginFile,
+
+        [string]
+        [parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        $powershellHomeDir
     )
 
     # This always overwrites the file with a new version of it if the
     # script is invoked multiple times.
-    Set-Content -Path $pluginFile -Value "PSHOMEDIR=$PSHOME"
-    Add-Content -Path $pluginFile -Value "CORECLRDIR=$PSHOME"
+    Set-Content -Path $pluginFile -Value "PSHOMEDIR=$powershellHomeDir"
+    Add-Content -Path $pluginFile -Value "CORECLRDIR=$powershellHomeDir"
 
     Write-Verbose "Created Plugin Config File: $pluginFile"
 }
@@ -103,7 +116,9 @@ if ($Verbose)
     $VerbosePreference = "Continue"
 }
 
-$powershellVersion = $PSVersionTable.PSVersion
+$powershellVersion = $PowershellVersion
+$powershellHome = $PowerShellHome
+
 $pluginBasePath = Join-Path "$env:WINDIR\System32\PowerShell" $powerShellVersion
 
 $resolvedPluginAbsolutePath = ""
@@ -122,10 +137,10 @@ $pluginRawPath = Join-Path $resolvedPluginAbsolutePath "pwrshplugin.dll"
 $fixedPluginPath = $pluginRawPath -replace '\\','\\'
 
 # This is forced to ensure the the file is placed correctly
-Copy-Item $PSHOME\pwrshplugin.dll $resolvedPluginAbsolutePath -Force -Verbose
+Copy-Item $powershellHome\pwrshplugin.dll $resolvedPluginAbsolutePath -Force -Verbose
 
 $pluginFile = Join-Path $resolvedPluginAbsolutePath "RemotePowerShellConfig.txt"
-Generate-PluginConfigFile $pluginFile
+Generate-PluginConfigFile $pluginFile $powershellHome
 
 $pluginEndpointName = "powershell.$powershellVersion"
 
@@ -162,4 +177,7 @@ catch [Microsoft.PowerShell.Commands.WriteErrorException]
 {
     Write-Error "No remoting session configuration matches the name $pluginEndpointName."
 }
+
+Write-Host "Restarting WinRM to ensure that the plugin configuration change takes effect. This is required in WinRM pre-Windows 10"
+Restart-Service winrm
 
