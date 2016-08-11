@@ -35,7 +35,72 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             }
         }
     }
+    
+    AfterEach {
+        $Error.Clear()
+    }
 
+    Context "ShellInterop" {
+        It "Verify Parsing Error Output Format Single Shell should throw exception" {
+            try 
+            {
+                & $powershell -outp blah -comm { $input }
+                Throw "Test execution should not reach here!"
+            }
+            catch
+            {
+                $_.FullyQualifiedErrorId | Should Be "IncorrectValueForFormatParameter"
+            }
+        }
+        
+        It "Verify Simple Interop Scenario Child Single Shell" {
+            $a = 1,2,3
+            $val  = $a | & $powershell  -noprofile -command { $input }
+            $val.Count | Should Be 3
+            $val[0] | Should Be 1
+            $val[1] | Should Be 2
+            $val[2] | Should Be 3
+        }
+        
+        It "Verify Validate Dollar Error Populated should throw exception" {
+            $origEA = $ErrorActionPreference
+            $ErrorActionPreference = "Stop"
+            try
+            {
+                $a = 1,2,3
+                $a | & $powershell -noprofile -command { wgwg-wrwrhqwrhrh35h3h3}
+                Throw "Test execution should not reach here!"
+            }
+            catch
+            {
+                $_.ToString() | Should Match "wgwg-wrwrhqwrhrh35h3h3"
+                $_.FullyQualifiedErrorId | Should Be "CommandNotFoundException"
+            }
+            finally
+            {
+                $ErrorActionPreference = $origEA
+            }
+        }
+        
+        It "Verify Validate Output Format As Text Explicitly Child Single Shell should works" {
+            {
+                $a="blahblah"
+                $a | & $powershell -noprofile -out text -com { $input }
+            } | Should Not Throw
+        }
+        
+        It "Verify Parsing Error Input Format Single Shell should throw exception" {
+            try 
+            {
+                & $powershell -input blah -comm { $input }
+                Throw "Test execution should not reach here!"
+            }
+            catch
+            {
+                $_.FullyQualifiedErrorId | Should Be "IncorrectValueForFormatParameter"
+            }
+        }
+    }
     Context "CommandLine" {
         It "simple -args" {
             & $powershell -noprofile { $args[0] } -args "hello world" | Should Be "hello world"
