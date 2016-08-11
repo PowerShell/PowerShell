@@ -1,6 +1,7 @@
 ﻿<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
-  <?define Win7SP1OrLater = "(VersionNT = 601 AND ServicePackLevel >= 1) OR VersionNT > 601" ?>
+  <!-- MSI installs on Win8 and above -->
+  <?define MinOSVersionSupported = "VersionNT > 601" ?>
 
   <!-- The URL for add/remove programs -->
   <!-- TBD:Point to the actual release -->
@@ -28,7 +29,7 @@
     <Property Id="ARPHELPLINK" Value="$(var.InfoURL)" />
     
     <!-- Prerequisites -->
-    <Condition Message="Supported only on Win7SP1 or later"><![CDATA[ Installed OR $(var.Win7SP1OrLater) ]]></Condition>
+    <Condition Message="Supported only on Win8 and above"><![CDATA[ Installed OR $(var.MinOSVersionSupported) ]]></Condition>
 
     <!-- Information About When Older Versions Are Trying To Be Installed-->
     <MajorUpgrade DowngradeErrorMessage="A newer version of PowerShell is already installed." />
