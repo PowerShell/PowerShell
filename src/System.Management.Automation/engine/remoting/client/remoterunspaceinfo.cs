@@ -263,8 +263,8 @@ namespace System.Management.Automation.Runspaces
             }
             else
             {
-                name = AutoGenerateRunspaceName(sessionid);
-                remoteRunspace.PSSessionName = name;
+                Name = AutoGenerateRunspaceName(Id);
+                remoteRunspace.PSSessionName = Name;
             }
 
             // WSMan session
@@ -302,8 +302,8 @@ namespace System.Management.Automation.Runspaces
             SSHConnectionInfo sshConnectionInfo = remoteRunspace.ConnectionInfo as SSHConnectionInfo;
             if (sshConnectionInfo != null)
             {
-                computerType = TargetMachineType.RemoteMachine;
-                shell = "DefaultShell";
+                ComputerType = TargetMachineType.RemoteMachine;
+                ConfigurationName = "DefaultShell";
                 return;
             }
 
@@ -323,24 +323,24 @@ namespace System.Management.Automation.Runspaces
         {
             string sessionIdStr = id.ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
 
-            if (this.remoteRunspace.ConnectionInfo is WSManConnectionInfo)
+            if (_remoteRunspace.ConnectionInfo is WSManConnectionInfo)
             {
                 return "WinRM" + sessionIdStr;
             }
-            else if (this.remoteRunspace.ConnectionInfo is SSHConnectionInfo)
+            else if (_remoteRunspace.ConnectionInfo is SSHConnectionInfo)
             {
                 return "SSH" + sessionIdStr;
             }
-            else if ((this.remoteRunspace.ConnectionInfo is NamedPipeConnectionInfo) ||
-                     (this.remoteRunspace.ConnectionInfo is ContainerConnectionInfo))
+            else if ((_remoteRunspace.ConnectionInfo is NamedPipeConnectionInfo) ||
+                     (_remoteRunspace.ConnectionInfo is ContainerConnectionInfo))
             {
                 return "NamedPipe" + sessionIdStr;
             }
-            else if (this.remoteRunspace.ConnectionInfo is NewProcessConnectionInfo)
+            else if (_remoteRunspace.ConnectionInfo is NewProcessConnectionInfo)
             {
                 return "Process" + sessionIdStr;
             }
-            else if (this.remoteRunspace.ConnectionInfo is VMConnectionInfo)
+            else if (_remoteRunspace.ConnectionInfo is VMConnectionInfo)
             {
                 return "Socket" + sessionIdStr;
             }

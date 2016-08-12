@@ -423,8 +423,8 @@ namespace System.Management.Automation.Remoting
 
             lock (_syncObject)
             {
-                writer.WriteLine(data);
-                writer.Flush();
+                _writer.WriteLine(data);
+                _writer.Flush();
             }
         }
 

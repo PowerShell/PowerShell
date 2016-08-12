@@ -986,9 +986,9 @@ namespace Microsoft.PowerShell.Commands
                             case InvokeCommandCommand.FilePathSSHHostParameterSet:
                                 {
                                     var job = new PSRemotingJob(new string[] { this.HostName }, Operations,
-                                        ScriptBlock.ToString(), ThrottleLimit, name);
+                                        ScriptBlock.ToString(), ThrottleLimit, _name);
                                     job.PSJobTypeName = RemoteJobType;
-                                    job.HideComputerName = hideComputerName;
+                                    job.HideComputerName = _hideComputerName;
                                     this.JobRepository.Add(job);
                                     WriteObject(job);
                                 }

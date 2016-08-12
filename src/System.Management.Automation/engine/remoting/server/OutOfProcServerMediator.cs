@@ -493,7 +493,7 @@ namespace System.Management.Automation.Remoting.Server
     {
         #region Private Data
 
-        private static SSHProcessMediator SingletonInstance;
+        private static SSHProcessMediator s_singletonInstance;
 
         #endregion
 
@@ -536,13 +536,13 @@ namespace System.Management.Automation.Remoting.Server
         {
             lock (SyncObject)
             {
-                if (SingletonInstance != null)
+                if (s_singletonInstance != null)
                 {
                     Dbg.Assert(false, "Run should not be called multiple times");
                     return;
                 }
 
-                SingletonInstance = new SSHProcessMediator();
+                s_singletonInstance = new SSHProcessMediator();
             }
 
             PSRemotingCryptoHelperServer cryptoHelper;
@@ -552,7 +552,7 @@ namespace System.Management.Automation.Remoting.Server
             cryptoHelper = null;
 #endif
 
-            SingletonInstance.Start(initialCommand, cryptoHelper);
+            s_singletonInstance.Start(initialCommand, cryptoHelper);
         }
 
         #endregion
