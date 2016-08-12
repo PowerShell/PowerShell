@@ -10,7 +10,6 @@
 #        plugin.
 #
 #####################################################################################################
-
 param
 (
     [parameter(ParameterSetName = "ByPath")]
@@ -21,7 +20,7 @@ param
     [parameter(ParameterSetName = "ByPath")]
     [ValidateNotNullOrEmpty()]
     [string]
-    $PowerShellVersion
+    $PowerShellVersion = "6.0.0-alpha.8"
 )
 
 function Register-WinRmPlugin
@@ -87,13 +86,13 @@ function Generate-PluginConfigFile
         [string]
         [parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        $powershellHomeDir
+        $targetPsHomeDir
     )
 
     # This always overwrites the file with a new version of it if the
     # script is invoked multiple times.
-    Set-Content -Path $pluginFile -Value "PSHOMEDIR=$powershellHomeDir"
-    Add-Content -Path $pluginFile -Value "CORECLRDIR=$powershellHomeDir"
+    Set-Content -Path $pluginFile -Value "PSHOMEDIR=$targetPsHomeDir"
+    Add-Content -Path $pluginFile -Value "CORECLRDIR=$targetPsHomeDir"
 
     Write-Verbose "Created Plugin Config File: $pluginFile"
 }
@@ -110,14 +109,38 @@ if (! ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity
     Break
 }
 
-$originalVerbosePreference = $VerbosePreference
-if ($Verbose)
+#
+# If the parameters were specified, it means that the script will be registering
+# an instance of PowerShell from another instance of PowerShell.
+#
+# If no parameters are specified, it means that this instance of PowerShell is
+# registering itself.
+#
+if ($PsCmdlet.ParameterSetName -eq "ByPath")
 {
-    $VerbosePreference = "Continue"
+    $targetPsHome = $PowerShellHome
+    $targetPsVersion = $PowershellVersion
 }
+else
+{
+    $targetPsHome = $PSHOME
 
-$powershellVersion = $PowershellVersion
-$powershellHome = $PowerShellHome
+    # Parse the version string from the version file so that users do not have
+    # to enter it manually.
+    $targetPsVersionFilePath = Join-Path $targetPsHome "Powershell.Version"
+    $versionString = (Get-Content $targetPsVersionFilePath).Trim()
+    if($versionString.StartsWith("v"))
+    {
+        $versionString = $versionString.substring(1)
+    }
+    $index = $versionString.LastIndexOf(".")
+    $version = $versionString.Substring(0,$index)
+    $revision = $versionString.Substring($index).split("-")
+    $version= $version + $revision[0]
+    $targetPsVersion = $version
+
+    Write-Verbose "Using PowerShell Version: $targetPsVersion" -Verbose
+}
 
 $pluginBasePath = Join-Path "$env:WINDIR\System32\PowerShell" $powerShellVersion
 
@@ -137,21 +160,15 @@ $pluginRawPath = Join-Path $resolvedPluginAbsolutePath "pwrshplugin.dll"
 $fixedPluginPath = $pluginRawPath -replace '\\','\\'
 
 # This is forced to ensure the the file is placed correctly
-Copy-Item $powershellHome\pwrshplugin.dll $resolvedPluginAbsolutePath -Force -Verbose
+Copy-Item $targetPsHome\pwrshplugin.dll $resolvedPluginAbsolutePath -Force -Verbose
 
 $pluginFile = Join-Path $resolvedPluginAbsolutePath "RemotePowerShellConfig.txt"
-Generate-PluginConfigFile $pluginFile $powershellHome
+Generate-PluginConfigFile $pluginFile $targetPsHome
 
-$pluginEndpointName = "powershell.$powershellVersion"
+$pluginEndpointName = "powershell.$targetPsVersion"
 
 # Register the plugin
 Register-WinRmPlugin $fixedPluginPath $pluginEndpointName
-
-# Reset verbosity
-if ($Verbose)
-{
-    $VerbosePreference = $originalVerbosePreference
-}
 
 ####################################################################
 #                                                                  #
@@ -171,6 +188,7 @@ if (! (Test-Path $resolvedPluginAbsolutePath\pwrshplugin.dll))
 
 try
 {
+    Write-Host "`nGet-PSSessionConfiguration $pluginEndpointName" -foregroundcolor "green"
     Get-PSSessionConfiguration $pluginEndpointName
 }
 catch [Microsoft.PowerShell.Commands.WriteErrorException]
@@ -178,6 +196,6 @@ catch [Microsoft.PowerShell.Commands.WriteErrorException]
     Write-Error "No remoting session configuration matches the name $pluginEndpointName."
 }
 
-Write-Host "Restarting WinRM to ensure that the plugin configuration change takes effect. This is required in WinRM pre-Windows 10"
+Write-Host "Restarting WinRM to ensure that the plugin configuration change takes effect.`nThis is required for WinRM running on Windows SKUs prior to Windows 10." -foregroundcolor "green"
 Restart-Service winrm
 
