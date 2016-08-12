@@ -106,6 +106,13 @@ PowerShell is licensed under the [MIT license][].
 
 [MIT license]: LICENSE.txt
 
+Governance
+-------------------
+
+Governance policy for PowerShell project is described [here][].  
+
+[here]: https://github.com/PowerShell/PowerShell/blob/master/docs/community/governance.md
+
 Code of Conduct
 ---------------
 
