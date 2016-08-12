@@ -707,7 +707,16 @@ namespace System.Management.Automation
             return result.ToString();
         }
         
-        private static bool NeedToClearProcessModulePath(string currentProcessModulePath, string personalModulePath, string programFilesModulePath, bool runningOps)
+        /// <summary>
+        /// Check if the current powershell is likely running in following scenarios:
+        ///  - sxs ps started on windows [machine-wide env:psmodulepath will influence]
+        ///  - sxs ps started from full ps
+        ///  - sxs ps started from inbox nano/iot ps
+        ///  - full ps started from sxs ps
+        ///  - inbox nano/iot ps started from sxs ps
+        /// If it's likely one of them, then we need to clear the current process module path.
+        /// </summary>
+        private static bool NeedToClearProcessModulePath(string currentProcessModulePath, string personalModulePath, string programFilesModulePath, bool runningSxS)
         {
 #if UNIX
             return false;
@@ -715,15 +724,19 @@ namespace System.Management.Automation
             Dbg.Assert(!string.IsNullOrEmpty(personalModulePath), "caller makes sure it's not null or empty");
             Dbg.Assert(!string.IsNullOrEmpty(programFilesModulePath), "caller makes sure it's not null or empty");
 
-            const string winOpsModuleDirectory = @"PowerShell\Modules";
+            const string winSxSModuleDirectory = @"PowerShell\Modules";
             const string winLegacyModuleDirectory = @"WindowsPowerShell\Modules";
 
-            if (runningOps)
+            if (runningSxS)
             {
+                // The machine-wide and user-wide environment variables are only meaningful for full ps,
+                // so if the current process module path contains any of them, it's likely that the sxs
+                // ps was started directly on windows, or from full ps. The same goes for the legacy personal
+                // and shared module paths.
                 string hklmModulePath = GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.Machine);
                 string hkcuModulePath = GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.User);
-                string legacyPersonalModulePath = personalModulePath.Replace(winOpsModuleDirectory, winLegacyModuleDirectory);
-                string legacyProgramFilesModulePath = programFilesModulePath.Replace(winOpsModuleDirectory, winLegacyModuleDirectory);
+                string legacyPersonalModulePath = personalModulePath.Replace(winSxSModuleDirectory, winLegacyModuleDirectory);
+                string legacyProgramFilesModulePath = programFilesModulePath.Replace(winSxSModuleDirectory, winLegacyModuleDirectory);
 
                 return (!string.IsNullOrEmpty(hklmModulePath) && currentProcessModulePath.IndexOf(hklmModulePath, StringComparison.OrdinalIgnoreCase) != -1) ||
                        (!string.IsNullOrEmpty(hkcuModulePath) && currentProcessModulePath.IndexOf(hkcuModulePath, StringComparison.OrdinalIgnoreCase) != -1) ||
@@ -731,15 +744,22 @@ namespace System.Management.Automation
                        currentProcessModulePath.IndexOf(legacyProgramFilesModulePath, StringComparison.OrdinalIgnoreCase) != -1;
             }
 
-            string opsPersonalModulePath = personalModulePath.Replace(winLegacyModuleDirectory, winOpsModuleDirectory);
-            string opsProgramFilesModulePath = programFilesModulePath.Replace(winLegacyModuleDirectory, winOpsModuleDirectory);
+            // The sxs personal and shared module paths are only meaningful for sxs ps, so if they appear
+            // in the current process module path, it's likely the running ps was started from a sxs ps.
+            string sxsPersonalModulePath = personalModulePath.Replace(winLegacyModuleDirectory, winSxSModuleDirectory);
+            string sxsProgramFilesModulePath = programFilesModulePath.Replace(winLegacyModuleDirectory, winSxSModuleDirectory);
 
-            return currentProcessModulePath.IndexOf(opsPersonalModulePath, StringComparison.OrdinalIgnoreCase) != -1 ||
-                   currentProcessModulePath.IndexOf(opsProgramFilesModulePath, StringComparison.OrdinalIgnoreCase) != -1;
+            return currentProcessModulePath.IndexOf(sxsPersonalModulePath, StringComparison.OrdinalIgnoreCase) != -1 ||
+                   currentProcessModulePath.IndexOf(sxsProgramFilesModulePath, StringComparison.OrdinalIgnoreCase) != -1;
 #endif
         }
 
-        private static string RemoveOpsPsHomeModulePath(string currentProcessModulePath)
+        /// <summary>
+        /// When sxs ps instance B got started from sxs ps instance A, A's pshome module path might
+        /// show up in current process module path. It doesn't make sense for B to load modules from
+        /// A's pshome module path, so remove it in such case.
+        /// </summary>
+        private static string RemoveSxSPsHomeModulePath(string currentProcessModulePath)
         {
 #if UNIX
             const string powershellExeName = "powershell";
@@ -787,19 +807,19 @@ namespace System.Management.Automation
             string psHomeModulePath = GetSystemwideModulePath(); // $PSHome\Modules location
 
 #if CORECLR
-            bool runningOps = Platform.IsInbox ? false : true;
+            bool runningSxS = Platform.IsInbox ? false : true;
 #else
-            bool runningOps = false;
+            bool runningSxS = false;
 #endif
             if (!string.IsNullOrEmpty(currentProcessModulePath) && 
-                NeedToClearProcessModulePath(currentProcessModulePath, personalModulePath, programFilesModulePath, runningOps))
+                NeedToClearProcessModulePath(currentProcessModulePath, personalModulePath, programFilesModulePath, runningSxS))
             {
                 // Clear the current process module path in the following cases
-                //  - start ops on windows [machine-wide env:psmodulepath will influence]
-                //  - start ops from full ps
-                //  - start ops from inbox nano/iot ps
-                //  - start full ps from ops
-                //  - start inbox nano/iot ps from ops
+                //  - start sxs ps on windows [machine-wide env:psmodulepath will influence]
+                //  - start sxs ps from full ps
+                //  - start sxs ps from inbox nano/iot ps
+                //  - start full ps from sxs ps
+                //  - start inbox nano/iot ps from sxs ps
                 currentProcessModulePath = null;
             }
 
@@ -828,10 +848,10 @@ namespace System.Management.Automation
             }
             // EVT.Process exists
             // Now handle the case where the environment variable is already set.
-            else if (runningOps) // The running powershell is an OPS instance
+            else if (runningSxS) // The running powershell is an SxS PS instance
             {
-                // When OPS instance A starts OPS instance B, A's PSHome module path might be inherited by B. We need to remove that path from B
-                currentProcessModulePath = RemoveOpsPsHomeModulePath(currentProcessModulePath);
+                // When SxS PS instance A starts SxS PS instance B, A's PSHome module path might be inherited by B. We need to remove that path from B
+                currentProcessModulePath = RemoveSxSPsHomeModulePath(currentProcessModulePath);
 
                 string personalModulePathToUse = string.IsNullOrEmpty(hkcuUserModulePath) ? personalModulePath : hkcuUserModulePath;
                 string systemModulePathToUse = string.IsNullOrEmpty(hklmMachineModulePath) ? psHomeModulePath : hklmMachineModulePath;

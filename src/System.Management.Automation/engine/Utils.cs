@@ -600,11 +600,7 @@ namespace System.Management.Automation
         /// The subdirectory of module paths
         /// e.g. ~\Documents\WindowsPowerShell\Modules and %ProgramFiles%\WindowsPowerShell\Modules
         /// </summary>
-#if CORECLR
-        internal static string ModuleDirectory = Platform.IsInbox ? @"WindowsPowerShell\Modules" : Path.Combine("PowerShell", "Modules");
-#else
-        internal const string ModuleDirectory = @"WindowsPowerShell\Modules";
-#endif
+        internal static string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
         internal static string GetRegistryConfigurationPrefix()
         {
