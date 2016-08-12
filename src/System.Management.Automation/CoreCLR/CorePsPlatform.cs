@@ -22,11 +22,11 @@ namespace System.Management.Automation
         {
             get
             {
-                #if CORECLR
+#if CORECLR
                 return RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-                #else
+#else
                 return false;
-                #endif
+#endif
             }
         }
 
@@ -37,11 +37,11 @@ namespace System.Management.Automation
         {
             get
             {
-                #if CORECLR
+#if CORECLR
                 return RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-                #else
+#else
                 return false;
-                #endif
+#endif
             }
         }
 
@@ -52,11 +52,11 @@ namespace System.Management.Automation
         {
             get
             {
-                #if CORECLR
+#if CORECLR
                 return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-                #else
+#else
                 return true;
-                #endif
+#endif
             }
         }
 
@@ -67,11 +67,11 @@ namespace System.Management.Automation
         {
             get
             {
-                #if CORECLR
+#if CORECLR
                 return true;
-                #else
+#else
                 return false;
-                #endif
+#endif
             }
         }
         

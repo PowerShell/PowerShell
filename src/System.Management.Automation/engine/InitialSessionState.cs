@@ -3149,11 +3149,11 @@ namespace System.Management.Automation.Runspaces
             var userName = (!string.IsNullOrEmpty(this.UserDriveUserName)) ?
                 this.UserDriveUserName :
                 // domain\user on Windows, just user on Unix
-                #if UNIX
+#if UNIX
                 Platform.Unix.UserName
-                #else
+#else
                 System.Security.Principal.WindowsIdentity.GetCurrent().Name
-                #endif
+#endif
                 ;
 
             // Ensure that user name contains no invalid path characters.
@@ -5362,14 +5362,14 @@ if($paths) {
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("more", DefaultMoreFunctionText, isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("help", GetHelpPagingFunctionText(), isProductCode: true),
             // Porting note: we remove mkdir on Linux because it is a conflict
-            #if !UNIX
+#if !UNIX
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("mkdir", GetMkdirFunctionText(), isProductCode: true),
-            #endif
+#endif
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Get-Verb", GetGetVerbText(), isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("oss", GetOSTFunctionText(), isProductCode: true),
 
             // Porting note: we remove the drive functions from Linux because they make no sense
-            #if !UNIX
+#if !UNIX
             // Default drives
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("A:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("B:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
@@ -5397,7 +5397,7 @@ if($paths) {
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("X:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Y:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Z:", DefaultSetDriveFunctionText, SetDriveScriptBlock),
-            #endif
+#endif
 
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd..", "Set-Location ..", isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd\\", "Set-Location \\", isProductCode: true),
