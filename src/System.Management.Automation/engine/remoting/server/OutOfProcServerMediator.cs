@@ -625,6 +625,7 @@ namespace System.Management.Automation.Remoting.Server
 
                 s_singletonInstance = new NamedPipeProcessMediator(namedPipeServer);
             }
+
 #if !CORECLR
             // AppDomain is not available in CoreCLR
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
