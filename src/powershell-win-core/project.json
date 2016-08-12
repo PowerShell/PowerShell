@@ -49,7 +49,8 @@
             "pwrshplugin.pdb",
             "Install-PowerShellRemoting.ps1",
             "../../LICENSE.txt",
-            "../../powershell.version"
+            "../../powershell.version",
+            "../System.Management.Automation/PowerShellProperties.json"
         ]
     },
 

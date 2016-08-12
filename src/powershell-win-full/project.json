@@ -21,7 +21,8 @@
             "powershell.pdb",
             "pwrshplugin.dll",
             "pwrshplugin.pdb",
-            "../../powershell.version"
+            "../../powershell.version",
+            "../System.Management.Automation/PowerShellProperties.json"
         ]
     },
 
