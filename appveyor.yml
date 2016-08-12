@@ -17,6 +17,7 @@ install:
   - ps: Set-Content c:\users\appveyor\.ssh\id_rsa $fileContent
   - git config --global url.git@github.com:.insteadOf https://github.com/
   - git submodule update --init
+  - ps: $buildConfiguration = 'Release'
   - ps: Import-Module .\build.psm1; Start-PSBootstrap -Force
 
 build_script:
@@ -28,7 +29,7 @@ build_script:
         $result.Warnings
         throw "Tags must be CI, Feature, Scenario, or Slow"
       }
-      Start-PSBuild -CrossGen -Configuration Release
+      Start-PSBuild -CrossGen -Configuration $buildConfiguration
       Start-PSBuild -FullCLR
 
 test_script:
@@ -37,7 +38,7 @@ test_script:
       $ErrorActionPreference = 'Stop'
       #
       # CoreCLR
-      $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
+      $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish -Configuration $buildConfiguratio))
       Write-Host -Foreground Green 'Run CoreCLR tests'
       $testResultsFile = "$pwd\TestsResults.xml"
       & ("$env:CoreOutput\powershell.exe") -noprofile -noninteractive -c "Set-ExecutionPolicy -Scope Process Unrestricted; Invoke-Pester test/powershell -Tag 'CI' -ExcludeTag 'Slow' -OutputFormat NUnitXml -OutputFile $testResultsFile"
