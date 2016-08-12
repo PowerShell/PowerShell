@@ -238,6 +238,12 @@ namespace Microsoft.PowerShell.Commands
                     }
                     break;
 
+                case NewPSSessionCommand.SSHHostParameterSet:
+                    {
+                        remoteRunspaces = CreateRunspacesForSSHHostParameterSet();
+                    }
+                    break;
+
                 default:
                     {
                         Dbg.Assert(false, "Missing paramenter set in switch statement");
@@ -1048,6 +1054,23 @@ namespace Microsoft.PowerShell.Commands
 
             return remoteRunspaces;
         }// CreateRunspacesWhenContainerParameterSpecified
+
+        /// <summary>
+        /// CreateRunspacesForSSHHostParameterSet
+        /// </summary>
+        /// <returns></returns>
+        private List<RemoteRunspace> CreateRunspacesForSSHHostParameterSet()
+        {
+            var remoteRunspaces = new List<RemoteRunspace>();
+            var sshConnectionInfo = new SSHConnectionInfo(
+                this.UserName,
+                this.HostName,
+                this.KeyPath);
+            var typeTable = TypeTable.LoadDefaultTypeFiles();
+            remoteRunspaces.Add(RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace);
+
+            return remoteRunspaces;
+        }
 
         /// <summary>
         /// Helper method to either get a user supplied runspace/session name

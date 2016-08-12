@@ -1609,4 +1609,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value> Other Possible Cause:
   -The domain or computer name was not included with the specified credential, for example: DOMAIN\UserName or COMPUTER\UserName.</value>
   </data>
+  <data name="CannotStartSSHClient" xml:space="preserve">
+    <value>An error occurred when starting the SSH.exe client needed for the remoting connection.</value>
+  </data>
 </root>

@@ -132,11 +132,12 @@ namespace System.Management.Automation.Remoting
             _senderInfo = senderInfo;
             _configProviderId = configurationProviderId;
             _initParameters = initializationParameters;
-            if (Platform.IsWindows)
-            {
-                _cryptoHelper = (PSRemotingCryptoHelperServer)transportManager.CryptoHelper;
-                _cryptoHelper.Session = this;
-            }
+#if !UNIX
+            _cryptoHelper = (PSRemotingCryptoHelperServer)transportManager.CryptoHelper;
+            _cryptoHelper.Session = this;
+#else
+            _cryptoHelper = null;
+#endif
 
             Context = new ServerRemoteSessionContext();
             SessionDataStructureHandler = new ServerRemoteSessionDSHandlerlImpl(this, transportManager);
@@ -162,9 +163,9 @@ namespace System.Management.Automation.Remoting
             transportManager.ReceivedDataCollection.MaximumReceivedDataSize = null;
         }
 
-        #endregion Constructors
+#endregion Constructors
 
-        #region Creation Factory
+#region Creation Factory
 
         /// <summary>
         /// Creates a server remote session for the supplied <paramref name="configuratioinProviderId"/>
@@ -240,9 +241,9 @@ namespace System.Management.Automation.Remoting
             return result;
         }
 
-        #endregion
+#endregion
 
-        #region Overrides
+#region Overrides
 
         /// <summary>
         /// This indicates the remote session object is Client, Server or Listener.
@@ -457,9 +458,9 @@ namespace System.Management.Automation.Remoting
             SessionDataStructureHandler.StateMachine.RaiseEvent(args);
         }
 
-        #endregion Overrides
+#endregion Overrides
 
-        #region Properties
+#region Properties
 
         /// <summary>
         /// This property returns the ServerRemoteSessionContext object created inside
@@ -473,9 +474,9 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal ServerRemoteSessionDataStructureHandler SessionDataStructureHandler { get; }
 
-        #endregion
+#endregion
 
-        #region Private/Internal Methods
+#region Private/Internal Methods
 
         /// <summary>
         /// Let the session clear its resources.
@@ -866,7 +867,11 @@ namespace System.Management.Automation.Remoting
                     _runspacePoolDriver.InstanceId);
             }
 
+#if !UNIX
             bool isAdministrator = _senderInfo.UserInfo.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+#else
+            bool isAdministrator = false;
+#endif
 
             ServerRunspacePoolDriver tmpDriver = new ServerRunspacePoolDriver(
                 clientRunspacePoolId,
@@ -1158,6 +1163,6 @@ namespace System.Management.Automation.Remoting
             cmdTransportManager.ReceivedDataCollection.MaximumReceivedObjectSize = _maxRecvdObjectSize;
         }
 
-        #endregion
+#endregion
     }
 }
