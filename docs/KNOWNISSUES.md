@@ -1,4 +1,4 @@
-Known Issues with the first Linux PowerShell Alpha Release
+Known Issues with the first PowerShell on Linux Alpha Release
 ==========================================================
 
 The first Alpha release of PowerShell on Linux is mostly functional but
@@ -50,15 +50,16 @@ On the, the "convenience aliases" for the basic commands "ls", "cp",
 "mv", "rm", "cat", "man", "mount", "ps" have been removed. On Windows,
 PowerShell provides a set of aliases that map to UNIX/Linux command
 names for user convenience. These aliases have been removed from the
-default Linux PowerShell distribution, allowing the native executable to
+default PowerShell on Linux distribution, allowing the native executable to
 be run instead. There are pros and cons to having do this. It exposes
-the native command experience to the Linux PowerShell user but reduces
+the native command experience to the PowerShell on Linux user but reduces
 functionality in the shell because the native commands return strings
 not objects.
 
 > NOTE: This is an area where the Open Source PowerShell team is looking
 > for feedback. What is the preferred solution? Should we leave it as is
-> or add the convenience aliases back?
+> or add the convenience aliases back? See 
+> [Issue 929](https://github.com/PowerShell/PowerShell/issues/929 "Issue 929")  
 
 Missing Wildcard (globbing) Support 
 ------------------------------------
@@ -70,7 +71,7 @@ file names. You can work around this by doing "ls (gci \*.txt | % name)"
 or, more simply, "gci \*.txt" using the PowerShell built-in equivalent
 to ls.
 
-.NET vs .NET Core
+.NET Framework vs .NET Core Framework
 -----------------
 
 PowerShell on Linux uses the .NET Core which is a subset of the full
@@ -78,7 +79,7 @@ PowerShell on Linux uses the .NET Core which is a subset of the full
 PowerShell provides direct access to the underlying framework types,
 methods etc. As a result, scripts that run on Windows may not run on
 Linux because of the differences in the frameworks. For more information
-about .NET Core, see <https://www.dotnetfoundation.org/netcore>
+about .NET Core framework, see <https://www.dotnetfoundation.org/netcore>
 
 Redirection Issues
 ------------------
@@ -124,11 +125,11 @@ sudo, exec and PowerShell
 -------------------------
 
 Because PowerShell runs most commands in memory (like Python or Ruby)
-you can â€˜t use sudo directly with PowerShell built-ins. (You can, of
-course, run powershell.exe from sudo.) it is necessary to run a
-PowerShell cmdlet from within PowerShell with sudo, for example “
-Remove-Item", then you would do "sudo powershell Remove-Item
-item\_to\_remove.txt". Likewise, you can't exec a PowerShell built-in
+you can't use sudo directly with PowerShell built-ins. (You can, of
+course, run powershell.exe from sudo.) If it is necessary to run a
+PowerShell cmdlet from within PowerShell with sudo, for example "sudo 
+Set-Date 8/18/2016", then you would do "sudo powershell Set-Date 8/18/2016". 
+Likewise, you can't exec a PowerShell built-in
 directly. Instead you would have to do "exec powershell item\_to\_exec".
 
 Missing Cmdlets
@@ -170,18 +171,9 @@ PowerShell.
 <td>Available, doesn't work properly. <td>For example "Start-Process gvim -PassThru | Wait-Process" doesn't work; it fails to wait for the process.
 </tr>
 <tr>
-<td>Unblock-File
-<td>Available but doesn't work.
-<td>This command will generate an error complaining about a missing .dll. Since the file-blocking feature doesn't exist in the Linux file system, this cmdlet will be removed in a future release.
-</tr>
-<tr>
 <td>Get-Help, Update-Help, Save-Help
-<td>Available but donâ€'t work.
+<td>Available but don't work.
 <td>enerates a null-pointer exception. These will be fixed in a future release.
-</tr>
-<tr>
-<td>Get-TraceSource, Set-TraceSource, Trace-Command <td>Available but don't work.
-<td>These fail because the underlying .NET tracing infrastructure is not currently available on Linux.
 </tr>
 <tr>
 <td>Register-PSSessionConfiguration
@@ -192,10 +184,6 @@ PowerShell.
 <td>Unregister-PSSessionConfiguration, Get-Event, New-Event, Register-EngineEvent, Register-WmiEvent, Remove-Event, Unregister-Event.
 <td>Available but no event sources are available.
 <td>The PowerShell eventing commands are present but most of the event sources used with the commands (such as System.Timers.Timer) are not available on Linux making the commands useless in the Alpha release.
-</tr>
-<tr>
-<td>Set-Date <td>Available but doesn't work.
-<td>Returns an invalid operation exception. This will be fixed in a future release.
 </tr>
 <tr>
 <td>Set-ExecutionPolicy <td>Available but doesn't work.
@@ -213,7 +201,7 @@ PowerShell.
 <tr>
 <td>Start-Job, Get-Job, Receive-Job, Remove-Job, Stop-Job, Wait-Job
 <td>The background job cmdlets are available and work with the important exception of Start-Job.
-<td>Without the ability to start a background job, the other cmdlets are useless.   This will be fixed soon in a future release.
+<td>Without the ability to start a background job, the other cmdlets are useless. This will be fixed soon in a future release.
 </tr>
 </table>
 
