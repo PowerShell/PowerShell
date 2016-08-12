@@ -4,6 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Win32.SafeHandles;
 
 #if CORECLR
 // Use stubs for SafeHandleZeroOrMinusOneIsInvalid, SecurityPermissionAttribute and ReliabilityContractAttribute
@@ -11,7 +12,6 @@ using Microsoft.PowerShell.CoreClr.Stubs;
 #else
 using System.Security.Permissions;
 using System.Runtime.ConstrainedExecution;
-using Microsoft.Win32.SafeHandles;
 #endif
 
 namespace System.Management.Automation
@@ -552,5 +552,192 @@ namespace System.Management.Automation
         internal const uint SE_PRIVILEGE_USED_FOR_ACCESS = 0x80000000;
 
         internal const int ERROR_SUCCESS = 0x0;
+
+        #region CreateProcess for SSH Remoting
+
+#if !UNIX
+
+        // Fields
+        internal static readonly IntPtr INVALID_HANDLE_VALUE = IntPtr.Zero;
+        internal static UInt32 GENERIC_READ = 0x80000000;
+        internal static UInt32 GENERIC_WRITE = 0x40000000;
+        internal static UInt32 FILE_ATTRIBUTE_NORMAL = 0x80000000;
+        internal static UInt32 CREATE_ALWAYS = 2;
+        internal static UInt32 FILE_SHARE_WRITE = 0x00000002;
+        internal static UInt32 FILE_SHARE_READ = 0x00000001;
+        internal static UInt32 OF_READWRITE = 0x00000002;
+        internal static UInt32 OPEN_EXISTING = 3;
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal class PROCESS_INFORMATION
+        {
+            public IntPtr hProcess;
+            public IntPtr hThread;
+            public int dwProcessId;
+            public int dwThreadId;
+
+            public PROCESS_INFORMATION()
+            {
+                this.hProcess = IntPtr.Zero;
+                this.hThread = IntPtr.Zero;
+            }
+
+            /// <summary>
+            /// Dispose
+            /// </summary>
+            public void Dispose()
+            {
+                Dispose(true);
+            }
+
+            /// <summary>
+            /// Dispose
+            /// </summary>
+            /// <param name="disposing"></param>
+            private void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    if (this.hProcess != IntPtr.Zero)
+                    {
+                        CloseHandle(this.hProcess);
+                        this.hProcess = IntPtr.Zero;
+                    }
+
+                    if (this.hThread != IntPtr.Zero)
+                    {
+                        CloseHandle(this.hThread);
+                        this.hThread = IntPtr.Zero;
+                    }
+                }
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal class STARTUPINFO
+        {
+            public int cb;
+            public IntPtr lpReserved;
+            public IntPtr lpDesktop;
+            public IntPtr lpTitle;
+            public int dwX;
+            public int dwY;
+            public int dwXSize;
+            public int dwYSize;
+            public int dwXCountChars;
+            public int dwYCountChars;
+            public int dwFillAttribute;
+            public int dwFlags;
+            public short wShowWindow;
+            public short cbReserved2;
+            public IntPtr lpReserved2;
+            public SafeFileHandle hStdInput;
+            public SafeFileHandle hStdOutput;
+            public SafeFileHandle hStdError;
+            public STARTUPINFO()
+            {
+                this.lpReserved = IntPtr.Zero;
+                this.lpDesktop = IntPtr.Zero;
+                this.lpTitle = IntPtr.Zero;
+                this.lpReserved2 = IntPtr.Zero;
+                this.hStdInput = new SafeFileHandle(IntPtr.Zero, false);
+                this.hStdOutput = new SafeFileHandle(IntPtr.Zero, false);
+                this.hStdError = new SafeFileHandle(IntPtr.Zero, false);
+                this.cb = Marshal.SizeOf(this);
+
+            }
+
+            public void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    if ((this.hStdInput != null) && !this.hStdInput.IsInvalid)
+                    {
+                        this.hStdInput.Dispose();
+                        this.hStdInput = null;
+                    }
+                    if ((this.hStdOutput != null) && !this.hStdOutput.IsInvalid)
+                    {
+                        this.hStdOutput.Dispose();
+                        this.hStdOutput = null;
+                    }
+                    if ((this.hStdError != null) && !this.hStdError.IsInvalid)
+                    {
+                        this.hStdError.Dispose();
+                        this.hStdError = null;
+                    }
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(true);
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal class SECURITY_ATTRIBUTES
+        {
+            public int nLength;
+            public SafeLocalMemHandle lpSecurityDescriptor;
+            public bool bInheritHandle;
+            public SECURITY_ATTRIBUTES()
+            {
+                this.nLength = 12;
+                this.bInheritHandle = true;
+                this.lpSecurityDescriptor = new SafeLocalMemHandle(IntPtr.Zero, true);
+            }
+        }
+
+        // Methods
+        //
+
+        [DllImport(PinvokeDllNames.CreateProcessDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        internal static extern bool CreateProcess(
+            [MarshalAs(UnmanagedType.LPWStr)] string lpApplicationName,
+            [MarshalAs(UnmanagedType.LPWStr)] string lpCommandLine,
+            SECURITY_ATTRIBUTES lpProcessAttributes,
+            SECURITY_ATTRIBUTES lpThreadAttributes,
+            bool bInheritHandles,
+            int dwCreationFlags,
+            IntPtr lpEnvironment,
+            [MarshalAs(UnmanagedType.LPWStr)] string lpCurrentDirectory,
+            STARTUPINFO lpStartupInfo,
+            PROCESS_INFORMATION lpProcessInformation);
+
+        [DllImport(PinvokeDllNames.ResumeThreadDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        public static extern uint ResumeThread(IntPtr threadHandle);
+
+        [DllImport(PinvokeDllNames.CreateFileDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        public static extern System.IntPtr CreateFileW(
+            [In, MarshalAs(UnmanagedType.LPWStr)] string lpFileName,
+            UInt32 dwDesiredAccess,
+            UInt32 dwShareMode,
+            SECURITY_ATTRIBUTES lpSecurityAttributes,
+            UInt32 dwCreationDisposition,
+            UInt32 dwFlagsAndAttributes,
+            System.IntPtr hTemplateFile);
+
+#endif
+
+        #endregion
+
+        #region GetStdHandle
+
+#if !UNIX
+
+        internal enum StandardHandleId : uint
+        {
+            Error = unchecked((uint)-12),
+            Output = unchecked((uint)-11),
+            Input = unchecked((uint)-10),
+        }
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        public static extern IntPtr GetStdHandle(uint handleId);
+
+#endif
+
+        #endregion
     }
 }
