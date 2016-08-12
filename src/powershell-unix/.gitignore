@@ -1,3 +1,4 @@
 *.a
 *.so
 *.dylib
+PowerShellProperties.json

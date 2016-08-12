@@ -49,7 +49,7 @@
             "*.dylib",
             "../../LICENSE.txt",
             "../../powershell.version",
-            "../System.Management.Automation/PowerShellProperties.json"
+            "PowerShellProperties.json"
         ]
     },
 
