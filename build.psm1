@@ -344,14 +344,6 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
         }
     }
 
-    if (-NOT $FullCLR)
-    {
-        # Place the JSON config file in the top-level build directory so it can be consumed by packaging.
-        # This is a workaround because "copyToOutput" in project.json is filtering out the file in project.json and a
-        # relative path from powershell-core-win\project.json is placing it in a sub-directory during publish.
-        Copy-Item "$PSScriptRoot/src/System.Management.Automation/PowerShellProperties.json" ($script:Options).Top
-    }
-
     # handle TypeGen
     if ($TypeGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext/CorePsTypeCatalog.cs")) {
         log "Run TypeGen (generating CorePsTypeCatalog.cs)"

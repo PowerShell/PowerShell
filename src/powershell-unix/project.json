@@ -48,8 +48,7 @@
             "*.so",
             "*.dylib",
             "../../LICENSE.txt",
-            "../../powershell.version",
-            "PowerShellProperties.json"
+            "../../powershell.version"
         ]
     },
 

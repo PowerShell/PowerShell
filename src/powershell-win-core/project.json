@@ -22,7 +22,7 @@
                 }
             },
             "include": [
-            "../../LICENSE.txt",
+                "../../LICENSE.txt",
                 "../../powershell.version"
             ]
         },
@@ -42,15 +42,15 @@
                 "exclude": [
                     "../Modules/Shared/Pester/.git*"
                 ]
-            }
+            },
+            "PowerShellProperties.json" : "../System.Management.Automation/PowerShellProperties.json"
         },
         "include": [
             "pwrshplugin.dll",
             "pwrshplugin.pdb",
             "Install-PowerShellRemoting.ps1",
             "../../LICENSE.txt",
-            "../../powershell.version",
-            "PowerShellProperties.json"
+            "../../powershell.version"
         ]
     },
 
