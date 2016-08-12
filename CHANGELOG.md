@@ -4,6 +4,30 @@ Changelog
 Unreleased
 ----------
 
+v6.0.0-alpha.8 - 2016-08-11
+---------------------------
+
+- PowerSell packages pre-compiled with CrossGen
+- `Get-Help` content added
+- `Get-Help` null reference exception fixed
+- Ubuntu 16.04 support added
+- Unsupported cmdlets removed from Unix modules
+- PSReadLine long prompt bug fixed
+- PSReadLine custom key binding bug on Linux fixed
+- Default terminal colors now respected
+- Semantic Version support added
+- `$env:` fixed for case-sensitive variables
+- Added JSON config files to hold some settings
+- `cd` with no arguments now behaves as `cd ~`
+- `ConvertFrom-Json` fixed for multiple lines
+- Windows branding removed
+- .NET CoreCLR Runtime patched to version 1.0.4
+- `Write-Host` with unknown hostname bug fixed
+- `powershell` man-page added to package
+- `Get-PSDrive` ported to report free space
+- Desired State Configuration MOF compilation ported to Linux
+- Windows 2012 R2 / Windows 8.1 remoting enabled
+
 v6.0.0-alpha.7 - 2016-07-26
 ---------------------------
 
