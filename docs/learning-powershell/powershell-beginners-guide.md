@@ -259,17 +259,10 @@ Mode                LastWriteTime       Length  Name
 -a----        5/16/2016   1:15 PM        32972  test.log
 
 ```
-
-Working with Objects
+How to Create and Run PowerShell scripts
 ----
-When cmdlets are executed in PowerShell, the output is an Object, as opposed to just text.
-This provides the ability to store a lot of information 
-
-Discovering available Methods
-----
-
-PowerShell Functions
-----
+You can use Visual Studio Code or your favorite editor to create a PowerShell script and save it with a `.ps1` file extension.
+For more details, see [Create and Run PowerShell Script Guide][create-run-script]
 
 
 Recommended Training and Reading
@@ -312,3 +305,4 @@ Commercial Resources
 [examples-ps-module]:https://msdn.microsoft.com/en-us/library/dd878340%28v=vs.85%29.aspx
 [writing-ps-module]:http://www.powershellmagazine.com/2014/03/18/writing-a-powershell-module-in-c-part-1-the-basics/
 [sample-code]:https://msdn.microsoft.com/en-us/library/ff602031%28v=vs.85%29.aspx
+[create-run-script]:./create-powershell-scripts.md
