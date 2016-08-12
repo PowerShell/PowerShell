@@ -22,7 +22,7 @@
                 }
             },
             "include": [
-                "../../LICENSE.txt",
+                "../../assets/license.txt",
                 "../../powershell.version"
             ]
         },
@@ -49,7 +49,7 @@
             "pwrshplugin.dll",
             "pwrshplugin.pdb",
             "Install-PowerShellRemoting.ps1",
-            "../../LICENSE.txt",
+            "../../assets/license.txt",
             "../../powershell.version"
         ]
     },
