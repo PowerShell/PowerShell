@@ -17,6 +17,7 @@ install:
   - ps: Set-Content c:\users\appveyor\.ssh\id_rsa $fileContent
   - git config --global url.git@github.com:.insteadOf https://github.com/
   - git submodule update --init
+  - ps: $buildConfiguration = 'Release'
   - ps: Import-Module .\build.psm1; Start-PSBootstrap -Force
 
 build_script:
@@ -28,7 +29,7 @@ build_script:
         $result.Warnings
         throw "Tags must be CI, Feature, Scenario, or Slow"
       }
-      Start-PSBuild -CrossGen
+      Start-PSBuild -CrossGen -Configuration $buildConfiguration
       Start-PSBuild -FullCLR
 
 test_script:
@@ -37,9 +38,13 @@ test_script:
       $ErrorActionPreference = 'Stop'
       #
       # CoreCLR
-      $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
+      $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish -Configuration $buildConfiguration))
       Write-Host -Foreground Green 'Run CoreCLR tests'
       $testResultsFile = "$pwd\TestsResults.xml"
+      if(!(Test-Path "$env:CoreOutput\powershell.exe"))
+      {
+         throw "CoreCL PowerShell.exe was not built"
+      }
       & ("$env:CoreOutput\powershell.exe") -noprofile -noninteractive -c "Set-ExecutionPolicy -Scope Process Unrestricted; Invoke-Pester test/powershell -Tag 'CI' -ExcludeTag 'Slow' -OutputFormat NUnitXml -OutputFile $testResultsFile"
                                                                                                        
       (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path $testResultsFile))
@@ -82,7 +87,9 @@ on_finish:
         $zipFilePath = Join-Path $pwd "$name.zip"
         $zipFileFullPath = Join-Path $pwd "$name.FullCLR.zip"
         Add-Type -assemblyname System.IO.Compression.FileSystem
+        Write-Verbose "Zipping ${env:CoreOutput} into $zipFilePath" -verbose
         [System.IO.Compression.ZipFile]::CreateFromDirectory($env:CoreOutput, $zipFilePath)
+        Write-Verbose "Zipping ${env:FullOutput} into $zipFileFullPath" -verbose
         [System.IO.Compression.ZipFile]::CreateFromDirectory($env:FullOutput, $zipFileFullPath)
         
         $artifacts = New-Object System.Collections.ArrayList
@@ -108,10 +115,23 @@ on_finish:
 
         $artifacts += (ls .\nuget-artifacts | % {$_.FullName})
 
+        $pushedAllArtifacts = $true
         $artifacts | % { 
             Write-Host "Pushing $_ as Appveyor artifact"
-            Push-AppveyorArtifact $_
+            if(Test-Path $_)
+            {
+              Push-AppveyorArtifact $_
+            }
+            else
+            {
+              $pushedAllArtifacts = $false
+              Write-Warning "Artifact $_ does not exist."
+            }
           }
+        if(!$pushedAllArtifacts)
+        {
+          throw "Some artifacts did not exist!"
+        }
       } catch {
         Write-Host -Foreground Red $_
       }
