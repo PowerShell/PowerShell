@@ -844,9 +844,14 @@ function Start-PSPackage {
         $Version = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
     }
 
-    Write-Warning "Please ensure you have previously run Start-PSBuild -Clean -CrossGen!"
+    if ($IsWindows) {
+        Write-Warning "Please ensure you have previously run Start-PSBuild -Clean -CrossGen -Configuration Release!"
+        $Source = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish -Configuration Release))
+    } else {
+        Write-Warning "Please ensure you have previously run Start-PSBuild -Clean -CrossGen!"
+        $Source = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
+    }
 
-    $Source = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
     Write-Verbose "Packaging $Source"
 
     # Decide package output type
