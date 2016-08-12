@@ -61,13 +61,8 @@ Click on the link below to learn more about debugging:
 - [Using Visual Studio Code (VS Code)][use-vscode-debugger]
 - [PowerShell Command-line Debugging][cli-debugging]
 
-On Windows, you can also use [PowerShell Integrated Scripting Environment (ISE)][use-ise-editor] to edit or debug PowerShell scripts.
-However it is not supported if you are using PowerShell installed from the [PowerShell package][get-powershell] or directly [built][build-powershell] from GitHub.
-
 [use-vscode-editor]:./using-vscode.md#editing-with-vs-code
-[use-ise-editor]:./using-ise.md#editing-with-ise
 [use-vscode-debugger]:./using-vscode.md#debugging-with-vs-code
-[use-ise-debugger]:./using-ise.md#debugging-with-ise
 [cli-debugging]:./debugging-from-commandline.md
 [get-powershell]:../../README.md#get-powershell
 [build-powershell]:../../README.md#building-the-repository
