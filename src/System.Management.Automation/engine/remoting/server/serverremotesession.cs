@@ -138,13 +138,13 @@ namespace System.Management.Automation.Remoting
 #else
             _cryptoHelper = null;
 #endif
-            _context = new ServerRemoteSessionContext();
-            _sessionDSHandler = new ServerRemoteSessionDSHandlerlImpl(this, transportManager);
-            BaseSessionDataStructureHandler = _sessionDSHandler;
-            _sessionDSHandler.CreateRunspacePoolReceived += HandleCreateRunspacePool;
-            _sessionDSHandler.NegotiationReceived += HandleNegotiationReceived;
-            _sessionDSHandler.SessionClosing += HandleSessionDSHandlerClosing;
-            _sessionDSHandler.PublicKeyReceived += 
+            Context = new ServerRemoteSessionContext();
+            SessionDataStructureHandler = new ServerRemoteSessionDSHandlerlImpl(this, transportManager);
+            BaseSessionDataStructureHandler = SessionDataStructureHandler;
+            SessionDataStructureHandler.CreateRunspacePoolReceived += HandleCreateRunspacePool;
+            SessionDataStructureHandler.NegotiationReceived += HandleNegotiationReceived;
+            SessionDataStructureHandler.SessionClosing += HandleSessionDSHandlerClosing;
+            SessionDataStructureHandler.PublicKeyReceived += 
                 new EventHandler<RemoteDataEventArgs<string>>(HandlePublicKeyReceived);      
             transportManager.Closing += HandleResourceClosing;
 
