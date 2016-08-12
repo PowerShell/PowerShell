@@ -216,6 +216,7 @@ namespace System.Management.Automation
                 if (engineKey != null)
                 {
                     var result = engineKey.GetValue(RegistryStrings.MonadEngine_ApplicationBase) as string;
+                    result = Environment.ExpandEnvironmentVariables(result);
                     if (wantPsHome)
                         Interlocked.CompareExchange(ref s_pshome, null, result);
 
@@ -584,25 +585,22 @@ namespace System.Management.Automation
         /// <summary>
         /// String representing the Default shellID.
         /// </summary>
-        internal static string DefaultPowerShellShellID = "Microsoft.PowerShell";
-        /// <summary>
-        /// String used to control directory location for PowerShell
-        /// </summary>
-        /// <remarks>
-        /// Profile uses this to control profile loading.
-        /// </remarks>
-        internal static string ProductNameForDirectory =
-            Platform.IsWindows ? "WindowsPowerShell" : Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
+        internal const string DefaultPowerShellShellID = "Microsoft.PowerShell";
 
         /// <summary>
-        /// The name of the subdirectory that contains packages.
+        /// This is used to construct the profile path.
         /// </summary>
-        internal static string ModuleDirectory = "Modules";
+#if CORECLR
+        internal static string ProductNameForDirectory = Platform.IsInbox ? "WindowsPowerShell" : "PowerShell";
+#else
+        internal const string ProductNameForDirectory = "WindowsPowerShell";
+#endif
 
         /// <summary>
-        /// The partial path to the DSC module directory
+        /// The subdirectory of module paths
+        /// e.g. ~\Documents\WindowsPowerShell\Modules and %ProgramFiles%\WindowsPowerShell\Modules
         /// </summary>
-        internal static string DscModuleDirectory = Path.Combine("WindowsPowerShell", "Modules");
+        internal static string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
         internal static string GetRegistryConfigurationPrefix()
         {
@@ -1519,6 +1517,7 @@ namespace System.Management.Automation
             internal static readonly char[] Semicolon = new char[] { ';' };
             internal static readonly char[] StarOrQuestion = new char[] { '*', '?' };
             internal static readonly char[] ColonOrBackslash = new char[] { '\\', ':' };
+            internal static readonly char[] PathSeparator = new char[] { Path.PathSeparator };
 
             internal static readonly char[] QuoteChars = new char[] { '\'', '"' };
             internal static readonly char[] Space = new char[] { ' ' };

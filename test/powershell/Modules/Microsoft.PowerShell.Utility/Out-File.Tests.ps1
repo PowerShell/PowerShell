@@ -1,6 +1,6 @@
 Describe "Out-File DRT Unit Tests" -Tags "CI" {
     It "Should be able to write the contens into a file with -pspath" {
-        $tempFile = "ExposeBug928965"
+        $tempFile = Join-Path -Path $TestDrive -ChildPath "ExposeBug928965"
         { 1 | Out-File -PSPath $tempFile } | Should Not Throw
         $fileContents = Get-Content $tempFile
         $fileContents | Should be 1
@@ -8,7 +8,7 @@ Describe "Out-File DRT Unit Tests" -Tags "CI" {
     }
 
     It "Should be able to write the contens into a file with -pspath" {
-        $tempFile = "outfileAppendTest.txt"
+        $tempFile = Join-Path -Path $TestDrive -ChildPath "outfileAppendTest.txt"
         { 'This is first line.' | out-file $tempFile } | Should Not Throw
         { 'This is second line.' | out-file -append $tempFile } | Should Not Throw
         $tempFile |Should Contain "first"

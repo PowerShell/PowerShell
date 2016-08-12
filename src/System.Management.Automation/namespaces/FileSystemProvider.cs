@@ -351,7 +351,7 @@ namespace Microsoft.PowerShell.Commands
             if (providerInfo != null && string.IsNullOrEmpty(providerInfo.Home))
             {
                 // %USERPROFILE% - indicate where a user's home directory is located in the file system.
-                string homeDirectory = Environment.GetEnvironmentVariable("USERPROFILE");
+                string homeDirectory = Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
 
                 if (!string.IsNullOrEmpty(homeDirectory))
                 {

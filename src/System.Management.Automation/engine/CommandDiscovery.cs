@@ -1548,7 +1548,7 @@ namespace System.Management.Automation
 
                 if (_pathCacheKey != null)
                 {
-                    string[] tokenizedPath = _pathCacheKey.Split(new char[] { System.IO.Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] tokenizedPath = _pathCacheKey.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries);
                     _cachedPath = new Collection<string>();
 
                     foreach (string directory in tokenizedPath)
@@ -1633,7 +1633,7 @@ namespace System.Management.Automation
             lock (s_lockObject)
             {
                 s_cachedPathExtCollection = pathExt != null
-                    ? pathExt.Split(new char[] { System.IO.Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries)
+                    ? pathExt.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
                     : Utils.EmptyArray<string>();
                 s_cachedPathExtCollectionWithPs1 = new string[s_cachedPathExtCollection.Length + 1];
                 s_cachedPathExtCollectionWithPs1[0] = StringLiterals.PowerShellScriptFileExtension;

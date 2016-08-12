@@ -303,8 +303,10 @@ namespace System.Management.Automation
                     RunspaceInit.PSHostDescription);
             this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
 
-            // $HOME = %USERPROFILE% - indicate where a user's home directory is located in the file system.
-            string home = Environment.GetEnvironmentVariable("USERPROFILE") ?? string.Empty;
+            // $HOME - indicate where a user's home directory is located in the file system.
+            //    -- %USERPROFILE% on windows
+            //    -- %HOME% on unix
+            string home = Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home) ?? string.Empty;
             v = new PSVariable(SpecialVariables.Home,
                     home,
                     ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope,

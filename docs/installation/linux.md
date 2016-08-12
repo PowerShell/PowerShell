@@ -79,12 +79,13 @@ sudo installer -pkg powershell-6.0.0-alpha.8-osx.10.11-x64.pkg -target /
 Paths
 =====
 
-* User profiles will be read from `~/.config/powershell/profile.ps1`.
-* User modules will be read from `~/.local/share/powershell/Modules`
-* PSReadLine history will be recorded to `~/.local/share/powershell/PSReadLine/ConsoleHost_history.txt`
 * `$PSHOME` is `/opt/microsoft/powershell/6.0.0-alpha.8/`
-* Default profiles will be read from `$PSHOME/profile.ps1`.
+* User profiles will be read from `~/.config/powershell/profile.ps1`
+* Default profiles will be read from `$PSHOME/profile.ps1`
+* User modules will be read from `~/.local/share/powershell/Modules`
+* Shared modules will be read from `/usr/local/share/powershell/Modules`
 * Default modules will be read from `$PSHOME/Modules`
+* PSReadLine history will be recorded to `~/.local/share/powershell/PSReadLine/ConsoleHost_history.txt`
 
 The profiles respect PowerShell's per-host configuration,
 so the default host-specific profiles exists at `Microsoft.PowerShell_profile.ps1` in the same locations.

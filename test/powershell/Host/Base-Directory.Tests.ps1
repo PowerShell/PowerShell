@@ -10,9 +10,14 @@ Describe "Configuration file locations" -tags "CI","Slow" {
         BeforeAll {
 
             if ($IsWindows) {
+                $ProductName = "WindowsPowerShell"
+                if ($IsCoreCLR -and ($PSHOME -notlike "*Windows\System32\WindowsPowerShell\v1.0"))
+                {
+                    $ProductName =  "PowerShell"
+                }
                 $expectedCache    = [IO.Path]::Combine($env:LOCALAPPDATA, "Microsoft", "Windows", "PowerShell", "StartupProfileData-NonInteractive")
-                $expectedModule   = [IO.Path]::Combine($env:USERPROFILE, "Documents", "WindowsPowerShell", "Modules")
-                $expectedProfile  = [io.path]::Combine($env:USERPROFILE, "Documents","WindowsPowerShell",$profileName)
+                $expectedModule   = [IO.Path]::Combine($env:USERPROFILE, "Documents", $ProductName, "Modules")
+                $expectedProfile  = [io.path]::Combine($env:USERPROFILE, "Documents", $ProductName, $profileName)
                 $expectedReadline = [IO.Path]::Combine($env:AppData, "Microsoft", "Windows", "PowerShell", "PSReadline", "ConsoleHost_history.txt")
             } else {
                 $expectedCache    = [IO.Path]::Combine($env:HOME, ".cache", "powershell", "StartupProfileData-NonInteractive")

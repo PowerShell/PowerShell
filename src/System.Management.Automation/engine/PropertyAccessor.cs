@@ -36,17 +36,9 @@ namespace System.Management.Automation
         static ConfigPropertyAccessor()
         {
 #if CORECLR
-            // TODO: Update this for #1184
-            //if (Platform.IsInbox())
-            //{
-            //    Instance = new RegistryAccessor();
-            //}
-            //else
-            //{
-            //    Instance = new JsonConfigFileAccessor();
-            //}
-            // Remove this following line:
-            Instance = new JsonConfigFileAccessor();
+            Instance = Platform.IsInbox
+                            ? (ConfigPropertyAccessor) new RegistryAccessor() 
+                            : new JsonConfigFileAccessor();
 #else
             Instance = new RegistryAccessor();
 #endif

@@ -2,13 +2,7 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
@@ -80,6 +74,105 @@ namespace System.Management.Automation
                 #endif
             }
         }
+        
+        /// <summary>
+        /// True if the underlying system is NanoServer.
+        /// </summary>
+        public static bool IsNanoServer
+        {
+            get
+            {
+#if !CORECLR
+                return false;
+#elif UNIX
+                return false;
+#else
+                if (_isNanoServer.HasValue) { return _isNanoServer.Value; }
+                
+                _isNanoServer = false;
+                using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Server\ServerLevels"))
+                {
+                    if (regKey != null)
+                    {
+                        object value = regKey.GetValue("NanoServer");
+                        if (value != null && regKey.GetValueKind("NanoServer") == RegistryValueKind.DWord)
+                        {
+                            _isNanoServer = (int)value == 1;
+                        }
+                    }
+                }
+
+                return _isNanoServer.Value;
+#endif
+            }
+        }
+
+        /// <summary>
+        /// True if the underlying system is IoT.
+        /// </summary>
+        public static bool IsIoT
+        {
+            get
+            {
+#if !CORECLR
+                return false;
+#elif UNIX
+                return false;
+#else
+                if (_isIoT.HasValue) { return _isIoT.Value; }
+
+                _isIoT = false;
+                using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion"))
+                {
+                    if (regKey != null)
+                    {
+                        object value = regKey.GetValue("ProductName");
+                        if (value != null && regKey.GetValueKind("ProductName") == RegistryValueKind.String)
+                        {
+                            _isIoT = string.Equals("IoTUAP", (string)value, StringComparison.OrdinalIgnoreCase);
+                        }
+                    }
+                }
+
+                return _isIoT.Value;
+#endif
+            }
+        }
+
+#if CORECLR
+        /// <summary>
+        /// True if it is the inbox powershell for NanoServer or IoT.
+        /// </summary>
+        internal static bool IsInbox
+        {
+            get
+            {
+#if UNIX
+                return false;
+#else
+                if (_isInbox.HasValue) { return _isInbox.Value; }
+
+                _isInbox = false;
+                if (IsNanoServer || IsIoT)
+                {
+                    _isInbox = string.Equals(
+                        Utils.GetApplicationBase(Utils.DefaultPowerShellShellID),
+                        Utils.GetApplicationBaseFromRegistry(Utils.DefaultPowerShellShellID),
+                        StringComparison.OrdinalIgnoreCase);
+                }
+
+                return _isInbox.Value;
+#endif
+            }
+        }
+
+#if !UNIX 
+        private static bool? _isNanoServer = null;
+        private static bool? _isIoT = null;
+        private static bool? _isInbox = null;
+#endif
+
+#endif
 
         // format files
         internal static List<string> FormatFileNames = new List<string>
@@ -98,6 +191,20 @@ namespace System.Management.Automation
             };
 
         /// <summary>
+        /// Some common environment variables used in PS have different
+        /// names in different OS platforms
+        /// </summary>
+        internal static class CommonEnvVariableNames
+        {
+#if UNIX
+            internal const string Home = "HOME";
+#else
+            internal const string Home = "USERPROFILE";
+#endif
+        }
+
+#if UNIX
+        /// <summary>
         /// X Desktop Group configuration type enum.
         /// </summary>
         public enum XDG_Type
@@ -109,7 +216,9 @@ namespace System.Management.Automation
             /// <summary> XDG_DATA_HOME/powershell </summary>
             DATA,
             /// <summary> XDG_DATA_HOME/powershell/Modules </summary>
-            MODULES,
+            USER_MODULES,
+            /// <summary> /usr/local/share/powershell/Modules </summary>
+            SHARED_MODULES,
             /// <summary> XDG_CONFIG_HOME/powershell </summary>
             DEFAULT
         }
@@ -160,7 +269,7 @@ namespace System.Management.Automation
                         return Path.Combine(xdgdatahome, "powershell");
                     }
 
-                case Platform.XDG_Type.MODULES:
+                case Platform.XDG_Type.USER_MODULES:
                     //the user has set XDG_DATA_HOME corresponding to module path
                     if (String.IsNullOrEmpty(xdgdatahome))
                     {
@@ -175,6 +284,9 @@ namespace System.Management.Automation
                     {
                         return Path.Combine(xdgdatahome, "powershell", "Modules");
                     }
+
+                case Platform.XDG_Type.SHARED_MODULES:
+                    return "/usr/local/share/powershell/Modules";
 
                 case Platform.XDG_Type.CACHE:
                     //the user has set XDG_CACHE_HOME
@@ -221,6 +333,7 @@ namespace System.Management.Automation
                     return xdgConfigHomeDefault;
             }
         }
+#endif
 
         // Platform methods prefixed NonWindows are:
         // - non-windows by the definition of the IsWindows method above

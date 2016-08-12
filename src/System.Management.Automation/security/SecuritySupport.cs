@@ -211,9 +211,9 @@ namespace System.Management.Automation.Internal
         private static void CleanKeyParents(RegistryKey baseKey, string keyPath)
         {
 #if CORECLR
-            // if ( ! Platform.Inbox) // Modify this to support registry checks for inbox CoreCLR
-            return;
-#else // Windows && FullCLR
+            if (!Platform.IsInbox)
+                return;
+#endif
             using (RegistryKey key = baseKey.OpenSubKey(keyPath, true))
             {
                 // Verify the child key has no children
@@ -248,7 +248,6 @@ namespace System.Management.Automation.Internal
                     return;
                 }
             }
-#endif
         }
 
         internal static ExecutionPolicy GetExecutionPolicy(string shellId)

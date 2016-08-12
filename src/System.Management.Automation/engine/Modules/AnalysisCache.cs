@@ -1027,10 +1027,11 @@ namespace System.Management.Automation
         {
             s_cacheStoreLocation =
                 Environment.GetEnvironmentVariable("PSModuleAnalysisCachePath") ??
-                (Platform.IsWindows
-                 ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                                @"Microsoft\Windows\PowerShell\ModuleAnalysisCache")
-                 : Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "ModuleAnalysisCache"));
+#if UNIX
+                Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "ModuleAnalysisCache");
+#else
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\Windows\PowerShell\ModuleAnalysisCache");
+#endif
         }
     }
 
