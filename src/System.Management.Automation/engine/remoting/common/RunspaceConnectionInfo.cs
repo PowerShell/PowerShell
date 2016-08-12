@@ -4,9 +4,12 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System.Net;
 using System.Net.Sockets;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.IO.Pipes;
+using System.ComponentModel; // Win32Exception
 using System.Management.Automation.Tracing;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Internal;
@@ -14,6 +17,8 @@ using System.Management.Automation.Remoting.Client;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Security.AccessControl;
+using Microsoft.Win32.SafeHandles;
 using Dbg = System.Management.Automation.Diagnostics;
 using WSManAuthenticationMechanism = System.Management.Automation.Remoting.Client.WSManNativeApi.WSManAuthenticationMechanism;
 
@@ -1555,7 +1560,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override string ComputerName
         {
-            // TODO: should this be different
             get { return "localhost"; }
             set { throw new NotImplementedException(); }
         }
@@ -1817,6 +1821,487 @@ namespace System.Management.Automation.Runspaces
                 instanceId,
                 cryptoHelper);
         }
+
+        #endregion
+    }
+
+    /// <summary>
+    /// Class used to create a connection through an SSH.exe client to a remote host machine.
+    /// Connection information includes SSH target (user name and host machine) along with
+    /// client key used for key based user authorization.
+    /// </summary>
+    public sealed class SSHConnectionInfo : RunspaceConnectionInfo
+    {
+        #region Properties
+
+        /// <summary>
+        /// User Name
+        /// </summary>
+        public string UserName
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Key Path
+        /// </summary>
+        private string KeyPath
+        {
+            get;
+            set;
+        }
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        private SSHConnectionInfo()
+        { }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="userName">User Name</param>
+        /// <param name="computerName">Computer Name</param>
+        /// <param name="keyPath">Key Path</param>
+        public SSHConnectionInfo(
+            string userName,
+            string computerName,
+            string keyPath)
+        {
+            if (userName == null) { throw new PSArgumentNullException("userName"); }
+            if (computerName == null) { throw new PSArgumentNullException("computerName"); }
+
+            this.UserName = userName;
+            this.ComputerName = computerName;
+            this.KeyPath = keyPath;
+        }
+
+        #endregion
+
+        #region Overrides
+
+        /// <summary>
+        /// Computer is always localhost.
+        /// </summary>
+        public override string ComputerName
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Credential
+        /// </summary>
+        public override PSCredential Credential
+        {
+            get { return null; }
+            set { throw new NotImplementedException(); }
+        }
+
+        /// <summary>
+        /// Authentication
+        /// </summary>
+        public override AuthenticationMechanism AuthenticationMechanism
+        {
+            get { return AuthenticationMechanism.Default; }
+            set { throw new NotImplementedException(); }
+        }
+
+        /// <summary>
+        /// CertificateThumbprint
+        /// </summary>
+        public override string CertificateThumbprint
+        {
+            get { return string.Empty; }
+            set { throw new NotImplementedException(); }
+        }
+
+        /// <summary>
+        /// Shallow copy of current instance.
+        /// </summary>
+        /// <returns>NamedPipeConnectionInfo</returns>
+        internal override RunspaceConnectionInfo InternalCopy()
+        {
+            SSHConnectionInfo newCopy = new SSHConnectionInfo();
+            newCopy.ComputerName = this.ComputerName;
+            newCopy.UserName = this.UserName;
+            newCopy.KeyPath = this.KeyPath;
+
+            return newCopy;
+        }
+
+        /// <summary>
+        /// CreateClientSessionTransportManager
+        /// </summary>
+        /// <param name="instanceId"></param>
+        /// <param name="sessionName"></param>
+        /// <param name="cryptoHelper"></param>
+        /// <returns></returns>
+        internal override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
+        {
+            return new SSHClientSessionTransportManager(
+                this,
+                instanceId,
+                cryptoHelper);
+        }
+
+        #endregion
+
+        #region Internal Methods
+
+        /// <summary>
+        /// StartSSHProcess
+        /// </summary>
+        /// <returns></returns>
+        internal System.Diagnostics.Process StartSSHProcess(
+            out StreamWriter stdInWriterVar,
+            out StreamReader stdOutReaderVar,
+            out StreamReader stdErrReaderVar)
+        {
+            string filePath = string.Empty;
+#if !UNIX
+            var context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
+            if (context != null)
+            {
+                var cmdInfo = context.CommandDiscovery.LookupCommandInfo("ssh.exe", CommandOrigin.Internal) as ApplicationInfo;
+                if (cmdInfo != null)
+                {
+                    filePath = cmdInfo.Path;
+                }
+            }
+#else
+            filePath = @"ssh";
+#endif
+
+            // Extract an optional domain name if provided.
+            string domainName = null;
+            string userName = this.UserName;
+#if !UNIX
+            var parts = this.UserName.Split(Utils.Separators.Backslash);
+            if (parts.Length == 2)
+            {
+                domainName = parts[0];
+                userName = parts[1];
+            }
+#endif
+
+            // Create client ssh process that hosts powershell.exe as a subsystem and is configured
+            // to be in server mode for PSRP over SSHD:
+            //   powershell -Version 5.1 -sshs -NoLogo -NoProfile
+            //   See sshd_configuration file, subsystems section and it will have this entry:
+            //     Subsystem       powershell C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Version 5.1 -sshs -NoLogo -NoProfile
+            string arguments;
+            if (!string.IsNullOrEmpty(this.KeyPath))
+            {
+                arguments = (string.IsNullOrEmpty(domainName)) ?
+                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" {1}@{2} -s powershell", this.KeyPath, userName, this.ComputerName) :
+                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" -l {1}@{2} {3} -s powershell", this.KeyPath, userName, domainName, this.ComputerName);
+            }
+            else
+            {
+                arguments = (string.IsNullOrEmpty(domainName)) ?
+                    string.Format(CultureInfo.InvariantCulture, @"{0}@{1} -s powershell", userName, this.ComputerName) :
+                    string.Format(CultureInfo.InvariantCulture, @"-l {0}@{1} {2} -s powershell", userName, domainName, this.ComputerName);
+            }
+
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(
+                filePath,
+                arguments);
+            startInfo.WorkingDirectory = System.IO.Path.GetDirectoryName(filePath);
+            startInfo.CreateNoWindow = true;
+            startInfo.UseShellExecute = false;
+
+            return StartSSHProcessImpl(startInfo, out stdInWriterVar, out stdOutReaderVar, out stdErrReaderVar);
+        }
+
+        #endregion
+
+        #region SSH Process Creation
+
+#if UNIX
+
+        /// <summary>
+        /// Create a process through managed APIs and return StdIn, StdOut, StdError reader/writers
+        /// This works for non-Windows platforms and is simpler.
+        /// </summary>
+        private static System.Diagnostics.Process StartSSHProcessImpl(
+            System.Diagnostics.ProcessStartInfo startInfo,
+            out StreamWriter stdInWriterVar,
+            out StreamReader stdOutReaderVar,
+            out StreamReader stdErrReaderVar)
+        {
+            startInfo.RedirectStandardInput = true;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.RedirectStandardError = true;
+
+            System.Diagnostics.Process process = new Process();
+            process.StartInfo = startInfo;
+
+            process.Start();
+
+            stdInWriterVar = process.StandardInput;
+            stdOutReaderVar = process.StandardOutput;
+            stdErrReaderVar = process.StandardError;
+
+            return process;
+        }
+
+#else
+
+        /// <summary>
+        /// Create a process through native Win32 APIs and return StdIn, StdOut, StdError reader/writers
+        /// This needs to be done via Win32 APIs because managed code creates anonymous synchronous pipes 
+        /// for redirected StdIn/Out and SSH (and PSRP) require asynchrous (overlapped) pipes, which must
+        /// be through named pipes.  Managed code for named pipes is unreliable and so this is done via
+        /// P-Invoking native APIs.
+        /// </summary>
+        private static System.Diagnostics.Process StartSSHProcessImpl(
+            System.Diagnostics.ProcessStartInfo startInfo,
+            out StreamWriter stdInWriterVar,
+            out StreamReader stdOutReaderVar,
+            out StreamReader stdErrReaderVar)
+        {
+            Exception ex = null;
+            System.Diagnostics.Process sshProcess = null;
+            //
+            // These std pipe handles are bound to managed Reader/Writer objects and returned to the transport
+            // manager object, which uses them for PSRP communication.  The lifetime of these handles are then
+            // tied to the reader/writer objects which the transport is responsible for disposing (see 
+            // SSHClientSessionTransportManger and the CloseConnection() method.
+            //
+            SafePipeHandle stdInPipeServer = null;
+            SafePipeHandle stdOutPipeServer = null;
+            SafePipeHandle stdErrPipeServer = null;
+            try
+            {
+                sshProcess = CreateProcessWithRedirectedStd(
+                    startInfo,
+                    out stdInPipeServer,
+                    out stdOutPipeServer,
+                    out stdErrPipeServer);
+            }
+            catch (InvalidOperationException e) { ex = e; }
+            catch (ArgumentException e) { ex = e; }
+            catch (FileNotFoundException e) { ex = e; }
+            catch (System.ComponentModel.Win32Exception e) { ex = e; }
+
+            if ((ex != null) ||
+                (sshProcess == null) ||
+                (sshProcess.HasExited == true))
+            {
+                throw new InvalidOperationException(RemotingErrorIdStrings.CannotStartSSHClient, ex);
+            }
+
+            // Create the std in writer/readers needed for communication with ssh.exe.
+            stdInWriterVar = null;
+            stdOutReaderVar = null;
+            stdErrReaderVar = null;
+            try
+            {
+                stdInWriterVar = new StreamWriter(new NamedPipeServerStream(PipeDirection.Out, true, true, stdInPipeServer));
+                stdOutReaderVar = new StreamReader(new NamedPipeServerStream(PipeDirection.In, true, true, stdOutPipeServer));
+                stdErrReaderVar = new StreamReader(new NamedPipeServerStream(PipeDirection.In, true, true, stdErrPipeServer));
+            }
+            catch (Exception e)
+            {
+                CommandProcessorBase.CheckForSevereException(e);
+                if (stdInWriterVar != null) { stdInWriterVar.Dispose(); } else { stdInPipeServer.Dispose(); }
+                if (stdOutReaderVar != null) { stdInWriterVar.Dispose(); } else { stdOutPipeServer.Dispose(); }
+                if (stdErrReaderVar != null) { stdInWriterVar.Dispose(); } else { stdErrPipeServer.Dispose(); }
+
+                throw;
+            }
+
+            return sshProcess;
+        }
+
+        /// <summary>
+        /// CreateProcessWithRedirectedStd
+        /// </summary>
+        private static Process CreateProcessWithRedirectedStd(
+            ProcessStartInfo startInfo,
+            out SafePipeHandle stdInPipeServer,
+            out SafePipeHandle stdOutPipeServer,
+            out SafePipeHandle stdErrPipeServer)
+        {
+            //
+            // Create named (async) pipes for reading/writing to std.
+            //
+            stdInPipeServer = null;
+            stdOutPipeServer = null;
+            stdErrPipeServer = null;
+            SafePipeHandle stdInPipeClient = null;
+            SafePipeHandle stdOutPipeClient = null;
+            SafePipeHandle stdErrPipeClient = null;
+            string randomName = System.IO.Path.GetFileNameWithoutExtension(System.IO.Path.GetRandomFileName());
+
+            try
+            {
+                // Get default pipe security (Admin and current user access)
+                var securityDesc = RemoteSessionNamedPipeServer.GetServerPipeSecurity();
+
+                var stdInPipeName = @"\\.\pipe\StdIn" + randomName;
+                stdInPipeServer = CreateNamedPipe(stdInPipeName, securityDesc);
+                stdInPipeClient = GetNamedPipeHandle(stdInPipeName);
+
+                var stdOutPipeName = @"\\.\pipe\StdOut" + randomName;
+                stdOutPipeServer = CreateNamedPipe(stdOutPipeName, securityDesc);
+                stdOutPipeClient = GetNamedPipeHandle(stdOutPipeName);
+
+                var stdErrPipeName = @"\\.\pipe\StdErr" + randomName;
+                stdErrPipeServer = CreateNamedPipe(stdErrPipeName, securityDesc);
+                stdErrPipeClient = GetNamedPipeHandle(stdErrPipeName);
+            }
+            catch (Exception e)
+            {
+                CommandProcessorBase.CheckForSevereException(e);
+
+                if (stdInPipeServer != null) { stdInPipeServer.Dispose(); }
+                if (stdInPipeClient != null) { stdInPipeClient.Dispose(); }
+                if (stdOutPipeServer != null) { stdOutPipeServer.Dispose(); }
+                if (stdOutPipeClient != null) { stdOutPipeClient.Dispose(); }
+                if (stdErrPipeServer != null) { stdErrPipeServer.Dispose(); }
+                if (stdErrPipeClient != null) { stdErrPipeClient.Dispose(); }
+
+                throw;
+            }
+
+            // Create process
+            PlatformInvokes.STARTUPINFO lpStartupInfo = new PlatformInvokes.STARTUPINFO();
+            PlatformInvokes.PROCESS_INFORMATION lpProcessInformation = new PlatformInvokes.PROCESS_INFORMATION();
+            int creationFlags = 0;
+
+            try
+            {
+                var cmdLine = String.Format(CultureInfo.InvariantCulture, @"""{0}"" {1}", startInfo.FileName, startInfo.Arguments);
+
+                lpStartupInfo.hStdInput = new SafeFileHandle(stdInPipeClient.DangerousGetHandle(), false);
+                lpStartupInfo.hStdOutput = new SafeFileHandle(stdOutPipeClient.DangerousGetHandle(), false);
+                lpStartupInfo.hStdError = new SafeFileHandle(stdErrPipeClient.DangerousGetHandle(), false);
+                lpStartupInfo.dwFlags = 0x100;
+
+                // No new window: Inherit the parent process's console window
+                creationFlags = 0x00000000;
+
+                // Create the new process suspended so we have a chance to get a corresponding Process object in case it terminates quickly.
+                creationFlags |= 0x00000004;
+
+                PlatformInvokes.SECURITY_ATTRIBUTES lpProcessAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
+                PlatformInvokes.SECURITY_ATTRIBUTES lpThreadAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
+                bool success = PlatformInvokes.CreateProcess(
+                    null,
+                    cmdLine,
+                    lpProcessAttributes,
+                    lpThreadAttributes,
+                    true,
+                    creationFlags,
+                    IntPtr.Zero,
+                    startInfo.WorkingDirectory,
+                    lpStartupInfo,
+                    lpProcessInformation);
+
+                if (!success)
+                {
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                }
+
+                // At this point, we should have a suspended process.  Get the .Net Process object, resume the process, and return.
+                Process result = Process.GetProcessById(lpProcessInformation.dwProcessId);
+                PlatformInvokes.ResumeThread(lpProcessInformation.hThread);
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                CommandProcessorBase.CheckForSevereException(e);
+                if (stdInPipeServer != null) { stdInPipeServer.Dispose(); }
+                if (stdInPipeClient != null) { stdInPipeClient.Dispose(); }
+                if (stdOutPipeServer != null) { stdOutPipeServer.Dispose(); }
+                if (stdOutPipeClient != null) { stdOutPipeClient.Dispose(); }
+                if (stdErrPipeServer != null) { stdErrPipeServer.Dispose(); }
+                if (stdErrPipeClient != null) { stdErrPipeClient.Dispose(); }
+
+                throw;
+            }
+            finally
+            {
+                lpProcessInformation.Dispose();
+            }
+        }
+
+        private static SafePipeHandle GetNamedPipeHandle(string pipeName)
+        {
+            // Create pipe flags for asynchronous pipes.
+            uint pipeFlags = NamedPipeNative.FILE_FLAG_OVERLAPPED;
+
+            // We want an inheritable handle.
+            PlatformInvokes.SECURITY_ATTRIBUTES securityAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
+
+            // Get handle to pipe.
+            var fileHandle = PlatformInvokes.CreateFileW(
+                pipeName,
+                NamedPipeNative.GENERIC_READ | NamedPipeNative.GENERIC_WRITE,
+                0,
+                securityAttributes,
+                NamedPipeNative.OPEN_EXISTING,
+                pipeFlags,
+                IntPtr.Zero);
+
+            int lastError = Marshal.GetLastWin32Error();
+            if (fileHandle == PlatformInvokes.INVALID_HANDLE_VALUE)
+            {
+                throw new System.ComponentModel.Win32Exception(lastError);
+            }
+
+            return new SafePipeHandle(fileHandle, true);
+        }
+
+        private static SafePipeHandle CreateNamedPipe(
+            string pipeName,
+            CommonSecurityDescriptor securityDesc)
+        {
+            // Create optional security attributes based on provided PipeSecurity.
+            NamedPipeNative.SECURITY_ATTRIBUTES securityAttributes = null;
+            GCHandle? securityDescHandle = null;
+            if (securityDesc != null)
+            {
+                byte[] securityDescBuffer = new byte[securityDesc.BinaryLength];
+                securityDesc.GetBinaryForm(securityDescBuffer, 0);
+                securityDescHandle = GCHandle.Alloc(securityDescBuffer, GCHandleType.Pinned);
+                securityAttributes = NamedPipeNative.GetSecurityAttributes(securityDescHandle.Value, true); ;
+            }
+
+            // Create async named pipe.
+            SafePipeHandle pipeHandle = NamedPipeNative.CreateNamedPipe(
+                pipeName,
+                NamedPipeNative.PIPE_ACCESS_DUPLEX | NamedPipeNative.FILE_FLAG_FIRST_PIPE_INSTANCE | NamedPipeNative.FILE_FLAG_OVERLAPPED,
+                NamedPipeNative.PIPE_TYPE_MESSAGE | NamedPipeNative.PIPE_READMODE_MESSAGE,
+                1,
+                32768,
+                32768,
+                0,
+                securityAttributes);
+
+            int lastError = Marshal.GetLastWin32Error();
+            if (securityDescHandle != null)
+            {
+                securityDescHandle.Value.Free();
+            }
+
+            if (pipeHandle.IsInvalid)
+            {
+                throw new Win32Exception(lastError);
+            }
+
+            return pipeHandle;
+        }
+
+#endif
 
         #endregion
     }

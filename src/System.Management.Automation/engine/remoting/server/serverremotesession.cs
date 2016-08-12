@@ -132,20 +132,20 @@ namespace System.Management.Automation.Remoting
             _senderInfo = senderInfo;
             _configProviderId = configurationProviderId;
             _initParameters = initializationParameters;
-            if (Platform.IsWindows)
-            {
-                _cryptoHelper = (PSRemotingCryptoHelperServer)transportManager.CryptoHelper;
-                _cryptoHelper.Session = this;
-            }
-
+#if !UNIX
+            _cryptoHelper = (PSRemotingCryptoHelperServer)transportManager.CryptoHelper;
+            _cryptoHelper.Session = this;
+#else
+            _cryptoHelper = null;
+#endif
             Context = new ServerRemoteSessionContext();
             SessionDataStructureHandler = new ServerRemoteSessionDSHandlerlImpl(this, transportManager);
             BaseSessionDataStructureHandler = SessionDataStructureHandler;
             SessionDataStructureHandler.CreateRunspacePoolReceived += HandleCreateRunspacePool;
             SessionDataStructureHandler.NegotiationReceived += HandleNegotiationReceived;
             SessionDataStructureHandler.SessionClosing += HandleSessionDSHandlerClosing;
-            SessionDataStructureHandler.PublicKeyReceived +=
-                new EventHandler<RemoteDataEventArgs<string>>(HandlePublicKeyReceived);
+            SessionDataStructureHandler.PublicKeyReceived += 
+                new EventHandler<RemoteDataEventArgs<string>>(HandlePublicKeyReceived);      
             transportManager.Closing += HandleResourceClosing;
 
             // update the quotas from sessionState..start with default size..and
@@ -457,7 +457,7 @@ namespace System.Management.Automation.Remoting
             SessionDataStructureHandler.StateMachine.RaiseEvent(args);
         }
 
-        #endregion Overrides
+#endregion Overrides
 
         #region Properties
 
@@ -865,8 +865,12 @@ namespace System.Management.Automation.Remoting
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.RunspaceAlreadyExists,
                     _runspacePoolDriver.InstanceId);
             }
-
+            
+#if !UNIX
             bool isAdministrator = _senderInfo.UserInfo.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+#else
+            bool isAdministrator = false;
+#endif
 
             ServerRunspacePoolDriver tmpDriver = new ServerRunspacePoolDriver(
                 clientRunspacePoolId,
