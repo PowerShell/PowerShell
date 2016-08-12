@@ -424,8 +424,11 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <returns>Directory Path</returns>
         public static string GetJobDefinitionLocation()
         {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                                ScheduledJobsPath);
+#if UNIX
+            return Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "ScheduledJobs"));
+#else
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ScheduledJobsPath);
+#endif
         }
 
         public static void CreateDirectoryIfNotExists()
@@ -444,9 +447,12 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <returns>Directory Path</returns>
         private static string GetDirectoryPath()
         {
-            string pathName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                                           ScheduledJobsPath);
-
+            string pathName;
+#if UNIX
+            pathName = Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "ScheduledJobs"));
+#else
+            pathName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ScheduledJobsPath);
+#endif
             if (!Directory.Exists(pathName))
             {
                 Directory.CreateDirectory(pathName);
@@ -499,9 +505,13 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <returns>Directory Path</returns>
         private static string GetJobDefinitionPath(string definitionName)
         {
+#if UNIX
+            return Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "ScheduledJobs", definitionName);
+#else
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                                 ScheduledJobsPath,
                                 definitionName);
+#endif
         }
 
         /// <summary>
