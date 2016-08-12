@@ -10,7 +10,6 @@
 #        plugin.
 #
 #####################################################################################################
-[CmdletBinding(DefaultParameterSetName="")]
 param
 (
     [parameter(ParameterSetName = "ByPath")]
