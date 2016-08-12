@@ -424,11 +424,11 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <returns>Directory Path</returns>
         public static string GetJobDefinitionLocation()
         {
-        #if UNIX
+#if UNIX
             return Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "ScheduledJobs"));
-        #else
+#else
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ScheduledJobsPath);
-        #endif
+#endif
         }
 
         public static void CreateDirectoryIfNotExists()
@@ -448,11 +448,11 @@ namespace Microsoft.PowerShell.ScheduledJob
         private static string GetDirectoryPath()
         {
             string pathName;
-        #if UNIX
+#if UNIX
             pathName = Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "ScheduledJobs"));
-        #else
+#else
             pathName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ScheduledJobsPath);
-        #endif
+#endif
             if (!Directory.Exists(pathName))
             {
                 Directory.CreateDirectory(pathName);
@@ -505,13 +505,13 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <returns>Directory Path</returns>
         private static string GetJobDefinitionPath(string definitionName)
         {
-        #if UNIX
+#if UNIX
             return Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "ScheduledJobs", definitionName);
-        #else
+#else
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                                 ScheduledJobsPath,
                                 definitionName);
-        #endif
+#endif
         }
 
         /// <summary>

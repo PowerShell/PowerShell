@@ -3106,14 +3106,14 @@ namespace System.Management.Automation.Runspaces
                 // Or for virtual accounts
                 // WinDir\System32\Microsoft\Windows\PowerShell\DriveRoots\[UserName]
                 string directoryName = MakeUserNamePath();
-            #if UNIX
+#if UNIX
                 string userDrivePath = Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "DriveRoots", directoryName);
-            #else
+#else
                 string userDrivePath = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     @"Microsoft\Windows\PowerShell\DriveRoots",
                     directoryName);
-            #endif
+#endif
 
                 // Create directory if it doesn't exist.
                 if (!System.IO.Directory.Exists(userDrivePath))
