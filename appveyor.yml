@@ -28,7 +28,7 @@ build_script:
         $result.Warnings
         throw "Tags must be CI, Feature, Scenario, or Slow"
       }
-      Start-PSBuild -CrossGen
+      Start-PSBuild -CrossGen -Configuration Release
       Start-PSBuild -FullCLR
 
 test_script:
@@ -82,7 +82,9 @@ on_finish:
         $zipFilePath = Join-Path $pwd "$name.zip"
         $zipFileFullPath = Join-Path $pwd "$name.FullCLR.zip"
         Add-Type -assemblyname System.IO.Compression.FileSystem
+        Write-Verbose "Zipping ${env:CoreOutput} into $zipFilePath" -verbose
         [System.IO.Compression.ZipFile]::CreateFromDirectory($env:CoreOutput, $zipFilePath)
+        Write-Verbose "Zipping ${env:FullOutput} into $zipFileFullPath" -verbose
         [System.IO.Compression.ZipFile]::CreateFromDirectory($env:FullOutput, $zipFileFullPath)
         
         $artifacts = New-Object System.Collections.ArrayList
