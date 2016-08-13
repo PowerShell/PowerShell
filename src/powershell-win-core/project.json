@@ -22,7 +22,7 @@
                 }
             },
             "include": [
-            "../../LICENSE.txt",
+                "../../LICENSE.txt",
                 "../../powershell.version"
             ]
         },
@@ -42,7 +42,8 @@
                 "exclude": [
                     "../Modules/Shared/Pester/.git*"
                 ]
-            }
+            },
+            "PowerShellProperties.json" : "../System.Management.Automation/PowerShellProperties.json"
         },
         "include": [
             "pwrshplugin.dll",
