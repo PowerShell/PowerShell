@@ -23,7 +23,6 @@ using Microsoft.Win32.SafeHandles;
 using Dbg = System.Management.Automation;
 using System.Runtime.InteropServices;
 using System.Management.Automation.Runspaces;
-
 #if CORECLR
 // Use stubs for SafeHandleZeroOrMinusOneIsInvalid and SecurityZone
 using Microsoft.PowerShell.CoreClr.Stubs;
@@ -1326,7 +1325,15 @@ namespace Microsoft.PowerShell.Commands
                 invokeProcess.StartInfo.Arguments = path;
                 invokeProcess.Start();
 #elif CORECLR
-                throw new PlatformNotSupportedException();
+                if (IsNanoServer || IsIoT)
+                {
+                    throw new PlatformNotSupportedException();
+                }
+                invokeProcess.StartInfo.FileName = "cmd.exe";
+                // start is very picky: the "optional" TITLE as the first argument should always be included, otherwise it can silently fail.
+                // also, we need "" around the path in case that there is a space in the path.
+                invokeProcess.StartInfo.Arguments = string.Format(@"/c ""start /b """" ""{0}""""", path);
+                invokeProcess.Start();
 #else
                 invokeProcess.StartInfo.FileName = path;
                 invokeProcess.Start();
@@ -9849,6 +9856,7 @@ namespace System.Management.Automation.Internal
         };
 
         #endregion
+
 
         internal static string AllCopyToRemoteScripts = s_PSCopyToSessionHelper + PSCopyRemoteUtils;
         internal static IEnumerable<Hashtable> GetAllCopyToRemoteScriptFunctions()
