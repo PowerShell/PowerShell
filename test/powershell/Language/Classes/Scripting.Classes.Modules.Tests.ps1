@@ -12,21 +12,20 @@ Describe 'use of a module from two runspaces' -Tags "CI" {
             [string]$Content
         )
         
-        Setup -Dir $Name
+        $TestModulePath = Join-Path -Path $TestDrive -ChildPath "TestModule"
+        $ModuleFolder = Join-Path -Path $TestModulePath -ChildPath $Name
+        New-Item -Path $ModuleFolder -ItemType Directory -Force > $null
+        
+        Set-Content -Path "$ModuleFolder\$Name.psm1" -Value $Content
+
         $manifestParams = @{
-            Path = "TestDrive:\$Name\$Name.psd1"
+            Path = "$ModuleFolder\$Name.psd1"
+            RootModule = "$Name.psm1"
         }
-        
-        if ($Content) {
-            Set-Content -Path "${TestDrive}\$Name\$Name.psm1" -Value $Content
-            $manifestParams['RootModule'] = "$Name.psm1"
-        }
-        
         New-ModuleManifest @manifestParams
 
-        $resolvedTestDrivePath = Split-Path ((get-childitem TestDrive:\)[0].FullName)
-        if (-not ($env:PSMODULEPATH -like "*$resolvedTestDrivePath*")) {
-            $env:PSMODULEPATH += "$([System.IO.Path]::PathSeparator)$resolvedTestDrivePath"
+        if ($env:PSMODULEPATH -notlike "*$TestModulePath*") {
+            $env:PSMODULEPATH += "$([System.IO.Path]::PathSeparator)$TestModulePath"
         }
     }
 
