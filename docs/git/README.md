@@ -27,7 +27,6 @@ Branches
 * Don't commit your changes directly to master.
   It will make the collaborative workflow messy.
 * Checkout a new local branch from `master` for every change you want to make (bugfix, feature).
-* Use the `username/feature-name` pattern for naming branches.
 * Use lowercase-with-dashes for naming.
 * Follow [Linus' recommendations][Linus] about history.
     - "People can (and probably should) rebase their _private_ trees (their own work). That's a _cleanup_. But never other peoples code. That's a 'destroy history'...
