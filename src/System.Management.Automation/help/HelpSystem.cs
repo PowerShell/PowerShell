@@ -604,10 +604,10 @@ namespace System.Management.Automation
             _helpProviders.Add(helpProvider);
 
             /* TH Bug#3141590 - Disable DscResourceHelp for ClientRTM due to perf issue.
-            #if !CORECLR // TODO:CORECLR Add this back in once we support Get-DscResource
-                        helpProvider = new DscResourceHelpProvider(this);
-                        _helpProviders.Add(helpProvider);
-            #endif
+#if !CORECLR // TODO:CORECLR Add this back in once we support Get-DscResource
+            helpProvider = new DscResourceHelpProvider(this);
+            _helpProviders.Add(helpProvider);
+#endif
             */
             helpProvider = new HelpFileHelpProvider(this);
             _helpProviders.Add(helpProvider);

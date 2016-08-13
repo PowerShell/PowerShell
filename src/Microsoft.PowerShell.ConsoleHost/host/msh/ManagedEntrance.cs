@@ -114,21 +114,17 @@ namespace Microsoft.PowerShell
                 int exitCode = 0;
                 try
                 {
-                #if CORECLR
+#if CORECLR
+                    var banner = ManagedEntranceStrings.ShellBannerNonWindowsPowerShell;
+#else
+                    var banner = ManagedEntranceStrings.ShellBanner;
+#endif
                     exitCode = Microsoft.PowerShell.ConsoleShell.Start(
                         configuration,
-                        ManagedEntranceStrings.ShellBannerNonWindowsPowerShell,
+                        banner,
                         ManagedEntranceStrings.ShellHelp,
                         warning == null ? null : warning.Message,
                         args);
-                #else
-                    exitCode = Microsoft.PowerShell.ConsoleShell.Start(
-                        configuration,
-                        ManagedEntranceStrings.ShellBanner,
-                        ManagedEntranceStrings.ShellHelp,
-                        warning == null ? null : warning.Message,
-                        args);
-                #endif
                 }
                 catch (System.Management.Automation.Host.HostException e)
                 {
