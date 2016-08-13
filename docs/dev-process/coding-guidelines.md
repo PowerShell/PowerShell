@@ -78,4 +78,7 @@ When absolutely necessary, avoid duplicating more code than necessary,
 and instead prefer introducing helper functions to minimize the platform differences.
 
 When adding platform dependent code, prefer preprocessor directives
-over runtime checks.  
+over runtime checks.
+
+We produce a single binary for all UNIX variants,
+so runtime checks are currently necessary for some platform differences, e.g. OS X and Linux.
