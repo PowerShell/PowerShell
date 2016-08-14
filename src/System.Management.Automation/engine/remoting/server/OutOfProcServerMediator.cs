@@ -298,9 +298,15 @@ namespace System.Management.Automation.Remoting.Server
 
         protected OutOfProcessServerSessionTransportManager CreateSessionTransportManager(string configurationName)
         {
+#if UNIX
+            PSPrincipal userPrincipal = new PSPrincipal(new PSIdentity("", true, "", null),
+                null);
+           
+#else             
             WindowsIdentity currentIdentity = WindowsIdentity.GetCurrent();
             PSPrincipal userPrincipal = new PSPrincipal(new PSIdentity("", true, currentIdentity.Name, null),
-                currentIdentity);
+                currentIdentity);            
+#endif 
             PSSenderInfo senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
 
             OutOfProcessServerSessionTransportManager tm = new OutOfProcessServerSessionTransportManager(originalStdOut, originalStdErr);
