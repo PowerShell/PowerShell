@@ -36,8 +36,13 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         static PowerShellProcessInstance()
         {
+#if UNIX
+            s_PSExePath = Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID),
+                            "powershell");
+#else 
             s_PSExePath = Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID),
                             "powershell.exe");
+#endif 
         }
 
         /// <summary>
@@ -71,17 +76,21 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            string processArguments = string.Empty;
+#if CORECLR
+            string processArguments = " -s -NoLogo -NoProfile";
+#else 
             // Adding Version parameter to powershell.exe
             // Version parameter needs to go before all other parameters because the native layer looks for Version or 
             // PSConsoleFile parameters before parsing other parameters.
             // The other parameters get parsed in the managed layer.
             Version tempVersion = powerShellVersion ?? PSVersionInfo.PSVersion;
-            processArguments = string.Format(CultureInfo.InvariantCulture,
+            string processArguments = string.Format(CultureInfo.InvariantCulture,
                        "-Version {0}", new Version(tempVersion.Major, tempVersion.Minor));
 
             processArguments = string.Format(CultureInfo.InvariantCulture,
                 "{0} -s -NoLogo -NoProfile", processArguments);
+
+#endif
 
             if (initializationScript != null)
             {
@@ -106,7 +115,9 @@ namespace System.Management.Automation.Runspaces
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 CreateNoWindow = true,
+#if !UNIX 
                 LoadUserProfile = true,
+#endif
             };
 
             if (credential != null)
