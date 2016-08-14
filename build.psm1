@@ -754,8 +754,8 @@ function Start-PSBootstrap {
             $newMachineEnvironmentPath = $machinePath
 
             $cmakePresent = precheck 'cmake' $null
-            $sdkPath = "${env:ProgramFiles(x86)}\Microsoft SDKs\Windows\v10.0A"
-            $sdkPresent = Test-Path -Path $sdkPath -PathType Container
+            $win10sdkBinPath = "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64"
+            $sdkPresent = Test-Path -Path $win10sdkBinPath -PathType Container
 
             # Install chocolatey
             $chocolateyPath = "$env:AllUsersProfile\chocolatey\bin"
