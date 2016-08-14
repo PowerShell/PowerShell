@@ -1196,7 +1196,11 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal PSRemotingCryptoHelperServer()
         {
+#if UNIX
+          _rsaCryptoProvider = null;
+#else            
             _rsaCryptoProvider = PSRSACryptoServiceProvider.GetRSACryptoServiceProviderForServer();
+#endif 
         }
 
         #endregion Constructors
