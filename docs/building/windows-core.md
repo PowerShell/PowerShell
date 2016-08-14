@@ -89,3 +89,13 @@ project, so `dotnet build` transitively builds all its dependencies, and emits a
 `--help`.
 
 You can run our cross-platform Pester tests with `Start-PSPester`.
+
+Building in Visual Studio
+-----------------------------
+
+We do not recommend building the Poweshell solution from Visual Studio. This may lead to package version mismatches with errors similar to:
+```
+C:\dev\powershell\src\System.Management.Automation\project.json(142,77): error NU1001: The dependency Microsoft.PowerShe
+ll.CoreCLR.AssemblyLoadContext >= 1.0.0-* could not be resolved.
+```
+If you find yourself blocked by these errors, either run `git clean -ffdx` or run `Start-PSBuild -Clean`.
