@@ -1,4 +1,4 @@
-PowerShell 6.0
+ï»¿PowerShell 6.0
 Copyright (c) Microsoft Corporation
 All rights reserved. 
 MIT License
