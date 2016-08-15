@@ -56,9 +56,9 @@ the native command experience to the PowerShell on Linux user but reduces
 functionality in the shell because the native commands return strings
 not objects.
 
-> NOTE: This is an area where the Open Source PowerShell team is looking
-> for feedback. What is the preferred solution? Should we leave it as is
-> or add the convenience aliases back? See 
+> NOTE: This is an area where the PowerShell team is looking for feedback. 
+> What is the preferred solution? Should we leave it as is or add the 
+> convenience aliases back? See 
 > [Issue 929](https://github.com/PowerShell/PowerShell/issues/929 "Issue 929")  
 
 Missing Wildcard (globbing) Support 
@@ -117,7 +117,7 @@ Just-Enough-Administration (JEA) Support
 ----------------------------------------
 
 The ability to create constrained administration (JEA) remoting
-endpoints is not currently available in Open PowerShell for Linux. This
+endpoints is not currently available in PowerShell on Linux. This
 feature will be enabled shortly after the Alpha release by installing
 new package.
 
