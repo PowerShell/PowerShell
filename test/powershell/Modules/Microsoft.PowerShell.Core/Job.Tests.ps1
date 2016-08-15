@@ -45,3 +45,30 @@ Describe "Job Cmdlet Tests" {
         }
     }
 }
+Describe "Debug-job test" -tag "Feature" {
+    BeforeAll {
+        $rs = [runspacefactory]::CreateRunspace()
+        $rs.Open()
+        $rs.Debugger.SetDebugMode([System.Management.Automation.DebugModes]::RemoteScript)
+        $rs.Debugger.add_DebuggerStop({$true})
+        $ps = [powershell]::Create()
+        $ps.Runspace = $rs
+    }
+    AfterAll {
+        $rs.Dispose()
+        $ps.Dispose()
+    }
+    # we check this via implication.
+    # if we're debugging a job, then the debugger will have a callstack
+    It "Debug-Job will break into debugger" -pending:(!$IsWindows) {
+        $ps.AddScript('$job = start-job { 1..300 | % { sleep 1 } }').Invoke()
+        $ps.Commands.Clear()
+        $ps.Runspace.Debugger.GetCallStack() | Should BeNullOrEmpty
+        start-sleep 3
+        $asyncResult = $ps.AddScript('debug-job $job').BeginInvoke()
+        $ps.commands.clear()
+        start-sleep 2
+        $result = $ps.runspace.Debugger.GetCallStack()
+        $result.Command | Should be "<ScriptBlock>"
+    }
+}
