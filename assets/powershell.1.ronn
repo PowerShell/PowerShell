@@ -2,19 +2,19 @@ POWERSHELL(1)                     User Manuals                    POWERSHELL(1)
 
 
 NAME
-    powershell - commandline shell and C# REPL. 
+    powershell - commandline shell and .NET REPL. 
 
 SYNOPSIS
     powershell[.exe][.exe] [-PSConsoleFile <file> | -Version <version>]
     [-NoLogo] [-NoExit] [-Sta] [-Mta] [-NoProfile] [-NonInteractive]
     [-InputFormat {Text | XML}] [-OutputFormat {Text | XML}] 
-    [-WindowStyle <style>] [-EncodedCommand <Base64EncodedCommand>] 
+    [-WindowStyle] [-EncodedCommand <Base64EncodedCommand>] 
     [-File <filePath> <args>] [-ExecutionPolicy <ExecutionPolicy>]
     [-Command { - | <script-block> [-args <arg-array>]
                   | <string> [<CommandParameters>] } ]
 
 DESCRIPTION
-     powershell commandline shell and C# REPL.
+     powershell commandline shell and .NET REPL.
 
 OPTIONS
     
