@@ -645,7 +645,7 @@ Subject to the foregoing clause ii., Microsoft will only be liable for slight ne
  performance of this agreement, the breach of which would endanger the purpose of this agreement 
  and the compliance with which a party may constantly trust in (so-called "cardinal obligations"). In 
  other cases of slight negligence, Microsoft will not be liable for slight negligence.
-14.	DISCLAIMER OF WARRANTY. THE SOFTWARE IS LICENSED €œAS IS.€ YOU BEAR THE RISK OF USING IT. MICROSOFT 
+14.	DISCLAIMER OF WARRANTY. THE SOFTWARE IS LICENSED AS IS YOU BEAR THE RISK OF USING IT. MICROSOFT 
 GIVES NO EXPRESS WARRANTIES, GUARANTEES, OR CONDITIONS. TO THE EXTENT PERMITTED UNDER APPLICABLE 
 LAWS, MICROSOFT EXCLUDES ALL IMPLIED WARRANTIES, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR 
 PURPOSE, AND NON-INFRINGEMENT.
