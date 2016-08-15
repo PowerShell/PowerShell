@@ -68,7 +68,7 @@ function ConvertTo-Pfx
     Write-Verbose "Windows 10 SDK needed - https://go.microsoft.com/fwlink/p/?LinkID=822845 - Ensure pvk2pfx.exe is present @ $pvk2pfxBinPath"
     if (-not (Test-Path $pvk2pfxBinPath))
     {
-        throw "$pvk2pfxBinPath is required to convert pvk file to pfx file - one of the prerequisities to signing a package!"
+        throw "$pvk2pfxBinPath is required to convert pvk file to pfx file - one of the prerequisites to sign a package!"
     }
         
     Remove-Item $PfxFilePath -Force -ErrorAction Ignore
@@ -92,7 +92,7 @@ function Sign-Package
         [ValidateNotNullOrEmpty()]
         [string] $PackageFilePath,
         
-        #Path to generated pfx file for signing the package
+        #Path to generated pfx file to sign the package
         [ValidateNotNullOrEmpty()]
         [string] $PfxFilePath = "$env:Temp\PowerShell.pfx"
 
