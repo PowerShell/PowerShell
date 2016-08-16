@@ -88,18 +88,3 @@ git config --global url.git@github.com:.insteadOf https://github.com/
 [SSH key]: https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#generating-a-new-ssh-key
 [token]: https://help.github.com/articles/creating-an-access-token-for-command-line-use/
 [manager]: https://github.com/Microsoft/Git-Credential-Manager-for-Windows
-
-
-Permissions
------------
-
-If you have difficulty in pushing your changes, there is a high probability that
-you actually don't have permissions.
-
-Be sure that you have write access to corresponding repository (remember that
-submodules have their own privilege).
-
-Your should push to this repository instead of a fork so that the CI system can
-provide credentials to your pull request. If you make a pull request from a
-fork, the CI *will* fail.
-
