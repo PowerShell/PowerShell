@@ -7,4 +7,4 @@ This demo shows use of a PowerShell script module to wrap a native tool (journal
 - Install PowerShell
 
 
-Note: Accessing the SystemD journal requires privileges. THe user must have authorization to elevate with sudo. You will be prompted for a sudo password when running the demo.
+Note: Accessing the SystemD journal requires privileges. The user must have authorization to elevate with sudo. You will be prompted for a sudo password when running the demo.

@@ -60,7 +60,7 @@ Class ApacheVirtualHost{
         }
 
         #Full specification
-        ApacheVirtualHost([string]$ServerName, [string]$DocumentRoot, [string[]]$ServerAliases, [string]$ServerAdmin,[string]$CustomLogPath,[string]$ErrorLogPath,[string]$VirtualHostIPAddress,[int]$VirtualHostPort,[string]$ConfigurationFile){
+        ApacheVirtualHost([string]$ServerName, [string]$DocumentRoot, [string[]]$ServerAliases, [string]$ServerAdmin, [string]$CustomLogPath, [string]$ErrorLogPath, [string]$VirtualHostIPAddress, [int]$VirtualHostPort, [string]$ConfigurationFile){
             $this.ServerName = $ServerName
             $this.DocumentRoot = $DocumentRoot
             $this.ServerAliases = $ServerAliases
@@ -72,14 +72,12 @@ Class ApacheVirtualHost{
             $this.ConfigurationFile = $ConfigurationFile
         }
 
-
-
         #Default Port and IP
         #endregion
 
         #region class methods
         Save($ConfigurationFile){
-            if (!(Test-Path $this.DocumentRoot)){ New-Item -type Directory $this.DocumentRoot }
+            if (!(Test-Path $this.DocumentRoot)){ New-Item -Type Directory $this.DocumentRoot }
 
             $VHostsDirectory = GetApacheVHostDir
             if (!(Test-Path $VHostsDirectory)){
@@ -101,7 +99,7 @@ Class ApacheVirtualHost{
             if ($this.ErrorLogPath -like "*/*"){$vHostDef += "ErrorLog " + $this.ErrorLogpath +"`n"}
             $vHostDef += "</VirtualHost>"
             $filName = $ConfigurationFile
-            $VhostDef |out-file "/tmp/${filName}" -Force -Encoding:ascii
+            $VhostDef | Out-File "/tmp/${filName}" -Force -Encoding:ascii
             & $global:sudocmd "mv" "/tmp/${filName}" "${VhostsDirectory}/${filName}" 
             Write-Information "Restarting Apache HTTP Server"
             Restart-ApacheHTTPServer
@@ -114,7 +112,7 @@ Class ApacheVirtualHost{
 
 Function New-ApacheVHost {
     [CmdletBinding()]
-    param (
+    param(
         [parameter (Mandatory = $true)][string]$ServerName,
         [parameter (Mandatory = $true)][string]$DocumentRoot,
         [string]$VirtualHostIPAddress,

@@ -1,6 +1,6 @@
 
 #Get Distro type and set distro-specific variables
-$OSname = get-content "/etc/os-release" |Select-String -pattern "^Name=" 
+$OSname = Get-Content "/etc/os-release" |Select-String -Pattern "^Name=" 
 $OSName = $OSName.tostring().split("=")[1].Replace('"','')
 if ($OSName -like "Ubuntu*"){
     $distro = "Ubuntu"
@@ -15,11 +15,11 @@ if ($OSName -like "Ubuntu*"){
     $VHostDir = "/etc/httpd/conf.d"
     $PackageManager = "yum"
 }else{
-    write-error "Unknown Linux operating system. Cannot continue."
+    Write-Error "Unknown Linux operating system. Cannot continue."
 }
 
 #Get Service Controller
-if ((test-path "/bin/systemctl") -or (test-path "/usr/bin/systemctl")){
+if ((Test-Path "/bin/systemctl") -or (Test-Path "/usr/bin/systemctl")){
     $ServiceCtl = "SystemD"
 }else{
     $ServiceCtl = "init"
@@ -28,7 +28,7 @@ if ((test-path "/bin/systemctl") -or (test-path "/usr/bin/systemctl")){
 #Get FQDN
 $hostname = & hostname --fqdn
 
-Write-host -ForegroundColor Blue "Compile a DSC MOF for the Apache Server configuration"
+Write-Host -ForegroundColor Blue "Compile a DSC MOF for the Apache Server configuration"
 Configuration ApacheServer{
     Node localhost{
 
@@ -94,7 +94,7 @@ ServerName $hostname
             Owner = "root"
             Mode = "744"
             Contents = @'
-<?php phpinfo(); ?>
+<?php phpinfo(); ?>
 
 '@
         }
@@ -111,12 +111,12 @@ ServerName $hostname
     } 
 }
 
-ApacheServer -outputPath "/tmp"
+ApacheServer -OutputPath "/tmp"
 
 Pause
 Write-Host -ForegroundColor Blue "Apply the configuration locally"
-& sudo /opt/microsoft/dsc/Scripts/StartDscConfiguration.py -configurationmof /tmp/localhost.mof |Out-Host
+& sudo /opt/microsoft/dsc/Scripts/StartDscConfiguration.py -configurationmof /tmp/localhost.mof | Out-Host
 
 Pause
 Write-Host -ForegroundColor Blue "Get the current configuration"
-& sudo /opt/microsoft/dsc/Scripts/GetDscConfiguration.py |Out-Host
+& sudo /opt/microsoft/dsc/Scripts/GetDscConfiguration.py | Out-Host
