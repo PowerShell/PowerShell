@@ -311,7 +311,6 @@ namespace System.Management.Automation.Remoting.Server
             senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
 #endif
 
-
             OutOfProcessServerSessionTransportManager tm = new OutOfProcessServerSessionTransportManager(originalStdOut, originalStdErr, cryptoHelper);
 
             ServerRemoteSession srvrRemoteSession = ServerRemoteSession.CreateServerRemoteSession(senderInfo,

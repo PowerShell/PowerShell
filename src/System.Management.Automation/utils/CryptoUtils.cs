@@ -1197,7 +1197,7 @@ namespace System.Management.Automation.Internal
         internal PSRemotingCryptoHelperServer()
         {
 #if UNIX
-          _rsaCryptoProvider = null;
+            _rsaCryptoProvider = null;
 #else            
             _rsaCryptoProvider = PSRSACryptoServiceProvider.GetRSACryptoServiceProviderForServer();
 #endif 

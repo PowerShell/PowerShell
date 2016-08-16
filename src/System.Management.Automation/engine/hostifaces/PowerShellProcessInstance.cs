@@ -89,8 +89,7 @@ namespace System.Management.Automation.Runspaces
                 "{0} -s -NoLogo -NoProfile", processArguments);
 
 #if CORECLR
-            processArguments = string.Format(CultureInfo.InvariantCulture,
-                " -s -NoLogo -NoProfile", processArguments);
+            processArguments = " -s -NoLogo -NoProfile";
 #endif 
 
             if (initializationScript != null)
