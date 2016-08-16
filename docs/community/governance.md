@@ -4,7 +4,7 @@
 
 * [**PowerShell Committee**](#powershell-committee): A committee of project owners who are responsible for design decisions, approving [RFCs][RFC-repo], and approving new maintainers/committee members 
 * **Project Leads**: Project Leads support the PowerShell Committee, engineering teams, and community by working across Microsoft teams and leadership, and working through industry issues with other companies.
-They also have optional votes on the PowerShell Committee when they choose to invoke them.
+They also have optional votes on the PowerShell Committee when they choose to invoke them. The initial Project Leads for PowerShell are Angel Calvo ([AsCalvo](https://github.com/AngelCalvo)) and Kenneth Hansen ([khansen00](https://github.com/khansen00)).
 * [**Repository maintainer**](#repository-maintainers): An individual responsible for merging pull requests (PRs) into `master` when all requirements are met (code review, tests, docs, and RFC approval as applicable).
 Repository Maintainers are the only people with write permissions into `master`.
 * [**Area experts**](#area-experts): People who are experts for specific components (e.g. PSReadline, the parser) or technologies (e.g. security, performance). 
@@ -14,7 +14,7 @@ The Corporation for PowerShell is Microsoft.
 * **Corporate Maintainer**: The Corporate Maintainer is an entity, person or set of persons, with the ability to veto decisions made by the PowerShell Committee or any other collaborators on the PowerShell project.
 This veto power will be used with restraint since it is intended that the community drive the project. 
 The Corporate Maintainer is determined by the Corporation both initially and in continuation.
-The initial Corporate Maintainer for PowerShell is Jeffrey Snover.
+The initial Corporate Maintainer for PowerShell is Jeffrey Snover ([jpsnover](https://github.com/jpsnover)).
 * [**RFC process**][RFC-repo]: The "review-for-comment" (RFC) process whereby design decisions get made. 
 
 ## PowerShell Committee
