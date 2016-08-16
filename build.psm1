@@ -658,7 +658,7 @@ function Start-PSBootstrap {
         [switch]$Force
     )
 
-    log "Installing Open PowerShell build dependencies"
+    log "Installing PowerShell build dependencies"
 
     Push-Location $PSScriptRoot/tools
 

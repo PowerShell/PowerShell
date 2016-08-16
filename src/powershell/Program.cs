@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell
         public static int Main(string[] args)
         {
 #if CORECLR
-            // Open PowerShell has to set the ALC here, since we don't own the native host
+            // PowerShell has to set the ALC here, since we don't own the native host
             string appBase = System.IO.Path.GetDirectoryName(typeof(ManagedPSEntry).GetTypeInfo().Assembly.Location);
             return (int)PowerShellAssemblyLoadContextInitializer.
                            InitializeAndCallEntryMethod(

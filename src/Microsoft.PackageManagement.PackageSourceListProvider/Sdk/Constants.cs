@@ -20,7 +20,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
         public static readonly string SettingsFileName = "PSL.config";
 
         /// <summary>
-        /// Sample JSON file containing open powershell entry
+        /// Sample JSON file containing powershell entry
         /// </summary>
         public static readonly string JSONFileName = "PSL.json";
         public static readonly string CatFileName = "PSL.cat";

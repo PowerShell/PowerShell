@@ -510,7 +510,7 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
 }
 
 Describe "install-packageprovider with Scope" -Tags "Feature" {
-    # PENDING a lot of these tests because jobs are broken on OPS
+    # PENDING a lot of these tests because jobs are broken on PowerShell from GitHub
 
     BeforeAll {
         if ($IsWindows)
