@@ -1,4 +1,4 @@
-Describe "Job Cmdlet Tests" {
+Describe "Job Cmdlet Tests" -Tag "CI" {
     Context "Simple Jobs" {
         AfterEach {
             Get-Job | Remove-Job

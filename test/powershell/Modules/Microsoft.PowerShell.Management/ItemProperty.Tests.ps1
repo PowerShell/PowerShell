@@ -1,4 +1,4 @@
-Describe "Simple ItemProperty Tests" {
+Describe "Simple ItemProperty Tests" -Tag "CI" {
     It "Can retrieve the PropertyValue with Get-ItemPropertyValue" {
         Get-ItemPropertyValue -path $TESTDRIVE -Name Attributes | should be "Directory"
     }

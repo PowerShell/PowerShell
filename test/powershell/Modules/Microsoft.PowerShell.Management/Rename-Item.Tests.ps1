@@ -1,4 +1,4 @@
-Describe "Rename-Item tests" {
+Describe "Rename-Item tests" -Tag "CI" {
     BeforeAll {
         $content = "This is content"
         Setup -f originalFile.txt -content "This is content"

@@ -1,4 +1,4 @@
-Describe "Resolve-Path returns proper path" {
+Describe "Resolve-Path returns proper path" -Tag "CI" {
     It "Resolve-Path returns resolved paths" {
         Resolve-Path $TESTDRIVE | Should be "$TESTDRIVE"
     }

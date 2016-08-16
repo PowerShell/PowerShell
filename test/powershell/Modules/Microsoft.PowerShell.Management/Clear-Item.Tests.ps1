@@ -1,4 +1,4 @@
-Describe "Clear-Item tests" {
+Describe "Clear-Item tests" -Tag "CI" {
     BeforeAll {
         ${myClearItemVariableTest} = "Value is here"
     }

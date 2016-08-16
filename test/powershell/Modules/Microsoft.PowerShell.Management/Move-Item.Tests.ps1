@@ -1,4 +1,4 @@
-Describe "Move-Item tests" {
+Describe "Move-Item tests" -Tag "CI" {
     BeforeAll {
         $content = "This is content"
         Setup -f originalfile.txt -content "This is content"
