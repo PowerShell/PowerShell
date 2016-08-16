@@ -1,7 +1,7 @@
 Describe "Job Cmdlet Tests" -Tag "CI" {
     Context "Simple Jobs" {
         AfterEach {
-            Get-Job | Remove-Job
+            Get-Job | Remove-Job -force
         }
         BeforeEach {
             $j = start-job -scriptblock { 1 + 1 }
@@ -13,7 +13,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
             (Get-Job -id $j.id).gettype().fullname | should be "System.Management.Automation.PSRemotingJob"
         }
         It "Remove-Job can remove a job" {
-            remove-job $j
+            remove-job $j -force
             try {
                 get-job $j -ea Stop
                 throw "Execution OK"
@@ -32,7 +32,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
             $j = start-job -scriptblock { Start-Sleep 5 }
         }
         AfterEach {
-            Get-Job | Remove-Job
+            Get-Job | Remove-Job -force
         }
         It "Wait-Job will wait for a job" {
             $result = wait-Job $j
