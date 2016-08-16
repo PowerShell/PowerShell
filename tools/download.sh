@@ -28,10 +28,10 @@ case "$OSTYPE" in
                 sudo apt-get install -y curl wget
                 case "$VERSION_ID" in
                     14.04)
-                        version=ubuntu.14.04-x64.deb
+                        version=ubuntu1.14.04.1_amd64.deb
                         ;;
                     16.04)
-                        version=ubuntu.16.04-x64.deb
+                        version=ubuntu1.16.04.1_amd64.deb
                         ;;
                     *)
                         exit 2 >&2 "Ubuntu $VERSION_ID is not supported!"
@@ -71,10 +71,10 @@ case "$OSTYPE" in
             ubuntu)
                 case "$VERSION_ID" in
                     14.04)
-                        $icupackage=libicu52
+                        icupackage=libicu52
                         ;;
                     16.04)
-                        $icupackage=libicu55
+                        icupackage=libicu55
                         ;;
                 esac
                 sudo apt-get install -y libunwind8 $icupackage
