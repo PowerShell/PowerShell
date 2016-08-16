@@ -127,7 +127,7 @@ function Start-PSBuild {
         $env:NUGET_PACKAGES="$PSScriptRoot\Packages"
 
         # cmake is needed to build powershell.exe
-        $precheck = $precheck -and (precheck 'cmake' 'cmake not found. Run Start-PSBootstrap. You can also install it from https://chocolatey.org/packages/cmake.portable')
+        $precheck = $precheck -and (precheck 'cmake' 'cmake not found. Run Start-PSBootstrap. You can also install it from https://chocolatey.org/packages/cmake')
 
         Use-MSBuild
 
@@ -788,7 +788,7 @@ function Start-PSBootstrap {
                 log "Cmake is already installed. Skipping installation."
             } else {
                 log "Cmake not present. Installing cmake."
-                choco install cmake.portable -y --version 3.6.0
+                choco install cmake -y --version 3.6.0
                 if (-not ($machinePath.ToLower().Contains($cmakePath.ToLower()))) {
                     log "Adding $cmakePath to Path environment variable"
                     $env:Path += ";$cmakePath"
