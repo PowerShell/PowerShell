@@ -16,14 +16,14 @@ Ubuntu 14.04
 ============
 
 Using [Ubuntu 14.04][], download the Debian package
-`powershell_6.0.0-alpha.9-1_amd64-ubuntu.14.04-x64.deb`
+`powershell_6.0.0-alpha.9-1ubuntu1.14.04.1_amd64.deb`
 from the [releases][] page onto the Ubuntu machine.
 
 Then execute the following in the terminal:
 
 ```sh
 sudo apt-get install libunwind8 libicu52
-sudo dpkg -i powershell_6.0.0-alpha.9-1_amd64-ubuntu.14.04-x64.deb
+sudo dpkg -i powershell_6.0.0-alpha.9-1ubuntu1.14.04.1_amd64.deb
 ```
 
 [Ubuntu 14.04]: http://releases.ubuntu.com/14.04/
@@ -32,7 +32,7 @@ Ubuntu 16.04
 ============
 
 Using [Ubuntu 16.04][], download the Debian package
-`powershell_6.0.0-alpha.9-1_amd64-ubuntu.16.04-x64.deb`
+`powershell_6.0.0-alpha.9-1ubuntu1.16.04.1_amd64.deb`
 from the [releases][] page onto the Ubuntu machine.
 
 Then execute the following in the terminal:
@@ -41,7 +41,7 @@ Then execute the following in the terminal:
 
 ```sh
 sudo apt-get install libunwind8 libicu55
-sudo dpkg -i powershell_6.0.0-alpha.9-1_amd64-ubuntu.16.04-x64.deb
+sudo dpkg -i powershell_6.0.0-alpha.9-1ubuntu1.16.04.1_amd64.deb
 ```
 
 [Ubuntu 16.04]: http://releases.ubuntu.com/16.04/
@@ -51,13 +51,13 @@ CentOS 7
 ========
 
 Using [CentOS 7][], download the RPM package
-`powershell-6.0.0_alpha.9-1.x86_64-centos.7-x64.rpm`
+`powershell-6.0.0_alpha.9-1.el7.centos.x86_64.rpm`
 from the [releases][] page onto the CentOS machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo yum install powershell-6.0.0_alpha.9-1.x86_64-centos.7-x64.rpm
+sudo yum install powershell-6.0.0_alpha.9-1.el7.centos.x86_64.rpm
 ```
 
 > This package should work on Red Hat Enterprise Linux 7 too.
