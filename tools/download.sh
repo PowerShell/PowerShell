@@ -88,4 +88,30 @@ case "$OSTYPE" in
         ;;
 esac
 
-echo "Congratulations! PowerShell is now installed."
+get_smadll_location() {
+    dpkg-query --listfiles PowerShell | grep "System.Management.Automation.dll"
+}
+
+get_powershell_location() {
+    dirname $(get_smadll_location)
+}
+
+get_powershell_symlink() {
+	dir /usr/bin/powershell
+}
+
+install_location=$(get_powershell_location)
+powershell_symlink=$(get_powershell_symlink)
+
+if [ $install_location ]
+then
+	echo "Congratulations! PowerShell \"$package\" is installed @ \"$install_location\""
+fi
+
+if [ $powershell_symlink ]
+then
+	echo "Symlink is available @ \"$powershell_symlink\""
+else
+	echo "PowerShell install failed! Check this script's output for information"
+	exit -1
+fi
