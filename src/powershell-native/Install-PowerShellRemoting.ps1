@@ -37,7 +37,7 @@ function Register-WinRmPlugin
         $pluginAbsolutePath,
 
         #
-        # Expected Example: microsoft.ops.5.1
+        # Expected Example: microsoft.powershell-core.6.0
         #
         [string]
         [parameter(Mandatory=$true)]
