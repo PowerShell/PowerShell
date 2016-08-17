@@ -112,7 +112,7 @@ If you are an Area Expert:
 1. **DO** ask people to resend a pull request, if it [doesn't target `master`](../../.github/CONTRIBUTING.md#lifecycle-of-a-pull-request).
 1. **DO** ensure that contributors [write Pester tests][pester] for all new/changed functionality
 1. **DO** ensure that contributors [write documentation][docs-contributing] for all new-/changed functionality
-1. **DO** encourage contributors to refer to issues in their pull request description per the [pull request template](../../.github/PULL_REQUEST_TEMPLATE.md) (e.g. `Resolves issue #123`)
+1. **DO** encourage contributors to refer to issues in their pull request description (e.g. `Resolves issue #123`).
 1. **DO** encourage contributors to create meaningful titles for all PRs. Edit title if necessary.
 1. **DO** verify that all contributors are following the [Coding Guidelines](../dev-process/coding-guidelines.md).
 

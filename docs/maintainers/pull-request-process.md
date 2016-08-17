@@ -1,10 +1,8 @@
 # Pull Request Process
 
-Our [pull request template][pr-template] includes the bare minimum requirements for a pull request to be accepted into PowerShell. This includes:
+Requirements for a pull request to be accepted into PowerShell
 * Writing tests
-* Writing documentation (where does thie one live already? is it where this guidance should exist all up?)
-* Our [code review process][code-review]
-* Repository maintainer sign-off, per our [governance model][governance]
+* Writing documentation
 
 ## Pull Request Workflow
 
@@ -30,8 +28,5 @@ In these cases:
   - If the changes required to merge the pull request are significant but needed, create a new branch with the changes and open an issue to merge the code into the dev branch. Mention the original pull request ID in the description of the new issue and close the abandoned pull request. 
   - If the changes in an abandoned pull request are no longer needed (e.g. due to refactoring of the code base or a design change), simply close the pull request.
 
-[pr-template]: ../../.github/PULL_REQUEST_TEMPLATE.md
-[code-review]: code-review-guidelines.md
-[governance]: ../community/governance.md
 [repository-maintainer]: ../community/governance.md#repository-maintainers
 [area-expert]: ../community/governance.md#area-experts#area-experts

@@ -46,7 +46,7 @@ This includes adding extra reviewers when it makes sense
 1. **SHOULD** ask people to resend a pull request, if it [doesn't target `master`](../../.github/CONTRIBUTING.md#lifecycle-of-a-pull-request)
 1. **SHOULD** wait for the [CI system][ci-system] build to pass for pull requests 
 (unless, for instance, the pull request is being submitted to fix broken CI)
-1. **SHOULD** encourage contributors to refer to issues in their pull request description per the [pull request template](../../.github/PULL_REQUEST_TEMPLATE.md) (e.g. `Resolves issue #123`).
+1. **SHOULD** encourage contributors to refer to issues in their pull request description (e.g. `Resolves issue #123`).
 If a user did not create an issue prior to submitting their pull request, their pull request should not be rejected.
 However, they should be reminded to create an issue in the future to frontload any potential problems with the work and to minimize duplication of efforts. 
 1. **SHOULD** encourage contributors to create meaningful titles for all PRs.
