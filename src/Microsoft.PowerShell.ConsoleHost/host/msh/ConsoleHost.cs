@@ -1722,10 +1722,13 @@ namespace Microsoft.PowerShell
                 // configuration to get the shell ID from, so we'll use the default...
                 string shellId = null;
                 if (_configuration != null)
-                    shellId = _configuration.ShellId;
+                        shellId = _configuration.ShellId;
                 else
-                    shellId = "Microsoft.PowerShell"; // TODO: what will happen for custom shells built using Make-Shell.exe
-
+#if CORECLR                
+                shellId = Platform.IsInbox ?  "Microsoft.PowerShell" : "PowerShell";
+#else
+                shellId = "Microsoft.PowerShell"; // TODO: what will happen for custom shells built using Make-Shell.exe
+#endif
                 // If the system lockdown policy says "Enforce", do so. Do this after types / formatting, default functions, etc
                 // are loaded so that they are trusted. (Validation of their signatures is done in F&O)
                 if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
