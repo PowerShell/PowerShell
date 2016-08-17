@@ -222,10 +222,10 @@ namespace System.Management.Automation.Remoting
            uint nDefaultTimeOut,
            SECURITY_ATTRIBUTES securityAttributes);
 
-        internal static SECURITY_ATTRIBUTES GetSecurityAttributes(GCHandle securityDescriptorPinnedHandle)
+        internal static SECURITY_ATTRIBUTES GetSecurityAttributes(GCHandle securityDescriptorPinnedHandle, bool inheritHandle = false)
         {
             SECURITY_ATTRIBUTES securityAttributes = new NamedPipeNative.SECURITY_ATTRIBUTES();
-            securityAttributes.InheritHandle = false;
+            securityAttributes.InheritHandle = inheritHandle;
             securityAttributes.NLength = (int)Marshal.SizeOf(securityAttributes);
             securityAttributes.LPSecurityDescriptor = securityDescriptorPinnedHandle.AddrOfPinnedObject();
             return securityAttributes;
@@ -590,7 +590,7 @@ namespace System.Management.Automation.Remoting
 
         #region Private Methods
 
-        private static CommonSecurityDescriptor GetServerPipeSecurity()
+        internal static CommonSecurityDescriptor GetServerPipeSecurity()
         {
             // Built-in Admin SID
             SecurityIdentifier adminSID = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);

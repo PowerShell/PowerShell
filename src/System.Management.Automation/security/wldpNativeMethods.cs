@@ -258,6 +258,13 @@ namespace System.Management.Automation.Security
                             (System.Security.Principal.WindowsIdentity.GetCurrent().ImpersonationLevel == System.Security.Principal.TokenImpersonationLevel.Impersonation) ?
                             SaferPolicy.Allowed : SaferPolicy.Disallowed;
                     }
+                    catch (ArgumentException)
+                    {
+                        // This is for IO.Path.GetTempPath() call when temp paths are not accessible.
+                        result =
+                           (System.Security.Principal.WindowsIdentity.GetCurrent().ImpersonationLevel == System.Security.Principal.TokenImpersonationLevel.Impersonation) ?
+                           SaferPolicy.Allowed : SaferPolicy.Disallowed;
+                    }
                     finally
                     {
                         if (IO.File.Exists(testPathScript)) { IO.File.Delete(testPathScript); }

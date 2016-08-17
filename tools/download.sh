@@ -22,23 +22,34 @@ case "$OSTYPE" in
         case "$ID" in
             centos*)
                 sudo yum install -y curl wget
-                info=$(get_info rpm)
+                version=rpm
                 ;;
             ubuntu)
                 sudo apt-get install -y curl wget
-                info=$(get_info deb)
+                case "$VERSION_ID" in
+                    14.04)
+                        version=ubuntu1.14.04.1_amd64.deb
+                        ;;
+                    16.04)
+                        version=ubuntu1.16.04.1_amd64.deb
+                        ;;
+                    *)
+                        exit 2 >&2 "Ubuntu $VERSION_ID is not supported!"
+                esac
                 ;;
             *)
                 exit 2 >&2 "$NAME is not supported!"
         esac
         ;;
     darwin*)
-        info=$(get_info pkg)
+        version=pkg
         ;;
     *)
         exit 2 >&2 "$OSTYPE is not supported!"
         ;;
 esac
+
+info=$(get_info $version)
 
 # Parses $info for asset ID and package name
 read asset package <<< $(echo $info | sed 's/[,"]//g' | awk '{ print $2; print $4 }')
@@ -58,7 +69,15 @@ case "$OSTYPE" in
                 sudo yum install "./$package"
                 ;;
             ubuntu)
-                sudo apt-get install -y libunwind8 libicu52
+                case "$VERSION_ID" in
+                    14.04)
+                        icupackage=libicu52
+                        ;;
+                    16.04)
+                        icupackage=libicu55
+                        ;;
+                esac
+                sudo apt-get install -y libunwind8 $icupackage
                 sudo dpkg -i "./$package"
                 ;;
             *)

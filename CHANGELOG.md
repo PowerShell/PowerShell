@@ -4,6 +4,13 @@ Changelog
 Unreleased
 ----------
 
+v6.0.0-alpha.9 - 2016-08-15
+---------------------------
+
+- Better man page
+- Added third-party and proprietary licenses
+- Added license to MSI
+
 v6.0.0-alpha.8 - 2016-08-11
 ---------------------------
 

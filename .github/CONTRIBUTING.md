@@ -34,7 +34,7 @@ Contributing to Issues
 * If you can't find your issue already,
   [open a new issue](https://github.com/PowerShell/PowerShell/issues/new),
   making sure to follow the directions as best you can.
-* If the issue is marked as [`help wanted`][help-wanted-issue],
+* If the issue is marked as [`0 - Backlog`][help-wanted-issue],
   the PowerShell maintainers are looking for help with the issue.
 
 Contributing to Documentation
@@ -80,6 +80,16 @@ Additional references:
 
 ### Lifecycle of a pull request
 
+#### Before submitting
+
+* To avoid merge conflicts, make sure your branch is rebased on the `master` branch of this repository.
+* Many code changes will require new tests,
+  so make sure you've added a new test if existing tests do not effectively test the code changed.
+* Clean up your commit history.
+  Each commit should be a **single complete** change.
+  This discipline is important when reviewing the changes as well as when using `git bisect` and `git revert`.
+
+
 #### Pull request submission
 
 **Always create a pull request to the `master` branch of this repository**.
@@ -94,13 +104,14 @@ See [Contributing to documentation related to PowerShell](#contributing-to-docum
   A better example is: "Add Ensure parameter to New-Item cmdlet", with "Fixes #5" in the PR's body.
 
 * When you create a pull request,
-  fill out the pull request template,
-  including a summary of what's included in your changes.
-  If the changes are related to an existing GitHub issue,
+  including a summary of what's included in your changes and
+  if the changes are related to an existing GitHub issue,
   please reference the issue in pull request description (e.g. ```Closes #11```).
   See [this][closing-via-message] for more details.
 
-* Include an update to the [changelog](../CHANGELOG.MD) in your pull request.
+* If the change warrants a note in the [changelog](../CHANGELOG.MD)
+  either update the changelog in your pull request or
+  add a comment in the PR description saying that the change may warrant a note in the changelog.
   New changes always go into the **Unreleased** section.
   Keeping the changelog up-to-date simplifies the release process for maintainers.
   An example:
@@ -260,5 +271,5 @@ Once you sign a CLA, all your existing and future pull requests will be labeled 
 [good-git-resources]: https://help.github.com/articles/good-resources-for-learning-git-and-github/
 [contribute-issues]: #contributing-to-issues
 [open-issue]: https://github.com/PowerShell/PowerShell/issues
-[help-wanted-issue]: https://github.com/PowerShell/PowerShell/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22
+[help-wanted-issue]: https://github.com/PowerShell/PowerShell/issues?q=is%3Aopen+is%3Aissue+label%3A%220%20-%20Backlog%22
 [semantic linefeeds]: http://rhodesmill.org/brandon/2012/one-sentence-per-line/

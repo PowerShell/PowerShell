@@ -155,6 +155,11 @@ namespace Microsoft.PowerShell
             get { return _namedPipeServerMode; }
         }
 
+        internal bool SSHServerMode
+        {
+            get { return _sshServerMode; }
+        }
+
         internal bool ServerMode
         {
             get
@@ -393,6 +398,10 @@ namespace Microsoft.PowerShell
                 else if (MatchSwitch(switchKey, "namedpipeservermode", "nam"))
                 {
                     _namedPipeServerMode = true;
+                }
+                else if (MatchSwitch(switchKey, "sshservermode", "sshs"))
+                {
+                    _sshServerMode = true;
                 }
                 else if (MatchSwitch(switchKey, "configurationname", "config"))
                 {
@@ -935,6 +944,7 @@ namespace Microsoft.PowerShell
         private bool _socketServerMode;
         private bool _serverMode;
         private bool _namedPipeServerMode;
+        private bool _sshServerMode;
         private string _configurationName;
         private ConsoleHost _parent;
         private ConsoleHostUserInterface _ui;

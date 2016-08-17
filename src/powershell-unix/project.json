@@ -23,7 +23,7 @@
             "include": [
                 "*.so",
                 "*.dylib",
-                "../../LICENSE.txt",
+                "../../license_thirdparty_proprietary.txt",
                 "../../powershell.version"
             ]
         },
@@ -47,7 +47,7 @@
         "include": [
             "*.so",
             "*.dylib",
-            "../../LICENSE.txt",
+            "../../license_thirdparty_proprietary.txt",
             "../../powershell.version"
         ]
     },

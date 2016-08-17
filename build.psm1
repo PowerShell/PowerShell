@@ -139,7 +139,7 @@ function Start-PSBuild {
 
         $vcVarsPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
         if ((Test-Path -Path $vcVarsPath\vcvarsall.bat) -eq $false) {
-            throw "Could not find Visual Studio vcvarsall.bat at" + $vcVarsPath
+            throw "Could not find Visual Studio vcvarsall.bat at $vcVarsPath. Please ensure the optional feature 'Common Tools for Visual C++' is installed."
         }
 
         # setup msbuild configuration
@@ -658,7 +658,7 @@ function Start-PSBootstrap {
         [switch]$Force
     )
 
-    log "Installing Open PowerShell build dependencies"
+    log "Installing PowerShell build dependencies"
 
     Push-Location $PSScriptRoot/tools
 
@@ -923,7 +923,8 @@ function New-UnixPackage {
         [string]$Version,
 
         # Package iteration version (rarely changed)
-        [int]$Iteration = 1
+        # This is a string because strings are appended to it
+        [string]$Iteration = "1"
     )
 
     # Validate platform
@@ -1059,11 +1060,24 @@ It consists of a cross-platform command-line shell and associated scripting lang
         "rpm" { "libicu" }
     }
 
+    # iteration is "debian_revision"
+    # usage of this to differentiate distributions is allowed by non-standard
+    if ($IsUbuntu14) {
+        $Iteration += "ubuntu1.14.04.1"
+    } elseif ($IsUbuntu16) {
+        $Iteration += "ubuntu1.16.04.1"
+    }
+
+    # We currently only support CentOS 7
+    # https://fedoraproject.org/wiki/Packaging:DistTag
+    $rpm_dist = "el7.centos"
+
     $Arguments = @(
         "--force", "--verbose",
         "--name", $Name,
         "--version", $Version,
         "--iteration", $Iteration,
+        "--rpm-dist", $rpm_dist,
         "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
         "--vendor", "Microsoft Corporation",
         "--url", "https://microsoft.com/powershell",
@@ -1094,17 +1108,7 @@ It consists of a cross-platform command-line shell and associated scripting lang
     }
 
     # Magic to get path output
-    $Package = Get-Item (Join-Path $PSScriptRoot (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
-
-    # Add runtime-identifier to package name.
-    # This information cannot be part of the package,
-    # but without a repository to host these,
-    # we need to differentiate distributions by the package's filename.
-    $PackageWithRuntime = "$($Package.BaseName)-$((New-PSOptions).Runtime)$($Package.Extension)"
-
-    Move-Item -Force $Package $PackageWithRuntime
-
-    return $PackageWithRuntime
+    return Get-Item (Join-Path $PSScriptRoot (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 }
 
 

@@ -977,11 +977,11 @@ namespace System.Management.Automation
         {
             get
             {
-                #if UNIX
+#if UNIX
                 return Platform.Unix.UserName;
-                #else
+#else
                 return WinGetUserName();
-                #endif
+#endif
             }
         }
 
@@ -1043,7 +1043,7 @@ namespace System.Management.Automation
             // The API 'SHGetFolderPath' is not available on OneCore, so we have to rely on environment variables
             string folderPath = null;
 
-            #if UNIX
+#if UNIX
             switch (folder)
             {
                 case SpecialFolder.ProgramFiles:
@@ -1069,7 +1069,7 @@ namespace System.Management.Automation
                 default:
                     throw new NotSupportedException();
             }
-            #else
+#else
             string systemRoot = null;
             string userProfile = null;
 
@@ -1136,7 +1136,7 @@ namespace System.Management.Automation
                 default:
                     throw new NotSupportedException();
             }
-            #endif
+#endif
 
             return folderPath ?? string.Empty;
         }

@@ -424,6 +424,7 @@ namespace System.Management.Automation.Remoting
             lock (_syncObject)
             {
                 _writer.WriteLine(data);
+                _writer.Flush();
             }
         }
 
@@ -1403,6 +1404,174 @@ namespace System.Management.Automation.Remoting.Client
         #endregion
     }
 
+    internal sealed class SSHClientSessionTransportManager : OutOfProcessClientSessionTransportManagerBase
+    {
+        #region Data
+
+        private SSHConnectionInfo _connectionInfo;
+        private Process _sshProcess;
+        private StreamWriter _stdInWriter;
+        private StreamReader _stdOutReader;
+        private StreamReader _stdErrReader;
+        private const string _threadName = "SSHTransport Reader Thread";
+
+        #endregion
+
+        #region Constructors
+
+        internal SSHClientSessionTransportManager(
+            SSHConnectionInfo connectionInfo,
+            Guid runspaceId,
+            PSRemotingCryptoHelper cryptoHelper)
+            : base(runspaceId, cryptoHelper)
+        {
+            if (connectionInfo == null) { throw new PSArgumentException("connectionInfo"); }
+
+            _connectionInfo = connectionInfo;
+        }
+
+        #endregion
+
+        #region Overrides
+
+        internal override void Dispose(bool isDisposing)
+        {
+            base.Dispose(isDisposing);
+
+            if (isDisposing)
+            {
+                CloseConnection();
+            }
+        }
+
+        protected override void CleanupConnection()
+        {
+            CloseConnection();
+        }
+
+        /// <summary>
+        /// Create an SSH connection to the target host and set up
+        /// transport reader/writer.
+        /// </summary>
+        internal override void CreateAsync()
+        {
+            // Create the ssh client process with connection to host target.
+            _sshProcess = _connectionInfo.StartSSHProcess(
+                out _stdInWriter,
+                out _stdOutReader,
+                out _stdErrReader);
+
+            _sshProcess.Exited += (sender, args) =>
+            {
+                CloseConnection();
+            };
+
+            // Create writer for named pipe.
+            stdInWriter = new OutOfProcessTextWriter(_stdInWriter);
+
+            // Create reader thread and send first PSRP message.
+            StartReaderThread(_stdOutReader);
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void CloseConnection()
+        {
+            var stdInWriter = _stdInWriter;
+            if (stdInWriter != null) { stdInWriter.Dispose(); }
+
+            var stdOutReader = _stdOutReader;
+            if (stdOutReader != null) { stdOutReader.Dispose(); }
+
+            var stdErrReader = _stdErrReader;
+            if (stdErrReader != null) { stdErrReader.Dispose(); }
+
+            var sshProcess = _sshProcess;
+            if ((sshProcess != null) && !sshProcess.HasExited)
+            {
+                _sshProcess = null;
+                try
+                {
+                    sshProcess.Kill();
+                }
+                catch (InvalidOperationException) { }
+                catch (NotSupportedException) { }
+                catch (System.ComponentModel.Win32Exception) { }
+            }
+        }
+
+        private void StartReaderThread(
+            StreamReader reader)
+        {
+            Thread readerThread = new Thread(ProcessReaderThread);
+            readerThread.Name = _threadName;
+            readerThread.IsBackground = true;
+            readerThread.Start(reader);
+        }
+
+        private void ProcessReaderThread(object state)
+        {
+            try
+            {
+                StreamReader reader = state as StreamReader;
+                Dbg.Assert(reader != null, "Reader cannot be null.");
+
+                // Send one fragment.
+                SendOneItem();
+
+                // Start reader loop.
+                while (true)
+                {
+                    string data = reader.ReadLine();
+                    if (data == null)
+                    {
+                        // End of stream indicates the target process was lost.
+                        // Raise transport exception to invalidate the client remote runspace.
+                        PSRemotingTransportException psrte = new PSRemotingTransportException(
+                            PSRemotingErrorId.IPCServerProcessReportedError,
+                            RemotingErrorIdStrings.IPCServerProcessReportedError,
+                            RemotingErrorIdStrings.NamedPipeTransportProcessEnded);
+                        RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
+                        break;
+                    }
+
+                    if (data.StartsWith(System.Management.Automation.Remoting.Server.NamedPipeErrorTextWriter.ErrorPrepend, StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Error message from the server.
+                        string errorData = data.Substring(System.Management.Automation.Remoting.Server.NamedPipeErrorTextWriter.ErrorPrepend.Length);
+                        HandleErrorDataReceived(errorData);
+                    }
+                    else
+                    {
+                        // Normal output data.
+                        HandleOutputDataReceived(data);
+                    }
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+                // Normal reader thread end.
+            }
+            catch (Exception e)
+            {
+                CommandProcessorBase.CheckForSevereException(e);
+
+                if (e is ArgumentOutOfRangeException)
+                {
+                    Dbg.Assert(false, "Need to adjust transport fragmentor to accomodate read buffer size.");
+                }
+
+                string errorMsg = (e.Message != null) ? e.Message : string.Empty;
+                _tracer.WriteMessage("SSHClientSessionTransportManager", "StartReaderThread", Guid.Empty,
+                    "Transport manager reader thread ended with error: {0}", errorMsg);
+            }
+        }
+
+        #endregion
+    }
+
     internal abstract class NamedPipeClientSessionTransportManagerBase : OutOfProcessClientSessionTransportManagerBase
     {
         #region Data
@@ -1979,8 +2148,8 @@ namespace System.Management.Automation.Remoting.Server
 
         #region Constructors
 
-        internal OutOfProcessServerSessionTransportManager(OutOfProcessTextWriter outWriter, OutOfProcessTextWriter errWriter)
-            : base(BaseTransportManager.DefaultFragmentSize, new PSRemotingCryptoHelperServer())
+        internal OutOfProcessServerSessionTransportManager(OutOfProcessTextWriter outWriter, OutOfProcessTextWriter errWriter, PSRemotingCryptoHelperServer cryptoHelper)
+            : base(BaseTransportManager.DefaultFragmentSize, cryptoHelper)
         {
             Dbg.Assert(null != outWriter, "outWriter cannot be null.");
             Dbg.Assert(null != errWriter, "errWriter cannot be null.");

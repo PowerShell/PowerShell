@@ -263,7 +263,7 @@ namespace System.Management.Automation.Runspaces
             }
             else
             {
-                Name = AutoGenerateRunspaceName();
+                Name = AutoGenerateRunspaceName(Id);
                 remoteRunspace.PSSessionName = Name;
             }
 
@@ -298,6 +298,15 @@ namespace System.Management.Automation.Runspaces
                 return;
             }
 
+            // SSH session
+            SSHConnectionInfo sshConnectionInfo = remoteRunspace.ConnectionInfo as SSHConnectionInfo;
+            if (sshConnectionInfo != null)
+            {
+                ComputerType = TargetMachineType.RemoteMachine;
+                ConfigurationName = "DefaultShell";
+                return;
+            }
+
             // We only support WSMan/VM/Container sessions now.
             Dbg.Assert(false, "Invalid Runspace");
         }
@@ -310,9 +319,35 @@ namespace System.Management.Automation.Runspaces
         /// Generates and returns the runspace name
         /// </summary>
         /// <returns>auto generated name</returns>
-        private String AutoGenerateRunspaceName()
+        private string AutoGenerateRunspaceName(int id)
         {
-            return "Session" + Id.ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
+            string sessionIdStr = id.ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
+
+            if (_remoteRunspace.ConnectionInfo is WSManConnectionInfo)
+            {
+                return "WinRM" + sessionIdStr;
+            }
+            else if (_remoteRunspace.ConnectionInfo is SSHConnectionInfo)
+            {
+                return "SSH" + sessionIdStr;
+            }
+            else if ((_remoteRunspace.ConnectionInfo is NamedPipeConnectionInfo) ||
+                     (_remoteRunspace.ConnectionInfo is ContainerConnectionInfo))
+            {
+                return "NamedPipe" + sessionIdStr;
+            }
+            else if (_remoteRunspace.ConnectionInfo is NewProcessConnectionInfo)
+            {
+                return "Process" + sessionIdStr;
+            }
+            else if (_remoteRunspace.ConnectionInfo is VMConnectionInfo)
+            {
+                return "Socket" + sessionIdStr;
+            }
+            else
+            {
+                return "Session" + sessionIdStr;
+            }
         }
 
         /// <summary>
@@ -360,7 +395,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>Runspace name</returns>
         internal static string ComposeRunspaceName(int id)
         {
-            return "Session" + id.ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
+            return "WinRM" + id.ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
         }
 
         #endregion

@@ -43,11 +43,11 @@ namespace System.Management.Automation
             this.TimeGenerated = DateTime.Now;
             this.Tags = new List<string>();
             // domain\user on Windows, just user on Unix
-            #if UNIX
+#if UNIX
             this.User = Platform.Unix.UserName;
-            #else
+#else
             this.User = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
-            #endif
+#endif
             this.Computer = PsUtils.GetHostName();
             this.ProcessId = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
             this.NativeThreadId = PsUtils.GetNativeThreadId();
