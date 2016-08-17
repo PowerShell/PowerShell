@@ -1,4 +1,7 @@
 #Region utility functions
+
+$global:sudocmd = "sudo"
+
 Function GetApacheCmd{
     if (Test-Path "/usr/sbin/apache2ctl"){
         $cmd = "/usr/sbin/apache2ctl"
@@ -57,7 +60,7 @@ Class ApacheVirtualHost{
         }
 
         #Full specification
-        ApacheVirtualHost([string]$ServerName, [string]$DocumentRoot, [string[]]$ServerAliases, [string]$ServerAdmin,[string]$CustomLogPath,[string]$ErrorLogPath,[string]$VirtualHostIPAddress,[int]$VirtualHostPort,[string]$ConfigurationFile){
+        ApacheVirtualHost([string]$ServerName, [string]$DocumentRoot, [string[]]$ServerAliases, [string]$ServerAdmin, [string]$CustomLogPath, [string]$ErrorLogPath, [string]$VirtualHostIPAddress, [int]$VirtualHostPort, [string]$ConfigurationFile){
             $this.ServerName = $ServerName
             $this.DocumentRoot = $DocumentRoot
             $this.ServerAliases = $ServerAliases
@@ -69,14 +72,12 @@ Class ApacheVirtualHost{
             $this.ConfigurationFile = $ConfigurationFile
         }
 
-
-
         #Default Port and IP
         #endregion
 
         #region class methods
         Save($ConfigurationFile){
-            if (!(Test-Path $this.DocumentRoot)){ New-Item -type Directory $this.DocumentRoot }
+            if (!(Test-Path $this.DocumentRoot)){ New-Item -Type Directory $this.DocumentRoot }
 
             $VHostsDirectory = GetApacheVHostDir
             if (!(Test-Path $VHostsDirectory)){
@@ -98,7 +99,8 @@ Class ApacheVirtualHost{
             if ($this.ErrorLogPath -like "*/*"){$vHostDef += "ErrorLog " + $this.ErrorLogpath +"`n"}
             $vHostDef += "</VirtualHost>"
             $filName = $ConfigurationFile
-            $VhostDef |out-file "${VHostsDirectory}/${filName}" -Force -Encoding:ascii
+            $VhostDef | Out-File "/tmp/${filName}" -Force -Encoding:ascii
+            & $global:sudocmd "mv" "/tmp/${filName}" "${VhostsDirectory}/${filName}" 
             Write-Information "Restarting Apache HTTP Server"
             Restart-ApacheHTTPServer
         }
@@ -110,7 +112,7 @@ Class ApacheVirtualHost{
 
 Function New-ApacheVHost {
     [CmdletBinding()]
-    param (
+    param(
         [parameter (Mandatory = $true)][string]$ServerName,
         [parameter (Mandatory = $true)][string]$DocumentRoot,
         [string]$VirtualHostIPAddress,
@@ -160,7 +162,7 @@ Function Get-ApacheVHost{
     $cmd = GetApacheCmd
 
     $Vhosts = @()
-    $res = & $cmd -t -D DUMP_VHOSTS
+    $res = & $global:sudocmd $cmd -t -D DUMP_VHOSTS
 
     ForEach ($line in $res){
         $ServerName = $null
@@ -207,9 +209,9 @@ Function Restart-ApacheHTTPServer{
     if ($Graceful -eq $null){$Graceful = $fase}
     $cmd = GetApacheCmd
         if ($Graceful){
-                & $cmd  -k graceful
+                & $global:sudocmd $cmd  -k graceful
         }else{
-                & $cmd  -k restart
+                & $global:sudocmd $cmd  -k restart
         }
 
 }
@@ -220,7 +222,7 @@ Function Get-ApacheModule{
 
         $ApacheModules = @()
 
-        $Results = & $cmd -M |grep -v Loaded
+        $Results = & $global:sudocmd $cmd -M |grep -v Loaded
 
         Foreach ($mod in $Results){
         $modInst = [ApacheModule]::new($mod.trim())

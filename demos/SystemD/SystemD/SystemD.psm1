@@ -3,8 +3,9 @@ Function Get-SystemDJournal {
     param (
         [Alias("args")][string]$journalctlParameters
        )
+        $sudocmd = "sudo"
         $cmd = "journalctl"
-        $Result = & $cmd $journalctlParameters -o json --no-pager
+        $Result = & $sudocmd $cmd $journalctlParameters -o json --no-pager
         Try
         {
                   $JSONResult = $Result|ConvertFrom-JSON
