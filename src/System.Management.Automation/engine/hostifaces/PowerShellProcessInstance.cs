@@ -36,8 +36,13 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         static PowerShellProcessInstance()
         {
+#if UNIX
+            s_PSExePath = Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID),
+                            "powershell");
+#else 
             s_PSExePath = Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID),
                             "powershell.exe");
+#endif 
         }
 
         /// <summary>
@@ -83,6 +88,10 @@ namespace System.Management.Automation.Runspaces
             processArguments = string.Format(CultureInfo.InvariantCulture,
                 "{0} -s -NoLogo -NoProfile", processArguments);
 
+#if CORECLR
+            processArguments = " -s -NoLogo -NoProfile";
+#endif 
+
             if (initializationScript != null)
             {
                 string scripBlockAsString = initializationScript.ToString();
@@ -106,7 +115,9 @@ namespace System.Management.Automation.Runspaces
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 CreateNoWindow = true,
+#if !UNIX 
                 LoadUserProfile = true,
+#endif
             };
 
             if (credential != null)

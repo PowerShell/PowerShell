@@ -156,6 +156,7 @@
                 "System.Diagnostics.StackTrace": "4.0.1",
                 "System.Diagnostics.TraceSource": "4.0.0",
                 "System.Dynamic.Runtime": "4.0.11",
+                "System.IO.FileSystem": "4.0.2-beta-24412-03",
                 "System.IO.FileSystem.AccessControl": "4.0.0",
                 "System.IO.FileSystem.DriveInfo": "4.0.0",
                 "System.IO.FileSystem.Watcher": "4.0.0",
