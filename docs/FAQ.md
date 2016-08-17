@@ -80,7 +80,7 @@ You can automatically install this using `Start-PSBootstrap`.
 
 If you have installed by using any of the following means:
 
-- MSI
+- `MSI`
 - `exe`
 - `apt-get`
 - `pkg`
