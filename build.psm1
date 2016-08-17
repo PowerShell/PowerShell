@@ -221,7 +221,7 @@ function Start-PSBuild {
             # This is the restored library used to build
             # This is allowed to fail since the user may have already restored
             Write-Warning ".NET Core links the incorrect OpenSSL, correcting NuGet package libraries..."
-            find $env:HOME/.nuget -name System.Security.Cryptography.Native.dylib  | %{sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib $_}                  
+            find $env:HOME/.nuget -name System.Security.Cryptography.Native.dylib | %{sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib $_}                  
         }
     }
 
