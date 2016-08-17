@@ -13,6 +13,11 @@ There is a shortcut placed in the Start Menu upon installation.
 >
 > You can launch PowerShell via the Start Menu or `$env:ProgramFiles\PowerShell\powershell.exe`
 
+> 
+> Note: On Windows 8.1 / Windows 2012R2, ensure Visual C++ Redistributable 
+> for VS2015 is installed from [here](http://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x64.exe):
+>
+
 ###APPX/WSA:
 Additionally, we provide APPX/WSA packages (that are compatible with Nano Server and works on Win10 x64 and above systems), 
 but these must be self-signed prior to install. 
