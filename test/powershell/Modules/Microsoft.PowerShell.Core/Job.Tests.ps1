@@ -22,14 +22,17 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
                 $_.FullyQualifiedErrorId | should be "JobWithSpecifiedNameNotFound,Microsoft.PowerShell.Commands.GetJobCommand"
             }
         }
-        It "Receive-Job can retrieve job results" -pending:(!$IsWindows) {
-            $result = receive-job -id $j.id
-            $result.id | Should be 2
+        It "Receive-Job can retrieve job results" -pending {
+            $waitjob = Wait-Job -Timeout 10 -id $j.id
+            if ( $waitJob ) {
+                $result = receive-job -id $j.id
+                $result.id | Should be 2
+            }
         }
     }
     Context "jobs which take time" {
         BeforeEach {
-            $j = start-job -scriptblock { Start-Sleep 5 }
+            $j = start-job -scriptblock { Start-Sleep 15 }
         }
         AfterEach {
             Get-Job | Remove-Job -force
@@ -38,10 +41,9 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
             $result = wait-Job $j
             $result | should be $j
         }
-        It "Stop-Job will stop a job" -pending:(!$IsWindows) {
-            Stop-Job -id $j.id
-            $result = get-job -id $j.id
-            $result.Status |Should be Stopped
+        It "Stop-Job will stop a job" -pending {
+            Stop-Job -id $j.id 
+            $j.Status |Should be Stopped
         }
     }
 }
