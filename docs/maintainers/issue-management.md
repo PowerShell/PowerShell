@@ -56,6 +56,7 @@ These are for issues that are specific to certain operating systems:
 * `OS-Linux`
 * `OS-OS X`
 * `OS-Windows`
+* `OS-WSL`: Windows Subsystem for Linux
 
 ### Process Tags
 
