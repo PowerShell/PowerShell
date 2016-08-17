@@ -13,6 +13,9 @@ There is a shortcut placed in the Start Menu upon installation.
 >
 > You can launch PowerShell via the Start Menu or `$env:ProgramFiles\PowerShell\powershell.exe`
 
+> Note: On Windows 8.1 / Windows 2012R2, ensure Visual C++ Redistributable 
+> for VS2015 is installed from [here](http://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x64.exe):
+
 # Instructions to Create a Remoting Endpoint
 
 Beginning with 6.0.0-alpha.9, the PowerShell package for Windows includes a WinRM plugin (pwrshplugin.dll) and an installation script (Install-PowerShellRemoting.ps1). 
