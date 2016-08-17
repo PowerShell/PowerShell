@@ -1,5 +1,5 @@
-Known Issues with the first PowerShell on Linux Alpha Release
-==========================================================
+Known Issues for PowerShell on Linux
+====================================
 
 The first Alpha release of PowerShell on Linux is mostly functional but
 does have some significant limitations and usability issues. In some
@@ -36,18 +36,18 @@ of ways, obvious and non-obvious.
 .PS1 File Extensions
 --------------------
 
-PowerShell scripts must end in ".ps1" for the interpreter to understand
+PowerShell scripts must end in `.ps1` for the interpreter to understand
 how to load and run them in the current process. Running scripts in the
-current process is the expected usual behavior for PowerShell. The "#!"
-magic number may be added to a script that doesn't have a .ps1 extension
+current process is the expected usual behavior for PowerShell. The `#!`
+magic number may be added to a script that doesn't have a `.ps1` extension,
 but this will cause the script to be run in a new PowerShell instance
 preventing the script from working properly when interchanging objects.
 
 Missing command aliases
 -----------------------
 
-On the, the "convenience aliases" for the basic commands "ls", "cp",
-"mv", "rm", "cat", "man", "mount", "ps" have been removed. On Windows,
+On the, the "convenience aliases" for the basic commands `ls`, `cp`,
+`mv`, `rm`, `cat`, `man`, `mount`, `ps` have been removed. On Windows,
 PowerShell provides a set of aliases that map to UNIX/Linux command
 names for user convenience. These aliases have been removed from the
 default PowerShell on Linux distribution, allowing the native executable to
@@ -59,17 +59,17 @@ not objects.
 > NOTE: This is an area where the PowerShell team is looking for feedback. 
 > What is the preferred solution? Should we leave it as is or add the 
 > convenience aliases back? See 
-> [Issue 929](https://github.com/PowerShell/PowerShell/issues/929 "Issue 929")  
+> [Issue #929](https://github.com/PowerShell/PowerShell/issues/929).
 
 Missing Wildcard (globbing) Support 
 ------------------------------------
 
 Currently, PowerShell only does wildcard expansion (globbing) for the
 built-ins but not for external commands. This means that a command like
-"ls \*.txt" will fail because the asterisk will not be expanded to match
-file names. You can work around this by doing "ls (gci \*.txt | % name)"
-or, more simply, "gci \*.txt" using the PowerShell built-in equivalent
-to ls.
+`ls *.txt` will fail because the asterisk will not be expanded to match
+file names. You can work around this by doing `ls (gci *.txt | % name)`
+or, more simply, `gci *.txt` using the PowerShell built-in equivalent
+to `ls`.
 
 .NET Framework vs .NET Core Framework
 -----------------
@@ -85,7 +85,7 @@ Redirection Issues
 ------------------
 
 Input redirection is not supported in PowerShell on any platform. Use
-either "cat" or "Get-Content" to write the contents of a file into the
+either `Get-Content` to write the contents of a file into the
 pipeline.
 
 PowerShell does not currently support "direct pipelining" external
@@ -95,16 +95,17 @@ command in the pipeline is run to completion and then the aggregated
 data is passed to the next command. (This behavior is intended to be
 fixed in a later release.)
 
-Redirected output will contain a Byte-order Mark (BOM) when the default
+Redirected output will contain the Unicode byte order mark (BOM) when the default
 UTF-8 encoding is used. The BOM will cause problems when working with
 utilities that do not expect it or when appending to a file.
+
+Use `-Encoding ascii` to write ASCII text (which, not being Unicode, will not have a BOM).
 
 Job Control
 -----------
 
-There is no job-control support in PowerShell on Linux. The fg and bg
-commands are not available. Ctrl-Z works but the commands cannot be
-brought into the foreground.
+There is no job-control support in PowerShell on Linux. The `fg` and `bg` commands are not available.
+`Ctrl-Z` sends the `powershell` process to the background.
 
 Remoting Support
 ----------------
@@ -126,11 +127,12 @@ sudo, exec and PowerShell
 
 Because PowerShell runs most commands in memory (like Python or Ruby)
 you can't use sudo directly with PowerShell built-ins. (You can, of
-course, run powershell.exe from sudo.) If it is necessary to run a
-PowerShell cmdlet from within PowerShell with sudo, for example "sudo 
-Set-Date 8/18/2016", then you would do "sudo powershell Set-Date 8/18/2016". 
+course, run `powershell` from sudo.) If it is necessary to run a
+PowerShell cmdlet from within PowerShell with sudo,
+for example `sudo Set-Date 8/18/2016`,
+then you would do `sudo powershell Set-Date 8/18/2016`. 
 Likewise, you can't exec a PowerShell built-in
-directly. Instead you would have to do "exec powershell item\_to\_exec".
+directly. Instead you would have to do `exec powershell item_to_exec`.
 
 Missing Cmdlets
 ---------------
@@ -153,40 +155,41 @@ PowerShell.
 <th>Commands<td><b>Operational State<td><b>Notes</th>
 <Tr>
 <td>Get-Service New-Service Restart-Service Resume-Service Set-Service Start-Service Stop-Service Suspend-Service
-<td> Available but not functional.
-<td>These commands will return an error indicating that they are not supported on this platform. This will be fixed in a future release.
+<td>Not available.
+<td>These commands will not be recognized. This will be fixed in a future release.
 </tr>
 <tr>
 <td>Get-Acl, Set-Acl 
-<td>Available but not ported
-<td> These commands will generate an error complaining about a missing .dll. These commands will be fixed in a future release.
+<td>Not available.
+<td>These commands will not be recognized. This will be fixed in a future release.
 </tr>
 <tr>
-<td>Get-AuthenticCodeSignature, Set-AuthenticodeSignature
-<td>Available but not ported. These commands will generate an error complaining about a missing .dll "wintrust.dll".
-<td>These commands may be fixed in a future release.
+<td>Get-AuthenticodeSignature, Set-AuthenticodeSignature
+<td>Not available.
+<td>These commands will not be recognized. This will be fixed in a future release.
 </tr>
 <tr>
-<td> Wait-Process
-<td>Available, doesn't work properly. <td>For example "Start-Process gvim -PassThru | Wait-Process" doesn't work; it fails to wait for the process.
+<td>Wait-Process
+<td>Available, doesn't work properly. <td>For example `Start-Process gvim -PassThru | Wait-Process` doesn't work; it fails to wait for the process.
 </tr>
 <tr>
-<td>Get-Help, Update-Help, Save-Help
-<td>Available but don't work.
-<td>enerates a null-pointer exception. These will be fixed in a future release.
-</tr>
-<tr>
-<td>Register-PSSessionConfiguration
+<td>Update-Help
 <td>Available but doesn't work.
-<td>Writes an error message indicating that the commands are not working.  These will be fixed in a future release.
+<td>`CabinetExtractorFactory` generates an `InvalidOperation` exception. These will be fixed in a future release.
 </tr>
 <tr>
-<td>Unregister-PSSessionConfiguration, Get-Event, New-Event, Register-EngineEvent, Register-WmiEvent, Remove-Event, Unregister-Event.
+<td>Register-PSSessionConfiguration, Unregister-PSSessionConfiguration, Get-PSSessionConfiguration
+<td>Available but doesn't work.
+<td>Writes an error message indicating that the commands are not working. These will be fixed in a future release.
+</tr>
+<tr>
+<td>Get-Event, New-Event, Register-EngineEvent, Register-WmiEvent, Remove-Event, Unregister-Event
 <td>Available but no event sources are available.
 <td>The PowerShell eventing commands are present but most of the event sources used with the commands (such as System.Timers.Timer) are not available on Linux making the commands useless in the Alpha release.
 </tr>
 <tr>
-<td>Set-ExecutionPolicy <td>Available but doesn't work.
+<td>Set-ExecutionPolicy
+<td>Available but doesn't work.
 <td>Returns a message saying not supported on this platform. Execution policy is a user-focused "safety belt" that helps prevent the user from making expensive mistakes. It is not a security boundary.
 </tr>
 <tr>
@@ -194,7 +197,8 @@ PowerShell.
 <td>Available but doesn't work.
 <td>The underlying Select.Xml.Node classes are missing on Linux/.NET Core. This is unlikely to be fixed in the near term so this cmdlet will be probably be removed.
 </tr>
-<tr><td>New-PSSession, New-PSSessionOption, New-PSTransportOption
+<tr>
+<td>New-PSSession, New-PSSessionOption, New-PSTransportOption
 <td>Available but New-PSSession doesn't work.
 <td>New-PSSessionOption and New-PSTransportOption do work but are useless without New-PSSession. The underlying client remoting layer code for WSMan is missing. This will be fixed soon in a future release.
 </tr>
@@ -204,4 +208,3 @@ PowerShell.
 <td>Without the ability to start a background job, the other cmdlets are useless. This will be fixed soon in a future release.
 </tr>
 </table>
-
