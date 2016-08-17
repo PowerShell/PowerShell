@@ -1,25 +1,25 @@
 PowerShell Remoting Over SSH
 ============================
 
-About
+Overview
 =====
 PowerShell remoting normally uses WinRM for connection negotiation and data transport.  SSH was chosen for this remoting implementation since it is now available for both Linux and Windows platforms and allows true multiplatform PowerShell remoting.  However, WinRM also provides a robust hosting model for PowerShell remote sessions which this implementation does not yet do.  And this means that PowerShell remote endpoint configuration and JEA (Just Enough Administration) is not yet supported in this implementation.
 
 PowerShell SSH remoting lets you do basic PowerShell session remoting between Windows and Linux machines.  This is done by creating a PowerShell hosting process on the target machine as an SSH subsystem.  Eventually this will be changed to a more general hosting model similar to how WinRM works in order to support endpoint configuration and JEA.
 
-The New-PSSession, Enter-PSSession, Invoke-Command cmdlets now have a new parameter set to facilitate this new remoting connection
+The New-PSSession, Enter-PSSession and Invoke-Command cmdlets now have a new parameter set to facilitate this new remoting connection
 ```powershell
 [-HostName <string>]  [-UserName <string>]  [-KeyPath <string>]
 ```
 This new parameter set will likely change but for now allows you to create SSH PSSessions that you can interact with from the command line or invoke commands and scripts on.
 You specify the target machine with the HostName parameter and provide the user name with UserName.  When running the cmdlets interactively at the PowerShell command line you will be prompted for a password.  But you also have the option to use SSH key authentication and provide a private key file path with the KeyPath parameter.  Note that PSCredential is not yet supported.
 
-General set up information
+General setup information
 ==========================
 SSH is required to be installed on all machines.  You should install both client (ssh.exe) and server (sshd.exe) so that you can experiment with remoting to and from the machines.
-For Windows you will need to install Win32 Open SSH from GitHub.  For Linux you will need to install SSH (including server) appropriate to your platform.  You will also need a recent PowerShell build or package from GitHub having the SSH remoting feature.  SSH Subsystems is used to establish a PowerShell process on the remote target machine and the SSH server will need to be configured for that.  In addition you will need to enable password authentication and optionally key based authentication.
+For Windows you will need to install Win32 Open SSH from GitHub.  For Linux you will need to install SSH (including server) appropriate to your platform.  You will also need a recent PowerShell build or package from GitHub having the SSH remoting feature.  SSH Subsystems is used to establish a PowerShell process on the remote machine and the SSH server will need to be configured for that.  In addition you will need to enable password authentication and optionally key based authentication.
 
-Set up on Windows Machine
+Setup on Windows Machine
 =========================
 1.  Install the latest [PowerShell for Windows] build from GitHub
     - You can tell if it has the SSH remoting support by looking at the parameter sets for New-PSSession
@@ -43,7 +43,7 @@ Set up on Windows Machine
 [Win32 Open SSH]: https://github.com/PowerShell/Win32-OpenSSH
 [installation]: https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH
 
-Set up on Linux (Ubuntu 14.04) Machine:
+Setup on Linux (Ubuntu 14.04) Machine:
 ======================================
 1.  Install the latest [PowerShell for Linux] build from GitHub
     - You can tell if it has the SSH remoting support by looking at the parameter sets for New-PSSession
@@ -96,7 +96,7 @@ Linux TestUser-UbuntuVM1 4.2.0-42-generic 49~14.04.1-Ubuntu SMP Wed Jun 29 20:22
 
 [UbuntuVM1]: PS /home/TestUser> Exit-PSSession
 
-PS /home/TestUser> Invoke-Command $session -Script { Get-Process powershell }
+PS /home/TestUser> Invoke-Command $session -ScriptBlock { Get-Process powershell }
 
 Handles  NPM(K)    PM(K)      WS(K)     CPU(s)     Id  SI ProcessName                    PSComputerName
 -------  ------    -----      -----     ------     --  -- -----------                    --------------
