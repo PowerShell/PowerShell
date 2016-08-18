@@ -6,16 +6,7 @@ cache:
 nuget:
   project_feed: true
 
-environment:
-  priv_key:
-    secure: <encryped-value>
-
 install:
-  - ps: $fileContent = "-----BEGIN RSA PRIVATE KEY-----`n"
-  - ps: $fileContent += $env:priv_key.Replace(' ', "`n")
-  - ps: $fileContent += "`n-----END RSA PRIVATE KEY-----`n"
-  - ps: Set-Content c:\users\appveyor\.ssh\id_rsa $fileContent
-  - git config --global url.git@github.com:.insteadOf https://github.com/
   - git submodule update --init
   - ps: $buildConfiguration = 'Release'
   - ps: Import-Module .\build.psm1; Start-PSBootstrap -Force
