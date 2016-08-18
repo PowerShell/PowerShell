@@ -60,7 +60,7 @@ error:    (Exception from HRESULT: 0x8007007E)
 
 Try the following
 
-* Make sure you have latest opensll and re-link it
+* Make sure you have latest openssl and re-link it
 
 ```
 brew update
