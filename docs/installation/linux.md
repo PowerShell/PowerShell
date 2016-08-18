@@ -67,13 +67,13 @@ sudo yum install powershell-6.0.0_alpha.9-1.el7.centos.x86_64.rpm
 OS X 10.11
 ==========
 
-Using OS X 10.11, download the PKG package `powershell-6.0.0-alpha.9-osx.10.11-x64.pkg` from the [releases][] page onto the OS X machine.
+Using OS X 10.11, download the PKG package `powershell-6.0.0-alpha.9.pkg` from the [releases][] page onto the OS X machine.
 
 Either double-click the file and follow the prompts,
 or install it from the terminal:
 
 ```sh
-sudo installer -pkg powershell-6.0.0-alpha.9-osx.10.11-x64.pkg -target /
+sudo installer -pkg powershell-6.0.0-alpha.9.pkg -target /
 ```
 
 Paths
