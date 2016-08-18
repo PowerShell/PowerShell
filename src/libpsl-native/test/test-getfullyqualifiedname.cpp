@@ -13,25 +13,18 @@
 TEST(GetFullyQualifiedNameTest, ValidateLinuxGetFullyQualifiedDomainName)
 {
     std::string actual(GetFullyQualifiedName());
-
     std::string hostname(GetComputerName());
 
-    // FQDN starts with hostname (which may be fully qualified)
-    EXPECT_LE(hostname, actual);
+    struct addrinfo hints, *info;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_CANONNAME;
+    EXPECT_FALSE(getaddrinfo(hostname.c_str(), "http", &hints, &info));
 
-    // hostname did not include domain name, so test it separately
-    if (hostname < actual)
-    {
-        struct addrinfo hints, *info;
-        memset(&hints, 0, sizeof(hints));
-        hints.ai_family = AF_UNSPEC;
-        hints.ai_socktype = SOCK_STREAM;
-        hints.ai_flags = AI_CANONNAME;
-        EXPECT_FALSE(getaddrinfo(hostname.c_str(), "http", &hints, &info));
+    // Compare canonical name to FQDN
+    EXPECT_STREQ(info->ai_canonname, actual.c_str());
 
-        // Compare canonical name to FQDN
-        EXPECT_STREQ(info->ai_canonname, actual.c_str());
+    freeaddrinfo(info);
 
-        freeaddrinfo(info);
-    }
 }
