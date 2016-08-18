@@ -34,7 +34,7 @@ Due to a [bug][809] in NuGet, the `dotnet restore` command will fail without the
 Run `ulimit -n 2048` to fix this in your session;
 add it your shell's profile to fix it permanently.
 
-We cannot do this for you in in the build module due to #[847][].
+We cannot do this for you in the build module due to #[847][].
 
 [809]: https://github.com/dotnet/cli/issues/809
 [847]: https://github.com/PowerShell/PowerShell/issues/847
@@ -78,4 +78,4 @@ start a `powershell` session, and use `Start-PSBuild` from the module.
 The output directory will be slightly different because your runtime identifier is different.
 PowerShell will be at `./src/powershell-unix/bin/Linux/netcoreapp1.0/osx.10.11-x64/powershell`,
 or `osx.10.10` depending on your operating system version.
-Note that configuration is still `Linux` because it would be silly to make yet another separate configuration when it's used soley to work-around a CLI issue.
+Note that configuration is still `Linux` because it would be silly to make yet another separate configuration when it's used solely to work-around a CLI issue.
