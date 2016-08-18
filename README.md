@@ -66,10 +66,10 @@ If you have any problems building, please consult the developer [FAQ][].
 
 [FAQ]: docs/FAQ.md
 
-[tv-image]:
-[tv-site]:
-[av-image]:
-[av-site]:
+[tv-image]: https://travis-ci.org/PowerShell/PowerShell.svg?branch=master
+[tv-site]: https://travis-ci.org/PowerShell/PowerShell/branches
+[av-image]: https://ci.appveyor.com/api/github/webhook?id=nsng9iobwa895f98
+[av-site]: https://ci.appveyor.com/project/PowerShell/powershell
 
 Downloading the Source Code
 ---------------------------
