@@ -1,16 +1,9 @@
 #!/usr/bin/env bash
 
-GITHUB_TOKEN=a27573e27bea23fb05393ead69511b09e3b224be
-
-# Authorizes with read-only access to GitHub API
-curl_() {
-    curl -s -i -H "Authorization: token $GITHUB_TOKEN" "$@"
-}
-
 # Retrieves asset ID and package name of asset ending in argument
 # $info looks like: "id": 1698239, "name": "powershell_0.4.0-1_amd64.deb",
 get_info() {
-    curl_ https://api.github.com/repos/PowerShell/PowerShell/releases/latest | grep -B 1 "name.*$1"
+    curl -s https://api.github.com/repos/PowerShell/PowerShell/releases/latest | grep -B 1 "name.*$1"
 }
 
 # Get OS specific asset ID and package name
@@ -55,7 +48,7 @@ info=$(get_info $version)
 read asset package <<< $(echo $info | sed 's/[,"]//g' | awk '{ print $2; print $4 }')
 
 # Downloads asset to file
-curl_ -H 'Accept: application/octet-stream' https://api.github.com/repos/PowerShell/PowerShell/releases/assets/$asset |
+curl -s -H 'Accept: application/octet-stream' https://api.github.com/repos/PowerShell/PowerShell/releases/assets/$asset |
     grep location | sed 's/location: //g' | wget -i - -O $package
 
 # Installs PowerShell package
