@@ -1,25 +1,24 @@
-Using Visual Studio Code (VS Code)
+Using Visual Studio Code for PowerShell Development
 ====
 
-If you are working on Linux and OS X, you cannot use ISE because it is not supported on these platforms.
+If you are working on Linux and OS X, you cannot use the PowerShell ISE because it is not supported on these platforms.
 In this case, you can choose your favorite editor to write PowerShell scripts.
-Here we choose VS Code as a PowerShell editor as an example.
+Here we choose Visual Studio Code as a PowerShell editor.
 
-You can use VS Code on Windows with PowerShell V5 by using Windows 10 or by installing [Windows Management Framework 5.0 RTM](https://www.microsoft.com/en-us/download/details.aspx?id=50395) for down-level Windows OSs (e.g. Windows 8.1, etc.).
+You can use Visual Studio Code on Windows with PowerShell version 5 by using Windows 10 or by installing [Windows Management Framework 5.0 RTM](https://www.microsoft.com/en-us/download/details.aspx?id=50395) for down-level Windows OSs (e.g. Windows 8.1, etc.).
 
 Before starting it, please make sure PowerShell exists on your system.
 By following the [Installing PowerShell](./README.md#installing-powershell) instructions you can install PowerShell and launch a PowerShell session.
 
-Editing with VS Code
+Editing with Visual Studio Code
 ----
-[**1. Installing VS Code**](https://code.visualstudio.com/Docs/setup/setup-overview)
+[**1. Installing Visual Studio Code**](https://code.visualstudio.com/Docs/setup/setup-overview)
 
-* **Linux**: follow the Installation instructions in the [Running VS Code on Linux](https://code.visualstudio.com/docs/setup/linux) to setup VS Code application
+* **Linux**: follow the installation instructions on the [Running VS Code on Linux](https://code.visualstudio.com/docs/setup/linux) page
 
+* **OS X**: follow the installation instructions on the [Running VS Code on OS X](https://code.visualstudio.com/docs/setup/osx) page
 
-* **OS X**: follow the Installation instructions in the [Running VS Code on OS X](https://code.visualstudio.com/docs/setup/osx) to setup VS Code application
-
-* **Windows**: download and install VS Code for your OS from [Visual Studio Code website](https://code.visualstudio.com/docs/setup/windows).
+* **Windows**: follow the installation instructions on the [Running VS Code on Windows](https://code.visualstudio.com/docs/setup/windows) page
 
 
 **2. Installing PowerShell Extension**
@@ -30,8 +29,8 @@ Editing with VS Code
   *	**OS X**:         typing **code** in your terminal
 
 
--	Press **F1** (or **Ctrl+Shift+P**) which opens up the “Command Palette” inside the VS Code app.
--	In the command palette, type **ext install** and hit **Enter**. It will show all VS Code extensions available on your system.
+-	Press **F1** (or **Ctrl+Shift+P**) which opens up the "Command Palette" inside the Visual Studio Code app.
+-	In the command palette, type **ext install** and hit **Enter**. It will show all Visual Studio Code extensions available on your system.
 -	Choose PowerShell and click on **Install**, you will see something like below
 
 ![VSCode](vscode.png)
@@ -42,15 +41,38 @@ Editing with VS Code
 For example, to create a new file, click **File->New**.
 To save it, click **File->Save** and then provide a file name, let's say "helloworld.ps1".
 To close the file, click on "x" next to the file name.
-To exit VS Code, **File->Exit**.
+To exit Visual Studio Code, **File->Exit**.
 
+#### Using a specific installed version of PowerShell
 
-Debugging with VS Code
+If you wish to use a specific installation of PowerShell with Visual Studio Code,
+you will need to add a new variable to your user settings file.
+
+1. Click **File -> Preferences -> User Settings**
+2. Two editor panes will appear.  In the right-most pane (`settings.json`), insert the setting below
+   appropriate for your OS somewhere between the two curly brackets (`{` and `}`) and replace *<version>*
+   with the installed PowerShell version:
+
+  ```json
+    // On Windows:
+    "powershell.developer.powerShellExePath": "c:/Program Files/PowerShell/<version>/powershell.exe"
+
+    // On Linux:
+    "powershell.developer.powerShellExePath": "/opt/microsoft/powershell/<version>/powershell"
+
+    // On OS X:
+    "powershell.developer.powerShellExePath": "/usr/local/microsoft/powershell/<version>/powershell"
+  ```
+
+3. Replace the setting with the path to the desired PowerShell executable
+4. Save the settings file and restart Visual Studio Code
+
+Debugging with Visual Studio Code
 ----
 
 -	Open a file folder (**File->Open Folder**) that contains the PowerShell modules or scripts you have written already and want to debug.
 In this example, we saved the helloworld.ps1 under a directory called "demo".
-Thus we select the "demo" folder and open it in VS Code.
+Thus we select the "demo" folder and open it in Visual Studio Code.
 
 -	Creating the Debug Configuration (launch.json)
 
@@ -60,9 +82,9 @@ Thus we select the "demo" folder and open it in VS Code.
 
   * Click on the **Debug** icon (or **Ctrl+Shift+D**)
   * Click on the **Settings** icon that looks like a gear.
-  VS Code will prompt you to **Select Environment**.
+  Visual Studio Code will prompt you to **Select Environment**.
 Choose **PowerShell**.
-Then VS code will auto create a debug configuration settings file in the same folder.
+Then Visual Studio Code will auto create a debug configuration settings file in the same folder.
 It looks like the following:
 ```json
 {
@@ -71,14 +93,6 @@ It looks like the following:
         {
             "name": "PowerShell",
             "type": "PowerShell",
-            "request": "launch",
-            "program": "${file}",
-            "args": [],
-            "cwd": "${file}"
-        },
-        {
-            "name": "PowerShell x86",
-            "type": "PowerShell x86",
             "request": "launch",
             "program": "${file}",
             "args": [],
@@ -93,12 +107,12 @@ It looks like the following:
 The execution should stop on the line you put the breakpoint on.
 - Press **F5** to continue running the script.
 
-There are a few blogs that may be helpful to get you started using PowerShell extension for VS Code
+There are a few blogs that may be helpful to get you started using PowerShell extension for Visual Studio Code
 
 -	Visual Studio Code: [PowerShell Extension][ps-extension]
 -	[Write and debug PowerShell scripts in Visual Studio Code][debug]
--	[Debugging VS Code Guidance][vscode-guide]
--	[Debugging PowerShell in VS Code][ps-vscode]
+-	[Debugging Visual Studio Code Guidance][vscode-guide]
+-	[Debugging PowerShell in Visual Studio Code][ps-vscode]
 
 
 [ps-extension]:https://blogs.msdn.microsoft.com/cdndevs/2015/12/11/visual-studio-code-powershell-extension/
@@ -106,7 +120,7 @@ There are a few blogs that may be helpful to get you started using PowerShell ex
 [vscode-guide]:https://johnpapa.net/debugging-with-visual-studio-code/
 [ps-vscode]:https://github.com/PowerShell/vscode-powershell-ops/tree/master/vscode-powershell/examples
 
-PowerShell Extension for VS Code
+PowerShell Extension for Visual Studio Code
 ----
 
-PowerShell extension source code can be found [GitHub](https://github.com/PowerShell/vscode-powershell-ops).
+The PowerShell extension's source code can be found on [GitHub](https://github.com/PowerShell/vscode-powershell-ops).
