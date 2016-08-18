@@ -17,12 +17,7 @@ addons:
     s3_region: "us-west-2"
     paths: $(ls powershell*{deb,pkg} | tr "\n" ":")
 
-git:
-  submodules: false
-
 install:
-  - git config --global url.git@github.com:.insteadOf https://github.com/
-  - git submodule update --init
   - (cd tools && ./download.sh)
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rvm use 2.2.1; fi # Default 2.0.0 Ruby is buggy
 
