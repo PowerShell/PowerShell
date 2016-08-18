@@ -104,7 +104,7 @@ The script is self-documented and contains a link to the
 corehost
 ========
 
-The native executable prouduced by .NET CLI will produce trace output
+The native executable produced by .NET CLI will produce trace output
 if launched with `COREHOST_TRACE=1 ./powershell`.
 
 CoreCLR PAL

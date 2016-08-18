@@ -28,7 +28,7 @@ And in PowerShell/PowerShell it mapped into `src/System.Management.Automation/en
 Our dev module contains a number of functions to work that can be used to work with this mapping file.
 
 * `Copy-MappedFiles` -- copies files from psl-monad into PowerShell/PowerShell. Used for "sd -> github" integration.
-* `Send-GitDiffToSd` -- applies patch from git to **admin** enslistment with respect to all `map.json` files. 
+* `Send-GitDiffToSd` -- applies patch from git to **admin** enlistment with respect to all `map.json` files. 
   It supports `-WhatIf` switch.
 
 ```
