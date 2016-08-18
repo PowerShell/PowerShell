@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// operations involving security.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Credential", DefaultParameterSetName = GetCredentialCommand.credentialSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113311")]
-    [OutputType(typeof(PSCredential), ParameterSetName = new string[] { GetCredentialCommand.credentialSet, GetCredentialCommand.messageSet })]
+    [OutputType(typeof(PSCredential), ParameterSetName = new string[] { GetCredentialCommand.credentialSet, GetCredentialCommand.messageSet, GetCredentialCommand.titleSet, GetCredentialCommand.usernameSet })]
     public sealed class GetCredentialCommand : PSCmdlet
     {
         /// <summary>
@@ -28,6 +28,16 @@ namespace Microsoft.PowerShell.Commands
         /// The Message parameter set name.
         /// </summary>
         private const string messageSet = "MessageSet";
+
+        /// <summary>
+        /// The Title parameter set name.
+        /// </summary>
+        private const string titleSet = "TitleSet";
+
+        /// <summary>
+        /// The Username parameter set name.
+        /// </summary>
+        private const string usernameSet = "UsernameSet";
 
         /// <summary>
         /// Gets or sets the underlying PSCredential of
@@ -63,9 +73,25 @@ namespace Microsoft.PowerShell.Commands
         private string _message = null;
 
         /// <summary>
+        /// Gets and sets the user supplied title providing description about which script/function is 
+        /// requesting the PSCredential from the user.
+        /// Also to guide Password managers to potential account.
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = titleSet)]
+        public string Title
+        {
+            get { return _title; }
+            set { _title = value; }
+        }
+        private string _title = null;
+
+
+        /// <summary>
         /// Gets and sets the user supplied username to be used while creating the PSCredential.
         /// </summary>
         [Parameter(Position = 0, Mandatory = false, ParameterSetName = messageSet)]
+        [Parameter(Position = 0, Mandatory = false, ParameterSetName = titleSet)]
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = usernameSet)]
         public string UserName
         {
             get { return _userName; }
@@ -86,14 +112,21 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (!string.IsNullOrEmpty(this.Message))
-            {
+            if(!string.IsNullOrEmpty(this.Title) {
+                string caption = this.Title;
+            }
+            else {
                 string caption = UtilsStrings.PromptForCredential_DefaultCaption;
+            }
+            
+            if (!string.IsNullOrEmpty(this.Message) -or !string.IsNullOrEmpty(this.Username))
+            {
+                string username = this.Username;
                 string message = this.Message;
 
                 try
                 {
-                    Credential = this.Host.UI.PromptForCredential(caption, message, _userName, string.Empty);
+                    Credential = this.Host.UI.PromptForCredential(caption, message, username, string.Empty);
                 }
                 catch (ArgumentException exception)
                 {
@@ -109,3 +142,4 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
+
