@@ -42,6 +42,27 @@ Read [An Introduction To Error Handling in PowerShell][error] for more informati
 
 [error]: https://blogs.msdn.microsoft.com/kebab/2013/06/09/an-introduction-to-error-handling-in-powershell/
 
+Where do I get the PowerShell Core SDK package?
+=============================================================
+
+The SDK NuGet package `Microsoft.PowerShell.SDK` is provided for developers to write .NET Core C# code targeting PowerShell Core.
+PowerShell NuGet packages for releases starting from v6.0.0-alpha.9 will be published to the [powershell-core][] myget feed.
+
+To use the `Microsoft.PowerShell.SDK` NuGet package, declare the `frameworks` section in your `project.json` file as follows:
+
+```
+"frameworks": {
+    "netstandard1.6": {
+        "imports": [ "dnxcore50", "portable-net45+win8" ],
+        "dependencies": {
+            "Microsoft.PowerShell.SDK": "1.0.0-alpha9"
+        }
+    }
+}
+```
+
+[powershell-core]: https://powershell.myget.org/gallery/powershell-core
+
 Why did my build fail?
 ============================================
 
