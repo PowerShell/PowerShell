@@ -1,6 +1,6 @@
 # PowerShell Core Test Status
 
-Testing has been a major part of PowerShell since its inception and PowerShell Core is no exception to that. We will continue to add tests to the repository over time, but we did not want to wait for the  
+Testing has been a major part of PowerShell since its inception and PowerShell Core is no exception to that. We will continue to add tests to the repository over time, but we did not want to wait for all of our existing tests to be available before publishing our repository.
 
 ## Test Information
 
