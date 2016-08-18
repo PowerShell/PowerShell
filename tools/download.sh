@@ -88,4 +88,9 @@ case "$OSTYPE" in
         ;;
 esac
 
-echo "Congratulations! PowerShell is now installed."
+powershell -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'
+
+if [[ $? != 0 ]]; then
+    echo "ERROR! PowerShell didn't install. Check script output"
+    exit 1
+fi
