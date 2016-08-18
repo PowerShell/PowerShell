@@ -112,14 +112,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if(!string.IsNullOrEmpty(this.Title) {
+            if(!string.IsNullOrEmpty(this.Title)) {
                 string caption = this.Title;
             }
             else {
                 string caption = UtilsStrings.PromptForCredential_DefaultCaption;
             }
             
-            if (!string.IsNullOrEmpty(this.Message) -or !string.IsNullOrEmpty(this.Username))
+            if (!string.IsNullOrEmpty(this.Message) || !string.IsNullOrEmpty(this.Username))
             {
                 string username = this.Username;
                 string message = this.Message;
