@@ -185,12 +185,13 @@ Type **$PSVersionTable** in your PowerShell session, you will see something like
 ```PowerShell
 Name                           Value
 ----                           -----
-PSVersion                      5.1.10032.0
+PSVersion                      6.0.0-alpha
 PSEdition                      Core
 PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0...}
 BuildVersion                   3.0.0.0
+GitCommitId                    v6.0.0-alpha.9
 CLRVersion                     
-WSManStackVersion              1.0
+WSManStackVersion              3.0
 PSRemotingProtocolVersion      2.3
 SerializationVersion           1.1.0.1
 
@@ -244,7 +245,7 @@ PowerShell Pipeline '|'
 Sometimes when you run Get-ChildItem or "dir", you want to get a list of files and folders in a descending order.
 To achieve that, type:
 ```PowerShell
-PS /home/jen> dir | sort -Descending
+PS /home/jen> dir | Sort-Object -Descending
 ```
 Say you want to get the largest file in a directory
 ```PowerShell
