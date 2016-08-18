@@ -104,7 +104,9 @@ Please see the [Contribution Guide][] for how to develop and contribute.
 
 If you have any problems, please consult the [known issues][], developer [FAQ][], and [GitHub issues][].
 If you do not see your problem captured, please file a [new issue][] and follow the provided template.
+If you are developing .NET Core C# applications targeting PowerShell Core, please [check out our FAQ][] to learn more about the PowerShell SDK NuGet package. 
 
+[check out our FAQ]: docs/FAQ.md#where-do-i-get-the-powershell-core-sdk-package
 [Contribution Guide]: .github/CONTRIBUTING.md
 [known issues]: docs/KNOWNISSUES.md
 [GitHub issues]: https://github.com/PowerShell/PowerShell/issues
