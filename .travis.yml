@@ -7,10 +7,8 @@ branches:
 
 os:
   - linux
-  - osx
 sudo: required
 dist: trusty
-osx_image: xcode7.3
 
 addons:
   artifacts:
