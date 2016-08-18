@@ -22,6 +22,7 @@ When an issue is resolved, the following labels are used to describe the resolut
 * `Resolution-Answered`: the issue was a `Issue-Question` and was answered.
 * `Resolution-By Design`: the issue is not considered a bug, the behavior is working as designed
 * `Resolution-Duplicate`: the issue is a duplicate - there must be a comment linking to another issue
+* `Resolution-External`: the issue cannot be address by this repo.  Should be addressed externally.
 * `Resolution-Fixed`: the issue is has been fixed and should be referenced from a PR
 * `Resolution-Won't Fix`: the issue may be considered a bug or enhancement but won't be fixed.
   If there is an inadequate explanation as to why the issue was closed,
