@@ -45,6 +45,13 @@ You can download and install a PowerShell package for any of the following platf
 
 To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).
 
+Chat Room
+---------
+
+Want to chat with other members of the PowerShell community?
+
+[![Join the chat at https://gitter.im/PowerShell/PowerShell](https://badges.gitter.im/PowerShell/PowerShell.svg)](https://gitter.im/PowerShell/PowerShell?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Building the Repository
 -----------------------
 
