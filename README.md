@@ -66,10 +66,10 @@ If you have any problems building, please consult the developer [FAQ][].
 
 [FAQ]: docs/FAQ.md
 
-[tv-image]: https://travis-ci.com/PowerShell/PowerShell.svg?token=31YifM4jfyVpBmEGitCm&branch=master
-[tv-site]: https://travis-ci.com/PowerShell/PowerShell/branches
-[av-image]: https://ci.appveyor.com/api/projects/status/jtefab3hpngtyesp/branch/master?svg=true
-[av-site]: https://ci.appveyor.com/project/PowerShell/powershell/branch/master
+[tv-image]:
+[tv-site]:
+[av-image]:
+[av-site]:
 
 Downloading the Source Code
 ---------------------------
