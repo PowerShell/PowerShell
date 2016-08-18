@@ -31,7 +31,7 @@ A resource file is a simple XML file, and it's easy to edit.
 ## Convert `.txt` resource files into `.resx` files
 
 `dotnet cli` doesn't support embedding old-fashioned `.txt` resource.
-You can do a one-time convertion of `.txt` resources into `.resx` files with a helper function:
+You can do a one-time conversion of `.txt` resources into `.resx` files with a helper function:
 
 ```
 # example, converting all .txt resources under src\Microsoft.WSMan.Management\resources

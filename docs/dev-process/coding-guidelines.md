@@ -18,11 +18,11 @@ Here are some general guidelines
 * Use of `this` is neither encouraged nor discouraged.
 * Avoid more than one blank empty line.
 * Public members should use [doc comments](https://msdn.microsoft.com/en-us/library/b2s063f7.aspx),
-  internal members may use doc comments but it is not enouraged.
+  internal members may use doc comments but it is not encouraged.
 * Public members in a namespace that ends with `Internal`,
   for example `System.Management.Automation.Internal` are not considered a supported public API.
   Such members are necessarily public as implementation details in code shared between C# and PowerShell script,
-  or must be available publically by generated code.
+  or must be available publicly by generated code.
 * File encoding should be ASCII (preferred)
   or UTF8 (with BOM) if absolutely necessary.
 
