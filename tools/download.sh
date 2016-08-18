@@ -48,7 +48,7 @@ info=$(get_info $version)
 read asset package <<< $(echo $info | sed 's/[,"]//g' | awk '{ print $2; print $4 }')
 
 # Downloads asset to file
-curl -s -H 'Accept: application/octet-stream' https://api.github.com/repos/PowerShell/PowerShell/releases/assets/$asset |
+curl -s -i -H 'Accept: application/octet-stream' https://api.github.com/repos/PowerShell/PowerShell/releases/assets/$asset |
     grep location | sed 's/location: //g' | wget -i - -O $package
 
 # Installs PowerShell package
