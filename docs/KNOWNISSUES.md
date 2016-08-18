@@ -200,3 +200,15 @@ The following table lists commands that are known not to work in PowerShell on L
 <td>Without the ability to start a background job, the other cmdlets are useless. This will be fixed soon in a future release.
 </tr>
 </table>
+
+Known Issues for PowerShell on Windows
+======================================
+
+Remoting Endpoint Creation on Nano Server TP5
+---------------------------------------------
+
+The [script](https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md) to create a new WinRM remoting 
+endpoint (`Install-PowerShellRemoting.ps1`) encounters a bug in the inbox PowerShell Core on Nano Server TP5.
+The bug causes the script to create an incorrect directory for the plugin and may result in creation of an invalid remoting endpoint.
+When the exact same command is run a second time, the script executes as expected and successfully creates the WinRM remoting endpoint. 
+The bug in inbox PowerShell Core on Nano Server TP5 does not occur in later versions of Nano Server.
