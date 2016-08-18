@@ -5229,10 +5229,6 @@ end
                         "Show-Command",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("trcm",
                         "Trace-Command",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("wget",
-                        "Invoke-WebRequest",   "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("curl",
-                        "Invoke-WebRequest",   "", ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("lp",
                         "Out-Printer",     "", ScopedItemOptions.AllScope),
 #endif
