@@ -49,12 +49,6 @@ you will also need to install
 [Visual C++ Redistributable for Visual Studio 2012 Update 4][redist-2012]
 and [Visual C++ Redistributable for Visual Studio 2015][redist-2015].
 
-The version of .NET CLI is very important, you want a recent build of
-1.0.0 (**not** 1.0.1).
-
-Previous installations of DNX, `dnvm`, or older installations of .NET
-CLI can cause odd failures when running. Please check your version.
-
 [dotnet-cli]: https://github.com/dotnet/cli#new-to-net-cli
 [cli-docs]: https://dotnet.github.io/getting-started/
 [redist-2012]: https://www.microsoft.com/en-us/download/confirmation.aspx?id=30679
