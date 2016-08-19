@@ -79,7 +79,7 @@ sudo installer -pkg powershell-6.0.0-alpha.9.pkg -target /
 Paths
 =====
 
-* `$PSHOME` is `/opt/microsoft/powershell/6.0.0-alpha.9/`
+* `$PSHOME` is `/usr/local/microsoft/powershell/6.0.0-alpha.9/`
 * User profiles will be read from `~/.config/powershell/profile.ps1`
 * Default profiles will be read from `$PSHOME/profile.ps1`
 * User modules will be read from `~/.local/share/powershell/Modules`
