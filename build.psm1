@@ -694,7 +694,7 @@ function Start-PSBootstrap {
             $Deps += "libicu", "libunwind"
 
             # Packaging tools
-            if ($Package) { $Deps += "ruby-devel", "rpmbuild" }
+            if ($Package) { $Deps += "ruby-devel", "rpm-build" }
 
             # Install dependencies
             sudo yum install -y -q $Deps
