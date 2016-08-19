@@ -20,14 +20,15 @@ Get PowerShell
 
 You can download and install a PowerShell package for any of the following platforms.
 
-| Platform                     | Downloads            | How to Install              |
-|------------------------------|----------------------|-----------------------------|
-| Windows 10 / Server 2016     | [.msi][rl-windows10] | [Instructions][in-windows]  |
-| Windows 8.1 / Server 2012 R2 | [.msi][rl-windows81] | [Instructions][in-windows]  |
-| Ubuntu 16.04                 | [.deb][rl-ubuntu16]  | [Instructions][in-ubuntu16] |
-| Ubuntu 14.04                 | [.deb][rl-ubuntu14]  | [Instructions][in-ubuntu14] |
-| CentOS 7                     | [.rpm][rl-centos]    | [Instructions][in-centos]   |
-| OS X 10.11                   | [.pkg][rl-osx]       | [Instructions][in-osx]      |
+| Platform                       | Downloads              | How to Install                |
+| ------------------------------ | ---------------------- | ----------------------------- |
+| Windows 10 / Server 2016       | [.msi][rl-windows10]   | [Instructions][in-windows]    |
+| Windows 8.1 / Server 2012 R2   | [.msi][rl-windows81]   | [Instructions][in-windows]    |
+| Ubuntu 16.04                   | [.deb][rl-ubuntu16]    | [Instructions][in-ubuntu16]   |
+| Ubuntu 14.04                   | [.deb][rl-ubuntu14]    | [Instructions][in-ubuntu14]   |
+| CentOS 7                       | [.rpm][rl-centos]      | [Instructions][in-centos]     |
+| OS X 10.11                     | [.pkg][rl-osx]         | [Instructions][in-osx]        |
+| Docker                         |                        | [Instructions] [in-docker]    |
 
 [rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.9/PowerShell_6.0.0.9-alpha.9-win10-x64.msi
 [rl-windows81]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.9/PowerShell_6.0.0.9-alpha.9-win81-x64.msi
@@ -42,6 +43,7 @@ You can download and install a PowerShell package for any of the following platf
 [in-ubuntu16]: docs/installation/linux.md#ubuntu-1604
 [in-centos]: docs/installation/linux.md#centos-7
 [in-osx]: docs/installation/linux.md#os-x-1011
+[in-docker]: docs/installation/docker.md
 
 To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).
 
