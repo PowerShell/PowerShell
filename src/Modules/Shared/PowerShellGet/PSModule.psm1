@@ -13974,7 +13974,7 @@ function ValidateAndGet-AuthenticodeSignature
             # Skip the PSGetModuleInfo.xml and ModuleName.cat files in the catalog validation
             $TestFileCatalogResult = Microsoft.PowerShell.Security\Test-FileCatalog -Path $ModuleBasePath `
                                                                                     -CatalogFilePath $CatalogFilePath `
-                                                                                    -FilesToSkip $script:PSGetItemInfoFileName,'*.cat','*.nupkg','*.nuspec' `
+                                                                                    -FilesToSkip $script:PSGetItemInfoFileName,'*.cat' `
                                                                                     -Detailed `
                                                                                     -ErrorAction SilentlyContinue
             if(-not $TestFileCatalogResult -or 
