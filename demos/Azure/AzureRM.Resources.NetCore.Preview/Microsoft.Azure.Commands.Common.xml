@@ -1,0 +1,2531 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Azure.Commands.Common</name>
+    </assembly>
+    <members>
+        <member name="M:Microsoft.WindowsAzure.Commands.Common.AzureDataCmdlet.ConfirmAction(System.Boolean,System.String,System.String,System.String,System.Action)">
+            <summary>
+            Guards execution of the given action using ShouldProcess and ShouldContinue.  The optional 
+            useSHouldContinue predicate determines whether SHouldContinue should be called for this 
+            particular action (e.g. a resource is being overwritten). By default, both 
+            ShouldProcess and ShouldContinue will be executed.  Cmdlets that use this method overload 
+            must have a force parameter.
+            </summary>
+            <param name="force">Do not ask for confirmation</param>
+            <param name="continueMessage">Message to describe the action</param>
+            <param name="processMessage">Message to prompt after the active is performed.</param>
+            <param name="target">The target name.</param>
+            <param name="action">The action code</param>
+        </member>
+        <member name="T:Microsoft.WindowsAzure.Commands.Common.CmdletInfoHandler">
+            <summary>
+            A delegating handler that writes the current cmdlet info into request headers.
+            </summary>
+        </member>
+        <member name="P:Microsoft.WindowsAzure.Commands.Common.CmdletInfoHandler.Cmdlet">
+            <summary>
+            The name of the cmdlet.
+            </summary>
+        </member>
+        <member name="P:Microsoft.WindowsAzure.Commands.Common.CmdletInfoHandler.ParameterSet">
+            <summary>
+            The name of the parameter set specified by user.
+            </summary>
+        </member>
+        <member name="P:Microsoft.WindowsAzure.Commands.Common.CmdletInfoHandler.ClientRequestId">
+            <summary>
+            The unique client request id.
+            </summary>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Common.CmdletInfoHandler.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Initializes an instance of a CmdletInfoHandler with the name of the cmdlet and the parameter set.
+            </summary>
+            <param name="cmdlet">the name of the cmdlet</param>
+            <param name="parameterSet">the name of the parameter set specified by user</param>
+            <param name="clientRequestId">the unique clientRequestId</param>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Common.ConversionUtilities.ArrayToString``1(``0[],System.String)">
+            <summary>
+            Convert the given array into string.
+            </summary>
+            <typeparam name="T">The type of the object array is holding</typeparam>
+            <param name="array">The collection</param>
+            <param name="delimiter">The used delimiter between array elements</param>
+            <returns>The array into string representation</returns>
+        </member>
+        <member name="T:Microsoft.WindowsAzure.Commands.Common.StringExtensions">
+            <summary>
+            Extension methods for strings.
+            </summary>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Common.StringExtensions.FormatInvariant(System.String,System.Object[])">
+            <summary>
+            Formats the string with parameters and invariant culture.
+            </summary>
+            <param name="s">The string</param>
+            <param name="args">The arguments</param>
+        </member>
+        <member name="T:Microsoft.WindowsAzure.Commands.Utilities.Common.AzurePSCmdlet">
+            <summary>
+            Represents base class for all Azure cmdlets.
+            </summary>
+        </member>
+        <member name="P:Microsoft.WindowsAzure.Commands.Utilities.Common.AzurePSCmdlet.ModuleName">
+            <summary>
+            Gets the PowerShell module name used for user agent header.
+            By default uses "Azure PowerShell"
+            </summary>
+        </member>
+        <member name="P:Microsoft.WindowsAzure.Commands.Utilities.Common.AzurePSCmdlet.ModuleVersion">
+            <summary>
+            Gets PowerShell module version used for user agent header.
+            </summary>
+        </member>
+        <member name="P:Microsoft.WindowsAzure.Commands.Utilities.Common.AzurePSCmdlet.DefaultContext">
+            <summary>
+            The context for management cmdlet requests - includes account, tenant, subscription, 
+            and credential information for targeting and authorizing management calls.
+            </summary>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Utilities.Common.AzurePSCmdlet.#ctor">
+            <summary>
+            Initializes AzurePSCmdlet properties.
+            </summary>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Utilities.Common.AzurePSCmdlet.BeginProcessing">
+            <summary>
+            Cmdlet begin process. Write to logs, setup Http Tracing and initialize profile
+            </summary>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Utilities.Common.AzurePSCmdlet.EndProcessing">
+            <summary>
+            Perform end of pipeline processing.
+            </summary>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Utilities.Common.AzurePSCmdlet.WriteExceptionError(System.Exception)">
+            <summary>
+            Write an error message for a given exception.
+            </summary>
+            <param name="ex">The exception resulting from the error.</param>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Utilities.Common.AzurePSCmdlet.ConfirmAction(System.Boolean,System.String,System.String,System.String,System.Action)">
+            <summary>
+            Guards execution of the given action using ShouldProcess and ShouldContinue.  This is a legacy 
+            version forcompatibility with older RDFE cmdlets.
+            </summary>
+            <param name="force">Do not ask for confirmation</param>
+            <param name="continueMessage">Message to describe the action</param>
+            <param name="processMessage">Message to prompt after the active is performed.</param>
+            <param name="target">The target name.</param>
+            <param name="action">The action code</param>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Utilities.Common.AzurePSCmdlet.ConfirmAction(System.Boolean,System.String,System.String,System.String,System.Action,System.Func{System.Boolean})">
+            <summary>
+            Guards execution of the given action using ShouldProcess and ShouldContinue.  The optional 
+            useSHouldContinue predicate determines whether SHouldContinue should be called for this 
+            particular action (e.g. a resource is being overwritten). By default, both 
+            ShouldProcess and ShouldContinue will be executed.  Cmdlets that use this method overload 
+            must have a force parameter.
+            </summary>
+            <param name="force">Do not ask for confirmation</param>
+            <param name="continueMessage">Message to describe the action</param>
+            <param name="processMessage">Message to prompt after the active is performed.</param>
+            <param name="target">The target name.</param>
+            <param name="action">The action code</param>
+            <param name="useShouldContinue">A predicate indicating whether ShouldContinue should be invoked for thsi action</param>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Utilities.Common.AzurePSCmdlet.ConfirmAction(System.String,System.String,System.Action)">
+            <summary>
+            Prompt for confirmation depending on the ConfirmLevel. By default No confirmation prompt 
+            occurs unless ConfirmLevel >= $ConfirmPreference.  Guarding the actions of a cmdlet with this 
+            method will enable the cmdlet to support -WhatIf and -Confirm parameters.
+            </summary>
+            <param name="processMessage">The change being made to the resource</param>
+            <param name="target">The resource that is being changed</param>
+            <param name="action">The action to perform if confirmed</param>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Utilities.Common.GeneralUtilities.TryEquals(System.String,System.String)">
+            <summary>
+            Compares two strings with handling special case that base string can be empty.
+            </summary>
+            <param name="leftHandSide">The base string.</param>
+            <param name="rightHandSide">The comparer string.</param>
+            <returns>True if equals or leftHandSide is null/empty, false otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Utilities.Common.GeneralUtilities.GetValueOrDefault``2(System.Collections.Generic.IDictionary{``0,``1},``0,``1)">
+            <summary>
+            Get the value for a given key in a dictionary or return a default
+            value if the key isn't present in the dictionary.
+            </summary>
+            <typeparam name="K">The type of the key.</typeparam>
+            <typeparam name="V">The type of the value.</typeparam>
+            <param name="dictionary">The dictionary.</param>
+            <param name="key">The key.</param>
+            <param name="defaultValue">A default value</param>
+            <returns>The corresponding value or default value.</returns>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Utilities.Common.GeneralUtilities.NonNull``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Returns a non-null sequence by either passing back the original
+            sequence or creating a new empty sequence if the original was null.
+            </summary>
+            <typeparam name="T">Type of elements in the sequence.</typeparam>
+            <param name="sequence">The sequence.</param>
+            <returns>A non-null sequence.</returns>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Utilities.Common.GeneralUtilities.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
+            <summary>
+            Perform an action on each element of a sequence.
+            </summary>
+            <typeparam name="T">Type of elements in the sequence.</typeparam>
+            <param name="sequence">The sequence.</param>
+            <param name="action">The action to perform.</param>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Utilities.Common.GeneralUtilities.Append``1(``0[],``0)">
+            <summary>
+            Append an element to the end of an array.
+            </summary>
+            <typeparam name="T">Type of the arrays.</typeparam>
+            <param name="left">The left array.</param>
+            <param name="right">The right array.</param>
+            <returns>The concatenated arrays.</returns>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Utilities.Common.GeneralUtilities.ExtendArray``1(System.Collections.Generic.IEnumerable{``0},``0)">
+            <summary>
+            Extends the array with one element.
+            </summary>
+            <typeparam name="T">The array type</typeparam>
+            <param name="collection">The array holding elements</param>
+            <param name="item">The item to add</param>
+            <returns>New array with added item</returns>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Utilities.Common.GeneralUtilities.ExtendArray``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Extends the array with another array
+            </summary>
+            <typeparam name="T">The array type</typeparam>
+            <param name="collection">The array holding elements</param>
+            <param name="items">The items to add</param>
+            <returns>New array with added items</returns>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Utilities.Common.GeneralUtilities.InitializeIfNull``1(``0)">
+            <summary>
+            Initializes given object if its set to null.
+            </summary>
+            <typeparam name="T">The object type</typeparam>
+            <param name="obj">The object to initialize</param>
+            <returns>Initialized object</returns>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Utilities.Common.GeneralUtilities.CreateHttpsEndpoint(System.String)">
+            <summary>
+            Creates https endpoint from the given endpoint.
+            </summary>
+            <param name="endpointUri">The endpoint uri.</param>
+            <returns>The https endpoint uri.</returns>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Utilities.Common.GeneralUtilities.GenerateSeparator(System.Int32,System.String)">
+            <summary>
+            Pad a string using the given separator string
+            </summary>
+            <param name="amount">The number of repetitions of the separator</param>
+            <param name="separator">The separator string to use</param>
+            <returns>A string containing the given number of repetitions of the separator string</returns>
+        </member>
+        <member name="M:Microsoft.WindowsAzure.Commands.Utilities.Common.GeneralUtilities.ClearCurrentStorageAccount(System.Boolean)">
+            <summary>
+            Clear the current storage account from the context - guarantees that only one storage account will be active 
+            at a time.
+            </summary>
+            <param name="clearSMContext">Whether to clear the service management context.</param>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.Common.Resources.Resource">
+            <summary>
+               A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ResourceManager">
+            <summary>
+               Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.Culture">
+            <summary>
+               Overrides the current thread's CurrentUICulture property for all
+               resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AccessDeniedExceptionMessage">
+            <summary>
+               Looks up a localized string similar to The remote server returned an error: (401) Unauthorized..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AccountIdDoesntMatchSubscription">
+            <summary>
+               Looks up a localized string similar to Account id doesn&apos;t match one in subscription..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AccountNeedsToBeSpecified">
+            <summary>
+               Looks up a localized string similar to Account needs to be specified.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AddAccountAdded">
+            <summary>
+               Looks up a localized string similar to Account &quot;{0}&quot; has been added..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AddAccountChangeSubscription">
+            <summary>
+               Looks up a localized string similar to To switch to a different subscription, please use Select-AzureSubscription..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AddAccountNonInteractiveGuestOrFpo">
+            <summary>
+               Looks up a localized string similar to Skipping external tenant {0}, because you are using a guest or a foreign principal object identity. In order to access this tenant, please run Add-AzureAccount without &quot;-Credential&quot;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AddAccountShowDefaultSubscription">
+            <summary>
+               Looks up a localized string similar to Subscription &quot;{0}&quot; is selected as the default subscription..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AddAccountViewSubscriptions">
+            <summary>
+               Looks up a localized string similar to To view all the subscriptions, please use Get-AzureSubscription..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AddOnCreatedMessage">
+            <summary>
+               Looks up a localized string similar to Add-On {0} is created successfully..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AddOnNameAlreadyUsed">
+            <summary>
+               Looks up a localized string similar to Add-on name {0} is already used..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AddOnNotFound">
+            <summary>
+               Looks up a localized string similar to Add-On {0} not found..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AddOnRemovedMessage">
+            <summary>
+               Looks up a localized string similar to Add-on {0} is removed successfully..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AddOnUpdatedMessage">
+            <summary>
+               Looks up a localized string similar to Add-On {0} is updated successfully..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AddRoleMessageCreate">
+            <summary>
+               Looks up a localized string similar to Role has been created at {0}\{1}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AddRoleMessageCreateNode">
+            <summary>
+               Looks up a localized string similar to Role has been created at {0}\{1}. For easy access to Microsoft Azure services from your application code, install the Microsoft Azure client library for Node.js by running ‘npm install azure’..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AddRoleMessageCreatePHP">
+            <summary>
+               Looks up a localized string similar to Role has been created at {0}\{1}. For easy access to Microsoft Azure services from your application code, install the Microsoft Azure client library for PHP by running &quot;pear WindowsAzure/WindowsAzure&quot;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AddRoleMessageInsufficientPermissions">
+            <summary>
+               Looks up a localized string similar to Unable to set role permissions. Please give the &apos;Network Service&apos; user &apos;Read &amp; execute&apos; and &apos;Modify&apos; permissions to the role folder, or run PowerShell as an Administrator.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AddRoleMessageRoleExists">
+            <summary>
+               Looks up a localized string similar to A role name &apos;{0}&apos; already exists.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AddTrafficManagerEndpointFailed">
+            <summary>
+               Looks up a localized string similar to Profile {0} already has an endpoint with name {1}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AuthenticatingForSingleTenant">
+            <summary>
+               Looks up a localized string similar to [Common.Authentication]: Authenticating for account {0} with single tenant {1}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AzureDirectory">
+            <summary>
+               Looks up a localized string similar to Windows Azure Powershell\.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AzurePortalUrl">
+            <summary>
+               Looks up a localized string similar to https://manage.windowsazure.com.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AzurePortalUrlEnv">
+            <summary>
+               Looks up a localized string similar to AZURE_PORTAL_URL.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AzureProfileMustNotBeNull">
+            <summary>
+               Looks up a localized string similar to Selected profile must not be null..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AzureSdkDirectory">
+            <summary>
+               Looks up a localized string similar to Azure SDK\{0}\.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AzureVMDscArchiveAlreadyExists">
+            <summary>
+               Looks up a localized string similar to File &apos;{0}&apos; already exists. Use the -Force parameter to overwrite it..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AzureVMDscCannotFindConfigurationDataFile">
+            <summary>
+               Looks up a localized string similar to Cannot find configuration data file: {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AzureVMDscCreateArchiveAction">
+            <summary>
+               Looks up a localized string similar to Create Archive.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AzureVMDscInvalidConfigurationDataFile">
+            <summary>
+               Looks up a localized string similar to The configuration data must be a .psd1 file.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AzureVMDscParsingConfiguration">
+            <summary>
+               Looks up a localized string similar to Parsing configuration script: {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AzureVMDscStorageBlobAlreadyExists">
+            <summary>
+               Looks up a localized string similar to Storage Blob &apos;{0}&apos; already exists. Use the -Force parameter to overwrite it..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.AzureVMDscUploadToBlobStorageAction">
+            <summary>
+               Looks up a localized string similar to Upload &apos;{0}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.BaseUriEmpty">
+            <summary>
+               Looks up a localized string similar to Base Uri was empty..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.BeginProcessingWithoutParameterSetLog">
+            <summary>
+               Looks up a localized string similar to {0} begin processing without ParameterSet..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.BeginProcessingWithParameterSetLog">
+            <summary>
+               Looks up a localized string similar to {0} begin processing with ParameterSet &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.BlobAlreadyExistsInTheAccount">
+            <summary>
+               Looks up a localized string similar to Blob with the name {0} already exists in the account..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.BlobEndpointUri">
+            <summary>
+               Looks up a localized string similar to https://{0}.blob.core.windows.net/.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.BlobEndpointUriEnv">
+            <summary>
+               Looks up a localized string similar to AZURE_BLOBSTORAGE_TEMPLATE.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CacheRuntimeUrl">
+            <summary>
+               Looks up a localized string similar to CACHERUNTIMEURL.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CacheRuntimeValue">
+            <summary>
+               Looks up a localized string similar to cache.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CacheRuntimeVersionKey">
+            <summary>
+               Looks up a localized string similar to CacheRuntimeVersion.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CacheVersionWarningText">
+            <summary>
+               Looks up a localized string similar to Installing caching version {0} for Role &apos;{1}&apos; (the caching version locally installed is: {2}).
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CannotChangeBuiltinEnvironment">
+            <summary>
+               Looks up a localized string similar to Cannot change built-in environment {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CannotFind">
+            <summary>
+               Looks up a localized string similar to Cannot find {0} with name {1}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CannotFindDeployment">
+            <summary>
+               Looks up a localized string similar to Deployment for service {0} with {1} slot doesn&apos;t exist.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CannotFindRole">
+            <summary>
+               Looks up a localized string similar to Can&apos;t find valid Microsoft Azure role in current directory {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CannotFindServiceConfigurationFile">
+            <summary>
+               Looks up a localized string similar to service {0} configuration file (ServiceConfiguration.Cloud.cscfg) is either null or doesn&apos;t exist.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CannotFindServiceRoot">
+            <summary>
+               Looks up a localized string similar to Invalid service path! Cannot locate ServiceDefinition.csdef in current folder or parent folders..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CannotUpdateUnknownSubscription">
+            <summary>
+               Looks up a localized string similar to The subscription named {0} with id {1} is not currently imported. You must import this subscription before it can be updated..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CertificateElementName">
+            <summary>
+               Looks up a localized string similar to ManagementCertificate.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CertificateFileName">
+            <summary>
+               Looks up a localized string similar to certificate.pfx.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CertificateImportedMessage">
+            <summary>
+               Looks up a localized string similar to Certificate imported into CurrentUser\My\{0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CertificatePrivateKeyAccessError">
+            <summary>
+               Looks up a localized string similar to Your account does not have access to the private key for certificate {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ChangeDeploymentStateWaitMessage">
+            <summary>
+               Looks up a localized string similar to {0} {1} deployment for {2} service.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ChangeDeploymentStatusCompleteMessage">
+            <summary>
+               Looks up a localized string similar to Cloud service {0} is in {1} state..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ChangePublicEnvironmentMessage">
+            <summary>
+               Looks up a localized string similar to Changing/Removing public environment &apos;{0}&apos; is not allowed..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ChangeSettingsElementMessage">
+            <summary>
+               Looks up a localized string similar to Service {0} is set to value {1}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ChangingDefaultEnvironmentNotSupported">
+            <summary>
+               Looks up a localized string similar to Changing public environment is not supported..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ChoosePublishSettingsFile">
+            <summary>
+               Looks up a localized string similar to Choose which publish settings file to use:.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ClientDiagnosticLevelName">
+            <summary>
+               Looks up a localized string similar to Microsoft.WindowsAzure.Plugins.Caching.ClientDiagnosticLevel.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ClientDiagnosticLevelValue">
+            <summary>
+               Looks up a localized string similar to 1.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CloudPackageFileName">
+            <summary>
+               Looks up a localized string similar to cloud_package.cspkg.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CloudServiceConfigurationFileName">
+            <summary>
+               Looks up a localized string similar to ServiceConfiguration.Cloud.cscfg.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CloudServiceDescription">
+            <summary>
+               Looks up a localized string similar to Add-ons for {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CommunicationCouldNotBeEstablished">
+            <summary>
+               Looks up a localized string similar to Communication could not be established. This could be due to an invalid subscription ID. Note that subscription IDs are case sensitive..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CompleteMessage">
+            <summary>
+               Looks up a localized string similar to Complete.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ComputeCloudExceptionOperationIdMessage">
+            <summary>
+               Looks up a localized string similar to OperationID : &apos;{0}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ConfigurationFileName">
+            <summary>
+               Looks up a localized string similar to config.json.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CreateFailedErrorMessage">
+            <summary>
+               Looks up a localized string similar to VirtualMachine creation failed..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.CreateWebsiteFailed">
+            <summary>
+               Looks up a localized string similar to Creating the website failed. If this is the first website for this subscription, please create it using the management portal instead..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DataCacheClientsType">
+            <summary>
+               Looks up a localized string similar to Microsoft.ApplicationServer.Caching.DataCacheClientsSection, Microsoft.ApplicationServer.Caching.Core.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DatacenterBlobQuery">
+            <summary>
+               Looks up a localized string similar to //blobcontainer[@datacenter=&apos;{0}&apos;].
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DataCollectionActivity">
+            <summary>
+               Looks up a localized string similar to Microsoft Azure PowerShell Data Collection Confirmation.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DataCollectionConfirmNo">
+            <summary>
+               Looks up a localized string similar to You choose not to participate in Microsoft Azure PowerShell data collection..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DataCollectionConfirmTime">
+            <summary>
+               Looks up a localized string similar to This confirmation message will be dismissed in &apos;{0}&apos; second(s)....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DataCollectionConfirmYes">
+            <summary>
+               Looks up a localized string similar to You choose to participate in Microsoft Azure PowerShell data collection..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DataCollectionPrompt">
+             <summary>
+                Looks up a localized string similar to  Microsoft Azure PowerShell collects data about how users use PowerShell cmdlets and some problems they encounter.  Microsoft uses this information to improve our PowerShell cmdlets.  Participation is voluntary and when you choose to participate your device automatically sends information to Microsoft about how you use Azure PowerShell. 
+             
+            If you choose to participate, you can stop at any time by using Azure PowerShell as follows:
+            1.	Use the Disable-AzureDataCollection cmdlet to turn the feature Off. The  [rest of string was truncated]&quot;;.
+             </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DataCollectionSaveFileInformation">
+            <summary>
+               Looks up a localized string similar to The setting profile has been saved to the following path &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DefaultAndCurrentSubscription">
+            <summary>
+               Looks up a localized string similar to Setting: {0} as the default and current subscription. To view other subscriptions use Get-AzureSubscription.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DefaultFileVersion">
+            <summary>
+               Looks up a localized string similar to none.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DefaultHostnamesValidation">
+            <summary>
+               Looks up a localized string similar to There are no hostnames which could be used for validation..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DefaultPort">
+            <summary>
+               Looks up a localized string similar to 8080.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DefaultRoleCachingInMB">
+            <summary>
+               Looks up a localized string similar to 1000.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DefaultUpgradeMode">
+            <summary>
+               Looks up a localized string similar to Auto.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DefaultWebPort">
+            <summary>
+               Looks up a localized string similar to 80.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.Delete">
+            <summary>
+               Looks up a localized string similar to Delete.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DeploymentAlreadyInState">
+            <summary>
+               Looks up a localized string similar to The {0} slot for service {1} is already in {2} state.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DeploymentRemovedMessage">
+            <summary>
+               Looks up a localized string similar to The deployment in {0} slot for service {1} is removed.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DiagnosticLevelName">
+            <summary>
+               Looks up a localized string similar to Microsoft.WindowsAzure.Plugins.Caching.DiagnosticLevel.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DiagnosticLevelValue">
+            <summary>
+               Looks up a localized string similar to 1.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DictionaryAddAlreadyContainsKey">
+            <summary>
+               Looks up a localized string similar to The key to add already exists in the dictionary..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DictionaryCopyToArrayIndexLessThanZero">
+            <summary>
+               Looks up a localized string similar to The array index cannot be less than zero..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DictionaryCopyToArrayTooShort">
+            <summary>
+               Looks up a localized string similar to The supplied array does not have enough room to contain the copied elements..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.DnsDoesNotExist">
+            <summary>
+               Looks up a localized string similar to The provided dns {0} doesn&apos;t exist.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.EnableRemoteDesktop_FriendlyCertificateName">
+            <summary>
+               Looks up a localized string similar to Microsoft Azure Certificate.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.EndPointNotFoundForBlobStorage">
+            <summary>
+               Looks up a localized string similar to Endpoint can&apos;t be retrieved for storage account.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.EndProcessingLog">
+            <summary>
+               Looks up a localized string similar to {0} end processing..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.EnvironmentDoesNotSupportActiveDirectory">
+            <summary>
+               Looks up a localized string similar to To use Active Directory authentication, you must configure the ActiveDirectoryEndpoint, ActiveDirectoryTenantId, and ActiveDirectorServiceEndpointResourceId for environment of &apos;{0}&apos;. You can configure these properties for this environment using the Set-AzureEnvironment cmdlet..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.EnvironmentExists">
+            <summary>
+               Looks up a localized string similar to The environment &apos;{0}&apos; already exists..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.EnvironmentNameDoesntMatchSubscription">
+            <summary>
+               Looks up a localized string similar to Environment name doesn&apos;t match one in subscription..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.EnvironmentNameNeedsToBeSpecified">
+            <summary>
+               Looks up a localized string similar to Environment name needs to be specified..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.EnvironmentNeedsToBeSpecified">
+            <summary>
+               Looks up a localized string similar to Environment needs to be specified..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.EnvironmentNotFound">
+            <summary>
+               Looks up a localized string similar to The environment name &apos;{0}&apos; is not found..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.EnvironmentsFileName">
+            <summary>
+               Looks up a localized string similar to environments.xml.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ErrorCreatingVirtualMachine">
+            <summary>
+               Looks up a localized string similar to Error creating VirtualMachine.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ErrorRetrievingRuntimesForLocation">
+            <summary>
+               Looks up a localized string similar to Unable to download available runtimes for location &apos;{0}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ErrorUpdatingVirtualMachine">
+            <summary>
+               Looks up a localized string similar to Error updating VirtualMachine.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.FailedJobErrorMessage">
+            <summary>
+               Looks up a localized string similar to Job Id {0} failed. Error: {1}, ExceptionDetails: {2}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.FilePathIsNotValid">
+            <summary>
+               Looks up a localized string similar to File path is not valid..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.FirstPurchaseErrorMessage">
+            <summary>
+               Looks up a localized string similar to The HTTP request was forbidden with client authentication scheme &apos;Anonymous&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.FirstPurchaseMessage">
+            <summary>
+               Looks up a localized string similar to This add-on requires you to purchase the first instance through the Microsoft Azure Portal. Subsequent purchases can be performed through PowerShell..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.GatewayOperationStatus">
+            <summary>
+               Looks up a localized string similar to Operation Status:.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.GeneralScaffolding">
+            <summary>
+               Looks up a localized string similar to Resources\Scaffolding\General.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.GetAllAddOnsWaitMessage">
+            <summary>
+               Looks up a localized string similar to Getting all available Microsoft Azure Add-Ons, this may take few minutes....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.GetStorageKeysHeader">
+            <summary>
+               Looks up a localized string similar to Name{0}Primary Key{0}Seconday Key.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.GitNotFound">
+            <summary>
+               Looks up a localized string similar to Git not found. Please install git and place it in your command line path..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.GlobalSettingsManager_Load_PublishSettingsNotFound">
+            <summary>
+               Looks up a localized string similar to Could not find publish settings. Please run Import-AzurePublishSettingsFile..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.IaasDiagnosticsBadConfigNoEndWadCfg">
+            <summary>
+               Looks up a localized string similar to Cannot find the WadCfg end element in the config..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.IaasDiagnosticsBadConfigNoMatchingWadCfg">
+            <summary>
+               Looks up a localized string similar to WadCfg start element in the config is not matching the end element..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.IaasDiagnosticsBadConfigNoWadCfg">
+            <summary>
+               Looks up a localized string similar to Cannot find the WadCfg element in the config..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.IISNodeDll">
+            <summary>
+               Looks up a localized string similar to iisnode.dll.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.IISNodeEngineKey">
+            <summary>
+               Looks up a localized string similar to iisnode.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.IISNodePath">
+            <summary>
+               Looks up a localized string similar to iisnode-dev\\release\\x64.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.IISNodeRuntimeValue">
+            <summary>
+               Looks up a localized string similar to iisnode.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.IISNodeVersionWarningText">
+            <summary>
+               Looks up a localized string similar to Installing IISNode version {0} in Azure for WebRole &apos;{1}&apos; (the version locally installed is: {2}).
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InternalServerErrorMessage">
+            <summary>
+               Looks up a localized string similar to Internal Server Error.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidCacheRoleName">
+            <summary>
+               Looks up a localized string similar to Cannot enable memcach protocol on a cache worker role {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidCertificateSingle">
+            <summary>
+               Looks up a localized string similar to Invalid certificate format..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidConfigPath">
+            <summary>
+               Looks up a localized string similar to The provided configuration path is invalid or doesn&apos;t exist.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidCountryNameMessage">
+            <summary>
+               Looks up a localized string similar to The country name is invalid, please use a valid two character country code, as described in ISO 3166-1 alpha-2..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidDefaultSubscription">
+            <summary>
+               Looks up a localized string similar to No default subscription has been designated. Use Select-AzureSubscription -Default &lt;subscriptionName&gt; to set the default subscription..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidDeployment">
+            <summary>
+               Looks up a localized string similar to Deployment with {0} does not exist.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidDeploymentSlot">
+            <summary>
+               Looks up a localized string similar to The deployment slot name {0} is invalid. Slot name must be either &quot;Staging&quot; or &quot;Production&quot;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidEndpoint">
+            <summary>
+               Looks up a localized string similar to Invalid service endpoint..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidFileName">
+            <summary>
+               Looks up a localized string similar to File {0} has invalid characters.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidGitCredentials">
+             <summary>
+                Looks up a localized string similar to You must create your git publishing credentials using the Microsoft Azure portal.
+            Please follow these steps in the portal:
+            1. On the left side open &quot;Web Sites&quot;
+            2. Click on any website
+            3. Choose &quot;Setup Git Publishing&quot; or &quot;Reset deployment credentials&quot;
+            4. Back in the PowerShell window, rerun this command by typing &quot;New-AzureWebSite {site name} -Git -PublishingUsername {username}.
+             </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidGuid">
+            <summary>
+               Looks up a localized string similar to The value {0} provided is not a valid GUID. Please provide a valid GUID..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidHostnameValidation">
+            <summary>
+               Looks up a localized string similar to The specified hostname does not exist. Please specify a valid hostname for the site..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidInstancesCount">
+            <summary>
+               Looks up a localized string similar to Role {0} instances must be greater than or equal 0 and less than or equal 20.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidJobFile">
+            <summary>
+               Looks up a localized string similar to There was an error creating your webjob. Please make sure that the script is in the root folder of the zip file..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidManifestError">
+            <summary>
+               Looks up a localized string similar to Could not download a valid runtime manifest, Please check your internet connection and try again..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidMediaServicesAccount">
+            <summary>
+               Looks up a localized string similar to The account {0} was not found. Please specify a valid account name..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidNamespaceName">
+            <summary>
+               Looks up a localized string similar to The provided name &quot;{0}&quot; does not match the service bus namespace naming rules..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidNewProfilePath">
+            <summary>
+               Looks up a localized string similar to Path must specify a valid path to an Azure profile..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidNullArgument">
+            <summary>
+               Looks up a localized string similar to Value cannot be null. Parameter name: &apos;{0}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidPackagePath">
+            <summary>
+               Looks up a localized string similar to The provided package path is invalid or doesn&apos;t exist.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidParameterSetName">
+            <summary>
+               Looks up a localized string similar to &apos;{0}&apos; is an invalid parameter set name..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidPath">
+            <summary>
+               Looks up a localized string similar to {0} doesn&apos;t exist in {1} or you&apos;ve not passed valid value for it.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidPathName">
+            <summary>
+               Looks up a localized string similar to Path {0} has invalid characters.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidProfileProperties">
+            <summary>
+               Looks up a localized string similar to Property bag Hashtable must contain one of the following sets of properties: {SubscriptionId, Certificate}, {SubscriptionId, Username, Password}, {SubscriptionId, ServicePrincipal, Password, Tenant},  {SubscriptionId, AccountId, Token}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidPublishSettingsSchema">
+            <summary>
+               Looks up a localized string similar to The provided publish settings file {0} has invalid content. Please get valid by running cmdlet Get-AzurePublishSettingsFile.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidRoleNameMessage">
+            <summary>
+               Looks up a localized string similar to The provided role name &quot;{0}&quot; has invalid characters.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidRootNameMessage">
+            <summary>
+               Looks up a localized string similar to A valid name for the service root folder is required.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidRuntimeError">
+            <summary>
+               Looks up a localized string similar to {0} is not a recognized runtime type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidScaffoldingLanguageArg">
+            <summary>
+               Looks up a localized string similar to A valid language is required.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidSelectedSubscription">
+            <summary>
+               Looks up a localized string similar to No subscription is currently selected. Use Select-Subscription to activate a subscription..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidServiceBusLocation">
+            <summary>
+               Looks up a localized string similar to The provided location &quot;{0}&quot; does not exist in the available locations use Get-AzureSBLocation for listing available locations..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidServiceName">
+            <summary>
+               Looks up a localized string similar to Please provide a service name or run this command from inside a service project directory..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidServiceSettingElement">
+            <summary>
+               Looks up a localized string similar to You must provide valid value for {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidServiceSettingMessage">
+            <summary>
+               Looks up a localized string similar to settings.json is invalid or doesn&apos;t exist.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidSubscription">
+            <summary>
+               Looks up a localized string similar to The subscription named &apos;{0}&apos; cannot be found. Use Set-AzureSubscription to initialize the subscription data..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidSubscriptionId">
+            <summary>
+               Looks up a localized string similar to The provided subscription id {0} is not valid.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidSubscriptionName">
+            <summary>
+               Looks up a localized string similar to Must specify a non-null subscription name..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidSubscriptionNameMessage">
+            <summary>
+               Looks up a localized string similar to A valid subscription name is required. This can be provided using the  -Subscription parameter or by setting the subscription via the Set-AzureSubscription cmdlet.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidSubscriptionsDataSchema">
+            <summary>
+               Looks up a localized string similar to The provided subscriptions file {0} has invalid content..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidVMSize">
+            <summary>
+               Looks up a localized string similar to Role {0} VM size should be ExtraSmall, Small, Medium, Large or ExtraLarge..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidWebJobFile">
+            <summary>
+               Looks up a localized string similar to The web job file must have *.zip extension.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidWebJobSingleton">
+            <summary>
+               Looks up a localized string similar to Singleton option works for continuous jobs only..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.InvalidWebsite">
+            <summary>
+               Looks up a localized string similar to The website {0} was not found. Please specify a valid website name..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.JobNotFound">
+            <summary>
+               Looks up a localized string similar to No job for id: {0} was found..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.JsonEnginesSectionName">
+            <summary>
+               Looks up a localized string similar to engines.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.LanguageScaffoldingIsNotSupported">
+            <summary>
+               Looks up a localized string similar to Scaffolding for this language is not yet supported.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.LinkAlreadyEstablished">
+            <summary>
+               Looks up a localized string similar to Link already established.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.LocalPackageFileName">
+            <summary>
+               Looks up a localized string similar to local_package.csx.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.LocalServiceConfigurationFileName">
+            <summary>
+               Looks up a localized string similar to ServiceConfiguration.Local.cscfg.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.LookingForDeploymentMessage">
+            <summary>
+               Looks up a localized string similar to Looking for {0} deployment for {1} cloud service....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.LookingForServiceMessage">
+            <summary>
+               Looks up a localized string similar to Looking for cloud service {0}....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ManagementCertificateFileName">
+            <summary>
+               Looks up a localized string similar to managementCertificate.pem.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ManagementPortalRealmFormat">
+            <summary>
+               Looks up a localized string similar to ?whr={0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ManifestBaseUriQuery">
+            <summary>
+               Looks up a localized string similar to //baseuri.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ManifestBlobUriKey">
+            <summary>
+               Looks up a localized string similar to uri.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ManifestUri">
+            <summary>
+               Looks up a localized string similar to http://az413943.vo.msecnd.net/node/runtimemanifest_0.7.5.2.xml.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.MissingCertificateInProfileProperties">
+            <summary>
+               Looks up a localized string similar to Property bag Hashtable must contain a &apos;Certificate&apos; of type &apos;X509Certificate2&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.MissingPasswordInProfileProperties">
+            <summary>
+               Looks up a localized string similar to Property bag Hashtable must contain a &apos;Password&apos; with an associated &apos;Username&apos; or &apos;ServicePrincipal&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.MissingSubscriptionInProfileProperties">
+            <summary>
+               Looks up a localized string similar to Property bag Hashtable must contain a &apos;SubscriptionId&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.MultipleAddOnsFoundMessage">
+            <summary>
+               Looks up a localized string similar to Multiple Add-Ons found holding name {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.MultiplePublishingUsernames">
+            <summary>
+               Looks up a localized string similar to Multiple possible publishing users. Please go to the Portal and use the listed deployment user, or click &apos;set/reset deployment credentials&apos; to set up a new user account, then reurn this cmdlet and specify PublishingUsername..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.MultiplePublishSettingsFilesFoundMessage">
+            <summary>
+               Looks up a localized string similar to The first publish settings file &quot;{0}&quot; is used. If you want to use another file specify the file name..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NamedCacheSettingName">
+            <summary>
+               Looks up a localized string similar to Microsoft.WindowsAzure.Plugins.Caching.NamedCaches.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NamedCacheSettingValue">
+            <summary>
+               Looks up a localized string similar to {&quot;caches&quot;:[{&quot;name&quot;:&quot;default&quot;,&quot;policy&quot;:{&quot;eviction&quot;:{&quot;type&quot;:0},&quot;expiration&quot;:{&quot;defaultTTL&quot;:10,&quot;isExpirable&quot;:true,&quot;type&quot;:1},&quot;serverNotification&quot;:{&quot;isEnabled&quot;:false}},&quot;secondaries&quot;:0}]}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NeedPublishingUsernames">
+            <summary>
+               Looks up a localized string similar to A publishing username is required. Please specify one using the argument PublishingUsername..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NewAddOnConformation">
+            <summary>
+               Looks up a localized string similar to New Add-On Confirmation.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NewMicrosoftAddOnMessage">
+             <summary>
+                Looks up a localized string similar to By typing &quot;Yes&quot;, I (a) authorize Microsoft to charge my current payment method on a monthly basis 
+            for the amount indicated at {0} for {1} until my service is cancelled or terminated, and (b) 
+            agree to the {2}&apos;s terms of user and privacy statement at {0} and (c) agree to sharing my 
+            contact information with {2}..
+             </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NewNamespaceErrorMessage">
+            <summary>
+               Looks up a localized string similar to Internal Server Error. This could happen because the namespace name is already used or due to an incorrect location name. Use Get-AzureSBLocation cmdlet to list valid names..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NewNonMicrosoftAddOnMessage">
+             <summary>
+                Looks up a localized string similar to By typing &quot;Yes&quot;, I (a) authorize Microsoft to charge my current payment method on a monthly basis 
+            for the amount indicated at {0} for {1} until my service is cancelled or terminated, and (b) 
+            acknowledge the offering is provided by {2}, not Microsoft, and agree to {2}&apos;s terms of 
+            use and privacy statement at {0} and (c) agree to sharing my contact information with {2}..
+             </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NewServiceCreatedMessage">
+            <summary>
+               Looks up a localized string similar to Service has been created at {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.No">
+            <summary>
+               Looks up a localized string similar to No.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NoCachedToken">
+            <summary>
+               Looks up a localized string similar to There is no access token cached for subscription {0}, user id {1}. Use the Add-AzureAccount cmdlet to log in again and get a token for this subscription..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NoCacheWorkerRoles">
+            <summary>
+               Looks up a localized string similar to The service does not have any cache worker roles, add one first by running cmdlet Add-AzureCacheWorkerRole..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NoCloudsAvailable">
+            <summary>
+               Looks up a localized string similar to No clouds available.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NoCurrentContextForDataCmdlet">
+            <summary>
+               Looks up a localized string similar to &quot;There is no current context, please log in using Login-AzureRmAccount for Azure Resource Manager or Add-AzureAccount for Azure Service Management.&quot;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NodeDirectory">
+            <summary>
+               Looks up a localized string similar to nodejs.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NodeEngineKey">
+            <summary>
+               Looks up a localized string similar to node.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NodeExe">
+            <summary>
+               Looks up a localized string similar to node.exe.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NoDefaultSubscriptionMessage">
+            <summary>
+               Looks up a localized string similar to There is no default subscription set, please set a default subscription by running Set-AzureSubscription -Default &lt;subscription name&gt;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NodeModulesPath">
+            <summary>
+               Looks up a localized string similar to Microsoft SDKs\Azure\Nodejs\Nov2011.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NodeProgramFilesFolderName">
+            <summary>
+               Looks up a localized string similar to nodejs.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NodeRuntimeValue">
+            <summary>
+               Looks up a localized string similar to node.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NodeScaffolding">
+            <summary>
+               Looks up a localized string similar to Resources\Scaffolding\Node.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NodeScaffoldingResources">
+            <summary>
+               Looks up a localized string similar to Microsoft.WindowsAzure.Commands.CloudService.ScaffoldingResources.Node.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NodeVersionWarningText">
+            <summary>
+               Looks up a localized string similar to Installing Node version {0} in Azure for Role &apos;{1}&apos; (the Node version locally installed is: {2}).
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NoHint">
+            <summary>
+               Looks up a localized string similar to No, I do not agree.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.None">
+            <summary>
+               Looks up a localized string similar to &lt;NONE&gt;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NoPublishSettingsFilesFoundMessage">
+            <summary>
+               Looks up a localized string similar to No publish settings files with extension *.publishsettings are found in the directory &quot;{0}&quot;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NoSubscriptionAddedMessage">
+            <summary>
+               Looks up a localized string similar to There is no subscription associated with account {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NoSubscriptionFoundForTenant">
+            <summary>
+               Looks up a localized string similar to No subscriptions are associated with the logged in account in Azure Service Management (RDFE). This means that the logged in user is not an administrator or co-administrator for any account.\r\nDid you mean to execute Login-AzureRmAccount?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NotCacheWorkerRole">
+            <summary>
+               Looks up a localized string similar to &apos;{0}&apos; must be a cache worker role. Verify that it has proper cache worker role configuration..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NullCertificateMessage">
+            <summary>
+               Looks up a localized string similar to Certificate can&apos;t be null..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NullObjectMessage">
+            <summary>
+               Looks up a localized string similar to {0} could not be null or empty.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NullRoleSettingsMessage">
+            <summary>
+               Looks up a localized string similar to Unable to add a null RoleSettings to {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.NullServiceDefinitionMessage">
+            <summary>
+               Looks up a localized string similar to Unable to add new role to null service definition.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.OfferNotFoundMessage">
+            <summary>
+               Looks up a localized string similar to The request offer &apos;{0}&apos; is not found..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.OperationFailedErrorMessage">
+            <summary>
+               Looks up a localized string similar to Operation &quot;{0}&quot; failed on VM with ID: {1}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.OperationFailedMessage">
+            <summary>
+               Looks up a localized string similar to The REST operation failed with message &apos;{0}&apos; and error code &apos;{1}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.OperationTimedOutOrError">
+            <summary>
+               Looks up a localized string similar to Job Id {0} did not complete within expected time or it is in Failed/Canceled/Invalid state..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.Package">
+            <summary>
+               Looks up a localized string similar to package.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PackageCreated">
+            <summary>
+               Looks up a localized string similar to Package is created at service root path {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PackageJsonDefaultFile">
+             <summary>
+                Looks up a localized string similar to {{
+              &quot;author&quot;: &quot;&quot;,
+            
+              &quot;name&quot;: &quot;{0}&quot;,
+              &quot;version&quot;: &quot;0.0.0&quot;,
+              &quot;dependencies&quot;:{{}},
+              &quot;devDependencies&quot;:{{}},
+              &quot;optionalDependencies&quot;: {{}},
+              &quot;engines&quot;: {{
+                &quot;node&quot;: &quot;*&quot;,
+                &quot;iisnode&quot;: &quot;*&quot;
+              }}
+            
+            }}
+            .
+             </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PackageJsonFileName">
+            <summary>
+               Looks up a localized string similar to package.json.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PeerAsnRequired">
+            <summary>
+               Looks up a localized string similar to A value for the  Peer Asn has to be provided..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PHPDefaultRuntimeVersion">
+            <summary>
+               Looks up a localized string similar to 5.4.0.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PhpRuntimeValue">
+            <summary>
+               Looks up a localized string similar to php.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PHPScaffolding">
+            <summary>
+               Looks up a localized string similar to Resources\Scaffolding\PHP.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PHPScaffoldingResources">
+            <summary>
+               Looks up a localized string similar to Microsoft.WindowsAzure.Commands.CloudService.ScaffoldingResources.PHP.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PHPVersionWarningText">
+            <summary>
+               Looks up a localized string similar to Installing PHP version {0} for Role &apos;{1}&apos; (the PHP version locally installed is: {2}).
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PortalInstructions">
+             <summary>
+                Looks up a localized string similar to You must create your first web site using the Microsoft Azure portal.
+            Please follow these steps in the portal:
+            1. At the bottom of the page, click on New &gt; Web Site &gt; Quick Create
+            2. Type {0} in the URL field
+            3. Click on &quot;Create Web Site&quot;
+            4. Once the site has been created, click on the site name
+            5. Click on &quot;Set up Git publishing&quot; or &quot;Reset deployment credentials&quot; and setup a publishing username and password. Use those credentials for all new websites you create..
+             </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PortalInstructionsGit">
+            <summary>
+               Looks up a localized string similar to 6. Back in the console window, rerun this command by typing &quot;New-AzureWebsite &lt;site name&gt; -Git&quot;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PrimaryPeerSubnetRequired">
+            <summary>
+               Looks up a localized string similar to A value for the Primary Peer Subnet has to be provided..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PromotionCodeWithCurrentPlanMessage">
+            <summary>
+               Looks up a localized string similar to Promotion code can be used only when updating to a new plan..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishAbortedAtUserRequest">
+            <summary>
+               Looks up a localized string similar to Service not published at user request..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishCompleteMessage">
+            <summary>
+               Looks up a localized string similar to Complete..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishConnectingMessage">
+            <summary>
+               Looks up a localized string similar to Connecting....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishCreatedDeploymentMessage">
+            <summary>
+               Looks up a localized string similar to Created Deployment ID: {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishCreatedServiceMessage">
+            <summary>
+               Looks up a localized string similar to Created hosted service &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishCreatedWebsiteMessage">
+            <summary>
+               Looks up a localized string similar to Created Website URL: {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishCreatingServiceMessage">
+            <summary>
+               Looks up a localized string similar to Creating....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishInitializingMessage">
+            <summary>
+               Looks up a localized string similar to Initializing....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishInstanceStatusBusy">
+            <summary>
+               Looks up a localized string similar to busy.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishInstanceStatusCreating">
+            <summary>
+               Looks up a localized string similar to creating the virtual machine.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishInstanceStatusMessage">
+            <summary>
+               Looks up a localized string similar to Instance {0} of role {1} is {2}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishInstanceStatusReady">
+            <summary>
+               Looks up a localized string similar to ready.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishPreparingDeploymentMessage">
+            <summary>
+               Looks up a localized string similar to Preparing deployment for {0} with Subscription ID: {1}....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishServiceStartMessage">
+            <summary>
+               Looks up a localized string similar to Publishing {0} to Microsoft Azure. This may take several minutes....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishSettings">
+            <summary>
+               Looks up a localized string similar to publish settings.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishSettingsElementName">
+            <summary>
+               Looks up a localized string similar to Azure.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishSettingsFileExtention">
+            <summary>
+               Looks up a localized string similar to .PublishSettings.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishSettingsFileName">
+            <summary>
+               Looks up a localized string similar to publishSettings.xml.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishSettingsSetSuccessfully">
+            <summary>
+               Looks up a localized string similar to Publish settings imported.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishSettingsUrlEnv">
+            <summary>
+               Looks up a localized string similar to AZURE_PUBLISHINGPROFILE_URL.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishStartingMessage">
+            <summary>
+               Looks up a localized string similar to Starting....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishUpgradingMessage">
+            <summary>
+               Looks up a localized string similar to Upgrading....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishUploadingPackageMessage">
+            <summary>
+               Looks up a localized string similar to Uploading Package to storage service {0}....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishVerifyingStorageMessage">
+            <summary>
+               Looks up a localized string similar to Verifying storage account &apos;{0}&apos;....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishVMDscExtensionAdditionalContentPathNotExist">
+            <summary>
+               Looks up a localized string similar to Path &apos;{0}&apos; not found..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishVMDscExtensionArchiveUploadedMessage">
+            <summary>
+               Looks up a localized string similar to Configuration published to {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishVMDscExtensionCopyFileVerbose">
+            <summary>
+               Looks up a localized string similar to Copy &apos;{0}&apos; to &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishVMDscExtensionCopyModuleVerbose">
+            <summary>
+               Looks up a localized string similar to Copy the module &apos;{0}&apos; to &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishVMDscExtensionCreateArchiveConfigFileInvalidExtension">
+             <summary>
+                Looks up a localized string similar to Invalid configuration file: {0}.
+            The file needs to be a PowerShell script (.ps1 or .psm1)..
+             </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishVMDscExtensionDeletedFileMessage">
+            <summary>
+               Looks up a localized string similar to Deleted &apos;{0}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishVMDscExtensionDeleteErrorMessage">
+            <summary>
+               Looks up a localized string similar to Cannot delete &apos;{0}&apos;: {1}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishVMDscExtensionDirectoryNotExist">
+            <summary>
+               Looks up a localized string similar to Path &apos;{0}&apos; not found..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishVMDscExtensionGetDscResourceFailed">
+             <summary>
+                Looks up a localized string similar to Cannot get module for DscResource &apos;{0}&apos;. Possible solutions:
+            1) Specify -ModuleName for Import-DscResource in your configuration.
+            2) Unblock module that contains resource.
+            3) Move Import-DscResource inside Node block.
+            .
+             </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishVMDscExtensionRequiredModulesVerbose">
+            <summary>
+               Looks up a localized string similar to List of required modules: [{0}]..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishVMDscExtensionRequiredPsVersion">
+            <summary>
+               Looks up a localized string similar to Your current PowerShell version {1} is less then required by this cmdlet {0}. Consider download and install latest PowerShell version..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishVMDscExtensionStorageParserErrors">
+             <summary>
+                Looks up a localized string similar to Configuration script &apos;{0}&apos; contained parse errors:
+            {1}.
+             </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishVMDscExtensionTempFolderVerbose">
+            <summary>
+               Looks up a localized string similar to Temp folder &apos;{0}&apos; created..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishVMDscExtensionUploadArchiveConfigFileInvalidExtension">
+             <summary>
+                Looks up a localized string similar to Invalid configuration file: {0}.
+            The file needs to be a PowerShell script (.ps1 or .psm1) or a ZIP archive (.zip)..
+             </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.PublishVMDscExtensionUploadArchiveConfigFileNotExist">
+            <summary>
+               Looks up a localized string similar to Configuration file &apos;{0}&apos; not found..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RedeployCommit">
+            <summary>
+               Looks up a localized string similar to Replace current deployment with &apos;{0}&apos; Id ?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RegenerateKeyWarning">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to regenerate key?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RegenerateKeyWhatIfMessage">
+            <summary>
+               Looks up a localized string similar to Generate new key..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveAccountConfirmation">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to remove account &apos;{0}&apos;?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveAccountMessage">
+            <summary>
+               Looks up a localized string similar to Removing account.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveAddOnConformation">
+            <summary>
+               Looks up a localized string similar to Remove Add-On Confirmation.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveAddOnMessage">
+            <summary>
+               Looks up a localized string similar to If you delete this add-on, your data may be deleted and the operation may not be undone.  You may have to purchase it again from the Microsoft Azure Store to use it. The price of the add-on  may not be refunded. Are you sure you want to delete this add-on? Enter “Yes” to confirm..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveAzureBGPPeeringFailed">
+            <summary>
+               Looks up a localized string similar to Remove-AzureBGPPeering Operation failed..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveAzureBGPPeeringMessage">
+            <summary>
+               Looks up a localized string similar to Removing Bgp Peering.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveAzureBGPPeeringSucceeded">
+            <summary>
+               Looks up a localized string similar to Successfully removed Azure Bgp Peering with Service Key {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveAzureBGPPeeringWarning">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to remove the Bgp Peering with service key &apos;{0}&apos;?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveAzureDedicatdCircuitWarning">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to remove the Dedicated Circuit with service key &apos;{0}&apos;?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveAzureDedicatedCircuitFailed">
+            <summary>
+               Looks up a localized string similar to Remove-AzureDedicatedCircuit Operation failed..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveAzureDedicatedCircuitLinkFailed">
+            <summary>
+               Looks up a localized string similar to Remove-AzureDedicatedCircuitLink Operation failed..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveAzureDedicatedCircuitLinkMessage">
+            <summary>
+               Looks up a localized string similar to Removing Dedicated Circui Link.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveAzureDedicatedCircuitLinkSucceeded">
+            <summary>
+               Looks up a localized string similar to Successfully removed Azure Dedicated Circuit Link with Service Key {0} and Vnet Name {1}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveAzureDedicatedCircuitLinkWarning">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to remove the Dedicated Circuit Link with service key &apos;{0}&apos; and virtual network name &apos;{1}&apos;?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveAzureDedicatedCircuitMessage">
+            <summary>
+               Looks up a localized string similar to Removing Dedicated Circuit.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveAzureDedicatedCircuitSucceeded">
+            <summary>
+               Looks up a localized string similar to Successfully removed Azure Dedicated Circuit with Service Key {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveAzureServiceWaitMessage">
+            <summary>
+               Looks up a localized string similar to Removing cloud service {0}....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveDefaultSubscription">
+            <summary>
+               Looks up a localized string similar to The default subscription is being removed. Use Select-AzureSubscription -Default &lt;subscriptionName&gt; to select a new default subscription..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveDeploymentWaitMessage">
+            <summary>
+               Looks up a localized string similar to Removing {0} deployment for {1} service.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveEnvironmentConfirmation">
+            <summary>
+               Looks up a localized string similar to Removing an environment will remove all associated subscriptions and accounts. Are you sure you want to remove an environment &apos;{0}&apos;?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveEnvironmentMessage">
+            <summary>
+               Looks up a localized string similar to Removing environment.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveJobCollectionMessage">
+            <summary>
+               Looks up a localized string similar to Removing job collection.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveJobCollectionWarning">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to remove the job collection &quot;{0}&quot;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveJobMessage">
+            <summary>
+               Looks up a localized string similar to Removing job.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveJobWarning">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to remove the job &quot;{0}&quot;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveMediaAccountWarning">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to remove the account?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveMediaAccountWhatIfMessage">
+            <summary>
+               Looks up a localized string similar to Account removed..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveNamespaceErrorMessage">
+            <summary>
+               Looks up a localized string similar to Internal Server Error. This could happen because the namespace does not exist or it does not exist under your subscription..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemovePackage">
+            <summary>
+               Looks up a localized string similar to Removing old package {0}....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveProfileConfirmation">
+            <summary>
+               Looks up a localized string similar to Removing the Azure profile will remove all associated environments, subscriptions, and accounts. Are you sure you want to remove the Azure profile?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveProfileMessage">
+            <summary>
+               Looks up a localized string similar to Removing the Azure profile.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveServiceBusNamespaceConfirmation">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to delete the namespace &apos;{0}&apos;?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveServiceWarning">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to remove cloud service?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveServiceWhatIfMessage">
+            <summary>
+               Looks up a localized string similar to Remove cloud service and all it&apos;s deployments.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveSubscriptionConfirmation">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to remove subscription &apos;{0}&apos;?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveSubscriptionMessage">
+            <summary>
+               Looks up a localized string similar to Removing subscription.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveTrafficManagerEndpointMissing">
+            <summary>
+               Looks up a localized string similar to The endpoint {0} cannot be removed from profile {1} because it&apos;s not in the profile..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveTrafficManagerProfileFailed">
+            <summary>
+               Looks up a localized string similar to Remove-AzureTrafficManagerProfile Operation failed..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveTrafficManagerProfileSucceeded">
+            <summary>
+               Looks up a localized string similar to Successfully removed Traffic Manager profile with name {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveTrafficManagerProfileWarning">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to remove the Traffic Manager profile &quot;{0}&quot;?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveVMConfirmationMessage">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to delete the VM &apos;{0}&apos;?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveVMMessage">
+            <summary>
+               Looks up a localized string similar to Deleting VM..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveWebJobMessage">
+            <summary>
+               Looks up a localized string similar to Removing WebJob....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveWebJobWarning">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to remove job &apos;{0}&apos;?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveWebsiteMessage">
+            <summary>
+               Looks up a localized string similar to Removing website.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemoveWebsiteWarning">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to remove the website &quot;{0}&quot;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemovingDefaultEnvironmentsNotSupported">
+            <summary>
+               Looks up a localized string similar to Removing public environment is not supported..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RemovingNamespaceMessage">
+            <summary>
+               Looks up a localized string similar to Deleting namespace.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RepositoryNotSetup">
+            <summary>
+               Looks up a localized string similar to Repository is not setup. You need to pass a valid site name..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ReservedIPNameNoLongerInUseButStillBeingReserved">
+            <summary>
+               Looks up a localized string similar to Reserved IP with the Name:&apos;{0}&apos; will no longer be in use after the deployment is deleted, and it is still reserved for later use..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ResourceNotFound">
+            <summary>
+               Looks up a localized string similar to Resource with ID : {0} does not exist..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.Restart">
+            <summary>
+               Looks up a localized string similar to Restart.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.Resume">
+            <summary>
+               Looks up a localized string similar to Resume.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RoleArgTemplate">
+            <summary>
+               Looks up a localized string similar to /role:{0};&quot;{1}/{0}&quot; .
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RoleBinFolderName">
+            <summary>
+               Looks up a localized string similar to bin.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RoleInstanceWaitMsg">
+            <summary>
+               Looks up a localized string similar to Role {0} is {1}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RoleMaxInstances">
+            <summary>
+               Looks up a localized string similar to 20.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RoleName">
+            <summary>
+               Looks up a localized string similar to role name.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RoleNotFoundMessage">
+            <summary>
+               Looks up a localized string similar to The provided role name {0} doesn&apos;t exist.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RoleSettingsTemplateFileName">
+            <summary>
+               Looks up a localized string similar to RoleSettings.xml.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RoleTypeDoesNotExist">
+            <summary>
+               Looks up a localized string similar to Role type {0} doesn&apos;t exist.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RuntimeDeploymentLocationError">
+            <summary>
+               Looks up a localized string similar to public static Dictionary&lt;string, Location&gt; ReverseLocations { get; private set; }.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RuntimeDeploymentStart">
+            <summary>
+               Looks up a localized string similar to Preparing runtime deployment for service &apos;{0}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RuntimeMismatchWarning">
+            <summary>
+               Looks up a localized string similar to WARNING Runtime Mismatch: Are you sure that you want to publish service &apos;{0}&apos; using an Azure runtime version that does not match your local runtime version?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RuntimeOverrideKey">
+            <summary>
+               Looks up a localized string similar to RUNTIMEOVERRIDEURL.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RuntimeQuery">
+            <summary>
+               Looks up a localized string similar to /runtimemanifest/runtimes/runtime.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RuntimeTypeKey">
+            <summary>
+               Looks up a localized string similar to RUNTIMEID.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RuntimeUrlKey">
+            <summary>
+               Looks up a localized string similar to RUNTIMEURL.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.RuntimeVersionPrimaryKey">
+            <summary>
+               Looks up a localized string similar to RUNTIMEVERSIONPRIMARYKEY.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ScaffoldXml">
+            <summary>
+               Looks up a localized string similar to scaffold.xml.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SchedulerInvalidLocation">
+            <summary>
+               Looks up a localized string similar to Invalid location entered. Pick one of the locations from Get-AzureSchedulerLocation.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SecondaryPeerSubnetRequired">
+            <summary>
+               Looks up a localized string similar to A value for the Secondary Peer Subnet has to be provided..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceAlreadyExistsOnDisk">
+            <summary>
+               Looks up a localized string similar to Service {0} already exists on disk in location {1}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceBusAuthorizationRuleNotFound">
+            <summary>
+               Looks up a localized string similar to No ServiceBus authorization rule with the given characteristics was found.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceBusEntityTypeNotFound">
+            <summary>
+               Looks up a localized string similar to The service bus entity &apos;{0}&apos; is not found..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceBusNamespaceMissingMessage">
+            <summary>
+               Looks up a localized string similar to Internal Server Error. This could happen due to an incorrect/missing namespace.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceConfiguration">
+            <summary>
+               Looks up a localized string similar to service configuration.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceDefinition">
+            <summary>
+               Looks up a localized string similar to service definition.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceDefinitionFileName">
+            <summary>
+               Looks up a localized string similar to ServiceDefinition.csdef.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceDeploymentName">
+            <summary>
+               Looks up a localized string similar to {0}Deploy.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceDoesNotExist">
+            <summary>
+               Looks up a localized string similar to The specified cloud service &quot;{0}&quot; does not exist..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceIsInTransitionState">
+            <summary>
+               Looks up a localized string similar to {0} slot for service {1} is in {2} state, please wait until it finish and update it&apos;s status.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceManagementClientExceptionStringFormat">
+            <summary>
+               Looks up a localized string similar to &quot;An exception occurred when calling the ServiceManagement API. HTTP Status Code: {0}. Service Management Error Code: {1}. Message: {2}. Operation Tracking ID: {3}.&quot;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceManagementExecuteClientActionBeginOperation">
+            <summary>
+               Looks up a localized string similar to Begin Operation: {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceManagementExecuteClientActionCompletedOperation">
+            <summary>
+               Looks up a localized string similar to Completed Operation: {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceManagementExecuteClientActionInOCSBeginOperation">
+            <summary>
+               Looks up a localized string similar to Begin Operation: {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceManagementExecuteClientActionInOCSCompletedOperation">
+            <summary>
+               Looks up a localized string similar to Completed Operation: {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceName">
+            <summary>
+               Looks up a localized string similar to service name.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceNameMissingMessage">
+            <summary>
+               Looks up a localized string similar to Please provide name for the hosted service.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceParentDirectory">
+            <summary>
+               Looks up a localized string similar to service parent directory.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceRemovedMessage">
+            <summary>
+               Looks up a localized string similar to Service {0} removed successfully.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceRoot">
+            <summary>
+               Looks up a localized string similar to service directory.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceSettings">
+            <summary>
+               Looks up a localized string similar to service settings.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceSettings_ValidateStorageAccountName_InvalidName">
+            <summary>
+               Looks up a localized string similar to The storage account name &apos;{0}&apos; is invalid.  Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceSlotDoesNotExist">
+            <summary>
+               Looks up a localized string similar to The {0} slot for cloud service {1} doesn&apos;t exist..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ServiceStatusChanged">
+            <summary>
+               Looks up a localized string similar to {0} slot for service {1} is {2}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SetAddOnConformation">
+            <summary>
+               Looks up a localized string similar to Set Add-On Confirmation.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SetInexistentTrafficManagerEndpointMessage">
+            <summary>
+               Looks up a localized string similar to Profile {0} does not contain endpoint {1}. Adding it..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SetMicrosoftAddOnMessage">
+             <summary>
+                Looks up a localized string similar to Note - You will be charged the amount for the new plan, without being refunded for time remaining 
+            in the existing plan.
+            By typing &quot;Yes&quot;, I (a) authorize Microsoft to charge my current payment method on a monthly basis 
+            for the amount indicated at {0} for {1} until my service is cancelled or terminated, and (b) 
+            agree to the {2}&apos;s terms of user and privacy statement at {0} and (c) agree to sharing my 
+            contact information with {2}..
+             </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SetNonMicrosoftAddOnMessage">
+             <summary>
+                Looks up a localized string similar to Note - You will be charged the amount for the new plan, without being refunded for time remaining 
+            in the existing plan.
+            By typing &quot;Yes&quot;, I (a) authorize Microsoft to charge my current payment method on a monthly basis 
+            for the amount indicated at {0} for {1} until my service is cancelled or terminated, and (b) 
+            acknowledge the offering is provided by {2}, not Microsoft, and agree to {2}&apos;s terms of 
+            use and privacy statement at &lt;url&gt; and (c) agree to sharing my contact information with {2}..
+             </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SetRoleInstancesMessage">
+            <summary>
+               Looks up a localized string similar to Role {0} instances are set to {1}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SettingsFileEmptyContent">
+            <summary>
+               Looks up a localized string similar to {&quot;Slot&quot;:&quot;&quot;,&quot;Location&quot;:&quot;&quot;,&quot;Subscription&quot;:&quot;&quot;,&quot;StorageAccountName&quot;:&quot;&quot;}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SettingsFileName">
+            <summary>
+               Looks up a localized string similar to deploymentSettings.json.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SetTrafficManagerEndpointNeedsParameters">
+            <summary>
+               Looks up a localized string similar to Insufficient parameters passed to create a new endpoint..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SetTrafficManagerProfileAmbiguous">
+            <summary>
+               Looks up a localized string similar to Ambiguous operation: the profile name specified doesn&apos;t match the name of the profile object..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.ShouldProcessCaption">
+            <summary>
+               Looks up a localized string similar to Confirm.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.Shutdown">
+            <summary>
+               Looks up a localized string similar to Shutdown.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SitesArgTemplate">
+            <summary>
+               Looks up a localized string similar to /sites:{0};{1};&quot;{2}/{0}&quot; .
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.StandardRetryDelayInMs">
+            <summary>
+               Looks up a localized string similar to 1000.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.Start">
+            <summary>
+               Looks up a localized string similar to Start.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.StartedEmulator">
+            <summary>
+               Looks up a localized string similar to Started.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.StartingEmulator">
+            <summary>
+               Looks up a localized string similar to Starting Emulator....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.StartStorageEmulatorCommandArgument">
+            <summary>
+               Looks up a localized string similar to start.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.Stop">
+            <summary>
+               Looks up a localized string similar to Stop.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.StopEmulatorMessage">
+            <summary>
+               Looks up a localized string similar to Stopping emulator....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.StoppedEmulatorMessage">
+            <summary>
+               Looks up a localized string similar to Stopped.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.StopStorageEmulatorCommandArgument">
+            <summary>
+               Looks up a localized string similar to stop.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.StorageAccountName">
+            <summary>
+               Looks up a localized string similar to Account Name:.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.StorageAccountNotFound">
+            <summary>
+               Looks up a localized string similar to Cannot find storage account &apos;{0}&apos; please type the name of an existing storage account..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.StorageEmulatorExe">
+            <summary>
+               Looks up a localized string similar to AzureStorageEmulator.exe.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.StorageEmulatorInstallPathRegistryKeyValue">
+            <summary>
+               Looks up a localized string similar to InstallPath.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.StorageEmulatorRegistryKey">
+            <summary>
+               Looks up a localized string similar to SOFTWARE\Microsoft\Windows Azure Storage Emulator.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.StoragePrimaryKey">
+            <summary>
+               Looks up a localized string similar to Primary Key:.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.StorageSecondaryKey">
+            <summary>
+               Looks up a localized string similar to Secondary Key:.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SubscriptionAlreadyExists">
+            <summary>
+               Looks up a localized string similar to The subscription named {0} already exists..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SubscriptionDataFileDeprecated">
+            <summary>
+               Looks up a localized string similar to The SubscriptionDataFile parameter is deprecated.  This parameter will be removed in a future release. See https://github.com/Azure/azure-powershell/wiki/Proposed-Design-Stateless-Azure-Profile for a description of the upcoming mechanism for providing alternate sources of subscription information..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SubscriptionDataFileName">
+            <summary>
+               Looks up a localized string similar to DefaultSubscriptionData.xml.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SubscriptionDataFileNotFound">
+            <summary>
+               Looks up a localized string similar to The subscription data file {0} does not exist..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SubscriptionIdNotFoundMessage">
+            <summary>
+               Looks up a localized string similar to The subscription id {0} doesn&apos;t exist..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SubscriptionMustNotBeNull">
+            <summary>
+               Looks up a localized string similar to Subscription must not be null.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SubscriptionNameNeedsToBeSpecified">
+            <summary>
+               Looks up a localized string similar to Subscription name needs to be specified..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SubscriptionNameNotFoundMessage">
+            <summary>
+               Looks up a localized string similar to The subscription name {0} doesn&apos;t exist..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SubscriptionNeedsToBeSpecified">
+            <summary>
+               Looks up a localized string similar to Subscription needs to be specified..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.Suspend">
+            <summary>
+               Looks up a localized string similar to Suspend.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SwappingWebsite">
+            <summary>
+               Looks up a localized string similar to Swapping website production slot ....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SwapWebsiteSlotWarning">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to swap the website &apos;{0}&apos; production slot with slot &apos;{1}&apos;?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.SwitchAzureModeDeprecated">
+            <summary>
+               Looks up a localized string similar to The Switch-AzureMode cmdlet is deprecated and will be removed in a future release..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.UnableToDecodeBase64String">
+            <summary>
+               Looks up a localized string similar to Unable to decode string from base 64. Please make sure the string is correctly encoded: {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.UnknownProviderMessage">
+            <summary>
+               Looks up a localized string similar to The provider {0} is unknown..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.Update">
+            <summary>
+               Looks up a localized string similar to Update.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.UpdatedSettings">
+            <summary>
+               Looks up a localized string similar to Updated settings for subscription &apos;{0}&apos;. Current subscription is &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.UserNameIsNotValid">
+            <summary>
+               Looks up a localized string similar to User name is not valid..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.UserNameNeedsToBeSpecified">
+            <summary>
+               Looks up a localized string similar to User name needs to be specified..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.VlanIdRequired">
+            <summary>
+               Looks up a localized string similar to A value for the VLan Id has to be provided..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.WaitMessage">
+            <summary>
+               Looks up a localized string similar to Please wait....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.WarningWhenStorageEmulatorIsMissing">
+            <summary>
+               Looks up a localized string similar to The azure storage emulator is not installed, skip launching....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.WebCloudConfig">
+            <summary>
+               Looks up a localized string similar to Web.cloud.config.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.WebConfigTemplateFileName">
+            <summary>
+               Looks up a localized string similar to web.config.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.WebDeployKeywordInWebSitePublishProfile">
+            <summary>
+               Looks up a localized string similar to MSDeploy.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.WebProjectBuildFailTemplate">
+            <summary>
+               Looks up a localized string similar to Cannot build the project successfully. Please see logs in {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.WebRole">
+            <summary>
+               Looks up a localized string similar to WebRole.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.WebRoleStartupTaskCommandLine">
+            <summary>
+               Looks up a localized string similar to setup_web.cmd &gt; log.txt.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.WebRoleTemplateFileName">
+            <summary>
+               Looks up a localized string similar to WebRole.xml.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.WebsiteAlreadyExists">
+            <summary>
+               Looks up a localized string similar to WebSite with given name {0} already exists in the specified Subscription and Webspace..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.WebsiteAlreadyExistsReplacement">
+            <summary>
+               Looks up a localized string similar to WebSite with given name {0} already exists in the specified Subscription and Location..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.WebsiteRepositoryAlreadyExists">
+            <summary>
+               Looks up a localized string similar to Site {0} already has repository created for it..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.WebsiteSufixUrl">
+            <summary>
+               Looks up a localized string similar to Workspaces/WebsiteExtension/Website/{0}/dashboard/.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.WebSiteWebDeployUriTemplate">
+            <summary>
+               Looks up a localized string similar to https://{0}/msdeploy.axd?site={1}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.WorkerRole">
+            <summary>
+               Looks up a localized string similar to WorkerRole.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.WorkerRoleStartupTaskCommandLine">
+            <summary>
+               Looks up a localized string similar to setup_worker.cmd &gt; log.txt.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.WorkerRoleTemplateFileName">
+            <summary>
+               Looks up a localized string similar to WorkerRole.xml.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.Yes">
+            <summary>
+               Looks up a localized string similar to Yes.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Common.Resources.Resource.YesHint">
+            <summary>
+               Looks up a localized string similar to Yes, I agree.
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,770 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Azure.Commands.Resources</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Azure.Commands.ActiveDirectory.GetAzureADApplicationCommand">
+            <summary>
+            Gets the AD application.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.ActiveDirectory.GetAzureADGroupCommand">
+            <summary>
+            Get AD groups.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.ActiveDirectory.GetAzureADGroupMemberCommand">
+            <summary>
+            Get AD groups members.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.ActiveDirectory.GetAzureADServicePrincipalCommand">
+            <summary>
+            Get AD users.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.ActiveDirectory.GetAzureADUserCommand">
+            <summary>
+            Get AD users.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.ActiveDirectory.NewAzureADApplicationCommand">
+            <summary>
+            Creates a new AD application.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.ActiveDirectory.NewAzureADServicePrincipalCommand">
+            <summary>
+            Creates a new service principal.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.ActiveDirectory.RemoveAzureADApplicationCommand">
+            <summary>
+            Removes the AD application.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.ActiveDirectory.RemoveAzureADServicePrincipalCommand">
+            <summary>
+            Removes the service principal.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.ActiveDirectory.ActiveDirectoryClient.#ctor(Microsoft.Azure.Commands.Common.Authentication.Models.AzureContext)">
+            <summary>
+            Creates new ActiveDirectoryClient using WindowsAzureSubscription.
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.Models.ActiveDirectory.ADObjectFilterOptions.NextLink">
+            <summary>
+            Used internally to track the paging for the listing, do not change manually.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.Models.Authorization.AuthorizationClient.RoleAssignmentNames">
+            <summary>
+            This queue is used by the tests to assign fixed role assignment
+            names every time the test runs.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.Models.Authorization.AuthorizationClient.RoleDefinitionNames">
+            <summary>
+            This queue is used by the tests to assign fixed role definition
+            names every time the test runs.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.Authorization.AuthorizationClient.#ctor(Microsoft.Azure.Commands.Common.Authentication.IAuthenticationFactory,Microsoft.Azure.Commands.Common.Authentication.IClientFactory,Microsoft.Azure.Commands.Common.Authentication.Models.AzureContext)">
+            <summary>
+            Creates PoliciesClient using AzureContext instance.
+            </summary>
+            <param name="authenticationFactory"></param>
+            <param name="clientFactory"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.Authorization.AuthorizationClient.GetRoleDefinition(System.String)">
+            <summary>
+            Gets a single role definition by a fully qualified role Id
+            </summary>
+            <param name="roleId">Fully qualified roleId</param>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.Authorization.AuthorizationClient.GetRoleDefinition(System.String,System.String)">
+            <summary>
+            Gets a single role definition by the role Id guid.
+            </summary>
+            <param name="roleId">RoleId guid</param>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.Authorization.AuthorizationClient.GetRoleDefinition(System.Guid)">
+            <summary>
+            Gets a single role definition by the role Id guid.
+            </summary>
+            <param name="roleId">RoleId guid</param>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.Authorization.AuthorizationClient.FilterRoleDefinitions(System.String,System.String,System.Boolean)">
+            <summary>
+            Filters the existing role Definitions.
+            If name is not provided, all role definitions are fetched.
+            </summary>
+            <param name="name">The role name</param>
+            <returns>The matched role Definitions</returns>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.Authorization.AuthorizationClient.GetRoleDefinitionsAtScopeAndBelow">
+            <summary>
+            Fetches all existing role Definitions.
+            </summary>
+            <returns>role Definitions</returns>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.Authorization.AuthorizationClient.FilterRoleDefinitionsByCustom(System.String,System.Boolean)">
+            <summary>
+            Filters the existing role Definitions by CustomRole.
+            </summary>
+            <returns>The custom role Definitions</returns>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.Authorization.AuthorizationClient.CreateRoleAssignment(Microsoft.Azure.Commands.Resources.Models.Authorization.FilterRoleAssignmentsOptions,System.String)">
+            <summary>
+            Creates new role assignment.
+            </summary>
+            <param name="parameters">The create parameters</param>
+            <returns>The created role assignment object</returns>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.Authorization.AuthorizationClient.FilterRoleAssignments(Microsoft.Azure.Commands.Resources.Models.Authorization.FilterRoleAssignmentsOptions,System.String)">
+            <summary>
+            Filters role assignments based on the passed options.
+            </summary>
+            <param name="options">The filtering options</param>
+            <param name="currentSubscription">The current subscription</param>
+            <returns>The filtered role assignments</returns>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.Authorization.AuthorizationClient.RemoveRoleAssignment(Microsoft.Azure.Commands.Resources.Models.Authorization.FilterRoleAssignmentsOptions,System.String)">
+            <summary>
+            Deletes a role assignments based on the used options.
+            </summary>
+            <param name="options">The role assignment filtering options</param>
+            <param name="subscriptionId">Current subscription id</param>
+            <returns>The deleted role assignments</returns>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.Authorization.AuthorizationClient.RemoveRoleDefinition(System.Guid,System.String)">
+            <summary>
+            Deletes a role definition based on the id.
+            </summary>
+            <param name="roleDefinitionId">The role definition id to delete</param>
+            <param name="subscriptionId">Current subscription id</param>
+            <returns>The deleted role definition.</returns>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.Authorization.AuthorizationClient.RemoveRoleDefinition(System.String,System.String)">
+            <summary>
+            Deletes a role definition based on the name.
+            </summary>
+            <param name="roleDefinitionName">The role definition name.</param>
+            <returns>The deleted role definition.</returns>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.Authorization.AuthorizationClient.UpdateRoleDefinition(Microsoft.Azure.Commands.Resources.Models.Authorization.PSRoleDefinition,System.String)">
+            <summary>
+            Updates a role definition.
+            </summary>
+            <param name="role">The role definition to update.</param>
+            <returns>The updated role definition.</returns>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.Models.Authorization.FilterRoleAssignmentsOptions.RoleDefinitionId">
+            <summary>
+            RoleDefinitionId Guid
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.Resources.Models.PSResourceProviderOperation">
+            <summary>
+            Definition of a resource provider and its registration state
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.Models.PSResourceProviderOperation.Operation">
+            <summary>
+            Gets or sets the operation id
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.Models.PSResourceProviderOperation.OperationName">
+            <summary>
+            Gets or sets the name of the provider operation.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.Models.PSResourceProviderOperation.ProviderNamespace">
+            <summary>
+            Gets or sets the name of the operation provider.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.Models.PSResourceProviderOperation.ResourceName">
+            <summary>
+            Gets or sets the name of the operation resource.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.Models.PSResourceProviderOperation.Description">
+            <summary>
+            Gets or sets the name of the operation description.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Azure.Commands.Resources.Models.ResourcesClient.Operations">
+            <summary>
+            A string that indicates the value of the resource type name for the RP's operations api
+            </summary>
+        </member>
+        <member name="F:Microsoft.Azure.Commands.Resources.Models.ResourcesClient.RegisteredStateName">
+            <summary>
+            A string that indicates the value of the registering state enum for a provider
+            </summary>
+        </member>
+        <member name="F:Microsoft.Azure.Commands.Resources.Models.ResourcesClient.operations">
+            <summary>
+            Used when provisioning the deployment status.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.ResourcesClient.#ctor(Microsoft.Azure.Commands.Common.Authentication.Models.AzureContext)">
+            <summary>
+            Creates new ResourceManagementClient
+            </summary>
+            <param name="context">Profile containing resources to manipulate</param>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.ResourcesClient.#ctor(Microsoft.Azure.Management.ResourceManager.IResourceManagementClient,Microsoft.Azure.Management.Authorization.IAuthorizationManagementClient)">
+            <summary>
+            Creates new ResourcesClient instance
+            </summary>
+            <param name="resourceManagementClient">The IResourceManagementClient instance</param>
+            <param name="galleryTemplatesClient">The IGalleryClient instance</param>
+            <param name="authorizationManagementClient">The management client instance</param>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.ResourcesClient.#ctor">
+            <summary>
+            Parameterless constructor for mocking
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.Resources.Models.ResourcesBaseCmdlet">
+            <summary> 
+            Base class for all resources cmdlets
+            </summary>
+        </member>
+        <member name="F:Microsoft.Azure.Commands.Resources.Models.ResourcesBaseCmdlet.resourcesClient">
+            <summary>
+            Field that holds the resource client instance
+            </summary>
+        </member>
+        <member name="F:Microsoft.Azure.Commands.Resources.Models.ResourcesBaseCmdlet.policiesClient">
+            <summary>
+            Field that holds the policies client instance
+            </summary>
+        </member>
+        <member name="F:Microsoft.Azure.Commands.Resources.Models.ResourcesBaseCmdlet.subscriptionsClient">
+            <summary>
+            Field that holds the subscripotions client instance
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.Models.ResourcesBaseCmdlet.ResourcesClient">
+            <summary>
+            Gets or sets the resources client
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.Models.ResourcesBaseCmdlet.PoliciesClient">
+            <summary>
+            Gets or sets the policies client
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.Models.ResourcesBaseCmdlet.SubscriptionsClient">
+            <summary>
+            Gets or sets the subscriptions client
+            </summary>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.ResourcesBaseCmdlet.DetermineParameterSetName">
+            <summary>
+            Determines the parameter set name.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.Resources.Models.SetResourceMode">
+            <summary>
+            Update resource mode.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.SubscriptionsClient.#ctor(Microsoft.Azure.Commands.Common.Authentication.Models.AzureContext)">
+            <summary>
+            Creates new SubscriptionsClient
+            </summary>
+            <param name="context">Profile containing resources to manipulate</param>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.Models.SubscriptionsClient.#ctor(Microsoft.Azure.Management.ResourceManager.ISubscriptionClient)">
+            <summary>
+            Creates new SubscriptionsClient instance
+            </summary>
+            <param name="subscriptionClient">The subscription client instance</param>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource">
+            <summary>
+               A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.ResourceManager">
+            <summary>
+               Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.Culture">
+            <summary>
+               Overrides the current thread's CurrentUICulture property for all
+               resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.AddingResourceGroup">
+            <summary>
+               Looks up a localized string similar to Adding resource group....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.CancelResourceGroupDeployment">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to cancel the active deployment of resource group &apos;{0}&apos;?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.CancelResourceGroupDeploymentMessage">
+            <summary>
+               Looks up a localized string similar to Cancelling active resource group deployment ....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.CreateApplicationNotAllowedGuestUser">
+            <summary>
+               Looks up a localized string similar to You are a guest user in the directory and are not allowed to create an application. Please contact the administrator of the directory..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.CreateServicePrincipalNotAllowedGuestUser">
+            <summary>
+               Looks up a localized string similar to You are a guest user in the directory and are not allowed to create a service principal. Please contact the administrator of the directory..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.DeleteResourceGroupDeployment">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to delete the deployment &apos;{0}&apos;?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.DeleteResourceGroupDeploymentMessage">
+            <summary>
+               Looks up a localized string similar to Deleting the deployment ....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.DeploymentDoesntExist">
+            <summary>
+               Looks up a localized string similar to Deployment &apos;{0}&apos; doesn&apos;t exist under resource group &apos;{1}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.DeploymentWithNameNotFound">
+            <summary>
+               Looks up a localized string similar to Cannot find a deployment with name &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.ExpandGroupsNotSupported">
+            <summary>
+               Looks up a localized string similar to ExpandPrincipalGroups is only supported for a User principal.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.FailedToParseProperty">
+            <summary>
+               Looks up a localized string similar to Cannot parse {0} &apos;{1}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.FailureParsingTemplateParameterFile">
+            <summary>
+               Looks up a localized string similar to Cannot set parameter &apos;{0}&apos; from TemplateParameterFile. Incompatible value &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.FailureParsingTemplateParameterObject">
+            <summary>
+               Looks up a localized string similar to Cannot set parameter &apos;{0}&apos; from TemplateParameterObject. Incompatible value &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.FeatureNotFound">
+            <summary>
+               Looks up a localized string similar to Could not find the feature &apos;{0}&apos; for the resource provider &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.FileAlreadyExists">
+            <summary>
+               Looks up a localized string similar to The provided file path &apos;{0}&apos; already exists, do you want to override it?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.IncludeClassicAdminsNotSupported">
+            <summary>
+               Looks up a localized string similar to IncludeClassicAdministrators is only supported for a User principal.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.InvalidActions">
+            <summary>
+               Looks up a localized string similar to Invalid value for Actions.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.InvalidAssignableScopes">
+            <summary>
+               Looks up a localized string similar to Invalid value for AssignableScopes.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.InvalidFormatOfResourceGroupId">
+            <summary>
+               Looks up a localized string similar to Invalid format of the resource group identifier. Expected &apos;subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.InvalidFormatOfResourceId">
+            <summary>
+               Looks up a localized string similar to Invalid format of the resource identifier..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.InvalidRoleDefinitionDescription">
+            <summary>
+               Looks up a localized string similar to RoleDefinition Description is invalid..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.InvalidRoleDefinitionName">
+            <summary>
+               Looks up a localized string similar to RoleDefinition Name is invalid.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.InvalidTagFormat">
+            <summary>
+               Looks up a localized string similar to Invalid tag format. Expect @{Name = &quot;tagName&quot;} or @{Name = &quot;tagName&quot;; Value = &quot;tagValue&quot;}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.InvalidTagFormatNotUniqueName">
+            <summary>
+               Looks up a localized string similar to Invalid tag format. Ensure that each tag has a unique name. Example: @{Name = &quot;tagName1&quot;; Value = &quot;tagValue1&quot;}, @{Name = &quot;tagName2&quot;; Value = &quot;tagValue2&quot;}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.InvalidTemplateIdentity">
+            <summary>
+               Looks up a localized string similar to Cannot find a template with identity &apos;{0}&apos;. Check the template identity and try the command again..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.MoveResourcesMessage">
+            <summary>
+               Looks up a localized string similar to Moving resource(s) ....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.MovingResources">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to move resource(s) into the resource group named &apos;{0}&apos; - the resource(s): &apos;{1}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.MovingResourcesFromDifferentSourceResourceGroupsNotAllowed">
+            <summary>
+               Looks up a localized string similar to Moving resources from different source resource groups is not allowed..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.MovingResourcesFromDifferentSubscriptionsIsNotAllowed">
+            <summary>
+               Looks up a localized string similar to Moving resources from different subscriptions is not currently supported..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.MovingResourcesFromNonDefaultSubscriptionNotAllowed">
+            <summary>
+               Looks up a localized string similar to Moving resources that are not in the default subscription is not allowed. Please select the subscription you want to move resources from and try again..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.MovingResourcesIntoNewSubscription">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to move resource(s) into the resource group named &apos;{0}&apos; in the subscription named &apos;{1}&apos; and id &apos;{2}&apos; - the resource(s): &apos;{3}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.MultipleRoleDefinitionsFoundWithSameName">
+            <summary>
+               Looks up a localized string similar to Multiple role definitions found with name &apos;{0}&apos;. Specify role definition using it&apos;s Id instead..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.NewResourceGroupMessage">
+            <summary>
+               Looks up a localized string similar to Replacing resource group ....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.NewResourceMessage">
+            <summary>
+               Looks up a localized string similar to Replacing resource ....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.NoDeploymentWereFound">
+            <summary>
+               Looks up a localized string similar to Cannot find any deployments in resource group &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.OperationSearchStringInvalidProviderName">
+            <summary>
+               Looks up a localized string similar to To get all operations under {0}, please specify the search string as {0}/*..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.OperationSearchStringInvalidWildcard">
+            <summary>
+               Looks up a localized string similar to Individual parts in the search string should either equal * or not contain *..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.OverrdingFile">
+            <summary>
+               Looks up a localized string similar to Overriding the existing file..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.PrincipalNotFound">
+            <summary>
+               Looks up a localized string similar to Cannot find principal using the specified options.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.ProviderOperationUnsupportedWildcard">
+            <summary>
+               Looks up a localized string similar to Wildcard character ? is not supported..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RegisteredFeatureNotFound">
+            <summary>
+               Looks up a localized string similar to Could not find a registered feature named &apos;{0}&apos; for the resource provider &apos;{1}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RegisteringProvider">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to register the provider &apos;{0}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RegisteringProviderFeature">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to register for the feature &apos;{0}&apos; of the provider &apos;{1}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RegisterProviderFeatureMessage">
+            <summary>
+               Looks up a localized string similar to Registering provider feature ....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RegisterProviderMessage">
+            <summary>
+               Looks up a localized string similar to Registering provider ....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RemoveApplication">
+            <summary>
+               Looks up a localized string similar to Removing application ....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RemoveResourceGroupMessage">
+            <summary>
+               Looks up a localized string similar to Removing resource group ....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RemoveResourceMessage">
+            <summary>
+               Looks up a localized string similar to Removing resource ....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RemoveRoleDefinition">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to remove role definition with id &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RemoveRoleDefinitionWithName">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to remove role definition with name &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RemoveServicePrincipal">
+            <summary>
+               Looks up a localized string similar to Removing service principal ....
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RemovingApplication">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to remove application with object id &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RemovingResource">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to remove resource &apos;{0}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RemovingResourceGroup">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to remove resource group &apos;{0}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RemovingRoleAssignment">
+            <summary>
+               Looks up a localized string similar to Removing role assignment for AD object &apos;{0}&apos; on scope &apos;{1}&apos; with role definition &apos;{2}&apos; .
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RemovingServicePrincipal">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to remove service principal with object id &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.ResourceAlreadyExists">
+            <summary>
+               Looks up a localized string similar to Provided resource already exists. Are you sure you want to replace it?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.ResourceDoesntExists">
+            <summary>
+               Looks up a localized string similar to Provided resource does not exist..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.ResourceGroupAlreadyExists">
+            <summary>
+               Looks up a localized string similar to Provided resource group already exists. Are you sure you want to update it?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.ResourceGroupDoesntExists">
+            <summary>
+               Looks up a localized string similar to Provided resource group does not exist..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.ResourceGroupDoesntExistsAdd">
+            <summary>
+               Looks up a localized string similar to Provided resource group does not exist. Would you like to create it?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.ResourceProviderNotFound">
+            <summary>
+               Looks up a localized string similar to Could not find the resource provider &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.ResourceProviderRegistrationFailed">
+            <summary>
+               Looks up a localized string similar to Could not register the resource provider &apos;{0}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.ResourceProviderUnregistrationFailed">
+            <summary>
+               Looks up a localized string similar to Could not unregister the resource provider &apos;{0}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.ResourceTypeFormat">
+            <summary>
+               Looks up a localized string similar to Resource type needs to be in the ResourceProvider/type format. For example Microsoft.Web/sites..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RoleDefinitionIdShouldBeAGuid">
+            <summary>
+               Looks up a localized string similar to Role definition id should be a valid guid..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RoleDefinitionNotFound">
+            <summary>
+               Looks up a localized string similar to Cannot find role definition with name &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.RoleDefinitionWithIdNotFound">
+            <summary>
+               Looks up a localized string similar to Cannot find role definition with id &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.ServicePrincipalDoesntExist">
+            <summary>
+               Looks up a localized string similar to Service principal with object id &apos;{0}&apos; does not exist..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.StorageAccountNameNeedsToBeSpecified">
+            <summary>
+               Looks up a localized string similar to Because the current subscription does not have a current storage account, you must specify the StorageAccountName parameter..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.SubscriptionWithTheSpecifiedIdNotFount">
+            <summary>
+               Looks up a localized string similar to A subscription with the Id &apos;{0}&apos; was not found. If this is a newly created subscription you will need to re-download your subscriptions..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.SubscriptionWithTheSpecifiedNameNotFount">
+            <summary>
+               Looks up a localized string similar to A subscription with the name &apos;{0}&apos; was not found. If this is a newly created subscription you will need to re-download your subscriptions..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.TemplateValid">
+            <summary>
+               Looks up a localized string similar to Template is valid..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.UnableToFindGallery">
+            <summary>
+               Looks up a localized string similar to Cannot find Gallery item &apos;{0}&apos;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.UnregisteringProvider">
+            <summary>
+               Looks up a localized string similar to Are you sure you want to unregister the provider &apos;{0}&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.ProjectResources.StringResource.UnregisterProviderMessage">
+            <summary>
+               Looks up a localized string similar to Unregistering provider ....
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.Resources.GetAzureProviderOperationCommand">
+            <summary>
+            Get an existing resource.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Azure.Commands.Resources.GetAzureProviderOperationCommand.OperationSearchString">
+            <summary>
+            Gets or sets the provider namespace
+            </summary>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.GetAzureProviderOperationCommand.ExecuteCmdlet">
+            <summary>
+            Executes the cmdlet
+            </summary>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.GetAzureProviderOperationCommand.ProcessProviderOperationsWithWildCard(System.String)">
+            <summary>
+            Get a list of Provider operations in the case that the Actionstring input contains a wildcard
+            </summary>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.GetAzureProviderOperationCommand.ProcessProviderOperationsWithoutWildCard(System.String)">
+            <summary>
+            Gets a list of Provider operations in the case that the Actionstring input does not contain a wildcard
+            </summary>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.GetAzureProviderOperationCommand.GetResourceProviderFullName(System.String)">
+            <summary>
+            Extracts the resource provider's full name - i.e portion of the non-wildcard prefix before the '/'
+            Returns null if the nonWildCardPrefix does not contain a '/'
+            </summary>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Resources.GetAzureProviderOperationCommand.GetNonWildcardPrefix(System.String)">
+            <summary>
+            Extracts the portion of the actionstring before the first wildcard character (*)
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.Resources.GetAzureRoleAssignmentCommand">
+            <summary>
+            Filters role assignments
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.Resources.NewAzureRoleAssignmentCommand">
+            <summary>
+            Creates new role assignment.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.Resources.RemoveAzureRoleAssignmentCommand">
+            <summary>
+            Removes a given role assignment.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.Resources.GetAzureRoleDefinitionCommand">
+            <summary>
+            Get the available role Definitions for certain resource types.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.Resources.NewAzureRoleDefinitionCommand">
+            <summary>
+            Creates a new role definition.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.Resources.RemoveAzureRoleDefinitionCommand">
+            <summary>
+            Deletes a given role definition.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.Resources.SetAzureRoleDefinitionCommand">
+            <summary>
+            Updates an existing role definition.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Azure.Commands.Providers.GetAzureLocationCmdlet">
+            <summary>
+            Get all locations with the supported providers.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Azure.Commands.Providers.GetAzureLocationCmdlet.ExecuteCmdlet">
+            <summary>
+            Executes the cmdlet
+            </summary>
+        </member>
+    </members>
+</doc>

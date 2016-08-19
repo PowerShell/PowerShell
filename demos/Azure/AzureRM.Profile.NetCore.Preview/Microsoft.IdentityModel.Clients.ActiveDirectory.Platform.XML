@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.IdentityModel.Clients.ActiveDirectory.Platform</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContextIntegratedAuthExtensions">
+            <summary>
+            Extension class to support username/password flow.
+            </summary>
+        </member>
+        <member name="M:Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContextIntegratedAuthExtensions.AcquireTokenAsync(Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext,System.String,System.String,Microsoft.IdentityModel.Clients.ActiveDirectory.UserCredential)">
+            <summary>
+            Acquires security token from the authority.
+            </summary>
+            <remarks>This feature is supported only for Azure Active Directory and Active Directory Federation Services (ADFS) on Windows 10.</remarks>
+            <param name="ctx">Authentication context instance</param>
+            <param name="resource">Identifier of the target resource that is the recipient of the requested token.</param>
+            <param name="clientId">Identifier of the client requesting the token.</param>
+            <param name="userCredential">The user credential to use for token acquisition.</param>
+            <returns>It contains Access Token, Refresh Token and the Access Token's expiration time.</returns>
+        </member>
+        <member name="T:Microsoft.IdentityModel.Clients.ActiveDirectory.AdalOption">
+            <summary>
+            Helper class to get ADAL EventSource
+            </summary>
+        </member>
+        <member name="P:Microsoft.IdentityModel.Clients.ActiveDirectory.AdalOption.AdalEventSource">
+            <summary>
+            Returns ADAL EventSource
+            </summary>
+        </member>
+        <member name="T:Microsoft.IdentityModel.Clients.ActiveDirectory.PlatformParameters">
+            <summary>
+            Additional parameters used in acquiring user's authorization
+            </summary>
+        </member>
+    </members>
+</doc>
