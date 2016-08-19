@@ -1,7 +1,7 @@
 Docker
 ======
 
-If you are using Docker, there is a wery simple way to try PowerShell:
+If you are using Docker, there is a very simple way to try PowerShell:
 
 ```
 docker run -it powershell
