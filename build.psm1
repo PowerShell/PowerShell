@@ -554,7 +554,7 @@ function Start-PSPester {
         [switch]$DisableExit,
         [string[]]$ExcludeTag = "Slow",
         [string[]]$Tag = "CI",
-        [string]$Path = "$PSScriptRoot/test/powershell"
+        [string]$Path = "'$PSScriptRoot/test/powershell'"
     )
 
     $powershell = Get-PSOutput
@@ -568,7 +568,7 @@ function Start-PSPester {
     }
 
     $PesterModule = [IO.Path]::Combine((Split-Path $powershell), "Modules", "Pester")
-    $Command += "Import-Module $PesterModule; "
+    $Command += "Import-Module '$PesterModule'; "
     $Command += "Invoke-Pester "
 
     $Command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
