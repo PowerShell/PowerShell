@@ -1,7 +1,7 @@
 Internals of build process
 =========================================
 
-The purpose of this document is to explain build process **internals** with subtle nuances. 
+The purpose of this document is to explain build process **internals** with subtle nuances.
 This document is not by any means complete.
 The ultimate source of truth is the code in `.\build.psm1` that's getting executed on the corresponding CI system.
 
@@ -14,7 +14,7 @@ Top directory
 We are calling `dotnet` tool build for `$Top` directory
 
 - `src\powershell-win-core` for CoreCLR on Windows.
-- `src\powershell-unix` for CoreCLR on Linux and OS X.
+- `src\powershell-unix` for CoreCLR on Linux and macOS.
 - `src\powershell-win-full` for FullCLR builds (Windows only)
 
 ### Dummy dependencies

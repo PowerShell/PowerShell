@@ -1,14 +1,14 @@
 Building a C# Cmdlet
 ====================
 
-This example project demonstrates how to build your own C# cmdlet for PowerShell. 
-When built in the following manner, the resulting DLL can be imported everywhere: 
-Windows PowerShell with Desktop .NET (FullCLR) and PowerShell on Windows, Linux, and OS X with .NET Core (CoreCLR).
+This example project demonstrates how to build your own C# cmdlet for PowerShell.
+When built in the following manner, the resulting DLL can be imported everywhere:
+Windows PowerShell with Desktop .NET (FullCLR) and PowerShell on Windows, Linux, and macOS with .NET Core (CoreCLR).
 
 Setup
 -----
 
-We use the [.NET Command-Line Interface][dotnet-cli] (`dotnet`) to build the cmdlet library. 
+We use the [.NET Command-Line Interface][dotnet-cli] (`dotnet`) to build the cmdlet library.
 Install the `dotnet` tool and ensure `dotnet --version` is at least `1.0.0-rc2`.
 
 .NET CLI uses a `project.json` file for build specifications:
@@ -35,7 +35,7 @@ Install the `dotnet` tool and ensure `dotnet --version` is at least `1.0.0-rc2`.
 }
 ```
 
-Note that no source files are specified. 
+Note that no source files are specified.
 .NET CLI automatically will build all `.cs` files in the project directory.
 
 Going through this step-by-step:
@@ -44,27 +44,27 @@ Going through this step-by-step:
 
 - `"version": "1.0.0-*"`: The wild-card can be replaced using the `--version-suffix` flag to `dotnet build`.
 
-- [Microsoft.PowerShell.5.ReferenceAssemblies][powershell]: Contains the SDK reference assemblies for PowerShell version 5. 
+- [Microsoft.PowerShell.5.ReferenceAssemblies][powershell]: Contains the SDK reference assemblies for PowerShell version 5.
   Targets the `net40` framework.
 
 - [netstandard1.3][]: The target framework for .NET Core portable libraries.
   This is an abstract framework that will work anywhere its dependencies work.
   Specifically, the 1.3 version allows this assembly to work even on Windows PowerShell with Desktop .NET.
 
-- `"imports": [ "net4" ]`: Since the PowerShell reference assemblies target the older `net40` framework, 
+- `"imports": [ "net4" ]`: Since the PowerShell reference assemblies target the older `net40` framework,
   we `import` it here to tell `dotnet restore` that we know we're loading a possibly-incompatible package.
 
-- [Microsoft.NETCore][netcore]: Provides a set of packages that can be used when building portable 
+- [Microsoft.NETCore][netcore]: Provides a set of packages that can be used when building portable
   libraries on .NETCore-based platforms.
 
 - [Microsoft.NETCore.Portable.Compatibility][portable]: Enables compatibility
-  with portable libraries targeting previous .NET releases like .NET Framework 4.0. 
+  with portable libraries targeting previous .NET releases like .NET Framework 4.0.
   Required to build against the PowerShell reference assemblies package.
 
-Other dependencies can be added as needed; 
+Other dependencies can be added as needed;
 refer to the [.NET Core package gallery][myget] for package availability, name, and version information.
 
-Because the .NET Core packages are not yet released to NuGet.org, 
+Because the .NET Core packages are not yet released to NuGet.org,
 you also need this `NuGet.config` file to setup the [.NET Core MyGet feed][myget]:
 
 ```xml
@@ -94,7 +94,7 @@ Building
 dotnet restore
 ```
 
-This reads the `project.json` and `NuGet.config` files and uses NuGet to restore the necessary packages. 
+This reads the `project.json` and `NuGet.config` files and uses NuGet to restore the necessary packages.
 The generated `project.lock.json` lockfile contains the resolved dependency graph.
 
 Once packages are restored, building is simple:
@@ -105,7 +105,7 @@ dotnet build
 
 This will produce the assembly `./bin/Debug/netstandard1.3/SendGreeting.dll`.
 
-This build/restore process should work anywhere .NET Core works, including Windows, Linux, and OS X.
+This build/restore process should work anywhere .NET Core works, including Windows, Linux, and macOS.
 
 Deployment
 ----------
