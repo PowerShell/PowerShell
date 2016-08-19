@@ -688,13 +688,13 @@ function Start-PSBootstrap {
             sudo apt-get install -y -qq $Deps
         } elseif ($IsCentOS) {
             # Build tools
-            $Deps += "curl", "gcc-c++", "cmake", "make"
+            $Deps += "which", "curl", "gcc-c++", "cmake", "make"
 
             # .NET Core required runtime libraries
             $Deps += "libicu", "libunwind"
 
             # Packaging tools
-            if ($Package) { $Deps += "ruby-devel", "rpmbuild" }
+            if ($Package) { $Deps += "ruby-devel", "rpm-build" }
 
             # Install dependencies
             sudo yum install -y -q $Deps
