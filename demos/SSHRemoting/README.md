@@ -71,7 +71,7 @@ Setup on Linux (Ubuntu 14.04) Machine:
 
 PowerShell Remoting Example:
 =====================================
-The easiest way to test remoting is to just try it on a single machine.  Here I will create a remote session back to the same machine on a Linux box.  Notice that I am using PowerShell cmdlets from a command prompt so we see prompts from ssh asking to verify the host computer as well as password prompts.  You can do the same thing on a Windows machine to ensure remoting is working there and then remote between machines by simply changing the host name.
+The easiest way to test remoting is to just try it on a single machine.  Here I will create a remote session back to the same machine on a Linux box.  Notice that I am using PowerShell cmdlets from a command prompt so we see prompts from SSH asking to verify the host computer as well as password prompts.  You can do the same thing on a Windows machine to ensure remoting is working there and then remote between machines by simply changing the host name.
 
 ```powershell
 #
@@ -122,8 +122,6 @@ Microsoft Windows [Version 10.0.10586]
 Known Issues:
 ------------
 1.  You can currently establish a connection either interactively with user name and password or via key authentication.  PSCredential is not yet supported.
-1.  SSH connection attempt errors are not currently surfaced.  There is a pull request with a fix for this.  But for now you need to use Ctrl+C to abort the connection attempt and wait for the one minute session close timeout.  To avoid connection errors make sure HostName and UserName names are correct and that the sshd service is running on the target machine.
-1.  Endpoint configuration and JEA is not yet supported.
 1.  Remote debugging from Linux to Windows does not work.  However, remote debugging from Windows to Linux does work.
 1.  Fan out to multiple machines not yet supported.
 1.  sudo command does not work in remote session to Linux machine.
