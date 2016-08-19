@@ -119,9 +119,9 @@ namespace Microsoft.PowerShell.Commands
                 string caption = UtilsStrings.PromptForCredential_DefaultCaption;
             }
             
-            if (!string.IsNullOrEmpty(this.Message) || !string.IsNullOrEmpty(this.Username))
+            if (!string.IsNullOrEmpty(this.Message) || !string.IsNullOrEmpty(this.UserName))
             {
-                string username = this.Username;
+                string username = this.UserName;
                 string message = this.Message;
 
                 try
