@@ -2,7 +2,7 @@
 ====================
 
 Welcome to the PowerShell GitHub Community!
-PowerShell is a cross-platform (Windows, Linux and OS X) automation and configuration tool/framework that works well with your existing tools and is optimized for dealing with structured data (e.g. JSON, CSV, XML, etc.), REST APIs, and object models.
+PowerShell is a cross-platform (Windows, Linux and macOS) automation and configuration tool/framework that works well with your existing tools and is optimized for dealing with structured data (e.g. JSON, CSV, XML, etc.), REST APIs, and object models.
 It includes a command-line shell, an associated scripting language and a framework for processing cmdlets. 
 
 
@@ -27,7 +27,7 @@ You can download and install a PowerShell package for any of the following platf
 | Ubuntu 16.04                 | [.deb][rl-ubuntu16]  | [Instructions][in-ubuntu16] |
 | Ubuntu 14.04                 | [.deb][rl-ubuntu14]  | [Instructions][in-ubuntu14] |
 | CentOS 7                     | [.rpm][rl-centos]    | [Instructions][in-centos]   |
-| OS X 10.11                   | [.pkg][rl-osx]       | [Instructions][in-osx]      |
+| macOS 10.11                   | [.pkg][rl-osx]       | [Instructions][in-osx]      |
 
 [rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.9/PowerShell_6.0.0.9-alpha.9-win10-x64.msi
 [rl-windows81]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.9/PowerShell_6.0.0.9-alpha.9-win81-x64.msi
@@ -55,7 +55,7 @@ Want to chat with other members of the PowerShell community?
 Building the Repository
 -----------------------
 
-| Linux                    | Windows                    | OS X                   |
+| Linux                    | Windows                    | macOS                   |
 |--------------------------|----------------------------|------------------------|
 | [Instructions][bd-linux] | [Instructions][bd-windows] | [Instructions][bd-osx] |
 
@@ -63,7 +63,7 @@ If you have any problems building, please consult the developer [FAQ][].
 
 ### Build status of master branches
 
-| AppVeyor (Windows)       | Travis CI (Linux / OS X) |
+| AppVeyor (Windows)       | Travis CI (Linux / macOS) |
 |--------------------------|--------------------------|
 | [![av-image][]][av-site] | [![tv-image][]][tv-site] |
 
