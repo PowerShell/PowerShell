@@ -10,7 +10,6 @@ get_info() {
 case "$OSTYPE" in
     linux*)
         source /etc/os-release
-        echo $ID
         # Install curl and wget to download package
         case "$ID" in
             centos*)
@@ -27,18 +26,21 @@ case "$OSTYPE" in
                         version=ubuntu1.16.04.1_amd64.deb
                         ;;
                     *)
-                        exit 2 >&2 "Ubuntu $VERSION_ID is not supported!"
+                        echo "Ubuntu $VERSION_ID is not supported!" >&2
+                        exit 2
                 esac
                 ;;
             *)
-                exit 2 >&2 "$NAME is not supported!"
+                echo "$NAME is not supported!" >&2
+                exit 2
         esac
         ;;
     darwin*)
         version=pkg
         ;;
     *)
-        exit 2 >&2 "$OSTYPE is not supported!"
+        echo "$OSTYPE is not supported!" >&2
+        exit 2
         ;;
 esac
 
@@ -82,8 +84,9 @@ case "$OSTYPE" in
 esac
 
 powershell -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'
+success=$?
 
-if [[ $? != 0 ]]; then
-    echo "ERROR! PowerShell didn't install. Check script output"
-    exit 1
+if [[ $success != 0 ]]; then
+    echo "ERROR! PowerShell didn't install. Check script output" >&2
+    exit $success
 fi
