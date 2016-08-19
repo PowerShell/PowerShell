@@ -60,7 +60,7 @@ Then execute the following in the terminal:
 sudo yum install powershell-6.0.0_alpha.9-1.el7.centos.x86_64.rpm
 ```
 
-> This package should work on Red Hat Enterprise Linux 7 too.
+> This package works on Oracle Linux 7. It should work on Red Hat Enterprise Linux 7 too.
 
 [CentOS 7]: https://www.centos.org/download/
 
