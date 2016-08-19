@@ -34,6 +34,9 @@ case "$OSTYPE" in
                 exit 2 >&2 "$NAME is not supported!"
         esac
         ;;
+    freebsd*)
+        version=pkg
+        ;;
     darwin*)
         version=pkg
         ;;
