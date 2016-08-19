@@ -10,7 +10,8 @@
         "delaySign": true,
         "publicSign": false,
         "warningsAsErrors": true,
-        "allowUnsafe": true
+        "allowUnsafe": true,
+        "debugType": "portable"
     },
 
     "configurations": {

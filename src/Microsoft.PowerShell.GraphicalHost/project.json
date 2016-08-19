@@ -8,7 +8,8 @@
         "keyFile": "../signing/visualstudiopublic.snk",
         "delaySign": true,
         "publicSign": false,
-        "warningsAsErrors": true
+        "warningsAsErrors": true,
+        "debugType": "portable"
     },
 
     "dependencies": {
