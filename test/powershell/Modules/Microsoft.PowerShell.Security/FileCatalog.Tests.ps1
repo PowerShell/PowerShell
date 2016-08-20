@@ -208,7 +208,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             $catalogPath = "$env:TEMP\UserConfigProv\NewFileCatalogFolderWhenCatlogFileIsCreatedInsideSameFolder.cat"
             try
             {
-                copy-item $testDataPath\UserConfigProv $env:temp -Recurse -ErrorAction SilentlyContinue             
+                copy-item "$testDataPath\UserConfigProv" $env:temp -Recurse -ErrorAction SilentlyContinue             
                 $null = New-FileCatalog -Path $env:temp\UserConfigProv\ -CatalogFilePath $catalogPath -CatalogVersion 1.0                   
                 $result = Test-FileCatalog -Path $env:temp\UserConfigProv\ -CatalogFilePath $catalogPath                     
             }
