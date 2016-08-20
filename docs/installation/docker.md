@@ -12,7 +12,7 @@ docker build -t powershell .
 Run
 ===
 
-If you are using Docker, there is a very simple way to try PowerShell:
+After you have built using Docker, running PowerShell very simple:
 
 ```
 docker run -it powershell
