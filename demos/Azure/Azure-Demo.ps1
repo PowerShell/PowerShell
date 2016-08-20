@@ -1,9 +1,16 @@
 ﻿### The techniques used in this demo are documented at
 ### https://azure.microsoft.com/en-us/documentation/articles/powershell-azure-resource-manager/
 
-### Import AzureRM.Profile and AzureRM.Resources modules
-### Make sure the folder you copied them to is in $ENV:PSModulePath
+### Import AzureRM.Profile.NetCore.Preview and AzureRM.Resources.NetCore.Preview modules.
 ### AzureRM.NetCore.Preview is a wrapper module that pulls in these modules
+###
+### Because of issue https://github.com/PowerShell/PowerShell/issues/1618,
+### currently you will not be able to use "Install-Module AzureRM.NetCore.Preview" from
+### PowerShellGallery. You can use the following workaround until the issue is fixed:
+###
+### Install-Package -Name AzureRM.NetCore.Preview -Source https://www.powershellgallery.com/api/v2 -ProviderName NuGet -ExcludeVersion -Destination <Folder you want this to be installed>
+###
+### Ensure $ENV:PSMODULEPATH is updated with the location you used to install.
 Import-Module AzureRM.NetCore.Preview
 
 ### Supply your Azure Credentials
