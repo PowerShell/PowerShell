@@ -4,7 +4,7 @@ Docker
 If you are using Docker, there is a very simple way to try PowerShell:
 
 ```
-docker run -it powershell
+docker run -it lalyos/powershell
 ```
 
 This Docker image is based on Ubuntu 16.04, and follows the instructions from the [Linux Installation docs][u16].
