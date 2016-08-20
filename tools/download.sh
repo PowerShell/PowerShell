@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# Let's quit on interrupt of subcommands
+trap '
+  trap - INT # restore default INT handler
+  echo "Interrupted"
+  kill -s INT "$$"
+' INT
+
 # Retrieves asset ID and package name of asset ending in argument
 # $info looks like: "id": 1698239, "name": "powershell_0.4.0-1_amd64.deb",
 get_info() {
@@ -50,8 +57,9 @@ info=$(get_info $version)
 read asset package <<< $(echo $info | sed 's/[,"]//g' | awk '{ print $2; print $4 }')
 
 # Downloads asset to file
-curl -s -i -H 'Accept: application/octet-stream' https://api.github.com/repos/PowerShell/PowerShell/releases/assets/$asset |
-    grep location | sed 's/location: //g' | wget -i - -O $package
+packageuri=$(curl -s -i -H 'Accept: application/octet-stream' https://api.github.com/repos/PowerShell/PowerShell/releases/assets/$asset |
+    grep location | sed 's/location: //g')
+curl -C - -s -o $package ${packageuri%$'\r'}
 
 # Installs PowerShell package
 case "$OSTYPE" in
@@ -60,6 +68,7 @@ case "$OSTYPE" in
         # Install dependencies
         case "$ID" in
             centos)
+                echo "Installing libicu, libunwind, and $package with sudo"
                 sudo yum install -y libicu libunwind
                 sudo yum install "./$package"
                 ;;
@@ -72,6 +81,7 @@ case "$OSTYPE" in
                         icupackage=libicu55
                         ;;
                 esac
+                echo "Installing $libicupackage, libunwind8, and $package with sudo"
                 sudo apt-get install -y libunwind8 $icupackage
                 sudo dpkg -i "./$package"
                 ;;
@@ -79,6 +89,7 @@ case "$OSTYPE" in
         esac
         ;;
     darwin*)
+        echo "Installing $package with sudo"
         sudo installer -pkg ./$package -target /
         ;;
 esac
