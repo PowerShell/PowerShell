@@ -42,7 +42,7 @@ You can download and install a PowerShell package for any of the following platf
 [in-ubuntu14]: docs/installation/linux.md#ubuntu-1404
 [in-ubuntu16]: docs/installation/linux.md#ubuntu-1604
 [in-centos]: docs/installation/linux.md#centos-7
-[in-osx]: docs/installation/linux.md#macos-1011
+[in-macos]: docs/installation/linux.md#macos-1011
 [in-docker]: docs/installation/docker.md
 
 To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).
