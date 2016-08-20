@@ -38,13 +38,8 @@ which require manual dependency resolution.
 Installing the toolchain is as easy as running `Start-PSBootstrap` in PowerShell. 
 Of course, this requires a self-hosted copy of PowerShell on Linux.
 
-Fortunately, this is as easy as downloading and installing the package. 
-Unfortunately, while the repository is still private, the package cannot be downloaded as simply as with `wget`. 
-
+Fortunately, this is as easy as [downloading and installing the package](../installation/linux.md). 
 The `./tools/download.sh` script will also install the PowerShell package.
-
-> You can alternatively download by using a browser, upload it to your
-> box via some other method, and manually install it.
 
 In Bash:
 
@@ -69,7 +64,7 @@ The `Start-PSBootstrap` function does the following:
 - Adds the LLVM package feed
 - Installs our dependencies combined with the dependencies of the .NET CLI toolchain via `apt-get`
 - Uninstalls any prior versions of .NET CLI
-- Downloads and installs the latest .NET CLI 1.0.0-preview2 SDK to `~/.dotnet`
+- Downloads and installs the latest .NET CLI 1.0.0-preview3 SDK to `~/.dotnet`
 
 If you want to use `dotnet` outside of `Start-PSBuild`, add `~/.dotnet` to your `PATH` environment variable.
 
