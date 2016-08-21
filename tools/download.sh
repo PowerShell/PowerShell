@@ -20,11 +20,13 @@ case "$OSTYPE" in
         # Install curl and wget to download package
         case "$ID" in
             centos*)
-                sudo yum install -y curl wget
+                if [[ -z $(command -v curl) ]]; then
+                    echo "curl not found, installing..."
+                    sudo yum install -y curl
+                fi
                 version=rpm
                 ;;
             ubuntu)
-                sudo apt-get install -y curl wget
                 case "$VERSION_ID" in
                     14.04)
                         version=ubuntu1.14.04.1_amd64.deb
@@ -36,6 +38,10 @@ case "$OSTYPE" in
                         echo "Ubuntu $VERSION_ID is not supported!" >&2
                         exit 2
                 esac
+                if [[ -z $(command -v curl) ]]; then
+                    echo "curl not found, installing..."
+                    sudo apt-get install -y curl
+                fi
                 ;;
             *)
                 echo "$NAME is not supported!" >&2
@@ -68,7 +74,7 @@ case "$OSTYPE" in
         # Install dependencies
         case "$ID" in
             centos)
-                echo "Installing libicu, libunwind, and $package with sudo"
+                echo "Installing libicu, libunwind, and $package with sudo ..."
                 sudo yum install -y libicu libunwind
                 sudo yum install "./$package"
                 ;;
@@ -81,7 +87,7 @@ case "$OSTYPE" in
                         icupackage=libicu55
                         ;;
                 esac
-                echo "Installing $libicupackage, libunwind8, and $package with sudo"
+                echo "Installing $libicupackage, libunwind8, and $package with sudo ..."
                 sudo apt-get install -y libunwind8 $icupackage
                 sudo dpkg -i "./$package"
                 ;;
@@ -89,7 +95,7 @@ case "$OSTYPE" in
         esac
         ;;
     darwin*)
-        echo "Installing $package with sudo"
+        echo "Installing $package with sudo ..."
         sudo installer -pkg ./$package -target /
         ;;
 esac
