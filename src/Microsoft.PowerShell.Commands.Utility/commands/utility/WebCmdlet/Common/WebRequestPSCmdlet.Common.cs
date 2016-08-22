@@ -89,10 +89,10 @@ namespace Microsoft.PowerShell.Commands
         public virtual X509Certificate Certificate { get; set; }
 
         /// <summary>
-        /// gets or sets the NoCertificateCheck property
+        /// gets or sets the SkipCertificateCheck property
         /// </summary>
         [Parameter]
-        public virtual SwitchParameter NoCertificateCheck { get; set; }
+        public virtual SwitchParameter SkipCertificateCheck { get; set; }
 
         #endregion
 
