@@ -46,6 +46,7 @@ sudo dpkg -i powershell_6.0.0-alpha.9-1ubuntu1.16.04.1_amd64.deb
 
 [Ubuntu 16.04]: http://releases.ubuntu.com/16.04/
 
+This works for Debian Stretch (now testing) as well.
 
 CentOS 7
 ========
