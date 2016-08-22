@@ -1,7 +1,7 @@
 Pester Testing Test Guide
 =========================
 
-Also see the [Pester Do and Don't](../../docs/testing/PesterDoAndDont.md)
+Also see the [Pester Do and Don't](../../docs/testing-guidelines/PesterDoAndDont.md)
 document.
 
 Running Pester Tests

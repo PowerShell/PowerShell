@@ -208,7 +208,7 @@ Remoting Endpoint Creation on Nano Server TP5
 ---------------------------------------------
 
 The [script](https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md) to create a new WinRM remoting 
-endpoint (`Install-PowerShellRemoting.ps1`) encounters a bug in the inbox PowerShell Core on Nano Server TP5.
+endpoint (`Install-PowerShellRemoting.ps1`) encounters a bug in the in-box PowerShell Core on Nano Server TP5.
 The bug causes the script to create an incorrect directory for the plugin and may result in creation of an invalid remoting endpoint.
-When the exact same command is run a second time, the script executes as expected and successfully creates the WinRM remoting endpoint. 
-The bug in inbox PowerShell Core on Nano Server TP5 does not occur in later versions of Nano Server.
+When the same command is run for the second time, the script executes as expected and successfully creates the WinRM remoting endpoint. 
+The bug in in-box PowerShell Core on Nano Server TP5 does not occur in later versions of Nano Server.

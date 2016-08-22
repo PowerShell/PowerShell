@@ -20,7 +20,7 @@ At the end of this exercise, you should be able to launch the PowerShell session
 
 - Get PowerShell by installing package
  * [PowerShell on Linux][inst-linux]
- * [PowerShell on OS X][inst-linux]
+ * [PowerShell on OS X][inst-macos]
  * [PowerShell on Windows][inst-win]
 
   For this tutorial, you do not need to install PowerShell if you are running on Windows.
@@ -31,6 +31,7 @@ At the end of this exercise, you should be able to launch the PowerShell session
 
 [inst-linux]: ../installation/linux.md
 [inst-win]: ../installation/windows.md
+[inst-macos]: ../installation/linux.md#os-x-1011
 
 Getting Started with PowerShell
 ----
