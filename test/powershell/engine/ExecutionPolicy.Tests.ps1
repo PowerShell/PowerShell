@@ -851,6 +851,99 @@ ZoneId=$FileType
     }
 }
 
+Describe "Validate Set-ExecutionPolicy -Scope" -Tags "CI" {
+
+    BeforeAll {
+        $originalPolicies = Get-ExecutionPolicy -list
+
+        # Calls Set-ExecutionPolicy with a known-bad Scope and expects failure.
+        # It is defined here so that it will be available at It scope.
+        function VerfiyBlockedSetExecutionPolicy
+        {
+            param(
+                [string]
+                $policyScope
+            )
+            $fqeid = ""
+            try {
+                Set-ExecutionPolicy -Scope $policyScope -ExecutionPolicy Restricted
+            }
+            catch {
+                $fqeid = $_.FullyQualifiedErrorId
+            }
+
+            $fqeid | Should Be "CantSetGroupPolicy,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand"
+        }
+    }
+
+    AfterAll {
+        foreach ($scopedPolicy in $originalPolicies)
+        {
+            if (($scopedPolicy.Scope -eq "Process") -or
+                ($scopedPolicy.Scope -eq "CurrentUser"))
+            {
+                try {
+                    Set-ExecutionPolicy -Scope $scopedPolicy.Scope -ExecutionPolicy $scopedPolicy.ExecutionPolicy -Force
+                }
+                catch {
+                    if ($_.FullyQualifiedErrorId -ne "ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand")
+                    {
+                        # Re-throw unrecognized exceptions. Otherwise, swallow 
+                        # the exception that warns about overridden policies
+                        throw $_
+                    }
+                }
+            }
+            elseif($scopedPolicy.Scope -eq "LocalMachine")
+            {
+                try {
+                    Set-ExecutionPolicy -Scope $scopedPolicy.Scope -ExecutionPolicy $scopedPolicy.ExecutionPolicy -Force
+                }
+                catch {
+                    if ($_.FullyQualifiedErrorId -eq "System.UnauthorizedAccessException,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand")
+                    {
+                        # Do nothing. Depending on the ownership of the file, 
+                        # regular users may or may not be able to set its 
+                        # value. 
+                        #
+                        # When targetting the Registry, regular users cannot
+                        # modify this value.
+                    }
+                    elseif ($_.FullyQualifiedErrorId -ne "ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand")
+                    {
+                        # Re-throw unrecognized exceptions. Otherwise, swallow 
+                        # the exception that warns about overridden policies
+                        throw $_
+                    }
+                }
+            }
+        }
+    }
+
+    It "-Scope MachinePolicy is not Modifiable" {
+        VerfiyBlockedSetExecutionPolicy "MachinePolicy"
+    }
+
+    It "-Scope UserPolicy is not Modifiable" {
+        VerfiyBlockedSetExecutionPolicy "UserPolicy"
+    }
+
+    It "-Scope Process is Settable" {
+        Set-ExecutionPolicy -Scope Process -ExecutionPolicy ByPass
+        Get-ExecutionPolicy -Scope Process | Should Be "ByPass"
+    }
+
+    It "-Scope CurrentUser is Settable" {
+        Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy ByPass
+        Get-ExecutionPolicy -Scope CurrentUser | Should Be "ByPass"
+    }
+
+    # This test requires Administrator privileges on Windows.
+    It "-Scope LocalMachine is Settable" {
+        Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy ByPass
+        Get-ExecutionPolicy -Scope LocalMachine | Should Be "ByPass"
+    }
+}
 
 Describe "Validate that 'ConvertTo-SecureString -Key' and 'ConvertFrom-SecureString -Key' work on NanoServer and IoT" -Tags "CI" {
 

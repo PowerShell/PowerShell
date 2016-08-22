@@ -182,12 +182,7 @@ namespace System.Management.Automation
 
             if (forCurrentUser)
             {
-#if UNIX
-                basePath = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);   
-#else
-                basePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-                basePath = IO.Path.Combine(basePath, Utils.ProductNameForDirectory);
-#endif
+                basePath = Utils.GetUserConfigurationDirectory();
             }
             else
             {
