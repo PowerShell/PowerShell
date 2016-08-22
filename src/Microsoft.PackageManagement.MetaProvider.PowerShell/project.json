@@ -4,7 +4,7 @@
 
 	"buildOptions": {
 		"warningsAsErrors": true,
-        "debugType": "portable"
+                "debugType": "portable"
 	},
 
 	"configurations": {
