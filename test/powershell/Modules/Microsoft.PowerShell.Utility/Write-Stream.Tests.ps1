@@ -68,4 +68,13 @@ Describe "Stream writer tests" -Tags "CI" {
             $Error[0] | Should Match "Test Error Message"
         }
     }
+
+    Context "Write-Information cmdlet" {
+       It "Write-Information outputs an information object" {
+           # redirect the streams is sufficient
+           $result = Write-Information "Test Message" *>&1
+           $result.GetType().Fullname | Should be "System.Management.Automation.InformationRecord"
+           "$result" | Should be "Test Message"
+       }
+    }
 }
