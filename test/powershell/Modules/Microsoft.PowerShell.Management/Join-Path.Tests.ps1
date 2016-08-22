@@ -43,4 +43,9 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
     $result.Count | Should be 1
     $result       | Should BeExactly ("Env:"+$SepChar+"foo")
   }
+  It "should be able to join multiple child paths passed by position with remaining arguments" {
+    $result = Join-Path one two three four five
+    $result.Count | Should Be 1
+    $result       | Should BeExactly "one${sepChar}two${sepChar}three${sepChar}four${sepChar}five"
+  }
 }

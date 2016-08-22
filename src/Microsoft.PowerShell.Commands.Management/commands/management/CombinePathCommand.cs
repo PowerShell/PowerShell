@@ -3,6 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
+using System.Text;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
@@ -29,10 +30,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the childPath parameter to the command
         /// </summary>
-        [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ValueFromRemainingArguments = true)]
         [AllowNull]
         [AllowEmptyString]
-        public string ChildPath { get; set; } = String.Empty;
+        [AllowEmptyCollection]
+        public string[] ChildPath { get; set; } = new string[0];
 
         /// <summary>
         /// Determines if the path should be resolved after being joined
@@ -55,6 +57,24 @@ namespace Microsoft.PowerShell.Commands
                 Path != null,
                 "Since Path is a mandatory parameter, paths should never be null");
 
+            string combinedChildPath = String.Empty;
+
+            // join the ChildPath elements
+            if (ChildPath != null)
+            {
+                foreach (string childPath in ChildPath)
+                {
+                    if (String.IsNullOrEmpty(combinedChildPath))
+                    {
+                        combinedChildPath = childPath;
+                    }
+                    else
+                    {
+                        combinedChildPath = SessionState.Path.Combine(combinedChildPath, childPath, CmdletProviderContext);
+                    }
+                }
+            }
+
             foreach (string path in Path)
             {
                 // First join the path elements
@@ -64,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     joinedPath =
-                        SessionState.Path.Combine(path, ChildPath, CmdletProviderContext);
+                        SessionState.Path.Combine(path, combinedChildPath, CmdletProviderContext);
                 }
                 catch (PSNotSupportedException notSupported)
                 {
