@@ -554,7 +554,7 @@ function Start-PSPester {
         [switch]$DisableExit,
         [string[]]$ExcludeTag = "Slow",
         [string[]]$Tag = "CI",
-        [string]$Path = "$PSScriptRoot/test/powershell"
+        [string]$Path = "'$PSScriptRoot/test/powershell'"
     )
 
     $powershell = Get-PSOutput
