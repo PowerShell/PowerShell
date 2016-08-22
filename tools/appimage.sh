@@ -64,12 +64,7 @@ OPTIONS="-o Debug::NoLocking=1
 -o APT::Install-Suggests=0
 "
 
-# TODO: Use the deb that has been generated in this build run instead
-RELEASE=$(wget -q "https://github.com/PowerShell/PowerShell/releases" -O - | grep "releases/tag" | head -n 1 | cut -d '"' -f 2)
-DEBS=$(wget -q "https://github.com/$RELEASE" -O - | grep deb | grep 14.04 | grep href | cut -d '"' -f 2)
-for DEB in $DEBS ; do
-  wget -c https://github.com/$DEB
-done
+cp ../powershell_*_amd64.deb .
 
 # Add local repository so that we can install deb files
 # that were downloaded outside of a repository
