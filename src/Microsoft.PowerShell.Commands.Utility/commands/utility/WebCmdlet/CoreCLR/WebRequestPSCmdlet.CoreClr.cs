@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
                 handler.ClientCertificates = WebSession.Certificates;
             }*/
 
-            if (IgnoreCertificateCheck)
+            if (NoCertificateCheck)
             {
                 handler.ServerCertificateCustomValidationCallback = delegate { return true; };
             }
