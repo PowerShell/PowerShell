@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// operations involving security.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Credential", DefaultParameterSetName = GetCredentialCommand.credentialSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113311")]
-    [OutputType(typeof(PSCredential), ParameterSetName = new string[] { GetCredentialCommand.credentialSet, GetCredentialCommand.messageSet, GetCredentialCommand.titleSet, GetCredentialCommand.usernameSet })]
+    [OutputType(typeof(PSCredential), ParameterSetName = new string[] { GetCredentialCommand.credentialSet, GetCredentialCommand.messageSet })]
     public sealed class GetCredentialCommand : PSCmdlet
     {
         /// <summary>
@@ -28,16 +28,6 @@ namespace Microsoft.PowerShell.Commands
         /// The Message parameter set name.
         /// </summary>
         private const string messageSet = "MessageSet";
-
-        /// <summary>
-        /// The Title parameter set name.
-        /// </summary>
-        private const string titleSet = "TitleSet";
-
-        /// <summary>
-        /// The Username parameter set name.
-        /// </summary>
-        private const string usernameSet = "UsernameSet";
 
         /// <summary>
         /// Gets or sets the underlying PSCredential of
@@ -64,40 +54,38 @@ namespace Microsoft.PowerShell.Commands
         /// Gets and sets the user supplied message providing description about which script/function is 
         /// requesting the PSCredential from the user.
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = messageSet)]
+        [Parameter(Mandatory = false, ParameterSetName = messageSet)]
+        [ValidateNotNullOrEmpty]
         public string Message
         {
             get { return _message; }
             set { _message = value; }
         }
-        private string _message = null;
-
-        /// <summary>
-        /// Gets and sets the user supplied title providing description about which script/function is 
-        /// requesting the PSCredential from the user.
-        /// Also to guide Password managers to potential account.
-        /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = titleSet)]
-        public string Title
-        {
-            get { return _title; }
-            set { _title = value; }
-        }
-        private string _title = null;
-
+        private string _message;
 
         /// <summary>
         /// Gets and sets the user supplied username to be used while creating the PSCredential.
         /// </summary>
         [Parameter(Position = 0, Mandatory = false, ParameterSetName = messageSet)]
-        [Parameter(Position = 0, Mandatory = false, ParameterSetName = titleSet)]
-        [Parameter(Position = 0, Mandatory = true, ParameterSetName = usernameSet)]
+        [ValidateNotNullOrEmpty]
         public string UserName
         {
             get { return _userName; }
             set { _userName = value; }
         }
-        private string _userName = null;
+        private string _userName;
+
+        /// <summary>
+        /// Gets and sets the title on the window prompt.
+        /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = messageSet)]
+        [ValidateNotNullOrEmpty]
+        public string Title
+        {
+            get { return _title; }
+            set { _title = value; }
+        }
+        private string _title;
 
         /// <summary>
         /// Initializes a new instance of the GetCredentialCommand
@@ -112,28 +100,18 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-           string caption;
-            if(!string.IsNullOrEmpty(this.Title)) {
-                caption = this.Title;
-            }
-            else {
-                caption = UtilsStrings.PromptForCredential_DefaultCaption;
-            }
-            
-            if (!string.IsNullOrEmpty(this.Message) || !string.IsNullOrEmpty(this.UserName))
-            {
-                string username = this.UserName;
-                string message = this.Message;
+            string caption = this.Title ?? UtilsStrings.PromptForCredential_DefaultCaption;
+            string message = this.Message ?? 'Enter your credentials.';
+            string username = this.UserName ?? null;
 
-                try
-                {
-                    Credential = this.Host.UI.PromptForCredential(caption, message, username, string.Empty);
-                }
-                catch (ArgumentException exception)
-                {
-                    ErrorRecord errorRecord = new ErrorRecord(exception, "CouldNotPromptForCredential", ErrorCategory.InvalidOperation, null);
-                    WriteError(errorRecord);
-                }
+            try
+            {
+                Credential = this.Host.UI.PromptForCredential(caption, message, _userName, string.Empty);
+            }
+            catch (ArgumentException exception)
+            {
+                ErrorRecord errorRecord = new ErrorRecord(exception, "CouldNotPromptForCredential", ErrorCategory.InvalidOperation, null);
+                WriteError(errorRecord);
             }
 
             if (Credential != null)
@@ -143,4 +121,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-
