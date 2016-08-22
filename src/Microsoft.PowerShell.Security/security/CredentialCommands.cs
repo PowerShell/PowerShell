@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             string caption = this.Title ?? UtilsStrings.PromptForCredential_DefaultCaption;
-            string message = this.Message ?? 'Enter your credentials.';
+            string message = this.Message ?? "Enter your credentials.";
             string username = this.UserName ?? null;
 
             try
