@@ -3,12 +3,7 @@
 	"version": "1.0.0-*",
 
 	"buildOptions": {
-<<<<<<< HEAD
 		"warningsAsErrors": true
-=======
-		"warningsAsErrors": true,
-                "debugType": "portable"
->>>>>>> c62d261c35fd6d8c8a0e58d16a76c590d0041fcd
 	},
 
 	"configurations": {
