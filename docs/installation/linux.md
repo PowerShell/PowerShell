@@ -46,7 +46,6 @@ sudo dpkg -i powershell_6.0.0-alpha.9-1ubuntu1.16.04.1_amd64.deb
 
 [Ubuntu 16.04]: http://releases.ubuntu.com/16.04/
 
-
 CentOS 7
 ========
 
@@ -63,6 +62,22 @@ sudo yum install powershell-6.0.0_alpha.9-1.el7.centos.x86_64.rpm
 > This package works on Oracle Linux 7. It should work on Red Hat Enterprise Linux 7 too.
 
 [CentOS 7]: https://www.centos.org/download/
+
+AppImage for Linux
+==================
+
+Using a desktop Linux distribution for the Intel x86_64 architecture that is no older than approximately two years, download the AppImage
+`PowerShell-6.0.0.alpha.9-x86_64.AppImage`
+from the [releases][] page onto the Linux machine.
+
+Then execute the following in the terminal:
+
+```
+chmod a+x PowerShell-6.0.0.alpha.9-x86_64.AppImage
+./PowerShell-6.0.0.alpha.9-x86_64.AppImage
+```
+
+The [AppImage](http://appimage.org/) lets you run PowerShell without installing it. It is a portable application that bundles PowerShell and everything it needs to run that is not part of the default installation of most distributions.
 
 OS X 10.11
 ==========
