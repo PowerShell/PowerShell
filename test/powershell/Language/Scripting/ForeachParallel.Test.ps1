@@ -8,13 +8,9 @@ Describe "Parallel foreach syntax" -Tags "CI" {
         It '$ast.EndBlock.Statements[0].Flags' { $ast.EndBlock.Statements[0].Flags | Should Be 'Parallel' }        
     }
 
-    Context 'Should be able to retrieve AST of parallel foreach, works in JobDefinition case' {
-        Import-Module PSWorkflow
-        $errors = @()
-        $ast = [System.Management.Automation.Language.Parser]::ParseInput(
-    'workflow foo { foreach -parallel ($foo in $bar) {} }', [ref] $null, [ref] $errors)
-        It '$errors.Count' { $errors.Count | Should Be 0 }
-        It '$ast.EndBlock.Statements[0].Body.EndBlock.Statements[0].Flags' { $ast.EndBlock.Statements[0].Body.EndBlock.Statements[0].Flags | Should Be 'Parallel' }
+    It 'Should be able to retrieve AST of parallel foreach, works in JobDefinition case' -Skip:$IsCoreCLR {
+        . .\TestsOnWinFullOnly.ps1
+        Run-TestOnWinFull "ForeachParallel:ASTOfParallelForeachOnWorkflow"
     }
 
     Context 'Supports newlines before and after' {

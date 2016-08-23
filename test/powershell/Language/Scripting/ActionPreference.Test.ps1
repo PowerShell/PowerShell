@@ -56,13 +56,9 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             $error.Count | Should Be $errorCount
         }
 
-        It 'ErrorAction = Suspend works on Workflow' {
-            workflow TestErrorActionSuspend { "Hello" }
-    
-            $r = TestErrorActionSuspend -ErrorAction Suspend
-    
-            ## suspend functionality itself tested in workflow tests
-            $r | Should Be Hello
+        It 'ErrorAction = Suspend works on Workflow' -Skip:$IsCoreCLR {
+           . .\TestsOnWinFullOnly.ps1
+            Run-TestOnWinFull "ActionPreference:ErrorAction=SuspendOnWorkflow"
         }
 
         Context 'ErrorAction = Suspend does not work on functions' {
@@ -100,9 +96,11 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
 
         Context 'WarningAction = Suspend does not work' {
 
+            $failed = $true
             try
             {
                 Get-Process -WarningAction Suspend
+                $failed = $false
             }
             catch {
                 It '$_.FullyQualifiedErrorId' { $_.FullyQualifiedErrorId | Should Be "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand" }
@@ -110,7 +108,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             It 'Expect exception' { $failed | Should be $true }
         }
 
-        Context 'ErrorAction and WarningAction are the only action preferences do not support suspend' -Skip {
+        It 'ErrorAction and WarningAction are the only action preferences do not support suspend' -Pending {
 
             $params = [System.Management.Automation.Internal.CommonParameters].GetProperties().Name | sls Action
             $suspendErrors = $null 
@@ -122,11 +120,10 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
                         try {
                             Write-Output @input
                             } catch {
-                                It '$_.FullyQualifiedErrorId' { $_.FullyQualifiedErrorId | Should Be "ParameterBindingFailed,Microsoft.PowerShell.Commands.WriteOutputCommand" }
+                                $_.FullyQualifiedErrorId | Should Be "ParameterBindingFailed,Microsoft.PowerShell.Commands.WriteOutputCommand"
                                 $num++
                             }
-                    }   
-            
-            It 'number of action preferences' { $num | Should Be 2 }
+                    }            
+            $num | Should Be 2
         }
 }
