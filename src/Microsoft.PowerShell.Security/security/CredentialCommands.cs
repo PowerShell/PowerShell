@@ -61,19 +61,18 @@ namespace Microsoft.PowerShell.Commands
             get { return _message; }
             set { _message = value; }
         }
-        private string _message;
+        private string _message = null;
 
         /// <summary>
         /// Gets and sets the user supplied username to be used while creating the PSCredential.
         /// </summary>
         [Parameter(Position = 0, Mandatory = false, ParameterSetName = messageSet)]
-        [ValidateNotNullOrEmpty]
         public string UserName
         {
             get { return _userName; }
             set { _userName = value; }
         }
-        private string _userName;
+        private string _userName = null;
 
         /// <summary>
         /// Gets and sets the title on the window prompt.
@@ -85,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _title; }
             set { _title = value; }
         }
-        private string _title;
+        private string _title = UtilsStrings.PromptForCredential_DefaultCaption;
 
         /// <summary>
         /// Initializes a new instance of the GetCredentialCommand
@@ -100,13 +99,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            string caption = this.Title ?? UtilsStrings.PromptForCredential_DefaultCaption;
-            string message = this.Message ?? "Enter your credentials.";
-            string username = this.UserName ?? null;
-
             try
             {
-                Credential = this.Host.UI.PromptForCredential(caption, message, _userName, string.Empty);
+                Credential = this.Host.UI.PromptForCredential(_title, _message, _userName, string.Empty);
             }
             catch (ArgumentException exception)
             {
