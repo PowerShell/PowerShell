@@ -65,7 +65,8 @@
         "netcoreapp1.0": {
             "imports": [ "dnxcore50", "portable-net45+win8" ],
             "buildOptions": {
-                "define": [ "CORECLR" ]
+                "define": [ "CORECLR" ],
+                "debugType": "portable"
             },
             "dependencies": {
                 "Microsoft.NETCore.App": "1.0.0",

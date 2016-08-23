@@ -6,7 +6,7 @@
         "keyFile": "../signing/visualstudiopublic.snk",
         "delaySign": true,
         "publicSign": false,
-        "warningsAsErrors": true,
+        "warningsAsErrors": true
     },
 
     "dependencies": {
@@ -17,8 +17,9 @@
         "netstandard1.6": {
             "imports": [ "dnxcore50"],
             "buildOptions": {
-                "define": [ "CORECLR" ]
-            },
+                "define": [ "CORECLR" ],
+                "debugType": "portable"
+            }
         },
         "net451": {
             "frameworkAssemblies": {

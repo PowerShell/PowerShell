@@ -1,7 +1,8 @@
 {
     "buildOptions": {
         "warningsAsErrors": true,
-        "emitEntryPoint": true
+        "emitEntryPoint": true,
+        "debugType": "portable"
     },
 
     "dependencies": {

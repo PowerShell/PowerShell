@@ -29,6 +29,7 @@
             "imports": [ "dnxcore50" ],
             "buildOptions": {
                 "define": [ "CORECLR", "PORTABLE" ],
+                "debugType": "portable",
                 "compile": {
                     "exclude": [
                         "cimSupport/cmdletization/xml/cmdlets-over-objects.objectModel.autogen.cs",

@@ -25,7 +25,8 @@
     "frameworks": {
         "netstandard1.6": {
             "buildOptions": {
-                "define": [ "CORECLR" ]
+                "define": [ "CORECLR" ],
+                "debugType": "portable"
             },
             "imports": [ "dnxcore50", "portable-net45+win8" ]
         },

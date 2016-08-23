@@ -44,7 +44,8 @@
 		"netstandard1.6": {
 			"imports": ["dnxcore50"],
 			"buildOptions": {
-				"define": ["CORECLR", "PORTABLE"],
+				"define": ["CORECLR", "PORTABLE"],				
+                "debugType": "portable",
 				"compile": {
           "exclude": [ "ProgramsProvider.cs"]
 				}
