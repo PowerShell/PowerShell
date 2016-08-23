@@ -3,7 +3,7 @@
 Repository Maintainers are trusted stewards of the PowerShell repository responsible for maintaining consistency and quality of PowerShell code.
 One of their primary responsibilities is merging pull requests after all requirements have been fulfilled.
 
-They have [write access](https://help.github.com/articles/permission-levels-for-an-organization-repository/) to the PowerShell repositories which gives them the power to:
+They have [write access](https://help.github.com/articles/repository-permission-levels-for-an-organization/) to the PowerShell repositories which gives them the power to:
 
 1. `git push` to the official PowerShell repository
 2. Merge pull requests
@@ -13,7 +13,7 @@ They have [write access](https://help.github.com/articles/permission-levels-for-
 - [Current Repository Maintainers](#current-repository-maintainers)
 - [Repository Maintainer Responsibilities](#repository-maintainer-responsibilities)
 - [Issue Management Process](#issue-management-process)
-- [Pull Request Workflow](#pull-management-process)
+- [Pull Request Workflow](#pull-request-workflow)
   - [Abandoned Pull Requests](#abandoned-pull-requests)
 - [Becoming a Repository Maintainer](#becoming-a-repository-maintainer)
 
@@ -22,7 +22,7 @@ They have [write access](https://help.github.com/articles/permission-levels-for-
 * Sergei Vorobev ([vors](https://github.com/vors))
 * Jason Shirk ([lzybkr](https://github.com/lzybkr))
 * Dongbo Wang ([daxian-dbw](https://github.com/daxian-dbw))
-* Travis Plunk ([TravisEz123](https://github.com/TravisEz123))
+* Travis Plunk ([TravisEz13](https://github.com/TravisEz13))
 * Mike Richmond ([mirichmo](https://github.com/mirichmo))
 * Andy Schwartzmeyer ([andschwa](https://github.com/andschwa))
 
@@ -34,11 +34,11 @@ If you are a Repository Maintainer, you:
 
 1. **MUST** ensure that each contributor has signed a valid Contributor License Agreement (CLA) 
 1. **MUST** verify compliance with any third party code license terms (e.g., requiring attribution, etc.) if the contribution contains third party code.
-1. **MUST** make sure that [any change requiring approval from the PowerShell Committee](#changes-that-require-an-rfc) has gone through the proper [RFC][RFC-repo] or approval process
+1. **MUST** make sure that [any change requiring approval from the PowerShell Committee](../community/governance.md#changes-that-require-an-rfc) has gone through the proper [RFC][RFC-repo] or approval process
 1. **MUST** validate that code reviews have been conducted before merging a pull request when no code is written
 1. **MUST** validate that tests and documentation have been written before merging a pull request that contains new functionality
 1. **SHOULD** add [the correct labels][issue-management] to issues and pull requests
-1. **SHOULD** make sure the correct [Area Experts](#area-experts) are assigned to relevant pull requests and issues.
+1. **SHOULD** make sure the correct [Area Experts](../community/governance.md#area-experts) are assigned to relevant pull requests and issues.
 This includes adding extra reviewers when it makes sense
 (e.g. a pull request that adds remoting capabilities might require a security expert)
 1. **SHOULD** validate that the names and email addresses in the git commits reasonably match identity of the person submitting the pull request 
@@ -96,7 +96,7 @@ In these cases:
 
 ## Becoming a Repository Maintainer
 
-Repository Maintainers currently consist entirely of Microsoft employees
+Repository Maintainers currently consist entirely of Microsoft employees.
 It is expected that over time, regular trusted contributors to the PowerShell repository will be made Repository Maintainers.
 Eligibility is heavily dependent on the level of contribution and expertise: individuals who contribute in meaningful ways to the project will be recognized accordingly. 
 

@@ -929,7 +929,7 @@ function Publish-Module
                     return
                 }
             }
-            elseif(-not $modulePathWithVersion -and ($PSVersionTable.PSVersion -ge [Version]'5.0'))
+            elseif(-not $modulePathWithVersion -and ($PSVersionTable.PSVersion -ge '5.0.0'))
             {
                 $module = Microsoft.PowerShell.Core\Get-Module -Name $resolvedPath -ListAvailable -ErrorAction SilentlyContinue -Verbose:$false
             }
@@ -1783,7 +1783,7 @@ function Install-Module
     	                    if(-not($YesToAll -or $NoToAll -or $SourceSGrantedTrust.Contains($source) -or $sourcesDeniedTrust.Contains($source) -or $Force))   
                             {
 	                            $message = $QueryInstallUntrustedPackage -f ($psgetModuleInfo.Name, $psgetModuleInfo.RepositorySourceLocation)
-                                if($PSVersionTable.PSVersion -ge [Version]"5.0")
+                                if($PSVersionTable.PSVersion -ge '5.0.0')
                                 {
                                      $sourceTrusted = $psCmdlet.ShouldContinue("$message", "$RepositoryIsNotTrusted",$true, [ref]$YesToAll, [ref]$NoToAll)
                                 }
@@ -3509,7 +3509,7 @@ function Install-Script
                             {
                                 $message = $QueryInstallUntrustedPackage -f ($psRepositoryItemInfo.Name, $psRepositoryItemInfo.RepositorySourceLocation)
                             
-                                if($PSVersionTable.PSVersion -ge [Version]"5.0")
+                                if($PSVersionTable.PSVersion -ge '5.0.0')
                                 {
                                     $sourceTrusted = $psCmdlet.ShouldContinue("$message", "$RepositoryIsNotTrusted",$true, [ref]$YesToAll, [ref]$NoToAll)
                                 }
@@ -5580,7 +5580,7 @@ function Get-RequiresString
                         $RequiredModuleStrings += "@{$($keyvalueStrings -join '; ')}"
                     }
                 }
-                elseif(($PSVersionTable.PSVersion -eq [Version]'3.0') -and
+                elseif(($PSVersionTable.PSVersion -eq '3.0.0') -and
                        ($requiredModuleObject.GetType().ToString() -eq 'Microsoft.PowerShell.Commands.ModuleSpecification'))
                 {
                     # ModuleSpecification.ToString() is not implemented on PowerShell 3.0.
@@ -10374,7 +10374,7 @@ function Install-PackageUtility
                         if( (-not $MinimumVersion -and ($version -ne $InstalledModuleInfo.Version)) -or 
                             ($MinimumVersion -and ($MinimumVersion -gt $InstalledModuleInfo.Version)))
                         {
-                            if($PSVersionTable.PSVersion -ge [Version]"5.0")
+                            if($PSVersionTable.PSVersion -ge '5.0.0')
                             {
                                 $message = $LocalizedData.ModuleAlreadyInstalledSxS -f ($InstalledModuleInfo.Version, $InstalledModuleInfo.Name, $InstalledModuleInfo.ModuleBase, $version, $InstalledModuleInfo.Version, $version)                            
                             }
@@ -12234,7 +12234,7 @@ function Test-ModuleSxSVersionSupport
 {
     # Side-by-Side module version is avialable on PowerShell 5.0 or later versions only
     # By default, PowerShell module versions will be installed/updated Side-by-Side.
-    $PSVersionTable.PSVersion -ge [Version]"5.0"
+    $PSVersionTable.PSVersion -ge '5.0.0'
 }
 
 function Test-ModuleInstalled
@@ -13008,8 +13008,8 @@ function Update-ModuleManifest
     {
         #DscResourcesToExport field is not available in PowerShell version lower than 5.0
         
-        if  (($PSVersionTable.PSVersion -lt [Version]"5.0") -or ($PowerShellVersion -and $PowerShellVersion -lt [Version]"5.0") `
-             -or (-not $PowerShellVersion -and $moduleInfo.PowerShellVersion -and $moduleInfo.PowerShellVersion -lt [Version]"5.0") `
+        if  (($PSVersionTable.PSVersion -lt '5.0.0') -or ($PowerShellVersion -and $PowerShellVersion -lt '5.0') `
+             -or (-not $PowerShellVersion -and $moduleInfo.PowerShellVersion -and $moduleInfo.PowerShellVersion -lt '5.0') `
              -or (-not $PowerShellVersion -and -not $moduleInfo.PowerShellVersion))
         {
                 ThrowError -ExceptionName "System.ArgumentException" `
@@ -13035,8 +13035,8 @@ function Update-ModuleManifest
     {
         # CompatiblePSEditions field is not available in PowerShell version lower than 5.1
         #
-        if  (($PSVersionTable.PSVersion -lt [Version]'5.1') -or ($PowerShellVersion -and $PowerShellVersion -lt [Version]'5.1') `
-             -or (-not $PowerShellVersion -and $moduleInfo.PowerShellVersion -and $moduleInfo.PowerShellVersion -lt [Version]'5.1') `
+        if  (($PSVersionTable.PSVersion -lt '5.1.0') -or ($PowerShellVersion -and $PowerShellVersion -lt '5.1') `
+             -or (-not $PowerShellVersion -and $moduleInfo.PowerShellVersion -and $moduleInfo.PowerShellVersion -lt '5.1') `
              -or (-not $PowerShellVersion -and -not $moduleInfo.PowerShellVersion))
         {
                 ThrowError -ExceptionName 'System.ArgumentException' `

@@ -2,7 +2,7 @@
 THIRD-PARTY SOFTWARE NOTICES AND INFORMATION 
 Do Not Translate or Localize
 
-The software is based on or incorporates material from the projects listed below (collectively, “Third Party Code”).  Microsoft is the not original author of the Third Party Code.  The original copyright notice and license, under which Microsoft received such Third Party Code, are set forth below. Microsoft reserves all rights not expressly granted herein, whether by implication, estoppel or otherwise.
+The software is based on or incorporates material from the projects listed below (collectively, “Third Party Code”).  Microsoft is not the original author of the Third Party Code.  The original copyright notice and license, under which Microsoft received such Third Party Code, are set forth below. Microsoft reserves all rights not expressly granted herein, whether by implication, estoppel or otherwise.
 
 
 ---------------------------------------------

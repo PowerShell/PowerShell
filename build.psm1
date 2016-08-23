@@ -554,7 +554,7 @@ function Start-PSPester {
         [switch]$DisableExit,
         [string[]]$ExcludeTag = "Slow",
         [string[]]$Tag = "CI",
-        [string]$Path = "$PSScriptRoot/test/powershell"
+        [string]$Path = "'$PSScriptRoot/test/powershell'"
     )
 
     $powershell = Get-PSOutput
@@ -568,7 +568,7 @@ function Start-PSPester {
     }
 
     $PesterModule = [IO.Path]::Combine((Split-Path $powershell), "Modules", "Pester")
-    $Command += "Import-Module $PesterModule; "
+    $Command += "Import-Module '$PesterModule'; "
     $Command += "Invoke-Pester "
 
     $Command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
@@ -582,8 +582,8 @@ function Start-PSPester {
         $Command += "-Tag @('" + (${Tag} -join "','") + "') "
     }
 
-    $Command += $Path
-
+    $Command += "'" + $Path + "'"
+        
     Write-Verbose $Command
     # To ensure proper testing, the module path must not be inherited by the spawned process
     try {
@@ -688,13 +688,13 @@ function Start-PSBootstrap {
             sudo apt-get install -y -qq $Deps
         } elseif ($IsCentOS) {
             # Build tools
-            $Deps += "curl", "gcc-c++", "cmake", "make"
+            $Deps += "which", "curl", "gcc-c++", "cmake", "make"
 
             # .NET Core required runtime libraries
             $Deps += "libicu", "libunwind"
 
             # Packaging tools
-            if ($Package) { $Deps += "ruby-devel", "rpmbuild" }
+            if ($Package) { $Deps += "ruby-devel", "rpm-build" }
 
             # Install dependencies
             sudo yum install -y -q $Deps
