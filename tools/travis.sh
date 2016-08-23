@@ -6,4 +6,3 @@ if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then
 else
     powershell -c "Import-Module ./build.psm1; Start-PSBootstrap; Start-PSBuild -CrossGen; Start-PSPester; Start-PSxUnit"
 fi
-bash -ex ./tools/appimage.sh # TODO: Move to build.psm1
