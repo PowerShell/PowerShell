@@ -2,7 +2,7 @@ Package installation instructions
 =================================
 
 Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16],
-[CentOS 7][cos], [most Linux distributions (AppImage)][lai], and [OS X 10.11][osx].
+[CentOS 7][cos], [many Linux distributions (AppImage)][lai], and [OS X 10.11][osx].
 All packages are available on our GitHub [releases][] page.
 
 Once the package is installed, run `powershell` from a terminal.
@@ -78,7 +78,7 @@ chmod a+x PowerShell-6.0.0.alpha.9-x86_64.AppImage
 ./PowerShell-6.0.0.alpha.9-x86_64.AppImage
 ```
 
-The [AppImage](http://appimage.org/) lets you run PowerShell without installing it. It is a portable application that bundles PowerShell and everything it needs to run that is not part of the default installation of most distributions.
+The AppImage lets you run PowerShell without installing it. It is a portable application that bundles PowerShell and everything it needs to run that is not part of the default installation of many distributions ([more information](http://appimage.org/)).
 
 OS X 10.11
 ==========
