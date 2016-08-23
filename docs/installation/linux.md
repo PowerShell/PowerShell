@@ -2,7 +2,7 @@ Package installation instructions
 =================================
 
 Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16],
-[CentOS 7][cos], and [OS X 10.11][osx].
+[CentOS 7][cos], [most Linux distributions (AppImage)][lai], and [OS X 10.11][osx].
 All packages are available on our GitHub [releases][] page.
 
 Once the package is installed, run `powershell` from a terminal.
@@ -10,6 +10,7 @@ Once the package is installed, run `powershell` from a terminal.
 [u14]: #ubuntu-1404
 [u16]: #ubuntu-1604
 [cos]: #centos-7
+[lai]: #linux-appimage
 [osx]: #os-x-1011
 
 Ubuntu 14.04
