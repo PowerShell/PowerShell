@@ -100,7 +100,7 @@ StartupNotify=true
 Terminal=true
 EOF
 
-wget -c "https://github.com/PowerShell/PowerShell/raw/master/assets/Powershell_256.png" -O $LOWERAPP.png
+cp ../../assets/Powershell_256.png $LOWERAPP.png
 
 cat > ./AppRun <<\EOF
 #!/bin/sh
