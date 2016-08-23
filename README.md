@@ -27,7 +27,7 @@ You can download and install a PowerShell package for any of the following platf
 | Ubuntu 16.04                   | [.deb][rl-ubuntu16]    | [Instructions][in-ubuntu16]   |
 | Ubuntu 14.04                   | [.deb][rl-ubuntu14]    | [Instructions][in-ubuntu14]   |
 | CentOS 7                       | [.rpm][rl-centos]      | [Instructions][in-centos]     |
-| Most Linux distributions       | [.AppImage][rl-ai]     | [Instructions][in-appimage]   |
+| Many Linux distributions       | [.AppImage][rl-ai]     | [Instructions][in-appimage]   |
 | OS X 10.11                     | [.pkg][rl-osx]         | [Instructions][in-osx]        |
 | Docker                         |                        | [Instructions][in-docker]     |
 
