@@ -18,6 +18,10 @@ Editing with Visual Studio Code
 
 * **OS X**: follow the installation instructions on the [Running VS Code on OS X](https://code.visualstudio.com/docs/setup/osx) page
 
+  **NOTE:** On OS X you must install OpenSSL for the PowerShell extension to work correctly.  The easiest way to
+            accomplish this is to install [Homebrew](http://brew.sh/) and then run `brew install openssl`.  The PowerShell extension
+            will now be able to load successfully.
+
 * **Windows**: follow the installation instructions on the [Running VS Code on Windows](https://code.visualstudio.com/docs/setup/windows) page
 
 
