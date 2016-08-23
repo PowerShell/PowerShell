@@ -6,5 +6,6 @@ This demo (Azure-Demo.ps1) shows management of Azure Compute resource using Azur
 - Install PowerShell 6.0.0-alpha.9
 - Install AzureRM.NetCore.Preview, AzureRM.Profile.NetCore.Preview and AzureRM.Resources.NetCore.Preview modules to a local directory.
    - The instructions for downloading these modules are in Azure-Demo.ps1 file.
-   - You have to use the command "Install-Package -Name AzureRM.NetCore.Preview -Source https://www.powershellgallery.com/api/v2 -ProviderName NuGet -ExcludeVersion -Destination <Folder you want this to be installed>"
+   - You have to use the command "Install-Package -Name AzureRM.NetCore.Preview -Source https://www.powershellgallery.com/api/v2 -ProviderName NuGet -ExcludeVersion -Destination <Local Directory>"
+
   
