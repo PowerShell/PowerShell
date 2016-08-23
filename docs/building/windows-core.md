@@ -49,12 +49,6 @@ Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/sc
 If you have any problems installing `dotnet`,
 please see their [documentation][cli-docs].
 
-The version of .NET CLI is very important, you want a recent build of
-1.0.0 (**not** 1.0.1).
-
-Previous installations of DNX, `dnvm`, or older installations of .NET
-CLI can cause odd failures when running. Please check your version.
-
 [dotnet-cli]: https://github.com/dotnet/cli#new-to-net-cli
 [cli-docs]: https://dotnet.github.io/getting-started/
 
