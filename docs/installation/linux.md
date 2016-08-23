@@ -63,8 +63,8 @@ sudo yum install powershell-6.0.0_alpha.9-1.el7.centos.x86_64.rpm
 
 [CentOS 7]: https://www.centos.org/download/
 
-AppImage for Linux
-==================
+Linux AppImage
+==============
 
 Using a desktop Linux distribution for the Intel x86_64 architecture that is no older than approximately two years, download the AppImage
 `PowerShell-6.0.0.alpha.9-x86_64.AppImage`
