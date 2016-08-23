@@ -122,7 +122,7 @@
 Describe 'get-help file' -Tags "CI" {
     BeforeAll {
         try {
-            $tmpfile = $env:TEMP + "\scriptHelp$PID.ps1"
+            $tmpfile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), "ps1")
         } catch {
             return
         }
@@ -358,7 +358,7 @@ Describe 'get-help other tests' -Tags "CI" {
         {
             # .EXTERNALHELP scriptHelp1.xml
         }
-        if ($PSUICulture -eq "en-us")
+        if ($PSUICulture -ieq "en-us")
         {
             $x = get-help helpFunc6
             It '$x should not be $null' { $x | Should Not Be $null }        
@@ -369,9 +369,9 @@ Describe 'get-help other tests' -Tags "CI" {
     Context 'get-help helpFunc6 script help xml' {
         function helpFunc6
         {
-            # .EXTERNALHELP newBase\scriptHelp1.xml
+            # .EXTERNALHELP newbase/scriptHelp1.xml
         }
-        if ($PSUICulture -eq "en-us")
+        if ($PSUICulture -ieq "en-us")
         {
             $x = get-help helpFunc6
             It '$x should not be $null' { $x | Should Not Be $null }

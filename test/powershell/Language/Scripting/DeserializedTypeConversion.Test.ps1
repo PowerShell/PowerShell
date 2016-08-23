@@ -159,7 +159,7 @@ public class test4
         test-1 $dst1
     }
 
-    It 'T1 Test remoting scenario.' {
+    It 'T1 Test remoting scenario.'  -skip:$IsCoreCLR {
         $s = New-PSSession
 
         $dsrt1 = Invoke-Command -Session $s -ArgumentList $t1 -ScriptBlock { $tr1 = $args[0]; $tr1 }
@@ -180,7 +180,7 @@ public class test4
         test-2 $dst2
     }
 
-    It 'T2 Test remoting scenario.' {
+    It 'T2 Test remoting scenario.'  -skip:$IsCoreCLR {
         $s = New-PSSession
 
         $dsrt2 = Invoke-Command -Session $s -ArgumentList $t2 -ScriptBlock { $tr2 = $args[0]; $tr2 }
@@ -221,7 +221,7 @@ public class test4
         #Assert ($Error[0].FullyQualifiedErrorId -eq 'ParameterArgumentTransformationError,test-3') "Test3 type should cause an invalid binding exception."
         }
 
-    Context 'T3 Test remoting scenario.' {
+    It 'T3 Test remoting scenario.'  -skip:$IsCoreCLR{
         $s = New-PSSession
         
         $dsrt3 = Invoke-Command -Session $s -ArgumentList $t3 -ScriptBlock { $tr3 = $args[0]; $tr3 }
@@ -232,7 +232,7 @@ public class test4
             $tcr3 = [test3]$dsrt3
         }
         catch {
-            It '$_.FullyQualifiedErrorId' { $_.FullyQualifiedErrorId | Should Be 'InvalidCastConstructorException' }
+            $_.FullyQualifiedErrorId | Should Be 'InvalidCastConstructorException'
         }
         #Assert ($Error[0].FullyQualifiedErrorId -eq "InvalidCastConstructorException") "Test3 type should cause an invalid cast exception."
 
@@ -242,7 +242,7 @@ public class test4
             test-3 $dsrt3
         }
         catch {
-            It '$_.FullyQualifiedErrorId' { $_.FullyQualifiedErrorId | Should Be 'ParameterArgumentTransformationError,test-3' }
+            $_.FullyQualifiedErrorId | Should Be 'ParameterArgumentTransformationError,test-3'
         }
         #Assert ($Error[0].FullyQualifiedErrorId -eq 'ParameterArgumentTransformationError,test-3') "Test3 type should cause an invalid binding exception."       
     }
@@ -259,7 +259,8 @@ public class test4
 
         }
 
-    It 'T4 Test remoting scenario.' {
+    #remote is not supported yet on linux
+    It 'T4 Test remoting scenario.'  -skip:$IsCoreCLR {
         $s = New-PSSession
 
         $dsrt4 = Invoke-Command -Session $s -ArgumentList $t4 -ScriptBlock { $tr4 = $args[0]; $tr4 }

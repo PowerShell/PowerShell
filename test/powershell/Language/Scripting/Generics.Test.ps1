@@ -66,7 +66,7 @@
         }
     }
 
-    It 'Array' {
+    It 'Array' -skip:$IsCoreCLR{
         $x = [system.array]::ConvertAll.OverloadDefinitions
         $x | Should match "static\s+TOutput\[\]\s+ConvertAll\[TInput,\s+TOutput\]\("
    }
