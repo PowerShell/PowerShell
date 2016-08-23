@@ -208,7 +208,7 @@ The following table lists commands that are known not to work in PowerShell on L
 
 Installing Software using PackageManagement and PowerShellGet Modules
 ---------------------------------------
-A bug in handling of System.Management.Automation.SemanticVersion as described in [#1618](https://github.com/PowerShell/PowerShell/issues/1618) prevents installing modules using 
+- (v6.0.0-alpha.9) A bug in handling of System.Management.Automation.SemanticVersion as described in [#1618](https://github.com/PowerShell/PowerShell/issues/1618) prevents installing modules using 
 the Install-Module cmdlet due to the inability to parase the Alpha version string "6.0.0-alpha".
 This similarly affects the Install-Package cmdlet. A fix has been mergeed and will be in a future
 release.
