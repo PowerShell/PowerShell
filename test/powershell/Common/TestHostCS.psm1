@@ -86,7 +86,6 @@ namespace TestHost
     public class Streams
     {
         public ArrayList ConsoleOutput = new ArrayList();
-        public ArrayList Output        = new ArrayList();
         public ArrayList Input         = new ArrayList();
         public ArrayList Error         = new ArrayList();
         public ArrayList Verbose       = new ArrayList();
@@ -95,6 +94,17 @@ namespace TestHost
         public ArrayList Information   = new ArrayList();
         public ArrayList Progress      = new ArrayList();
         public ArrayList Prompt        = new ArrayList();
+        public void Clear() {
+            ConsoleOutput.Clear()
+            Input.Clear()
+            Error.Clear()
+            Verbose.Clear()
+            Debug.Clear()
+            Warning.Clear()
+            Information.Clear()
+            Progress.Clear()
+            Prompt.Clear()
+        }
     }
     public class TestPSHostUserInterface : PSHostUserInterface
     {
@@ -112,7 +122,9 @@ namespace TestHost
 
         public override Dictionary<string, PSObject> Prompt(string caption, string message, Collection<FieldDescription> descriptions)
         {
-            Streams.Prompt.Add(caption + ":" + message);
+            string s = String.Empty;
+            if ( descriptions[0] != null ) { s = descriptions[0].Name; }
+            Streams.Prompt.Add(caption + ":" + message + ":" + s);
             Dictionary<string, PSObject> d = new Dictionary<string, PSObject>();
             d.Add(descriptions[0].ToString(), new PSObject(promptResponse));
             return d;
