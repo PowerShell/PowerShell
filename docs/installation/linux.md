@@ -2,7 +2,7 @@ Package installation instructions
 =================================
 
 Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16],
-[CentOS 7][cos], and [macOS 10.11][osx].
+[CentOS 7][cos], [many Linux distributions (AppImage)][lai], and [macOS 10.11][mac].
 All packages are available on our GitHub [releases][] page.
 
 All of these steps can be done automatically by the [`download.sh`][download] script.
@@ -19,7 +19,8 @@ Once the package is installed, run `powershell` from a terminal.
 [u14]: #ubuntu-1404
 [u16]: #ubuntu-1604
 [cos]: #centos-7
-[osx]: #os-x-1011
+[lai]: #linux-appimage
+[mac]: #macos-1011
 [download]: https://github.com/PowerShell/PowerShell/blob/v6.0.0-alpha.16/tools/download.sh
 
 Ubuntu 14.04
@@ -104,6 +105,31 @@ sudo yum remove powershell
 ```
 
 [CentOS 7]: https://www.centos.org/download/
+
+Linux AppImage
+==============
+
+> Please note that we do not have an alpha.16 AppImage,
+> this is preparation for the next release!
+
+Using a recent Linux distribution,
+download the AppImage `powershell-6.0.0-alpha.16-x86_64.AppImage`
+from the [releases][] page onto the Linux machine.
+
+Then execute the following in the terminal:
+
+```
+chmod a+x powershell-6.0.0-alpha.16-x86_64.AppImage
+./powershell-6.0.0-alpha.16-x86_64.AppImage
+```
+
+The [AppImage][] lets you run PowerShell without installing it.
+It is a portable application that bundles PowerShell and its dependencies
+(including .NET Core's system dependencies) into one cohesive package.
+This package works independently of the user's Linux distribution,
+and is a single binary.
+
+[appimage]: http://appimage.org/
 
 macOS 10.11
 ===========
