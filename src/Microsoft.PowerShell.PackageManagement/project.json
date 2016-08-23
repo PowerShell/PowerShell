@@ -3,8 +3,7 @@
 	"version": "1.0.0-*",
 
 	"buildOptions": {
-		"warningsAsErrors": true,
-        "debugType": "portable"
+		"warningsAsErrors": true
 	},
 
 	"configurations": {
@@ -53,7 +52,8 @@
 		"netstandard1.6": {
       "imports": [ "dnxcore50" ],
 			"buildOptions": {
-				"define": ["CORECLR"]
+				"define": ["CORECLR"],
+        "debugType": "portable"
 			}
 		}
 	}

@@ -9,15 +9,15 @@
         "delaySign": true,
         "publicSign": false,
         "warningsAsErrors": true,
-        "allowUnsafe": true,
-        "debugType": "portable"
+        "allowUnsafe": true
     },
 
     "frameworks": {
         "netstandard1.6": {
             "imports": [ "dnxcore50" ],
             "buildOptions": {
-                "define": [ "CORECLR" ]
+                "define": [ "CORECLR" ],
+                "debugType": "portable"
             },
             "dependencies": {
                 "NETStandard.Library": "1.6.0",

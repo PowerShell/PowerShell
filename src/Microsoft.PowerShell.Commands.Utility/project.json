@@ -9,8 +9,7 @@
         "delaySign": true,
         "publicSign": false,
         "warningsAsErrors": true,
-        "allowUnsafe": true,
-        "debugType": "portable"
+        "allowUnsafe": true
     },
 
     "dependencies": {
@@ -21,6 +20,7 @@
         "netstandard1.6": {
             "buildOptions": {
                 "define": [ "CORECLR" ],
+                "debugType": "portable",
                 "compile": {
                     "exclude": [
                         "commands/utility/FormatAndOutput/OutGridView/ColumnInfo.cs",

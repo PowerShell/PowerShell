@@ -9,8 +9,7 @@
         "delaySign": true,
         "publicSign": false,
         "warningsAsErrors": true,
-        "allowUnsafe": true,
-        "debugType": "portable"
+        "allowUnsafe": true
     },
 
     "configurations": {
@@ -30,6 +29,7 @@
             "imports": [ "dnxcore50" ],
             "buildOptions": {
                 "define": [ "CORECLR" ],
+                "debugType": "portable",
                 "compile": {
                     "exclude": [
                         "security/CertificateCommands.cs",

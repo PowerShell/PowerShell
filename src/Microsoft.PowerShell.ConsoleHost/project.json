@@ -10,8 +10,7 @@
         "delaySign": true,
         "publicSign": false,
         "warningsAsErrors": true,
-        "allowUnsafe": true,
-        "debugType": "portable"
+        "allowUnsafe": true
     },
 
     "configurations": {
@@ -31,6 +30,7 @@
             "imports": [ "dnxcore50", "portable-net45+win8" ],
             "buildOptions": {
                 "define": [ "CORECLR" ],
+                "debugType": "portable",
                 "compile": {
                     "exclude": [
                         "singleshell/installer/EngineInstaller.cs",

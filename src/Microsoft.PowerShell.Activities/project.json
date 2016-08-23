@@ -18,8 +18,7 @@
         },
         "embed": {
             "include": [ "gen/Microsoft.PowerShell.Activities.g.resources" ]
-        },
-        "debugType": "portable"
+        }
     },
 
     "dependencies": {

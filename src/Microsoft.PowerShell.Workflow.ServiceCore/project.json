@@ -9,8 +9,7 @@
         "delaySign": true,
         "publicSign": false,
         "warningsAsErrors": true,
-        "define": [ "_NOTARMBUILD_" ],
-        "debugType": "portable"
+        "define": [ "_NOTARMBUILD_" ]
     },
 
     "dependencies": {

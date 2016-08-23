@@ -3,8 +3,7 @@
 	"version": "1.0.0-*",
 
 	"buildOptions": {
-		"warningsAsErrors": true,
-        "debugType": "portable"
+		"warningsAsErrors": true
 	},
 
 	"configurations": {
@@ -46,7 +45,8 @@
 			"imports": ["dnxcore50"],
 			"buildOptions": {
 				"define": ["CORECLR"]
-			}
+			},
+            "debugType": "portable"
 		}
 	}
 }
