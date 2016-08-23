@@ -73,6 +73,7 @@ nuspec
 hashtables
 nunit
 exe
+AppImage
 init
 labeled
 toolset
