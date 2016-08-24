@@ -6,7 +6,7 @@ Copyright="© Microsoft Corporation. All rights reserved."
 ModuleVersion="3.1.0.0"
 PowerShellVersion="3.0"
 NestedModules="Microsoft.PowerShell.Commands.Management.dll"
-HelpInfoURI = 'http://go.microsoft.com/fwlink/?linkid=390785'
+HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=390785'
 FunctionsToExport = @()
 CmdletsToExport=@("Add-Content",
     "Clear-Content",

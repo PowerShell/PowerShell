@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Cmdlet to create a new module manifest file.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "ModuleManifest", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=141555")]
+    [Cmdlet(VerbsCommon.New, "ModuleManifest", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141555")]
     [OutputType(typeof(string))]
     public sealed class NewModuleManifestCommand : PSCmdlet
     {

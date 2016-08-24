@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Removes an event from the event queue.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "Event", SupportsShouldProcess = true, DefaultParameterSetName = "BySource", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135247")]
+    [Cmdlet(VerbsCommon.Remove, "Event", SupportsShouldProcess = true, DefaultParameterSetName = "BySource", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135247")]
     public class RemoveEventCommand : PSCmdlet
     {
         #region parameters

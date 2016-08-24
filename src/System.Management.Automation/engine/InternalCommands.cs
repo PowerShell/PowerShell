@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet("ForEach", "Object", SupportsShouldProcess = true, DefaultParameterSetName = "ScriptBlockSet",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113300", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113300", RemotingCapability = RemotingCapability.None)]
     public sealed class ForEachObjectCommand : PSCmdlet
     {
         /// <summary>
@@ -765,7 +765,7 @@ namespace Microsoft.PowerShell.Commands
     /// is passed on, otherwise it is dropped.
     /// </summary>
     [Cmdlet("Where", "Object", DefaultParameterSetName = "EqualSet",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113423", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113423", RemotingCapability = RemotingCapability.None)]
     public sealed class WhereObjectCommand : PSCmdlet
     {
         /// <summary>
@@ -1664,7 +1664,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements a cmdlet that sets the script debugging options.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "PSDebug", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113398")]
+    [Cmdlet(VerbsCommon.Set, "PSDebug", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113398")]
     public sealed class SetPSDebugCommand : PSCmdlet
     {
         /// <summary>
@@ -1755,7 +1755,7 @@ namespace Microsoft.PowerShell.Commands
     /// Unlike Set-PSDebug -strict, Set-StrictMode is not engine-wide, and only 
     /// affects the scope it was defined in.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "StrictMode", DefaultParameterSetName = "Version", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113450")]
+    [Cmdlet(VerbsCommon.Set, "StrictMode", DefaultParameterSetName = "Version", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113450")]
     public class SetStrictModeCommand : PSCmdlet
     {
         /// <summary>

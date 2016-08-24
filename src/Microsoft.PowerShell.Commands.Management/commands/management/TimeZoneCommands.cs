@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// A cmdlet to retrieve time zone information.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TimeZone", DefaultParameterSetName = "Name",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=799468")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=799468")]
     [Alias("gtz")]
     public class GetTimeZoneCommand : PSCmdlet
     {
@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.Set, "TimeZone",
         SupportsShouldProcess = true,
         DefaultParameterSetName = "Name",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=799469")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=799469")]
     [Alias("stz")]
     public class SetTimeZoneCommand : PSCmdlet
     {

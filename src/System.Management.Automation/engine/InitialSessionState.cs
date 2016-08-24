@@ -4589,7 +4589,7 @@ $RawUI.SetBufferContents(
     @{Top = -1; Bottom = -1; Right = -1; Left = -1},
     @{Character = ' '; ForegroundColor = $rawui.ForegroundColor; BackgroundColor = $rawui.BackgroundColor})
 # .Link
-# http://go.microsoft.com/fwlink/?LinkID=225747
+# https://go.microsoft.com/fwlink/?LinkID=225747
 # .ExternalHelp System.Management.Automation.dll-help.xml
 ";
             }
@@ -4614,7 +4614,7 @@ $RawUI.SetBufferContents(
 .FORWARDHELPTARGETNAME Get-Help
 .FORWARDHELPCATEGORY Cmdlet 
 #>
-[CmdletBinding(DefaultParameterSetName='AllUsersView', HelpUri='http://go.microsoft.com/fwlink/?LinkID=113316')]
+[CmdletBinding(DefaultParameterSetName='AllUsersView', HelpUri='https://go.microsoft.com/fwlink/?LinkID=113316')]
 param(
     [Parameter(Position=0, ValueFromPipelineByPropertyName=$true)]
     [string]
@@ -4770,7 +4770,7 @@ process {
     }
 }
 # .Link
-# http://go.microsoft.com/fwlink/?LinkID=160712
+# https://go.microsoft.com/fwlink/?LinkID=160712
 # .ExternalHelp System.Management.Automation.dll-help.xml
 ";
         }
@@ -5324,7 +5324,7 @@ end
         internal const string DefaultPromptFunctionText = @"
 ""PS $($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) "";
 # .Link
-# http://go.microsoft.com/fwlink/?LinkID=225750
+# https://go.microsoft.com/fwlink/?LinkID=225750
 # .ExternalHelp System.Management.Automation.dll-help.xml
 ";
 

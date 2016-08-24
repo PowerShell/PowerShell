@@ -10,5 +10,5 @@ AliasesToExport = @()
 CmdletsToExport = @()
 FunctionsToExport = 'Invoke-AsWorkflow'
 NestedModules="PSWorkflowUtility.psm1"
-HelpInfoURI = 'http://go.microsoft.com/fwlink/?linkid=390818'
+HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=390818'
 }

@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
     using Microsoft.PackageManagement.Internal.Utility.Extensions;
     using Microsoft.PackageManagement.Internal.Packaging;
 
-    [Cmdlet("Import", Constants.Nouns.PackageProviderNoun, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=626942")]
+    [Cmdlet("Import", Constants.Nouns.PackageProviderNoun, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=626942")]
     public sealed class ImportPackageProvider : CmdletBase {
 
         protected override IEnumerable<string> ParameterSets {

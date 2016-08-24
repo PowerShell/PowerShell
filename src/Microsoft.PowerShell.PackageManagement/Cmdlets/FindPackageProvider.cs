@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
     using Microsoft.PackageManagement.Packaging;
     using Utility;
 
-    [Cmdlet("Find", Constants.Nouns.PackageProviderNoun, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=626939"), OutputType(new Type[1] {typeof(SoftwareIdentity)})]
+    [Cmdlet("Find", Constants.Nouns.PackageProviderNoun, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=626939"), OutputType(new Type[1] {typeof(SoftwareIdentity)})]
     public sealed class FindPackageProvider : CmdletWithSearchAndSource {
         private const string FilterOnTag = "FilterOnTag";
 

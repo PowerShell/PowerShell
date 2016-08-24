@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to Set WMI Instance
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "WmiInstance", DefaultParameterSetName = "class", SupportsShouldProcess = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113402", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113402", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public sealed class SetWmiInstance : WmiBaseCmdlet
     {
         #region Parameters

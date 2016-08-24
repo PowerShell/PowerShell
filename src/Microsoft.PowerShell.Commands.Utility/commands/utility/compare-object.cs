@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// 
     /// </summary>
-    [Cmdlet(VerbsData.Compare, "Object", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113286",
+    [Cmdlet(VerbsData.Compare, "Object", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113286",
         RemotingCapability = RemotingCapability.None)]
     public sealed class CompareObjectCommand : ObjectCmdletBase
     {

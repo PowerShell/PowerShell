@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// implementation for the format-table command
     /// </summary>
-    [Cmdlet("Format", "Table", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113303")]
+    [Cmdlet("Format", "Table", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113303")]
     public class FormatTableCommand : OuterFormatTableBase
     {
         /// <summary>

@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
 #if !CORECLR
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsLifecycle.Suspend, "Job", SupportsShouldProcess = true, DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=210613")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210613")]
     [OutputType(typeof(Job))]
 #endif
     public class SuspendJobCommand : JobCmdletBase, IDisposable

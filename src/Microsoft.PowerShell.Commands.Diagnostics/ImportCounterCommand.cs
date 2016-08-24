@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
     /// 
     /// Class that implements the Get-Counter cmdlet.
     /// 
-    [Cmdlet("Import", "Counter", DefaultParameterSetName = "GetCounterSet", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=138338")]
+    [Cmdlet("Import", "Counter", DefaultParameterSetName = "GetCounterSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=138338")]
     public sealed class ImportCounterCommand : PSCmdlet
     {
         //

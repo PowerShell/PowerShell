@@ -43,10 +43,10 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
         private string _configurationFileLocation;
         private XDocument _config;
         private string _defaultConfig;
-        private string PowerShellSourceURL = @"http://go.microsoft.com/fwlink/?LinkID=821777&clcid=0x409";
-        private string PowerShellNanoSourceURL = @"http://go.microsoft.com/fwlink/?LinkID=821783&clcid=0x409";
-        private string PowerShellSourceCatalogURL = @"http://go.microsoft.com/fwlink/?LinkID=823093&clcid=0x409";
-        private string PowerShellNanoSourceCatalogURL = @"http://go.microsoft.com/fwlink/?LinkID=823094&clcid=0x409";
+        private string PowerShellSourceURL = @"https://go.microsoft.com/fwlink/?LinkID=821777&clcid=0x409";
+        private string PowerShellNanoSourceURL = @"https://go.microsoft.com/fwlink/?LinkID=821783&clcid=0x409";
+        private string PowerShellSourceCatalogURL = @"https://go.microsoft.com/fwlink/?LinkID=823093&clcid=0x409";
+        private string PowerShellNanoSourceCatalogURL = @"https://go.microsoft.com/fwlink/?LinkID=823094&clcid=0x409";
         private IEnumerable<string> _packageSources;
         private const string _PackageSourceListRequest = "PackageSourceListRequest";
         private HttpClient _httpClient;

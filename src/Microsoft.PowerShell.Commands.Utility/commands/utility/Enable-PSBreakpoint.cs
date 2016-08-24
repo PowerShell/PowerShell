@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Enable-PSBreakpoint 
     /// </summary>
-    [Cmdlet("Enable", "PSBreakpoint", SupportsShouldProcess = true, DefaultParameterSetName = "Id", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113295")]
+    [Cmdlet("Enable", "PSBreakpoint", SupportsShouldProcess = true, DefaultParameterSetName = "Id", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113295")]
     [OutputType(typeof(Breakpoint))]
     public class EnablePSBreakpointCommand : PSBreakpointCommandBase
     {

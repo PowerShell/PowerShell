@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
     /// about a computer.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "ComputerInfo",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=799466")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=799466")]
     [Alias("gin")]
     public class GetComputerInfoCommand : PSCmdlet
     {

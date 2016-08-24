@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command to determine if an item exists at a specified path
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Test, "Path", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113418")]
+    [Cmdlet(VerbsDiagnostic.Test, "Path", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113418")]
     [OutputType(typeof(bool))]
     public class TestPathCommand : CoreCommandWithCredentialsBase
     {

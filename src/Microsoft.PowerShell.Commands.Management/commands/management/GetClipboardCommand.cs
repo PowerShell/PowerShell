@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
     /// Defines the implementation of the 'Get-Clipboard' cmdlet.
     /// This cmdlet get the content from system clipboard. 
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Clipboard", HelpUri = "http://go.microsoft.com/fwlink/?LinkId=526219")]
+    [Cmdlet(VerbsCommon.Get, "Clipboard", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526219")]
     [Alias("gcb")]
     [OutputType(typeof(String), typeof(FileInfo), typeof(Image), typeof(Stream))]
     public class GetClipboardCommand : PSCmdlet

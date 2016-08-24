@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command that rolls back a transaction.
     /// </summary>
-    [Cmdlet(VerbsCommon.Undo, "Transaction", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135268")]
+    [Cmdlet(VerbsCommon.Undo, "Transaction", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135268")]
     public class UndoTransactionCommand : PSCmdlet
     {
         /// <summary>

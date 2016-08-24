@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Write-Debug command
     /// 
     /// </summary>
-    [Cmdlet("Write", "Debug", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113424", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet("Write", "Debug", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113424", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteDebugCommand : PSCmdlet
     {
         /// <summary>
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Write-Verbose command
     /// 
     /// </summary>
-    [Cmdlet("Write", "Verbose", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113429", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet("Write", "Verbose", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113429", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteVerboseCommand : PSCmdlet
     {
         /// <summary>
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Write-Warning command
     /// 
     /// </summary>
-    [Cmdlet("Write", "Warning", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113430", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet("Write", "Warning", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113430", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteWarningCommand : PSCmdlet
     {
         /// <summary>
@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Write-Information command
     /// 
     /// </summary>
-    [Cmdlet("Write", "Information", HelpUri = "http://go.microsoft.com/fwlink/?LinkId=525909", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet("Write", "Information", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=525909", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteInformationCommand : PSCmdlet
     {
         /// <summary>
@@ -396,7 +396,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Write-Error command
     /// </summary>
     [Cmdlet("Write", "Error", DefaultParameterSetName = "NoException",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113425", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113425", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteErrorCommand : WriteOrThrowErrorCommand
     {
         /// <summary>

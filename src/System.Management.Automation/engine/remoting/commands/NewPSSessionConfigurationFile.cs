@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
     /// 
     /// See Declarative Initial Session State (DISC)
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "PSSessionConfigurationFile", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=217036")]
+    [Cmdlet(VerbsCommon.New, "PSSessionConfigurationFile", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217036")]
     public class NewPSSessionConfigurationFileCommand : PSCmdlet
     {
         #region Parameters
@@ -1074,7 +1074,7 @@ namespace Microsoft.PowerShell.Commands
     /// 
     /// Creates a role capability file suitable for use in a Role Capability (which can be referenced in a Session Configuration file)
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "PSRoleCapabilityFile", HelpUri = "http://go.microsoft.com/fwlink/?LinkId=623708")]
+    [Cmdlet(VerbsCommon.New, "PSRoleCapabilityFile", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=623708")]
     public class NewPSRoleCapabilityFileCommand : PSCmdlet
     {
         #region Parameters

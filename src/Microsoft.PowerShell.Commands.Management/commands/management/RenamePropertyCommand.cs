@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to rename a property of an item at a specified path
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "ItemProperty", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113383")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113383")]
     public class RenameItemPropertyCommand : PassThroughItemPropertyCommandBase
     {
         #region Parameters

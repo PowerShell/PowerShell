@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "LocalGroup",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717975")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717975")]
     [Alias("rlg")]
     public class RemoveLocalGroupCommand : Cmdlet
     {

@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the Out-GridView command
     /// </summary>
-    [Cmdlet("Out", "GridView", DefaultParameterSetName = "PassThru", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113364")]
+    [Cmdlet("Out", "GridView", DefaultParameterSetName = "PassThru", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113364")]
     public class OutGridViewCommand : PSCmdlet, IDisposable
     {
         #region Properties

@@ -9,7 +9,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// 
     /// </summary>
-    [Cmdlet("Sort", "Object", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113403", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet("Sort", "Object", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113403", RemotingCapability = RemotingCapability.None)]
     public sealed class SortObjectCommand : OrderObjectBase
     {
         #region Command Line Switches

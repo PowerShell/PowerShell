@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// 
     /// </summary>
 
-    [Cmdlet(VerbsCommon.Get, "Host", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113318", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommon.Get, "Host", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113318", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(System.Management.Automation.Host.PSHost))]
     public
     class GetHostCommand : PSCmdlet

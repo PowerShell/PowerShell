@@ -14,5 +14,5 @@ CmdletsToExport= "Get-CimAssociatedInstance", "Get-CimClass", "Get-CimInstance",
     "Export-BinaryMiLog","Import-BinaryMiLog"
 AliasesToExport = "gcim","scim","ncim", "rcim","icim","gcai","rcie","ncms","rcms","gcms","ncso","gcls"
 FunctionsToExport = @()
-HelpInfoUri="http://go.microsoft.com/fwlink/?linkid=390758"
+HelpInfoUri="https://go.microsoft.com/fwlink/?linkid=390758"
 }

@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
     using Microsoft.PackageManagement.Packaging;
     using Utility;
 
-    [Cmdlet("Install", Constants.Nouns.PackageProviderNoun, SupportsShouldProcess = true, DefaultParameterSetName = Constants.ParameterSets.PackageBySearchSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=626941")]
+    [Cmdlet("Install", Constants.Nouns.PackageProviderNoun, SupportsShouldProcess = true, DefaultParameterSetName = Constants.ParameterSets.PackageBySearchSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=626941")]
     public sealed class InstallPackageProvider : CmdletWithSearchAndSource {
 
         private const string FilterOnTag = "FilterOnTag";

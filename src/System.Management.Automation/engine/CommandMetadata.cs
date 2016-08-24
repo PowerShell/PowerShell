@@ -1204,7 +1204,7 @@ end
             return GetRestrictedCmdlet(
                 "Get-Command",
                 null, // defaultParameterSet 
-                "http://go.microsoft.com/fwlink/?LinkID=113309", // helpUri
+                "https://go.microsoft.com/fwlink/?LinkID=113309", // helpUri
                 nameParameter,
                 moduleParameter,
                 argumentListParameter,
@@ -1223,7 +1223,7 @@ end
             typeNameParameter.Attributes.Add(new ValidateLengthAttribute(0, 1000));
             typeNameParameter.Attributes.Add(new ValidateCountAttribute(0, 1000));
 
-            return GetRestrictedCmdlet("Get-FormatData", null, "http://go.microsoft.com/fwlink/?LinkID=144303", typeNameParameter);
+            return GetRestrictedCmdlet("Get-FormatData", null, "https://go.microsoft.com/fwlink/?LinkID=144303", typeNameParameter);
         }
 
         private static CommandMetadata GetRestrictedGetHelp()
@@ -1242,7 +1242,7 @@ end
             categoryParameter.Attributes.Add(new ValidateSetAttribute(Enum.GetNames(typeof(HelpCategory))));
             categoryParameter.Attributes.Add(new ValidateCountAttribute(0, 1));
 
-            return GetRestrictedCmdlet("Get-Help", null, "http://go.microsoft.com/fwlink/?LinkID=113316", nameParameter, categoryParameter);
+            return GetRestrictedCmdlet("Get-Help", null, "https://go.microsoft.com/fwlink/?LinkID=113316", nameParameter, categoryParameter);
         }
 
         private static CommandMetadata GetRestrictedSelectObject()
@@ -1268,7 +1268,7 @@ end
                     ParameterSetMetadata.ParameterFlags.ValueFromPipeline | ParameterSetMetadata.ParameterFlags.Mandatory,
                     null)); // no help message
 
-            return GetRestrictedCmdlet("Select-Object", null, "http://go.microsoft.com/fwlink/?LinkID=113387", propertyParameter, inputParameter);
+            return GetRestrictedCmdlet("Select-Object", null, "https://go.microsoft.com/fwlink/?LinkID=113387", propertyParameter, inputParameter);
         }
 
         private static CommandMetadata GetRestrictedMeasureObject()
@@ -1285,7 +1285,7 @@ end
                     ParameterSetMetadata.ParameterFlags.ValueFromPipeline | ParameterSetMetadata.ParameterFlags.Mandatory,
                     null)); // no help message
 
-            return GetRestrictedCmdlet("Measure-Object", null, "http://go.microsoft.com/fwlink/?LinkID=113349", inputParameter);
+            return GetRestrictedCmdlet("Measure-Object", null, "https://go.microsoft.com/fwlink/?LinkID=113349", inputParameter);
         }
 
         private static CommandMetadata GetRestrictedOutDefault()
@@ -1301,7 +1301,7 @@ end
                     ParameterSetMetadata.ParameterFlags.ValueFromPipeline | ParameterSetMetadata.ParameterFlags.Mandatory,
                     null)); // no help message
 
-            return GetRestrictedCmdlet("Out-Default", null, "http://go.microsoft.com/fwlink/?LinkID=113362", inputParameter);
+            return GetRestrictedCmdlet("Out-Default", null, "https://go.microsoft.com/fwlink/?LinkID=113362", inputParameter);
         }
 
         private static CommandMetadata GetRestrictedExitPSSession()
@@ -1309,7 +1309,7 @@ end
             // remote Exit-PSSession is not called by PowerShell, but is needed so that users
             // can exit an interactive remoting session
 
-            return GetRestrictedCmdlet("Exit-PSSession", null, "http://go.microsoft.com/fwlink/?LinkID=135210"); // no parameters are used
+            return GetRestrictedCmdlet("Exit-PSSession", null, "https://go.microsoft.com/fwlink/?LinkID=135210"); // no parameters are used
         }
 
         /// <summary>
@@ -1472,7 +1472,7 @@ end
             ParameterMetadata passThruParameter = new ParameterMetadata("PassThru", typeof(SwitchParameter));
             ParameterMetadata anyParameter = new ParameterMetadata("Any", typeof(SwitchParameter));
 
-            CommandMetadata stopJob = GetRestrictedCmdlet("Stop-Job", JobCmdletBase.SessionIdParameterSet, "http://go.microsoft.com/fwlink/?LinkID=113413", nameParameter,
+            CommandMetadata stopJob = GetRestrictedCmdlet("Stop-Job", JobCmdletBase.SessionIdParameterSet, "https://go.microsoft.com/fwlink/?LinkID=113413", nameParameter,
                                                           instanceIdParameter, idParameter,
                                                           stateParameter, filterParameter, jobParameter, passThruParameter);
             restrictedJobCommands.Add(stopJob);
@@ -1481,13 +1481,13 @@ end
             ParameterMetadata timeoutParameter = new ParameterMetadata("Timeout", typeof(int));
             timeoutParameter.Attributes.Add(new ValidateRangeAttribute(-1, Int32.MaxValue));
 
-            CommandMetadata waitJob = GetRestrictedCmdlet("Wait-Job", JobCmdletBase.SessionIdParameterSet, "http://go.microsoft.com/fwlink/?LinkID=113422", nameParameter,
+            CommandMetadata waitJob = GetRestrictedCmdlet("Wait-Job", JobCmdletBase.SessionIdParameterSet, "https://go.microsoft.com/fwlink/?LinkID=113422", nameParameter,
                                                           instanceIdParameter, idParameter,
                                                           jobParameter, stateParameter, filterParameter, anyParameter, timeoutParameter);
             restrictedJobCommands.Add(waitJob);
 
             // Get-Job cmdlet
-            CommandMetadata getJob = GetRestrictedCmdlet("Get-Job", JobCmdletBase.SessionIdParameterSet, "http://go.microsoft.com/fwlink/?LinkID=113328", nameParameter,
+            CommandMetadata getJob = GetRestrictedCmdlet("Get-Job", JobCmdletBase.SessionIdParameterSet, "https://go.microsoft.com/fwlink/?LinkID=113328", nameParameter,
                                                          instanceIdParameter, idParameter,
                                                          stateParameter, filterParameter, commandParameter);
             restrictedJobCommands.Add(getJob);
@@ -1520,7 +1520,7 @@ end
             ParameterMetadata writeJobParameter = new ParameterMetadata("WriteJobInResults", typeof(SwitchParameter));
             ParameterMetadata autoRemoveParameter = new ParameterMetadata("AutoRemoveJob", typeof(SwitchParameter));
 
-            CommandMetadata receiveJob = GetRestrictedCmdlet("Receive-Job", "Location", "http://go.microsoft.com/fwlink/?LinkID=113372", nameParameter,
+            CommandMetadata receiveJob = GetRestrictedCmdlet("Receive-Job", "Location", "https://go.microsoft.com/fwlink/?LinkID=113372", nameParameter,
                                                              instanceIdParameter,
                                                              idParameter, stateParameter, jobParameter2,
                                                              computerNameParameter, locationParameter,
@@ -1531,20 +1531,20 @@ end
             // Remove-Job cmdlet
             ParameterMetadata forceParameter = new ParameterMetadata("Force", typeof(SwitchParameter));
 
-            CommandMetadata removeJob = GetRestrictedCmdlet("Remove-Job", JobCmdletBase.SessionIdParameterSet, "http://go.microsoft.com/fwlink/?LinkID=113377",
+            CommandMetadata removeJob = GetRestrictedCmdlet("Remove-Job", JobCmdletBase.SessionIdParameterSet, "https://go.microsoft.com/fwlink/?LinkID=113377",
                                                             nameParameter, instanceIdParameter,
                                                             idParameter, stateParameter, filterParameter, jobParameter, forceParameter);
 
             restrictedJobCommands.Add(removeJob);
 
             // Suspend-Job cmdlet
-            CommandMetadata suspendJob = GetRestrictedCmdlet("Suspend-Job", JobCmdletBase.SessionIdParameterSet, "http://go.microsoft.com/fwlink/?LinkID=210613",
+            CommandMetadata suspendJob = GetRestrictedCmdlet("Suspend-Job", JobCmdletBase.SessionIdParameterSet, "https://go.microsoft.com/fwlink/?LinkID=210613",
                                                              nameParameter, instanceIdParameter,
                                                              idParameter, stateParameter, filterParameter, jobParameter, passThruParameter);
             restrictedJobCommands.Add(suspendJob);
 
             // Suspend-Job cmdlet
-            CommandMetadata resumeJob = GetRestrictedCmdlet("Resume-Job", JobCmdletBase.SessionIdParameterSet, "http://go.microsoft.com/fwlink/?LinkID=210611",
+            CommandMetadata resumeJob = GetRestrictedCmdlet("Resume-Job", JobCmdletBase.SessionIdParameterSet, "https://go.microsoft.com/fwlink/?LinkID=210611",
                                                              nameParameter, instanceIdParameter,
                                                              idParameter, stateParameter, filterParameter, jobParameter, passThruParameter);
             restrictedJobCommands.Add(resumeJob);

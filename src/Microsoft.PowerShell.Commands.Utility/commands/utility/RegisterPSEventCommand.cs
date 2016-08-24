@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Registers for an event coming from the engine.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Register, "EngineEvent", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135243")]
+    [Cmdlet(VerbsLifecycle.Register, "EngineEvent", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135243")]
     [OutputType(typeof(PSEventJob))]
     public class RegisterEngineEventCommand : ObjectEventRegistrationBase
     {

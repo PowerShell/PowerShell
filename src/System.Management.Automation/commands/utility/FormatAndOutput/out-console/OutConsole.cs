@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// Null sink to absorb pipeline output
     /// </summary>
     [CmdletAttribute("Out", "Null", SupportsShouldProcess = false,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113366", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113366", RemotingCapability = RemotingCapability.None)]
     public class OutNullCommand : PSCmdlet
     {
         /// <summary>
@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
     /// powershell.exe host at the end of the pipeline as the
     /// default sink (display to console screen)
     /// </summary>
-    [Cmdlet("Out", "Default", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113362", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet("Out", "Default", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113362", RemotingCapability = RemotingCapability.None)]
     public class OutDefaultCommand : FrontEndCommandBase
     {
         /// <summary>
@@ -157,7 +157,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// implementation for the out-host command
     /// </summary>
-    [Cmdlet("Out", "Host", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113365", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet("Out", "Host", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113365", RemotingCapability = RemotingCapability.None)]
     public class OutHostCommand : FrontEndCommandBase
     {
         #region Command Line Parameters

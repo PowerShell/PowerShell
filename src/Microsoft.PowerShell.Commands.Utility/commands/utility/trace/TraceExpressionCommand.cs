@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     /// A cmdlet that traces the specified categories and flags for the duration of the 
     /// specified expression.
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Trace, "Command", DefaultParameterSetName = "expressionSet", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113419")]
+    [Cmdlet(VerbsDiagnostic.Trace, "Command", DefaultParameterSetName = "expressionSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113419")]
     public class TraceCommandCommand : TraceListenerCommandBase, IDisposable
     {
         #region Parameters

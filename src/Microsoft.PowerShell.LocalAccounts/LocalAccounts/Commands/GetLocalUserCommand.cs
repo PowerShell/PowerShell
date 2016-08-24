@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "LocalUser",
             DefaultParameterSetName = "Default",
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717980")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717980")]
     [Alias("glu")]
     public class GetLocalUserCommand : Cmdlet
     {

@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements get-member command.  
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "Member", DefaultParameterSetName = "TypeNameSet",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113280", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113280", RemotingCapability = RemotingCapability.None)]
     public class AddMemberCommand : PSCmdlet
     {
         private static object s_notSpecified = new object();

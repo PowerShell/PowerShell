@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// The implementation of the "import-alias" cmdlet
     /// </summary>
     /// 
-    [Cmdlet(VerbsData.Import, "Alias", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113339")]
+    [Cmdlet(VerbsData.Import, "Alias", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113339")]
     [OutputType(typeof(AliasInfo))]
     public class ImportAliasCommand : PSCmdlet
     {

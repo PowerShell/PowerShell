@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// 
     /// See Declarative Initial Session Config (DISC)
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Test, "PSSessionConfigurationFile", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=217039")]
+    [Cmdlet(VerbsDiagnostic.Test, "PSSessionConfigurationFile", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217039")]
     [OutputType(typeof(bool))]
     public class TestPSSessionConfigurationFileCommand : PSCmdlet
     {

@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Gets events from the event queue.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Event", DefaultParameterSetName = "BySource", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113453")]
+    [Cmdlet(VerbsCommon.Get, "Event", DefaultParameterSetName = "BySource", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113453")]
     [OutputType(typeof(PSEventArgs))]
     public class GetEventCommand : PSCmdlet
     {

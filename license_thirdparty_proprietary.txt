@@ -436,7 +436,7 @@ included for your information only.
 2.      DATA.  The software may collect information about you and your use of the software, and send that 
 to Microsoft. Microsoft may use this information to improve our products and services. You can learn 
 more about data collection and use in the help documentation and the privacy statement 
-at  http://go.microsoft.com/fwlink/?LinkId=528096 . Your use of the software operates as your 
+at  https://go.microsoft.com/fwlink/?LinkId=528096 . Your use of the software operates as your 
 consent to these practices. 
 3.      ADDITIONAL LICENSING REQUIREMENTS AND/OR USE RIGHTS. 
 a.      DISTRIBUTABLE CODE.   The software is comprised of Distributable Code. “Distributable 

@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
     using Microsoft.PackageManagement.Internal.Utility.Extensions;
     using Microsoft.PackageManagement.Packaging;
 
-    [Cmdlet(VerbsLifecycle.Install, Constants.Nouns.PackageNoun, SupportsShouldProcess = true, DefaultParameterSetName = Constants.ParameterSets.PackageBySearchSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=517138")]
+    [Cmdlet(VerbsLifecycle.Install, Constants.Nouns.PackageNoun, SupportsShouldProcess = true, DefaultParameterSetName = Constants.ParameterSets.PackageBySearchSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=517138")]
     public sealed class InstallPackage : CmdletWithSearchAndSource {
 
         public InstallPackage()

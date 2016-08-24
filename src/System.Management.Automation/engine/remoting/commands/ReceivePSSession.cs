@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Receive, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = ReceivePSSessionCommand.SessionParameterSet,
-         HelpUri = "http://go.microsoft.com/fwlink/?LinkID=217037", RemotingCapability = RemotingCapability.OwnedByCommand)]
+         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217037", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class ReceivePSSessionCommand : PSRemotingCmdlet
     {
         #region Parameters

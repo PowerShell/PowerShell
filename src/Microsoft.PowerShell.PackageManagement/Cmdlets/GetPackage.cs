@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
     using Microsoft.PackageManagement.Internal.Utility.Extensions;
     using Microsoft.PackageManagement.Packaging;
 
-    [Cmdlet(VerbsCommon.Get, Constants.Nouns.PackageNoun, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=517135")]
+    [Cmdlet(VerbsCommon.Get, Constants.Nouns.PackageNoun, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=517135")]
     public class GetPackage : CmdletWithSearch {
         private readonly Dictionary<string, bool> _namesProcessed = new Dictionary<string, bool>();
         private readonly string _newSoftwareIdentityTypeName = "Microsoft.PackageManagement.Packaging.SoftwareIdentity#GetPackage";

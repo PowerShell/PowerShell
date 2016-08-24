@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsLifecycle.Register, "ScheduledJob", SupportsShouldProcess = true, DefaultParameterSetName = RegisterScheduledJobCommand.ScriptBlockParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223922")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223922")]
     [OutputType(typeof(ScheduledJobDefinition))]
     public sealed class RegisterScheduledJobCommand : ScheduleJobCmdletBase
     {

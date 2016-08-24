@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command that appends the specified content to the item at the specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "Content", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113278")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113278")]
     public class AddContentCommand : WriteContentCommandBase
     {
         #region protected members

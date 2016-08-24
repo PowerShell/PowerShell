@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "LocalGroup",
             DefaultParameterSetName = "Default",
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717974")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717974")]
     [Alias("glg")]
     public class GetLocalGroupCommand : Cmdlet
     {

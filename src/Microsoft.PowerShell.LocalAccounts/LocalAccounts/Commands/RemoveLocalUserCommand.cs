@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "LocalUser",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717982")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717982")]
     [Alias("rlu")]
     public class RemoveLocalUserCommand : Cmdlet
     {

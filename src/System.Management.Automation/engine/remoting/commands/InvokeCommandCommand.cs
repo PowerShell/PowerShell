@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
     /// "Microsoft.PowerShell" is used.
     /// </summary>
     [Cmdlet("Invoke", "Command", DefaultParameterSetName = InvokeCommandCommand.InProcParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135225", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135225", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class InvokeCommandCommand : PSExecutionCmdlet, IDisposable
     {
         #region Parameters

@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command to get the property of an item at a specified path
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ItemProperty", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113320")]
+    [Cmdlet(VerbsCommon.Get, "ItemProperty", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113320")]
     public class GetItemPropertyCommand : ItemPropertyCommandBase
     {
         #region Parameters
@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command to get the property value of an item at a specified path.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ItemPropertyValue", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=389281")]
+    [Cmdlet(VerbsCommon.Get, "ItemPropertyValue", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=389281")]
     public sealed class GetItemPropertyValueCommand : ItemPropertyCommandBase
     {
         #region Parameters

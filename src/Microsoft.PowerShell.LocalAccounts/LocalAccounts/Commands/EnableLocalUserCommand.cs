@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsLifecycle.Enable, "LocalUser",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717985")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717985")]
     [Alias("elu")]
     public class EnableLocalUserCommand : Cmdlet
     {

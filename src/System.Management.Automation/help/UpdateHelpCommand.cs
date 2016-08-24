@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsData.Update, "Help", DefaultParameterSetName = PathParameterSetName,
         SupportsShouldProcess = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=210614")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210614")]
     public sealed class UpdateHelpCommand : UpdatableHelpCommandBase
     {
         #region Constructor

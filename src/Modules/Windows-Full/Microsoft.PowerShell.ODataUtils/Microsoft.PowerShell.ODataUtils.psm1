@@ -28,7 +28,7 @@ function Export-ODataEndpointProxy
     [CmdletBinding(
     DefaultParameterSetName='CDXML',
     SupportsShouldProcess=$true,
-    HelpUri="http://go.microsoft.com/fwlink/?LinkId=510069")]
+    HelpUri="https://go.microsoft.com/fwlink/?LinkId=510069")]
     [OutputType([System.IO.FileInfo])]
     param
     (

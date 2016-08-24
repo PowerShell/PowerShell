@@ -24,7 +24,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         "CimInstance",
         SupportsShouldProcess = true,
         DefaultParameterSetName = CimBaseCommand.CimInstanceComputerSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227962")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227962")]
     public class SetCimInstanceCommand : CimBaseCommand
     {
         #region constructor

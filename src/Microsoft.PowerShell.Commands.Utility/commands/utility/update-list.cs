@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// (multi-valued parameter for a cmdlet), without exposing the list.
     /// </summary>
     [Cmdlet(VerbsData.Update, "List", DefaultParameterSetName = "AddRemoveSet",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113447", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113447", RemotingCapability = RemotingCapability.None)]
     public class UpdateListCommand : PSCmdlet
     {
         /// <summary>

@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// a provider internal path.
     /// </summary>
     [Cmdlet(VerbsData.Convert, "Path", DefaultParameterSetName = "Path", SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113289", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113289", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(string))]
     public class ConvertPathCommand : CoreCommandBase
     {

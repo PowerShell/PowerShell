@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
     /// A cmdlet to load WF Workflows, expressed as XAML and wrap them
     /// in functions.
     /// </summary>
-    [Cmdlet("Import", "PSWorkflow", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=210606")]
+    [Cmdlet("Import", "PSWorkflow", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210606")]
     public class ImportWorkflowCommand : PSCmdlet
     {
         private static readonly PowerShellTraceSource Tracer = PowerShellTraceSourceFactory.GetTraceSource();

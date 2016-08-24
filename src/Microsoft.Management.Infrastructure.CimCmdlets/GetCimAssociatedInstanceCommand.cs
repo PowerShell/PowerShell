@@ -28,7 +28,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     [Cmdlet(VerbsCommon.Get,
         GetCimAssociatedInstanceCommand.Noun,
         DefaultParameterSetName = CimBaseCommand.ComputerSetName,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227958")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227958")]
     [OutputType(typeof(CimInstance))]
     public class GetCimAssociatedInstanceCommand : CimBaseCommand
     {

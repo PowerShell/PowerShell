@@ -11,5 +11,5 @@ AliasesToExport = 'nwsn'
 FunctionsToExport = 'New-PSWorkflowSession'
 NestedModules="Microsoft.PowerShell.Activities","Microsoft.PowerShell.Workflow.ServiceCore","PSWorkflow.psm1"
 TypesToProcess="PSWorkflow.types.ps1xml"
-HelpInfoURI = 'http://go.microsoft.com/fwlink/?linkid=390817'
+HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=390817'
 }

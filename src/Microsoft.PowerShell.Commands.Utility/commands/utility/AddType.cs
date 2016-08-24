@@ -912,7 +912,7 @@ namespace Microsoft.PowerShell.Commands
     /// Adds a new type to the Application Domain. 
     /// This version is based on CodeAnalysis (Roslyn).
     /// </summary>
-    [Cmdlet(VerbsCommon.Add, "Type", DefaultParameterSetName = "FromSource", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135195")]
+    [Cmdlet(VerbsCommon.Add, "Type", DefaultParameterSetName = "FromSource", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135195")]
     [OutputType(typeof(Type))]
     public sealed class AddTypeCommand : AddTypeCommandBase
     {
@@ -1282,7 +1282,7 @@ namespace Microsoft.PowerShell.Commands
     /// Adds a new type to the Application Domain. 
     /// This version is based on CodeDomProvider.
     /// </summary>
-    [Cmdlet(VerbsCommon.Add, "Type", DefaultParameterSetName = "FromSource", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135195")]
+    [Cmdlet(VerbsCommon.Add, "Type", DefaultParameterSetName = "FromSource", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135195")]
     [OutputType(typeof(Type))]
     public sealed class AddTypeCommand : AddTypeCommandBase
     {

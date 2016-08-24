@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
     using Microsoft.PackageManagement.Packaging;
     using Utility;
 
-    [Cmdlet(VerbsCommon.Get, Constants.Nouns.PackageSourceNoun, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=517137")]
+    [Cmdlet(VerbsCommon.Get, Constants.Nouns.PackageSourceNoun, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=517137")]
     public sealed class GetPackageSource : CmdletWithProvider {
         private readonly List<PackageSource> _unregistered = new List<PackageSource>();
         private bool _found;

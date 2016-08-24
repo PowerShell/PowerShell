@@ -401,7 +401,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Command to create an object for WSManConfigurationOption
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "PSTransportOption", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=210608", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommon.New, "PSTransportOption", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210608", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(WSManConfigurationOption))]
     public sealed class NewPSTransportOptionCommand : PSCmdlet
     {

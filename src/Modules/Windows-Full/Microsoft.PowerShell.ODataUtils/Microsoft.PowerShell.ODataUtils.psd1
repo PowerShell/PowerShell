@@ -85,7 +85,7 @@ AliasesToExport = ''
 # PrivateData = ''
 
 # HelpInfo URI of this module
-HelpInfoURI = 'http://go.microsoft.com/fwlink/?LinkId=509916'
+HelpInfoURI = 'https://go.microsoft.com/fwlink/?LinkId=509916'
 
 # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
 # DefaultCommandPrefix = ''

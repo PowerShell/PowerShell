@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
     using File = System.IO.File;
     using Microsoft.PackageManagement.Internal.Utility.Versions;
 
-    [Cmdlet(VerbsData.Save, Constants.Nouns.PackageNoun, SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=517140")]
+    [Cmdlet(VerbsData.Save, Constants.Nouns.PackageNoun, SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=517140")]
     public sealed class SavePackage : CmdletWithSearchAndSource {
         public SavePackage()
             : base(new[] {

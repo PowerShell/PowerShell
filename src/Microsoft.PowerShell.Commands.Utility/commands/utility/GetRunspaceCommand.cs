@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet returns runspaces in the PowerShell session.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Runspace", DefaultParameterSetName = GetRunspaceCommand.NameParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=403730")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=403730")]
     [OutputType(typeof(Runspace))]
     public sealed class GetRunspaceCommand : PSCmdlet
     {

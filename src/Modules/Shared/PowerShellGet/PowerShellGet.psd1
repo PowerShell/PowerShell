@@ -46,5 +46,5 @@ PrivateData = @{
                 "PackageManagementProviders" = 'PSModule.psm1'
                 "SupportedPowerShellGetFormatVersions" = @('1.x')
                }
-HelpInfoURI = 'http://go.microsoft.com/fwlink/?LinkId=393271'
+HelpInfoURI = 'https://go.microsoft.com/fwlink/?LinkId=393271'
 }

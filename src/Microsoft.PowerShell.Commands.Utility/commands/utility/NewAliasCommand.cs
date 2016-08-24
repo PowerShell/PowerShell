@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// The implementation of the "new-alias" cmdlet
     /// </summary>
     /// 
-    [Cmdlet(VerbsCommon.New, "Alias", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113352")]
+    [Cmdlet(VerbsCommon.New, "Alias", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113352")]
     [OutputType(typeof(AliasInfo))]
     public class NewAliasCommand : WriteAliasCommandBase
     {

@@ -121,7 +121,7 @@
     <value>Signature verified.</value>
   </data>
   <data name="MshSignature_NotSigned" xml:space="preserve">
-    <value>The file {0} is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at http://go.microsoft.com/fwlink/?LinkID=135170</value>
+    <value>The file {0} is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170</value>
   </data>
   <data name="MshSignature_HashMismatch" xml:space="preserve">
     <value>The contents of file {0} might have been changed by an unauthorized user or process, because the hash of the file does not match the hash stored in the digital signature. The script cannot run on the specified system. For more information, run Get-Help about_Signing.</value>

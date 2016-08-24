@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     /// 
     /// </summary>
 
-    [Cmdlet(VerbsLifecycle.Start, "Transcript", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113408")]
+    [Cmdlet(VerbsLifecycle.Start, "Transcript", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113408")]
     [OutputType(typeof(String))]
     public sealed class StartTranscriptCommand : PSCmdlet
     {

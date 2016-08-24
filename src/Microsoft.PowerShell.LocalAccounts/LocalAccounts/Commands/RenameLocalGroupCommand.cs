@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "LocalGroup",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717978")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717978")]
     [Alias("rnlg")]
     public class RenameLocalGroupCommand : Cmdlet
     {
