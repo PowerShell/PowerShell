@@ -1,17 +1,22 @@
-Known Issues for PowerShell on Linux
+Known Issues for PowerShell on Non-Windows Platforms
 ====================================
 
-The first Alpha release of PowerShell on Linux is mostly functional but
+The first Alpha release of PowerShell on Linux and macOS is mostly functional but
 does have some significant limitations and usability issues. 
 In some cases, these issues are simply bugs that haven't been fixed yet. 
 In other cases (as with the default aliases for ls, cp, etc.) we are
 looking for feedback from the community regarding the choices we make.
 
+Note: Due to the similarities of many underlying subsystems, PowerShell on Linux
+and macOS tend to share the same level of maturity in both features and bugs.
+Except as noted below, the issues in this section will apply to both operating
+systems.
+
 Case-sensitivity in PowerShell
 -------------------------------
 
-Historically, PowerShell has uniformly been case-insensitive. 
-On UNIX, the file system is case-sensitive and this is exposed through a number
+Historically, PowerShell has been uniformly case-insensitive, with few exceptions. 
+On UNIX-like operating systems, the file system is case-sensitive and this is exposed through a number
 of ways, obvious and non-obvious.
 
 ### Directly:
@@ -45,14 +50,14 @@ preventing the script from working properly when interchanging objects.
 Missing command aliases
 -----------------------
 
-On Linux, the "convenience aliases" for the basic commands `ls`, `cp`,
+On Linux/macOS, the "convenience aliases" for the basic commands `ls`, `cp`,
 `mv`, `rm`, `cat`, `man`, `mount`, `ps` have been removed. 
-On Windows, PowerShell provides a set of aliases that map to UNIX/Linux command
+On Windows, PowerShell provides a set of aliases that map to Linux command
 names for user convenience. 
-These aliases have been removed from the default PowerShell on Linux distribution, 
+These aliases have been removed from the default PowerShell on Linux/macOS distributions, 
 allowing the native executable to be run instead. 
 There are pros and cons to having do this. 
-It exposes the native command experience to the PowerShell on Linux user but reduces
+It exposes the native command experience to the PowerShell user but reduces
 functionality in the shell because the native commands return strings not objects.
 
 > NOTE: This is an area where the PowerShell team is looking for feedback. 
@@ -73,11 +78,11 @@ You can work around this by doing `ls (gci *.txt | % name)` or, more simply,
 .NET Framework vs .NET Core Framework
 -----------------
 
-PowerShell on Linux uses the .NET Core which is a subset of the full
+PowerShell on Linux/macOS uses the .NET Core which is a subset of the full
 .NET Framework on Microsoft Windows. 
 This is significant because PowerShell provides direct access to the underlying framework types,
 methods etc. 
-As a result, scripts that run on Windows may not run on Linux because of the differences in the frameworks. 
+As a result, scripts that run on Windows may not run on non-Windows platforms because of the differences in the frameworks. 
 For more information about .NET Core Framework, see <https://www.dotnetfoundation.org/netcore>
 
 Redirection Issues
@@ -101,21 +106,21 @@ Use `-Encoding ascii` to write ASCII text (which, not being Unicode, will not ha
 Job Control
 -----------
 
-There is no job-control support in PowerShell on Linux. 
+There is no job-control support in PowerShell on Linux/macOS. 
 The `fg` and `bg` commands are not available.
 `Ctrl-Z` sends the `powershell` process to the background.
 
 Remoting Support
 ----------------
 
-Client-side remoting from Linux is not supported with the initial package. 
+Client-side remoting from Linux/macOS is not supported with the initial package. 
 This will be enabled shortly after the Alpha release by installing an additional package.
 
 Just-Enough-Administration (JEA) Support
 ----------------------------------------
 
 The ability to create constrained administration (JEA) remoting
-endpoints is not currently available in PowerShell on Linux. 
+endpoints is not currently available in PowerShell on Linux/macOS. 
 This feature will be enabled shortly after the Alpha release by installing new package.
 
 sudo, exec, and PowerShell
@@ -133,15 +138,15 @@ Instead you would have to do `exec powershell item_to_exec`.
 Missing Cmdlets
 ---------------
 
-A large number of the commands (cmdlets) normally available in PowerShell are not available on Linux. 
-In many cases, these commands make no sense on Linux (e.g. Windows-specific features like the registry). 
-Other commands like the service control commands (get/start/stop-service are present but not functional.) 
+A large number of the commands (cmdlets) normally available in PowerShell are not available on Linux/macOS. 
+In many cases, these commands make no sense on these platforms (e.g. Windows-specific features like the registry). 
+Other commands like the service control commands (get/start/stop-service) are present, but not functional. 
 Future releases will correct these problems, fixing the broken cmdlets and adding new ones over time.
 
 Command Availability
 --------------------
 
-The following table lists commands that are known not to work in PowerShell on Linux.
+The following table lists commands that are known not to work in PowerShell on Linux/macOS.
 
 <table>
 <th>Commands<td><b>Operational State<td><b>Notes</th>
@@ -200,6 +205,13 @@ The following table lists commands that are known not to work in PowerShell on L
 <td>Without the ability to start a background job, the other cmdlets are useless. This will be fixed soon in a future release.
 </tr>
 </table>
+
+Installing Software using PackageManagement and PowerShellGet Modules
+---------------------------------------
+- (v6.0.0-alpha.9) A bug in handling of System.Management.Automation.SemanticVersion as described in [#1618](https://github.com/PowerShell/PowerShell/issues/1618) prevents installing modules using 
+the Install-Module cmdlet due to the inability to parse the Alpha version string "6.0.0-alpha".
+This similarly affects the Install-Package cmdlet. A fix has been merged and will be in a future
+release.
 
 Known Issues for PowerShell on Windows
 ======================================
