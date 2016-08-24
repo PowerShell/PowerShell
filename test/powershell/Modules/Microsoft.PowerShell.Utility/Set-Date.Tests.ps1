@@ -1,7 +1,7 @@
 # first check to see which platform we're on. If we're on windows we should be able
 # to be sure whether we're running elevated. If we're on Linux, we can use whoami to
 # determine whether we're elevated
-Describe "Set-Date" {
+Describe "Set-Date" -Tag "CI" {
     BeforeAll {
         if ( $IsWindows ) {
             $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
