@@ -1,8 +1,11 @@
 #!/bin/bash
 
-# The MIT License (MIT)
+# This code is based on an example recipe from the AppImage project,
+# https://github.com/probonopd/AppImages/blob/master/recipes/powershell/Recipe
 # Copyright (c) 2016 Simon Peter
-
+# The license of this code and of https://github.com/probonopd/AppImages/raw/master/functions.sh
+# is the MIT License, see https://github.com/probonopd/AppImages/blob/master/LICENSE
+#
 # Generate AppImage, http://appimage.org
 #
 # The resulting PowerShell AppImage is known to run on
@@ -111,9 +114,6 @@ exec "${HERE}/usr/bin/powershell.wrapper" "$@"
 EOF
 chmod a+x ./AppRun
 
-# Copy in the indirect dependencies
-# copy_deps # not needed here due to the way we use apt to download everything
-
 move_lib
 mv ./usr/lib/x86_64-linux-gnu/* ./usr/lib/ # AppRun sets Qt env here
 
@@ -125,13 +125,7 @@ delete_blacklisted
 rm -rf ./etc/ ./home/ ./lib/ || true
 rm -r opt/ usr/lib/x86_64-linux-gnu/ usr/lib64 usr/share/
 
-# patch_usr
-# Patching only the executable files seems not to be enough for some apps
-# find usr/ -type f -exec sed -i -e "s|/usr|././|g" {} \;
-
-VER1=$(find ../*.deb -name $LOWERAPP"_*" | head -n 1 | cut -d "~" -f 1 | cut -d "_" -f 2 | cut -d "-" -f 1-2 | sed -e 's|1%3a||g' | sed -e 's|-|.|g' )
-# GLIBC_NEEDED=$(glibc_needed)
-VERSION=$VER1
+VERSION=$(find ../*.deb -name $LOWERAPP"_*" | head -n 1 | cut -d "~" -f 1 | cut -d "_" -f 2 | cut -d "-" -f 1-2 | sed -e 's|1%3a||g' | sed -e 's|-|.|g' )
 echo $VERSION
 
 get_desktopintegration $LOWERAPP
