@@ -33,7 +33,7 @@ Describe "Breakpoints when set should be hit" -tag "CI" {
     }
 }
 
-Describe "It should be possible to reset runspace debugging" {
+Describe "It should be possible to reset runspace debugging" -tag "Feature" {
     BeforeAll {
         import-module $helperModule -force
         $path = setup -pass -f TestScript_2.ps1 -content $script2
