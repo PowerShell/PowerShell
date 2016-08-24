@@ -379,6 +379,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
+    It "Validate Invoke-WebRequest -SkipCertificateCheck" {
+
+        # validate that exception is thrown for URI with expired certificate
+        Invoke-WebRequest -Uri 'https://expired.badssl.com' | Should Throw
+        # validate that no exception is thrown for URI with expired certificate when using -SkipCertificateCheck option
+        Invoke-WebRequest -Uri 'https://expired.badssl.com' -SkipCertificateCheck | Should Not Throw
+    }
+
 }
 
 Describe "Invoke-RestMethod tests" -Tags "Feature" {
@@ -593,4 +601,14 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $jsonContent.headers.Host | Should Match "httpbin.org"
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
+
+    It "Validate Invoke-RestMethod -SkipCertificateCheck" {
+
+        # HTTP method HEAD must be used to not retrieve an unparsable HTTP body
+        # validate that exception is thrown for URI with expired certificate
+        Invoke-RestMethod -Uri 'https://expired.badssl.com' -Method HEAD | Should Throw
+        # validate that no exception is thrown for URI with expired certificate when using -SkipCertificateCheck option
+        Invoke-RestMethod -Uri 'https://expired.badssl.com' -SkipCertificateCheck -Method HEAD | Should Not Throw
+    }
+
 }
