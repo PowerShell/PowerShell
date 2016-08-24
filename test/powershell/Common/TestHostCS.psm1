@@ -95,15 +95,15 @@ namespace TestHost
         public ArrayList Progress      = new ArrayList();
         public ArrayList Prompt        = new ArrayList();
         public void Clear() {
-            ConsoleOutput.Clear()
-            Input.Clear()
-            Error.Clear()
-            Verbose.Clear()
-            Debug.Clear()
-            Warning.Clear()
-            Information.Clear()
-            Progress.Clear()
-            Prompt.Clear()
+            ConsoleOutput.Clear();
+            Input.Clear();
+            Error.Clear();
+            Verbose.Clear();
+            Debug.Clear();
+            Warning.Clear();
+            Information.Clear();
+            Progress.Clear();
+            Prompt.Clear();
         }
     }
     public class TestPSHostUserInterface : PSHostUserInterface
