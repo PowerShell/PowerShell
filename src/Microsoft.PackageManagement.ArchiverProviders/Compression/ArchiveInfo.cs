@@ -352,7 +352,7 @@ namespace Microsoft.PackageManagement.Archivers.Internal.Compression
         /// Extracts multiple files from the archive.
         /// </summary>
         /// <param name="fileNames">A mapping from internal file paths to
-        /// external file paths. Case-senstivity when matching internal paths
+        /// external file paths. Case-sensitivity when matching internal paths
         /// depends on the IDictionary implementation.</param>
         /// <param name="destDirectory">This parameter may be null, but if
         /// specified it is the root directory for any relative external paths
@@ -372,7 +372,7 @@ namespace Microsoft.PackageManagement.Archivers.Internal.Compression
         /// Extracts multiple files from the archive.
         /// </summary>
         /// <param name="fileNames">A mapping from internal file paths to
-        /// external file paths. Case-senstivity when matching internal
+        /// external file paths. Case-sensitivity when matching internal
         /// paths depends on the IDictionary implementation.</param>
         /// <param name="destDirectory">This parameter may be null, but if
         /// specified it is the root directory for any relative external

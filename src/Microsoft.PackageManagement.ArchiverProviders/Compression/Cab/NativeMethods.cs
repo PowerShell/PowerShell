@@ -157,7 +157,7 @@ namespace Microsoft.PackageManagement.Archivers.Internal.Compression.Cab
             internal class Handle : SafeHandle
             {
                 /// <summary>
-                /// Creates a new unintialized handle. The handle will be initialized
+                /// Creates a new uninitialized handle. The handle will be initialized
                 /// when it is marshalled back from native code.
                 /// </summary>
                 internal Handle()
@@ -317,7 +317,7 @@ namespace Microsoft.PackageManagement.Archivers.Internal.Compression.Cab
             internal class Handle : SafeHandle
             {
                 /// <summary>
-                /// Creates a new unintialized handle. The handle will be initialized
+                /// Creates a new uninitialized handle. The handle will be initialized
                 /// when it is marshalled back from native code.
                 /// </summary>
                 internal Handle()

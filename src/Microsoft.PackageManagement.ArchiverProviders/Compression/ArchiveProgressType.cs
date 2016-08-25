@@ -63,7 +63,7 @@ namespace Microsoft.PackageManagement.Archivers.Internal.Compression
         /// <summary>Status message before beginning the packing or unpacking an archive.</summary>
         StartArchive,
 
-        /// <summary>Status message (possibly reported multiple times) during the process of packing or unpacking an archiv.</summary>
+        /// <summary>Status message (possibly reported multiple times) during the process of packing or unpacking an archive.</summary>
         PartialArchive,
 
         /// <summary>Status message after completion of the packing or unpacking of an archive.</summary>

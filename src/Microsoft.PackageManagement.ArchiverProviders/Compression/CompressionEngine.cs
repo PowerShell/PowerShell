@@ -318,7 +318,7 @@ namespace Microsoft.PackageManagement.Archivers.Internal.Compression
             Predicate<string> fileFilter);
 
         /// <summary>
-        /// Called by sublcasses to distribute a packing or unpacking progress
+        /// Called by subclasses to distribute a packing or unpacking progress
         /// event to listeners.
         /// </summary>
         /// <param name="e">Event details.</param>
@@ -343,7 +343,7 @@ namespace Microsoft.PackageManagement.Archivers.Internal.Compression
         }
 
         /// <summary>
-        /// Compresion utility function for converting old-style
+        /// Compression utility function for converting old-style
         /// date and time values to a DateTime structure.
         /// </summary>
         public static void DosDateAndTimeToDateTime(
@@ -363,7 +363,7 @@ namespace Microsoft.PackageManagement.Archivers.Internal.Compression
         }
 
         /// <summary>
-        /// Compresion utility function for converting a DateTime structure
+        /// Compression utility function for converting a DateTime structure
         /// to old-style date and time values.
         /// </summary>
         public static void DateTimeToDosDateAndTime(

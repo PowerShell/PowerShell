@@ -396,7 +396,7 @@ namespace Microsoft.PackageManagement.Archivers.Internal.Compression
         /// <param name="newFileInfo">Fresh instance for the same file just
         /// read from the archive.</param>
         /// <remarks>
-        /// Subclasses may override this method to refresh sublcass fields.
+        /// Subclasses may override this method to refresh subclass fields.
         /// However they should always call the base implementation first.
         /// </remarks>
         protected virtual void Refresh(ArchiveFileInfo newFileInfo)

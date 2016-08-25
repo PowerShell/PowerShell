@@ -10,7 +10,7 @@
 namespace Microsoft.PackageManagement.Archivers.Internal.Compression
 {
     /// <summary>
-    /// Specifies the compression level ranging from minimum compresion to
+    /// Specifies the compression level ranging from minimum compression to
     /// maximum compression, or no compression at all.
     /// </summary>
     /// <remarks>
@@ -25,7 +25,7 @@ namespace Microsoft.PackageManagement.Archivers.Internal.Compression
         /// <summary>Minimum compression; fastest.</summary>
         Min = 1,
 
-        /// <summary>A compromize between speed and compression efficiency.</summary>
+        /// <summary>A compromise between speed and compression efficiency.</summary>
         Normal = 6,
 
         /// <summary>Maximum compression; slowest.</summary>
