@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Workflow
         #region Overrides
 
         /// <summary>
-        /// Whether the operation reprensented by this method is 
+        /// Whether the operation represented by this method is 
         /// completed
         /// </summary>
         public bool IsCompleted

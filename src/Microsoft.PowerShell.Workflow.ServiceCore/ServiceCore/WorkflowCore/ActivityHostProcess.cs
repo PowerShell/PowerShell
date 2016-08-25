@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Workflow
             catch (Exception e)
             {
                 // RemoteRunspace.Close can throw exceptions when Server process has exited or runspace is invalid.
-                // Ignoring all exceptions as this runpspace was used for previous OOP activity execution.
+                // Ignoring all exceptions as this runspace was used for previous OOP activity execution.
                 //
                 _tracer.TraceException(e);
 
@@ -253,7 +253,7 @@ namespace Microsoft.PowerShell.Workflow
             using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
             {
                 ps.Runspace = runspace;
-                // Setting erroaction to stop for import-module since they are required modules. If not present, stop the execution
+                // Setting erroraction to stop for import-module since they are required modules. If not present, stop the execution
                 ps.AddCommand("Import-Module").AddArgument(modules).AddParameter("ErrorAction",ActionPreference.Stop).AddParameter("Force");
                 ps.Invoke();
             }
@@ -339,7 +339,7 @@ namespace Microsoft.PowerShell.Workflow
                 if (_busy) return;
 
                 // Mark this process for removal and set it as busy so that this process will not be assigned to any new activity.
-                // Marking for removal will ensure that servicing thread will remove this object from host processs collection.
+                // Marking for removal will ensure that servicing thread will remove this object from host process collection.
                 //
                 _busy = true;
                 _markForRemoval = true;
@@ -448,7 +448,7 @@ namespace Microsoft.PowerShell.Workflow
                 }
 
                 // Prepare phase is completed without any issues. 
-                // setupSucceeded flag is used in HandleTranportError method to enqueue the current activity for retry. 
+                // setupSucceeded flag is used in HandleTransportError method to enqueue the current activity for retry. 
                 // If there is any PSRemotingTransportException during InvokePowershell current activity will not be enqueued to setup failed requests in ActivityHostManager.
                 //
                 setupSucceeded = true;
@@ -522,7 +522,7 @@ namespace Microsoft.PowerShell.Workflow
         #region IDisposable
 
         /// <summary>
-        /// Dipose 
+        /// Dispose 
         /// </summary>
         public void Dispose()
         {

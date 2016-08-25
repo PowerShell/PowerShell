@@ -636,7 +636,7 @@ namespace Microsoft.PowerShell.Commands
         }
         
         /// <summary>
-        /// UseEnctyption
+        /// UseEncryption
         /// </summary>
         [Parameter]
         public SwitchParameter PersistWithEncryption {

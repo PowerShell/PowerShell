@@ -320,7 +320,7 @@ namespace Microsoft.PowerShell.Activities
         }
 
         /// <summary>
-        /// Dipose of managed resources
+        /// Dispose of managed resources
         /// </summary>
         /// <param name="disposing">true if disposing</param>
         private void Dispose(bool disposing)
@@ -1199,7 +1199,7 @@ namespace Microsoft.PowerShell.Activities
             }
 
             // bookmarking will only be enabled when the PSPersist variable is set to 'true' by the author.
-            // so we are retriveing the information before host overrides.
+            // so we are retrieving the information before host overrides.
             // if the value is false or not provided then we will not go into the unloaded mode.
 
             bool intBookmarking = InternalBookmarkingRequired(context);
@@ -1812,7 +1812,7 @@ namespace Microsoft.PowerShell.Activities
             {
                 activityProgMsg = this.PSProgressMessage.Get(context);
 
-                // there is no need to write the progress message since the value of psprogressmessage is explicityly provided with null
+                // there is no need to write the progress message since the value of psprogressmessage is explicitly provided with null
                 if (this.PSProgressMessage.Expression != null && string.IsNullOrEmpty(activityProgMsg))
                     return;
             }
@@ -1948,7 +1948,7 @@ namespace Microsoft.PowerShell.Activities
 
             // this is expected when there would be a disconnected execution
             // here we expects the PSActivityHostArguments to be passed
-            // agrument contains the result from the execution
+            // argument contains the result from the execution
             PSResumableActivityContext arguments = null;
             if (value != null && value.GetType() == typeof(PSResumableActivityContext))
             {
@@ -2129,7 +2129,7 @@ namespace Microsoft.PowerShell.Activities
         }
 
         /// <summary>
-        /// The method is override-able by the drived classes in case they would like to implement different logic at the end of persistence.
+        /// The method is override-able by the derived classes in case they would like to implement different logic at the end of persistence.
         /// The default behavior would be to schedule the 'Persist' activity if the PSPersist flag is true or Host is asking for it.
         /// </summary>
         /// <param name="context">The native activity context of execution engine.</param>
@@ -2613,11 +2613,11 @@ namespace Microsoft.PowerShell.Activities
         /// <summary>
         /// The method for derived activities to return a configured instance of System.Management.Automation.PowerShell.
         /// The implementor should have added all of the commands and parameters required to launch their command through
-        /// the standard AddCommand() and AddParameter() methods. Derived activites should not manage the Runspace property
+        /// the standard AddCommand() and AddParameter() methods. Derived activities should not manage the Runspace property
         /// directly, as the PSActivity class configures the runspace afterward to enable remote connections.
         /// </summary>
         /// <param name="context">The NativeActivityContext for the currently running activity.</param>
-        /// <returns>A populated instance of Sytem.Management.Automation.PowerShell</returns>
+        /// <returns>A populated instance of System.Management.Automation.PowerShell</returns>
         /// <remarks>The infrastructure takes responsibility for closing and disposing the PowerShell instance returned.</remarks>
         protected abstract ActivityImplementationContext GetPowerShell(NativeActivityContext context);
 
@@ -2646,7 +2646,7 @@ namespace Microsoft.PowerShell.Activities
         }
 
         /// <summary>
-        /// Retrievs all of the default arguments from the type and its parents.
+        /// Retrieve all of the default arguments from the type and its parents.
         /// </summary>
         /// <returns>All of the default arguments from the type and its parents</returns>
         protected IEnumerable<PSActivityArgumentInfo> GetActivityArguments()
@@ -2727,7 +2727,7 @@ namespace Microsoft.PowerShell.Activities
         /// <param name="implementationContext">The activity context to use</param>
         /// <param name="psActivityContext">The powershell activity context.</param>
         /// <param name="ActivityType">The activity type.</param>
-        /// <param name="PrepareSession">The prepare session delgate.</param>
+        /// <param name="PrepareSession">The prepare session delegate.</param>
         /// <param name="activityObject">This object representing activity.</param>
         private static void UpdatePowerShell(ActivityImplementationContext implementationContext, PSActivityContext psActivityContext, Type ActivityType, PrepareSessionDelegate PrepareSession, object activityObject)
         {
@@ -3421,7 +3421,7 @@ namespace Microsoft.PowerShell.Activities
                 commandToRun.Runspace.StateChanged += psActivityContext.HandleRunspaceStateChanged;
 
                 // Invocation state can be in running or final state in reconnect scenario
-                // Command should be invoked only when invocation state is not strted,
+                // Command should be invoked only when invocation state is not started,
                 // during the normal scenario, invocation state is always NotStarted as runspace is just assigned
                 if (commandToRun.InvocationStateInfo.State == PSInvocationState.NotStarted)
                 {
@@ -4101,13 +4101,13 @@ namespace Microsoft.PowerShell.Activities
             {
                 Dbg.Assert(activityEnvironment.Modules.Count > 0,
                            "When PSActivityEnvironment is specified and modules are imported, PSActivityEnvironment.Modules need to be populated");
-                // Setting erroaction to stop for import-module since they are required modules. If not present, stop the execution
+                // Setting erroraction to stop for import-module since they are required modules. If not present, stop the execution
                 ps.AddCommand("Import-Module").AddParameter("Name", activityEnvironment.Modules).AddParameter(
                     "ErrorAction", ActionPreference.Stop);
             }
             else
             {
-                // Setting erroaction to stop for import-module since they are required modules. If not present, stop the execution
+                // Setting erroraction to stop for import-module since they are required modules. If not present, stop the execution
                 ps.AddCommand("Import-Module").AddParameter("Name", args.ActivityParameters.PSRequiredModules).AddParameter(
                     "ErrorAction", ActionPreference.Stop);
             }
@@ -5773,7 +5773,7 @@ namespace Microsoft.PowerShell.Activities
         }
 
         /// <summary>
-        /// The paththat the workflow was imported from.
+        /// The path that the workflow was imported from.
         /// </summary>
         public string PSWorkflowPath
         {
@@ -5933,14 +5933,14 @@ namespace Microsoft.PowerShell.Activities
         /// <summary>
         /// Get all additional extensions.
         /// </summary>
-        /// <returns>Retruns no extensions.</returns>
+        /// <returns>Returns no extensions.</returns>
         public IEnumerable<object> GetAdditionalExtensions()
         {
             return null;
         }
 
         /// <summary>
-        /// Set the instance of the worfkow.
+        /// Set the instance of the workflow.
         /// </summary>
         /// <param name="instance">The workflow instance proxy.</param>
         public void SetInstance(WorkflowInstanceProxy instance)
@@ -5954,7 +5954,7 @@ namespace Microsoft.PowerShell.Activities
         /// <param name="bookmark">The bookmark where it will be resumed.</param>
         /// <param name="value">The value which need to be passed to the bookmark.</param>
         /// <param name="callback">The call back function when resuming the bookmark.</param>
-        /// <param name="state">The state of the aysn call.</param>
+        /// <param name="state">The state of the async call.</param>
         /// <returns>Returns the result of async call.</returns>
         public IAsyncResult BeginResumeBookmark(Bookmark bookmark, object value, AsyncCallback callback, object state)
         {
@@ -5964,7 +5964,7 @@ namespace Microsoft.PowerShell.Activities
         /// <summary>
         /// End resuming bookmark.
         /// </summary>
-        /// <param name="asyncResult">The result of asyc all.</param>
+        /// <param name="asyncResult">The result of async all.</param>
         /// <returns>Returns the bookmark resumption result.</returns>
         public BookmarkResumptionResult EndResumeBookmark(IAsyncResult asyncResult)
         {
@@ -5989,7 +5989,7 @@ namespace Microsoft.PowerShell.Activities
     }
 
     /// <summary>
-    /// Abstract base contining the common members and invocation code for the WMI cmdlets.
+    /// Abstract base containing the common members and invocation code for the WMI cmdlets.
     /// </summary>
     public abstract class WmiActivity : PSActivity
     {
@@ -6083,7 +6083,7 @@ namespace Microsoft.PowerShell.Activities
         /// <summary>
         /// Generic version of the function to handle value types
         /// </summary>
-        /// <typeparam name="T">THe type of the intende argument</typeparam>
+        /// <typeparam name="T">The type of the intended argument</typeparam>
         /// <param name="parameterName"></param>
         /// <param name="parameterDefaults"></param>
         /// <returns></returns>
@@ -6199,7 +6199,7 @@ namespace Microsoft.PowerShell.Activities
                 ActivityImplementationContext implementationContext = GetPowerShell(context);
                 System.Management.Automation.PowerShell invoker = implementationContext.PowerShellInstance;
 
-                // Don't add the conputer if it's empty or localhost...
+                // Don't add the computer if it's empty or localhost...
                 if (!String.IsNullOrEmpty(computername) && !String.Equals(computername, "localhost", StringComparison.OrdinalIgnoreCase))
                 {
                     invoker.AddParameter("ComputerName", computername);
@@ -6293,7 +6293,7 @@ namespace Microsoft.PowerShell.Activities
 
         /// <summary>
         /// Default implementation of WriteError - if the error record contains
-        /// an exceptin then that exception will be thrown. If not, then an
+        /// an exception then that exception will be thrown. If not, then an
         /// InvalidOperationException will be constructed and thrown.
         /// </summary>
         /// <param name="errorRecord">Error record instance to process</param>

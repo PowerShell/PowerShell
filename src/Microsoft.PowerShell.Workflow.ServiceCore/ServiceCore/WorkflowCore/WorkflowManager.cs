@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Workflow
 
 
         /// <summary>
-        /// Disope implementation.
+        /// Dispose implementation.
         /// </summary>
         public void Dispose()
         {
@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// Disope implementation.
+        /// Dispose implementation.
         /// </summary>
         /// <param name="disposing"></param>
         private void Dispose(bool disposing)
@@ -310,7 +310,7 @@ namespace Microsoft.PowerShell.Workflow
             {
                 lock (_syncObject)
                 {
-                    // Start the shudown timer when there is no inprogess job, no pending job requests and no active sessions
+                    // Start the shutdown timer when there is no inprogress job, no pending job requests and no active sessions
                     // Otherwise disable it
                     if (_activeSessionsCount == 0 && _inProgressCount == 0 && _pendingQueue.Count == 0)
                     {
@@ -395,7 +395,7 @@ namespace Microsoft.PowerShell.Workflow
 
                     if (_shutdownTimer != null)
                     {
-                        // Start the shudown timer when there is no inprogess job, no pending job requests and no active sessions
+                        // Start the shutdown timer when there is no inprogress job, no pending job requests and no active sessions
                         // Otherwise disable it
                         if (_activeSessionsCount == 0 && _inProgressCount == 0 && _pendingQueue.Count == 0)
                         {
@@ -1118,7 +1118,7 @@ namespace Microsoft.PowerShell.Workflow
 
                     if ((filter.Value is string || filter.Value is WildcardPattern) && value is string)
                     {
-                        // at this point we are guaranteed that the key exists somewehere                    
+                        // at this point we are guaranteed that the key exists somewhere                    
                         WildcardPattern pattern;
                         string stringValue = filter.Value as string;
                         if (stringValue != null)

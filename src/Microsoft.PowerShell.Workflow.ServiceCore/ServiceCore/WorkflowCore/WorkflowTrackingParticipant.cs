@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// Retreive each type of tracking record and perform the corresponding fucntionality.
+        /// Retrieve each type of tracking record and perform the corresponding functionality.
         /// </summary>
         /// <param name="record">Represents the tracking record.</param>
         /// <param name="timeout">Time out for the tracking to be completed.</param>

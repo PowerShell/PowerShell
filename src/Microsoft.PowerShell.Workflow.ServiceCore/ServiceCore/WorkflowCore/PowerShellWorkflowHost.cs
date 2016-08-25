@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// Disope implementation.
+        /// Dispose implementation.
         /// </summary>
         public void Dispose()
         {
@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// Disope implementation.
+        /// Dispose implementation.
         /// </summary>
         /// <param name="disposing"></param>
         private void Dispose(bool disposing)

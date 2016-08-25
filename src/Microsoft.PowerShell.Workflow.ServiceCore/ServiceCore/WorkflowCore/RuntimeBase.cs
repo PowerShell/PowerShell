@@ -359,7 +359,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// Synchonization object available to derived classes.
+        /// Synchronization object available to derived classes.
         /// </summary>
         protected object SyncLock
         {

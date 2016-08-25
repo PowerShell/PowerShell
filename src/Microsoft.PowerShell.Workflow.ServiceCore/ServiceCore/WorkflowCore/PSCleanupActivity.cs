@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Activities
         }
 
         /// <summary>
-        /// Method that needs to be overrided to perform the actual
+        /// Method that needs to be overridden to perform the actual
         /// cleanup action
         /// </summary>
         /// <param name="args">RunCommandsArguments</param>
@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Activities
         }
 
         /// <summary>
-        /// Method that needs to be overrided to perform the actual
+        /// Method that needs to be overridden to perform the actual
         /// cleanup action
         /// </summary>
         /// <param name="args">RunCommandsArguments</param>
