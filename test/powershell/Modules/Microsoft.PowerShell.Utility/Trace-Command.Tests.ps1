@@ -1,7 +1,7 @@
 # This came from monad/tests/ci/PowerShell/tests/Commands/Cmdlets/pester.utility.command.tests.ps1
 Describe "Trace-Command" -tags "CI" {
     
-    Context "Listner options" {
+    Context "Listener options" {
         BeforeAll {
             $logFile = New-Item "TestDrive:/traceCommandLog.txt" -Force
             $actualLogFile = New-Item "TestDrive:/actualTraceCommandLog.txt" -Force

@@ -464,7 +464,7 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
         '' | Should Be "Exception expected"
     }
     
-    It 'allow use convertion [string -> int] in base ctor call' {
+    It 'allow use conversion [string -> int] in base ctor call' {
         class A { 
             [int]$a 
             A([int]$a) 

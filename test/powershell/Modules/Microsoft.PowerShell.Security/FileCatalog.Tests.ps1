@@ -126,7 +126,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             CompareHashTables $result.CatalogItems $expectedPathsAndHashes   
         }
 
-        It "NewFileCatalogWithMutipleFoldersAndFiles" -Skip:$true {
+        It "NewFileCatalogWithMultipleFoldersAndFiles" -Skip:$true {
          
             $expectedPathsAndHashes = @{
                 "UserConfigProv.psd1" = "748E5486814051DA3DFB79FE8964152727213248" ;
@@ -141,7 +141,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
                 "CatalogTestFile1.mof" = "083B0953D0D70FFF62710F0356FEB86BCE327FE7";
                 "CatalogTestFile2.xml" = "E73BB7A0DD9FAC6A8182F67B750D9CA3094490F1" }
             
-            $catalogPath = "$env:TEMP\NewFileCatalogWithMutipleFoldersAndFiles.cat"             
+            $catalogPath = "$env:TEMP\NewFileCatalogWithMultipleFoldersAndFiles.cat"             
             $catalogDataPath = @("$testDataPath\UserConfigProv\","$testDataPath\CatalogTestFile1.mof","$testDataPath\CatalogTestFile2.xml")
          
             try
@@ -164,7 +164,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             CompareHashTables $result.CatalogItems $expectedPathsAndHashes
         }
 
-        It "NewFileCatalogVersion2WithMutipleFoldersAndFiles" -Skip:$true {
+        It "NewFileCatalogVersion2WithMultipleFoldersAndFiles" -Skip:$true {
 
             $expectedPathsAndHashes = @{
                 "UserConfigProv.psd1" = "9FFE4CA2873CD91CDC9D71362526446ECACDA64D26DEA768E6CE489B84D888E4" ;
@@ -181,7 +181,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
                 "TestImage.gif" = "2D938D255D0D6D547747BD21447CF7295318D34D9B4105D04C1C27487D2FF402" }                 
 
             
-            $catalogPath = "$env:TEMP\NewFileCatalogVersion2WithMutipleFoldersAndFiles.cat"             
+            $catalogPath = "$env:TEMP\NewFileCatalogVersion2WithMultipleFoldersAndFiles.cat"             
             $catalogDataPath = @("$testDataPath\UserConfigProv\","$testDataPath\CatalogTestFile1.mof","$testDataPath\CatalogTestFile2.xml", "$testDataPath\TestImage.gif")            
 
             try
@@ -203,9 +203,9 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             CompareHashTables $result.CatalogItems $expectedPathsAndHashes
         }
 
-        It "NewFileCatalogFolderWhenCatlogFileIsCreatedInsideSameFolder" {
+        It "NewFileCatalogFolderWhenCatalogFileIsCreatedInsideSameFolder" {
             
-            $catalogPath = "$env:TEMP\UserConfigProv\NewFileCatalogFolderWhenCatlogFileIsCreatedInsideSameFolder.cat"
+            $catalogPath = "$env:TEMP\UserConfigProv\NewFileCatalogFolderWhenCatalogFileIsCreatedInsideSameFolder.cat"
             try
             {
                 copy-item "$testDataPath\UserConfigProv" $env:temp -Recurse -ErrorAction SilentlyContinue             
@@ -368,9 +368,9 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             $result | Should Be "Valid"
         }
 
-        It "TestCatalogSkipMuitplePattensDuringValidation" {
+        It "TestCatalogSkipMultiplePattensDuringValidation" {
             
-            $script:catalogPath = "$env:TEMP\TestCatalogSkipMuitplePattensDuringValidation.cat"
+            $script:catalogPath = "$env:TEMP\TestCatalogSkipMultiplePattensDuringValidation.cat"
             $null = New-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -CatalogVersion 1.0 
             $result = Test-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -FilesToSkip "*.psd1","UserConfigProviderModVersion2.psm1","*ModVersion1.schema.mof"
             $result | Should Be "Valid"

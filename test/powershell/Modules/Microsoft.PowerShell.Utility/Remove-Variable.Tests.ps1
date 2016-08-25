@@ -25,7 +25,7 @@ Describe "Remove-Variable" -Tags "CI" {
     }
 
     It "Should throw error when used with Name field, and named variable does not exist" {
-	Remove-Variable -Name nonexistantVariable -ErrorAction SilentlyContinue | Should Throw
+	Remove-Variable -Name nonexistentVariable -ErrorAction SilentlyContinue | Should Throw
     }
 
     It "Should be able to remove a variable using the rv alias" {

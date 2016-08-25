@@ -8,8 +8,8 @@ Describe "Test-Path" -Tags "CI" {
 	New-Item -Path $testdirectory -Name gatestfile -value 1 -ItemType file | Out-Null
 	New-Item -Path $testdirectory -Name usr -value 1 -ItemType directory | Out-Null
 
-	$nonExistantDir = Join-Path -Path (Join-Path -Path $testdirectory -ChildPath usr) -ChildPath bin
-	$nonExistantPath = Join-Path -Path (Join-Path -Path (Join-Path -Path $testdirectory -ChildPath usr) -ChildPath bin) -ChildPath error
+	$nonExistentDir = Join-Path -Path (Join-Path -Path $testdirectory -ChildPath usr) -ChildPath bin
+	$nonExistentPath = Join-Path -Path (Join-Path -Path (Join-Path -Path $testdirectory -ChildPath usr) -ChildPath bin) -ChildPath error
     }
 
     It "Should be called on an existing path without error" {
@@ -22,15 +22,15 @@ Describe "Test-Path" -Tags "CI" {
 	{ $testdirectory | Test-Path  } | Should Not Throw
 
 	$testdirectory                  | Test-Path | Should Be $true
-	$nonExistantDir                 | Test-Path | Should Be $false
+	$nonExistentDir                 | Test-Path | Should Be $false
     }
 
-    It "Should be called on a nonexistant path without error" {
-	{ Test-Path -Path $nonExistantPath } | Should Not Throw
+    It "Should be called on a nonexistent path without error" {
+	{ Test-Path -Path $nonExistentPath } | Should Not Throw
     }
 
-    It "Should return false for a nonexistant path" {
-	Test-Path -Path $nonExistantPath | Should Be $false
+    It "Should return false for a nonexistent path" {
+	Test-Path -Path $nonExistentPath | Should Be $false
     }
 
     It "Should return true for an existing path" {
@@ -58,7 +58,7 @@ Describe "Test-Path" -Tags "CI" {
 	Test-Path -Path $testfilename -PathType Leaf | Should Be $true
     }
 
-    It "Should return false when the Leaf pathtype is used on a nonexistant file" {
+    It "Should return false when the Leaf pathtype is used on a nonexistent file" {
 	Test-Path -Path "aoeu" -PathType Leaf | Should Be $false
     }
 
@@ -80,7 +80,7 @@ Describe "Test-Path" -Tags "CI" {
     }
 
     It "Should return true if the syntax of the path is correct when using the IsValid switch" {
-	{ Test-Path -Path $nonExistantPath -IsValid } | Should Be $true
+	{ Test-Path -Path $nonExistentPath -IsValid } | Should Be $true
     }
 
     It "Should return false if the syntax of the path is incorrect when using the IsValid switch" {

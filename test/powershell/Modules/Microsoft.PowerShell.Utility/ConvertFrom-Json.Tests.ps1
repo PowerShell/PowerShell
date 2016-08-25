@@ -9,7 +9,7 @@ Describe 'ConvertFrom-Json' -tags "CI" {
         $json[1].a | Should Be 'x'
     }
 
-    It 'can convert mutli-line object' {
+    It 'can convert multi-line object' {
         $json = @('{"a" :', '"x"}') | ConvertFrom-Json
         $json.a | Should Be 'x'
     }

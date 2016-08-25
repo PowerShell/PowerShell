@@ -87,7 +87,7 @@
             $ps.Streams.Information).Count
         $ps.Dispose()
         
-        ## Twice per stream - once for the original invocatgion, and once for the re-invocation
+        ## Twice per stream - once for the original invocation, and once for the re-invocation
         $outputCount | Should be 12
     }   
 

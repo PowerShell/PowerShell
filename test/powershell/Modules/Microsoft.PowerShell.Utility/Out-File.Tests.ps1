@@ -1,5 +1,5 @@
 Describe "Out-File DRT Unit Tests" -Tags "CI" {
-    It "Should be able to write the contens into a file with -pspath" {
+    It "Should be able to write the contents into a file with -pspath" {
         $tempFile = Join-Path -Path $TestDrive -ChildPath "ExposeBug928965"
         { 1 | Out-File -PSPath $tempFile } | Should Not Throw
         $fileContents = Get-Content $tempFile
@@ -7,7 +7,7 @@ Describe "Out-File DRT Unit Tests" -Tags "CI" {
         Remove-Item $tempFile -Force
     }
 
-    It "Should be able to write the contens into a file with -pspath" {
+    It "Should be able to write the contents into a file with -pspath" {
         $tempFile = Join-Path -Path $TestDrive -ChildPath "outfileAppendTest.txt"
         { 'This is first line.' | out-file $tempFile } | Should Not Throw
         { 'This is second line.' | out-file -append $tempFile } | Should Not Throw
@@ -38,7 +38,7 @@ Describe "Out-File" -Tags "CI" {
 	$actual | Should Be $expectedContent
     }
 
-    It "Should be able to accept string input via the InputObject swictch" {
+    It "Should be able to accept string input via the InputObject switch" {
 	{ Out-File -FilePath $testfile -InputObject $expectedContent } | Should Not Throw
 
 	$actual = Get-Content $testfile

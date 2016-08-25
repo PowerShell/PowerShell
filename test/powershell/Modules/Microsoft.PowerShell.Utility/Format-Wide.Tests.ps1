@@ -81,7 +81,7 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
 	}
 	
    It "Format-Wide with complex object for End-To-End should work" {
-		Add-Type -TypeDefinition "public enum MyDayOfWeek{Sun,Mon,Tue,Wed,Thr,Fri,Sat}"
+		Add-Type -TypeDefinition "public enum MyDayOfWeek{Sun,Mon,Tue,Wed,Thu,Fri,Sat}"
 		$eto = New-Object MyDayOfWeek
 		$info = @{}
 		$info.intArray = 1,2,3,4

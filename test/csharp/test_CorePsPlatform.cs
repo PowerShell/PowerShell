@@ -201,7 +201,7 @@ namespace PSTests
         }
 
         [Fact]
-        public static void TestNonExistantIsHardLink()
+        public static void TestNonExistentIsHardLink()
         {
             // A file that should *never* exist on a test machine:
             string path = @"/tmp/ThisFileShouldNotExistOnTestMachines";

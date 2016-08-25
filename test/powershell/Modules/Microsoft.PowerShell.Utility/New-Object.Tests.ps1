@@ -112,7 +112,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
 		}
 	}
 	
-	It "New-Object with bad argument for class construtor should throw Exception"{
+	It "New-Object with bad argument for class constructor should throw Exception"{
 		if(-not ([System.Management.Automation.PSTypeName]'Employee').Type)
 		{
 			Add-Type -TypeDefinition "public class Employee{public Employee(string firstName,string lastName,int yearsInMS){FirstName = firstName;LastName=lastName;YearsInMS = yearsInMS;}public string FirstName;public string LastName;public int YearsInMS;}"
@@ -130,7 +130,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
 	}
 	
 	#This case will throw "Execution OK" now, just mark as pending now
-	It "New-Object with not init class construtor should throw Exception" -Pending{
+	It "New-Object with not init class constructor should throw Exception" -Pending{
 		if(-not ([System.Management.Automation.PSTypeName]'Employee').Type)
 		{
 			Add-Type -TypeDefinition "public class Employee{public Employee(string firstName,string lastName,int yearsInMS){FirstName = firstName;LastName=lastName;YearsInMS = yearsInMS;}public string FirstName;public string LastName;public int YearsInMS;}"

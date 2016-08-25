@@ -191,7 +191,7 @@ Describe "Test class based extensible completion" -Tags "CI" {
     } | Get-CompletionTestCaseData | Test-Completions
 }
 
-Describe "Test registration based exensible completion" -Tags "CI" {
+Describe "Test registration based extensible completion" -Tags "CI" {
     Register-ArgumentCompleter -Command TestFunction -Parameter Gamma -ScriptBlock {
         param(
             [string] $CommandName,

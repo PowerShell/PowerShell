@@ -1,6 +1,6 @@
 ﻿Describe "Trace-Command" -tags "Feature" {
     
-    Context "Listner options" {
+    Context "Listener options" {
         BeforeAll {
             $logFile = setup -f traceCommandLog.txt -pass
             $actualLogFile = setup -f actualTraceCommandLog.txt -pass

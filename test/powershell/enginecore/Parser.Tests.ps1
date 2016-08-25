@@ -210,7 +210,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         }
     }
 	
-	It "Throws an incomplete parse exeception when a comma follows an expression (line 247)" {
+	It "Throws an incomplete parse exception when a comma follows an expression (line 247)" {
         try {
             ExecuteCommand "(1+ 1)," 
             throw "Execution OK"
@@ -467,7 +467,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         }
     }
 	
-	It "Test that if an exception is thrown from the try block it will be caught in the apprpropriate catch block and that the finally block will run regardless of whether an exception is thrown. (line 1317)" {
+	It "Test that if an exception is thrown from the try block it will be caught in the appropropriate catch block and that the finally block will run regardless of whether an exception is thrown. (line 1317)" {
         $result = ExecuteCommand 'try { try { throw (new-object System.ArgumentException) } catch [System.DivideByZeroException] { } finally { "Finally" } } catch { $_.Exception.GetType().FullName }'
 		$result | should be "Finally", "System.ArgumentException"
     }
@@ -771,7 +771,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 		$result | should be "global"
     }
 	
-	It 'Test piping arguments to a script block. The objects should be accesible from "$input". (line 2870)'{
+	It 'Test piping arguments to a script block. The objects should be accessible from "$input". (line 2870)'{
 		ExecuteCommand '$script = { $input; };$results = @(0,0),-1 | &$script'
 		$result = ExecuteCommand '$results[0][0]'
         $result | Should be "0"

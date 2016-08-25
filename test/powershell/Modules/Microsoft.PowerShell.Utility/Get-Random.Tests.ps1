@@ -15,7 +15,7 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
         @{ Name = 'maximum is Int64.MaxValue'; Maximum = ([int64]::MaxValue); Minimum = $null; GreaterThan = ([int64]-1); LessThan = ([int64]::MaxValue); Type = 'System.Int64' }
         @{ Name = 'maximum is a 64-bit integer'; Maximum = ([int64]100); Minimum = $null; GreaterThan = ([int64]-1); LessThan = ([int64]100); Type = 'System.Int64' }
         @{ Name = 'maximum set to a large integer greater than int32.MaxValue'; Maximum = 100000000000; Minimum = $null; GreaterThan = ([int64]-1); LessThan = ([int64]100000000000); Type = 'System.Int64' }
-        @{ Name = 'maximum set to 0, Minumum set to a negative 64-bit integer'; Maximum = ([int64]0); Minimum = ([int64]-100); GreaterThan = ([int64]-101); LessThan = ([int64]0); Type = 'System.Int64' }
+        @{ Name = 'maximum set to 0, Minimum set to a negative 64-bit integer'; Maximum = ([int64]0); Minimum = ([int64]-100); GreaterThan = ([int64]-101); LessThan = ([int64]0); Type = 'System.Int64' }
         @{ Name = 'maximum set to positive 64-bit number, min set to negative 64-bit number'; Maximum = ([int64]100); Minimum = ([int64]-100); GreaterThan = ([int64]-101); LessThan = ([int64]100); Type = 'System.Int64' }
         @{ Name = 'both are negative 64-bit number'; Maximum = ([int64]-100); Minimum = ([int64]-200); GreaterThan = ([int64]-201); LessThan = ([int64]-100); Type = 'System.Int64' }
         @{ Name = 'both are negative 64-bit number with parentheses'; Maximum = ([int64](-100)); Minimum = ([int64](-200)); GreaterThan = ([int64]-201); LessThan = ([int64]-100); Type = 'System.Int64' }
@@ -39,7 +39,7 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
         @{ Name = 'max set to a special double number'; Maximum = 20.; Minimum = 0.0; GreaterThan = -1.0; LessThan = 20.0; Type = 'System.Double' }
         @{ Name = 'max is double with quote'; Maximum = '20.'; Minimum = 0.0; GreaterThan = -1.0; LessThan = 20.0; Type = 'System.Double' }
         @{ Name = 'max is double with plus sign'; Maximum = +100.0; Minimum = 0; GreaterThan = -1.0; LessThan = 100.0; Type = 'System.Double' }
-        @{ Name = 'max is doulbe with plus sign and enclosed in quote'; Maximum = '+100.0'; Minimum = 0; GreaterThan = -1.0; LessThan = 100.0; Type = 'System.Double' }
+        @{ Name = 'max is double with plus sign and enclosed in quote'; Maximum = '+100.0'; Minimum = 0; GreaterThan = -1.0; LessThan = 100.0; Type = 'System.Double' }
         @{ Name = 'both set to the special numbers as 1.0e+xx '; Maximum = $null; Minimum = 1.0e+100; GreaterThan = 1.0e+99; LessThan = ([double]::MaxValue); Type = 'System.Double' }
         @{ Name = 'max is Double.MaxValue, min is Double.MinValue'; Maximum = ([double]::MaxValue); Minimum = ([double]::MinValue); GreaterThan = ([double]::MinValue); LessThan = ([double]::MaxValue); Type = 'System.Double' }
 
@@ -150,7 +150,7 @@ Describe "Get-Random" -Tags "CI" {
 	$randomNumber | Should Be ("red" -or "yellow" -or "blue")
     }
 
-    It "Should return a number for hexdecimal " {
+    It "Should return a number for hexadecimal " {
 	$randomNumber = Get-Random 0x07FFFFFFFFF
 	$randomNumber | Should BeLessThan 549755813887
 	$randomNumber | Should BeGreaterThan 0
@@ -162,12 +162,12 @@ Describe "Get-Random" -Tags "CI" {
 	$firstRandomNumber | Should Not Be $secondRandomNumber
     }
 
-    It "Should return the same number for hexidemical number and regular number when the switch SetSeed it used " {
+    It "Should return the same number for hexadecimal number and regular number when the switch SetSeed it used " {
 	$firstRandomNumber = Get-Random 0x07FFFFFFFF -SetSeed 20
 	$secondRandomNumber = Get-Random 34359738367 -SetSeed 20
 	$firstRandomNumber | Should Be @secondRandomNumber
     }
-    It "Should throw an error because the hexidecial number is to large " {
+    It "Should throw an error because the hexadecimal number is to large " {
 	{ Get-Random 0x07FFFFFFFFFFFFFFFF } | Should Throw "Value was either too large or too small for a UInt32"
     }
 }

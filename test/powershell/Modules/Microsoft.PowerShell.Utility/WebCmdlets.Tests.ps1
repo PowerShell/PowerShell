@@ -153,7 +153,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
         $response.Error | Should Be $null
 
-        # A sucessful call returns: Status = 200, and StatusDescription = "OK"
+        # A successful call returns: Status = 200, and StatusDescription = "OK"
         $response.Output.StatusDescription | Should Match "OK"
         $response.Output.StatusCode | Should Be 200
 
