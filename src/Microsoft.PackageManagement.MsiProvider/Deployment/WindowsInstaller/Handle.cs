@@ -132,7 +132,7 @@ namespace Microsoft.PackageManagement.Msi.Internal.Deployment.WindowsInstaller
         }
 
         /// <summary>
-        /// Gets an object that can be used internally for safe syncronization.
+        /// Gets an object that can be used internally for safe synchronization.
         /// </summary>
         internal object Sync
         {

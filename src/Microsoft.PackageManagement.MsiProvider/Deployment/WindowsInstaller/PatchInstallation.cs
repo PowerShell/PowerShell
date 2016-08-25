@@ -205,7 +205,7 @@ namespace Microsoft.PackageManagement.Msi.Internal.Deployment.WindowsInstaller
         }
 
         /// <summary>
-        /// Gets a value indicating whether this patch is marked as obsolte.
+        /// Gets a value indicating whether this patch is marked as obsolete.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Obsoleted")]
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]

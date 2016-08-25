@@ -27,7 +27,7 @@ namespace Microsoft.PackageManagement.Msi.Internal.Deployment.WindowsInstaller
         {
             get
             {
-                // TODO: Use the extended form of version info to get the 4th component of the verison.
+                // TODO: Use the extended form of version info to get the 4th component of the version.
                 uint[] dllVersionInfo = new uint[5];
                 dllVersionInfo[0] = 20;
                 int hr = NativeMethods.DllGetVersion(dllVersionInfo);

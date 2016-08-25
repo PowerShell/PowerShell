@@ -48,7 +48,7 @@ namespace Microsoft.PackageManagement.Msi.Internal.Deployment.WindowsInstaller.P
             if(parse.Length == 3)
             {
                 // Syntax was targetshort:sourceshort|targetlong:sourcelong.
-                // Chnage it to targetshort|targetlong:sourceshort|sourcelong.
+                // Change it to targetshort|targetlong:sourceshort|sourcelong.
                 parse = name.Split(new char[] { ':', '|' }, 4);
                 if(parse.Length == 4)
                     parse = new string[] { parse[0] + '|' + parse[2], parse[1] + '|' + parse[3] };
@@ -634,7 +634,7 @@ namespace Microsoft.PackageManagement.Msi.Internal.Deployment.WindowsInstaller.P
         }
 
         /// <summary>
-        /// Gets or sets an install path for a direcotry, component, or file key.
+        /// Gets or sets an install path for a directory, component, or file key.
         /// </summary>
         /// <param name="key">Depending on the type of InstallPathMap, this is the primary key from the
         /// either the Directory, Component, or File table.</param>
@@ -679,7 +679,7 @@ namespace Microsoft.PackageManagement.Msi.Internal.Deployment.WindowsInstaller.P
         }
 
         /// <summary>
-        /// Sets an install path for a direcotry, component, or file key.
+        /// Sets an install path for a directory, component, or file key.
         /// </summary>
         /// <param name="key">Depending on the type of InstallPathMap, this is the primary key from the
         /// either the Directory, Component, or File table.</param>
@@ -707,7 +707,7 @@ namespace Microsoft.PackageManagement.Msi.Internal.Deployment.WindowsInstaller.P
         }
 
         /// <summary>
-        /// Tests whether a direcotry, component, or file key exists in the map.
+        /// Tests whether a directory, component, or file key exists in the map.
         /// </summary>
         /// <param name="key">Depending on the type of InstallPathMap, this is the primary key from the
         /// either the Directory, Component, or File table.</param>

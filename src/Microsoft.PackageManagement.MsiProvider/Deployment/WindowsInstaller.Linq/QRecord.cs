@@ -350,7 +350,7 @@ namespace Microsoft.PackageManagement.Msi.Internal.Deployment.WindowsInstaller.L
         /// <remarks>
         /// The record (primary keys) may not already exist in the table.
         /// <para>Use <see cref="QTable&lt;TRecord&gt;.NewRecord()"/> to get a new
-        /// record. Prmary keys and all required fields
+        /// record. Primary keys and all required fields
         /// must be filled in before insertion.</para>
         /// </remarks>
         public void Insert()
@@ -366,7 +366,7 @@ namespace Microsoft.PackageManagement.Msi.Internal.Deployment.WindowsInstaller.L
         /// <remarks>
         /// The record (primary keys) may not already exist in the table.
         /// <para>Use <see cref="QTable&lt;TRecord&gt;.NewRecord()"/> to get a new
-        /// record. Prmary keys and all required fields
+        /// record. Primary keys and all required fields
         /// must be filled in before insertion.</para>
         /// </remarks>
         public void Insert(bool temporary)

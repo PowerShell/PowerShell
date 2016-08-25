@@ -294,7 +294,7 @@ namespace Microsoft.PackageManagement.Msi.Internal.Deployment.WindowsInstaller
         /// <a href="http://msdn.microsoft.com/library/en-us/msi/setup/msigetfeatureinfo.asp">MsiGetFeatureInfo</a>,
         /// <a href="http://msdn.microsoft.com/library/en-us/msi/setup/msisetfeatureattributes.asp">MsiSetFeatureAttributes</a>
         /// </p><p>
-        /// Since the lpAttributes paramter of
+        /// Since the lpAttributes parameter of
         /// <a href="http://msdn.microsoft.com/library/en-us/msi/setup/msigetfeatureinfo.asp">MsiGetFeatureInfo</a>
         /// does not contain an equivalent flag for <see cref="FeatureAttributes.UIDisallowAbsent"/>, this flag will
         /// not be retrieved.

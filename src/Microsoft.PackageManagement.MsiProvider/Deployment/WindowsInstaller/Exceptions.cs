@@ -546,7 +546,7 @@ namespace Microsoft.PackageManagement.Msi.Internal.Deployment.WindowsInstaller
         }
 
         /// <summary>
-        /// Gets a message that describes the merge conflits.
+        /// Gets a message that describes the merge conflicts.
         /// </summary>
         public override String Message
         {
