@@ -43,7 +43,7 @@ namespace Microsoft.PackageManagement.Msu.Internal {
         /// <summary>
         ///     Returns the name of the Provider.
         /// </summary>
-        /// <returns>The name of this proivder (uses the constant declared at the top of the class)</returns>
+        /// <returns>The name of this provider (uses the constant declared at the top of the class)</returns>
         public string GetPackageProviderName() {
             return ProviderName;
         }
