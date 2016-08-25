@@ -18,7 +18,7 @@ namespace SendGreeting
         }
         private string name;
 
-        // Overide the ProcessRecord method to process
+        // Override the ProcessRecord method to process
         // the supplied user name and write out a
         // greeting to the user by calling the WriteObject
         // method.
