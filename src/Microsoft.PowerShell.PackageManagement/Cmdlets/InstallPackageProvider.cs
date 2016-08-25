@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
             // only generate these parameters if there is an actual call happening. it won't show in get-command -syntax
             if (IsInvocation) {
                 //Use the InternalPackageManagementInstallOnly flag to indicate we are installing a provider right now.
-                //This will seperate a case from auto-bootstrapping.
+                //This will separate a case from auto-bootstrapping.
                 var packageManagementService = PackageManagementService as PackageManagementService;
                 if (packageManagementService != null) {
                     packageManagementService.InternalPackageManagementInstallOnly = true;
@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
                     return false;
                 }
             }
-            //Error out for the case where multiple provider names with any version specififed
+            //Error out for the case where multiple provider names with any version specified
             if (Name.IsNullOrEmpty()) {
                 if ((!string.IsNullOrWhiteSpace(RequiredVersion)) || (!string.IsNullOrWhiteSpace(MinimumVersion)) || (!string.IsNullOrWhiteSpace(MaximumVersion))) {
                     Error(Constants.Errors.MultipleNamesWithVersionNotAllowed);
@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
         protected override IHostApi GetProviderSpecificOption(PackageProvider pv) {
             var host = this.ProviderSpecific(pv);
             var host1 = host;
-            //add filterontag for finding providers.  Provider keys are: PackageManagment and Providers
+            //add filterontag for finding providers.  Provider keys are: PackageManagement and Providers
             host = host.Extend<IRequest>(
                 new {
                     GetOptionValues = new Func<string, IEnumerable<string>>(key => {
@@ -317,7 +317,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
 
                 // there are overmatched packages:
                 // are they found across multiple providers?
-                // are they found accross multiple sources?
+                // are they found across multiple sources?
                 // are they all from the same source?
 
                 var providers = pkgSet.Select(each => each.ProviderName).Distinct().ToArray();
@@ -352,7 +352,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
                     }
                 } else {
                     //Handling a case where the multiple providers match one package
-                    //In this case, both boostrap and PowerShellGet found the same package, let's take PowerShellGet as a presendence
+                    //In this case, both bootstrap and PowerShellGet found the same package, let's take PowerShellGet as a precedence
                     foreach (var subset in pkgSet) {
                         if (subset.ProviderName.EqualsIgnoreCase(PowerShellGet)) {
                             //find the match

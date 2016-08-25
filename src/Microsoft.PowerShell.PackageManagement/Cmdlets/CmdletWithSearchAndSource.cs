@@ -472,7 +472,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
          protected IEnumerable<SoftwareIdentity> CheckMatchedDuplicates() {
             // if there are overmatched packages we need to know why:
             // are they found across multiple providers?
-            // are they found accross multiple sources?
+            // are they found across multiple sources?
             // are they all from the same source?
  
             foreach (var list in _resultsPerName.Values.Where(each => each != null && each.Any())) {
@@ -492,7 +492,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                     //      Example: install-package -Source @('src1', 'src2')
                     //               install-package -Source @('src1', 'src2') -Provider @('p1', 'p2')
                     if (Sources.Any() && (providers.Length != 1 || sources.Length != 1)) {
-                        // let's use the first source as our priority.As long as we find a package, we exit the 'for' loop righ away
+                        // let's use the first source as our priority.As long as we find a package, we exit the 'for' loop right away
                         foreach (var source in Sources) {
                             //select all packages matched source
                             var pkgs = list.Where(package => source.EqualsIgnoreCase(package.Source) || (UserSpecifiedSourcesList.Keys.ContainsIgnoreCase(package.Source) && source.EqualsIgnoreCase(UserSpecifiedSourcesList[package.Source]))).ToArray();

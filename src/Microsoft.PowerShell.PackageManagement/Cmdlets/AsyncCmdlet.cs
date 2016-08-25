@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
 #endif
 
         /// <summary>
-        ///     Manages the re-entrancy lock for cmdlets
+        ///     Manages the reentrancy lock for cmdlets
         ///     This is abstracted here because (at this point)
         ///     we need this to be static, but per-cmdlet class.
         /// </summary>
@@ -350,7 +350,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
 #if DEBUG
                             Log("ERROR",errorMessage);
 #endif
-                            //Replaced Wait() with ConintueWith(Cancel) to avoid hang if the error message comes in too early, e.g. GetDyanamicParameters(), etc.
+                            //Replaced Wait() with ContinueWith(Cancel) to avoid hang if the error message comes in too early, e.g. GetDynamicParameters(), etc.
                             WriteError(new ErrorRecord(new Exception(errorMessage), DropMsgPrefix(id), errorCategory, string.IsNullOrWhiteSpace(targetObjectValue) ? (object)this : targetObjectValue)).Wait(3000);
                         } catch {
                             // this will throw if the provider thread abends before we get back our result.
@@ -682,7 +682,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
             }
         }
 
-        #region Dynamic Paramters
+        #region Dynamic Parameters
 
         public virtual RuntimeDefinedParameterDictionary DynamicParameterDictionary {
             get {
@@ -826,7 +826,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                 // let's not even bother doing all this if they didn't even
                 // override the method.
                 if (IsOverridden(Constants.Methods.BeginProcessingAsyncMethod)) {
-                    // just before we kick stuff off, let's make sure we consume the dynamicaparmeters
+                    // just before we kick stuff off, let's make sure we consume the dynamic parameters
                     if (!_consumedDynamicParameters) {
                         ConsumeDynamicParameters();
                         _consumedDynamicParameters = true;
@@ -854,7 +854,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                 // let's not even bother doing all this if they didn't even
                 // override the method.
                 if (IsOverridden(Constants.Methods.ProcessRecordAsyncMethod)) {
-                    // just before we kick stuff off, let's make sure we consume the dynamicaparmeters
+                    // just before we kick stuff off, let's make sure we consume the dynamic parameters
                     if (!_consumedDynamicParameters) {
                         ConsumeDynamicParameters();
                         _consumedDynamicParameters = true;
@@ -883,7 +883,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                 // let's not even bother doing all this if they didn't even
                 // override the method.
                 if (IsOverridden(Constants.Methods.EndProcessingAsyncMethod)) {
-                    // just before we kick stuff off, let's make sure we consume the dynamicaparmeters
+                    // just before we kick stuff off, let's make sure we consume the dynamic parameters
                     if (!_consumedDynamicParameters) {
                         ConsumeDynamicParameters();
                         _consumedDynamicParameters = true;
