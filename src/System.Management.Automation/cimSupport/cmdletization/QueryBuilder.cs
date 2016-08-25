@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// - When a wildcard is specified, then no errors are reported (i.e. Get-Process -Name noSuchProcess*)
         /// - When no wildcard is specified, then errors are reported (i.e. Get-Process -Name noSuchProcess)
         /// 
-        /// Note that the following conventions are adpoted:
+        /// Note that the following conventions are adopted:
         /// - Min/max queries 
         ///   (<see cref="QueryBuilder.FilterByMinPropertyValue(string,object,BehaviorOnNoMatch)"/> and 
         ///    <see cref="QueryBuilder.FilterByMaxPropertyValue(string,object,BehaviorOnNoMatch)"/>) 
