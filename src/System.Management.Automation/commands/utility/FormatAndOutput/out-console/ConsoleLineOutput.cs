@@ -374,12 +374,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         private void LineWrittenEvent()
         {
-            // check to avoid reeentrancy from the prompt handler
-            // writing during the PropmtUser() call
+            // check to avoid reentrancy from the prompt handler
+            // writing during the PromptUser() call
             if (_disableLineWrittenEvent)
                 return;
 
-            // if there is no promting, we are done
+            // if there is no prompting, we are done
             if (_prompt == null)
                 return;
 
@@ -420,7 +420,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// check if we need to put out a prompt
         /// </summary>
-        /// <value>true if we need to promp</value>
+        /// <value>true if we need to prompt</value>
         private bool NeedToPrompt
         {
             get
@@ -471,10 +471,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             /// <summary>
-            /// detemine how many rows the prompt should take.
+            /// determine how many rows the prompt should take.
             /// </summary>
-            /// <param name="cols">current number of colums on the screen</param>
-            /// <param name="displayCells">string manipupation helper</param>
+            /// <param name="cols">current number of columns on the screen</param>
+            /// <param name="displayCells">string manipulation helper</param>
             /// <returns></returns>
             internal int ComputePromptLines(DisplayCells displayCells, int cols)
             {
@@ -574,7 +574,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// handler to prompt the user for page breaks
-        /// if this handler is not null, we have promting
+        /// if this handler is not null, we have prompting
         /// </summary>
         private PromptHandler _prompt = null;
 
@@ -584,7 +584,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private long _linesWritten = 0;
 
         /// <summary>
-        /// flag to avoid renetrancy on promting
+        /// flag to avoid reentrancy on prompting
         /// </summary>
         private bool _disableLineWrittenEvent = false;
 

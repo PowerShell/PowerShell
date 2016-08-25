@@ -759,7 +759,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private ComplexSpecificParameters _complexSpecificParameters;
 
         /// <summary>
-        /// identation added to each level in the recursion
+        /// indentation added to each level in the recursion
         /// </summary>
         private int _indentationStep = 2;
 

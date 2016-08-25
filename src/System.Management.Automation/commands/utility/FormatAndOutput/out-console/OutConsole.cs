@@ -31,14 +31,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            // explicitely overriden:
+            // explicitely overridden:
             // do not do any processing
         }
     }
 
     /// <summary>
     /// implementation for the out-default command
-    /// this command it impicitely inject by the
+    /// this command it implicitly inject by the
     /// powershell.exe host at the end of the pipeline as the
     /// default sink (display to console screen)
     /// </summary>
@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
     {
         /// <summary>
         /// Determines whether objects should be sent to API consumers.
-        /// This command is automatically added to the pipeline when PowerShell is transcripting and
+        /// This command is automatically added to the pipeline when PowerShell is transcribing and
         /// invoked via API. This ensures that the objects pass through the formatting and output
         /// system, but can still make it to the API consumer.
         /// </summary>

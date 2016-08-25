@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     break;
                 default:
                     {
-                        // do not eumerate at all (CoreOnly)
+                        // do not enumerate at all (CoreOnly)
                         ProcessObject(so);
                     }
                     break;
@@ -421,7 +421,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// compute the group transition, given an input object
         /// </summary>
-        /// <param name="so">object receoved from the input pipeline</param>
+        /// <param name="so">object received from the input pipeline</param>
         /// <returns>GroupTransition enumeration</returns>
         private GroupTransition ComputeGroupTransition(PSObject so)
         {
@@ -691,7 +691,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Positional parameter for properties, property sets and table sets
         /// specified on the command line.
-        /// The paramater is optional, since the defaults
+        /// The parameter is optional, since the defaults
         /// will be determined using property sets, etc.
         /// </summary>
         [Parameter(Position = 0)]

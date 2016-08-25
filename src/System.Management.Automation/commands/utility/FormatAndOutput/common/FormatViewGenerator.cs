@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // first check if there is an override from the command line
             if (parameters != null && parameters.groupByParameter != null)
             {
-                // get the epxpression to use
+                // get the expression to use
                 MshExpression groupingKeyExpression = parameters.groupByParameter.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as MshExpression;
 
                 // set the label

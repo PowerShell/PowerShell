@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Deserialization of string without TAB expansion (RAW)
         /// </summary>
-        /// <param name="so">object whose the property belogs to</param>
+        /// <param name="so">object whose the property belongs to</param>
         /// <param name="property">name of the string property</param>
         /// <returns>string out of the MsObject</returns>
         internal string DeserializeStringMemberVariableRaw(PSObject so, string property)
@@ -271,7 +271,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Deserialization of string performing TAB expansion
         /// </summary>
-        /// <param name="so">object whose the property belogs to</param>
+        /// <param name="so">object whose the property belongs to</param>
         /// <param name="property">name of the string property</param>
         /// <returns>string out of the MsObject</returns>
         internal string DeserializeStringMemberVariable(PSObject so, string property)

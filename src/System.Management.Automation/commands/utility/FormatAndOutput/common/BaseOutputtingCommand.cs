@@ -275,7 +275,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             else if (o is FormatStartData)
             {
-                // when encountering FormatStartDate out of sequemce,
+                // when encountering FormatStartDate out of sequence,
                 // pretend that the previous formatting directives were properly closed
                 if (_currentFormattingState == FormattingState.InsideGroup)
                 {
@@ -318,7 +318,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private void ValidateCurrentFormattingState(FormattingState expectedFormattingState, object obj)
         {
-            // chec if we are in the expected formatting state
+            // check if we are in the expected formatting state
             if (_currentFormattingState != expectedFormattingState)
             {
                 // we are not in the expected state, some message is out of sequence,
@@ -839,7 +839,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal virtual void Initialize() { }
 
             /// <summary>
-            /// called when a group of data is started, overrided will do
+            /// called when a group of data is started, overridden will do
             /// things such as headers, etc...
             /// </summary>
             internal virtual void GroupStart() { }
@@ -1124,7 +1124,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // set the hard wider default, to be used if no other info is available
                 int itemsPerRow = 2;
 
-                // get the header info and the wiew hint
+                // get the header info and the view hint
                 WideFormattingHint hint = this.InnerCommand.RetrieveFormattingHint() as WideFormattingHint;
 
                 // give a preference to the hint, if there

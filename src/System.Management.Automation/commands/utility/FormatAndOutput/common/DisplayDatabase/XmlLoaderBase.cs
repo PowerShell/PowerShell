@@ -22,7 +22,7 @@ using Microsoft.PowerShell.CoreClr.Stubs;
     It provides the capability of:
     * logging errors, warnings and traces to a file or in memory
     * managing the XML dom traversal using an add hoc stack frame management scheme
-    * validating common error condotions (e.g. missing node or unknown node)
+    * validating common error conditions (e.g. missing node or unknown node)
 */
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
@@ -247,7 +247,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// get the list of logg entries
+        /// get the list of log entries
         /// </summary>
         /// <value>list of entries logged during a load</value>
         internal List<XmlLoaderLoggerEntry> LogEntries

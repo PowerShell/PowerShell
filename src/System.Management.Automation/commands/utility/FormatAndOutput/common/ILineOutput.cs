@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal abstract class LineOutput
     {
         /// <summary>
-        /// whether the device requres full buffering of formatting
+        /// whether the device requires full buffering of formatting
         /// objects before any processing
         /// </summary>
         internal virtual bool RequiresBuffering { get { return false; } }
@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             get
             {
                 CheckStopProcessing();
-                // just return the default singelton implementation
+                // just return the default singleton implementation
                 return _displayCellsDefault;
             }
         }
@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// <summary>
     /// helper class to provide line breaking (based on device width) 
     /// and embedded newline processing
-    /// It needs to be provided with two callabacks for line processing
+    /// It needs to be provided with two callbacks for line processing
     /// </summary>
     internal class WriteLineHelper
     {

@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class TableRowItemDefinition
     {
         /// <summary>
-        /// optional aligment to override the default one at the header level
+        /// optional alignment to override the default one at the header level
         /// </summary>
         internal int alignment = TextAlignment.Undefined;
 

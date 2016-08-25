@@ -290,7 +290,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal ComplexControlItemDefinition itemDefinition = new ComplexControlItemDefinition();
 
         /// <summary>
-        /// frame info assocated with this frame definition
+        /// frame info associated with this frame definition
         /// </summary>
         internal FrameInfoDefinition frameInfoDefinition = new FrameInfoDefinition();
     }
@@ -491,7 +491,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal ControlBase control = null;
 
         /// <summary>
-        /// alternative (and simpified) representation for the control
+        /// alternative (and simplified) representation for the control
         /// RULE: if the control object is null, use this one
         /// </summary>
         internal TextToken labelTextToken = null;
