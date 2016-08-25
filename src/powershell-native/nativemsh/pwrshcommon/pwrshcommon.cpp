@@ -57,7 +57,7 @@ namespace NativeMsh
                 break;
             }
             WCHAR * pwchIntEnd = NULL;
-            // this should never cause overflow because VerifyInteger gaurantees pwchMinorVersion
+            // this should never cause overflow because VerifyInteger guarantees pwchMinorVersion
             // has less than g_MAX_NUMBER_OF_DIGITS_IN_VERSION which is 10.
             unsigned long ulTempResult = wcstoul(pwchStart, &pwchIntEnd, 10);
             // Make sure the whole string is an integer and fits an int 

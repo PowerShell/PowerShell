@@ -5,7 +5,7 @@
 //
 //  File:      NativeMsh.h
 //
-//  Contents:  common code requred to start powershell (exe and plugin)
+//  Contents:  common code required to start powershell (exe and plugin)
 //
 // ----------------------------------------------------------------------
 

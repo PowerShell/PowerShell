@@ -93,7 +93,7 @@ private:
     bool isCSInitSucceeded; 
 
     // Abstraction of the differences between CLR hosting environments with
-    // repsect to the interface with pspluginwkr.
+    // respect to the interface with pspluginwkr.
     IPowerShellClrHost* powerShellClrHost;
 
     // Default no-op implementation used for the output functions.
@@ -180,7 +180,7 @@ public:
             {
                 if (!singletonInstance.bIsPluginLoaded)
                 {
-                    // process extra info initializies the pwrshplugin
+                    // process extra info initializes the pwrshplugin
                     // by initializing the CLR version and obtaining access
                     // pointers for the plugin worker or for System.Management.Automation.dll.
                     singletonInstance.ProcessExtraInfo(extraInfo, NULL);
@@ -668,7 +668,7 @@ private:
         wchar_t* wszMonadVersion = NULL;    // Allocated via ConstructPowerShellVersion || GetRegistryInfo
         wchar_t* wszTempCLRVersion = NULL;  // Allocated via GetRegistryInfo
         wchar_t* wszTempAppBase = NULL;     // Allocated via GetRegistryInfo
-        PWSTR wszMgdPlugInFileName = NULL;  // Allocted in CreateMgdPluginFileName
+        PWSTR wszMgdPlugInFileName = NULL;  // Allocated in CreateMgdPluginFileName
         unsigned int exitCode = EXIT_CODE_SUCCESS;
         PlugInException* pErrorMsg = NULL;
 

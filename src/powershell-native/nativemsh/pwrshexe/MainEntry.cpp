@@ -1483,7 +1483,7 @@ HRESULT AddPowerShellTasksToList(ICustomDestinationList *pCustDestList, STARTUPI
 
 /*********************************************************************
 * FileExists is a helper function used to check if the file path 
-* provided as arguement to this function exists or not.
+* provided as argument to this function exists or not.
 *********************************************************************/
 BOOL FileExists(LPCWSTR  fileName)
 {
@@ -1586,7 +1586,7 @@ int __cdecl
     // Change the thread user interface to a language that the
     // windows console can display. This is important as starting
     // from windows vista and later, the OS support thread user
-    // interface lanaguage separate from thread locale.
+    // interface language separate from thread locale.
     // Setting this will enable OS resource loader to load correct
     // resource that can display properly in a console window.
     // Note: If the language identifier is 0, the function always 
@@ -1723,7 +1723,7 @@ int __cdecl
             pwrshExeOutput->DisplayMessage(false, g_NONSTANDARD_CLR_VERSION, wszRuntimeVersion);
         }
 
-        // On downlevel setups, verify that the CLR was present when PowerShell was intalled.
+        // On downlevel setups, verify that the CLR was present when PowerShell was installed.
         // If it wasn't, then PowerShell is in a bad state and needs to be installed after the
         // CLR.
         exitCode = ValidateDownlevelSetupHadClrWhenInstalled(
