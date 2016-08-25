@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             this.ClientSideQuery = new ClientSideQuery();
         }
 
-        #region WQL proceessing
+        #region WQL processing
 
         private void AddWqlCondition(string condition)
         {

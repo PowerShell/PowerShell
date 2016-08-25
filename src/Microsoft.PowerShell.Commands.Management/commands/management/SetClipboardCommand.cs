@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// Defines the implementation of the 'Set-Clipboard' cmdlet.
-    /// This cmldet get the content from system clipboard. 
+    /// This cmdlet gets the content from system clipboard. 
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "Clipboard", DefaultParameterSetName = "String", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=526220")]
     [Alias("scb")]

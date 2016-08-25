@@ -25,7 +25,7 @@ using Microsoft.PowerShell.CoreClr.Stubs;
 using System.Net.Mail;
 #endif
 
-// TODO/FIXME: Move this class to src/cimSupport/other directory (to map to the namespace it lives in and functionality it implements [cmdletization idependent])
+// TODO/FIXME: Move this class to src/cimSupport/other directory (to map to the namespace it lives in and functionality it implements [cmdletization independent])
 
 namespace Microsoft.PowerShell.Cim
 {

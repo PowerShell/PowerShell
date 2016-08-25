@@ -1568,7 +1568,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets the Persist Switch parameter.
-        /// If this switch parmter is set then the created PSDrive
+        /// If this switch parameter is set then the created PSDrive
         /// would be persisted across PowerShell sessions.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]

@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
             returnValue.Append(namespaceParameter);
             return returnValue.ToString();
         }
-        #endregion helper funtions
+        #endregion helper functions
 
 
         /// <summary>

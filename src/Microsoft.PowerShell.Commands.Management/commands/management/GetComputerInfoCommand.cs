@@ -1939,7 +1939,7 @@ namespace Microsoft.PowerShell.Commands
 #pragma warning restore 649
     #endregion Intermediate WMI classes
 
-    #region Other Imtermediate classes
+    #region Other Intermediate classes
     internal class RegWinNtCurrentVersion
     {
         public string BuildLabEx;
@@ -1953,7 +1953,7 @@ namespace Microsoft.PowerShell.Commands
         public string RegisteredOwner;
         public string SystemRoot;
     }
-    #endregion Other Intermediage classes
+    #endregion Other Intermediate classes
 
     #region Output components
     #region Classes comprising the output object
@@ -2677,7 +2677,7 @@ namespace Microsoft.PowerShell.Commands
         public string CsPrimaryOwnerName { get; internal set; }
 
         /// <summary>
-        /// Indicates if the computer system can be resut.
+        /// Indicates if the computer system can be reset.
         /// </summary>
         public ResetCapability? CsResetCapability { get; internal set; }
 
@@ -2806,7 +2806,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Array of <see cref="HotFix"/> objects containing information about
-        /// any Quick-Fix Enginnering patches (Hot Fixes) applied to the operating
+        /// any Quick-Fix Engineering patches (Hot Fixes) applied to the operating
         /// system
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -3348,7 +3348,7 @@ namespace Microsoft.PowerShell.Commands
         Alpha = 2,
 
         /// <summary>
-        /// Architecture is Motorolla PowerPC
+        /// Architecture is Motorola PowerPC
         /// </summary>
         PowerPC = 3,
 
@@ -3865,17 +3865,17 @@ namespace Microsoft.PowerShell.Commands
     public enum OSEncryptionLevel
     {
         /// <summary>
-        /// 40-bit encription
+        /// 40-bit encryption
         /// </summary>
         Encrypt40Bits = 0,
 
         /// <summary>
-        /// 128-bit encription
+        /// 128-bit encryption
         /// </summary>
         Encrypt128Bits = 1,
 
         /// <summary>
-        /// n-bit encription
+        /// n-bit encryption
         /// </summary>
         EncryptNBits = 2
     }
@@ -4605,7 +4605,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Specifies the type of the computer in use, such as laptop, desktop, or Tablet.
-    /// This is an extended verion of PCSystemType
+    /// This is an extended version of PCSystemType
     /// </summary>
     //TODO: conflate these two enums???
     public enum PCSystemTypeEx
@@ -4776,27 +4776,27 @@ namespace Microsoft.PowerShell.Commands
         Other = 1,
 
         /// <summary>
-        /// Proccessor type is 
+        /// Processor type is 
         /// </summary>
         Unknown = 2,
 
         /// <summary>
-        /// Proccessor is a Central Processing Unit (CPU)
+        /// Processor is a Central Processing Unit (CPU)
         /// </summary>
         CentralProcessor = 3,
 
         /// <summary>
-        /// Proccessor is a Math processor
+        /// Processor is a Math processor
         /// </summary>
         MathProcessor = 4,
 
         /// <summary>
-        /// Proccessor is a Digital Signal processor (DSP)
+        /// Processor is a Digital Signal processor (DSP)
         /// </summary>
         DSPProcessor = 5,
 
         /// <summary>
-        /// Proccessor is a Video processor
+        /// Processor is a Video processor
         /// </summary>
         VideoProcessor = 6
     }
@@ -4973,7 +4973,7 @@ namespace Microsoft.PowerShell.Commands
     public enum ServerLevel
     {
         /// <summary>
-        /// An unknown or unrecognized level was dected
+        /// An unknown or unrecognized level was detected
         /// </summary>
         Unknown = 0,
 

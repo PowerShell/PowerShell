@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
         ///
         /// <value>
         /// If true the qualifier of the path will be returned.
-        /// The qualifier is the drive or provider that is qualifing
+        /// The qualifier is the drive or provider that is qualifying
         /// the MSH path.
         /// </value>
         ///
@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
         ///
         /// <value>
         /// If true the qualifier of the path will be returned.
-        /// The qualifier is the drive or provider that is qualifing
+        /// The qualifier is the drive or provider that is qualifying
         /// the MSH path.
         /// </value>
         ///

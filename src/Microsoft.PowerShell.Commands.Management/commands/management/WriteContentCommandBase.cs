@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This method is called by the base class after getting the content writer
         /// from the provider. If the current position needs to be changed before writing
-        /// the content, this method should be overriden to do that.
+        /// the content, this method should be overridden to do that.
         /// </summary>
         /// 
         /// <param name="contentHolders">
