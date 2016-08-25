@@ -315,7 +315,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             Dispose(true);
             // This object will be cleaned up by the Dispose method.
-            // Therefore, you should call GC.SupressFinalize to
+            // Therefore, you should call GC.SuppressFinalize to
             // take this object off the finalization queue
             // and prevent finalization code for this object
             // from executing a second time.
@@ -747,7 +747,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// <para>
     /// Base class of all session operation classes.
     /// All sessions created will be held in a ConcurrentDictionary:cimSessions.
-    /// It manages the lifecyclye of the sessions being created for each
+    /// It manages the lifecycle of the sessions being created for each
     /// runspace according to the state of the runspace.
     /// </para>
     /// </summary>
@@ -893,7 +893,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             /// <summary>
-            /// <para>namespce</para>
+            /// <para>namespace</para>
             /// </summary>
             internal CimSessionWrapper CimSessionWrapper
             {
@@ -951,7 +951,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
                 else
                 {
-                    //CimSession will be retunred as part of TestConnection
+                    //CimSession will be returned as part of TestConnection
                     this.cimTestSession.TestCimSession(computerName, proxy); 
                 }
             }
@@ -1049,7 +1049,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             Dispose(true);
             // This object will be cleaned up by the Dispose method.
-            // Therefore, you should call GC.SupressFinalize to
+            // Therefore, you should call GC.SuppressFinalize to
             // take this object off the finalization queue
             // and prevent finalization code for this object
             // from executing a second time.

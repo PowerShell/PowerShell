@@ -27,7 +27,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Execute the write opration to given cmdlet object
+        /// Execute the write operation to given cmdlet object
         /// </para>
         /// </summary>
         /// <param name="cmdlet">
@@ -42,7 +42,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <para>
         /// <see cref="XOperationContextBase"/> object that related to current action.
         /// It may used by action, such as <see cref="CimWriteResultObject"/>,
-        /// since later on action may require namspace, and proxy object to reuse
+        /// since later on action may require namespace, and proxy object to reuse
         /// <see cref="CimSession"/>, <see cref="CimOperationOptions"/> object.
         /// </para>
         /// </summary>
@@ -152,7 +152,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             Dispose(true);
             // This object will be cleaned up by the Dispose method.
-            // Therefore, you should call GC.SupressFinalize to
+            // Therefore, you should call GC.SuppressFinalize to
             // take this object off the finalization queue
             // and prevent finalization code for this object
             // from executing a second time.

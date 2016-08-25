@@ -245,7 +245,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Hanlder to handle unsubcribe event
+        /// Handler to handle unsubscribe event
         /// </para>
         /// </summary>
         /// <param name="sender"></param>

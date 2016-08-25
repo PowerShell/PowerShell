@@ -112,7 +112,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// <para>
-        /// New subscritpion result event
+        /// New subscription result event
         /// </para>
         /// </summary>
         public event EventHandler<CimSubscriptionEventArgs> OnNewSubscriptionResult;
@@ -129,7 +129,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Start an indication subsctiption target to the given computer.
+        /// Start an indication subscription target to the given computer.
         /// </summary>
         /// <param name="computerName">null stands for localhost</param>
         /// <param name="nameSpace"></param>
@@ -151,7 +151,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Start an indication subsctiption through a given <see cref="CimSession"/>.
+        /// Start an indication subscription through a given <see cref="CimSession"/>.
         /// </summary>
         /// <param name="cimSession">Cannot be null</param>
         /// <param name="nameSpace"></param>

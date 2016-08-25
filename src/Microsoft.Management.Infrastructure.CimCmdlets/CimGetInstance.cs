@@ -75,7 +75,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Refactory to be reused by Get-CimInstance;Remove-CimInstance;Set-CimInstance
+        /// Refactor to be reused by Get-CimInstance;Remove-CimInstance;Set-CimInstance
         /// </para>
         /// </summary>
         /// <param name="cmdlet"></param>
