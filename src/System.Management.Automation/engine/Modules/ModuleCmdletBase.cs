@@ -170,25 +170,25 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The minimum version number to check the module against. Used the underlying property
-        /// for derived cmdlet paramters.
+        /// for derived cmdlet parameters.
         /// </summary>
         internal Version BaseMinimumVersion { get; set; }
 
         /// <summary>
         /// The maximum version number to check the module against. Used the underlying property
-        /// for derived cmdlet paramters.
+        /// for derived cmdlet parameters.
         /// </summary>
         internal Version BaseMaximumVersion { get; set; }
 
         /// <summary>
         /// The version number to check the module against. Used the underlying property
-        /// for derived cmdlet paramters.
+        /// for derived cmdlet parameters.
         /// </summary>
         internal Version BaseRequiredVersion { get; set; }
 
         /// <summary>
         /// The Guid to check the module against. Used the underlying property
-        /// for derived cmdlet paramters.
+        /// for derived cmdlet parameters.
         /// </summary>
         internal Guid? BaseGuid { get; set; }
 
@@ -433,7 +433,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Extra variables that are allowed to be referenced in moudle manifest file
+        /// Extra variables that are allowed to be referenced in module manifest file
         /// </summary>
         private static readonly string[] s_extraAllowedVariables = new string[] { "PSScriptRoot", "PSEdition" };
 
@@ -515,7 +515,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // MSFT:873446 Create a case insensitive comparer based hashtable to help
-            // with case-insenstive comparision of keys.
+            // with case-insensitive comparison of keys.
             data = new Hashtable(data, StringComparer.OrdinalIgnoreCase);
             if (validMembers != null && !ValidateManifestHash(data, validMembers, moduleManifestPath, manifestProcessingFlags))
             {
@@ -960,7 +960,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            // Given path is a directory, we first check if it is end with moudle version.
+                            // Given path is a directory, we first check if it is end with module version.
                             Version version;
                             if (Version.TryParse(moduleName, out version))
                             {
@@ -1134,7 +1134,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                // If first convertion fails, try to convert * to maximum version
+                // If first conversion fails, try to convert * to maximum version
                 string maxRange = "999999999";
                 if (stringVersion[stringVersion.Length - 1] == '*')
                 {
@@ -1487,7 +1487,7 @@ namespace Microsoft.PowerShell.Commands
             // Workflows specified in NestedModules from the manifest
             List<string> workflowsToProcess = new List<string>();
 
-            // Workflows specified in ReduiredAssemblies
+            // Workflows specified in RequiredAssemblies
             List<string> dependentWorkflows = new List<string>();
 
             string moduleToProcess = null;
@@ -1873,7 +1873,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // Test the required procesor architecture
+            // Test the required processor architecture
             ProcessorArchitecture requiredProcesorArchitecture;
             if (
                 !GetScalarFromData(data, moduleManifestPath, "ProcessorArchitecture", manifestProcessingFlags,
@@ -2378,7 +2378,7 @@ namespace Microsoft.PowerShell.Commands
                 !GetListOfFilesFromData(data, moduleManifestPath, "FileList", manifestProcessingFlags, moduleBase, ""
                     /*extension*/,
                     false
-                    /* don't check file existance - don't want to change current behavior without feature team discussion */,
+                    /* don't check file existence - don't want to change current behavior without feature team discussion */,
                     out fileList))
             {
                 containedErrors = true;
@@ -2981,7 +2981,7 @@ namespace Microsoft.PowerShell.Commands
                             ModuleIntrinsics.GetModuleName(moduleManifestPath));
                     throw workflowModuleNotSupported;
 #else
-                    // Depending on current execution policy, check the signature of Module manfiest file if required.
+                    // Depending on current execution policy, check the signature of Module manifest file if required.
                     // Reusing already created ScriptInfo object to avoid race condition when modulemanifest was not signed during first check and signed before this step.
                     //
                     scriptInfo.ValidateScriptInfo(Host);
@@ -3395,7 +3395,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // If there are types/formats entries in the ModuleToProcess use them
-                // only if there are no entries from the manifst. The manifest entries
+                // only if there are no entries from the manifest. The manifest entries
                 // completely override the module's entries.
                 if (manifestInfo.ExportedTypeFiles.Count > 0)
                 {
@@ -4476,7 +4476,7 @@ namespace Microsoft.PowerShell.Commands
                     error = new ErrorRecord(mm, "Modules_InvalidManifest", ErrorCategory.ResourceUnavailable, mo.Path);
                     return true;
                 }
-                else // Go for the recusrive check for the RequiredModules of current module
+                else // Go for the recursive check for the RequiredModules of current module
                 {
                     // Add required Modules of m to the list
                     Collection<PSModuleInfo> availableModules = GetModuleIfAvailable(moduleSpecification);
@@ -5013,7 +5013,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    filePaths = context.SessionState.Path.GetResolvedProviderPathFromPSPath(filePath, true /* allowNonExistantPaths */, out provider);
+                    filePaths = context.SessionState.Path.GetResolvedProviderPathFromPSPath(filePath, true /* allowNonExistentPaths */, out provider);
                 }
                 catch (Exception e)
                 {
@@ -5052,7 +5052,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    filePaths = context.SessionState.Path.GetResolvedProviderPathFromPSPath(filePath, true /* allowNonExistantPaths */, out provider);
+                    filePaths = context.SessionState.Path.GetResolvedProviderPathFromPSPath(filePath, true /* allowNonExistentPaths */, out provider);
                 }
                 catch (Exception e)
                 {
@@ -5381,7 +5381,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     this.RemoveTypesAndFormatting(module.ExportedFormatFiles, module.ExportedTypeFiles);
-                    // reseting the help caches. This is needed as the help content cached is cached in process.
+                    // resetting the help caches. This is needed as the help content cached is cached in process.
                     // When a module is removed there is no need to cache the help content for the commands in
                     // the module. The HelpSystem is not designed to track per module help content...so resetting
                     // all of the cache. HelpSystem knows how to build this cache back when needed.
@@ -6854,7 +6854,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                // Avoid trying to import a PowerShell assembly as Snapin as it results in PSArgementException
+                // Avoid trying to import a PowerShell assembly as Snapin as it results in PSArgumentException
                 if ((moduleName != null) && Utils.IsPowerShellAssembly(moduleName))
                 {
                     trySnapInName = false;

@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (module != null)
                     {
-                        //Validtate file existence
+                        //Validate file existence
                         if (module.RequiredAssemblies != null)
                         {
                             foreach (string requiredAssembliespath in module.RequiredAssemblies)

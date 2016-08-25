@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         /// Initialize moduleSpecification from hashtable. Return exception object, if hashtable cannot be converted.
         /// Return null, in the success case.
         /// </summary>
-        /// <param name="moduleSpecification">object to initalize</param>
+        /// <param name="moduleSpecification">object to initialize</param>
         /// <param name="hashtable">contains info about object to initialize.</param>
         /// <returns></returns>
         internal static Exception ModuleSpecificationInitHelper(ModuleSpecification moduleSpecification, Hashtable hashtable)
@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             // catch all exceptions here, we are going to report them via return value.
-            // Example of catched exception: one of convertions to Version failed.
+            // Example of catched exception: one of conversions to Version failed.
             catch (Exception e)
             {
                 return e;

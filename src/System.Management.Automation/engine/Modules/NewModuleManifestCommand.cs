@@ -683,7 +683,7 @@ namespace Microsoft.PowerShell.Commands
         ///// <summary>
         ///// Takes a collection of file names and returns the collection
         ///// quoted.  It does not expand wildcard to actual files (as QuoteFiles does).
-        ///// It throws an error when the entered filename is different than the alllowedExtension.
+        ///// It throws an error when the entered filename is different than the allowedExtension.
         ///// If any file name falls outside the directory tree basPath a warning is issued.
         ///// </summary>
         ///// <param name="basePath">This is the path which will be used to determine whether a warning is to be displayed.</param>
@@ -833,7 +833,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Generate the module manfest...
+        /// Generate the module manifest...
         /// </summary>
         protected override void EndProcessing()
         {
@@ -864,7 +864,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // By default, we want to generate a module manifest the encourages the best practice of explicitly specifying
-            // the commands exported (even if it's an empty array.) Unforunately, changing the default breaks automation
+            // the commands exported (even if it's an empty array.) Unfortunately, changing the default breaks automation
             // (however unlikely, this cmdlet isn't really meant for automation). Instead of trying to detect interactive
             // use (which is quite hard), we infer interactive use if none of RootModule/NestedModules/RequiredModules is
             // specified - because the manifest needs to be edited to actually be of use in those cases.

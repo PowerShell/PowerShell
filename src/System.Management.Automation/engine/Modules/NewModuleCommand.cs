@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
 
                 _functionImportList = value;
-                // Create the list of patterns to match at patameter bind time
+                // Create the list of patterns to match at parameter bind time
                 // so errors will be reported before loading the module...
                 BaseFunctionPatterns = new List<WildcardPattern>();
                 foreach (string pattern in _functionImportList)
@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
 
                 _cmdletImportList = value;
-                // Create the list of patterns to match at patameter bind time
+                // Create the list of patterns to match at parameter bind time
                 // so errors will be reported before loading the module...
                 BaseCmdletPatterns = new List<WildcardPattern>();
                 foreach (string pattern in _cmdletImportList)

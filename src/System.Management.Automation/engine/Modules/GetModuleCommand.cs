@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
         public ModuleSpecification[] FullyQualifiedName { get; set; }
 
         /// <summary>
-        /// If specified, all loaded modules should be returne, otherwise only the visible
+        /// If specified, all loaded modules should be returned, otherwise only the visible
         /// modules should be returned.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_Loaded)]
@@ -426,7 +426,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Determine whether a module info matches a given module specification table and specified PSEditon value.
+        /// Determine whether a module info matches a given module specification table and specified PSEdition value.
         /// </summary>
         /// <param name="moduleInfo"></param>
         /// <param name="moduleSpecTable"></param>

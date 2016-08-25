@@ -185,7 +185,7 @@ namespace System.Management.Automation
                     ast = ast.Parent;
                 }
 
-                // The variables set in the interpretted case get set by InvokeWithPipe in the compiled case.
+                // The variables set in the interpreted case get set by InvokeWithPipe in the compiled case.
                 Diagnostics.Assert(_context.SessionState.Internal.CurrentScope.LocalsTuple == null,
                                     "No locals tuple should have been created yet.");
 
@@ -862,7 +862,7 @@ namespace System.Management.Automation
             else // The running powershell is Full PS or inbox Core PS
             {
                 // If there is no personal path key, then if the env variable doesn't match the system variable,
-                // the user modified it somewhere, else prepend the default personel module path
+                // the user modified it somewhere, else prepend the default personal module path
                 if (hklmMachineModulePath != null) // EVT.Machine exists
                 {
                     if (hkcuUserModulePath == null) // EVT.User does Not exist
@@ -1328,7 +1328,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Used by modules to provide a hooko to the engine for cleanup on removal
+    /// Used by modules to provide a hook to the engine for cleanup on removal
     /// w.r.t. compiled assembly being removed.
     /// </summary>
     public interface IModuleAssemblyCleanup
