@@ -68,7 +68,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Default depth of serializaiton
+        /// Default depth of serialization
         /// </summary>
         public static int MshDefaultSerializationDepth { get; } = 1;
 
@@ -93,7 +93,7 @@ namespace System.Management.Automation
         private bool _firstCall = true;
 
         /// <summary>
-        /// Serialzies passed in object
+        /// Serializes passed in object
         /// </summary>
         /// <param name="source">
         /// object to be serialized
@@ -118,7 +118,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Serialzies passed in object
+        /// Serializes passed in object
         /// </summary>
         /// <param name="source">
         /// object to be serialized
@@ -399,7 +399,7 @@ namespace System.Management.Automation
                     break;
             }
 
-            //An object which is orignially enumerable becomes an PSObject 
+            //An object which is original enumerable becomes an PSObject 
             //with arraylist on deserialization. So on roundtrip it will show up
             //as List. 
             //We serialize properties of enumerable and on deserialization mark the object

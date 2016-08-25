@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands
         /// Returns the string representation of the match object same format as ToString()
         /// but trims the path to be relative to the <paramref name="directory"/> argument.
         /// </summary>
-        /// <param name="directory">Directory to use as the root when calcualting the relative path</param>
+        /// <param name="directory">Directory to use as the root when calculating the relative path</param>
         /// <returns>The string representation of the match object</returns>
         public string ToString(string directory)
         {

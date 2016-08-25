@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     pd.PrinterSettings.PrinterName = _printerName;
                 }
 
-                // set up the callaback mechanism
+                // set up the callback mechanism
                 pd.PrintPage += new PrintPageEventHandler(this.pd_PrintPage);
 
                 // start printing

@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            // initally set start and end time to be equal
+            // initially set start and end time to be equal
             DateTime startTime = DateTime.Now;
             DateTime endTime = startTime;
             TimeSpan result;

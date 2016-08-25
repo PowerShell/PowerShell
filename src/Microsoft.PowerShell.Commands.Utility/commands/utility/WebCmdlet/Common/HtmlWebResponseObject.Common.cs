@@ -325,7 +325,7 @@ namespace Microsoft.PowerShell.Commands
                     throw _parsingException;
                 }
 
-                // Parsing was successfull
+                // Parsing was successful
                 _htmlParsed = true;
             }
 

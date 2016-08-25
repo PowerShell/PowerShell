@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// 
         /// Identifies whether the activity has completed (and the display for it should be removed),
-        /// or if it is proceededing (and the display for it should be shown).
+        /// or if it is proceeding (and the display for it should be shown).
         /// 
         /// </summary>
         /// <value></value>

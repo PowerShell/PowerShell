@@ -336,7 +336,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion parameters
 
         /// <summary>
-        /// Implements ProcessRecord() method for get-variabit's le command.
+        /// Implements ProcessRecord() method for get-variable's command.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -419,7 +419,7 @@ namespace Microsoft.PowerShell.Commands
         public ScopedItemOptions Option { get; set; } = ScopedItemOptions.None;
 
         /// <summary>
-        /// Specifies the visiblity of the new variable...
+        /// Specifies the visibility of the new variable...
         /// </summary>
         [Parameter]
         public SessionStateEntryVisibility Visibility
@@ -891,7 +891,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         varToSet.Description = Description;
 
-                        // If visiblity was specified, set it on the variable
+                        // If visibility was specified, set it on the variable
                         if (_visibility != null)
                         {
                             varToSet.Visibility = Visibility;
@@ -994,7 +994,7 @@ namespace Microsoft.PowerShell.Commands
                                     }
                                 }
 
-                                // If visiblity was specified, set it on the variable
+                                // If visibility was specified, set it on the variable
                                 if (_visibility != null)
                                 {
                                     matchingVariable.Visibility = Visibility;

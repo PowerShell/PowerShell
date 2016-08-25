@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     XmlDocument workingDocument = new XmlDocument();
                     // performing a Read() here to avoid rrechecking
-                    // "rss" or "feed" itmes
+                    // "rss" or "feed" items
                     reader.Read();
                     while (!reader.EOF)
                     {
@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
         public enum RestReturnType
         {
             /// <summary>
-            /// Return type not defined in reponse, 
+            /// Return type not defined in response, 
             /// best effort detect
             /// </summary>
             Detect,

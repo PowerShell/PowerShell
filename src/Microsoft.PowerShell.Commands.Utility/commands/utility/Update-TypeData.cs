@@ -228,7 +228,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _propertySerializationSet; }
         }
 
-        // These members are represeted as NoteProperty in types.ps1xml
+        // These members are represented as NoteProperty in types.ps1xml
         private string _serializationMethod;
         private Type _targetTypeForDeserialization;
         private int _serializationDepth = int.MinValue;
@@ -753,7 +753,7 @@ namespace Microsoft.PowerShell.Commands
             { return; }
 
             string action = UpdateDataStrings.UpdateTypeDataAction;
-            // Load the resource once and format it whenver a new target
+            // Load the resource once and format it whenever a new target
             // filename is available
             string target = UpdateDataStrings.UpdateTarget;
 
@@ -927,7 +927,7 @@ namespace Microsoft.PowerShell.Commands
 
             string action = UpdateDataStrings.UpdateFormatDataAction;
 
-            // Load the resource once and format it whenver a new target
+            // Load the resource once and format it whenever a new target
             // filename is available
             string target = UpdateDataStrings.UpdateTarget;
 
@@ -1412,7 +1412,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// To make it easier to specify a TypeName, we add an ArgumentTransformationAttribute here.
-    /// * string: retrun the string
+    /// * string: return the string
     /// * Type: return the Type.ToString()
     /// * instance: return instance.GetType().ToString()
     /// </summary>

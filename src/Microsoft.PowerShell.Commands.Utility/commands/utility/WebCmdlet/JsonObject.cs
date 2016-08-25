@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
             }
 #else
             //In ConvertTo-Json, to serialize an object with a given depth, we set the RecursionLimit to depth + 2, see JavaScriptSerializer constructor in ConvertToJsonCommand.cs.
-            // Setting RecursionLimit to depth + 2 in order to support '$object | ConverTo-Json –depth <value less than or equal to 100> | ConvertFrom-Json'.
+            // Setting RecursionLimit to depth + 2 in order to support '$object | ConvertTo-Json –depth <value less than or equal to 100> | ConvertFrom-Json'.
             JavaScriptSerializer serializer = new JavaScriptSerializer(new JsonObjectTypeResolver()) { RecursionLimit = (maxDepthAllowed + 2) };
             serializer.MaxJsonLength = Int32.MaxValue;
             object obj = serializer.DeserializeObject(input);

@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public CookieContainer Cookies { get; set; }
 
-        #region Credetials
+        #region Credentials
 
         /// <summary>
         /// gets or sets the UseDefaultCredentials property

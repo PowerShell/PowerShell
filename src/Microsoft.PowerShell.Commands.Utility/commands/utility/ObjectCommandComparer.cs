@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         internal bool IsExistingProperty { get; }
 
         /// <summary>
-        /// Indicates if the Property Value comparion has to be Case sensitive or not.
+        /// Indicates if the Property Value comparison has to be Case sensitive or not.
         /// </summary>
         internal SwitchParameter CaseSensitive
         {

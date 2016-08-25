@@ -342,7 +342,7 @@ namespace Microsoft.PowerShell.Commands
                 // return;
             }
 
-            // Set the recepient address of the mail message 
+            // Set the recipient address of the mail message 
             AddAddressesToMailMessage(_to, "to");
 
             // Set the BCC address of the mail message 
