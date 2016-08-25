@@ -55,9 +55,7 @@ Want to chat with other members of the PowerShell community?
 We have a Gitter Room which you can join below
 [![Join the chat at https://gitter.im/PowerShell/PowerShell](https://badges.gitter.im/PowerShell/PowerShell.svg)](https://gitter.im/PowerShell/PowerShell?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-There is also the community driven PowerShell Slack Team where there are over 1500 members already signed up with a number of channels for discussion on PowerShell topics including azure, dsc, ps-core (for discussionson topics mainly relating to this repository), ps-contributors and irc-bridge
-
-You can sign up for the slack team at [Slack Signup] 
+There is also the community driven PowerShell Slack Team where which you can sign up for at [Slack Signup] 
 
 [Slack Signup]: http://slack.poshcode.org
 Building the Repository
