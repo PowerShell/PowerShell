@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Workflow
         /// the AST before compilation. This stage should be light-weight and as efficient
         /// as possible.
         /// </summary>
-        /// <param name="ast">The PowerShell AST correpsponding to the job's definition.</param>
+        /// <param name="ast">The PowerShell AST corresponding to the job's definition.</param>
         /// <returns>A collection of PSParseErrors corresponding to any semantic issues in the AST.</returns>
         public List<ParseError> ValidateAst(FunctionDefinitionAst ast)
         {
@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Workflow
         /// Converts a PowerShell AST into a script block that represents
         /// the workflow to run.
         /// </summary>
-        /// <param name="ast">The PowerShell AST correpsponding to the job's definition.</param>
+        /// <param name="ast">The PowerShell AST corresponding to the job's definition.</param>
         /// <param name="definingModule">The module that is defining this command (if any)</param>
         /// <returns>
         /// A PowerShell script block that invokes an underlying job,
@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Workflow
         /// Converts a PowerShell AST into a script block that represents
         /// the workflow to run.
         /// </summary>
-        /// <param name="ast">The PowerShell AST correpsponding to the job's definition.</param>
+        /// <param name="ast">The PowerShell AST corresponding to the job's definition.</param>
         /// <param name="definingModule">The module that is defining this command (if any)</param>
         /// <param name="rootWorkflowName">Only root Workflow will be compiled</param>
         /// <returns>
@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Workflow
         /// Converts a PowerShell AST into a script block that represents
         /// the workflow to run.
         /// </summary>
-        /// <param name="ast">The PowerShell AST correpsponding to the job's definition.</param>
+        /// <param name="ast">The PowerShell AST corresponding to the job's definition.</param>
         /// <param name="definingModule">The module that is defining this command (if any)</param>
         /// <param name="initialSessionState">The initial session state of a runspace.</param>
         /// <param name="parsingErrors">parsing errors</param>
@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Workflow
         /// Converts a PowerShell AST into a script block that represents
         /// the workflow to run.
         /// </summary>
-        /// <param name="ast">The PowerShell AST correpsponding to the job's definition.</param>
+        /// <param name="ast">The PowerShell AST corresponding to the job's definition.</param>
         /// <param name="definingModule">The module that is defining this command (if any)</param>
         /// <param name="initialSessionState">The initial session state of a runspace.</param>
         /// <param name="parsingErrors">parsing errors</param>
@@ -206,7 +206,7 @@ namespace Microsoft.PowerShell.Workflow
         /// Converts a PowerShell AST into a script block that represents
         /// the workflow to run.
         /// </summary>
-        /// <param name="ast">The PowerShell AST correpsponding to the job's definition.</param>
+        /// <param name="ast">The PowerShell AST corresponding to the job's definition.</param>
         /// <param name="definingModule">The module that is defining this command (if any).</param>
         /// <param name="initialSessionState">The initial session state of a runspace.</param>
         /// <param name="sourceLanguageMode">Language mode of source that is creating the workflow.</param>
@@ -224,7 +224,7 @@ namespace Microsoft.PowerShell.Workflow
         /// Converts a PowerShell AST into a script block that represents
         /// the workflow to run.
         /// </summary>
-        /// <param name="ast">The PowerShell AST correpsponding to the job's definition.</param>
+        /// <param name="ast">The PowerShell AST corresponding to the job's definition.</param>
         /// <param name="definingModule">The module that is defining this command (if any)</param>
         /// <param name="initialSessionState">The initial session state of a runspace.</param>
         /// <param name="sourceLanguageMode">Language mode of source that is creating the workflow.</param>
@@ -323,7 +323,7 @@ namespace Microsoft.PowerShell.Workflow
                 invoker = System.Management.Automation.PowerShell.Create(initialSessionState);
                 var scopeFromIss = GetScopeFromIss(initialSessionState, invoker, out processedActivityLibraries, out activityMap);
 
-                // Add functionDefinitions, if any, from scopeFromIss to parent scope, so that they will be available for all FunctionDefintionAsts
+                // Add functionDefinitions, if any, from scopeFromIss to parent scope, so that they will be available for all FunctionDefinitionAsts
                 foreach(var entry in scopeFromIss.functionDefinitions)
                 {
                     scope.functionDefinitions.Add(entry.Key, entry.Value);
@@ -908,7 +908,7 @@ namespace Microsoft.PowerShell.Workflow
         /// <param name="referencedAssemblies">The list of additional assemblies to search for workflow activities.</param>
         /// <param name="parameterValidation">Any parameter validation applied to the parameters in the provided AST.</param>
         /// <param name="nestedWorkflows">Any nested workflows required by this PowerShell AST.</param>
-        /// <param name="requiredAssemblies">All assemblies, including provided at API or proiveded in workfow definition, required by this PowerShell Workflow.</param>
+        /// <param name="requiredAssemblies">All assemblies, including provided at API or provided in workflow definition, required by this PowerShell Workflow.</param>
         /// <param name="workflowAttributes">The attribute string for the workflow if these is one.</param>
         public static string Convert(FunctionDefinitionAst ast,
                                      PSModuleInfo definingModule,
@@ -1901,7 +1901,7 @@ namespace Microsoft.PowerShell.Workflow
         /// Block variable scope prefix like "$GLOBAL:" and "$SCRIPT:". In script workflow,
         /// the only valid scope prefix is "$WORKFLOW:". When generating expression for the
         /// PowerShellValue activity, we need to remove the $WORKFLOW part. Otherwise it will
-        /// generate error during execution, becuase the prefix "WORKFLOW" is not actually 
+        /// generate error during execution, because the prefix "WORKFLOW" is not actually 
         /// supported in the PowerShell.
         /// </summary>
         /// <param name="expression"></param>
@@ -2058,7 +2058,7 @@ namespace Microsoft.PowerShell.Workflow
 
         /// <summary>
         /// Used to hold the CmdletBinding attribute string specified in the script workflow text.
-        /// This needs to be propigated to the synthesized driver function .
+        /// This needs to be propagated to the synthesized driver function .
         /// </summary>
         internal string CmdletAttributeText { get; set; }
         
@@ -2398,7 +2398,7 @@ namespace Microsoft.PowerShell.Workflow
             // Generate debug symbol information for variable assignments.
             GenerateSymbolicInformation(value.Extent);
 
-            // Visit the right-hand side of the expression for activitities
+            // Visit the right-hand side of the expression for activities
             PipelineAst rightPipeline = value as PipelineAst;
             if (rightPipeline != null)
             {
@@ -2944,7 +2944,7 @@ namespace Microsoft.PowerShell.Workflow
                                 return null;
                             }
 
-                            // This is now an interative pipeline, remember the nonIterativePipelineVariable as one that needs to be set.
+                            // This is now an interactive pipeline, remember the nonIterativePipelineVariable as one that needs to be set.
                             if (!String.IsNullOrEmpty(nonIterativePipelineVariable) &&
                                 !iterativePipelineVariables.Contains(nonIterativePipelineVariable, StringComparer.OrdinalIgnoreCase))
                             {
@@ -2952,7 +2952,7 @@ namespace Microsoft.PowerShell.Workflow
                             }
                         }
 
-                        // Verify that once they've started an interative pipeline, all commands are
+                        // Verify that once they've started an interactive pipeline, all commands are
                         // Foreach-Object -Sequence or Where-Object -Sequence.
                         if (isIterativePipeline && (! isIterativeCommand))
                         {
@@ -7426,7 +7426,7 @@ namespace Microsoft.PowerShell.Workflow
             if (tryStatementAst.Finally != null)
             {
                 // Close the original try / catch. Since we're bringing the original
-                // finally into a new catch statement, we need to sythesize a dummy one here.
+                // finally into a new catch statement, we need to synthesize a dummy one here.
                 if (tryStatementAst.CatchClauses.Count == 0)
                 {
                     WriteLine("<TryCatch.Finally><Sequence /></TryCatch.Finally>");

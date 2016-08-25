@@ -109,7 +109,7 @@ namespace {0}
         /// Returns a configured instance of System.Management.Automation.PowerShell, pre-populated with the command to run.
         /// </summary>
         /// <param name=""context"">The NativeActivityContext for the currently running activity.</param>
-        /// <returns>A populated instance of Sytem.Management.Automation.PowerShell</returns>
+        /// <returns>A populated instance of System.Management.Automation.PowerShell</returns>
         /// <remarks>The infrastructure takes responsibility for closing and disposing the PowerShell instance returned.</remarks>
         protected override ActivityImplementationContext GetPowerShell(NativeActivityContext context)
         {{
@@ -448,7 +448,7 @@ namespace {0}
         /// Generates a complete activity source file from a module.
         /// </summary>
         /// <param name="moduleToProcess"></param>
-        /// <param name="activityNamespace">The namesspace to use for the target classes</param>
+        /// <param name="activityNamespace">The namespace to use for the target classes</param>
         /// <returns>An array of code elements to compile into an assembly</returns>
         static public string[] GenerateFromModuleInfo(PSModuleInfo moduleToProcess, string activityNamespace)
         {

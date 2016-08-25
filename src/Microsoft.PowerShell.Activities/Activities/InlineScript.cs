@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Activities
         /// <summary>
         /// Validates the contents of the script block for this command.
         /// </summary>
-        /// <param name="metadata">Metatdata for this activity</param>
+        /// <param name="metadata">Metadata for this activity</param>
         protected override void CacheMetadata(NativeActivityMetadata metadata)
         {
             base.CacheMetadata(metadata);
@@ -195,7 +195,7 @@ namespace Microsoft.PowerShell.Activities
         /// Returns a configured instance of System.Management.Automation.PowerShell, pre-populated with the script to run.
         /// </summary>
         /// <param name="context">The NativeActivityContext for the currently running activity.</param>
-        /// <returns>A populated instance of Sytem.Management.Automation.PowerShell</returns>
+        /// <returns>A populated instance of System.Management.Automation.PowerShell</returns>
         /// <remarks>The infrastructure takes responsibility for closing and disposing the PowerShell instance returned.</remarks>
         [System.Diagnostics.CodeAnalysis.SuppressMessage(
             "Microsoft.Reliability",
@@ -780,7 +780,7 @@ namespace Microsoft.PowerShell.Activities
     public class Suspend : NativeActivity
     {
         /// <summary>
-        /// Optional field used for resuming the worklfow for a specific label.
+        /// Optional field used for resuming the workflow for a specific label.
         /// </summary>
         public string Label { get; set; }
 

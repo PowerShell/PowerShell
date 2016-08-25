@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Activities
     /// <summary>
     /// The implementation of pipeline activity.
     /// This similar concept which we have in PowerShell today like Get-Process | Stop-Process.
-    /// Pipline activity will make sure the piped execution of its child acitities.
+    /// Pipeline activity will make sure the piped execution of its child activities.
     /// </summary>
 #if _NOTARMBUILD_
     [Designer (typeof (PipelineDesigner))]
@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Activities
 
         /// <summary>
         /// Validate the required number of activities of pipeline activity.
-        /// Setup the cachemetata with variables and activities.
+        /// Setup the cachemetadata with variables and activities.
         /// </summary>
         /// <param name="metadata"></param>
         protected override void CacheMetadata(NativeActivityMetadata metadata)
@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Activities
                 return;
             }
 #endif
-            // Adding variables into the CacheMetatdata of pipeline activity.
+            // Adding variables into the CacheMetadata of pipeline activity.
             metadata.AddImplementationVariable(this.lastIndexHint);
 
             // We use a GUID here to make this name hard to guess. It's not a security issue,
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Activities
                 appendOutput = true;
             }
 
-            // Adding activities into the CacheMetatdata of pipeline activity.
+            // Adding activities into the CacheMetadata of pipeline activity.
             if (count == 1)
             {
 
@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell.Activities
         /// </summary>
         /// <param name="context">The activity context.</param>
         /// <param name="variable">The variable which needs to set.</param>
-        /// <param name="value">The value for the vriable.</param>
+        /// <param name="value">The value for the variable.</param>
         private void SetData(ActivityContext context, Variable<PSDataCollection<PSObject>> variable, PSDataCollection<PSObject> value)
         {
             PropertyDescriptor prop = context.DataContext.GetProperties()[variable.Name];
