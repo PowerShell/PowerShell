@@ -332,7 +332,7 @@ namespace Microsoft.PowerShell
                 case ConsoleControl.ConsoleBreakSignal.Logoff:
                     // Just ignore the logoff signal. This signal is sent to console
                     // apps running as service anytime *any* user logs off which means
-                    // that PowerShell could't be used in servces/tasks if we didn't
+                    // that PowerShell couldn't be used in services/tasks if we didn't
                     // suppress this signal...
                     return true;
 
@@ -372,7 +372,7 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// 
-        /// Spin up a new thread to cancel the current pipline.  This will allow subsequent break interrupts to be received even
+        /// Spin up a new thread to cancel the current pipeline.  This will allow subsequent break interrupts to be received even
         /// if the cancellation is blocked (which can be the case when the pipeline blocks and nothing implements Cmdlet.Stop
         /// properly).  That is because the OS will not inject another thread when a break event occurs if one has already been
         /// injected and is running.
@@ -1384,8 +1384,8 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// This method is reatined to make V1 tests compatible with V2 as signature of this method
-        /// is slighlty changed in v2.
+        /// This method is retained to make V1 tests compatible with V2 as signature of this method
+        /// is slightly changed in v2.
         /// </summary>
         /// <param name="bannerText"></param>
         /// <param name="helpText"></param>
@@ -1520,7 +1520,7 @@ namespace Microsoft.PowerShell
             // Don't load PSReadline if:
             //   * we don't think the process will be interactive, e.g. -command or -file
             //     - exception: when -noexit is specified, we will be interactive after the command/file finishes
-            //   * -noniteractive: this should be obvious, they've asked that we don't every prompt
+            //   * -noninteractive: this should be obvious, they've asked that we don't every prompt
             //
             // Note that PSReadline doesn't support redirected stdin/stdout, but we don't check that here because
             // a future version might, and we should automatically load it at that unknown point in the future.
@@ -1629,7 +1629,7 @@ namespace Microsoft.PowerShell
 
         private void OpenConsoleRunspace(Runspace runspace, bool staMode)
         {
-            // staMode will have folowing values:
+            // staMode will have following values:
             // On FullPS: 'true'/'false' = default('true'=STA) + possibility of overload through cmdline parameter '-mta'
             // On NanoPS: always 'false' = default('false'=MTA) + NO possibility of overload through cmdline parameter '-mta'
             // ThreadOptions should match on FullPS and NanoPS for corresponding ApartmentStates.
@@ -2030,7 +2030,7 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// 
-        /// Reports an exception accoring to the exception reporting settings in effect.
+        /// Reports an exception according to the exception reporting settings in effect.
         /// 
         /// </summary>
         /// <param name="e">
