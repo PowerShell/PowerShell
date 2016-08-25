@@ -790,7 +790,7 @@ function Start-PSBootstrap {
             }
 
             # Install cmake
-            $cmakePath = "${env:ProgramFiles(x86)}\CMake\bin"
+            $cmakePath = "${env:ProgramFiles}\CMake\bin"
             if($cmakePresent) {
                 log "Cmake is already installed. Skipping installation."
             } else {
