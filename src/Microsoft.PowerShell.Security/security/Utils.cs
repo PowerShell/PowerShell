@@ -303,7 +303,7 @@ namespace Microsoft.PowerShell
 
 
         /// <summary>
-        /// convert the specifed provider path to a provider path
+        /// convert the specified provider path to a provider path
         /// and make sure that all of the following is true:
         /// -- it represents a FileSystem path
         /// -- it points to a file
