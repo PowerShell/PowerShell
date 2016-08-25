@@ -1516,7 +1516,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             //
             // Prior to Vista, PdhCollectQueryDataWithTime() was not available, 
             // so we could not collect a timestamp for the entire sample set.
-            // We will use the last sample's timstamp instead.
+            // We will use the last sample's timestamp instead.
             //
             nextSet = new PerformanceCounterSampleSet(sampleTimeStamp, samplesArr, _firstReading);
             _firstReading = false;
