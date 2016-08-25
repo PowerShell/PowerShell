@@ -1,4 +1,4 @@
-Describe "BooleanParameterDCR Tests" -tags "CI" {
+Describe "Event Subscriber Tests" -tags "CI" {
     BeforeEach {
         Get-EventSubscriber | Unregister-Event
     }
@@ -6,7 +6,7 @@ Describe "BooleanParameterDCR Tests" -tags "CI" {
         Get-EventSubscriber | Unregister-Event
     }
 
-    # can't let this case to work, need help
+    # can't let this case to work
     It "Register an event with no action, trigger it and wait for it to be raised." -Pending:$true{
         Get-EventSubscriber | should BeNullOrEmpty
         $messageData = new-object psobject
