@@ -45,10 +45,10 @@
         private string _destinationPath = null;
 
         internal Lazy<bool> SkipValidate;  //??? Seems to be a design choice. Why let a user to decide?
-        // we cannot enable skipdepedencies because this will break downlevel psget which sets skipdependencies to true
+        // we cannot enable skipdependencies because this will break downlevel psget which sets skipdependencies to true
         //internal Lazy<bool> SkipDependencies;     
-        //internal ImplictLazy<bool> ContinueOnFailure;
-        //internal ImplictLazy<bool> FindByCanonicalId;
+        //internal ImplicitLazy<bool> ContinueOnFailure;
+        //internal ImplicitLazy<bool> FindByCanonicalId;
 
         private HttpClient _httpClient;
         private HttpClient _httpClientWithoutAcceptHeader;
@@ -73,8 +73,8 @@
             Scope = new Lazy<string>(() => GetOptionValue("Scope"));
 
             //SkipDependencies = new Lazy<bool>(() => GetOptionValue("SkipDependencies").IsTrue());
-            //ContinueOnFailure = new ImplictLazy<bool>(() => GetOptionValue("ContinueOnFailure").IsTrue());           
-            //FindByCanonicalId = new ImplictLazy<bool>(() => GetOptionValue("FindByCanonicalId").IsTrue());
+            //ContinueOnFailure = new ImplicitLazy<bool>(() => GetOptionValue("ContinueOnFailure").IsTrue());           
+            //FindByCanonicalId = new ImplicitLazy<bool>(() => GetOptionValue("FindByCanonicalId").IsTrue());
 
             Headers = new Lazy<string[]>(() => (GetOptionValues("Headers") ?? new string[0]).ToArray());
             InstalledPackages = new Lazy<PackageBase[]>(() => (GetInstalledPackagesOptionValue()).ToArray());
@@ -984,7 +984,7 @@
 
                         if (pkgItem != null && pkgItem.IsInstalled)
                         {
-                            //A user does not provide any package name in the commandeline, return them all
+                            //A user does not provide any package name in the commandline, return them all
                             if (string.IsNullOrWhiteSpace(name))
                             {
                                 isDup = true;
@@ -1409,7 +1409,7 @@
                 }
 
                 if (AllVersions.Value){
-                    //Display versions from lastest to oldest
+                    //Display versions from latest to oldest
                     pkgs = (from p in pkgs select p).OrderByDescending(x => x.Version);
                 }
 
@@ -1605,7 +1605,7 @@
                 return pkgs;
             }
 
-            //Tags should be performed as *AND* intead of *OR"
+            //Tags should be performed as *AND* instead of *OR"
             //For example -FilterOnTag:{ "A", "B"}, the returned package should have both A and B.
             return pkgs.Where(pkg => FilterOnTag.Value.All(
                 tagFromUser =>
@@ -1681,7 +1681,7 @@
                     //A sample case will be something like find-package sql*Compact*.
 
                     //When the AllVersions property exists, the query like the following containing the wildcards does not work. We need to remove the wild cards and
-                    //replace it with the longest string searhc.
+                    //replace it with the longest string search.
                     //http://www.powershellgallery.com/api/v2/Search()?$orderby=DownloadCount%20desc,Id&searchTerm='tsdprovi*'&targetFramework=''&includePrerelease=false
 
                     if ((!String.IsNullOrWhiteSpace(name) && source.Location.IndexOf("powershellgallery.com", StringComparison.OrdinalIgnoreCase) == -1)
@@ -1714,7 +1714,7 @@
 
                 if (!String.IsNullOrWhiteSpace(name))
                 {
-                    //Filter on the results. This is needed because we replace [...] regex in the searchterm at the begining of this method.
+                    //Filter on the results. This is needed because we replace [...] regex in the searchterm at the beginning of this method.
                     pkgs = FilterOnName(pkgs, name, isNameContainsWildCard);
                 }
 

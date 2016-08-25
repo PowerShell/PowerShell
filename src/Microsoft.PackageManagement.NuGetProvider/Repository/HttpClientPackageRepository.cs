@@ -100,7 +100,7 @@
             //Usually versions has a limited number, ToArray should be ok. 
             var versions = version.GetComparableVersionStrings().ToArray();
 
-            //Will only enumerate oackages once
+            //Will only enumerate packages once
             return packages.FirstOrDefault(package => packageId.Equals(package.Id, StringComparison.OrdinalIgnoreCase) && versions.Contains(package.Version,StringComparer.OrdinalIgnoreCase));  
         }
 

@@ -345,7 +345,7 @@
                 return packages;
             }
 
-            //return the lastest version
+            //return the latest version
             return packages.GroupBy(p => p.Id).Select(each => each.OrderByDescending(pp => pp.Version).FirstOrDefault());
         }
 

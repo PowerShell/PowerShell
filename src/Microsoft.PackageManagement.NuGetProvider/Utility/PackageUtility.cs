@@ -30,7 +30,7 @@
         internal static string GetPackageNameWithoutVersionInfo(string packageName)
         {
             //Input: JQuery.2.1.3
-            //output: Jqery
+            //output: JQuery
             // An unsupported scenario is if the package has name MyModule2.2 and version 2.0 then we will return version as 2.2.2.0 and packagename as mymodule
 
             string version = String.Empty;
@@ -276,7 +276,7 @@
             }
 
             // Dependencies are of the form "dep1|dep2"
-            // Split them up and process each depedency with ParseDependency function
+            // Split them up and process each dependency with ParseDependency function
             var dependencies = value.Split('|').Select(ParseDependency);
 
             // group the dependencies by target framework
@@ -338,7 +338,7 @@
 
         /// <summary>
         /// Extract the package id.
-        /// From the feed, the package id is eqaul to something like this "http://www.nuget.org/api/v2/Packages(Id='jQuery',Version='2.1.3')".
+        /// From the feed, the package id is equal to something like this "http://www.nuget.org/api/v2/Packages(Id='jQuery',Version='2.1.3')".
         /// But we need id='jQuery'. 
         /// </summary>
         /// <param name="longId"></param>
@@ -416,7 +416,7 @@
         }
 
         /// <summary>
-        /// A help for processing the metatadata tag
+        /// A help for processing the metadata tag
         /// </summary>
         /// <param name="package"></param>
         /// <param name="xElement"></param>
@@ -542,7 +542,7 @@
 
             if (!groups.Any())
             {
-                // since there is no group, we are encoutering
+                // since there is no group, we are encountering
                 // old format, <dependency> is direct child of <dependencies>
                 var dependencySet = new PackageDependencySet
                 {
@@ -586,7 +586,7 @@
         }
 
         /// <summary>
-        /// Make sure the Nuget required xml tags exist witin the metadata tag in the nuspec file.
+        /// Make sure the Nuget required xml tags exist within the metadata tag in the nuspec file.
         /// </summary>
         /// <param name="package"></param>
         private static void EnsureRequiredXmlTags(PackageBase package)
