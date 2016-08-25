@@ -4,7 +4,7 @@
 **
 ** Purpose: 
 ** Defines a session for Event Log operations.  The session can 
-** be configured for a remote machine and can use specfic
+** be configured for a remote machine and can use specific
 ** user credentials.
 ============================================================*/
 
@@ -45,7 +45,7 @@ namespace System.Diagnostics.Eventing.Reader
         internal EventLogHandle renderContextHandleSystem = EventLogHandle.Zero;
         internal EventLogHandle renderContextHandleUser = EventLogHandle.Zero;
 
-        //the dummy sync object for the two contextes.
+        //the dummy sync object for the two contexts.
         private object _syncObject = null;
 
         private string _server;
