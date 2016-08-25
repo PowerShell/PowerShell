@@ -112,7 +112,7 @@ namespace Microsoft.PackageManagement.MetaProvider.PowerShell.Internal {
         private static string _powershellProviderFunctionsPath;
     
         //The reason of using 'object' instead of' PowerShellPackageProvider' is that PowerShellPackageProvider is a provider
-        //that is not visiable to the PackageManagment.
+        //that is not visible to the PackageManagement.
         private readonly IDictionary<string, object> _availableProviders = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
         private readonly IDictionary<string, List<ProviderItem>> _psProviderCacheTable = new Dictionary<string, List<ProviderItem>>(StringComparer.OrdinalIgnoreCase);
         internal const string PowerShellGet = "PowerShellGet";
@@ -282,9 +282,9 @@ namespace Microsoft.PackageManagement.MetaProvider.PowerShell.Internal {
 
         private void AddToPowerShellProviderCacheTable(KeyValuePair<string, PSModuleInfo> moduleInfo) {
 
-            //some times when PrivateData in a provider's .psd1 meta file contains multiple providers (not recommanded way), 
+            //some times when PrivateData in a provider's .psd1 meta file contains multiple providers (not recommended way), 
             //they all reside under the same module path. So we extract each file name and add to the table as dictionary key
-            //to indicate they are actaully different providers. 
+            //to indicate they are actually different providers. 
             if (moduleInfo.Key != null) {
                 var name = Path.GetFileNameWithoutExtension(moduleInfo.Key);
                 if (string.IsNullOrWhiteSpace(name)) {
@@ -531,7 +531,7 @@ namespace Microsoft.PackageManagement.MetaProvider.PowerShell.Internal {
                 var tasks = modules.AsyncForEach(modulePath => AnalyzeModule(request, modulePath.Key, modulePath.Value.Version ?? new Version(0, 0), false, logWarning, modulePath.Value));
                 tasks.WaitAll();
             } else {
-                //find all providers but only load the lastest if no name nor version exists, e.g. get-pp -list 
+                //find all providers but only load the latest if no name nor version exists, e.g. get-pp -list 
 
                 //Scan for the all available providers
                 var results = ScanForModules(request, null, null, null, ProviderOption.AllProvider).ToArray();
@@ -692,7 +692,7 @@ namespace Microsoft.PackageManagement.MetaProvider.PowerShell.Internal {
                 var providerName = provider.GetPackageProviderName();
                 if (!string.IsNullOrWhiteSpace(providerName)) {
                     request.Debug(string.Format(CultureInfo.CurrentCulture, Resources.Messages.SuccessfullyLoadedModule, modulePath));
-                    // looks good to me, let's add this to the list of moduels this meta provider can create.
+                    // looks good to me, let's add this to the list of modules this meta provider can create.
 
                     var packageProvider = new PackageProvider(provider.As<IPackageProvider>()) {
                         IsLoaded = true,
