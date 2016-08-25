@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Returns the PowerShell commond line execution path.
+        /// Returns the PowerShell command line execution path.
         /// </summary>
         public string PSExecutionPath
         {
@@ -312,7 +312,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Compares the current ScheduledJobDefintion task scheduler information
+        /// Compares the current ScheduledJobDefinition task scheduler information
         /// with the corresponding information stored in Task Scheduler.  If the
         /// information is different then the task scheduler information in this 
         /// object is updated to match what is in Task Scheduler, since that information
@@ -469,7 +469,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Updates existing file with this defintion information.
+        /// Updates existing file with this definition information.
         /// </summary>
         private void UpdateJobStore()
         {
@@ -788,7 +788,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 InvocationInfo.Definition.Name = newName;
                 _definitionOutputPath = ScheduledJobStore.GetJobRunOutputDirectory(Name);
 
-                // Update job defintion in new job store location.
+                // Update job definition in new job store location.
                 UpdateJobStore();
 
                 // Add new Task Scheduler task with new name.
@@ -1175,7 +1175,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Starts registered job defintion running from the Task Scheduler.
+        /// Starts registered job definition running from the Task Scheduler.
         /// </summary>
         public void RunAsTask()
         {
@@ -1920,7 +1920,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
             else
             {
-                // Look for definigion in known path.
+                // Look for definition in known path.
                 fs = ScheduledJobStore.GetFileForJobDefinition(
                     definitionName,
                     definitionPath,
@@ -1984,7 +1984,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     // Wait for job to finish.
                     job.Finished.WaitOne();
 
-                    // Ensure that the job run results are presisted to store.
+                    // Ensure that the job run results are persisted to store.
                     jobManager.PersistJob(job, Definition);
 
                     // Perform a Receive-Job on the job object.  Output data will be dropped
@@ -2290,7 +2290,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
     #endregion
 
-    #region Utililites
+    #region Utilities
 
     /// <summary>
     /// Simple string formatting helper.

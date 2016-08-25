@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private Int32[] _definitionIds;
 
         /// <summary>
-        /// ScheduledJobDefintion Name.
+        /// ScheduledJobDefinition Name.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, 
                    ParameterSetName = RemoveJobTriggerCommand.JobDefinitionNameParameterSet)]

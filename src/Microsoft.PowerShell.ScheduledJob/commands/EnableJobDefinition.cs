@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         #region Properties
 
         /// <summary>
-        /// Returns true if scheduled job defintion should be enabled,
+        /// Returns true if scheduled job definition should be enabled,
         /// false otherwise.
         /// </summary>
         protected override bool Enabled

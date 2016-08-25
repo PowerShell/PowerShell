@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Retrives options for the provided task Id.
+        /// Retrieves options for the provided task Id.
         /// </summary>
         /// <param name="taskId">Task Id</param>
         /// <exception cref="ScheduledJobException">Task not found.</exception>
@@ -459,7 +459,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Creates a ScheuduledJobTrigger object based on a provided WTS ITrigger.
+        /// Creates a ScheduledJobTrigger object based on a provided WTS ITrigger.
         /// </summary>
         /// <param name="iTrigger">ITrigger</param>
         /// <returns>ScheduledJobTrigger</returns>
