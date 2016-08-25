@@ -2153,7 +2153,7 @@ function Get-InstalledModule
 
 #endregion *-Module cmdlets
 
-#region Find-DscResouce cmdlet
+#region Find-DscResource cmdlet
 
 function Find-DscResource
 {
@@ -2259,7 +2259,7 @@ function Find-DscResource
     }
 }
 
-#endregion Find-DscResouce cmdlet
+#endregion Find-DscResource cmdlet
 
 #region Find-Command cmdlet
 
@@ -2936,7 +2936,7 @@ function Find-Script
             $psgalleryRepo = Get-PSRepository -Name $Script:PSGalleryModuleSource `
                                               -ErrorAction SilentlyContinue `
                                               -WarningAction SilentlyContinue
-            # And check for IsDeafult?
+            # And check for IsDefault?
             if($psgalleryRepo)
             {
                 $isRepositoryNullOrPSGallerySpecified = $true
@@ -4547,7 +4547,7 @@ function Test-ScriptFileInfo
 
         if($ast)
         {
-            # Get the block/group comment begining with <#PSScriptInfo
+            # Get the block/group comment beginning with <#PSScriptInfo
             $CommentTokens = $tokens | Microsoft.PowerShell.Core\Where-Object {$_.Kind -eq 'Comment'}
 
             $psscriptInfoComments = $CommentTokens | 
@@ -6655,7 +6655,7 @@ function Set-ModuleSourcesVariable
             }
         }
 
-        # Already registed repositories may not have the ScriptSourceLocation property, try to populate it from the existing SourceLocation
+        # Already registered repositories may not have the ScriptSourceLocation property, try to populate it from the existing SourceLocation
         # Also populate the PublishLocation and ScriptPublishLocation from the SourceLocation if PublishLocation is empty/null.
         # 
         $script:PSGetModuleSources.Keys | Microsoft.PowerShell.Core\ForEach-Object { 
@@ -8930,7 +8930,7 @@ function Add-PackageSource
 
     if($Name -eq $Script:PSGalleryModuleSource)
     {
-        # Add or update the PSGallery repostory
+        # Add or update the PSGallery repository
         $repository = Set-PSGalleryRepository -Trusted:$Trusted
 
         if($repository)
@@ -10550,7 +10550,7 @@ function Install-PackageUtility
 
                 $destinationModulePath = Microsoft.PowerShell.Management\Join-Path -Path $moduleDestination -ChildPath $pkg.Name
 
-                # Side-by-Side module version is avialable on PowerShell 5.0 or later versions only
+                # Side-by-Side module version is available on PowerShell 5.0 or later versions only
                 # By default, PowerShell module versions will be installed/updated Side-by-Side.
                 if(Test-ModuleSxSVersionSupport)
                 {
@@ -12232,7 +12232,7 @@ function Save-ModuleSources
 
 function Test-ModuleSxSVersionSupport
 {
-    # Side-by-Side module version is avialable on PowerShell 5.0 or later versions only
+    # Side-by-Side module version is available on PowerShell 5.0 or later versions only
     # By default, PowerShell module versions will be installed/updated Side-by-Side.
     $PSVersionTable.PSVersion -ge '5.0.0'
 }
@@ -12826,7 +12826,7 @@ function Update-ModuleManifest
     {
         $params.Add("ProcessorArchitecture",$ProcessorArchitecture)
     }
-    #Check if ProcessorArchitecture has a value and is not 'None' on lower verison PS
+    #Check if ProcessorArchitecture has a value and is not 'None' on lower version PS
     elseif($moduleInfo.ProcessorArchitecture -and $moduleInfo.ProcessorArchitecture -ne 'None')
     {
         $params.Add("ProcessorArchitecture",$moduleInfo.ProcessorArchitecture)
@@ -13237,7 +13237,7 @@ function Update-ModuleManifest
         }
         $PrivateDataInput = Get-PrivateData -PrivateData $Data
         
-        #Repleace the PrivateData section by first locating the linenumbers of start line and endline.  
+        #Replace the PrivateData section by first locating the linenumbers of start line and endline.  
         $PrivateDataBegin = Select-String -Path $tempPath -Pattern "PrivateData ="
         $PrivateDataBeginLine = $PrivateDataBegin.LineNumber
     
