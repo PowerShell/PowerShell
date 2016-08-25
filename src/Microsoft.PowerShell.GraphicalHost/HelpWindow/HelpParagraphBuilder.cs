@@ -148,7 +148,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="psObj">PSObject that contains another PSObject as a property</param>
         /// <param name="psObjectName">property name that contains the PSObject</param>
-        /// <param name="propertyName">property name in thye inner PSObject</param>
+        /// <param name="propertyName">property name in the inner PSObject</param>
         /// <returns>the string from the inner psObject property or null if it could not be retrieved</returns>
         private static string GetInnerPSObjectPropertyString(PSObject psObj, string psObjectName, string propertyName)
         {
@@ -200,7 +200,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Gets the text from a property of type PSObject[] where the first object has a text property
         /// </summary>
-        /// <param name="psObj">objhect to get text from</param>
+        /// <param name="psObj">object to get text from</param>
         /// <param name="propertyText">property with PSObject[] containing text</param>
         /// <returns>the text from a property of type PSObject[] where the first object has a text property</returns>
         private static string GetTextFromArray(PSObject psObj, string propertyText)
@@ -683,7 +683,7 @@ namespace Microsoft.Management.UI.Internal
                         {
                             parameterType = GetPropertyString(parameterTypeData, "name");
 
-                            //If there is no type for the paramter, we expect it is System.Object
+                            //If there is no type for the parameter, we expect it is System.Object
                             if (String.IsNullOrEmpty(parameterType))
                                 parameterType = "object";
                         }
@@ -900,7 +900,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="setting">true if it should add the segment</param>
         /// <param name="sectionTitle">title of the section</param>
-        /// <param name="inputOrOutputProperty">property with the outter object</param>
+        /// <param name="inputOrOutputProperty">property with the outer object</param>
         /// <param name="inputOrOutputInnerProperty">property with the inner object</param>
         private void AddInputOrOutputEntries(bool setting, string sectionTitle, string inputOrOutputProperty, string inputOrOutputInnerProperty)
         {

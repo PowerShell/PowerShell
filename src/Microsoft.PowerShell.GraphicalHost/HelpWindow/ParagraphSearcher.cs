@@ -57,15 +57,15 @@ namespace Microsoft.Management.UI.Internal
 
             if (this.currentHighlightedMatch != null)
             {
-                // restore the curent highlighted background to plain highlighted
+                // restore the current highlighted background to plain highlighted
                 this.currentHighlightedMatch.Background = ParagraphSearcher.HighlightBrush;
             }
 
             // If the caret is in the end of a highlight we move to the adjacent run
-            // It has to be in the end because if there is a match at the begining of the file
+            // It has to be in the end because if there is a match at the beginning of the file
             // and the caret has not been touched (so it is in the beginning of the file too)
             // we want to highlight this first match.
-            // Considering the caller allways set the caret to the end of the highlight
+            // Considering the caller always set the caret to the end of the highlight
             // The condition below works well for successive searchs
             // We also need to move to the adjacent run if the caret is at the first run and we
             // are moving backwards so that a search backwards when the first run is highlighted
@@ -92,7 +92,7 @@ namespace Microsoft.Management.UI.Internal
             this.currentHighlightedMatch = currentRun;
             if (this.currentHighlightedMatch != null)
             {
-                // restore the curent highligthed background to current highlighted
+                // restore the current highlighted background to current highlighted
                 this.currentHighlightedMatch.Background = ParagraphSearcher.CurrentHighlightBrush;
             }
 
@@ -153,7 +153,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the run of an inline. Inlines in a ParagrahBuilder are either a Run or a Bold
+        /// Gets the run of an inline. Inlines in a ParagraphBuilder are either a Run or a Bold
         /// which contains a Run
         /// </summary>
         /// <param name="inline">inline to get the run from</param>
@@ -208,10 +208,10 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Returns true if the run is the fiorst run of the paragraph
+        /// Returns true if the run is the first run of the paragraph
         /// </summary>
         /// <param name="run">run to check</param>
-        /// <returns>true if the run is the fiorst run of the paragraph</returns>
+        /// <returns>true if the run is the first run of the paragraph</returns>
         private static bool IsFirstRun(Run run)
         {
             Paragraph paragraph = GetParagraph(run);

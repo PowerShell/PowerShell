@@ -303,7 +303,7 @@ namespace Microsoft.Management.UI.Internal
 
             this.itemsSourceIsEmpty = (null != this.ItemsSource && false == this.ItemsSource.GetEnumerator().MoveNext());
 
-            // A view can be created if there is data to auto-generate columns, or columns are added programatically \\
+            // A view can be created if there is data to auto-generate columns, or columns are added programmatically \\
             bool canCreateView = (null != this.ItemsSource) &&
                 (false == this.itemsSourceIsEmpty || false == this.AutoGenerateColumns);
 

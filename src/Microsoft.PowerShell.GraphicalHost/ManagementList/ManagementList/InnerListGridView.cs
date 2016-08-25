@@ -39,7 +39,7 @@ namespace Microsoft.Management.UI.Internal
         private bool canChangeColumns = false;
 
         /// <summary>
-        /// Instanctiates a new object of this class.
+        /// Instantiates a new object of this class.
         /// </summary>
         public InnerListGridView()
             : this(new ObservableCollection<InnerListColumn>())
@@ -257,7 +257,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Syncronizes AvailableColumns and Columns preserving the order from Columns that
+        /// Synchronizes AvailableColumns and Columns preserving the order from Columns that
         /// comes from the user moving Columns around.
         /// </summary>
         private void SynchronizeColumns()
