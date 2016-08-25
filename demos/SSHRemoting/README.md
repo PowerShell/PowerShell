@@ -38,11 +38,15 @@ Setup on Windows Machine
       + PubkeyAuthentication yes
 1.  Restart the sshd service
     - Restart-Service sshd
+1. Add the path where OpenSSH is installed to your Path Env Variable
+    - This should be along the lines of C:\ProgramFiles\OpenSSH\
+    - This allows for the ssh.exe to be found and resolves the issue you may see as reported in [#2003] with Invoke-Command New-PSSession & Enter-PSSession 
+
 
 [PowerShell for Windows]: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#msi
 [Win32 Open SSH]: https://github.com/PowerShell/Win32-OpenSSH
 [installation]: https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH
-
+[#2003]: https://github.com/PowerShell/PowerShell/issues/2003
 Setup on Linux (Ubuntu 14.04) Machine:
 ======================================
 1.  Install the latest [PowerShell for Linux] build from GitHub
