@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell
         /// Returns the beginning of the current/next word as defined by wordDelimiters and whitespace.
         /// </summary>
         /// <param name="i">Current cursor location.</param>
-        /// <param name="wordDelimiters">Characters used to deliminate words.</param>
+        /// <param name="wordDelimiters">Characters used to delimit words.</param>
         /// <returns>Location of the beginning of the previous word.</returns>
         private int ViFindPreviousWordPoint(int i, string wordDelimiters)
         {

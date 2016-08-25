@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// When displaying possible completions, either display
-        /// tooltips or dipslay just the completions.
+        /// tooltips or display just the completions.
         /// </summary>
         public const bool DefaultShowToolTips = false;
 

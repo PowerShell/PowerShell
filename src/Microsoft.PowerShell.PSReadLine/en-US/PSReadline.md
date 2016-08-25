@@ -10,9 +10,9 @@ If neither -Bound nor -Unbound is specified, returns all bound keys and unbound 
 
 If -Bound is specified and -Unbound is not specified, only bound keys are returned.
 
-If -Unound is specified and -Bound is not specified, only unbound keys are returned.
+If -Unbound is specified and -Bound is not specified, only unbound keys are returned.
 
-If both -Bound and -Unound are specified, returns all bound keys and unbound functions.
+If both -Bound and -Unbound are specified, returns all bound keys and unbound functions.
 
 ## PARAMETERS
 

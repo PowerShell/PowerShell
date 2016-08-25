@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell
             // should be included on all handlers that ignore their parameters so they
             // can be called from PowerShell without passing anything.
             //
-            // The first arugment is the key that caused the action to be called
+            // The first argument is the key that caused the action to be called
             // (the second key when it's a 2 key chord).  The default is null (it's nullable)
             // because PowerShell can't handle default(ConsoleKeyInfo) as a default.
             // Most actions will ignore this argument.

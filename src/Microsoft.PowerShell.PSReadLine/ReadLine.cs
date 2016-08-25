@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell
                                 // There is an OnIdle event.  We're idle because we timed out.  Normally
                                 // PowerShell generates this event, but PowerShell assumes the engine is not
                                 // idle because it called PSConsoleHostReadline which isn't returning.
-                                // So we generate the event intstead.
+                                // So we generate the event instead.
                                 _singleton._engineIntrinsics.Events.GenerateEvent("PowerShell.OnIdle", null, null, null);
                                 runPipelineForEventProcessing = true;
                                 break;

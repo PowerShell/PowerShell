@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete the charcter before the cursor.
+        ///   Looks up a localized string similar to Delete the character before the cursor.
         /// </summary>
         internal static string BackwardDeleteCharDescription {
             get {
@@ -322,7 +322,7 @@ namespace Microsoft.PowerShell {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete the character under the cusor.
+        ///   Looks up a localized string similar to Delete the character under the cursor.
         /// </summary>
         internal static string DeleteCharDescription {
             get {
@@ -331,7 +331,7 @@ namespace Microsoft.PowerShell {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete the character under the cusor, or if the line is empty, exit the process..
+        ///   Looks up a localized string similar to Delete the character under the cursor, or if the line is empty, exit the process..
         /// </summary>
         internal static string DeleteCharOrExitDescription {
             get {
@@ -502,7 +502,7 @@ namespace Microsoft.PowerShell {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Moves the cursor to the perscribed column..
+        ///   Looks up a localized string similar to Moves the cursor to the prescribed column..
         /// </summary>
         internal static string GotoColumnDescription {
             get {
@@ -990,7 +990,7 @@ namespace Microsoft.PowerShell {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Searches backward for the perscribed character..
+        ///   Looks up a localized string similar to Searches backward for the prescribed character..
         /// </summary>
         internal static string SearchBackwardCharDescription {
             get {
@@ -999,7 +999,7 @@ namespace Microsoft.PowerShell {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Move to the previous occurance of the specified character..
+        ///   Looks up a localized string similar to Move to the previous occurrence of the specified character..
         /// </summary>
         internal static string SearchCharBackwardDescription {
             get {
@@ -1008,7 +1008,7 @@ namespace Microsoft.PowerShell {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Move to the previous occurance of the specified character and then forward one character..
+        ///   Looks up a localized string similar to Move to the previous occurrence of the specified character and then forward one character..
         /// </summary>
         internal static string SearchCharBackwardWithBackoffDescription {
             get {
@@ -1017,7 +1017,7 @@ namespace Microsoft.PowerShell {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Move to the next occurance of the specified character..
+        ///   Looks up a localized string similar to Move to the next occurrence of the specified character..
         /// </summary>
         internal static string SearchCharDescription {
             get {
@@ -1026,7 +1026,7 @@ namespace Microsoft.PowerShell {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Move to he next occurance of the specified character and then back one character..
+        ///   Looks up a localized string similar to Move to he next occurrence of the specified character and then back one character..
         /// </summary>
         internal static string SearchCharWithBackoffDescription {
             get {
@@ -1035,7 +1035,7 @@ namespace Microsoft.PowerShell {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Searches for the perscribed character in the perscribed direction..
+        ///   Looks up a localized string similar to Searches for the prescribed character in the prescribed direction..
         /// </summary>
         internal static string SearchDescription {
             get {
@@ -1488,7 +1488,7 @@ namespace Microsoft.PowerShell {
         /// <summary>
         ///   Looks up a localized string similar to Moves the cursor to the beginning of the line and switches to insert mode..
         /// </summary>
-        internal static string ViInsertAtBeginingDescription {
+        internal static string ViInsertAtBeginningDescription {
             get {
                 return ResourceManager.GetString("ViInsertAtBeginingDescription", resourceCulture);
             }
@@ -1585,7 +1585,7 @@ namespace Microsoft.PowerShell {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete to the end of the word, as delimited by white space and common delimters, and enter insert mode..
+        ///   Looks up a localized string similar to Delete to the end of the word, as delimited by white space and common delimiters, and enter insert mode..
         /// </summary>
         internal static string ViReplaceEndOfWordDescription {
             get {
@@ -1639,7 +1639,7 @@ namespace Microsoft.PowerShell {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Starts a new seach backward in the history..
+        ///   Looks up a localized string similar to Starts a new search backward in the history..
         /// </summary>
         internal static string ViSearchHistoryBackwardDescription {
             get {
@@ -1756,7 +1756,7 @@ namespace Microsoft.PowerShell {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Place all characters from before the cursor to the beginning of the previous word, as delimted by white space and common delimiters, into the local clipboard..
+        ///   Looks up a localized string similar to Place all characters from before the cursor to the beginning of the previous word, as delimited by white space and common delimiters, into the local clipboard..
         /// </summary>
         internal static string ViYankPreviousWordDescription {
             get {

@@ -127,7 +127,7 @@
     <value>Move the cursor back one character</value>
   </data>
   <data name="BackwardDeleteCharDescription" xml:space="preserve">
-    <value>Delete the charcter before the cursor</value>
+    <value>Delete the character before the cursor</value>
   </data>
   <data name="BackwardDeleteLineDescription" xml:space="preserve">
     <value>Delete text from the cursor to the start of the line</value>
@@ -154,7 +154,7 @@
     <value>Complete the input if there is a single completion, otherwise complete the input with common prefix for all completions.  Show possible completions if pressed a second time.</value>
   </data>
   <data name="DeleteCharDescription" xml:space="preserve">
-    <value>Delete the character under the cusor</value>
+    <value>Delete the character under the cursor</value>
   </data>
   <data name="ShellBackwardWordDescription" xml:space="preserve">
     <value>Move the cursor to the beginning of the current or previous token or start of the line</value>
@@ -412,7 +412,7 @@ Exception:
 If there are other parse errors, unresolved commands, or incorrect parameters, show the error and continue editing.</value>
   </data>
   <data name="DeleteCharOrExitDescription" xml:space="preserve">
-    <value>Delete the character under the cusor, or if the line is empty, exit the process.</value>
+    <value>Delete the character under the cursor, or if the line is empty, exit the process.</value>
   </data>
   <data name="CantTranslateKey" xml:space="preserve">
     <value>Unable to translate '{0}' to virtual key code: {1}.</value>
@@ -451,10 +451,10 @@ If there are other parse errors, unresolved commands, or incorrect parameters, s
     <value>Repeats the last search.</value>
   </data>
   <data name="SearchBackwardCharDescription" xml:space="preserve">
-    <value>Searches backward for the perscribed character.</value>
+    <value>Searches backward for the prescribed character.</value>
   </data>
   <data name="SearchDescription" xml:space="preserve">
-    <value>Searches for the perscribed character in the perscribed direction.</value>
+    <value>Searches for the prescribed character in the prescribed direction.</value>
   </data>
   <data name="ViAppendAtEndDescription" xml:space="preserve">
     <value>Switches to insert mode after positioning the cursor past the end of the line.</value>
@@ -496,7 +496,7 @@ If there are other parse errors, unresolved commands, or incorrect parameters, s
     <value>Moves the cursor forward to the end of the next word.</value>
   </data>
   <data name="GotoColumnDescription" xml:space="preserve">
-    <value>Moves the cursor to the perscribed column.</value>
+    <value>Moves the cursor to the prescribed column.</value>
   </data>
   <data name="ViInsertModeDescription" xml:space="preserve">
     <value>Switches to insert mode.</value>
@@ -547,7 +547,7 @@ If there are other parse errors, unresolved commands, or incorrect parameters, s
     <value>Delete the current character and insert the next character.</value>
   </data>
   <data name="ViSearchHistoryBackwardDescription" xml:space="preserve">
-    <value>Starts a new seach backward in the history.</value>
+    <value>Starts a new search backward in the history.</value>
   </data>
   <data name="ViTransposeCharsDescription" xml:space="preserve">
     <value>Transposes the current character with the next character in the line.</value>
@@ -565,16 +565,16 @@ If there are other parse errors, unresolved commands, or incorrect parameters, s
     <value>Repeat the last recorded character search.</value>
   </data>
   <data name="SearchCharBackwardDescription" xml:space="preserve">
-    <value>Move to the previous occurance of the specified character.</value>
+    <value>Move to the previous occurrence of the specified character.</value>
   </data>
   <data name="SearchCharBackwardWithBackoffDescription" xml:space="preserve">
-    <value>Move to the previous occurance of the specified character and then forward one character.</value>
+    <value>Move to the previous occurrence of the specified character and then forward one character.</value>
   </data>
   <data name="SearchCharDescription" xml:space="preserve">
-    <value>Move to the next occurance of the specified character.</value>
+    <value>Move to the next occurrence of the specified character.</value>
   </data>
   <data name="SearchCharWithBackoffDescription" xml:space="preserve">
-    <value>Move to he next occurance of the specified character and then back one character.</value>
+    <value>Move to he next occurrence of the specified character and then back one character.</value>
   </data>
   <data name="ViBackwardReplaceWordDescription" xml:space="preserve">
     <value>Replace the previous word.</value>
@@ -622,7 +622,7 @@ If there are other parse errors, unresolved commands, or incorrect parameters, s
     <value>Delete to the beginning of the next word, as delimited by white space, and enter insert mode.</value>
   </data>
   <data name="ViReplaceEndOfWordDescription" xml:space="preserve">
-    <value>Delete to the end of the word, as delimited by white space and common delimters, and enter insert mode.</value>
+    <value>Delete to the end of the word, as delimited by white space and common delimiters, and enter insert mode.</value>
   </data>
   <data name="ViReplaceEndOfGlobDescription" xml:space="preserve">
     <value>Delete to the end of the word, as delimited by white space, and enter insert mode.</value>
@@ -634,7 +634,7 @@ If there are other parse errors, unresolved commands, or incorrect parameters, s
     <value>Place all characters at and after the cursor into the local clipboard.</value>
   </data>
   <data name="ViYankPreviousWordDescription" xml:space="preserve">
-    <value>Place all characters from before the cursor to the beginning of the previous word, as delimted by white space and common delimiters, into the local clipboard.</value>
+    <value>Place all characters from before the cursor to the beginning of the previous word, as delimited by white space and common delimiters, into the local clipboard.</value>
   </data>
   <data name="ViYankPreviousGlobDescription" xml:space="preserve">
     <value>Place all characters from before the cursor to the beginning of the previous word, as delimited by white space, into the local clipboard.</value>

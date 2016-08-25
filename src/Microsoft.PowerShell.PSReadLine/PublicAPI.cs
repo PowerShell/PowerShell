@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell
         /// <param name="length">The length to replace</param>
         /// <param name="replacement">The replacement text</param>
         /// <param name="instigator">The action that initiated the replace (used for undo)</param>
-        /// <param name="instigatorArg">The argument to the action that initiaed the replace (used for undo)</param>
+        /// <param name="instigatorArg">The argument to the action that initiated the replace (used for undo)</param>
         public static void Replace(int start, int length, string replacement, Action<ConsoleKeyInfo?, object> instigator = null, object instigatorArg = null)
         {
             if (start < 0 || start > _singleton._buffer.Length)
@@ -224,7 +224,7 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// A helper method when your function expects an optional int argument (e.g. from DigitArgument)
-        /// If there is not argument (it's null), returns true and sets numericArg to derfaultNumericArg.
+        /// If there is not argument (it's null), returns true and sets numericArg to defaultNumericArg.
         /// Dings and returns false if the argument is not an int (no conversion is attempted)
         /// Otherwise returns true, and numericArg has the result.
         /// </summary>
