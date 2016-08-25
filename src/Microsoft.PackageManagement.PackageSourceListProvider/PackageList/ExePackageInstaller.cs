@@ -214,7 +214,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
 
         private static bool YieldPackages(string hive, RegistryKey regkey, string name, string displayname, string requiredVersion, string minimumVersion, string maximumVersion, PackageJson package, Request request)
         {
-            //TODO make it wildcard match, follow the fastfrence format, get-package git no reults, get-package git*
+            //TODO make it wildcard match, follow the fastfrence format, get-package git no results, get-package git*
 
             if (regkey != null)
             {
