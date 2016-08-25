@@ -138,7 +138,7 @@ namespace Microsoft.PackageManagement.Internal.Utility.Plugin
                 // this method isn't returning anything.
                 if (instanceMethod.ReturnType != typeof(void))
                 {
-                    // pop the return value beacuse the generated method is void and the
+                    // pop the return value because the generated method is void and the
                     // method we called actually gave us a result.
                     il.Emit(OpCodes.Pop);
                 }

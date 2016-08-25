@@ -72,7 +72,7 @@ namespace Microsoft.PackageManagement.Internal.Providers {
         /// Expected behavior:
         ///     If request.Sources is null or empty, the provider should return the list of registered sources.
         ///     Otherwise, the provider should return package sources that match the strings in the request.Sources  
-        ///     collction. If the string doesn't match a registered source (either by name or by location) and the 
+        ///     collection. If the string doesn't match a registered source (either by name or by location) and the 
         ///     string can be construed as a package source (ie, passing in a valid URL to a provider that uses URLs 
         ///     for their package sources), then the provider should return a package source for that URL, but marked
         ///     as 'unregistered' (and 'untrusted')
@@ -84,7 +84,7 @@ namespace Microsoft.PackageManagement.Internal.Providers {
         /// <remarks>
         ///     PowerShellMetaProvider notes:
         ///         - may use Resolve-PackageSource as the function name 
-        ///         - $request object is not passed as a parameter, but inserted as a variable before the ca New-PackageSourcell.
+        ///         - $request object is not passed as a parameter, but inserted as a variable before the ca New-PackageSource.
         ///         - Values can be returned using Write-Object for objects returned from the function
         /// </remarks>
         void ResolvePackageSources(IRequest requestObject);
@@ -115,7 +115,7 @@ namespace Microsoft.PackageManagement.Internal.Providers {
         ///     that match sources (either by name or location) in the list of specified strings.
         /// </summary>
         /// <param name="name">matches against the name of a package. If this is null or empty, should return all matching packages.</param>
-        /// <param name="requiredVersion">an exact version of the package to match. If this is specified, miniumum and maximum should be ignored.</param>
+        /// <param name="requiredVersion">an exact version of the package to match. If this is specified, minimum and maximum should be ignored.</param>
         /// <param name="minimumVersion">the minimum version of the package to match. If requiredVersion is specified, this should be ignored.</param>
         /// <param name="maximumVersion">the maximum version of the package to match. If requiredVersion is specified, this should be ignored.</param>
         /// <param name="id">the batch id. If the provider supports batch searches, and this is non-zero,
@@ -226,7 +226,7 @@ namespace Microsoft.PackageManagement.Internal.Providers {
         /// Returns Software Identities for installed packages
         /// </summary>
         /// <param name="name">matches against the name of a package. If this is null or empty, should return all matching packages.</param>
-        /// <param name="requiredVersion">an exact version of the package to match. If this is specified, miniumum and maximum should be ignored.</param>
+        /// <param name="requiredVersion">an exact version of the package to match. If this is specified, minimum and maximum should be ignored.</param>
         /// <param name="minimumVersion">the minimum version of the package to match. If requiredVersion is specified, this should be ignored.</param>
         /// <param name="maximumVersion">the maximum version of the package to match. If requiredVersion is specified, this should be ignored.</param>
         /// <param name="requestObject">The request context passed to the provider.</param>

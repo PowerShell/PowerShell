@@ -108,7 +108,7 @@ namespace Microsoft.PackageManagement.Provider.Utility {
 
                 if (File.Exists(location))
                 {
-                    // err("Unable to forcably remove file '{0}'. This can't be good.", location);
+                    // err("Unable to forcibly remove file '{0}'. This can't be good.", location);
                 }
             }
             return;
@@ -213,7 +213,7 @@ namespace Microsoft.PackageManagement.Provider.Utility {
                     //    }
                    // }
                 }
-                // not a remote (or resovably-remote) path or
+                // not a remote (or resolvable-remote) path or
                 // it is already a path that is in it's correct form (via localpath)
                 return pathUri.LocalPath;
             } catch (UriFormatException) {

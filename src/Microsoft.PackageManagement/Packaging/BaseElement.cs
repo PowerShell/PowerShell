@@ -21,7 +21,7 @@ namespace Microsoft.PackageManagement.Internal.Packaging {
 
     /// <summary>
     ///     The base element that is common to all elements in a Swidtag.
-    ///     Swidtag classes are intended to be constructed, but are not mutatable
+    ///     Swidtag classes are intended to be constructed, but are not mutable
     ///     (ie, can't be created and have values modified or removed)
     /// </summary>
     public class BaseElement {
@@ -46,7 +46,7 @@ namespace Microsoft.PackageManagement.Internal.Packaging {
         }
 
         /// <summary>
-        ///     All Swidtag elements can explicity support the xml:lang attribute.
+        ///     All Swidtag elements can explicitly support the xml:lang attribute.
         /// </summary>
         public string Culture {
             get {

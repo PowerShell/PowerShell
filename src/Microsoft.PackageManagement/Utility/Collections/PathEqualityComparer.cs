@@ -64,7 +64,7 @@ namespace Microsoft.PackageManagement.Internal.Utility.Collections {
             }
             catch (Exception) {
                 //GetFullPath() can throw for the bad path or unsupported path format, e.g. PS:MydriveFolder.
-                //we should not throw in this case. Intead return string.Empty to indicate not matching
+                //we should not throw in this case. Instead return string.Empty to indicate not matching
             }
             return string.Empty;
         }

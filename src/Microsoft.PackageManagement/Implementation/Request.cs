@@ -236,7 +236,7 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
 
         private static string FixMeFormat(string formatString, object[] args) {
             if (args == null || args.Length == 0) {
-                // not really any args, and not really expectng any
+                // not really any args, and not really expecting any
                 return formatString.Replace('{', '\u00ab').Replace('}', '\u00bb');
             }
             return args.Aggregate(formatString.Replace('{', '\u00ab').Replace('}', '\u00bb'), (current, arg) => current + string.Format(CultureInfo.CurrentCulture, " \u00ab{0}\u00bb", arg));

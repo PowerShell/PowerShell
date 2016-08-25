@@ -16,7 +16,7 @@ namespace Microsoft.PackageManagement.Internal {
     using Implementation;
 
     /// <summary>
-    ///     The public interface to accessing the fetaures of the Package Management Service
+    ///     The public interface to accessing the features of the Package Management Service
     ///     This offers two possible methods to get the instance of the PackageManagementService.
     ///     If the Host is consuming the PackageManagementService by linking to this assembly, then
     ///     the simplest access is just to use the <code>Instance</code> method.

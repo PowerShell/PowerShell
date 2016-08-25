@@ -775,7 +775,7 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
 
                     AddToProviderCacheTable(provider.ProviderName, provider);
 
-                    //initialize the warpper package provider
+                    //initialize the wrapper package provider
                     provider.Initialize(request);
 
                     // addOrSet locks the collection anyway.
