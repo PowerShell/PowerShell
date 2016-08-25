@@ -34,7 +34,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
         }
 
         /// <summary>
-        ///     Follows the feed to find all the *declared latest* versions of packgaes
+        ///     Follows the feed to find all the *declared latest* versions of packages
         /// </summary>
         /// <returns>A set of packages</returns>
         internal IEnumerable<Package> Query() {
@@ -192,7 +192,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
             // and the version is either in the specified range of the link, or there is no specified version.
             var packagesByName = Feeds.Where(feedGroup => feedGroup.Any(link => {
                 if (name.EqualsIgnoreCase(link.Attributes[Iso19770_2.Discovery.Name])) {
-                    // first, ensure that the requested miniumum version is lower than the maximum version found in the feed.
+                    // first, ensure that the requested minimum version is lower than the maximum version found in the feed.
                     var maxVer = link.Attributes[Iso19770_2.Discovery.MaximumVersion];
                     if (!string.IsNullOrEmpty(maxVer)) {
                         // since we don't know the version scheme at this point, so we just have to guess.
@@ -202,7 +202,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
                         }
                     }
 
-                    // and then ensure that the requested maximum version is greater than the miniumum version found in the feed.
+                    // and then ensure that the requested maximum version is greater than the minimum version found in the feed.
                     var minVer = link.Attributes[Iso19770_2.Discovery.MinimumVersion];
                     if (!string.IsNullOrEmpty(minVer)) {
                         // since we don't know the version scheme at this point, so we just have to guess.
