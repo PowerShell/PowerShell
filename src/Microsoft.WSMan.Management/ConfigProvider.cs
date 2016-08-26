@@ -95,9 +95,10 @@ namespace Microsoft.WSMan.Management
                 string muiDirectory = Path.Combine(providerBase, culture.Name);
                 if (Directory.Exists(muiDirectory))
                 {
-                    if (File.Exists(muiDirectory + "\\" + this.ProviderInfo.HelpFile))
+                    string supposedHelpFile = Path.Combine(muiDirectory, this.ProviderInfo.HelpFile);
+                    if (File.Exists(supposedHelpFile))
                     {
-                        helpFile = muiDirectory + "\\" + this.ProviderInfo.HelpFile;
+                        helpFile = supposedHelpFile;
                         break;
                     }
                 }
@@ -112,10 +113,15 @@ namespace Microsoft.WSMan.Management
 
             try
             {
-                //XmlDocument in CoreCLR takes a stream instead of a string for loading xml
-                byte[] byteArray = Encoding.UTF8.GetBytes(helpFile);
-                MemoryStream stream = new MemoryStream(byteArray);
-                document.Load(stream);
+                //XmlDocument in CoreCLR does not have file path parameter, use XmlReader
+                XmlReaderSettings readerSettings = new XmlReaderSettings();
+#if !CORECLR
+                readerSettings.XmlResolver = null;
+#endif
+                using (XmlReader reader = XmlReader.Create(helpFile, readerSettings))
+                {
+                    document.Load(reader);
+                }
             }
             catch(XmlException)
             {
@@ -141,17 +147,20 @@ namespace Microsoft.WSMan.Management
             {
                 return String.Empty;
             }
-            
-            // Add the "command" namespace from the MAML schema
+
+            // Add the "msh" and "command" namespaces from the MAML schema
             XmlNamespaceManager nsMgr = new XmlNamespaceManager(document.NameTable);
+            // XPath 1.0 associates empty prefix with "null" namespace; must use non-empty prefix for default namespace.
+            // This will not work: nsMgr.AddNamespace("", "http://msh");
+            nsMgr.AddNamespace("msh", "http://msh");
             nsMgr.AddNamespace("command", "http://schemas.microsoft.com/maml/dev/command/2004/10");
 
             // Split the help item name into verb and noun
             string verb = helpItemName.Split('-')[0];
-            string noun = helpItemName.Substring(helpItemName.IndexOf('-')+1);
+            string noun = helpItemName.Substring(helpItemName.IndexOf('-') + 1);
 
-            //Compose XPath query to select the appropriate node based on the verb,noun and ID
-            string xpathQuery = "/helpItems/providerHelp/CmdletHelpPaths/CmdletHelpPath[@ID='" +  child + "']/command:command/command:details[command:verb='" + verb + "' and command:noun='" + noun + "']";
+            //Compose XPath query to select the appropriate node based on the verb, noun and id
+            string xpathQuery = "/msh:helpItems/msh:providerHelp/msh:CmdletHelpPaths/msh:CmdletHelpPath[@id='" + child + "' or @ID='" + child + "']/command:command/command:details[command:verb='" + verb + "' and command:noun='" + noun + "']";
 
             // Execute the XPath query and if the command was found, return its MAML snippet
             XmlNode result = null;

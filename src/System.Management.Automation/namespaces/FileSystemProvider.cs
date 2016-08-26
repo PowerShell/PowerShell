@@ -272,8 +272,9 @@ namespace Microsoft.PowerShell.Commands
                 reader = XmlReader.Create(fullHelpPath, settings);
                 document.Load(reader);
 
-                // Add the "command" namespace from the MAML schema
+                // Add "msh" and "command" namespaces from the MAML schema
                 XmlNamespaceManager nsMgr = new XmlNamespaceManager(document.NameTable);
+                nsMgr.AddNamespace("msh", HelpCommentsParser.mshURI);
                 nsMgr.AddNamespace("command", HelpCommentsParser.commandURI);
 
                 // Compose XPath query to select the appropriate node based on the cmdlet
