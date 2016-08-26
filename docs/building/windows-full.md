@@ -65,7 +65,7 @@ What can you do with the produced binaries?
 For PowerShell .NET (aka: FullCLR PowerShell) our recommendation is to continue using the PowerShell .NET version already shipping in Windows Client and Windows Server.
 
 The primary reason to build the PowerShell FullCLR binaries is to test backward compatibility, and interoperability between .NET and CoreCLR.
-It is also important to mention that some features like PowerShell Workflows are not currently available in the CoreCLR version. 
+It is also important to mention that some features like PowerShell Workflows are not currently available in the CoreCLR version.
 We want to provide the ability for the Community to test CoreCLR PowerShell code changes while validating that these changes don't introduce regressions in .NET PowerShell (aka: as FullCLR PowerShell).
 
 To run (for test purposes) the dev version of these binaries please follow the following steps:
@@ -77,8 +77,8 @@ Running Dev version of FullCLR PowerShell
 Running FullCLR version is not as simple as CoreCLR version.
 
 If you just run `./powershell.exe`, you will get a `powershell` process, 
-but all the interesting DLLs (such as `System.Management.Automation.dll`) would be loaded 
-from the Global Assembly Cache (GAC), not your output directory.
+but all the interesting DLLs (such as `System.Management.Automation.dll`) would be loaded from the Global Assembly Cache (GAC), 
+not your output directory.
 
 Use `Start-DevPowerShell` helper function to workaround it with `$env:DEVPATH`
 
