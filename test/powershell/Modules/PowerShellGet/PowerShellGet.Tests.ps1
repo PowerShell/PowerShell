@@ -6,6 +6,7 @@ $FabrikamServerScript = 'Fabrikam-ServerScript'
 
 #region Utility functions
 
+function IsInbox { $PSHOME.EndsWith('\WindowsPowerShell\v1.0', [System.StringComparison]::OrdinalIgnoreCase) }
 function IsWindows { $PSVariable = Get-Variable -Name IsWindows -ErrorAction Ignore; return (-not $PSVariable -or $PSVariable.Value) }
 function IsCoreCLR { $PSVariable = Get-Variable -Name IsCoreCLR -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
 
@@ -13,7 +14,7 @@ function IsCoreCLR { $PSVariable = Get-Variable -Name IsCoreCLR -ErrorAction Ign
 
 #region Install locations for modules and scripts
 
-if((IsWindows) -and (-not (IsCoreCLR)))
+if(IsInbox)
 {
     $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath "WindowsPowerShell"
 }
@@ -22,32 +23,29 @@ else
     $script:ProgramFilesPSPath = $PSHome
 }
 
-if(IsWindows)
+if(IsInbox)
 {
-    if(IsCoreCLR)
+    try
     {
-        $script:MyDocumentsPSPath = Microsoft.PowerShell.Management\Join-Path -Path $HOME -ChildPath 'Documents\PowerShell'
+        $script:MyDocumentsFolderPath = [Environment]::GetFolderPath("MyDocuments")
     }
-    else
+    catch
     {
-        try
-        {
-            $script:MyDocumentsFolderPath = [Environment]::GetFolderPath('MyDocuments')
-        }
-        catch
-        {
-            $script:MyDocumentsFolderPath = $null
-        }
+        $script:MyDocumentsFolderPath = $null
+    }
 
-        $script:MyDocumentsPSPath = if($script:MyDocumentsFolderPath)
-                                    {
-                                        Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsFolderPath -ChildPath 'WindowsPowerShell'
-                                    } 
-                                    else
-                                    {
-                                        Microsoft.PowerShell.Management\Join-Path -Path $env:USERPROFILE -ChildPath 'Documents\WindowsPowerShell'
-                                    }
-    }
+    $script:MyDocumentsPSPath = if($script:MyDocumentsFolderPath)
+                                {
+                                    Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsFolderPath -ChildPath "WindowsPowerShell"
+                                } 
+                                else
+                                {
+                                    Microsoft.PowerShell.Management\Join-Path -Path $env:USERPROFILE -ChildPath "Documents\WindowsPowerShell"
+                                }
+}
+elseif(IsWindows)
+{
+    $script:MyDocumentsPSPath = Microsoft.PowerShell.Management\Join-Path -Path $HOME -ChildPath 'Documents\PowerShell'
 }
 else
 {

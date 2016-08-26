@@ -14,12 +14,13 @@ Microsoft.PowerShell.Core\Set-StrictMode -Version Latest
 # Check if this is nano server. [System.Runtime.Loader.AssemblyLoadContext] is only available on NanoServer
 $script:isNanoServer = $null -ne ('System.Runtime.Loader.AssemblyLoadContext' -as [Type])
 
+function IsInbox { $PSHOME.EndsWith('\WindowsPowerShell\v1.0', [System.StringComparison]::OrdinalIgnoreCase) }
 function IsWindows { $PSVariable = Get-Variable -Name IsWindows -ErrorAction Ignore; return (-not $PSVariable -or $PSVariable.Value) }
 function IsLinux { $PSVariable = Get-Variable -Name IsLinux -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
 function IsOSX { $PSVariable = Get-Variable -Name IsOSX -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
 function IsCoreCLR { $PSVariable = Get-Variable -Name IsCoreCLR -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
 
-if((IsWindows) -and (-not (IsCoreCLR)))
+if(IsInbox)
 {
     $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath "WindowsPowerShell"
 }
@@ -28,32 +29,29 @@ else
     $script:ProgramFilesPSPath = $PSHome
 }
 
-if(IsWindows)
+if(IsInbox)
 {
-    if(IsCoreCLR)
+    try
     {
-        $script:MyDocumentsPSPath = Microsoft.PowerShell.Management\Join-Path -Path $HOME -ChildPath 'Documents\PowerShell'
+        $script:MyDocumentsFolderPath = [Environment]::GetFolderPath("MyDocuments")
     }
-    else
-    { 
-        try
-        {
-            $script:MyDocumentsFolderPath = [Environment]::GetFolderPath("MyDocuments")
-        }
-        catch
-        {
-            $script:MyDocumentsFolderPath = $null
-        }
+    catch
+    {
+        $script:MyDocumentsFolderPath = $null
+    }
 
-        $script:MyDocumentsPSPath = if($script:MyDocumentsFolderPath)
-                                    {
-                                        Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsFolderPath -ChildPath "WindowsPowerShell"
-                                    } 
-                                    else
-                                    {
-                                        Microsoft.PowerShell.Management\Join-Path -Path $env:USERPROFILE -ChildPath "Documents\WindowsPowerShell"
-                                    }
-    }
+    $script:MyDocumentsPSPath = if($script:MyDocumentsFolderPath)
+                                {
+                                    Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsFolderPath -ChildPath "WindowsPowerShell"
+                                } 
+                                else
+                                {
+                                    Microsoft.PowerShell.Management\Join-Path -Path $env:USERPROFILE -ChildPath "Documents\WindowsPowerShell"
+                                }
+}
+elseif(IsWindows)
+{
+    $script:MyDocumentsPSPath = Microsoft.PowerShell.Management\Join-Path -Path $HOME -ChildPath 'Documents\PowerShell'
 }
 else
 {
