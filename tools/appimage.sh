@@ -138,3 +138,5 @@ ARCH="x86_64"
 generate_appimage
 
 cp ../out/*AppImage ..
+
+cd ..
