@@ -1227,12 +1227,12 @@ namespace System.Management.Automation
             // Win32 return type is BOOLEAN (which is 1 byte and not BOOL which is 4bytes)
             internal static extern byte GetUserNameEx(int format, [Out] StringBuilder domainName, ref uint domainNameLen);
 
-            [DllImport("api-ms-win-core-localization-l1-2-1.dll", CharSet = CharSet.Unicode)]
+            [DllImport(PinvokeDllNames.FormatMessageDllName, CharSet = CharSet.Unicode)]
             internal static extern int FormatMessage(int dwFlags, IntPtr lpSource, int dwMessageId,
                                                      int dwLanguageId, [Out]StringBuilder lpBuffer,
                                                      int nSize, IntPtr va_list_arguments);
 
-            [DllImport("api-ms-win-core-sysinfo-l1-2-1.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+            [DllImport(PinvokeDllNames.GetVersionExDllName, CharSet = CharSet.Unicode, SetLastError = true)]
             internal static extern bool GetVersionEx(ref OSVERSIONINFOEX osVerEx);
 
             [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
