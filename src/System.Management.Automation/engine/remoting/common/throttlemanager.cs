@@ -93,9 +93,9 @@ namespace System.Management.Automation.Remoting
         /// Event which will be triggered when the operation is complete. It is
         /// assumed that all the operations perfomed by StartOperation and 
         /// StopOperation are asynchronous. The submitter of operations may 
-        /// subscribe to this event to know when its complete (or it can handle 
+        /// subscribe to this event to know when it's complete (or it can handle 
         /// the synchronization with its scheduler) and the throttle 
-        /// manager will subscribe to this event to know that its complete 
+        /// manager will subscribe to this event to know that it's complete 
         /// and to start the operation on the next item.
         /// </summary>
         internal abstract event EventHandler<OperationStateEventArgs> OperationComplete;
@@ -420,8 +420,8 @@ namespace System.Management.Automation.Remoting
         /// which triggered this method</param>
         private void OperationCompleteHandler(object source, OperationStateEventArgs stateEventArgs)
         {
-            // An item has completed operation. If its a start operation which completed
-            // remove the instance from the startOperationqueue. If its a stop operation 
+            // An item has completed operation. If it's a start operation which completed
+            // remove the instance from the startOperationqueue. If it's a stop operation 
             // which completed, then remove the instance from both queues
             lock (_syncObject)
             {
@@ -467,7 +467,7 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            // Its possible that all operations are completed at this point
+            // It's possible that all operations are completed at this point
             // and submit is complete. So raise event
             RaiseThrottleManagerEvents();
 

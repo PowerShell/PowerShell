@@ -54,6 +54,7 @@
 			"imports": ["dnxcore50"],
 			"buildOptions": {
 				"define": ["CORECLR"],
+        "debugType": "portable",
 				"compile": {
           "include": [
             "../Microsoft.PackageManagement/Providers/Inbox/Common/Extensions/*.cs",

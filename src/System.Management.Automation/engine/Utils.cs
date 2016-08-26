@@ -282,16 +282,16 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Specifies the per-user configuration settings directory in a platform agnostic manner.
-        /// Windows Ex:
-        ///     %LOCALAPPDATA%\PowerShell
-        /// Non-Windows Ex:
-        ///     ~/.config/PowerShell
         /// </summary>
         /// <returns>The current user's configuration settings directory</returns>
-        internal static string GetUserSettingsDirectory()
+        internal static string GetUserConfigurationDirectory()
         {
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            return Path.Combine(appDataPath, "PowerShell");
+#if UNIX
+            return Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
+#else
+            string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+            return IO.Path.Combine(basePath, Utils.ProductNameForDirectory);
+#endif
         }
 
         private static string[] GetProductFolderDirectories()

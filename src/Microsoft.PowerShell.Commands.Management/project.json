@@ -29,6 +29,7 @@
             "imports": [ "dnxcore50" ],
             "buildOptions": {
                 "define": [ "CORECLR" ],
+                "debugType": "portable",
                 "compile": {
                     "exclude": [
                         "commands/management/ClearRecycleBinCommand.cs",

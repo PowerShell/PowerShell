@@ -1466,6 +1466,9 @@ namespace System.Management.Automation.Remoting.Client
                 CloseConnection();
             };
 
+            // Start error reader thread.
+            StartErrorThread(_stdErrReader);
+
             // Create writer for named pipe.
             stdInWriter = new OutOfProcessTextWriter(_stdInWriter);
 
@@ -1499,6 +1502,48 @@ namespace System.Management.Automation.Remoting.Client
                 catch (InvalidOperationException) { }
                 catch (NotSupportedException) { }
                 catch (System.ComponentModel.Win32Exception) { }
+            }
+        }
+
+        private void StartErrorThread(
+            StreamReader stdErrReader)
+        {
+            Thread errorThread = new Thread(ProcessErrorThread);
+            errorThread.Name = "SSH Transport Error Thread";
+            errorThread.IsBackground = true;
+            errorThread.Start(stdErrReader);
+        }
+
+        private void ProcessErrorThread(object state)
+        {
+            try
+            {
+                StreamReader reader = state as StreamReader;
+                Dbg.Assert(reader != null, "Reader cannot be null.");
+
+                while (true)
+                {
+                    string error = reader.ReadLine();
+                    if (!string.IsNullOrEmpty(error) && (error.IndexOf("WARNING:", StringComparison.OrdinalIgnoreCase) < 0))
+                    {
+                        // Any SSH client error results in a broken session.
+                        PSRemotingTransportException psrte = new PSRemotingTransportException(
+                            PSRemotingErrorId.IPCServerProcessReportedError,
+                            RemotingErrorIdStrings.IPCServerProcessReportedError,
+                            error);
+                        RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.CloseShellOperationEx));
+                        CloseConnection();
+                    }
+                }
+            }
+            catch (ObjectDisposedException) { }
+            catch (Exception e)
+            {
+                CommandProcessorBase.CheckForSevereException(e);
+
+                string errorMsg = (e.Message != null) ? e.Message : string.Empty;
+                _tracer.WriteMessage("SSHClientSessionTransportManager", "ProcessErrorThread", Guid.Empty,
+                    "Transport manager error thread ended with error: {0}", errorMsg);
             }
         }
 
@@ -1564,7 +1609,7 @@ namespace System.Management.Automation.Remoting.Client
                 }
 
                 string errorMsg = (e.Message != null) ? e.Message : string.Empty;
-                _tracer.WriteMessage("SSHClientSessionTransportManager", "StartReaderThread", Guid.Empty,
+                _tracer.WriteMessage("SSHClientSessionTransportManager", "ProcessReaderThread", Guid.Empty,
                     "Transport manager reader thread ended with error: {0}", errorMsg);
             }
         }

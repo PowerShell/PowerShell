@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# Let's quit on interrupt of subcommands
+trap '
+  trap - INT # restore default INT handler
+  echo "Interrupted"
+  kill -s INT "$$"
+' INT
+
 # Retrieves asset ID and package name of asset ending in argument
 # $info looks like: "id": 1698239, "name": "powershell_0.4.0-1_amd64.deb",
 get_info() {
@@ -10,15 +17,16 @@ get_info() {
 case "$OSTYPE" in
     linux*)
         source /etc/os-release
-        echo $ID
         # Install curl and wget to download package
         case "$ID" in
             centos*)
-                sudo yum install -y curl wget
+                if [[ -z $(command -v curl) ]]; then
+                    echo "curl not found, installing..."
+                    sudo yum install -y curl
+                fi
                 version=rpm
                 ;;
             ubuntu)
-                sudo apt-get install -y curl wget
                 case "$VERSION_ID" in
                     14.04)
                         version=ubuntu1.14.04.1_amd64.deb
@@ -27,18 +35,25 @@ case "$OSTYPE" in
                         version=ubuntu1.16.04.1_amd64.deb
                         ;;
                     *)
-                        exit 2 >&2 "Ubuntu $VERSION_ID is not supported!"
+                        echo "Ubuntu $VERSION_ID is not supported!" >&2
+                        exit 2
                 esac
+                if [[ -z $(command -v curl) ]]; then
+                    echo "curl not found, installing..."
+                    sudo apt-get install -y curl
+                fi
                 ;;
             *)
-                exit 2 >&2 "$NAME is not supported!"
+                echo "$NAME is not supported!" >&2
+                exit 2
         esac
         ;;
     darwin*)
         version=pkg
         ;;
     *)
-        exit 2 >&2 "$OSTYPE is not supported!"
+        echo "$OSTYPE is not supported!" >&2
+        exit 2
         ;;
 esac
 
@@ -48,8 +63,9 @@ info=$(get_info $version)
 read asset package <<< $(echo $info | sed 's/[,"]//g' | awk '{ print $2; print $4 }')
 
 # Downloads asset to file
-curl -s -i -H 'Accept: application/octet-stream' https://api.github.com/repos/PowerShell/PowerShell/releases/assets/$asset |
-    grep location | sed 's/location: //g' | wget -i - -O $package
+packageuri=$(curl -s -i -H 'Accept: application/octet-stream' https://api.github.com/repos/PowerShell/PowerShell/releases/assets/$asset |
+    grep location | sed 's/location: //g')
+curl -C - -s -o $package ${packageuri%$'\r'}
 
 # Installs PowerShell package
 case "$OSTYPE" in
@@ -58,6 +74,7 @@ case "$OSTYPE" in
         # Install dependencies
         case "$ID" in
             centos)
+                echo "Installing libicu, libunwind, and $package with sudo ..."
                 sudo yum install -y libicu libunwind
                 sudo yum install "./$package"
                 ;;
@@ -70,6 +87,7 @@ case "$OSTYPE" in
                         icupackage=libicu55
                         ;;
                 esac
+                echo "Installing $libicupackage, libunwind8, and $package with sudo ..."
                 sudo apt-get install -y libunwind8 $icupackage
                 sudo dpkg -i "./$package"
                 ;;
@@ -77,13 +95,15 @@ case "$OSTYPE" in
         esac
         ;;
     darwin*)
+        echo "Installing $package with sudo ..."
         sudo installer -pkg ./$package -target /
         ;;
 esac
 
 powershell -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'
+success=$?
 
-if [[ $? != 0 ]]; then
-    echo "ERROR! PowerShell didn't install. Check script output"
-    exit 1
+if [[ $success != 0 ]]; then
+    echo "ERROR! PowerShell didn't install. Check script output" >&2
+    exit $success
 fi

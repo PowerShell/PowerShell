@@ -18,6 +18,10 @@ Editing with Visual Studio Code
 
 * **OS X**: follow the installation instructions on the [Running VS Code on OS X](https://code.visualstudio.com/docs/setup/osx) page
 
+  **NOTE:** On OS X you must install OpenSSL for the PowerShell extension to work correctly.  The easiest way to
+            accomplish this is to install [Homebrew](http://brew.sh/) and then run `brew install openssl`.  The PowerShell extension
+            will now be able to load successfully.
+
 * **Windows**: follow the installation instructions on the [Running VS Code on Windows](https://code.visualstudio.com/docs/setup/windows) page
 
 
@@ -118,7 +122,7 @@ There are a few blogs that may be helpful to get you started using PowerShell ex
 [ps-extension]:https://blogs.msdn.microsoft.com/cdndevs/2015/12/11/visual-studio-code-powershell-extension/
 [debug]:https://blogs.msdn.microsoft.com/powershell/2015/11/16/announcing-powershell-language-support-for-visual-studio-code-and-more/
 [vscode-guide]:https://johnpapa.net/debugging-with-visual-studio-code/
-[ps-vscode]:https://github.com/PowerShell/vscode-powershell-ops/tree/master/vscode-powershell/examples
+[ps-vscode]:https://github.com/PowerShell/vscode-powershell/tree/master/examples
 
 PowerShell Extension for Visual Studio Code
 ----

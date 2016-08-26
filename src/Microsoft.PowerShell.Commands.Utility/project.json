@@ -20,6 +20,7 @@
         "netstandard1.6": {
             "buildOptions": {
                 "define": [ "CORECLR" ],
+                "debugType": "portable",
                 "compile": {
                     "exclude": [
                         "commands/utility/FormatAndOutput/OutGridView/ColumnInfo.cs",

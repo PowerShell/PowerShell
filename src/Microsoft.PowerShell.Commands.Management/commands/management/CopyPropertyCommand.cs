@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
         /// 
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
-            if (Path != null & Path.Length > 0)
+            if (Path != null && Path.Length > 0)
             {
                 return InvokeProvider.Property.CopyPropertyDynamicParameters(
                     Path[0],

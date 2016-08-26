@@ -25,6 +25,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.Get, "ComputerInfo",
         HelpUri = "http://go.microsoft.com/fwlink/?LinkId=799466")]
     [Alias("gin")]
+    [OutputType(typeof(ComputerInfo), typeof(PSObject))]
     public class GetComputerInfoCommand : PSCmdlet
     {
         #region Inner Types

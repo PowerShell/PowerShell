@@ -49,6 +49,7 @@
       "imports": [ "dnxcore50" ],
       "buildOptions": {
         "define": [ "CORECLR", "PORTABLE" ],
+        "debugType": "portable",
       	"compile": {
           "exclude": [ "Providers/Inbox/Common/*" ]
 				}

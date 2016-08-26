@@ -275,7 +275,7 @@ function Start-PSBuild {
                 $nativeResourcesFolder = $_
                 Get-ChildItem $nativeResourcesFolder -Filter "*.mc" | % {
                     $command = @"
-cmd.exe /C cd /d "$currentLocation" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" mc.exe -o -d -c -U $($_.FullName) -h "$nativeResourcesFolder" -r "$nativeResourcesFolder"
+cmd.exe /C cd /d "$currentLocation" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" mc.exe -o -d -c -U "$($_.FullName)" -h "$nativeResourcesFolder" -r "$nativeResourcesFolder"
 "@
                     log "  Executing mc.exe Command: $command"
                     Start-NativeExecution { Invoke-Expression -Command:$command }
@@ -568,7 +568,7 @@ function Start-PSPester {
     }
 
     $PesterModule = [IO.Path]::Combine((Split-Path $powershell), "Modules", "Pester")
-    $Command += "Import-Module $PesterModule; "
+    $Command += "Import-Module '$PesterModule'; "
     $Command += "Invoke-Pester "
 
     $Command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
@@ -582,8 +582,8 @@ function Start-PSPester {
         $Command += "-Tag @('" + (${Tag} -join "','") + "') "
     }
 
-    $Command += $Path
-
+    $Command += "'" + $Path + "'"
+        
     Write-Verbose $Command
     # To ensure proper testing, the module path must not be inherited by the spawned process
     try {
@@ -688,13 +688,13 @@ function Start-PSBootstrap {
             sudo apt-get install -y -qq $Deps
         } elseif ($IsCentOS) {
             # Build tools
-            $Deps += "curl", "gcc-c++", "cmake", "make"
+            $Deps += "which", "curl", "gcc-c++", "cmake", "make"
 
             # .NET Core required runtime libraries
             $Deps += "libicu", "libunwind"
 
             # Packaging tools
-            if ($Package) { $Deps += "ruby-devel", "rpmbuild" }
+            if ($Package) { $Deps += "ruby-devel", "rpm-build" }
 
             # Install dependencies
             sudo yum install -y -q $Deps
@@ -790,7 +790,7 @@ function Start-PSBootstrap {
             }
 
             # Install cmake
-            $cmakePath = "${env:ProgramFiles(x86)}\CMake\bin"
+            $cmakePath = "${env:ProgramFiles}\CMake\bin"
             if($cmakePresent) {
                 log "Cmake is already installed. Skipping installation."
             } else {

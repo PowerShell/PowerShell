@@ -146,7 +146,7 @@ namespace System.Management.Automation
             //
             // Sets the per-user configuration directory
             //
-            appDataConfigDirectory = Utils.GetUserSettingsDirectory();
+            appDataConfigDirectory = Utils.GetUserConfigurationDirectory();
             if (!Directory.Exists(appDataConfigDirectory))
             {
                 try
@@ -166,11 +166,11 @@ namespace System.Management.Automation
         /// not interfere with PowerShell initialization
         /// </summary>
         /// <returns>Returns the directory if present or creatable. Throws otherwise.</returns>
-        private string GetAppDataConfigDirectory()
+        private string GetCurrentUserConfigDirectory()
         {
             if (null == appDataConfigDirectory)
             {
-                string tempAppDataConfigDir = Utils.GetUserSettingsDirectory();
+                string tempAppDataConfigDir = Utils.GetUserConfigurationDirectory();
                 if (!Directory.Exists(tempAppDataConfigDir))
                 {
                     Directory.CreateDirectory(tempAppDataConfigDir);
@@ -194,7 +194,7 @@ namespace System.Management.Automation
             // Defaults to system wide.
             if (PropertyScope.CurrentUser == scope)
             {
-                scopeDirectory = GetAppDataConfigDirectory();
+                scopeDirectory = GetCurrentUserConfigDirectory();
             }
 
             string fileName = Path.Combine(scopeDirectory, configFileName);
@@ -229,7 +229,7 @@ namespace System.Management.Automation
             // Defaults to system wide.
             if(PropertyScope.CurrentUser == scope)
             {
-                scopeDirectory = GetAppDataConfigDirectory();
+                scopeDirectory = GetCurrentUserConfigDirectory();
             }
 
             string fileName = Path.Combine(scopeDirectory, configFileName);
@@ -250,7 +250,7 @@ namespace System.Management.Automation
             // Defaults to system wide.
             if (PropertyScope.CurrentUser == scope)
             {
-                scopeDirectory = GetAppDataConfigDirectory();
+                scopeDirectory = GetCurrentUserConfigDirectory();
             }
 
             string fileName = Path.Combine(scopeDirectory, configFileName);
@@ -265,7 +265,7 @@ namespace System.Management.Automation
             // Defaults to system wide.
             if (PropertyScope.CurrentUser == scope)
             {
-                scopeDirectory = GetAppDataConfigDirectory();
+                scopeDirectory = GetCurrentUserConfigDirectory();
             }
 
             string fileName = Path.Combine(scopeDirectory, configFileName);
