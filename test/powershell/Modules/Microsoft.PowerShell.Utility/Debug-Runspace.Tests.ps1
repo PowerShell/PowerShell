@@ -12,7 +12,7 @@ Describe "Debug-Runspace" -tag "CI" {
         if ( $rs2 ) { $rs1.Dispose() }
     }
 
-    It "Debugging a runspace should fail is the name is ambiguous" {
+    It "Debugging a runspace should fail if the name is ambiguous" {
         try {
             Debug-Runspace -Name "My*" -ea stop
             throw "Execution OK"
@@ -22,7 +22,7 @@ Describe "Debug-Runspace" -tag "CI" {
         }
     }
 
-    It "Debugging a runspace should fail is the name is not found" {
+    It "Debugging a runspace should fail if the name is not found" {
         try {
             Debug-Runspace -Name "dflkjsdkfjldkjssldfj" -ea stop
             throw "Execution OK"
@@ -32,7 +32,7 @@ Describe "Debug-Runspace" -tag "CI" {
         }
     }
 
-    It "Debugging a runspace should fail is the runspace is not open" {
+    It "Debugging a runspace should fail if the runspace is not open" {
         try {
             $rs2.Close()
             Debug-Runspace -runspace $rs2 -ea stop
@@ -43,7 +43,7 @@ Describe "Debug-Runspace" -tag "CI" {
         }
     }
 
-    It "Debugging a runspace should fail is the runspace has no debugger" {
+    It "Debugging a runspace should fail if the runspace has no debugger" {
         try {
             $rs1.Debugger.SetDebugMode("None")
             Debug-Runspace -runspace $rs1 -ea stop
