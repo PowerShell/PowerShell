@@ -19,7 +19,7 @@ function IsLinux { $PSVariable = Get-Variable -Name IsLinux -ErrorAction Ignore;
 function IsOSX { $PSVariable = Get-Variable -Name IsOSX -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
 function IsCoreCLR { $PSVariable = Get-Variable -Name IsCoreCLR -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
 
-if(IsWindows)
+if((IsWindows) -and (-not (IsCoreCLR)))
 {
     $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath "WindowsPowerShell"
 }
@@ -30,23 +30,30 @@ else
 
 if(IsWindows)
 {
-    try
+    if(IsCoreCLR)
     {
-        $script:MyDocumentsFolderPath = [Environment]::GetFolderPath("MyDocuments")
+        $script:MyDocumentsPSPath = Microsoft.PowerShell.Management\Join-Path -Path $HOME -ChildPath 'Documents\PowerShell'
     }
-    catch
-    {
-        $script:MyDocumentsFolderPath = $null
-    }
+    else
+    { 
+        try
+        {
+            $script:MyDocumentsFolderPath = [Environment]::GetFolderPath("MyDocuments")
+        }
+        catch
+        {
+            $script:MyDocumentsFolderPath = $null
+        }
 
-    $script:MyDocumentsPSPath = if($script:MyDocumentsFolderPath)
-                                {
-                                    Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsFolderPath -ChildPath "WindowsPowerShell"
-                                } 
-                                else
-                                {
-                                    Microsoft.PowerShell.Management\Join-Path -Path $env:USERPROFILE -ChildPath "Documents\WindowsPowerShell"
-                                }
+        $script:MyDocumentsPSPath = if($script:MyDocumentsFolderPath)
+                                    {
+                                        Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsFolderPath -ChildPath "WindowsPowerShell"
+                                    } 
+                                    else
+                                    {
+                                        Microsoft.PowerShell.Management\Join-Path -Path $env:USERPROFILE -ChildPath "Documents\WindowsPowerShell"
+                                    }
+    }
 }
 else
 {
