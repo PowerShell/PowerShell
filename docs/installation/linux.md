@@ -2,7 +2,7 @@ Package installation instructions
 =================================
 
 Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16],
-[CentOS 7][cos], and [OS X 10.11][osx].
+[CentOS 7][cos], [many Linux distributions (AppImage)][lai], and [OS X 10.11][osx].
 All packages are available on our GitHub [releases][] page.
 
 Once the package is installed, run `powershell` from a terminal.
@@ -10,6 +10,7 @@ Once the package is installed, run `powershell` from a terminal.
 [u14]: #ubuntu-1404
 [u16]: #ubuntu-1604
 [cos]: #centos-7
+[lai]: #linux-appimage
 [osx]: #os-x-1011
 
 Ubuntu 14.04
@@ -46,7 +47,6 @@ sudo dpkg -i powershell_6.0.0-alpha.9-1ubuntu1.16.04.1_amd64.deb
 
 [Ubuntu 16.04]: http://releases.ubuntu.com/16.04/
 
-
 CentOS 7
 ========
 
@@ -69,6 +69,22 @@ sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0
 > This package works on Oracle Linux 7. It should work on Red Hat Enterprise Linux 7 too.
 
 [CentOS 7]: https://www.centos.org/download/
+
+Linux AppImage
+==============
+
+Using a desktop Linux distribution for the Intel x86_64 architecture that is no older than approximately two years, download the AppImage
+`PowerShell-6.0.0.alpha.9-x86_64.AppImage`
+from the [releases][] page onto the Linux machine.
+
+Then execute the following in the terminal:
+
+```
+chmod a+x PowerShell-6.0.0.alpha.9-x86_64.AppImage
+./PowerShell-6.0.0.alpha.9-x86_64.AppImage
+```
+
+The AppImage lets you run PowerShell without installing it. It is a portable application that bundles PowerShell and everything it needs to run that is not part of the default installation of many distributions ([more information](http://appimage.org/)).
 
 OS X 10.11
 ==========

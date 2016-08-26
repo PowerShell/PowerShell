@@ -1114,6 +1114,8 @@ It consists of a cross-platform command-line shell and associated scripting lang
         }
     }
 
+    bash -ex ./tools/appimage.sh
+
     # Magic to get path output
     return Get-Item (Join-Path $PSScriptRoot (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 }

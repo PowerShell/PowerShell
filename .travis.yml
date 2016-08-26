@@ -1,3 +1,6 @@
+git:
+  depth: 100
+  
 language: cpp
 
 branches:
@@ -12,7 +15,9 @@ dist: trusty
 
 addons:
   artifacts:
-    paths: $(ls powershell*{deb,pkg} | tr "\n" ":")
+    paths: 
+    - $(ls PowerShell*AppImage | tr "\n" ":")
+    - $(ls powershell*{deb,pkg} | tr "\n" ":")
 
 install:
   - (cd tools && ./download.sh)
