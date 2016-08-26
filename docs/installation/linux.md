@@ -67,18 +67,27 @@ sudo yum install powershell-6.0.0_alpha.9-1.el7.centos.x86_64.rpm
 Linux AppImage
 ==============
 
-Using a desktop Linux distribution for the Intel x86_64 architecture that is no older than approximately two years, download the AppImage
-`PowerShell-6.0.0.alpha.9-x86_64.AppImage`
+> Please note that we do have an alpha.9 AppImage,
+> this is preparation for alpha.10!
+
+Using a recent Linux distribution for the Intel x86_64 architecture,
+download the AppImage `powershell-6.0.0-alpha.9-x86_64.AppImage`
 from the [releases][] page onto the Linux machine.
 
 Then execute the following in the terminal:
 
 ```
-chmod a+x PowerShell-6.0.0.alpha.9-x86_64.AppImage
-./PowerShell-6.0.0.alpha.9-x86_64.AppImage
+chmod a+x powershell-6.0.0-alpha.9-x86_64.AppImage
+./powershell-6.0.0-alpha.9-x86_64.AppImage
 ```
 
-The AppImage lets you run PowerShell without installing it. It is a portable application that bundles PowerShell and everything it needs to run that is not part of the default installation of many distributions ([more information](http://appimage.org/)).
+The [AppImage][] lets you run PowerShell without installing it.
+It is a portable application that bundles PowerShell and its dependencies
+(including .NET Core's system dependencies) into one cohesive package.
+This package works independently of the user's Linux distribution,
+and is a single binary.
+
+[appimage]: http://appimage.org/
 
 OS X 10.11
 ==========

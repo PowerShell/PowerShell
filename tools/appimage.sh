@@ -32,8 +32,7 @@
 # ubuntu-mate-16.04-desktop-amd64.iso
 # xubuntu-16.04-desktop-amd64.iso
 
-APP=PowerShell
-LOWERAPP=${APP,,}
+APP=powershell
 
 mkdir -p ./$APP/$APP.AppDir/usr/lib
 
@@ -79,7 +78,7 @@ echo "deb file:$(readlink -e $PWD) ./" >> sources.list
 
 apt-get $OPTIONS update
 
-URLS=$(apt-get $OPTIONS -y install --print-uris $LOWERAPP | cut -d "'" -f 2 | grep -e "^http")
+URLS=$(apt-get $OPTIONS -y install --print-uris $APP | cut -d "'" -f 2 | grep -e "^http")
 
 wget -c $URLS
 
@@ -90,7 +89,7 @@ find ../*.deb -exec dpkg -x {} . \; || true
 rm usr/bin/powershell
 mv opt/microsoft/powershell/*/* usr/bin/
 
-cat > $LOWERAPP.desktop <<\EOF
+cat > $APP.desktop <<\EOF
 [Desktop Entry]
 Name=PowerShell
 Comment=Microsoft PowerShell
@@ -103,7 +102,7 @@ StartupNotify=true
 Terminal=true
 EOF
 
-cp ../../assets/Powershell_256.png $LOWERAPP.png
+cp ../../assets/Powershell_256.png $APP.png
 
 cat > ./AppRun <<\EOF
 #!/bin/sh
@@ -125,11 +124,11 @@ delete_blacklisted
 rm -rf ./etc/ ./home/ ./lib/ || true
 rm -r opt/ usr/lib/x86_64-linux-gnu/ usr/lib64 usr/share/
 
-VERSION=$(find ../*.deb -name $LOWERAPP"_*" | head -n 1 | cut -d "~" -f 1 | cut -d "_" -f 2 | cut -d "-" -f 1-2 | sed -e 's|1%3a||g' | sed -e 's|-|.|g' )
+VERSION=$(find ../*.deb -name $APP"_*" | head -n 1 | cut -d "~" -f 1 | cut -d "_" -f 2 | cut -d "-" -f 1-2 | sed -e 's|1%3a||g')
 echo $VERSION
 
-get_desktopintegration $LOWERAPP
-sed -i -e 's|^echo|# echo|g' usr/bin/$LOWERAPP.wrapper # Make less verbose
+get_desktopintegration $APP
+sed -i -e 's|^echo|# echo|g' usr/bin/$APP.wrapper # Make less verbose
 
 # Go out of AppImage
 cd ..
