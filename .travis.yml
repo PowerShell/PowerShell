@@ -15,9 +15,8 @@ dist: trusty
 
 addons:
   artifacts:
-    paths: 
-    - $(ls PowerShell*AppImage | tr "\n" ":")
-    - $(ls powershell*{deb,pkg} | tr "\n" ":")
+    paths:
+    - $(ls powershell*{deb,pkg,AppImage} | tr "\n" ":")
 
 install:
   - (cd tools && ./download.sh)
