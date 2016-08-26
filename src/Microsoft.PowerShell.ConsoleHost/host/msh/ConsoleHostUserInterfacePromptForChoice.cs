@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell
         /// Presents a dialog allowing the user to choose options from a set of options.
         /// </summary>
         /// <param name="caption">
-        /// Caption to preceed or title the prompt.  E.g. "Parameters for get-foo (instance 1 of 2)"
+        /// Caption to precede or title the prompt.  E.g. "Parameters for get-foo (instance 1 of 2)"
         /// </param>
         /// <param name="message">
         /// A message that describes what the choice is for.

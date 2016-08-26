@@ -15,7 +15,7 @@ using System.Diagnostics;
 namespace Microsoft.PowerShell.ScheduledJob
 {
     /// <summary>
-    /// This cmdlet gets ScheduledJobTriggers for the specified ScheduledJobDefintion object.
+    /// This cmdlet gets ScheduledJobTriggers for the specified ScheduledJobDefinition object.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "JobTrigger", DefaultParameterSetName = GetJobTriggerCommand.JobDefinitionParameterSet,
         HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223915")]
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private ScheduledJobDefinition _definition;
 
         /// <summary>
-        /// ScheduledJobDefintion Id.
+        /// ScheduledJobDefinition Id.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true,
                    ParameterSetName = GetJobTriggerCommand.JobDefinitionIdParameterSet)]

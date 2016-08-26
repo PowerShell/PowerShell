@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             if (this.DidUserSuppressTheOperation)
             {
                 // If user suppressed CreateInstance operation, then no instance should be returned by the cmdlet
-                // If the provider's CreateInstance implemenration doesn't post an instance and returns a success, then WMI infra will error out to flag an incorrect implementation of CreateInstance (by design)
+                // If the provider's CreateInstance implementation doesn't post an instance and returns a success, then WMI infra will error out to flag an incorrect implementation of CreateInstance (by design)
                 // Therefore cmdletization layer has to suppress the error and treat this as normal/successful completion
                 this.OnCompleted();
             }

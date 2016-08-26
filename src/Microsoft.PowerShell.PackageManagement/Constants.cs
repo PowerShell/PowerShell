@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.PackageManagement {
 
         // Implementation Note:
         // Because PackageManagement allows the application layer closest to the user (host) to be in ultimate
-        // control of spcifying messages to the end user, and falls back up the chain of responsibility
+        // control of specifying messages to the end user, and falls back up the chain of responsibility
         // when resolving Messages from resources, we have prefixed the constants with MSG: in order
         // to *know* when we're trying to resolve a message.
 

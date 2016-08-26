@@ -18,7 +18,7 @@ namespace System.Diagnostics.Eventing
         // log events using WriteMessageEvent method. 
         // 
         // Because WriteMessageEvent takes a string as the event payload 
-        // all the overriden loging methods convert the arguments into strings.
+        // all the overridden logging methods convert the arguments into strings.
         // Event payload is "delimiter" separated, which can be configured
         // 
         // 
@@ -53,7 +53,7 @@ namespace System.Diagnostics.Eventing
 
         /// <summary>
         /// This method creates an instance of the ETW provider.
-        /// The guid argument must be a valid GUID or a format exeption will be
+        /// The guid argument must be a valid GUID or a format exception will be
         /// thrown when creating an instance of the ControlGuid. 
         /// We need to be running on Vista or above. If not an 
         /// PlatformNotSupported exception will be thrown by the EventProvider. 
@@ -132,7 +132,7 @@ namespace System.Diagnostics.Eventing
 
         //
         // For all the methods below the string to be logged contains:
-        // m_delimeter seperated data converted to string
+        // m_delimiter separated data converted to string
         //
         // The source parameter is ignored.
         // 

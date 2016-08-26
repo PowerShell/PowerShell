@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Workflow
 
         /// <summary>
         /// Specifies that the System.Activities.WorkflowApplication should persist and unload the workflow.
-        /// The job will remain in running state because aysnc operation (out of proc or remote operation) is in progress.
+        /// The job will remain in running state because async operation (out of proc or remote operation) is in progress.
         /// The System.Activities.WorkflowApplication will be loaded when async operation gets completed.
         /// </summary>
         Unload = 3,
@@ -336,7 +336,7 @@ namespace Microsoft.PowerShell.Workflow
                         }
 
                         // This method is first time called from OnResumeBookmark, if no resume required it's entry
-                        // needs to be removed fromt the collection as activity execution has finsihed.
+                        // needs to be removed fromt the collection as activity execution has finished.
                         // When an activity entry is removed, remoteActivityState will be persisted 
                         // as part of whole workflow application persistence at the end of activity completion
                         if (activityResumeRequired == false)
@@ -605,7 +605,7 @@ namespace Microsoft.PowerShell.Workflow
             _structuredTracer.Correlate();
             Tracer.WriteMessage("Workflow Application is completed in Aborted state.");
 
-            // if the supend in progress and there is some error it result in the aborted event
+            // if the suspend in progress and there is some error it result in the aborted event
             // explicit faulting the workflow.
             if (this.callSuspendDelegate)
             {
@@ -665,7 +665,7 @@ namespace Microsoft.PowerShell.Workflow
                 return;
 
             // this lock will ensure the synchronization between the persistence and the force suspend (abort) method.
-            // if persitence is going on then it will hold the execution of force suspend
+            // if persistence is going on then it will hold the execution of force suspend
             lock (ReactivateSync)
             {
                 if (Disposed)
@@ -702,7 +702,7 @@ namespace Microsoft.PowerShell.Workflow
                     }
                     catch (Exception e)
                     {
-                        // this may occure in the race condition if there are many persitable workflow and then you tried to shutdown them.
+                        // this may occur in the race condition if there are many persistable workflow and then you tried to shutdown them.
                         Tracer.WriteMessage("PSWorkflowApplicationInstance", "HandlePersistence", id, "There has been exception while persisting the workflow in the background thread.");
                         Tracer.TraceException(e);
                     }
@@ -718,7 +718,7 @@ namespace Microsoft.PowerShell.Workflow
             }
             catch (Exception e)
             {
-                // this may occure in the race condition if there is a persitable workflow which is getting stopped and at the same persit is called.
+                // this may occur in the race condition if there is a persistable workflow which is getting stopped and at the same persist is called.
                 Tracer.WriteMessage("PSWorkflowApplicationInstance", "SafelyHandleFaultedState", id, "There has been exception while marking the workflow in faulted state in the background thread.");
                 Tracer.TraceException(e);
             }
@@ -778,7 +778,7 @@ namespace Microsoft.PowerShell.Workflow
             _structuredTracer.Correlate();
             Tracer.WriteMessage("Workflow Application is idle.");
 
-            // there might be a possiblity that stop job is being called by wfApp is Idle handling it properly so all Async execution .
+            // there might be a possibility that stop job is being called by wfApp is Idle handling it properly so all Async execution .
             if (_job.JobStateInfo.State == JobState.Stopping)
             {
                 this.StopBookMarkedWorkflow();
@@ -875,9 +875,9 @@ namespace Microsoft.PowerShell.Workflow
             Tracer.WriteMessage("Workflow Application is completed in Faulted state.");
 
             // there might be possible of race condition here in case of Winrm shutdown. if the activity is 
-            // excuting on loop back winrm process so there might be possibility that the winrm shuts down the 
-            // activity process fist and cuasing the workflow to fail in the M3P process.
-            // in order to avoid those situations we will ignore the remote exception if the shutdwon is in progress
+            // executing on loop back winrm process so there might be possibility that the winrm shuts down the 
+            // activity process fist and causing the workflow to fail in the M3P process.
+            // in order to avoid those situations we will ignore the remote exception if the shutdown is in progress
             if (WorkflowJobSourceAdapter.GetInstance().IsShutdownInProgress)
             {
                 if (e.GetType() == typeof(RemoteException))
@@ -1620,7 +1620,7 @@ namespace Microsoft.PowerShell.Workflow
             {
                 // this flag ensures that the workflow application will not be loaded again since we are stopping the workflow instance
                 IsTerminalStateAction = true;
-                // this flag ensures that we don't unload the wfApplication instance since we are stopping the worklfow.
+                // this flag ensures that we don't unload the wfApplication instance since we are stopping the workflow.
                 PersistIdleTimerInProgressOrTriggered = false;
             }
 
@@ -1916,7 +1916,7 @@ namespace Microsoft.PowerShell.Workflow
                 
                 // saving the workflow application handle into the temporary variable
                 // then unregistering the workflow application handle
-                // temporary varialbe will be used to call abort if workflow is in running state
+                // temporary variable will be used to call abort if workflow is in running state
                 WorkflowApplication wf = this.workflowApplication;
                 DisposeWorkflowApplication();
 
@@ -2046,7 +2046,7 @@ namespace Microsoft.PowerShell.Workflow
                 _paramDefaults.Parameters[Constants.PrivateMetadata] = this.PSWorkflowContext.PrivateMetadata;
             }
 
-            // Job realted parameters
+            // Job related parameters
             if (this.PSWorkflowContext.JobMetadata.ContainsKey(Constants.JobMetadataName))
             {
                 _paramDefaults.Parameters[TranslateMetaDataName(Constants.JobMetadataName)] = 
@@ -2351,7 +2351,7 @@ namespace Microsoft.PowerShell.Workflow
         {
             // Workflow is currently in booked marked state
             // we will try to cancel all async operations 
-            // and then perform the termial tasks related to stop workflow
+            // and then perform the terminal tasks related to stop workflow
 
             if (Disposed)
                 return;
@@ -2390,7 +2390,7 @@ namespace Microsoft.PowerShell.Workflow
             {
                 // This is not a full fix:
                 // there could be a race condition where we have taken the copy but context is removed from by activity and disposed in that case contextinstance.cancel will throw
-                // there could be one more possiblity that is if copy has been made and after that activity adds a new context and will not get canceled and streams will get closed so async execution might throw
+                // there could be one more possibility that is if copy has been made and after that activity adds a new context and will not get canceled and streams will get closed so async execution might throw
                 // the solution is make every these operation on async execution collection thread safe
 
                 foreach (PSActivityContext psActivityContextInstance in this.asyncExecutionCollection.Values.ToList())
@@ -2471,7 +2471,7 @@ namespace Microsoft.PowerShell.Workflow
                     SetInternalUnloaded(true);
 
                     // Check for the race condition.
-                    // There could be possibilibly workflow application is unloaded because of terminal state is reached.
+                    // There could be possibility workflow application is unloaded because of terminal state is reached.
                     if (this.workflowApplication != null)
                     {
                         try

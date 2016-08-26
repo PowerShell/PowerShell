@@ -419,7 +419,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     if (!AsBaseObject)
                     {
-                        //wraping in PSobject to insert into PStypesnames
+                        //wrapping in PSobject to insert into PStypesnames
                         PSObject logentry = new PSObject(entry);
                         //inserting at zero position in reverse order
                         logentry.TypeNames.Insert(0, logentry.ImmediateBaseObject + "#" + log.Log + "/" + entry.Source);

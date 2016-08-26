@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
             bool ContainsWildcard = WildcardPattern.ContainsWildcardCharacters(value);
             WildcardPattern wcPattern = WildcardPattern.Get(value, WildcardOptions.IgnoreCase);
 
-            // exlucing patter for Default paramset.
+            // excluding patter for Default paramset.
             Collection<WildcardPattern> excludePatterns =
                       SessionStateUtilities.CreateWildcardsFromStrings(
                           _excludes,

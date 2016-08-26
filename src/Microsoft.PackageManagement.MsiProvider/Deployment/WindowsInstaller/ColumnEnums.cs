@@ -687,7 +687,7 @@ namespace Microsoft.PackageManagement.Msi.Internal.Deployment.WindowsInstaller
         /// <summary>Detects the range of versions including the value in VersionMin.</summary>
         VersionMinInclusive = 0x0100,
 
-        /// <summary>Dectects the range of versions including the value in VersionMax.</summary>
+        /// <summary>Detects the range of versions including the value in VersionMax.</summary>
         VersionMaxInclusive = 0x0200,
 
         /// <summary>Detects all languages, excluding the languages listed in the Language column.</summary>

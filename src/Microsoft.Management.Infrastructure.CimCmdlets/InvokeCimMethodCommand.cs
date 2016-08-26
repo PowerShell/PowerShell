@@ -392,7 +392,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// <para>
         /// Get <see cref="CimInvokeCimMethod"/> object, which is
-        /// used to delegate all Inovke-CimMethod operations.
+        /// used to delegate all Invoke-CimMethod operations.
         /// </para>
         /// </summary>
         CimInvokeCimMethod GetOperationAgent()

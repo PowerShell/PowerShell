@@ -161,7 +161,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="computerName"></param>
         /// <param name="nameSpace"></param>
         /// <param name="queryExpression"></param>
-        /// <param name="opreationTimeout"></param>
+        /// <param name="operationTimeout"></param>
         public CimIndicationWatcher(
             string computerName,
             string theNamespace,
@@ -183,7 +183,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cimSession"></param>
         /// <param name="nameSpace"></param>
         /// <param name="queryExpression"></param>
-        /// <param name="opreationTimeout"></param>
+        /// <param name="operationTimeout"></param>
         public CimIndicationWatcher(
             CimSession cimSession,
             string theNamespace,
@@ -226,7 +226,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Hanlder of new subscription result
+        /// Handler of new subscription result
         /// </para>
         /// </summary>
         /// <param name="src"></param>

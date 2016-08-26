@@ -500,7 +500,7 @@ namespace Microsoft.PowerShell.Commands
 
                     AnalyzeValue(propertyName, tempExprRes[0].Result);
 
-                    // Remember resolved propertNames that have been counted
+                    // Remember resolved propertyNames that have been counted
                     countedProperties[propertyName] = null;
                 }
             }

@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell
 
 
         /// <summary>
-        /// This method handles the failure in excecuting pipeline asynchronously
+        /// This method handles the failure in executing pipeline asynchronously
         /// </summary>
         /// <param name="ex"></param>
         private void AsyncPipelineFailureHandler(Exception ex)
@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell
                         {
                             //This exception can occurs when input is closed. This can happen 
                             //for various reasons. For ex:Command in the pipeline is invalid and 
-                            //command discovery throws excecption which closes the pipeline and 
+                            //command discovery throws exception which closes the pipeline and 
                             //hence the Input pipe.
                             break;
                         }
@@ -699,7 +699,7 @@ namespace Microsoft.PowerShell
         ///            restore p1 as current
         ///
         /// Summary: 
-        /// ExecuteCommand always saves/sets/restores CurrentExector
+        /// ExecuteCommand always saves/sets/restores CurrentExecutor
         /// Host.EnterNestedPrompt always saves/clears/restores CurrentExecutor
         /// 
         /// </remarks>

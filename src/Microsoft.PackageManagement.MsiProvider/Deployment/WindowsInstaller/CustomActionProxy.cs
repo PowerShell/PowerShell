@@ -297,7 +297,7 @@ namespace Microsoft.PackageManagement.Msi.Internal.Deployment.WindowsInstaller
         }
 
         /// <summary>
-        /// Checks if a method has the right return and paramater types
+        /// Checks if a method has the right return and parameter types
         /// for a custom action, and that it is marked by a CustomActionAttribute.
         /// </summary>
         /// <param name="method">Method to be checked.</param>

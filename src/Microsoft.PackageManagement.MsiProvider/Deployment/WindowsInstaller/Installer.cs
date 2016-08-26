@@ -106,7 +106,7 @@ internal static partial class Installer
     /// </summary>
     /// <param name="logModes">One or more mode flags specifying the type of messages to log</param>
     /// <param name="logFile">Full path to the log file.  A null path disables logging,
-    /// in which case the logModes paraneter is ignored.</param>
+    /// in which case the logModes parameter is ignored.</param>
     /// <exception cref="ArgumentException">an invalid log mode was specified</exception>
     /// <remarks>This method takes effect on any new installation processes.  Calling this
     /// method from within a custom action will not start logging for that installation.</remarks>
@@ -121,7 +121,7 @@ internal static partial class Installer
     /// </summary>
     /// <param name="logModes">One or more mode flags specifying the type of messages to log</param>
     /// <param name="logFile">Full path to the log file.  A null path disables logging,
-    /// in which case the logModes paraneter is ignored.</param>
+    /// in which case the logModes parameter is ignored.</param>
     /// <param name="append">If true, the log lines will be appended to any existing file content.
     /// If false, the log file will be truncated if it exists.  The default is false.</param>
     /// <param name="flushEveryLine">If true, the log will be flushed after every line.

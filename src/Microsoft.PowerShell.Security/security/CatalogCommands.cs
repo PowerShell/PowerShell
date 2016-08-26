@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Defines the implementation of the 'Test-FileCatalog' cmdlet.
-    /// This cmdlet validaes the Intgerity of catalog  
+    /// This cmdlet validates the Integrity of catalog  
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "FileCatalog", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath",
         HelpUri = "http://go.microsoft.com/fwlink/?LinkId=786750")]

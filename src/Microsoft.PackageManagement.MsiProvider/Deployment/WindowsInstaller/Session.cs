@@ -932,7 +932,7 @@ namespace Microsoft.PackageManagement.Msi.Internal.Deployment.WindowsInstaller
         }
 
         /// <summary>
-        /// Throws an exception if the custom action is not able to access immedate session details.
+        /// Throws an exception if the custom action is not able to access immediate session details.
         /// </summary>
         private void ValidateSessionAccess()
         {

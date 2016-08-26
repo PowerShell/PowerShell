@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Workflow
                 System.Management.Automation.PowerShell currentPowerShellInstance = implementationContext.PowerShellInstance;
                 PSActivityContext psActivityContext = args.PSActivityContext;
 
-                // Non-empty guid represtents that args.ImplementationContext.EnableRemotingActivityAutoResume is true
+                // Non-empty guid represents that args.ImplementationContext.EnableRemotingActivityAutoResume is true
                 if (!runspaceId.Equals(Guid.Empty))
                 {
                     Runspace[] runspaces = null;
@@ -946,7 +946,7 @@ namespace Microsoft.PowerShell.Workflow
 
             AssertNotDisposed();
 
-            // this will throw an exeption when a runspace is not successfully
+            // this will throw an exception when a runspace is not successfully
             // available
             result.EndInvoke();
 
@@ -1961,7 +1961,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// Dipose the connection manager
+        /// Dispose the connection manager
         /// </summary>
         /// <param name="isDisposing"></param>
         protected void Dispose(bool isDisposing)

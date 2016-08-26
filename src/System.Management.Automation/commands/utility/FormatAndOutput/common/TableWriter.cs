@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal class TableWriter
     {
         /// <summary>
-        /// Information about each column boudaries
+        /// Information about each column boundaries
         /// </summary>
         private class ColumnInfo
         {
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
 
         /// <summary>
-        /// Initalize the table specifying the width of each column
+        /// Initialize the table specifying the width of each column
         /// </summary>
         /// <param name="leftMarginIndent">left margin indentation</param>
         /// <param name="screenColumns">number of character columns on the screen</param>
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         count = labelDisplayCells;
                 }
                 // NOTE: we can do this because "-" is a single cell character
-                // on all devices. If changed to some other character, this assuption
+                // on all devices. If changed to some other character, this assumption
                 // would be invalidated
                 breakLine[k] = new string('-', count);
             }
@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (_disabled)
                 return;
 
-            // build the current row aligment settings
+            // build the current row alignment settings
             int cols = _si.columnInfo.Length;
             int[] currentAlignment = new int[cols];
 
@@ -264,7 +264,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            // now we processed all the rows colums and we need to find the cell that occupies the most
+            // now we processed all the rows columns and we need to find the cell that occupies the most
             // rows
             int screenRows = 0;
             for (int k = 0; k < scArray.Length; k++)
@@ -273,7 +273,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     screenRows = scArray[k].Count;
             }
 
-            // add padding for the colums that are shorter
+            // add padding for the columns that are shorter
             for (int col = 0; col < scArray.Length; col++)
             {
                 int paddingBlanks = _si.columnInfo[validColumnArray[col]].width;

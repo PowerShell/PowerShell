@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private const string JobDefinitionNameParameterSet = "JobDefinitionName";
 
         /// <summary>
-        /// ScheduledJobDefition Id.
+        /// ScheduledJobDefinition Id.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, 
                    ParameterSetName = GetScheduledJobOptionCommand.JobDefinitionIdParameterSet)]

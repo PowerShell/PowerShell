@@ -1032,7 +1032,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// The API set 'api-ms-win-shell-shellfolders-l1-1-0.dll' was removed from NanoServer, so we cannot depend on 'SHGetFolderPathW'
-        /// to get the special folder paths. Instead, we need to rely on the baisc environment variables to get the special folder paths.
+        /// to get the special folder paths. Instead, we need to rely on the basic environment variables to get the special folder paths.
         /// </summary>
         /// <returns>
         /// The path to the specified system special folder, if that folder physically exists on your computer.

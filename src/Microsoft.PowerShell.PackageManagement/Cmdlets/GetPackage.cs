@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                 requests = requests.FilterWithFinalizer(each => each.packages.IsConsumed, each => each.packages.Dispose()).ToArray();
             } // end of WaitForActivity()
             
-            // Peform post-processing only if -AllVersions is not specified            
+            // Perform post-processing only if -AllVersions is not specified            
             if (!AllVersions)
             {
                 // post processing the potential packages as we have to display only
@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
 
                 // However there are cases when the same package can be found by different providers. in that case, we will show
                 // the packages from different providers even through they have the same package name. This is important because uninstall-package 
-                // inherts from get-package, so that when the first provider does not implement the uninstall-package(), such as Programs, others will
+                // inherits from get-package, so that when the first provider does not implement the uninstall-package(), such as Programs, others will
                 // perform the uninstall.
 
                 //grouping packages by package name first

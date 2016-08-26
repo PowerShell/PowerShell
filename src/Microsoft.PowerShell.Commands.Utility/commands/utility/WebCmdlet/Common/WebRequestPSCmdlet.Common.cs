@@ -465,14 +465,14 @@ namespace Microsoft.PowerShell.Commands
         /// needed if an HtmlDocument will be created shortly.</param>
         protected bool VerifyInternetExplorerAvailable(bool checkComObject)
         {
-            // TODO: Remove this code once the dependecy on mshtml has been resolved.
+            // TODO: Remove this code once the dependency on mshtml has been resolved.
 #if CORECLR
             return false;
 #else
             bool isInternetExplorerConfigurationComplete = false;
             // Check for IE for both PS Full and PS Core on windows.
             // The registry key DisableFirstRunCustomize can exits at one of the following path.
-            // IE uses the same decending orider (as mentioned) to check for the presence of this key.
+            // IE uses the same descending order (as mentioned) to check for the presence of this key.
             // If the value of DisableFirstRunCustomize key is set to greater than zero then Run first
             // is disabled.
             string[] disableFirstRunCustomizePaths = new string[] {

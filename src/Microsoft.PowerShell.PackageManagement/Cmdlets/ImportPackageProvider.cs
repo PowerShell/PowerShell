@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
         }
 
         public override bool ProcessRecordAsync() {
-            //Error out for the case where multiple provider names with any version specififed
+            //Error out for the case where multiple provider names with any version specified
             if (((!Name.IsNullOrEmpty() && Name.Length > 1) || Name[0].ContainsWildcards())
                 && ((RequiredVersion != null) || (MinimumVersion != null) || (MaximumVersion != null)))
             {

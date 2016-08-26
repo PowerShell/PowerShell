@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
             string[] displayNames = new string[count];
             Type[] types = new Type[count];
 
-            count = 0; // Reuse this variabe to count cycles.
+            count = 0; // Reuse this variable to count cycles.
             foreach (ColumnInfo column in _columns)
             {
                 propertyNames[count] = column.StaleObjectPropertyName();

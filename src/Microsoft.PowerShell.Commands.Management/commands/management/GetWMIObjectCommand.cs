@@ -108,8 +108,8 @@ namespace Microsoft.PowerShell.Commands
         ///            Character   Description Example Match   Comment
         ///             *   Matches zero or more characters starting at the specified position  A*  A,ag,Apple  Supported by PowerShell.
         ///              ?   Matches any character at the specified position ?n  An,in,on (does not match ran)   Supported by PowerShell.
-        ///              _   Matches any character at the specified position    _n  An,in,on (does not match ran)   Supperted by WMI
-        ///             %   Matches zero or more characters starting at the specified position   A%  A,ag,Apple  Supperted by WMI
+        ///              _   Matches any character at the specified position    _n  An,in,on (does not match ran)   Supported by WMI
+        ///             %   Matches zero or more characters starting at the specified position   A%  A,ag,Apple  Supported by WMI
         ///             []  Matches a range of characters  [a-l]ook    Book,cook,look (does not match took)    Supported by WMI and powershell
         ///              []  Matches specified characters   [bc]ook Book,cook, (does not match look)    Supported by WMI and powershell
         ///              ^   Does not Match specified characters. [^bc]ook    Look, took (does not match book, cook)  Supported by WMI.

@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The Id of a Runsapce to be debugged.
+        /// The Id of a Runspace to be debugged.
         /// </summary>
         [Parameter(Position = 0,
                    Mandatory = true,

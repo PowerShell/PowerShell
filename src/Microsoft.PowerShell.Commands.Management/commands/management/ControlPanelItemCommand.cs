@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
         private static string s_verbActionOpenName = null;
 
         /// <summary>
-        /// Canonical name of the control panel item used as a refernece to fetch the verb
+        /// Canonical name of the control panel item used as a reference to fetch the verb
         /// action Open string. This control panel item exists on all SKU's.
         /// </summary>
         private const string RegionCanonicalName = "Microsoft.RegionAndLanguage";
@@ -205,9 +205,9 @@ $result
 
         /// <summary>
         /// CompareVerbActionOpen is a helper function used to perform locale specific
-        /// comparision of the verb action Open exposed by various control panel items.
+        /// comparison of the verb action Open exposed by various control panel items.
         /// </summary>
-        /// <param name="verbActionName">Locale spcific verb action exposed by the control panel item.</param>
+        /// <param name="verbActionName">Locale specific verb action exposed by the control panel item.</param>
         /// <returns>True if the control panel item supports verb action open or else returns false.</returns>
         private static bool CompareVerbActionOpen(string verbActionName)
         {
@@ -644,7 +644,7 @@ $result
                 results.Add(controlPanelItem);
             }
 
-            // Sort the reuslts by Canonical Name
+            // Sort the results by Canonical Name
             results.Sort(CompareControlPanelItems);
             foreach (ControlPanelItem controlPanelItem in results)
             {

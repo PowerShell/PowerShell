@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Saves content from stream into filePath.
-        /// Caller need to ensure <paramref name="stream"/> postion is properly set.
+        /// Caller need to ensure <paramref name="stream"/> position is properly set.
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="filePath"></param>

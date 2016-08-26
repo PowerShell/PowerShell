@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell
         private int _visualSelectionCommandCount;
 
         /// <summary>
-        /// Mark the current loction of the cursor for use in a subsequent editing command.
+        /// Mark the current location of the cursor for use in a subsequent editing command.
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static void SetMark(ConsoleKeyInfo? key = null, object arg = null)

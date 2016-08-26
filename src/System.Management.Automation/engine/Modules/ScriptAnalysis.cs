@@ -52,7 +52,7 @@ namespace System.Management.Automation
             ParseError[] errors;
             var moduleAst = (new Parser()).Parse(path, scriptContent, null, out errors, ParseMode.ModuleAnalysis);
 
-            // Don't bother analyzing if there are syntax errors (we don't do semenatic analysis which would
+            // Don't bother analyzing if there are syntax errors (we don't do semantic analysis which would
             // detect other errors that we also might choose to ignore, but it's slower.)
             if (errors.Length > 0)
                 return null;

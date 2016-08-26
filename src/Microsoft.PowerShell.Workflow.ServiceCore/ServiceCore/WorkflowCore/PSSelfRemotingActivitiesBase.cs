@@ -428,7 +428,7 @@ namespace Microsoft.PowerShell.Activities
 
 
     /// <summary>
-    /// Provides additional functionalty for CIM activity implementations.
+    /// Provides additional functionality for CIM activity implementations.
     /// </summary>
     public class CimActivityImplementationContext : ActivityImplementationContext
     {

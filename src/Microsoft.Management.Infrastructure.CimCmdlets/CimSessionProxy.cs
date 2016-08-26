@@ -27,12 +27,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// context base class for cross operations
     /// for example, some cmdlets need to query instance first and then
     /// remove instance, those scenarios need context object transferred
-    /// from one operation to antoher.
+    /// from one operation to another.
     /// </summary>
     internal abstract class XOperationContextBase
     {
         /// <summary>
-        /// <para>namespce</para>
+        /// <para>namespace</para>
         /// </summary>
         internal string Namespace
         {
@@ -117,7 +117,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     }
     #endregion
 
-    #region Preprossessing of result object interface
+    #region Preprocessing of result object interface
     /// <summary>
     ///  Defines a method to preprocessing an result object before sending to
     ///  output pipeline.
@@ -572,7 +572,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }        
 
         /// <summary>
-        /// Enable/Disable the methos result streming,
+        /// Enable/Disable the method result streaming,
         /// it is enabled by default.
         /// </summary>
         public bool EnableMethodResultStreaming
@@ -589,7 +589,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Enable/Disable prompt user streming,
+        /// Enable/Disable prompt user streaming,
         /// it is enabled by default.
         /// </summary>
         public bool EnablePromptUser
@@ -691,7 +691,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Add a new opertion to cache.
+        /// Add a new operation to cache.
         /// </summary>
         /// <param name="operation"></param>
         /// <param name="cancelObject"></param>
@@ -835,7 +835,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Write opertion start verbose message
+        /// Write operation start verbose message
         /// </para>
         /// </summary>
         /// <param name="operation"></param>
@@ -1534,7 +1534,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private IObservable<object> operation;
 
         /// <summary>
-        /// the current opration name
+        /// the current operation name
         /// </summary>
         private string operationName;
 
@@ -1544,7 +1544,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private Hashtable operationParameters = new Hashtable();
 
         /// <summary>
-        /// hanlder used to cancel operation
+        /// handler used to cancel operation
         /// </summary>
         private IDisposable _cancelOperation;
 
@@ -1554,7 +1554,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private int _cancelOperationDisposed = 0;
 
         /// <summary>
-        /// Dispose the cancel opreation
+        /// Dispose the cancel operation
         /// </summary>
         private void DisposeCancelOperation()
         {
@@ -1571,7 +1571,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Set the cancel opreation
+        /// Set the cancel operation
         /// </summary>
         private IDisposable CancelOperation
         {
@@ -1661,7 +1661,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             Dispose(true);
             // This object will be cleaned up by the Dispose method.
-            // Therefore, you should call GC.SupressFinalize to
+            // Therefore, you should call GC.SuppressFinalize to
             // take this object off the finalization queue
             // and prevent finalization code for this object
             // from executing a second time.
@@ -2143,7 +2143,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     return match;
                 }
             }
-            DebugHelper.WriteLog("CimClass '{0}' is qulified.", 1, cimClass.CimSystemProperties.ClassName);
+            DebugHelper.WriteLog("CimClass '{0}' is qualified.", 1, cimClass.CimSystemProperties.ClassName);
             return true;
         }
         #endregion

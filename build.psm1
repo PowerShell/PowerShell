@@ -43,7 +43,7 @@ function Start-PSBuild {
         [switch]$TypeGen,
         [switch]$Clean,
 
-        # this switch will re-build only System.Mangement.Automation.dll
+        # this switch will re-build only System.Management.Automation.dll
         # it's useful for development, to do a quick changes in the engine
         [switch]$SMAOnly,
 
@@ -1254,7 +1254,7 @@ function Copy-MappedFiles {
             throw "$pslMonadRoot is not a valid folder"
         }
 
-        # Do some intelligens to prevent shouting us in the foot with CL management
+        # Do some intelligence to prevent shooting us in the foot with CL management
 
         # finding base-line CL
         $cl = git --git-dir="$PSScriptRoot/.git" tag | % {if ($_ -match 'SD.(\d+)$') {[int]$Matches[1]} } | Sort-Object -Descending | Select-Object -First 1
@@ -1360,7 +1360,7 @@ function Get-Mappings
 
 <#
 .EXAMPLE Send-GitDiffToSd -diffArg1 32b90c048aa0c5bc8e67f96a98ea01c728c4a5be~1 -diffArg2 32b90c048aa0c5bc8e67f96a98ea01c728c4a5be -AdminRoot d:\e\ps_dev\admin
-Apply a signle commit to admin folder
+Apply a single commit to admin folder
 #>
 function Send-GitDiffToSd {
     param(
@@ -1633,7 +1633,7 @@ function script:Use-MSBuild {
 
 function script:log([string]$message) {
     Write-Host -Foreground Green $message
-    #reset colors for older package to at return to default after error message on a compiliation error
+    #reset colors for older package to at return to default after error message on a compilation error
     [console]::ResetColor()
 }
 
@@ -1706,7 +1706,7 @@ function script:Start-NativeExecution([scriptblock]$sb)
     $script:ErrorActionPreference = "Continue"
     try {
         & $sb
-        # note, if $sb doens't have a native invocation, $LASTEXITCODE will
+        # note, if $sb doesn't have a native invocation, $LASTEXITCODE will
         # point to the obsolete value
         if ($LASTEXITCODE -ne 0) {
             throw "Execution of {$sb} failed with exit code $LASTEXITCODE"

@@ -522,15 +522,15 @@ namespace Microsoft.PowerShell.Commands
     public enum DisplayHintType
     {
         /// <summary>
-        /// Display prerence Date-Only
+        /// Display preference Date-Only
         /// </summary>
         Date,
         /// <summary>
-        /// Display prerence Time-Only
+        /// Display preference Time-Only
         /// </summary>
         Time,
         /// <summary>
-        /// Display prerence Date and Time
+        /// Display preference Date and Time
         /// </summary>
         DateTime
     }

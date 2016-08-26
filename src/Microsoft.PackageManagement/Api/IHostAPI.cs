@@ -18,7 +18,7 @@ namespace Microsoft.PackageManagement.Internal.Api {
     using System.Net;
 
     /// <summary>
-    /// Functions implemented by the HOST to provide contexual information and control to for the current request.
+    /// Functions implemented by the HOST to provide contextual information and control to for the current request.
     /// </summary>
     public interface IHostApi {
 
@@ -198,7 +198,7 @@ namespace Microsoft.PackageManagement.Internal.Api {
         /// </summary>
         /// <param name="requestor">the name of the provider or component requesting the provider.</param>
         /// <param name="providerName">the name of the requested provider</param>
-        /// <param name="providerVersion">the miniumum version of the provider required</param>
+        /// <param name="providerVersion">the minimum version of the provider required</param>
         /// <param name="providerType"></param>
         /// <param name="location">the remote location that the provider is being bootstrapped from</param>
         /// <param name="destination">the target folder where the provider is to be installed.</param>
@@ -214,7 +214,7 @@ namespace Microsoft.PackageManagement.Internal.Api {
         bool ShouldContinueWithUntrustedPackageSource(string package, string packageSource);
 
         /// <summary>
-        /// Allow a package provider to comfirm a user whether the process should continue
+        /// Allow a package provider to confirm a user whether the process should continue
         /// </summary>
         /// <param name="query">Query that inquires whether the cmdlet should continue.</param>
         /// <param name="caption">Caption of the window that might be displayed when the user is prompted whether or not to perform the action.</param>
@@ -224,7 +224,7 @@ namespace Microsoft.PackageManagement.Internal.Api {
         bool ShouldContinue(string query, string caption, ref bool yesToAll, ref bool noToAll);
 
         /// <summary>
-        /// Allow a package provider to comfirm a user whether the process should continue
+        /// Allow a package provider to confirm a user whether the process should continue
         /// </summary>
         /// <param name="query">Query that inquires whether the cmdlet should continue.</param>
         /// <param name="caption">Caption of the window that might be displayed when the user is prompted whether or not to perform the action.</param>

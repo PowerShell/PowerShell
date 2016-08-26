@@ -40,7 +40,7 @@
 //! - ERROR_BAD_PATH_NAME: pathname is too long, or contains invalid characters
 //!
 //! @retval 1 if creation is successful
-//! @retval 0 if createion failed
+//! @retval 0 if creation failed
 //!
 
 int32_t CreateHardLink(const char *newlink, const char *target)

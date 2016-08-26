@@ -457,7 +457,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Showing help information for current actived cmdlet.
+        /// Showing help information for current active cmdlet.
         /// </summary>
         public void OpenHelpWindow()
         {
@@ -465,7 +465,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Determins whether current command name and a specifed ParameterSetName have same name.
+        /// Determines whether current command name and a specified ParameterSetName have same name.
         /// </summary>
         /// <param name="name">The name of ShareParameterSet</param>
         /// <returns>Return true is ShareParameterSet. Else return false.</returns>
@@ -479,7 +479,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         /// <param name="module">Module to which the CommandViewModel will belong to</param>
         /// <param name="commandInfo">Will showing command</param>
-        /// <param name="noCommonParameters">true to ommit displaying common parameter</param>
+        /// <param name="noCommonParameters">true to omit displaying common parameter</param>
         /// <exception cref="ArgumentNullException">If commandInfo is null</exception>
         /// <exception cref="RuntimeException">
         /// If could not create the CommandViewModel. For instance the ShowCommandCommandInfo corresponding to
@@ -592,7 +592,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Compares source and target by being the default parameter set and then by name
         /// </summary>
-        /// <param name="source">source paremeterset</param>
+        /// <param name="source">source parameterset</param>
         /// <param name="target">target parameterset</param>
         /// <returns>0 if they are the same, -1 if source is smaller, 1 if source is larger</returns>
         private int Compare(ParameterSetViewModel source, ParameterSetViewModel target)

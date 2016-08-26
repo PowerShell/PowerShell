@@ -462,7 +462,7 @@ namespace Microsoft.PowerShell
             else if (_visualSelectionCommandCount > 0 && InRegion(i))
             {
                 // We can't quite emulate real console selection because it inverts
-                // based on actual screen colors, our pallete is limited.  The choice
+                // based on actual screen colors, our palette is limited.  The choice
                 // to invert only the lower 3 bits to change the color is somewhat
                 // but looks best with the 2 default color schemes - starting PowerShell
                 // from it's shortcut or from a cmd shortcut.

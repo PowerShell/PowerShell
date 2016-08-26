@@ -970,7 +970,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Name of the processes to wait on for termintation
+        /// Name of the processes to wait on for termination
         /// </summary>
         [Parameter(
             ParameterSetName = "Name",
@@ -1570,7 +1570,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Name of the processes to wait on for termintation
+        /// Name of the processes to wait on for termination
         /// </summary>
         [Parameter(
             ParameterSetName = "Name",
@@ -2712,7 +2712,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Start API assignes the process to the JobObject and starts monitoring 
+        /// Start API assigns the process to the JobObject and starts monitoring 
         /// the child processes hosted by the process created by Start-Process cmdlet.
         /// </summary>
         internal bool AssignProcessToJobObject(Process process)

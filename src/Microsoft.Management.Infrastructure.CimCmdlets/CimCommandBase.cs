@@ -218,7 +218,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.CloneParameterEntries(parameters, sets);
         }
 
-        #region Two dictionaryies used to determine the bound parameter set
+        #region Two dictionaries used to determine the bound parameter set
 
         /// <summary>
         /// Define the parameter definition entries,
@@ -242,7 +242,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// <para>
         /// Used to remember the set of parameterset were set
-        /// if any conflition occurred with current parameter,
+        /// if any conflict occurred with current parameter,
         /// throw exception
         /// </para>
         /// </summary>
@@ -256,14 +256,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// <para>
         /// Used to remember the set of parameterset were set before begin process
-        /// if any conflition occurred with current parameter,
+        /// if any conflict occurred with current parameter,
         /// throw exception
         /// </para>
         /// </summary>
         private List<string> parametersetNamesListAtBeginProcess = new List<string>();
 
         /// <summary>
-        /// Parameter names list befre begin process
+        /// Parameter names list before begin process
         /// </summary>
         private List<string> parameterNamesListAtBeginProcess = new List<string>();
 
@@ -594,7 +594,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             Dispose(true);
             // This object will be cleaned up by the Dispose method.
-            // Therefore, you should call GC.SupressFinalize to
+            // Therefore, you should call GC.SuppressFinalize to
             // take this object off the finalization queue
             // and prevent finalization code for this object
             // from executing a second time.

@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         None,
         /// <summary>
-        /// Allow selection of one sinlge item to be written to the pipeline.
+        /// Allow selection of one single item to be written to the pipeline.
         /// </summary>
         Single,
         /// <summary>
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
         {
         }
 
-        #endregion Contructors
+        #endregion Constructors
 
         #region Input Parameters
 
@@ -282,7 +282,7 @@ namespace Microsoft.PowerShell.Commands
                 _gridHeader.ProcessInputObject(input);
             }
 
-            // Some thread syncronization needed.
+            // Some thread synchronization needed.
             Exception exception = _windowProxy.GetLastException();
             if (exception != null)
             {
@@ -480,7 +480,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Dispose method in IDisposeable
+        /// Dispose method in IDisposable
         /// </summary>
         public void Dispose()
         {

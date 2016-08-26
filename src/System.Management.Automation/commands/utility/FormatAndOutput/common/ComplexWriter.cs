@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class ComplexWriter
     {
         /// <summary>
-        /// initalization method to be called before any other operation
+        /// initialization method to be called before any other operation
         /// </summary>
         /// <param name="lineOutput">LineOutput interfaces to write to</param>
         /// <param name="numberOfTextColumns">number of columns used to write out</param>
@@ -46,13 +46,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="formatValueList">list of FormatValue tokens to interpret</param>
         internal void WriteObject(List<FormatValue> formatValueList)
         {
-            // we always start with no identation
+            // we always start with no indentation
             _indentationManager.Clear();
 
             foreach (FormatEntry fe in formatValueList)
             {
                 // operate on each directive inside the list,
-                // carrying the identation from invocation to invocation
+                // carrying the indentation from invocation to invocation
                 GenerateFormatEntryDisplay(fe, 0);
             }
             // make sure that, if we have pending text in the buffer it gets flushed
@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // VALIDITY CHECKS:
 
-            // check the useful ("active") witdth
+            // check the useful ("active") width
             int usefulWidth = _textColumns - rightIndentation - leftIndentation;
             if (usefulWidth <= 0)
             {
@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private LineOutput _lo;
 
         /// <summary>
-        /// nomber of columns for the output device
+        /// number of columns for the output device
         /// </summary>
         private int _textColumns;
 
@@ -459,11 +459,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                         else
                         {
-                            // of the given lenght, add it to the accumulator
+                            // of the given length, add it to the accumulator
                             accumulator.AddLine(lines[k].Substring(offset, charactersToAdd));
                         }
 
-                        // increase the offest by the # of characters added
+                        // increase the offset by the # of characters added
                         offset += charactersToAdd;
                     }
                     else

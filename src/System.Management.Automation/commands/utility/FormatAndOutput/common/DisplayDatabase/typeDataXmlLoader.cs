@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal const string EnumerableExpansionNode = "EnumerableExpansion";
             internal const string ExpandNode = "Expand";
 
-            // entries indentifying the various control types definitions
+            // entries identifying the various control types definitions
             internal const string ControlNode = "Control";
             internal const string ComplexControlNameNode = "CustomControlName";
 
@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             internal const string ViewNode = "View";
 
-            // entries indentifying the various control types
+            // entries identifying the various control types
             internal const string TableControlNode = "TableControl";
             internal const string ListControlNode = "ListControl";
             internal const string WideControlNode = "WideControl";
@@ -554,7 +554,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (tableBody.header.columnHeaderDefinitionList.Count != 0)
             {
                 // CHECK: if there are headers in the list, their number has to match
-                // the default row definition intem count
+                // the default row definition item count
                 if (tableBody.header.columnHeaderDefinitionList.Count !=
                     tableBody.defaultDefinition.rowItemDefinitionList.Count)
                 {
@@ -586,7 +586,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 TableColumnHeaderDefinition chd = new TableColumnHeaderDefinition();
 
                 // Contains:
-                //   Label     --- Lable     cardinality 0..1
+                //   Label     --- Label     cardinality 0..1
                 //   Width     --- Width     cardinality 0..1
                 //   Alignment --- Alignment cardinality 0..1
                 if (!String.IsNullOrEmpty(header.Label))
@@ -914,7 +914,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #region Load WideControl
 
         /// <summary>
-        /// Load the WideControl into the WideContolBody
+        /// Load the WideControl into the WideControlBody
         /// </summary>
         /// <param name="wide"></param>
         /// <param name="viewIndex"></param>

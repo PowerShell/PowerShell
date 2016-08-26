@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Cmdletization
 
         #endregion Common CIM-related parameters
 
-        #region Abstract methods to be overriden in derived classes
+        #region Abstract methods to be overridden in derived classes
 
         /// <summary>
         /// Creates a <see cref="System.Management.Automation.Job"/> object that performs a query against the wrapped object model.
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// </para>
         /// <para>
         /// <see cref="Job.WriteObject" /> (and other methods returning job results) will block to support throttling and flow-control.
-        /// Implementations of Job instance returned from this method should make sure that implementation-specific flow-control mechanism pauses further procesing,
+        /// Implementations of Job instance returned from this method should make sure that implementation-specific flow-control mechanism pauses further processing,
         /// until calls from <see cref="Job.WriteObject" /> (and other methods returning job results) return.
         /// </para>
         /// </remarks>
@@ -174,7 +174,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// </para>
         /// <para>
         /// <see cref="Job.WriteObject" /> (and other methods returning job results) will block to support throttling and flow-control.
-        /// Implementations of Job instance returned from this method should make sure that implementation-specific flow-control mechanism pauses further procesing,
+        /// Implementations of Job instance returned from this method should make sure that implementation-specific flow-control mechanism pauses further processing,
         /// until calls from <see cref="Job.WriteObject" /> (and other methods returning job results) return.
         /// </para>
         /// </remarks>
@@ -209,7 +209,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// </para>
         /// <para>
         /// <see cref="Job.WriteObject" /> (and other methods returning job results) will block to support throttling and flow-control.
-        /// Implementations of Job instance returned from this method should make sure that implementation-specific flow-control mechanism pauses further procesing,
+        /// Implementations of Job instance returned from this method should make sure that implementation-specific flow-control mechanism pauses further processing,
         /// until calls from <see cref="Job.WriteObject" /> (and other methods returning job results) return.
         /// </para>
         /// </remarks>
@@ -550,7 +550,7 @@ namespace Microsoft.PowerShell.Cmdletization
         private TSession GetImpliedSession()
         {
             TSession sessionFromImportModule;
-            // When being called from a CIM actiivty, this will be invoked as
+            // When being called from a CIM activity, this will be invoked as
             // a function so there will be no module info
             if (this.PSModuleInfo != null)
             {

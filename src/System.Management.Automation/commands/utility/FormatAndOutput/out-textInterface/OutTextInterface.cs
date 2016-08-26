@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     public class OutLineOutputCommand : FrontEndCommandBase
     {
         /// <summary>
-        /// command line switch for ILineOutput comunication channel
+        /// command line switch for ILineOutput communication channel
         /// </summary>
         /// <value></value>
         [Parameter(Mandatory = true, Position = 0)]

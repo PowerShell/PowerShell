@@ -62,7 +62,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 
         /// <summary>
-        /// Defines a set of flags, each coresponding to a member of LocalUser,
+        /// Defines a set of flags, each corresponding to a member of LocalUser,
         /// which indicate fields to be updated.
         /// </summary>
         /// <remarks>
@@ -2397,7 +2397,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     present = true;
                 }
 
-                // set the DACL into our new sescurity descriptor
+                // set the DACL into our new security descriptor
                 var ok = Win32.SetSecurityDescriptorDacl(ipsd, present, ipDacl, false);
                 if (!ok)
                 {
@@ -2660,7 +2660,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// to look up.
         /// </param>
         /// <returns>
-        /// A <see cref="AccountInfo"/> object containg information about the
+        /// A <see cref="AccountInfo"/> object contains information about the
         /// account, or null if no matching account was found.
         /// </returns>
         private AccountInfo LookupAccountInfo(SecurityIdentifier sid)
@@ -2718,7 +2718,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// A string containing the name of the account to look up.
         /// </param>
         /// <returns>
-        /// A <see cref="AccountInfo"/> object containg information about the
+        /// A <see cref="AccountInfo"/> object contains information about the
         /// account, or null if no matching account was found.
         /// </returns>
         private AccountInfo LookupAccountInfo(string accountName)
@@ -2762,7 +2762,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 // Bug: 7407413 :
                 // If accountname is in the format domain1\user1, 
                 //then AccountName.ToString() will return domain1\domain1\user1
-                // Ideally , accountname should be processed to hold only accout name (without domain)
+                // Ideally , accountname should be processed to hold only account name (without domain)
                 // as we are keeping the domain in 'DomainName' variable.
 
                 int index = accountName.IndexOf("\\", StringComparison.CurrentCultureIgnoreCase);

@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
                     nextLine.AppendFormat("{0:X2} ", currentByte);
 
                     // If the character is printable, add its ascii representation to
-                    // the right-hand side.  Otherwise, addeter  a dot to the right hand side.
+                    // the right-hand side.  Otherwise, add a dot to the right hand side.
                     if ((currentByte >= 0x20) && (currentByte <= 0xFE))
                     {
                         asciiEnd.Append((char)currentByte);

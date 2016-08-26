@@ -139,7 +139,7 @@ namespace Microsoft.PackageManagement.Msi.Internal.Deployment.WindowsInstaller
 
         /// <summary>Gets or sets the Template summary information property.</summary>
         /// <remarks><p>
-        /// The Template summary information propery indicates the platform and language versions supported by the database.
+        /// The Template summary information property indicates the platform and language versions supported by the database.
         /// </p><p>
         /// The syntax of the Template Summary property information is:
         /// [platform property][,platform property][,...];[language id][,language id][,...]

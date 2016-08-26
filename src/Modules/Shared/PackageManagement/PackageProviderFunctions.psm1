@@ -267,7 +267,7 @@ function New-SoftwareIdentityFromXml {
 }
 
 <#
-	Creates a new instance of a DyamicOption object
+	Creates a new instance of a DynamicOption object
 #>
 function New-DynamicOption {
 	param(

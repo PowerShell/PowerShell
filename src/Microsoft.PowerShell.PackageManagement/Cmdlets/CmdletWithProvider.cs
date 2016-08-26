@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                     // the user gave us provider names that we're not able to resolve.
 
                     if (IsInvocation) {
-                        // and we're in an actual cmdlet invocaton.
+                        // and we're in an actual cmdlet invocation.
                         QueueHeldMessage(() => Error(Constants.Errors.UnknownProviders, ProviderName.JoinWithComma()));
                         IsFailingEarly = true;
                     }
@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                     var filteredproviders = registeredSources.Any() ? registeredSources.Select(source => source.Provider).Distinct().ReEnumerable() : potentialSources.Select(source => source.Provider).Distinct().ReEnumerable();
 
                     if (!filteredproviders.Any()) {
-                        // we've filtered out everthing!
+                        // we've filtered out everything!
 
                         if (!didUserSpecifyProviders) {
                             // if cmdlet is generating parameter, we have to log error that source is wrong
@@ -281,7 +281,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
             }
 
             // these warnings only show for providers that would have otherwise be selected.
-            // if not for the missing requrired parameter.
+            // if not for the missing required parameter.
             foreach (var mp in excluded.OrderBy(each => each.Key)) {
                 string optionsValue = mp.Value.JoinWithComma();
 
@@ -493,7 +493,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                             Console.WriteLine("»»» Cancelled before we got finished doing dynamic parameters");
 #endif
                             // this happens if there is a serious failure early in the cmdlet
-                            // i.e. - if the SelectedProviders comes back empty (due to agressive filtering)
+                            // i.e. - if the SelectedProviders comes back empty (due to aggressive filtering)
 
                             // in this case, we just want to provide a catch-all for remaining arguments so that we can make
                             // output the error that we really want to (that the user specified conditions that filtered them all out)

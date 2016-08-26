@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         {
             // Update ScheduledJobOptions object with current parameters.
             // Update switch parameters only if they were selected.
-            // Also update the ScheduledJobDefintion object associated with this options object.
+            // Also update the ScheduledJobDefinition object associated with this options object.
             if (MyInvocation.BoundParameters.ContainsKey("StartIfOnBattery"))
             {
                 _jobOptions.StartIfOnBatteries = StartIfOnBattery;

@@ -374,7 +374,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Callled in response to a GUI event that requires the command to be run
+        /// Called in response to a GUI event that requires the command to be run
         /// </summary>
         internal void OnRunSelectedCommand()
         {
@@ -417,7 +417,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="filterPattern">pattern corresponding to filter</param>
         /// <param name="commandName">command name string</param>
         /// <param name="filter">filter string</param>
-        /// <returns>true if coparisonText matches str or pattern</returns>
+        /// <returns>true if comparisonText matches str or pattern</returns>
         private static bool Matches(WildcardPattern filterPattern, string commandName, string filter)
         {
             if (filterPattern != null)

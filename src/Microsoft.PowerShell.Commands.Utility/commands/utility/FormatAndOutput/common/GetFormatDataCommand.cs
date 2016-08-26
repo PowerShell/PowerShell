@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                // Older version of PowerShell do not know about someting in the control, so
+                // Older version of PowerShell do not know about something in the control, so
                 // don't return it.
                 if (writeOldWay && !control.CompatibleWithOldPowerShell())
                     continue;

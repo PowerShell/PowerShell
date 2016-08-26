@@ -13,7 +13,7 @@ namespace Microsoft.PackageManagement.Archivers.Internal.Compression.Zip
     using System.IO;
 
     /// <summary>
-    /// Wraps a source stream and calcaluates a CRC over all bytes that are read or written.
+    /// Wraps a source stream and calculates a CRC over all bytes that are read or written.
     /// </summary>
     /// <remarks>
     /// The CRC algorithm matches that used in the standard ZIP file format.
@@ -251,7 +251,7 @@ namespace Microsoft.PackageManagement.Archivers.Internal.Compression.Zip
         }
 
         /// <summary>
-        /// Reflects the ordering of certain number of bits. For exmample when reflecting
+        /// Reflects the ordering of certain number of bits. For example when reflecting
         /// one byte, bit one is swapped with bit eight, bit two with bit seven, etc.
         /// </summary>
         private static uint Reflect(uint value, int bits)

@@ -622,7 +622,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class GetAclCommand : SecurityDescriptorCommandsBase
     {
         /// <summary>
-        /// Initialzes a new instance of the GetAclCommand
+        /// Initializes a new instance of the GetAclCommand
         /// class.  Sets the default path to the current location.
         /// </summary>
         public GetAclCommand()

@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private ScheduledJobTrigger[] _triggers;
 
         /// <summary>
-        /// ScheduledJobDefition Id.
+        /// ScheduledJobDefinition Id.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, 
                    ParameterSetName = AddJobTriggerCommand.JobDefinitionIdParameterSet)]

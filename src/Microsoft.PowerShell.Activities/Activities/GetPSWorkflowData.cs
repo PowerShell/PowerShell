@@ -301,7 +301,7 @@ namespace Microsoft.PowerShell.Activities
 
                         foreach(string varKey in dictionaryParam.Keys)
                         {
-                            // We need to get the values of required runtime variables only, not evrything from DataContext parameters
+                            // We need to get the values of required runtime variables only, not everything from DataContext parameters
                             //
                             if (workflowRuntimeVariables.ContainsKey(varKey))
                             {

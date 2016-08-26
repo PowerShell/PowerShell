@@ -276,7 +276,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                     }
                 }                   
 
-                // it's good to check just before you actaully write something to see if the user has cancelled the operation
+                // it's good to check just before you actually write something to see if the user has cancelled the operation
                 if (request.IsCanceled) {
                     return;
                 }

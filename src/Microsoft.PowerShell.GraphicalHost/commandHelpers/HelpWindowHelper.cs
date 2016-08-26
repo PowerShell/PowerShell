@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands.Internal
     using Microsoft.PowerShell.Commands.ShowCommandInternal;
 
     /// <summary>
-    /// Implements thw WPF window part of the the ShowWindow option of get-help
+    /// Implements the WPF window part of the the ShowWindow option of get-help
     /// </summary>
     internal static class HelpWindowHelper
     {

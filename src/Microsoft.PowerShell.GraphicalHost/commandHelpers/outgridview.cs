@@ -397,7 +397,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Add column defenitions to the underlying management list.
+        /// Add column definitions to the underlying management list.
         /// </summary>
         /// <param name="propertyNames">An array of property names to add.</param>
         /// <param name="displayNames">An array of display names to add.</param>

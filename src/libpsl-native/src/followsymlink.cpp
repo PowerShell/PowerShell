@@ -30,7 +30,7 @@
 //! - ERROR_INVALID_NAME: file provided is not a symbolic link
 //! - ERROR_INVALID_FUNCTION: incorrect function
 //! - ERROR_BAD_PATH_NAME: pathname is too long
-//! - ERROR_OUTOFMEMORY insufficient kernal memory
+//! - ERROR_OUTOFMEMORY insufficient kernel memory
 //!
 //! @retval target path, or NULL if unsuccessful
 //!

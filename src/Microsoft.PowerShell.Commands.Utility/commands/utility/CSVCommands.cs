@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// Write the string to a file or pipelin
+        /// Write the string to a file or pipeline
         /// </summary>
         public virtual void WriteCsvLine(string line)
         {
@@ -332,7 +332,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // If the csv file is empty then even append is treated as regualr export (i.e., both header & values are added to the CSV file).
+            // If the csv file is empty then even append is treated as regular export (i.e., both header & values are added to the CSV file).
             _isActuallyAppending = this.Append && File.Exists(resolvedFilePath) && !isCsvFileEmpty;
 
             if (_isActuallyAppending)
@@ -1311,7 +1311,7 @@ namespace Microsoft.PowerShell.Commands
         {
             //Collection of strings to return
             Collection<string> result = new Collection<string>();
-            //currect string
+            //current string
             StringBuilder current = new StringBuilder();
 
             bool seenBeginQuote = false;
@@ -1383,7 +1383,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else if (current.Length == 0)
                     {
-                        //We are at the begining of a new word.
+                        //We are at the beginning of a new word.
                         //This quote is the first quote.
                         seenBeginQuote = true;
                     }
@@ -1391,7 +1391,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         //We are seeing a quote after the start of 
                         //the word. This is error, however we will be 
-                        //lineient here and do what excel does:
+                        //lenient here and do what excel does:
                         //Ex: foo "ba,r"
                         //In above example word read is ->foo "ba<-
                         //Basically we read till next delimiter
@@ -1419,9 +1419,9 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         //We are not in quote and we are not at the 
-                        //begining of a word. We should not be seeing
+                        //beginning of a word. We should not be seeing
                         //spaces here. This is an error condition, however
-                        //we will be linient here and do what excel does,
+                        //we will be lenient here and do what excel does,
                         //that is read till next delimiter.
                         //Ex: ->foo <- is read as ->foo<-
                         //Ex: ->foo bar<- is read as ->foo bar<-
@@ -1471,7 +1471,7 @@ namespace Microsoft.PowerShell.Commands
                 result.Add(current.ToString());
             }
 
-            //Trim all trailing blackspaces and delimiters ( single/multiple ).
+            //Trim all trailing blankspaces and delimiters ( single/multiple ).
             // If there is only one element in the row and if its a blankspace we dont trim it.
             // A trailing delimiter is represented as a blankspace while being added to result collection
             // which is getting trimmed along with blankspaces supplied through the CSV in the below loop.

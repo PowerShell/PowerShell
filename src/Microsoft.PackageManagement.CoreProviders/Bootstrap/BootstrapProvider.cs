@@ -173,7 +173,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
                 var wildcardPattern = new WildcardPattern(name, WildcardOptions);
 
                 if (request.GetOptionValue("AllVersions").IsTrue()) {
-                    // Feed.Query() can return an empty provider, so here we need to execlude it by checking p.Name !=null or empty.
+                    // Feed.Query() can return an empty provider, so here we need to exclude it by checking p.Name !=null or empty.
                     foreach (var p in request.Providers.Distinct(PackageEqualityComparer).Where(p => !string.IsNullOrWhiteSpace(p.Name) && (string.IsNullOrWhiteSpace(name) || wildcardPattern.IsMatch(p.Name)))) {
                         FindPackage(p.Name, null, "0.0", null, 0, request);
                     }
@@ -245,7 +245,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
 
             request.Debug("Calling '{0}::GetInstalledPackages' '{1}','{2}','{3}','{4}'", PackageProviderName, name, requiredVersion, minimumVersion, maximumVersion);
 
-            //search under the providerAssembies folder for the installed providers
+            //search under the providerAssemblies folder for the installed providers
             var providers = PackageManagementService.AllProvidersFromProviderAssembliesLocation(request).Select(providerFileAssembly => {
                           
                 //get the provider's name\version

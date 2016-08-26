@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Gets the content type with safe fallback - in the situation
-        // of FTPWebResponse that retuns NotImplemented.
+        // of FTPWebResponse that returns NotImplemented.
         internal static string GetContentType(WebResponse response)
         {
             string contentType = null;

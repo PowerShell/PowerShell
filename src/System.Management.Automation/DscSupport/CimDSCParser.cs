@@ -498,7 +498,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             StringComparer.OrdinalIgnoreCase);
 
         //a collection to hold current importing script based resource file
-        //this prevent circular importing case when the script resource exising in the same module with resources it import-dscresource
+        //this prevent circular importing case when the script resource existing in the same module with resources it import-dscresource
         private static readonly HashSet<string> s_currentImportingScriptFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
@@ -1179,7 +1179,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// A routine that validates a string contining MOF instances against the
+        /// A routine that validates a string containing MOF instances against the
         /// current set of cached classes.
         /// </summary>
         /// <param name="instanceText"></param>
@@ -1748,7 +1748,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                 if (LanguagePrimitives.TryConvertTo(moduleName, out moduleSpecifications))
                 {
-                    // if resourceNames are specifed then we can not specify multiple modules name 
+                    // if resourceNames are specified then we can not specify multiple modules name 
                     if (moduleSpecifications != null && moduleSpecifications.Length > 1 && resourceNames != null)
                     {
                         errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent,
@@ -1756,7 +1756,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                                                      string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceMultipleModulesNotSupportedWithName)));
                     }
 
-                    // if moduleversion is specifed then we can not specify multiple modules name 
+                    // if moduleversion is specified then we can not specify multiple modules name 
                     if (moduleSpecifications != null && moduleSpecifications.Length > 1 && moduleVersion != null)
                     {
                         errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent,
@@ -1764,7 +1764,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                                                      string.Format(CultureInfo.CurrentCulture, ParserStrings.ImportDscResourceNeedParams)));
                     }
 
-                    // if moduleversion is specifed then we can not specify another version in modulespecification object of ModuleName  
+                    // if moduleversion is specified then we can not specify another version in modulespecification object of ModuleName  
                     if (moduleSpecifications != null && (moduleSpecifications[0].Version != null || moduleSpecifications[0].MaximumVersion != null) && moduleVersion != null)
                     {
                         errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent,
@@ -1870,7 +1870,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     {
                         if (mandatoryPropertiesNames.Remove(presentName) && mandatoryPropertiesNames.Count == 0)
                         {
-                            // optimization, once all mandotory properties are specified, we can safely exit.
+                            // optimization, once all mandatory properties are specified, we can safely exit.
                             return null;
                         }
                     }
@@ -3167,7 +3167,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                             if (classes != null)
                             {
                                 //
-                                // search if class'es friendly name is the given resourceName
+                                // search if class's friendly name is the given resourceName
                                 //
                                 foreach (var c in classes)
                                 {
@@ -3581,7 +3581,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         /// <summary>
-        /// The scriptblock that implementes the CIM keyword functionality.
+        /// The scriptblock that implements the CIM keyword functionality.
         /// </summary>
         private static ScriptBlock CimKeywordImlementationFunction
         {
@@ -3708,11 +3708,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
         else
         {
-# If there are prerequsite resources, validate that the references are well-formed strings
+# If there are prerequisite resources, validate that the references are well-formed strings
 # This routine also adds the resource to the global node resources table.
             Test-DependsOn
 
-# Check if PsDscRunCredetial is being specified as Arguments to Configuration
+# Check if PsDscRunCredential is being specified as Arguments to Configuration
         if($PsDscRunAsCredential -ne $null)
         {
 # Check if resource is also trying to set the value for RunAsCred

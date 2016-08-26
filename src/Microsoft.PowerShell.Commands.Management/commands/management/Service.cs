@@ -411,7 +411,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         /// <remarks>
         /// We do not use the ServiceController(string serviceName)
-        /// constructor variant, since thr resultant
+        /// constructor variant, since the resultant
         /// ServiceController.ServiceName is the provided serviceName
         /// even when that differs from the real ServiceName by case.
         /// </remarks>
@@ -1390,7 +1390,7 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                //Set the NoWait paramater to false since we are not adding this switch to this cmdlet.
+                //Set the NoWait parameter to false since we are not adding this switch to this cmdlet.
                 List<ServiceController> stoppedServices = DoStopService(serviceController, Force, true);
 
                 if (stoppedServices.Count > 0)
@@ -1809,7 +1809,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         if (PassThru.IsPresent)
                         {
-                            //to display the service,refreshing the service would not show the display name after updation
+                            //to display the service,refreshing the service would not show the display name after updating
                             ServiceController displayservice = new ServiceController(Name, ServiceComputerName);
                             WriteObject(displayservice);
                         }

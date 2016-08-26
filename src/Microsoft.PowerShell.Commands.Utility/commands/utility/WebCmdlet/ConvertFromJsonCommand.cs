@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
         public string InputObject { get; set; }
 
         /// <summary>
-        /// inputObjectBuffer buffers all InputObjet contents avaliable in the pipeline.
+        /// inputObjectBuffer buffers all InputObjet contents available in the pipeline.
         /// </summary>
         private List<string> _inputObjectBuffer = new List<string>();
 
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///  Buffers InputObjet contents avaliable in the pipeline.
+        ///  Buffers InputObjet contents available in the pipeline.
         /// </summary>
         protected override void ProcessRecord()
         {

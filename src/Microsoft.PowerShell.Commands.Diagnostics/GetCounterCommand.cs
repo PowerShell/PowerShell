@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell.Commands
         // The localized Pdh resource strings might use Unicode characters that are different from
         // what the user can type with the keyboard to represent a special character.
         //
-        // e.g. the apostrophe in Frence UI culture: it's [char]39 from keyboard, but it's [char]8217
+        // e.g. the apostrophe in French UI culture: it's [char]39 from keyboard, but it's [char]8217
         // in the resource strings.
         //
         // With this dictionary, we can add special mapping if we find other special cases in the future.

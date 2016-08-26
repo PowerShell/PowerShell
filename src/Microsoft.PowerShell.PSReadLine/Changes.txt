@@ -154,7 +154,7 @@ New features:
 * SamplePSReadlineProfile.ps1 added with examples of custom key bindings
 * Word movement takes DigitArgument
 * HistoryNoDuplicates now works a little differently
-    - Dupicates are saved (it was a dubious memory optimization anyway)
+    - Duplicates are saved (it was a dubious memory optimization anyway)
     - Recall will recall the most recently executed item instead of the first
 * When at the last word, NextWord/ForwardWord now move to the end of line instead
   of the last character of the word.
@@ -227,7 +227,7 @@ Bugs fixed:
 * Ctrl+R with long search lines no longer causes big problems
 
 Behavior change:
-* Word functions now use delimiters.  The previous behavior is availble 
+* Word functions now use delimiters.  The previous behavior is available 
   via a Shell*Word function, e.g. instead of KillWord, use ShellKillWord.
 
 ### Version 1.0.0.4

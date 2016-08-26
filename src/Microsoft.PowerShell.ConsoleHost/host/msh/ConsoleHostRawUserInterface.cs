@@ -318,7 +318,7 @@ namespace Microsoft.PowerShell
         /// </exception>
         /// <exception cref="HostException">
         /// 
-        /// If obaining information about the buffer failed
+        /// If obtaining information about the buffer failed
         ///    OR
         ///    Win32's SetConsoleWindowInfo failed
         /// 
@@ -411,7 +411,7 @@ namespace Microsoft.PowerShell
             set
             {
                 // looking in windows/core/ntcon/server/output.c, it looks like the minimum size is 1 row X however many 
-                // charcters will fit in the minimum window size system metric (SM_CXMIN).  Instead of going to the effort of
+                // characters will fit in the minimum window size system metric (SM_CXMIN).  Instead of going to the effort of
                 // computing that minimum here, it is cleaner and cheaper to make the call to SetConsoleScreenBuffer and just
                 // translate any exception that might get thrown.
                 try
@@ -1027,7 +1027,7 @@ namespace Microsoft.PowerShell
         /// 
         /// Provided for clearing regions -- less chatty than passing an array of cells.
         /// Clear screen is:
-        ///    SetBufferContents(new Rectangle(-1, -1, -1, -1), ' ', ForgroundColor, BackgroundColor);
+        ///    SetBufferContents(new Rectangle(-1, -1, -1, -1), ' ', ForegroundColor, BackgroundColor);
         ///    CursorPosition = new Coordinates(0, 0);
         /// 
         /// fill.Type is ignored
@@ -1098,7 +1098,7 @@ namespace Microsoft.PowerShell
             // The FillConsoleOutputXxx functions wrap at the end of a line.  So we need to convert our rectangular region
             // into line segments that don't extend past the end of a line.  We will also clip the rectangle so that the semantics
             // are the same as SetBufferContents(Coordinates, BufferCell[,]), which clips if the rectangle extends past the 
-            // screen buffer bounarides.
+            // screen buffer boundaries.
             if (region.Left >= bufferWidth || region.Top >= bufferHeight || region.Right < 0 || region.Bottom < 0)
             {
                 // region is entirely outside the buffer boundaries
@@ -1144,7 +1144,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    // use ReadConsoleOutputCJK becaue checking the left and right edges of the existing output
+                    // use ReadConsoleOutputCJK because checking the left and right edges of the existing output
                     // is NOT needed
                     BufferCell[,] rightExisting = new BufferCell[existingRegion.Bottom + 1, 2];
                     ConsoleControl.ReadConsoleOutputCJK(handle, codePage,
@@ -1545,7 +1545,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                // Console can return zero when a pseduo-TTY is allocated, which
+                // Console can return zero when a pseudo-TTY is allocated, which
                 // is useless for us. Instead, map to the wrap size.
                 return Console.BufferWidth == 0 || Console.BufferHeight == 0
                     ? s_wrapSize
@@ -1618,7 +1618,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                // Console can return zero when a pseduo-TTY is allocated, which
+                // Console can return zero when a pseudo-TTY is allocated, which
                 // is useless for us. Instead, map to the wrap size.
                 return Console.LargestWindowWidth == 0 || Console.LargestWindowHeight == 0
                     ? s_wrapSize
@@ -1646,7 +1646,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                // Console can return zero when a pseduo-TTY is allocated, which
+                // Console can return zero when a pseudo-TTY is allocated, which
                 // is useless for us. Instead, map to the wrap size.
                 return Console.WindowWidth == 0 || Console.WindowHeight == 0
                     ? s_wrapSize

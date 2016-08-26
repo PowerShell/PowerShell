@@ -28,7 +28,7 @@ namespace System.Management.Automation
         // Take the 'en-US' culture as an example. When retrieving resource string to construct an exception, ResourceManager calls Assembly.Load(..) in the following order to load the resource dll:
         //     1. Load assembly with culture 'en-US' (Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.resources, Version=3.0.0.0, Culture=en-US, PublicKeyToken=31bf3856ad364e35)
         //     2. Load assembly with culture 'en'    (Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.resources, Version=3.0.0.0, Culture=en, PublicKeyToken=31bf3856ad364e35) 
-        // When the first attempt fails, we again need to retrieve the resouce string to construct another exception, which ends up with an infinite loop.
+        // When the first attempt fails, we again need to retrieve the resource string to construct another exception, which ends up with an infinite loop.
         private const string BaseFolderDoesNotExist = "The base directory '{0}' does not exist.";
         private const string ManifestDefinitionDoesNotMatch = "Could not load file or assembly '{0}' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference.";
         private const string AssemblyPathDoesNotExist = "Could not load file or assembly '{0}' or one of its dependencies. The system cannot find the file specified.";
@@ -152,7 +152,7 @@ namespace System.Management.Automation
         private readonly string[] _extensions = new string[] { ".ni.dll", ".dll" };
 
         /// <summary>
-        /// Assembly cache accross the AppDomain
+        /// Assembly cache across the AppDomain
         /// </summary>
         /// <remarks>
         /// We user the assembly short name (AssemblyName.Name) as the key.
@@ -161,7 +161,7 @@ namespace System.Management.Automation
         /// 
         /// MVID is Module Version Identifier, which is a guid. Its purpose is solely to be unique for each time the module is compiled, and
         /// it gets regenerated for every compilation. That means AssemblyLoadContext cannot handle loading two assemblies with the same name
-        /// but different veresions, not even two asssemblies with the exactly same code and version but built by two separate compilations.
+        /// but different versions, not even two assemblies with the exactly same code and version but built by two separate compilations.
         /// 
         /// Therefore, there is no need to use the full assembly name as the key. Short assembly name is sufficient.
         /// </remarks>
@@ -205,7 +205,7 @@ namespace System.Management.Automation
             // We let the default context load the assemblies included in the type catalog as there
             // appears to be a bug in .NET with method resolution with system libraries loaded by our
             // context and not the default. We use the short name because some packages have inconsistent
-            // verions between reference and runtime assemblies.
+            // versions between reference and runtime assemblies.
             if (_tpaSet.Contains(assemblyName.Name))
                 return null;
 
@@ -329,7 +329,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Load assemlby from byte stream.
+        /// Load assembly from byte stream.
         /// </summary>
         internal Assembly LoadFrom(Stream assembly)
         {

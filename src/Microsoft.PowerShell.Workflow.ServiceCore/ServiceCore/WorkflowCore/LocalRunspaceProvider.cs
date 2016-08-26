@@ -267,7 +267,7 @@ namespace Microsoft.PowerShell.Workflow
             if (result == null)
                 throw new ArgumentException(Resources.InvalidAsyncResultSpecified, "asyncResult");
 
-            // this will throw an exeption when a runspace is not successfully
+            // this will throw an exception when a runspace is not successfully
             // available
             result.EndInvoke();
 

@@ -17,10 +17,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class GroupingInfoManager
     {
         /// <summary>
-        /// Initalize with the grouping property data
+        /// Initialize with the grouping property data
         /// </summary>
-        /// <param name="groupingExpression">name of the grouping porperty</param>
-        /// <param name="displayLabel">dispaly name of the property</param>
+        /// <param name="groupingExpression">name of the grouping property</param>
+        /// <param name="displayLabel">display name of the property</param>
         internal void Initialize(MshExpression groupingExpression, string displayLabel)
         {
             _groupingKeyExpression = groupingExpression;

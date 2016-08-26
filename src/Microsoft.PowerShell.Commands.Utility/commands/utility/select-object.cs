@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
     internal sealed class MshExpressionFilter
     {
         /// <summary>
-        /// construnt the class, using an array of patterns
+        /// construct the class, using an array of patterns
         /// </summary>
         /// <param name="wildcardPatternsStrings">array of pattern strings to use</param>
         internal MshExpressionFilter(string[] wildcardPatternsStrings)
@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// Skips the sepecified number of items from top when used with First,from end when used with Last
+        /// Skips the specified number of items from top when used with First,from end when used with Last
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -267,7 +267,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    //if last paramater is not mentioned,remove the objects and decrement the skip
+                    //if last parameter is not mentioned,remove the objects and decrement the skip
                     if (_last == 0)
                     {
                         Dequeue();
