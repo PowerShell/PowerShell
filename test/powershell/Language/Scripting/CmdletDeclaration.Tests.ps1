@@ -85,21 +85,21 @@
                     }
                 }'}
                 @{
-                Name = 'cmdlet declaration within scripblock';
+                Name = 'cmdlet declaration within scriptblock';
                 Script = '
                 {
                     param([Parameter(mandatory=$true)]$a)
                     $a
                 }'},
                 @{
-                Name = 'cmdlet declaration within scripblock 2';
+                Name = 'cmdlet declaration within scriptblock 2';
                 Script = '
                 {
                     param([Parameter(mandatory=$true)]$a)
                     $a
                 }'},
                 @{
-                Name = 'cmdlet declaration within scripblock 3';
+                Name = 'cmdlet declaration within scriptblock 3';
                 Script = '
                 {
                     [CmdletBinding(SupportsShouldProcess=$true)]

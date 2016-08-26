@@ -32,7 +32,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             $error.Count | Should Be $errorCount
         }
         
-        Context 'action preference of Ignore cannot be set as a preference variable' {           
+        It 'action preference of Ignore cannot be set as a preference variable' {           
             try {
                 $GLOBAL:errorActionPreference = "Ignore"
                 Get-Process -Name asdfasdfasdf
@@ -91,7 +91,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             }
         }
 
-        Context 'WarningAction = Suspend does not work' {
+        It 'WarningAction = Suspend does not work' {
             try
             {
                 Get-Process -WarningAction Suspend
@@ -105,7 +105,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         #issue 2076
         It 'ErrorAction and WarningAction are the only action preferences do not support suspend' -Pending{
 
-            $params = [System.Management.Automation.Internal.CommonParameters].GetProperties().Name | sls Action
+            $params = [System.Management.Automation.Internal.CommonParameters].GetProperties().Name | Select-String Action
             $suspendErrors = $null 
             $num=0  
                         

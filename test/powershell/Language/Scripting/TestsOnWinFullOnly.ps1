@@ -22,6 +22,9 @@
             $ast.EndBlock.Statements[0].Body.EndBlock.Statements[0].Flags | Should Be 'Parallel'
             break;
             }
+        default {
+            #do nothing
+        }
          
     }
 }
