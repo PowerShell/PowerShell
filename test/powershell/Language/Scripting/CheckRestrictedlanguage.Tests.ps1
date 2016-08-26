@@ -1,12 +1,9 @@
-﻿#  <Test>
-#    <summary>Test restricted language check method on scriptblocks</summary>
-#  </Test>
-Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
+﻿Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
         BeforeAll {
             set-strictmode -v 2
             function list {
 
-            $l = new-object system.collections.generic.list[string]
+            $l = [System.Collections.Generic.List[String]]::new()
             $args | foreach {$l.Add($_)}
             , $l
             }
@@ -65,7 +62,7 @@ Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
             }
         }
 
-        It 'Check union of default + one allowed variable and but not allow evironment variable' {
+        It 'Check union of default + one allowed variable and but not allow environment variable' {
 
             try
             {
@@ -78,7 +75,7 @@ Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
             }
         }
 
-        It 'Check union of default + one allowed varialbe name and allow environment variable ' {
+        It 'Check union of default + one allowed variable name and allow environment variable ' {
                     
             {{ 2 + $a + $env:foo }.CheckRestrictedLanguage($null, (list a), $true)}   | Should Not Throw # succeed
         }
