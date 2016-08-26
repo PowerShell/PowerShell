@@ -1557,6 +1557,7 @@ namespace Microsoft.PowerShell
             if (initialContent != null)
             {
                 sb.Append(initialContent);
+                sb.Append('\n');
             }
 
             while (true)
@@ -1579,7 +1580,11 @@ namespace Microsoft.PowerShell
                         if (!NoPrompt) Console.Out.Write('\n');
                         Console.In.Read();
                     }
-                    sb.Append('\n');
+                    break;
+                }
+
+                if (c == '\n')
+                {
                     break;
                 }
 
@@ -1590,12 +1595,6 @@ namespace Microsoft.PowerShell
                 else
                 {
                     sb.Append(c);
-                }
-
-
-                if (c == '\n')
-                {
-                    break;
                 }
             }
 
