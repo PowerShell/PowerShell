@@ -62,7 +62,7 @@ Similarly, the PowerShell man-page is generated from the Markdown-like file
 [`assets/powershell.1.ronn`][man] using [Ronn][].
 The function `Start-PSBootstrap -Publish` will install both these tools.
 
-To modify any property of the packages, edit the `New-UnixPckage` function.
+To modify any property of the packages, edit the `New-UnixPackage` function.
 Please also refer to the function for details on the package properties
 (such as the description, maintainer, vendor, URL,
 license, category, dependencies, and file layout).
