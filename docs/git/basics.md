@@ -66,7 +66,7 @@ Authentication
 On Windows, the best way to use Git securely is [Git Credential Manager for Windows][manager].
 It's included in the official Git installer for Windows.
 
-#### Linux and OS X
+#### Linux and macOS
 
 If you do not have a preferred method of authentication, enable the storage
 credential helper, which will cache your credentials in plaintext on your

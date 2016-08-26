@@ -32,7 +32,7 @@ There are 3 primary preprocessor macros we define during builds:
 
 * DEBUG - guard code that should not be included in release builds
 * CORECLR - guard code that differs between Full CLR and CoreCLR
-* UNIX - guard code that is specific to Unix (Linux and Mac OS X)
+* UNIX - guard code that is specific to Unix (Linux and macOS)
 
 Any other preprocessor defines found in the source are used for one-off custom builds,
 typically to help debug specific scenarios.
@@ -81,4 +81,4 @@ When adding platform dependent code, prefer preprocessor directives
 over runtime checks.
 
 We produce a single binary for all UNIX variants,
-so runtime checks are currently necessary for some platform differences, e.g. OS X and Linux.
+so runtime checks are currently necessary for some platform differences, e.g. macOS and Linux.

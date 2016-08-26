@@ -56,7 +56,7 @@ These labels describe what feature area of PowerShell that an issue affects.
 
 These are for issues that are specific to certain operating systems:
 * `OS-Linux`
-* `OS-OS X`
+* `OS-macOS`
 * `OS-Windows`
 * `OS-WSL`: Windows Subsystem for Linux
 

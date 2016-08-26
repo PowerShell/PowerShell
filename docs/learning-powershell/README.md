@@ -20,7 +20,7 @@ At the end of this exercise, you should be able to launch the PowerShell session
 
 - Get PowerShell by installing package
  * [PowerShell on Linux][inst-linux]
- * [PowerShell on OS X][inst-macos]
+ * [PowerShell on macOS][inst-macos]
  * [PowerShell on Windows][inst-win]
 
   For this tutorial, you do not need to install PowerShell if you are running on Windows.
@@ -48,7 +48,7 @@ PowerShell Editor
 
 In this section, you will create a PowerShell script using a text editor.
 You can use your favorite editor to write scripts.
-We use Visual Studio Code (VS Code) which works on Windows, Linux, and OS X.
+We use Visual Studio Code (VS Code) which works on Windows, Linux, and macOS.
 Click on the following link to create your first PowerShell script.
 
 - [Using Visual Studio Code (VS Code)][use-vscode-editor]

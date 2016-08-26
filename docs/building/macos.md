@@ -1,10 +1,10 @@
-Build PowerShell on OS X
+Build PowerShell on macOS
 ========================
 
 This guide supplements the [Linux instructions](./linux.md), as
-building on OS X is almost identical.
+building on macOS is almost identical.
 
-.NET Core (and by transitivity, us) only supports OS X 10.11, per
+.NET Core (and by transitivity, us) only supports macOS 10.11, per
 CoreFX issue #[7731][].
 
 [7731]: https://github.com/dotnet/corefx/issues/7731
@@ -12,9 +12,9 @@ CoreFX issue #[7731][].
 Environment
 ===========
 
-You will want [Homebrew](http://brew.sh/), the missing package manager for OS X.
+You will want [Homebrew](http://brew.sh/), the missing package manager for macOS.
 Once installed, follow the same instructions to download and
-install a self-hosted copy of PowerShell on your OS X machine,
+install a self-hosted copy of PowerShell on your macOS machine,
 and use`Start-PSBootstrap` to install the dependencies.
 
 The `Start-PSBootstrap` function does the following:
