@@ -44,7 +44,81 @@ Describe "Invoke-Item" -Tags "CI" {
         $process.ExitCode | Should Be 0
     }
 
-    It "Should throw not supported on Windows with .NET Core" -Skip:($IsLinux -or $IsOSX -or !$IsCoreCLR) {
-        { Invoke-Item $testfile }| Should Throw "Operation is not supported on this platform."
+}
+
+Describe "Invoke-Item tests" -Tags "CI" {
+
+    # Helper functions
+    #
+    function Get-AppNameFor
+    {
+        param (
+            [ValidateSet("txt", "html")]
+            [String]
+            $Extension
+        )
+
+        [string]$appName = (Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.$Extension\OpenWithList").a
+        $appName = $appName.Replace(".EXE", "")
+
+        if (-not $appName)
+        {
+            throw "unable to find app associate with extension '$Extension'"
+        }
+
+        return $appName
+    }
+
+    function New-TxtFile
+    {
+        param ($path)
+    
+        if (-not $path)
+        {
+            $path = Join-Path $env:TEMP "$((Get-Random).ToString() + '.txt')"
+        }
+
+        if (Test-Path $path)
+        {
+            remove-item $path -Force -ea SilentlyContinue
+        }
+
+        Set-Content -Path $path -Value "Sample file" -Force
+
+        return $path
+    }
+
+    It "Invoke-Item opens txt file with the default txt reader" -Skip:($IsLinux -or $IsOSX) {
+
+        $appName = Get-AppNameFor -Extension txt
+        $txtFilePath = New-TxtFile
+
+        try
+        {
+            try { $processIds =  @(Get-Process -Name $appName -ea SilentlyContinue | % Id) } catch {$processIds = @()}
+
+            # Open the file via invoke-item
+            Invoke-Item $txtFilePath
+
+            # wait while the files opens
+            Start-Sleep -Milliseconds 500
+
+            $newProcessId = @(Get-Process -Name $appName -ea SilentlyContinue | % Id)
+
+            $newProcessId.Count -gt $processIds.Count | Should Be $true
+        }
+        finally
+        {
+            # Close the open explorer instance
+            foreach ($id in $newProcessId)
+            {
+                if ($processIds -notcontains $id)
+                {
+                    Stop-Process -Id $id -ea SilentlyContinue
+                }
+            }
+
+            Remove-Item $txtFilePath -Force -ea SilentlyContinue
+        }
     }
 }

@@ -626,7 +626,15 @@ namespace Microsoft.PowerShell.Commands
                 browserProcess.StartInfo.Arguments = uriToLaunch.OriginalString;
                 browserProcess.Start();
 #elif CORECLR
-                throw new PlatformNotSupportedException();
+                if (IsNanoServer || IsIoT)
+                {
+                    throw new PlatformNotSupportedException();
+                }
+                browserProcess.StartInfo.FileName = "cmd.exe";
+                // start is very picky: the "optional" TITLE as the first argument should always be included, otherwise it can silently fail.
+                // also, we need "" around the uriToLaunch.OriginalString in case that there is a space in the HelpUri.
+                browserProcess.StartInfo.Arguments = string.Format(@"/c ""start /b """" ""{0}""""", uriToLaunch.OriginalString);
+                browserProcess.Start();
 #else
                 browserProcess.StartInfo.FileName = uriToLaunch.OriginalString;
                 browserProcess.Start();
