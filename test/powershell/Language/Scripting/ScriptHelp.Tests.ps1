@@ -302,44 +302,43 @@ Describe 'get-help other tests' -Tags "CI" {
         It 'Common parameters should also not appear in parameters maml' { $x.parameters.parameter.Count | Should Be 2} 
     }
 
-    Context 'helpFunc3 -?' {
+    It 'helpFunc3 -?' {
 
+        ##############################################
 
-    ##############################################
+        function helpFunc3()
+        {
+        #
+        #
+        #.Synopsis
+        #
+        #   A synopsis of helpFunc3.
+        #
+        #
+        }
 
-    function helpFunc3()
-    {
-    #
-    #
-    #.Synopsis
-    #
-    #   A synopsis of helpFunc3.
-    #
-    #
+        $x = helpFunc3 -?
+        $x.Synopsis | Should Be "A synopsis of helpFunc3."
     }
 
-    $x = helpFunc3 -?
-    It '$x.Synopsis' {  $x.Synopsis | Should Be "A synopsis of helpFunc3." }
-    }
+    It 'get-help helpFunc4' {
 
-    Context 'get-help helpFunc4' {
+        <#
+        .Description
+          description
 
-    <#
-    .Description
-      description
-
-    .Synopsis
+        .Synopsis
   
 
-    .Component
-      component
-    #>
-    function helpFunc4()
-    {
-    }
+        .Component
+          component
+        #>
+        function helpFunc4()
+        {
+        }
 
         $x = get-help helpFunc4
-        It '$x.Synopsis should be empty' { $x.Synopsis | Should Be "" }
+        $x.Synopsis | Should Be ""
     }
 
     Context 'get-help helpFunc5' {
@@ -439,7 +438,7 @@ Describe 'get-help other tests' -Tags "CI" {
         It '$x should not be $null' { $x | Should Not Be $null }
     }
     
-    Context 'get-help helpFunc10' {
+    It 'get-help helpFunc10' {
         #######################################################
         # .SYNOPSIS
         #    Help on helpFunc10
@@ -449,7 +448,7 @@ Describe 'get-help other tests' -Tags "CI" {
         }
 
         $x = get-help helpFunc10
-        It '$x.Synopsis' { $x.Synopsis | Should Be 'Help on helpFunc10' }
+        $x.Synopsis | Should Be 'Help on helpFunc10'
     }
 
     Context 'get-help helpFunc11' {
