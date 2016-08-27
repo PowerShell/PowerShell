@@ -1,12 +1,12 @@
 Learning PowerShell
 ====
 
-Whether you're a Developer, a DevOps or an IT Professional, this doc will help you getting started with PowerShell.
+Whether you're a developer, a DevOps or an IT professional, this document will help you getting started with PowerShell.
 In this document we'll cover the following:
-installing PowerShell, samples walkthrough, PowerShell editor, debugger, testing tools and a map book for experienced bash users to get started with PowerShell faster.
+Installing PowerShell, samples walkthrough, PowerShell editor, debugger, testing tools, and a map book for experienced Bash users to get started with PowerShell faster.
 
 The exercises in this document are intended to give you a solid foundation in how to use PowerShell.
-You won't be a PowerShell guru at the end of reading this material but you will be well on your way with the right set of knowledge to start using PowerShell.
+You won't be a PowerShell guru at the end of reading this material, but you will be well on your way with the right set of knowledge to start using PowerShell.
 
 If you have 30 minutes now, let’s try it.
 
@@ -35,7 +35,7 @@ At the end of this exercise, you should be able to launch the PowerShell session
 
 Getting Started with PowerShell
 ----
-PowerShell commands follow a Verb-Noun semantic with a set of parameters.
+PowerShell commands follow a verb-noun semantic with a set of parameters.
 It's easy to learn and use PowerShell.
 For example, `Get-Process` will display all the running processes on your system.
 Let's walk through with a few examples from the [PowerShell Beginner's Guide](powershell-beginners-guide.md).
@@ -72,8 +72,8 @@ Click on the link below to learn more about debugging:
 PowerShell Testing
 ----
 
-We recommend using Pester testing tool which is initiated by the PowerShell Community for writing test cases.
-To use the tool please read [ Pester Guides](https://github.com/pester/Pester) and [Writing Pester Tests Guidelines](https://github.com/PowerShell/PowerShell/blob/master/docs/testing-guidelines/WritingPesterTests.md).
+We recommend using the Pester testing tool which is initiated by the PowerShell Community for writing test cases.
+To use the tool please read [Pester Guides](https://github.com/pester/Pester) and [Writing Pester Tests Guidelines](https://github.com/PowerShell/PowerShell/blob/master/docs/testing-guidelines/WritingPesterTests.md).
 
 
 Map Book for Experienced Bash users
