@@ -66,7 +66,7 @@ namespace System.Management.Automation.Language
 
         internal static DynamicMetaObject WriteToDebugLog(this DynamicMetaObject obj, DynamicMetaObjectBinder binder)
         {
-#if ENABLE_BINDER_DEBUG_LOGGING && !CORECLR
+#if ENABLE_BINDER_DEBUG_LOGGING 
             if (obj != FakeError)
             {
                 System.Diagnostics.Debug.WriteLine("Binder: {0}\r\n    Restrictions: {2}\r\n    Target: {1}",
@@ -328,7 +328,7 @@ namespace System.Management.Automation.Language
                                          bindingRestrictions);
         }
 
-#if ENABLE_BINDER_DEBUG_LOGGING && !CORECLR
+#if ENABLE_BINDER_DEBUG_LOGGING
         internal static string ToDebugString(this BindingRestrictions restrictions)
         {
             return restrictions.ToExpression().ToDebugString();

@@ -14,7 +14,17 @@
  * ***************************************************************************/
 
 
-#if ENABLE_BINDER_DEBUG_LOGGING && !CORECLR
+#if ENABLE_BINDER_DEBUG_LOGGING 
+
+using System.Linq.Expressions;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Reflection;
+using System.Globalization;
+using System.Diagnostics;
+using System.Dynamic; 
+
 namespace System.Management.Automation.Language {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
     internal sealed class DebugViewWriter : ExpressionVisitor {
@@ -312,12 +322,14 @@ namespace System.Management.Automation.Language {
             Out(close.ToString(), Flow.Break);
         }
 
+#if !CORECLR
         protected override Expression VisitDynamic(DynamicExpression node) {
             Out(".Dynamic", Flow.Space);
             Out(FormatBinder(node.Binder));
             VisitExpressions('(', node.Arguments);
             return node;
         }
+#endif
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         protected override Expression VisitBinary(BinaryExpression node) {
