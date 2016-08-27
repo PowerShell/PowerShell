@@ -39,7 +39,10 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
                 Throw "Execution OK"
              } catch {
                      $_.CategoryInfo.Reason | Should Be NotSupportedException
+             } finally {
+                $GLOBAL:errorActionPreference = $orgin
              }
+             
         }
 
         It 'action preference of Suspend cannot be set as a preference variable' {            
@@ -49,6 +52,9 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
                     Throw "Execution OK"
                 } catch { 
                     $_.CategoryInfo.Reason | Should Be ArgumentTransformationMetadataException
+                }
+                finally {
+                    $GLOBAL:errorActionPreference = $orgin
                 }
         }
 
@@ -105,7 +111,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         #issue 2076
         It 'ErrorAction and WarningAction are the only action preferences do not support suspend' -Pending{
 
-            $params = [System.Management.Automation.Internal.CommonParameters].GetProperties().Name | Select-String Action
+            $params = [System.Management.Automation.Internal.CommonParameters].GetProperties().Name | sls Action
             $suspendErrors = $null 
             $num=0  
                         
