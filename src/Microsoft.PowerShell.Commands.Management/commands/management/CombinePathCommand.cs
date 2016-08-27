@@ -30,11 +30,20 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the childPath parameter to the command
         /// </summary>
-        [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ValueFromRemainingArguments = true)]
+        [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
+        [AllowNull]
+        [AllowEmptyString]
+        public string ChildPath { get; set; }
+
+        /// <summary>
+        /// Gets or sets additional childPaths to the command.
+        /// </summary>
+
+        [Parameter(Position = 2, Mandatory = false, ValueFromPipelineByPropertyName = true, ValueFromRemainingArguments = true)]
         [AllowNull]
         [AllowEmptyString]
         [AllowEmptyCollection]
-        public string[] ChildPath { get; set; } = Utils.EmptyArray<string>();
+        public string[] AdditionalChildPath { get; set; } = Utils.EmptyArray<string>();
 
         /// <summary>
         /// Determines if the path should be resolved after being joined
@@ -57,21 +66,14 @@ namespace Microsoft.PowerShell.Commands
                 Path != null,
                 "Since Path is a mandatory parameter, paths should never be null");
 
-            string combinedChildPath = String.Empty;
+            string combinedChildPath = ChildPath;
 
             // join the ChildPath elements
-            if (ChildPath != null)
+            if (AdditionalChildPath != null)
             {
-                foreach (string childPath in ChildPath)
+                foreach (string childPath in AdditionalChildPath)
                 {
-                    if (String.IsNullOrEmpty(combinedChildPath))
-                    {
-                        combinedChildPath = childPath;
-                    }
-                    else
-                    {
-                        combinedChildPath = SessionState.Path.Combine(combinedChildPath, childPath, CmdletProviderContext);
-                    }
+                    combinedChildPath = SessionState.Path.Combine(combinedChildPath, childPath, CmdletProviderContext);
                 }
             }
 
