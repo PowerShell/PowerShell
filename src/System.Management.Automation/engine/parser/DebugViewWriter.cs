@@ -14,10 +14,20 @@
  * ***************************************************************************/
 
 
-#if ENABLE_BINDER_DEBUG_LOGGING && !CORECLR
+#if ENABLE_BINDER_DEBUG_LOGGING 
+
+using System.Linq.Expressions;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Reflection;
+using System.Globalization;
+using System.Diagnostics;
+using System.Dynamic; 
+
 namespace System.Management.Automation.Language {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
-    internal sealed class DebugViewWriter : ExpressionVisitor {
+    internal sealed class DebugViewWriter : DynamicExpressionVisitor {
         [Flags]
         private enum Flow {
             None,
