@@ -316,7 +316,7 @@ namespace System.Management.Automation
         /// as the data buffer.
         /// </summary>
         /// <param name="listToUse">
-        /// buffer wherer the elements are stored
+        /// buffer where the elements are stored
         /// </param>
         /// <remarks>
         /// Using this constructor will make the data buffer a wrapper on
@@ -534,7 +534,7 @@ namespace System.Management.Automation
                     {
                         _isOpen = false;
                         raiseEvents = true;
-                        // release any threads to notify an event. Enumertor
+                        // release any threads to notify an event. Enumerator
                         // blocks on this syncObject.
                         Monitor.PulseAll(SyncObject);
 
@@ -1363,7 +1363,7 @@ namespace System.Management.Automation
                         _readWaitHandle.Reset();
                     }
                 }
-                // release any threads to notify an event. Enumertor
+                // release any threads to notify an event. Enumerator
                 // blocks on this syncObject.
                 Monitor.PulseAll(SyncObject);
 
@@ -1525,7 +1525,7 @@ namespace System.Management.Automation
                 {
                     InsertItem(psInstanceId, _data.Count, (T)o);
 
-                    // set raise events if atlease one item is
+                    // set raise events if atleast one item is
                     // added.
                     raiseEvents = true;
                 }
@@ -1568,7 +1568,7 @@ namespace System.Management.Automation
                     _readWaitHandle.Set();
                 }
 
-                // release any threads to notify refCount is 0. Enumertor
+                // release any threads to notify refCount is 0. Enumerator
                 // blocks on this syncObject and it needs to be notified
                 // when the count becomes 0. 
                 Monitor.PulseAll(SyncObject);
@@ -1576,7 +1576,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the index of first occurece of <paramref name="item"/>
+        /// Returns the index of first occurrence of <paramref name="item"/>
         /// in the buffer. 
         /// This method is not thread safe.
         /// </summary>
@@ -1822,7 +1822,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Enumerator for PSDataCollection. This enumerator blocks until 
-    /// either all the PowerShell operations are compeleted or the
+    /// either all the PowerShell operations are completed or the
     /// PSDataCollection is closed.
     /// </summary>
     /// <typeparam name="W"></typeparam>
@@ -2006,7 +2006,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="psInstanceId">
         /// Guid of Powershell instance creating this buffers.
-        /// Whenver an item is added to one of the buffers, this id is
+        /// Whenever an item is added to one of the buffers, this id is
         /// used to notify the buffer about the PowerShell instance adding
         /// this data.
         /// </param>

@@ -480,7 +480,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Creates a RunspacePool 
-        /// on the specified remote runspace compuer.
+        /// on the specified remote runspace computer.
         /// <paramref name="maxRunspaces"/>
         /// limits the number of Runspaces that can exist in this
         /// pool. The minimum pool size is set to 
@@ -498,10 +498,10 @@ namespace System.Management.Automation.Runspaces
         /// The TypeTable to use while deserializing/serializing remote objects.
         /// TypeTable has the following information used by serializer:
         ///   1. SerializationMethod
-        ///   2. SerailizationDepth
+        ///   2. SerializationDepth
         ///   3. SpecificSerializationProperties
-        /// TypeTable has the following inforamtion used by deserializer:
-        ///   1. TargetTypeForDeserializaiton
+        /// TypeTable has the following information used by deserializer:
+        ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
         /// 
         /// If <paramref name="typeTable"/> is null no custom serialization/deserialization
@@ -527,7 +527,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Creates a RunspacePool 
-        /// on the specified remote runspace compuer.
+        /// on the specified remote runspace computer.
         /// <paramref name="maxRunspaces"/>
         /// limits the number of Runspaces that can exist in this
         /// pool. The minimum pool size is set to 
@@ -545,10 +545,10 @@ namespace System.Management.Automation.Runspaces
         /// The TypeTable to use while deserializing/serializing remote objects.
         /// TypeTable has the following information used by serializer:
         ///   1. SerializationMethod
-        ///   2. SerailizationDepth
+        ///   2. SerializationDepth
         ///   3. SpecificSerializationProperties
-        /// TypeTable has the following inforamtion used by deserializer:
-        ///   1. TargetTypeForDeserializaiton
+        /// TypeTable has the following information used by deserializer:
+        ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
         /// 
         /// If <paramref name="typeTable"/> is null no custom serialization/deserialization
@@ -600,10 +600,10 @@ namespace System.Management.Automation.Runspaces
         /// The TypeTable to use while deserializing/serializing remote objects.
         /// TypeTable has the following information used by serializer:
         ///   1. SerializationMethod
-        ///   2. SerailizationDepth
+        ///   2. SerializationDepth
         ///   3. SpecificSerializationProperties
-        /// TypeTable has the following inforamtion used by deserializer:
-        ///   1. TargetTypeForDeserializaiton
+        /// TypeTable has the following information used by deserializer:
+        ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
         /// </param>
         /// <param name="host"></param>
@@ -621,10 +621,10 @@ namespace System.Management.Automation.Runspaces
         /// The TypeTable to use while deserializing/serializing remote objects.
         /// TypeTable has the following information used by serializer:
         ///   1. SerializationMethod
-        ///   2. SerailizationDepth
+        ///   2. SerializationDepth
         ///   3. SpecificSerializationProperties
-        /// TypeTable has the following inforamtion used by deserializer:
-        ///   1. TargetTypeForDeserializaiton
+        /// TypeTable has the following information used by deserializer:
+        ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
         /// </param>
         /// <param name="host"></param>
@@ -647,10 +647,10 @@ namespace System.Management.Automation.Runspaces
         /// The TypeTable to use while deserializing/serializing remote objects.
         /// TypeTable has the following information used by serializer:
         ///   1. SerializationMethod
-        ///   2. SerailizationDepth
+        ///   2. SerializationDepth
         ///   3. SpecificSerializationProperties
-        /// TypeTable has the following inforamtion used by deserializer:
-        ///   1. TargetTypeForDeserializaiton
+        /// TypeTable has the following information used by deserializer:
+        ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
         /// </param>
         /// <param name="applicationArguments">

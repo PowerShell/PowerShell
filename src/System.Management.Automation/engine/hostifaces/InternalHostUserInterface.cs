@@ -424,7 +424,7 @@ namespace System.Management.Automation.Internal.Host
         /// </exception>
         /// <exception cref="ArgumentException">
         /// 
-        /// If the debug preference is not a valid ActionPrefernce value.
+        /// If the debug preference is not a valid ActionPreference value.
         /// 
         /// </exception>
 
@@ -482,11 +482,11 @@ namespace System.Management.Automation.Internal.Host
         /// </summary>
         /// <param name="informationalBuffers">
         /// Buffers to which Debug, Verbose, Warning, Progress, Information messages
-        /// will be writtern to.
+        /// will be written to.
         /// </param>
         /// <remarks>
         /// This method is not thread safe. Caller should make sure of the
-        /// assosciated risks. 
+        /// associated risks. 
         /// </remarks>
         internal void SetInformationalMessageBuffers(PSInformationalBuffers informationalBuffers)
         {
@@ -910,7 +910,7 @@ namespace System.Management.Automation.Internal.Host
         /// Presents a dialog allowing the user to choose options from a set of options.
         /// </summary>
         /// <param name="caption">
-        /// Caption to preceed or title the prompt.  E.g. "Parameters for get-foo (instance 1 of 2)"
+        /// Caption to precede or title the prompt.  E.g. "Parameters for get-foo (instance 1 of 2)"
         /// </param>
         /// <param name="message">
         /// A message that describes what the choice is for.

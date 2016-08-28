@@ -238,9 +238,9 @@ namespace System.Management.Automation.Host
         /// If the UI property returns null, the engine should not call this method.
         /// 
         /// 
-        /// <!--Was: ExecuteSubShell.  "subshell" inplies a new child engine, which is not the case here.  This is called during the 
+        /// <!--Was: ExecuteSubShell.  "subshell" implies a new child engine, which is not the case here.  This is called during the 
         /// interruption of a pipeline to allow nested pipeline(s) to be run as a way to the user to suspend execution while he
-        /// evalautes other commands.  It does not create a truly new engine instance with new session state.-->
+        /// evaluates other commands.  It does not create a truly new engine instance with new session state.-->
         /// 
         /// </remarks>
         /// <seealso cref="System.Management.Automation.Host.PSHost.ExitNestedPrompt"/>
@@ -258,7 +258,7 @@ namespace System.Management.Automation.Host
         /// </summary>
         /// <remarks>
         /// 
-        /// Typicalled called by the engine in response to some user action that resumes a suspended pipeline, such as with the
+        /// Typically called by the engine in response to some user action that resumes a suspended pipeline, such as with the
         /// 'continue-command' intrinsic cmdlet. Before calling this method, the engine should clear out the loop-specific 
         /// variables that were set when the loop was created.
         /// 
@@ -291,7 +291,7 @@ namespace System.Management.Automation.Host
         /// 
         /// If the host is using an in-process Runspace, then the BaseObject property can be a non-null value  a live object. 
         /// No guarantees are made as to the app domain or thread that the BaseObject is accessed if it is accessed in the 
-        /// runspace. No guarantees of threadsafety or re-entrancy are made.  The object set in the BaseObject property of
+        /// runspace. No guarantees of threadsafety or reentrancy are made.  The object set in the BaseObject property of
         /// the value returned by this method is responsible for ensuring its own threadsafety and re-entrance safety.
         /// Note that thread(s) accessing that object may not necessarily be the same from one access to the next.
         /// 
@@ -364,7 +364,7 @@ namespace System.Management.Automation.Host
         /// <summary>
         /// Used by hosting applications to notify PowerShell engine that it is
         /// being hosted in a console based application and the Pipeline execution
-        /// thread should call SetThreadUILanguage(0). This propery is currently
+        /// thread should call SetThreadUILanguage(0). This property is currently
         /// used by ConsoleHost only and in future releases we may consider 
         /// exposing this publicly.
         /// </summary>

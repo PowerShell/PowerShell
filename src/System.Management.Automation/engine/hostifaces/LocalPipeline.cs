@@ -170,7 +170,7 @@ namespace System.Management.Automation.Runspaces
                         }
                         else
                         {
-                            apartmentState = this.LocalRunspace.ApartmentState; // use the Runspace apartmet state
+                            apartmentState = this.LocalRunspace.ApartmentState; // use the Runspace apartment state
                         }
 
                         if (apartmentState != ApartmentState.Unknown)
@@ -821,7 +821,7 @@ namespace System.Management.Automation.Runspaces
         private PipelineStopper _stopper;
 
         /// <summary>
-        /// Gets PipelineStopper object which maitains stack of PipelineProcessor
+        /// Gets PipelineStopper object which maintains stack of PipelineProcessor
         /// for this pipeline
         /// </summary>
         /// <value></value>
@@ -1081,7 +1081,7 @@ namespace System.Management.Automation.Runspaces
         internal
         void AddHistoryEntryFromAddHistoryCmdlet()
         {
-            //This method can be called by mulitple times during a single
+            //This method can be called by multiple times during a single
             //pipeline execution. For ex: a script can execute add-history
             //command multiple times. However we should add entry only 
             //once.
@@ -1129,7 +1129,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <returns>
         /// ExecutionContext, if it available in TLS
-        /// Null, if ExecutionContext is not availalbe in TLS
+        /// Null, if ExecutionContext is not available in TLS
         /// </returns>
         internal static System.Management.Automation.ExecutionContext GetExecutionContextFromTLS()
         {
@@ -1437,7 +1437,7 @@ namespace System.Management.Automation.Runspaces
                     {
                         _stack.Peek().ExecutionFailed = true;
                     }
-                    // If this is the last pipeline processor on the stack, then propigate it's execution status
+                    // If this is the last pipeline processor on the stack, then propagate it's execution status
                     if (_stack.Count == 1 && _localPipeline != null)
                     {
                         _localPipeline.SetHadErrors(oldPipe.ExecutionFailed);
@@ -1460,7 +1460,7 @@ namespace System.Management.Automation.Runspaces
                 copyStack = _stack.ToArray();
             }
 
-            // Propigate error from the toplevel operation through to enclosing the LocalPipeline.
+            // Propagate error from the toplevel operation through to enclosing the LocalPipeline.
             if (copyStack.Length > 0)
             {
                 PipelineProcessor topLevel = copyStack[copyStack.Length - 1];

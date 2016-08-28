@@ -115,7 +115,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// State of pipleine when exception was thrown.
+        /// State of pipeline when exception was thrown.
         /// </summary>
         [NonSerialized]
         private PipelineState _currentState = 0;
@@ -397,7 +397,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// True if pipeline execution encountered and error.
-        /// It will alwys be true if _reason is non-null
+        /// It will always be true if _reason is non-null
         /// since an exception occurred. For other error types,
         /// It has to be set manually.
         /// </summary>
@@ -413,7 +413,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// gets the unique identifier for this pipeline. This indentifier is unique with in
+        /// gets the unique identifier for this pipeline. This identifier is unique with in
         /// the scope of Runspace.
         /// </summary>
         public long InstanceId { get; }
@@ -444,7 +444,7 @@ namespace System.Management.Automation.Runspaces
         /// On V1, the global error output pipe is redirected to the command's error output pipe only when 
         /// it has already been redirected. The command-line host achieves this redirection by merging the
         /// error output into the output pipe so it checks $ErrorActionPreference all right. However, when 
-        /// the Pipeline class is used programatically the global error output pipe is not set and the first
+        /// the Pipeline class is used programmatically the global error output pipe is not set and the first
         /// error terminates the pipeline.
         /// 
         /// This flag is used to force the redirection. By default it is false to maintain compatibility with
@@ -500,7 +500,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="ThreadAbortException">
         /// The thread in which the pipeline was executing was aborted.
@@ -571,7 +571,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="ThreadAbortException">
         /// The thread in which the pipeline was executing was aborted.

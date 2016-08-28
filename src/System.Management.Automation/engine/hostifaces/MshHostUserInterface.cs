@@ -237,7 +237,7 @@ namespace System.Management.Automation.Host
         // 
         // Ideally, this would be associated with the host instance, but remoting recycles host instances
         // for each command that gets invoked (so that it can keep track of the order of commands and their
-        // output.) Therefore, we store this transcripton data in the runspace. However, the
+        // output.) Therefore, we store this transcription data in the runspace. However, the
         // Runspace.DefaultRunspace property isn't always available (i.e.: when the pipeline is being set up),
         // so we have to cache it the first time it becomes available.
         private TranscriptionData TranscriptionData
@@ -721,7 +721,7 @@ namespace System.Management.Automation.Host
         /// Constructs a 'dialog' where the user is presented with a number of fields for which to supply values.
         /// </summary>
         /// <param name="caption">
-        /// Caption to preceed or title the prompt.  E.g. "Parameters for get-foo (instance 1 of 2)"
+        /// Caption to precede or title the prompt.  E.g. "Parameters for get-foo (instance 1 of 2)"
         /// </param>
         /// <param name="message">
         /// A text description of the set of fields to be prompt.
@@ -733,7 +733,7 @@ namespace System.Management.Automation.Host
         /// A Dictionary object with results of prompting.  The keys are the field names from the FieldDescriptions, the values
         /// are objects representing the values of the corresponding fields as collected from the user. To the extent possible, 
         /// the host should return values of the type(s) identified in the FieldDescription.  When that is not possible (for 
-        /// example, the type is not avaiable to the host), the host should return the value as a string.
+        /// example, the type is not available to the host), the host should return the value as a string.
         /// </returns>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLine"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLineAsSecureString"/>
@@ -815,7 +815,7 @@ namespace System.Management.Automation.Host
         /// Presents a dialog allowing the user to choose an option from a set of options.
         /// </summary>
         /// <param name="caption">
-        /// Caption to preceed or title the prompt.  E.g. "Parameters for get-foo (instance 1 of 2)"
+        /// Caption to precede or title the prompt.  E.g. "Parameters for get-foo (instance 1 of 2)"
         /// </param>
         /// <param name="message">
         /// A message that describes what the choice is for.
@@ -1145,7 +1145,7 @@ namespace System.Management.Automation.Host
         /// Presents a dialog allowing the user to choose options from a set of options.
         /// </summary>
         /// <param name="caption">
-        /// Caption to preceed or title the prompt.  E.g. "Parameters for get-foo (instance 1 of 2)"
+        /// Caption to precede or title the prompt.  E.g. "Parameters for get-foo (instance 1 of 2)"
         /// </param>
         /// <param name="message">
         /// A message that describes what the choice is for.

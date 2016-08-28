@@ -128,7 +128,7 @@ namespace System.Management.Automation.Internal.Host
         /// <value></value>
         /// <exception cref="NotImplementedException">
         /// 
-        ///  when the external host's InstaceId is a zero Guid.
+        ///  when the external host's InstanceId is a zero Guid.
         /// 
         /// </exception>
         public override System.Guid InstanceId
