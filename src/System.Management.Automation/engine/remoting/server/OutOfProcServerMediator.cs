@@ -342,7 +342,7 @@ namespace System.Management.Automation.Remoting.Server
                         lock (_syncObject)
                         {
                             // give a chance to runspace/pipelines to close (as it looks like the client died
-                            // interminently)
+                            // intermittently)
                             sessionTM.Close(null);
                             sessionTM = null;
                         }

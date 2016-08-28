@@ -60,7 +60,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This method sends the server side capability negotitation packet to the client. 
+        /// This method sends the server side capability negotiation packet to the client. 
         /// </summary>
         internal override void SendNegotiationAsync()
         {

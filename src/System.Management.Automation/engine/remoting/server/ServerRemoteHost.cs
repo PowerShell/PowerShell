@@ -398,7 +398,7 @@ namespace System.Management.Automation.Remoting
         #region Properties
 
         /// <summary>
-        /// Server Debuger
+        /// Server Debugger
         /// </summary>
         internal Debugger ServerDebugger
         {

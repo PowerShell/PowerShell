@@ -718,7 +718,7 @@ namespace System.Management.Automation
         /// <remarks>This method should be called before
         /// sending the state information. The client will 
         /// remove the association between a powershell and
-        /// runspace pool if it recieves any of the terminal
+        /// runspace pool if it receives any of the terminal
         /// states. Hence all the remaining data should be
         /// sent before this happens. Else the data will be
         /// discarded</remarks>
