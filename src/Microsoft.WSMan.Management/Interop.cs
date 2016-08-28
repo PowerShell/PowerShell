@@ -153,7 +153,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         Digest = 0x2,
         /// <summary>
-        /// Use negotiate authentication for a remote operation (may use kerboros or ntlm)
+        /// Use negotiate authentication for a remote operation (may use kerberos or ntlm)
         /// </summary>
         Negotiate = 0x4,
         /// <summary>

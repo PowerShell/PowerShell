@@ -214,7 +214,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".
-        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connnection to 
+        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to 
         /// the remote computer. If SSL is not available on the port specified by the 
         /// Port parameter, the command fails.
         /// </summary>
