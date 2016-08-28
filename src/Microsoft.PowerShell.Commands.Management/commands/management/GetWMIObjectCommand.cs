@@ -340,8 +340,8 @@ namespace Microsoft.PowerShell.Commands
                 // When -List is not specified and -Recurse is specified, we need the -Class parameter to compose the right query string
                 if (this.Recurse.IsPresent && string.IsNullOrEmpty(Class))
                 {
-                    string errormMsg = string.Format(CultureInfo.InvariantCulture, WmiResources.WmiParameterMissing, "-Class");
-                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(errormMsg), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
+                    string errorMsg = string.Format(CultureInfo.InvariantCulture, WmiResources.WmiParameterMissing, "-Class");
+                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(errorMsg), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }

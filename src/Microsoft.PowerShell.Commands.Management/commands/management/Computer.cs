@@ -6264,7 +6264,7 @@ $result
         [DllImport("Netapi32.dll", SetLastError = true)]
         internal static extern int NetApiBufferFree(IntPtr Buffer);
 
-        internal const int WorkrGroupMachine = 2692;
+        internal const int WorkGroupMachine = 2692;
         internal const int MaxMachineNameLength = 15;
     }
 
