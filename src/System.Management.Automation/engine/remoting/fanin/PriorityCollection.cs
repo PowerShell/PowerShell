@@ -22,7 +22,7 @@ namespace System.Management.Automation.Remoting
         Default = 0,
 
         /// <summary>
-        /// PromptReponse may be sent with or without priority considerations.
+        /// PromptResponse may be sent with or without priority considerations.
         /// Large data objects will be fragmented so that each fragmented piece can
         /// fit into one message.
         /// </summary>
@@ -62,7 +62,7 @@ namespace System.Management.Automation.Remoting
         /// Callback that is called once a fragmented data is available to send.
         /// </summary>
         /// <param name="data">
-        /// Fragemented object that can be sent to the remote end.
+        /// Fragmented object that can be sent to the remote end.
         /// </param>
         /// <param name="priorityType">
         /// Priority stream to which <paramref name="data"/> belongs to.
@@ -124,7 +124,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(null != _dataToBeSent, "Serialized streams are not initialized");
 
             // make sure the only one object is fragmented and added to the collection
-            // at any give time. This way the order of fragmenets is maintained
+            // at any give time. This way the order of fragment is maintained
             // in the SendDataCollection(s).
             lock (_syncObjects[(int)priority])
             {
@@ -172,7 +172,7 @@ namespace System.Management.Automation.Remoting
         /// synchronized way.
         /// 
         /// While getting a fragment the following algorithm is used:
-        /// 1. If this is the first time or if the last fragement read is an EndFragment,
+        /// 1. If this is the first time or if the last fragment read is an EndFragment,
         ///    then a new set of fragments is chosen based on the implicit priority.
         ///    PromptResponse is higher in priority order than default.
         /// 2. If last fragment read is not an EndFragment, then next fragment is chosen from
@@ -189,7 +189,7 @@ namespace System.Management.Automation.Remoting
         /// is undefined.
         /// </param>
         /// <returns>
-        /// A FragementRemoteObject if available, otherwise null.
+        /// A FragmentRemoteObject if available, otherwise null.
         /// </returns>
         internal byte[] ReadOrRegisterCallback(OnDataAvailableCallback callback,
             out DataPriorityType priorityType)
@@ -284,16 +284,16 @@ namespace System.Management.Automation.Remoting
         private MemoryStream _pendingDataStream;
         // the idea is to maintain 1 whole object.
         // 1 whole object may contain any number of fragments. blob from
-        // each fragement is written to this stream.
+        // each fragment is written to this stream.
         private MemoryStream _dataToProcessStream;
         private long _currentObjectId;
         private long _currentFrgId;
-        // max deseriazlied object size in bytes
+        // max deserialized object size in bytes
         private Nullable<int> _maxReceivedObjectSize;
         private int _totalReceivedObjectSizeSoFar;
         private bool _isCreateByClientTM;
 
-        // this indicates if any off sync fragments canbe ignored
+        // this indicates if any off sync fragments can be ignored
         // this gets reset (to false) upon receiving the next "start" fragment along the stream
         private bool _canIgnoreOffSyncFragments = false;
 
@@ -375,7 +375,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Prepares the collection for a stream connect
-        ///     When reconneting from same client, its possible that fragment stream get interrupted if server is dropping data
+        ///     When reconnecting from same client, its possible that fragment stream get interrupted if server is dropping data
         ///     When connecting from a new client, its possible to get trailing fragments of a previously partially transmitted object
         ///     Logic based on this flag, ensures such offsync/trailing fragments get ignored until the next full object starts flowing
         /// </summary>
@@ -401,7 +401,7 @@ namespace System.Management.Automation.Remoting
         /// Defragmented Object if any, otherwise null.
         /// </returns>
         /// <exception cref="PSRemotingTransportException">
-        /// 1. Fragmet Ids not in sequence
+        /// 1. Fragment Ids not in sequence
         /// 2. Object Ids does not match
         /// 3. The current deserialized object size of the received data exceeded 
         /// allowed maximum object size. The current deserialized object size is {0}.
@@ -518,7 +518,7 @@ namespace System.Management.Automation.Remoting
                         }
                     }
 
-                    // appears like stream doesn't have individual postion marker for read and write
+                    // appears like stream doesn't have individual position marker for read and write
                     // since we are going to read from now...
                     _pendingDataStream.Seek(0, SeekOrigin.Begin);
 
@@ -612,7 +612,7 @@ namespace System.Management.Automation.Remoting
                     {
                         try
                         {
-                            // appears like stream doesn't individual postion marker for read and write
+                            // appears like stream doesn't individual position marker for read and write
                             // since we are going to read from now..i am resetting position to 0.
                             _dataToProcessStream.Seek(0, SeekOrigin.Begin);
                             RemoteDataObject<PSObject> remoteObject = RemoteDataObject<PSObject>.CreateFrom(_dataToProcessStream, _defragmentor);
@@ -726,7 +726,7 @@ namespace System.Management.Automation.Remoting
         #region Constructor
 
         /// <summary>
-        /// Construct a priority recieve data collection
+        /// Construct a priority receive data collection
         /// </summary>
         /// <param name="defragmentor">Defragmentor used to deserialize an object.</param>
         /// <param name="createdByClientTM">
@@ -811,7 +811,7 @@ namespace System.Management.Automation.Remoting
         /// Data to process.
         /// </param>
         /// <param name="priorityType">
-        /// Priorty stream this data belongs to.
+        /// Priority stream this data belongs to.
         /// </param>
         /// <param name="callback">
         /// Callback to call once a complete deserialized object is available.
@@ -820,7 +820,7 @@ namespace System.Management.Automation.Remoting
         /// Defragmented Object if any, otherwise null.
         /// </returns>
         /// <exception cref="PSRemotingTransportException">
-        /// 1. Fragmet Ids not in sequence
+        /// 1. Fragment Ids not in sequence
         /// 2. Object Ids does not match
         /// 3. The current deserialized object size of the received data exceeded 
         /// allowed maximum object size. The current deserialized object size is {0}.

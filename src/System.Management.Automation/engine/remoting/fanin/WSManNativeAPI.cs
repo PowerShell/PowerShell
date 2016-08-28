@@ -238,7 +238,7 @@ namespace System.Management.Automation.Remoting.Client
             /// </summary>
             WSMAN_FLAG_AUTH_DIGEST = 0x2,
             /// <summary>
-            /// Use negotiate authentication for a remote operation (may use kerboros or ntlm)
+            /// Use negotiate authentication for a remote operation (may use kerberos or ntlm)
             /// </summary>
             WSMAN_FLAG_AUTH_NEGOTIATE = 0x4,
             /// <summary>
@@ -355,7 +355,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             /// <summary>
-            /// gets a structure represenation (used for marshalling)
+            /// gets a structure representation (used for marshalling)
             /// </summary>
             internal WSManUserNameCredentialStruct CredentialStruct
             {
@@ -508,7 +508,7 @@ namespace System.Management.Automation.Remoting.Client
             /// </summary>
             WSMAN_OPTION_UNENCRYPTED_MESSAGES = 20,
             /// <summary>
-            /// int - 1 Send all network packets for remote operatons in UTF16; 0 - default is UTF8
+            /// int - 1 Send all network packets for remote operations in UTF16; 0 - default is UTF8
             /// </summary>
             WSMAN_OPTION_UTF16 = 21,
             /// <summary>
@@ -607,7 +607,7 @@ namespace System.Management.Automation.Remoting.Client
 
         #region WSManData
         /// <summary>
-        /// types of suppored WSMan data.
+        /// types of supported WSMan data.
         /// PowerShell uses only Text and DWORD (in some places).
         /// </summary>
         internal enum WSManDataType : uint
@@ -712,7 +712,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             /// <summary>
-            /// Gets the buffer lenfth of data.
+            /// Gets the buffer length of data.
             /// </summary>
             internal int BufferLength
             {
@@ -748,7 +748,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             /// <summary>
-            /// implict IntPtr conversion
+            /// implicit IntPtr conversion
             /// </summary>
             /// <param name="data"></param>
             /// <returns></returns>
@@ -1085,7 +1085,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Option set struct used to pass optional infromation
+        /// Option set struct used to pass optional information
         /// with WSManCreateShellEx
         /// </summary>
         internal struct WSManOptionSet : IDisposable
@@ -1899,7 +1899,7 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
         /// <summary>
-        /// Used in the shell compeletion function delegate to refer to the data.
+        /// Used in the shell completion function delegate to refer to the data.
         /// </summary>
         internal class WSManReceiveDataResult
         {
@@ -1916,7 +1916,7 @@ namespace System.Management.Automation.Remoting.Client
             /// Constructs a WSManReceiveDataResult from the unmanaged pointer.
             /// This involves copying data from unmanaged memory to managed heap.
             /// Currently PowerShell supports only text data on the wire, so this
-            /// method asserst if the data is not text.
+            /// method asserts if the data is not text.
             /// </summary>
             /// <param name="unmanagedData">
             /// Pointer to unmanaged data.
@@ -2104,7 +2104,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             /// <summary>
-            /// Managed represenation of WSMAN_SENDER_DETAILS
+            /// Managed representation of WSMAN_SENDER_DETAILS
             /// </summary>
             [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
             private struct WSManSenderDetailsInternal
@@ -2324,7 +2324,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// This API deinitializes the Winrm client stack; all operations will 
         /// finish before this API will return; this is a sync call;
-        /// it is highly recommended that all operations are explictly cancelled 
+        /// it is highly recommended that all operations are explicitly cancelled 
         /// and all sessions are closed before calling this API
         /// Returns non zero error code upon failure.
         /// </summary>
@@ -2494,7 +2494,7 @@ namespace System.Management.Automation.Remoting.Client
         /// callback to notify when the create operation completes.
         /// </param>
         /// <param name="shellOperationHandle">
-        /// An out parameter referening a WSMan shell operation handle
+        /// An out parameter referencing a WSMan shell operation handle
         /// for this shell.
         /// </param>
         /// <returns></returns>
@@ -2596,7 +2596,7 @@ namespace System.Management.Automation.Remoting.Client
         /// callback to notify when the operation completes.
         /// </param>
         /// <param name="commandOperationHandle">
-        /// An out parameter referening a WSMan shell operation handle
+        /// An out parameter referencing a WSMan shell operation handle
         /// for this command.
         /// </param>
         [DllImport(WSManNativeApi.WSManClientApiDll, EntryPoint = "WSManRunShellCommandEx", SetLastError = false, CharSet = CharSet.Unicode)]
@@ -2643,7 +2643,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="flags"> </param>
         /// <param name="desiredStreamSet"></param>
         /// <param name="asyncCallback">
-        /// callback which receives the data asynchronoulsy.
+        /// callback which receives the data asynchronously.
         /// </param>
         /// <param name="receiveOperationHandle">
         /// handle to use to cancel the operation.

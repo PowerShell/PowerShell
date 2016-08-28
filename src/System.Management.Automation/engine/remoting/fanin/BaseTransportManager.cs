@@ -191,14 +191,14 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Event that is raised when a remote object is available. The event is raised
         /// from a WSMan transport thread. Since this thread can hold on to a HTTP
-        /// connection, the event handler should compelete processing as fast as possible.
+        /// connection, the event handler should complete processing as fast as possible.
         /// Importantly the event handler should not generate any call that results in a
         /// user request like host.ReadLine().
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs> DataReceived;
 
         /// <summary>
-        /// Listen to this event to observe the PowerShell guid of the process'ed object.
+        /// Listen to this event to observe the PowerShell guid of the processed object.
         /// </summary>
         public event EventHandler PowerShellGuidObserver;
 
@@ -228,7 +228,7 @@ namespace System.Management.Automation.Remoting
         /// This may be null..in which case type rehydration does not happen.
         /// At construction time we may not have typetable (server runspace
         /// is created only when a request from the client)..so this is
-        /// a property on the base tranpsort manager to allow for setting at
+        /// a property on the base transport manager to allow for setting at
         /// a later time.
         /// </summary>
         internal TypeTable TypeTable
@@ -453,7 +453,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Event that is raised when a create operation on transport has been successfully completed
         /// The event is raised
         /// from a WSMan transport thread. Since this thread can hold on to a HTTP
-        /// connection, the event handler should compelete processing as fast as possible.
+        /// connection, the event handler should complete processing as fast as possible.
         /// Importantly the event handler should not generate any call that results in a
         /// user request like host.ReadLine().
         /// 
@@ -464,7 +464,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Event that is raised when a remote connection is successfully closed. The event is raised
         /// from a WSMan transport thread. Since this thread can hold on to a HTTP
-        /// connection, the event handler should compelete processing as fast as possible.
+        /// connection, the event handler should complete processing as fast as possible.
         /// Importantly the event handler should not generate any call that results in a
         /// user request like host.ReadLine().
         /// 
@@ -477,7 +477,7 @@ namespace System.Management.Automation.Remoting.Client
         internal event EventHandler<EventArgs> CloseCompleted;
 
         /// <summary>
-        /// Indicated successfull completion of a connect operation on transport
+        /// Indicated successful completion of a connect operation on transport
         /// 
         /// Errors are reported through WSManTransportErrorOccured
         /// event.
@@ -485,7 +485,7 @@ namespace System.Management.Automation.Remoting.Client
         internal event EventHandler<EventArgs> ConnectCompleted;
 
         /// <summary>
-        /// Indicated successfull completion of a disconnect operation on transport
+        /// Indicated successful completion of a disconnect operation on transport
         /// 
         /// Errors are reported through WSManTransportErrorOccured
         /// event.
@@ -493,7 +493,7 @@ namespace System.Management.Automation.Remoting.Client
         internal event EventHandler<EventArgs> DisconnectCompleted;
 
         /// <summary>
-        /// Indicated successfull completion of a reconnect operation on transport
+        /// Indicated successful completion of a reconnect operation on transport
         /// 
         /// Errors are reported through WSManTransportErrorOccured
         /// event.
@@ -524,7 +524,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Properties
 
         /// <summary>
-        /// Gets the data collection which is used by this tranport manager to send
+        /// Gets the data collection which is used by this transport manager to send
         /// data to the server.
         /// </summary>
         internal PrioritySendDataCollection DataToBeSentCollection
@@ -927,7 +927,7 @@ namespace System.Management.Automation.Remoting.Client
         internal class CallbackNotificationInformation
         {
             // only one of the following 2 should be present..
-            // anyway transportException takes precendence over remoteObject.
+            // anyway transportException takes precedence over remoteObject.
             internal RemoteDataObject<PSObject> remoteObject;
             internal TransportErrorOccuredEventArgs transportError;
             // Used by ServicePendingCallbacks to give the control to derived classes for
@@ -937,7 +937,7 @@ namespace System.Management.Automation.Remoting.Client
 
         #endregion
 
-        #region Abstract / Virtural methods
+        #region Abstract / Virtual methods
 
         internal abstract void CreateAsync();
 
@@ -996,7 +996,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 try
                 {
-                    // looks like Dispose is not called for this tranpsort manager
+                    // looks like Dispose is not called for this transport manager
                     // try closing the transport manager.
                     CloseAsync();
                 }
@@ -1252,8 +1252,8 @@ namespace System.Management.Automation.Remoting.Server
         #region Helper Methods
 
         /// <summary>
-        /// Sends an object from the server end. The object is fragmented and each fragement is sent
-        /// separately. The call blocks until all the fragements are sent to the client. If there
+        /// Sends an object from the server end. The object is fragmented and each fragment is sent
+        /// separately. The call blocks until all the fragments are sent to the client. If there
         /// is a failure sending any of the fragments WSManTransportErrorOccured event is raised.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -1266,16 +1266,16 @@ namespace System.Management.Automation.Remoting.Server
         /// </param>
         internal void SendDataToClient<T>(RemoteDataObject<T> data, bool flush, bool reportPending = false)
         {
-            // make sure only one data packet can be sent in its entirity at any 
+            // make sure only one data packet can be sent in its entirety at any 
             // given point of time using this transport manager.
             lock (_syncObject)
             {
                 // Win8: 491001 Icm -computername $env:COMPUTERNAME {Get-NetIpInterface} fails with Unexpected ObjectId
-                // This is because the output object has some extentded script properties. Getter of one of the
-                // script proprties is calling write-progress. Write-Progress in turn results in a progress record
+                // This is because the output object has some extended script properties. Getter of one of the
+                // script properties is calling write-progress. Write-Progress in turn results in a progress record
                 // being sent to client. This breaks the fragmentation rule when the original object (without progress)
                 // does not fit in fragmented packet.
-                // ******************** repro using powershll *********************************
+                // ******************** repro using powershell *********************************
                 //  icm . {
                 //        $a = new-object psobject
                 //        $a.pstypenames.Insert(0, "Microsoft.PowerShell.Test.Bug491001")
@@ -1286,12 +1286,12 @@ namespace System.Management.Automation.Remoting.Server
                 //   }
                 // 1. The value of "name" property is huge 50kb and cannot fit in one fragment (with fragment size 32kb)   
                 // 2. The value of "Verbose" is actually writing a progress record
-                // 3. The value of "zname" proprty is also huge
-                // 4. Notice the ascending order of propery names. This is because seralizer seralizes properties in sort order
+                // 3. The value of "zname" property is also huge
+                // 4. Notice the ascending order of property names. This is because serializer serializes properties in sort order
                 // ******************** End of repro ******************************************
-                // To fix the issue, I am creating a Queue and enqueuing the data objects if we are already serializaing another data object
-                // Notice this is in lock() above. An object is serialized in its entirity in one thread. So, in my example above "name",
-                // "verbose","zname" properties are serialized in one thread. So lock() estenially protects from serialing other objects
+                // To fix the issue, I am creating a Queue and enqueuing the data objects if we are already serializing another data object
+                // Notice this is in lock() above. An object is serialized in its entirety in one thread. So, in my example above "name",
+                // "verbose","zname" properties are serialized in one thread. So lock() essentially protects from serializing other objects
                 // and not this (parent)object.
                 RemoteDataObject dataToBeSent = RemoteDataObject.CreateFrom(data.Destination, data.DataType,
                                                                             data.RunspacePoolId, data.PowerShellId,
@@ -1362,8 +1362,8 @@ namespace System.Management.Automation.Remoting.Server
         }
 
         /// <summary>
-        /// Sends an object to the server end. The object is fragmented and each fragement is sent
-        /// separately. The call blocks until all the fragements are sent to the client. If there
+        /// Sends an object to the server end. The object is fragmented and each fragment is sent
+        /// separately. The call blocks until all the fragments are sent to the client. If there
         /// is a failure sending any of the fragments WSManTransportErrorOccured event is raised.
         /// </summary>
         /// <param name="psObjectData"></param>
