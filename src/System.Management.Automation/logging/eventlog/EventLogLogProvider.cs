@@ -184,7 +184,7 @@ namespace System.Management.Automation
         private const int _invalidEventId = -1;
 
         /// <summary>
-        /// Get engine lifecyle event id based on engine state
+        /// Get engine lifecycle event id based on engine state
         /// </summary>
         /// <param name="engineState"></param>
         /// <returns></returns>
