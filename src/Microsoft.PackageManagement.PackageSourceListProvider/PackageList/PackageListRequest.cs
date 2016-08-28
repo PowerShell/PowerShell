@@ -97,7 +97,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
             }
         }
 
-        internal string DefaultCatlogFileLocation
+        internal string DefaultCatalogFileLocation
         {
             get
             {
@@ -970,9 +970,9 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                             if (force || this.ShouldContinue(Resources.Messages.QueryDownloadPackageSourceList.format(DefaultJSONSourceLocation), Resources.Messages.PackageSourceListNotFound.format(DefaultJSONFileLocation)))
                             {
                                 WebDownloader.DownloadFile(DefaultJSONSourceLocation, DefaultJSONFileLocation, this, null);
-                                WebDownloader.DownloadFile(DefaultJSONCatalogFileLocation, DefaultCatlogFileLocation, this, null);
-                                if (System.IO.File.Exists(DefaultJSONFileLocation) && System.IO.File.Exists(DefaultCatlogFileLocation) && 
-                                    PackageSourceListProvider.TestCatalogFile(DefaultJSONFileLocation, DefaultCatlogFileLocation, this))
+                                WebDownloader.DownloadFile(DefaultJSONCatalogFileLocation, DefaultCatalogFileLocation, this, null);
+                                if (System.IO.File.Exists(DefaultJSONFileLocation) && System.IO.File.Exists(DefaultCatalogFileLocation) && 
+                                    PackageSourceListProvider.TestCatalogFile(DefaultJSONFileLocation, DefaultCatalogFileLocation, this))
                                 {
                                    addDefaultConfig = true;
                                 }                            

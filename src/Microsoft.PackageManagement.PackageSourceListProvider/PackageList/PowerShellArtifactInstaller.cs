@@ -92,7 +92,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                 return;
             }
 
-            int packagesRecevied = 0;
+            int packagesReceived = 0;
             foreach (var i in installing)
             {
                 request.YieldSoftwareIdentity(i.FastPackageReference, i.Name, i.Version, i.VersionScheme, i.Summary, i.Source, i.SearchKey, i.FullPath, i.PackageFilename);
@@ -111,10 +111,10 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                         request.PackageManagementService.ImportPackageProvider(request, packageJson.Name, null, null, null, isRooted: false, force: false);
                     }
                 }
-                packagesRecevied++;
+                packagesReceived++;
             }
 
-            request.Verbose(Resources.Messages.NumberOfPackagesRecevied, packagesRecevied, provider.Name, "install-package");
+            request.Verbose(Resources.Messages.NumberOfPackagesRecevied, packagesReceived, provider.Name, "install-package");
         }
 
         internal static void GeInstalledPowershellArtifacts(PackageJson package, string requiredVersion, string minimumVersion, string maximumVersion, Dictionary<string, SoftwareIdentity> fastPackReftable, PackageSourceListRequest request)
