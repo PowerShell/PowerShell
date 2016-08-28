@@ -19,7 +19,7 @@ namespace System.Management.Automation.Provider
     /// the use of a set of core commands against the objects that the provider
     /// gives access to. By deriving from this class users can take advantage of
     /// all the features of the <see cref="ItemCmdletProvider"/> as well as
-    /// globbing and the following commands when targetting this provider:
+    /// globbing and the following commands when targeting this provider:
     ///     get-childitem
     ///     rename-item
     ///     new-item
@@ -100,7 +100,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         /// 
         internal object GetChildItemsDynamicParameters(
@@ -181,7 +181,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         /// 
         /// <remarks>
-        /// Providers override this method if they support a native filteing syntax that
+        /// Providers override this method if they support a native filtering syntax that
         /// can offer performance improvements over wildcard matching done by the PowerShell
         /// engine.
         /// If the provider can handle a portion (or all) of the PowerShell wildcard with
@@ -229,7 +229,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         /// 
         internal object GetChildNamesDynamicParameters(
@@ -701,7 +701,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         protected virtual object GetChildItemsDynamicParameters(string path, bool recurse)
         {
@@ -785,7 +785,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         /// 
         /// <remarks>
-        /// Providers override this method if they support a native filteing syntax that
+        /// Providers override this method if they support a native filtering syntax that
         /// can offer performance improvements over wildcard matching done by the PowerShell
         /// engine.
         /// If the provider can handle a portion (or all) of the PowerShell wildcard with
@@ -830,7 +830,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         protected virtual object GetChildNamesDynamicParameters(string path)
         {
@@ -908,7 +908,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         protected virtual object RenameItemDynamicParameters(string path, string newName)
         {
@@ -995,7 +995,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         protected virtual object NewItemDynamicParameters(
             string path,
@@ -1077,7 +1077,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         protected virtual object RemoveItemDynamicParameters(
             string path,
@@ -1205,7 +1205,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         protected virtual object CopyItemDynamicParameters(
             string path,

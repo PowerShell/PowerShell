@@ -119,7 +119,7 @@ namespace System.Management.Automation.Provider
         ///
         /// <remarks>
         /// When this attribute is specified a provider specific filter can be passed from
-        /// the Core Commands to the provider. This filter string is not interpretted in any
+        /// the Core Commands to the provider. This filter string is not interpreted in any
         /// way by the Monad engine.
         /// </remarks>
         Filter = 0x4,

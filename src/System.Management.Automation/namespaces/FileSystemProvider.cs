@@ -484,7 +484,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// MapNetworkDrive facilitates to map the newly created PS Drive to a network share.
         /// </summary>
-        /// <param name="drive">The PSDrive infor that would be used to create a new PS drive.</param>
+        /// <param name="drive">The PSDrive info that would be used to create a new PS drive.</param>
         private void MapNetworkDrive(PSDriveInfo drive)
         {
             // Porting note: mapped network drives are only supported on Windows
@@ -509,7 +509,7 @@ namespace Microsoft.PowerShell.Commands
                 const int RESOURCEDISPLAYTYPE_GENERIC = 0x00000000;
                 const int RESOURCEUSAGE_CONNECTABLE = 0x00000001;
 
-                // By deafult the connection is not persisted.
+                // By default the connection is not persisted.
                 int CONNECT_TYPE = CONNECT_NOPERSIST;
 
                 string driveName = null;
@@ -572,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 finally
                 {
-                    // Clear the passward in the memory.
+                    // Clear the password in the memory.
                     if (passwd != null)
                     {
                         Array.Clear(passwd, 0, passwd.Length - 1);
@@ -694,7 +694,7 @@ namespace Microsoft.PowerShell.Commands
                 // By default buffer size is set to 300 which would generally be sufficient in most of the cases.
                 int bufferSize = 300;
 #if DEBUG
-                // In Debug mode buffer size is initially set to 3 and if additial buffer is required, the 
+                // In Debug mode buffer size is initially set to 3 and if additional buffer is required, the 
                 // required buffer size is allocated and the WNetGetConnection API is executed with the newly 
                 // allocated buffer size.
                 bufferSize = 3;
@@ -749,7 +749,7 @@ namespace Microsoft.PowerShell.Commands
             string associatedPath = null;
             if (!string.IsNullOrEmpty(driveName) && driveName.Length == 1)
             {
-                // By default buffer size is set to 300 which would generatlly be sufficient in most of the cases.
+                // By default buffer size is set to 300 which would generally be sufficient in most of the cases.
                 int bufferSize = 300;
                 var pathInfo = new StringBuilder(bufferSize);
                 driveName += ':';
@@ -1237,7 +1237,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             bool filterHidden = false;           // "Hidden" is specified somewhere in the expression
-            bool switchFilterHidden = false;     // "Hidden" is specified somewhere in the paramters
+            bool switchFilterHidden = false;     // "Hidden" is specified somewhere in the parameters
 
             if (null != evaluator)
             {
@@ -1248,7 +1248,7 @@ namespace Microsoft.PowerShell.Commands
                 switchFilterHidden = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
             }
 
-            // if "Hidden" is specified in the attribute filter dynamic paramters
+            // if "Hidden" is specified in the attribute filter dynamic parameters
             // also return the object
             if (exists && !directory && (!hidden || Force || showHidden || filterHidden || switchFilterHidden))
             {
@@ -1274,7 +1274,7 @@ namespace Microsoft.PowerShell.Commands
                         directoryObj.FullName,
                         StringComparison.OrdinalIgnoreCase) == 0;
 
-                // if "Hidden" is specified in the attribute filter dynamic paramters
+                // if "Hidden" is specified in the attribute filter dynamic parameters
                 // also return the object
                 if (exists && (isRootPath || !hidden || Force || showHidden || filterHidden || switchFilterHidden))
                 {
@@ -1531,7 +1531,7 @@ namespace Microsoft.PowerShell.Commands
                     bool attributeFilter = true;
                     bool switchAttributeFilter = true;
                     bool filterHidden = false;           // "Hidden" is specified somewhere in the expression
-                    bool switchFilterHidden = false;     // "Hidden" is specified somewhere in the paramters
+                    bool switchFilterHidden = false;     // "Hidden" is specified somewhere in the parameters
 
                     if (null != evaluator)
                     {
@@ -1540,7 +1540,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     if (null != switchEvaluator)
                     {
-                        switchAttributeFilter = switchEvaluator.Evaluate(fileInfo.Attributes);  // switch paramters
+                        switchAttributeFilter = switchEvaluator.Evaluate(fileInfo.Attributes);  // switch parameters
                         switchFilterHidden = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
                     }
 
@@ -1661,7 +1661,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         if (null != switchEvaluator)
                         {
-                            switchAttributeFilter = switchEvaluator.Evaluate(filesystemInfo.Attributes);  // switch paramters
+                            switchAttributeFilter = switchEvaluator.Evaluate(filesystemInfo.Attributes);  // switch parameters
                             switchFilterHidden = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
                         }
 
@@ -1758,7 +1758,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Create an enum expression evaluator for user-specified attribute filtering
-        /// switch paramters. 
+        /// switch parameters. 
         /// </summary>
         /// <returns>
         /// If any attribute filtering switch parameters are set,
@@ -3269,7 +3269,7 @@ namespace Microsoft.PowerShell.Commands
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         protected override object ItemExistsDynamicParameters(string path)
         {
@@ -4117,7 +4117,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool result = PerformCopyFileFromRemoteSession(sourceFileFullName, destinationFile, destinationPath, force, ps, fileSize, false, null);
 
-                // Copying the file from the remote session completed sucessfully
+                // Copying the file from the remote session completed successfully
                 if (result)
                 {
                     // Check if the remote source file has any alternate data streams
@@ -4610,7 +4610,7 @@ namespace Microsoft.PowerShell.Commands
 
             bool targetSupportsAlternateStreams = RemoteTargetSupportsAlternateStreams(ps, remoteFilePath);
 
-            // Once the file is copied sucessfully, check if the file has any alternate data streams
+            // Once the file is copied successfully, check if the file has any alternate data streams
             if (result && targetSupportsAlternateStreams)
             {
                 foreach (AlternateStreamData stream in AlternateDataStreamUtilities.GetStreams(file.FullName))
@@ -4737,7 +4737,7 @@ namespace Microsoft.PowerShell.Commands
                 // Since UNC paths must have "\\server\share" as the base of
                 // the path, you cannot get a parent path higher than this.
                 // So this looks for the path separator between server\share and
-                // ensures that it is in a position where it is preceeded by
+                // ensures that it is in a position where it is preceded by
                 // "\\s" at a minimum.
 
                 int indexOfLastPathSeparator = parentPath.LastIndexOf('\\');
@@ -5058,9 +5058,9 @@ namespace Microsoft.PowerShell.Commands
         /// is encouraged that the provider actually use the path to lookup in its store
         /// and create a relative path that matches the casing, and standardized path syntax.
         /// 
-        /// Note, the base class implemenation uses GetParentPath, GetChildName, and MakePath
+        /// Note, the base class implementation uses GetParentPath, GetChildName, and MakePath
         /// to normalize the path and then make it relative to basePath. All string comparisons
-        /// are done using StringComparison.InvariantCultureIngoreCase.
+        /// are done using StringComparison.InvariantCultureIgnoreCase.
         /// </remarks>
         /// 
         private string NormalizeRelativePathHelper(string path, string basePath)
@@ -5291,7 +5291,7 @@ namespace Microsoft.PowerShell.Commands
         /// 
         /// <returns>
         /// A stack containing the tokenized path with leaf elements on the bottom
-        /// of the stack and the most ancestoral parent at the top.
+        /// of the stack and the most ancestral parent at the top.
         /// </returns>
         /// 
         private Stack<string> TokenizePathToStack(string path, string basePath)
@@ -5344,7 +5344,7 @@ namespace Microsoft.PowerShell.Commands
         } // TokenizePathToStack
 
         /// <summary>
-        /// Given the tokenized path, the relative pathing elements are removed.
+        /// Given the tokenized path, the relative path elements are removed.
         /// </summary>
         /// 
         /// <param name="basepath">
@@ -5353,13 +5353,13 @@ namespace Microsoft.PowerShell.Commands
         /// 
         /// <param name="tokenizedPathStack">
         /// A stack containing path elements where the leaf most element is at
-        /// the bottom of the stack and the most ancestoral parent is on the top.
+        /// the bottom of the stack and the most ancestral parent is on the top.
         /// Generally this stack comes from TokenizePathToStack().
         /// </param>
         /// 
         /// <returns>
         /// A stack in reverse order with the path elements normalized and all relative
-        /// pathing tokens removed.
+        /// path tokens removed.
         /// </returns>
         /// 
         private Stack<string> NormalizeThePath(string basepath, Stack<string> tokenizedPathStack)
@@ -6115,7 +6115,7 @@ namespace Microsoft.PowerShell.Commands
         } // GetProperty
 
         /// <summary>
-        /// Gets the dynamic propery parameters required by the get-itemproperty cmdlet.
+        /// Gets the dynamic property parameters required by the get-itemproperty cmdlet.
         /// This feature is not required by the File System provider.
         /// </summary>
         /// 
@@ -6317,7 +6317,7 @@ namespace Microsoft.PowerShell.Commands
         } // SetProperty
 
         /// <summary>
-        /// Gets the dynamic propery parameters required by the set-itemproperty cmdlet.
+        /// Gets the dynamic property parameters required by the set-itemproperty cmdlet.
         /// This feature is not required by the File System provider.
         /// </summary>
         /// 
@@ -6450,7 +6450,7 @@ namespace Microsoft.PowerShell.Commands
         } // ClearProperty
 
         /// <summary>
-        /// Gets the dynamic propery parameters required by the clear-itemproperty cmdlet.
+        /// Gets the dynamic property parameters required by the clear-itemproperty cmdlet.
         /// This feature is not required by the File System provider.
         /// </summary>
         /// 
@@ -6622,7 +6622,7 @@ namespace Microsoft.PowerShell.Commands
         } // GetContentReader
 
         /// <summary>
-        /// Gets the dynamic propery parameters required by the get-content cmdlet.
+        /// Gets the dynamic property parameters required by the get-content cmdlet.
         /// </summary>
         /// 
         /// <param name="path">
@@ -6744,7 +6744,7 @@ namespace Microsoft.PowerShell.Commands
         } // GetContentWriter
 
         /// <summary>
-        /// Gets the dynamic propery parameters required by the set-content and
+        /// Gets the dynamic property parameters required by the set-content and
         /// add-content cmdlets.
         /// </summary>
         /// 
@@ -6894,7 +6894,7 @@ namespace Microsoft.PowerShell.Commands
                         FileStream fileStream = new FileStream(path, FileMode.Truncate, FileAccess.Write, FileShare.Write);
                         fileStream.Dispose();
 
-                        //For filesystem once content is cleare
+                        //For filesystem once content is cleared
                         WriteItemObject("", path, false);
                     }
                     catch (UnauthorizedAccessException failure)
@@ -6915,7 +6915,7 @@ namespace Microsoft.PowerShell.Commands
         } // ClearContent
 
         /// <summary>
-        /// Gets the dynamic propery parameters required by the clear-content cmdlet.
+        /// Gets the dynamic property parameters required by the clear-content cmdlet.
         /// </summary>
         /// 
         /// <param name="path">
@@ -7054,20 +7054,20 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// WNetAddConnection2 API makes a connection to a network resource 
             /// and can redirect a local device to the network resource.
-            /// This API simulates the "new Use" funcationality used to connect to 
+            /// This API simulates the "new Use" functionality used to connect to 
             /// network resource.
             /// </summary>
             /// <param name="netResource">
             /// The The netResource structure contains information 
             /// about a network resource.</param>
             /// <param name="password">
-            /// The passward used to get connected to network resource.
+            /// The password used to get connected to network resource.
             /// </param>
             /// <param name="username">
             /// The username used to get connected to network resource.
             /// </param>
             /// <param name="flags">
-            /// The flags paramter is used to indicate if the created network 
+            /// The flags parameter is used to indicate if the created network 
             /// resource has to be persisted or not.
             /// </param>
             /// <returns>If connection is established to the network resource 
@@ -7211,7 +7211,7 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             /// <param name="name">Path of the symbolic link.</param>
             /// <param name="destination">Path of the target of the symbolic link.</param>
-            /// <param name="destinationType">0 for destionation as file and 1 for destination as directory.</param>
+            /// <param name="destinationType">0 for destination as file and 1 for destination as directory.</param>
             /// <returns>1 on successful creation.</returns>
             [DllImport(PinvokeDllNames.CreateSymbolicLinkDllName, CharSet = CharSet.Unicode, SetLastError = true)]
             internal static extern int CreateSymbolicLink(string name, string destination, int destinationType);
@@ -8299,7 +8299,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (reparseDataBuffer.ReparseTag == IO_REPARSE_TAG_MOUNT_POINT)
                 {
-                    //Since this is a junction we need to unmarshall to the correct structure.
+                    //Since this is a junction we need to unmarshal to the correct structure.
                     REPARSE_DATA_BUFFER_MOUNTPOINT reparseDataBufferMountPoint = ClrFacade.PtrToStructure<REPARSE_DATA_BUFFER_MOUNTPOINT>(outBuffer);
 
                     targetDir = Encoding.Unicode.GetString(reparseDataBufferMountPoint.PathBuffer, reparseDataBufferMountPoint.SubstituteNameOffset, reparseDataBufferMountPoint.SubstituteNameLength);
@@ -8898,7 +8898,7 @@ namespace System.Management.Automation.Internal
             return $op
         }}
 
-        # Retuns a hashtable with the following members:
+        # Returns a hashtable with the following members:
         #    BytesWritten - number of bytes written to an alternate file stream
         #
         function PSCopyFileAlternateStreamToRemoteSession

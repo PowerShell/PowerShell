@@ -1109,7 +1109,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         ///
         /// <param name="recurse">
-        /// Ignored. All removes are recursive becuase the
+        /// Ignored. All removes are recursive because the
         /// registry provider does not support filters.
         /// </param>
         protected override void RemoveItem(
@@ -3519,7 +3519,7 @@ namespace Microsoft.PowerShell.Commands
 
             // If the main path existed, we must do a semantic analysis
             // to find the parent -- since path elements may contain
-            // path delemiters. We only need to do this comparison
+            // path delimiters. We only need to do this comparison
             // if the base implementation returns something in our namespace.
             if (!String.Equals(parentPath, root, StringComparison.OrdinalIgnoreCase))
             {
@@ -4048,7 +4048,7 @@ namespace Microsoft.PowerShell.Commands
 
             switch (valueKind)
             {
-                // NOTICE: we assume that an unkown type is treated as
+                // NOTICE: we assume that an unknown type is treated as
                 // the same as a binary blob
                 case RegistryValueKind.Binary:
                 case RegistryValueKind.Unknown:
@@ -4877,7 +4877,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="key">RegistryKey containing property</param>
         /// <param name="valueName">Property for which RegistryValueKind is requested</param>
-        /// <returns>RegistryValueKind of the property. If the property does not exit,returns RegsitryValueKind.Unknown</returns>
+        /// <returns>RegistryValueKind of the property. If the property does not exit,returns RegistryValueKind.Unknown</returns>
         private static RegistryValueKind GetValueKindForProperty(IRegistryWrapper key, string valueName)
         {
             try
@@ -4995,7 +4995,7 @@ namespace Microsoft.PowerShell.Commands
         /// 
         /// <param name="kind"> output for the RegistryValueKind for the string</param>
         /// <returns>
-        /// true if the conversion succeded
+        /// true if the conversion succeeded
         /// </returns>
         private bool ParseKind(string type, out RegistryValueKind kind)
         {

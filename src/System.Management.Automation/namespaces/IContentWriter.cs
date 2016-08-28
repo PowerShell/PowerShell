@@ -54,7 +54,7 @@ namespace System.Management.Automation.Provider
         /// </param>
         /// 
         /// <remarks>
-        /// The implemenation of this method moves the content writer <paramref name="offset"/> 
+        /// The implementation of this method moves the content writer <paramref name="offset"/> 
         /// number of blocks from the specified <paramref name="origin"/>. See <see cref="System.Management.Automation.Provider.IContentWriter.Write(IList)"/>
         /// for a description of what a block is.
         /// </remarks>
