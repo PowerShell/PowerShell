@@ -855,7 +855,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// certificate parameter set
         /// </summary>
-        internal const string CertificatePrameterSet = "CertificatePrameterSet";
+        internal const string CertificateParameterSet = "CertificateParameterSet";
 
         /// <summary>
         /// CimInstance parameter alias

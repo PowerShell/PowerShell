@@ -220,7 +220,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.nameSpace = theNameSpace;
             this.queryDialect = ConstValue.GetQueryDialectWithDefault(theQueryDialect);
             this.queryExpression = theQueryExpression;
-            this.opreationTimeout = theOpreationTimeout;
+            this.operationTimeout = theOpreationTimeout;
             this.computerName = theComputerName;
         }
 
@@ -299,7 +299,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             this.nameSpace,
                             this.queryDialect,
                             this.queryExpression,
-                            this.opreationTimeout);
+                            this.operationTimeout);
                     }
                     else
                     {
@@ -308,7 +308,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             this.nameSpace,
                             this.queryDialect,
                             this.queryExpression,
-                            this.opreationTimeout);
+                            this.operationTimeout);
                     }
                     status = Status.Started;
                 }
@@ -392,7 +392,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private string nameSpace;
         private string queryDialect;
         private string queryExpression;
-        private UInt32 opreationTimeout;
+        private UInt32 operationTimeout;
         #endregion
         #endregion
     }

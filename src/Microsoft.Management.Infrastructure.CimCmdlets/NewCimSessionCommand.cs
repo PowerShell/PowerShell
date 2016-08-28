@@ -64,7 +64,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// This is specificly for wsman protocol.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = CertificatePrameterSet)]
+                   ParameterSetName = CertificateParameterSet)]
         public String CertificateThumbprint
         {
             get { return certificatethumbprint; }

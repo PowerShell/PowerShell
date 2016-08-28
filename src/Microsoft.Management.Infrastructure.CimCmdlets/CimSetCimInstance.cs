@@ -141,17 +141,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         }
 
                         Exception exception = null;
-                        CimInstance intance = cmdlet.CimInstance;
+                        CimInstance instance = cmdlet.CimInstance;
                         // For CimInstance parameter sets, Property is an optional parameter
                         if (cmdlet.Property != null)
                         {
-                            if (!SetProperty(cmdlet.Property, ref intance, ref exception))
+                            if (!SetProperty(cmdlet.Property, ref instance, ref exception))
                             {
                                 cmdlet.ThrowTerminatingError(exception, action);
                                 return;
                             }
                         }
-                        proxy.ModifyInstanceAsync(nameSpace, intance);
+                        proxy.ModifyInstanceAsync(nameSpace, instance);
                     }
                     break;
                 case CimBaseCommand.QueryComputerSet:
