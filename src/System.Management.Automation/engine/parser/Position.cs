@@ -106,7 +106,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// A few utilty functions for script positions.
+    /// A few utility functions for script positions.
     /// </summary>
     internal static class PositionUtilities
     {
@@ -116,7 +116,7 @@ namespace System.Management.Automation.Language
         public static IScriptPosition EmptyPosition { get; } = new EmptyScriptPosition();
 
         /// <summary>
-        /// Return a unique extent repesenting an empty or missing extent.
+        /// Return a unique extent representing an empty or missing extent.
         /// </summary>
         public static IScriptExtent EmptyExtent { get; } = new EmptyScriptExtent();
 

@@ -1857,7 +1857,7 @@ namespace System.Management.Automation.Language
             exprs.Add(Expression.Call(oldPipe, CachedReflectionInfo.Pipe_SetVariableListForTemporaryPipe, s_getCurrentPipe));
             if (generateRedirectExprs != null)
             {
-                // Add merge redirection expressions if delgate is provided.
+                // Add merge redirection expressions if delegate is provided.
                 generateRedirectExprs(exprs, finallyExprs);
             }
             exprs.Add(Compile(ast));
@@ -2427,7 +2427,7 @@ namespace System.Management.Automation.Language
             exprs.Add(Expression.Assign(LocalVariablesParameter,
                                         Expression.Field(_functionContext, CachedReflectionInfo.FunctionContext__localsTuple).Cast(this.LocalVariablesTupleType)));
 
-            // Compiling a single expression (a default argument, or an locally evalutated argument in a ScriptBlock=>PowerShell conversion)
+            // Compiling a single expression (a default argument, or an locally evaluated argument in a ScriptBlock=>PowerShell conversion)
             // does not support debugging, so skip calling EnterScriptFunction.
             if (!_compilingSingleExpression)
             {
@@ -2647,7 +2647,7 @@ namespace System.Management.Automation.Language
                     //     "Should continue here"
                     // In this example, the trap just continues, but we want to continue after the 'if' statement, not after
                     // the 'throw' statement.
-                    // We push null onto the active trap handlers to let ExceptionHandlingOps.CheckActionPrefence know it
+                    // We push null onto the active trap handlers to let ExceptionHandlingOps.CheckActionPreference know it
                     // shouldn't process traps (but should still query the user if appropriate), and just rethrow so we can
                     // unwind to the block with the trap.
 
@@ -3040,7 +3040,7 @@ namespace System.Management.Automation.Language
 
                 // The redirections are passed as a CommandRedirection[][] - one dimension for each command in the pipe,
                 // one dimension because each command may have multiple redirections.  Here we create the array for
-                // each command in the pipe, either a compile time constant or created at runtime if necesary.
+                // each command in the pipe, either a compile time constant or created at runtime if necessary.
                 Expression redirectionExpr;
                 if (commandRedirections.Any(r => r is Expression))
                 {
@@ -3093,7 +3093,7 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            // Most redirections will be instannces of CommandRedirection, but non-constant filenames
+            // Most redirections will be instances of CommandRedirection, but non-constant filenames
             // will generated a Linq.Expression, so we store objects.
             object[] compiledRedirections = new object[count];
             for (int i = 0; i < count; ++i)
@@ -3233,7 +3233,7 @@ namespace System.Management.Automation.Language
                 exprs.Add(Compile(subExpr.SubExpression));
                 if (resultList != null)
                 {
-                    // If there is no resultList, we wrote our results of the subexperssion directly to the pipe
+                    // If there is no resultList, we wrote our results of the subexpression directly to the pipe
                     // instead of being collected to be written here.
                     result = Expression.Call(CachedReflectionInfo.PipelineOps_PipelineResult, resultList);
                 }
@@ -3871,7 +3871,7 @@ namespace System.Management.Automation.Language
             if (dataStatementAst.CommandsAllowed.Count > 0)
             {
                 // If CommandsAllowed was specified, we need to check the language mode - the data section runs
-                // in restriced language mode and we don't want to allow disallowed commands to run if we were in
+                // in restricted language mode and we don't want to allow disallowed commands to run if we were in
                 // constrained language mode.
                 exprs.Add(
                     Expression.Call(

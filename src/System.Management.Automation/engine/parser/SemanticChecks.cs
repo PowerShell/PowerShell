@@ -1173,7 +1173,7 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst)
         {
             //
-            // Check if the ScirptBlockAst contains NamedBlockAst other than the End block
+            // Check if the ScriptBlockAst contains NamedBlockAst other than the End block
             //
             ScriptBlockAst configBody = configurationDefinitionAst.Body.ScriptBlock;
             if (configBody.BeginBlock != null || configBody.ProcessBlock != null || configBody.DynamicParamBlock != null)
@@ -1447,7 +1447,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="parser"></param>
         /// <param name="functionMemberAst">The function member AST</param>
-        /// <param name="hasGet">True if it is a Get method with qualified return type and signaure; otherwise, false. </param>
+        /// <param name="hasGet">True if it is a Get method with qualified return type and signature; otherwise, false. </param>
         private static void CheckGet(Parser parser, FunctionMemberAst functionMemberAst, ref bool hasGet)
         {
             if (hasGet)
@@ -1484,7 +1484,7 @@ namespace System.Management.Automation.Language
         /// Check if it is a Test method with correct return type and signature
         /// </summary>
         /// <param name="functionMemberAst">The function member AST</param>
-        /// <param name="hasTest">True if it is a Test method with qualified return type and signaure; otherwise, false.</param>
+        /// <param name="hasTest">True if it is a Test method with qualified return type and signature; otherwise, false.</param>
         private static void CheckTest(FunctionMemberAst functionMemberAst, ref bool hasTest)
         {
             if (hasTest) return;
@@ -1497,7 +1497,7 @@ namespace System.Management.Automation.Language
         /// Check if it is a Set method with correct return type and signature
         /// </summary>
         /// <param name="functionMemberAst">The function member AST</param>
-        /// <param name="hasSet">True if it is a Set method with qualified return type and signaure; otherwise, false.</param>
+        /// <param name="hasSet">True if it is a Set method with qualified return type and signature; otherwise, false.</param>
         private static void CheckSet(FunctionMemberAst functionMemberAst, ref bool hasSet)
         {
             if (hasSet) return;

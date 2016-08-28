@@ -506,7 +506,7 @@ namespace System.Management.Automation.Language
         public Token Kind { get; private set; }
 
         /// <summary>
-        /// The flags specifid and their value. The value is null if it's not specified.
+        /// The flags specified and their value. The value is null if it's not specified.
         /// e.g. switch -regex -file c:\demo.txt  --->   regex -- null
         ///                                              file  -- { c:\demo.txt }
         /// </summary>
@@ -749,7 +749,7 @@ namespace System.Management.Automation.Language
         public ReadOnlyCollection<PSSnapInSpecification> RequiresPSSnapIns { get; internal set; }
 
         /// <summary>
-        /// The aseemblies this script requires, specified like:
+        /// The assemblies this script requires, specified like:
         ///     <code>#requires -Assembly path\to\foo.dll</code>
         ///     <code>#requires -Assembly "System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"</code>
         /// If no assemblies are required, this property is an empty collection.
@@ -757,7 +757,7 @@ namespace System.Management.Automation.Language
         public ReadOnlyCollection<string> RequiredAssemblies { get; internal set; }
 
         /// <summary>
-        /// Specifies if this script requires elevated privelges, specified like:
+        /// Specifies if this script requires elevated privileges, specified like:
         ///     <code>#requires -RunAsAdministrator</code>
         /// If nothing is specified, this property is false.
         /// </summary>
@@ -1206,7 +1206,7 @@ namespace System.Management.Automation.Language
                                "Caller makes sure the section is within the ScriptBlockAst");
 
             List<VariableExpressionAst> usingVars = usingVariablesTuple.Item1; // A list of using variables
-            string newParams = usingVariablesTuple.Item2; // The new parameters are seperated by the comma
+            string newParams = usingVariablesTuple.Item2; // The new parameters are separated by the comma
 
             // astElements contains
             //  -- UsingVariable
@@ -1943,7 +1943,7 @@ namespace System.Management.Automation.Language
     public abstract class AttributeBaseAst : Ast
     {
         /// <summary>
-        /// Initiale the common fields for an attribute.
+        /// Initialize the common fields for an attribute.
         /// </summary>
         /// <param name="extent">The extent of the attribute, from the opening '[' to the closing ']'.</param>
         /// <param name="typeName">The type named by the attribute.</param>
@@ -2268,7 +2268,7 @@ namespace System.Management.Automation.Language
         /// A parameter name cannot be a using variable, but its default value could contain any number of UsingExpressions, for example:
         ///     function bar ($x = (Get-X @using:defaultSettings.Parameters)) { ... }
         /// This method goes through the ParameterAst text and replace each $using variable with its new synthetic name (remove the $using prefix).
-        /// This method is used when we call Invoke-Command targetting a PSv2 remote machine. In that case, we might need to call this method
+        /// This method is used when we call Invoke-Command targeting a PSv2 remote machine. In that case, we might need to call this method
         /// to process the script block text, since $using prefix cannot be recognized by PSv2.
         /// </summary>
         /// <param name="orderedUsingVar">A sorted enumerator of using variable asts, ascendingly sorted based on StartOffSet</param>
@@ -2661,7 +2661,7 @@ namespace System.Management.Automation.Language
             // REVIEW: should old visitors completely skip the attributes and
             // bodies of methods, or should they get a chance to see them.  If
             // we want to skip them, the code below needs to move up into the
-            // above test 'vistitor2 != null'.
+            // above test 'visitor2 != null'.
             if (action == AstVisitAction.Continue)
             {
                 for (int index = 0; index < Attributes.Count; index++)
@@ -4098,7 +4098,7 @@ namespace System.Management.Automation.Language
     public abstract class LabeledStatementAst : StatementAst
     {
         /// <summary>
-        /// Initialize the properties commmon to labeled statements.
+        /// Initialize the properties common to labeled statements.
         /// </summary>
         /// <param name="extent">The extent of the statement.</param>
         /// <param name="label">The optionally null label for the statement.</param>
@@ -4363,7 +4363,7 @@ namespace System.Management.Automation.Language
         public PipelineBaseAst Initializer { get; private set; }
 
         /// <summary>
-        /// The ast for the iteration experssion of a for statement, or null if none was specified.
+        /// The ast for the iteration expression of a for statement, or null if none was specified.
         /// </summary>
         public PipelineBaseAst Iterator { get; private set; }
 
@@ -4679,7 +4679,7 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// A possibly empty collection of conditions and statement blocks representing the cases of the switch statement.
-        /// If the colleciton is empty, the default clause is not null.
+        /// If the collection is empty, the default clause is not null.
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public ReadOnlyCollection<SwitchClause> Clauses { get; private set; }
@@ -5435,7 +5435,7 @@ namespace System.Management.Automation.Language
     #region Pipelines
 
     /// <summary>
-    /// An abstract base class for statements that include command invocations, pipelines, expressions, and assignements.
+    /// An abstract base class for statements that include command invocations, pipelines, expressions, and assignments.
     /// Any statement that does not begin with a keyword is derives from PipelineBastAst.
     /// </summary>
     public abstract class PipelineBaseAst : StatementAst
@@ -5462,7 +5462,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// The ast that repesents a PowerShell pipeline, e.g. <c>gci -re . *.cs | select-string Foo</c> or <c> 65..90 | % { [char]$_ }</c>.
+    /// The ast that represents a PowerShell pipeline, e.g. <c>gci -re . *.cs | select-string Foo</c> or <c> 65..90 | % { [char]$_ }</c>.
     /// A pipeline must have at least 1 command.  The first command may be an expression or a command invocation.
     /// </summary>
     public class PipelineAst : PipelineBaseAst
@@ -5808,7 +5808,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// If this command was synthesiszed out of a dynamic keyword, this property will point to the DynamicKeyword
+        /// If this command was synthesized out of a dynamic keyword, this property will point to the DynamicKeyword
         /// data structure that was used to create this command.
         /// </summary>
         public DynamicKeyword DefiningKeyword { get; set; }
@@ -6290,7 +6290,7 @@ namespace System.Management.Automation.Language
     public class AssignmentStatementAst : PipelineBaseAst
     {
         /// <summary>
-        /// Construct an assignement statement.
+        /// Construct an assignment statement.
         /// </summary>
         /// <param name="extent">The extent of the assignment statement.</param>
         /// <param name="left">The value being assigned.</param>
@@ -6564,7 +6564,7 @@ namespace System.Management.Automation.Language
         internal List<DynamicKeyword> DefinedKeywords { get; set; }
 
         /// <summary>
-        /// Generate ast that definies a function for this <see cref="ConfigurationDefinitionAst"/> object
+        /// Generate ast that defines a function for this <see cref="ConfigurationDefinitionAst"/> object
         /// </summary>
         /// <returns>
         /// The <see cref="PipelineAst"/> that defines a function for this <see cref="ConfigurationDefinitionAst"/> object
@@ -6627,7 +6627,7 @@ namespace System.Management.Automation.Language
             cea.Add(new CommandParameterAst(LCurlyToken.Extent, "InstanceName", new VariableExpressionAst(LCurlyToken.Extent, "InstanceName", false), LCurlyToken.Extent));
 
             //
-            // copy the configuration paramter to the new function parameter
+            // copy the configuration parameter to the new function parameter
             // the new set-item created function will have below parameters
             //    [cmdletbinding()]
             //    param(
@@ -7062,13 +7062,13 @@ namespace System.Management.Automation.Language
             //
             // The second type, where the DirectCall flag is set to true, simply calls the command directly.
             // In the original source, the keyword body will be a property collection where the allowed properties
-            // in the collection corresond to the parameters on the actual called function.
+            // in the collection correspond to the parameters on the actual called function.
             //
             var cea = new Collection<CommandElementAst>();
 
             //
             // First add the name of the command to call. If a module name has been provided
-            // then use the module-quilified form of the command name..
+            // then use the module-qualified form of the command name..
             //
             if (string.IsNullOrEmpty(Keyword.ImplementingModule))
             {
@@ -7225,7 +7225,7 @@ namespace System.Management.Automation.Language
                         LCurly.Extent));
 
                 //
-                // Add the -SourceMetadata parametere
+                // Add the -SourceMetadata parameter
                 //
                 string sourceMetadata = FunctionName.Extent.File
                                         + "::" + FunctionName.Extent.StartLineNumber
@@ -7874,7 +7874,7 @@ namespace System.Management.Automation.Language
         /// <param name="expression">The expression before the member access operator '.' or '::'.</param>
         /// <param name="member">The name or expression naming the member to access.</param>
         /// <param name="static">True if the '::' operator was used, false if '.' is used.
-        /// True if the member access is for a static member, using '::', false if accessing a member on an instace using '.'.
+        /// True if the member access is for a static member, using '::', false if accessing a member on an instance using '.'.
         /// </param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/>, <paramref name="expression"/>, or <paramref name="member"/> is null.
@@ -8164,7 +8164,7 @@ namespace System.Management.Automation.Language
         /// <param name="method">The method to invoke.</param>
         /// <param name="arguments">The arguments to pass to the method.</param>
         /// <param name="static">
-        /// True if the invocation is for a static method, using '::', false if invoking a method on an instace using '.'.
+        /// True if the invocation is for a static method, using '::', false if invoking a method on an instance using '.'.
         /// </param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> is null.
@@ -9302,7 +9302,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Construct a variable reference with an exising VariablePath (rather than construct a new one.)
+        /// Construct a variable reference with an existing VariablePath (rather than construct a new one.)
         /// </summary>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="variablePath"/> is null.
@@ -9417,7 +9417,7 @@ namespace System.Management.Automation.Language
                                 {
                                     // Assume (because we're looking at $_ and we're inside a script block that is an
                                     // argument to some command) that the type we're getting is actually unrolled.
-                                    // This might not be right in all cases, but with our simple analysis, it'r
+                                    // This might not be right in all cases, but with our simple analysis, it's
                                     // right more often than it's wrong.
                                     if (result.Type.IsArray)
                                     {
@@ -9950,7 +9950,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// The ast that repesents a double quoted string (here string or normal string) and can have nested variable
+    /// The ast that represents a double quoted string (here string or normal string) and can have nested variable
     /// references or sub-expressions, e.g. <c>"Name: $name`nAge: $([DateTime]::Now.Year - $dob.Year)"</c>.
     /// </summary>
     public class ExpandableStringExpressionAst : ExpressionAst
@@ -10333,7 +10333,7 @@ namespace System.Management.Automation.Language
             yield return new PSTypeName(typeof(Hashtable));
         }
 
-        // Indicates that this ast was consructed as part of a schematized object instead of just a plain hash literal.
+        // Indicates that this ast was constructed as part of a schematized object instead of just a plain hash literal.
         internal bool IsSchemaElement { get; set; }
 
 

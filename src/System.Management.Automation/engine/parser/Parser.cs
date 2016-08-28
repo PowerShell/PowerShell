@@ -32,7 +32,7 @@ namespace System.Management.Automation.Language
 
     /// <summary>
     /// The parser that parses PowerShell script and returns a <see cref="ScriptBlockAst"/>, tokens, and error messages
-    /// if the script cannot be parsed successfullly.
+    /// if the script cannot be parsed successfully.
     /// </summary>
     public sealed class Parser
     {
@@ -4126,7 +4126,7 @@ namespace System.Management.Automation.Language
                 {
                     // Incompleted input like:
                     // class foo { $private: }
-                    // Error message already emmited by tokenizer ScanVariable
+                    // Error message already emitted by tokenizer ScanVariable
 
                     RecordErrorAsts(attributeList, ref astsOnError);
                     RecordErrorAsts(typeConstraint, ref astsOnError);

@@ -212,7 +212,7 @@ namespace System.Management.Automation.Language
         /// <summary>The subtraction assignment operator '-='.</summary>
         MinusEquals = 44,
 
-        /// <summary>The multiplcation assignment operator '*='.</summary>
+        /// <summary>The multiplication assignment operator '*='.</summary>
         MultiplyEquals = 45,
 
         /// <summary>The division assignment operator '/='.</summary>
@@ -598,7 +598,7 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// The precedence of comparison operators including: '-eq', '-ne', '-ge', '-gt', '-lt', '-le', '-like', '-notlike',
-        /// '-match', '-notmatch', '-replace', '-containts', '-notcontains', '-in', '-notin', '-split', '-join', '-is', '-isnot', '-as',
+        /// '-match', '-notmatch', '-replace', '-contains', '-notcontains', '-in', '-notin', '-split', '-join', '-is', '-isnot', '-as',
         /// and all of the case sensitive variants of these operators, if they exists.
         /// </summary>
         BinaryPrecedenceComparison = 3,
@@ -792,7 +792,7 @@ namespace System.Management.Automation.Language
             /*               Equals */ TokenFlags.AssignmentOperator,
             /*           PlusEquals */ TokenFlags.AssignmentOperator,
             /*          MinusEquals */ TokenFlags.AssignmentOperator,
-            /*        MultipyEquals */ TokenFlags.AssignmentOperator,
+            /*       MultiplyEquals */ TokenFlags.AssignmentOperator,
             /*         DivideEquals */ TokenFlags.AssignmentOperator,
             /*      RemainderEquals */ TokenFlags.AssignmentOperator,
             /*          Redirection */ TokenFlags.DisallowedInRestrictedMode,
@@ -990,7 +990,7 @@ namespace System.Management.Automation.Language
             /*               Equals */ "=",
             /*           PlusEquals */ "+=",
             /*          MinusEquals */ "-=",
-            /*        MultipyEquals */ "*=",
+            /*       MultiplyEquals */ "*=",
             /*         DivideEquals */ "/=",
             /*      RemainderEquals */ "%=",
             /*          Redirection */ "redirection",

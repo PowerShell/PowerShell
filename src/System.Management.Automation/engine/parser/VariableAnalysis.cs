@@ -1615,7 +1615,7 @@ namespace System.Management.Automation.Language
                 // left operand is always evaluated, visit it's expression in the current block.
                 binaryExpressionAst.Left.Accept(this);
 
-                // The right operand is condtionally evaluated.  We aren't generating any code here, just
+                // The right operand is conditionally evaluated.  We aren't generating any code here, just
                 // modeling the flow graph, so we just visit the right operand in a new block, and have
                 // both the current and new blocks both flow to a post-expression block.
                 var targetBlock = new Block();
