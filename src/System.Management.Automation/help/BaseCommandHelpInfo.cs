@@ -371,7 +371,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returs help information for a parameter(s) identified by pattern
+        /// Returns help information for a parameter(s) identified by pattern
         /// </summary>
         /// <param name="pattern">pattern to search for parameters</param>
         /// <returns>A collection of parameters that match pattern</returns>        

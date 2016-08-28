@@ -17,7 +17,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Monad help is an architecture made up of three layers: 
     ///     1. At the top is get-help commandlet from where help functionality is accessed. 
-    ///     2. At the middel is the help system which collects help objects based on user's request. 
+    ///     2. At the middle is the help system which collects help objects based on user's request. 
     ///     3. At the bottom are different help providers which provide help contents for different kinds of information requested.
     /// 
     /// Class HelpSystem implements the middle layer of Monad Help.
@@ -48,7 +48,7 @@ namespace System.Management.Automation
     /// Help Api:
     ///     Help Api is the function to be called by get-help commandlet. 
     /// 
-    ///     Following information needs to be provided in Help Api paramters, 
+    ///     Following information needs to be provided in Help Api parameters, 
     ///         1. search target: (which can be one or multiple strings)
     ///         2. help type: limit the type of help to be searched.
     ///         3. included fields: the fields to be included in the help info
@@ -145,7 +145,7 @@ namespace System.Management.Automation
             InitializeHelpProviders();
         }
 
-        #endregion Initalization
+        #endregion Initialization
 
         #region Help API
 
@@ -290,7 +290,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get help based on the target, help type, etc
         /// 
-        /// Help eninge retrieve help based on following schemes,
+        /// Help engine retrieve help based on following schemes,
         /// 
         ///     1. if help target is empty, get default help
         ///     2. if help target is not a search pattern, try to retrieve exact help
@@ -411,7 +411,7 @@ namespace System.Management.Automation
         /// <param name="helpInfo"></param>
         /// <param name="helpRequest">Help request object</param>        
         /// <returns>Never returns null.</returns>
-        /// <remarks>helpInfos is not null or emtpy.</remarks>
+        /// <remarks>helpInfos is not null or empty.</remarks>
         private IEnumerable<HelpInfo> ForwardHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
             Collection<HelpInfo> result = new Collection<HelpInfo>();

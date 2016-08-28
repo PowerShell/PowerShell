@@ -799,7 +799,7 @@ namespace Microsoft.PowerShell.Commands
         #region Logging
 
         /// <summary>
-        /// Loggs a command message
+        /// Logs a command message
         /// </summary>
         /// <param name="message">message to log</param>
         internal void LogMessage(string message)

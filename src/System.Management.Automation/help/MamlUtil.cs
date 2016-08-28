@@ -188,7 +188,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get propery info.
+        /// Get property info.
         /// </summary>
         internal static PSPropertyInfo GetProperyInfo(PSObject psObject, string[] path)
         {

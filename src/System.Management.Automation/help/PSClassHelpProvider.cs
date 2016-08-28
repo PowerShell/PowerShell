@@ -126,7 +126,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the help in for the PS Class Info.        /// 
         /// </summary>
-        /// <param name="searcher">Searcher for PS Classses.</param>
+        /// <param name="searcher">Searcher for PS Classes.</param>
         /// <returns>Next HelpInfo object.</returns>
         private IEnumerable<HelpInfo> GetHelpInfo(PSClassSearcher searcher)
         {

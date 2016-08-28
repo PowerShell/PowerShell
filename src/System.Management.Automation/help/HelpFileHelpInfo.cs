@@ -18,7 +18,7 @@ namespace System.Management.Automation
         /// Constructor for HelpFileHelpInfo
         /// </summary>
         /// <remarks>
-        /// This is made private intentally so that the only way to create object of this type
+        /// This is made private intentionally so that the only way to create object of this type
         /// is through 
         ///     GetHelpInfo(string name, string text, string filename)
         /// </remarks>

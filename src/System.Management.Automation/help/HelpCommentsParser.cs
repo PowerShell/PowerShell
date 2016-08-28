@@ -1140,7 +1140,7 @@ namespace System.Management.Automation
                 }
 
                 // comment block is behind function definition
-                // we don't suport it for configuration delaration as this style is rarely used
+                // we don't support it for configuration declaration as this style is rarely used
                 if (funcDefnAst != null)
                 {
                     startTokenIndex =

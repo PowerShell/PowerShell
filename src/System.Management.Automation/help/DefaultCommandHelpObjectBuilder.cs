@@ -235,7 +235,7 @@ namespace System.Management.Automation.Help
 
                 Collection<CommandParameterInfo> parameters = new Collection<CommandParameterInfo>();
                 // GenerateParameters parameters in display order 
-                // ie., Postional followed by
+                // ie., Positional followed by
                 //      Named Mandatory (in alpha numeric) followed by
                 //      Named (in alpha numeric)
                 parameterSet.GenerateParametersInDisplayOrder(commonWorkflow,
@@ -256,7 +256,7 @@ namespace System.Management.Automation.Help
         /// <param name="obj">HelpInfo object</param>
         /// <param name="parameters">
         /// a collection of parameters in display order 
-        /// ie., Postional followed by
+        /// ie., Positional followed by
         ///      Named Mandatory (in alpha numeric) followed by
         ///      Named (in alpha numeric)
         /// </param>
