@@ -15,7 +15,7 @@ namespace System.Management.Automation.Runspaces
     /// Runspace config for single shell are a special kind of runspace
     /// configuration that is generated for single shells. 
     /// 
-    /// This class needs to handle the standard managment of 
+    /// This class needs to handle the standard management of 
     /// 
     ///     1. consoleInfo: each instance of this class will have 
     ///        a consoleInfo object. 

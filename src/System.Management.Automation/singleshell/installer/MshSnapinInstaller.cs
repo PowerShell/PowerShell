@@ -30,7 +30,7 @@ namespace System.Management.Automation
     /// Here, the information about registry content is provided. 
     /// 
     /// The reason of not calling this class MshSnapinInstaller is to "hide" the details 
-    /// that MshSnapin class is actually doing installion. It is also more intuitive
+    /// that MshSnapin class is actually doing installation. It is also more intuitive
     /// since people deriving from this class will think there are really 
     /// implementing a class for mshsnapin. 
     /// 

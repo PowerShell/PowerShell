@@ -31,7 +31,7 @@ namespace System.Management.Automation.Runspaces
     public class PSConsoleLoadException : SystemException, IContainsErrorRecord
     {
         /// <summary>
-        /// Intiate an instance of PSConsoleLoadException.
+        /// Initiate an instance of PSConsoleLoadException.
         /// </summary>
         /// <param name="consoleInfo">Console info object for the exception</param>
         /// <param name="exceptions">A collection of PSSnapInExceptions.</param>
@@ -159,7 +159,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Get object data from serizliation information.
+        /// Get object data from serialization information.
         /// </summary>
         /// <param name="info"> Serialization information </param>
         /// <param name="context"> Streaming context </param>
