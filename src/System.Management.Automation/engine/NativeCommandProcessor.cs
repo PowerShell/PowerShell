@@ -1405,7 +1405,7 @@ namespace System.Management.Automation
         /// </param>
         internal void Start(Process process, NativeCommandIOFormat inputFormat)
         {
-            Dbg.Assert(process != null, "caller should validate the paramter");
+            Dbg.Assert(process != null, "caller should validate the parameter");
 
             //Get the encoding for writing to native command. Note we get the Encoding 
             //from the current scope so a script or function can use a different encoding

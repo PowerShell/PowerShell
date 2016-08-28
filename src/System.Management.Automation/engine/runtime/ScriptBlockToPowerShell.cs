@@ -714,7 +714,7 @@ namespace System.Management.Automation
             else
             {
                 // If this assertion fires, the command name is determined incorrectly.
-                Diagnostics.Assert(commandNameAst is CommandParameterAst, "Unxpected element not handled correctly.");
+                Diagnostics.Assert(commandNameAst is CommandParameterAst, "Unexpected element not handled correctly.");
                 commandName = commandNameAst.Extent.Text;
             }
 
@@ -739,7 +739,7 @@ namespace System.Management.Automation
 
             // Process the contents of a splatted variable into the arguments for this
             // command. If the variable contains a hashtable, distribute the key/value pairs
-            // If it's an enumberable, then distribute the values as $args and finally
+            // If it's an enumerable, then distribute the values as $args and finally
             // if it's a scalar, then the effect is equivalent to $var
             object splattedValue = _context.GetVariableValue(variableAst.VariablePath);
             foreach (var splattedParameter in PipelineOps.Splat(splattedValue, variableAst.Extent))

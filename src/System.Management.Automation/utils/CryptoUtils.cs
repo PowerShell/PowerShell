@@ -1032,7 +1032,7 @@ namespace System.Management.Automation.Internal
             } // if (rsa != null...
             else
             {
-                Dbg.Assert(false, "Session key not availble to encrypt secure string");
+                Dbg.Assert(false, "Session key not available to encrypt secure string");
             }
 
             return encryptedDataAsString;
@@ -1392,7 +1392,7 @@ namespace System.Management.Automation.Internal
         /// <returns></returns>
         internal bool ImportEncryptedSessionKey(string encryptedSessionKey)
         {
-            Dbg.Assert(!String.IsNullOrEmpty(encryptedSessionKey), "encrypted sessoin key passed in cannot be null");
+            Dbg.Assert(!String.IsNullOrEmpty(encryptedSessionKey), "encrypted session key passed in cannot be null");
 
             try
             {

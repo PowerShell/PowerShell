@@ -388,7 +388,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="cimInstance"></param>
         public CimSessionProxy(string computerName, CimInstance cimInstance)
         {
-            DebugHelper.WriteLogEx("ComptuerName {0}; cimInstance.CimSessionInstanceID = {1}; cimInstance.CimSessionComputerName = {2}.",
+            DebugHelper.WriteLogEx("ComputerName {0}; cimInstance.CimSessionInstanceID = {1}; cimInstance.CimSessionComputerName = {2}.",
                 0,
                 computerName,
                 cimInstance.GetCimSessionInstanceId(),
@@ -716,7 +716,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             lock (this.stateLock)
             {
-                Debug.Assert(this.operation == operation, "Caller should verify that the operation to reomove is the operation in progress");
+                Debug.Assert(this.operation == operation, "Caller should verify that the operation to remove is the operation in progress");
 
                 this.DisposeCancelOperation();
 
@@ -2139,7 +2139,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 if (!match)
                 {
-                    DebugHelper.WriteLog("Qualifer name does not match: {0}", 1, context.QualifierName);
+                    DebugHelper.WriteLog("Qualifier name does not match: {0}", 1, context.QualifierName);
                     return match;
                 }
             }

@@ -376,7 +376,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             else
                             {
-                                Dbg.Assert(false, "Either RunspaceConfiguration or InitiaSessionState must be non-null for Update-Typedata to work");
+                                Dbg.Assert(false, "Either RunspaceConfiguration or InitialSessionState must be non-null for Update-Typedata to work");
                             }
                         }
                     }
@@ -494,7 +494,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            Dbg.Assert(false, "Either RunspaceConfiguration or InitiaSessionState must be non-null for Update-Typedata to work");
+                            Dbg.Assert(false, "Either RunspaceConfiguration or InitialSessionState must be non-null for Update-Typedata to work");
                         }
                     }
                 }
@@ -887,7 +887,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                Dbg.Assert(false, "Either RunspaceConfiguration or InitiaSessionState must be non-null for Update-Typedata to work");
+                Dbg.Assert(false, "Either RunspaceConfiguration or InitialSessionState must be non-null for Update-Typedata to work");
             }
         }
 
@@ -1069,7 +1069,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                Dbg.Assert(false, "Either RunspaceConfiguration or InitiaSessionState must be non-null for Update-FormatData to work");
+                Dbg.Assert(false, "Either RunspaceConfiguration or InitialSessionState must be non-null for Update-FormatData to work");
             }
         }
     }
@@ -1289,7 +1289,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            Dbg.Assert(false, "Either RunspaceConfiguration or InitiaSessionState must be non-null for Remove-Typedata to work");
+                            Dbg.Assert(false, "Either RunspaceConfiguration or InitialSessionState must be non-null for Remove-Typedata to work");
                         }
                     }
                 }

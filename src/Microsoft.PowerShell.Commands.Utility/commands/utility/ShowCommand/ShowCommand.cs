@@ -371,7 +371,7 @@ namespace Microsoft.PowerShell.Commands
         {
             CommandInfo commandInfo;
             this.GetCommandInfoAndModules(out commandInfo, out _importedModules);
-            Diagnostics.Assert(commandInfo != null, "GetCommandInfoAndModules would throw a termninating error/exception");
+            Diagnostics.Assert(commandInfo != null, "GetCommandInfoAndModules would throw a terminating error/exception");
 
             try
             {
