@@ -81,7 +81,7 @@ TEST_F(getLinkCountTest, LinkCountOfSinglyLinkedFile)
     removeFile(file);
 }
 
-TEST_F(getLinkCountTest, LinkCountOfMultipliLinkedFile)
+TEST_F(getLinkCountTest, LinkCountOfMultiplyLinkedFile)
 {
     createFileForTesting(file);
     std::string newFile = createHardLink(file);
