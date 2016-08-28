@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         public override string[] Command { get; set; }
         #endregion Parameters
 
-        #region Coordinating how different events (timeout, stopprocesing, job finished, job blocked) affect what happens in EndProcessing
+        #region Coordinating how different events (timeout, stopprocessing, job finished, job blocked) affect what happens in EndProcessing
 
         private readonly object _endProcessingActionLock = new object();
         private Action _endProcessingAction;
@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
                 endProcessingAction = _endProcessingAction;
             }
 
-            // Inovke action outside lock.
+            // Invoke action outside lock.
             if (endProcessingAction != null)
             {
                 endProcessingAction();
@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-        #region Support for triggering EndProcesing when jobs are finished or blocked
+        #region Support for triggering EndProcessing when jobs are finished or blocked
 
         private readonly HashSet<Job> _finishedJobs = new HashSet<Job>();
         private readonly HashSet<Job> _blockedJobs = new HashSet<Job>();

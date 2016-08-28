@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    // there could be possiblility that the job gets completed befor or after the 
+                    // there could be possibility that the job gets completed before or after the 
                     // subscribing to nowait_job2_statechanged event so checking it again.
                     if (!_wait && (job2.IsFinishedState(job2.JobStateInfo.State) || job2.JobStateInfo.State == JobState.Suspending || job2.JobStateInfo.State == JobState.Suspended))
                     {
@@ -262,7 +262,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // there could be a possiblity of race condiftion where this fucntion is getting called twice
+                    // there could be a possibility of race condition where this function is getting called twice
                     // so if job doesn't present in the _pendingJobs then just return
                     return;
                 }

@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="resourceString">resource String which holds the message
         /// </param>
-        /// <returns>Error message loaded from appropriate resouce cache</returns>
+        /// <returns>Error message loaded from appropriate resource cache</returns>
         internal String GetMessage(string resourceString)
         {
             String message = GetMessage(resourceString, null);
@@ -603,7 +603,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual Uri[] ConnectionUri { get; set; }
 
         /// <summary>
-        /// The AllowRediraction parameter enables the implicit redirection functionality
+        /// The AllowRedirection parameter enables the implicit redirection functionality
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.UriParameterSet)]
         public virtual SwitchParameter AllowRedirection
@@ -723,7 +723,7 @@ namespace Microsoft.PowerShell.Commands
         /// Used to resolve authentication from the parameters chosen by the user.
         /// User has the following options:
         /// 1. AuthMechanism + Credential
-        /// 2. CertiticateThumbPrint
+        /// 2. CertificateThumbPrint
         /// 
         /// All the above are mutually exclusive.
         /// </summary>
@@ -814,7 +814,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!ParameterSetName.Equals(PSRemotingBaseCmdlet.UriParameterSet, StringComparison.OrdinalIgnoreCase))
             {
-                // uri redirection is supported only with URI parmeter set
+                // uri redirection is supported only with URI parameter set
                 connectionInfo.MaximumConnectionRedirectionCount = 0;
             }
 
@@ -2834,11 +2834,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Write the maching runspace objects down the pipeline, or add to the list.
+        /// Write the matching runspace objects down the pipeline, or add to the list.
         /// </summary>
-        /// <param name="matchingRunspaceInfos">The maching runspaces</param>
+        /// <param name="matchingRunspaceInfos">The matching runspaces</param>
         /// <param name="writeobject">if true write the object down the pipeline. Otherwise, add to the list</param>
-        /// <param name="matches">The list we add the maching runspaces to</param>        
+        /// <param name="matches">The list we add the matching runspaces to</param>        
         private void WriteOrAddMatches(List<PSSession> matchingRunspaceInfos,
             bool writeobject,
             ref Dictionary<Guid, PSSession> matches)
@@ -3015,7 +3015,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                // will have to raise OpertionComplete from here,
+                // will have to raise OperationComplete from here,
                 // else ThrottleManager will have
                 RaiseOperationCompleteEvent();
             }
@@ -3237,7 +3237,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 case RunspaceState.Closed:
                     {
-                        // raise a OpertionComplete event with
+                        // raise a OperationComplete event with
                         // StopComplete message 
                         if (stateEventArgs.RunspaceStateInfo.Reason != null)
                         {
