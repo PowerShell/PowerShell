@@ -41,10 +41,10 @@ namespace System.Management.Automation.Runspaces.Internal
         /// The TypeTable to use while deserializing/serializing remote objects.
         /// TypeTable has the following information used by serializer:
         ///   1. SerializationMethod
-        ///   2. SerailizationDepth
+        ///   2. SerializationDepth
         ///   3. SpecificSerializationProperties
-        /// TypeTable has the following inforamtion used by deserializer:
-        ///   1. TargetTypeForDeserializaiton
+        /// TypeTable has the following information used by deserializer:
+        ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
         /// </param>
         /// <param name="host">Host associated with this runspacepool</param>
@@ -134,7 +134,7 @@ namespace System.Management.Automation.Runspaces.Internal
             this.instanceId = instanceId;
 
             // This indicates that this is a disconnected remote runspace pool and min/max values
-            // are currently unkown. These values will be updated once the object is connected.
+            // are currently unknown. These values will be updated once the object is connected.
             this.minPoolSz = -1;
             this.maxPoolSz = -1;
 
@@ -261,7 +261,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     // same way it is set for runspaces.
                     availability = (AvailableForConnection) ?
                             RunspacePoolAvailability.None :     // Disconnected runspacepool available for connection.
-                            RunspacePoolAvailability.Busy;      // Disconnected runspacepool unavailble for connection.
+                            RunspacePoolAvailability.Busy;      // Disconnected runspacepool unavailable for connection.
                 }
                 else
                 {
@@ -518,7 +518,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (raiseEvents)
             {
-                // Private application data is senter after (post) connect.  We need
+                // Private application data is sent after (post) connect.  We need
                 // to wait for application data before raising the state change
                 // Connecting -> Opened event.
                 ThreadPool.QueueUserWorkItem(WaitAndRaiseConnectEventsProc, info);
@@ -695,7 +695,7 @@ namespace System.Management.Automation.Runspaces.Internal
         internal event EventHandler<RemoteDataEventArgs<RemoteHostCall>> HostCallReceived;
 
         /// <summary>
-        /// EventHandler used to report connecion URI redirections to the application
+        /// EventHandler used to report connection URI redirections to the application
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<Uri>> URIRedirectionReported;
 

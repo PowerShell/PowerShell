@@ -45,7 +45,7 @@ namespace System.Management.Automation
     /// <remarks>The following are some of the notes about
     /// why the asynchronous operations are provided this way
     /// in this class. There are two possible options in which
-    /// asynchornous support can be provided:
+    /// asynchronous support can be provided:
     ///     1. Classical pattern (Begin and End)
     ///     2. Event based pattern
     ///     
@@ -212,7 +212,7 @@ namespace System.Management.Automation
         /// start a job. The job will be started with the parameters
         /// specified in StartParameters
         /// </summary>
-        /// <remarks>It is redudant to have a method named StartJob
+        /// <remarks>It is redundant to have a method named StartJob
         /// on a job class. However, this is done so as to avoid
         /// an FxCop violation "CA1716:IdentifiersShouldNotMatchKeywords"
         /// Stop and Resume are reserved keyworks in C# and hence cannot
@@ -257,7 +257,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Method which can be exteded or called by derived 
+        /// Method which can be extended or called by derived 
         /// classes to raise the event when suspending a 
         /// job is completed
         /// </summary>
@@ -801,7 +801,7 @@ namespace System.Management.Automation
                 catch (Exception e)
                 {
                     // These exceptions are thrown by third party code. Adding them here to the collection
-                    // of execution errors to present consistant behavior of the object.
+                    // of execution errors to present consistent behavior of the object.
 
                     ExecutionError.Add(new ErrorRecord(e, "ContainerParentJobStartError",
                                                        ErrorCategory.InvalidResult, child));
@@ -985,7 +985,7 @@ namespace System.Management.Automation
                 catch (Exception e)
                 {
                     // These exceptions are thrown by third party code. Adding them here to the collection
-                    // of execution errors to present consistant behavior of the object.
+                    // of execution errors to present consistent behavior of the object.
 
                     ExecutionError.Add(new ErrorRecord(e, "ContainerParentJobResumeError",
                                                        ErrorCategory.InvalidResult, child));
@@ -1221,7 +1221,7 @@ namespace System.Management.Automation
                 catch (Exception e)
                 {
                     // These exceptions are thrown by third party code. Adding them here to the collection
-                    // of execution errors to present consistant behavior of the object.
+                    // of execution errors to present consistent behavior of the object.
 
                     ExecutionError.Add(new ErrorRecord(e, "ContainerParentJobUnblockError",
                         ErrorCategory.InvalidResult, child));
@@ -1390,7 +1390,7 @@ namespace System.Management.Automation
                 catch (Exception e)
                 {
                     // These exceptions are thrown by third party code. Adding them here to the collection
-                    // of execution errors to present consistant behavior of the object.
+                    // of execution errors to present consistent behavior of the object.
 
                     ExecutionError.Add(new ErrorRecord(e, "ContainerParentJobSuspendError",
                                                        ErrorCategory.InvalidResult, child));
@@ -1563,7 +1563,7 @@ namespace System.Management.Automation
                 catch (Exception e)
                 {
                     // These exceptions are thrown by third party code. Adding them here to the collection
-                    // of execution errors to present consistant behavior of the object.
+                    // of execution errors to present consistent behavior of the object.
 
                     ExecutionError.Add(new ErrorRecord(e, "ContainerParentJobStopError",
                                                        ErrorCategory.InvalidResult, child));

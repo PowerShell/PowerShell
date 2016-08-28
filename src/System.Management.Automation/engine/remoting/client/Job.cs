@@ -570,7 +570,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Wait Handle which is signaled when job is finished.
         /// This is set when state of the job is set to Completed,
-        /// Stopped or Failied.
+        /// Stopped or Failed.
         /// </summary>
         public WaitHandle Finished
         {
@@ -1408,7 +1408,7 @@ namespace System.Management.Automation
                 }
 
 #pragma warning disable 56500
-                //Exception rasied in the eventhandler are not error in job.
+                //Exception raised in the eventhandler are not error in job.
                 //silently ignore them.
                 try
                 {
@@ -1778,7 +1778,7 @@ namespace System.Management.Automation
                         int throttleLimit, string name)
             : base(remoteCommand, name)
         {
-            // Create chiild jobs for each object in the list
+            // Create child jobs for each object in the list
             for (int i = 0; i < remoteRunspaceInfos.Length; i++)
             {
                 ExecutionCmdletHelperRunspace helper = (ExecutionCmdletHelperRunspace)runspaceHelpers[i];
@@ -2661,7 +2661,7 @@ namespace System.Management.Automation
             }
             else
             {
-                // Will have to raise OpertionComplete from here,
+                // Will have to raise OperationComplete from here,
                 // else ThrottleManager will have
                 SendStopComplete();
             }
@@ -4081,7 +4081,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// This job is used for running as a job the results from multiple
-    /// pipelines. This is used in synchronouse Invoke-Expression execution
+    /// pipelines. This is used in synchronous Invoke-Expression execution
     /// </summary>
     /// <remarks>
     /// TODO: I am not sure whether to change this internal to just InvokeExpressionSyncJob.

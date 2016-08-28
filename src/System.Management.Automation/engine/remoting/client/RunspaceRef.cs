@@ -135,7 +135,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Creates the PSCommand when the runspace is not overriden
+        /// Creates the PSCommand when the runspace is not overridden
         /// </summary>
         private PSCommand CreatePsCommandNotOverriden(string line, bool isScript, bool? useNewScope)
         {

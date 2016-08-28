@@ -50,7 +50,7 @@ namespace System.Management.Automation
         private string _moduleName;
 
         /// <summary>
-        /// Module name for the module contianing
+        /// Module name for the module containing
         /// the source adapter implementation.
         /// </summary>
         public string ModuleName
@@ -169,7 +169,7 @@ namespace System.Management.Automation
     /// be passed to a job so that the job can be
     /// instantiated without having to specify
     /// the parameters explicitly. Helps in 
-    /// passivating job parameters to disk
+    /// passing job parameters to disk
     /// </summary>
     /// <remarks>This class is not required if
     /// CommandParameterCollection adds a public

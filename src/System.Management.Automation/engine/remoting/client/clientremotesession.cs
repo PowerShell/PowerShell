@@ -43,7 +43,7 @@ namespace System.Management.Automation.Remoting
         internal RemoteSessionCapability ServerCapability { get; set; }
 
         /// <summary>
-        /// This is the shellName which indentifies the PowerShell configuration to launch
+        /// This is the shellName which identifies the PowerShell configuration to launch
         /// on remote machine.        
         /// </summary>
         internal string ShellName { get; set; }
@@ -75,7 +75,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Close the connection to the remote computer in an asynchronous manner.
-        /// Client side user can register an event handler with ConnectionClosed to minitor
+        /// Client side user can register an event handler with ConnectionClosed to monitor
         /// the connection state.
         /// </summary>
         public abstract void CloseAsync();
@@ -108,7 +108,7 @@ namespace System.Management.Automation.Remoting
         #region URI Redirection
 
         /// <summary>
-        /// Deleagate used to report connecion URI redirections to the application
+        /// Delegate used to report connection URI redirections to the application
         /// </summary>
         /// <param name="newURI">
         /// New URI to which the connection is being redirected to.
@@ -239,7 +239,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override void CreateAsync()
         {
-            //Raise a CreateSession event in StateMachine. This start the process of connection and negotition to a new remote session
+            //Raise a CreateSession event in StateMachine. This start the process of connection and negotiation to a new remote session
             RemoteSessionStateMachineEventArgs startArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.CreateSession);
             SessionDataStructureHandler.StateMachine.RaiseEvent(startArg);
         }
@@ -249,7 +249,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override void ConnectAsync()
         {
-            //Raise the connectsession event in statemachine. This start the process of connection and negotition to an existing remote session
+            //Raise the connectsession event in statemachine. This start the process of connection and negotiation to an existing remote session
             RemoteSessionStateMachineEventArgs startArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.ConnectSession);
             SessionDataStructureHandler.StateMachine.RaiseEvent(startArg);
         }
@@ -267,7 +267,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Temporaritly suspends connection to a connected remote session
+        /// Temporarily suspends connection to a connected remote session
         /// </summary>
         public override void DisconnectAsync()
         {
@@ -487,7 +487,7 @@ namespace System.Management.Automation.Remoting
         /// Verifies the negotiation packet received from the server
         /// </summary>
         /// <param name="serverRemoteSessionCapability">
-        /// Capablities of remote session
+        /// Capabilities of remote session
         /// </param>
         /// <returns> 
         /// The method returns true if the capability negotiation is successful.
@@ -567,7 +567,7 @@ namespace System.Management.Automation.Remoting
             return true;
         }
 
-        #endregion negotioation
+        #endregion negotiation
 
         internal override RemotingDestination MySelf { get; }
 

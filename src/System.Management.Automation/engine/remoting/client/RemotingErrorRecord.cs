@@ -363,7 +363,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Overriden ToString() method
+        /// Overridden ToString() method
         /// </summary>
         /// <returns>returns the computername</returns>
         public override string ToString()
