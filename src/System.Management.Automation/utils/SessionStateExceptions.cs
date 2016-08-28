@@ -683,7 +683,7 @@ namespace System.Management.Automation
     /// SessionStateUnauthorizedAccessException occurs when
     /// a change to a session state object cannot be completed
     /// because the object is read-only or constant, or because
-    /// an object which is declard constant cannot be removed
+    /// an object which is declared constant cannot be removed
     /// or made non-constant.
     /// </summary>
     [Serializable]

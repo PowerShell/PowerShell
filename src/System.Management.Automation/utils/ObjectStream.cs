@@ -280,7 +280,7 @@ namespace System.Management.Automation.Internal
         /// If enumerateCollection is true, and <paramref name="obj"/>
         /// is an enumeration according to LanguagePrimitives.GetEnumerable,
         /// the objects in the enumeration will be unrolled and
-        /// written seperately.  Otherwise, <paramref name="obj"/>
+        /// written separately.  Otherwise, <paramref name="obj"/>
         /// will be written as a single object.
         /// </param>
         /// <returns>The number of objects written</returns>
@@ -520,7 +520,7 @@ namespace System.Management.Automation.Internal
         /// Default constructor
         /// </summary>
         /// <remarks>
-        /// Constructs a stream with a miximum size of Int32.Max
+        /// Constructs a stream with a maximum size of Int32.Max
         /// </remarks>
         internal ObjectStream()
             : this(Int32.MaxValue)
@@ -1293,7 +1293,7 @@ namespace System.Management.Automation.Internal
         /// If enumerateCollection is true, and <paramref name="obj"/>
         /// is an enumeration according to LanguagePrimitives.GetEnumerable,
         /// the objects in the enumeration will be unrolled and
-        /// written seperately.  Otherwise, <paramref name="obj"/>
+        /// written separately.  Otherwise, <paramref name="obj"/>
         /// will be written as a single object.
         /// </param>
         /// <returns>The number of objects written</returns>
@@ -1342,7 +1342,7 @@ namespace System.Management.Automation.Internal
                 foreach (object o in enumerable)
                 {
                     // 879023-2003/10/28-JonN
-                    //  Outputting stops when recieving a AutomationNull.Value
+                    //  Outputting stops when receiving a AutomationNull.Value
                     // 2003/10/28-JonN There is a window where another
                     //  thread could modify the array to contain
                     //  AutomationNull.Value, but I'm not going to deal with it.
@@ -1833,7 +1833,7 @@ namespace System.Management.Automation.Internal
             {
                 foreach (object o in enumerable)
                 {
-                    //  Outputting stops when recieving a AutomationNull.Value
+                    //  Outputting stops when receiving a AutomationNull.Value
                     //  There is a window where another thread could modify the 
                     //  array to contain AutomationNull.Value, 
                     //  but I'm not going to deal with it.

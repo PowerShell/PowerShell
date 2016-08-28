@@ -350,7 +350,7 @@ namespace System.Management.Automation.Tracing
         Exception = 0xB002,
 
         /// <summary>
-        /// PoweShellObject
+        /// PowerShellObject
         /// </summary>
         PowerShellObject = 0xB003,
 
@@ -940,7 +940,7 @@ namespace System.Management.Automation.Tracing
         private bool disposed;
 
         /// <summary>
-        /// Consturctor
+        /// Constructor
         /// </summary>
         internal PowerShellTraceSource(PowerShellTraceTask task, PowerShellTraceKeywords keywords)
         {

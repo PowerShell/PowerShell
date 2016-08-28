@@ -371,7 +371,7 @@ namespace System.Management.Automation.Internal
         /// Constructor with inner exception
         /// </summary>
         /// <param name="message">error message</param>
-        /// <param name="innerException">innter exception</param>
+        /// <param name="innerException">inner exception</param>
         /// <remarks>This constructor is currently not called 
         /// explicitly from crypto utils</remarks>
         public PSCryptoException(string message, Exception innerException) :
@@ -512,7 +512,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Generates an AEX-256 sessin key if one is not already generated
+        /// Generates an AEX-256 session key if one is not already generated
         /// </summary>
         internal void GenerateSessionKey()
         {
@@ -860,7 +860,7 @@ namespace System.Management.Automation.Internal
         #region IDisposable
 
         /// <summary>
-        /// Dipose resources
+        /// Dispose resources
         /// </summary>
         public void Dispose()
         {

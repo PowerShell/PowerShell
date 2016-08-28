@@ -21,7 +21,7 @@ namespace System.Management.Automation.Internal
     /// Microsoft.PowerShell.GraphicalHost.dll contains:
     ///    1) out-gridview window implementation (the actual cmdlet is in Microsoft.PowerShell.Commands.Utility.dll)
     ///    2) show-command window implementation (the actual cmdlet is in Microsoft.PowerShell.Commands.Utility.dll)
-    ///    3) the help window used in the System.Management.Automation.dll's get-help cmdslet when -ShowWindow is specified
+    ///    3) the help window used in the System.Management.Automation.dll's get-help cmdlet when -ShowWindow is specified
     /// </summary>
     internal class GraphicalHostReflectionWrapper
     {

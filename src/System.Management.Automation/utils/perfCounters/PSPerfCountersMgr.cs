@@ -14,7 +14,7 @@ namespace System.Management.Automation.PerformanceData
     /// <summary>
     /// Powershell Performance Counters Manager class shall provide a mechanism
     /// for components using SYstem.Management.Automation assembly to register
-    /// performance counters with Performance Counters susbsystem.
+    /// performance counters with Performance Counters subsystem.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public class PSPerfCountersMgr
@@ -37,7 +37,7 @@ namespace System.Management.Automation.PerformanceData
 
         #endregion
 
-        #region Desctructor
+        #region Destructor
 
         /// <summary>
         /// Destructor which will trigger the cleanup of internal data structures and

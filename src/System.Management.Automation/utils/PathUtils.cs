@@ -23,7 +23,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="cmdlet">cmdlet that is opening the file (used mainly for error reporting)</param>
         /// <param name="filePath">path to the file (as specified on the command line - this method will resolve the path)</param>
-        /// <param name="encoding">encoding (this method will convert the command line strin to an Encoding instance)</param>
+        /// <param name="encoding">encoding (this method will convert the command line string to an Encoding instance)</param>
         /// <param name="defaultEncoding">if <c>true</c>, then we will use default .NET encoding instead of the encoding specified in <paramref name="encoding"/> parameter</param>
         /// <param name="Append"></param>
         /// <param name="Force"></param>
@@ -57,7 +57,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="cmdlet">cmdlet that is opening the file (used mainly for error reporting)</param>
         /// <param name="filePath">path to the file (as specified on the command line - this method will resolve the path)</param>
-        /// <param name="resolvedEncoding">encoding (this method will convert the command line strin to an Encoding instance)</param>
+        /// <param name="resolvedEncoding">encoding (this method will convert the command line string to an Encoding instance)</param>
         /// <param name="defaultEncoding">if <c>true</c>, then we will use default .NET encoding instead of the encoding specified in <paramref name="encoding"/> parameter</param>
         /// <param name="Append"></param>
         /// <param name="Force"></param>
@@ -453,7 +453,7 @@ namespace System.Management.Automation
         internal const string OEM = "oem";
 
         /// <summary>
-        /// retrieve the encoding paramater from the command line
+        /// retrieve the encoding parameter from the command line
         /// it throws if the encoding does not match the known ones
         /// </summary>
         /// <returns>a System.Text.Encoding object (null if no encoding specified)</returns>
