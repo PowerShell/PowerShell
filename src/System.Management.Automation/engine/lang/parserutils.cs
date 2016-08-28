@@ -73,7 +73,7 @@ namespace System.Management.Automation
             return (c == '{' || c == '}');
         }
         /// <summary>
-        /// Canonicalize the quote charater - map all of the aliases for " or '
+        /// Canonicalize the quote character - map all of the aliases for " or '
         /// into their ascii equivalent.
         /// </summary>
         /// <param name="c">The character to map</param>
@@ -270,7 +270,7 @@ namespace System.Management.Automation
     public enum SplitOptions
     {
         /// <summary>
-        /// Use simple string comparison when evaluting the delimiter.
+        /// Use simple string comparison when evaluating the delimiter.
         /// Cannot be used with RegexMatch.
         /// </summary>
         SimpleMatch = 0x01,
@@ -280,7 +280,7 @@ namespace System.Management.Automation
         /// </summary>
         RegexMatch = 0x02,
         /// <summary>
-        /// CultureInvariant: Ignores cultural differences in language when evaluting the delimiter.
+        /// CultureInvariant: Ignores cultural differences in language when evaluating the delimiter.
         /// Valid only with RegexMatch.
         /// </summary>
         CultureInvariant = 0x04,
@@ -1330,7 +1330,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Launch a method on an object. This will handle .NET native methods, COM 
-        /// methods and ScriptBlock notes. Native methods currently take precidence over notes...
+        /// methods and ScriptBlock notes. Native methods currently take precedence over notes...
         /// </summary>
         /// <param name="errorPosition">The position to use for error reporting.</param>
         /// <param name="target">The object to call the method on. It shouldn't be an msh object</param>
@@ -1338,7 +1338,7 @@ namespace System.Management.Automation
         /// <param name="invocationConstraints">Invocation constraints</param>
         /// <param name="paramArray">The arguments to pass to the method.</param>
         /// <param name="callStatic">Set to true if you want to call a static method.</param>
-        /// <param name="valueToSet">If not automation null, then this must be a settable propery</param>
+        /// <param name="valueToSet">If not automation null, then this must be a settable property</param>
         /// <exception cref="RuntimeException">Wraps the exception returned from the method call</exception>
         /// <exception cref="SessionStateOverflowException">The maximum scope depth would be exceeded</exception>
         /// <exception cref="FlowControlException">Internal exception from a flow control statement</exception>        
