@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell
     {
         /// Unrestricted - No files must be signed.  If a file originates from the
         ///    internet, Monad provides a warning prompt to alert the user.  To
-        ///    supress this warning message, right-click on the file in File Explorer,
+        ///    suppress this warning message, right-click on the file in File Explorer,
         ///    select "Properties," and then "Unblock."
         Unrestricted = 0,
 
@@ -642,7 +642,7 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// check to see if the specified cert is suitable to be
-        /// used as an encryption cert for PKI encyryption. Note
+        /// used as an encryption cert for PKI encryption. Note
         /// that this cert doesn't require the private key.
         /// </summary>
         ///
