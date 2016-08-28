@@ -21,7 +21,7 @@ namespace System.Management.Automation.Runspaces
     /// Runspace configuration entry collection is used for handling following 
     /// problems for runspace configuration entries. 
     /// 
-    ///     1. synhronization. Since multiple runspaces may be sharing the same
+    ///     1. synchronization. Since multiple runspaces may be sharing the same
     ///        runspace configuration, it is essential all the entry collections
     ///        (cmdlets, providers, assemblies, types, formats) are thread-safe. 
     ///     2. prepending/appending. Data for types and formats are order 

@@ -9,7 +9,7 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     /// <!--
     /// This is an assembly attribute for the mini-shell assembly to tell 
-    /// the type name for MiniShellConguration derived class.
+    /// the type name for MiniShellConfiguration derived class.
     /// -->
     [AttributeUsage(AttributeTargets.Assembly)]
 #if CORECLR
