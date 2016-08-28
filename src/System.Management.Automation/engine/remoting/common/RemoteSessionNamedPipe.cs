@@ -264,7 +264,7 @@ namespace System.Management.Automation.Remoting
         #region Properties
 
         /// <summary>
-        /// Exception reson for listener end event.  Can be null
+        /// Exception reason for listener end event.  Can be null
         /// which indicates listener thread end is not due to an error.
         /// </summary>
         public Exception Reason
@@ -503,7 +503,7 @@ namespace System.Management.Automation.Remoting
             s_syncObject = new object();
 
             // All PowerShell instances will start with the named pipe
-            // and listner created and running.
+            // and listener created and running.
             if (Platform.IsWindows)
             {
                 IPCNamedPipeServerEnabled = true;
@@ -962,7 +962,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Connect to named pipe server.  This is a blocking call until a 
-        /// connection occurs or the timeout time has ellapsed.
+        /// connection occurs or the timeout time has elapsed.
         /// </summary>
         /// <param name="timeout">Connection attempt timeout in milliseconds</param>
         public void Connect(

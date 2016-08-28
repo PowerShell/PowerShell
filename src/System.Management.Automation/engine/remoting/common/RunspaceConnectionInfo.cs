@@ -545,7 +545,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// AuthenticationMaechanism converted to WSManAuthenticationMechanism type.
+        /// AuthenticationMechanism converted to WSManAuthenticationMechanism type.
         /// This is internal.
         /// </summary>
         internal WSManAuthenticationMechanism WSManAuthenticationMechanism { get; private set; } = WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION;
@@ -709,7 +709,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Specifies that no encryption will be used when doing remote operations over 
-        /// http. Unencrypted traffix is not allowed by default and must be enabled in 
+        /// http. Unencrypted traffic is not allowed by default and must be enabled in 
         /// the local configuration
         /// </summary>
         public bool NoEncryption { get; set; }
@@ -925,7 +925,7 @@ namespace System.Management.Automation.Runspaces
         /// default server life time and default open
         /// timeout
         /// </summary>
-        /// <param name="uri">uri of remote runspae</param>
+        /// <param name="uri">uri of remote runspace</param>
         /// <exception cref="ArgumentException">When an
         /// uri representing an invalid path is specified</exception>
         public WSManConnectionInfo(Uri uri)
@@ -1089,7 +1089,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Converts <paramref name="rsCI"/> to a WSManConnectionInfo. If conversion succeeds extracts
-        /// the propery..otherwise returns default value
+        /// the property..otherwise returns default value
         /// </summary>
         /// <param name="rsCI"></param>
         /// <param name="property"></param>
@@ -1246,7 +1246,7 @@ namespace System.Management.Automation.Runspaces
         /// Used to resolve authentication from the parameters chosen by the user.
         /// User has the following options:
         /// 1. AuthMechanism + Credential
-        /// 2. CertiticateThumbPrint
+        /// 2. CertificateThumbPrint
         /// 
         /// All the above are mutually exclusive.
         /// </summary>
@@ -1603,7 +1603,7 @@ namespace System.Management.Automation.Runspaces
         /// ThumbPrint of a certificate used for connecting to a remote machine.
         /// When this is specified, you dont need to supply credential and authentication
         /// mechanism.
-        /// Will always be empty to signfy that this is not supported.
+        /// Will always be empty to signify that this is not supported.
         /// </summary>
         public override string CertificateThumbprint
         {
@@ -2056,7 +2056,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a process through native Win32 APIs and return StdIn, StdOut, StdError reader/writers
         /// This needs to be done via Win32 APIs because managed code creates anonymous synchronous pipes 
-        /// for redirected StdIn/Out and SSH (and PSRP) require asynchrous (overlapped) pipes, which must
+        /// for redirected StdIn/Out and SSH (and PSRP) require asynchronous (overlapped) pipes, which must
         /// be through named pipes.  Managed code for named pipes is unreliable and so this is done via
         /// P-Invoking native APIs.
         /// </summary>
@@ -2362,7 +2362,7 @@ namespace System.Management.Automation.Runspaces
         /// ThumbPrint of a certificate used for connecting to a remote machine.
         /// When this is specified, you dont need to supply credential and authentication
         /// mechanism.
-        /// Will always be null to signfy that this is not supported.
+        /// Will always be null to signify that this is not supported.
         /// </summary>
         public override string CertificateThumbprint
         {
@@ -2483,7 +2483,7 @@ namespace System.Management.Automation.Runspaces
         /// ThumbPrint of a certificate used for connecting to a remote machine.
         /// When this is specified, you dont need to supply credential and authentication
         /// mechanism.
-        /// Will always be null to signfy that this is not supported.
+        /// Will always be null to signify that this is not supported.
         /// </summary>
         public override string CertificateThumbprint
         {
