@@ -20,7 +20,7 @@ namespace Microsoft.Management.UI.Internal
 {
     
     /// <summary>
-    /// A TextBox which shows a user provided text when its empty.
+    /// A TextBox which shows a user provided text when it's empty.
     /// </summary>
     [Localizability(LocalizationCategory.None)]
     partial class MessageTextBox
