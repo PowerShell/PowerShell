@@ -49,8 +49,8 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>the next highlight starting at the <paramref name="caretPosition"/></returns>
         internal Run MoveAndHighlightNextNextMatch(bool forward, TextPointer caretPosition)
         {
-            Debug.Assert(caretPosition != null, "a caret position is allways valid");
-            Debug.Assert(caretPosition.Parent != null && caretPosition.Parent is Run, "a caret PArent is allways a valid Run");
+            Debug.Assert(caretPosition != null, "a caret position is always valid");
+            Debug.Assert(caretPosition.Parent != null && caretPosition.Parent is Run, "a caret Parent is always a valid Run");
             Run caretRun = (Run)caretPosition.Parent;
 
             Run currentRun;
@@ -203,7 +203,7 @@ namespace Microsoft.Management.UI.Internal
         {
             Bold parentBold = run.Parent as Bold;
             Paragraph parentParagraph = (parentBold != null ? parentBold.Parent : run.Parent) as Paragraph;
-            Debug.Assert(parentParagraph != null, "the documents we are saerching are built with ParagraphBuilder, which builds the document like this");
+            Debug.Assert(parentParagraph != null, "the documents we are searching are built with ParagraphBuilder, which builds the document like this");
             return parentParagraph;
         }
 
@@ -227,7 +227,7 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>the first or last run in the paragraph containing <paramref name="caretRun"/></returns>
         private static Run GetFirstOrLastRun(Run caretRun, bool forward)
         {
-            Debug.Assert(caretRun != null, "a caret run is allways valid");
+            Debug.Assert(caretRun != null, "a caret run is always valid");
 
             Paragraph paragraph = GetParagraph(caretRun);
             

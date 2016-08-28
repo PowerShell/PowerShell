@@ -130,7 +130,7 @@ namespace Microsoft.Management.UI.Internal
                 return;
             }
             
-            Debug.Assert(this.AvailableColumns.Count == 0, "AvailabeColumns should be empty at this point");
+            Debug.Assert(this.AvailableColumns.Count == 0, "AvailableColumns should be empty at this point");
 
             PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(first);
             foreach (PropertyDescriptor property in properties)

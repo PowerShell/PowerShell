@@ -623,7 +623,7 @@ namespace Microsoft.PowerShell.Workflow
 
         private long LoadSerializedMetadata(object data)
         {
-            Debug.Assert(data.GetType() == typeof (PSWorkflowContext), "The data should be of type worklfow metadata");
+            Debug.Assert(data.GetType() == typeof (PSWorkflowContext), "The data should be of type workflow metadata");
             PSWorkflowContext metadata = (PSWorkflowContext) data;
 
             this.serializedWorkflowParameters = Encrypt(SerializeObject(metadata.WorkflowParameters));
@@ -757,7 +757,7 @@ namespace Microsoft.PowerShell.Workflow
         private ArraySegment<byte> serializedRequiredAssemblies;
         private long LoadSerializedDefinition(object data)
         {
-            Debug.Assert(data.GetType() == typeof (PSWorkflowDefinition), "The data should be of type worklfow definition");
+            Debug.Assert(data.GetType() == typeof (PSWorkflowDefinition), "The data should be of type workflow definition");
             PSWorkflowDefinition definition = (PSWorkflowDefinition) data;
 
             string WorkflowXaml = definition.WorkflowXaml;
@@ -782,7 +782,7 @@ namespace Microsoft.PowerShell.Workflow
 
         private void SaveSerializedDefinition(object data)
         {
-            Debug.Assert(data.GetType() == typeof (PSWorkflowDefinition), "The data should be of type worklfow definition");
+            Debug.Assert(data.GetType() == typeof (PSWorkflowDefinition), "The data should be of type workflow definition");
             PSWorkflowDefinition definition = (PSWorkflowDefinition) data;
 
             if (firstTimeStoringDefinition)
@@ -1826,7 +1826,7 @@ namespace Microsoft.PowerShell.Workflow
                         CreateAndEnsureInstancePath(Metadatas, out storePath);
 
                         Debug.Assert(component.GetType() == typeof(PSWorkflowContext),
-                                     "The data should be of type worklfow metadata");
+                                     "The data should be of type workflow metadata");
                         PSWorkflowContext metadata = (PSWorkflowContext)component;
 
                         totalBytesWritten += SerializeAndSaveToFile(metadata.WorkflowParameters, Path.Combine(storePath, Input_xml));
@@ -1841,7 +1841,7 @@ namespace Microsoft.PowerShell.Workflow
                         if (firstTimeStoringDefinition)
                         {
                             Debug.Assert(component.GetType() == typeof(PSWorkflowDefinition),
-                                         "The data should be of type worklfow definition");
+                                         "The data should be of type workflow definition");
                             PSWorkflowDefinition definition = (PSWorkflowDefinition)component;
 
                             // there is no serialization involved, just storing xamls and reference

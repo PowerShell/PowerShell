@@ -442,7 +442,7 @@ namespace Microsoft.PowerShell.Management.Activities
                 return;
             }
 
-            _structuredTracer.DebugMessage("Executing activity '" + this.DisplayName + "', local machine (" + Environment.MachineName + ") is self-restaring");
+            _structuredTracer.DebugMessage("Executing activity '" + this.DisplayName + "', local machine (" + Environment.MachineName + ") is self-restarting");
             base.Execute(context);
         }
     }
