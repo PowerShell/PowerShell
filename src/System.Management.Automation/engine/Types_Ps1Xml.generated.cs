@@ -1102,7 +1102,7 @@ namespace System.Management.Automation.Runspaces
           {
           if ($psversiontable.psversion.Major -lt 3)
           {
-          # ok to cast CommandTypes enum to HelpCategory because string/indentifier for
+          # ok to cast CommandTypes enum to HelpCategory because string/identifier for
           # cmdlet,function,filter,alias,externalscript is identical.
           # it is ok to fail for other enum values (i.e. for Application)
           $commandName = $this.Name

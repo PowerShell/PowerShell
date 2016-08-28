@@ -323,7 +323,7 @@ namespace System.Management.Automation
 
             foreach (MergedCompiledCommandParameter parameter in UnboundParameters)
             {
-                // If a prarameter doesn't take pipeline input at all, we can skip it
+                // If a parameter doesn't take pipeline input at all, we can skip it
                 if (!parameter.Parameter.IsPipelineParameterInSomeParameterSet)
                 {
                     continue;
@@ -363,7 +363,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Apply the binding for the defualt parameter defined by the user 
+        /// Apply the binding for the default parameter defined by the user 
         /// </summary>
         /// <param name="bindingStage">
         /// Dictate which binding stage this default binding happens
@@ -413,7 +413,7 @@ namespace System.Management.Automation
         /// <param name="validParameterSetFlag">validParameterSetFlag</param>
         /// <param name="defaultParameterValues">default value pairs</param>
         /// <returns>
-        /// true if there is at least one default parameter bound scucessfully
+        /// true if there is at least one default parameter bound successfully
         /// false if there is no default parameter bound successfully
         /// </returns>
         private bool BindDefaultParameters(uint validParameterSetFlag, Dictionary<MergedCompiledCommandParameter, object> defaultParameterValues)
@@ -554,7 +554,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                // check if this param's set confilcts with other possible params.
+                // check if this param's set conflicts with other possible params.
                 if (param.Parameter.ParameterSetFlags != 0)
                 {
                     possibleParameterFlag &= param.Parameter.ParameterSetFlags;
@@ -876,7 +876,7 @@ namespace System.Management.Automation
         /// Verify if all arguments from the command line are bound.
         /// </summary>
         /// <param name="originalBindingException">
-        /// Previous binding exceptions that possiblly causes the failure
+        /// Previous binding exceptions that possibly causes the failure
         /// </param>
         private void VerifyArgumentsProcessed(ParameterBindingException originalBindingException)
         {
@@ -2037,7 +2037,7 @@ namespace System.Management.Automation
                         //
                         // We ignore those parameter sets that contain unbound mandatory parameters, but leave
                         // all other parameter sets remain valid. The other parameter sets contains the default
-                        // parameter set and have one characeristic: NONE of them contain unbound mandatory parameters
+                        // parameter set and have one characteristic: NONE of them contain unbound mandatory parameters
                         //
                         // Comparing to the old algorithm, we keep more possible parameter sets here, but
                         // we need to prioritize the default parameter set for pipeline binding, so as NOT to
@@ -2932,7 +2932,7 @@ namespace System.Management.Automation
         } // AtLeastOneValidParameterSetTakesPipelineInput
 
         /// <summary>
-        /// Checks for unbound mandatory paramters. If any are found, an exception is thrown.
+        /// Checks for unbound mandatory parameters. If any are found, an exception is thrown.
         /// </summary>
         /// 
         /// <param name="missingMandatoryParameters">
@@ -2953,7 +2953,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks for unbound mandatory paramters. If any are found and promptForMandatory is true,
+        /// Checks for unbound mandatory parameters. If any are found and promptForMandatory is true,
         /// the user will be prompted for the missing mandatory parameters.
         /// </summary>
         /// 
@@ -3358,7 +3358,7 @@ namespace System.Management.Automation
             {
                 // Reset the default values
                 // This prevents the last pipeline object from being bound during EndProcessing
-                // if it failed some post binding varification step.
+                // if it failed some post binding verification step.
                 this.RestoreDefaultParameterValues(ParametersBoundThroughPipelineInput);
 
                 // Let the parameter binding errors propagate out
@@ -3374,7 +3374,7 @@ namespace System.Management.Automation
             {
                 // Reset the default values
                 // This prevents the last pipeline object from being bound during EndProcessing
-                // if it failed some post binding varification step.
+                // if it failed some post binding verification step.
                 this.RestoreDefaultParameterValues(ParametersBoundThroughPipelineInput);
 
                 throw;
@@ -3384,7 +3384,7 @@ namespace System.Management.Automation
             {
                 // Reset the default values
                 // This prevents the last pipeline object from being bound during EndProcessing
-                // if it failed some post binding varification step.
+                // if it failed some post binding verification step.
                 this.RestoreDefaultParameterValues(ParametersBoundThroughPipelineInput);
             }
             return result;
@@ -4229,7 +4229,7 @@ namespace System.Management.Automation
         private class DelayedScriptBlockArgument
         {
             // Remember the parameter binder so we know when to invoke the script block
-            // and when to use the evaluted argument.
+            // and when to use the evaluated argument.
             internal CmdletParameterBinderController _parameterBinder;
             internal CommandParameterInternal _argument;
             internal Collection<PSObject> _evaluatedArgument;
@@ -4756,7 +4756,7 @@ namespace System.Management.Automation
         /// When the name is not enclosed by quotes, the index returned should be the index of the separator;
         /// 
         /// For parameterName:
-        /// When the name is enclosed by quotes, the index returned should be the index of the seocnd quote plus 1 (the length of the key if the key is in a valid format);
+        /// When the name is enclosed by quotes, the index returned should be the index of the second quote plus 1 (the length of the key if the key is in a valid format);
         /// When the name is not enclosed by quotes, the index returned should be the length of the key.
         /// 
         /// </returns>

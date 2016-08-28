@@ -7,7 +7,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// A class respresenting a name that is qualified by the PSSnapin name
+    /// A class representing a name that is qualified by the PSSnapin name
     /// </summary>
     internal class PSSnapinQualifiedName
     {

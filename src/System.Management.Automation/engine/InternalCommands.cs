@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell.Commands
             // Win8: 176403: ScriptCmdlets sets the global WhatIf and Confirm preferences
             // This effects the new W8 foreach-object cmdlet with -whatif and -confirm
             // implemented. -whatif and -confirm needed only for PropertyAndMethodSet
-            // parmaeter set. So erring out in cases where these are used with ScriptBlockSet.
+            // parameter set. So erring out in cases where these are used with ScriptBlockSet.
             // Not using MshCommandRuntime, as those variables will be affected by ScriptCmdlet
             // infrastructure (wherein ScriptCmdlet modifies the global preferences).
             Dictionary<string, object> psBoundParameters = this.MyInvocation.BoundParameters;
@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
             _end = _scripts.Count;
             _start = _scripts.Count > 1 ? 1 : 0;
 
-            // and set the end script if it wasn't explicilty set with a named parameter.
+            // and set the end script if it wasn't explicitly set with a named parameter.
             if (!_setEndScript)
             {
                 if (_scripts.Count > 2)
@@ -338,7 +338,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (members.Count > 1)
                             {
-                                // write error record: property method ambigious
+                                // write error record: property method ambiguous
                                 StringBuilder possibleMatches = new StringBuilder();
                                 foreach (PSMemberInfo item in members)
                                 {
@@ -505,7 +505,7 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert(methods != null, "The return value of Members.Match should never be null.");
             if (methods.Count > 1)
             {
-                // write error record: method ambigious
+                // write error record: method ambiguous
                 StringBuilder possibleMatches = new StringBuilder();
                 foreach (PSMemberInfo item in methods)
                 {
@@ -1495,7 +1495,7 @@ namespace Microsoft.PowerShell.Commands
                                                        "ValueNotSpecifiedForWhereObject", null));
                 }
 
-                // The binary operation needs to be specified if the user specifies both the -Propery and -Value
+                // The binary operation needs to be specified if the user specifies both the -Property and -Value
                 if (!_valueNotSpecified && (_binaryOperator == TokenKind.Ieq && _forceBooleanEvaluation))
                 {
                     // The -Property and -Value are specified explicitly by the user but the binary operation is not

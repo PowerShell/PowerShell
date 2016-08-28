@@ -14,7 +14,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// Contains auxilliary ToString CodeMethod implementations for some types
+    /// Contains auxiliary ToString CodeMethod implementations for some types
     /// </summary>
     public static partial class ToStringCodeMethods
     {

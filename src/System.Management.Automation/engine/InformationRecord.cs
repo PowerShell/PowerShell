@@ -100,7 +100,7 @@ namespace System.Management.Automation
         public DateTime TimeGenerated { get; set; }
 
         /// <summary>
-        /// The tags assocaited with this informational record (if any)
+        /// The tags associated with this informational record (if any)
         /// </summary>
         [DataMember]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

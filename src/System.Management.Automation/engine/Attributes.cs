@@ -582,7 +582,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initiailizes a new instance of the AliasAttribute class
+        /// Initializes a new instance of the AliasAttribute class
         /// </summary>
         /// <param name="aliasNames">The name for this alias</param>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
@@ -604,7 +604,7 @@ namespace System.Management.Automation
     public sealed class ParameterAttribute : ParsingBaseAttribute
     {
         /// <summary>
-        /// ParameterSetName refering to all ParameterSets
+        /// ParameterSetName referring to all ParameterSets
         /// </summary>
         public const string AllParameterSets = "__AllParameterSets";
 
@@ -690,7 +690,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets and sets the base name of the resource for a help message. When this field is speicifed, 
+        /// Gets and sets the base name of the resource for a help message. When this field is specified, 
         /// HelpMessageResourceId must also be specified.
         /// </summary>
         /// <exception cref="ArgumentException">for a null or empty value when setting</exception>
@@ -711,7 +711,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets and sets the Id of the resource for a help message. When this field is speicifed,
+        /// Gets and sets the Id of the resource for a help message. When this field is specified,
         /// HelpMessageBaseName must also be specified.
         /// </summary>
         /// <exception cref="ArgumentException">for a null or empty value when setting</exception>
@@ -989,7 +989,7 @@ namespace System.Management.Automation
         /// <param name="maxRange">Maximum value of the range allowed. </param>
         /// <exception cref="ArgumentNullException">for invalid arguments</exception>
         /// <exception cref="ValidationMetadataException">
-        /// if maxRange has a differnet type than minRange
+        /// if maxRange has a different type than minRange
         /// if maxRange is smaller than minRange
         /// if maxRange, minRange are not IComparable
         /// </exception>
@@ -1241,7 +1241,7 @@ namespace System.Management.Automation
         /// </param>
         /// <exception cref="ValidationMetadataException">
         /// if the element is none of ICollection, IEnumerable, IList, IEnumerator
-        /// if the element's lenght is not between MinLength and MAxLEngth
+        /// if the element's length is not between MinLength and MAxLEngth
         /// </exception>
         protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
         {

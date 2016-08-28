@@ -71,7 +71,7 @@ namespace System.Management.Automation
                 }
             }
 
-            // If this is a PSCredential type and they haven't added any argument transformation attributues,
+            // If this is a PSCredential type and they haven't added any argument transformation attributes,
             // add one for credential transformation
             if ((this.Type == typeof(PSCredential)) && argTransformationAttributes == null)
             {

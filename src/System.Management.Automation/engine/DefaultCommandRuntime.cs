@@ -42,7 +42,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Default implementation of WriteError - if the error record contains
-        /// an exceptin then that exception will be thrown. If not, then an
+        /// an exception then that exception will be thrown. If not, then an
         /// InvalidOperationException will be constructed and thrown.
         /// </summary>
         /// <param name="errorRecord">Error record instance to process</param>

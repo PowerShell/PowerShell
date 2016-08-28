@@ -128,7 +128,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get/set constraints for this execution environemnt
+        /// Get/set constraints for this execution environment
         /// </summary>
         public PSLanguageMode LanguageMode
         {
@@ -154,7 +154,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Public proxy for the list of appications that are allowed to be run. If the name "*"
+        /// Public proxy for the list of applications that are allowed to be run. If the name "*"
         /// is in the list, then all applications can be run. (This is the default.)
         /// </summary>
         public List<string> Applications
@@ -187,7 +187,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Utility to check the visiblity of an object based on the current
+        /// Utility to check the visibility of an object based on the current
         /// command origin. If the object implements IHasSessionStateEntryVisibility
         /// then the check will be made. If the check fails, then an exception will be thrown...
         /// </summary>
@@ -359,7 +359,7 @@ namespace System.Management.Automation
     } // SessionStatePublic
 
     /// <summary>
-    /// This enum defines the visiblity of execution environment elements...
+    /// This enum defines the visibility of execution environment elements...
     /// </summary>
     public enum SessionStateEntryVisibility
     {
@@ -386,7 +386,7 @@ namespace System.Management.Automation
     public enum PSLanguageMode
     {
         /// <summary>
-        /// All PowerShell langugage elements are available
+        /// All PowerShell language elements are available
         /// </summary>
         FullLanguage = 0,
 

@@ -78,7 +78,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks> 
         /// Script command processor created from a script file is special
-        /// in following two perspect, 
+        /// in following two perspectives, 
         /// 
         ///     1. New scope created needs to be a 'script' scope in the 
         ///        sense that it needs to handle $script: variables. 
@@ -172,7 +172,7 @@ namespace System.Management.Automation
             // This goes both ways:
             //    - Can't dot something from a more permissive mode, since that would probably expose
             //      functions that were never designed to handle untrusted data.
-            //    - Can't dot something from a less permissive mode, since that might introduce tained
+            //    - Can't dot something from a less permissive mode, since that might introduce tainted
             //      data into the current scope.
             if ((scriptBlock.LanguageMode.HasValue) &&
                 (scriptBlock.LanguageMode != languageMode) &&
@@ -228,7 +228,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a command procesor for "get-help [helpTarget]"
+        /// Creates a command processor for "get-help [helpTarget]"
         /// </summary>
         /// <param name="context">context for the command processor</param>
         /// <param name="helpTarget">help target</param>
@@ -895,7 +895,7 @@ namespace System.Management.Automation
             }
             catch (Exception)
             {
-                // this method shoud not throw exceptions; warn about any violations on checked builds and re-throw
+                // this method should not throw exceptions; warn about any violations on checked builds and re-throw
                 Diagnostics.Assert(false, "This method should not throw exceptions!");
                 throw;
             }

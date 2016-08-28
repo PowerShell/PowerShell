@@ -51,8 +51,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Construct the tree from an object collection when arguments are comma seperated.
-        /// If valid, all elements are OR seperated.
+        /// Construct the tree from an object collection when arguments are comma separated.
+        /// If valid, all elements are OR separated.
         /// </summary>
         /// <param name="expression">
         /// The array of specified flag attribute subexpression strings.

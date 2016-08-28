@@ -991,7 +991,7 @@ namespace System.Management.Automation
                     // invocation to the current runspace, we took dependency on eventing infrastructure and
                     // this required ensuring the event and associated action be processed in the current thread
                     // synchronously. The below while loop was added for that (win8: 530495). However, fix for
-                    // 530495 resulted in hang for icm | % { icm } case and dynamic event/subscriptions senarios.
+                    // 530495 resulted in hang for icm | % { icm } case and dynamic event/subscriptions scenarios.
                     // To overcome that, changed "processSynchronously" parameter to "processInCurrentThread" and added
                     // a new parameter "waitForCompletionWhenInCurrentThread" to trigger blocking for ScriptBlock
                     // case.
