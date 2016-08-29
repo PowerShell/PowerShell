@@ -484,7 +484,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                     PackageVersion = swidObject.Version,
                     PackageProviderName = swidObject.ProviderName,
                     Repository = swidObject.Source,
-                    ExuectionStatus = swidObject.Status,
+                    ExecutionStatus = swidObject.Status,
                     ExecutionTime = DateTime.Today
                 });
 #endif
