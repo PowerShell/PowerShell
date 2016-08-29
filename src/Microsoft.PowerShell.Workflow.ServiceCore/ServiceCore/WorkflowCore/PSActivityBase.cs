@@ -2849,7 +2849,7 @@ namespace Microsoft.PowerShell.Activities
             {
                 System.Management.Automation.PowerShell commandToRun = implementationContext.PowerShellInstance;
                 actionTracer.WriteMessage(String.Format(CultureInfo.InvariantCulture,
-                                                        "Begining action to run command {0}.", commandToRun));
+                                                        "Beginning action to run command {0}.", commandToRun));
 
                 if (CheckForCancel(psActivityContext)) return;
 
@@ -4322,7 +4322,7 @@ namespace Microsoft.PowerShell.Activities
                 catch (Exception)
                 {
                     // Exception setting variables, try using proxy
-                    tracer.WriteMessage("Setting varibles in remote runspace failed using script, trying with proxy");
+                    tracer.WriteMessage("Setting variables in remote runspace failed using script, trying with proxy");
 
                     try
                     {                        
@@ -6130,7 +6130,7 @@ namespace Microsoft.PowerShell.Activities
                 var authLevel = GetUbiquitousParameter<AuthenticationLevel>("PSAuthenticationLevel", parameterDefaults);
                 command.AddParameter("Authentication", authLevel);
                 Tracer.WriteMessage(String.Format(CultureInfo.InvariantCulture,
-                    "PowerShell activity ID={0}: Setting parameter {1} to {2} from ubiquitious parameters.",
+                    "PowerShell activity ID={0}: Setting parameter {1} to {2} from ubiquitous parameters.",
                         context.ActivityInstanceId, "AuthenticationLevel", authLevel));
             }
 

@@ -1223,7 +1223,7 @@ namespace System.Management.Automation
                         resolvedPath = null;
 
                         CommandDiscovery.discoveryTracer.TraceError(
-                        "The relative path with wildcard resolved to mutiple paths. {0}",
+                        "The relative path with wildcard resolved to multiple paths. {0}",
                         path);
                     }
                     else

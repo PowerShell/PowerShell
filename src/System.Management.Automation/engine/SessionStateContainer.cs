@@ -4670,7 +4670,7 @@ namespace System.Management.Automation
                             providerPath,
                             context);
 
-                    s_tracer.WriteLine("sourcIsContainer = {0}", sourceIsContainer);
+                    s_tracer.WriteLine("sourceIsContainer = {0}", sourceIsContainer);
 
                     if (sourceIsContainer)
                     {

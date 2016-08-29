@@ -212,7 +212,7 @@ namespace Microsoft.PowerShell.Workflow
                     }
                     catch (System.Management.Automation.RuntimeException)
                     {
-                        _tracer.WriteMessage("PSW Conn: Disconnected Remote Runspace is not avialable. Runspace Instance Id: " + runspaceId.ToString());
+                        _tracer.WriteMessage("PSW Conn: Disconnected Remote Runspace is not available. Runspace Instance Id: " + runspaceId.ToString());
                     }
 
                     if (runspaces != null)
@@ -258,7 +258,7 @@ namespace Microsoft.PowerShell.Workflow
                             }
                             catch (PSInvalidOperationException)
                             {
-                                _tracer.WriteMessage("PSW Conn: Disconnected PowerShell is not avialable. Runspace Instance Id: " + foundRunspace.InstanceId.ToString());
+                                _tracer.WriteMessage("PSW Conn: Disconnected PowerShell is not available. Runspace Instance Id: " + foundRunspace.InstanceId.ToString());
                             }
                             finally
                             {
@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell.Workflow
                                         // Runspace.Close can throw exceptions when Server process has exited or runspace is invalid.
                                         // Ignoring all exceptions.
                                         //
-                                        _tracer.WriteMessage("PSW Conn: Disconnected PowerShell is not avialable. Runspace Instance Id: " + foundRunspace.InstanceId.ToString());
+                                        _tracer.WriteMessage("PSW Conn: Disconnected PowerShell is not available. Runspace Instance Id: " + foundRunspace.InstanceId.ToString());
                                     }
                                 }
                             }

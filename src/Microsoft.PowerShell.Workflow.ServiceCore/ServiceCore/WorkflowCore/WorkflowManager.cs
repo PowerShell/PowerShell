@@ -987,7 +987,7 @@ namespace Microsoft.PowerShell.Workflow
         /// <returns>Returns the collection of workflow instances.</returns>
         internal IEnumerable<Job2> GetJobs(WorkflowFilterTypes type, Dictionary<string, object> filters)
         {
-            Tracer.WriteMessage(Facility + "Geting workflow instances based on filters");
+            Tracer.WriteMessage(Facility + "Getting workflow instances based on filters");
             return GetJobs(_wfJobTable.Values, type, filters);
         }
 
@@ -1315,7 +1315,7 @@ namespace Microsoft.PowerShell.Workflow
                         }
                         catch (ObjectDisposedException)
                         {
-                            Tracer.WriteMessage(Facility, "RemoveJob", job.PSWorkflowInstance.Id, "Worklfow Job is already disposed. so removing it.");
+                            Tracer.WriteMessage(Facility, "RemoveJob", job.PSWorkflowInstance.Id, "Workflow Job is already disposed. so removing it.");
                         }
                     }
                 }
@@ -1344,7 +1344,7 @@ namespace Microsoft.PowerShell.Workflow
 
             lock (lockObjects.GetLockObject(instanceId))
             {
-                Tracer.WriteMessage(Facility + "Forgeting job instance with id: " + instanceId);
+                Tracer.WriteMessage(Facility + "Forgetting job instance with id: " + instanceId);
 
                 PSWorkflowJob job = GetJob(instanceId);
 

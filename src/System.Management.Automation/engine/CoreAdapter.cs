@@ -2969,7 +2969,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This method is necessary becausean overridden property in a specific class derived from a generic one will
+        /// This method is necessary because an overridden property in a specific class derived from a generic one will
         /// appear twice. The second time, it should be ignored.
         /// </summary>
         private static bool PropertyAlreadyPresent(List<PropertyInfo> previousProperties, PropertyInfo property)
@@ -5187,7 +5187,7 @@ namespace System.Management.Automation
             Dbg.Assert(typeParameter != null, "Caller should verify typeParameter != null");
             Dbg.Assert(
                 _typeParametersOfTheMethod.Contains(typeParameter),
-                "Caller should verify that typeParameter is actuall a generic type parameter of the method");
+                "Caller should verify that typeParameter is actually a generic type parameter of the method");
 #endif
 
             ICollection<Type> inferenceCandidates =
@@ -5284,7 +5284,7 @@ namespace System.Management.Automation
 #if DEBUG
                 Dbg.Assert(
                     _typeParametersOfTheMethod.Contains(parameterType),
-                    "Only uninstantinated generic type parameters encountered in real life, should be the ones coming from the method");
+                    "Only uninstantiated generic type parameters encountered in real life, should be the ones coming from the method");
 #endif
 
                 HashSet<Type> inferenceCandidates = _typeParameterIndexToSetOfInferenceCandidates[parameterType.GenericParameterPosition];
