@@ -1,7 +1,7 @@
 ﻿
 #-----------------
 
-function Get-Issues
+function Get-Issue
 {
     param([string]$UserName,
           [string]$Repo,
@@ -28,7 +28,7 @@ function Get-Issues
     }
 }
 
-$issues = Get-Issues -UserName lzybkr -Repo PSReadline
+$issues = Get-Issue -UserName lzybkr -Repo PSReadline
 
 $issues.Count
 
