@@ -12,9 +12,8 @@ $script2 = @'
 "line 3"
 '@
 
-$root = git rev-parse --show-toplevel
-$pestertestroot = join-path $root test/powershell
-$common = join-path $pestertestroot Common
+$testroot = resolve-path (join-path $psscriptroot ../../..)
+$common = join-path $testroot Common
 $helperModule = join-path $common Test.Helpers.psm1
 
 Describe "Breakpoints when set should be hit" -tag "CI" {

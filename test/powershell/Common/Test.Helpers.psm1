@@ -22,4 +22,28 @@ function Wait-CompleteExecution
     }
     return $true
 }
-export-modulemember -function Wait-CompleteExecution
+
+function Test-IsElevated
+{
+    $IsElevated = $False
+    if ( $IsWindows ) {
+        # on Windows we can determine whether we're executing in an
+        # elevated context
+        $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+        $windowsPrincipal = new-object 'Security.Principal.WindowsPrincipal' $identity
+        if ($windowsPrincipal.IsInRole("Administrators") -eq 1) 
+        { 
+            $IsElevated = $true 
+        } 
+    }
+    else {
+        # on Linux, tests run via sudo will generally report "root" for whoami
+        if ( (whoami) -match "root" ) {
+            $IsElevated = $true
+        }
+    }
+    return $IsElevated
+}
+
+export-modulemember -function Wait-CompleteExecution,Test-IsElevated
+
