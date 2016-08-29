@@ -3,6 +3,8 @@ $repoRoot = Join-Path $PSScriptRoot '..'
 
 Import-Module (Join-Path $repoRoot 'build.psm1')
 
+# Emulates running all of AppVeyor but locally
+# should not be used on AppVeyor
 function Invoke-AppVeyorFull
 {
     Invoke-AppVeyorInstall
@@ -11,6 +13,7 @@ function Invoke-AppVeyorFull
     Invoke-AppveyorFinish
 }
 
+# Implements the AppVeyor 'build_script' step
 function Invoke-AppVeyorBuild
 {
       # check to be sure our test tags are correct
@@ -23,11 +26,15 @@ function Invoke-AppVeyorBuild
       Start-PSBuild -FullCLR
 }
 
+# Implements the AppVeyor 'install' step
 function Invoke-AppVeyorInstall
 {
     Start-PSBootstrap -Force
 }
 
+# A wrapper to ensure that we upload test results
+# and that if we are not able to that it does not fail
+# the CI build
 function Update-AppVeyorTestResults
 {
     param(
@@ -64,7 +71,7 @@ function Update-AppVeyorTestResults
                 Write-Warning "Pushing test Artifact failed..."
             }
         }
-        
+
         if(!$pushedResults -or !$pushedResults)
         {
             Write-Warning "Failed to push all artifacts for $resultsFile"
@@ -76,6 +83,7 @@ function Update-AppVeyorTestResults
     }
 }
 
+# Implement AppVeyor 'Test_script'
 function Invoke-AppVeyorTest 
 {
     #
@@ -118,6 +126,7 @@ function Invoke-AppVeyorTest
     }
 }
 
+# Implements AppVeyor 'on_finish' step
 function Invoke-AppveyorFinish
 {
       try {
