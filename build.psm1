@@ -1138,6 +1138,8 @@ function Publish-NuGetFeed
 'System.Management.Automation',
 'Microsoft.PowerShell.CoreCLR.AssemblyLoadContext',
 'Microsoft.PowerShell.CoreCLR.Eventing',
+'Microsoft.WSMan.Management',
+'Microsoft.WSMan.Runtime',
 'Microsoft.PowerShell.SDK'
     ) | % {
         if ($VersionSuffix) {
