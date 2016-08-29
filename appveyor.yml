@@ -1,5 +1,7 @@
 version: 6.0.0-alpha.9-{build}
 
+image: Visual Studio 2015
+
 cache:
   - '%LocalAppData%\Microsoft\dotnet'
 
