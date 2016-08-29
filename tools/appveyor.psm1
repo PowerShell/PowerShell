@@ -93,7 +93,7 @@ function Invoke-AppVeyorTest
     $testResultsFile = "$pwd\TestsResults.xml"
     if(!(Test-Path "$env:CoreOutput\powershell.exe"))
     {
-        throw "CoreCL PowerShell.exe was not built"
+        throw "CoreCLR PowerShell.exe was not built"
     }
     
     & ("$env:CoreOutput\powershell.exe") -noprofile -noninteractive -c "Set-ExecutionPolicy -Scope Process Unrestricted; Invoke-Pester test/powershell -Tag 'CI' -ExcludeTag 'Slow' -OutputFormat NUnitXml -OutputFile $testResultsFile"
@@ -114,7 +114,7 @@ function Invoke-AppVeyorTest
     $x = [xml](cat -raw $testResultsFile)
     if ([int]$x.'test-results'.failures -gt 0)
     {
-    throw "$($x.'test-results'.failures) tests in test/powershell failed"
+        throw "$($x.'test-results'.failures) tests in test/powershell failed"
     }
 
     Write-Host -Foreground Green 'Upload FullCLR test results'
