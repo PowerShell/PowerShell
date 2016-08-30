@@ -1,10 +1,3 @@
-#This works only for en-US or fr-FR
-if ($PSUICulture -ne 'en-US' -and $PSUICulture -ne 'fr-FR')
-{
-    return
-}
-
-
 Describe 'Testing of script internationalization' -Tags "CI" {
 
     BeforeAll {
