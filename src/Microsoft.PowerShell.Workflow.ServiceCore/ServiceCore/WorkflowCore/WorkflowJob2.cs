@@ -1371,7 +1371,7 @@ namespace Microsoft.PowerShell.Workflow
             }
 
             Dbg.Assert(instance.JobStateRetrieved,
-                       "Cannot set job state when job state is not retrieved or when there is an error in retrival");
+                       "Cannot set job state when job state is not retrieved or when there is an error in retrieval");
             // igorse: set job state when job is fully restored as StateChanged event will fire
             DoSetJobState(instance.State, reason);
             _tracer.WriteMessage(ClassNameTrace, "RestoreFromWorkflowInstance", WorkflowGuidForTraces, this, "END");
