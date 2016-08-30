@@ -15,7 +15,7 @@ Describe "Debug-Runspace" -tag "CI" {
     It "Debugging a runspace should fail if the name is ambiguous" {
         try {
             Debug-Runspace -Name "My*" -ea stop
-            throw "Execution OK"
+            throw "Command did not throw exception"
         }
         catch {
             $_.FullyQualifiedErrorId | should be "DebugRunspaceTooManyRunspaceFound,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
@@ -25,7 +25,7 @@ Describe "Debug-Runspace" -tag "CI" {
     It "Debugging a runspace should fail if the name is not found" {
         try {
             Debug-Runspace -Name "dflkjsdkfjldkjssldfj" -ea stop
-            throw "Execution OK"
+            throw "Command did not throw exception"
         }
         catch {
             $_.FullyQualifiedErrorId | should be "DebugRunspaceNoRunspaceFound,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
@@ -36,7 +36,7 @@ Describe "Debug-Runspace" -tag "CI" {
         try {
             $rs2.Close()
             Debug-Runspace -runspace $rs2 -ea stop
-            throw "Execution OK"
+            throw "Command did not throw exception"
         }
         catch {
             $_.FullyQualifiedErrorId | should be "InvalidOperation,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
@@ -47,7 +47,7 @@ Describe "Debug-Runspace" -tag "CI" {
         try {
             $rs1.Debugger.SetDebugMode("None")
             Debug-Runspace -runspace $rs1 -ea stop
-            throw "Execution OK"
+            throw "Command did not throw exception"
         }
         catch {
             $_.FullyQualifiedErrorId | should be "InvalidOperation,Microsoft.PowerShell.Commands.DebugRunspaceCommand"

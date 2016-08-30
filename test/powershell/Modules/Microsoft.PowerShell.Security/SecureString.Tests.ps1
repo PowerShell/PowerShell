@@ -25,7 +25,7 @@ Describe "SecureString conversion tests" -Tags "CI" {
         try {
             $badkey = [byte[]]@(1,2)
             ConvertFrom-SecureString -securestring $secureString -key $badkey
-            throw "Execution OK"
+            throw "Command did not throw exception"
         }
         catch {
             $_.FullyQualifiedErrorId | should be "Argument,Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand"
