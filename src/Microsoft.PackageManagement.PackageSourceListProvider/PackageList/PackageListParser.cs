@@ -255,7 +255,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
     public class OSRequirement
     {
         public List<string> architecture { get; set; }
-        public string minimunVersion { get; set; }
+        public string minimumVersion { get; set; }
         public List<string> installationOption { get; set; }
     }
 
