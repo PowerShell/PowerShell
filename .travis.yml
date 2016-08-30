@@ -1,10 +1,5 @@
 language: cpp
 
-branches:
-  only:
-    - master
-    - /^test.*$/
-
 git:
   depth: 1000
 
