@@ -6,12 +6,22 @@ if ($PSUICulture -ne 'en-US' -and $PSUICulture -ne 'fr-FR')
 
 
 Describe 'Testing of script internationalization' -Tags "CI" {
+
     BeforeAll {
         $dir=$PSScriptRoot
+        $defaultParamValues = $PSDefaultParameterValues.Clone()
+        #This works only for en-US or fr-FR
+        if ($PSUICulture -ne 'en-US' -and $PSUICulture -ne 'fr-FR')
+        {
+            $PSDefaultParameterValues["It:Skip"] = $true
         }
+    }
+    AfterAll {
+        $global:PSDefaultParameterValues = $defaultParamValues
+    }    
     
 
-    Context 'converFromString-Data.' {
+    It 'convertFromString-Data should work with data statement.' {
 
         data mydata
         {
@@ -21,83 +31,83 @@ Describe 'Testing of script internationalization' -Tags "CI" {
 '@
         }
 
-        It '$mydata.string1' { $mydata.string1 | Should Be 'string1' }
-        It '$mydata.string2' { $mydata.string2 | Should Be 'string2' }
+        $mydata.string1 | Should Be 'string1'
+        $mydata.string2 | Should Be 'string2'
     }
 
-    Context 'Import default culture' {
+    It 'Import default culture is done correctly' {
 
         import-localizedData mydata;
 
-        It '$mydata.string1' { $mydata.string1 | Should Be 'string1 for en-US' }
-        It '$mydata.string2' { $mydata.string2 | Should be 'string2 for en-US' }
+        $mydata.string1 | Should Be 'string1 for en-US'
+        $mydata.string2 | Should be 'string2 for en-US'
     }
 
-    Context 'Import specific culture' {
+    It 'Import specific culture(en-US)' {
 
         import-localizedData mydata -uiculture en-US
 
-        It '$mydata.string1' { $mydata.string1 | Should Be 'string1 for en-US' }
-        It '$mydata.string2' { $mydata.string2 | Should Be 'string2 for en-US' }
+        $mydata.string1 | Should Be 'string1 for en-US'
+        $mydata.string2 | Should Be 'string2 for en-US'
 
         import-localizedData mydata -uiculture fr-FR
 
-        It '$mydata.string1' { $mydata.string1 | Should Be 'string1 for fr-FR' }
-        It '$mydata.string2' { $mydata.string2 | Should Be 'string2 for fr-FR' }
+        $mydata.string1 | Should Be 'string1 for fr-FR'
+        $mydata.string2 | Should Be 'string2 for fr-FR'
     }
 
-    It 'Import non existing culture' {
+    It 'Import non existing culture is done correctly' {
     
         import-localizedData mydata -uiculture nl-NL -ea SilentlyContinue -ev ev
 
         $ev[0].Exception.GetType() | Should Be System.Management.Automation.PSInvalidOperationException
     }
 
-    Context 'Import different file name' {
+    It 'Import different file name is done correctly' {
 
         import-localizedData mydata -filename foo
 
-        It '$mydata.string1' { $mydata.string1 | Should Be 'string1 from foo in en-US' }
-        It '$mydata.string2' { $mydata.string2 | Should Be 'string2 from foo in en-US' }
+        $mydata.string1 | Should Be 'string1 from foo in en-US'
+        $mydata.string2 | Should Be 'string2 from foo in en-US'
 
         import-localizedData mydata -filename foo -uiculture fr-FR
 
-        It '$mydata.string1' { $mydata.string1 | Should Be 'string1 from foo in fr-FR' }
-        It '$mydata.string2' { $mydata.string2 | Should Be 'string2 from foo in fr-FR' }
+        $mydata.string1 | Should Be 'string1 from foo in fr-FR'
+        $mydata.string2 | Should Be 'string2 from foo in fr-FR'
     }
 
-    Context 'Import different file base' {
+    It 'Import different file base is done correctly' {
     
         import-localizedData mydata -basedirectory "${dir}\newbase"
 
-        It '$mydata.string1' { $mydata.string1 | Should Be 'string1 for en-US under newbase' }
-        It '$mydata.string2' { $mydata.string2 | Should Be 'string2 for en-US under newbase' }
+        $mydata.string1 | Should Be 'string1 for en-US under newbase'
+        $mydata.string2 | Should Be 'string2 for en-US under newbase'
 
         import-localizedData mydata -basedirectory "${dir}\newbase" -uiculture fr-FR
 
-        It '$mydata.string1' { $mydata.string1 | Should Be 'string1 for fr-FR under newbase' }
-        It '$mydata.string2' { $mydata.string2 | Should Be 'string2 for fr-FR under newbase' }
+        $mydata.string1 | Should Be 'string1 for fr-FR under newbase'
+        $mydata.string2 | Should Be 'string2 for fr-FR under newbase'
     }
 
-    Context 'Import different file base and file name' {
+    It 'Import different file base and file name' {
     
         import-localizedData mydata -basedirectory "${dir}\newbase" -filename foo
 
-        It '$mydata.string1' { $mydata.string1 | Should Be 'string1 for en-US from foo under newbase' }
-        It '$mydata.string2' { $mydata.string2 | Should Be 'string2 for en-US from foo under newbase' }
+        $mydata.string1 | Should Be 'string1 for en-US from foo under newbase'
+        $mydata.string2 | Should Be 'string2 for en-US from foo under newbase'
 
         import-localizedData mydata -basedirectory "${dir}\newbase" -filename foo -uiculture fr-FR
 
-        It '$mydata.string1' { $mydata.string1 | Should Be 'string1 for fr-FR from foo under newbase' }
-        It '$mydata.string2' { $mydata.string2 | Should Be 'string2 for fr-FR from foo under newbase' }
+        $mydata.string1 | Should Be 'string1 for fr-FR from foo under newbase'
+        $mydata.string2 | Should Be 'string2 for fr-FR from foo under newbase'
         }
 
-    Context "Import variable that doesn't exist" {    
+    It "Import variable that doesn't exist" {    
 
         import-localizedData mydata2 
 
-        It '$mydata.string1' { $mydata2.string1 | Should Be 'string1 for en-US' }
-        It '$mydata.string2' { $mydata2.string2 | Should Be 'string2 for en-US' }
+        $mydata2.string1 | Should Be 'string1 for en-US'
+        $mydata2.string2 | Should Be 'string2 for en-US'
     }
 
     It 'Import bad psd1 file - tests the use of disallowed variables' {
@@ -111,18 +121,18 @@ Describe 'Testing of script internationalization' -Tags "CI" {
         $script:exception.exception.gettype() | Should Be System.management.automation.psinvalidoperationexception
         }
 
-    Context 'Import if psd1 file' {
+    It 'Import if psd1 file is done correctly' {
     
         import-localizedData mydata -filename if
 
         if ($psculture -eq 'en-US')
         {    
-            It '$mydata.string1' { $mydata.string1 | Should Be 'string1 for en-US in if' }
-            It '$mydata.string2' { $mydata.string2 | Should Be 'string2 for en-US in if' }
+            $mydata.string1 | Should Be 'string1 for en-US in if'
+            $mydata.string2 | Should Be 'string2 for en-US in if'
         }
         else
         {
-            It '$mydata should not be null' { $mydata | Should Be $null }
+            $mydata | Should Be $null
         }
     }
 
@@ -145,34 +155,33 @@ Describe 'Testing of script internationalization' -Tags "CI" {
     }
 
 
-    Context 'Check alternate syntax that also supports complex variable names' {
+    it 'Check alternate syntax that also supports complex variable names' {
     
        & {
         $script:mydata = data { 123 }
         }
-        It '$mydata' { $mydata | Should Be 123 }
+        $mydata | Should Be 123
 
         $mydata = data { 456 }
         & {
             # This import should not clobber the one at script scope
             import-localizedData mydata -uiculture en-US
         }
-        It '$mydata' { $mydata | Should Be 456 }
+        $mydata | Should Be 456
 
         & {
             # This import should clobber the one at script scope
             import-localizedData script:mydata -uiculture en-US
         }        
-        It '$script:mydata.string1' { $script:mydata.string1 | Should Be 'string1 for en-US'}
+        $script:mydata.string1 | Should Be 'string1 for en-US'
     }
 
-
-    Context 'Check fallback to current directory plus -SupportedCommand parameter' {
+    It 'Check fallback to current directory plus -SupportedCommand parameter is done correctly' {
     
         new-alias MyConvertFrom-StringData ConvertFrom-StringData
 
         import-localizeddata local:mydata -uiculture fr-ca -filename I18n.Tests_fallback.psd1 -SupportedCommand MyConvertFrom-StringData
-        It '$mydata[0].string1' { $mydata[0].string1 | Should Be 'fallback string1 for en-US' }
-        It '$mydata[1]' { $mydata[1] | Should Be 42 }
+        $mydata[0].string1 | Should Be 'fallback string1 for en-US'
+        $mydata[1] | Should Be 42
     }
 }
