@@ -9,7 +9,7 @@ function Invoke-AppVeyorFull
 {
     Invoke-AppVeyorInstall
     Invoke-AppVeyorBuild
-    Invoke-AppVeyorTest
+    Invoke-AppVeyorTest -ErrorAction Continue
     Invoke-AppveyorFinish
 }
 
@@ -86,6 +86,8 @@ function Update-AppVeyorTestResults
 # Implement AppVeyor 'Test_script'
 function Invoke-AppVeyorTest 
 {
+    [CmdletBinding()]
+    param()
     #
     # CoreCLR
     $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish -Configuration $buildConfiguration))
@@ -96,7 +98,8 @@ function Invoke-AppVeyorTest
         throw "CoreCLR PowerShell.exe was not built"
     }
     
-    & ("$env:CoreOutput\powershell.exe") -noprofile -noninteractive -c "Set-ExecutionPolicy -Scope Process Unrestricted; Invoke-Pester test/powershell -Tag 'CI' -ExcludeTag 'Slow' -OutputFormat NUnitXml -OutputFile $testResultsFile"
+    Start-PSPester -bindir $env:CoreOutput -outputFile $testResultsFile
+    Write-Host -Foreground Green 'Upload CoreCLR test results'
     Update-AppVeyorTestResults -resultsFile $testResultsFile
     
     #
@@ -104,26 +107,17 @@ function Invoke-AppVeyorTest
     $env:FullOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -FullCLR))
     Write-Host -Foreground Green 'Run FullCLR tests'
     $testResultsFileFullCLR = "$pwd\TestsResults.FullCLR.xml"
-    Start-DevPowerShell -FullCLR -NoNewWindow -ArgumentList '-noprofile', '-noninteractive' -Command "Set-ExecutionPolicy -Scope Process Unrestricted; Invoke-Pester test/fullCLR -ExcludeTag 'Slow' -OutputFormat NUnitXml -OutputFile $testResultsFileFullCLR"
+    Start-PSPester -FullCLR -bindir $env:FullOutput -outputFile $testResultsFileFullCLR -Tag $null -path 'test/fullCLR'
+
+    Write-Host -Foreground Green 'Upload FullCLR test results'
     Update-AppVeyorTestResults -resultsFile $testResultsFileFullCLR
  
 
     #
     # Fail the build, if tests failed
-    Write-Host -Foreground Green 'Upload CoreCLR test results'
-    $x = [xml](cat -raw $testResultsFile)
-    if ([int]$x.'test-results'.failures -gt 0)
-    {
-        throw "$($x.'test-results'.failures) tests in test/powershell failed"
-    }
+    Test-PSPesterResults -TestResultsFile $testResultsFile
 
-    Write-Host -Foreground Green 'Upload FullCLR test results'
-    $x = [xml](cat -raw $testResultsFileFullCLR)
-
-    if ([int]$x.'test-results'.failures -gt 0)
-    {
-        throw "$($x.'test-results'.failures) tests in test/fullCLR failed"
-    }
+    Test-PSPesterResults -TestResultsFile $testResultsFileFullCLR
 }
 
 # Implements AppVeyor 'on_finish' step
