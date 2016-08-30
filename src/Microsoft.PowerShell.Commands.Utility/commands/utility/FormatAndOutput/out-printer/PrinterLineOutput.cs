@@ -225,7 +225,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // Use the MarginBounds on the event to do this
             float linesPerPage = ev.MarginBounds.Height / _printFont.GetHeight(ev.Graphics);
 
-            if (!_printingInitalized)
+            if (!_printingInitialized)
             {
                 // on the first page we have to initialize the metrics for LineOutput
 
@@ -234,7 +234,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 float w = ev.Graphics.MeasureString(s, _printFont).Width / s.Length;
                 float columnsPerPage = ev.MarginBounds.Width / w;
 
-                _printingInitalized = true;
+                _printingInitialized = true;
                 _deviceRows = (int)linesPerPage;
                 _deviceColumns = (int)columnsPerPage;
 
@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// flag for one time initialization of the interface (columns, etc.)
         /// </summary>
-        private bool _printingInitalized = false;
+        private bool _printingInitialized = false;
 
         /// <summary>
         /// callback to ask the outputter to playback its cache

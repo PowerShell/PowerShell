@@ -361,15 +361,15 @@ namespace Microsoft.PowerShell.Commands
                 PSObject result = new PSObject();
                 if (matchedProperties.Count != 0)
                 {
-                    HashSet<string> propertNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    HashSet<string> propertyNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
                     foreach (PSNoteProperty noteProperty in matchedProperties)
                     {
                         try
                         {
-                            if (!propertNames.Contains(noteProperty.Name))
+                            if (!propertyNames.Contains(noteProperty.Name))
                             {
-                                propertNames.Add(noteProperty.Name);
+                                propertyNames.Add(noteProperty.Name);
                                 result.Properties.Add(noteProperty);
                             }
                             else

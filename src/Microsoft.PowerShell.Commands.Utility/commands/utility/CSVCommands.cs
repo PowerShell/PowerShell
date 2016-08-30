@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public SwitchParameter Append { get; set; }
-        private bool _isActuallyAppending; // true if Append=true AND the file written was not empty (or nonexistant) when the cmdlet was invoked
+        private bool _isActuallyAppending; // true if Append=true AND the file written was not empty (or nonexistent) when the cmdlet was invoked
 
         #endregion
 
