@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CatalogDefintionFileNotGenerated" xml:space="preserve">
-    <value>Unable to generate catalog defintion file.</value>
+    <value>Unable to generate catalog definition file.</value>
   </data>
   <data name="AddFileToCatalog" xml:space="preserve">
     <value>Adding file '{0}' to the catalog. Relative path of file in catalog is '{1}'.</value>
@@ -151,7 +151,7 @@
     <value>Catalog version is not valid. We only support catalog version {0} and version {1}.</value>
   </data>
   <data name="UnableToOpenCatalogDefinitionFile" xml:space="preserve">
-    <value>Unable to open catalog defintion file.</value>
+    <value>Unable to open catalog definition file.</value>
   </data>
   <data name="FoundDuplicateFileMemberInCatalog" xml:space="preserve">
     <value>Found multiple entries of file member {0} in the catalog.</value>

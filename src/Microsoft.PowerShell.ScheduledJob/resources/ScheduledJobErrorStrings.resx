@@ -119,7 +119,7 @@
   </resheader>
   <data name="CannotFindJobDefinition" xml:space="preserve">
     <value>Cannot find scheduled job {0}.</value>
-    <comment>{0} is the scheduled job defintion name that cannot be found.</comment>
+    <comment>{0} is the scheduled job definition name that cannot be found.</comment>
   </data>
   <data name="CannotFindTaskId" xml:space="preserve">
     <value>Cannot find scheduled job definition {0} in the Task Scheduler.</value>
@@ -174,7 +174,7 @@
     <value>Only one JobTrigger type can be specified: AtStartup, AtLogon, Once, Daily, or Weekly.</value>
   </data>
   <data name="DefinitionAlreadyExistsInLocal" xml:space="preserve">
-    <value>A scheduled job defintion object {0} already exists in the local scheduled job repository having this Global ID {1}.</value>
+    <value>A scheduled job definition object {0} already exists in the local scheduled job repository having this Global ID {1}.</value>
   </data>
   <data name="DefinitionNotFoundByGlobalId" xml:space="preserve">
     <value>A scheduled job definition object with Global ID {0} could not be found.</value>
@@ -331,7 +331,7 @@
   <data name="CannotSerializeData" xml:space="preserve">
     <value>The scheduled job definition {0} could not be saved because one of the values in the ArgumentList parameter cannot be converted to XML. If possible, change the ArgumentList values to types that are easily converted to XML, such as strings, integers, and hash tables. {1}</value>
     <comment>{0} is the name of the scheduled job definition that cannot be registered
-{1} is the inner exception message from .Net serialization, or emtpy if no exception message.</comment>
+{1} is the inner exception message from .Net serialization, or empty if no exception message.</comment>
   </data>
   <data name="UnsupportedHostFunction" xml:space="preserve">
     <value>Commands that interact with the host program, such as Write-Host, cannot be included in Windows PowerShell scheduled jobs because scheduled jobs do not interact with the host program.  Use an alternate command that does not interact with the host program, such as Write-Output or Out-File.</value>
@@ -367,10 +367,10 @@
     <value>An unrecoverable error occurred while renaming the scheduled job from {0} to {1} with message {2}. The scheduled job will be removed.</value>
   </data>
   <data name="ErrorRunningAsTask" xml:space="preserve">
-    <value>An error occurred while running scheduled job defintion {0} from the Task Scheduler.</value>
+    <value>An error occurred while running scheduled job definition {0} from the Task Scheduler.</value>
   </data>
   <data name="ErrorRunningAsTaskWithReason" xml:space="preserve">
-    <value>An error occurred while running scheduled job defintion {0} from the Task Scheduler because {1}.</value>
+    <value>An error occurred while running scheduled job definition {0} from the Task Scheduler because {1}.</value>
   </data>
   <data name="InvalidRepeatIndefinitelyParams" xml:space="preserve">
     <value>You cannot specify the RepetitionDuration and RepeatIndefinitely parameters in the same command.</value>

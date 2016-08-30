@@ -235,7 +235,7 @@ The defined template is following:
     <value>Cannot retrieve information about the {0} performance counter set because access was denied.</value>
   </data>
   <data name="VersionNotSpecified" xml:space="preserve">
-    <value>Event cannot be written because multiple events with id {0} have beend defined for provider {1}.  Please provide a version for the event and try again.</value>
+    <value>Event cannot be written because multiple events with id {0} have been defined for provider {1}.  Please provide a version for the event and try again.</value>
   </data>
   <data name="SpecifyOldestForEtlEvt" xml:space="preserve">
     <value>The {0} event log file can be read only in the forward chronological order because it is an .etl or an .evt file. To see events from the {0} event log, use the Oldest parameter in the command.</value>

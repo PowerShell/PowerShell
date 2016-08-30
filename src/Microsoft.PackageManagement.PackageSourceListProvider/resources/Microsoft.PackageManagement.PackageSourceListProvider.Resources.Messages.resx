@@ -210,7 +210,7 @@
     <value>Package '{0}' failed to install.</value>
   </data>
   <data name="PackagesReceived" xml:space="preserve">
-    <value>'{0}' packages recevied in the last request.</value>
+    <value>'{0}' packages received in the last request.</value>
   </data>
   <data name="ProviderNotFound" xml:space="preserve">
     <value>A required provider '{0}' does not exist. Try 'Find-PackageProvider' and 'Install-PackageProvider' to install the particular provider.</value>
