@@ -74,7 +74,7 @@ namespace System.Management.Automation
                 }
             }
 
-            // If its not in the cache, create it an add it.
+            // If it's not in the cache, create it an add it.
             if (manager == null)
             {
                 manager = InitRMWithAssembly(baseName, assembly);
