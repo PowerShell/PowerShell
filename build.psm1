@@ -278,7 +278,7 @@ function Start-PSBuild {
 cmd.exe /C cd /d "$currentLocation" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" mc.exe -o -d -c -U "$($_.FullName)" -h "$nativeResourcesFolder" -r "$nativeResourcesFolder"
 "@
                     log "  Executing mc.exe Command: $command"
-                    Start-NativeExecution { Invoke-Expression -Command:$command }
+                    Start-NativeExecution { Invoke-Expression -Command:$command 2>&1 }
                 }
             }
 
@@ -551,30 +551,32 @@ function Start-PSPester {
     [CmdletBinding()]param(
         [string]$OutputFormat = "NUnitXml",
         [string]$OutputFile = "pester-tests.xml",
-        [switch]$DisableExit,
         [string[]]$ExcludeTag = "Slow",
         [string[]]$Tag = "CI",
-        [string]$Path = "$PSScriptRoot/test/powershell"
+        [string]$Path = "$PSScriptRoot/test/powershell",
+        [switch]$ThrowOnFailure,
+        [switch]$FullCLR,
+        [string]$binDir = (Split-Path (New-PSOptions -FullCLR:$FullCLR).Output) 
     )
-
-    $powershell = Get-PSOutput
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
     $Command = ""
+    $powershell = Join-Path $binDir 'powershell'
 
     # Windows needs the execution policy adjusted
     if ($IsWindows) {
         $Command += "Set-ExecutionPolicy -Scope Process Unrestricted; "
     }
+    $startParams = @{binDir=$binDir}
 
-    $PesterModule = [IO.Path]::Combine((Split-Path $powershell), "Modules", "Pester")
-    $Command += "Import-Module '$PesterModule'; "
+    $PesterModule = [IO.Path]::Combine($binDir, "Modules", "Pester")
+    if(!$FullCLR)
+    {
+        $Command += "Import-Module '$PesterModule'; "
+    }
     $Command += "Invoke-Pester "
 
     $Command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
-    if (!$DisableExit) {
-        $Command += "-EnableExit "
-    }
     if ($ExcludeTag -and ($ExcludeTag -ne "")) {
         $Command += "-ExcludeTag @('" + (${ExcludeTag} -join "','") + "') "
     }
@@ -585,17 +587,46 @@ function Start-PSPester {
     $Command += "'" + $Path + "'"
         
     Write-Verbose $Command
-    # To ensure proper testing, the module path must not be inherited by the spawned process
-    try {
-        $originalModulePath = $env:PSMODULEPATH
-        $env:PSMODULEPATH = ""
-        & $powershell -noprofile -c $Command
-    } finally {
-        $env:PSMODULEPATH = $originalModulePath
-    }
 
-    if ($LASTEXITCODE -ne 0) {
-        throw "$LASTEXITCODE Pester tests failed"
+    # To ensure proper testing, the module path must not be inherited by the spawned process
+    if($FullCLR)
+    {
+        Start-DevPowerShell -binDir $binDir -FullCLR -NoNewWindow -ArgumentList '-noprofile', '-noninteractive' -Command $command
+    }
+    else {
+        try {
+            $originalModulePath = $env:PSMODULEPATH
+            
+            & $powershell -noprofile -c $Command
+        } finally {
+            $env:PSMODULEPATH = $originalModulePath
+        }        
+    }
+    if($ThrowOnFailure)
+    {
+        Test-PSPesterResults -TestResultsFile $OutputFile
+    }
+}
+
+#
+# Read the test result file and
+# Throw if a test failed 
+function Test-PSPesterResults
+{
+    param(
+        [string]$TestResultsFile = "pester-tests.xml",
+        [string] $TestArea = 'test/powershell'
+    )
+
+    if(!(Test-Path $TestResultsFile))
+    {
+        throw "Test result file '$testResultsFile' not found for $TestArea."
+    } 
+
+    $x = [xml](Get-Content -raw $testResultsFile)
+    if ([int]$x.'test-results'.failures -gt 0)
+    {
+        throw "$($x.'test-results'.failures) tests in $TestArea failed"
     }
 }
 
@@ -1213,9 +1244,13 @@ function Start-DevPowerShell {
 
         Start-Process @startProcessArgs
     } finally {
-        ri env:DEVPATH
+        if($env:DevPath)
+        {
+            Remove-Item env:DEVPATH
+        }
+        
         if ($ZapDisable) {
-            ri env:COMPLUS_ZapDisable
+            Remove-Item env:COMPLUS_ZapDisable
         }
     }
 }
