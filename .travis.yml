@@ -5,6 +5,9 @@ branches:
     - master
     - /^test.*$/
 
+git:
+  depth: 1000
+
 os:
   - linux
 sudo: required
