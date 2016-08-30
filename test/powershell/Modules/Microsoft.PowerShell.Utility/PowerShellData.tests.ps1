@@ -5,7 +5,7 @@
         try
         {
             Import-PowerShellDataFile -Path /SomeMissingDirectory -ErrorAction Stop
-            Throw "Execution OK"
+            Throw "Command did not throw exception"
         }
         catch
         {
@@ -18,7 +18,7 @@
         try
         {
             Import-PowerShellDataFile ${TESTDRIVE} -ErrorAction Stop
-            Throw "Execution OK"
+            Throw "Command did not throw exception"
         }
         catch
         {
@@ -33,7 +33,7 @@
         try
         {
             Import-PowerShellDataFile $path -ErrorAction Stop
-            Throw "Execution OK"
+            Throw "Command did not throw exception"
         }
         catch
         {
@@ -47,7 +47,7 @@
         try
         {
             Import-PowerShellDataFile $path -ErrorAction Stop 
-            Throw "Execution OK"
+            Throw "Command did not throw exception"
         }
         catch
         {
