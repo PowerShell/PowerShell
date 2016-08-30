@@ -330,7 +330,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
 
         private bool ValidateFileHash(string fileFullPath, Payload payload) {
 
-            Debug("BoostrapRequest::ValidateFileHash");
+            Debug("BootstrapRequest::ValidateFileHash");
             /* format: 
              * <Payload>
              *   <File name="nuget-anycpu-2.8.5.205.exe"  sha512:hash="a314fc2dc663ae7a6b6bc6787594057396e6b3f569cd50fd5ddb4d1bbafd2b6a" />

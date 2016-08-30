@@ -334,7 +334,7 @@ namespace Microsoft.PowerShell.Commands
                             // get the matched member(s)
                             ReadOnlyPSMemberInfoCollection<PSMemberInfo> members =
                                 _inputObject.Members.Match(_propertyOrMethodName, PSMemberTypes.All);
-                            Dbg.Assert(members != null, "The retrun value of Members.Match shoudl never be null");
+                            Dbg.Assert(members != null, "The return value of Members.Match should never be null");
 
                             if (members.Count > 1)
                             {

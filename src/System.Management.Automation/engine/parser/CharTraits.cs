@@ -68,7 +68,7 @@ namespace System.Management.Automation.Language
     {
         static CharExtensions()
         {
-            Diagnostics.Assert(s_traits.Length == 128, "Extention methods rely on this table size.");
+            Diagnostics.Assert(s_traits.Length == 128, "Extension methods rely on this table size.");
         }
 
         private static readonly CharTraits[] s_traits = new CharTraits[]

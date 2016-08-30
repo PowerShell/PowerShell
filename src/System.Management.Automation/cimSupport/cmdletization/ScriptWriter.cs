@@ -1633,7 +1633,7 @@ function __cmdletization_BindCommonParameters
                                 methodName = "FilterByMaxPropertyValue";
                                 break;
                             default:
-                                Dbg.Assert(false, "Unrecognize query xml element");
+                                Dbg.Assert(false, "Unrecognized query xml element");
                                 methodName = "NotAValidMethod";
                                 break;
                         }

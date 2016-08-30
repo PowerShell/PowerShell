@@ -246,7 +246,7 @@ namespace Microsoft.PowerShell.Commands
 
                 default:
                     {
-                        Dbg.Assert(false, "Missing paramenter set in switch statement");
+                        Dbg.Assert(false, "Missing parameter set in switch statement");
                         remoteRunspaces = new List<RemoteRunspace>(); // added to avoid prefast warning
                     }
                     break;

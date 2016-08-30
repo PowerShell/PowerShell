@@ -4532,7 +4532,7 @@ namespace System.Management.Automation
                     delegateOwner = PSObject.AsPSObject(delegateOwner);
                     foreach (CollectionEntry<T> collection in Collections)
                     {
-                        Diagnostics.Assert(delegateOwner != null, "all integrating collections with non emtpty collections have an associated PSObject");
+                        Diagnostics.Assert(delegateOwner != null, "all integrating collections with non empty collections have an associated PSObject");
                         T memberAsT = collection.GetMember((PSObject)delegateOwner, name);
                         if (memberAsT != null)
                         {

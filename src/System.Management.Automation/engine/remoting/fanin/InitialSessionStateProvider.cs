@@ -624,32 +624,32 @@ namespace System.Management.Automation.Remoting
                 }
                 catch (ArgumentException e)
                 {
-                    s_tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
+                    s_tracer.TraceWarning("Not able to change current working directory to {0}: {1}",
                         applicationBase, e.Message);
                 }
                 catch (PathTooLongException e)
                 {
-                    s_tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
+                    s_tracer.TraceWarning("Not able to change current working directory to {0}: {1}",
                            applicationBase, e.Message);
                 }
                 catch (FileNotFoundException e)
                 {
-                    s_tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
+                    s_tracer.TraceWarning("Not able to change current working directory to {0}: {1}",
                         applicationBase, e.Message);
                 }
                 catch (IOException e)
                 {
-                    s_tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
+                    s_tracer.TraceWarning("Not able to change current working directory to {0}: {1}",
                         applicationBase, e.Message);
                 }
                 catch (System.Security.SecurityException e)
                 {
-                    s_tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
+                    s_tracer.TraceWarning("Not able to change current working directory to {0}: {1}",
                            applicationBase, e.Message);
                 }
                 catch (UnauthorizedAccessException e)
                 {
-                    s_tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
+                    s_tracer.TraceWarning("Not able to change current working directory to {0}: {1}",
                         applicationBase, e.Message);
                 }
             }

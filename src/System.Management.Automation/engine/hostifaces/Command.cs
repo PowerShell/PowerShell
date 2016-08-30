@@ -358,7 +358,7 @@ namespace System.Management.Automation.Runspaces
         void
         SetMergeSettingsOnCommandProcessor(CommandProcessorBase commandProcessor)
         {
-            Dbg.Assert(commandProcessor != null, "caller should valiadate the parameter");
+            Dbg.Assert(commandProcessor != null, "caller should validate the parameter");
 
             MshCommandRuntime mcr = commandProcessor.Command.commandRuntime as MshCommandRuntime;
 
@@ -477,8 +477,8 @@ namespace System.Management.Automation.Runspaces
                         break;
                     default:
                         // This should never happen...
-                        Diagnostics.Assert(false, "Invalid langage mode was set when building a ScriptCommandProcessor");
-                        throw new InvalidOperationException("Invalid langage mode was set when building a ScriptCommandProcessor");
+                        Diagnostics.Assert(false, "Invalid language mode was set when building a ScriptCommandProcessor");
+                        throw new InvalidOperationException("Invalid language mode was set when building a ScriptCommandProcessor");
                 }
 
                 if (scriptBlock.UsesCmdletBinding)

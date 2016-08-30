@@ -1098,7 +1098,7 @@ namespace System.Management.Automation.Remoting
         internal PSObject DeserializeToPSObject(Stream serializedDataStream)
         {
             Dbg.Assert(null != serializedDataStream, "Cannot Deserialize null data");
-            Dbg.Assert(serializedDataStream.Length != 0, "Cannot Deserialze empty data");
+            Dbg.Assert(serializedDataStream.Length != 0, "Cannot Deserialize empty data");
 
             object result = null;
             using (XmlReader xmlReader = XmlReader.Create(serializedDataStream, InternalDeserializer.XmlReaderSettingsForCliXml))

@@ -10698,7 +10698,7 @@ namespace System.Management.Automation.Language
                 return ExtractUsingVariableImpl(memberExpr.Expression);
             }
 
-            Diagnostics.Assert(false, "We should alwasy be able to get a VariableExpressionAst from a UsingExpressionAst");
+            Diagnostics.Assert(false, "We should always be able to get a VariableExpressionAst from a UsingExpressionAst");
             return null;
         }
 

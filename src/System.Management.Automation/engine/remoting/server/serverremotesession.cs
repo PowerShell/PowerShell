@@ -692,7 +692,7 @@ namespace System.Management.Automation.Remoting
             runspacepoolInitData.Serialize(stream, fragmentor);
             stream.Exit();
             byte[] outbuffer = stream.Read();
-            Dbg.Assert(outbuffer != null, "connet response data should be serialized");
+            Dbg.Assert(outbuffer != null, "connect response data should be serialized");
             stream.Dispose();
             //we are done
             connectResponseData = outbuffer;

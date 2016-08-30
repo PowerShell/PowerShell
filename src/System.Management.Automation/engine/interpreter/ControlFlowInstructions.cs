@@ -361,7 +361,7 @@ namespace System.Management.Automation.Interpreter
                 if (index == _tryHandler.GotoEndTargetIndex)
                 {
                     // run the 'Goto' that jumps out of the try/catch/finally blocks
-                    Debug.Assert(instructions[index] is GotoInstruction, "should be the 'Goto' instruction that jumpes out the try/catch/finally");
+                    Debug.Assert(instructions[index] is GotoInstruction, "should be the 'Goto' instruction that jumps out the try/catch/finally");
                     frame.InstructionIndex += instructions[index].Run(frame);
                 }
             }
@@ -404,7 +404,7 @@ namespace System.Management.Automation.Interpreter
                     if (index == _tryHandler.GotoEndTargetIndex)
                     {
                         // run the 'Goto' that jumps out of the try/catch/finally blocks
-                        Debug.Assert(instructions[index] is GotoInstruction, "should be the 'Goto' instruction that jumpes out the try/catch/finally");
+                        Debug.Assert(instructions[index] is GotoInstruction, "should be the 'Goto' instruction that jumps out the try/catch/finally");
                         frame.InstructionIndex += instructions[index].Run(frame);
                     }
                 }

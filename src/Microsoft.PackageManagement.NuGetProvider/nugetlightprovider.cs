@@ -209,7 +209,7 @@ namespace Microsoft.PackageManagement.NuGetProvider
                 throw new ArgumentNullException("request");
             }
             try {
-                request.Debug(string.Format(CultureInfo.InvariantCulture, "AddPackageSource - ProvidenName = '{0}', name='{1}', location='{2}', trusted='{3}'", PackageProviderName, name, location, trusted));
+                request.Debug(string.Format(CultureInfo.InvariantCulture, "AddPackageSource - ProviderName = '{0}', name='{1}', location='{2}', trusted='{3}'", PackageProviderName, name, location, trusted));
 
                 // Error out if a user does not provide package source Name
                 if (string.IsNullOrWhiteSpace(name))

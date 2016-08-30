@@ -481,7 +481,7 @@ namespace Microsoft.PowerShell.Workflow
                 {
                     //ignoring the error message and just logging them into ETW
                     _tracer.WriteMessage(String.Format(CultureInfo.InvariantCulture,
-                                                       "WorkflowJobSourceAdapter: Ingnoring the exception. Exception details: {0}",
+                                                       "WorkflowJobSourceAdapter: Ignoring the exception. Exception details: {0}",
                                                        exception));
                     innerException = exception;
                     _structuredTracer.JobRemoveError(job.InstanceId,
@@ -499,7 +499,7 @@ namespace Microsoft.PowerShell.Workflow
             {
                 //ignoring the error message and just logging them into ETW
                 _tracer.WriteMessage(String.Format(CultureInfo.InvariantCulture,
-                                                   "WorkflowJobSourceAdapter: Ingnoring the exception. Exception details: {0}",
+                                                   "WorkflowJobSourceAdapter: Ignoring the exception. Exception details: {0}",
                                                    exception));
                 innerException = exception;
             }
@@ -547,7 +547,7 @@ namespace Microsoft.PowerShell.Workflow
                 {
                     //ignoring the error message and just logging them into ETW
                     _tracer.WriteMessage(String.Format(CultureInfo.InvariantCulture,
-                                                       "WorkflowJobSourceAdapter: Ingnoring the exception. Exception details: {0}",
+                                                       "WorkflowJobSourceAdapter: Ignoring the exception. Exception details: {0}",
                                                        exception));
 
                     _structuredTracer.JobRemoveError(job.InstanceId,
@@ -566,7 +566,7 @@ namespace Microsoft.PowerShell.Workflow
                     {
                         //ignoring the error message and just logging them into ETW
                         _tracer.WriteMessage(String.Format(CultureInfo.InvariantCulture,
-                                                           "WorkflowJobSourceAdapter: Ingnoring the exception. Exception details: {0}",
+                                                           "WorkflowJobSourceAdapter: Ignoring the exception. Exception details: {0}",
                                                            exception));
                     }
                     job.Dispose();
@@ -904,7 +904,7 @@ namespace Microsoft.PowerShell.Workflow
                                                    "Shutting down WSMan server: Exception details: {0}",
                                                    exception));
 
-                Dbg.Assert(false, "Exception has happned during the shutdown API. [Message] " + exception.Message + "[StackTrace] " + exception.StackTrace);
+                Dbg.Assert(false, "Exception has happened during the shutdown API. [Message] " + exception.Message + "[StackTrace] " + exception.StackTrace);
 
             }
         }

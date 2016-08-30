@@ -1389,9 +1389,9 @@ namespace Microsoft.PowerShell.Commands
             Dictionary<string, string> alias2resolvedCommandName,
             PSObject remoteCommandInfo)
         {
-            Dbg.Assert(name2commandMetadata != null, "name2commandMetadata paremeter != null");
-            Dbg.Assert(alias2resolvedCommandName != null, "alias2resolvedCommandName paremeter != null");
-            Dbg.Assert(remoteCommandInfo != null, "remoteCommandInfo paremeter != null");
+            Dbg.Assert(name2commandMetadata != null, "name2commandMetadata parameter != null");
+            Dbg.Assert(alias2resolvedCommandName != null, "alias2resolvedCommandName parameter != null");
+            Dbg.Assert(remoteCommandInfo != null, "remoteCommandInfo parameter != null");
 
             string resolvedCommandName;
             CommandMetadata commandMetadata = RehydrateCommandMetadata(remoteCommandInfo, out resolvedCommandName);
@@ -1455,8 +1455,8 @@ namespace Microsoft.PowerShell.Commands
 
         private void AddRemoteTypeDefinition(IList<ExtendedTypeDefinition> listOfTypeDefinitions, PSObject remoteTypeDefinition)
         {
-            Dbg.Assert(listOfTypeDefinitions != null, "listOfTypeDefinitions paremeter != null");
-            Dbg.Assert(remoteTypeDefinition != null, "remoteTypeDefinition paremeter != null");
+            Dbg.Assert(listOfTypeDefinitions != null, "listOfTypeDefinitions parameter != null");
+            Dbg.Assert(remoteTypeDefinition != null, "remoteTypeDefinition parameter != null");
 
             ExtendedTypeDefinition typeDefinition = ConvertTo<ExtendedTypeDefinition>("Get-FormatData", remoteTypeDefinition);
             if (!IsSafeTypeDefinition(typeDefinition))

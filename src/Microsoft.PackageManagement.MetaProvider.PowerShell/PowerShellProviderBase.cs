@@ -189,7 +189,7 @@ namespace Microsoft.PackageManagement.MetaProvider.PowerShell.Internal {
                     // we're going to throw an error here because this indicates that the currently
                     // running powershell call is calling back into PM, and it has called back
                     // into this provider. That's just bad bad bad.
-                    throw new Exception("Re-entrancy Violation in powershell module");
+                    throw new Exception("Reentrancy Violation in powershell module");
                 }
                 
                 try {
