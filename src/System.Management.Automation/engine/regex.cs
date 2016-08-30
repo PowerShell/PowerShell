@@ -431,7 +431,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructs an instance of the WildcardPatternException object taking
-        /// a message parameter to use in cnstructing the exception.
+        /// a message parameter to use in constructing the exception.
         /// </summary>
         /// <param name="message">The string to use as the exception message</param>
         public WildcardPatternException(string message) : base(message)

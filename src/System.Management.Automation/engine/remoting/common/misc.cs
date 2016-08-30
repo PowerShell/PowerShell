@@ -145,7 +145,7 @@ namespace System.Management.Automation
         NegotiationReceived = 7,
 
         /// <summary>
-        /// Used by server to wait for negotation from client.
+        /// Used by server to wait for negotiation from client.
         /// </summary>
         NegotiationPending = 8,
 
@@ -181,9 +181,9 @@ namespace System.Management.Automation
         /// <summary>
         /// for Server - Have sent a request to the remote end to 
         /// send a public key 
-        /// for Cleint - have received a PK request from server
+        /// for Client - have received a PK request from server
         /// </summary>
-        /// <remarks>Applicable to both cleint and server</remarks>
+        /// <remarks>Applicable to both client and server</remarks>
         EstablishedAndKeyRequested = 14,
 
         /// <summary>
@@ -392,7 +392,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// In the presence of ambient remoting, the command assumes
-        /// all responsibility for targetting the remote computer;
+        /// all responsibility for targeting the remote computer;
         /// PowerShell Remoting is not supported.
         /// </summary>
         OwnedByCommand

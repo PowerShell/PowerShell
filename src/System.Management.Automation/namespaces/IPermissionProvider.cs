@@ -40,7 +40,7 @@ namespace System.Management.Automation.Provider
         /// 
         /// <returns>
         /// Nothing.   Write the security descriptor to the context's pipeline for 
-        /// the item specifed by the path using the WriteSecurityDescriptorObject 
+        /// the item specified by the path using the WriteSecurityDescriptorObject 
         /// method.  
         /// </returns>
         void GetSecurityDescriptor(
@@ -63,7 +63,7 @@ namespace System.Management.Automation.Provider
         /// <returns>
         /// Nothing.   After setting the security descriptor to the value passed in,
         /// write the new security descriptor to the context's pipeline for the 
-        /// item specifed by the path using the WriteSecurityDescriptorObject method.
+        /// item specified by the path using the WriteSecurityDescriptorObject method.
         /// </returns>
         /// 
         void SetSecurityDescriptor(

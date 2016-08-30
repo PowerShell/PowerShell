@@ -610,7 +610,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// PSRP layer.
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
-        /// <param name="e">Event arugments.</param>
+        /// <param name="e">Event arguments.</param>
         private void HandleConnectCompleted(object sender, RemoteDataEventArgs<Exception> e)
         {
             // After initial connect/reconnect set state to "Running".  Later events

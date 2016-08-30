@@ -237,7 +237,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// The AppDomain currently being used for module analysis.  It should only be created if needed,
-        /// but various callers need to take responsbility for unloading the domain via
+        /// but various callers need to take responsibility for unloading the domain via
         /// the TakeResponsibilityForModuleAnalysisAppDomain.
         /// </summary>
         internal AppDomain AppDomainForModuleAnalysis { get; set; }
@@ -334,7 +334,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get/set constraints for this execution environemnt
+        /// Get/set constraints for this execution environment
         /// </summary>
         internal PSLanguageMode LanguageMode
         {
@@ -792,7 +792,7 @@ namespace System.Management.Automation
             if (arraylist.Count > 0)
             {
                 // There may be exceptions stored directly in which case
-                // the direc comparison will catch them...
+                // the direct comparison will catch them...
                 if (arraylist[0] == obj)
                     return;
                 // otherwise check the exception members of the error records...
@@ -802,7 +802,7 @@ namespace System.Management.Automation
                     return;
             }
 
-            // 1045384-2004/12/14-JonN impementing $MaximumErrorCount
+            // 1045384-2004/12/14-JonN implementing $MaximumErrorCount
             object maxcountobj = EngineSessionState.CurrentScope.ErrorCapacity.FastValue;
             if (null != maxcountobj)
             {
@@ -1238,7 +1238,7 @@ namespace System.Management.Automation
         private TypeInfoDataBaseManager _formatDBManager;
 
         /// <summary>
-        /// Gets the TransactionManager instance that controlls transactions in the current
+        /// Gets the TransactionManager instance that controls transactions in the current
         /// instance.
         /// </summary>
         internal PSTransactionManager TransactionManager
@@ -1382,7 +1382,7 @@ namespace System.Management.Automation
                 catch (FileLoadException fileLoadException)
                 {
                     error = fileLoadException;
-                    // this is a legitamate error on CoreCLR for a newly emited with Add-Type assemblies
+                    // this is a legitimate error on CoreCLR for a newly emited with Add-Type assemblies
                     // they cannot be loaded by name, but we are only interested in importing them by path
                 }
                 catch (BadImageFormatException badImage)
@@ -1663,7 +1663,7 @@ namespace System.Management.Automation
                 // we only want to set the event handler once for the entire app domain...
                 lock (lockObject)
                 {
-                    // Need to check again inside the lock due to possibliity of a race condition...
+                    // Need to check again inside the lock due to possibility of a race condition...
                     if (!_assemblyEventHandlerSet)
                     {
                         AppDomain currentAppDomain = AppDomain.CurrentDomain;

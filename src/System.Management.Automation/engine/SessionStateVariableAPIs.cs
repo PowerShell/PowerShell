@@ -1162,7 +1162,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Set a variable useing a pre-parsed variablePath object instead of a string.
+        /// Set a variable using a pre-parsed variablePath object instead of a string.
         /// </summary>
         /// 
         /// <param name="variablePath">
@@ -1226,7 +1226,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Set a variable useing a pre-parsed variablePath object instead of a string.
+        /// Set a variable using a pre-parsed variablePath object instead of a string.
         /// </summary>
         /// 
         /// <param name="variablePath">

@@ -869,7 +869,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Downloads the help cotent
+        /// Downloads the help content
         /// </summary>
         /// <param name="commandType">command type</param>
         /// <param name="path">destination path</param>
@@ -1267,7 +1267,7 @@ namespace System.Management.Automation.Help
 
             string cabDir = Path.GetDirectoryName(srcPath);
 
-            // Cabinet API doens't handle the trailing back slash
+            // Cabinet API doesn't handle the trailing back slash
             if (!cabDir.EndsWith("\\", StringComparison.Ordinal))
             {
                 cabDir += "\\";

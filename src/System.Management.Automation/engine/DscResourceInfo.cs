@@ -72,7 +72,7 @@ namespace System.Management.Automation
         public string FriendlyName { get; set; }
 
         /// <summary>
-        /// Gets or sets of the file which implements the resource. For the reosurces which are defined using 
+        /// Gets or sets of the file which implements the resource. For the resources which are defined using 
         /// MOF file, this will be path to a module which resides in the same folder where schema.mof file is present.
         /// For composite resources, this will be the module which implements the resource
         /// </summary>

@@ -263,7 +263,7 @@ namespace System.Management.Automation
         private Hashtable _dynamicParameterHelps;
 
         /// <summary>
-        /// Return the provider-specific dynamic paramter help based on input parameter name
+        /// Return the provider-specific dynamic parameter help based on input parameter name
         /// </summary>
         /// <param name="parameters">an array of parameters to retrieve help</param>
         /// <returns>an array of mshObject that contains the parameter help</returns>

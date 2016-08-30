@@ -113,10 +113,10 @@ namespace System.Management.Automation
         /// The TypeTable to use while deserializing/serializing remote objects.
         /// TypeTable has the following information used by serializer:
         ///   1. SerializationMethod
-        ///   2. SerailizationDepth
+        ///   2. SerializationDepth
         ///   3. SpecificSerializationProperties
-        /// TypeTable has the following inforamtion used by deserializer:
-        ///   1. TargetTypeForDeserializaiton
+        /// TypeTable has the following information used by deserializer:
+        ///   1. TargetTypeForDeserialization
         ///   2. TypeConverter
         /// </param>
         /// <param name="connectionInfo">connection information which identifies
@@ -176,7 +176,7 @@ namespace System.Management.Automation
             SetRunspaceState(RunspaceState.Disconnected, null);
 
             // Normal Availability for a disconnected runspace is "None", which means it can be connected.
-            // However, we can also have disconnected runspace objects that are *not* avaialable for 
+            // However, we can also have disconnected runspace objects that are *not* available for 
             // connection and in this case the Availability is set to "Busy".
             _runspaceAvailability = RunspacePool.RemoteRunspacePoolInternal.AvailableForConnection ?
                 Runspaces.RunspaceAvailability.None : Runspaces.RunspaceAvailability.Busy;
@@ -703,7 +703,7 @@ namespace System.Management.Automation
         /// accidental dependencies on prior runspace state.
         /// </summary>
         /// <exception cref="PSInvalidOperationException">
-        /// Thrown when runspace is not in proper state or avaialablity or if the
+        /// Thrown when runspace is not in proper state or availability or if the
         /// reset operation fails in the remote session.
         /// </exception>
         public override void ResetRunspaceState()
@@ -1037,11 +1037,11 @@ namespace System.Management.Automation
 
 
         /// <summary>
-        /// Createa a pipeline froma command string
+        /// Create a pipeline from a command string
         /// </summary>
         /// <param name="command">A valid command string</param>
         /// <returns>
-        /// A pipline pre-filled with Commands specified in commandString.
+        /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// command is null
@@ -1062,7 +1062,7 @@ namespace System.Management.Automation
         /// <param name="command">A valid command string</param>
         /// <param name="addToHistory">if true command is added to history</param>
         /// <returns>
-        /// A pipline pre-filled with Commands specified in commandString.
+        /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// command is null
@@ -1098,7 +1098,7 @@ namespace System.Management.Automation
         /// <param name="command">A valid command string</param>
         /// <param name="addToHistory">if true command is added to history</param>
         /// <returns>
-        /// A pipline pre-filled with Commands specified in commandString.
+        /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
         /// <exception cref="PSNotSupportedException">Not supported in remoting
         /// scenarios</exception>
@@ -1156,7 +1156,7 @@ namespace System.Management.Automation
                     throw e;
                 }
 
-                //Add the pipeline to list of Excuting pipeline.
+                //Add the pipeline to list of Executing pipeline.
                 //Note:_runningPipelines is always accessed with the lock so
                 //there is no need to create a synchronized version of list
                 _runningPipelines.Add(pipeline);
@@ -1181,7 +1181,7 @@ namespace System.Management.Automation
                 Dbg.Assert(_runspaceStateInfo.State != RunspaceState.BeforeOpen,
                              "Runspace should not be before open when pipeline is running");
 
-                //Remove the pipeline to list of Excuting pipeline.
+                //Remove the pipeline to list of Executing pipeline.
                 //Note:_runningPipelines is always accessed with the lock so
                 //there is no need to create a synchronized version of list
                 _runningPipelines.Remove(pipeline);
@@ -1255,7 +1255,7 @@ namespace System.Management.Automation
                             UpdateDisconnectExpiresOn();
 
                             // Application private data containing server debug state is updated on
-                            // a *reconstruct* connect operation when _applicatPrivateData is null.  
+                            // a *reconstruct* connect operation when _applicationPrivateData is null.  
                             // Pass new information to the debugger.
                             if (_applicationPrivateData == null)
                             {
@@ -1719,7 +1719,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Keeps track of the current invoke command executing 
-        /// within the current local pipline
+        /// within the current local pipeline
         /// </summary>
         /// <param name="invokeCommand">reference to invoke command
         /// which is currently being processed</param>
@@ -1770,7 +1770,7 @@ namespace System.Management.Automation
         internal RunspacePool RunspacePool { get; }
 
         /// <summary>
-        /// EventHandler used to report connecion URI redirections to the application
+        /// EventHandler used to report connection URI redirections to the application
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<Uri>> URIRedirectionReported;
 

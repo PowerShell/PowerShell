@@ -16,7 +16,7 @@ using System.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements the Save-Help cmdleto
+    /// This class implements the Save-Help cmdlet
     /// </summary>
     [Cmdlet(VerbsData.Save, "Help", DefaultParameterSetName = SaveHelpCommand.PathParameterSetName,
         HelpUri = "http://go.microsoft.com/fwlink/?LinkID=210612")]

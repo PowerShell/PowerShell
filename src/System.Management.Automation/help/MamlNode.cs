@@ -17,7 +17,7 @@ namespace System.Management.Automation
     /// etc, which needs to be taken care of during display. As a result, xml node in Maml schema can't be 
     /// converted into PSObject directly with XmlNodeAdapter. 
     /// 
-    /// MamlNode class provides logic in converting formatting tags into the format accetable by monad format
+    /// MamlNode class provides logic in converting formatting tags into the format acceptable by monad format
     /// and output engine. 
     /// 
     /// Following three kinds of formating tags are supported per our agreement with Maml team, 
@@ -61,10 +61,10 @@ namespace System.Management.Automation
     ///             <tag>*</tag>
     ///             <text>text for list item 2</text>
     ///         </textItem>
-    ///     3. definitionList => a list of defintionTextItem's
+    ///     3. definitionList => a list of definitionTextItem's
     ///         <definitionListItem>
     ///             <term>definition term here</term>
-    ///             <definition>defintion text here</definition>
+    ///             <definition>definition text here</definition>
     ///         </definitionListItem>
     /// </summary>
     /// 
@@ -380,7 +380,7 @@ namespace System.Management.Automation
         /// "attrib1" will be lost. This seems to be OK with current practice of authoring 
         /// monad command help. 
         /// </summary>
-        /// <param name="properties">property hastable</param>
+        /// <param name="properties">property hashtable</param>
         /// <param name="name">property name</param>
         /// <param name="mshObject">property value</param>
         private static void AddProperty(Hashtable properties, string name, PSObject mshObject)
@@ -805,7 +805,7 @@ namespace System.Management.Automation
         /// two properties,
         ///        a. tag=" 1. " or " 2. "
         ///        b. text="text for list item 1" or "text for list item 2"
-        /// In the case of unordered list, similiar PSObject will created with type to be "MamlUnorderedListText" and tag="*"
+        /// In the case of unordered list, similar PSObject will created with type to be "MamlUnorderedListText" and tag="*"
         /// 
         /// </summary>
         /// <param name="xmlNode"></param>
@@ -977,16 +977,16 @@ namespace System.Management.Automation
         /// Convert an definitionListItem node into an PSObject
         /// 
         /// For example
-        ///        <defintionListItem>
+        ///        <definitionListItem>
         ///            <term>
         ///                term text
         ///            </term>
         ///            <definition>
         ///                <para>
-        ///                    definiton text
+        ///                    definition text
         ///                </para>
         ///            </definition>
-        ///        </defintionListItem>
+        ///        </definitionListItem>
         /// In this case, an PSObject of type "definitionListText" will be created with following 
         /// properties
         ///        a. term="term text"
@@ -1185,7 +1185,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get mininum indentation of a paragraph
+        /// Get minimum indentation of a paragraph
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
@@ -1208,7 +1208,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get indetation of a line, i.e., number of spaces
+        /// Get indentation of a line, i.e., number of spaces
         /// at the beginning of the line.
         /// </summary>
         /// <param name="line"></param>

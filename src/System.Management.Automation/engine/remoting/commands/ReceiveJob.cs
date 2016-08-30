@@ -22,7 +22,7 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Cmdlet used for receiveing results from job object. 
+    /// Cmdlet used for receiving results from job object. 
     /// This cmdlet is intended to have a slightly different behavior
     /// in the following two cases:
     ///          1. The job object to receive results from is a PSRemotingJob

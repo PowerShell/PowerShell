@@ -49,7 +49,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Inherited from InvalidCastException, because it happens in [string] -> [Type] convertion.
+        /// Inherited from InvalidCastException, because it happens in [string] -> [Type] conversion.
         /// </summary>
         internal class AmbiguousTypeException : InvalidCastException
         {
@@ -202,7 +202,7 @@ namespace System.Management.Automation.Language
             try
             {
                 // We shouldn't really bother looking for the type in System namespace, but
-                // we've always done that.  We explictily are not supporting arbitrary
+                // we've always done that.  We explicitly are not supporting arbitrary
                 // 'using namespace' here because there is little value, if you need the assembly
                 // qualifier, it's best to just fully specify the type.
                 var result = Type.GetType(typeName.FullName, false, true) ??
@@ -266,14 +266,14 @@ namespace System.Management.Automation.Language
             //             Consider this code
             //                  Add-Type 'public class Q {}' # ok
             //                  Add-Type 'public class Q { }' # get error about the same name
-            //                  [Q] # we would get error about ambigious type, because we added assembly with duplicated type
+            //                  [Q] # we would get error about ambiguous type, because we added assembly with duplicated type
             //                      # before we can report TYPE_ALREADY_EXISTS error.
             //      
             //                  Add-Type 'public class Q2 {}' # ok
             //                  [Q2] # caching Q2 type
             //                  Add-Type 'public class Q2 { }' # get error about the same name
-            //                  [Q2] # we don't get an error about ambigious type, because it's cached already
-            //          2) NuGet (VS Package Management console) uses MEF extensability model. 
+            //                  [Q2] # we don't get an error about ambiguous type, because it's cached already
+            //          2) NuGet (VS Package Management console) uses MEF extensibility model. 
             //             Different assemblies includes same interface (i.e. NuGet.VisualStudio.IVsPackageInstallerServices), 
             //             where they include only methods that they are interested in the interface declaration (result interfaces are different!).
             //             Then, at runtime VS provides an instance. Everything work as far as instance has compatible API.
@@ -751,14 +751,14 @@ namespace System.Management.Automation
 
     /// <summary>
     /// A class to view and modify the type accelerators used by the PowerShell engine.  Builtin
-    /// type accelerators are read only, but user defined type accerators may be added.
+    /// type accelerators are read only, but user defined type accelerators may be added.
     /// </summary>
     internal static class TypeAccelerators
     {
         // builtins are not exposed publicly in a direct manner so they can't be changed at all
         internal static Dictionary<string, Type> builtinTypeAccelerators = new Dictionary<string, Type>(64, StringComparer.OrdinalIgnoreCase);
 
-        // users can add to user added accelerators (but not currently remove any.)  Keeping a seperate
+        // users can add to user added accelerators (but not currently remove any.)  Keeping a separate
         // list allows us to add removing in the future w/o worrying about breaking the builtins.
         internal static Dictionary<string, Type> userTypeAccelerators = new Dictionary<string, Type>(64, StringComparer.OrdinalIgnoreCase);
 
@@ -847,7 +847,7 @@ namespace System.Management.Automation
         /// to the dictionary will not affect PowerShell scripts in any way.  Use
         /// <see cref="TypeAccelerators.Add"/> and
         /// <see cref="TypeAccelerators.Remove"/> to
-        /// affect the type resolutin in PowerShell scripts.
+        /// affect the type resolution in PowerShell scripts.
         /// </remarks>
         public static Dictionary<string, Type> Get
         {

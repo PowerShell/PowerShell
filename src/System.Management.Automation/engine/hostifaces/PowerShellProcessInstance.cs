@@ -140,7 +140,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                // When process is exited, there is some delay in receiving ProcesExited event and HasExited property on process object.
+                // When process is exited, there is some delay in receiving ProcessExited event and HasExited property on process object.
                 // Using HasExited property on started process object to determine if powershell process has exited. 
                 //                
                 return _processExited || (_started && Process != null && Process.HasExited);

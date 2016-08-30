@@ -349,7 +349,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="property">PSProperty coming from a previous call to DoGetProperty</param>
         /// <param name="setValue">value to set the property with</param>
-        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter suports conversion</param>
+        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
             ManagementBaseObject mObj = property.baseObject as ManagementBaseObject;
@@ -452,7 +452,7 @@ namespace System.Management.Automation
                 try
                 {
                     // try to populate method table..if there is any exception
-                    // generati.ng the method metadata..suppress the exception
+                    // generating the method metadata..suppress the exception
                     // but dont store the info in the cache. This is to allow
                     // for method look up again in future (after the wmi object
                     // is fixed)
@@ -511,7 +511,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a ManagementClass object from the supplied mgmtBaseObject.
         /// ManagementObject has scope, options, path which need to be carried over to the ManagementClass for
-        /// retreiveing method/property/parameter metadata
+        /// retrieving method/property/parameter metadata
         /// </summary>
         /// <param name="mgmtBaseObject"></param>
         /// <returns></returns>
@@ -724,7 +724,7 @@ namespace System.Management.Automation
                 // and also null ints to 0. But WMI providers do not like these
                 // conversions. So dont convert input arguments if they are null.
                 // We could have done this in the base adapter but the change would be
-                // costly for other adpaters which dont mind the conversion.
+                // costly for other adapters which dont mind the conversion.
                 if ((i < arguments.Length) && (arguments[i] == null))
                 {
                     verifiedArguments[i] = null;
@@ -753,7 +753,7 @@ namespace System.Management.Automation
 
             foreach (PropertyData data in parameters.Properties)
             {
-                // parameter postion..
+                // parameter position..
                 int location = -1;
                 WMIParameterInformation pInfo = new WMIParameterInformation(data.Name, GetDotNetType(data));
 
@@ -928,7 +928,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Deals with ManagementClass objects.
     /// Adapts only static methods and SystemProperties of a 
-    /// ManagemetnClass object.
+    /// ManagementClass object.
     /// </summary>
     internal class ManagementClassApdapter : BaseWMIAdapter
     {
@@ -961,7 +961,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Invokes method reperesented by <paramref name="mdata"/> using supplied arguments.
+        /// Invokes method represented by <paramref name="mdata"/> using supplied arguments.
         /// </summary>
         /// <param name="wmiObject">ManagementObject on which the method is invoked.</param>
         /// <param name="methodName">Method data.</param>
@@ -1118,7 +1118,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Invokes method reperesented by <paramref name="mdata"/> using supplied arguments.
+        /// Invokes method represented by <paramref name="mdata"/> using supplied arguments.
         /// </summary>
         /// <param name="obj">ManagementObject on which the method is invoked.</param>
         /// <param name="methodName">Method data.</param>

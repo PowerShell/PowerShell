@@ -126,14 +126,14 @@ namespace System.Management.Automation
         /// <remarks>
         /// This will, 
         ///     a. use _sessionState object to get a list of alias that match the target.
-        ///     b. for each alias, retrive help info as in ExactMatchHelp.
+        ///     b. for each alias, retrieve help info as in ExactMatchHelp.
         /// </remarks>
         /// <param name="helpRequest">help request object</param>   
         /// <param name="searchOnlyContent">
         /// If true, searches for pattern in the help content. Individual 
         /// provider can decide which content to search in.
         /// 
-        /// If false, seraches for pattern in the command names.
+        /// If false, searches for pattern in the command names.
         /// </param> 
         /// <returns>a IEnumerable of helpinfo object</returns>
         internal override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)

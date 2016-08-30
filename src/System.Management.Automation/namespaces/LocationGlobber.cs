@@ -1053,7 +1053,7 @@ namespace System.Management.Automation
         /// </param>
         /// 
         /// <returns>
-        /// A provider specifc path that the Msh path represents.
+        /// A provider specific path that the Msh path represents.
         /// </returns>
         /// 
         /// <exception cref="ArgumentNullException">
@@ -1114,7 +1114,7 @@ namespace System.Management.Automation
         /// </param>
         /// 
         /// <returns>
-        /// A provider specifc path that the Msh path represents.
+        /// A provider specific path that the Msh path represents.
         /// </returns>
         /// 
         /// <exception cref="ArgumentNullException">
@@ -1198,7 +1198,7 @@ namespace System.Management.Automation
         /// </param>
         /// 
         /// <returns>
-        /// A provider specifc path that the Msh path represents.
+        /// A provider specific path that the Msh path represents.
         /// </returns>
         /// 
         /// <exception cref="ArgumentNullException">
@@ -1330,7 +1330,7 @@ namespace System.Management.Automation
         /// Returns a provider specific path for given PowerShell path.
         /// </summary>
         /// <param name="path">Path to resolve</param>
-        /// <param name="context">Cmdlet contet</param>
+        /// <param name="context">Cmdlet context</param>
         /// <param name="isTrusted">When true bypass trust check</param>
         /// <param name="provider">Provider</param>
         /// <param name="drive">Drive</param>
@@ -1794,7 +1794,7 @@ namespace System.Management.Automation
         private SessionState _sessionState;
 
         /// <summary>
-        /// Removs the back tick "`" from any of the glob characters in the path.
+        /// Removes the back tick "`" from any of the glob characters in the path.
         /// </summary>
         /// 
         /// <param name="path">
@@ -2009,7 +2009,7 @@ namespace System.Management.Automation
 
                 // This will resolve $GLOBAL, and $LOCAL as needed.
                 // This throws DriveNotFoundException if a drive of the specified
-                // name does not exist. Just let the exception propogate out.
+                // name does not exist. Just let the exception propagate out.
                 try
                 {
                     workingDriveForPath = _sessionState.Drive.Get(driveName);

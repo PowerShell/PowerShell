@@ -33,7 +33,7 @@ namespace Microsoft.WSMan.Management
         private PSObject objPluginNames = null;
 
         /// <summary>
-        /// Determinies if Set-Item user input type validateion is required or not.
+        /// Determines if Set-Item user input type validation is required or not.
         /// It is True by default, Clear-Item will set it to false so that it can 
         /// pass Empty String as value for Set-Item.
         /// </summary>
@@ -42,7 +42,7 @@ namespace Microsoft.WSMan.Management
         WSManHelper helper = new WSManHelper();
 
         /// <summary>
-        /// Object contains the cache of the enumarate results for the cmdlet to execute.
+        /// Object contains the cache of the enumerate results for the cmdlet to execute.
         /// </summary>
         Dictionary<string, XmlDocument> enumarateMapping = new Dictionary<string, XmlDocument>();
 
@@ -196,7 +196,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// Adds the requird drive
+        /// Adds the required drive
         /// </summary>
         /// <returns></returns>
         protected override Collection<PSDriveInfo> InitializeDefaultDrives()
@@ -208,7 +208,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// Removes the requird drive
+        /// Removes the required drive
         /// </summary>
         /// <returns></returns>
         protected override PSDriveInfo RemoveDrive(PSDriveInfo drive)
@@ -223,9 +223,9 @@ namespace Microsoft.WSMan.Management
         #region ItemCmdletProvider
 
         /// <summary>
-        /// Get a Child Name. This methos is called from MakePath method.
+        /// Get a Child Name. This method is called from MakePath method.
         /// This Method helps in getting the correct case of particular element in the provider path.
-        /// XML is case senstive but Powershell is not. 
+        /// XML is case sensitive but Powershell is not. 
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
@@ -391,7 +391,7 @@ namespace Microsoft.WSMan.Management
                 /* 
                 WsMan Config Can be divided in to Four Fixed Regions to Check Whether it has Child Items.
                 
-                 * 1. Branch in to Listerners (winrm/config/listener)
+                 * 1. Branch in to Listeners (winrm/config/listener)
                  * 2. Branch in to CertMapping (winrm/config/service/certmapping)
                  * 3. Branch in to Plugin (winrm/config/plugin) - Plugin is subdivided in Resources,Security & InitParams
                  * 4. Rest all the branches like Client, Shell(WinRS) ,Service
@@ -1314,7 +1314,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// This commad is used to clear the value of a item.
+        /// This command is used to clear the value of a item.
         /// </summary>
         /// <param name="path"></param>
         protected override void ClearItem(string path)
@@ -1366,7 +1366,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// This method gives the names of child items. this is used for Tab compeletion.
+        /// This method gives the names of child items. this is used for Tab completion.
         /// </summary>
         /// <param name="path"></param>
         /// <param name="returnContainers"></param>
@@ -1427,7 +1427,7 @@ namespace Microsoft.WSMan.Management
                 /* 
                 WsMan Config Can be divided in to Four Fixed Regions to Check Whether Item is Container
                 
-                 * 1. Branch in to Listerners (winrm/config/listener)
+                 * 1. Branch in to Listeners (winrm/config/listener)
                  * 2. Branch in to CertMapping (winrm/config/service/certmapping)
                  * 3. Branch in to Plugin (winrm/config/plugin) - Plugin is subdivided in Resources,Security & InitParams
                  * 4. Rest all the branches like Client, Shell(WinRS) ,Service
@@ -3016,7 +3016,7 @@ namespace Microsoft.WSMan.Management
                 if (!prop.Value.ToString().Equals(WSManStringLiterals.ContainerChildValue))
                 {
                     // This path is used by WriteItemObject to construct PSPath.
-                    // PSPath is a provider quailified path and we dont need to specify
+                    // PSPath is a provider qualified path and we dont need to specify
                     // provider root in this path..So I am trying to eliminate provider root
                     // in this case.
                     string pathToUse = WSManStringLiterals.rootpath.Equals(path, StringComparison.OrdinalIgnoreCase) ?
@@ -3027,7 +3027,7 @@ namespace Microsoft.WSMan.Management
                 else
                 {
                     // This path is used by WriteItemObject to construct PSPath.
-                    // PSPath is a provider quailified path and we dont need to specify
+                    // PSPath is a provider qualified path and we dont need to specify
                     // provider root in this path..So I am trying to eliminate provider root
                     // in this case.
                     string pathToUse = WSManStringLiterals.rootpath.Equals(path, StringComparison.OrdinalIgnoreCase) ?
@@ -3292,13 +3292,13 @@ namespace Microsoft.WSMan.Management
         /// Given wsman config path, gets the value of the leaf present.
         /// If path is not valid or not present throws an exception.
         /// 
-        /// Currently this supports only retreiving Rescource_XXXX dir contents.
+        /// Currently this supports only retrieving Resource_XXXX dir contents.
         /// if you need support at other levels implement them.
         /// Example resource dir: WSMan:\localhost\Plugin\someplugin\Resources\Resource_XXXXXXX
         /// </summary>
         /// <param name="path"></param>
         /// <returns>
-        /// A PSObject representing the contents of the path if successfull,
+        /// A PSObject representing the contents of the path if successful,
         /// Otherwise null.
         /// </returns>
         /// <exception cref="ArgumentException">
@@ -3381,7 +3381,7 @@ namespace Microsoft.WSMan.Management
                     }
                     else
                     {
-                        // Currently this supports only retreiving Rescource_XXXX dir contents.
+                        // Currently this supports only retrieving Resource_XXXX dir contents.
                         // if you need support at other levels implement them.
                         // Example resource dir: WSMan:\localhost\Plugin\someplugin\Resources\Resource_67830040
                         string filter = uri + "?Name=" + currentpluginname;
@@ -3695,7 +3695,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// Removes a Listerner or ClientCertificate object. Used by Remove-Item cmdlets.
+        /// Removes a Listener or ClientCertificate object. Used by Remove-Item cmdlets.
         /// </summary>
         /// <param name="sessionobj"></param>
         /// <param name="WsManUri"></param>
@@ -4409,7 +4409,7 @@ namespace Microsoft.WSMan.Management
                     {
                         PluginNames.Properties.Add(new PSNoteProperty(e.Attributes[i].Value, WSManStringLiterals.ContainerChildValue));
 
-                        // If the path contains \plugin and splitLength is greater than 3 then splitLenght[2] will be plugin Name.
+                        // If the path contains \plugin and splitLength is greater than 3 then splitLength[2] will be plugin Name.
                         if (splitPath.Length >= 3 && splitPath[2].Equals(e.Attributes[i].Value, StringComparison.OrdinalIgnoreCase))
                         {
                             CurrentPluginName = e.Attributes[i].Value;
@@ -4575,7 +4575,7 @@ namespace Microsoft.WSMan.Management
                         && attribute.Key.ToString().Equals("Port", StringComparison.OrdinalIgnoreCase))
                     {
                         // we add the Port number when generating the name in order 
-                        // be distinguish compatiblity listeners which might have the same
+                        // be distinguish compatibility listeners which might have the same
                         // real key (address and port) as a real listener
                         sbHashKey.Append(attribute.Key.ToString());
                         sbHashKey.Append(WSManStringLiterals.Equalto);
@@ -5460,7 +5460,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".
-        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connnection to 
+        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to 
         /// the remote computer. If SSL is not available on the port specified by the 
         /// Port parameter, the command fails.
         /// </summary>
@@ -5599,7 +5599,7 @@ namespace Microsoft.WSMan.Management
         private PSCredential runAsCredentials;
 
         /// <summary>
-        /// Parameter for Plugin Host Process configuration (Shared or Saperate).
+        /// Parameter for Plugin Host Process configuration (Shared or Separate).
         /// </summary>
         [Parameter()]
         public SwitchParameter UseSharedProcess
@@ -5810,7 +5810,7 @@ namespace Microsoft.WSMan.Management
 #region Listener Dynamic Parameters
 
     /// <summary>
-    /// Listener Dyanamic parameters
+    /// Listener Dynamic parameters
     /// Path - WsMan:\Localhost\Listener>
     /// </summary>
     public class WSManProvidersListenerParameters
@@ -6091,15 +6091,15 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         internal const string containerService = "Service";
         /// <summary>
-        /// Auth Container - Under Client,Serive
+        /// Auth Container - Under Client,Service
         /// </summary>
         internal const string containerAuth = "Auth";
         /// <summary>
-        /// DefaultPorts Container - Under Client,Serive
+        /// DefaultPorts Container - Under Client,Service
         /// </summary>
         internal const string containerDefaultPorts = "DefaultPorts";
         /// <summary>
-        /// TrustedHosts Container - Under Client,Serive
+        /// TrustedHosts Container - Under Client,Service
         /// </summary>
         internal const string containerTrustedHosts = "TrustedHosts";
         /// <summary>
@@ -6177,7 +6177,7 @@ namespace Microsoft.WSMan.Management
         internal const string ConfigRunAsUserName = "RunAsUser";
 
         /// <summary>
-        /// Name of the configuration which represents if HostProcess is shared or saperate.
+        /// Name of the configuration which represents if HostProcess is shared or separate.
         /// </summary>
         internal const string ConfigUseSharedProcess = "UseSharedProcess";
 
@@ -6371,7 +6371,7 @@ $_ | Start-WSManServiceD15A7957836142a18627D7E1D342DD82 -force $args[0] -caption
 
 
 
-#endregion "WsMan Outpu tObjects"
+#endregion "WsMan Output Objects"
 
 
 }

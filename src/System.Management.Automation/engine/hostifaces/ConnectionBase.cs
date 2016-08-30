@@ -279,7 +279,7 @@ namespace System.Management.Automation.Runspaces
             OpenHelper(syncCall);
             if (etwEnabled) RunspaceEventSource.Log.OpenRunspaceStop();
 
-            // We report startup telemtry when opening the runspace - because this is the first time
+            // We report startup telementry when opening the runspace - because this is the first time
             // we are really using PowerShell. This isn't the cleanest place though, because
             // sometimes there are many runspaces created - the callee ensures telemetry is only
             // reported once. Note that if the host implements IHostProvidesTelemetryData, we rely
@@ -541,11 +541,11 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Createa a pipeline froma command string
+        /// Create a pipeline from a command string
         /// </summary>
         /// <param name="command">A valid command string</param>
         /// <returns>
-        /// A pipline pre-filled with Commands specified in commandString.
+        /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// command is null
@@ -566,7 +566,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="command">A valid command string</param>
         /// <param name="addToHistory">if true command is added to history</param>
         /// <returns>
-        /// A pipline pre-filled with Commands specified in commandString.
+        /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// command is null
@@ -600,7 +600,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="command">A valid command string</param>
         /// <param name="addToHistory">if true command is added to history</param>
         /// <returns>
-        /// A pipline pre-filled with Commands specified in commandString.
+        /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// command is null
@@ -623,7 +623,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="addToHistory">if true command is added to history</param>
         /// <param name="isNested">True for nested pipeline</param>
         /// <returns>
-        /// A pipline pre-filled with Commands specified in commandString.
+        /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
         protected abstract Pipeline CoreCreatePipeline(string command, bool addToHistory, bool isNested);
 
@@ -866,7 +866,7 @@ namespace System.Management.Automation.Runspaces
                     throw e;
                 }
 
-                //Add the pipeline to list of Excuting pipeline.
+                //Add the pipeline to list of Executing pipeline.
                 //Note:_runningPipelines is always accessed with the lock so
                 //there is no need to create a synchronized version of list
                 RunningPipelines.Add(pipeline);
@@ -892,7 +892,7 @@ namespace System.Management.Automation.Runspaces
                 Dbg.Assert(RunspaceState != RunspaceState.BeforeOpen,
                              "Runspace should not be before open when pipeline is running");
 
-                //Remove the pipeline to list of Excuting pipeline.
+                //Remove the pipeline to list of Executing pipeline.
                 //Note:_runningPipelines is always accessed with the lock so
                 //there is no need to create a synchronized version of list
                 RunningPipelines.Remove(pipeline);
@@ -1529,7 +1529,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Protected methods to be implemented by derived class.
-        /// This does the acutal work of setting variable.
+        /// This does the actual work of setting variable.
         /// </summary>
         /// <param name="name">Name of the variable to set</param>
         /// <param name="value">The value to set it to</param>

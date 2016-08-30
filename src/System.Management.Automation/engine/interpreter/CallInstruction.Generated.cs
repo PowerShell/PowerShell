@@ -80,7 +80,7 @@ namespace System.Management.Automation.Interpreter {
 
         /// <summary>
         /// Fast creation works if we have a known primitive types for the entire
-        /// method siganture.  If we have any non-primitive types then FastCreate
+        /// method signature.  If we have any non-primitive types then FastCreate
         /// falls back to SlowCreate which works for all types.
         /// 
         /// Fast creation is fast because it avoids using reflection (MakeGenericType

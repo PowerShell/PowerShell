@@ -389,7 +389,7 @@ namespace System.Management.Automation.Runspaces
             if (SyncInvokeCall)
             {
                 //Raise the pipeline completion events. These events are set in
-                //pipeline execution thread. However for Synchornous execution
+                //pipeline execution thread. However for Synchronous execution
                 //we raise the event in the main thread.
                 RaisePipelineStateEvents();
             }
@@ -526,7 +526,7 @@ namespace System.Management.Automation.Runspaces
                 RunspaceBase.DoConcurrentCheckAndAddToRunningPipelines(this, syncCall);
 
                 //Note: Set PipelineState to Running only after adding pipeline to list
-                //of pipelines in exectuion. AddForExecution checks that runspace is in
+                //of pipelines in execution. AddForExecution checks that runspace is in
                 //state where pipeline can be run.
                 //StartPipelineExecution raises this event. See Windows Bug 1160481 for
                 //more details.
@@ -591,7 +591,7 @@ namespace System.Management.Automation.Runspaces
         /// In case of LocalPipeline, this is the thread of execution
         /// of LocalPipeline. In case of RemotePipeline, this is thread
         /// on which EnterNestedPrompt is called.
-        /// RemotePipeline proxy should set it on at the begining of 
+        /// RemotePipeline proxy should set it on at the beginning of 
         /// EnterNestedPrompt and clear it on return.
         /// </summary>
         internal Thread NestedPipelineExecutionThread { get; set; }
@@ -604,7 +604,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="syncCall">True if method is called from Invoke, false
         /// if called from InvokeAsync</param>
         /// <param name="syncObject">The sync object on which the lock is acquired</param>
-        /// <param name="isInLock">True if the method is invoked in a critical secion</param>
+        /// <param name="isInLock">True if the method is invoked in a critical section</param>
         /// <exception cref="InvalidOperationException">
         /// 1) A pipeline is already executing. Pipeline cannot execute 
         /// concurrently.
@@ -871,7 +871,7 @@ namespace System.Management.Automation.Runspaces
 
                     // this is shipped as part of V1. So disabling the warning here.
 #pragma warning disable 56500
-                    //Exception rasied in the eventhandler are not error in pipeline.
+                    //Exception raised in the eventhandler are not error in pipeline.
                     //silently ignore them.
                     if (stateChanged != null)
                     {

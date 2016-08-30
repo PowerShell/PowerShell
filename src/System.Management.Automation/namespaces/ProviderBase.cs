@@ -110,7 +110,7 @@ namespace System.Management.Automation.Provider
 
         /// <summary>
         /// Checks whether the filter of the provider is set. 
-        /// Can be overriden by derived class when additional filters are defined.
+        /// Can be overridden by derived class when additional filters are defined.
         /// </summary>
         /// <returns>
         /// Whether the filter of the provider is set. 
@@ -226,7 +226,7 @@ namespace System.Management.Automation.Provider
             Context = cmdletProviderContext;
 
             return StartDynamicParameters();
-        } // StartDynamicParmaters
+        } // StartDynamicParameter
 
         /// <summary>
         /// Called when the provider is being removed. It sets the context
@@ -1713,7 +1713,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         protected virtual object StartDynamicParameters()
         {

@@ -203,7 +203,7 @@ namespace Microsoft.WSMan.Management
 
 
         /// <summary>
-        /// add a session to dictioanry
+        /// add a session to dictionary
         /// </summary>
         /// <param name="key">connection string</param>
         /// <param name="value">session object</param>
@@ -408,7 +408,7 @@ namespace Microsoft.WSMan.Management
                     string parameters = null, nilns = null;
                     string xmlns = GetXmlNs(resourceUri.ResourceUri);
 
-                    //if valueset is given, i.e hastable
+                    //if valueset is given, i.e hashtable
                     if (valueset != null)
                     {
                         foreach (DictionaryEntry entry in valueset)
@@ -619,7 +619,7 @@ namespace Microsoft.WSMan.Management
         /// Used to resolve authentication from the parameters chosen by the user.
         /// User has the following options:
         /// 1. AuthMechanism + Credential
-        /// 2. CertiticateThumbPrint
+        /// 2. CertificateThumbPrint
         /// 
         /// All the above are mutually exclusive.
         /// </summary>
@@ -982,7 +982,7 @@ namespace Microsoft.WSMan.Management
         /// Verifies all the registry keys are set as expected. In case of failure .. try ecery second for 60 seconds before returning false.
         /// </summary>
         /// <param name="AllowFreshCredentialsValueShouldBePresent">True if trying to Enable CredSSP.</param>
-        /// <param name="DelegateComputer">Names of the degate computer.</param>
+        /// <param name="DelegateComputer">Names of the delegate computer.</param>
         /// <param name="applicationname">Name of the application.</param>
         /// <returns>True if valid.</returns>
         internal bool ValidateCreadSSPRegistryRetry(bool AllowFreshCredentialsValueShouldBePresent, string[] DelegateComputer, string applicationname)

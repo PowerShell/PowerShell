@@ -22,7 +22,7 @@ namespace System.Management.Automation.Remoting
     // cases if GCRoot is used, CLR will pick up the first AppDomain in the list
     // to get the managed handle. Delegates are not just function pointers, they
     // also contain a reference to the AppDomain that created it. However the catch
-    // is that delegates must be marshelled into their respective unmanaged function
+    // is that delegates must be marshalled into their respective unmanaged function
     // pointers (otherwise we end up storing the delegate into a GCRoot).
 
     /// <summary>

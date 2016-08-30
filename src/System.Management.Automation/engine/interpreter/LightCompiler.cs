@@ -177,7 +177,7 @@ namespace System.Management.Automation.Interpreter
     }
 
     /// <summary>
-    /// The re-throw instrcution will throw this exception
+    /// The re-throw instruction will throw this exception
     /// </summary>
     internal sealed class RethrowException : SystemException
     {
@@ -282,7 +282,7 @@ namespace System.Management.Automation.Interpreter
 
         private readonly Stack<ParameterExpression> _exceptionForRethrowStack = new Stack<ParameterExpression>();
 
-        // Set to true to force compiliation of this lambda.
+        // Set to true to force compilation of this lambda.
         // This disables the interpreter for this lambda. We still need to
         // walk it, however, to resolve variables closed over from the parent
         // lambdas (because they may be interpreted).
@@ -1249,7 +1249,7 @@ namespace System.Management.Automation.Interpreter
                     return true;
                 case ExpressionType.Switch:
                     PushLabelBlock(LabelScopeKind.Switch);
-                    // Define labels inside of the switch cases so theyare in
+                    // Define labels inside of the switch cases so they are in
                     // scope for the whole switch. This allows "goto case" and
                     // "goto default" to be considered as local jumps.
                     var @switch = (SwitchExpression)node;

@@ -150,7 +150,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// If HelpMessageBaseName and HelpMessageResourceId are set, the help info is
-        /// loaded from the resouce indicated by HelpMessageBaseName and HelpMessageResourceId.
+        /// loaded from the resource indicated by HelpMessageBaseName and HelpMessageResourceId.
         /// If that fails and HelpMessage is set, the help info is set to HelpMessage; otherwise,
         /// the exception that is thrown when loading the resource is thrown.
         /// If both HelpMessageBaseName and HelpMessageResourceId are not set, the help info is

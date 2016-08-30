@@ -33,7 +33,7 @@ namespace System.Management.Automation.Tracing
 
 #endregion
 
-#region Instsance Access
+#region Instance Access
 
         public Delegate Invoker
         {

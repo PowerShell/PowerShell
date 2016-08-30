@@ -483,8 +483,8 @@ namespace System.Management.Automation.Remoting
             }
             else if (obj is PSObject && IsGenericIEnumerableOfInt(type))
             {
-                // we cannot create an instance of interface type like IEnumberable
-                // Since a Collection implements IEnumberable, falling back to use 
+                // we cannot create an instance of interface type like IEnumerable
+                // Since a Collection implements IEnumerable, falling back to use 
                 // that.
                 return DecodeCollection((PSObject)obj, typeof(Collection<int>));
             }

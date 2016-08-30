@@ -41,7 +41,7 @@ namespace Microsoft.WSMan.Management
         private XmlDocument rootDocument;
 
         /// <summary>
-        /// Holds the referance to the current document element.
+        /// Holds the reference to the current document element.
         /// </summary>
         private XmlElement documentElement;
 
@@ -89,7 +89,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// Refresh the CurrentConfiguration. This method calls GET operation for the given 
-        /// URI on the server and update the current configuraition. It also intialize some
+        /// URI on the server and update the current configuration. It also initialize some
         /// of required class members.
         /// </summary>
         /// <param name="responseOfGet">Plugin configuration.</param>
@@ -115,7 +115,7 @@ namespace Microsoft.WSMan.Management
         /// Issues a PUT request with the ResourceUri provided.
         /// </summary>
         /// <param name="resourceUri">Resource URI to use.</param>
-        /// <returns>Fales, if operation is not succesful.</returns>
+        /// <returns>False, if operation is not succesful.</returns>
         public void PutConfiguraitonOnServer(string resourceUri)
         {
             if (String.IsNullOrEmpty(resourceUri))

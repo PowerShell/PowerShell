@@ -94,7 +94,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sourceValue">value supposedly *not* of the types supported by this converted to be converted to the <paramref name="destinationType"/> parameter</param>
         /// <param name="destinationType">one of the types supported by this converter to which the <paramref name="sourceValue"/> parameter should be converted to</param>
-        /// <param name="formatProvider">The format provider to use like in IFormatable's ToString</param>
+        /// <param name="formatProvider">The format provider to use like in IFormattable's ToString</param>
         /// <param name="ignoreCase">true if case should be ignored</param>
         /// <returns>the <paramref name="sourceValue"/> parameter converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase</returns>
         /// <exception cref="InvalidCastException">if no conversion was possible</exception>
@@ -105,7 +105,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sourceValue">value supposedly *not* of the types supported by this converted to be converted to the <paramref name="destinationType"/> parameter</param>
         /// <param name="destinationType">one of the types supported by this converter to which the <paramref name="sourceValue"/> parameter should be converted to</param>
-        /// <param name="formatProvider">The format provider to use like in IFormatable's ToString</param>
+        /// <param name="formatProvider">The format provider to use like in IFormattable's ToString</param>
         /// <param name="ignoreCase">true if case should be ignored</param>
         /// <returns>the <paramref name="sourceValue"/> parameter converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase</returns>
         /// <exception cref="InvalidCastException">if no conversion was possible</exception>
@@ -138,7 +138,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sourceValue">value supposedly from one of the types supported by this converter to be converted to the <paramref name="destinationType"/> parameter</param>
         /// <param name="destinationType">type to convert the <paramref name="sourceValue"/> parameter, supposedly not one of the types supported by the converter</param>
-        /// <param name="formatProvider">The format provider to use like in IFormatable's ToString</param>
+        /// <param name="formatProvider">The format provider to use like in IFormattable's ToString</param>
         /// <param name="ignoreCase">true if case should be ignored</param>
         /// <returns>sourceValue converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase</returns>
         /// <exception cref="InvalidCastException">if no conversion was possible</exception>
@@ -149,7 +149,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sourceValue">value supposedly from one of the types supported by this converter to be converted to the <paramref name="destinationType"/> parameter</param>
         /// <param name="destinationType">type to convert the <paramref name="sourceValue"/> parameter, supposedly not one of the types supported by the converter</param>
-        /// <param name="formatProvider">The format provider to use like in IFormatable's ToString</param>
+        /// <param name="formatProvider">The format provider to use like in IFormattable's ToString</param>
         /// <param name="ignoreCase">true if case should be ignored</param>
         /// <returns>sourceValue converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase</returns>
         /// <exception cref="InvalidCastException">if no conversion was possible</exception>
@@ -934,7 +934,7 @@ namespace System.Management.Automation
                 case 1:
                     // A possible implementation would be just 
                     // return IsTrue(objectArray[0]);
-                    // but since we don't want this to recurse indefinately
+                    // but since we don't want this to recurse indefinitely
                     // we explicitly check the case where it would recurse
                     // and deal with it.
                     IList firstElement = objectArray[0] as IList;
@@ -965,7 +965,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Auxilliary for the cases where we want a new PSObject or null
+        /// Auxiliary for the cases where we want a new PSObject or null
         /// </summary>
         internal static PSObject AsPSObjectOrNull(object obj)
         {
@@ -1305,7 +1305,7 @@ namespace System.Management.Automation
                     // This assumption holds for System.Collections.Generic.Dictionary<TKey,TValue>.
 
                     // If we did not make this assumption, we would be forced to generate code
-                    // to call the generic indexer directly, somewhat analgous to what we do
+                    // to call the generic indexer directly, somewhat analogous to what we do
                     // in GetEnumeratorFromIEnumeratorT.
 
                     Type[] genericArguments = i.GetGenericArguments();
@@ -1447,7 +1447,7 @@ namespace System.Management.Automation
         /// If the string to convert is null or empty then the function returns "[object]" as the default typeless type.
         /// </summary>
         /// <param name="typeName">The typename string to convert.</param>
-        /// <returns>The equivalent PowerShell representatin of that type.</returns>
+        /// <returns>The equivalent PowerShell representation of that type.</returns>
         public static string ConvertTypeNameToPSTypeName(string typeName)
         {
             if (string.IsNullOrWhiteSpace(typeName))
@@ -1557,7 +1557,7 @@ namespace System.Management.Automation
         ///                                                 string representation of valueToConvert.
         ///     - to ADSI                               -   returns DirectoryEntry  represented by the
         ///                                                 string representation of valueToConvert.
-        ///     - to ADSISearcher                       -   return DirectorySearcher representd by the
+        ///     - to ADSISearcher                       -   return DirectorySearcher represented by the
         ///                                                 string representation of valueToConvert.
         /// 
         /// If none of the cases above is true, the following is considered in order:
@@ -1644,7 +1644,7 @@ namespace System.Management.Automation
         /// <param name="resultType">type to convert psobject.</param>
         /// <param name="recursion">Indicates if inner properties have to be recursively converted.</param>
         /// <param name="formatProvider">To be used in custom type conversions, to call parse and to call Convert.ChangeType</param>
-        /// <param name="ignoreUnknownMembers">Indiacates if Unknown members in the psobject have to be ignored if the corresponding members in resultType do not exist.</param>
+        /// <param name="ignoreUnknownMembers">Indicates if Unknown members in the psobject have to be ignored if the corresponding members in resultType do not exist.</param>
         /// <returns>converted value.</returns>
         public static object ConvertPSObjectToType(PSObject valueToConvert, Type resultType, bool recursion, IFormatProvider formatProvider, bool ignoreUnknownMembers)
         {
@@ -1658,7 +1658,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Generic convertto that simplifies workfing with workflow.
+        /// Generic convertto that simplifies working with workflow.
         /// </summary>
         /// <typeparam name="T">The type of object to return</typeparam>
         /// <param name="valueToConvert"></param>
@@ -1831,7 +1831,7 @@ namespace System.Management.Automation
                             }
 
                             // we know the value is not negative, so this conversion
-                            // always succede
+                            // always succeed
                             allValues |= Convert.ToUInt64(value, CultureInfo.CurrentCulture);
                         }
                     }
@@ -2121,9 +2121,9 @@ namespace System.Management.Automation
         /// <summary>
         /// There might be many cast operators in a Type A that take Type A. Each operator will have a 
         /// different return type. Because of that we cannot call GetMethod since it would cause a 
-        /// AmbiguousMatchException. This auxilliar method calls GetMember to find the right method
+        /// AmbiguousMatchException. This auxiliary method calls GetMember to find the right method
         /// </summary>
-        /// <param name="methodName">Either op_Excplicit or op_Implicit, at the moment</param>
+        /// <param name="methodName">Either op_Explicit or op_Implicit, at the moment</param>
         /// <param name="targetType">the type to look for an operator</param>
         /// <param name="originalType">Type of the only parameter the operator method should have</param>
         /// <param name="resultType">Return type of the operator method</param>
@@ -2472,7 +2472,7 @@ namespace System.Management.Automation
 
         /// backupTypeTable:
         /// Used by Remoting Rehydration Logic. While Deserializing a remote object, 
-        /// LocalPipeline.ExecutionCotextFromTLS() might return null..In which case this
+        /// LocalPipeline.ExecutionContextFromTLS() might return null..In which case this
         /// TypeTable will be used to do the conversion.
         private static bool IsCustomTypeConversion(object valueToConvert,
                                                    Type resultType,
@@ -2741,7 +2741,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// We need to add this built-in converter because in FullCLR, Syste.Uri has a TypeConverter attribute
+        /// We need to add this built-in converter because in FullCLR, System.Uri has a TypeConverter attribute
         /// declared: [TypeConverter(typeof(UriTypeConverter))], so the conversion from 'string' to 'Uri' is
         /// actually taken care of by 'UriTypeConverter'. However, the type 'UriTypeConverter' is not available
         /// in CoreCLR, and thus the conversion from 'string' to 'Uri' would show a different behavior.
@@ -4547,7 +4547,7 @@ namespace System.Management.Automation
         /// <param name="formatProvider">governing conversion of types</param>
         /// <param name="backupTypeTable">
         /// Used by Remoting Rehydration Logic. While Deserializing a remote object, 
-        /// LocalPipeline.ExecutionCotextFromTLS() might return null..In which case this
+        /// LocalPipeline.ExecutionContextFromTLS() might return null..In which case this
         /// TypeTable will be used to do the conversion.
         /// </param>
         /// <returns>the value converted</returns>

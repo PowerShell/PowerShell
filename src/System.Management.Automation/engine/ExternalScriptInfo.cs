@@ -60,7 +60,7 @@ namespace System.Management.Automation
 
             Diagnostics.Assert(IO.Path.IsPathRooted(path), "Caller makes sure that 'path' is already resolved.");
 
-            // Path might contian short-name syntax such as 'DOCUME~1'. Use Path.GetFullPath to expand the short name
+            // Path might contain short-name syntax such as 'DOCUME~1'. Use Path.GetFullPath to expand the short name
             _path = IO.Path.GetFullPath(path);
             CommonInitialization();
         }
@@ -90,7 +90,7 @@ namespace System.Management.Automation
 
             Diagnostics.Assert(IO.Path.IsPathRooted(path), "Caller makes sure that 'path' is already resolved.");
 
-            // Path might contian short-name syntax such as 'DOCUME~1'. Use Path.GetFullPath to expand the short name
+            // Path might contain short-name syntax such as 'DOCUME~1'. Use Path.GetFullPath to expand the short name
             _path = IO.Path.GetFullPath(path);
             CommonInitialization();
         }
@@ -110,7 +110,7 @@ namespace System.Management.Automation
         /// </summary>
         private void CommonInitialization()
         {
-            // Assume external scripts are untrusted by defult (for Get-Command, etc)
+            // Assume external scripts are untrusted by default (for Get-Command, etc)
             // until we've actually parsed their script block.
             if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.None)
             {

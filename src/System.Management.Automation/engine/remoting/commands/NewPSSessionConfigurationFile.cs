@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
         private IDictionary _requiredGroups;
 
         /// <summary>
-        /// Languange mode
+        /// Language mode
         /// </summary>
         [Parameter()]
         public PSLanguageMode LanguageMode
@@ -446,7 +446,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _visibleProviders = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// A list of alises
+        /// A list of aliases
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1309,7 +1309,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _scriptsToProcess = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// A list of alises
+        /// A list of aliases
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]

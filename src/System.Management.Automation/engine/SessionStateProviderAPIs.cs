@@ -110,7 +110,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Internal method used by RunspaceConfig for updatting providers.
+        /// Internal method used by RunspaceConfig for updating providers.
         /// </summary>
         /// <param name="providerConfig"></param>
         private ProviderInfo AddProvider(ProviderConfigurationEntry providerConfig)

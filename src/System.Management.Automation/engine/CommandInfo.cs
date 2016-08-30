@@ -557,7 +557,7 @@ namespace System.Management.Automation
                 }
                 catch (ParameterBindingException)
                 {
-                    // Ignore the binding exception if no arugment is specified
+                    // Ignore the binding exception if no argument is specified
                     if (processor.arguments.Count > 0)
                     {
                         throw;

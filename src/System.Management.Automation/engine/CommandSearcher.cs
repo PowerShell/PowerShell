@@ -1483,7 +1483,7 @@ namespace System.Management.Automation
         private CommandPathSearch _pathSearcher;
 
         /// <summary>
-        /// Thge execution context instance for the current engine...
+        /// The execution context instance for the current engine...
         /// </summary>
         private ExecutionContext _context;
 

@@ -8,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace System.Management.Automation.PerformanceData
 {
     /// <summary>
-    /// A struct that encapuslates the information pertaining to a given counter
+    /// A struct that encapsulates the information pertaining to a given counter
     /// like name,type and id.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]

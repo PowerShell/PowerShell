@@ -17,7 +17,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a variable attribute collection attached to
         /// the specified variable. Whenever the attributes change
-        /// the variable value is varified against the attribute.
+        /// the variable value is verified against the attribute.
         /// </summary>
         /// 
         /// <param name="variable">

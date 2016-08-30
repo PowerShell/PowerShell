@@ -241,7 +241,7 @@ namespace System.Management.Automation.Remoting
         PSDefaultSessionOptionDescription = 1002,
         PSSenderInfoDescription = 1004,
 
-        // IPC for Backgroud jobs related errors: 2000
+        // IPC for Background jobs related errors: 2000
         IPCUnknownNodeType = 2001,
         IPCInsufficientDataforElement = 2002,
         IPCWrongAttributeCountForDataElement = 2003,
@@ -296,7 +296,7 @@ namespace System.Management.Automation.Remoting
         #region Constructors
 
         /// <summary>
-        /// Default construtor.
+        /// Default constructor.
         /// </summary>
         public PSRemotingDataStructureException()
             : base(PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.DefaultRemotingExceptionMessage, typeof(PSRemotingDataStructureException).FullName))
@@ -350,7 +350,7 @@ namespace System.Management.Automation.Remoting
         /// This constuctor takes an inner exception and an error id.
         /// </summary>
         /// <param name="innerException">
-        /// Inner excetion.
+        /// Inner exception.
         /// </param>
         /// <param name="resourceString">
         /// The resource string in the base resource file.
@@ -460,7 +460,7 @@ namespace System.Management.Automation.Remoting
         /// This constuctor takes an inner exception and an error id.
         /// </summary>
         /// <param name="innerException">
-        /// Inner excetion.
+        /// Inner exception.
         /// </param>
         /// <param name="resourceString">
         /// The resource string in the base resource file.
@@ -602,7 +602,7 @@ namespace System.Management.Automation.Remoting
         /// This constuctor takes an inner exception and an error id.
         /// </summary>
         /// <param name="innerException">
-        /// Inner excetion.
+        /// Inner exception.
         /// </param>
         /// <param name="resourceString">
         /// The resource string in the base resource file.

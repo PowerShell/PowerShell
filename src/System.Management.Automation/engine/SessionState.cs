@@ -188,7 +188,7 @@ namespace System.Management.Automation
         internal Dictionary<string, PSModuleInfo> ModuleTable { get; } = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Get/set constraints for this execution environemnt
+        /// Get/set constraints for this execution environment
         /// </summary>
         internal PSLanguageMode LanguageMode
         {
@@ -230,7 +230,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The list of appications that are allowed to be run. If the name "*"
+        /// The list of applications that are allowed to be run. If the name "*"
         /// is in the list, then all applications can be run. (This is the default.)
         /// </summary>
         public List<string> Applications { get; } = new List<string>(new string[] { "*" });

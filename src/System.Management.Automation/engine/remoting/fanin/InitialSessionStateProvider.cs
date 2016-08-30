@@ -332,7 +332,7 @@ namespace System.Management.Automation.Remoting
             {
             }
 
-            // if we are here, that means we are unble to load the type specified
+            // if we are here, that means we are unable to load the type specified
             // in the config xml.. notify the same.
             throw PSTraceSource.NewArgumentException("typeToLoad", RemotingErrorIdStrings.UnableToLoadType,
                     EndPointConfigurationTypeName, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
@@ -340,7 +340,7 @@ namespace System.Management.Automation.Remoting
     }
 
     /// <summary>
-    /// InitialSessionStateProvider is used by 3rd parties to provide shell configurtion
+    /// InitialSessionStateProvider is used by 3rd parties to provide shell configuration
     /// on the remote server.
     /// </summary>
     public abstract class PSSessionConfiguration : IDisposable
@@ -356,7 +356,7 @@ namespace System.Management.Automation.Remoting
         #region public interfaces
 
         /// <summary>
-        /// Derived classes must override this to supply an InitialSesionState
+        /// Derived classes must override this to supply an InitialSessionState
         /// to be used to construct a Runspace for the user
         /// </summary>
         /// <param name="senderInfo">
@@ -426,7 +426,7 @@ namespace System.Management.Automation.Remoting
         #region IDisposable Overrides
 
         /// <summary>
-        /// Disose this configuration object. This will be called when a Runspace/RunspacePool
+        /// Dispose this configuration object. This will be called when a Runspace/RunspacePool
         /// created using InitialSessionState from this object is Closed.
         /// </summary>
         public void Dispose()
@@ -587,7 +587,7 @@ namespace System.Management.Automation.Remoting
                 {
                 }
 
-                // if we are here, that means we are unble to load the type specified
+                // if we are here, that means we are unable to load the type specified
                 // in the config xml.. notify the same.
                 throw PSTraceSource.NewArgumentException("typeToLoad", RemotingErrorIdStrings.UnableToLoadType,
                         typeToLoad, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
@@ -601,7 +601,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Sets the application's current working directory to <paramref name="applicationBase"/> and 
         /// loads the assembly <paramref name="assemblyName"/>. Once the assembly is loaded, the application's
-        /// current working directory is set back to the orginal value.
+        /// current working directory is set back to the original value.
         /// </summary>
         /// <param name="applicationBase"></param>
         /// <param name="assemblyName"></param>
@@ -654,7 +654,7 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            // Even if there is erro changing current working directory..try to load the assembly
+            // Even if there is error changing current working directory..try to load the assembly
             // This is to allow assembly loading from GAC
             Assembly result = null;
             try
@@ -2068,7 +2068,7 @@ namespace System.Management.Automation.Remoting
                                     // Win8: 627752 Cannot load microsoft.powershell.core module as part of DISC
                                     // Convert Microsoft.PowerShell.Core module -> Microsoft.PowerShell.Core snapin.
                                     // Doing this Import only in SessionType.Empty case, because other cases already do this.
-                                    // In V3, Micorosft.PowerShell.Core module is not installed externally.
+                                    // In V3, Microsoft.PowerShell.Core module is not installed externally.
                                     iss.ImportCorePSSnapIn();
                                 }
                                 // silently ignore Microsoft.PowerShell.Core for other cases ie., SessionType.RestrictedRemoteServer && SessionType.Default
@@ -2316,7 +2316,7 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            // Now apply visibilty logic
+            // Now apply visibility logic
             if (cmdletVisibilityApplied || functionVisiblityApplied || aliasVisibilityApplied || providerVisibiltyApplied)
             {
                 if (sessionType == SessionType.Default)
@@ -2758,7 +2758,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Attempts to get a hastable array from an object
+        /// Attempts to get a hashtable array from an object
         /// </summary>
         /// <param name="hashObj"></param>
         /// <returns></returns>
@@ -2802,7 +2802,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Attemps to get a string array from a hashtable
+        /// Attempts to get a string array from a hashtable
         /// </summary>
         /// <param name="hashObj"></param>
         /// <returns></returns>

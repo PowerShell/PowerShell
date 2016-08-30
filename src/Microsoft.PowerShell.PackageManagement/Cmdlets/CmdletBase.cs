@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                     }
                 }
 
-                return Constants.DefaultTimeout; // in a non-invokcation, always default to one hour
+                return Constants.DefaultTimeout; // in a non-invocation, always default to one hour
             }
         }
 
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                         return t;
                     }
                 }
-                return Constants.DefaultResponsiveness; // in a non-invokcation, always default to one hour
+                return Constants.DefaultResponsiveness; // in a non-invocation, always default to one hour
             }
         }
 

@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Do the follwing actions:
+        /// Do the following actions:
         ///     1. If runspace is in opened state,
         ///             a. stop any execution in process in the runspace
         ///             b. close the runspace

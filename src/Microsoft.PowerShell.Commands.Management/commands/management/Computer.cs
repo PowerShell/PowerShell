@@ -6281,7 +6281,7 @@ $result
         private const string MatchFormat = "{0}:{1}";
 
         /// <summary>
-        /// The HasSuceeded which shows the operation was success or not
+        /// The HasSucceeded which shows the operation was success or not
         /// </summary>
         public bool HasSucceeded { get; set; }
 

@@ -529,7 +529,7 @@ namespace System.Management.Automation.Runspaces
                     }
                     else
                     {
-                        // For wahtever reason, cache is corrupted. Hence override the cache content.
+                        // For whatever reason, cache is corrupted. Hence override the cache content.
                         if (enable)
                         {
                             debugPreferenceCache = new Hashtable();
@@ -604,7 +604,7 @@ namespace System.Management.Automation.Runspaces
         /// Open the runspace
         /// </summary>
         /// <param name="syncCall">
-        /// paramter which control if Open is done synchronously or asynchronously
+        /// parameter which control if Open is done synchronously or asynchronously
         /// </param>
         protected override void OpenHelper(bool syncCall)
         {
@@ -796,7 +796,7 @@ namespace System.Management.Automation.Runspaces
         /// Returns the thread that must be used to execute pipelines when CreateThreadOptions is ReuseThread
         /// </summary>
         /// <remarks>
-        /// The pipeline calls this function after ensuring there is a single thread in the pipeline, so no locking is neccesary
+        /// The pipeline calls this function after ensuring there is a single thread in the pipeline, so no locking is necessary
         /// </remarks>
         internal PipelineThread GetPipelineThread()
         {

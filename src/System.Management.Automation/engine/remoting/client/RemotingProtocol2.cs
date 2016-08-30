@@ -359,7 +359,7 @@ namespace System.Management.Automation.Internal
         /// Event raised when RunspacePoolInitInfo is received. This is the first runspace pool message expected
         /// after connecting to an existing remote runspace pool. RemoteRunspacePoolInternal should use this 
         /// notification to set the state of a reconstructed runspace to "Opened State" and use the
-        /// minRusnpace and MaxRunspaces information to set its state
+        /// minRunspace and MaxRunspaces information to set its state
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<RunspacePoolInitInfo>> RSPoolInitInfoReceived;
 
@@ -400,7 +400,7 @@ namespace System.Management.Automation.Internal
         internal event EventHandler<RemoteDataEventArgs<PSObject>> SetMaxMinRunspacesResponseRecieved;
 
         /// <summary>
-        /// EventHandler used to report connecion URI redirections to the application
+        /// EventHandler used to report connection URI redirections to the application
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<Uri>> URIRedirectionReported;
 
@@ -490,7 +490,7 @@ namespace System.Management.Automation.Internal
 
                 lock (_syncObject)
                 {
-                    //We are doing this check because Establised event 
+                    //We are doing this check because Established event 
                     //is raised more than once
                     if (_createRunspaceCalled)
                     {
@@ -1024,7 +1024,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Event that is raised when a remote connection is successfully closed. The event is raised
         /// from a WSMan transport thread. Since this thread can hold on to a HTTP
-        /// connection, the event handler should compelete processing as fast as possible.
+        /// connection, the event handler should complete processing as fast as possible.
         /// Importantly the event handler should not generate any call that results in a
         /// user request like host.ReadLine().
         /// 
@@ -1174,7 +1174,7 @@ namespace System.Management.Automation.Internal
             {
                 // its possible that in client input data is written in a thread
                 // other than the current thread. Since we want to write input
-                // to the server in the order in which it was recieved, this
+                // to the server in the order in which it was received, this
                 // operation of writing to the server need to be synced
                 // Also we need to ensure that all the data currently available
                 // for enumeration are written out before any newly added data
@@ -1351,7 +1351,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Closes tranport manager.
+        /// Closes transport manager.
         /// </summary>
         internal void CloseConnectionAsync(Exception sessionCloseReason)
         {
@@ -1411,7 +1411,7 @@ namespace System.Management.Automation.Internal
         /// This does not ensure that the corresponding session/runspacepool is in connected stated
         /// Its the caller responsiblity to ensure that this is the case
         /// At the protocols layers, this logic is delegated to the transport layer.
-        /// WSMan tranport ensures that WinRS commands cannot be reconnected when the parent shell is not in connected state
+        /// WSMan transport ensures that WinRS commands cannot be reconnected when the parent shell is not in connected state
         /// </summary>
         internal void ReconnectAsync()
         {

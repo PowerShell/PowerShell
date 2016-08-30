@@ -164,7 +164,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Specifies that no encryption will be used when doing remote operations over 
-        /// http. Unencrypted traffix is not allowed by default and must be enabled in 
+        /// http. Unencrypted traffic is not allowed by default and must be enabled in 
         /// the local configuration
         /// </summary>
         public bool NoEncryption { get; set; }
@@ -525,7 +525,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The following is the definition of the input parameter "UnEncrypted".
         /// Specifies that no encryption will be used when doing remote operations over 
-        /// http. Unencrypted traffix is not allowed by default and must be enabled in 
+        /// http. Unencrypted traffic is not allowed by default and must be enabled in 
         /// the local configuration
         /// </summary>
         [Parameter]

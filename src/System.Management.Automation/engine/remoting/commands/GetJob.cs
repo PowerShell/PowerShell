@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Extract resutl objects corresponding to the specified 
+        /// Extract result objects corresponding to the specified 
         /// names or expressions
         /// </summary>
         protected override void ProcessRecord()

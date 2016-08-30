@@ -3701,7 +3701,7 @@ namespace System.Management.Automation
 
                     // Don't support 'New-Item -Type Directory' on the Function provider
                     // if the runspace has ever been in constrained language mode, as the mkdir
-                    // funciton can be abused
+                    // function can be abused
                     if (context.ExecutionContext.HasRunspaceEverUsedConstrainedLanguageMode &&
                         (providerInstance is Microsoft.PowerShell.Commands.FunctionProvider) &&
                         (String.Equals(type, "Directory", StringComparison.OrdinalIgnoreCase)))

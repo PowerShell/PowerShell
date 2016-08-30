@@ -467,7 +467,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// An internal constructor which constructs a ParameterMetadata object
-        /// from compiled commmand parameter metadata. ParameterMetadata
+        /// from compiled command parameter metadata. ParameterMetadata
         /// is a proxy written on top of CompiledCommandParameter
         /// </summary>
         /// <param name="cmdParameterMD">
@@ -1089,7 +1089,7 @@ namespace System.Management.Automation
         /// </param>
         /// 
         /// <returns>
-        /// An instance of the TypeMetdata for the specified runtime-defined parameters. The metadata 
+        /// An instance of the TypeMetadata for the specified runtime-defined parameters. The metadata 
         /// is always constructed on demand and never cached.
         /// </returns>
         /// 
@@ -1131,7 +1131,7 @@ namespace System.Management.Automation
         /// </param>
         /// 
         /// <returns>
-        /// An instance of the TypeMetdata for the specified type. The metadata may get
+        /// An instance of the TypeMetadata for the specified type. The metadata may get
         /// constructed on-demand or may be retrieved from the cache.
         /// </returns>
         /// 
@@ -1248,7 +1248,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets a dictionary of the compiled parameter metadata for this Type. 
         /// The dictionary keys are the names of the parameters (or aliases) and
-        /// the values are the compiled parameter metdata.
+        /// the values are the compiled parameter metadata.
         /// </summary>
         /// 
         internal Dictionary<string, CompiledCommandParameter> BindableParameters { get; }

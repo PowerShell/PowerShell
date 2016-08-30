@@ -573,7 +573,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The AllowRediraction parameter enables the implicit redirection functionality
+        /// The AllowRedirection parameter enables the implicit redirection functionality
         /// </summary>
         [Parameter(ParameterSetName = InvokeCommandCommand.UriParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathUriParameterSet)]
@@ -882,7 +882,7 @@ namespace Microsoft.PowerShell.Commands
                                     // be using protocol version 2.2. Otherwise, we skip this and assume the old behavior.
                                     if (version >= RemotingConstants.ProtocolVersionWin8RTM)
                                     {
-                                        // Supress collection behavior
+                                        // Suppress collection behavior
                                         _needToCollect = false;
                                         _needToStartSteppablePipelineOnServer = true;
                                         break;
@@ -1948,7 +1948,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        } // Dipose
+        } // Dispose
 
         #endregion IDisposable Overrides
     }

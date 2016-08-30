@@ -52,7 +52,7 @@ namespace System.Management.Automation
                 _deserializedRemoteHelp = helpResults[0];
                 _deserializedRemoteHelp.Methods.Remove("ToString");
                 // Win8: bug9457: Remote proxy command's name can be changed locally using -Prefix
-                // parameter of the Import-PSSession cmdlet. To give better user expereience for
+                // parameter of the Import-PSSession cmdlet. To give better user experience for
                 // get-help (on par with get-command), it was decided to use the local command name
                 // for the help content.
                 PSPropertyInfo nameInfo = _deserializedRemoteHelp.Properties["Name"];

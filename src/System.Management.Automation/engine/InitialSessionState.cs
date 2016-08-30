@@ -144,7 +144,7 @@ namespace System.Management.Automation.Runspaces
 
     /// <summary>
     /// Command class so that all the commands can derive off this one.
-    /// Adds the flexibility of adding addditional derived class,
+    /// Adds the flexibility of adding additional derived class,
     /// such as ProxyCommand for Exchange.
     /// Derived classes - Alias, Application, Cmdlet, Function, Script.
     /// </summary>
@@ -404,7 +404,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Create a named entry for the assembly to load, specifying
-        /// just the nanme
+        /// just the name
         /// </summary>
         /// <param name="name">The name of the assembly to load</param>
         public SessionStateAssemblyEntry(string name)
@@ -555,7 +555,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Create a session state command entry instance with the specified visiblity.
+        /// Create a session state command entry instance with the specified visibility.
         /// </summary>
         /// <param name="path">The path to the script</param>
         /// <param name="visibility">Visibility of the script.</param>
@@ -591,7 +591,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         ///  Define an alias entry to add to the initial session state
         /// </summary>
-        /// <param name="name">Name of the aliase</param>
+        /// <param name="name">Name of the alias</param>
         /// <param name="definition">The name of the command it resolves to</param>
         public SessionStateAliasEntry(string name, string definition)
             : base(name, SessionStateEntryVisibility.Public)
@@ -603,9 +603,9 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         ///  Define an alias entry to add to the initial session state
         /// </summary>
-        /// <param name="name">Name of the aliase</param>
+        /// <param name="name">Name of the alias</param>
         /// <param name="definition">The name of the command it resolves to</param>
-        /// <param name="description">A descripion of the purpose of the alias.</param>
+        /// <param name="description">A description of the purpose of the alias.</param>
         public SessionStateAliasEntry(string name, string definition, string description)
             : base(name, SessionStateEntryVisibility.Public)
         {
@@ -617,10 +617,10 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         ///  Define an alias entry to add to the initial session state
         /// </summary>
-        /// <param name="name">Name of the aliase</param>
+        /// <param name="name">Name of the alias</param>
         /// <param name="definition">The name of the command it resolves to</param>
-        /// <param name="description">A descripion of the purpose of the alias.</param>
-        /// <param name="options">Options defining the scope visiblity, readonly and constant</param>
+        /// <param name="description">A description of the purpose of the alias.</param>
+        /// <param name="options">Options defining the scope visibility, readonly and constant</param>
         public SessionStateAliasEntry(string name, string definition, string description, ScopedItemOptions options)
             : base(name, SessionStateEntryVisibility.Public)
         {
@@ -633,10 +633,10 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         ///  Define an alias entry to add to the initial session state
         /// </summary>
-        /// <param name="name">Name of the aliase</param>
+        /// <param name="name">Name of the alias</param>
         /// <param name="definition">The name of the command it resolves to</param>
-        /// <param name="description">A descripion of the purpose of the alias.</param>
-        /// <param name="options">Options defining the scope visiblity, readonly and constant</param>
+        /// <param name="description">A description of the purpose of the alias.</param>
+        /// <param name="options">Options defining the scope visibility, readonly and constant</param>
         /// <param name="visibility"></param>
         internal SessionStateAliasEntry(string name, string definition, string description,
             ScopedItemOptions options, SessionStateEntryVisibility visibility)
@@ -669,7 +669,7 @@ namespace System.Management.Automation.Runspaces
         public string Description { get; } = String.Empty;
 
         /// <summary>
-        /// Options controling scope visiblity and setability for this entry.
+        /// Options controling scope visibility and setability for this entry.
         /// </summary>
         public ScopedItemOptions Options { get; } = ScopedItemOptions.None;
     }
@@ -696,7 +696,7 @@ namespace System.Management.Automation.Runspaces
         /// "*", then any path is permitted.
         /// </summary>
         /// <param name="path">The full path to the application</param>
-        /// <param name="visibility">Sets the external visibilty of the path.</param>
+        /// <param name="visibility">Sets the external visibility of the path.</param>
         internal SessionStateApplicationEntry(string path, SessionStateEntryVisibility visibility)
             : base(path, visibility)
         {
@@ -823,7 +823,7 @@ namespace System.Management.Automation.Runspaces
         internal ScriptBlock ScriptBlock { get; set; }
 
         /// <summary>
-        /// Options controling scope visiblity and setability for this entry.
+        /// Options controling scope visibility and setability for this entry.
         /// </summary>
         public ScopedItemOptions Options { get; } = ScopedItemOptions.None;
 
@@ -918,7 +918,7 @@ namespace System.Management.Automation.Runspaces
         internal WorkflowInfo WorkflowInfo { get; set; }
 
         /// <summary>
-        /// Options controling scope visiblity and setability for this entry.
+        /// Options controling scope visibility and setability for this entry.
         /// </summary>
         public ScopedItemOptions Options { get; } = ScopedItemOptions.None;
 
@@ -1521,7 +1521,7 @@ namespace System.Management.Automation.Runspaces
             allowedCommands.Add("Measure-Object"); // used to have nice progress bars when import/export-pssession is running
             // required by interactive remoting
             allowedCommands.Add("Out-Default"); // appended to every command line
-            allowedCommands.Add("Exit-PSSession"); // used by the user to exit the sesion
+            allowedCommands.Add("Exit-PSSession"); // used by the user to exit the session
 
             // We don't remove these entries so that they can be called by commands in the runspace.
             // Setting them to 'Private' ensures that the user can't call them.
@@ -2255,7 +2255,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Specifies the authorization manager to be used for this session state instance.
-        /// If no authorization manager is specified, then the default authroization manager
+        /// If no authorization manager is specified, then the default authorization manager
         /// for PowerShell will be used which checks the ExecutionPolicy before running a command.
         /// </summary>
         public virtual AuthorizationManager AuthorizationManager { get; set; } = new Microsoft.PowerShell.PSAuthorizationManager(Utils.DefaultPowerShellShellID);
@@ -2289,7 +2289,7 @@ namespace System.Management.Automation.Runspaces
         /// Add a list of modules to import when the runspace is created.
         /// </summary>
         /// <param name="modules">
-        /// The modules, whose specificiations are specified by <paramref name="modules"/>,
+        /// The modules, whose specifications are specified by <paramref name="modules"/>,
         /// to add.
         /// </param>
         public void ImportPSModule(IEnumerable<ModuleSpecification> modules)
@@ -2394,7 +2394,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// If set to true, disables any updates to format table. This includes disabling
-        /// format table updates throught Update-FormatData, Import-Module etc.
+        /// format table updates through Update-FormatData, Import-Module etc.
         /// All the disabling happens silently ie., the user will not get any exception.
         /// By default, this is set to False.
         /// </summary>
@@ -2528,7 +2528,7 @@ namespace System.Management.Automation.Runspaces
 
                 // If the initial session state made some commands private by way of
                 // VisibleCmdlets / etc., then change the default command visibility for
-                // the sesssion state so that newly imported modules aren't exposed accidentally.
+                // the session state so that newly imported modules aren't exposed accidentally.
                 if (DefaultCommandVisibility == SessionStateEntryVisibility.Private)
                 {
                     ss.DefaultCommandVisibility = SessionStateEntryVisibility.Private;
@@ -3148,7 +3148,7 @@ namespace System.Management.Automation.Runspaces
 
         private string MakeUserNamePath()
         {
-            // Use the user name passsed to initial session state if avaiable, or
+            // Use the user name passed to initial session state if available, or
             // otherwise use the current user name.
             var userName = (!string.IsNullOrEmpty(this.UserDriveUserName)) ?
                 this.UserDriveUserName :
@@ -5142,7 +5142,7 @@ end
                         "Stop-Service",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("sv",
                         "Set-Variable",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-// Porting note: #if !UNIX is used to disable alises for cmdlets which conflict with Linux / OS X
+// Porting note: #if !UNIX is used to disable aliases for cmdlets which conflict with Linux / OS X
 #if !UNIX
                     // ac is a native command on OS X
                     new SessionStateAliasEntry("ac",
@@ -5163,7 +5163,7 @@ end
                         "Tee-Object",      "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("write",
                         "Write-Output",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    // These were traqnsferred from the "transferred from the profile" section
+                    // These were transferred from the "transferred from the profile" section
                     new SessionStateAliasEntry("cat",
                         "Get-Content",     "", ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("cp",

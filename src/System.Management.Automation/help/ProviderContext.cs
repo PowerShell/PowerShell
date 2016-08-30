@@ -112,7 +112,7 @@ namespace System.Management.Automation
                 throw new ItemNotFoundException(_requestedPath, "PathNotFound", SessionStateStrings.PathNotFound);
             }
 
-            // ok we have path and valid provider that supplys content..intialize the provider
+            // ok we have path and valid provider that supplys content..initialize the provider
             // and get the help content for the path.
             cmdletProvider.Start(providerInfo, cmdletProviderContext);
             // There should be exactly one resolved path.

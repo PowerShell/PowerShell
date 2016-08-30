@@ -21,7 +21,7 @@ namespace System.Management.Automation.Runspaces
     /// 2. Data values for the content represented by Console file. Later this data
     /// is used by other components ( MshConsoleInfo ) to construct Monad Types ( like
     /// PSSnapInInfo ).
-    /// 3. Owns responsibilty to read/write Files.
+    /// 3. Owns responsibility to read/write Files.
     /// 
     /// Risk:
     /// File Acces related security issues.
@@ -419,7 +419,7 @@ namespace System.Management.Automation.Runspaces
             IsDirty = false;
             Filename = null;
 
-            // Intialize list of mshsnapins..
+            // Initialize list of mshsnapins..
             _defaultPSSnapIns = new Collection<PSSnapInInfo>();
             _externalPSSnapIns = new Collection<PSSnapInInfo>();
         }
@@ -451,7 +451,7 @@ namespace System.Management.Automation.Runspaces
             catch (PSArgumentException ae)
             {
                 string message = ConsoleInfoErrorStrings.CannotLoadDefaults;
-                // If we were unalbe to load default mshsnapins throw PSSnapInException
+                // If we were unable to load default mshsnapins throw PSSnapInException
 
                 s_mshsnapinTracer.TraceError(message);
 
@@ -460,7 +460,7 @@ namespace System.Management.Automation.Runspaces
             catch (System.Security.SecurityException se)
             {
                 string message = ConsoleInfoErrorStrings.CannotLoadDefaults;
-                // If we were unalbe to load default mshsnapins throw PSSnapInException
+                // If we were unable to load default mshsnapins throw PSSnapInException
 
                 s_mshsnapinTracer.TraceError(message);
 
@@ -814,7 +814,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         private Collection<PSSnapInInfo> Load(string path, out PSConsoleLoadException cle)
         {
-            // Intialize the out parameter..
+            // Initialize the out parameter..
             cle = null;
 
             s_mshsnapinTracer.WriteLine("Load mshsnapins from console file {0}", path);
@@ -933,7 +933,7 @@ namespace System.Management.Automation.Runspaces
 
 
         /// <summary>
-        /// Constructs a new list of mshsnapins from defualt mshsnapins and external mshsnapins.
+        /// Constructs a new list of mshsnapins from default mshsnapins and external mshsnapins.
         /// </summary>
         /// <returns>A list of mshsnapins represented by the current console file</returns>
         private Collection<PSSnapInInfo> MergeDefaultExternalMshSnapins()

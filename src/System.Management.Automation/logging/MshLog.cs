@@ -32,7 +32,7 @@ namespace System.Management.Automation
     /// 
     /// Msh Log Engine provides features in following areas, 
     ///   1. Loading and managing logging providers. Based on some "Provider Catalog", engine will try to 
-    ///      load providers. First provider that is sucessfully loaded will be used for low level logging.
+    ///      load providers. First provider that is successfully loaded will be used for low level logging.
     ///      If no providers can be loaded, a dummy provider will be used, which will essentially do nothing.
     ///   2. Implementation of logging api functions. These api functions is implemented by calling corresponding 
     ///      functions in provider interface. 
@@ -222,7 +222,7 @@ namespace System.Management.Automation
         /// LogEngineHealthEvent: Log an engine health event. If engine state is changed, a engine 
         /// lifecycle event will be logged also.
         /// 
-        /// This is the basic form of EngineHealthEvent logging api, in which all paramters are provided.
+        /// This is the basic form of EngineHealthEvent logging api, in which all parameters are provided.
         /// 
         /// Variant form of this function is defined below, which will make parameters additionalInfo 
         /// and newEngineState optional.
@@ -382,7 +382,7 @@ namespace System.Management.Automation
         /// <summary>
         /// LogEngineLifecycleEvent: Log an engine lifecycle event. 
         /// 
-        /// This is the basic form of EngineLifecycleEvent logging api, in which all paramters are provided.
+        /// This is the basic form of EngineLifecycleEvent logging api, in which all parameters are provided.
         /// 
         /// Variant form of this function is defined below, which will make parameter additionalInfo 
         /// optional.
@@ -473,7 +473,7 @@ namespace System.Management.Automation
         #region Command Lifecycle Event Logging Api
 
         /// <summary>
-        /// LogCommandLifecycleEvent: Log a command lifecyle event.
+        /// LogCommandLifecycleEvent: Log a command lifecycle event.
         /// 
         /// This is the only form of CommandLifecycleEvent logging api.
         /// </summary>
@@ -513,7 +513,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// LogCommandLifecycleEvent: Log a command lifecyle event.
+        /// LogCommandLifecycleEvent: Log a command lifecycle event.
         /// 
         /// This is a form of CommandLifecycleEvent which takes a commandName instead
         /// of invocationInfo. It is likely that invocationInfo is not available if 
@@ -665,7 +665,7 @@ namespace System.Management.Automation
         #region Provider Lifecycle Event Logging Api
 
         /// <summary>
-        /// LogProviderLifecycleEvent: Log a provider lifecyle event.
+        /// LogProviderLifecycleEvent: Log a provider lifecycle event.
         /// 
         /// This is the only form of ProviderLifecycleEvent logging api.
         /// </summary>

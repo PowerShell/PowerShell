@@ -38,7 +38,7 @@ namespace System.Management.Automation
     {
         /// <summary>
         /// We need it to avoid calling lookups inside dynamic assemblies with PS Types, so we exclude it from GetAssemblies().
-        /// We use this convention for names to achive it.
+        /// We use this convention for names to archive it.
         /// </summary>
         internal static readonly char FIRST_CHAR_PSASSEMBLY_MARK = (char)0x29f9;
 
@@ -326,7 +326,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Load assemlby from byte stream.
+        /// Load assembly from byte stream.
         /// </summary>
         internal static Assembly LoadFrom(Stream assembly)
         {
@@ -602,7 +602,7 @@ namespace System.Management.Automation
         /// 
         /// In CORECLR, there are two peculiarities with its implementation that affect our own:
         /// 1. Structures cannot be instantiated using GetConstructor, so they must be filtered out.
-        /// 2. Classes must have a default constructor implemented for GetContructor to work.
+        /// 2. Classes must have a default constructor implemented for GetConstructor to work.
         /// 
         /// See RemoteHostEncoder.IsEncodingAllowedForClassOrStruct for a list of the required types.
         /// </summary>

@@ -894,7 +894,7 @@ namespace System.Management.Automation
         /// Removes a function from the function table 
         /// if the function was imported from the given module.
         /// 
-        /// BUGBUG: This is only used by the implict remoting functions...
+        /// BUGBUG: This is only used by the implicit remoting functions...
         /// </summary>
         /// 
         /// <param name="name">

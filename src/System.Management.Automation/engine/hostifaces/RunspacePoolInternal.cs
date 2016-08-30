@@ -201,7 +201,7 @@ namespace System.Management.Automation.Runspaces.Internal
         #region Public Properties
 
         /// <summary>
-        /// Get unqiue id for this instance of runspace pool. It is primarily used 
+        /// Get unique id for this instance of runspace pool. It is primarily used 
         /// for logging purposes.
         /// </summary>
         public Guid InstanceId
@@ -224,7 +224,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Gets State of the current runpsace pool.
+        /// Gets State of the current runspace pool.
         /// </summary>
         public RunspacePoolStateInfo RunspacePoolStateInfo
         {
@@ -340,7 +340,7 @@ namespace System.Management.Automation.Runspaces.Internal
         public event EventHandler<PSEventArgs> ForwardEvent;
 
         /// <summary>
-        /// Event rasied when a new Runspace is created by the pool.
+        /// Event raised when a new Runspace is created by the pool.
         /// </summary>
         internal event EventHandler<RunspaceCreatedEventArgs> RunspaceCreated;
 
@@ -937,7 +937,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Waits for the pending asynchronous BegineGetRunspace to complete. 
+        /// Waits for the pending asynchronous BeginGetRunspace to complete. 
         /// </summary>
         /// <param name="asyncResult">
         /// </param>

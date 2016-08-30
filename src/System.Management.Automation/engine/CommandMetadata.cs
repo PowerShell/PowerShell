@@ -35,7 +35,7 @@ namespace System.Management.Automation
         RemoteServer = 0x1,
 
         /// <summary>
-        /// Session with <see cref="WorkflowServer"/> capabibilities can be made available on 
+        /// Session with <see cref="WorkflowServer"/> capabilities can be made available on 
         /// a server that wants to provide workflow hosting capabilities in the
         /// specified end points. All jobs commands as well as commands for
         /// implicit remoting and interactive remoting will be made available
@@ -57,7 +57,7 @@ namespace System.Management.Automation
         #region Public Constructor
 
         /// <summary>
-        /// Constructs a CommandMetada object for the given CLS complaint type
+        /// Constructs a CommandMetadata object for the given CLS complaint type
         /// <paramref name="commandType"/>.
         /// </summary>
         /// <param name="commandType">
@@ -294,7 +294,7 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Gets the metdata for the specified cmdlet from the cache or creates
+        /// Gets the metadata for the specified cmdlet from the cache or creates
         /// a new instance if its not in the cache.
         /// </summary>
         /// 
@@ -586,7 +586,7 @@ namespace System.Management.Automation
                     }
                     else if (this.CommandType != null)
                     {
-                        // Construct compiled parameter metada from this
+                        // Construct compiled parameter metadata from this
                         InternalParameterMetadata parameterMetadata = InternalParameterMetadata.Get(this.CommandType, null, false);
                         MergedCommandParameterMetadata mergedCommandParameterMetadata =
                             MergeParameterMetadata(null, parameterMetadata, _shouldGenerateCommonParameters);

@@ -188,7 +188,7 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// Remove a single entry from the dynamic keyword collection
-        /// and clean up any assoicated data.
+        /// and clean up any associated data.
         /// </summary>
         /// <param name="name"></param>
         public static void RemoveKeyword(string name)
@@ -306,7 +306,7 @@ namespace System.Management.Automation.Language
         public bool MetaStatement { get; set; }
 
         /// <summary>
-        /// Indicate that the keyword is reservce for future use by powershell
+        /// Indicate that the keyword is reserved for future use by powershell
         /// </summary>
         public bool IsReservedKeyword { get; set; }
 
@@ -1497,7 +1497,7 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        // Otherwise, the edit distance is the minumum
+                        // Otherwise, the edit distance is the minimum
                         // of doing an addition of a character, a deletion
                         // of a character, or a substitution of a character
                         distanceMap[row, column] = Math.Min(
@@ -2115,7 +2115,7 @@ namespace System.Management.Automation.Language
 
         private bool ScanAfterHereStringHeader(string header)
         {
-            // On entry, we've see the header.  We allow whitepace and require a newline before the actual string starts
+            // On entry, we've see the header.  We allow whitespace and require a newline before the actual string starts
             int headerOffset = _currentIndex - 2;
 
             char c;
@@ -3394,7 +3394,7 @@ namespace System.Management.Automation.Language
         internal Token GetLBracket()
         {
             // We know we want a '[' token or no token.  We are in a context where we expect an attribute/type constraint
-            // and allow any whitespace/commments before the '[', but nothing else (the caller has already skipped newlines
+            // and allow any whitespace/comments before the '[', but nothing else (the caller has already skipped newlines
             // if appropriate.)  This is handled specially because in command mode, a generic token may begin with '[', but
             // we don't want anything more than the '['.
 

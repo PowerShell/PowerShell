@@ -21,7 +21,7 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Contructor for InvocationInfo object when the associated command object is present. 
+        /// Constructor for InvocationInfo object when the associated command object is present. 
         /// </summary>
         /// <param name="command"></param>
         internal InvocationInfo(InternalCommand command)

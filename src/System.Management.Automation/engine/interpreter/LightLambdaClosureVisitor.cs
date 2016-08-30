@@ -245,7 +245,7 @@ namespace System.Management.Automation.Interpreter
         #region MergedRuntimeVariables
 
         /// <summary>
-        /// Provides a list of variables, supporing read/write of the values
+        /// Provides a list of variables, supporting read/write of the values
         /// </summary>
         private sealed class MergedRuntimeVariables : IRuntimeVariables
         {

@@ -349,7 +349,7 @@ namespace System.Management.Automation.Internal
 
                 commandProcessor.AddedToPipelineAlready = true;
             }
-            // 2003/08/11-JonN Subseqent commands must have predecessor
+            // 2003/08/11-JonN Subsequent commands must have predecessor
             else if (readFromCommand > _commands.Count || readFromCommand <= 0)
             {
                 // "invalid command number"
@@ -1002,7 +1002,7 @@ namespace System.Management.Automation.Internal
                 // Generate new Activity Id for the thread
                 Guid pipelineActivityId = EtwActivity.CreateActivityId();
 
-                // commandProcess.PieplineActivityId = new Activity id
+                // commandProcess.PipelineActivityId = new Activity id
                 EtwActivity.SetActivityId(pipelineActivityId);
                 commandProcessor.PipelineActivityId = pipelineActivityId;
 

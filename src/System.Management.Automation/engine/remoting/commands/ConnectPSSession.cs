@@ -973,7 +973,7 @@ namespace Microsoft.PowerShell.Commands
             if (ParameterSetName != ConnectPSSessionCommand.ConnectionUriParameterSet &&
                 ParameterSetName != ConnectPSSessionCommand.ConnectionUriGuidParameterSet)
             {
-                // uri redirection is supported only with URI parmeter set
+                // uri redirection is supported only with URI parameter set
                 connectionInfo.MaximumConnectionRedirectionCount = 0;
             }
 

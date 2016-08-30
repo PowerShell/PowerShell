@@ -77,7 +77,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// When prefixing a variable "script" makes the variable
-        /// global to the scipt but not global to the entire session.
+        /// global to the script but not global to the entire session.
         /// </summary>
         internal const string Script = "SCRIPT";
 

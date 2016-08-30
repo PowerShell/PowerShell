@@ -31,7 +31,7 @@ namespace System.Management.Automation
         /// 
         /// This is why we hard code the PowerShell version here. 
         /// 
-        /// For each later relase of PowerShell, this constant needs to 
+        /// For each later release of PowerShell, this constant needs to 
         /// be updated to reflect the right version. 
         /// </remarks>
         private static Version s_psV1Version = new Version(1, 0);

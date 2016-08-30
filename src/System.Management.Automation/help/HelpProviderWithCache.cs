@@ -93,8 +93,8 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// Derived class can choose to either override ExactMatchHelp method to DoExactMatchHelp method.
-        /// If ExactMatchHelp is overriden, initial cache checking will be disabled by default.
-        /// If DoExactMatchHelp is overriden, cache check will be done first in ExactMatchHelp before the 
+        /// If ExactMatchHelp is overridden, initial cache checking will be disabled by default.
+        /// If DoExactMatchHelp is overridden, cache check will be done first in ExactMatchHelp before the 
         /// logic in DoExactMatchHelp is in place.
         /// </remarks>
         /// <param name="helpRequest">help request object</param>
@@ -110,7 +110,7 @@ namespace System.Management.Automation
         /// If true, searches for pattern in the help content. Individual 
         /// provider can decide which content to search in.
         /// 
-        /// If false, seraches for pattern in the command names.
+        /// If false, searches for pattern in the command names.
         /// </param> 
         /// <returns>a collection of help info objects</returns>
         internal override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)

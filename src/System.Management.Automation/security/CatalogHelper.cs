@@ -103,7 +103,7 @@ namespace System.Management.Automation
             }
             // One Windows 7 this API sent version information as decimal 1 not hex (0X100 = 256)
             // so we are checking for that value as well. Reason we are not checking for version 2 above in
-            // this scenario because catalog verion 2 is not supported on win7. 
+            // this scenario because catalog version 2 is not supported on win7. 
             else if ((catalogInfo.dwPublicVersion == catalogVersion1) || (catalogInfo.dwPublicVersion == 1))
             {
                 catalogVersion = 1;
@@ -152,14 +152,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Generate the Catalog Defintion File representing files and folders 
+        /// Generate the Catalog Definition File representing files and folders 
         /// </summary>
         /// 
         /// <param name="Path"> Path of expected output .cdf file </param>        
         ///          
         /// <param name="catalogFilePath"> Path of the output catalog file </param>        
         /// 
-        /// <param name="cdfFilePath"> Path of the catalog definiton file </param>        
+        /// <param name="cdfFilePath"> Path of the catalog definition file </param>        
         /// 
         /// <param name="catalogVersion"> Version of catalog</param>
         ///  
@@ -213,7 +213,7 @@ namespace System.Management.Automation
         /// <param name="relativePaths"> working set of relative paths of all files. </param>   
         /// <param name="cdfHeaderContent"> content to be added in CatalogHeader section of cdf File</param>   
         /// <param name="cdfFilesContent"> content to be added in CatalogFiles section of cdf File </param>   
-        /// <param name="catAttributeCount"> indictaing the current no of catalog header level attributes </param>   
+        /// <param name="catAttributeCount"> indicating the current no of catalog header level attributes </param>   
         /// <returns> void </returns>
         internal static void ProcessFileToBeAddedInCatalogDefinitionFile(FileInfo fileToHash, DirectoryInfo dirInfo, ref HashSet<string> relativePaths, ref string cdfHeaderContent, ref string cdfFilesContent, ref int catAttributeCount)
         {
@@ -252,7 +252,7 @@ namespace System.Management.Automation
             }
         }
         /// <summary>
-        /// Generate the Catalog file for Input Catalog Defintion File 
+        /// Generate the Catalog file for Input Catalog Definition File 
         /// </summary>
         ///
         /// <param name="cdfFilePath"> Path to the Input .cdf file </param>        
@@ -346,7 +346,7 @@ namespace System.Management.Automation
 
             if (!String.IsNullOrEmpty(hashAlgorithm))
             {
-                // Generate Path for Catalog Defintion File 
+                // Generate Path for Catalog Definition File 
                 string cdfFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName());
                 cdfFilePath = cdfFilePath + ".cdf";
                 try
@@ -355,8 +355,8 @@ namespace System.Management.Automation
 
                     if (!File.Exists(cdfFilePath))
                     {
-                        // If we are not able to generate catalog defintion file we can not continue generating catalog 
-                        // throw PSTraceSource.NewInvalidOperationException("catalog", CatalogStrings.CatalogDefintionFileNotGenerated);                    
+                        // If we are not able to generate catalog definition file we can not continue generating catalog 
+                        // throw PSTraceSource.NewInvalidOperationException("catalog", CatalogStrings.CatalogDefinitionFileNotGenerated);                    
                         ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(CatalogStrings.CatalogDefintionFileNotGenerated), "CatalogDefintionFileNotGenerated", ErrorCategory.InvalidOperation, null);
                         _cmdlet.ThrowTerminatingError(errorRecord);
                     }

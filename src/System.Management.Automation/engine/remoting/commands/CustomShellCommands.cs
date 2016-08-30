@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
 {
     #region Register-PSSessionConfiguration cmdlet
     /// <summary>
-    /// Class implemeting Register-PSSessionConfiguration
+    /// Class implementing Register-PSSessionConfiguration
     /// </summary>
     [Cmdlet(VerbsLifecycle.Register, RemotingConstants.PSSessionConfigurationNoun,
         DefaultParameterSetName = PSSessionConfigurationCommandBase.NameParameterSetName,
@@ -1364,7 +1364,7 @@ else
         /// Checks if the current thread is running elevated. If not, throws an error.
         /// </summary>
         /// <exception cref="InvalidOperationException">
-        /// 1. Acess is denied. You need to run this cmdlet from an elevated process.
+        /// 1. Access is denied. You need to run this cmdlet from an elevated process.
         /// </exception>
         internal static void ThrowIfNotAdministrator()
         {
@@ -1641,7 +1641,7 @@ else
             sb.Append(prologue);
 
             //
-            // Convert to condtional ACE
+            // Convert to conditional ACE
             // Beginning (Regular) ACE has exactly 6 required fields and one (optional) field.
             // We only manipulate ACEs that we create and we currently do not use the optional resource field,
             // so we always expect a beginning ACE with exactly 6 fields.
@@ -1764,13 +1764,13 @@ else
         private const string MemberOfFormat = "Member_of {{SID({0})}}";
 
         /// <summary>
-        /// Parse RequiredGroups configruation and build conditional ACE string.
+        /// Parse RequiredGroups configuration and build conditional ACE string.
         /// </summary>
         /// <param name="configTable"></param>
         /// <returns></returns>
         // RequiredGroups:  @{ And = @{ Or = '2FA_GROUP_1', '2FA_GROUP_2' }, @{ Or = 'TRUSTEDHOSTS_1', 'TRUSTEDHOSTS_2' } }
-        // User ACE:        (XA;;GA;;;S-1-5-21-2127438184-1604012920-1882527527;CondionalPart)
-        // CondionalPart:   ((Member_of {SID(2FA_GROUP_1)} || Member_of {SID(2FA_GROUP_2)}) && (Member_of {SID(TRUSTEDHOSTS_1)} || Member_of {TRUSTEDHOSTS_2}))
+        // User ACE:        (XA;;GA;;;S-1-5-21-2127438184-1604012920-1882527527;ConditionalPart)
+        // ConditionalPart:   ((Member_of {SID(2FA_GROUP_1)} || Member_of {SID(2FA_GROUP_2)}) && (Member_of {SID(TRUSTEDHOSTS_1)} || Member_of {TRUSTEDHOSTS_2}))
         //         where:   2FA_GROUP_1, 2FA_GROUP_2, TRUSTEDHOSTS_1, TRUSTEDHOSTS_2 are resolved SIDs of the group names.
         // (https://msdn.microsoft.com/en-us/library/windows/desktop/dd981030(v=vs.85).aspx)
         internal static string CreateConditionalACEFromConfig(
@@ -2040,7 +2040,7 @@ else
         /// <summary>
         /// This parameter should be specified with AssemblyName. This supplies
         /// the type to load to get the InitialSessionState. The type should
-        /// be derivided from <see cref="PSSessionConfiguration"/>.
+        /// be derived from <see cref="PSSessionConfiguration"/>.
         /// </summary>
         [Parameter(Position = 2, Mandatory = true, ParameterSetName = PSSessionConfigurationCommandBase.AssemblyNameParameterSetName)]
         public string ConfigurationTypeName
@@ -2446,7 +2446,7 @@ else
     #region Unregister-PSSessionConfiguration cmdlet
 
     /// <summary>
-    /// Class implemeting Unregister-PSSessionConfiguration
+    /// Class implementing Unregister-PSSessionConfiguration
     /// </summary>
     [Cmdlet(VerbsLifecycle.Unregister, RemotingConstants.PSSessionConfigurationNoun,
         SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144308")]
@@ -2668,7 +2668,7 @@ else
     #region Get-PSSessionConfiguration cmdlet
 
     /// <summary>
-    /// Class implemeting Get-PSSessionConfiguration
+    /// Class implementing Get-PSSessionConfiguration
     /// </summary>
     [Cmdlet(VerbsCommon.Get, RemotingConstants.PSSessionConfigurationNoun, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144304")]
     [OutputType("Microsoft.PowerShell.Commands.PSSessionConfigurationCommands#PSSessionConfiguration")]
@@ -2904,7 +2904,7 @@ $args[0] | foreach {{
     #region Set-PSSessionConfiguration cmdlet
 
     /// <summary>
-    /// Class implemeting Set-PSSessionConfiguration
+    /// Class implementing Set-PSSessionConfiguration
     /// </summary>
     [Cmdlet(VerbsCommon.Set, RemotingConstants.PSSessionConfigurationNoun,
        DefaultParameterSetName = PSSessionConfigurationCommandBase.NameParameterSetName,
@@ -3958,7 +3958,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                                     }
                                 }
                                 // if ModulesToImport doesn't exist in the pssessionConfigurationData, we don't need to do anything.
-                                // in this case, if the current config is of type workfolw, it's not a valid config.
+                                // in this case, if the current config is of type workflow, it's not a valid config.
                             }
                             else
                             {
@@ -4786,7 +4786,7 @@ param(
             if ($pa -eq ""x86"")
             {{
                 # on 64-bit platforms, wow64 bit process has the correct architecture
-                # available in processor_architew6432 varialbe
+                # available in processor_architew6432 variable
                 $pa = $env:PROCESSOR_ARCHITEW6432
             }}
             if ((($pa -eq ""amd64"")) -and (test-path $env:windir\syswow64\pwrshplugin.dll))
@@ -5191,7 +5191,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
         #region Cmdlet Override
 
         /// <summary>
-        /// Check for prerequisites and eleveation mode
+        /// Check for prerequisites and elevation mode
         /// </summary>
         protected override void BeginProcessing()
         {

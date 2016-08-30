@@ -105,7 +105,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Clone from IClonable
+        /// Clone from ICloneable
         /// </summary>
         public object Clone()
         {

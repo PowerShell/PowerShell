@@ -76,7 +76,7 @@ namespace System.Management.Automation
         /// </param>
         /// 
         /// <returns>
-        /// The security descriptor for the item at the sepecified path.
+        /// The security descriptor for the item at the specified path.
         /// </returns>
         /// 
         internal Collection<PSObject> GetSecurityDescriptor(string path,
@@ -115,7 +115,7 @@ namespace System.Management.Automation
         /// </param>
         /// 
         /// <returns>
-        /// Nothing. The security descriptor for the item at the sepecified path is
+        /// Nothing. The security descriptor for the item at the specified path is
         /// written to the context.
         /// </returns>
         /// 
@@ -219,7 +219,7 @@ namespace System.Management.Automation
         /// </param>
         /// 
         /// <returns>
-        /// The security descriptor that was set on the item at the sepecified path.
+        /// The security descriptor that was set on the item at the specified path.
         /// </returns>
         /// 
         internal Collection<PSObject> SetSecurityDescriptor(string path, ObjectSecurity securityDescriptor)
@@ -263,7 +263,7 @@ namespace System.Management.Automation
         /// </param>
         /// 
         /// <returns>
-        /// Nothing. The security descriptor that was set on the item at the sepecified path
+        /// Nothing. The security descriptor that was set on the item at the specified path
         /// is written to the context.
         /// </returns>
         /// 
@@ -416,7 +416,7 @@ namespace System.Management.Automation
         /// </param>
         /// 
         /// <returns>
-        /// Nothing. The security descriptor for the item at the sepecified path is
+        /// Nothing. The security descriptor for the item at the specified path is
         /// written to the context.
         /// </returns>
         /// 
@@ -538,7 +538,7 @@ namespace System.Management.Automation
         /// </param>
         /// 
         /// <returns>
-        /// Nothing. The security descriptor for the item at the sepecified type is
+        /// Nothing. The security descriptor for the item at the specified type is
         /// written to the context.
         /// </returns>
         /// 
@@ -570,7 +570,7 @@ namespace System.Management.Automation
         /// </param>
         /// 
         /// <returns>
-        /// Nothing. The security descriptor for the item at the sepecified type is
+        /// Nothing. The security descriptor for the item at the specified type is
         /// written to the context.
         /// </returns>
         /// 

@@ -483,7 +483,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Connect to Hyper-V socket server.  This is a blocking call until a 
-        /// connection occurs or the timeout time has ellapsed.
+        /// connection occurs or the timeout time has elapsed.
         /// </summary>
         /// <param name="networkCredential">The credential used for authentication</param>
         /// <param name="configurationName">The configuration name of the PS session</param>
@@ -566,8 +566,8 @@ namespace System.Management.Automation.Remoting
                     //
                     // There are 3 cases for the responseString received above.
                     // - "FAIL": credential is invalid
-                    // - "PASS": credentail is valid, but PowerShell Direct in VM does not support configuration (Server 2016 TP4 and before)
-                    // - "CONF": credentail is valid, and PowerShell Direct in VM supports configuration (Server 2016 TP5 and later)
+                    // - "PASS": credential is valid, but PowerShell Direct in VM does not support configuration (Server 2016 TP4 and before)
+                    // - "CONF": credential is valid, and PowerShell Direct in VM supports configuration (Server 2016 TP5 and later)
                     //
 
                     //

@@ -241,7 +241,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Used by Remoting infrastructure. This TypeTable instance
         /// will be used by Serializer if ExecutionContext is not
-        /// avaliable (to get the ExecutionContext's TypeTable)
+        /// available (to get the ExecutionContext's TypeTable)
         /// </summary>
         internal TypeTable TypeTable
         {
@@ -517,7 +517,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Used by Remoting infrastructure. This TypeTable instance
         /// will be used by Deserializer if ExecutionContext is not
-        /// avaliable (to get the ExecutionContext's TypeTable)
+        /// available (to get the ExecutionContext's TypeTable)
         /// </summary>
         internal TypeTable TypeTable
         {
@@ -806,7 +806,7 @@ namespace System.Management.Automation
 
         /// Used by Remoting infrastructure. This TypeTable instance
         /// will be used by Serializer if ExecutionContext is not
-        /// avaliable (to get the ExecutionContext's TypeTable)
+        /// available (to get the ExecutionContext's TypeTable)
         private TypeTable _typeTable;
 
         /// <summary>
@@ -843,7 +843,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Used by Remoting infrastructure. This TypeTable instance
         /// will be used by Serializer if ExecutionContext is not
-        /// avaliable (to get the ExecutionContext's TypeTable)
+        /// available (to get the ExecutionContext's TypeTable)
         /// </summary>
         internal TypeTable TypeTable
         {
@@ -1039,7 +1039,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Handles primitive known type by first converting it to a PSObject.In W8, extended
-        /// property data is stored external to PSObject. By coverting to PSObject, we will
+        /// property data is stored external to PSObject. By converting to PSObject, we will
         /// be able to retrieve and serialize the extended properties. This is tracked by
         /// Win8: 414042
         /// </summary>
@@ -1243,7 +1243,7 @@ namespace System.Management.Automation
 
             if (depth != 0)
             {
-                // An object which is orignially enumerable becomes an PSObject with ArrayList on deserialization. 
+                // An object which is original enumerable becomes an PSObject with ArrayList on deserialization. 
                 // So on roundtrip it will show up as List.
                 // We serialize properties of enumerable and on deserialization mark the object as Deserialized. 
                 // So if object is marked deserialized, we should write properties.
@@ -2929,7 +2929,7 @@ namespace System.Management.Automation
 
         /// Used by Remoting infrastructure. This TypeTable instance
         /// will be used by Serializer if ExecutionContext is not
-        /// avaliable (to get the ExecutionContext's TypeTable)
+        /// available (to get the ExecutionContext's TypeTable)
         private TypeTable _typeTable;
 
         /// <summary>
@@ -2997,7 +2997,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Used by Remoting infrastructure. This TypeTable instance
         /// will be used by Deserializer if ExecutionContext is not
-        /// avaliable (to get the ExecutionContext's TypeTable)
+        /// available (to get the ExecutionContext's TypeTable)
         /// </summary>
         internal TypeTable TypeTable
         {
@@ -3038,7 +3038,7 @@ namespace System.Management.Automation
             //Versioning Note:Future version of serialization can add new known types.
             //This version will ignore those known types, if they are base object.
             //It is expected that future version will still put information in base
-            //and adpater properties which this serializer can read and use. 
+            //and adapter properties which this serializer can read and use. 
             //For example, assume the version 2 serialization engine supports a new known 
             //type IPAddress. The version 1 deserializer doesn't know IPAddress as known 
             //type and it must retrieve it as an PSObject. The version 2 serializer 
@@ -3046,17 +3046,17 @@ namespace System.Management.Automation
             //<PSObject Version=1.2 Was=Deserialized.IPAddress >
             //  <TypeNames>...</TypeNames>
             //  <BaseObject>
-            //      <IPAddress>120.23.35.53</IPAdddress>
+            //      <IPAddress>120.23.35.53</IPAddress>
             //  </BaseObject>
             //  <Properties>
             //      <string name=Address>120.23.34.53</string>
             //      <string name=class>A</string>
             //  </Properties>
             //</PSObject>
-            // In above example, V1 serializer will ingore <IPAdresss> element and read
+            // In above example, V1 serializer will ignore <IPAddress> element and read
             // properties from <Properties>
             // V2 serializer can read <IPAddress> tag and ignore properties.
-            // Read serializion note doc for information.
+            // Read serialization note doc for information.
 
             //Now validate the major version number is 1
             if (_version.Major != 1)
@@ -3624,7 +3624,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        //We have an unknwon tag
+                        //We have an unknown tag
                         s_trace.WriteLine("Unknwon tag {0} encountered", _reader.LocalName);
                         if (UnknownTagsAllowed)
                         {
@@ -5595,7 +5595,7 @@ namespace System.Management.Automation
                 {
                     // collected object doesn't have a hash code
                     // return an arbitrary hashcode here and fall back on Equal method for comparison
-                    return RuntimeHelpers.GetHashCode(obj); // RuntimeHelpers.GetHashCode(null) returns 0 - this would cause many hashtable colisions for WeakReferences to dead objects
+                    return RuntimeHelpers.GetHashCode(obj); // RuntimeHelpers.GetHashCode(null) returns 0 - this would cause many hashtable collisions for WeakReferences to dead objects
                 }
                 else
                 {
@@ -6602,7 +6602,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="sourceValue">The value to convert from</param>
         /// <param name="destinationType">The type to convert to</param>
-        /// <param name="formatProvider">The format provider to use like in IFormatable's ToString</param>
+        /// <param name="formatProvider">The format provider to use like in IFormattable's ToString</param>
         /// <param name="ignoreCase">true if case should be ignored</param>
         /// <returns>the <paramref name="sourceValue"/> parameter converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase</returns>
         /// <exception cref="InvalidCastException">if no conversion was possible</exception>
@@ -6690,7 +6690,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="sourceValue">The value to convert from</param>
         /// <param name="destinationType">The type to convert to</param>
-        /// <param name="formatProvider">The format provider to use like in IFormatable's ToString</param>
+        /// <param name="formatProvider">The format provider to use like in IFormattable's ToString</param>
         /// <param name="ignoreCase">true if case should be ignored</param>
         /// <returns>sourceValue converted to the <paramref name="destinationType"/> parameter using formatProvider and ignoreCase</returns>
         /// <exception cref="InvalidCastException">if no conversion was possible</exception>
@@ -7209,7 +7209,7 @@ namespace Microsoft.PowerShell
         /// of the DebuggerStopEventArgs type.
         /// </summary>
         /// <param name="instance">InvocationInfo instance.</param>
-        /// <returns>PSObject containing seralized InvocationInfo.</returns>
+        /// <returns>PSObject containing serialized InvocationInfo.</returns>
         public static PSObject GetInvocationInfo(PSObject instance)
         {
             if (instance == null)
@@ -7400,7 +7400,7 @@ namespace Microsoft.PowerShell
         private static PSControl RehydratePSControl(PSObject deserializedControl)
         {
             // Earlier versions of PowerShell did not have all of the possible properties in a control, so we must
-            // use MisingPropertyOk to allow for connections to those older endpoints.
+            // use MissingPropertyOk to allow for connections to those older endpoints.
             PSControl result;
             if (Deserializer.IsDeserializedInstanceOfType(deserializedControl, typeof(TableControl)))
             {

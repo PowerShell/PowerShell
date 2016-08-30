@@ -391,7 +391,7 @@ namespace System.Management.Automation.Remoting
         private WSManPluginServerTransportManager _serverTransportMgr;
         private System.Guid _cmdId;
 
-        // Create Cmd Transport Manager for this sessn trnsprt manager
+        // Create Cmd Transport Manager for this sessn transport manager
         internal WSManPluginCommandTransportManager(WSManPluginServerTransportManager srvrTransportMgr)
             : base(srvrTransportMgr.Fragmentor.FragmentSize, srvrTransportMgr.CryptoHelper)
         {

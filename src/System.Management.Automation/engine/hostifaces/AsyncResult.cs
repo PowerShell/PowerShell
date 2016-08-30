@@ -32,7 +32,7 @@ namespace System.Management.Automation.Runspaces
         /// Constructor
         /// </summary>
         /// <param name="ownerId">
-        /// Instace Id of the object creating this instance
+        /// Instance Id of the object creating this instance
         /// </param>
         /// <param name="callback">
         /// A AsyncCallback to call once the async operation completes.

@@ -227,7 +227,7 @@ namespace System.Management.Automation
         public bool IsDefault { get; }
 
         /// <summary>
-        /// Retuns applicationbase for mshsnapin
+        /// Returns applicationbase for mshsnapin
         /// </summary>
         public string ApplicationBase { get; }
 
@@ -630,7 +630,7 @@ namespace System.Management.Automation
                 {
                     mshsnapins.Add(ReadOne(mshsnapinRoot, id));
                 }
-                //If we cannot read some mshsnapins, we should contiune
+                //If we cannot read some mshsnapins, we should continue
                 catch (SecurityException)
                 {
                 }
@@ -906,7 +906,7 @@ namespace System.Management.Automation
                 string.Format(CultureInfo.CurrentCulture, "{0} is null", RegistryStrings.MonadEngine_MonadVersion));
 
             // Get version number in x.x.x.x format
-            // This information is available from the exeucting assembly
+            // This information is available from the executing assembly
             //
             // PROBLEM: The following code assumes all assemblies have the same version,
             // culture, publickeytoken...This will break the scenarios where only one of

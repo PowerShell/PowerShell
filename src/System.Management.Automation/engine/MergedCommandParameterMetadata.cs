@@ -60,7 +60,7 @@ namespace System.Management.Automation
         } // ReplaceMetadata
 
         /// <summary>
-        /// Merges the specified metdata with the other metadata already defined
+        /// Merges the specified metadata with the other metadata already defined
         /// in this object.
         /// </summary>
         /// 
@@ -625,7 +625,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets a dictionary of the compiled parameter metadata for this Type. 
         /// The dictionary keys are the names of the parameters and
-        /// the values are the compiled parameter metdata.
+        /// the values are the compiled parameter metadata.
         /// </summary>
         internal IDictionary<string, MergedCompiledCommandParameter> BindableParameters { get { return _bindableParameters; } }
         private IDictionary<string, MergedCompiledCommandParameter> _bindableParameters =

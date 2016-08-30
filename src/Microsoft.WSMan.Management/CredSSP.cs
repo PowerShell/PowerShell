@@ -423,7 +423,7 @@ namespace Microsoft.WSMan.Management
     /// an application to delegate the user's credentials from the client to the 
     /// server, hence allowing the user to perform management operations that access 
     /// a second hop.
-    /// This cmdlt performs the following:
+    /// This cmdlet performs the following:
     /// 
     /// On the client:
     /// 1. Enables WSMan local configuration on client to enable CredSSP
@@ -547,7 +547,7 @@ namespace Microsoft.WSMan.Management
                 return dyanmicParameters;
             }
 
-            // Construct attributes for the DelegateComputer paramter
+            // Construct attributes for the DelegateComputer parameter
             Collection<Attribute> delegateComputerAttributeCollection = new Collection<Attribute>();
             ParameterAttribute paramAttribute = new ParameterAttribute();
             paramAttribute.Mandatory = true;
@@ -848,7 +848,7 @@ namespace Microsoft.WSMan.Management
     /// enables an application to delegate the user's credentials from the client to 
     /// the server, hence allowing the user to perform management operations that 
     /// access a second hop.
-    /// This cmdlt performs the following:
+    /// This cmdlet performs the following:
     /// 1. Gets the configuration for WSMan policy on client to enable/disable 
     /// CredSSP
     /// 2. Gets the configuration information for the CredSSP policy 

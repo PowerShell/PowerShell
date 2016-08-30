@@ -163,7 +163,7 @@ namespace System.Management.Automation
         //       particular component, role and functionality using parameters like
         //       -component, -role, -functionality.
         //    3. At runtime, help engine will match against component/role/functionality
-        //       criteria before returing help results.
+        //       criteria before returning help results.
         //
 
         private string _component = null;
@@ -276,7 +276,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Merge the provider specific help with current command help. 
         /// 
-        /// The cmdletHelp and dynamicParameterHelp is normally retrived from ProviderHelpProvider.
+        /// The cmdletHelp and dynamicParameterHelp is normally retrieved from ProviderHelpProvider.
         /// </summary>
         /// <remarks>
         /// A new MamlCommandHelpInfo is created to avoid polluting the provider help cache.
@@ -292,7 +292,7 @@ namespace System.Management.Automation
             MamlCommandHelpInfo result = (MamlCommandHelpInfo)this.MemberwiseClone();
 
             // We will need to use a deep clone of _fullHelpObject
-            // to avoid _fullHelpObject being get tarminated. 
+            // to avoid _fullHelpObject being get terminated. 
             result._fullHelpObject = this._fullHelpObject.Copy();
 
             if (cmdletHelp != null)
@@ -333,7 +333,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Given a PSObject, this method will traverse through the objects properties,
-        /// extracts content from properities that are of type System.String, appends them
+        /// extracts content from properties that are of type System.String, appends them
         /// together and returns.
         /// </summary>
         /// <param name="psObject"></param>
