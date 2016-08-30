@@ -222,7 +222,7 @@ function Compress-Archive
                 # The $isArchiveFileProcessingComplete would be set to $false if user has typed 'CTRL + C' to 
                 # terminate the cmdlet execution or if an unhandled exception is thrown.
                 # $numberOfItemsArchived contains the count of number of files or directories add to the archive file.
-                # If the newly created archive file is empty then we delete it as its not usable.
+                # If the newly created archive file is empty then we delete it as it's not usable.
                 if(($isArchiveFileProcessingComplete -eq $false) -or 
                 ($numberOfItemsArchived -eq 0))
                 {
@@ -956,7 +956,7 @@ function ExpandArchiveHelper
                 $pathExists = Test-Path -LiteralPath $currentArchiveEntryPath
 
                 # The current archive entry expects an empty directory.
-                # Check if the existing directory is empty. If its not empty
+                # Check if the existing directory is empty. If it's not empty
                 # then it means that user has added this directory by other means.
                 if($pathExists -eq $false)
                 {
