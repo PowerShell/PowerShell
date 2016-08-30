@@ -58,3 +58,6 @@ gen
 
 # OS X
 .DS_Store
+
+# TestsResults
+TestsResults*.xml
