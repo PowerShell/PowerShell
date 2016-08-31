@@ -542,13 +542,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the default system-wide module path.
+        /// Gets the PSHome module path, as known as the "system wide module path" in windows powershell.
         /// </summary>
-        /// <returns>The default system wide module path</returns>
-        internal static string GetSystemwideModulePath()
+        /// <returns>The PSHome module path</returns>
+        internal static string GetPSHomeModulePath()
         {
-            if (s_systemWideModulePath != null)
-                return s_systemWideModulePath;
+            if (s_psHomeModulePath != null)
+                return s_psHomeModulePath;
             
             try
             {
@@ -565,32 +565,33 @@ namespace System.Management.Automation
 #if !UNIX
                     psHome = psHome.ToLowerInvariant().Replace("\\syswow64\\", "\\system32\\");
 #endif
-                    Interlocked.CompareExchange(ref s_systemWideModulePath, Path.Combine(psHome, "Modules"), null);
+                    Interlocked.CompareExchange(ref s_psHomeModulePath, Path.Combine(psHome, "Modules"), null);
                 }
             }
             catch (System.Security.SecurityException) { }
 
-            return s_systemWideModulePath;
+            return s_psHomeModulePath;
         }
 
-        private static string s_systemWideModulePath;
+        private static string s_psHomeModulePath;
 
         /// <summary>
-        /// Get the DSC module path.
+        /// Get the module path that is shared among different users.
+        /// It's known as "Program Files" module path in windows powershell.
         /// </summary>
         /// <returns></returns>
-        internal static string GetDscModulePath()
+        internal static string GetSharedModulePath()
         {
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.SHARED_MODULES);
 #else
-            string dscModulePath = null;
+            string sharedModulePath = null;
             string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
             if (!string.IsNullOrEmpty(programFilesPath))
             {
-                dscModulePath = Path.Combine(programFilesPath, Utils.ModuleDirectory);
+                sharedModulePath = Path.Combine(programFilesPath, Utils.ModuleDirectory);
             }
-            return dscModulePath;
+            return sharedModulePath;
 #endif
         }
 
@@ -601,20 +602,20 @@ namespace System.Management.Automation
         /// <returns></returns>
         private static string CombineSystemModulePaths()
         {
-            string systemModulePath = GetSystemwideModulePath();
-            string commonModulePath = GetDscModulePath();
+            string psHomeModulePath = GetPSHomeModulePath();
+            string sharedModulePath = GetSharedModulePath();
 
-            bool isSystemPathNullOrEmpty = string.IsNullOrEmpty(systemModulePath);
-            bool isCommonPathNullOrEmpty = string.IsNullOrEmpty(commonModulePath);
+            bool isPSHomePathNullOrEmpty = string.IsNullOrEmpty(psHomeModulePath);
+            bool isSharedPathNullOrEmpty = string.IsNullOrEmpty(sharedModulePath);
 
-            if (!isSystemPathNullOrEmpty && !isCommonPathNullOrEmpty)
+            if (!isPSHomePathNullOrEmpty && !isSharedPathNullOrEmpty)
             {
-                return (commonModulePath + Path.PathSeparator + systemModulePath);
+                return (sharedModulePath + Path.PathSeparator + psHomeModulePath);
             }
 
-            if (!isSystemPathNullOrEmpty || !isCommonPathNullOrEmpty)
+            if (!isPSHomePathNullOrEmpty || !isSharedPathNullOrEmpty)
             {
-                return isSystemPathNullOrEmpty ? commonModulePath : systemModulePath;
+                return isPSHomePathNullOrEmpty ? sharedModulePath : psHomeModulePath;
             }
 
             return null;
@@ -716,13 +717,13 @@ namespace System.Management.Automation
         ///  - inbox nano/iot ps started from sxs ps
         /// If it's likely one of them, then we need to clear the current process module path.
         /// </summary>
-        private static bool NeedToClearProcessModulePath(string currentProcessModulePath, string personalModulePath, string programFilesModulePath, bool runningSxS)
+        private static bool NeedToClearProcessModulePath(string currentProcessModulePath, string personalModulePath, string sharedModulePath, bool runningSxS)
         {
 #if UNIX
             return false;
 #else
             Dbg.Assert(!string.IsNullOrEmpty(personalModulePath), "caller makes sure it's not null or empty");
-            Dbg.Assert(!string.IsNullOrEmpty(programFilesModulePath), "caller makes sure it's not null or empty");
+            Dbg.Assert(!string.IsNullOrEmpty(sharedModulePath), "caller makes sure it's not null or empty");
 
             const string winSxSModuleDirectory = @"PowerShell\Modules";
             const string winLegacyModuleDirectory = @"WindowsPowerShell\Modules";
@@ -736,7 +737,7 @@ namespace System.Management.Automation
                 string hklmModulePath = GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.Machine);
                 string hkcuModulePath = GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.User);
                 string legacyPersonalModulePath = personalModulePath.Replace(winSxSModuleDirectory, winLegacyModuleDirectory);
-                string legacyProgramFilesModulePath = programFilesModulePath.Replace(winSxSModuleDirectory, winLegacyModuleDirectory);
+                string legacyProgramFilesModulePath = sharedModulePath.Replace(winSxSModuleDirectory, winLegacyModuleDirectory);
 
                 return (!string.IsNullOrEmpty(hklmModulePath) && currentProcessModulePath.IndexOf(hklmModulePath, StringComparison.OrdinalIgnoreCase) != -1) ||
                        (!string.IsNullOrEmpty(hkcuModulePath) && currentProcessModulePath.IndexOf(hkcuModulePath, StringComparison.OrdinalIgnoreCase) != -1) ||
@@ -747,7 +748,7 @@ namespace System.Management.Automation
             // The sxs personal and shared module paths are only meaningful for sxs ps, so if they appear
             // in the current process module path, it's likely the running ps was started from a sxs ps.
             string sxsPersonalModulePath = personalModulePath.Replace(winLegacyModuleDirectory, winSxSModuleDirectory);
-            string sxsProgramFilesModulePath = programFilesModulePath.Replace(winLegacyModuleDirectory, winSxSModuleDirectory);
+            string sxsProgramFilesModulePath = sharedModulePath.Replace(winLegacyModuleDirectory, winSxSModuleDirectory);
 
             return currentProcessModulePath.IndexOf(sxsPersonalModulePath, StringComparison.OrdinalIgnoreCase) != -1 ||
                    currentProcessModulePath.IndexOf(sxsProgramFilesModulePath, StringComparison.OrdinalIgnoreCase) != -1;
@@ -803,8 +804,8 @@ namespace System.Management.Automation
         public static string GetModulePath(string currentProcessModulePath, string hklmMachineModulePath, string hkcuUserModulePath)
         {
             string personalModulePath = GetPersonalModulePath();
-            string programFilesModulePath = GetDscModulePath(); // aka <Program Files> location
-            string psHomeModulePath = GetSystemwideModulePath(); // $PSHome\Modules location
+            string sharedModulePath = GetSharedModulePath(); // aka <Program Files> location
+            string psHomeModulePath = GetPSHomeModulePath(); // $PSHome\Modules location
 
 #if CORECLR
             bool runningSxS = Platform.IsInbox ? false : true;
@@ -812,7 +813,7 @@ namespace System.Management.Automation
             bool runningSxS = false;
 #endif
             if (!string.IsNullOrEmpty(currentProcessModulePath) && 
-                NeedToClearProcessModulePath(currentProcessModulePath, personalModulePath, programFilesModulePath, runningSxS))
+                NeedToClearProcessModulePath(currentProcessModulePath, personalModulePath, sharedModulePath, runningSxS))
             {
                 // Clear the current process module path in the following cases
                 //  - start sxs ps on windows [machine-wide env:psmodulepath will influence]
@@ -839,7 +840,7 @@ namespace System.Management.Automation
                 currentProcessModulePath += Path.PathSeparator;
                 if (string.IsNullOrEmpty(hklmMachineModulePath)) // EVT.Machine does Not exist
                 {
-                    currentProcessModulePath += CombineSystemModulePaths(); // += (DscModulePath + $PSHome\Modules)
+                    currentProcessModulePath += CombineSystemModulePaths(); // += (SharedModulePath + $PSHome\Modules)
                 }
                 else
                 {
@@ -869,7 +870,7 @@ namespace System.Management.Automation
                     {
                         if (!(hklmMachineModulePath).Equals(currentProcessModulePath, StringComparison.OrdinalIgnoreCase))
                         {
-                            // before returning, use <presence of Windows module path> heuristic to conditionally add programFilesModulePath
+                            // before returning, use <presence of Windows module path> heuristic to conditionally add <Program Files> location
                             int psHomePosition = PathContainsSubstring(currentProcessModulePath, psHomeModulePath); // index of $PSHome\Modules in currentProcessModulePath
                             if (psHomePosition >= 0) // if $PSHome\Modules IS found - insert <Program Files> location before $PSHome\Modules
                             {
@@ -881,7 +882,7 @@ namespace System.Management.Automation
                                     psHomePosition = PathContainsSubstring(currentProcessModulePath, psHomeModulePath);
                                 }
 #endif
-                                return AddToPath(currentProcessModulePath, programFilesModulePath, psHomePosition);
+                                return AddToPath(currentProcessModulePath, sharedModulePath, psHomePosition);
                             } // if $PSHome\Modules NOT found = <scenario 4> = 'PSModulePath has been constrained by a user to create a sand boxed environment without including System Modules'
 
                             return null;
@@ -896,11 +897,11 @@ namespace System.Management.Automation
                             (hklmMachineModulePath).Equals(currentProcessModulePath, StringComparison.OrdinalIgnoreCase) ||
                             (hkcuUserModulePath).Equals(currentProcessModulePath, StringComparison.OrdinalIgnoreCase)))
                         {
-                            // before returning, use <presence of Windows module path> heuristic to conditionally add programFilesModulePath
+                            // before returning, use <presence of Windows module path> heuristic to conditionally add <Program Files> location
                             int psHomePosition = PathContainsSubstring(currentProcessModulePath, psHomeModulePath); // index of $PSHome\Modules in currentProcessModulePath
                             if (psHomePosition >= 0) // if $PSHome\Modules IS found - insert <Program Files> location before $PSHome\Modules
                             {
-                                return AddToPath(currentProcessModulePath, programFilesModulePath, psHomePosition);
+                                return AddToPath(currentProcessModulePath, sharedModulePath, psHomePosition);
                             } // if $PSHome\Modules NOT found = <scenario 4> = 'PSModulePath has been constrained by a user to create a sand boxed environment without including System Modules'
 
                             return null;
@@ -916,15 +917,15 @@ namespace System.Management.Automation
                     {
                         if (hkcuUserModulePath.Equals(currentProcessModulePath, StringComparison.OrdinalIgnoreCase))
                         {
-                            currentProcessModulePath = hkcuUserModulePath + Path.PathSeparator + CombineSystemModulePaths(); // = EVT.User + (DscModulePath + $PSHome\Modules)
+                            currentProcessModulePath = hkcuUserModulePath + Path.PathSeparator + CombineSystemModulePaths(); // = EVT.User + (SharedModulePath + $PSHome\Modules)
                         }
                         else
                         {
-                            // before returning, use <presence of Windows module path> heuristic to conditionally add programFilesModulePath
+                            // before returning, use <presence of Windows module path> heuristic to conditionally add <Program Files> location
                             int psHomePosition = PathContainsSubstring(currentProcessModulePath, psHomeModulePath); // index of $PSHome\Modules in currentProcessModulePath
                             if (psHomePosition >= 0) // if $PSHome\Modules IS found - insert <Program Files> location before $PSHome\Modules
                             {
-                                return AddToPath(currentProcessModulePath, programFilesModulePath, psHomePosition);
+                                return AddToPath(currentProcessModulePath, sharedModulePath, psHomePosition);
                             } // if $PSHome\Modules NOT found = <scenario 4> = 'PSModulePath has been constrained by a user to create a sand boxed environment without including System Modules'
 
                             return null;
@@ -932,11 +933,11 @@ namespace System.Management.Automation
                     }
                     else // EVT.User does Not exist
                     {
-                        // before returning, use <presence of Windows module path> heuristic to conditionally add programFilesModulePath
+                        // before returning, use <presence of Windows module path> heuristic to conditionally add <Program Files> location
                         int psHomePosition = PathContainsSubstring(currentProcessModulePath, psHomeModulePath); // index of $PSHome\Modules in currentProcessModulePath
                         if (psHomePosition >= 0) // if $PSHome\Modules IS found - insert <Program Files> location before $PSHome\Modules
                         {
-                            return AddToPath(currentProcessModulePath, programFilesModulePath, psHomePosition);
+                            return AddToPath(currentProcessModulePath, sharedModulePath, psHomePosition);
                         } // if $PSHome\Modules NOT found = <scenario 4> = 'PSModulePath has been constrained by a user to create a sand boxed environment without including System Modules'
 
                         // Neither key is set so go with what the environment variable is already set to
@@ -950,7 +951,7 @@ namespace System.Management.Automation
             int indexOfPSHomeModulePath = PathContainsSubstring(currentProcessModulePath, psHomeModulePath); // index of $PSHome\Modules in currentProcessModulePath
             // if $PSHome\Modules not found (psHomePosition == -1) - append <Program Files> location to the end;
             // if $PSHome\Modules IS found (psHomePosition >= 0) - insert <Program Files> location before $PSHome\Modules
-            currentProcessModulePath = AddToPath(currentProcessModulePath, programFilesModulePath, indexOfPSHomeModulePath);
+            currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, indexOfPSHomeModulePath);
 
             return currentProcessModulePath;
         }
@@ -1020,7 +1021,7 @@ namespace System.Management.Automation
 
             if (includeSystemModulePath)
             {
-                var processedPath = ProcessOneModulePath(context, GetSystemwideModulePath(), processedPathSet);
+                var processedPath = ProcessOneModulePath(context, GetPSHomeModulePath(), processedPathSet);
                 if (processedPath != null)
                     yield return processedPath;
             }
