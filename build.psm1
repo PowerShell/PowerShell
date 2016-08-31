@@ -698,9 +698,11 @@ function Start-PSBootstrap {
     try {
         # Update googletest submodule for linux native cmake
         if ($IsLinux -or $IsOSX) {
+            Push-Location $PSScriptRoot
             $Submodule = "$PSScriptRoot/src/libpsl-native/test/googletest"
             Remove-Item -Path $Submodule -Recurse -Force -ErrorAction SilentlyContinue
             git submodule update --init -- $submodule
+            Pop-Location
         }
 
         # Install ours and .NET's dependencies
