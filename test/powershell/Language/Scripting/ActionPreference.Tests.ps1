@@ -36,7 +36,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             try {
                 $GLOBAL:errorActionPreference = "Ignore"
                 Get-Process -Name asdfasdfasdf
-                Throw "Execution OK"
+                Throw "Exception expected, execution should not have reached here"
              } catch {
                      $_.CategoryInfo.Reason | Should Be NotSupportedException
              } finally {
@@ -49,7 +49,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             try { 
                     $GLOBAL:errorActionPreference = "Suspend"
                     Get-Process -Name asdfasdfasdf
-                    Throw "Execution OK"
+                    Throw "Exception expected, execution should not have reached here"
                 } catch { 
                     $_.CategoryInfo.Reason | Should Be ArgumentTransformationMetadataException
                 }
@@ -80,7 +80,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             try
             {
                 MyHelperFunction -ErrorAction Suspend
-                Throw "Execution OK"
+                Throw "Exception expected, execution should not have reached here"
             } catch {
                 $_.FullyQualifiedErrorId | Should Be "ParameterBindingFailed,MyHelperFunction"
             }
@@ -90,7 +90,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             try
             {
                 Get-Process -ErrorAction Suspend
-                Throw "Execution OK"
+                Throw "Exception expected, execution should not have reached here"
             }
             catch {
                 $_.FullyQualifiedErrorId | Should Be "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
@@ -101,7 +101,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             try
             {
                 Get-Process -WarningAction Suspend
-                Throw "Execution OK"
+                Throw "Exception expected, execution should not have reached here"
             }
             catch {
                 $_.FullyQualifiedErrorId | Should Be "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"

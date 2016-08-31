@@ -139,7 +139,7 @@
             try
             {
                 $ps.EndInvoke($asyncResult)
-                Throw "Execution OK"
+                Throw "Exception expected, execution should not have reached here"
             }
             catch {
                 $_.FullyQualifiedErrorId | Should Be "ActionPreferenceStopException"
