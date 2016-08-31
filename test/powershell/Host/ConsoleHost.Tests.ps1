@@ -263,8 +263,23 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $si = NewProcessStartInfo "-noprofile -" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("1+1`n")
+            $process.StandardOutput.ReadLine() | Should Be "2"
+
+            # Multi-line input
+            $process.StandardInput.Write("if (1)`n{`n    42`n}`n`n")
+            $process.StandardOutput.ReadLine() | Should Be "42"
+            $process.StandardInput.Write(@"
+function foo
+{
+    'in foo'
+}
+
+foo
+
+"@)
+            $process.StandardOutput.ReadLine() | Should Be "in foo"
+
             $process.StandardInput.Close()
-            $process.StandardOutput.ReadToEnd() | Should Be "2${nl}"
             EnsureChildHasExited $process
         }
 
