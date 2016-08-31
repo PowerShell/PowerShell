@@ -14,7 +14,7 @@ Get-ApacheVHost |out-host
 
 #Add a new virtual host
 Write-Host -Foreground Yellow "Create a new Apache Virtual Host"
-New-ApacheVHost -ServerName "mytestserver" -DocumentRoot /var/www/html/mystestserver -VirtualHostIPAddress * -VirtualHostPort 8090 | Out-Host
+New-ApacheVHost -ServerName "mytestserver" -DocumentRoot /var/www/html/mytestserver -VirtualHostIPAddress * -VirtualHostPort 8090 | Out-Host
 
 #Enumerate new set of virtual hosts
 Write-Host -Foreground Blue "Enumerate Apache Virtual Hosts Again"
