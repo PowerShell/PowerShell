@@ -1046,6 +1046,61 @@ It consists of a cross-platform command-line shell and associated scripting lang
 
     New-Item -Force -ItemType SymbolicLink -Path "/tmp/$Name" -Target "$Destination/$Name" >$null
 
+    if ($IsCentos) {
+        $AfterInstallScript = [io.path]::GetTempFileName()
+        $AfterRemoveScript = [io.path]::GetTempFileName()
+        @'
+#!/bin/sh
+if [ ! -f /etc/shells ] ; then
+    echo "{0}" > /etc/shells
+else
+    grep -q "^{0}$" /etc/shells || echo "{0}" >> /etc/shells
+fi
+'@ -f "$Link/$Name" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+
+        @'
+if [ "$1" = 0 ] ; then
+    if [ -f /etc/shells ] ; then
+        TmpFile=`/bin/mktemp /tmp/.powershellmXXXXXX`
+        grep -v '^{0}$' /etc/shells > $TmpFile
+        cp -f $TmpFile /etc/shells
+        rm -f $TmpFile
+    fi
+fi
+'@ -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+    }
+    elseif ($IsUbuntu) {
+        $AfterInstallScript = [io.path]::GetTempFileName()
+        $AfterRemoveScript = [io.path]::GetTempFileName()
+        @'
+#!/bin/sh
+set -e
+case "$1" in
+    (configure)
+        add-shell "{0}"
+    ;;
+    (abort-upgrade|abort-remove|abort-deconfigure)
+        exit 0
+    ;;
+    (*)
+        echo "postinst called with unknown argument '$1'" >&2
+        exit 0
+    ;;
+esac
+'@ -f "$Link/$Name" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+
+        @'
+#!/bin/sh
+set -e
+case "$1" in
+        (remove)
+        remove-shell "{0}"
+        ;;
+esac
+'@ -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+    }
+
+
     # there is a weird bug in fpm
     # if the target of the powershell symlink exists, `fpm` aborts
     # with a `utime` error on OS X.
@@ -1128,12 +1183,19 @@ It consists of a cross-platform command-line shell and associated scripting lang
         "--depends", $libunwind,
         "--depends", $libicu,
         "-t", $Type,
-        "-s", "dir",
+        "-s", "dir"
+    )
+    if ($AfterInstallScript) {
+       $Arguments += @("--after-install", $AfterInstallScript)
+    }
+    if ($AfterRemoveScript) {
+       $Arguments += @("--after-remove", $AfterRemoveScript)
+    }
+    $Arguments += @(
         "$Staging/=$Destination/",
         "$GzipFile=$ManFile",
         "/tmp/$Name=$Link"
     )
-
     # Build package
     try {
         $Output = Start-NativeExecution { fpm $Arguments }
@@ -1144,6 +1206,12 @@ It consists of a cross-platform command-line shell and associated scripting lang
                 Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
                 Move-Item $hack_dest $symlink_dest
             }
+        }
+        if ($AfterInstallScript) {
+           Remove-Item -erroraction 'silentlycontinue' $AfterInstallScript
+        }
+        if ($AfterRemoveScript) {
+           Remove-Item -erroraction 'silentlycontinue' $AfterRemoveScript
         }
     }
 
