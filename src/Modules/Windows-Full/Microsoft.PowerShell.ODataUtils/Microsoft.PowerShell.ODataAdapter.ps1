@@ -537,16 +537,16 @@ function GenerateClientSideProxyModule
 
     Write-Verbose ($LocalizedData.VerboseSavingModule -f $outputModule)
 
-    $typeDefinationFileName = "ComplexTypeDefinitions.psm1"
-    $complexTypeMapping = GenerateComplexTypeDefination $metaData $metaDataUri $outputModule $typeDefinationFileName $cmdletAdapter $callerPSCmdlet
+    $typeDefinitionFileName = "ComplexTypeDefinitions.psm1"
+    $complexTypeMapping = GenerateComplexTypeDefinition $metaData $metaDataUri $outputModule $typeDefinitionFileName $cmdletAdapter $callerPSCmdlet
 
     ProgressBarHelper "Export-ODataEndpointProxy" $progressBarStatus 20 20 1  1
 
-    $complexTypeFileDefinationPath = Join-Path -Path $outputModule -ChildPath $typeDefinationFileName
+    $complexTypeFileDefinitionPath = Join-Path -Path $outputModule -ChildPath $typeDefinitionFileName
 
-    if(Test-Path -Path $complexTypeFileDefinationPath)
+    if(Test-Path -Path $complexTypeFileDefinitionPath)
     {
-        $proxyFile = New-Object -TypeName System.IO.FileInfo -ArgumentList $complexTypeFileDefinationPath | Get-Item
+        $proxyFile = New-Object -TypeName System.IO.FileInfo -ArgumentList $complexTypeFileDefinitionPath | Get-Item
         if($callerPSCmdlet -ne $null)
         { 
             $callerPSCmdlet.WriteObject($proxyFile)
@@ -570,7 +570,7 @@ function GenerateClientSideProxyModule
 
     $moduleDirInfo = [System.IO.DirectoryInfo]::new($outputModule)
     $moduleManifestName = $moduleDirInfo.Name + ".psd1"
-    GenerateModuleManifest $metaData $outputModule\$moduleManifestName @($typeDefinationFileName, 'ServiceActions.cdxml') $resourceNameMapping $progressBarStatus $callerPSCmdlet
+    GenerateModuleManifest $metaData $outputModule\$moduleManifestName @($typeDefinitionFileName, 'ServiceActions.cdxml') $resourceNameMapping $progressBarStatus $callerPSCmdlet
 }
 
 #########################################################
@@ -592,7 +592,7 @@ function GenerateCRUDProxyCmdlet
         [string] $cmdletAdapter,
         [Hashtable] $resourceNameMapping,  
         [Hashtable] $customData,
-        [Hashtable] $compexTypeMapping,
+        [Hashtable] $complexTypeMapping,
         [string] $progressBarActivityName,
         [string] $progressBarStatus,
         [double] $previousSegmentWeight,
@@ -643,7 +643,7 @@ function GenerateCRUDProxyCmdlet
 
     $navigationProperties = GetAllProperties $entitySet.Type -IncludeOnlyNavigationProperties
 
-    GenerateGetProxyCmdlet $xmlWriter $metaData $keys $navigationProperties $cmdletAdapter $compexTypeMapping
+    GenerateGetProxyCmdlet $xmlWriter $metaData $keys $navigationProperties $cmdletAdapter $complexTypeMapping
 
     $nonKeyProperties = (GetAllProperties $entitySet.Type) | ? { -not $_.isKey }
     $nullableProperties = $nonKeyProperties | ? { $_.isNullable }
@@ -662,11 +662,11 @@ function GenerateCRUDProxyCmdlet
             $nonNullableProperties = UpdateNetworkControllerSpecificProperties $nonNullableProperties $additionalProperties $keyProperties $false
         }
 
-        GenerateNewProxyCmdlet $xmlWriter $metaData $keyProperties $nonNullableProperties $nullableProperties $navigationProperties $cmdletAdapter $compexTypeMapping
+        GenerateNewProxyCmdlet $xmlWriter $metaData $keyProperties $nonNullableProperties $nullableProperties $navigationProperties $cmdletAdapter $complexTypeMapping
 
         if ($CmdletAdapter -ne "NetworkControllerAdapter")
         {
-            GenerateSetProxyCmdlet $xmlWriter $keyProperties $nonKeyProperties $compexTypeMapping
+            GenerateSetProxyCmdlet $xmlWriter $keyProperties $nonKeyProperties $complexTypeMapping
         }
 
         if ($CmdletAdapter -eq "NetworkControllerAdapter")
@@ -674,7 +674,7 @@ function GenerateCRUDProxyCmdlet
     	    $keyProperties = GetKeys $entitySet $customData.$name 'Remove'
         }
 
-        GenerateRemoveProxyCmdlet $xmlWriter $metaData $keyProperties $navigationProperties $cmdletAdapter $compexTypeMapping
+        GenerateRemoveProxyCmdlet $xmlWriter $metaData $keyProperties $navigationProperties $cmdletAdapter $complexTypeMapping
 
         $entityActions = $metaData.Actions | Where-Object { ($_.EntitySet.Namespace -eq $entitySet.Namespace) -and ($_.EntitySet.Name -eq $entitySet.Name) }
 
@@ -1631,14 +1631,14 @@ function AddParametersCDXML
         [bool] $isMandatory,
         [string] $prefix,
         [string] $suffix,
-        [Hashtable] $compleTypeMapping
+        [Hashtable] $complexTypeMapping
     )
 
     $properties | ? { $_ -ne $null } | % {
         $xmlWriter.WriteStartElement('Parameter')
         $xmlWriter.WriteAttributeString('ParameterName', $_.Name + $suffix)
             $xmlWriter.WriteStartElement('Type')
-            $PSTypeName = Convert-ODataTypeToCLRType $_.TypeName $compleTypeMapping
+            $PSTypeName = Convert-ODataTypeToCLRType $_.TypeName $complexTypeMapping
             $xmlWriter.WriteAttributeString('PSType', $PSTypeName)
             $xmlWriter.WriteEndElement()
 
@@ -1663,14 +1663,14 @@ function AddParametersCDXML
 # GenerateComplexTypeDefinition is a helper function used 
 # to generate complex type definition from the metadata.
 #########################################################
-function GenerateComplexTypeDefination 
+function GenerateComplexTypeDefinition 
 {
     param
     (
         [ODataUtils.Metadata] $metaData,
         [string] $metaDataUri,
         [string] $OutputModule,
-        [string] $typeDefinationFileName,
+        [string] $typeDefinitionFileName,
         [string] $cmdletAdapter,
         [System.Management.Automation.PSCmdlet] $callerPSCmdlet
     )
@@ -1680,10 +1680,10 @@ function GenerateComplexTypeDefination
     if($metaData -eq $null) { throw ($LocalizedData.ArguementNullError -f "metadata", "GenerateComplexTypeDefination") }
     if($callerPSCmdlet -eq $null) { throw ($LocalizedData.ArguementNullError -f "PSCmdlet", "GenerateComplexTypeDefination") }
 
-    $Path = "$OutputModule\$typeDefinationFileName"
+    $Path = "$OutputModule\$typeDefinitionFileName"
 
     # We are currently generating classes for EntityType & ComplexType 
-    # defination exposed in the metadata.
+    # definition exposed in the metadata.
     $typesToBeGenerated = $metaData.EntityTypes+$metadata.ComplexTypes
 
     if($typesToBeGenerated -ne $null -and $typesToBeGenerated.Count -gt 0)

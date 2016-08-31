@@ -719,14 +719,14 @@ function AddParametersCDXML
         [bool] $isMandatory,
         [string] $prefix,
         [string] $suffix,
-        [Hashtable] $compleTypeMapping
+        [Hashtable] $complexTypeMapping
     )
 
     $properties | ? { $_ -ne $null } | % {
         $xmlWriter.WriteStartElement('Parameter')
         $xmlWriter.WriteAttributeString('ParameterName', $_.Name + $suffix)
             $xmlWriter.WriteStartElement('Type')
-            $PSTypeName = Convert-ODataTypeToCLRType $_.TypeName $compleTypeMapping
+            $PSTypeName = Convert-ODataTypeToCLRType $_.TypeName $complexTypeMapping
             $xmlWriter.WriteAttributeString('PSType', $PSTypeName)
             $xmlWriter.WriteEndElement()
 
