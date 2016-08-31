@@ -149,7 +149,7 @@
   </data>
   <data name="CimJob_SafeQueryDescription" xml:space="preserve">
     <value>CIM query for instances of the {0} class on the {1} CIM server: {2}</value>
-    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Proccess".
+    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Process".
 {1} is a placeholder for a server name.  Example: "localhost".</comment>
   </data>
   <data name="CimJob_ErrorCodeFromMethod" xml:space="preserve">
@@ -158,7 +158,7 @@
   </data>
   <data name="CimJob_SafeMethodDescription" xml:space="preserve">
     <value>The {2} CIM method exposed by the {0} class on the {1} CIM server</value>
-    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Proccess".
+    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Process".
 {1} is a placeholder for a server name.  Example: "localhost".
 {2} is a placeholder for a CIM method name. Example: Create</comment>
   </data>
@@ -187,12 +187,12 @@
   </data>
   <data name="CimJob_SafeAssociationDescription" xml:space="preserve">
     <value>CIM query for enumerating associated instance of the {0} class on the {1} CIM server</value>
-    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Proccess".
+    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Process".
 {1} is a placeholder for a server name.  Example: "localhost".</comment>
   </data>
   <data name="CimJob_AssociationDescription" xml:space="preserve">
     <value>CIM query for enumerating instances of the {0} class on the {1} CIM server, that are associated with the following instance: {2}</value>
-    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Proccess".
+    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Process".
 {1} is a placeholder for a server name.  Example: "localhost".
 {2} is a placeholder for a string describing a CimInstance.  Example: "Win32_Process[Handle=123]".</comment>
   </data>

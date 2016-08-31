@@ -126,7 +126,7 @@
     <comment>query</comment>
   </data>
   <data name="DestinationPathInvalid" xml:space="preserve">
-    <value>The desintation path '{0}' for package '{1}' is invalid.</value>
+    <value>The destination path '{0}' for package '{1}' is invalid.</value>
     <comment>{0} - path
 {1} - package name</comment>
   </data>
@@ -314,11 +314,11 @@
   </data>
   <data name="MatchesMultipleProviders" xml:space="preserve">
     <value>Specified ProviderName parameter matches multiple providers: {0}.</value>
-    <comment>{0} - comma seperated list of providers matched</comment>
+    <comment>{0} - comma separated list of providers matched</comment>
   </data>
   <data name="ProviderNameNotSpecified" xml:space="preserve">
     <value>ProviderName must be specified. Available Providers: {0}.</value>
-    <comment>{0} - comma seperated list of available providers</comment>
+    <comment>{0} - comma separated list of available providers</comment>
   </data>
   <data name="NameOrLocationRequired" xml:space="preserve">
     <value>Either -Name or -Location must be specified to select a package source.</value>
@@ -396,7 +396,7 @@
   </data>
   <data name="SpecifiedProviderMissingRequiredOption" xml:space="preserve">
     <value>The action with the specified provider '{0}' is missing one or more required parameters: {1}.</value>
-    <comment>0 -provider name, 1- comma seperated list of required missing parameters</comment>
+    <comment>0 -provider name, 1- comma separated list of required missing parameters</comment>
   </data>
   <data name="FileNotFound" xml:space="preserve">
     <value>Cannot find file '{0}'.</value>

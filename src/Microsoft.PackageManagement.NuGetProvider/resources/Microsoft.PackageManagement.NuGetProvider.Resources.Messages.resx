@@ -244,7 +244,7 @@
     <value>Package '{0}' failed to be installed because: {1}</value>
   </data>
   <data name="PackagesReceived" xml:space="preserve">
-    <value>'{0}' packages recevied in the last request.</value>
+    <value>'{0}' packages received in the last request.</value>
   </data>
   <data name="ReadingManifest" xml:space="preserve">
     <value>Process Package Manifest</value>
