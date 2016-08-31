@@ -5,7 +5,7 @@
 
 <#
     Purpose:
-        Verify that Format-Hex display the Hexa decmial value for the input data.
+        Verify that Format-Hex display the Hexa decimal value for the input data.
                 
     Action:
         Run Format-Fex.
@@ -49,7 +49,7 @@ Describe "FormatHex" -tags "CI" {
         ($actualResult -match $inputText1) | Should Be $true   
     }
 
-    # This test is to validate to input given through Path paramter set in Format-Hex cmdlet.
+    # This test is to validate to input given through Path parameter set in Format-Hex cmdlet.
     It "ValidatePathParameterSet" {
 
         $result =  Format-Hex -Path $inputFile1
@@ -59,7 +59,7 @@ Describe "FormatHex" -tags "CI" {
         ($actualResult -match $inputText1) | Should Be $true  
     }
 
-    # This test is to validate to Path paramter set is considered as default in Format-Hex cmdlet.
+    # This test is to validate to Path parameter set is considered as default in Format-Hex cmdlet.
     It "ValidatePathAsDefaultParameterSet" {
 
         $result =  Format-Hex $inputFile1
@@ -69,7 +69,7 @@ Describe "FormatHex" -tags "CI" {
         ($actualResult -match $inputText1) | Should Be $true  
     }
 
-    # This test is to validate to input given through LiteralPath paramter set in Format-Hex cmdlet.
+    # This test is to validate to input given through LiteralPath parameter set in Format-Hex cmdlet.
     It "ValidateLiteralPathParameterSet" {
         
         $result =  Format-Hex -LiteralPath $inputFile1

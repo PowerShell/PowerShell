@@ -82,7 +82,7 @@ class Bar : Foo.Foo {}
     It "can use modules with classes collision" {
         # we use 3 classes with name Foo at the same time
         # two of them come from 'using module' and one is defined in the scriptblock itself.
-        # we should be able to use first two of them by the module-quilified name and the third one it's name.
+        # we should be able to use first two of them by the module-qualified name and the third one it's name.
         $fooModuleName = [scriptblock]::Create(@"
 using module Foo
 using module FooWithManifest
@@ -106,7 +106,7 @@ class Bar : Foo {}
         $fooModuleName[3] | Should Be 'This'
     }
 
-    It "doesn't mess up two consequitive scripts" {
+    It "doesn't mess up two consecutive scripts" {
         $sb1 = [scriptblock]::Create(@"
 using module Foo
 class Bar : Foo {}
@@ -324,7 +324,7 @@ using module Foo
             New-TestModule -Manifest -Name FooWithManifest -Content 'class Foo { [string] GetModuleName() { return "Foo345" } }' -Version '3.4.5' -ModulePathPrefix 'Modules2'
         }
 
-        # 'using module' behavior must be alligned with Import-Module.
+        # 'using module' behavior must be aligned with Import-Module.
         # Import-Module does the following:
         # 1) find the first directory from $env:PSMODULEPATH that contains the module
         # 2) Import highest available version of the module

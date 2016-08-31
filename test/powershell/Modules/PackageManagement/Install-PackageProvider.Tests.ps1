@@ -128,7 +128,7 @@ Describe "install-packageprovider" -Tags "Feature" {
     }
  }
 
-<# Don't need this test since we are not boostraping
+<# Don't need this test since we are not bootstraping
 Describe "install-packageprovider with local source" -Tags "Feature" {
 
     BeforeAll{
@@ -519,8 +519,8 @@ Describe "install-packageprovider with Scope" -Tags "Feature" {
             $password = "password%1"
             #net user $userName /delete | Out-Null
             net user $userName $password /add
-            $secesurestring = ConvertTo-SecureString $password -AsPlainText -Force
-            $credential = new-object -typename System.Management.Automation.PSCredential -argumentlist $userName, $secesurestring
+            $securestring = ConvertTo-SecureString $password -AsPlainText -Force
+            $credential = new-object -typename System.Management.Automation.PSCredential -argumentlist $userName, $securestring
         }
     }
     
@@ -656,7 +656,7 @@ Describe "install-PackageProvider with Versions" -Tags "Feature" {
 }    
 
 
-Describe "Get-package with mulitiple providers" -Tags "Feature" {
+Describe "Get-package with multiple providers" -Tags "Feature" {
 
     It "Get-package with multiple providers" -Pending {
 
@@ -733,7 +733,7 @@ Describe "install-packageprovider Error Cases" -Tags "Feature" {
         $theError2.FullyQualifiedErrorId| should BeNullOrEmpty
     }
 
-    It "EXPECTED:  returns an error when inputing a bad version format" {
+    It "EXPECTED:  returns an error when inputting a bad version format" {
         $Error.Clear()
         install-packageprovider -name nuget -RequiredVersion BOGUSVERSION  -warningaction:silentlycontinue -ea silentlycontinue
         $ERROR[0].FullyQualifiedErrorId | should be "InvalidVersion,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
@@ -747,13 +747,13 @@ Describe "install-packageprovider Error Cases" -Tags "Feature" {
     }
  
 
-   It "EXPECTED:  returns an error when asking for a provider with RequiredVersoin and MinimumVersion" {
+   It "EXPECTED:  returns an error when asking for a provider with RequiredVersion and MinimumVersion" {
         $Error.Clear()
         install-packageprovider -name NOT_EXISTS -Scope CurrentUser -RequiredVersion 1.0 -MinimumVersion 2.0  -warningaction:silentlycontinue -ea silentlycontinue
         $ERROR[0].FullyQualifiedErrorId | should be "VersionRangeAndRequiredVersionCannotBeSpecifiedTogether,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"
     }
 
-   It "EXPECTED:  returns an error when asking for a provider with RequiredVersoin and MaximumVersion" {
+   It "EXPECTED:  returns an error when asking for a provider with RequiredVersion and MaximumVersion" {
         $Error.Clear()
         install-packageprovider -name NOT_EXISTS -Scope CurrentUser -RequiredVersion 1.0 -MaximumVersion 2.0  -warningaction:silentlycontinue -ea silentlycontinue
         $ERROR[0].FullyQualifiedErrorId | should be "VersionRangeAndRequiredVersionCannotBeSpecifiedTogether,Microsoft.PowerShell.PackageManagement.Cmdlets.InstallPackageProvider"

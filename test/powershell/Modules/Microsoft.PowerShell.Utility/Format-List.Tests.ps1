@@ -107,7 +107,7 @@ Describe "Format-List DRT basic functionality" -Tags "CI" {
 	}
 	
     It "Format-List with complex object for End-To-End should work" {
-        Add-Type -TypeDefinition "public enum MyDayOfWeek{Sun,Mon,Tue,Wed,Thr,Fri,Sat}"
+        Add-Type -TypeDefinition "public enum MyDayOfWeek{Sun,Mon,Tue,Wed,Thu,Fri,Sat}"
         $eto = [MyDayOfWeek]::New()
         $info = @{}
         $info.intArray = 1,2,3,4
