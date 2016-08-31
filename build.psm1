@@ -548,7 +548,8 @@ function Get-PesterTag {
 }
 
 function Start-PSPester {
-    [CmdletBinding()]param(
+    [CmdletBinding()]
+    param(
         [string]$OutputFormat = "NUnitXml",
         [string]$OutputFile = "pester-tests.xml",
         [string[]]$ExcludeTag = "Slow",
@@ -559,6 +560,7 @@ function Start-PSPester {
         [string]$binDir = (Split-Path (New-PSOptions -FullCLR:$FullCLR).Output) 
     )
 
+    Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
     # All concatenated commands/arguments are suffixed with the delimiter (space)
     $Command = ""
     $powershell = Join-Path $binDir 'powershell'
@@ -2113,6 +2115,27 @@ function Start-CrossGen {
         Remove-Item $symbolsPath -Force -ErrorAction SilentlyContinue
     }
 }
+
+# Cleans the PowerShell repo
+# by default everything but the root folder and the Packages folder
+# if you specify -IncludePackages it will clean the Packages folder
+function Clear-PSRepo
+{
+    [CmdletBinding()]
+    param(
+        [switch] $IncludePackages
+    )
+        Get-ChildItem $PSScriptRoot\* -Directory -Exclude 'Packages' | ForEach-Object {
+        Write-Verbose "Cleaning $_ ..." 
+        git clean -fdX $_
+    }
+
+    if($IncludePackages)
+    {
+        remove-item $RepoRoot\Packages\ -Recurse -Force  -ErrorAction SilentlyContinue
+    }
+}
+
 
 $script:RESX_TEMPLATE = @'
 <?xml version="1.0" encoding="utf-8"?>
