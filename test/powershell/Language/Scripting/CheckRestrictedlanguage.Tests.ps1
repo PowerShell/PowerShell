@@ -25,7 +25,7 @@
             try
             {
                 {2+$a}.CheckRestrictedLanguage($null, $null, $false)
-                Throw "Execution OK"
+                Throw "Exception expected, execution should not have reached here"
             }
             catch
             {
@@ -54,7 +54,7 @@
             try
             {
                 { $a + $b + $c }.CheckRestrictedLanguage($null, (list a b), $false)   # fail
-                Throw "Execution OK"
+                Throw "Exception expected, execution should not have reached here"
             }
             catch
             {
@@ -67,7 +67,7 @@
             try
             {
                 { 2 + $a + $env:foo }.CheckRestrictedLanguage($null, (list a), $false)   # fail
-                Throw "Execution OK"
+                Throw "Exception expected, execution should not have reached here"
             }
             catch
             {
@@ -90,7 +90,7 @@
             try
             {
                 {get-date}.CheckRestrictedLangauge($null, $null, $false)
-                Throw "Execution OK"
+                Throw "Exception expected, execution should not have reached here"
             }
             catch
             {
