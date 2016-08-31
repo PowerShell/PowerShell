@@ -28,7 +28,7 @@ Function CleanInputString([string]$inputStr){
     $outputStr
 }
 
-#EndRegion utilty functions
+#EndRegion utility functions
 
 #Region Class specifications
 
