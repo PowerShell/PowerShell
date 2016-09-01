@@ -196,12 +196,12 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             System.Management.Automation.Host.TranscriptionData transcriptionData)
         {
             bool isConstrained = (iss != null) && (iss.DefaultCommandVisibility != SessionStateEntryVisibility.Public) && (iss.LanguageMode != PSLanguageMode.FullLanguage);
-            bool isTranscripting = (transcriptionData != null) && (transcriptionData.SystemTranscript != null);
+            bool isTranscribing = (transcriptionData != null) && (transcriptionData.SystemTranscript != null);
 
             TelemetryWrapper.TraceMessage("PSNewLocalSession", new
             {
                 Constrained = isConstrained,
-                Transcripting = isTranscripting
+                Transcribing = isTranscribing
             });
         }
 
