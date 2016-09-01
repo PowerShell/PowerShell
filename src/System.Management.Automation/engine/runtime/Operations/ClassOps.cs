@@ -13,7 +13,7 @@ using System.Management.Automation.Language;
 using System.Threading;
 
 // These APIs are not part of the public contract.
-// They are implementation details and intendent to be called from generated assemlbies for PS classes.
+// They are implementation details and intended to be called from generated assemblies for PS classes.
 //
 // Because they are called from other assemblies, we have to make them public. 
 // We put them in Internal namespace to emphasise that despite the fact that they are public, it's not part of API contract.
@@ -27,7 +27,7 @@ namespace System.Management.Automation.Internal
     /// In the former case, module can be imported from the different runspaces in the same process.
     /// And so runspaces will share RuntimeType. But in every runspace, Type is associated with just one SessionState.
     /// We want type methods to be able access $script: variables and module-specific methods.
-    /// To achive it, we preserve reference to SessionState that creates type in the private field 'SessionStateFieldName'.
+    /// To achieve it, we preserve reference to SessionState that creates type in the private field 'SessionStateFieldName'.
     /// Later, we use it to call scriptBlocks captured in ScriptBlockMemberMethodWrapper with the right sessionState.
     /// </summary>
     public class SessionStateKeeper

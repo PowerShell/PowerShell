@@ -288,7 +288,7 @@ namespace System.Management.Automation
                     var parameters = functionParameters != null
                                          ? Compiler.GetParameterMetaData(functionParameters, true, ref usesCmdletBinding)
                                          : ((IParameterMetadataProvider)body).GetParameterMetadata(true, ref usesCmdletBinding);
-                    object[] remainingArgs = ScriptBlock.BindArgumentsForScripblockInvoke(
+                    object[] remainingArgs = ScriptBlock.BindArgumentsForScriptblockInvoke(
                         (RuntimeDefinedParameter[])parameters.Data, args, context, false, null, locals);
                     locals.SetAutomaticVariable(AutomaticVariable.Args, remainingArgs, context);
                     newScope.LocalsTuple = locals;

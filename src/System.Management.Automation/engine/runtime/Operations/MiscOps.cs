@@ -520,7 +520,7 @@ namespace System.Management.Automation
                     var locals = MutableTuple.MakeTuple(Compiler.DottedLocalsTupleType,
                                                         Compiler.DottedLocalsNameIndexMap);
                     object[] remainingArgs =
-                        ScriptBlock.BindArgumentsForScripblockInvoke(
+                        ScriptBlock.BindArgumentsForScriptblockInvoke(
                             (RuntimeDefinedParameter[])scriptBlock.RuntimeDefinedParameters.Data,
                             args, context, false, null, locals);
                     locals.SetAutomaticVariable(AutomaticVariable.Args, remainingArgs, context);
@@ -576,7 +576,7 @@ namespace System.Management.Automation
 
                 // For nicer error reporting, we want to make it look like errors in the steppable pipeline point back to
                 // the caller of the proxy.  We don't want errors pointing to the script block created in the proxy.
-                // Here we assume (in a safe way) that GetSteppablePipline is called from script.  If that isn't the case,
+                // Here we assume (in a safe way) that GetSteppablePipeline is called from script.  If that isn't the case,
                 // we won't crash, but the error reporting might be a little misleading.
                 var callStack = context.Debugger.GetCallStack().ToArray();
                 if (callStack.Length > 0 && Regex.IsMatch(callStack[0].Position.Text, "GetSteppablePipeline", RegexOptions.IgnoreCase))
@@ -1538,7 +1538,7 @@ namespace System.Management.Automation
         /// <param name="context">The execution context</param>
         /// <returns>The preference the user selected</returns>
         /// <remarks>
-        /// Error action is decided by error action preference. If preferenc is inquire, we will
+        /// Error action is decided by error action preference. If preference is inquire, we will
         /// prompt user for their preference. 
         /// </remarks>
         internal static ActionPreference QueryForAction(RuntimeException rte, string message, ExecutionContext context)
@@ -2488,8 +2488,8 @@ namespace System.Management.Automation
             var context = Runspace.DefaultRunspace.ExecutionContext;
 
             // If expression argument is a .Net type then convert the collection to that type
-            // if the target type is a collecton or array, then the result will be a collection of exactly
-            // that type. If the target type is not a collectiom type then return a generic collection of that type.
+            // if the target type is a collection or array, then the result will be a collection of exactly
+            // that type. If the target type is not a collection type then return a generic collection of that type.
             Type targetType = expression as Type;
             if (targetType != null)
             {
