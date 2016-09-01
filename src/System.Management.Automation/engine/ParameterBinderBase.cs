@@ -2052,14 +2052,14 @@ namespace System.Management.Automation
             if (_dictionary.ImplicitUsingParameters == null)
             {
                 // Handle downlevel V4 case where using parameters are passed as an array list.
-                IList implictArrayUsingParameters = PSObject.Base(obj) as IList;
-                if ((implictArrayUsingParameters != null) && (implictArrayUsingParameters.Count > 0))
+                IList implicitArrayUsingParameters = PSObject.Base(obj) as IList;
+                if ((implicitArrayUsingParameters != null) && (implicitArrayUsingParameters.Count > 0))
                 {
                     // Convert array to hash table.
                     _dictionary.ImplicitUsingParameters = new Hashtable();
-                    for (int index = 0; index < implictArrayUsingParameters.Count; index++)
+                    for (int index = 0; index < implicitArrayUsingParameters.Count; index++)
                     {
-                        _dictionary.ImplicitUsingParameters.Add(index, implictArrayUsingParameters[index]);
+                        _dictionary.ImplicitUsingParameters.Add(index, implicitArrayUsingParameters[index]);
                     }
                 }
             }

@@ -504,7 +504,7 @@ namespace System.Management.Automation
             Collection<string> filteredVersions = new Collection<string>();
             foreach (string version in versions)
             {
-                string temp = PSVersionInfo.GetRegisteryVersionKeyForSnapinDiscovery(version);
+                string temp = PSVersionInfo.GetRegistryVersionKeyForSnapinDiscovery(version);
                 if (string.IsNullOrEmpty(temp))
                 {
                     temp = version;
@@ -1173,7 +1173,7 @@ namespace System.Management.Automation
             Dbg.Assert(!string.IsNullOrEmpty(psVersion), "caller should validate the parameter");
             Dbg.Assert(rootKey != null, "caller should validate the parameter");
 
-            string versionKey = PSVersionInfo.GetRegisteryVersionKeyForSnapinDiscovery(psVersion);
+            string versionKey = PSVersionInfo.GetRegistryVersionKeyForSnapinDiscovery(psVersion);
             RegistryKey versionRoot = rootKey.OpenSubKey(versionKey);
             if (versionRoot == null)
             {

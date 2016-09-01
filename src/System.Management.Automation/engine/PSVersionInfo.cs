@@ -228,7 +228,7 @@ namespace System.Management.Automation
         }
 
 
-        internal static string GetRegisteryVersionKeyForSnapinDiscovery(string majorVersion)
+        internal static string GetRegistryVersionKeyForSnapinDiscovery(string majorVersion)
         {
             int tempMajorVersion = 0;
             LanguagePrimitives.TryConvertTo<int>(majorVersion, out tempMajorVersion);

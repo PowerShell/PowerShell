@@ -558,7 +558,7 @@ namespace System.Management.Automation
         // #Requires -Module
         internal static void VerifyScriptRequirements(ExternalScriptInfo scriptInfo, ExecutionContext context)
         {
-            VerifyElevatedPriveleges(scriptInfo);
+            VerifyElevatedPrivileges(scriptInfo);
             VerifyPSVersion(scriptInfo);
             VerifyPSEdition(scriptInfo);
             VerifyRequiredModules(scriptInfo, context);
@@ -616,7 +616,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal static void VerifyElevatedPriveleges(ExternalScriptInfo scriptInfo)
+        internal static void VerifyElevatedPrivileges(ExternalScriptInfo scriptInfo)
         {
             bool requiresElevation = scriptInfo.RequiresElevation;
             bool isAdministrator = Utils.IsAdministrator();
