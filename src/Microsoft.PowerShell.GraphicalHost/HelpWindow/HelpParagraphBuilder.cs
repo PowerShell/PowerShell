@@ -248,12 +248,12 @@ namespace Microsoft.Management.UI.Internal
         /// Splits the string adding indentation before each line
         /// </summary>
         /// <param name="str">string to add indentation to</param>
-        /// <param name="numberOfIdents">number of indentations</param>
+        /// <param name="numberOfIndents">number of indentations</param>
         /// <returns>the string indented</returns>
-        private static string AddIndent(string str, int numberOfIdents)
+        private static string AddIndent(string str, int numberOfIndents)
         {
             StringBuilder indent = new StringBuilder();
-            indent.Append(' ', numberOfIdents * HelpParagraphBuilder.IndentSize);
+            indent.Append(' ', numberOfIndents * HelpParagraphBuilder.IndentSize);
             return HelpParagraphBuilder.AddIndent(str, indent.ToString());
         }
 
@@ -421,22 +421,22 @@ namespace Microsoft.Management.UI.Internal
                         parameterNameOptionalCloseBrace = "]";
                     }
 
-                    string paramterPrefix = String.Format(
+                    string parameterPrefix = String.Format(
                         CultureInfo.CurrentCulture,
                         "{0}{1}-",
                         parameterOptionalOpenBrace,
                         parameterNameOptionalOpenBrace);
 
-                    this.AddText(paramterPrefix, false);
+                    this.AddText(parameterPrefix, false);
                     this.AddText(parameterName, true);
 
-                    string paramterSuffix = String.Format(
+                    string parameterSuffix = String.Format(
                         CultureInfo.CurrentCulture,
                         "{0} {1}{2} ",
                         parameterNameOptionalCloseBrace,
                         parameterType,
                         parameterOptionalCloseBrace);
-                    this.AddText(paramterSuffix, false);
+                    this.AddText(parameterSuffix, false);
                 }
 
                 string commonParametersText = String.Format(
