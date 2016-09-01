@@ -3604,7 +3604,7 @@ namespace System.Management.Automation.Language
                 ExpressionAst body = null;
                 if (keywordData.BodyMode == DynamicKeywordBodyMode.ScriptBlock)
                 {
-                    var oldInConfiguraiton = _inConfiguration;
+                    var oldInConfiguration = _inConfiguration;
                     try
                     {
                         _inConfiguration = false;
@@ -3612,7 +3612,7 @@ namespace System.Management.Automation.Language
                     }
                     finally
                     {
-                        _inConfiguration = oldInConfiguraiton;
+                        _inConfiguration = oldInConfiguration;
                     }
                 }
                 else if (keywordData.BodyMode == DynamicKeywordBodyMode.Hashtable)

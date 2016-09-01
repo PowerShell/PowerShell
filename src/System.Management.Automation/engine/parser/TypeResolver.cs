@@ -67,7 +67,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private static Type LookForTypeInAssemblies(TypeName typeName, IEnumerable<Assembly> assemblies, TypeResolutionState typeResolutionState, bool reportAmbigousException, out Exception exception)
+        private static Type LookForTypeInAssemblies(TypeName typeName, IEnumerable<Assembly> assemblies, TypeResolutionState typeResolutionState, bool reportAmbiguousException, out Exception exception)
         {
             exception = null;
             string alternateNameToFind = typeResolutionState.GetAlternateTypeName(typeName.Name);
@@ -85,7 +85,7 @@ namespace System.Management.Automation.Language
 
                     if (targetType != null)
                     {
-                        if (!reportAmbigousException)
+                        if (!reportAmbiguousException)
                         {
                             // accelerator  for the common case, when we are not interested  in ambiguity exception.
                             return targetType;
@@ -159,7 +159,7 @@ namespace System.Management.Automation.Language
             return true;
         }
 
-        private static Type ResolveTypeNameWorker(TypeName typeName, SessionStateScope currentScope, IEnumerable<Assembly> loadedAssemblies, TypeResolutionState typeResolutionState, bool reportAmbigousException, out Exception exception)
+        private static Type ResolveTypeNameWorker(TypeName typeName, SessionStateScope currentScope, IEnumerable<Assembly> loadedAssemblies, TypeResolutionState typeResolutionState, bool reportAmbiguousException, out Exception exception)
         {
             Type result;
             exception = null;
@@ -179,7 +179,7 @@ namespace System.Management.Automation.Language
             }
 
             exception = null;
-            result = LookForTypeInAssemblies(typeName, loadedAssemblies, typeResolutionState, reportAmbigousException, out exception);
+            result = LookForTypeInAssemblies(typeName, loadedAssemblies, typeResolutionState, reportAmbiguousException, out exception);
             if (exception != null)
             {
                 // skip the rest of lookups, if exception reported.
@@ -304,10 +304,10 @@ namespace System.Management.Automation.Language
                 return typeName._typeDefinitionAst.Type;
             }
 
-            result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, typeResolutionState, /* reportAmbigousException */ true, out exception);
+            result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, typeResolutionState, /* reportAmbiguousException */ true, out exception);
             if (exception == null && result == null)
             {
-                result = ResolveTypeNameWorker(typeName, currentScope, assemList, typeResolutionState, /* reportAmbigousException */ false, out exception);
+                result = ResolveTypeNameWorker(typeName, currentScope, assemList, typeResolutionState, /* reportAmbiguousException */ false, out exception);
             }
 
             if (result != null)
@@ -332,10 +332,10 @@ namespace System.Management.Automation.Language
                         assemList = ClrFacade.GetAssemblies(typeResolutionState, newTypeName);
                     }
 #endif
-                    var newResult = ResolveTypeNameWorker(newTypeName, currentScope, typeResolutionState.assemblies, typeResolutionState, /* reportAmbigousException */ true, out exception);
+                    var newResult = ResolveTypeNameWorker(newTypeName, currentScope, typeResolutionState.assemblies, typeResolutionState, /* reportAmbiguousException */ true, out exception);
                     if (exception == null && newResult == null)
                     {
-                        newResult = ResolveTypeNameWorker(newTypeName, currentScope, assemList, typeResolutionState, /* reportAmbigousException */ false, out exception);
+                        newResult = ResolveTypeNameWorker(newTypeName, currentScope, assemList, typeResolutionState, /* reportAmbiguousException */ false, out exception);
                     }
 
                     if (exception != null)

@@ -9886,7 +9886,7 @@ namespace System.Management.Automation.Language
         internal StringConstantExpressionAst(StringToken token)
             : base(token.Extent, token.Value)
         {
-            this.StringConstantType = MapTokenKindToStringContantKind(token);
+            this.StringConstantType = MapTokenKindToStringConstantKind(token);
         }
 
         /// <summary>
@@ -9915,7 +9915,7 @@ namespace System.Management.Automation.Language
             get { return typeof(string); }
         }
 
-        internal static StringConstantType MapTokenKindToStringContantKind(Token token)
+        internal static StringConstantType MapTokenKindToStringConstantKind(Token token)
         {
             switch (token.Kind)
             {
@@ -10019,7 +10019,7 @@ namespace System.Management.Automation.Language
         internal ExpandableStringExpressionAst(Token token, string value, string formatString, IEnumerable<ExpressionAst> nestedExpressions)
             : this(token.Extent, value, formatString,
                    StringConstantExpressionAst
-                        .MapTokenKindToStringContantKind(token),
+                        .MapTokenKindToStringConstantKind(token),
                    nestedExpressions)
         {
         }
