@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(NuGetPackageRoot)' == ''">
+    <NuGetPackageRoot>C:\git\part4\Packages</NuGetPackageRoot>
+  </PropertyGroup>
+  <ImportGroup>
+    <Import Project="$(NuGetPackageRoot)\microsoft.diasymreader.native\1.3.3\build\Microsoft.DiaSymReader.Native.props" Condition="Exists('$(NuGetPackageRoot)\microsoft.diasymreader.native\1.3.3\build\Microsoft.DiaSymReader.Native.props')" />
+    <Import Project="$(NuGetPackageRoot)\xunit.core\2.1.0\build\portable-net45+win8+wp8+wpa81\xunit.core.props" Condition="Exists('$(NuGetPackageRoot)\xunit.core\2.1.0\build\portable-net45+win8+wp8+wpa81\xunit.core.props')" />
+  </ImportGroup>
+</Project>
