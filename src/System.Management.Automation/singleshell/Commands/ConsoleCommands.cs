@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell.Commands
             catch (ArgumentException ae)
             {
                 ThrowError(resolvedPath,
-                    "InvalidCharacetersInPath", ae, ErrorCategory.InvalidArgument);
+                    "InvalidCharactersInPath", ae, ErrorCategory.InvalidArgument);
             }
 
             // looks like saving succeeded.
