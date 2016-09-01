@@ -27,7 +27,7 @@ Facility=POWERSHELL
 Severity=CoError
 SymbolicName=g_MANAGED_METHOD_RESOLUTION_FAILED
 Language=English
-Unable to find plugin methods WSManPluginShell, WSManPluginCommand, WSManPluginSend, WSManPluginRecieve in the Managed plugin module.
+Unable to find plugin methods WSManPluginShell, WSManPluginCommand, WSManPluginSend, WSManPluginReceive in the Managed plugin module.
 .
 
 MessageId=1004
