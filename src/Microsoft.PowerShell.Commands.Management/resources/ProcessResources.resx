@@ -222,4 +222,7 @@
   <data name="ParameterNotSupported" xml:space="preserve">
     <value>The parameter '{0}' is not supported for the cmdlet '{1}' on this edition of Windows.</value>
   </data>
+  <data name="ParameterNotSupportedOnPSEdition" xml:space="preserve">
+    <value>The parameter '{0}' is not supported for the cmdlet '{1}' on this edition of PowerShell.</value>
+  </data>
 </root>

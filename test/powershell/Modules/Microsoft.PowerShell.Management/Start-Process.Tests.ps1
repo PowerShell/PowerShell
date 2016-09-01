@@ -69,5 +69,17 @@ Describe "Start-Process" -Tags @("CI","SLOW") {
 	$dirEntry.Length | Should BeGreaterThan 0
     }
 
+    It "Should give an error when Verb parameter is used" -Skip:(-not $IsCoreClr) {
+        try 
+        {
+            Start-Process -Verb runas -FilePath $pingCommand -ArgumentList $pingParam
+            throw "No Exception!"
+        }
+        catch
+        {
+            $_.FullyQualifiedErrorId | Should be "NotSupportedException,Microsoft.PowerShell.Commands.StartProcessCommand"
+            $_.Exception.Message | Should match '-Verb'
+        }
+    }
     Remove-Item -Path $tempFile -Force
 }
