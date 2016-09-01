@@ -1275,7 +1275,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             // And now define the driver functions in the current scope...
             if (functionsToDefine != null)
             {
-                functionsToDefine[moduleName + "\\" + keyword.Keyword] = CimKeywordImlementationFunction;
+                functionsToDefine[moduleName + "\\" + keyword.Keyword] = CimKeywordImplementationFunction;
             }
         }
 
@@ -3583,17 +3583,17 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <summary>
         /// The scriptblock that implements the CIM keyword functionality.
         /// </summary>
-        private static ScriptBlock CimKeywordImlementationFunction
+        private static ScriptBlock CimKeywordImplementationFunction
         {
             get
             {
                 // The scriptblock cache will handle mutual exclusion
-                return s_cimKeywordImlementationFunction ??
-                       (s_cimKeywordImlementationFunction = ScriptBlock.Create(CimKeywordImlementationFunctionText));
+                return s_cimKeywordImplementationFunction ??
+                       (s_cimKeywordImplementationFunction = ScriptBlock.Create(CimKeywordImplementationFunctionText));
             }
         }
-        private static ScriptBlock s_cimKeywordImlementationFunction;
-        private const string CimKeywordImlementationFunctionText = @"
+        private static ScriptBlock s_cimKeywordImplementationFunction;
+        private const string CimKeywordImplementationFunctionText = @"
     param (
         [Parameter(Mandatory)]
             $KeywordData,
