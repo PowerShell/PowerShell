@@ -1,6 +1,5 @@
-﻿Import-Module ..\LanguageTestSupport.psm1 -force 
-
-    set-strictmode -v 2    
+﻿Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1 -force
+set-strictmode -v 2    
 
     
 Describe 'for statement parsing' -Tags "CI" {
