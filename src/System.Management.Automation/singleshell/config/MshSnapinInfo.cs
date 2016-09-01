@@ -501,7 +501,7 @@ namespace System.Management.Automation
 
             // PS V3 snapin information is stored under 1 registry key..
             // so no need to iterate over twice.
-            Collection<string> filterdVersions = new Collection<string>();
+            Collection<string> filteredVersions = new Collection<string>();
             foreach (string version in versions)
             {
                 string temp = PSVersionInfo.GetRegisteryVersionKeyForSnapinDiscovery(version);
@@ -510,13 +510,13 @@ namespace System.Management.Automation
                     temp = version;
                 }
 
-                if (!filterdVersions.Contains(temp))
+                if (!filteredVersions.Contains(temp))
                 {
-                    filterdVersions.Add(temp);
+                    filteredVersions.Add(temp);
                 }
             }
 
-            foreach (string version in filterdVersions)
+            foreach (string version in filteredVersions)
             {
                 if (string.IsNullOrEmpty(version))
                 {
