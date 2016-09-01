@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         private enum HostIsInteractive
         {
             Unknown,
-            Iteractive,
+            Interactive,
             NonInteractive
         }
 
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             {
                 TelemetryWrapper.TraceMessage("PSHostStart", new
                 {
-                    Interactive = ihptd.HostIsInteractive ? HostIsInteractive.Iteractive : HostIsInteractive.NonInteractive,
+                    Interactive = ihptd.HostIsInteractive ? HostIsInteractive.Interactive : HostIsInteractive.NonInteractive,
                     ProfileLoadTime = ihptd.ProfileLoadTimeInMS,
                     ReadyForInputTime = ihptd.ReadyForInputTimeInMS,
                     Is32Bit = is32Bit,
