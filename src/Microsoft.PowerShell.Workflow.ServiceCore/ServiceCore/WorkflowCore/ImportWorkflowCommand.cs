@@ -723,7 +723,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return Resources.AsJobandJobNameNotAllowed;
+                return Resources.AsJobAndJobNameNotAllowed;
             }
         }
 
