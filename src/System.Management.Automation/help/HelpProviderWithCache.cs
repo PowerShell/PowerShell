@@ -135,11 +135,11 @@ namespace System.Management.Automation
             else
             {
                 int countOfHelpInfoObjectsFound = 0;
-                WildcardPattern helpMatchter = WildcardPattern.Get(wildcardpattern, WildcardOptions.IgnoreCase);
+                WildcardPattern helpMatcher = WildcardPattern.Get(wildcardpattern, WildcardOptions.IgnoreCase);
                 foreach (string key in _helpCache.Keys)
                 {
-                    if ((!searchOnlyContent && helpMatchter.IsMatch(key)) ||
-                        (searchOnlyContent && ((HelpInfo)_helpCache[key]).MatchPatternInContent(helpMatchter)))
+                    if ((!searchOnlyContent && helpMatcher.IsMatch(key)) ||
+                        (searchOnlyContent && ((HelpInfo)_helpCache[key]).MatchPatternInContent(helpMatcher)))
                     {
                         countOfHelpInfoObjectsFound++;
                         yield return (HelpInfo)_helpCache[key];
