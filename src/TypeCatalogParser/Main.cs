@@ -34,7 +34,7 @@ namespace TypeCatalogParser
                                          // Get the real reference assemblies
                                          from y in x.CompileTimeAssemblies where y.Path.EndsWith(".dll")
                                          // Construct the path to the assemblies
-                                         select $"{context.PackagesDirectory}/{x.Name}/{x.Version}/{y.Path};");
+                                         select $"{context.PackagesDirectory}/{x.Name.ToLower()}/{x.Version}/{y.Path};");
 
             Console.WriteLine($"List of reference assemblies written to {outputPath}");
         }
