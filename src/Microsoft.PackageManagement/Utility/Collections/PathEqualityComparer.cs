@@ -25,7 +25,7 @@ namespace Microsoft.PackageManagement.Internal.Utility.Collections {
             _option = option;
         }
 
-        [SuppressMessage("Microsoft.Globalization", "CA1309:UseOrginalStringComparison")]
+        [SuppressMessage("Microsoft.Globalization", "CA1309:UseOrdinalStringComparison")]
         public bool Equals(string x, string y) {
 #if !CORECLR
             return string.Compare(ComparePath(x), ComparePath(y), StringComparison.InvariantCultureIgnoreCase) == 0;

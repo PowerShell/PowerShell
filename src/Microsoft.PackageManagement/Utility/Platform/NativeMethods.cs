@@ -119,7 +119,7 @@ namespace Microsoft.PackageManagement.Internal.Utility.Platform {
         public static ResourceType GroupCursor = new ResourceType(12);
         public static ResourceType GroupIcon = new ResourceType(14);
         public static ResourceType Version = new ResourceType(16);
-        public static ResourceType DialogInclud = new ResourceType(17);
+        public static ResourceType DialogInclude = new ResourceType(17);
         public static ResourceType PlugPlay = new ResourceType(19);
         public static ResourceType Vxd = new ResourceType(20);
         public static ResourceType AniCursor = new ResourceType(21);

@@ -63,7 +63,7 @@ namespace Microsoft.PackageManagement.Internal.Utility.Plugin
             il.LoadThis();
             il.LoadField(implementedMethodsField);
             il.LoadArgument(1);
-            il.CallVirutal(typeof(HashSet<string>).GetMethod("Contains"));
+            il.CallVirtual(typeof(HashSet<string>).GetMethod("Contains"));
             il.Return();
         }
 
@@ -112,7 +112,7 @@ namespace Microsoft.PackageManagement.Internal.Utility.Plugin
             }
 
             // call the actual method implementation
-            il.CallVirutal(instanceMethod);
+            il.CallVirtual(instanceMethod);
 
             if (hasReturn)
             {
@@ -206,7 +206,7 @@ namespace Microsoft.PackageManagement.Internal.Utility.Plugin
             {
                 il.LoadArgument(i + 1);
             }
-            il.CallVirutal(delegateType.GetMethod("Invoke"));
+            il.CallVirtual(delegateType.GetMethod("Invoke"));
             il.Return();
         }
 
