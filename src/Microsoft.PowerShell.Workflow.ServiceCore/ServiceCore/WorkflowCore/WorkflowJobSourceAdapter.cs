@@ -166,15 +166,15 @@ namespace Microsoft.PowerShell.Workflow
             {
                 foreach (PSWorkflowJob job in newJob.ChildJobs)
                 {
-                    bool? psPersitValue = null;
+                    bool? psPersistValue = null;
                     PSWorkflowContext context = job.PSWorkflowInstance.PSWorkflowContext;
                     if (context != null && context.PSWorkflowCommonParameters != null && context.PSWorkflowCommonParameters.ContainsKey(Constants.Persist))
                     {
-                        psPersitValue = context.PSWorkflowCommonParameters[Constants.Persist] as bool?;
+                        psPersistValue = context.PSWorkflowCommonParameters[Constants.Persist] as bool?;
                     }
 
                     // check for invocation time pspersist value if not true then there is a possibility that workflow is not suspendable.
-                    if (psPersitValue == null || (psPersitValue == false))
+                    if (psPersistValue == null || (psPersistValue == false))
                     {
                         // check for authoring time definition of persist activity 
                         if (isSuspendable != null && isSuspendable.Value == false)

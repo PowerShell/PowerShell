@@ -1491,7 +1491,7 @@ namespace Microsoft.PowerShell.Workflow
             Connection newConnection = CreateConnection(requestInfo, connections);
             _perfCountersMgr.UpdateCounterByValue(
                     PSWorkflowPerformanceCounterSetInfo.CounterSetId,
-                    PSWorkflowPerformanceCounterIds.PSRemotingConnectionsClosedReopendCount);
+                    PSWorkflowPerformanceCounterIds.PSRemotingConnectionsClosedReopenedCount);
             SubmitOperation(new CloseOneAndOpenAnotherOperation(potentialConnection, newConnection));
             _perfCountersMgr.UpdateCounterByValue(
                     PSWorkflowPerformanceCounterSetInfo.CounterSetId,

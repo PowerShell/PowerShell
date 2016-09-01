@@ -234,13 +234,13 @@ namespace Microsoft.PowerShell.Workflow
 
             lock (_syncObject)
             {
-                Dictionary<int, Tuple<object, string>> ruspaceIdCollection;
-                if (_remoteRunspaceIdCollection.TryGetValue(activityId, out ruspaceIdCollection))
+                Dictionary<int, Tuple<object, string>> runspaceIdCollection;
+                if (_remoteRunspaceIdCollection.TryGetValue(activityId, out runspaceIdCollection))
                 {
-                    if (ruspaceIdCollection != null)
+                    if (runspaceIdCollection != null)
                     {
                         Tuple<object, string> taskTuple;
-                        ruspaceIdCollection.TryGetValue(taskId, out taskTuple);
+                        runspaceIdCollection.TryGetValue(taskId, out taskTuple);
 
                         if (taskTuple != null)
                             taskRunspaceId = taskTuple.Item1;
@@ -2009,22 +2009,22 @@ namespace Microsoft.PowerShell.Workflow
             this.workflowApplication.Extensions.Add(this.GetTrackingParticipant());
 
             // adding the custom extensions
-            IEnumerable<object> extentions = this.Runtime.Configuration.CreateWorkflowExtensions();
-            if (extentions != null)
+            IEnumerable<object> extensions = this.Runtime.Configuration.CreateWorkflowExtensions();
+            if (extensions != null)
             {
-                foreach (object extention in extentions)
+                foreach (object extension in extensions)
                 {
-                    this.workflowApplication.Extensions.Add(extention);
+                    this.workflowApplication.Extensions.Add(extension);
                 }
             }
 
             // adding the custom extension creation functions
-            IEnumerable<Func<object>> extentionFunctions = this.Runtime.Configuration.CreateWorkflowExtensionCreationFunctions<object>();
-            if (extentionFunctions != null)
+            IEnumerable<Func<object>> extensionFunctions = this.Runtime.Configuration.CreateWorkflowExtensionCreationFunctions<object>();
+            if (extensionFunctions != null)
             {
-                foreach(Func<object> extentionFunc in extentionFunctions)
+                foreach(Func<object> extensionFunc in extensionFunctions)
                 {
-                    this.workflowApplication.Extensions.Add<object>(extentionFunc);
+                    this.workflowApplication.Extensions.Add<object>(extensionFunc);
                 }
             }
             

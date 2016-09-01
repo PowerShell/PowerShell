@@ -208,8 +208,8 @@ namespace Microsoft.PowerShell.Workflow
                     using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
                     {
                         ps.Runspace = runspace;
-                        string langSript = "$ExecutionContext.SessionState.LanguageMode = '" + _languageMode.Value.ToString() + "'";
-                        ps.AddScript(langSript);
+                        string langScript = "$ExecutionContext.SessionState.LanguageMode = '" + _languageMode.Value.ToString() + "'";
+                        ps.AddScript(langScript);
                         ps.Invoke();
                     }
                 }

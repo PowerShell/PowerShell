@@ -998,7 +998,7 @@ namespace Microsoft.PowerShell.Workflow
                         debugSource = new DebugSource(
                             debugSource.Script,                 // Update script
                             debugSource.ScriptFile,             // Update script filename
-                            existingInfo.XamlDefinition);       // Keep XamlDefintion
+                            existingInfo.XamlDefinition);       // Keep XamlDefinition
                     }
 
                     funcToSourceMap.Add(fName, debugSource);
