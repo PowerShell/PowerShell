@@ -213,4 +213,7 @@ Windows PowerShell transcript end
 End time: {0:yyyyMMddHHmmss}
 **********************</value>
   </data>
+   <data name="InvalidTranscriptFilePath" xml:space="preserve">
+    <value>Cannot perform operation because file path resolves to a directory.</value>
+  </data>
 </root>

@@ -215,9 +215,11 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            Exception innerException = PSTraceSource.NewArgumentException(effectiveFilePath,
+                            string errorMessage = String.Format(
+                                System.Globalization.CultureInfo.InvariantCulture,
                                 TranscriptStrings.TranscriptFileReadOnly,
                                 effectiveFilePath);
+                            Exception innerException = new ArgumentException(errorMessage);
                             ThrowTerminatingError(new ErrorRecord(innerException, "FileReadOnly", ErrorCategory.InvalidArgument, effectiveFilePath));
                         }
                     }
