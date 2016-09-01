@@ -12,7 +12,7 @@ namespace System.Management.Automation
     using System.Collections;
 
     /// <summary>
-    /// Auxilliary class to the execution of commands as needed by
+    /// Auxiliary class to the execution of commands as needed by
     /// CommandCompletion
     /// </summary>
     internal class CompletionExecutionHelper
