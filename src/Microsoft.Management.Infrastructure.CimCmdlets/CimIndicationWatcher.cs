@@ -208,7 +208,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string theNameSpace,
             string theQueryDialect,
             string theQueryExpression,
-            UInt32 theOpreationTimeout)
+            UInt32 theOperationTimeout)
         {
             enableRaisingEvents = false;
             status = Status.Default;
@@ -220,7 +220,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.nameSpace = theNameSpace;
             this.queryDialect = ConstValue.GetQueryDialectWithDefault(theQueryDialect);
             this.queryExpression = theQueryExpression;
-            this.operationTimeout = theOpreationTimeout;
+            this.operationTimeout = theOperationTimeout;
             this.computerName = theComputerName;
         }
 
