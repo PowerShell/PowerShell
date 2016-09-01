@@ -12,9 +12,12 @@ using System.Linq;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Numerics;
 using System.Reflection;
 using System.Security;
+using System.Security.AccessControl;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Microsoft.Management.Infrastructure;
@@ -677,10 +680,13 @@ namespace System.Management.Automation
                     { typeof(Microsoft.Management.Infrastructure.CimType), new[] { "cimtype" } },
                     { typeof(CimConverter),                                new[] { "cimconverter" } },
                     { typeof(ModuleSpecification),                         null },
+                    { typeof(IPEndPoint),                                  new[] { "IPEndpoint" } },
                     { typeof(NullString),                                  new[] { "NullString" } },
                     { typeof(OutputTypeAttribute),                         new[] { "OutputType" } },
                     { typeof(Object[]),                                    null },
+                    { typeof(ObjectSecurity),                              new[] { "ObjectSecurity" } },
                     { typeof(ParameterAttribute),                          new[] { "Parameter" } },
+                    { typeof(PhysicalAddress),                             new[] { "PhysicalAddress" } },
                     { typeof(PSCredential),                                new[] { "pscredential" } },
                     { typeof(PSDefaultValueAttribute),                     new[] { "PSDefaultValue" } },
                     { typeof(PSListModifier),                              new[] { "pslistmodifier" } },
@@ -716,9 +722,13 @@ namespace System.Management.Automation
                     { typeof(void),                                        new[] { "void" } },
                     { typeof(IPAddress),                                   new[] { "ipaddress" } },
                     { typeof(DscLocalConfigurationManagerAttribute),       new[] {"DscLocalConfigurationManager"}},
+                    { typeof(WildcardPattern),                             new[] { "WildcardPattern" } },
+                    { typeof(X509Certificate),                             new[] { "X509Certificate" } },
+                    { typeof(X500DistinguishedName),                       new[] { "X500DistinguishedName" } },
                     { typeof(XmlDocument),                                 new[] { "xml" } },
+                    { typeof(CimSession),                                  new[] { "CimSession" } },
 #if !CORECLR
-                    // Following types not int CoreCLR
+                    // Following types not in CoreCLR
                     { typeof(DirectoryEntry),                              new[] { "adsi" } },
                     { typeof(DirectorySearcher),                           new[] { "adsisearcher" } },
                     { typeof(ManagementClass),                             new[] { "wmiclass" } },
