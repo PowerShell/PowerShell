@@ -93,8 +93,6 @@ namespace System.Management.Automation
             }
 
             InitialSessionState.SetSessionStateDrive(Context, true);
-
-            InitialSessionState.CreateQuestionVariable(Context);
         }
 
         /// <summary>
