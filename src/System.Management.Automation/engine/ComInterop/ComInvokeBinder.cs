@@ -31,7 +31,7 @@ namespace System.Management.Automation.ComInterop
 
         private VarEnumSelector _varEnumSelector;
         private string[] _keywordArgNames;
-        private int _totalExplicitArgs; // Includes the individial elements of ArgumentKind.Dictionary (if any)
+        private int _totalExplicitArgs; // Includes the individual elements of ArgumentKind.Dictionary (if any)
 
         private ParameterExpression _dispatchObject;
         private ParameterExpression _dispatchPointer;
@@ -249,7 +249,7 @@ namespace System.Management.Automation.ComInterop
                 }
                 else
                 {
-                    // Positial arguments are in reverse order at the tail of rgArgs
+                    // Positional arguments are in reverse order at the tail of rgArgs
                     variantIndex = reverseIndex;
                 }
                 VariantBuilder variantBuilder = _varEnumSelector.VariantBuilders[i];

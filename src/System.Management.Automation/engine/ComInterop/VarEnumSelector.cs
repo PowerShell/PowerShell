@@ -489,7 +489,7 @@ namespace System.Management.Automation.ComInterop
         }
 
 
-        // This helper is called when we are looking for a ByVal marhsalling
+        // This helper is called when we are looking for a ByVal marshalling
         // In a ByVal case we can take into account conversions or IConvertible if all other 
         // attempts to find marshalling type failed 
         private static ArgBuilder GetByValArgBuilder(Type elementType, ref VarEnum elementVarEnum)

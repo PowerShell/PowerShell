@@ -129,9 +129,9 @@ namespace System.Management.Automation.ComInterop
         private static int GetIDsOfNames(IDispatch dispatch, string name, out int dispId)
         {
             int[] dispIds = new int[1];
-            Guid emtpyRiid = Guid.Empty;
+            Guid emptyRiid = Guid.Empty;
             int hresult = dispatch.TryGetIDsOfNames(
-                ref emtpyRiid,
+                ref emptyRiid,
                 new string[] { name },
                 1,
                 0,
@@ -143,13 +143,13 @@ namespace System.Management.Automation.ComInterop
 
         private static int Invoke(IDispatch dispatch, int memberDispId, out object result)
         {
-            Guid emtpyRiid = Guid.Empty;
+            Guid emptyRiid = Guid.Empty;
             ComTypes.DISPPARAMS dispParams = new ComTypes.DISPPARAMS();
             ComTypes.EXCEPINFO excepInfo = new ComTypes.EXCEPINFO();
             uint argErr;
             int hresult = dispatch.TryInvoke(
                 memberDispId,
-                ref emtpyRiid,
+                ref emptyRiid,
                 0,
                 ComTypes.INVOKEKIND.INVOKE_PROPERTYGET,
                 ref dispParams,
@@ -491,7 +491,7 @@ namespace System.Management.Automation.ComInterop
 
                     // Sometimes coclass has multiple source interfaces. Usually this is caused by
                     // adding new events and putting them on new interfaces while keeping the
-                    // old interfaces around. This may cause name collisioning which we are
+                    // old interfaces around. This may cause name collisions which we are
                     // resolving by keeping only the first event with the same name.
                     if (events.ContainsKey(name) == false)
                     {
