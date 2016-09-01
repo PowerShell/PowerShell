@@ -158,9 +158,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal const string True = "TRUE";
             internal const string False = "FALSE";
 
-            internal const string AligmentLeft = "left";
-            internal const string AligmentCenter = "center";
-            internal const string AligmentRight = "right";
+            internal const string AlignmentLeft = "left";
+            internal const string AlignmentCenter = "center";
+            internal const string AlignmentRight = "right";
         }
 
         // Flag that determines whether validation should be suppressed while

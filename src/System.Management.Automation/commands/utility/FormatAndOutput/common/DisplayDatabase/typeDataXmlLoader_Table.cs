@@ -270,15 +270,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false; // fatal error
             }
 
-            if (string.Equals(n.InnerText, XMLStringValues.AligmentLeft, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(n.InnerText, XMLStringValues.AlignmentLeft, StringComparison.OrdinalIgnoreCase))
             {
                 alignmentValue = TextAlignment.Left;
             }
-            else if (string.Equals(n.InnerText, XMLStringValues.AligmentRight, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(n.InnerText, XMLStringValues.AlignmentRight, StringComparison.OrdinalIgnoreCase))
             {
                 alignmentValue = TextAlignment.Right;
             }
-            else if (string.Equals(n.InnerText, XMLStringValues.AligmentCenter, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(n.InnerText, XMLStringValues.AlignmentCenter, StringComparison.OrdinalIgnoreCase))
             {
                 alignmentValue = TextAlignment.Center;
             }

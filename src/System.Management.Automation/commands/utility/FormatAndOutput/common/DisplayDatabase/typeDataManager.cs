@@ -349,8 +349,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (Database == null)
                     {
                         TypeInfoDataBase tempDataBase = new TypeInfoDataBase();
-                        AddPreLoadInstrinsics(tempDataBase);
-                        AddPostLoadInstrinsics(tempDataBase);
+                        AddPreLoadIntrinsics(tempDataBase);
+                        AddPostLoadIntrinsics(tempDataBase);
                         Database = tempDataBase;
                     }
                 }
@@ -393,7 +393,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             TypeInfoDataBase db = new TypeInfoDataBase();
 
             // prepopulate the database with any necessary overriding data
-            AddPreLoadInstrinsics(db);
+            AddPreLoadIntrinsics(db);
 
             var etwEnabled = RunspaceEventSource.Log.IsEnabled();
 
@@ -439,7 +439,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // add any sensible defaults to the database
-            AddPostLoadInstrinsics(db);
+            AddPostLoadIntrinsics(db);
 
             return db;
         }
@@ -534,7 +534,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// helper to to add any pre-load intrinsics to the db
         /// </summary>
         /// <param name="db">db being initialized</param>
-        private static void AddPreLoadInstrinsics(TypeInfoDataBase db)
+        private static void AddPreLoadIntrinsics(TypeInfoDataBase db)
         {
             // NOTE: nothing to add for the time being. Add here if needed.
         }
@@ -543,7 +543,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// helper to to add any post-load intrinsics to the db
         /// </summary>
         /// <param name="db">db being initialized</param>
-        private static void AddPostLoadInstrinsics(TypeInfoDataBase db)
+        private static void AddPostLoadIntrinsics(TypeInfoDataBase db)
         {
             // add entry for the output of update-formatdata
             // we want to be able to display this as a list, unless overridden

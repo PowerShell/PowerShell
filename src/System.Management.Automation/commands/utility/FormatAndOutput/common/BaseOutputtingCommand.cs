@@ -920,7 +920,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     columnWidthsHint = tableHint.columnWidths;
                 }
 
-                int columsOnTheScreen = this.InnerCommand._lo.ColumnNumber;
+                int columnsOnTheScreen = this.InnerCommand._lo.ColumnNumber;
 
                 int columns = this.CurrentTableHeaderInfo.tableColumnInfoList.Count;
                 if (columns == 0)
@@ -939,7 +939,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     alignment[k] = tci.alignment;
                     k++;
                 }
-                this.Writer.Initialize(0, columsOnTheScreen, columnWidths, alignment, this.CurrentTableHeaderInfo.hideHeader);
+                this.Writer.Initialize(0, columnsOnTheScreen, columnWidths, alignment, this.CurrentTableHeaderInfo.hideHeader);
             }
 
             /// <summary>
@@ -1200,7 +1200,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return;
                 }
 
-                string[] values = new string[_buffer.Lenght];
+                string[] values = new string[_buffer.Length];
                 for (int k = 0; k < values.Length; k++)
                 {
                     if (k < _buffer.CurrentCount)
@@ -1231,7 +1231,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 /// <summary>
                 /// get the size of the buffer
                 /// </summary>
-                internal int Lenght { get { return _arr.Length; } }
+                internal int Length { get { return _arr.Length; } }
 
                 /// <summary>
                 /// get the current number of entries in the buffer
