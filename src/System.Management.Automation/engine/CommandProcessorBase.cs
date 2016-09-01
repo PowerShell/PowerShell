@@ -172,6 +172,8 @@ namespace System.Management.Automation
             // We are currently restricting in one direction:
             //    - Can't dot something from a more permissive mode, since that would probably expose
             //      functions that were never designed to handle untrusted data.
+            // This function won't be called for NoLanguage mode so the only direction checked is trusted 
+            // (FullLanguage mode) script running in a constrained/restricted session.
             if ((scriptBlock.LanguageMode.HasValue) &&
                 (scriptBlock.LanguageMode != languageMode) &&
                 ((languageMode == PSLanguageMode.RestrictedLanguage) ||
