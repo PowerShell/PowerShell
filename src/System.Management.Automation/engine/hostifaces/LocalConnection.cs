@@ -459,16 +459,16 @@ namespace System.Management.Automation.Runspaces
                                 // appdomins for which the debug preference has to be enabled.
                                 if (processDebugPreference != null)
                                 {
-                                    List<string> chachedAppDomainNames = null;
+                                    List<string> cachedAppDomainNames = null;
                                     if (processDebugPreference.AppDomainNames != null && processDebugPreference.AppDomainNames.Length > 0)
                                     {
-                                        chachedAppDomainNames = new List<string>(processDebugPreference.AppDomainNames);
+                                        cachedAppDomainNames = new List<string>(processDebugPreference.AppDomainNames);
 
                                         foreach (string currentAppDomainName in appDomainName)
                                         {
-                                            if (!chachedAppDomainNames.Contains(currentAppDomainName, StringComparer.OrdinalIgnoreCase))
+                                            if (!cachedAppDomainNames.Contains(currentAppDomainName, StringComparer.OrdinalIgnoreCase))
                                             {
-                                                chachedAppDomainNames.Add(currentAppDomainName);
+                                                cachedAppDomainNames.Add(currentAppDomainName);
                                                 iscacheUpdated = true;
                                             }
                                         }
@@ -476,7 +476,7 @@ namespace System.Management.Automation.Runspaces
 
                                     if (iscacheUpdated)
                                     {
-                                        DebugPreference DebugPreference = CreateDebugPreference(chachedAppDomainNames.ToArray());
+                                        DebugPreference DebugPreference = CreateDebugPreference(cachedAppDomainNames.ToArray());
                                         debugPreferenceCache[processName] = DebugPreference;
                                     }
                                 }
@@ -501,17 +501,17 @@ namespace System.Management.Automation.Runspaces
                                     // appdomins for which the debug preference has to be enabled.
                                     if (processDebugPreference != null)
                                     {
-                                        List<string> chachedAppDomainNames = null;
+                                        List<string> cachedAppDomainNames = null;
                                         if (processDebugPreference.AppDomainNames != null && processDebugPreference.AppDomainNames.Length > 0)
                                         {
-                                            chachedAppDomainNames = new List<string>(processDebugPreference.AppDomainNames);
+                                            cachedAppDomainNames = new List<string>(processDebugPreference.AppDomainNames);
 
                                             foreach (string currentAppDomainName in appDomainName)
                                             {
-                                                if (chachedAppDomainNames.Contains(currentAppDomainName, StringComparer.OrdinalIgnoreCase))
+                                                if (cachedAppDomainNames.Contains(currentAppDomainName, StringComparer.OrdinalIgnoreCase))
                                                 {
                                                     // remove requested appdomains debug preference details. 
-                                                    chachedAppDomainNames.Remove(currentAppDomainName);
+                                                    cachedAppDomainNames.Remove(currentAppDomainName);
                                                     iscacheUpdated = true;
                                                 }
                                             }
@@ -519,7 +519,7 @@ namespace System.Management.Automation.Runspaces
 
                                         if (iscacheUpdated)
                                         {
-                                            DebugPreference DebugPreference = CreateDebugPreference(chachedAppDomainNames.ToArray());
+                                            DebugPreference DebugPreference = CreateDebugPreference(cachedAppDomainNames.ToArray());
                                             debugPreferenceCache[processName] = DebugPreference;
                                         }
                                     }
