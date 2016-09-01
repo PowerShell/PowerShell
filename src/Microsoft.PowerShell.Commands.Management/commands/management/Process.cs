@@ -653,11 +653,11 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (InvalidOperationException exception)
                     {
-                        WriteNonTerminatingError(process, exception, ProcessResources.CouldnotEnumerateModuleFileVer, "CouldnotEnumerateModuleFileVer", ErrorCategory.PermissionDenied);
+                        WriteNonTerminatingError(process, exception, ProcessResources.CouldNotEnumerateModuleFileVer, "CouldNotEnumerateModuleFileVer", ErrorCategory.PermissionDenied);
                     }
                     catch (ArgumentException exception)
                     {
-                        WriteNonTerminatingError(process, exception, ProcessResources.CouldnotEnumerateModuleFileVer, "CouldnotEnumerateModuleFileVer", ErrorCategory.PermissionDenied);
+                        WriteNonTerminatingError(process, exception, ProcessResources.CouldNotEnumerateModuleFileVer, "CouldNotEnumerateModuleFileVer", ErrorCategory.PermissionDenied);
                     }
                     catch (Win32Exception exception)
                     {
@@ -669,18 +669,18 @@ namespace Microsoft.PowerShell.Commands
                             }
                             else
                             {
-                                WriteNonTerminatingError(process, exception, ProcessResources.CouldnotEnumerateModuleFileVer, "CouldnotEnumerateModuleFileVer", ErrorCategory.PermissionDenied);
+                                WriteNonTerminatingError(process, exception, ProcessResources.CouldNotEnumerateModuleFileVer, "CouldNotEnumerateModuleFileVer", ErrorCategory.PermissionDenied);
                             }
                         }
                         catch (Win32Exception ex)
                         {
-                            WriteNonTerminatingError(process, ex, ProcessResources.CouldnotEnumerateModuleFileVer, "CouldnotEnumerateModuleFileVer", ErrorCategory.PermissionDenied);
+                            WriteNonTerminatingError(process, ex, ProcessResources.CouldNotEnumerateModuleFileVer, "CouldNotEnumerateModuleFileVer", ErrorCategory.PermissionDenied);
                         }
                     }
                     catch (Exception exception)
                     {
                         CommandsCommon.CheckForSevereException(this, exception);
-                        WriteNonTerminatingError(process, exception, ProcessResources.CouldnotEnumerateModuleFileVer, "CouldnotEnumerateModuleFileVer", ErrorCategory.PermissionDenied);
+                        WriteNonTerminatingError(process, exception, ProcessResources.CouldNotEnumerateModuleFileVer, "CouldNotEnumerateModuleFileVer", ErrorCategory.PermissionDenied);
                     }
                 }
                 else if (Module.IsPresent)
@@ -700,18 +700,18 @@ namespace Microsoft.PowerShell.Commands
                             }
                             else
                             {
-                                WriteNonTerminatingError(process, exception, ProcessResources.CouldnotEnumerateModules, "CouldnotEnumerateModules", ErrorCategory.PermissionDenied);
+                                WriteNonTerminatingError(process, exception, ProcessResources.CouldNotEnumerateModules, "CouldNotEnumerateModules", ErrorCategory.PermissionDenied);
                             }
                         }
                         catch (Win32Exception ex)
                         {
-                            WriteNonTerminatingError(process, ex, ProcessResources.CouldnotEnumerateModules, "CouldnotEnumerateModules", ErrorCategory.PermissionDenied);
+                            WriteNonTerminatingError(process, ex, ProcessResources.CouldNotEnumerateModules, "CouldNotEnumerateModules", ErrorCategory.PermissionDenied);
                         }
                     }
                     catch (Exception exception)
                     {
                         CommandsCommon.CheckForSevereException(this, exception);
-                        WriteNonTerminatingError(process, exception, ProcessResources.CouldnotEnumerateModules, "CouldnotEnumerateModules", ErrorCategory.PermissionDenied);
+                        WriteNonTerminatingError(process, exception, ProcessResources.CouldNotEnumerateModules, "CouldNotEnumerateModules", ErrorCategory.PermissionDenied);
                     }
                 }
                 else if (FileVersionInfo.IsPresent)
@@ -723,11 +723,11 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (InvalidOperationException exception)
                     {
-                        WriteNonTerminatingError(process, exception, ProcessResources.CouldnotEnumerateFileVer, "CouldnotEnumerateFileVer", ErrorCategory.PermissionDenied);
+                        WriteNonTerminatingError(process, exception, ProcessResources.CouldNotEnumerateFileVer, "CouldNotEnumerateFileVer", ErrorCategory.PermissionDenied);
                     }
                     catch (ArgumentException exception)
                     {
-                        WriteNonTerminatingError(process, exception, ProcessResources.CouldnotEnumerateFileVer, "CouldnotEnumerateFileVer", ErrorCategory.PermissionDenied);
+                        WriteNonTerminatingError(process, exception, ProcessResources.CouldNotEnumerateFileVer, "CouldNotEnumerateFileVer", ErrorCategory.PermissionDenied);
                     }
                     catch (Win32Exception exception)
                     {
@@ -739,18 +739,18 @@ namespace Microsoft.PowerShell.Commands
                             }
                             else
                             {
-                                WriteNonTerminatingError(process, exception, ProcessResources.CouldnotEnumerateFileVer, "CouldnotEnumerateFileVer", ErrorCategory.PermissionDenied);
+                                WriteNonTerminatingError(process, exception, ProcessResources.CouldNotEnumerateFileVer, "CouldNotEnumerateFileVer", ErrorCategory.PermissionDenied);
                             }
                         }
                         catch (Win32Exception ex)
                         {
-                            WriteNonTerminatingError(process, ex, ProcessResources.CouldnotEnumerateFileVer, "CouldnotEnumerateFileVer", ErrorCategory.PermissionDenied);
+                            WriteNonTerminatingError(process, ex, ProcessResources.CouldNotEnumerateFileVer, "CouldNotEnumerateFileVer", ErrorCategory.PermissionDenied);
                         }
                     }
                     catch (Exception exception)
                     {
                         CommandsCommon.CheckForSevereException(this, exception);
-                        WriteNonTerminatingError(process, exception, ProcessResources.CouldnotEnumerateFileVer, "CouldnotEnumerateFileVer", ErrorCategory.PermissionDenied);
+                        WriteNonTerminatingError(process, exception, ProcessResources.CouldNotEnumerateFileVer, "CouldNotEnumerateFileVer", ErrorCategory.PermissionDenied);
                     }
                 }
                 else

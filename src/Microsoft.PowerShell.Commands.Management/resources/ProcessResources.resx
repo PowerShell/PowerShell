@@ -132,13 +132,13 @@
   <data name="ProcessNameForConfirmation" xml:space="preserve">
     <value>{0} ({1})</value>
   </data>
-  <data name="CouldnotEnumerateModules" xml:space="preserve">
+  <data name="CouldNotEnumerateModules" xml:space="preserve">
     <value>Cannot enumerate the modules of the "{0}" process.</value>
   </data>
-  <data name="CouldnotEnumerateFileVer" xml:space="preserve">
+  <data name="CouldNotEnumerateFileVer" xml:space="preserve">
     <value>Cannot enumerate the file version information of the "{0}" process.</value>
   </data>
-  <data name="CouldnotEnumerateModuleFileVer" xml:space="preserve">
+  <data name="CouldNotEnumerateModuleFileVer" xml:space="preserve">
     <value>Cannot enumerate the modules and the file version information of the "{0}" process.</value>
   </data>
   <data name="ConfirmStopProcess" xml:space="preserve">
