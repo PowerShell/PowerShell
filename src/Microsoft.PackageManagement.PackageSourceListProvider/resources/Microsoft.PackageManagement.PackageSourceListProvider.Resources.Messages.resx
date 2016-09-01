@@ -347,10 +347,10 @@
   <data name="InstallingPackage" xml:space="preserve">
     <value>Installing a package from '{0}'</value>
   </data>
-  <data name="MininumVersonCheck" xml:space="preserve">
+  <data name="MinimumVersionCheck" xml:space="preserve">
     <value>Provider '{0}' is not used to perform this operation because it requires a minimum version of the PackageManagement module to be '{1}', but the current version of the PackageManagement module is '{2}'.</value>
   </data>
-  <data name="NumberOfPackagesRecevied" xml:space="preserve">
+  <data name="NumberOfPackagesReceived" xml:space="preserve">
     <value>'{0}' packages returned by the provider '{1}' for the '{2}' operation.</value>
   </data>
   <data name="RetryingDownload" xml:space="preserve">
@@ -371,7 +371,7 @@
   <data name="UnknownMediaType" xml:space="preserve">
     <value>Package '{0}' with Source '{1}' has unknown media type '{2}'.</value>
   </data>
-  <data name="UnsuportedUriFormat" xml:space="preserve">
+  <data name="UnsupportedUriFormat" xml:space="preserve">
     <value>The provider '{0}' does not support the Uri format: '{1}'.</value>
   </data>
   <data name="UnsupportedPackageSource" xml:space="preserve">
@@ -411,7 +411,7 @@
   <data name="HashNotSpecified" xml:space="preserve">
     <value>Invalid hash for package '{0}'. Please correct the values in json file or use -SkipHashValidation switch to skip Hash validation.</value>
   </data>
-  <data name="HashValidationSuccessfull" xml:space="preserve">
+  <data name="HashValidationSuccessful" xml:space="preserve">
     <value>Hash validation was successful.</value>
   </data>
   <data name="HashVerificationFailed" xml:space="preserve">

@@ -879,11 +879,11 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
             {
                 if (userSpecifiedProvider != null && userSpecifiedProvider.IndexOf(Constants.ProviderName, StringComparison.OrdinalIgnoreCase) > -1)
                 {
-                    request.WriteError(ErrorCategory.InvalidOperation, Constants.ProviderName, Resources.Messages.MininumVersonCheck, Constants.ProviderName, RequiredPackageManagementVersion, _currentPackageManagementVersion);
+                    request.WriteError(ErrorCategory.InvalidOperation, Constants.ProviderName, Resources.Messages.MinimumVersionCheck, Constants.ProviderName, RequiredPackageManagementVersion, _currentPackageManagementVersion);
                 }
                 else
                 {
-                    request.Verbose(Resources.Messages.MininumVersonCheck, Constants.ProviderName, RequiredPackageManagementVersion, _currentPackageManagementVersion);
+                    request.Verbose(Resources.Messages.MinimumVersionCheck, Constants.ProviderName, RequiredPackageManagementVersion, _currentPackageManagementVersion);
                 }
             }
 
