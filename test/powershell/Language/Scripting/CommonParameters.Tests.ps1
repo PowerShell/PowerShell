@@ -5,7 +5,6 @@
     }    
 
     Context "Debug" {
-
         $script = "
             function get-foo
             {
@@ -154,6 +153,7 @@
     }
 
     Context "SupportShouldprocess" {
+
         $script = '
                 function get-foo
                 {
@@ -207,6 +207,7 @@
     }
 
     It 'confirmimpact support: none' {
+
         $script = '
             function get-foo
             {
@@ -240,7 +241,6 @@
     }
 
     Context 'confirmimpact support: low under the non-interactive host' {
-
         $script = '
             function get-foo
             {
@@ -277,7 +277,6 @@
     }
 
     Context 'confirmimpact support: Medium under the non-interactive host' {
-
         $script = '
             function get-foo
             {
