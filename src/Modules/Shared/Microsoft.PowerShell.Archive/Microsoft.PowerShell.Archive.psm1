@@ -36,7 +36,7 @@ function Compress-Archive
     [CmdletBinding(
     DefaultParameterSetName="Path", 
     SupportsShouldProcess=$true,
-    HelpUri="http://go.microsoft.com/fwlink/?LinkID=393252")]
+    HelpUri="https://go.microsoft.com/fwlink/?LinkID=393252")]
     param 
     (
         [parameter (mandatory=$true, Position=0, ParameterSetName="Path", ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
@@ -247,7 +247,7 @@ function Expand-Archive
     [CmdletBinding(
     DefaultParameterSetName="Path", 
     SupportsShouldProcess=$true,
-    HelpUri="http://go.microsoft.com/fwlink/?LinkID=393253")]    
+    HelpUri="https://go.microsoft.com/fwlink/?LinkID=393253")]    
     param 
     (
         [parameter (

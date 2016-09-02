@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command that gets the active transaction.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Transaction", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135220")]
+    [Cmdlet(VerbsCommon.Get, "Transaction", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135220")]
     [OutputType(typeof(PSTransaction))]
     public class GetTransactionCommand : PSCmdlet
     {

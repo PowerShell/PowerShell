@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
     /// 
     /// </summary>
     [Cmdlet("Receive", "Job", DefaultParameterSetName = ReceiveJobCommand.LocationParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113372", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113372", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public class ReceiveJobCommand : JobCmdletBase, IDisposable
     {
         #region Properties

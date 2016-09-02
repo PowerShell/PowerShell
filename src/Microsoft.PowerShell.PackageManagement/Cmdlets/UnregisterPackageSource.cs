@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
     using Microsoft.PackageManagement.Packaging;
     using Utility;
 
-    [Cmdlet(VerbsLifecycle.Unregister, Constants.Nouns.PackageSourceNoun, SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=517143")]
+    [Cmdlet(VerbsLifecycle.Unregister, Constants.Nouns.PackageSourceNoun, SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=517143")]
     public sealed class UnregisterPackageSource : CmdletWithSource {
         public UnregisterPackageSource()
             : base(new[] {OptionCategory.Provider, OptionCategory.Source}) {

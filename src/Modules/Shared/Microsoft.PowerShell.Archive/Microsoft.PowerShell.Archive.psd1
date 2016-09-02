@@ -9,5 +9,5 @@ DotNetFrameworkVersion = 4.5
 CmdletsToExport = @()
 AliasesToExport = @()
 NestedModules="Microsoft.PowerShell.Archive.psm1"
-HelpInfoURI = 'http://go.microsoft.com/fwlink/?LinkId=393254'
+HelpInfoURI = 'https://go.microsoft.com/fwlink/?LinkId=393254'
 }

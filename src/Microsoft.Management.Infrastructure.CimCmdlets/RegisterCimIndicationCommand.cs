@@ -22,7 +22,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// cancel the subscription
     /// Should we have the second parameter set with a -Query?
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Register, "CimIndicationEvent", DefaultParameterSetName = CimBaseCommand.ClassNameComputerSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227960")]
+    [Cmdlet(VerbsLifecycle.Register, "CimIndicationEvent", DefaultParameterSetName = CimBaseCommand.ClassNameComputerSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227960")]
     public class RegisterCimIndicationCommand : ObjectEventRegistrationBase
     {
         #region parameters

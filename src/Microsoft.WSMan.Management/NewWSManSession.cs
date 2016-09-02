@@ -29,7 +29,7 @@ namespace Microsoft.WSMan.Management
     /// </summary>
 
 
-    [Cmdlet(VerbsCommon.New, "WSManSessionOption", HelpUri = "http://go.microsoft.com/fwlink/?LinkId=141449")]
+    [Cmdlet(VerbsCommon.New, "WSManSessionOption", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141449")]
     public class NewWSManSessionOptionCommand : PSCmdlet
     {
         /// <summary>

@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "PSSession", SupportsShouldProcess = true,
             DefaultParameterSetName = RemovePSSessionCommand.IdParameterSet,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135250", RemotingCapability = RemotingCapability.OwnedByCommand)]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135250", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class RemovePSSessionCommand : PSRunspaceCmdlet
     {
         #region Parameters

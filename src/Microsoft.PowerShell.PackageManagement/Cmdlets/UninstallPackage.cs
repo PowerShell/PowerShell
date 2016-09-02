@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
     using Microsoft.PackageManagement.Packaging;
     using Utility;
 
-    [Cmdlet(VerbsLifecycle.Uninstall, Constants.Nouns.PackageNoun, SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=517142")]
+    [Cmdlet(VerbsLifecycle.Uninstall, Constants.Nouns.PackageNoun, SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=517142")]
     public sealed class UninstallPackage : GetPackage {
         private Dictionary<string, List<SoftwareIdentity>> _resultsPerName = new Dictionary<string, List<SoftwareIdentity>>();
 

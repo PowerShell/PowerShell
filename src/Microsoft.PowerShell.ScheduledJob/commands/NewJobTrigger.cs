@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// parameter values.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "JobTrigger", DefaultParameterSetName = NewJobTriggerCommand.OnceParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223912")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223912")]
     [OutputType(typeof(ScheduledJobTrigger))]
     public sealed class NewJobTriggerCommand : ScheduleJobCmdletBase
     {

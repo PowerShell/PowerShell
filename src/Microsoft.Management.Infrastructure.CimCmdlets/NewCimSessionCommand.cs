@@ -21,7 +21,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// The CimSession object returned by the Cmdlet is used by all other CIM 
     /// cmdlets.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "CimSession", DefaultParameterSetName = CredentialParameterSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227967")]
+    [Cmdlet(VerbsCommon.New, "CimSession", DefaultParameterSetName = CredentialParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227967")]
     [OutputType(typeof(CimSession))]
     public sealed class NewCimSessionCommand : CimBaseCommand
     {

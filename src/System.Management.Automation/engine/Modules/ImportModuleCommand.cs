@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements a cmdlet that loads a module
     /// </summary>
-    [Cmdlet("Import", "Module", DefaultParameterSetName = ParameterSet_Name, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=141553")]
+    [Cmdlet("Import", "Module", DefaultParameterSetName = ParameterSet_Name, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141553")]
     [OutputType(typeof(PSModuleInfo))]
     public sealed class ImportModuleCommand : ModuleCmdletBase, IDisposable
     {

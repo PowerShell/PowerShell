@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to Invoke WMI Method
     /// </summary>
     [Cmdlet("Invoke", "WmiMethod", DefaultParameterSetName = "class", SupportsShouldProcess = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113346", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113346", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public sealed class InvokeWmiMethod : WmiBaseCmdlet
     {
         #region Parameters

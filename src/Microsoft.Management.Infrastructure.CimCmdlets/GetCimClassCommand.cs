@@ -25,7 +25,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// Should the class remember what Session it came from? No.
     /// </para>
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, GetCimClassCommand.Noun, DefaultParameterSetName = ComputerSetName, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227959")]
+    [Cmdlet(VerbsCommon.Get, GetCimClassCommand.Noun, DefaultParameterSetName = ComputerSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227959")]
     [OutputType(typeof(CimClass))]
     public class GetCimClassCommand : CimBaseCommand
     {

@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
     using Microsoft.PackageManagement.Packaging;
     using Utility;
 
-    [Cmdlet(VerbsCommon.Find, Constants.Nouns.PackageNoun, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=517132"), OutputType(new Type[1] { typeof(SoftwareIdentity) })]
+    [Cmdlet(VerbsCommon.Find, Constants.Nouns.PackageNoun, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=517132"), OutputType(new Type[1] { typeof(SoftwareIdentity) })]
     public sealed class FindPackage : CmdletWithSearchAndSource {
         public FindPackage()
             : base(new[] {

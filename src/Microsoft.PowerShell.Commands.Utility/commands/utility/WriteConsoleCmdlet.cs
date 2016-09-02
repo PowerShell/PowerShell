@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// </summary>
 
-    [Cmdlet("Write", "Host", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113426", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet("Write", "Host", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113426", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteHostCommand : ConsoleColorCmdlet
     {
         //

@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// a prompted password. That credential object can then be used for other 
     /// operations involving security.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Credential", DefaultParameterSetName = GetCredentialCommand.credentialSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113311")]
+    [Cmdlet(VerbsCommon.Get, "Credential", DefaultParameterSetName = GetCredentialCommand.credentialSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113311")]
     [OutputType(typeof(PSCredential), ParameterSetName = new string[] { GetCredentialCommand.credentialSet, GetCredentialCommand.messageSet })]
     public sealed class GetCredentialCommand : PSCmdlet
     {

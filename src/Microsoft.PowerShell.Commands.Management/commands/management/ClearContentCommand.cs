@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command that appends the specified content to the item at the specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Clear, "Content", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113282")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113282")]
     public class ClearContentCommand : ContentCommandBase
     {
         #region Command code

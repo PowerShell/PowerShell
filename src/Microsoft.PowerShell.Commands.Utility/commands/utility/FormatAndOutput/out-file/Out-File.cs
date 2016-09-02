@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// implementation for the out-file command
     /// </summary>
-    [Cmdlet("Out", "File", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113363")]
+    [Cmdlet("Out", "File", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113363")]
     public class OutFileCommand : FrontEndCommandBase
     {
         /// <summary>

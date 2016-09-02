@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command that begins a transaction.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Start, "Transaction", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135262")]
+    [Cmdlet(VerbsLifecycle.Start, "Transaction", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135262")]
     public class StartTransactionCommand : PSCmdlet
     {
         /// <summary>

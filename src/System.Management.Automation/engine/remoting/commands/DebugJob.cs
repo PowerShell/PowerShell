@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsDiagnostic.Debug, "Job", SupportsShouldProcess = true, DefaultParameterSetName = DebugJobCommand.JobParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=330208")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=330208")]
     public sealed class DebugJobCommand : PSCmdlet
     {
         #region Strings

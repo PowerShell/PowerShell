@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
 #if !CORECLR
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsLifecycle.Resume, "Job", SupportsShouldProcess = true, DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=210611")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210611")]
 #endif
     [OutputType(typeof(Job))]
     public class ResumeJobCommand : JobCmdletBase, IDisposable

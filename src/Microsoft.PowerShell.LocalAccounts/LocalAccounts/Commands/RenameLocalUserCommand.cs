@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "LocalUser",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkID=717983")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkID=717983")]
     [Alias("rnlu")]
     public class RenameLocalUserCommand : Cmdlet
     {

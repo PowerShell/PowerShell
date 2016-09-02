@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// Task Scheduler, job store, and local repository.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Unregister, "ScheduledJob", SupportsShouldProcess = true, DefaultParameterSetName = UnregisterScheduledJobCommand.DefinitionParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223925")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223925")]
     public sealed class UnregisterScheduledJobCommand : ScheduleJobCmdletBase
     {
         #region Parameters

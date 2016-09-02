@@ -23,7 +23,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         "CimInstance",
         SupportsShouldProcess=true,
         DefaultParameterSetName = CimBaseCommand.CimInstanceComputerSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227964")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227964")]
     public class RemoveCimInstanceCommand : CimBaseCommand
     {
         #region constructor

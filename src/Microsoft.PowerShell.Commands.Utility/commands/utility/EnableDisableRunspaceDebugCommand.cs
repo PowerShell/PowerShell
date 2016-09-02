@@ -328,7 +328,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet enables debugging for selected runspaces in the current or specified process.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Enable, "RunspaceDebug", DefaultParameterSetName = CommonRunspaceCommandBase.RunspaceNameParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=403732")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=403732")]
     public sealed class EnableRunspaceDebugCommand : CommonRunspaceCommandBase
     {
         #region Parameters
@@ -430,7 +430,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet disables Runspace debugging in selected Runspaces.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Disable, "RunspaceDebug", DefaultParameterSetName = CommonRunspaceCommandBase.RunspaceNameParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=403733")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=403733")]
     public sealed class DisableRunspaceDebugCommand : CommonRunspaceCommandBase
     {
         #region Overrides
@@ -486,7 +486,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet returns a PSRunspaceDebug object for each found Runspace object.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "RunspaceDebug", DefaultParameterSetName = CommonRunspaceCommandBase.RunspaceNameParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=403734")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=403734")]
     [OutputType(typeof(PSRunspaceDebug))]
     public sealed class GetRunspaceDebugCommand : CommonRunspaceCommandBase
     {
@@ -525,7 +525,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet causes a running script or command to stop in the debugger at the next execution point.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Wait, "Debugger",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=403735")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=403735")]
     public sealed class WaitDebuggerCommand : PSCmdlet
     {
         #region Overrides

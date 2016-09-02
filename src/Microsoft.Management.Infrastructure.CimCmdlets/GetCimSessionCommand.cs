@@ -18,7 +18,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// connections with remote computers established from the current PS Session.
     /// </summary>
 
-    [Cmdlet(VerbsCommon.Get, "CimSession", DefaultParameterSetName = ComputerNameSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227966")]
+    [Cmdlet(VerbsCommon.Get, "CimSession", DefaultParameterSetName = ComputerNameSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227966")]
     [OutputType(typeof(CimSession))]
     public sealed class GetCimSessionCommand : CimBaseCommand
     {

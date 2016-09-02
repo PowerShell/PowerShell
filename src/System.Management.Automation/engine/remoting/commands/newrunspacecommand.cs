@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     /// 
     [Cmdlet(VerbsCommon.New, "PSSession", DefaultParameterSetName = "ComputerName",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135237", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135237", RemotingCapability = RemotingCapability.OwnedByCommand)]
     [OutputType(typeof(PSSession))]
     public class NewPSSessionCommand : PSRemotingBaseCmdlet, IDisposable
     {

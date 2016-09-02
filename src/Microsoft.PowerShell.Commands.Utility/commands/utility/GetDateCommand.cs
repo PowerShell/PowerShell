@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary> 
     /// implementation for the get-date command 
     /// </summary> 
-    [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = "net", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113313")]
+    [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = "net", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113313")]
     [OutputType(typeof(string), ParameterSetName = new string[] { "UFormat", "net" })]
     [OutputType(typeof(DateTime), ParameterSetName = new string[] { "net" })]
     public sealed class GetDateCommand : Cmdlet

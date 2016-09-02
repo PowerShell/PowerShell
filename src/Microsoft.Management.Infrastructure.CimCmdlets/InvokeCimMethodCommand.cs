@@ -24,7 +24,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         "CimMethod",
         SupportsShouldProcess = true,
         DefaultParameterSetName = CimBaseCommand.ClassNameComputerSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227965")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227965")]
     public class InvokeCimMethodCommand : CimBaseCommand
     {
         #region constructor

@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to move a property on an item to another item
     /// </summary>
     [Cmdlet(VerbsCommon.Move, "ItemProperty", SupportsShouldProcess = true, DefaultParameterSetName = "Path", SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113351")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113351")]
     public class MoveItemPropertyCommand : PassThroughItemPropertyCommandBase
     {
         #region Parameters

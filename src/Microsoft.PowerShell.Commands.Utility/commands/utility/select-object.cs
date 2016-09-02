@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
     /// 
     /// </summary>
     [Cmdlet("Select", "Object", DefaultParameterSetName = "DefaultParameter",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113387", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113387", RemotingCapability = RemotingCapability.None)]
     public sealed class SelectObjectCommand : PSCmdlet
     {
         #region Command Line Switches

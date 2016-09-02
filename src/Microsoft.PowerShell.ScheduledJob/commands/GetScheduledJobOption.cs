@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// This cmdlet gets  scheduled job option object from a provided ScheduledJobDefinition object.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "ScheduledJobOption", DefaultParameterSetName = GetScheduledJobOptionCommand.JobDefinitionParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223920")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223920")]
     [OutputType(typeof(ScheduledJobOptions))]
     public sealed class GetScheduledJobOptionCommand : ScheduleJobCmdletBase
     {

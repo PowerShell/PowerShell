@@ -27,6 +27,6 @@ CmdletsToExport = @(
     'Set-LocalUser'
     )
 AliasesToExport= @( "algm", "dlu", "elu", "glg", "glgm", "glu", "nlg", "nlu", "rlg", "rlgm", "rlu", "rnlg", "rnlu", "slg", "slu")
-HelpInfoURI = 'http://go.microsoft.com/fwlink/?LinkId=717973'
+HelpInfoURI = 'https://go.microsoft.com/fwlink/?LinkId=717973'
 }
 

@@ -542,7 +542,7 @@ $result
     /// <summary>
     /// Get all control panel items that is available in the "All Control Panel Items" category
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ControlPanelItem", DefaultParameterSetName = RegularNameParameterSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=219982")]
+    [Cmdlet(VerbsCommon.Get, "ControlPanelItem", DefaultParameterSetName = RegularNameParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=219982")]
     [OutputType(typeof(ControlPanelItem))]
     public sealed class GetControlPanelItemCommand : ControlPanelItemBaseCommand
     {
@@ -674,7 +674,7 @@ $result
     /// <summary>
     /// Show the specified control panel applet
     /// </summary>
-    [Cmdlet(VerbsCommon.Show, "ControlPanelItem", DefaultParameterSetName = RegularNameParameterSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=219983")]
+    [Cmdlet(VerbsCommon.Show, "ControlPanelItem", DefaultParameterSetName = RegularNameParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=219983")]
     public sealed class ShowControlPanelItemCommand : ControlPanelItemBaseCommand
     {
         private const string RegularNameParameterSet = "RegularName";

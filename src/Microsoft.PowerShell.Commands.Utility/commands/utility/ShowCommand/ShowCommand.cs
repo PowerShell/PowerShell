@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Show-Command displays a GUI for a cmdlet, or for all cmdlets if no specific cmdlet is specified.
     /// </summary>
-    [Cmdlet(VerbsCommon.Show, "Command", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=217448")]
+    [Cmdlet(VerbsCommon.Show, "Command", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217448")]
     public class ShowCommandCommand : PSCmdlet, IDisposable
     {
         #region Private Fields

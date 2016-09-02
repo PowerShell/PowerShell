@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to get WMI Objects
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "WmiObject", DefaultParameterSetName = "query",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113337", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113337", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class GetWmiObjectCommand : WmiBaseCmdlet
     {
         #region Parameters

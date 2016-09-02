@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// implementation for the new-timespan command 
     /// </summary> 
     [Cmdlet(VerbsCommon.New, "TimeSpan", DefaultParameterSetName = "Date",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113360", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113360", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(TimeSpan))]
     public sealed class NewTimeSpanCommand : PSCmdlet
     {

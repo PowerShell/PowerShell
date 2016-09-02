@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Cmdlet for new-WebService Proxy
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "WebServiceProxy", DefaultParameterSetName = "NoCredentials", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135238")]
+    [Cmdlet(VerbsCommon.New, "WebServiceProxy", DefaultParameterSetName = "NoCredentials", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135238")]
     public sealed class NewWebServiceProxy : PSCmdlet
     {
         #region Parameters

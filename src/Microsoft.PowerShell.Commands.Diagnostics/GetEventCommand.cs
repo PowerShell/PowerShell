@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
     /// 
     /// Class that implements the Get-WinEvent cmdlet.
     /// 
-    [Cmdlet(VerbsCommon.Get, "WinEvent", DefaultParameterSetName = "GetLogSet", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=138336")]
+    [Cmdlet(VerbsCommon.Get, "WinEvent", DefaultParameterSetName = "GetLogSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=138336")]
     public sealed class GetWinEventCommand : PSCmdlet
     {
         /// <summary>

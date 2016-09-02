@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements a cmdlet that loads a module
     /// </summary>
-    [Cmdlet("Export", "ModuleMember", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=141551")]
+    [Cmdlet("Export", "ModuleMember", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141551")]
     public sealed class ExportModuleMemberCommand : PSCmdlet
     {
         /// <summary>

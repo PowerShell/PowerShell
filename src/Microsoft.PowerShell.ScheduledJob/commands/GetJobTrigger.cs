@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// This cmdlet gets ScheduledJobTriggers for the specified ScheduledJobDefinition object.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "JobTrigger", DefaultParameterSetName = GetJobTriggerCommand.JobDefinitionParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223915")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223915")]
     [OutputType(typeof(ScheduledJobTrigger))]
     public sealed class GetJobTriggerCommand : ScheduleJobCmdletBase
     {

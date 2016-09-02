@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsLifecycle.Register, RemotingConstants.PSSessionConfigurationNoun,
         DefaultParameterSetName = PSSessionConfigurationCommandBase.NameParameterSetName,
         SupportsShouldProcess = true,
-        ConfirmImpact = ConfirmImpact.Medium, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144306")]
+        ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144306")]
     public sealed class RegisterPSSessionConfigurationCommand : PSSessionConfigurationCommandBase
     {
         #region Private Data
@@ -2449,7 +2449,7 @@ else
     /// Class implementing Unregister-PSSessionConfiguration
     /// </summary>
     [Cmdlet(VerbsLifecycle.Unregister, RemotingConstants.PSSessionConfigurationNoun,
-        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144308")]
+        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144308")]
     public sealed class UnregisterPSSessionConfigurationCommand : PSCmdlet
     {
         #region Private Data
@@ -2670,7 +2670,7 @@ else
     /// <summary>
     /// Class implementing Get-PSSessionConfiguration
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, RemotingConstants.PSSessionConfigurationNoun, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144304")]
+    [Cmdlet(VerbsCommon.Get, RemotingConstants.PSSessionConfigurationNoun, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144304")]
     [OutputType("Microsoft.PowerShell.Commands.PSSessionConfigurationCommands#PSSessionConfiguration")]
     public sealed class GetPSSessionConfigurationCommand : PSCmdlet
     {
@@ -2909,7 +2909,7 @@ $args[0] | foreach {{
     [Cmdlet(VerbsCommon.Set, RemotingConstants.PSSessionConfigurationNoun,
        DefaultParameterSetName = PSSessionConfigurationCommandBase.NameParameterSetName,
        SupportsShouldProcess = true,
-       ConfirmImpact = ConfirmImpact.Medium, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144307")]
+       ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144307")]
     public sealed class SetPSSessionConfigurationCommand : PSSessionConfigurationCommandBase
     {
         #region Private Data
@@ -4037,7 +4037,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
     /// Class implementing Enable-PSSessionConfiguration cmdlet
     /// </summary>
     [Cmdlet(VerbsLifecycle.Enable, RemotingConstants.PSSessionConfigurationNoun,
-        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144301")]
+        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144301")]
     public sealed class EnablePSSessionConfigurationCommand : PSCmdlet
     {
         #region Private Data
@@ -4464,7 +4464,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
     /// 
     /// </summary>
     [Cmdlet(VerbsLifecycle.Disable, RemotingConstants.PSSessionConfigurationNoun,
-        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144299")]
+        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144299")]
     public sealed class DisablePSSessionConfigurationCommand : PSCmdlet
     {
         #region Private Data
@@ -4697,7 +4697,7 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
     /// </summary>
 #if !CORECLR
     [Cmdlet(VerbsLifecycle.Enable, RemotingConstants.PSRemotingNoun,
-        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144300")]
+        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144300")]
 #endif
     public sealed class EnablePSRemotingCommand : PSCmdlet
     {
@@ -5047,7 +5047,7 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
     /// </summary>
 #if !CORECLR
     [Cmdlet(VerbsLifecycle.Disable, RemotingConstants.PSRemotingNoun,
-        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144298")]
+        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144298")]
 #endif
     public sealed class DisablePSRemotingCommand : PSCmdlet
     {
@@ -5244,7 +5244,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
     /// <summary>
     /// Gets the capabilities of a constrained endpoint on the local machine for a specific user.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "PSSessionCapability", HelpUri = "http://go.microsoft.com/fwlink/?LinkId=623709")]
+    [Cmdlet(VerbsCommon.Get, "PSSessionCapability", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=623709")]
     [OutputType(new Type[] { typeof(System.Management.Automation.CommandInfo), typeof(System.Management.Automation.Runspaces.InitialSessionState) })]
     public sealed class GetPSSessionCapabilityCommand : PSCmdlet
     {

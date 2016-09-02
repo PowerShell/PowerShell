@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "LocalGroupMember",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717987")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717987")]
     [Alias("algm")]
     public class AddLocalGroupMemberCommand : PSCmdlet
     {

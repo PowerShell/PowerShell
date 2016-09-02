@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements update-typeData command.  
     /// </summary>
-    [Cmdlet(VerbsData.Update, "TypeData", SupportsShouldProcess = true, DefaultParameterSetName = FileParameterSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113421")]
+    [Cmdlet(VerbsData.Update, "TypeData", SupportsShouldProcess = true, DefaultParameterSetName = FileParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113421")]
     public class UpdateTypeDataCommand : UpdateData
     {
         #region dynamic type set
@@ -897,7 +897,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements update-typeData command.  
     /// </summary>
-    [Cmdlet(VerbsData.Update, "FormatData", SupportsShouldProcess = true, DefaultParameterSetName = FileParameterSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113420")]
+    [Cmdlet(VerbsData.Update, "FormatData", SupportsShouldProcess = true, DefaultParameterSetName = FileParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113420")]
     public class UpdateFormatDataCommand : UpdateData
     {
         /// <summary>
@@ -1078,7 +1078,7 @@ namespace Microsoft.PowerShell.Commands
     /// Remove-TypeData cmdlet
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TypeData", SupportsShouldProcess = true, DefaultParameterSetName = RemoveTypeDataSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=217038")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217038")]
     public class RemoveTypeDataCommand : PSCmdlet
     {
         private const string RemoveTypeSet = "RemoveTypeSet";
@@ -1323,7 +1323,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Get-TypeData cmdlet
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TypeData", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=217033")]
+    [Cmdlet(VerbsCommon.Get, "TypeData", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217033")]
     [OutputType(typeof(System.Management.Automation.PSObject))]
     public class GetTypeDataCommand : PSCmdlet
     {

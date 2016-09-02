@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class that implements add-pssnapin cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.Add, "PSSnapin", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113281")]
+    [Cmdlet(VerbsCommon.Add, "PSSnapin", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113281")]
     [OutputType(typeof(PSSnapInInfo))]
     public sealed class AddPSSnapinCommand : PSSnapInCommandBase
     {
@@ -538,7 +538,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class that implements remove-pssnapin cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "PSSnapin", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113378")]
+    [Cmdlet(VerbsCommon.Remove, "PSSnapin", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113378")]
     [OutputType(typeof(PSSnapInInfo))]
     public sealed class RemovePSSnapinCommand : PSSnapInCommandBase
     {
@@ -702,7 +702,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class that implements get-pssnapin cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "PSSnapin", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113330")]
+    [Cmdlet(VerbsCommon.Get, "PSSnapin", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113330")]
     [OutputType(typeof(PSSnapInInfo))]
     public sealed class GetPSSnapinCommand : PSSnapInCommandBase
     {

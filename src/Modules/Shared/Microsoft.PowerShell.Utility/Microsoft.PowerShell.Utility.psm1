@@ -1,6 +1,6 @@
 function Get-FileHash
 {
-    [CmdletBinding(DefaultParameterSetName = "Path", HelpURI = "http://go.microsoft.com/fwlink/?LinkId=517145")]
+    [CmdletBinding(DefaultParameterSetName = "Path", HelpURI = "https://go.microsoft.com/fwlink/?LinkId=517145")]
     param(
         [Parameter(Mandatory, ParameterSetName="Path", Position = 0)]
         [System.String[]]
@@ -145,7 +145,7 @@ function Get-FileHash
 function New-TemporaryFile
 {
     [CmdletBinding(
-        HelpURI='http://go.microsoft.com/fwlink/?LinkId=526726',
+        HelpURI='https://go.microsoft.com/fwlink/?LinkId=526726',
         SupportsShouldProcess=$true)]
     [OutputType([System.IO.FileInfo])]
     Param()
@@ -176,7 +176,7 @@ function New-TemporaryFile
 <# This cmdlet is used to generate a new guid #>
 function New-Guid
 {
-    [CmdletBinding(HelpURI='http://go.microsoft.com/fwlink/?LinkId=526920')]
+    [CmdletBinding(HelpURI='https://go.microsoft.com/fwlink/?LinkId=526920')]
 	[OutputType([System.Guid])]
     Param()
     
@@ -193,7 +193,7 @@ function Format-Hex
 {
     [CmdletBinding(
         DefaultParameterSetName="Path", 
-        HelpUri="http://go.microsoft.com/fwlink/?LinkId=526919")]
+        HelpUri="https://go.microsoft.com/fwlink/?LinkId=526919")]
     [Alias("fhx")]
     [OutputType("Microsoft.PowerShell.Commands.ByteCollection")]
     param 
@@ -513,7 +513,7 @@ function Format-Hex
 ## a file (such as a Module manifest, session configuration file)
 function Import-PowerShellDataFile
 {
-    [CmdletBinding(DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=623621")]
+    [CmdletBinding(DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=623621")]
     [OutputType("System.Collections.Hashtable")]
     param(
         [Parameter(ParameterSetName = "ByPath", Position = 0)]
@@ -569,7 +569,7 @@ function Import-PowerShellDataFile
 ## descriptor
 function ConvertFrom-SddlString
 {
-    [CmdletBinding(HelpUri = "http://go.microsoft.com/fwlink/?LinkId=623636")]
+    [CmdletBinding(HelpUri = "https://go.microsoft.com/fwlink/?LinkId=623636")]
     param(
         ## The string representing the security descriptor in SDDL syntax
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]

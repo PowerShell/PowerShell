@@ -126,7 +126,7 @@ $script:FastPackRefHastable = @{}
 $script:NuGetBinaryProgramDataPath=if(IsWindows) {"$env:ProgramFiles\PackageManagement\ProviderAssemblies"}
 $script:NuGetBinaryLocalAppDataPath=if(IsWindows) {"$env:LOCALAPPDATA\PackageManagement\ProviderAssemblies"}
 # go fwlink for 'https://nuget.org/nuget.exe'
-$script:NuGetClientSourceURL = 'http://go.microsoft.com/fwlink/?LinkID=690216&clcid=0x409'
+$script:NuGetClientSourceURL = 'https://go.microsoft.com/fwlink/?LinkID=690216&clcid=0x409'
 $script:NuGetExeName = 'NuGet.exe'
 $script:NuGetExePath = $null
 $script:NuGetProvider = $null
@@ -659,7 +659,7 @@ function Publish-Module
     #>
     [CmdletBinding(SupportsShouldProcess=$true,
                    PositionalBinding=$false,
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkID=398575',
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkID=398575',
                    DefaultParameterSetName="ModuleNameParameterSet")]
     Param
     (
@@ -1156,7 +1156,7 @@ function Find-Module
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(HelpUri='http://go.microsoft.com/fwlink/?LinkID=398574')]
+    [CmdletBinding(HelpUri='https://go.microsoft.com/fwlink/?LinkID=398574')]
     [outputtype("PSCustomObject[]")]
     Param
     (
@@ -1326,7 +1326,7 @@ function Save-Module
     .ExternalHelp PSGet.psm1-help.xml
     #>
     [CmdletBinding(DefaultParameterSetName='NameAndPathParameterSet',
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=531351',
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=531351',
                    SupportsShouldProcess=$true)]
     Param
     (
@@ -1570,7 +1570,7 @@ function Install-Module
     .ExternalHelp PSGet.psm1-help.xml
     #>
     [CmdletBinding(DefaultParameterSetName='NameParameterSet',
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkID=398573',
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkID=398573',
                    SupportsShouldProcess=$true)]
     Param
     (
@@ -1826,7 +1826,7 @@ function Update-Module
     .ExternalHelp PSGet.psm1-help.xml
     #>
     [CmdletBinding(SupportsShouldProcess=$true,
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkID=398576')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkID=398576')]
     Param
     (
         [Parameter(ValueFromPipelineByPropertyName=$true, 
@@ -2000,7 +2000,7 @@ function Uninstall-Module
     #>
     [CmdletBinding(DefaultParameterSetName='NameParameterSet',
                    SupportsShouldProcess=$true,
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=526864')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=526864')]
     Param
     (
         [Parameter(ValueFromPipelineByPropertyName=$true,
@@ -2103,7 +2103,7 @@ function Get-InstalledModule
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(HelpUri='http://go.microsoft.com/fwlink/?LinkId=526863')]
+    [CmdletBinding(HelpUri='https://go.microsoft.com/fwlink/?LinkId=526863')]
     Param
     (
         [Parameter(ValueFromPipelineByPropertyName=$true, 
@@ -2165,7 +2165,7 @@ function Find-DscResource
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(HelpUri = 'http://go.microsoft.com/fwlink/?LinkId=517196')]
+    [CmdletBinding(HelpUri = 'https://go.microsoft.com/fwlink/?LinkId=517196')]
     [outputtype('PSCustomObject[]')]
     Param
     (
@@ -2273,7 +2273,7 @@ function Find-Command
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(HelpUri = 'http://go.microsoft.com/fwlink/?LinkId=733636')]
+    [CmdletBinding(HelpUri = 'https://go.microsoft.com/fwlink/?LinkId=733636')]
     [outputtype('PSCustomObject[]')]
     Param
     (
@@ -2383,7 +2383,7 @@ function Find-RoleCapability
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(HelpUri = 'http://go.microsoft.com/fwlink/?LinkId=718029')]
+    [CmdletBinding(HelpUri = 'https://go.microsoft.com/fwlink/?LinkId=718029')]
     [outputtype('PSCustomObject[]')]
     Param
     (
@@ -2493,7 +2493,7 @@ function Publish-Script
     [CmdletBinding(SupportsShouldProcess=$true,
                    PositionalBinding=$false,
                    DefaultParameterSetName='PathParameterSet',
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=619788')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=619788')]
     Param
     (
         [Parameter(Mandatory=$true, 
@@ -2796,7 +2796,7 @@ function Find-Script
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(HelpUri='http://go.microsoft.com/fwlink/?LinkId=619785')]
+    [CmdletBinding(HelpUri='https://go.microsoft.com/fwlink/?LinkId=619785')]
     [outputtype("PSCustomObject[]")]
     Param
     (
@@ -2977,7 +2977,7 @@ function Save-Script
     .ExternalHelp PSGet.psm1-help.xml
     #>
     [CmdletBinding(DefaultParameterSetName='NameAndPathParameterSet',
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=619786',
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=619786',
                    SupportsShouldProcess=$true)]
     Param
     (
@@ -3235,7 +3235,7 @@ function Install-Script
     .ExternalHelp PSGet.psm1-help.xml
     #>
     [CmdletBinding(DefaultParameterSetName='NameParameterSet',
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=619784',
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=619784',
                    SupportsShouldProcess=$true)]
     Param
     (
@@ -3551,7 +3551,7 @@ function Update-Script
     .ExternalHelp PSGet.psm1-help.xml
     #>
     [CmdletBinding(SupportsShouldProcess=$true,
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=619787')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=619787')]
     Param
     (
         [Parameter(ValueFromPipelineByPropertyName=$true, 
@@ -3753,7 +3753,7 @@ function Uninstall-Script
     #>
     [CmdletBinding(DefaultParameterSetName='NameParameterSet',
                    SupportsShouldProcess=$true,
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=619789')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=619789')]
     Param
     (
         [Parameter(ValueFromPipelineByPropertyName=$true,
@@ -3851,7 +3851,7 @@ function Get-InstalledScript
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(HelpUri='http://go.microsoft.com/fwlink/?LinkId=619790')]
+    [CmdletBinding(HelpUri='https://go.microsoft.com/fwlink/?LinkId=619790')]
     Param
     (
         [Parameter(ValueFromPipelineByPropertyName=$true, 
@@ -3909,7 +3909,7 @@ function Register-PSRepository
     .ExternalHelp PSGet.psm1-help.xml
     #>
     [CmdletBinding(DefaultParameterSetName='NameParameterSet',
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkID=517129')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkID=517129')]
     Param 
     (
         [Parameter(Mandatory=$true,
@@ -4119,7 +4119,7 @@ function Set-PSRepository
     .ExternalHelp PSGet.psm1-help.xml
     #>
     [CmdletBinding(PositionalBinding=$false,
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkID=517128')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkID=517128')]
     Param
     (
         [Parameter(Mandatory=$true, Position=0)]
@@ -4318,7 +4318,7 @@ function Unregister-PSRepository
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(HelpUri='http://go.microsoft.com/fwlink/?LinkID=517130')]
+    [CmdletBinding(HelpUri='https://go.microsoft.com/fwlink/?LinkID=517130')]
     Param
     (
         [Parameter(ValueFromPipelineByPropertyName=$true,
@@ -4362,7 +4362,7 @@ function Get-PSRepository
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(HelpUri='http://go.microsoft.com/fwlink/?LinkID=517127')]
+    [CmdletBinding(HelpUri='https://go.microsoft.com/fwlink/?LinkID=517127')]
     Param
     (
         [Parameter(ValueFromPipelineByPropertyName=$true)]
@@ -4460,7 +4460,7 @@ function Test-ScriptFileInfo
     #>
     [CmdletBinding(PositionalBinding=$false,
                    DefaultParameterSetName='PathParameterSet',
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=619791')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=619791')]
     Param
     (
         [Parameter(Mandatory=$true,
@@ -4793,7 +4793,7 @@ function New-ScriptFileInfo
     #>
     [CmdletBinding(PositionalBinding=$false,
                    SupportsShouldProcess=$true,
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=619792')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=619792')]
     Param
     (
         [Parameter(Mandatory=$false,
@@ -5034,7 +5034,7 @@ function Update-ScriptFileInfo
     [CmdletBinding(PositionalBinding=$false,
                    DefaultParameterSetName='PathParameterSet',
                    SupportsShouldProcess=$true,
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=619793')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=619793')]
     Param
     (
         [Parameter(Mandatory=$true,
@@ -12496,7 +12496,7 @@ function Update-ModuleManifest
 #>
 [CmdletBinding(SupportsShouldProcess=$true,
                    PositionalBinding=$false,
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=619311')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=619311')]
     Param
     (
         [Parameter(Mandatory=$true,

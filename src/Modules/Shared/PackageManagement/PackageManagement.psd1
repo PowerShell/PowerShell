@@ -19,7 +19,7 @@
     Author = "Microsoft Corporation"
     CompanyName = "Microsoft Corporation"
     Copyright = "(C) Microsoft Corporation. All rights reserved."
-    HelpInfoUri = "http://go.microsoft.com/fwlink/?linkid=392040"
+    HelpInfoUri = "https://go.microsoft.com/fwlink/?linkid=392040"
     ModuleVersion = "1.0.0.1"
     PowerShellVersion = "3.0"
     ClrVersion = "4.0"

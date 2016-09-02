@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet clear all files in the RecycleBin for the given DriveLetter. 
     /// If not DriveLetter is specified, then the RecycleBin for all drives are cleared. 
     /// </summary>
-    [Cmdlet(VerbsCommon.Clear, "RecycleBin", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=524082", ConfirmImpact = ConfirmImpact.High)]
+    [Cmdlet(VerbsCommon.Clear, "RecycleBin", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=524082", ConfirmImpact = ConfirmImpact.High)]
     public class ClearRecycleBinCommand : PSCmdlet
     {
         private string[] _drivesList;

@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements get-variable command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Variable", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113336")]
+    [Cmdlet(VerbsCommon.Get, "Variable", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113336")]
     [OutputType(typeof(PSVariable))]
     public class GetVariableCommand : VariableCommandBase
     {
@@ -386,7 +386,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class implementing new-variable command
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "Variable", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113361")]
+    [Cmdlet(VerbsCommon.New, "Variable", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113361")]
     public sealed class NewVariableCommand : VariableCommandBase
     {
         #region parameters
@@ -578,7 +578,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements set-variable command
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "Variable", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113401")]
+    [Cmdlet(VerbsCommon.Set, "Variable", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113401")]
     [OutputType(typeof(PSVariable))]
     public sealed class SetVariableCommand : VariableCommandBase
     {
@@ -1033,7 +1033,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The Remove-Variable cmdlet implementation
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "Variable", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113380")]
+    [Cmdlet(VerbsCommon.Remove, "Variable", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113380")]
     public sealed class RemoveVariableCommand : VariableCommandBase
     {
         #region parameters
@@ -1187,7 +1187,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements set-variable command
     /// </summary>
-    [Cmdlet(VerbsCommon.Clear, "Variable", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113285")]
+    [Cmdlet(VerbsCommon.Clear, "Variable", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113285")]
     [OutputType(typeof(PSVariable))]
     public sealed class ClearVariableCommand : VariableCommandBase
     {

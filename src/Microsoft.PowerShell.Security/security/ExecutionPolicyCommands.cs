@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
     ///    - Current user machine preference    
     ///    - Local machine preference
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ExecutionPolicy", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113315")]
+    [Cmdlet(VerbsCommon.Get, "ExecutionPolicy", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113315")]
     [OutputType(typeof(ExecutionPolicy))]
     public class GetExecutionPolicyCommand : PSCmdlet
     {
@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
     /// If the Group Policy setting overrides the desired behaviour, the Cmdlet
     /// generates a terminating error.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "ExecutionPolicy", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113394")]
+    [Cmdlet(VerbsCommon.Set, "ExecutionPolicy", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113394")]
     public class SetExecutionPolicyCommand : PSCmdlet
     {
         /// <summary>

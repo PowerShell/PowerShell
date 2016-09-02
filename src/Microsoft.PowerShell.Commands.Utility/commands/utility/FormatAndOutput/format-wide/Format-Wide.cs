@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// implementation for the format-table command
     /// </summary>
-    [Cmdlet("Format", "Wide", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113304")]
+    [Cmdlet("Format", "Wide", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113304")]
     public class FormatWideCommand : OuterFormatShapeCommandBase
     {
         /// <summary>

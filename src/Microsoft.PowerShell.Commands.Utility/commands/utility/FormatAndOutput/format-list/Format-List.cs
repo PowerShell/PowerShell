@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// implementation for the format-table command
     /// </summary>
-    [Cmdlet("Format", "List", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113302")]
+    [Cmdlet("Format", "List", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113302")]
     public class FormatListCommand : OuterFormatTableAndListBase
     {
         /// <summary>

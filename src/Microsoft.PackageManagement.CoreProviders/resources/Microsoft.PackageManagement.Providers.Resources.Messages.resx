@@ -169,7 +169,7 @@
     <comment>0 - Uri link</comment>
   </data>
   <data name="ProviderBootstrapFailed" xml:space="preserve">
-    <value>Unable to bootstrap the required package provider due to problems with network connectivity. Please fix your network connection. If this is not possible, refer to 'Get-Help Install-PackageProvider' or http://go.microsoft.com/fwlink/?LinkId=626941 for guidance on installing the package provider manually.</value>
+    <value>Unable to bootstrap the required package provider due to problems with network connectivity. Please fix your network connection. If this is not possible, refer to 'Get-Help Install-PackageProvider' or https://go.microsoft.com/fwlink/?LinkId=626941 for guidance on installing the package provider manually.</value>
   </data>
   <data name="RetryDownload" xml:space="preserve">
     <value>Cannot download link '{0}', retrying for '{1}' more times.</value>

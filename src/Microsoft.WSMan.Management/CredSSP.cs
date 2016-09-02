@@ -123,7 +123,7 @@ namespace Microsoft.WSMan.Management
     /// </summary>
 
 
-    [Cmdlet(VerbsLifecycle.Disable, "WSManCredSSP", HelpUri = "http://go.microsoft.com/fwlink/?LinkId=141438")]
+    [Cmdlet(VerbsLifecycle.Disable, "WSManCredSSP", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141438")]
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
     [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSP")]
     public class DisableWSManCredSSPCommand : WSManCredSSPCommandBase, IDisposable
@@ -431,7 +431,7 @@ namespace Microsoft.WSMan.Management
     /// allows delegating explicit credentials to a server when server 
     /// authentication is achieved via a trusted X509 certificate or Kerberos
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Enable, "WSManCredSSP", HelpUri = "http://go.microsoft.com/fwlink/?LinkId=141442")]
+    [Cmdlet(VerbsLifecycle.Enable, "WSManCredSSP", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141442")]
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
     [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSP")]
     public class EnableWSManCredSSPCommand : WSManCredSSPCommandBase, IDisposable/*, IDynamicParameters*/
@@ -858,7 +858,7 @@ namespace Microsoft.WSMan.Management
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
     [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSP")]
-    [Cmdlet(VerbsCommon.Get, "WSManCredSSP", HelpUri = "http://go.microsoft.com/fwlink/?LinkId=141443")]
+    [Cmdlet(VerbsCommon.Get, "WSManCredSSP", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141443")]
     public class GetWSManCredSSPCommand : PSCmdlet, IDisposable
     {
         # region private

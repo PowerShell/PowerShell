@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
     /// statistical summary when finished.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = RegularParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135266", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135266", RemotingCapability = RemotingCapability.OwnedByCommand)]
     [OutputType(typeof(Boolean))]
     [OutputType(@"System.Management.ManagementObject#root\cimv2\Win32_PingStatus")]
     public class TestConnectionCommand : PSCmdlet
@@ -668,7 +668,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Cmdlet for Enable-ComputerRestore
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Enable, "ComputerRestore", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135209")]
+    [Cmdlet(VerbsLifecycle.Enable, "ComputerRestore", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135209")]
     public sealed class EnableComputerRestoreCommand : PSCmdlet, IDisposable
     {
 #region Parameters
@@ -848,7 +848,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This cmdlet is to Disable Computer Restore points.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Disable, "ComputerRestore", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135207")]
+    [Cmdlet(VerbsLifecycle.Disable, "ComputerRestore", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135207")]
     public sealed class DisableComputerRestoreCommand : PSCmdlet, IDisposable
     {
 #region Parameters
@@ -999,7 +999,7 @@ namespace Microsoft.PowerShell.Commands
     /// Creates the Restore Point for the Local computer 
     /// </summary>
 
-    [Cmdlet(VerbsData.Checkpoint, "Computer", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135197")]
+    [Cmdlet(VerbsData.Checkpoint, "Computer", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135197")]
     public class CheckpointComputerCommand : PSCmdlet, IDisposable
     {
 #region Parameters
@@ -1397,7 +1397,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This cmdlet is to Get Computer Restore points.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ComputerRestorePoint", DefaultParameterSetName = "ID", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135215")]
+    [Cmdlet(VerbsCommon.Get, "ComputerRestorePoint", DefaultParameterSetName = "ID", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135215")]
     [OutputType(@"System.Management.ManagementObject#root\default\SystemRestore")]
     public sealed class GetComputerRestorePointCommand : PSCmdlet, IDisposable
     {
@@ -1725,7 +1725,7 @@ namespace Microsoft.PowerShell.Commands
     /// Restarts  the computer 
     /// </summary>
     [Cmdlet(VerbsLifecycle.Restart, "Computer", SupportsShouldProcess = true, DefaultParameterSetName = DefaultParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135253", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135253", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class RestartComputerCommand : PSCmdlet, IDisposable
     {
 #region "Parameters and PrivateData"
@@ -3188,7 +3188,7 @@ $result
     /// cmdlet to stop computer
     /// </summary>
     [Cmdlet(VerbsLifecycle.Stop, "Computer", SupportsShouldProcess = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135263", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135263", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public sealed class StopComputerCommand : PSCmdlet, IDisposable
     {
 #region Private Members
@@ -3612,7 +3612,7 @@ $result
     /// <summary>
     /// This cmdlet is to Restore Computer
     /// </summary>
-    [Cmdlet(VerbsData.Restore, "Computer", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135254")]
+    [Cmdlet(VerbsData.Restore, "Computer", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135254")]
     public sealed class RestoreComputerCommand : PSCmdlet, IDisposable
     {
 #region Parameters
@@ -3831,7 +3831,7 @@ $result
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1004AcceptForceParameterWhenCallingShouldContinue")]
     [Cmdlet(VerbsCommon.Add, "Computer", SupportsShouldProcess = true, DefaultParameterSetName = DomainParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135194", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135194", RemotingCapability = RemotingCapability.SupportedByCommand)]
     [OutputType(typeof(ComputerChangeInfo))]
     public class AddComputerCommand : PSCmdlet
     {
@@ -4628,7 +4628,7 @@ $result
     /// </summary>
 
     [Cmdlet(VerbsCommon.Remove, "Computer", SupportsShouldProcess = true, DefaultParameterSetName = LocalParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135246", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135246", RemotingCapability = RemotingCapability.SupportedByCommand)]
     [OutputType(typeof(ComputerChangeInfo))]
     public class RemoveComputerCommand : PSCmdlet
     {
@@ -4970,7 +4970,7 @@ $result
     /// </summary>
 
     [Cmdlet(VerbsCommon.Rename, "Computer", SupportsShouldProcess = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=219990", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=219990", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public class RenameComputerCommand : PSCmdlet
     {
 #region Private Members
@@ -5495,7 +5495,7 @@ $result
     /// rebuild the trust if specified.
     /// </summary>
 
-    [Cmdlet(VerbsDiagnostic.Test, "ComputerSecureChannel", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=137749")]
+    [Cmdlet(VerbsDiagnostic.Test, "ComputerSecureChannel", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=137749")]
     [OutputType(typeof(Boolean))]
     public class TestComputerSecureChannelCommand : PSCmdlet
     {
@@ -5716,7 +5716,7 @@ $result
     /// </summary>
 
     [Cmdlet("Reset", "ComputerMachinePassword",
-             SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135252")]
+             SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135252")]
     public class ResetComputerMachinePasswordCommand : PSCmdlet
     {
 #region "Parameter and PrivateData"
