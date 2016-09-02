@@ -630,6 +630,24 @@ namespace System.Management.Automation
         } // SetVariable
 
         /// <summary>
+        /// Sets a variable to scope without any checks.
+        /// This is intended to be used only for global scope.
+        /// </summary>
+        /// <param name="variableToSet">PSVariable to set</param>
+        /// <param name="sessionState">SessionState for variable</param>
+        /// <returns></returns>
+        internal void SetVariableForce(PSVariable variableToSet, SessionStateInternal sessionState)
+        {
+            if (Parent != null)
+            {
+                throw new NotImplementedException("SetVariableForce");
+            }
+
+            variableToSet.SessionState = sessionState;
+            GetPrivateVariables()[variableToSet.Name] = variableToSet;
+        }
+
+        /// <summary>
         /// Sets a variable to the given value.
         /// </summary>
         ///

@@ -351,6 +351,10 @@ namespace System.Management.Automation
             v = new PSUICultureVariable();
             this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
 
+            // $?
+            v = new QuestionMarkVariable(this.ExecutionContext);
+            this.GlobalScope.SetVariableForce(v, this);
+
             // $ShellId - if there is no runspace config, use the default string
             string shellId = ExecutionContext.ShellID;
 
