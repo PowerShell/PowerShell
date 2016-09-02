@@ -216,7 +216,7 @@
   <data name="PromptForExportConsole" xml:space="preserve">
     <value>Cannot export a console file because no console file has been specified. Do you want to continue with the export operation?</value>
   </data>
-  <data name="ConsoleCannotbeConvertedToString" xml:space="preserve">
+  <data name="ConsoleCannotBeConvertedToString" xml:space="preserve">
     <value>Cannot save the file because the file name format is not valid. Specify a file name using the command: export-console -path.</value>
   </data>
   <data name="FileNameNotResolved" xml:space="preserve">

@@ -297,7 +297,7 @@
   <data name="ProviderStartException" xml:space="preserve">
     <value>Attempting to perform the Start operation on the '{0}' provider failed. {1}</value>
   </data>
-  <data name="StartDynamicParmatersProviderException" xml:space="preserve">
+  <data name="StartDynamicParameterProviderException" xml:space="preserve">
     <value>Attempting to perform the StartDynamicParameters operation on the '{0}' provider failed for the path '{1}'. {2}</value>
   </data>
   <data name="InitializeDefaultDrivesException" xml:space="preserve">

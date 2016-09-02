@@ -4930,7 +4930,7 @@ end
             new SessionStateVariableEntry(
                 FormatEnumerationLimit,
                 DefaultFormatEnumerationLimit,
-                RunspaceInit.FormatEnunmerationLimitDescription
+                RunspaceInit.FormatEnumerationLimitDescription
                 ),
 
              //variable for PSEmailServer

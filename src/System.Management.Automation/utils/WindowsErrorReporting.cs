@@ -172,7 +172,7 @@ namespace System.Management.Automation
             /// <summary>
             /// Spawn another process to submit the report and return from this function call immediately. Note that the contents of the pSubmitResult parameter are undefined and there is no way to query when the reporting completes or the completion status.
             /// </summary>
-            OutOfProcesAsync = 1024,
+            OutOfProcessAsync = 1024,
 
             BypassDataThrottling = 2048,
             ArchiveParametersOnly = 4096,
@@ -440,7 +440,7 @@ namespace System.Management.Automation
             /// <param name="dumpType">The type of dump to be generated.</param>
             /// <param name="exceptionParam">A pointer to a MINIDUMP_EXCEPTION_INFORMATION structure describing the client exception that caused the minidump to be generated. If the value of this parameter is NULL, no exception information is included in the minidump file.</param>
             /// <param name="userStreamParam">A pointer to a MINIDUMP_USER_STREAM_INFORMATION structure. If the value of this parameter is NULL, no user-defined information is included in the minidump file.</param>
-            /// <param name="callackParam">A pointer to a MINIDUMP_CALLBACK_INFORMATION structure that specifies a callback routine which is to receive extended minidump information. If the value of this parameter is NULL, no callbacks are performed.</param>
+            /// <param name="callbackParam">A pointer to a MINIDUMP_CALLBACK_INFORMATION structure that specifies a callback routine which is to receive extended minidump information. If the value of this parameter is NULL, no callbacks are performed.</param>
             /// <returns></returns>
             [DllImport("DbgHelp.dll", SetLastError = true)]
             internal static extern bool MiniDumpWriteDump(
@@ -450,7 +450,7 @@ namespace System.Management.Automation
                 MiniDumpType dumpType,
                 IntPtr exceptionParam,
                 IntPtr userStreamParam,
-                IntPtr callackParam);
+                IntPtr callbackParam);
         }
 
         #endregion Native methods

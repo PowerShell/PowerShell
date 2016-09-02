@@ -592,7 +592,7 @@ namespace System.Management.Automation.Remoting
                             ResetReceiveData();
                             if (!_canIgnoreOffSyncFragments)
                             {
-                                PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.FragmetIdsNotInSequence);
+                                PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.FragmentIdsNotInSequence);
                                 throw e;
                             }
                             else

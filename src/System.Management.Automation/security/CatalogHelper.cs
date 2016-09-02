@@ -357,7 +357,7 @@ namespace System.Management.Automation
                     {
                         // If we are not able to generate catalog definition file we can not continue generating catalog 
                         // throw PSTraceSource.NewInvalidOperationException("catalog", CatalogStrings.CatalogDefinitionFileNotGenerated);                    
-                        ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(CatalogStrings.CatalogDefintionFileNotGenerated), "CatalogDefintionFileNotGenerated", ErrorCategory.InvalidOperation, null);
+                        ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(CatalogStrings.CatalogDefinitionFileNotGenerated), "CatalogDefinitionFileNotGenerated", ErrorCategory.InvalidOperation, null);
                         _cmdlet.ThrowTerminatingError(errorRecord);
                     }
 
@@ -586,7 +586,7 @@ namespace System.Management.Automation
         internal static void ProcessCatalogFile(string relativePath, string fileHash, WildcardPattern[] excludedPatterns, ref Dictionary<String, String> catalogHashes)
         {
             // Found the attribute we are looking for 
-            _cmdlet.WriteVerbose(StringUtil.Format(CatalogStrings.FoundFileHashInCatlogItem, relativePath, fileHash));
+            _cmdlet.WriteVerbose(StringUtil.Format(CatalogStrings.FoundFileHashInCatalogItem, relativePath, fileHash));
 
             // Only add the file for validation if it does not meet exclusion criteria 
             if (!CheckExcludedCriteria((new FileInfo(relativePath)).Name, excludedPatterns))

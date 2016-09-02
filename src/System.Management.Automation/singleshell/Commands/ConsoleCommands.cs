@@ -556,7 +556,7 @@ namespace Microsoft.PowerShell.Commands
                 return consoleValue;
             }
 
-            throw PSTraceSource.NewArgumentException("fileName", ConsoleInfoErrorStrings.ConsoleCannotbeConvertedToString);
+            throw PSTraceSource.NewArgumentException("fileName", ConsoleInfoErrorStrings.ConsoleCannotBeConvertedToString);
         }
 
         /// <summary>

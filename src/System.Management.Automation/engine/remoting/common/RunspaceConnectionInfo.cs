@@ -654,7 +654,7 @@ namespace System.Management.Automation.Runspaces
                         _proxyAuthentication = value;
                         break;
                     default:
-                        string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ProxyAmbiguosAuthentication,
+                        string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ProxyAmbiguousAuthentication,
                             value,
                             AuthenticationMechanism.Basic.ToString(),
                             AuthenticationMechanism.Negotiate.ToString(),
@@ -1258,7 +1258,7 @@ namespace System.Management.Automation.Runspaces
             if ((WSManAuthenticationMechanism != WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION)
                 && (_thumbPrint != null))
             {
-                throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.NewRunspaceAmbiguosAuthentication,
+                throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.NewRunspaceAmbiguousAuthentication,
                       "CertificateThumbPrint", this.AuthenticationMechanism.ToString());
             }
         }

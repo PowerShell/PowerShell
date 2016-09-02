@@ -157,7 +157,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (moduleSpecification.RequiredVersion != null && moduleSpecification.MaximumVersion != null)
             {
-                message = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "MaxiumVersion", "RequiredVersion");
+                message = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "MaximumVersion", "RequiredVersion");
                 return new ArgumentException(message);
             }
             return null;
