@@ -30,11 +30,6 @@ char *GetFullyQualifiedName()
         return NULL;
     }
 
-    if (strchr(computerName, '.') != NULL)
-    {
-        return computerName;
-    }
-
     struct addrinfo hints, *info;
 
     memset(&hints, 0, sizeof hints);
