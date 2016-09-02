@@ -1,5 +1,4 @@
 ﻿Describe "Cmdlet declaration statement" -Tags "CI" {
-
     $testData = @(
         @{ Name = 'Verify non-cmdlet formatted names are allowed';
            Script = '

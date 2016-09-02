@@ -7,8 +7,7 @@
             $args | foreach {$l.Add($_)}
             , $l
             }
-        }
-        
+        }        
 
         It 'Check basic expressions' {
 
@@ -63,7 +62,6 @@
         }
 
         It 'Check union of default + one allowed variable and but not allow environment variable' {
-
             try
             {
                 { 2 + $a + $env:foo }.CheckRestrictedLanguage($null, (list a), $false)   # fail
@@ -85,8 +83,7 @@
             { { 2 + $a + $b + $c + $env:foo }.CheckRestrictedLanguage($null, (list *), $false)} | Should Not Throw   # succeed
         }
 
-        It 'Check for restricted commands' {
-        
+        It 'Check for restricted commands' {        
             try
             {
                 {get-date}.CheckRestrictedLangauge($null, $null, $false)
@@ -99,11 +96,9 @@
         }
 
         It 'Check for allowed commands and variables' {
-
             { { get-process | where name -match $pattern | foreach $prop }.CheckRestrictedLanguage(
                 (list get-process where foreach),
                 (list prop pattern)
                 , $false) }| Should Not Throw
         }
-
 }
