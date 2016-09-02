@@ -169,24 +169,40 @@ namespace System.Management.Automation
             InvocationInfo invocationInfo)
         {
             // If we are in a constrained language mode (Core or Restricted), block it.
-            // This goes both ways:
+            // We are currently restricting in one direction:
             //    - Can't dot something from a more permissive mode, since that would probably expose
             //      functions that were never designed to handle untrusted data.
-            //    - Can't dot something from a less permissive mode, since that might introduce tainted
-            //      data into the current scope.
+            // This function won't be called for NoLanguage mode so the only direction checked is trusted 
+            // (FullLanguage mode) script running in a constrained/restricted session.
             if ((scriptBlock.LanguageMode.HasValue) &&
                 (scriptBlock.LanguageMode != languageMode) &&
                 ((languageMode == PSLanguageMode.RestrictedLanguage) ||
                 (languageMode == PSLanguageMode.ConstrainedLanguage)))
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                // Finally check if script block is really just PowerShell commands plus parameters.
+                // If so then it is safe to dot source across language mode boundaries.
+                bool isSafeToDotSource = false;
+                try
+                {
+                    scriptBlock.GetPowerShell();
+                    isSafeToDotSource = true;
+                }
+                catch (Exception e)
+                {
+                    CheckForSevereException(e);
+                }
+
+                if (!isSafeToDotSource)
+                {
+                    ErrorRecord errorRecord = new ErrorRecord(
                     new NotSupportedException(
                         DiscoveryExceptions.DotSourceNotSupported),
                         "DotSourceNotSupported",
                         ErrorCategory.InvalidOperation,
                         null);
-                errorRecord.SetInvocationInfo(invocationInfo);
-                throw new CmdletInvocationException(errorRecord);
+                    errorRecord.SetInvocationInfo(invocationInfo);
+                    throw new CmdletInvocationException(errorRecord);
+                }
             }
         }
 
