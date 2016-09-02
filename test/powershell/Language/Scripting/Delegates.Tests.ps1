@@ -1,6 +1,5 @@
 ﻿Describe 'Test for conversion b/w script block and delegate' -Tags "CI" {
     BeforeAll {
-
         function lineno
         {
             $myInvocation.ScriptLineNumber
