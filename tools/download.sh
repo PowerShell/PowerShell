@@ -98,6 +98,19 @@ case "$OSTYPE" in
         esac
         ;;
     darwin*)
+        if hash brew 2>/dev/null; then
+            if [[ ! -d $(brew --prefix openssl) ]]; then
+               echo "Installing OpenSSL with brew..."
+               if ! brew install openssl; then
+                   echo "ERROR: OpenSSL failed to install! Crypto functions will not work..." >&2
+                   # Don't abort because it is not fatal
+               fi
+            fi
+        else
+            echo "ERROR: brew not found! OpenSSL may not be available..." >&2
+            # Don't abort because it is not fatal
+        fi
+
         echo "Installing $package with sudo ..."
         sudo installer -pkg "./$package" -target /
         ;;
