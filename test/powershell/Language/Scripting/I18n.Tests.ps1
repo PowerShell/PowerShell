@@ -130,9 +130,9 @@ Describe 'Testing of script internationalization' -Tags "CI" {
     }
 
     $testData = @(
-        @{cmd = 'data d { @{ x=$(get-command)} }';Expected='*get-command*'},
-        @{cmd = 'data d { if ($(get-command)) {} }';Expected='*get-command*'},
-        @{cmd = 'data d { @(get-command) }';Expected='*get-command*'}
+        @{cmd = 'data d { @{ x=$(get-command)} }';Expected='get-command'},
+        @{cmd = 'data d { if ($(get-command)) {} }';Expected='get-command'},
+        @{cmd = 'data d { @(get-command) }';Expected='get-command'}
         )
 
     It 'Allowed cmdlets checked properly' -TestCase:$testData {
@@ -141,18 +141,18 @@ Describe 'Testing of script internationalization' -Tags "CI" {
         $script:exception = $null
         & {
             trap {$script:exception = $_.Exception ; continue }            
-            iex $cmd
-        }
-        #$exception -like '*get-command*' | Should Be $true
-        $exception -like $Expected | Should Be $true
+            invoke-expression $cmd 
+        }       
+        
+        $exception | Should Match $Expected
     }
 
 
     it 'Check alternate syntax that also supports complex variable names' {
     
        & {
-        $script:mydata = data { 123 }
-        }
+            $script:mydata = data { 123 }
+         }
         $mydata | Should Be 123
 
         $mydata = data { 456 }
