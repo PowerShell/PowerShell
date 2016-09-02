@@ -60,15 +60,15 @@ case "$OSTYPE" in
         ;;
 esac
 
-info=$(get_info $version)
+info=$(get_info "$version")
 
 # Parses $info for asset ID and package name
-read asset package <<< $(echo $info | sed 's/[,"]//g' | awk '{ print $2; print $4 }')
+read asset package <<< $(echo "$info" | sed 's/[,"]//g' | awk '{ print $2; print $4 }')
 
 # Downloads asset to file
-packageuri=$(curl -s -i -H 'Accept: application/octet-stream' https://api.github.com/repos/PowerShell/PowerShell/releases/assets/$asset |
+packageuri=$(curl -s -i -H 'Accept: application/octet-stream' "https://api.github.com/repos/PowerShell/PowerShell/releases/assets/$asset" |
     grep location | sed 's/location: //g')
-curl -C - -s -o $package ${packageuri%$'\r'}
+curl -C - -s -o "$package" ${packageuri%$'\r'}
 
 # Installs PowerShell package
 case "$OSTYPE" in
@@ -91,7 +91,7 @@ case "$OSTYPE" in
                         ;;
                 esac
                 echo "Installing $libicupackage, libunwind8, and $package with sudo ..."
-                sudo apt-get install -y libunwind8 $icupackage
+                sudo apt-get install -y libunwind8 "$icupackage"
                 sudo dpkg -i "./$package"
                 ;;
             *)
@@ -99,14 +99,14 @@ case "$OSTYPE" in
         ;;
     darwin*)
         echo "Installing $package with sudo ..."
-        sudo installer -pkg ./$package -target /
+        sudo installer -pkg "./$package" -target /
         ;;
 esac
 
 powershell -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'
 success=$?
 
-if [[ $success != 0 ]]; then
-    echo "ERROR! PowerShell didn't install. Check script output" >&2
-    exit $success
+if [[ "$success" != 0 ]]; then
+    echo "ERROR: PowerShell failed to install!" >&2
+    exit "$success"
 fi
