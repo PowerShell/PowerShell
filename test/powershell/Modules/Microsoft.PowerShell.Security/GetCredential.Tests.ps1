@@ -55,7 +55,4 @@ Describe "Get-Credential Test" -tag "CI" {
         $netcred.Password | Should be "this is a test"
         $th.ui.Streams.Prompt[-1] | should be "Credential:CustomTitle:Foo"
     }
-    It "Get-Credential with empty username, should throw" {
-        { $cred = $ps.AddScript("Get-Credential -UserName ''").Invoke() } | should throw
-    }
 }
