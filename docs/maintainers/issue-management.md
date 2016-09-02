@@ -75,6 +75,8 @@ The following labels are used on PRs:
 
 * `Review - Needed` : The PR is being reviewed.  Please see [Pull Request - Code Review](../../.github/CONTRIBUTING.md#pull-request-code-review)
 * `Review - Waiting on Author` : The PR was reviewed by the team and requires changes or comments from the author before being accepted.
+* `Review - Abandoned` : The PR was not updated for significant number of days (the exact number could vary in time).
+  Maintainers should look into such PRs and re-evaluate them.
 
 ### Random labels
 
