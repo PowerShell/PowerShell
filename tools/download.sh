@@ -70,6 +70,11 @@ packageuri=$(curl -s -i -H 'Accept: application/octet-stream' "https://api.githu
     grep location | sed 's/location: //g')
 curl -C - -o "$package" ${packageuri%$'\r'}
 
+if [[ ! -r "$package" ]]; then
+    echo "ERROR: $package failed to download! Aborting..." >&2
+    exit 1
+fi
+
 # Installs PowerShell package
 case "$OSTYPE" in
     linux*)
