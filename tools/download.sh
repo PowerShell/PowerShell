@@ -20,13 +20,19 @@ case "$OSTYPE" in
         # Install curl and wget to download package
         case "$ID" in
             centos*)
-                if [[ -z $(command -v curl) ]]; then
+                if ! hash curl 2>/dev/null; then
                     echo "curl not found, installing..."
                     sudo yum install -y curl
                 fi
+
                 version=rpm
                 ;;
             ubuntu)
+                if ! hash curl 2>/dev/null; then
+                    echo "curl not found, installing..."
+                    sudo apt-get install -y curl
+                fi
+
                 case "$VERSION_ID" in
                     14.04)
                         version=ubuntu1.14.04.1_amd64.deb
@@ -38,10 +44,6 @@ case "$OSTYPE" in
                         echo "Ubuntu $VERSION_ID is not supported!" >&2
                         exit 2
                 esac
-                if [[ -z $(command -v curl) ]]; then
-                    echo "curl not found, installing..."
-                    sudo apt-get install -y curl
-                fi
                 ;;
             *)
                 echo "$NAME is not supported!" >&2
@@ -49,6 +51,7 @@ case "$OSTYPE" in
         esac
         ;;
     darwin*)
+        # We don't check for curl as macOS should have a system version
         version=pkg
         ;;
     *)
