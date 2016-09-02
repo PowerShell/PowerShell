@@ -164,9 +164,9 @@ Describe 'named blocks parsing' -Tags "CI" {
     Test-Ast 'begin {} end' 'begin {} end' 'begin {}' 'end'
 }
 
-    #
-    # data statement
-    #
+#
+# data statement
+#
 Describe 'data statement parsing' -Tags "CI" {
     ShouldBeParseError 'data' MissingStatementBlockForDataSection 5 -CheckColumnNumber
     ShouldBeParseError 'data foo' MissingStatementBlockForDataSection 9 -CheckColumnNumber
@@ -188,10 +188,9 @@ Describe 'data statement parsing' -Tags "CI" {
     Test-ErrorStmt 'data -s a,b' 'data -s a,b' 'a' 'b'
 }
 
-    #
-    # try/catch/finally statement
-    #
-
+#
+# try/catch/finally statement
+#
 Describe 'try/catch/finally statement parsing' -Tags "CI" {
     ShouldBeParseError 'try' MissingTryStatementBlock 3
     ShouldBeParseError 'try {}' MissingCatchOrFinally 6
@@ -215,7 +214,6 @@ Describe 'try/catch/finally statement parsing' -Tags "CI" {
     Test-ErrorStmt 'try {1} catch [int],[char] {2} catch'  'try {1} catch [int],[char] {2} catch' '{1}' '1' '1' '1' 'catch [int],[char] {2}' '{2}' '2' '2' '2' '[int]' '[char]'
     Test-ErrorStmt 'try {1} catch [int],'                  'try {1} catch [int],' '{1}' '1' '1' '1' '[int]'
 }
-
 
 Describe 'switch statement parsing' -Tags "CI" {
     ShouldBeParseError 'switch' PipelineValueRequired 6
@@ -277,7 +275,6 @@ Describe 'splatting parsing' -Tags "CI" {
     ShouldBeParseError 'function foo (@a) {}' SplattingNotPermitted 14
 }
 
-
 Describe 'Pipes parsing' -Tags "CI" {
     ShouldBeParseError 'gps|' EmptyPipeElement 4
     ShouldBeParseError '1|1' ExpressionsMustBeFirstInPipeline 2
@@ -291,14 +288,10 @@ Describe 'commands parsing' -Tags "CI" {
     ShouldBeParseError 'gcm ,' MissingArgument 4
 }
 
-    #
-    # tokens
-    #
 Describe 'tokens parsing' -Tags "CI" {
     ShouldBeParseError '   )' UnexpectedToken 3
     ShouldBeParseError '   }' UnexpectedToken 4 -CheckColumnNumber
 }
-
 
 Describe 'expressions parsing' -Tags "CI" {
     ShouldBeParseError '1+' ExpectedValueExpression 2

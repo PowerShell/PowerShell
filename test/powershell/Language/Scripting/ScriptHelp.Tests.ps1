@@ -1,5 +1,4 @@
 ﻿ Describe 'get-help HelpFunc1' -Tags "CI" { 
- 
     BeforeAll {
     function TestHelpError {
         [CmdletBinding()]
@@ -154,15 +153,15 @@ Describe 'get-help file' -Tags "CI" {
 
 	    # Note - 2 blank lines below are intentional, do not delete
         @'
-    # .SYNOPSIS
-    #    Script help, not function help
+        # .SYNOPSIS
+        #    Script help, not function help
 
 
-    function foo
-    {
-    }
+        function foo
+        {
+        }
 
-    get-help foo
+        get-help foo
 '@ > $tmpfile
 
         $x = get-help $tmpfile
@@ -173,7 +172,6 @@ Describe 'get-help file' -Tags "CI" {
 } 
    
 Describe 'get-help other tests' -Tags "CI" {
-
     BeforeAll {
         try {
             $tempFile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), "ps1")
@@ -216,19 +214,19 @@ Describe 'get-help other tests' -Tags "CI" {
     }
 
     Context 'get-help file and get-help helpFunc2' {
-            $script = @"
-    <#
-    .SYNOPSIS
-        This is script help
-    #>
+        $script = @"
+            <#
+            .SYNOPSIS
+                This is script help
+            #>
 
-    <#
-    .SYNOPSIS
-        This is function help for helpFunc2
-    #>
-    function helpFunc2 {}
+            <#
+            .SYNOPSIS
+                This is function help for helpFunc2
+            #>
+            function helpFunc2 {}
 
-    get-help helpFunc2
+            get-help helpFunc2
 "@
 
         Set-Content $tempFile $script
@@ -241,18 +239,18 @@ Describe 'get-help other tests' -Tags "CI" {
 
     Context 'get-help file and get-help helpFunc2' {
     $script = @"
-    #
-    # .SYNOPSIS
-    #    This is script help
-    #
+        #
+        # .SYNOPSIS
+        #    This is script help
+        #
 
-    #
-    # .SYNOPSIS
-    #    This is function help for helpFunc2
-    #
-    function helpFunc2 {}
+        #
+        # .SYNOPSIS
+        #    This is function help for helpFunc2
+        #
+        function helpFunc2 {}
 
-    get-help helpFunc2
+        get-help helpFunc2
 "@
 
         Set-Content $tempFile $script
@@ -266,28 +264,28 @@ Describe 'get-help other tests' -Tags "CI" {
     Context 'get-help psuedo file' {
     
     $script = @'
-    ###########################################
-    #
-    # Psuedo-Copyright header comment
-    #
-    ###########################################
+        ###########################################
+        #
+        # Psuedo-Copyright header comment
+        #
+        ###########################################
 
-    #requires -version 2.0
+        #requires -version 2.0
 
-    #
-    # .Synopsis
-    #	Changes Admin passwords across all KDE servers.
-    #
-    [CmdletBinding(DefaultParameterSetName="Live")]
-    param(
-    [Parameter(
-	    ParameterSetName="Live",
-	    Mandatory=$true)]
-    $live,
-    [Parameter(
-	    ParameterSetName="Test",
-	    Mandatory=$true)]
-    $test)
+        #
+        # .Synopsis
+        #	Changes Admin passwords across all KDE servers.
+        #
+        [CmdletBinding(DefaultParameterSetName="Live")]
+        param(
+        [Parameter(
+	        ParameterSetName="Live",
+	        Mandatory=$true)]
+        $live,
+        [Parameter(
+	        ParameterSetName="Test",
+	        Mandatory=$true)]
+        $test)
 '@
 
         Set-Content $tempFile $script
@@ -452,41 +450,41 @@ Describe 'get-help other tests' -Tags "CI" {
     }
 
     Context 'get-help helpFunc11' {
-    function helpFunc11
-    {
-    # .Synopsis
-    #
-    #   useless, sorry
+        function helpFunc11
+        {
+        # .Synopsis
+        #
+        #   useless, sorry
 
-    param(
+            param(
 
-        # not in help
+                # not in help
     
-        <# abc #><# help #> [parameter()]    [string]
-        $abc,
+                <# abc #><# help #> [parameter()]    [string]
+                $abc,
 
-        [string]
-        # def help
-        $def,
+                [string]
+                # def help
+                $def,
 
-        [parameter()]
-        # ghi help
-        $ghi,
+                [parameter()]
+                # ghi help
+                $ghi,
 
-        # jkl help
+                # jkl help
 
-        $jkl,
+                $jkl,
 
-        <#mno help#>$mno,
-        <#pqr help#>[int]$pqr
+                <#mno help#>$mno,
+                <#pqr help#>[int]$pqr
 
-    )
-    }
+                )
+        }
 
-    $x = get-help helpFunc11 -det
-    $x.Parameters.parameter | % {
-    It '$_.description' { $_.description[0].text | Should match "^$($_.Name)\s+help" }
-    }
+        $x = get-help helpFunc11 -det
+        $x.Parameters.parameter | % {
+        It '$_.description' { $_.description[0].text | Should match "^$($_.Name)\s+help" }
+        }
     }
 
     Context 'get-help helpFunc12' {

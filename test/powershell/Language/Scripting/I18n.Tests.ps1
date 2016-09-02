@@ -1,5 +1,4 @@
 Describe 'Testing of script internationalization' -Tags "CI" {
-
     BeforeAll {
         $dir=$PSScriptRoot
         $defaultParamValues = $PSDefaultParameterValues.Clone()
