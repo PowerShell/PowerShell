@@ -154,7 +154,6 @@
     }
 
     Context "SupportShouldprocess" {
-
         $script = '
                 function get-foo
                 {
@@ -208,7 +207,6 @@
     }
 
     It 'confirmimpact support: none' {
-
         $script = '
             function get-foo
             {
@@ -316,7 +314,6 @@
 
 
     Context 'confirmimpact support: High under the non-interactive host' {
-
         $script = '
             function get-foo
             {
@@ -354,7 +351,6 @@
     }
 
     Context 'ShouldContinue Support under the non-interactive host' {
-
         $script = '
             function get-foo 
             {
