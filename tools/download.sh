@@ -68,7 +68,7 @@ read asset package <<< $(echo "$info" | sed 's/[,"]//g' | awk '{ print $2; print
 # Downloads asset to file
 packageuri=$(curl -s -i -H 'Accept: application/octet-stream' "https://api.github.com/repos/PowerShell/PowerShell/releases/assets/$asset" |
     grep location | sed 's/location: //g')
-curl -C - -s -o "$package" ${packageuri%$'\r'}
+curl -C - -o "$package" ${packageuri%$'\r'}
 
 # Installs PowerShell package
 case "$OSTYPE" in
