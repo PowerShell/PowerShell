@@ -7,10 +7,9 @@ trap '
   kill -s INT "$$"
 ' INT
 
-# Retrieves asset ID and package name of asset ending in argument
-# $info looks like: "id": 1698239, "name": "powershell_0.4.0-1_amd64.deb",
-get_info() {
-    curl -s https://api.github.com/repos/PowerShell/PowerShell/releases/latest | grep -B 1 "name.*$1"
+get_url() {
+    release=v6.0.0-alpha.9
+    echo "https://github.com/PowerShell/PowerShell/releases/download/$release/$1"
 }
 
 # Get OS specific asset ID and package name
@@ -25,7 +24,7 @@ case "$OSTYPE" in
                     sudo yum install -y curl
                 fi
 
-                version=rpm
+                package=powershell-6.0.0_alpha.9-1.el7.centos.x86_64.rpm
                 ;;
             ubuntu)
                 if ! hash curl 2>/dev/null; then
@@ -35,10 +34,10 @@ case "$OSTYPE" in
 
                 case "$VERSION_ID" in
                     14.04)
-                        version=ubuntu1.14.04.1_amd64.deb
+                        package=powershell_6.0.0-alpha.9-1ubuntu1.14.04.1_amd64.deb
                         ;;
                     16.04)
-                        version=ubuntu1.16.04.1_amd64.deb
+                        package=powershell_6.0.0-alpha.9-1ubuntu1.16.04.1_amd64.deb
                         ;;
                     *)
                         echo "Ubuntu $VERSION_ID is not supported!" >&2
@@ -52,7 +51,7 @@ case "$OSTYPE" in
         ;;
     darwin*)
         # We don't check for curl as macOS should have a system version
-        version=pkg
+        package=powershell-6.0.0-alpha.9.pkg
         ;;
     *)
         echo "$OSTYPE is not supported!" >&2
@@ -60,15 +59,7 @@ case "$OSTYPE" in
         ;;
 esac
 
-info=$(get_info "$version")
-
-# Parses $info for asset ID and package name
-read asset package <<< $(echo "$info" | sed 's/[,"]//g' | awk '{ print $2; print $4 }')
-
-# Downloads asset to file
-packageuri=$(curl -s -i -H 'Accept: application/octet-stream' "https://api.github.com/repos/PowerShell/PowerShell/releases/assets/$asset" |
-    grep location | sed 's/location: //g')
-curl -C - -o "$package" ${packageuri%$'\r'}
+curl -L -o "$package" $(get_url "$package")
 
 if [[ ! -r "$package" ]]; then
     echo "ERROR: $package failed to download! Aborting..." >&2
