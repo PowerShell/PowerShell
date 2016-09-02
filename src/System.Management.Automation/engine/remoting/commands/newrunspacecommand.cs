@@ -487,9 +487,9 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         // add host identification information in data structure handler message
-                        PSRemotingDataStructureException protoExeption = reason as PSRemotingDataStructureException;
+                        PSRemotingDataStructureException protoException = reason as PSRemotingDataStructureException;
 
-                        if (protoExeption != null)
+                        if (protoException != null)
                         {
                             OpenRunspaceOperation senderAsOp = sender as OpenRunspaceOperation;
 
@@ -497,7 +497,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 String host = senderAsOp.OperatedRunspace.ConnectionInfo.ComputerName;
 
-                                errorDetails = "[" + host + "] " + protoExeption.Message;
+                                errorDetails = "[" + host + "] " + protoException.Message;
                             }
                         }
 

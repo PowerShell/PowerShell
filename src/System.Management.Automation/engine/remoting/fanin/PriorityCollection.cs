@@ -478,7 +478,7 @@ namespace System.Management.Automation.Remoting
                     catch (System.OverflowException)
                     {
                         s_baseTracer.WriteLine("Fragement too big.");
-                        ResetRecieveData();
+                        ResetReceiveData();
                         PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.ObjectIsTooBig);
                         throw e;
                     }
@@ -513,7 +513,7 @@ namespace System.Management.Automation.Remoting
                                       _totalReceivedObjectSizeSoFar, _maxReceivedObjectSize);
                             }
 
-                            ResetRecieveData();
+                            ResetReceiveData();
                             throw e;
                         }
                     }
@@ -572,7 +572,7 @@ namespace System.Management.Automation.Remoting
                         {
                             s_baseTracer.WriteLine("ObjectId != CurrentObjectId");
                             //TODO - drop an ETW event 
-                            ResetRecieveData();
+                            ResetReceiveData();
                             if (!_canIgnoreOffSyncFragments)
                             {
                                 PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.ObjectIdsNotMatching);
@@ -589,7 +589,7 @@ namespace System.Management.Automation.Remoting
                         {
                             s_baseTracer.WriteLine("Fragment Id is not in sequence.");
                             //TODO - drop an ETW event 
-                            ResetRecieveData();
+                            ResetReceiveData();
                             if (!_canIgnoreOffSyncFragments)
                             {
                                 PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.FragmetIdsNotInSequence);
@@ -624,7 +624,7 @@ namespace System.Management.Automation.Remoting
                         finally
                         {
                             // Reset the receive data buffers and start the process again.
-                            ResetRecieveData();
+                            ResetReceiveData();
                         }
 
                         if (_isDisposed)
@@ -650,7 +650,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Resets the store(s) holding received data.
         /// </summary>
-        private void ResetRecieveData()
+        private void ResetReceiveData()
         {
             // reset resources used to store incoming data (for a single object)
             if (null != _dataToProcessStream)

@@ -134,7 +134,7 @@ namespace System.Management.Automation.Remoting.Client
 
         internal const int ERROR_WSMAN_COMPUTER_NOTFOUND = -2144108103;
 
-        internal const int ERROR_WSMAN_TARGET_UNKOWN = -2146893053;
+        internal const int ERROR_WSMAN_TARGET_UNKNOWN = -2146893053;
 
         internal const int ERROR_WSMAN_CANNOTUSE_IP = -2144108101;
 

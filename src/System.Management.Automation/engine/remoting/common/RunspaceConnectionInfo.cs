@@ -2710,7 +2710,7 @@ namespace System.Management.Automation.Runspaces
             string processParameters,
             ref HCS_PROCESS_INFORMATION processInformation,
             ref IntPtr process,
-            ref string reslt);
+            ref string result);
 
         [DllImport(PinvokeDllNames.CreateProcessInComputeSystemDllName, SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern uint HcsOpenProcess(

@@ -118,7 +118,7 @@ namespace System.Management.Automation.Remoting
             // Fall-back to traditional approach if runspace is not pushed.
             if (!this.IsRunspaceOverridden)
             {
-                return CreatePsCommandNotOverriden(line, isScript, useNewScope);
+                return CreatePsCommandNotOverridden(line, isScript, useNewScope);
             }
 
             // Try to parse commands as script-block.
@@ -127,7 +127,7 @@ namespace System.Management.Automation.Remoting
             // If that didn't work fall back to traditional approach.
             if (psCommand == null)
             {
-                return CreatePsCommandNotOverriden(line, isScript, useNewScope);
+                return CreatePsCommandNotOverridden(line, isScript, useNewScope);
             }
 
             // Otherwise return the psCommandCollection we got.
@@ -137,7 +137,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Creates the PSCommand when the runspace is not overridden
         /// </summary>
-        private PSCommand CreatePsCommandNotOverriden(string line, bool isScript, bool? useNewScope)
+        private PSCommand CreatePsCommandNotOverridden(string line, bool isScript, bool? useNewScope)
         {
             PSCommand command = new PSCommand();
 

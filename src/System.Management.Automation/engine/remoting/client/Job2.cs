@@ -873,9 +873,9 @@ namespace System.Management.Automation
                 // Check to see expected behavior if one child job fails to start.
             } 
 
-            if (ExcecutionError.Count == 1)
+            if (ExecutionError.Count == 1)
             {
-                throw ExcecutionError[0];
+                throw ExecutionError[0];
             } */
             _tracer.WriteMessage(TraceClassName, "StartJob", Guid.Empty, this, "Exiting method", null);
         }

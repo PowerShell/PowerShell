@@ -969,19 +969,19 @@ namespace System.Management.Automation.Remoting
             new ConfigTypeEntry(Copyright,                      new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
             new ConfigTypeEntry(Description,                    new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
             new ConfigTypeEntry(EnforceInputParameterValidation,new ConfigTypeEntry.TypeValidationCallback(BooleanTypeValidationCallback)),
-            new ConfigTypeEntry(EnvironmentVariables,           new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValiationCallback)),
+            new ConfigTypeEntry(EnvironmentVariables,           new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValidationCallback)),
             new ConfigTypeEntry(ExecutionPolicy,                new ConfigTypeEntry.TypeValidationCallback(ExecutionPolicyValidationCallback)),
             new ConfigTypeEntry(FormatsToProcess,               new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
             new ConfigTypeEntry(FunctionDefinitions,            new ConfigTypeEntry.TypeValidationCallback(FunctionDefinitionsTypeValidationCallback)),
             new ConfigTypeEntry(GMSAAccount,                    new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
             new ConfigTypeEntry(Guid,                           new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
-            new ConfigTypeEntry(LanguageMode,                   new ConfigTypeEntry.TypeValidationCallback(LanugageModeValidationCallback)),
+            new ConfigTypeEntry(LanguageMode,                   new ConfigTypeEntry.TypeValidationCallback(LanguageModeValidationCallback)),
             new ConfigTypeEntry(ModulesToImport,                new ConfigTypeEntry.TypeValidationCallback(StringOrHashtableArrayTypeValidationCallback)),
             new ConfigTypeEntry(MountUserDrive,                 new ConfigTypeEntry.TypeValidationCallback(BooleanTypeValidationCallback)),
             new ConfigTypeEntry(PowerShellVersion,              new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
-            new ConfigTypeEntry(RequiredGroups,                 new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValiationCallback)),
+            new ConfigTypeEntry(RequiredGroups,                 new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValidationCallback)),
             new ConfigTypeEntry(RoleCapabilities,               new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
-            new ConfigTypeEntry(RoleDefinitions,                new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValiationCallback)),
+            new ConfigTypeEntry(RoleDefinitions,                new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValidationCallback)),
             new ConfigTypeEntry(RunAsVirtualAccount,            new ConfigTypeEntry.TypeValidationCallback(BooleanTypeValidationCallback)),
             new ConfigTypeEntry(RunAsVirtualAccountGroups,      new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
             new ConfigTypeEntry(SchemaVersion,                  new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
@@ -1070,7 +1070,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
         /// <returns></returns>
-        private static bool LanugageModeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
+        private static bool LanguageModeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
             string value = obj as string;
 
@@ -1134,7 +1134,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
         /// <returns></returns>
-        private static bool HashtableTypeValiationCallback(string key, object obj, PSCmdlet cmdlet, string path)
+        private static bool HashtableTypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
             Hashtable hash = obj as Hashtable;
 
@@ -1935,10 +1935,10 @@ namespace System.Management.Automation.Remoting
             // Create the initial session state
             string initialSessionState = TryGetValue(_configHash, ConfigFileConstants.SessionType);
             SessionType sessionType = SessionType.Default;
-            bool cmdletVisibilityApplied = IsNonDefaultVisibiltySpecified(ConfigFileConstants.VisibleCmdlets);
-            bool functionVisiblityApplied = IsNonDefaultVisibiltySpecified(ConfigFileConstants.VisibleFunctions);
-            bool aliasVisibilityApplied = IsNonDefaultVisibiltySpecified(ConfigFileConstants.VisibleAliases);
-            bool providerVisibiltyApplied = IsNonDefaultVisibiltySpecified(ConfigFileConstants.VisibleProviders);
+            bool cmdletVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleCmdlets);
+            bool functionVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleFunctions);
+            bool aliasVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleAliases);
+            bool providerVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleProviders);
             bool processDefaultSessionStateVisibility = false;
 
             if (!String.IsNullOrEmpty(initialSessionState))
@@ -1965,8 +1965,8 @@ namespace System.Management.Automation.Remoting
                 processDefaultSessionStateVisibility = true;
             }
 
-            if (cmdletVisibilityApplied || functionVisiblityApplied || aliasVisibilityApplied || providerVisibiltyApplied ||
-                IsNonDefaultVisibiltySpecified(ConfigFileConstants.VisibleExternalCommands))
+            if (cmdletVisibilityApplied || functionVisibilityApplied || aliasVisibilityApplied || providerVisibilityApplied ||
+                IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleExternalCommands))
             {
                 iss.DefaultCommandVisibility = SessionStateEntryVisibility.Private;
 
@@ -1982,7 +1982,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // Add providers
-            if (providerVisibiltyApplied)
+            if (providerVisibilityApplied)
             {
                 string[] providers = TryGetStringArray(_configHash[ConfigFileConstants.VisibleProviders]);
 
@@ -2167,7 +2167,7 @@ namespace System.Management.Automation.Remoting
                 {
                     foreach (Hashtable function in functions)
                     {
-                        SessionStateFunctionEntry entry = CreateSessionStateFunctionEntry(function, functionVisiblityApplied);
+                        SessionStateFunctionEntry entry = CreateSessionStateFunctionEntry(function, functionVisibilityApplied);
 
                         if (entry != null)
                         {
@@ -2317,7 +2317,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // Now apply visibility logic
-            if (cmdletVisibilityApplied || functionVisiblityApplied || aliasVisibilityApplied || providerVisibiltyApplied)
+            if (cmdletVisibilityApplied || functionVisibilityApplied || aliasVisibilityApplied || providerVisibilityApplied)
             {
                 if (sessionType == SessionType.Default)
                 {
@@ -2723,7 +2723,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="configFileKey"></param>
         /// <returns></returns>
-        private bool IsNonDefaultVisibiltySpecified(string configFileKey)
+        private bool IsNonDefaultVisibilitySpecified(string configFileKey)
         {
             if (_configHash.ContainsKey(configFileKey))
             {

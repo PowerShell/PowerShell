@@ -11,7 +11,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This class is an implementation of the abstract class ServerRemoteSessionDataStructureHandler.
     /// </summary>
-    internal class ServerRemoteSessionDSHandlerlImpl : ServerRemoteSessionDataStructureHandler
+    internal class ServerRemoteSessionDSHandlerImpl : ServerRemoteSessionDataStructureHandler
     {
         private AbstractServerSessionTransportManager _transportManager;
         private ServerRemoteSessionDSHandlerStateMachine _stateMachine;
@@ -34,7 +34,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="session"></param>
         /// <param name="transportManager"></param>
-        internal ServerRemoteSessionDSHandlerlImpl(ServerRemoteSession session,
+        internal ServerRemoteSessionDSHandlerImpl(ServerRemoteSession session,
             AbstractServerSessionTransportManager transportManager)
         {
             Dbg.Assert(null != session, "session cannot be null.");

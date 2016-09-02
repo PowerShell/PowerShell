@@ -1229,7 +1229,7 @@ namespace System.Management.Automation.Remoting.Server
         // the following variable are used by onDataAvailableCallback.
         private bool _shouldFlushData;
         private bool _reportAsPending;
-        private Guid _runpacePoolInstanceId;
+        private Guid _runspacePoolInstanceId;
         private Guid _powerShellInstanceId;
         private RemotingDataType _dataType;
         private RemotingTargetInterface _targetInterface;
@@ -1319,7 +1319,7 @@ namespace System.Management.Automation.Remoting.Server
                         {
                             _shouldFlushData = flush;
                             _reportAsPending = reportPending;
-                            _runpacePoolInstanceId = dataToBeSent.RunspacePoolId;
+                            _runspacePoolInstanceId = dataToBeSent.RunspacePoolId;
                             _powerShellInstanceId = dataToBeSent.PowerShellId;
                             _dataType = dataToBeSent.DataType;
                             _targetInterface = dataToBeSent.TargetInterface;
@@ -1352,7 +1352,7 @@ namespace System.Management.Automation.Remoting.Server
             // log to crimson log.
             PSEtwLog.LogAnalyticInformational(PSEventId.ServerSendData, PSOpcode.Send, PSTask.None,
                 PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
-                _runpacePoolInstanceId.ToString(),
+                _runspacePoolInstanceId.ToString(),
                 _powerShellInstanceId.ToString(),
                 dataToSend.Length.ToString(CultureInfo.InvariantCulture),
                 (UInt32)_dataType,

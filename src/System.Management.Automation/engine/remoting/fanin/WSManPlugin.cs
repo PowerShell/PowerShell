@@ -1487,7 +1487,7 @@ namespace System.Management.Automation.Remoting
                 WSManPluginConstants.WSManPluginParamsGetRequestedLocale,
                 outputStruct);
             //ref nativeLocaleData);
-            bool retreivingLocaleSucceeded = (0 == hResult);
+            bool retrievingLocaleSucceeded = (0 == hResult);
             WSManNativeApi.WSManData_UnToMan localeData = WSManNativeApi.WSManData_UnToMan.UnMarshal(outputStruct); // nativeLocaleData
 
             //IntPtr nativeDataLocaleData = IntPtr.Zero;
@@ -1496,13 +1496,13 @@ namespace System.Management.Automation.Remoting
                 WSManPluginConstants.WSManPluginParamsGetRequestedDataLocale,
                 outputStruct);
             //ref nativeDataLocaleData);
-            bool retreivingDataLocaleSucceeded = ((int)WSManPluginErrorCodes.NoError == hResult);
+            bool retrievingDataLocaleSucceeded = ((int)WSManPluginErrorCodes.NoError == hResult);
             WSManNativeApi.WSManData_UnToMan dataLocaleData = WSManNativeApi.WSManData_UnToMan.UnMarshal(outputStruct); // nativeDataLocaleData
 
             // Set the UI Culture
             try
             {
-                if (retreivingLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == localeData.Type))
+                if (retrievingLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == localeData.Type))
                 {
                     CultureInfo uiCultureToUse = new CultureInfo(localeData.Text);
                     ClrFacade.SetCurrentThreadUiCulture(uiCultureToUse);
@@ -1516,7 +1516,7 @@ namespace System.Management.Automation.Remoting
             // Set the Culture
             try
             {
-                if (retreivingDataLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == dataLocaleData.Type))
+                if (retrievingDataLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == dataLocaleData.Type))
                 {
                     CultureInfo cultureToUse = new CultureInfo(dataLocaleData.Text);
                     ClrFacade.SetCurrentThreadCulture(cultureToUse);
