@@ -860,9 +860,9 @@ namespace Microsoft.PowerShell
                 ConsoleControl.INPUT_RECORD[] inputRecords =
                     new ConsoleControl.INPUT_RECORD[ConsoleControl.GetNumberOfConsoleInputEvents(handle)];
 
-                int acutalNumberOfInputRecords = ConsoleControl.PeekConsoleInput(handle, ref inputRecords);
+                int actualNumberOfInputRecords = ConsoleControl.PeekConsoleInput(handle, ref inputRecords);
 
-                for (int i = 0; i < acutalNumberOfInputRecords; i++)
+                for (int i = 0; i < actualNumberOfInputRecords; i++)
                 {
                     if (((ConsoleControl.InputRecordEventTypes)inputRecords[i].EventType) ==
                             ConsoleControl.InputRecordEventTypes.KEY_EVENT)
