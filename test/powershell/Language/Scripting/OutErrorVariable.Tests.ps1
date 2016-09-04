@@ -37,19 +37,7 @@
                         Command = "get-foo2";
                         OutVariable = 'a';
                         Expected = 'foo'
-                        } )
-                        
-    
-
-    It '<Name>' -TestCases $testdata {
-        param ( $Name, $Command, $OutVariable, $Expected )
-
-        & $Command -OutVariable $OutVariable > $null
-        $a = Get-Variable -ValueOnly $OutVariable
-        $a | Should Be $Expected
-    }
-
-    $testdata1 = @(                 
+                        },                 
                     @{ Name = 'Appending OutVariable Case 1: pipe string';
                         Command = "get-foo1";
                         OutVariable = 'a';
@@ -66,9 +54,15 @@
 
     It '<Name>' -TestCases $testdata {
         param ( $Name, $Command, $OutVariable, $PreSet, $Expected )
-
-        Set-Variable -Name $OutVariable -Value $PreSet
-        & $Command -OutVariable +$OutVariable > $null
+        if($PreSet -ne $null)
+        {
+            Set-Variable -Name $OutVariable -Value $PreSet
+            & $Command -OutVariable +$OutVariable > $null
+        }
+        else
+        {
+            & $Command -OutVariable $OutVariable > $null
+        }
         $a = Get-Variable -ValueOnly $OutVariable
         $a | Should Be $Expected
     }
@@ -76,8 +70,8 @@
     It 'Nested OutVariable' {
 
         get-bar -outVariable b > $null
-        Validate-Result $global:a 'foo'        
-        Validate-Result $b @("bar", "foo")
+        $global:a | Should Be 'foo'        
+        $b | Should Be @("bar", "foo")
     }
 }
 
@@ -110,7 +104,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
     }
 
     
-    $testdata2 = @(
+    $testdata1 = @(
                     @{ Name = 'Updating ErrorVariable Case 1: write-error';
                        Command = "get-foo1";
                        ErrorVariable = 'a';
@@ -120,18 +114,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
                        Command = "get-foo1";
                        ErrorVariable = 'a';
                        Expected = 'foo'
-                     }
-                  )
-
-    It '<Name>' -TestCases $testdata2 {
-        param ( $Name, $Command, $ErrorVariable, $Expected )
-        
-        & $Command -ErrorVariable $ErrorVariable 2> $null
-        $a = Get-Variable -ValueOnly $ErrorVariable
-        $a | should be $Expected
-    }
-
-    $testdata3 = @(                 
+                     },             
                     @{ Name = 'Appending ErrorVariable Case 1: pipe string';
                         Command = "get-foo1";
                         ErrorVariable = 'a';
@@ -146,12 +129,19 @@ Describe "Test ErrorVariable only" -Tags "CI" {
                         }
                     )
 
-    It '<Name>' -TestCases $testdata3 {
+    It '<Name>' -TestCases $testdata1 {
         param ( $Name, $Command, $ErrorVariable, $PreSet, $Expected )
-
-        Set-Variable -Name $ErrorVariable -Value $PreSet
-        & $Command -ErrorVariable +$ErrorVariable 2> $null
-        $a = Get-Variable -ValueOnly $ErrorVariable
+        if($PreSet -ne $null)
+        {
+            Set-Variable -Name $ErrorVariable -Value $PreSet
+            & $Command -ErrorVariable +$ErrorVariable 2> $null
+        }
+        else
+        {
+            & $Command -ErrorVariable $ErrorVariable 2> $null
+        }
+        $a = (Get-Variable -ValueOnly $ErrorVariable) | % {$_.ToString()}
+        
         $a | should be $Expected
     }    
 
@@ -299,7 +289,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
 
         (get-foo -ev foo_err | get-item -ev get_item_err ) 2>&1 > $null
 
-        Validate-Result $foo_err @("foo-error")
+        $foo_err | Should Be "foo-error"
 
         It '$get_item_err.count' { $get_item_err.count | Should Be 1 }
         It '$get_item_err[0].exception' { $get_item_err[0].exception.GetType() | Should Be 'System.Management.Automation.ItemNotFoundException' }

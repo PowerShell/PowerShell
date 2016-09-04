@@ -4,8 +4,8 @@
             
         { $script:a = new-object psobject -property $null } | Should not throw
         
-        It '$a should not be $null' { $a | Should Not Be $null }
-        It '$a type' { $a | should BeOfType "System.Management.automation.psobject" }
+        It '$a should not be $null' { $script:a | Should Not Be $null }
+        It '$a type' { $script:a | should BeOfType "System.Management.automation.psobject" }
     }
 
     It 'New-Object cmdlet should throw terminating errors when user specifies a non-existent property or tries to assign incompatible values' {
@@ -42,20 +42,20 @@
     Context 'Hashtable conversion to PSCustomObject succeeds (Insertion Order is not retained)' {
         { $script:x = [pscustomobject][hashtable]@{one=1;two=2}} | Should Not  Throw
         It '$x is not $null' { $script:x | Should Not Be $null }
-        It '$x type' { $x | should BeOfType "System.Management.automation.psobject" }
+        It '$x type' { $script:x | should BeOfType "System.Management.automation.psobject" }
    }
        
 
     Context 'Hashtable conversion to PSCustomObject retains insertion order of hashtable keys when passed a hashliteral' {
        
-        { $x = [pscustomobject]@{one=1;two=2} } | Should Not  Throw
+        { $script:x = [pscustomobject]@{one=1;two=2} } | Should Not  Throw
        
         It '$x is not $null' { $script:x | Should Not Be $null } 
-        It '$x type' { $x | should BeOfType "System.Management.automation.psobject" }
+        It '$x type' { $script:x | should BeOfType "System.Management.automation.psobject" }
        
         $p = 0
         # Checks if the first property is One
-        $x.psobject.Properties | foreach-object  `
+        $script:x.psobject.Properties | foreach-object  `
                                 {               
                                     if ($p -eq 0)  
                                     {               
@@ -74,7 +74,7 @@
         } | Should not throw
        
         It '$x is not $null' { $script:x | Should Not Be $null }
-        It '$x type' { $x | should BeOfType "System.Management.automation.psobject" }
+        It '$x type' { $script:x | should BeOfType "System.Management.automation.psobject" }
    }
 
 
@@ -96,11 +96,11 @@
       
        { $script:x = [pscustomobject][ordered]@{one=1;two=2} } | Should Not Throw
        It '$x is not $null' { $script:x | Should Not Be $null }
-       It '$x type' { $x | should BeOfType "System.Management.automation.psobject" }
+       It '$x type' { $script:x | should BeOfType "System.Management.automation.psobject" }
        
        $p = 0
        # Checks if the first property is One
-       $x.psobject.Properties | foreach-object  `
+       $script:x.psobject.Properties | foreach-object  `
                                 {               
                                     if ($p -eq 0)  
                                     {               
