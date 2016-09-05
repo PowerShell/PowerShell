@@ -133,15 +133,18 @@ Describe "Test ErrorVariable only" -Tags "CI" {
         param ( $Name, $Command, $ErrorVariable, $PreSet, $Expected )
         if($PreSet -ne $null)
         {
+            '$PreSet' + $PreSet | Out-String
+            '$Command' + $Command | Out-String
             Set-Variable -Name $ErrorVariable -Value $PreSet
             & $Command -ErrorVariable +$ErrorVariable 2> $null
+            $a = (Get-Variable -ValueOnly $ErrorVariable) | % {$_.ToString()}
         }
         else
         {
             & $Command -ErrorVariable $ErrorVariable 2> $null
+            $a = Get-Variable -ValueOnly $ErrorVariable
         }
-        $a = (Get-Variable -ValueOnly $ErrorVariable) | % {$_.ToString()}
-        
+                
         $a | should be $Expected
     }    
 
@@ -153,7 +156,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
         $b | Should be @("bar","foo")        
     }
 
-    Context 'Nested ErrorVariable with redirection' {
+    It 'Nested ErrorVariable with redirection' {
 
         get-bar -errorVariable b 2>&1 > $null
         
@@ -311,7 +314,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
 
         $foo_err | Should be 'foo-error'
         $bar_err | Should be @("bar-error", "foo-error")
-}
+    }
 
     It 'multi-command pipeline with nested commands' { 
 
