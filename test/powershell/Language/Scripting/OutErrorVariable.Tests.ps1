@@ -52,7 +52,7 @@
                         }
                     )
 
-    It '<Name>' -TestCases $testdata {
+    It 'Test: <Name>' -TestCases $testdata {
         param ( $Name, $Command, $OutVariable, $PreSet, $Expected )
         if($PreSet -ne $null)
         {
@@ -118,13 +118,13 @@ Describe "Test ErrorVariable only" -Tags "CI" {
                     @{ Name = 'Appending ErrorVariable Case 1: pipe string';
                         Command = "get-foo1";
                         ErrorVariable = 'a';
-                        PreSet = 'a','b';
+                        PreSet = @('a','b');
                         Expected = @("a", "b", "foo")
                         },
                     @{ Name = 'Appending ErrorVariable Case 2: $pscmdlet.writeobject';
                         Command = "get-foo2";
                         ErrorVariable = 'a';
-                        PreSet = 'a','b';
+                        PreSet = @('a','b');
                         Expected = @("a", "b", "foo")
                         }
                     )
