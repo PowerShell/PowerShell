@@ -143,7 +143,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
         $a | should be $Expected
     } 
     
-    It 'Appending ErrorVariable Case 2: $pscmdlet.writeobject' {
+    It 'Appending ErrorVariable Case 2: $pscmdlet.writeerror' {
         write-error "foo" -errorVariable global:foo 2> $null
         $a = 'a','b'
 
