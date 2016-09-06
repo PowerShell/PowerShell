@@ -52,9 +52,9 @@ These labels describe what feature area of PowerShell that an issue affects:
 * `Area-SideBySide`: side by side support
 * `Area-Test`:issues in a test or in test infrastructure
 
-### Operating systems
+### Operating Systems
 
-These are for issues that are specific to certain operating systems:
+These are for issues that are specific to certain Operating Systems:
 * `OS-Linux`
 * `OS-macOS`
 * `OS-Windows`
