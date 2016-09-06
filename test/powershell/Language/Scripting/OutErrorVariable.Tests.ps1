@@ -147,8 +147,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
         get-foo2 -errorVariable +a 2> $null
 
         $a.count | Should Be 3
-        $a| % {$_.ToString()} | Should Be @('a', 'b', 'foo')
-        Remove-Variable -Name foo -Scope global -ErrorAction SilentlyContinue
+        $a| % {$_.ToString()} | Should Be @('a', 'b', 'foo')        
     }   
 
     It 'Nested ErrorVariable' {
