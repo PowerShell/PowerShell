@@ -101,6 +101,8 @@ Describe "Test ErrorVariable only" -Tags "CI" {
             write-error "bar"
             get-foo1 -errorVariable global:a
         }
+
+
     }
 
     
@@ -120,12 +122,6 @@ Describe "Test ErrorVariable only" -Tags "CI" {
                         ErrorVariable = 'a';
                         PreSet = @('a','b');
                         Expected = @("a", "b", "foo")
-                        },
-                    @{ Name = 'Appending ErrorVariable Case 2: $pscmdlet.writeobject';
-                        Command = "get-foo2";
-                        ErrorVariable = 'a';
-                        PreSet = @('a','b');
-                        Expected = @("a", "b", "foo")
                         }
                     )
 
@@ -136,17 +132,27 @@ Describe "Test ErrorVariable only" -Tags "CI" {
             '$PreSet' + $PreSet | Out-String
             '$Command' + $Command | Out-String
             Set-Variable -Name $ErrorVariable -Value $PreSet
-            & $Command -ErrorVariable +$ErrorVariable 2> $null
-            $a = (Get-Variable -ValueOnly $ErrorVariable) | % {$_.ToString()}
+            & $Command -ErrorVariable +$ErrorVariable 2> $null            
         }
         else
         {
             & $Command -ErrorVariable $ErrorVariable 2> $null
-            $a = Get-Variable -ValueOnly $ErrorVariable
+            
         }
-                
+        $a = (Get-Variable -ValueOnly $ErrorVariable) | % {$_.ToString()}
         $a | should be $Expected
-    }    
+    } 
+    
+    It 'Appending ErrorVariable Case 2: $pscmdlet.writeobject' {
+        write-error "foo" -errorVariable global:foo 2> $null
+        $a = 'a','b'
+
+        get-foo2 -errorVariable +a 2> $null
+
+        $a.count | Should Be 3
+        $a| % {$_.ToString()} | Should Be @('a', 'b', 'foo')
+
+    }   
 
     It 'Nested ErrorVariable' {
 
