@@ -23,9 +23,9 @@
             param()
 
             "bar"
-            get-foo1 -outVariable global:a
+            get-foo1 -outVariable script:a
         }
-    }    
+    }
 
     $testdata = @(
                     @{ Name = 'Updating OutVariable Case 1: pipe string';
@@ -70,7 +70,7 @@
     It 'Nested OutVariable' {
 
         get-bar -outVariable b > $null
-        $global:a | Should Be 'foo'        
+        $script:a | Should Be 'foo'        
         $b | Should Be @("bar", "foo")
     }
 }
@@ -90,7 +90,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
             [CmdletBinding()]
             param()
 
-            $pscmdlet.WriteError($global:foo[0])
+            $pscmdlet.WriteError($script:foo[0])
         }
 
         function get-bar 
@@ -99,13 +99,10 @@ Describe "Test ErrorVariable only" -Tags "CI" {
             param()
 
             write-error "bar"
-            get-foo1 -errorVariable global:a
+            get-foo1 -errorVariable script:a
         }
-
-
     }
-
-    
+        
     $testdata1 = @(
                     @{ Name = 'Updating ErrorVariable Case 1: write-error';
                        Command = "get-foo1";
@@ -144,21 +141,21 @@ Describe "Test ErrorVariable only" -Tags "CI" {
     } 
     
     It 'Appending ErrorVariable Case 2: $pscmdlet.writeerror' {
-        write-error "foo" -errorVariable global:foo 2> $null
+        write-error "foo" -errorVariable script:foo 2> $null
         $a = 'a','b'
 
         get-foo2 -errorVariable +a 2> $null
 
         $a.count | Should Be 3
         $a| % {$_.ToString()} | Should Be @('a', 'b', 'foo')
-
+        Remove-Variable -Name foo -Scope global -ErrorAction SilentlyContinue
     }   
 
     It 'Nested ErrorVariable' {
 
         get-bar -errorVariable b 2> $null
 
-        $global:a | Should be 'foo'
+        $script:a | Should be 'foo'
         $b | Should be @("bar","foo")        
     }
 
@@ -166,7 +163,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
 
         get-bar -errorVariable b 2>&1 > $null
         
-        $global:a | Should be 'foo'
+        $script:a | Should be 'foo'
         $b | Should be @("bar", "foo")
     }
 
@@ -197,7 +194,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
             [CmdletBinding()]
             param()
 
-            $pscmdlet.WriteError($global:foo[0])
+            $pscmdlet.WriteError($script:foo[0])
         }
 
         function get-bar 
@@ -206,7 +203,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
             param()
 
             write-error "bar"
-            get-foo1 -errorVariable global:a
+            get-foo1 -errorVariable script:a
         }
 
         function get-foo3
@@ -227,7 +224,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
             "bar-output-0"
             write-output "bar-output-1"
             write-error "bar-error"
-            get-foo3 -OutVariable global:foo_out -errorVariable global:foo_err 
+            get-foo3 -OutVariable script:foo_out -errorVariable script:foo_err 
         }
     }
     
@@ -241,7 +238,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
 
     It 'Update OutVariable and ErrorVariable' {        
 
-        get-bar2 -OutVariable global:bar_out -errorVariable global:bar_err  2> $null > $null
+        get-bar2 -OutVariable script:bar_out -errorVariable script:bar_err  2> $null > $null
 
         $foo_out | Should be @("foo-output-0", "foo-output-1")
         $foo_err | Should be 'foo-error'
@@ -339,14 +336,14 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
             param([Parameter(ValueFromPipeline = $true)][string] $i)
 
             write-error  "bar-error"
-            get-foo6 "foo-output" -errorVariable global:foo_err1 | get-foo6 -errorVariable global:foo_err2 
+            get-foo6 "foo-output" -errorVariable script:foo_err1 | get-foo6 -errorVariable script:foo_err2 
         }
 
-        get-bar4 -errorVariable global:bar_err 2>&1 > $null
+        get-bar4 -errorVariable script:bar_err 2>&1 > $null
 
-        $global:foo_err1 | Should be "foo-error"
-        $global:foo_err2 | Should be "foo-error"
-        $global:bar_err | Should be @("bar-error", "foo-error")        
+        $script:foo_err1 | Should be "foo-error"
+        $script:foo_err2 | Should be "foo-error"
+        $script:bar_err | Should be @("bar-error", "foo-error")        
     }
 
     It 'Nested output variables' {        
@@ -366,26 +363,26 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
 
             "bar-output"
             write-error  "bar-error"
-            get-foo7 "foo-output" -ev global:foo_err1 -ov global:foo_out1 | get-foo7 -ev global:foo_err2 -ov global:foo_out2
-            get-foo7 "foo-output" -ev global:foo_err3 -ov global:foo_out3 | get-foo7 -ev global:foo_err4 -ov global:foo_out4
+            get-foo7 "foo-output" -ev script:foo_err1 -ov script:foo_out1 | get-foo7 -ev script:foo_err2 -ov script:foo_out2
+            get-foo7 "foo-output" -ev script:foo_err3 -ov script:foo_out3 | get-foo7 -ev script:foo_err4 -ov script:foo_out4
         }
        
 
-        get-bar5 -ev global:bar_err -ov global:bar_out 2>&1 > $null
+        get-bar5 -ev script:bar_err -ov script:bar_out 2>&1 > $null
 
-        $global:foo_out1 | Should be "foo-output"
-        $global:foo_err1 | Should be "foo-error"
+        $script:foo_out1 | Should be "foo-output"
+        $script:foo_err1 | Should be "foo-error"
 
-        $global:foo_out2 | Should be "foo-output"
-        $global:foo_err2 | Should be "foo-error"
+        $script:foo_out2 | Should be "foo-output"
+        $script:foo_err2 | Should be "foo-error"
 
-        $global:foo_out3 | Should be "foo-output"
-        $global:foo_err3 | Should be "foo-error"
+        $script:foo_out3 | Should be "foo-output"
+        $script:foo_err3 | Should be "foo-error"
 
-        $global:foo_out4 | Should be "foo-output"
-        $global:foo_err4 | Should be "foo-error"
+        $script:foo_out4 | Should be "foo-output"
+        $script:foo_err4 | Should be "foo-error"
                 
-        $global:bar_out | Should be @("bar-output", "foo-output", "foo-output")
-        $global:bar_err | Should be @("bar-error", "foo-error", "foo-error")
+        $script:bar_out | Should be @("bar-output", "foo-output", "foo-output")
+        $script:bar_err | Should be @("bar-error", "foo-error", "foo-error")
     }
 }
