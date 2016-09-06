@@ -125,9 +125,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
     It '<Name>' -TestCases $testdata1 {
         param ( $Name, $Command, $ErrorVariable, $PreSet, $Expected )
         if($PreSet -ne $null)
-        {
-            '$PreSet' + $PreSet | Out-String
-            '$Command' + $Command | Out-String
+        {            
             Set-Variable -Name $ErrorVariable -Value $PreSet
             & $Command -ErrorVariable +$ErrorVariable 2> $null            
         }
