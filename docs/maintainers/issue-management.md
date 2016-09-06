@@ -78,7 +78,7 @@ The following labels are used on PRs:
 * `Review - Abandoned` : The PR was not updated for significant number of days (the exact number could vary over time).
   Maintainers should look into such PRs and re-evaluate them.
 
-### Random labels
+### Miscellaneous labels
 
 * `Blocked`: an issue cannot be addressed due to external factors,
   but should not be closed because those external factors are temporary.
