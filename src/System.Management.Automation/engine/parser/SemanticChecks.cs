@@ -334,19 +334,19 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst)
         {
-            AttributeAst dscResourceAttibuteAst = null;
+            AttributeAst dscResourceAttributeAst = null;
             for (int i = 0; i < typeDefinitionAst.Attributes.Count; i++)
             {
                 var attr = typeDefinitionAst.Attributes[i];
                 if (attr.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute))
                 {
-                    dscResourceAttibuteAst = attr;
+                    dscResourceAttributeAst = attr;
                     break;
                 }
             }
-            if (dscResourceAttibuteAst != null)
+            if (dscResourceAttributeAst != null)
             {
-                DscResourceChecker.CheckType(_parser, typeDefinitionAst, dscResourceAttibuteAst);
+                DscResourceChecker.CheckType(_parser, typeDefinitionAst, dscResourceAttributeAst);
             }
 
             return AstVisitAction.Continue;

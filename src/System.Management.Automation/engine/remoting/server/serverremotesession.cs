@@ -140,7 +140,7 @@ namespace System.Management.Automation.Remoting
 #endif
 
             Context = new ServerRemoteSessionContext();
-            SessionDataStructureHandler = new ServerRemoteSessionDSHandlerlImpl(this, transportManager);
+            SessionDataStructureHandler = new ServerRemoteSessionDSHandlerImpl(this, transportManager);
             BaseSessionDataStructureHandler = SessionDataStructureHandler;
             SessionDataStructureHandler.CreateRunspacePoolReceived += HandleCreateRunspacePool;
             SessionDataStructureHandler.NegotiationReceived += HandleNegotiationReceived;

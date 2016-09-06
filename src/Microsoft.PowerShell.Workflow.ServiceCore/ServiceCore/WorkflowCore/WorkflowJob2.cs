@@ -1327,7 +1327,7 @@ namespace Microsoft.PowerShell.Workflow
         internal void ConfigureWorkflowHandlers()
         {
             _workflowInstance.OnCompletedDelegate = OnWorkflowCompleted;
-            _workflowInstance.OnSuspenedDelegate = OnWorkflowSuspended;
+            _workflowInstance.OnSuspendedDelegate = OnWorkflowSuspended;
             _workflowInstance.OnStoppedDelegate = OnWorkflowStopped;
             _workflowInstance.OnAbortedDelegate = OnWorkflowAborted;
             _workflowInstance.OnFaultedDelegate = OnWorkflowFaulted;

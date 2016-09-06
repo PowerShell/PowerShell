@@ -29,11 +29,11 @@ namespace System.Management.Automation.ComInterop
     /// ComEventSink does not, strongly speaking, implements the interface 
     /// that it claims to implement - it is just "faking" it by using IReflect.
     /// Thus, Word's QIs on the pointer passed to ICP::Advise would fail. To
-    /// prevent this we take advangate of RealProxy's ability of
+    /// prevent this we take advantage of RealProxy's ability of
     /// "dressing up" like other classes and hence successfully respond to QIs 
     /// for interfaces that it does not really support( it is OK to say 
     /// "I implement this interface" for event sinks only since the common 
-    /// practice is to use IDistpach.Invoke when calling into event sinks). 
+    /// practice is to use IDispatch.Invoke when calling into event sinks). 
     /// </summary>
     internal sealed class ComEventSinkProxy : RealProxy
     {

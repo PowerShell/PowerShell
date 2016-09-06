@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
                     request.Headers.Clear();
                     foreach (string key in WebSession.Headers.Keys)
                     {
-                        bool setHeaderViaProperty = TryMapHeaaderToProperty(webRequest, key);
+                        bool setHeaderViaProperty = TryMapHeaderToProperty(webRequest, key);
 
                         if (!setHeaderViaProperty)
                         {
@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
             return (request);
         }
 
-        private bool TryMapHeaaderToProperty(HttpWebRequest webRequest, string key)
+        private bool TryMapHeaderToProperty(HttpWebRequest webRequest, string key)
         {
             bool setHeaderViaProperty = false;
 

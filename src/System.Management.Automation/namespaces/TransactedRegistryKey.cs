@@ -768,7 +768,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             if (ret == 0 && !result.IsInvalid)
             {
                 TransactedRegistryKey key = new TransactedRegistryKey(result, writable, false, Transaction.Current, safeTransactionHandle);
-                key._checkMode = GetSubKeyPermissonCheck(writable);
+                key._checkMode = GetSubKeyPermissionCheck(writable);
                 key._keyName = _keyName + "\\" + name;
                 return key;
             }
@@ -1986,7 +1986,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-        private RegistryKeyPermissionCheck GetSubKeyPermissonCheck(bool subkeyWritable)
+        private RegistryKeyPermissionCheck GetSubKeyPermissionCheck(bool subkeyWritable)
         {
             if (_checkMode == RegistryKeyPermissionCheck.Default)
             {

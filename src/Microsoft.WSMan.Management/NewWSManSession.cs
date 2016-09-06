@@ -41,14 +41,14 @@ namespace Microsoft.WSMan.Management
         {
             get
             {
-                return _proxyacesstype;
+                return _proxyaccesstype;
             }
             set
             {
-                _proxyacesstype = value;
+                _proxyaccesstype = value;
             }
         }
-        private ProxyAccessType _proxyacesstype;
+        private ProxyAccessType _proxyaccesstype;
 
         /// <summary>
         /// The following is the definition of the input parameter "ProxyAuthentication".
@@ -253,7 +253,7 @@ namespace Microsoft.WSMan.Management
             objSessionOption.OperationTimeout = operationtimeout;
             objSessionOption.SkipRevocationCheck = skiprevocationcheck;
             //Proxy Settings
-            objSessionOption.ProxyAccessType = _proxyacesstype;
+            objSessionOption.ProxyAccessType = _proxyaccesstype;
             objSessionOption.ProxyAuthentication = proxyauthentication;
 
             if (noencryption)

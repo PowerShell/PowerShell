@@ -105,9 +105,9 @@ namespace System.Management.Automation.Remoting
             {
                 RaiseClosingEvent();
 
-                foreach (var cmdTrsprtKvp in _activeCmdTransportManagers)
+                foreach (var cmdTransportKvp in _activeCmdTransportManagers)
                 {
-                    cmdTrsprtKvp.Value.Close(reasonForClose);
+                    cmdTransportKvp.Value.Close(reasonForClose);
                 }
                 _activeCmdTransportManagers.Clear();
 

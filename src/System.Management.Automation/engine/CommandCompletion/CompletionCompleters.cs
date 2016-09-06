@@ -1805,7 +1805,7 @@ namespace System.Management.Automation
             NativeCommandArgumentCompletion(commandName, parameter.Parameter, result, commandAst, context, boundArguments);
         }
 
-        private static IEnumerable<PSTypeName> NativeCommandArgumentCompletion_InferTypesOfArugment(
+        private static IEnumerable<PSTypeName> NativeCommandArgumentCompletion_InferTypesOfArgument(
             Dictionary<string, AstParameterArgumentPair> boundArguments,
             CommandAst commandAst,
             CompletionContext context,
@@ -2527,7 +2527,7 @@ namespace System.Management.Automation
             else if (boundArguments != null && boundArguments.ContainsKey("InputObject"))
             {
                 gotInstance = true;
-                cimClassTypeNames = NativeCommandArgumentCompletion_InferTypesOfArugment(boundArguments, commandAst, context, "InputObject");
+                cimClassTypeNames = NativeCommandArgumentCompletion_InferTypesOfArgument(boundArguments, commandAst, context, "InputObject");
             }
 
             if (cimClassTypeNames != null)
@@ -3893,7 +3893,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Find the location where 'tab' is typed based on the line and colum.
+        /// Find the location where 'tab' is typed based on the line and column.
         /// </summary>
         private static ArgumentLocation FindTargetArgumentLocation(Collection<AstParameterArgumentPair> parsedArguments, Token token)
         {
@@ -4326,7 +4326,7 @@ namespace System.Management.Automation
                             }
                             catch (Exception e)
                             {
-                                // The object at the specifie path is not accessable, such as c:\hiberfil.sys (for hibernation) or c:\pagefile.sys (for paging)
+                                // The object at the specified path is not accessable, such as c:\hiberfil.sys (for hibernation) or c:\pagefile.sys (for paging)
                                 // We ignore those files
                                 CommandProcessorBase.CheckForSevereException(e);
                                 continue;
@@ -5857,8 +5857,8 @@ namespace System.Management.Automation
 
             #region Process_LoadedAssemblies
 
-            var assembliesExludingPSGenerated = ClrFacade.GetAssemblies();
-            var allPublicTypes = assembliesExludingPSGenerated.SelectMany(assembly => assembly.GetTypes().Where(TypeResolver.IsPublic));
+            var assembliesExcludingPSGenerated = ClrFacade.GetAssemblies();
+            var allPublicTypes = assembliesExcludingPSGenerated.SelectMany(assembly => assembly.GetTypes().Where(TypeResolver.IsPublic));
 
             foreach (var type in allPublicTypes)
             {
@@ -6064,7 +6064,7 @@ namespace System.Management.Automation
                 }
             }
 
-            //this is a temparary fix. Only the type defined in the same script get complete. Need to use using Module when that is available. 
+            //this is a temporary fix. Only the type defined in the same script get complete. Need to use using Module when that is available. 
             var scriptBlockAst = (ScriptBlockAst)context.RelatedAsts[0];
             var typeAsts = scriptBlockAst.FindAll(ast => ast is TypeDefinitionAst, false).Cast<TypeDefinitionAst>();
             foreach (var typeAst in typeAsts.Where(ast => pattern.IsMatch(ast.Name)))
@@ -6251,7 +6251,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(ast.Keyword != null, "DynamicKeywordStatementAst.Keyword can never be null");
             List<CompletionResult> results = null;
-            var dynamicKeywordProperies = ast.Keyword.Properties;
+            var dynamicKeywordProperties = ast.Keyword.Properties;
             var memberPattern = completionContext.WordToComplete + "*";
 
             //
@@ -6269,10 +6269,10 @@ namespace System.Management.Automation
                 }
             }
 
-            if (dynamicKeywordProperies.Count > 0)
+            if (dynamicKeywordProperties.Count > 0)
             {
                 // Excludes existing properties in the hashtable statement
-                var tempProperties = dynamicKeywordProperies.Where(p => !propertiesName.Contains(p.Key, StringComparer.OrdinalIgnoreCase));
+                var tempProperties = dynamicKeywordProperties.Where(p => !propertiesName.Contains(p.Key, StringComparer.OrdinalIgnoreCase));
                 if (tempProperties != null && tempProperties.Any())
                 {
                     results = new List<CompletionResult>();

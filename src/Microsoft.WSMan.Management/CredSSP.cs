@@ -440,7 +440,7 @@ namespace Microsoft.WSMan.Management
 
         //private const string DelegateComputerParam = "DelegateComputer";
         //private String[] delegatecomputer;
-        //private RuntimeDefinedParameterDictionary dyanmicParameters = new RuntimeDefinedParameterDictionary();
+        //private RuntimeDefinedParameterDictionary dynamicParameters = new RuntimeDefinedParameterDictionary();
 
         #endregion
 
@@ -544,7 +544,7 @@ namespace Microsoft.WSMan.Management
             // return null if the role is not client.
             if (!Role.Equals(ClientRole, StringComparison.OrdinalIgnoreCase))
             {
-                return dyanmicParameters;
+                return dynamicParameters;
             }
 
             // Construct attributes for the DelegateComputer parameter
@@ -561,9 +561,9 @@ namespace Microsoft.WSMan.Management
                 DelegateComputerParam,
                 typeof(string[]),
                 delegateComputerAttributeCollection);
-            dyanmicParameters.Add(DelegateComputerParam, delegateComputer);
+            dynamicParameters.Add(DelegateComputerParam, delegateComputer);
 
-            return dyanmicParameters;
+            return dynamicParameters;
             
         } // GetDynamicParameters*/
 
@@ -603,7 +603,7 @@ namespace Microsoft.WSMan.Management
                     return;
                 }
                 // Extract delegateComputer information from dynamic parameters collection
-                //RuntimeDefinedParameter delegateComputerParameter = dyanmicParameters[DelegateComputerParam];
+                //RuntimeDefinedParameter delegateComputerParameter = dynamicParameters[DelegateComputerParam];
                 //delegatecomputer = (string[])delegateComputerParameter.Value;
 
                 string newxmlcontent = @"<cfg:Auth xmlns:cfg=""http://schemas.microsoft.com/wbem/wsman/1/config/client/auth""><cfg:CredSSP>true</cfg:CredSSP></cfg:Auth>";

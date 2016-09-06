@@ -163,8 +163,8 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
                 if (IncludeDependencies) {
                     var missingDependencies = new HashSet<string>();
                     foreach (var dep in package.Dependencies) {
-                        var dependendcies = PackageManagementService.FindPackageByCanonicalId(dep, this);
-                        var depPkg = dependendcies.OrderByDescending(pp => pp, SoftwareIdentityVersionComparer.Instance).FirstOrDefault();
+                        var dependencies = PackageManagementService.FindPackageByCanonicalId(dep, this);
+                        var depPkg = dependencies.OrderByDescending(pp => pp, SoftwareIdentityVersionComparer.Instance).FirstOrDefault();
 
                         if (depPkg == null) {
                             missingDependencies.Add(dep);

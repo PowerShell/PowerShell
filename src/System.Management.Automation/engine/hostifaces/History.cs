@@ -1742,7 +1742,7 @@ namespace Microsoft.PowerShell.Commands
             }
             set
             {
-                _countParamterSpecified = true;
+                _countParameterSpecified = true;
                 _count = value;
             }
         }
@@ -1755,7 +1755,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// a boolean variable to indicate if the count parameter specified
         /// </summary>
-        private bool _countParamterSpecified = false;
+        private bool _countParameterSpecified = false;
 
         /// <summary>
         /// Specifies whether new entries to be cleared or the default old ones.
@@ -1824,7 +1824,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void ClearHistoryByID()
         {
-            if (_countParamterSpecified && Count < 0)
+            if (_countParameterSpecified && Count < 0)
             {
                 Exception ex =
                    new ArgumentException
@@ -1846,7 +1846,7 @@ namespace Microsoft.PowerShell.Commands
             if (_id != null)
             {
                 // if count parameter is not present
-                if (!_countParamterSpecified)
+                if (!_countParameterSpecified)
                 {
                     // clearing the entry for each id in the id[] parameter.      
                     foreach (long id in _id)
@@ -1908,7 +1908,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // confirmation message if all the clearhistory cmdlet is used without any parameters
-                if (_countParamterSpecified == false)
+                if (_countParameterSpecified == false)
                 {
                     string message = StringUtil.Format(HistoryStrings.ClearHistoryWarning, "Warning");// "The command would clear all the entry(s) from the session history,Are you sure you want to continue ?";
                     if (!ShouldProcess(message))
@@ -1933,7 +1933,7 @@ namespace Microsoft.PowerShell.Commands
         private void ClearHistoryByCmdLine()
         {
             // throw an exception for invalid count values
-            if (_countParamterSpecified && Count < 0)
+            if (_countParameterSpecified && Count < 0)
             {
                 Exception ex =
                    new ArgumentException
@@ -1956,7 +1956,7 @@ namespace Microsoft.PowerShell.Commands
             if (_commandline != null)
             {
                 // if count parameter is not present
-                if (!_countParamterSpecified)
+                if (!_countParameterSpecified)
                 {
                     foreach (string cmd in _commandline)
                     {
@@ -2038,7 +2038,7 @@ namespace Microsoft.PowerShell.Commands
                 //creates a wild card pattern
                 WildcardPattern wildcardpattern = WildcardPattern.Get(cmdline, WildcardOptions.IgnoreCase);
                 //count set to zero if not specified.
-                if (!_countParamterSpecified && WildcardPattern.ContainsWildcardCharacters(cmdline))
+                if (!_countParameterSpecified && WildcardPattern.ContainsWildcardCharacters(cmdline))
                 {
                     count = 0;
                 }

@@ -26,7 +26,7 @@ namespace System.Management.Automation.ComInterop
         # region ctor
 
         /// <summary>
-        /// Creates a representation for the paramter of a COM method
+        /// Creates a representation for the parameter of a COM method
         /// </summary>
         internal ComParamDesc(ref ELEMDESC elemDesc, string name)
         {

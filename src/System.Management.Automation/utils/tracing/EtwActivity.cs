@@ -366,8 +366,8 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         public void Correlate()
         {
-            Guid parentAcitvity = GetActivityId();
-            CorrelateWithActivity(parentAcitvity);
+            Guid parentActivity = GetActivityId();
+            CorrelateWithActivity(parentActivity);
         }
 
         /// <summary>

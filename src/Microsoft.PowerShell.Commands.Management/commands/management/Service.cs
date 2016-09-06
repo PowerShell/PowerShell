@@ -683,9 +683,9 @@ namespace Microsoft.PowerShell.Commands
                     }
                     if (RequiredServices.IsPresent)
                     {
-                        foreach (ServiceController servdependedon in service.ServicesDependedOn)
+                        foreach (ServiceController servicedependedon in service.ServicesDependedOn)
                         {
-                            WriteObject(servdependedon);
+                            WriteObject(servicedependedon);
                         }
                     }
                 }

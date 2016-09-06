@@ -1915,7 +1915,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 for (int i = 0; i < values.Length;)
                 {
-                    WriteRequriedGroup(values[i++], sb);
+                    WriteRequiredGroup(values[i++], sb);
 
                     if (i < values.Length)
                     {
@@ -1925,7 +1925,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                WriteRequriedGroup(keyObject, sb);
+                WriteRequiredGroup(keyObject, sb);
             }
 
             sb.Append(" }");
@@ -1933,7 +1933,7 @@ namespace Microsoft.PowerShell.Commands
             return sb.ToString();
         }
 
-        private static void WriteRequriedGroup(object value, StringBuilder sb)
+        private static void WriteRequiredGroup(object value, StringBuilder sb)
         {
             string strValue = value as string;
             if (strValue != null)

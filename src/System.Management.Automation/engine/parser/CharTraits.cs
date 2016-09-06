@@ -265,7 +265,7 @@ namespace System.Management.Automation.Language
 
         // Return true if the character can be the first character of
         // an identifier or label.
-        internal static bool IsIndentifierStart(this char c)
+        internal static bool IsIdentifierStart(this char c)
         {
             if (c < 128)
             {
@@ -276,7 +276,7 @@ namespace System.Management.Automation.Language
 
         // Return true if the character can follow the first character of
         // an identifier or label.
-        internal static bool IsIndentifierFollow(this char c)
+        internal static bool IsIdentifierFollow(this char c)
         {
             if (c < 128)
             {

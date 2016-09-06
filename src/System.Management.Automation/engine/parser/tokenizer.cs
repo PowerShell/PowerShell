@@ -3513,7 +3513,7 @@ namespace System.Management.Automation.Language
             {
                 c = GetChar();
 
-                if (c.IsIndentifierFollow())
+                if (c.IsIdentifierFollow())
                 {
                     sb.Append(c);
                 }
@@ -3677,7 +3677,7 @@ namespace System.Management.Automation.Language
             var sb = GetStringBuilder();
 
             char c = GetChar();
-            if (!c.IsIndentifierStart())
+            if (!c.IsIdentifierStart())
             {
                 // Must be a generic token then
                 sb.Append(':');
@@ -3690,7 +3690,7 @@ namespace System.Management.Automation.Language
                 return ScanGenericToken(sb);
             }
 
-            while (c.IsIndentifierFollow())
+            while (c.IsIdentifierFollow())
             {
                 sb.Append(c);
                 c = GetChar();
@@ -4057,7 +4057,7 @@ namespace System.Management.Automation.Language
                 case '!':
                     c1 = PeekChar();
                     if ((InCommandMode() && !c1.ForceStartNewToken()) ||
-                        (InExpressionMode() && c1.IsIndentifierStart()))
+                        (InExpressionMode() && c1.IsIdentifierStart()))
                     {
                         return ScanGenericToken(c);
                     }

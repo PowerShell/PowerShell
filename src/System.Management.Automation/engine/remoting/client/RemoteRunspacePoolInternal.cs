@@ -179,7 +179,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 new EventHandler<RemoteDataEventArgs<Exception>>(HandleSessionClosing);
             DataStructureHandler.SessionClosed +=
                 new EventHandler<RemoteDataEventArgs<Exception>>(HandleSessionClosed);
-            DataStructureHandler.SetMaxMinRunspacesResponseRecieved +=
+            DataStructureHandler.SetMaxMinRunspacesResponseReceived +=
                 new EventHandler<RemoteDataEventArgs<PSObject>>(HandleResponseReceived);
             DataStructureHandler.URIRedirectionReported +=
                 new EventHandler<RemoteDataEventArgs<Uri>>(HandleURIDirectionReported);

@@ -1026,10 +1026,10 @@ namespace System.Management.Automation.Remoting
         /// <param name="newState">
         /// The new state.
         /// </param>
-        /// <param name="reasion">
+        /// <param name="reason">
         /// Optional parameter that can provide additional information. This is currently not used.
         /// </param>
-        private void SetState(RemoteSessionState newState, Exception reasion)
+        private void SetState(RemoteSessionState newState, Exception reason)
         {
             RemoteSessionState oldState = _state;
             if (newState != oldState)

@@ -835,12 +835,12 @@ namespace Microsoft.PowerShell.Commands
                         ArrayList namespaceArray = new ArrayList();
                         ArrayList sinkArray = new ArrayList();
                         ArrayList connectArray = new ArrayList(); // Optimization for remote namespace
-                        int currentNamesapceCount = 0;
+                        int currentNamespaceCount = 0;
                         namespaceArray.Add(getObject.Namespace);
                         bool topNamespace = true;
-                        while (currentNamesapceCount < namespaceArray.Count)
+                        while (currentNamespaceCount < namespaceArray.Count)
                         {
-                            string connectNamespace = (string)namespaceArray[currentNamesapceCount];
+                            string connectNamespace = (string)namespaceArray[currentNamespaceCount];
                             ManagementScope scope = new ManagementScope(WMIHelper.GetScopeString(_computerName, connectNamespace), options);
                             scope.Connect();
                             ManagementClass namespaceClass = new ManagementClass(scope, new ManagementPath("__Namespace"), new ObjectGetOptions());
@@ -861,7 +861,7 @@ namespace Microsoft.PowerShell.Commands
                                 sinkArray.Add(_job.GetNewSink());
                             }
                             connectArray.Add(scope);
-                            currentNamesapceCount++;
+                            currentNamespaceCount++;
                         }
 
                         if ((sinkArray.Count != namespaceArray.Count) || (connectArray.Count != namespaceArray.Count)) // not expected throw exception
@@ -872,14 +872,14 @@ namespace Microsoft.PowerShell.Commands
                             return;
                         }
 
-                        currentNamesapceCount = 0;
-                        while (currentNamesapceCount < namespaceArray.Count)
+                        currentNamespaceCount = 0;
+                        while (currentNamespaceCount < namespaceArray.Count)
                         {
-                            string connectNamespace = (string)namespaceArray[currentNamesapceCount];
-                            ManagementObjectSearcher searcher = getObject.GetObjectList((ManagementScope)connectArray[currentNamesapceCount]);
+                            string connectNamespace = (string)namespaceArray[currentNamespaceCount];
+                            ManagementObjectSearcher searcher = getObject.GetObjectList((ManagementScope)connectArray[currentNamespaceCount]);
                             if (searcher == null)
                             {
-                                currentNamesapceCount++;
+                                currentNamespaceCount++;
                                 continue;
                             }
                             if (topNamespace)
@@ -889,9 +889,9 @@ namespace Microsoft.PowerShell.Commands
                             }
                             else
                             {
-                                searcher.Get((ManagementOperationObserver)sinkArray[currentNamesapceCount]);
+                                searcher.Get((ManagementOperationObserver)sinkArray[currentNamespaceCount]);
                             }
-                            currentNamesapceCount++;
+                            currentNamespaceCount++;
                         }
                     }
                     else

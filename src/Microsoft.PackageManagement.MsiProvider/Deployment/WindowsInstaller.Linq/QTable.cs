@@ -228,9 +228,9 @@ namespace Microsoft.PackageManagement.Msi.Internal.Deployment.WindowsInstaller.L
             return q;
         }
 
-        private static LambdaExpression GetJoinLambda(Expression expresion)
+        private static LambdaExpression GetJoinLambda(Expression expression)
         {
-            UnaryExpression unaryExpression = (UnaryExpression) expresion;
+            UnaryExpression unaryExpression = (UnaryExpression) expression;
             return (LambdaExpression) unaryExpression.Operand;
         }
 

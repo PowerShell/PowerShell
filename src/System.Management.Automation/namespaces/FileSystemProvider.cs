@@ -1233,7 +1233,7 @@ namespace Microsoft.PowerShell.Commands
             if (fspDynamicParam != null)
             {
                 evaluator = fspDynamicParam.Attributes;
-                switchEvaluator = FormatAttributeSwitchParamters();
+                switchEvaluator = FormatAttributeSwitchParameters();
             }
 
             bool filterHidden = false;           // "Hidden" is specified somewhere in the expression
@@ -1525,7 +1525,7 @@ namespace Microsoft.PowerShell.Commands
                     if (fspDynamicParam != null)
                     {
                         evaluator = fspDynamicParam.Attributes;
-                        switchEvaluator = FormatAttributeSwitchParamters();
+                        switchEvaluator = FormatAttributeSwitchParameters();
                     }
 
                     bool attributeFilter = true;
@@ -1632,7 +1632,7 @@ namespace Microsoft.PowerShell.Commands
                 if (fspDynamicParam != null)
                 {
                     evaluator = fspDynamicParam.Attributes;
-                    switchEvaluator = FormatAttributeSwitchParamters();
+                    switchEvaluator = FormatAttributeSwitchParameters();
                 }
 
                 // Write out the items
@@ -1766,7 +1766,7 @@ namespace Microsoft.PowerShell.Commands
         /// Otherwise,
         /// returns NULL
         /// </returns>
-        private FlagsExpression<FileAttributes> FormatAttributeSwitchParamters()
+        private FlagsExpression<FileAttributes> FormatAttributeSwitchParameters()
         {
             FlagsExpression<FileAttributes> switchParamEvaluator = null;
             StringBuilder sb = new StringBuilder();
@@ -3219,15 +3219,15 @@ namespace Microsoft.PowerShell.Commands
                 // If the items see if we need to check the age of the file...
                 if (result && itemExistsDynamicParameters != null)
                 {
-                    DateTime lastWrtiteTime = File.GetLastWriteTime(path);
+                    DateTime lastWriteTime = File.GetLastWriteTime(path);
 
                     if (itemExistsDynamicParameters.OlderThan.HasValue)
                     {
-                        result = lastWrtiteTime < itemExistsDynamicParameters.OlderThan.Value;
+                        result = lastWriteTime < itemExistsDynamicParameters.OlderThan.Value;
                     }
                     if (itemExistsDynamicParameters.NewerThan.HasValue)
                     {
-                        result = lastWrtiteTime > itemExistsDynamicParameters.NewerThan.Value;
+                        result = lastWriteTime > itemExistsDynamicParameters.NewerThan.Value;
                     }
                 }
             }
@@ -3492,7 +3492,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ps.Runspace = fromSession.Runspace;
 
-                InitilizeFunctionPSCopyFileFromRemoteSession(ps);
+                InitializeFunctionPSCopyFileFromRemoteSession(ps);
 
                 try
                 {
@@ -3571,7 +3571,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool isContainer = IsItemContainer(path);
 
-            InitilizeFunctionsPSCopyFileToRemoteSession(ps);
+            InitializeFunctionsPSCopyFileToRemoteSession(ps);
 
             try
             {
@@ -3998,7 +3998,7 @@ namespace Microsoft.PowerShell.Commands
             return streams;
         }
 
-        private void InitilizeFunctionPSCopyFileFromRemoteSession(System.Management.Automation.PowerShell ps)
+        private void InitializeFunctionPSCopyFileFromRemoteSession(System.Management.Automation.PowerShell ps)
         {
             if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
 
@@ -4299,7 +4299,7 @@ namespace Microsoft.PowerShell.Commands
             return success;
         }
 
-        private void InitilizeFunctionsPSCopyFileToRemoteSession(System.Management.Automation.PowerShell ps)
+        private void InitializeFunctionsPSCopyFileToRemoteSession(System.Management.Automation.PowerShell ps)
         {
             if ((ps == null) || !ValidRemoteSessionForScripting(ps.Runspace)) { return; }
 

@@ -2056,7 +2056,7 @@ namespace System.Management.Automation
                         if (_currentParameterSetFlag == defaultParameterSet)
                             Command.SetParameterSetName(CurrentParameterSetName);
                         else
-                            _parameterSetToBePrioritizedInPipelingBinding = defaultParameterSet;
+                            _parameterSetToBePrioritizedInPipelineBinding = defaultParameterSet;
                     }
                 }
                 // We need to analyze the prompting data that was gathered to determine what parameter
@@ -2082,7 +2082,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
-                else if (_parameterSetToBePrioritizedInPipelingBinding == 0)
+                else if (_parameterSetToBePrioritizedInPipelineBinding == 0)
                 {
                     // We have more than one valid parameter set.  Need to figure out which one to
                     // use.
@@ -2573,7 +2573,7 @@ namespace System.Management.Automation
 
                 if (_currentParameterSetFlag != chosenMandatorySet)
                 {
-                    _parameterSetToBePrioritizedInPipelingBinding = chosenMandatorySet;
+                    _parameterSetToBePrioritizedInPipelineBinding = chosenMandatorySet;
                 }
             }
         }
@@ -3459,15 +3459,15 @@ namespace System.Management.Automation
 
             _currentParameterSetFlag = _prePipelineProcessingParameterSetFlags;
             uint validParameterSets = _currentParameterSetFlag;
-            bool needToPrioritizeOneSpecificParameterSet = _parameterSetToBePrioritizedInPipelingBinding != 0;
+            bool needToPrioritizeOneSpecificParameterSet = _parameterSetToBePrioritizedInPipelineBinding != 0;
             int steps = needToPrioritizeOneSpecificParameterSet ? 2 : 1;
 
             if (needToPrioritizeOneSpecificParameterSet)
             {
-                // _parameterSetToBePrioritizedInPipelingBinding is set, so we are certain that the specified parameter set must be valid,
+                // _parameterSetToBePrioritizedInPipelineBinding is set, so we are certain that the specified parameter set must be valid,
                 // and it's not the only valid parameter set.
-                Diagnostics.Assert((_currentParameterSetFlag & _parameterSetToBePrioritizedInPipelingBinding) != 0, "_parameterSetToBePrioritizedInPipelingBinding should be valid if it's set");
-                validParameterSets = _parameterSetToBePrioritizedInPipelingBinding;
+                Diagnostics.Assert((_currentParameterSetFlag & _parameterSetToBePrioritizedInPipelineBinding) != 0, "_parameterSetToBePrioritizedInPipelineBinding should be valid if it's set");
+                validParameterSets = _parameterSetToBePrioritizedInPipelineBinding;
             }
 
             for (int i = 0; i < steps; i++)
@@ -3501,8 +3501,8 @@ namespace System.Management.Automation
                 if (needToPrioritizeOneSpecificParameterSet && i == 0)
                 {
                     // If the prioritized set can be bound successfully, there is no need to do the second round binding
-                    if (_currentParameterSetFlag == _parameterSetToBePrioritizedInPipelingBinding) break;
-                    validParameterSets = _currentParameterSetFlag & (~_parameterSetToBePrioritizedInPipelingBinding);
+                    if (_currentParameterSetFlag == _parameterSetToBePrioritizedInPipelineBinding) break;
+                    validParameterSets = _currentParameterSetFlag & (~_parameterSetToBePrioritizedInPipelineBinding);
                 }
             }
 
@@ -4089,7 +4089,7 @@ namespace System.Management.Automation
 
         #endregion DefaultParameterBindingStructures
 
-        private uint _parameterSetToBePrioritizedInPipelingBinding = 0;
+        private uint _parameterSetToBePrioritizedInPipelineBinding = 0;
 
         /// <summary>
         /// The cmdlet metadata.

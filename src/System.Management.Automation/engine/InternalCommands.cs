@@ -1644,13 +1644,13 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!WildcardPattern.ContainsWildcardCharacters(_property))
             {
-                PSMemberInfoInternalCollection<PSMemberInfo> restuls = new PSMemberInfoInternalCollection<PSMemberInfo>();
+                PSMemberInfoInternalCollection<PSMemberInfo> results = new PSMemberInfoInternalCollection<PSMemberInfo>();
                 PSMemberInfo member = _inputObject.Members[_property];
                 if (member != null)
                 {
-                    restuls.Add(member);
+                    results.Add(member);
                 }
-                return new ReadOnlyPSMemberInfoCollection<PSMemberInfo>(restuls);
+                return new ReadOnlyPSMemberInfoCollection<PSMemberInfo>(results);
             }
 
             ReadOnlyPSMemberInfoCollection<PSMemberInfo> members = _inputObject.Members.Match(_property, PSMemberTypes.All);

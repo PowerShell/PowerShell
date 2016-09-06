@@ -324,7 +324,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// - Enabled state
         /// </summary>
         /// <returns>Boolean if this object data is modified.</returns>
-        private bool UpdateDefintionFromWTS()
+        private bool UpdateDefinitionFromWTS()
         {
             bool dataModified = false;
 
@@ -697,7 +697,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             Exception notFoundEx = null;
             try
             {
-                if (UpdateDefintionFromWTS())
+                if (UpdateDefinitionFromWTS())
                 {
                     SaveToStore();
                 }

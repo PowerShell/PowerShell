@@ -397,7 +397,7 @@ namespace System.Management.Automation
                 // in the same invocation. Return once the job object is returned and
                 // used to initialize the proxy.
                 DoStartAsync(dataAdded, stateChanged, input);
-                _jobInitialiedWaitHandle.WaitOne();
+                _jobInitializedWaitHandle.WaitOne();
             }
             catch (Exception error)
             {
@@ -1344,7 +1344,7 @@ namespace System.Management.Automation
                 // remove it.
                 // Do this within the Try/Finally block so that the wait handle will be set
                 // on exit.
-                _jobInitialiedWaitHandle.WaitOne();
+                _jobInitializedWaitHandle.WaitOne();
                 if (_remoteJobInstanceId == Guid.Empty) return;
 
                 // Stop the receive-job command if it's in progress.
@@ -1567,7 +1567,7 @@ namespace System.Management.Automation
                             JobSuspendedOrFinished.Set();
                             OnSuspendJobCompleted(new AsyncCompletedEventArgs(e.JobStateInfo.Reason, false, null));
 
-                            _jobInitialiedWaitHandle.Set();
+                            _jobInitializedWaitHandle.Set();
                             OnStartJobCompleted(new AsyncCompletedEventArgs(e.JobStateInfo.Reason, false, null));
 
                             OnStopJobCompleted(new AsyncCompletedEventArgs(e.JobStateInfo.Reason, false, null));
@@ -2058,7 +2058,7 @@ namespace System.Management.Automation
                                            ? PSTraceSource.NewNotSupportedException(PowerShellStrings.CommandDoesNotWriteJob)
                                            : _receivePowerShell.Streams.Error[0].Exception;
                     DoSetJobState(JobState.Failed, reason);
-                    _jobInitialiedWaitHandle.Set();
+                    _jobInitializedWaitHandle.Set();
                     OnStartJobCompleted(new AsyncCompletedEventArgs(reason, false, null));
                     return;
                 }
@@ -2079,7 +2079,7 @@ namespace System.Management.Automation
                 }
 
                 // Release any thread waiting start.
-                _jobInitialiedWaitHandle.Set();
+                _jobInitializedWaitHandle.Set();
                 _tracer.WriteMessage(ClassNameTrace, "DataAddedToOutput", Guid.Empty, this,
                                      "BEGIN Invoke StartJobCompleted event", null);
                 OnStartJobCompleted(new AsyncCompletedEventArgs(null, false, null));
@@ -2377,7 +2377,7 @@ namespace System.Management.Automation
 
             if (_removeComplete != null) _removeComplete.Dispose();
             if (_jobRunningOrFinished != null) _jobRunningOrFinished.Dispose();
-            _jobInitialiedWaitHandle.Dispose();
+            _jobInitializedWaitHandle.Dispose();
             if (_jobSuspendedOrFinished != null) _jobSuspendedOrFinished.Dispose();
 
             if (ChildJobs != null && ChildJobs.Count > 0)
@@ -2448,7 +2448,7 @@ namespace System.Management.Automation
             }
         }
 
-        private readonly ManualResetEvent _jobInitialiedWaitHandle = new ManualResetEvent(false);
+        private readonly ManualResetEvent _jobInitializedWaitHandle = new ManualResetEvent(false);
 
         private ManualResetEvent _jobSuspendedOrFinished;
         private ManualResetEvent JobSuspendedOrFinished

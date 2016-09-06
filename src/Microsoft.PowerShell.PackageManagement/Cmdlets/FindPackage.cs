@@ -80,8 +80,8 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                         // this dep is not processed yet
                         if (!processedDependencies.Contains(dep))
                         {
-                            var dependendcies = PackageManagementService.FindPackageByCanonicalId(dep, this);
-                            var depPkg = dependendcies.OrderByDescending(pp => pp, SoftwareIdentityVersionComparer.Instance).FirstOrDefault();
+                            var dependencies = PackageManagementService.FindPackageByCanonicalId(dep, this);
+                            var depPkg = dependencies.OrderByDescending(pp => pp, SoftwareIdentityVersionComparer.Instance).FirstOrDefault();
 
                             processedDependencies.Add(dep);
 

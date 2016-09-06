@@ -593,7 +593,7 @@ namespace Microsoft.PowerShell.Workflow
         /// <summary>
         /// On suspended handler.
         /// </summary>
-        internal Action<object> OnSuspenedDelegate
+        internal Action<object> OnSuspendedDelegate
         {
             set { this.OnSuspended = value; }
         }

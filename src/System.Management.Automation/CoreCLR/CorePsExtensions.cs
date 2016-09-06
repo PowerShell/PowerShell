@@ -420,10 +420,10 @@ namespace System.Management.Automation
             do
             {
                 // Use 'for' loop to avoid construct new ArrayEnumerator object
-                for (int constorIndex = 0; constorIndex < constructors.Length; constorIndex++)
+                for (int constructorIndex = 0; constructorIndex < constructors.Length; constructorIndex++)
                 {
-                    var constor = constructors[constorIndex];
-                    ParameterInfo[] parameters = constor.GetParameters();
+                    var constructor = constructors[constructorIndex];
+                    ParameterInfo[] parameters = constructor.GetParameters();
                     if (types.Length == parameters.Length)
                     {
                         bool success = true;
@@ -438,7 +438,7 @@ namespace System.Management.Automation
 
                         if (success)
                         {
-                            matchConstructors.Add(constor);
+                            matchConstructors.Add(constructor);
                         }
                     }
                 }
@@ -1110,7 +1110,7 @@ namespace System.Management.Automation
                     break;
                 case SpecialFolder.LocalApplicationData:
                     folderPath = System.Environment.GetEnvironmentVariable("LOCALAPPDATA");
-                    // When powershell gets executed in SetupComplete.cmd during NanoSrever's first boot, 'LOCALAPPDATA' won't be set yet.
+                    // When powershell gets executed in SetupComplete.cmd during NanoServer's first boot, 'LOCALAPPDATA' won't be set yet.
                     // In this case, we need to return an alternate path, so that module auto-loading can continue to work properly.
                     if (folderPath == null)
                     {

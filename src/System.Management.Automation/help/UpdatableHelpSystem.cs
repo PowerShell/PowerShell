@@ -1020,11 +1020,11 @@ namespace System.Management.Automation.Help
             {
                 if (_progressEvents.Count > 0)
                 {
-                    foreach (UpdatableHelpProgressEventArgs evnt in _progressEvents)
+                    foreach (UpdatableHelpProgressEventArgs evt in _progressEvents)
                     {
-                        evnt.CommandType = commandType;
+                        evt.CommandType = commandType;
 
-                        OnProgressChanged(this, evnt);
+                        OnProgressChanged(this, evt);
                     }
 
                     _progressEvents.Clear();

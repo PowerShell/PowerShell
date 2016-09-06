@@ -2952,8 +2952,8 @@ Set-SessionPluginQuota $args[0]
 ";
 
         private const string setSessionConfigurationTimeoutQuotasSbFormat = @"
-function Set-SessionPluginIdleTimeoutQuotas([int] $maxIdleTimeoutms, [int] $idleTimeoutms, [bool] $setMaxIdleTimoutFirst) {{
-    if ($setMaxIdleTimoutFirst) {{
+function Set-SessionPluginIdleTimeoutQuotas([int] $maxIdleTimeoutms, [int] $idleTimeoutms, [bool] $setMaxIdleTimeoutFirst) {{
+    if ($setMaxIdleTimeoutFirst) {{
         set-item -WarningAction SilentlyContinue 'WSMan:\localhost\Plugin\{0}\Quotas\MaxIdleTimeoutms' -Value $maxIdleTimeoutms -confirm:$false
         set-item -WarningAction SilentlyContinue 'WSMan:\localhost\Plugin\{0}\Quotas\IdleTimeoutms' -Value $idleTimeoutms -confirm:$false
     }}
@@ -3571,7 +3571,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
 
                 if (idleTimeOut != 0 && quotas.ContainsKey(WSManConfigurationOption.AttribMaxIdleTimeout))
                 {
-                    bool setMaxIdleTimoutFirst = true;
+                    bool setMaxIdleTimeoutFirst = true;
                     int maxIdleTimeOut;
 
                     if (LanguagePrimitives.TryConvertTo<int>(quotas[WSManConfigurationOption.AttribMaxIdleTimeout], out maxIdleTimeOut))
@@ -3594,7 +3594,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
 
                         if (currentIdleTimeoutms >= maxIdleTimeOut && currentIdleTimeoutms >= idleTimeOut)
                         {
-                            setMaxIdleTimoutFirst = false;
+                            setMaxIdleTimeoutFirst = false;
                         }
                     }
 
@@ -3609,7 +3609,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                         dollarUnder: AutomationNull.Value,
                         input: Utils.EmptyArray<object>(),
                         scriptThis: AutomationNull.Value,
-                        args: new object[] { maxIdleTimeOut, idleTimeOut, setMaxIdleTimoutFirst });
+                        args: new object[] { maxIdleTimeOut, idleTimeOut, setMaxIdleTimeoutFirst });
 
                     // Remove Idle timeout values as we have set them above
                     // 
@@ -4410,7 +4410,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
 
             string qcCaptionMessage = StringUtil.Format(RemotingErrorIdStrings.EcsWSManQCCaption);
             string qcQueryMessage = StringUtil.Format(RemotingErrorIdStrings.EcsWSManQCQuery, setWSManConfigCommand);
-            string qcShoudProcessDesc = StringUtil.Format(RemotingErrorIdStrings.EcsWSManShouldProcessDesc, setWSManConfigCommand);
+            string qcShouldProcessDesc = StringUtil.Format(RemotingErrorIdStrings.EcsWSManShouldProcessDesc, setWSManConfigCommand);
             string setCaptionMessage = StringUtil.Format(RemotingErrorIdStrings.CSShouldProcessAction,
                 "Set-PSSessionConfiguration");
             string setQueryMessage = RemotingErrorIdStrings.EcsShouldProcessTarget;
@@ -4434,7 +4434,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
                                                qcCaptionMessage,
                                                whatIf,
                                                confirm,
-                                               qcShoudProcessDesc,
+                                               qcShouldProcessDesc,
                                                setEnabledTarget,
                                                setEnabledAction,
                                                _skipNetworkProfileCheck,

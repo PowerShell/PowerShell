@@ -881,9 +881,9 @@ namespace Microsoft.PowerShell.Commands
                     _exportedCmdlets = new string[] { "*" };
             }
 
-            ValidateUriParamterValue(ProjectUri, "ProjectUri");
-            ValidateUriParamterValue(LicenseUri, "LicenseUri");
-            ValidateUriParamterValue(IconUri, "IconUri");
+            ValidateUriParameterValue(ProjectUri, "ProjectUri");
+            ValidateUriParameterValue(LicenseUri, "LicenseUri");
+            ValidateUriParameterValue(IconUri, "IconUri");
 
             if (CompatiblePSEditions != null && (CompatiblePSEditions.Distinct(StringComparer.OrdinalIgnoreCase).Count() != CompatiblePSEditions.Count()))
             {
@@ -1131,7 +1131,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void ValidateUriParamterValue(Uri uri, string parameterName)
+        private void ValidateUriParameterValue(Uri uri, string parameterName)
         {
             Dbg.Assert(!String.IsNullOrWhiteSpace(parameterName), "parameterName should not be null or whitespace");
 

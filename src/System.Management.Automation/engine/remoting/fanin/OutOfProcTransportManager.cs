@@ -478,7 +478,7 @@ namespace System.Management.Automation.Remoting.Client
             _dataProcessingCallbacks.CommandCreationPacketReceived += new OutOfProcessUtils.CommandCreationPacketReceived(OnCommandCreationPacketReceived);
             _dataProcessingCallbacks.CommandCreationAckReceived += new OutOfProcessUtils.CommandCreationAckReceived(OnCommandCreationAckReceived);
             _dataProcessingCallbacks.SignalPacketReceived += new OutOfProcessUtils.SignalPacketReceived(OnSignalPacketReceived);
-            _dataProcessingCallbacks.SignalAckPacketReceived += new OutOfProcessUtils.SignalAckPacketReceived(OnSiganlAckPacketReceived);
+            _dataProcessingCallbacks.SignalAckPacketReceived += new OutOfProcessUtils.SignalAckPacketReceived(OnSignalAckPacketReceived);
             _dataProcessingCallbacks.ClosePacketReceived += new OutOfProcessUtils.ClosePacketReceived(OnClosePacketReceived);
             _dataProcessingCallbacks.CloseAckPacketReceived += new OutOfProcessUtils.CloseAckPacketReceived(OnCloseAckReceived);
 
@@ -860,7 +860,7 @@ namespace System.Management.Automation.Remoting.Client
                    OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_TAG);
         }
 
-        private void OnSiganlAckPacketReceived(Guid psGuid)
+        private void OnSignalAckPacketReceived(Guid psGuid)
         {
             if (psGuid == Guid.Empty)
             {

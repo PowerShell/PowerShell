@@ -255,7 +255,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // set the alignment
                 if (a.OriginatingParameter != null)
                 {
-                    object key = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.AligmentEntryKey);
+                    object key = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.AlignmentEntryKey);
 
                     if (key != AutomationNull.Value)
                         ci.alignment = (int)key;

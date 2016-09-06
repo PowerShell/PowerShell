@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Field used for the CommonParameters parameter.
         /// </summary>
-        private ParameterSetViewModel comonParameters;
+        private ParameterSetViewModel commonParameters;
 
         /// <summary>
         /// The ShowCommandCommandInfo this model is based on
@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         public ParameterSetViewModel CommonParameters
         {
-            get { return this.comonParameters; }
+            get { return this.commonParameters; }
         }
 
         /// <summary>
@@ -537,7 +537,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             }
 
             List<ParameterViewModel> commonParametersList = commonParametersTable.Values.ToList<ParameterViewModel>();
-            returnValue.comonParameters = new ParameterSetViewModel(String.Empty, commonParametersList);
+            returnValue.commonParameters = new ParameterSetViewModel(String.Empty, commonParametersList);
 
             returnValue.parameterSets.Sort(returnValue.Compare);
 

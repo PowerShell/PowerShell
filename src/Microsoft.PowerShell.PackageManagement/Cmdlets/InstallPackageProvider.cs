@@ -237,8 +237,8 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
                 foreach (var dep in package.Dependencies) {
                     // note: future work may be needed if the package sources currently selected by the user don't
                     // contain the dependencies.
-                    var dependendcies = PackageManagementService.FindPackageByCanonicalId(dep, this);
-                    foreach (var depPackage in dependendcies) {
+                    var dependencies = PackageManagementService.FindPackageByCanonicalId(dep, this);
+                    foreach (var depPackage in dependencies) {
                         ProcessPackage(depPackage.Provider, searchKey.Select(each => each + depPackage.Name).ToArray(), depPackage);
                     }
                 }

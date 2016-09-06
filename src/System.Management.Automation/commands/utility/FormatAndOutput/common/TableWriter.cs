@@ -308,7 +308,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return rows;
         }
 
-        private StringCollection GenerateMultiLineRowField(string val, int k, int aligment, DisplayCells dc)
+        private StringCollection GenerateMultiLineRowField(string val, int k, int alignment, DisplayCells dc)
         {
             StringCollection sc = StringManipulationHelper.GenerateLines(dc, val,
                                         _si.columnInfo[k].width, _si.columnInfo[k].width);
@@ -316,7 +316,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             for (int col = 0; col < sc.Count; col++)
             {
                 if (dc.Length(sc[col]) < _si.columnInfo[k].width)
-                    sc[col] = GenerateRowField(sc[col], _si.columnInfo[k].width, aligment, dc);
+                    sc[col] = GenerateRowField(sc[col], _si.columnInfo[k].width, alignment, dc);
             }
             return sc;
         }

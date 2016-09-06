@@ -475,8 +475,8 @@ namespace System.Management.Automation.Runspaces.Internal
                     // of the pool.
                     while (pool.Count > maxRunspaces)
                     {
-                        Runspace rsToDestory = pool.Pop();
-                        DestroyRunspace(rsToDestory);
+                        Runspace rsToDestroy = pool.Pop();
+                        DestroyRunspace(rsToDestroy);
                     }
                 }
 

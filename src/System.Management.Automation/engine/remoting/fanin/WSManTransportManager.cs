@@ -80,7 +80,7 @@ namespace System.Management.Automation.Remoting.Client
             {WSManNativeApi.ERROR_WSMAN_BAD_METHOD, "WinRMOperationNotSupportedOnServer"},
             {WSManNativeApi.ERROR_WSMAN_HTTP_SERVICE_UNAVAILABLE, "CannotConnectWinRMService"},
             {WSManNativeApi.ERROR_WSMAN_HTTP_SERVICE_ERROR, "WinRMHttpError"},
-            {WSManNativeApi.ERROR_WSMAN_TARGET_UNKOWN, "TargetUnknown"},
+            {WSManNativeApi.ERROR_WSMAN_TARGET_UNKNOWN, "TargetUnknown"},
             {WSManNativeApi.ERROR_WSMAN_CANNOTUSE_IP, "CannotUseIPAddress"}
         };
 
@@ -329,7 +329,7 @@ namespace System.Management.Automation.Remoting.Client
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManShellOperationHandle;
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
-        private IntPtr _wsManRecieveOperationHandle;
+        private IntPtr _wsManReceiveOperationHandle;
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManSendOperationHandle;
         // this is used with WSMan callbacks to represent a session transport manager.
@@ -1018,7 +1018,7 @@ namespace System.Management.Automation.Remoting.Client
                 _receivedFromRemote = new WSManNativeApi.WSManShellAsync(new IntPtr(_sessionContextID), s_sessionReceiveCallback);
                 WSManNativeApi.WSManReceiveShellOutputEx(_wsManShellOperationHandle,
                     IntPtr.Zero, 0, WSManAPIData.OutputStreamSet, _receivedFromRemote,
-                    ref _wsManRecieveOperationHandle);
+                    ref _wsManReceiveOperationHandle);
             }
         }
 
@@ -1675,10 +1675,10 @@ namespace System.Management.Automation.Remoting.Client
                 // clearing for receive..Clear only when the end of operation is reached.
                 if (flags == (int)WSManNativeApi.WSManCallbackFlags.WSMAN_FLAG_CALLBACK_END_OF_OPERATION)
                 {
-                    if (IntPtr.Zero != _wsManRecieveOperationHandle)
+                    if (IntPtr.Zero != _wsManReceiveOperationHandle)
                     {
-                        WSManNativeApi.WSManCloseOperation(_wsManRecieveOperationHandle, 0);
-                        _wsManRecieveOperationHandle = IntPtr.Zero;
+                        WSManNativeApi.WSManCloseOperation(_wsManReceiveOperationHandle, 0);
+                        _wsManReceiveOperationHandle = IntPtr.Zero;
                     }
 
                     if (null != _receivedFromRemote)
@@ -2719,7 +2719,7 @@ namespace System.Management.Automation.Remoting.Client
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _cmdSignalOperationHandle;
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
-        private IntPtr _wsManRecieveOperationHandle;
+        private IntPtr _wsManReceiveOperationHandle;
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManSendOperationHandle;
         // this is used with WSMan callbacks to represent a command transport manager.
@@ -2857,7 +2857,7 @@ namespace System.Management.Automation.Remoting.Client
                 new PrioritySendDataCollection.OnDataAvailableCallback(OnDataAvailableCallback);
             _sessnTm = sessnTM;
             // Suspend queue on robust connections initiated event.
-            sessnTM.RobustConnectionsInitiated += HandleRobustConnectionsIntiated;
+            sessnTM.RobustConnectionsInitiated += HandleRobustConnectionsInitiated;
 
             // Resume queue on robust connections completed event.
             sessnTM.RobustConnectionsCompleted += HandleRobusConnectionsCompleted;
@@ -2873,7 +2873,7 @@ namespace System.Management.Automation.Remoting.Client
 
         #region Internal Methods / Properties
 
-        private void HandleRobustConnectionsIntiated(object sender, EventArgs e)
+        private void HandleRobustConnectionsInitiated(object sender, EventArgs e)
         {
             SuspendQueue();
         }
@@ -3210,10 +3210,10 @@ namespace System.Management.Automation.Remoting.Client
                 // clearing for receive..Clear only when the end of operation is reached.
                 if (flags == (int)WSManNativeApi.WSManCallbackFlags.WSMAN_FLAG_CALLBACK_END_OF_OPERATION)
                 {
-                    if (IntPtr.Zero != _wsManRecieveOperationHandle)
+                    if (IntPtr.Zero != _wsManReceiveOperationHandle)
                     {
-                        WSManNativeApi.WSManCloseOperation(_wsManRecieveOperationHandle, 0);
-                        _wsManRecieveOperationHandle = IntPtr.Zero;
+                        WSManNativeApi.WSManCloseOperation(_wsManReceiveOperationHandle, 0);
+                        _wsManReceiveOperationHandle = IntPtr.Zero;
                     }
 
                     if (null != _receivedFromRemote)
@@ -3930,7 +3930,7 @@ namespace System.Management.Automation.Remoting.Client
                 WSManNativeApi.WSManReceiveShellOutputEx(_wsManShellOperationHandle,
                     _wsManCmdOperationHandle, startInDisconnectedMode ? (int)WSManNativeApi.WSManShellFlag.WSMAN_FLAG_RECEIVE_DELAY_OUTPUT_STREAM : 0,
                    _sessnTm.WSManAPIData.OutputStreamSet,
-                   _receivedFromRemote, ref _wsManRecieveOperationHandle);
+                   _receivedFromRemote, ref _wsManReceiveOperationHandle);
             }
         }
 
@@ -3949,7 +3949,7 @@ namespace System.Management.Automation.Remoting.Client
             // unregister event handlers
             if (null != _sessnTm)
             {
-                _sessnTm.RobustConnectionsInitiated -= HandleRobustConnectionsIntiated;
+                _sessnTm.RobustConnectionsInitiated -= HandleRobustConnectionsInitiated;
                 _sessnTm.RobustConnectionsCompleted -= HandleRobusConnectionsCompleted;
             }
 

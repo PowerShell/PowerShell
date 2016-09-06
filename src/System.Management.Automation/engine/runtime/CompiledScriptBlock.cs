@@ -259,7 +259,7 @@ namespace System.Management.Automation
         private bool _usesCmdletBinding;
         private bool _compiledOptimized;
         private bool _compiledUnoptimized;
-        private bool _hasSuspicousContent;
+        private bool _hasSuspiciousContent;
         internal bool DebuggerHidden { get; set; }
         internal bool DebuggerStepThrough { get; set; }
         internal Guid Id { get; private set; }
@@ -281,9 +281,9 @@ namespace System.Management.Automation
             get
             {
                 Diagnostics.Assert(_compiledOptimized || _compiledUnoptimized, "HasSuspiciousContent is not set correctly before being compiled");
-                return _hasSuspicousContent;
+                return _hasSuspiciousContent;
             }
-            set { _hasSuspicousContent = value; }
+            set { _hasSuspiciousContent = value; }
         }
 
         private MergedCommandParameterMetadata _parameterMetadata;
@@ -1011,7 +1011,7 @@ namespace System.Management.Automation
                     context.LanguageMode = newLanguageMode.Value;
                 }
 
-                args = BindArgumentsForScripblockInvoke(
+                args = BindArgumentsForScriptblockInvoke(
                     (RuntimeDefinedParameter[])RuntimeDefinedParameters.Data,
                     args, context, !createLocalScope, backupWhenDotting, locals);
                 locals.SetAutomaticVariable(AutomaticVariable.Args, args, context);
@@ -1106,7 +1106,7 @@ namespace System.Management.Automation
             return locals;
         }
 
-        internal static object[] BindArgumentsForScripblockInvoke(
+        internal static object[] BindArgumentsForScriptblockInvoke(
             RuntimeDefinedParameter[] parameters,
             object[] args,
             ExecutionContext context,
@@ -1415,7 +1415,7 @@ namespace System.Management.Automation
                         // We only do this once, as the error will always be the same for a given certificate.
                         if (error != null)
                         {
-                            // If we got an error resoving the encryption certificate, log a warning and continue
+                            // If we got an error resolving the encryption certificate, log a warning and continue
                             // logging the (unencrypted) message anyways. Logging trumps protected logging -
                             // being able to detect that an attacker has compromised a box outweighs the danger of the
                             // attacker seeing potentially sensitive data. Because if they aren't detected, then

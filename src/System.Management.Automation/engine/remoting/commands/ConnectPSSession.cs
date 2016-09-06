@@ -1129,7 +1129,7 @@ namespace Microsoft.PowerShell.Commands
                                                                int throttleLimit, SessionFilterState filterState,
                                                                Guid[] matchIds, string[] matchNames, string configurationName)
         {
-            Collection<PSSession> filteredPSSesions = new Collection<PSSession>();
+            Collection<PSSession> filteredPSSessions = new Collection<PSSession>();
 
             // Create a query operation for each connection information object.
             foreach (WSManConnectionInfo connectionInfo in connectionInfos)
@@ -1210,25 +1210,25 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (TestRunspaceState(existingPSSession.Runspace, filterState))
                             {
-                                filteredPSSesions.Add(existingPSSession);
+                                filteredPSSessions.Add(existingPSSession);
                             }
                         }
                         else if (TestRunspaceState(runspace, filterState))
                         {
-                            filteredPSSesions.Add(new PSSession(runspace as RemoteRunspace));
+                            filteredPSSessions.Add(new PSSession(runspace as RemoteRunspace));
                         }
                     }
                 }
             }
 
             // Return only PSSessions that match provided Ids or Names.
-            if ((matchIds != null) && (filteredPSSesions.Count > 0))
+            if ((matchIds != null) && (filteredPSSessions.Count > 0))
             {
                 Collection<PSSession> matchIdsSessions = new Collection<PSSession>();
                 foreach (Guid id in matchIds)
                 {
                     bool matchFound = false;
-                    foreach (PSSession psSession in filteredPSSesions)
+                    foreach (PSSession psSession in filteredPSSessions)
                     {
                         if (_stopProcessing)
                         {
@@ -1255,14 +1255,14 @@ namespace Microsoft.PowerShell.Commands
                 // Return all found sessions.
                 return matchIdsSessions;
             }
-            else if ((matchNames != null) && (filteredPSSesions.Count > 0))
+            else if ((matchNames != null) && (filteredPSSessions.Count > 0))
             {
                 Collection<PSSession> matchNamesSessions = new Collection<PSSession>();
                 foreach (string name in matchNames)
                 {
                     WildcardPattern namePattern = WildcardPattern.Get(name, WildcardOptions.IgnoreCase);
                     bool matchFound = false;
-                    foreach (PSSession psSession in filteredPSSesions)
+                    foreach (PSSession psSession in filteredPSSessions)
                     {
                         if (_stopProcessing)
                         {
@@ -1290,7 +1290,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // Return all collected sessions.
-                return filteredPSSesions;
+                return filteredPSSessions;
             }
         }
 

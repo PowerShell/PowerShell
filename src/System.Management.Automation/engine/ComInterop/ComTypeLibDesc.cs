@@ -59,7 +59,7 @@ namespace System.Management.Automation.ComInterop
 
         /// <summary>
         /// Reads the latest registered type library for the corresponding GUID,
-        /// reads definitions of CoClass'es and Enum's from this library
+        /// reads definitions of CoClasses and Enum's from this library
         /// and creates a IDynamicMetaObjectProvider that allows to instantiate coclasses
         /// and get actual values for the enums.
         /// </summary>
@@ -78,7 +78,7 @@ namespace System.Management.Automation.ComInterop
 
         /// <summary>
         /// Gets an ITypeLib object from OLE Automation compatible RCW ,
-        /// reads definitions of CoClass'es and Enum's from this library
+        /// reads definitions of CoClasses and Enum's from this library
         /// and creates a IDynamicMetaObjectProvider that allows to instantiate coclasses
         /// and get actual values for the enums.
         /// </summary>

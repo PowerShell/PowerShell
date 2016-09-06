@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
         // Debugging to persist until Ctrl+C or Debugger 'Exit' stops cmdlet.
         private bool _debugging;
         private ManualResetEventSlim _newRunningScriptEvent = new ManualResetEventSlim(true);
-        private RunspaceAvailability _previousRunspaceAvailablity = RunspaceAvailability.None;
+        private RunspaceAvailability _previousRunspaceAvailability = RunspaceAvailability.None;
 
         #endregion
 
@@ -409,8 +409,8 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            RunspaceAvailability prevAvailability = _previousRunspaceAvailablity;
-            _previousRunspaceAvailablity = e.RunspaceAvailability;
+            RunspaceAvailability prevAvailability = _previousRunspaceAvailability;
+            _previousRunspaceAvailability = e.RunspaceAvailability;
 
             if ((e.RunspaceAvailability == RunspaceAvailability.Available) || (e.RunspaceAvailability == RunspaceAvailability.None))
             {

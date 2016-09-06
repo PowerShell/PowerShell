@@ -3121,13 +3121,13 @@ namespace Microsoft.PowerShell.Activities
                             }
                             else
                             {
-                                PSOutOfProcessActivityController delgateController = workflowHost.PSActivityHostController as PSOutOfProcessActivityController;
-                                if (delgateController != null)
+                                PSOutOfProcessActivityController delegateController = workflowHost.PSActivityHostController as PSOutOfProcessActivityController;
+                                if (delegateController != null)
                                 {
                                     AddHandlersToStreams(commandToRun, args);
 
                                     IAsyncResult asyncResult =
-                                        delgateController.BeginInvokePowerShell(commandToRun, input,
+                                        delegateController.BeginInvokePowerShell(commandToRun, input,
                                                                                                output,
                                                                                                implementationContext.PSActivityEnvironment,
                                                                                                ActivityHostManagerCallback,

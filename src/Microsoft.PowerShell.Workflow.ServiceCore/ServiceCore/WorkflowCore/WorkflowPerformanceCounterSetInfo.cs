@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Workflow
                 new CounterInfo(PSWorkflowPerformanceCounterIds.PSRemotingForcedToWaitRequestsQueueLength, CounterType.RawData64),
                 new CounterInfo(PSWorkflowPerformanceCounterIds.PSRemotingConnectionsCreatedCount, CounterType.RawData64),
                 new CounterInfo(PSWorkflowPerformanceCounterIds.PSRemotingConnectionsDisposedCount, CounterType.RawData64),
-                new CounterInfo(PSWorkflowPerformanceCounterIds.PSRemotingConnectionsClosedReopendCount, CounterType.RawData64)
+                new CounterInfo(PSWorkflowPerformanceCounterIds.PSRemotingConnectionsClosedReopenedCount, CounterType.RawData64)
             };
     }
 
@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Workflow
         internal const int PSRemotingForcedToWaitRequestsQueueLength = PSRemotingRequestsBeingServicedCount + 1;
         internal const int PSRemotingConnectionsCreatedCount = PSRemotingForcedToWaitRequestsQueueLength + 1;
         internal const int PSRemotingConnectionsDisposedCount = PSRemotingConnectionsCreatedCount + 1;
-        internal const int PSRemotingConnectionsClosedReopendCount = PSRemotingConnectionsDisposedCount + 1;
+        internal const int PSRemotingConnectionsClosedReopenedCount = PSRemotingConnectionsDisposedCount + 1;
     };
 
 

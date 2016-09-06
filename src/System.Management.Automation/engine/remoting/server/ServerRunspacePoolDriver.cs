@@ -260,7 +260,7 @@ namespace System.Management.Automation
             DataStructureHandler.SetMinRunspacesReceived +=
                 new EventHandler<RemoteDataEventArgs<PSObject>>(HandleSetMinRunspacesReceived);
             DataStructureHandler.GetAvailableRunspacesReceived +=
-                new EventHandler<RemoteDataEventArgs<PSObject>>(HandleGetAvailalbeRunspacesReceived);
+                new EventHandler<RemoteDataEventArgs<PSObject>>(HandleGetAvailableRunspacesReceived);
             DataStructureHandler.ResetRunspaceState +=
                 new EventHandler<RemoteDataEventArgs<PSObject>>(HandleResetRunspaceState);
         }
@@ -1143,7 +1143,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sender">sender of this event, unused</param>
         /// <param name="eventArgs">contains information on the callid</param>
-        private void HandleGetAvailalbeRunspacesReceived(object sender, RemoteDataEventArgs<PSObject> eventArgs)
+        private void HandleGetAvailableRunspacesReceived(object sender, RemoteDataEventArgs<PSObject> eventArgs)
         {
             PSObject data = eventArgs.Data;
             long callId = (long)((PSNoteProperty)data.Properties[RemoteDataNameStrings.CallId]).Value;

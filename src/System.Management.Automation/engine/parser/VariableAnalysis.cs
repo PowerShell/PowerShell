@@ -11,7 +11,7 @@ using System.Reflection;
 
 namespace System.Management.Automation.Language
 {
-    internal static class VariablePathExtentions
+    internal static class VariablePathExtensions
     {
         internal static bool IsAnyLocal(this VariablePath variablePath)
         {

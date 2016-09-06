@@ -717,7 +717,7 @@ namespace System.Management.Automation
                         {
                             UserDefinedHelpData userDefinedHelpData = UserDefinedHelpData.Load(node);
 
-                            ProcessUserDefineddHelpData(helpFileIdentifier, userDefinedHelpData);
+                            ProcessUserDefinedHelpData(helpFileIdentifier, userDefinedHelpData);
                         }
                     }
                 }
@@ -730,7 +730,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="mshSnapInId">PSSnapIn Name for the current help file.</param>
         /// <param name="userDefinedHelpData"></param>
-        private void ProcessUserDefineddHelpData(string mshSnapInId, UserDefinedHelpData userDefinedHelpData)
+        private void ProcessUserDefinedHelpData(string mshSnapInId, UserDefinedHelpData userDefinedHelpData)
         {
             if (userDefinedHelpData == null)
                 return;

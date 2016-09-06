@@ -31,7 +31,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// The text spans that should be highlighted
         /// </summary>
-        private List<TextSpan> highlighedSpans;
+        private List<TextSpan> highlightedSpans;
 
         /// <summary>
         /// The text displayed
@@ -56,7 +56,7 @@ namespace Microsoft.Management.UI.Internal
 
             this.paragraph = paragraph;
             this.boldSpans = new List<TextSpan>();
-            this.highlighedSpans = new List<TextSpan>();
+            this.highlightedSpans = new List<TextSpan>();
             this.textBuilder = new StringBuilder();
         }
 
@@ -72,7 +72,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         internal int HighlightCount
         {
-            get { return this.highlighedSpans.Count; }
+            get { return this.highlightedSpans.Count; }
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Microsoft.Management.UI.Internal
             int currentBoldIndex = 0;
             TextSpan? currentBoldSpan = this.boldSpans.Count == 0 ? (TextSpan?)null : this.boldSpans[0];
             int currentHighlightedIndex = 0;
-            TextSpan? currentHighlightedSpan = this.highlighedSpans.Count == 0 ? (TextSpan?)null : this.highlighedSpans[0];
+            TextSpan? currentHighlightedSpan = this.highlightedSpans.Count == 0 ? (TextSpan?)null : this.highlightedSpans[0];
 
             bool currentBold = false;
             bool currentHighlighted = false;
@@ -115,7 +115,7 @@ namespace Microsoft.Management.UI.Internal
                 ParagraphBuilder.MoveSpanToPosition(ref currentBoldIndex, ref currentBoldSpan, i, this.boldSpans);
                 newBold = currentBoldSpan == null ? false : currentBoldSpan.Value.Contains(i);
 
-                ParagraphBuilder.MoveSpanToPosition(ref currentHighlightedIndex, ref currentHighlightedSpan, i, this.highlighedSpans);
+                ParagraphBuilder.MoveSpanToPosition(ref currentHighlightedIndex, ref currentHighlightedSpan, i, this.highlightedSpans);
                 newHighlighted = currentHighlightedSpan == null ? false : currentHighlightedSpan.Value.Contains(i);
 
                 if (newBold != currentBold || newHighlighted != currentHighlighted)
@@ -142,7 +142,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="wholeWord">true if we should search whole word only</param>
         internal void HighlightAllInstancesOf(string search, bool caseSensitive, bool wholeWord)
         {
-            this.highlighedSpans.Clear();
+            this.highlightedSpans.Clear();
 
             if (search == null || search.Trim().Length == 0)
             {
@@ -216,7 +216,7 @@ namespace Microsoft.Management.UI.Internal
         internal void ResetAllText()
         {
             this.boldSpans.Clear();
-            this.highlighedSpans.Clear();
+            this.highlightedSpans.Clear();
             this.textBuilder.Clear();
         }
 
@@ -298,7 +298,7 @@ namespace Microsoft.Management.UI.Internal
                 throw new ArgumentOutOfRangeException("length");
             }
 
-            this.highlighedSpans.Add(new TextSpan(start, length));
+            this.highlightedSpans.Add(new TextSpan(start, length));
         }
 
         /// <summary>

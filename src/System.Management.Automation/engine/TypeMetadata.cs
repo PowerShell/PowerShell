@@ -704,10 +704,10 @@ namespace System.Management.Automation
                 }
 
                 // ConstrainedLanguage note - This conversion is analyzed, but actually invoked via regular conversion.
-                var convertionData = LanguagePrimitives.FigureConversion(dotNetType, this.ParameterType);
-                if (convertionData != null)
+                var conversionData = LanguagePrimitives.FigureConversion(dotNetType, this.ParameterType);
+                if (conversionData != null)
                 {
-                    if ((int)(convertionData.Rank) >= (int)(ConversionRank.NumericImplicitS2A))
+                    if ((int)(conversionData.Rank) >= (int)(ConversionRank.NumericImplicitS2A))
                     {
                         return true;
                     }

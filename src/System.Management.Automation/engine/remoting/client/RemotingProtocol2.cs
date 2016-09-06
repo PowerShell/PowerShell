@@ -180,10 +180,10 @@ namespace System.Management.Automation.Internal
 
                 case RemotingDataType.RunspacePoolOperationResponse:
                     {
-                        Dbg.Assert(SetMaxMinRunspacesResponseRecieved != null,
+                        Dbg.Assert(SetMaxMinRunspacesResponseReceived != null,
                             "RemoteRunspacePoolInternal should subscribe to all data structure handler events");
 
-                        SetMaxMinRunspacesResponseRecieved.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
+                        SetMaxMinRunspacesResponseReceived.SafeInvoke(this, new RemoteDataEventArgs<PSObject>(receivedData.Data));
                     }
                     break;
 
@@ -209,12 +209,12 @@ namespace System.Management.Automation.Internal
         internal ClientPowerShellDataStructureHandler CreatePowerShellDataStructureHandler(
             ClientRemotePowerShell shell)
         {
-            BaseClientCommandTransportManager clientTrsptMgr =
+            BaseClientCommandTransportManager clientTransportMgr =
                 RemoteSession.SessionDataStructureHandler.
                     CreateClientCommandTransportManager(shell, shell.NoInput);
 
             return new ClientPowerShellDataStructureHandler(
-                clientTrsptMgr, _clientRunspacePoolId, shell.InstanceId);
+                clientTransportMgr, _clientRunspacePoolId, shell.InstanceId);
         }
 
         /// <summary>
@@ -397,7 +397,7 @@ namespace System.Management.Automation.Internal
         /// Event raised when a response to a SetMaxRunspaces or SetMinRunspaces call
         /// is received
         /// </summary>
-        internal event EventHandler<RemoteDataEventArgs<PSObject>> SetMaxMinRunspacesResponseRecieved;
+        internal event EventHandler<RemoteDataEventArgs<PSObject>> SetMaxMinRunspacesResponseReceived;
 
         /// <summary>
         /// EventHandler used to report connection URI redirections to the application

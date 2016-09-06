@@ -1392,8 +1392,8 @@ namespace Microsoft.PowerShell.Workflow
             {
                 if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
                 {
-                    foreach (WaitHandle hanlde in waitHandles)
-                        hanlde.WaitOne();
+                    foreach (WaitHandle handle in waitHandles)
+                        handle.WaitOne();
                 }
                 else
                 {

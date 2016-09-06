@@ -169,7 +169,7 @@ namespace System.Management.Automation.Remoting
         internal const uint TRUNCATE_EXISTING = 5;
 
         internal const uint SECURITY_IMPERSONATIONLEVEL_ANONYMOUS = 0;
-        internal const uint SECURITY_IMPERSONATIONLEVEL_IDENTIFCATION = 1;
+        internal const uint SECURITY_IMPERSONATIONLEVEL_IDENTIFICATION = 1;
         internal const uint SECURITY_IMPERSONATIONLEVEL_IMPERSONATION = 2;
         internal const uint SECURITY_IMPERSONATIONLEVEL_DELEGATION = 3;
 
@@ -579,10 +579,10 @@ namespace System.Management.Automation.Remoting
                 IsListenerRunning = true;
 
                 // Create listener thread.
-                Thread listenterThread = new Thread(ProcessListeningThread);
-                listenterThread.Name = _threadName;
-                listenterThread.IsBackground = true;
-                listenterThread.Start(clientConnectCallback);
+                Thread listenerThread = new Thread(ProcessListeningThread);
+                listenerThread.Name = _threadName;
+                listenerThread.IsBackground = true;
+                listenerThread.Start(clientConnectCallback);
             } // Lock _syncObject.
         }
 

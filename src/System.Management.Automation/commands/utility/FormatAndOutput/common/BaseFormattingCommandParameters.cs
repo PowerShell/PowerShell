@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 hash.Add (FormatParameterDefinitionKeys.WidthEntryKey, width);
 
             if (align != null)
-                hash.Add (FormatParameterDefinitionKeys.AligmentEntryKey, align);
+                hash.Add (FormatParameterDefinitionKeys.AlignmentEntryKey, align);
 
             return hash;
         }
@@ -244,9 +244,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool _noGlobbing;
     }
 
-    internal class AligmentEntryDefinition : HashtableEntryDefinition
+    internal class AlignmentEntryDefinition : HashtableEntryDefinition
     {
-        internal AligmentEntryDefinition() : base(FormatParameterDefinitionKeys.AligmentEntryKey,
+        internal AlignmentEntryDefinition() : base(FormatParameterDefinitionKeys.AlignmentEntryKey,
                                     new Type[] { typeof(string) })
         {
         }
@@ -414,7 +414,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal const string FormatStringEntryKey = "formatString";
 
         // specific to format-table
-        internal const string AligmentEntryKey = "alignment";
+        internal const string AlignmentEntryKey = "alignment";
         internal const string WidthEntryKey = "width";
 
         // specific to format-table,list and wide
@@ -453,7 +453,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             base.SetEntries();
             this.hashEntries.Add(new WidthEntryDefinition());
-            this.hashEntries.Add(new AligmentEntryDefinition());
+            this.hashEntries.Add(new AlignmentEntryDefinition());
             this.hashEntries.Add(new LabelEntryDefinition());
         }
     }

@@ -31,7 +31,7 @@ namespace System.Diagnostics.Eventing
         private static Guid t_activityId;
 
         private const int s_basicTypeAllocationBufferSize = 16;
-        private const int s_etwMaxMumberArguments = 32;
+        private const int s_etwMaxNumberArguments = 32;
         private const int s_etwAPIMaxStringCount = 8;
         private const int s_maxEventDataDescriptors = 128;
         private const int s_traceEventMaximumSize = 65482;
@@ -625,13 +625,13 @@ namespace System.Diagnostics.Eventing
                     if ((eventPayload != null) && (eventPayload.Length != 0))
                     {
                         argCount = eventPayload.Length;
-                        if (argCount > s_etwMaxMumberArguments)
+                        if (argCount > s_etwMaxNumberArguments)
                         {
                             //
                             //too many arguments to log
                             //
                             throw new ArgumentOutOfRangeException("eventPayload",
-                                string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_MaxArgExceeded, s_etwMaxMumberArguments));
+                                string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_MaxArgExceeded, s_etwMaxNumberArguments));
                         }
 
                         uint totalEventSize = 0;

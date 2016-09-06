@@ -44,7 +44,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Object contains the cache of the enumerate results for the cmdlet to execute.
         /// </summary>
-        Dictionary<string, XmlDocument> enumarateMapping = new Dictionary<string, XmlDocument>();
+        Dictionary<string, XmlDocument> enumerateMapping = new Dictionary<string, XmlDocument>();
 
         /// <summary>
         /// Mapping of ResourceURI with the XML returned by the Get call.
@@ -406,7 +406,7 @@ namespace Microsoft.WSMan.Management
                     if (xmlListeners != null)
                     {
                         Hashtable KeyCache, ListenerObjCache;
-                        ProcessListernerObjects(xmlListeners, out ListenerObjCache, out KeyCache);
+                        ProcessListenerObjects(xmlListeners, out ListenerObjCache, out KeyCache);
                         if (ListenerObjCache.Count > 0)
                         {
                             return true;
@@ -1448,7 +1448,7 @@ namespace Microsoft.WSMan.Management
                     if (xmlListeners != null)
                     {
                         Hashtable KeyCache, ListenerObjCache;
-                        ProcessListernerObjects(xmlListeners, out ListenerObjCache, out KeyCache);
+                        ProcessListenerObjects(xmlListeners, out ListenerObjCache, out KeyCache);
                         if (KeyCache.Contains(childname))
                         {
                             return true;
@@ -1962,7 +1962,7 @@ namespace Microsoft.WSMan.Management
             }
             else if (ContainerListenerOrCertMapping.Equals(WSManStringLiterals.containerListener))
             {
-                ProcessListernerObjects(xmlResource, out CCache, out kCache);
+                ProcessListenerObjects(xmlResource, out CCache, out kCache);
             }
             if (CCache != null && CCache.Count > 0)
             {
@@ -2292,7 +2292,7 @@ namespace Microsoft.WSMan.Management
 
             if (ResourceURI.EndsWith(WSManStringLiterals.containerListener, StringComparison.OrdinalIgnoreCase))
             {
-                ProcessListernerObjects(xmlResource, out objcache, out Keyscache);
+                ProcessListenerObjects(xmlResource, out objcache, out Keyscache);
             }
             else if (ResourceURI.EndsWith(WSManStringLiterals.containerCertMapping, StringComparison.OrdinalIgnoreCase))
             {
@@ -2677,7 +2677,7 @@ namespace Microsoft.WSMan.Management
         {
             XmlDocument xmlEnumResources = null;
 
-            if (!this.enumarateMapping.TryGetValue(ResourceURI, out xmlEnumResources))
+            if (!this.enumerateMapping.TryGetValue(ResourceURI, out xmlEnumResources))
             {
                 try
                 {
@@ -2696,7 +2696,7 @@ namespace Microsoft.WSMan.Management
                         xmlEnumResources = new XmlDocument();
                         strXmlValue = "<WsManResults>" + strXmlValue + "</WsManResults>";
                         xmlEnumResources.LoadXml(strXmlValue);
-                        this.enumarateMapping.Add(ResourceURI, xmlEnumResources);
+                        this.enumerateMapping.Add(ResourceURI, xmlEnumResources);
                     }
 
                 }
@@ -3604,7 +3604,7 @@ namespace Microsoft.WSMan.Management
             }
             else if (ListenerOrCerMapping.Equals(WSManStringLiterals.containerListener))
             {
-                ProcessListernerObjects(xmlResource, out Objcache, out Keyscache);
+                ProcessListenerObjects(xmlResource, out Objcache, out Keyscache);
             }
             else
             { return; }
@@ -3665,7 +3665,7 @@ namespace Microsoft.WSMan.Management
             Hashtable Objcache, Keyscache;
             if (ContainerListenerOrClientCert.Equals(WSManStringLiterals.containerListener, StringComparison.OrdinalIgnoreCase))
             {
-                ProcessListernerObjects(xmlResource, out Objcache, out Keyscache);
+                ProcessListenerObjects(xmlResource, out Objcache, out Keyscache);
             }
             else if (ContainerListenerOrClientCert.Equals(WSManStringLiterals.containerClientCertificate, StringComparison.OrdinalIgnoreCase))
             {
@@ -3715,7 +3715,7 @@ namespace Microsoft.WSMan.Management
                 }
                 else
                 {
-                    ProcessListernerObjects(xmlresources, out ResourcesCache, out KeysCache);
+                    ProcessListenerObjects(xmlresources, out ResourcesCache, out KeysCache);
                 }
                 if (KeysCache.Contains(childname))
                 {
@@ -3950,7 +3950,7 @@ namespace Microsoft.WSMan.Management
             }
             else
             {
-                ProcessListernerObjects(outxml, out objcache, out KeysCache);
+                ProcessListenerObjects(outxml, out objcache, out KeysCache);
             }
 
             String PathChecked = host + WSManStringLiterals.DefaultPathSeparator + parentListenerOrCert;
@@ -4644,7 +4644,7 @@ namespace Microsoft.WSMan.Management
             Keyscache = kCache;
         }
 
-        private void ProcessListernerObjects(XmlDocument xmlListeners, out Hashtable listenercache, out Hashtable Keyscache)
+        private void ProcessListenerObjects(XmlDocument xmlListeners, out Hashtable listenercache, out Hashtable Keyscache)
         {
             Hashtable lCache = new Hashtable();
             Hashtable kCache = new Hashtable();
@@ -4871,11 +4871,11 @@ namespace Microsoft.WSMan.Management
             // ArrayList SecurityLvl = null;
             if (xmlSecurity != null)
             {
-                XmlNodeList nodelistSecutiry = xmlSecurity.GetElementsByTagName(WSManStringLiterals.containerSecurity);
-                if (nodelistSecutiry.Count > 0)
+                XmlNodeList nodelistSecurity = xmlSecurity.GetElementsByTagName(WSManStringLiterals.containerSecurity);
+                if (nodelistSecurity.Count > 0)
                 {
                     //SecurityLvl = new ArrayList();
-                    foreach (XmlElement xe in nodelistSecutiry)
+                    foreach (XmlElement xe in nodelistSecurity)
                     {
                         bool ExactMatchFound = false;
                         PSObject objSecurity = new PSObject();

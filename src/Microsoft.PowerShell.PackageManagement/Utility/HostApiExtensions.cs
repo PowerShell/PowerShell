@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.PackageManagement.Utility {
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Required.")]
-        internal static IHostApi SuprressBootstrapping(this IHostApi parent, bool isProcessing) {
+        internal static IHostApi SuppressBootstrapping(this IHostApi parent, bool isProcessing) {
             return new object[] {
                 new {
                     IsInvocation = new Func<bool>(() => false),

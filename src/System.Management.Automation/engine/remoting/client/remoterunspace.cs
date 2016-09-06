@@ -999,13 +999,13 @@ namespace System.Management.Automation
         private void UpdatePoolDisconnectOptions()
         {
             WSManConnectionInfo runspaceWSManConnectionInfo = RunspacePool.ConnectionInfo as WSManConnectionInfo;
-            WSManConnectionInfo wsManconnectionInfo = ConnectionInfo as WSManConnectionInfo;
+            WSManConnectionInfo wsManConnectionInfo = ConnectionInfo as WSManConnectionInfo;
 
             Dbg.Assert(runspaceWSManConnectionInfo != null, "Disconnect-Connect feature is currently only supported for WSMan transport");
-            Dbg.Assert(wsManconnectionInfo != null, "Disconnect-Connect feature is currently only supported for WSMan transport");
+            Dbg.Assert(wsManConnectionInfo != null, "Disconnect-Connect feature is currently only supported for WSMan transport");
 
-            runspaceWSManConnectionInfo.IdleTimeout = wsManconnectionInfo.IdleTimeout;
-            runspaceWSManConnectionInfo.OutputBufferingMode = wsManconnectionInfo.OutputBufferingMode;
+            runspaceWSManConnectionInfo.IdleTimeout = wsManConnectionInfo.IdleTimeout;
+            runspaceWSManConnectionInfo.OutputBufferingMode = wsManConnectionInfo.OutputBufferingMode;
         }
 
         #endregion
@@ -2617,7 +2617,7 @@ namespace System.Management.Automation
             _runspace = runspace;
         }
 
-        private Exception _isInNoLangugeModeException = null;
+        private Exception _isInNoLanguageModeException = null;
         private Exception _getVariableCommandNotFoundException = null;
         private Exception _setVariableCommandNotFoundException = null;
 
@@ -2778,8 +2778,8 @@ namespace System.Management.Automation
             {
                 // Verify the runspace has is not in NoLanguage mode. For performance, throw if we got an error
                 // before.
-                if (_isInNoLangugeModeException != null)
-                    throw _isInNoLangugeModeException;
+                if (_isInNoLanguageModeException != null)
+                    throw _isInNoLanguageModeException;
 
                 // Since these are implemented as pipelines, we don't need to do our own
                 // locking of sessionStateCallInProgress like we do with local runspaces.
@@ -2798,8 +2798,8 @@ namespace System.Management.Automation
                 {
                     if (e.ErrorRecord.CategoryInfo.Category == ErrorCategory.ParserError)
                     {
-                        _isInNoLangugeModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
-                        throw _isInNoLangugeModeException;
+                        _isInNoLanguageModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
+                        throw _isInNoLanguageModeException;
                     }
                     else throw;
                 }
@@ -2825,8 +2825,8 @@ namespace System.Management.Automation
             {
                 // Verify the runspace has is not in NoLanguage mode. For performance, throw if we got an error
                 // before.
-                if (_isInNoLangugeModeException != null)
-                    throw _isInNoLangugeModeException;
+                if (_isInNoLanguageModeException != null)
+                    throw _isInNoLanguageModeException;
 
                 // Since these are implemented as pipelines, we don't need to do our own
                 // locking of sessionStateCallInProgress like we do with local runspaces.
@@ -2845,8 +2845,8 @@ namespace System.Management.Automation
                 {
                     if (e.ErrorRecord.CategoryInfo.Category == ErrorCategory.ParserError)
                     {
-                        _isInNoLangugeModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
-                        throw _isInNoLangugeModeException;
+                        _isInNoLanguageModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
+                        throw _isInNoLanguageModeException;
                     }
                     else throw;
                 }
@@ -2891,7 +2891,7 @@ namespace System.Management.Automation
             {
                 // Verify the runspace has is not in NoLanguage mode. For performance, return our
                 // cached value if we got an error before.
-                if (_isInNoLangugeModeException != null)
+                if (_isInNoLanguageModeException != null)
                     return PSLanguageMode.NoLanguage;
 
                 // Since these are implemented as pipelines, we don't need to do our own
@@ -2909,7 +2909,7 @@ namespace System.Management.Automation
                 {
                     if (e.ErrorRecord.CategoryInfo.Category == ErrorCategory.ParserError)
                     {
-                        _isInNoLangugeModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
+                        _isInNoLanguageModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
                         return PSLanguageMode.NoLanguage;
                     }
                     else throw;
