@@ -11,7 +11,7 @@ We use the following labels for issue classifications:
 * `Issue-Discussion`: the issue may not have a clear classification yet.
   The issue may generate a [RFC][ln-rfc] or maybe be reclassified as a bug or enhancement.
 * `Issue-Enhancement`: the issue is more of a feature request than a bug.
-* `Issue-Meta`: an issue used to track multiple issues
+* `Issue-Meta`: an issue used to track multiple issues.
 * `Issue-Question`: ideally support can be provided via other mechanisms,
   but sometimes folks to open an issue to get a question answered and we will use this label for such issues.
 
@@ -20,17 +20,17 @@ We use the following labels for issue classifications:
 When an issue is resolved, the following labels are used to describe the resolution:
 
 * `Resolution-Answered`: the issue was a `Issue-Question` and was answered.
-* `Resolution-By Design`: the issue is not considered a bug, the behavior is working as designed
-* `Resolution-Duplicate`: the issue is a duplicate - there must be a comment linking to another issue
+* `Resolution-By Design`: the issue is not considered a bug, the behavior is working as designed.
+* `Resolution-Duplicate`: the issue is a duplicate - there must be a comment linking to another issue.
 * `Resolution-External`: the issue cannot be address by this repo.  Should be addressed externally.
-* `Resolution-Fixed`: the issue is has been fixed and should be referenced from a PR
+* `Resolution-Fixed`: the issue is has been fixed and should be referenced from a PR.
 * `Resolution-Won't Fix`: the issue may be considered a bug or enhancement but won't be fixed.
   If there is an inadequate explanation as to why the issue was closed,
   anyone should feel free to reopen the issue.
 
 ### Feature areas
 
-These labels describe what feature area of PowerShell that an issue affects.
+These labels describe what feature area of PowerShell that an issue affects:
 
 * `Area-Build`: build issues
 * `Area-Cmdlets`: cmdlets in any module
