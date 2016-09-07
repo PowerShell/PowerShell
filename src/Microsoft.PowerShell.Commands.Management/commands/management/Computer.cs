@@ -1535,7 +1535,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 string message = StringUtil.Format(ComputerResources.NoResorePoint, id);
                                 ArgumentException e = new ArgumentException(message);
-                                ErrorRecord errorrecord = new ErrorRecord(e, "NoResorePoint", ErrorCategory.InvalidArgument, null);
+                                ErrorRecord errorrecord = new ErrorRecord(e, "NoRestorePoint", ErrorCategory.InvalidArgument, null);
                                 WriteError(errorrecord);
                             }
                         }
