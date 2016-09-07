@@ -240,7 +240,7 @@ namespace System.Management.Automation.Remoting
                 case RemoteSessionEvent.KeyReceived:
                     {
                         Dbg.Assert(_state == RemoteSessionState.EstablishedAndKeySent,
-                            "Key Receving can only be raised after reaching the Established state");
+                            "Key Receiving can only be raised after reaching the Established state");
 
                         if (_state == RemoteSessionState.EstablishedAndKeySent)
                         {
@@ -506,7 +506,7 @@ namespace System.Management.Automation.Remoting
         {
             lock (_syncObject)
             {
-                s_trace.WriteLine("Event recieved : {0} for {1}", arg.StateEvent, _id);
+                s_trace.WriteLine("Event received : {0} for {1}", arg.StateEvent, _id);
                 if (clearQueuedEvents)
                 {
                     _processPendingEventsQueue.Clear();
