@@ -888,26 +888,16 @@ namespace Microsoft.PowerShell
         /// </summary>
         public static string GetPrompt()
         {
-            var runspaceIsRemote = _singleton._mockableMethods.RunspaceIsRemote(_singleton._runspace);
-            System.Management.Automation.PowerShell ps;
-            if (!runspaceIsRemote)
+            var command = new PSCommand();
+            command.AddCommand("prompt");
+            var results = HostUtilities.InvokeOnRunspace(command, _singleton._runspace);
+            string newPrompt = (results.Count == 1) ? results[0].BaseObject as string : null;
+            if (newPrompt == null)
             {
-                ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
-            }
-            else
-            {
-                ps = System.Management.Automation.PowerShell.Create();
-                ps.Runspace = _singleton._runspace;
-            }
-            string newPrompt;
-            using (ps)
-            {
-                ps.AddCommand("prompt");
-                var result = ps.Invoke<string>();
-                newPrompt = result.Count == 1 ? result[0] : "PS>";
+                newPrompt = "PS>";
             }
 
-            if (runspaceIsRemote)
+            if (_singleton._mockableMethods.RunspaceIsRemote(_singleton._runspace))
             {
                 var connectionInfo = _singleton._runspace.ConnectionInfo;
                 if (!string.IsNullOrEmpty(connectionInfo.ComputerName))
@@ -915,6 +905,7 @@ namespace Microsoft.PowerShell
                     newPrompt = string.Format(CultureInfo.InvariantCulture, "[{0}]: {1}", connectionInfo.ComputerName, newPrompt);
                 }
             }
+
             return newPrompt;
         }
 
