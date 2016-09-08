@@ -9,7 +9,7 @@ fi
 
 # Build specified distributions
 if [[ -z $DISTROS ]]; then
-    DISTROS="ubuntu14.04 ubuntu16.04"
+    DISTROS="ubuntu14.04 ubuntu16.04 centos7"
 fi
 
 for build in $BUILDS; do
