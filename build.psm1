@@ -720,7 +720,7 @@ function Start-PSBootstrap {
             elseif ($IsUbuntu16) { $Deps += "libicu55" }
 
             # Packaging tools
-            if ($Package) { $Deps += "ruby-dev" }
+            if ($Package) { $Deps += "ruby-dev", "groff" }
 
             # Install dependencies
             sudo apt-get install -y -qq $Deps
@@ -732,7 +732,7 @@ function Start-PSBootstrap {
             $Deps += "libicu", "libunwind"
 
             # Packaging tools
-            if ($Package) { $Deps += "ruby-devel", "rpm-build" }
+            if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff" }
 
             # Install dependencies
             sudo yum install -y -q $Deps
