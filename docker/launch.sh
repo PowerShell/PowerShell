@@ -2,6 +2,14 @@
 
 set -e
 
+if [[ -z "$FORK" ]]; then
+    FORK=PowerShell
+fi
+
+if [[ -z "$BRANCH" ]]; then
+    BRANCH=master
+fi
+
 # Build both sets by default
 if [[ -z "$BUILDS" ]]; then
     BUILDS="stable unstable"
@@ -20,9 +28,10 @@ for build in $BUILDS; do
         # copy the common script because it lives outside the docker build context
         if [[ "$build" = "unstable" ]]; then
             cp bootstrap.ps1 $distro
+            buildargs="--build-arg fork=$FORK --build-arg branch=$BRANCH"
         fi
         # build and tag the image so they can be derived from
-        docker build -t powershell/powershell:$build-$distro $distro
+        docker build $buildargs -t powershell/powershell:$build-$distro $distro
     done
     cd ..
 done
