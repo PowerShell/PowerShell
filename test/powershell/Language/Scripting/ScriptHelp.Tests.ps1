@@ -1,4 +1,4 @@
-﻿ Describe 'get-help HelpFunc1' -Tags "CI" { 
+﻿ Describe 'get-help HelpFunc1' -Tags "Feature" { 
     BeforeAll {
     function TestHelpError {
         [CmdletBinding()]
