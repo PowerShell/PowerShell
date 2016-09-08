@@ -746,12 +746,17 @@ function Start-PSBootstrap {
             $Deps += "openssl"
 
             # Install dependencies
-            brew install $Deps
+            Start-NativeExecution { brew install $Deps }
         }
 
         # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
         if ($Package) {
-            gem install fpm ronn
+            try {
+                # We cannot guess if the user wants to run gem install as root
+                Start-NativeExecution { gem install fpm ronn }
+            } catch {
+                Write-Warning "Installation of fpm and ronn gems failed! Must resolve manually."
+            }
         }
 
         $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain"
@@ -766,18 +771,20 @@ function Start-PSBootstrap {
             }
 
             if ($uninstallScript) {
-                curl -s $obtainUrl/uninstall/$uninstallScript -o $uninstallScript
-                chmod +x $uninstallScript
-                sudo ./$uninstallScript
+                Start-NativeExecution {
+                    curl -sO $obtainUrl/uninstall/$uninstallScript
+                    Invoke-Expression "$sudo bash ./$uninstallScript"
+                }
             } else {
                 Write-Warning "This script only removes prior versions of dotnet for Ubuntu 14.04 and OS X"
             }
 
             # Install new dotnet 1.0.0 preview packages
             $installScript = "dotnet-install.sh"
-            curl -s $obtainUrl/$installScript -o $installScript
-            chmod +x $installScript
-            bash ./$installScript -c $Channel -v $Version
+            Start-NativeExecution {
+                curl -sO $obtainUrl/$installScript
+                bash ./$installScript -c $Channel -v $Version
+            }
 
             # .NET Core's crypto library needs brew's OpenSSL libraries added to its rpath
             if ($IsOSX) {
