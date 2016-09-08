@@ -728,7 +728,10 @@ function Start-PSBootstrap {
             if ($Package) { $Deps += "ruby-dev", "groff" }
 
             # Install dependencies
-            Start-NativeExecution { Invoke-Expression "$sudo apt-get install -y -qq $Deps" }
+            Start-NativeExecution {
+                Invoke-Expression "$sudo apt-get update"
+                Invoke-Expression "$sudo apt-get install -y -qq $Deps"
+            }
         } elseif ($IsCentOS) {
             # Build tools
             $Deps += "which", "curl", "gcc-c++", "cmake", "make"
