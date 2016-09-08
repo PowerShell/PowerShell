@@ -688,12 +688,17 @@ function Start-PSBootstrap {
         [string]$Channel = "rel-1.0.0",
         [string]$Version = "latest",
         [switch]$Package,
+        [switch]$NoSudo,
         [switch]$Force
     )
 
     log "Installing PowerShell build dependencies"
 
     Push-Location $PSScriptRoot/tools
+
+    # This allows sudo install to be optional; needed when running in containers / as root
+    # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
+    $sudo = if (!$NoSudo) { "sudo" }
 
     try {
         # Update googletest submodule for linux native cmake
@@ -723,7 +728,7 @@ function Start-PSBootstrap {
             if ($Package) { $Deps += "ruby-dev", "groff" }
 
             # Install dependencies
-            sudo apt-get install -y -qq $Deps
+            Start-NativeExecution { Invoke-Expression "$sudo apt-get install -y -qq $Deps" }
         } elseif ($IsCentOS) {
             # Build tools
             $Deps += "which", "curl", "gcc-c++", "cmake", "make"
@@ -735,7 +740,9 @@ function Start-PSBootstrap {
             if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff" }
 
             # Install dependencies
-            sudo yum install -y -q $Deps
+            Start-NativeExecution {
+                Invoke-Expression "$sudo yum install -y -q $Deps"
+            }
         } elseif ($IsOSX) {
             precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
 
