@@ -6149,7 +6149,8 @@ if($paths) {
 
         private static string GetHelpFile(string assemblyPath)
         {
-            return Path.GetFileName(assemblyPath) + StringLiterals.HelpFileExtension;
+            // Help files exist only for original module assemblies, not for generated Ngen binaries
+            return Path.GetFileName(assemblyPath).Replace(".ni.dll", ".dll") + StringLiterals.HelpFileExtension;
         }
 
         private static PSTraceSource s_PSSnapInTracer = PSTraceSource.GetTracer("PSSnapInLoadUnload", "Loading and unloading mshsnapins", false);
