@@ -4,6 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -881,6 +882,9 @@ namespace Microsoft.PowerShell
             _singleton.Render();
         }
 
+        private const string s_PromptCommand = "prompt";
+        private const string s_DefaultPrompt = "PS>";
+
         /// <summary>
         /// Gets the current prompt as possibly defined by the user through the
         /// prompt function, and returns a default prompt if no other is
@@ -888,16 +892,47 @@ namespace Microsoft.PowerShell
         /// </summary>
         public static string GetPrompt()
         {
-            var command = new PSCommand();
-            command.AddCommand("prompt");
-            var results = HostUtilities.InvokeOnRunspace(command, _singleton._runspace);
-            string newPrompt = (results.Count == 1) ? results[0].BaseObject as string : null;
-            if (newPrompt == null)
+            string newPrompt;
+            var runspaceIsRemote = _singleton._mockableMethods.RunspaceIsRemote(_singleton._runspace);
+
+            if ((_singleton._runspace.Debugger != null) && _singleton._runspace.Debugger.InBreakpoint)
             {
-                newPrompt = "PS>";
+                // Run prompt command in debugger API to ensure it is run correctly on the runspace.
+                // This handles remote runspace debugging and nested debugger scenarios.
+                PSDataCollection<PSObject> results = new PSDataCollection<PSObject>();
+                var command = new PSCommand();
+                command.AddCommand(s_PromptCommand);
+                _singleton._runspace.Debugger.ProcessCommand(
+                    command,
+                    results);
+
+                newPrompt = (results.Count == 1) ? (results[0].BaseObject as string) : s_DefaultPrompt;
+                if (newPrompt == null)
+                {
+                    newPrompt = s_DefaultPrompt;
+                }
+            }
+            else
+            {
+                System.Management.Automation.PowerShell ps;
+                if (!runspaceIsRemote)
+                {
+                    ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+                }
+                else
+                {
+                    ps = System.Management.Automation.PowerShell.Create();
+                    ps.Runspace = _singleton._runspace;
+                }
+                using (ps)
+                {
+                    ps.AddCommand(s_PromptCommand);
+                    var result = ps.Invoke<string>();
+                    newPrompt = result.Count == 1 ? result[0] : s_DefaultPrompt;
+                }
             }
 
-            if (_singleton._mockableMethods.RunspaceIsRemote(_singleton._runspace))
+            if (runspaceIsRemote)
             {
                 var connectionInfo = _singleton._runspace.ConnectionInfo;
                 if (!string.IsNullOrEmpty(connectionInfo.ComputerName))
@@ -905,7 +940,6 @@ namespace Microsoft.PowerShell
                     newPrompt = string.Format(CultureInfo.InvariantCulture, "[{0}]: {1}", connectionInfo.ComputerName, newPrompt);
                 }
             }
-
             return newPrompt;
         }
 
