@@ -679,12 +679,66 @@ function Start-PSxUnit {
 }
 
 
+function Install-Dotnet {
+    [CmdletBinding()]
+    param(
+        [string]$Channel = "rel-1.0.0",
+        [string]$Version = "latest",
+        [switch]$NoSudo
+    )
+
+    # This allows sudo install to be optional; needed when running in containers / as root
+    # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
+    $sudo = if (!$NoSudo) { "sudo" }
+
+    $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain"
+
+    # Install for Linux and OS X
+    if ($IsLinux -or $IsOSX) {
+        # Uninstall all previous dotnet packages
+        $uninstallScript = if ($IsUbuntu) {
+            "dotnet-uninstall-debian-packages.sh"
+        } elseif ($IsOSX) {
+            "dotnet-uninstall-pkgs.sh"
+        }
+
+        if ($uninstallScript) {
+            Start-NativeExecution {
+                curl -sO $obtainUrl/uninstall/$uninstallScript
+                Invoke-Expression "$sudo bash ./$uninstallScript"
+            }
+        } else {
+            Write-Warning "This script only removes prior versions of dotnet for Ubuntu 14.04 and OS X"
+        }
+
+        # Install new dotnet 1.0.0 preview packages
+        $installScript = "dotnet-install.sh"
+        Start-NativeExecution {
+            curl -sO $obtainUrl/$installScript
+            bash ./$installScript -c $Channel -v $Version
+        }
+
+        # .NET Core's crypto library needs brew's OpenSSL libraries added to its rpath
+        if ($IsOSX) {
+            # This is the library shipped with .NET Core
+            # This is allowed to fail as the user may have installed other versions of dotnet
+            Write-Warning ".NET Core links the incorrect OpenSSL, correcting .NET CLI libraries..."
+            find $env:HOME/.dotnet -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
+        }
+    } elseif ($IsWindows) {
+        Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
+        $installScript = "dotnet-install.ps1"
+        Invoke-WebRequest -Uri $obtainUrl/$installScript -OutFile $installScript
+        & ./$installScript -c $Channel -v $Version
+    }
+}
+
+
 function Start-PSBootstrap {
     [CmdletBinding(
         SupportsShouldProcess=$true,
         ConfirmImpact="High")]
     param(
-        [ValidateSet("dev", "beta", "preview")]
         [string]$Channel = "rel-1.0.0",
         [string]$Version = "latest",
         [switch]$Package,
@@ -769,49 +823,11 @@ function Start-PSBootstrap {
             }
         }
 
-        $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain"
-
-        # Install for Linux and OS X
-        if ($IsLinux -or $IsOSX) {
-            # Uninstall all previous dotnet packages
-            $uninstallScript = if ($IsUbuntu) {
-                "dotnet-uninstall-debian-packages.sh"
-            } elseif ($IsOSX) {
-                "dotnet-uninstall-pkgs.sh"
-            }
-
-            if ($uninstallScript) {
-                Start-NativeExecution {
-                    curl -sO $obtainUrl/uninstall/$uninstallScript
-                    Invoke-Expression "$sudo bash ./$uninstallScript"
-                }
-            } else {
-                Write-Warning "This script only removes prior versions of dotnet for Ubuntu 14.04 and OS X"
-            }
-
-            # Install new dotnet 1.0.0 preview packages
-            $installScript = "dotnet-install.sh"
-            Start-NativeExecution {
-                curl -sO $obtainUrl/$installScript
-                bash ./$installScript -c $Channel -v $Version
-            }
-
-            # .NET Core's crypto library needs brew's OpenSSL libraries added to its rpath
-            if ($IsOSX) {
-                # This is the library shipped with .NET Core
-                # This is allowed to fail as the user may have installed other versions of dotnet
-                Write-Warning ".NET Core links the incorrect OpenSSL, correcting .NET CLI libraries..."
-                find $env:HOME/.dotnet -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
-            }
-        }
+        $DotnetArguments = @{ Channel=$Channel; Version=$Version; NoSudo=$NoSudo }
+        Install-Dotnet @DotnetArguments
 
         # Install for Windows
-        if ($IsWindows -and -not $IsCoreCLR) {
-            Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
-            $installScript = "dotnet-install.ps1"
-            Invoke-WebRequest -Uri $obtainUrl/$installScript -OutFile $installScript
-            & ./$installScript -c $Channel -v $Version
-
+        if ($IsWindows) {
             $machinePath = [Environment]::GetEnvironmentVariable('Path', 'MACHINE')
             $newMachineEnvironmentPath = $machinePath
 
@@ -878,8 +894,6 @@ function Start-PSBootstrap {
                 }
             }
 
-        } elseif ($IsWindows) {
-            Write-Warning "Start-PSBootstrap cannot be run in Core PowerShell on Windows (need Invoke-WebRequest!)"
         }
     } finally {
         Pop-Location
