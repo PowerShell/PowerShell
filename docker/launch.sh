@@ -27,13 +27,13 @@ for build in $BUILDS; do
         image="$build/$distro"
         if [[ "$TEST" -eq 1 ]]; then
             echo "Testing $image"
-            command="cd PowerShell; Import-Module ./build.psm1; Install-Dotnet -NoSudo; Start-PSPester"
+            command="cd PowerShell; Import-Module ./build.psm1; Install-Dotnet -NoSudo; Start-PSPester -powershell powershell -Pester ./src/Modules/Shared/Pester"
             # clone repo for stable images because it's not already done
             if [[ "$build" = stable ]]; then
                 command="git clone --recursive https://github.com/$FORK/PowerShell -b $BRANCH; $command"
             fi
             # run Pester tests inside container
-            docker run --rm -it powershell/powershell:$build-$distro powershell -c "$command"
+            docker run --rm -it powershell/powershell:$build-$distro -c "$command"
         else
             echo "Building $image"
             # copy the common script because it lives outside the docker build context

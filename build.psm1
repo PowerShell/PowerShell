@@ -557,13 +557,14 @@ function Start-PSPester {
         [string]$Path = "$PSScriptRoot/test/powershell",
         [switch]$ThrowOnFailure,
         [switch]$FullCLR,
-        [string]$binDir = (Split-Path (New-PSOptions -FullCLR:$FullCLR).Output) 
+        [string]$binDir = (Split-Path (New-PSOptions -FullCLR:$FullCLR).Output),
+        [string]$powershell = (Join-Path $binDir 'powershell'),
+        [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester"))
     )
 
     Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
     # All concatenated commands/arguments are suffixed with the delimiter (space)
     $Command = ""
-    $powershell = Join-Path $binDir 'powershell'
 
     # Windows needs the execution policy adjusted
     if ($IsWindows) {
@@ -571,10 +572,9 @@ function Start-PSPester {
     }
     $startParams = @{binDir=$binDir}
 
-    $PesterModule = [IO.Path]::Combine($binDir, "Modules", "Pester")
     if(!$FullCLR)
     {
-        $Command += "Import-Module '$PesterModule'; "
+        $Command += "Import-Module '$Pester'; "
     }
     $Command += "Invoke-Pester "
 
