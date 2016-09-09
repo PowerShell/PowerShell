@@ -24,14 +24,26 @@ for build in $BUILDS; do
     # cd so $distro is only the distro name
     cd $build
     for distro in $DISTROS; do
-        echo "Building $build/$distro"
-        # copy the common script because it lives outside the docker build context
-        if [[ "$build" = "unstable" ]]; then
-            cp bootstrap.ps1 $distro
-            buildargs="--build-arg fork=$FORK --build-arg branch=$BRANCH"
+        image="$build/$distro"
+        if [[ "$TEST" -eq 1 ]]; then
+            echo "Testing $image"
+            command="cd PowerShell; Import-Module ./build.psm1; Install-Dotnet -NoSudo; Start-PSPester"
+            # clone repo for stable images because it's not already done
+            if [[ "$build" = stable ]]; then
+                command="git clone --recursive https://github.com/$FORK/PowerShell -b $BRANCH; $command"
+            fi
+            # run Pester tests inside container
+            docker run --rm -it powershell/powershell:$build-$distro powershell -c "$command"
+        else
+            echo "Building $image"
+            # copy the common script because it lives outside the docker build context
+            if [[ "$build" = unstable ]]; then
+                cp bootstrap.ps1 $distro
+                buildargs="--build-arg fork=$FORK --build-arg branch=$BRANCH"
+            fi
+            # build and tag the image so they can be derived from
+            docker build $buildargs -t powershell/powershell:$build-$distro $distro
         fi
-        # build and tag the image so they can be derived from
-        docker build $buildargs -t powershell/powershell:$build-$distro $distro
     done
     cd ..
 done
