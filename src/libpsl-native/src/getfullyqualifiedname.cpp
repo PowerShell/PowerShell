@@ -43,17 +43,18 @@ char *GetFullyQualifiedName()
      * POSIX compliant, and some are being deprecated. getaddrinfo seems
      * to be the best choice.
      */
+    char *fullName = NULL;
     if (getaddrinfo(computerName, "http", &hints, &info) != 0)
     {
-        errno = ERROR_BAD_NET_NAME;
-        return NULL;
+        goto exit;
     }
 
-    // info is actually a link-list.  We'll just return the first full name
+    // return the first canonical name in the list
+    fullName = strndup(info->ai_canonname, strlen(info->ai_canonname));
 
-    char *fullName = strndup(info->ai_canonname, strlen(info->ai_canonname));
-
+    // only free info if getaddrinfo was successful
     freeaddrinfo(info);
+exit:
     free(computerName);
     return fullName;
 }
