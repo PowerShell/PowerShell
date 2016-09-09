@@ -1844,9 +1844,9 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Key Path
+        /// Key File Path
         /// </summary>
-        private string KeyPath
+        private string KeyFilePath
         {
             get;
             set;
@@ -1867,18 +1867,18 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="userName">User Name</param>
         /// <param name="computerName">Computer Name</param>
-        /// <param name="keyPath">Key Path</param>
+        /// <param name="keyFilePath">Key File Path</param>
         public SSHConnectionInfo(
             string userName,
             string computerName,
-            string keyPath)
+            string keyFilePath)
         {
             if (userName == null) { throw new PSArgumentNullException("userName"); }
             if (computerName == null) { throw new PSArgumentNullException("computerName"); }
 
             this.UserName = userName;
             this.ComputerName = computerName;
-            this.KeyPath = keyPath;
+            this.KeyFilePath = keyFilePath;
         }
 
         #endregion
@@ -1930,7 +1930,7 @@ namespace System.Management.Automation.Runspaces
             SSHConnectionInfo newCopy = new SSHConnectionInfo();
             newCopy.ComputerName = this.ComputerName;
             newCopy.UserName = this.UserName;
-            newCopy.KeyPath = this.KeyPath;
+            newCopy.KeyFilePath = this.KeyFilePath;
 
             return newCopy;
         }
@@ -1996,11 +1996,17 @@ namespace System.Management.Automation.Runspaces
             //   See sshd_configuration file, subsystems section and it will have this entry:
             //     Subsystem       powershell C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Version 5.1 -sshs -NoLogo -NoProfile
             string arguments;
-            if (!string.IsNullOrEmpty(this.KeyPath))
+            if (!string.IsNullOrEmpty(this.KeyFilePath))
             {
+                if (!System.IO.File.Exists(this.KeyFilePath))
+                {
+                    throw new FileNotFoundException(
+                        StringUtil.Format(RemotingErrorIdStrings.KeyFileNotFound, this.KeyFilePath));
+                }
+
                 arguments = (string.IsNullOrEmpty(domainName)) ?
-                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" {1}@{2} -s powershell", this.KeyPath, userName, this.ComputerName) :
-                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" -l {1}@{2} {3} -s powershell", this.KeyPath, userName, domainName, this.ComputerName);
+                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" {1}@{2} -s powershell", this.KeyFilePath, userName, this.ComputerName) :
+                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" -l {1}@{2} {3} -s powershell", this.KeyFilePath, userName, domainName, this.ComputerName);
             }
             else
             {
@@ -2094,7 +2100,9 @@ namespace System.Management.Automation.Runspaces
                 (sshProcess == null) ||
                 (sshProcess.HasExited == true))
             {
-                throw new InvalidOperationException(RemotingErrorIdStrings.CannotStartSSHClient, ex);
+                throw new InvalidOperationException(
+                    StringUtil.Format(RemotingErrorIdStrings.CannotStartSSHClient, (ex != null) ? ex.Message : string.Empty), 
+                    ex);
             }
 
             // Create the std in writer/readers needed for communication with ssh.exe.

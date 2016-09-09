@@ -1610,6 +1610,15 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   -The domain or computer name was not included with the specified credential, for example: DOMAIN\UserName or COMPUTER\UserName.</value>
   </data>
   <data name="CannotStartSSHClient" xml:space="preserve">
-    <value>An error occurred when starting the SSH.exe client needed for the remoting connection.</value>
+    <value>Failed to start the SSH client process needed for the remoting connection with error: {0}.</value>
+  </data>
+  <data name="KeyFileNotFound" xml:space="preserve">
+    <value>The specified key file {0} was not found.</value>
+  </data>
+  <data name="SSHClientEndWithErrorMessage" xml:space="preserve">
+    <value>The SSH client session has ended with error message: {0}</value>
+  </data>
+  <data name="SSHClientEndNoErrorMessage" xml:space="preserve">
+    <value>The SSH client session has ended with no error message.</value>
   </data>
 </root>

@@ -693,11 +693,11 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
         [ValidateNotNullOrEmpty()]
-        public override string KeyPath
+        public override string KeyFilePath
         {
-            get { return base.KeyPath; }
+            get { return base.KeyFilePath; }
 
-            set { base.KeyPath = value; }
+            set { base.KeyFilePath = value; }
         }
 
         #endregion

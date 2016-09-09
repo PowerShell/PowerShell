@@ -1065,7 +1065,7 @@ namespace Microsoft.PowerShell.Commands
             var sshConnectionInfo = new SSHConnectionInfo(
                 this.UserName,
                 this.HostName,
-                this.KeyPath);
+                this.KeyFilePath);
             var typeTable = TypeTable.LoadDefaultTypeFiles();
             remoteRunspaces.Add(RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace);
 

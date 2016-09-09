@@ -683,7 +683,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// SSH Target Host Name
         /// </summary>
-        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet, Mandatory = true)]
         [ValidateNotNullOrEmpty()]
         public virtual string HostName
         {
@@ -694,7 +694,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// SSH User Name
         /// </summary>
-        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet, Mandatory = true)]
         [ValidateNotNullOrEmpty()]
         public virtual string UserName
         {
@@ -703,15 +703,22 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// SSH Key Path
+        /// SSH Key File Path
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
         [ValidateNotNullOrEmpty()]
-        public virtual string KeyPath
+        public virtual string KeyFilePath
         {
-            get;
-            set;
+            get { return _keyFilePath; }
+
+            set
+            {
+                // Resolve the key file path.
+                PathResolver resolver = new PathResolver();
+                _keyFilePath = resolver.ResolveProviderAndPath(value, true, this, false, RemotingErrorIdStrings.FilePathNotFromFileSystemProvider);
+            }
         }
+        private string _keyFilePath;
 
         #endregion
 
@@ -1166,7 +1173,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected void CreateHelpersForSpecifiedHostNames()
         {
-            var sshConnectionInfo = new SSHConnectionInfo(this.UserName, this.HostName, this.KeyPath);
+            var sshConnectionInfo = new SSHConnectionInfo(this.UserName, this.HostName, this.KeyFilePath);
             var typeTable = TypeTable.LoadDefaultTypeFiles();
             var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
             var pipeline = CreatePipeline(remoteRunspace);

@@ -1524,13 +1524,20 @@ namespace System.Management.Automation.Remoting.Client
                 while (true)
                 {
                     string error = reader.ReadLine();
-                    if (!string.IsNullOrEmpty(error) && (error.IndexOf("WARNING:", StringComparison.OrdinalIgnoreCase) < 0))
+                    if (!string.IsNullOrEmpty(error) && (error.IndexOf("WARNING:", StringComparison.OrdinalIgnoreCase) > -1))
+                    {
+                        // Handle as interactive warning message.
+                        Console.WriteLine(error);
+                    }
+                    else
                     {
                         // Any SSH client error results in a broken session.
                         PSRemotingTransportException psrte = new PSRemotingTransportException(
                             PSRemotingErrorId.IPCServerProcessReportedError,
                             RemotingErrorIdStrings.IPCServerProcessReportedError,
-                            error);
+                            string.IsNullOrEmpty(error) ?
+                                RemotingErrorIdStrings.SSHClientEndNoErrorMessage
+                                : StringUtil.Format(RemotingErrorIdStrings.SSHClientEndWithErrorMessage, error));
                         RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.CloseShellOperationEx));
                         CloseConnection();
                     }
