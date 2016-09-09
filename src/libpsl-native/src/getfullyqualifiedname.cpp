@@ -11,15 +11,7 @@
 
 //! @brief GetFullyQualifiedName retrieves the fully qualified dns name of the host
 //!
-//! @exception errno Passes these errors via errno to GetLastError:
-//! - ERROR_INVALID_FUNCTION: getlogin_r() returned an unrecognized error code (from GetComputerName)
-//! - ERROR_INVALID_ADDRESS:  buffer is an invalid address (from GetComputerName)
-//! - ERROR_GEN_FAILURE: buffer not large enough (from GetComputerName)
-//! - ERROR_BAD_NET_NAME: Cannot determine network short name
-//!
 //! @retval username as UTF-8 string, or null if unsuccessful
-//!
-
 char *GetFullyQualifiedName()
 {
     errno = 0;
