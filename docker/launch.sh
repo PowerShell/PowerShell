@@ -33,7 +33,8 @@ for build in $BUILDS; do
                 command="git clone --recursive https://github.com/$FORK/PowerShell -b $BRANCH; $command"
             fi
             # run Pester tests inside container
-            docker run --rm -it powershell/powershell:$build-$distro -c "$command"
+            # RUNARGS can be set in the environment
+            docker run -it $RUNARGS powershell/powershell:$build-$distro -c "$command"
         else
             echo "Building $image"
             # copy the common script because it lives outside the docker build context
@@ -42,7 +43,8 @@ for build in $BUILDS; do
                 buildargs="--build-arg fork=$FORK --build-arg branch=$BRANCH"
             fi
             # build and tag the image so they can be derived from
-            docker build $buildargs -t powershell/powershell:$build-$distro $distro
+            # BUILDARGS can be set in the environment
+            docker build $buildargs $BUILDARGS -t powershell/powershell:$build-$distro $distro
         fi
     done
     cd ..
