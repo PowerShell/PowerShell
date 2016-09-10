@@ -12,16 +12,22 @@ get_url() {
     echo "https://github.com/PowerShell/PowerShell/releases/download/$release/$1"
 }
 
+if [[ $EUID -ne 0 ]]; then
+  SUDO=sudo
+else
+  SUDO=''
+fi
+
 # Get OS specific asset ID and package name
 case "$OSTYPE" in
     linux*)
         source /etc/os-release
-        # Install curl and wget to download package
+        # Install curl to download package
         case "$ID" in
             centos*)
                 if ! hash curl 2>/dev/null; then
                     echo "curl not found, installing..."
-                    sudo yum install -y curl
+                    $SUDO yum install -y curl
                 fi
 
                 package=powershell-6.0.0_alpha.9-1.el7.centos.x86_64.rpm
@@ -29,7 +35,7 @@ case "$OSTYPE" in
             ubuntu)
                 if ! hash curl 2>/dev/null; then
                     echo "curl not found, installing..."
-                    sudo apt-get install -y curl
+                    $SUDO apt-get install -y curl
                 fi
 
                 case "$VERSION_ID" in
@@ -74,8 +80,8 @@ case "$OSTYPE" in
         case "$ID" in
             centos)
                 echo "Installing libicu, libunwind, and $package with sudo ..."
-                sudo yum install -y libicu libunwind
-                sudo yum install "./$package"
+                $SUDO yum install -y libicu libunwind
+                $SUDI yum install "./$package"
                 ;;
             ubuntu)
                 case "$VERSION_ID" in
@@ -87,8 +93,8 @@ case "$OSTYPE" in
                         ;;
                 esac
                 echo "Installing $libicupackage, libunwind8, and $package with sudo ..."
-                sudo apt-get install -y libunwind8 "$icupackage"
-                sudo dpkg -i "./$package"
+                $SUDO apt-get install -y libunwind8 "$icupackage"
+                $SUDO dpkg -i "./$package"
                 ;;
             *)
         esac
@@ -108,7 +114,7 @@ case "$OSTYPE" in
         fi
 
         echo "Installing $package with sudo ..."
-        sudo installer -pkg "./$package" -target /
+        $SUDO installer -pkg ./$package -target /
         ;;
 esac
 
