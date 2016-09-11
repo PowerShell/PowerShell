@@ -1,4 +1,4 @@
-﻿Describe "Test restricted language check method on scriptblocks" -Tags "Feature" {
+﻿Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
         BeforeAll {
             set-strictmode -v 2
             function list {
@@ -7,7 +7,10 @@
             $args | foreach {$l.Add($_)}
             , $l
             }
-        }        
+        }
+        AfterAll {
+            Set-StrictMode -Off
+        }
 
         It 'Check basic expressions' {
 

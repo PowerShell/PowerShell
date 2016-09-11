@@ -1,4 +1,4 @@
-﻿Describe "Common parameters support for script cmdlets" -Tags "CI" {
+﻿Describe "Common parameters support for script cmdlets" -Tags "FeatureSet-StrictMode -Off" {
     BeforeAll {
         $rp = [system.management.automation.runspaces.runspacefactory]::createrunspacepool(1, 1)
         $rp.open()
