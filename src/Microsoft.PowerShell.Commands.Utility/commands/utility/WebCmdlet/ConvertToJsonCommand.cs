@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
     /// The ConvertTo-Json command
     /// This command convert an object to a Json string representation
     /// </summary>
-    [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=217032", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217032", RemotingCapability = RemotingCapability.None)]
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public class ConvertToJsonCommand : PSCmdlet
     {
@@ -470,7 +470,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (pso != null && pso.immediateBaseObjectIsEmpty)
                         {
-                            // The obj is a pure PSObject, we convet the original PSObject to a string, 
+                            // The obj is a pure PSObject, we convert the original PSObject to a string, 
                             // instead of its base object in this case
                             rv = LanguagePrimitives.ConvertTo(pso, typeof(string),
                                 CultureInfo.InvariantCulture);
@@ -535,7 +535,7 @@ namespace Microsoft.PowerShell.Commands
             if (pso == null)
                 return obj;
 
-            // when isPurePSObj is true, the obj is guaranteed to be a string convertted by LanguagePrimitives
+            // when isPurePSObj is true, the obj is guaranteed to be a string converted by LanguagePrimitives
             if (isPurePSObj)
                 return obj;
 
@@ -562,7 +562,7 @@ namespace Microsoft.PowerShell.Commands
         /// If the passed in object is a custom object (not a simple object, not a dictionary, not a list, get processed in ProcessCustomObject method),
         /// we also take Adapted properties into account. Otherwise, we only consider the Extended properties.
         /// When the object is a pure PSObject, it also gets processed in "ProcessCustomObject" before reaching this method, so we will
-        /// iterate both extended and adapted proerpties for it. Since it's a pure PSObject, there will be no adapted properties.
+        /// iterate both extended and adapted properties for it. Since it's a pure PSObject, there will be no adapted properties.
         /// </summary>
         /// <param name="psobj">The containing PSObject, or null if the base object was not contained in a PSObject</param>
         /// <param name="receiver">The dictionary to which any additional properties will be appended</param>

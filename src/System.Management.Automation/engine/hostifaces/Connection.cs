@@ -419,7 +419,7 @@ namespace System.Management.Automation.Runspaces
     public enum RunspaceCapability
     {
         /// <summary>
-        /// No additional capabilites beyond a default runspace.
+        /// No additional capabilities beyond a default runspace.
         /// </summary>
         Default = 0x0,
 
@@ -674,7 +674,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Get unqiue id for this instance of runspace. It is primarily used 
+        /// Get unique id for this instance of runspace. It is primarily used 
         /// for logging purposes
         /// </summary>
         public Guid InstanceId { get;
@@ -1394,7 +1394,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="command">A valid command string</param>
         /// <returns>
-        /// A pipline pre-filled with a <see cref="Command"/> object for specified command parameter.
+        /// A pipeline pre-filled with a <see cref="Command"/> object for specified command parameter.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// command is null
@@ -1407,7 +1407,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="command">A valid command string</param>
         /// <param name="addToHistory">if true command is added to history</param>
         /// <returns>
-        /// A pipline pre-filled with a <see cref="Command"/> object for specified command parameter.
+        /// A pipeline pre-filled with a <see cref="Command"/> object for specified command parameter.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// command is null
@@ -1430,7 +1430,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="command">A valid command string</param>
         /// <param name="addToHistory">if true command is added to history</param>
         /// <returns>
-        /// A pipline pre-filled with Command specified in commandString.
+        /// A pipeline pre-filled with Command specified in commandString.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// command is null

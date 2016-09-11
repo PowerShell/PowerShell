@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to resolve MSH paths containing glob characters to
     /// MSH paths that match the glob strings.
     /// </summary>
-    [Cmdlet("Split", "Path", DefaultParameterSetName = "ParentSet", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113404")]
+    [Cmdlet("Split", "Path", DefaultParameterSetName = "ParentSet", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113404")]
     [OutputType(typeof(string), ParameterSetName = new string[] { SplitPathCommand.leafSet,
                                                                   SplitPathCommand.noQualifierSet,
                                                                   SplitPathCommand.parentSet,
@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
         ///
         /// <value>
         /// If true the qualifier of the path will be returned.
-        /// The qualifier is the drive or provider that is qualifing
+        /// The qualifier is the drive or provider that is qualifying
         /// the MSH path.
         /// </value>
         ///
@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
         ///
         /// <value>
         /// If true the qualifier of the path will be returned.
-        /// The qualifier is the drive or provider that is qualifing
+        /// The qualifier is the drive or provider that is qualifying
         /// the MSH path.
         /// </value>
         ///

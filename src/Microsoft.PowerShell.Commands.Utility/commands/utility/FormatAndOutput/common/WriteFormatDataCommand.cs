@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// Cmdlet used to write a collection of formatting directives to
     /// an XML file
     /// </summary>
-    [Cmdlet("Export", "FormatData", DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144302")]
+    [Cmdlet("Export", "FormatData", DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144302")]
     public class ExportFormatDataCommand : PSCmdlet
     {
         private ExtendedTypeDefinition[] _typeDefinition;

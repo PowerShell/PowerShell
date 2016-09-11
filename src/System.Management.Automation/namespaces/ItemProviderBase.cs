@@ -71,7 +71,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         /// 
         internal object GetItemDynamicParameters(string path, CmdletProviderContext context)
@@ -139,7 +139,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         /// 
         internal object SetItemDynamicParameters(
@@ -197,7 +197,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         /// 
         internal object ClearItemDynamicParameters(
@@ -255,7 +255,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         /// 
         internal object InvokeDefaultActionDynamicParameters(
@@ -325,7 +325,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         /// 
         internal object ItemExistsDynamicParameters(
@@ -356,7 +356,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         /// 
         /// <remarks>
-        /// This test should not verify the existance of the item at the path. It should
+        /// This test should not verify the existence of the item at the path. It should
         /// only perform syntactic and semantic validation of the path.  For instance, for
         /// the file system provider, that path should be canonicalized, syntactically verified,
         /// and ensure that the path does not refer to a device.
@@ -455,7 +455,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         protected virtual object GetItemDynamicParameters(string path)
         {
@@ -526,7 +526,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         protected virtual object SetItemDynamicParameters(string path, object value)
         {
@@ -588,7 +588,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         protected virtual object ClearItemDynamicParameters(string path)
         {
@@ -611,7 +611,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         /// 
         /// <remarks>
-        /// The default implemenation does nothing.
+        /// The default implementation does nothing.
         /// 
         /// Providers override this method to give the user the ability to invoke provider objects using
         /// the invoke-item cmdlet. Think of the invocation as a double click in the Windows Shell. This
@@ -651,7 +651,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         protected virtual object InvokeDefaultActionDynamicParameters(string path)
         {
@@ -685,7 +685,7 @@ namespace System.Management.Automation.Provider
         /// of ExpandWildcards, Filter, Include, or Exclude should ensure that the path passed meets those
         /// requirements by accessing the appropriate property from the base class.
         /// 
-        /// The implemenation of this method should take into account any form of access to the object that may
+        /// The implementation of this method should take into account any form of access to the object that may
         /// make it visible to the user.  For instance, if a user has write access to a file in the file system 
         /// provider bug not read access, the file still exists and the method should return true.  Sometimes this
         /// may require checking the parent to see if the child can be enumerated.
@@ -717,7 +717,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         protected virtual object ItemExistsDynamicParameters(string path)
         {
@@ -742,7 +742,7 @@ namespace System.Management.Automation.Provider
         /// </returns>
         /// 
         /// <remarks>
-        /// This test should not verify the existance of the item at the path. It should
+        /// This test should not verify the existence of the item at the path. It should
         /// only perform syntactic and semantic validation of the path.  For instance, for
         /// the file system provider, that path should be canonicalized, syntactically verified,
         /// and ensure that the path does not refer to a device.

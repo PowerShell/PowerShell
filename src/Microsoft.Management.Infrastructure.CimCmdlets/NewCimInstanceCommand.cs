@@ -24,7 +24,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// on the server, otherwise just create client in-memory instance
     /// </para>
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "CimInstance", DefaultParameterSetName = CimBaseCommand.ClassNameComputerSet, SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227963")]
+    [Cmdlet(VerbsCommon.New, "CimInstance", DefaultParameterSetName = CimBaseCommand.ClassNameComputerSet, SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227963")]
     [OutputType(typeof(CimInstance))]
     public class NewCimInstanceCommand : CimBaseCommand
     {

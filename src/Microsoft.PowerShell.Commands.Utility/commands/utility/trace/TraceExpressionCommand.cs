@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     /// A cmdlet that traces the specified categories and flags for the duration of the 
     /// specified expression.
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Trace, "Command", DefaultParameterSetName = "expressionSet", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113419")]
+    [Cmdlet(VerbsDiagnostic.Trace, "Command", DefaultParameterSetName = "expressionSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113419")]
     public class TraceCommandCommand : TraceListenerCommandBase, IDisposable
     {
         #region Parameters
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ParameterSetName == "commandSet")
             {
-                // Create the CommmandProcessor and add it to a pipeline
+                // Create the CommandProcessor and add it to a pipeline
 
                 CommandProcessorBase commandProcessor =
                     this.Context.CommandDiscovery.LookupCommandProcessor(Command, CommandOrigin.Runspace, false);
@@ -468,7 +468,7 @@ namespace Microsoft.PowerShell.Commands
         /// If enumerateCollection is true, and <paramref name="obj"/>
         /// is an enumeration according to LanguagePrimitives.GetEnumerable,
         /// the objects in the enumeration will be unrolled and
-        /// written seperately.  Otherwise, <paramref name="obj"/>
+        /// written separately.  Otherwise, <paramref name="obj"/>
         /// will be written as a single object.
         /// </param>
         /// <returns>The number of objects written</returns>

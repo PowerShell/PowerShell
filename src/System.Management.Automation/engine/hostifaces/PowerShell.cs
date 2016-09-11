@@ -529,7 +529,7 @@ namespace System.Management.Automation
         /// Constructor
         /// </summary>
         /// <param name="ownerId">
-        /// Instace Id of the Powershell object creating this instance
+        /// Instance Id of the Powershell object creating this instance
         /// </param>
         /// <param name="callback">
         /// Callback to call when the async operation completes.
@@ -567,7 +567,7 @@ namespace System.Management.Automation
     /// <code>
     ///    Powershell.Create("get-process").Invoke();
     /// </code>
-    /// The above statetement creates a local runspace using default
+    /// The above statement creates a local runspace using default
     /// configuration, executes the command and then closes the runspace.
     /// 
     /// Using RunspacePool property, the caller can provide the runspace
@@ -1672,7 +1672,7 @@ namespace System.Management.Automation
         internal bool RedirectShellErrorOutputPipe { get; set; } = true;
 
         /// <summary>
-        /// Get unqiue id for this instance of runspace pool. It is primarily used 
+        /// Get unique id for this instance of runspace pool. It is primarily used 
         /// for logging purposes.
         /// </summary>
         public Guid InstanceId { get; private set; }
@@ -1710,7 +1710,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Access to the EndInvoke AysncResult object.  Used by remote
+        /// Access to the EndInvoke AsyncResult object.  Used by remote
         /// debugging to invoke debugger commands on command thread.
         /// </summary>
         internal AsyncResult EndInvokeAsyncResult
@@ -1720,7 +1720,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Event rasied when PowerShell Execution State Changes.
+        /// Event raised when PowerShell Execution State Changes.
         /// </summary>
         public event EventHandler<PSInvocationStateChangedEventArgs> InvocationStateChanged;
 
@@ -2212,7 +2212,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="ThreadAbortException">
         /// The thread in which the command was executing was aborted.
@@ -2274,7 +2274,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="ThreadAbortException">
         /// The thread in which the command was executing was aborted.
@@ -2339,7 +2339,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="ThreadAbortException">
         /// The thread in which the command was executing was aborted.
@@ -2401,7 +2401,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="ThreadAbortException">
         /// The thread in which the command was executing was aborted.
@@ -2467,7 +2467,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="ThreadAbortException">
         /// The thread in which the command was executing was aborted.
@@ -2534,7 +2534,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="ThreadAbortException">
         /// The thread in which the command was executing was aborted.
@@ -2604,7 +2604,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="ThreadAbortException">
         /// The thread in which the command was executing was aborted.
@@ -2670,7 +2670,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="ThreadAbortException">
         /// The thread in which the command was executing was aborted.
@@ -2744,7 +2744,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="ThreadAbortException">
         /// The thread in which the command was executing was aborted.
@@ -4161,7 +4161,7 @@ namespace System.Management.Automation
         /// <exception cref="System.Security.SecurityException">
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
-        /// reflextion access to a cmdlet assembly.
+        /// reflection access to a cmdlet assembly.
         /// </exception>
         /// <exception cref="ThreadAbortException">
         /// The thread in which the command was executing was aborted.
@@ -4271,7 +4271,7 @@ namespace System.Management.Automation
                         "Nested PowerShell can only work on a Runspace");
 
 
-                    // Peform work on the current thread. Nested Pipeline
+                    // Perform work on the current thread. Nested Pipeline
                     // should be invoked from the same thread that the parent
                     // pipeline is executing in.
                     _worker.ConstructPipelineAndDoWork(rsToUse, true);
@@ -4415,7 +4415,7 @@ namespace System.Management.Automation
                                 throw;
                             }
 
-                            // Ignore the exception if neccessary.
+                            // Ignore the exception if necessary.
                             if ((null != settings) && settings.ErrorActionPreference == ActionPreference.Ignore)
                             {
                                 continue;
@@ -5179,7 +5179,7 @@ namespace System.Management.Automation
             /// <summary>
             /// This method gets called from a ThreadPool thread.
             /// This method gets called from a RunspacePool thread when a
-            /// Runsapce is available.
+            /// Runspace is available.
             /// </summary>
             /// <param name="asyncResult">
             /// AsyncResult object which monitors the asyncOperation.

@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to create a new property on an object.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "ItemProperty", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113354")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113354")]
     public class NewItemPropertyCommand : ItemPropertyCommandBase
     {
         #region Parameters

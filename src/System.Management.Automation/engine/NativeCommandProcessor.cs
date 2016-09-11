@@ -660,7 +660,7 @@ namespace System.Management.Automation
         #region Process cleanup with Child Process cleanup
 
         /// <summary>
-        /// Utility routine to kill a process, discarding non-critial exceptions.
+        /// Utility routine to kill a process, discarding non-critical exceptions.
         /// This utility makes two passes at killing a process. In the first pass,
         /// if the process handle is invalid (as seems to be the case with an ntvdm)
         /// then we try to get a fresh handle based on the original process id.
@@ -745,8 +745,8 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    // note that we have tried to retrived parent id once.
-                    // retreiving parent id might throw exceptions..so
+                    // note that we have tried to retrieved parent id once.
+                    // retrieving parent id might throw exceptions..so
                     // setting this to -1 so that we dont try again to
                     // get the parent id.
                     _parentId = -1;
@@ -1085,7 +1085,7 @@ namespace System.Management.Automation
                 // compare the command name to avoid breaking change.
                 if (String.Equals(outputProcessor.CommandInfo.Name, "Out-Default", StringComparison.OrdinalIgnoreCase))
                 {
-                    // Verify that this isn't an Out-Default added for transcripting
+                    // Verify that this isn't an Out-Default added for transcribing
                     if (!outputProcessor.Command.MyInvocation.BoundParameters.ContainsKey("Transcript"))
                     {
                         return true;
@@ -1113,7 +1113,7 @@ namespace System.Management.Automation
             // redirecting anything. This is a bit tricky as we always run redirected so
             // we have to see if the redirection is actually being done at the topmost level or not.
 
-            // If we're eligable to be running standalone, that is, without redirection
+            // If we're eligible to be running standalone, that is, without redirection
             // use our pipeline position to determine if we really want to redirect
             // input and error or not. If we're first in the pipeline, then we don't
             // redirect input. If we're last in the pipeline, we don't redirect output.
@@ -1121,7 +1121,7 @@ namespace System.Management.Automation
             if (this.Command.MyInvocation.PipelinePosition == this.Command.MyInvocation.PipelineLength)
             {
                 // If the output pipe is the default outputter, for example, calling the native command from command-line host,
-                // then we're possiblly running standalone.
+                // then we're possibly running standalone.
                 //
                 // If the downstream cmdlet is explicitly Out-Default, for example: 
                 //    $powershell.AddScript('ipconfig.exe') 
@@ -1140,7 +1140,7 @@ namespace System.Management.Automation
             if (CommandRuntime.ErrorMergeTo != MshCommandRuntime.MergeDataStream.Output)
             {
                 // If the error output pipe is the default outputter, for example, calling the native command from command-line host,
-                // then we're possiblly running standalone.
+                // then we're possibly running standalone.
                 //
                 // If the downstream cmdlet is explicitly Out-Default, for example: 
                 //    $powershell.AddScript('ipconfig.exe') 
@@ -1405,7 +1405,7 @@ namespace System.Management.Automation
         /// </param>
         internal void Start(Process process, NativeCommandIOFormat inputFormat)
         {
-            Dbg.Assert(process != null, "caller should validate the paramter");
+            Dbg.Assert(process != null, "caller should validate the parameter");
 
             //Get the encoding for writing to native command. Note we get the Encoding 
             //from the current scope so a script or function can use a different encoding
@@ -1697,7 +1697,7 @@ namespace System.Management.Automation
     /// and processes them appropriately.
     /// </summary>
     /// <remarks>
-    /// This class is not thread safe. It is assumed that NativeCommnadProcessor
+    /// This class is not thread safe. It is assumed that NativeCommandProcessor
     /// class will synchronize access to this class between different threads.
     /// </remarks>
     internal class ProcessStreamReader
@@ -2204,7 +2204,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Initializes a new instance of the RemoteException 
-        /// with a specified error message, serialzed Exception and 
+        /// with a specified error message, serialized Exception and 
         /// serialized InvocationInfo
         /// </summary>
         /// <param name="message">The message that describes the error. </param>

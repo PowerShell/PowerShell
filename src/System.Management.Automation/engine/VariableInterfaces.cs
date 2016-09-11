@@ -75,7 +75,7 @@ namespace System.Management.Automation
 
             // Null is returned whenever the requested variable is String.Empty.
             // As per Powershell V1 implementation:
-            // 1. If the requested varible exists in the session scope, the variable value is returned.
+            // 1. If the requested variable exists in the session scope, the variable value is returned.
             // 2. If the requested variable is not null and does not exist in the session scope, then a null value is returned to the pipeline.
             // 3. If the requested variable is null then an NewArgumentNullException is thrown.
             // PowerShell V3 has the similar experience.

@@ -271,7 +271,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// helper to convert an PSObject into a string
-        /// It takes into account eumerations (use display name)
+        /// It takes into account enumerations (use display name)
         /// </summary>
         /// <param name="so">shell object to process</param>
         /// <param name="expressionFactory">expression factory to create MshExpression</param>

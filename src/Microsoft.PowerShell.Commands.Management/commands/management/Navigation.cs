@@ -392,7 +392,7 @@ namespace Microsoft.PowerShell.Commands
     /// <remarks>
     /// </remarks>
     /// 
-    [Cmdlet(VerbsCommon.Get, "Location", DefaultParameterSetName = "Location", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113321")]
+    [Cmdlet(VerbsCommon.Get, "Location", DefaultParameterSetName = "Location", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113321")]
     [OutputType(typeof(PathInfo), ParameterSetName = new string[] { "locationSet" })]
     [OutputType(typeof(PathInfoStack), ParameterSetName = new string[] { "Stack" })]
     public class GetLocationCommand : DriveMatchingCoreCommandBase
@@ -724,7 +724,7 @@ namespace Microsoft.PowerShell.Commands
     /// The core command for setting/changing location.
     /// This is the equivalent of cd command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "Location", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113397")]
+    [Cmdlet(VerbsCommon.Set, "Location", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113397")]
     [OutputType(typeof(PathInfo), typeof(PathInfoStack))]
     public class SetLocationCommand : CoreCommandBase
     {
@@ -1065,7 +1065,7 @@ namespace Microsoft.PowerShell.Commands
     /// The core command for setting/changing location and pushing it onto a location stack.
     /// This is the equivalent of the pushd command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Push, "Location", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113370")]
+    [Cmdlet(VerbsCommon.Push, "Location", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113370")]
     public class PushLocationCommand : CoreCommandBase
     {
         #region Command parameters
@@ -1354,7 +1354,7 @@ namespace Microsoft.PowerShell.Commands
     /// The core command for pop-location.  This is the equivalent of the popd command.
     /// It pops a container from the stack and sets the current location to that container.
     /// </summary>
-    [Cmdlet(VerbsCommon.Pop, "Location", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113369")]
+    [Cmdlet(VerbsCommon.Pop, "Location", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113369")]
     public class PopLocationCommand : CoreCommandBase
     {
         #region Command parameters
@@ -1478,7 +1478,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Mounts a drive in the Monad namespace.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "PSDrive", SupportsShouldProcess = true, SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113357")]
+    [Cmdlet(VerbsCommon.New, "PSDrive", SupportsShouldProcess = true, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113357")]
     public class NewPSDriveCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -1568,7 +1568,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets the Persist Switch parameter.
-        /// If this switch parmter is set then the created PSDrive
+        /// If this switch parameter is set then the created PSDrive
         /// would be persisted across PowerShell sessions.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
@@ -1915,7 +1915,7 @@ namespace Microsoft.PowerShell.Commands
     /// Removes a drive that is mounted in the Monad namespace.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "PSDrive", DefaultParameterSetName = "Name", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113376")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113376")]
     public class RemovePSDriveCommand : DriveMatchingCoreCommandBase
     {
         #region Command parameters
@@ -2109,7 +2109,7 @@ namespace Microsoft.PowerShell.Commands
     /// Gets a specified or listing of drives that are mounted in the Monad
     /// namespace.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "PSDrive", DefaultParameterSetName = "Name", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113327")]
+    [Cmdlet(VerbsCommon.Get, "PSDrive", DefaultParameterSetName = "Name", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113327")]
     [OutputType(typeof(PSDriveInfo))]
     public class GetPSDriveCommand : DriveMatchingCoreCommandBase
     {
@@ -2307,7 +2307,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Gets the specified item using the namespace providers.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Item", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113319")]
+    [Cmdlet(VerbsCommon.Get, "Item", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113319")]
     public class GetItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -2513,7 +2513,7 @@ namespace Microsoft.PowerShell.Commands
     /// Creates the specified item using the namespace providers.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "Item", DefaultParameterSetName = "pathSet", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113353")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113353")]
     public class NewItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -2675,7 +2675,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Sets the specified item using the namespace providers.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "Item", SupportsShouldProcess = true, DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113395")]
+    [Cmdlet(VerbsCommon.Set, "Item", SupportsShouldProcess = true, DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113395")]
     public class SetItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -2892,7 +2892,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Removes the specified item using the namespace providers.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "Item", SupportsShouldProcess = true, DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113373")]
+    [Cmdlet(VerbsCommon.Remove, "Item", SupportsShouldProcess = true, DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113373")]
     public class RemoveItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -3350,7 +3350,7 @@ namespace Microsoft.PowerShell.Commands
     /// the namespace providers.
     /// </summary>
     [Cmdlet(VerbsCommon.Move, "Item", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113350")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113350")]
     public class MoveItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -3748,7 +3748,7 @@ namespace Microsoft.PowerShell.Commands
     /// Renames a specified item to a new name using the namespace providers
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "Item", SupportsShouldProcess = true, SupportsTransactions = true, DefaultParameterSetName = "ByPath",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113382")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113382")]
     public class RenameItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -4036,7 +4036,7 @@ namespace Microsoft.PowerShell.Commands
     /// Copies a specified item to a new location using the namespace providers
     /// </summary>
     [Cmdlet(VerbsCommon.Copy, "Item", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113292")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113292")]
     public class CopyItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -4309,7 +4309,7 @@ namespace Microsoft.PowerShell.Commands
     /// Clears an item at the specified location
     /// </summary>
     [Cmdlet(VerbsCommon.Clear, "Item", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113283")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113283")]
     public class ClearItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -4540,7 +4540,7 @@ namespace Microsoft.PowerShell.Commands
     /// Invokes an item at the specified location
     /// </summary>
     [Cmdlet("Invoke", "Item", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113345")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113345")]
     public class InvokeItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -4741,7 +4741,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Gets a core command provider by name
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "PSProvider", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113329")]
+    [Cmdlet(VerbsCommon.Get, "PSProvider", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113329")]
     [OutputType(typeof(ProviderInfo))]
     public class GetPSProviderCommand : CoreCommandBase
     {

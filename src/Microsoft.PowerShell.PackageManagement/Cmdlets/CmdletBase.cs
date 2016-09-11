@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                     }
                 }
 
-                return Constants.DefaultTimeout; // in a non-invokcation, always default to one hour
+                return Constants.DefaultTimeout; // in a non-invocation, always default to one hour
             }
         }
 
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                         return t;
                     }
                 }
-                return Constants.DefaultResponsiveness; // in a non-invokcation, always default to one hour
+                return Constants.DefaultResponsiveness; // in a non-invocation, always default to one hour
             }
         }
 
@@ -254,14 +254,14 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
             //is expected. However when the install-module starts, the MessageResolver delegate stops responding. This is a PowerShell thing.
             //Once the delegate is blocked, it's blocked for the subsequence log message calls for the current cmdlet, find-module. Note that the
             //next cmdlet, install-module has no impact on the delegate blocking issue, meaning all messages are expected to be logged for install-module.
-            //_messageResolverNotResponding is for avoiding continuesly waiting for unresponsive MessageResolver delegate.
+            //_messageResolverNotResponding is for avoiding continuously waiting for unresponsive MessageResolver delegate.
             if (MessageResolver != null && !_messageResolverNotResponding) {
                 // if the consumer has specified a MessageResolver delegate, we need to call it on the main thread
                 // because powershell won't let us use the default runspace from another thread.
 
                 // if we are anywhere but the end of the pipeline, the delegate here would block on stuff later in the pipe
                 // and since we're blocking *that* based on the the resolution of this, we're better off just skipping
-                // the message resoluion for things earlier in the pipeline.
+                // the message resolution for things earlier in the pipeline.
                 _messageResolverNotResponding = !ExecuteOnMainThread(() =>{
                     result = MessageResolver(messageText, defaultText);
                     if (string.IsNullOrWhiteSpace(result)) {
@@ -484,7 +484,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                     PackageVersion = swidObject.Version,
                     PackageProviderName = swidObject.ProviderName,
                     Repository = swidObject.Source,
-                    ExuectionStatus = swidObject.Status,
+                    ExecutionStatus = swidObject.Status,
                     ExecutionTime = DateTime.Today
                 });
 #endif

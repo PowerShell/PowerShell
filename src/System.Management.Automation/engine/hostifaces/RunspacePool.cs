@@ -355,7 +355,7 @@ namespace System.Management.Automation.Runspaces
     public enum RunspacePoolCapability
     {
         /// <summary>
-        /// No additional capabilites beyond a default runspace.
+        /// No additional capabilities beyond a default runspace.
         /// </summary>
         Default = 0x0,
 
@@ -384,7 +384,7 @@ namespace System.Management.Automation.Runspaces
         /// Constructor
         /// </summary>
         /// <param name="ownerId">
-        /// Instace Id of the pool creating this instance
+        /// Instance Id of the pool creating this instance
         /// </param>
         /// <param name="callback">
         /// Callback to call when the async operation completes.
@@ -433,7 +433,7 @@ namespace System.Management.Automation.Runspaces
         /// Constructor
         /// </summary>
         /// <param name="ownerId">
-        /// Instace Id of the pool creating this instance
+        /// Instance Id of the pool creating this instance
         /// </param>
         /// <param name="callback">
         /// Callback to call when the async operation completes.
@@ -649,7 +649,7 @@ namespace System.Management.Automation.Runspaces
             PSHost host,
             TypeTable typeTable)
         {
-            // Disconnect-Connect semantics are currently only suppored in WSMan transport.
+            // Disconnect-Connect semantics are currently only supported in WSMan transport.
             if (!(connectionInfo is WSManConnectionInfo))
             {
                 throw new NotSupportedException();
@@ -666,7 +666,7 @@ namespace System.Management.Automation.Runspaces
         #region Public Properties
 
         /// <summary>
-        /// Get unqiue id for this instance of runspace pool. It is primarily used 
+        /// Get unique id for this instance of runspace pool. It is primarily used 
         /// for logging purposes.
         /// </summary>
         public Guid InstanceId
@@ -689,7 +689,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Gets State of the current runpsace pool.
+        /// Gets State of the current runspace pool.
         /// </summary>
         public RunspacePoolStateInfo RunspacePoolStateInfo
         {
@@ -859,7 +859,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Event rasied when a new Runspace is created by the pool.
+        /// Event raised when a new Runspace is created by the pool.
         /// </summary>
         internal event EventHandler<RunspaceCreatedEventArgs> RunspaceCreated
         {
@@ -1331,7 +1331,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Waits for the pending asynchronous BegineGetRunspace to complete. 
+        /// Waits for the pending asynchronous BeginGetRunspace to complete. 
         /// </summary>
         /// <param name="asyncResult">
         /// </param>

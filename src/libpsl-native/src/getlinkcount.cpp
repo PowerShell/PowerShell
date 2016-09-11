@@ -42,7 +42,7 @@
 //! - ERROR_BAD_PATH_NAME: pathname is too long, or contains invalid characters
 //!
 //! @retval 1 If the function succeeds, and the variable pointed to by buffer contains 
-//! infomation about the files
+//! information about the files
 //! @retval 0 If the function fails, the return value is zero. To get
 //! extended error information, call GetLastError.
 //!

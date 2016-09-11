@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsDiagnostic.Debug, "Runspace", SupportsShouldProcess = true, DefaultParameterSetName = DebugRunspaceCommand.RunspaceParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=403731")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=403731")]
     public sealed class DebugRunspaceCommand : PSCmdlet
     {
         #region Strings
@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
         // Debugging to persist until Ctrl+C or Debugger 'Exit' stops cmdlet.
         private bool _debugging;
         private ManualResetEventSlim _newRunningScriptEvent = new ManualResetEventSlim(true);
-        private RunspaceAvailability _previousRunspaceAvailablity = RunspaceAvailability.None;
+        private RunspaceAvailability _previousRunspaceAvailability = RunspaceAvailability.None;
 
         #endregion
 
@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// The Id of a Runsapce to be debugged.
+        /// The Id of a Runspace to be debugged.
         /// </summary>
         [Parameter(Position = 0,
                    Mandatory = true,
@@ -409,8 +409,8 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            RunspaceAvailability prevAvailability = _previousRunspaceAvailablity;
-            _previousRunspaceAvailablity = e.RunspaceAvailability;
+            RunspaceAvailability prevAvailability = _previousRunspaceAvailability;
+            _previousRunspaceAvailability = e.RunspaceAvailability;
 
             if ((e.RunspaceAvailability == RunspaceAvailability.Available) || (e.RunspaceAvailability == RunspaceAvailability.None))
             {

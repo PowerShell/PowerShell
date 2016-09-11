@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements a cmdlet that gets the list of loaded modules...
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "Module", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=141556")]
+    [Cmdlet(VerbsCommon.Remove, "Module", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141556")]
     public sealed class RemoveModuleCommand : ModuleCmdletBase
     {
         /// <summary>
@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         private PSModuleInfo[] _moduleInfo = Utils.EmptyArray<PSModuleInfo>();
 
         /// <summary>
-        /// If provided, this paramter will allow readonly modules to be removed.
+        /// If provided, this parameter will allow readonly modules to be removed.
         /// </summary>
         [Parameter]
         public SwitchParameter Force
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
         private int _numberRemoved = 0;  // Maintains a count of the number of modules removed...
 
         /// <summary>
-        /// Remove the specified modules. Modules can be specifed either through a ModuleInfo or a name.
+        /// Remove the specified modules. Modules can be specified either through a ModuleInfo or a name.
         /// </summary>
         protected override void ProcessRecord()
         {

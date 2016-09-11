@@ -39,7 +39,7 @@ namespace System.Management.Automation.Remoting
         // request context passed by WSMan while sending Plugin data.
         internal WSManNativeApi.WSManPluginRequest sendRequestDetails;
         internal WSManPluginOperationShutdownContext shutDownContext;
-        // tracker used in conjunction with WSMan API to identigy a particular
+        // tracker used in conjunction with WSMan API to identify a particular
         // shell context.
         internal RegisteredWaitHandle registeredShutDownWaitHandle;
         internal WSManPluginServerTransportManager transportMgr;
@@ -55,11 +55,11 @@ namespace System.Management.Automation.Remoting
 
         protected WSManPluginServerSession(
             WSManNativeApi.WSManPluginRequest creationRequestDetails,
-            WSManPluginServerTransportManager trnsprtMgr)
+            WSManPluginServerTransportManager transportMgr)
         {
             _syncObject = new Object();
             this.creationRequestDetails = creationRequestDetails;
-            this.transportMgr = trnsprtMgr;
+            this.transportMgr = transportMgr;
 
             transportMgr.PrepareCalled +=
                 new EventHandler<EventArgs>(this.HandlePrepareFromTransportManager);
@@ -72,7 +72,7 @@ namespace System.Management.Automation.Remoting
             // Dispose of unmanaged resources.
             Dispose(true);
             // This object will be cleaned up by the Dispose method. 
-            // Therefore, you should call GC.SupressFinalize to 
+            // Therefore, you should call GC.SuppressFinalize to 
             // take this object off the finalization queue 
             // and prevent finalization code for this object 
             // from executing a second time.
@@ -323,7 +323,7 @@ namespace System.Management.Automation.Remoting
             Close(reasonForClose);
         }
 
-        // handle prepare from tranport by reporting context to WSMan.
+        // handle prepare from transport by reporting context to WSMan.
         internal void HandlePrepareFromTransportManager(Object sender, EventArgs eventArgs)
         {
             ReportContext();
@@ -416,10 +416,10 @@ namespace System.Management.Automation.Remoting
         #region Constructor
         internal WSManPluginShellSession(
             WSManNativeApi.WSManPluginRequest creationRequestDetails,
-            WSManPluginServerTransportManager trnsprtMgr,
+            WSManPluginServerTransportManager transportMgr,
             ServerRemoteSession remoteSession,
             WSManPluginOperationShutdownContext shutDownContext)
-            : base(creationRequestDetails, trnsprtMgr)
+            : base(creationRequestDetails, transportMgr)
         {
             _remoteSession = remoteSession;
             _remoteSession.Closed +=
@@ -481,7 +481,7 @@ namespace System.Management.Automation.Remoting
                                     WSManNativeApi.PS_XML_NAMESPACE,
                                     Convert.ToBase64String(outputData));
 
-                    //TODO: curretly using OperationComplete to report back the responseXml. This will need to change to use WSManReportObject
+                    //TODO: currently using OperationComplete to report back the responseXml. This will need to change to use WSManReportObject
                     //that is currently internal.
                     WSManPluginInstance.ReportOperationComplete(requestDetails, WSManPluginErrorCodes.NoError, responseData);
                 }
@@ -641,7 +641,7 @@ namespace System.Management.Automation.Remoting
             while (cmdSessionEnumerator.MoveNext())
             {
                 WSManPluginCommandSession cmdSession = cmdSessionEnumerator.Current;
-                // we are not interested in session closed events anymore as we are intiating the close
+                // we are not interested in session closed events anymore as we are initiating the close
                 // anyway/
                 cmdSession.SessionClosed -= new EventHandler<EventArgs>(this.HandleCommandSessionClosed);
                 cmdSession.Close(reasonForClose);
@@ -712,7 +712,7 @@ namespace System.Management.Automation.Remoting
             if (!isRcvOp)
             {
                 // Initiate close on the active command sessions and then clear the internal
-                // Command Sesison dictionary
+                // Command Session dictionary
                 CloseAndClearCommandSessions(reasonForClose);
                 // raise session closed event and let dependent code to release resources.
                 // null check is not performed here because the handler will take care of this.
@@ -744,9 +744,9 @@ namespace System.Management.Automation.Remoting
 
         internal WSManPluginCommandSession(
             WSManNativeApi.WSManPluginRequest creationRequestDetails,
-            WSManPluginServerTransportManager trnsprtMgr,
+            WSManPluginServerTransportManager transportMgr,
             ServerRemoteSession remoteSession)
-            : base(creationRequestDetails, trnsprtMgr)
+            : base(creationRequestDetails, transportMgr)
         {
             _remoteSession = remoteSession;
             cmdSyncObject = new System.Object();

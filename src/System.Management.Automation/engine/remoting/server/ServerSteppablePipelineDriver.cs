@@ -434,7 +434,7 @@ namespace System.Management.Automation
         internal void SetState(PSInvocationState newState, Exception reason)
         {
             PSInvocationState copyState = PSInvocationState.NotStarted;
-            bool shoulRaiseEvents = false;
+            bool shouldRaiseEvents = false;
             lock (SyncObject)
             {
                 switch (PipelineState)
@@ -471,7 +471,7 @@ namespace System.Management.Automation
                                 case PSInvocationState.Stopped:
                                 case PSInvocationState.Failed:
                                     copyState = newState;
-                                    shoulRaiseEvents = true;
+                                    shouldRaiseEvents = true;
                                     break;
                             }
                         }
@@ -484,11 +484,11 @@ namespace System.Management.Automation
                                 case PSInvocationState.Completed:
                                 case PSInvocationState.Failed:
                                     copyState = PSInvocationState.Stopped;
-                                    shoulRaiseEvents = true;
+                                    shouldRaiseEvents = true;
                                     break;
                                 case PSInvocationState.Stopped:
                                     copyState = newState;
-                                    shoulRaiseEvents = true;
+                                    shouldRaiseEvents = true;
                                     break;
                                 default:
                                     throw new InvalidOperationException();
@@ -505,7 +505,7 @@ namespace System.Management.Automation
                 PipelineState = copyState;
             }
 
-            if (shoulRaiseEvents)
+            if (shouldRaiseEvents)
             {
                 // send the state change notification to the client
                 DataStructureHandler.SendStateChangedInformationToClient(

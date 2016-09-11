@@ -14,10 +14,10 @@ using System.Threading;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This cmdlet stops the asynchronously invoked remote operaitons.
+    /// This cmdlet stops the asynchronously invoked remote operations.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Stop, "Job", SupportsShouldProcess = true, DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113413")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113413")]
     [OutputType(typeof(Job))]
     public class StopJobCommand : JobCmdletBase, IDisposable
     {
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     Job2 job2 = job as Job2;
                     // if it is a Job2, then async is supported
-                    // stop the job asynchornously
+                    // stop the job asynchronously
                     if (job2 != null)
                     {
                         _cleanUpActions.Add(job2, HandleStopJobCompleted);

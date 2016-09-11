@@ -167,7 +167,7 @@ Describe "import-packageprovider Error Cases" -Tags "Feature" {
         $ERROR[0].FullyQualifiedErrorId | should be "InvalidParameter,Microsoft.PowerShell.PackageManagement.Cmdlets.ImportPackageProvider"     
     }
 
-  It "EXPECTED:  returns an error when inputing a bad version format" {
+  It "EXPECTED:  returns an error when inputting a bad version format" {
         $Error.Clear()
         import-packageprovider -name Gistprovider -RequiredVersion BOGUSVERSION -warningaction:silentlycontinue -ea silentlycontinue
         $ERROR[0].FullyQualifiedErrorId | should be "InvalidVersion,Microsoft.PowerShell.PackageManagement.Cmdlets.ImportPackageProvider"
@@ -186,13 +186,13 @@ Describe "import-packageprovider Error Cases" -Tags "Feature" {
     }
  
 
-   It "EXPECTED:  returns an error when asking for a provider with RequiredVersoin and MinimumVersion" {
+   It "EXPECTED:  returns an error when asking for a provider with RequiredVersion and MinimumVersion" {
         $Error.Clear()
         import-packageprovider -name PowerShellGet -RequiredVersion 1.0 -MinimumVersion 2.0  -warningaction:silentlycontinue -ea silentlycontinue
         $ERROR[0].FullyQualifiedErrorId | should be "VersionRangeAndRequiredVersionCannotBeSpecifiedTogether,Microsoft.PowerShell.PackageManagement.Cmdlets.ImportPackageProvider"
     }
 
-   It "EXPECTED:  returns an error when asking for a provider with RequiredVersoin and MaximumVersion" {
+   It "EXPECTED:  returns an error when asking for a provider with RequiredVersion and MaximumVersion" {
         $Error.Clear()
         import-packageprovider -name PowerShellGet -RequiredVersion 1.0 -MaximumVersion 2.0  -warningaction:silentlycontinue -ea silentlycontinue
         $ERROR[0].FullyQualifiedErrorId | should be "VersionRangeAndRequiredVersionCannotBeSpecifiedTogether,Microsoft.PowerShell.PackageManagement.Cmdlets.ImportPackageProvider"

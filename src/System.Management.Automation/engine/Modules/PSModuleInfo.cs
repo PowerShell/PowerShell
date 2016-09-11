@@ -255,7 +255,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get the module base directory for this module. For modules loaded via a module
-        /// manifest, this will be the directory containting the manifest file rather than
+        /// manifest, this will be the directory containing the manifest file rather than
         /// the directory containing the actual module file. This is particularly useful
         /// when loading a GAC'ed assembly.
         /// </summary>
@@ -735,7 +735,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the aggregated list of visible commands exported from the module. If there are two
         /// commands of different types exported with the same name (e.g. alias 'foo' and cmdlet 'foo') the
-        /// combined dictionary will only contain the highest precidence cmdlet (e.g. the alias 'foo' since
+        /// combined dictionary will only contain the highest precedence cmdlet (e.g. the alias 'foo' since
         /// aliases shadow cmdlets.
         /// </summary>
         public Dictionary<string, CommandInfo> ExportedCommands

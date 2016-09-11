@@ -785,7 +785,7 @@ namespace System.Management.Automation
                             if (foregroundColor.HasValue || backgroundColor.HasValue)
                             {
                                 // It is possible for either one or the other to be empty if run from a 
-                                // non-interative host, but only one was specified in Write-Host.
+                                // non-interactive host, but only one was specified in Write-Host.
                                 // So fill them with defaults if they are empty.
                                 if (!foregroundColor.HasValue)
                                 {
@@ -825,7 +825,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        // Only transcribe informational messages here. Transcripton of PSHost-targeted messages is done in the InternalUI.Write* methods.
+                        // Only transcribe informational messages here. Transcription of PSHost-targeted messages is done in the InternalUI.Write* methods.
                         CBhost.InternalUI.TranscribeResult(StringUtil.Format(InternalHostUserInterfaceStrings.InformationFormatString, record.ToString()));
                     }
                 }

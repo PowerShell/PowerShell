@@ -1564,7 +1564,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// This constructor takes a colletion of errors occurred during construction
+        /// This constructor takes a collection of errors occurred during construction
         /// time.
         /// </summary>
         /// <param name="loadErrors">
@@ -4225,7 +4225,7 @@ namespace System.Management.Automation.Runspaces
 
             ConcurrentBag<string> errors = new ConcurrentBag<string>();
 
-            // Always clear the consolidate memebrs - they need to be recalculated
+            // Always clear the consolidate members - they need to be recalculated
             // anytime the types are updated...
             ClearConsolidatedMembers();
 
@@ -4252,7 +4252,7 @@ namespace System.Management.Automation.Runspaces
             TypeData typeData = new TypeData(typeName);
             ConcurrentBag<string> errors = new ConcurrentBag<string>();
 
-            // Always clear the consolidate memebrs - they need to be recalculated
+            // Always clear the consolidate members - they need to be recalculated
             // anytime the types are updated...
             ClearConsolidatedMembers();
 
@@ -4275,7 +4275,7 @@ namespace System.Management.Automation.Runspaces
         /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.
         /// </param>
         /// <exception cref="InvalidOperationException">
-        /// 1. The TypeTable cannot be updated becasue the TypeTable might have 
+        /// 1. The TypeTable cannot be updated because the TypeTable might have 
         /// been created outside of the Runspace.
         /// </exception>
         internal void Update(
@@ -4322,7 +4322,7 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         /// <param name="failToLoadFile">Indicate if the file cannot be loaded due to the security reason</param>
         /// <exception cref="InvalidOperationException">
-        /// 1. The TypeTable cannot be updated becasue the TypeTable might have 
+        /// 1. The TypeTable cannot be updated because the TypeTable might have 
         /// been created outside of the Runspace.
         /// </exception>
         internal void Update(
@@ -4350,7 +4350,7 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         /// <param name="failToLoadFile">Indicate if the file cannot be loaded due to security reason</param>
         /// <exception cref="InvalidOperationException">
-        /// 1. The TypeTable cannot be updated becasue the TypeTable might have 
+        /// 1. The TypeTable cannot be updated because the TypeTable might have 
         /// been created outside of the Runspace.
         /// </exception>
         internal void Update(

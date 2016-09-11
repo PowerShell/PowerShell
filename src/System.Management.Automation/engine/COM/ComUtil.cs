@@ -30,7 +30,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="typeinfo">ITypeInfo interface of the object</param>
         /// <param name="funcdesc">FuncDesc which defines the method</param>
-        /// <param name="isPropertyPut">True if this is a property put; these properties take their return type from their first paramenter</param>
+        /// <param name="isPropertyPut">True if this is a property put; these properties take their return type from their first parameter</param>
         /// <returns>signature of the method</returns>
         internal static string GetMethodSignatureFromFuncDesc(COM.ITypeInfo typeinfo, COM.FUNCDESC funcdesc, bool isPropertyPut)
         {

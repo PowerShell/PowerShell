@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This cmdlet takes a module manifest and validates the contents...
     /// </summary>
-    [Cmdlet("Test", "ModuleManifest", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=141557")]
+    [Cmdlet("Test", "ModuleManifest", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141557")]
     [OutputType(typeof(PSModuleInfo))]
     public sealed class TestModuleManifestCommand : ModuleCmdletBase
     {
@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (module != null)
                     {
-                        //Validtate file existence
+                        //Validate file existence
                         if (module.RequiredAssemblies != null)
                         {
                             foreach (string requiredAssembliespath in module.RequiredAssemblies)

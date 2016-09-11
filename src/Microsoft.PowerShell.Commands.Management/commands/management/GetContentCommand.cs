@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command to get the content of an item at a specified path
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Content", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113310")]
+    [Cmdlet(VerbsCommon.Get, "Content", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113310")]
     public class GetContentCommand : ContentCommandBase
     {
         #region Parameters
@@ -315,7 +315,7 @@ namespace Microsoft.PowerShell.Commands
                     // Create and save the error record. The error record
                     // will be written outside the while loop.
                     // This is to make sure the accumulated results get written
-                    // out before the error recrod when the 'scanForwardForTail' is true.
+                    // out before the error record when the 'scanForwardForTail' is true.
                     error = new ErrorRecord(
                         providerException.ErrorRecord,
                         providerException);
@@ -352,7 +352,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (ReadCount == 1)
                 {
-                    // Write out the contnet as single object
+                    // Write out the content as single object
                     while (tailResultQueue.Count > 0)
                         WriteContentObject(tailResultQueue.Dequeue(), count++, holder.PathInfo, currentContext);
                 }

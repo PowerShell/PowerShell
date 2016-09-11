@@ -3,6 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
+using System.Text;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
@@ -13,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command that adds the parent and child parts of a path together
     /// with the appropriate path separator.
     /// </summary>
-    [Cmdlet("Join", "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113347")]
+    [Cmdlet("Join", "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113347")]
     [OutputType(typeof(string))]
     public class JoinPathCommand : CoreCommandWithCredentialsBase
     {
@@ -32,7 +33,16 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [AllowNull]
         [AllowEmptyString]
-        public string ChildPath { get; set; } = String.Empty;
+        public string ChildPath { get; set; }
+
+        /// <summary>
+        /// Gets or sets additional childPaths to the command.
+        /// </summary>
+        [Parameter(Position = 2, Mandatory = false, ValueFromPipelineByPropertyName = true, ValueFromRemainingArguments = true)]
+        [AllowNull]
+        [AllowEmptyString]
+        [AllowEmptyCollection]
+        public string[] AdditionalChildPath { get; set; } = Utils.EmptyArray<string>();
 
         /// <summary>
         /// Determines if the path should be resolved after being joined
@@ -55,6 +65,17 @@ namespace Microsoft.PowerShell.Commands
                 Path != null,
                 "Since Path is a mandatory parameter, paths should never be null");
 
+            string combinedChildPath = ChildPath;
+
+            // join the ChildPath elements
+            if (AdditionalChildPath != null)
+            {
+                foreach (string childPath in AdditionalChildPath)
+                {
+                    combinedChildPath = SessionState.Path.Combine(combinedChildPath, childPath, CmdletProviderContext);
+                }
+            }
+
             foreach (string path in Path)
             {
                 // First join the path elements
@@ -64,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     joinedPath =
-                        SessionState.Path.Combine(path, ChildPath, CmdletProviderContext);
+                        SessionState.Path.Combine(path, combinedChildPath, CmdletProviderContext);
                 }
                 catch (PSNotSupportedException notSupported)
                 {

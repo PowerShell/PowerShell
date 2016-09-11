@@ -44,7 +44,7 @@ namespace System.Management.Automation
 #endif
         }
         /// <summary>
-        /// The instance of the ConfigPropertyAccessor to use to iteract with properties.
+        /// The instance of the ConfigPropertyAccessor to use to interact with properties.
         /// Derived classes should not be directly instantiated.
         /// </summary>
         internal static readonly ConfigPropertyAccessor Instance;
@@ -131,7 +131,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Lock used to enable multiple concurrent readers and singular write locks within a
         /// single process.
-        /// TODO: This solution only works for IO from a single process. A more robust solution is needed to enable ReaderWriterLockSlim behavior between proceses.
+        /// TODO: This solution only works for IO from a single process. A more robust solution is needed to enable ReaderWriterLockSlim behavior between processes.
         /// </summary>
         private ReaderWriterLockSlim fileLock = new ReaderWriterLockSlim();
 
@@ -696,7 +696,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Reads a DWORD from the Registry. Excpetions are intentionally allowed to pass through to 
+        /// Reads a DWORD from the Registry. Exceptions are intentionally allowed to pass through to 
         /// the caller because different classes and methods within the code base handle Registry 
         /// exceptions differently. Some suppress exceptions and others pass them to the user.
         /// </summary>
@@ -730,7 +730,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Excpetions are intentionally allowed to pass through to 
+        /// Exceptions are intentionally allowed to pass through to 
         /// the caller because different classes and methods within the code base handle Registry 
         /// exceptions differently. Some suppress exceptions and others pass them to the user.
         /// </summary>
@@ -750,7 +750,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Excpetions are intentionally allowed to pass through to 
+        /// Exceptions are intentionally allowed to pass through to 
         /// the caller because different classes and methods within the code base handle Registry 
         /// exceptions differently. Some suppress exceptions and others pass them to the user.
         /// </summary>
@@ -787,7 +787,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Excpetions are intentionally allowed to pass through to 
+        /// Exceptions are intentionally allowed to pass through to 
         /// the caller because different classes and methods within the code base handle Registry 
         /// exceptions differently. Some suppress exceptions and others pass them to the user.
         /// </summary>

@@ -3,16 +3,16 @@ Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
         $dtStart = [DateTime]::Now
         Start-Sleep -Seconds 1
         $dtEnd = [DateTime]::Now
-        $millseconds = (New-TimeSpan -Start $dtStart -End $dtEnd).TotalMilliseconds
-        $millseconds | Should BeGreaterThan 1000
+        $milliseconds = (New-TimeSpan -Start $dtStart -End $dtEnd).TotalMilliseconds
+        $milliseconds | Should BeGreaterThan 1000
     }
 
     It "Should be works properly when sleeping with Milliseconds" {
         $dtStart = [DateTime]::Now
         Start-Sleep -Milliseconds 1000
         $dtEnd = [DateTime]::Now
-        $millseconds = (New-TimeSpan -Start $dtStart -End $dtEnd).TotalMilliseconds
-        $millseconds | Should BeGreaterThan 1000
+        $milliseconds = (New-TimeSpan -Start $dtStart -End $dtEnd).TotalMilliseconds
+        $milliseconds | Should BeGreaterThan 1000
     }
 
 }

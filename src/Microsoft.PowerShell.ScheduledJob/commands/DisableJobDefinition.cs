@@ -12,14 +12,14 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// This cmdlet disables the specified ScheduledJobDefinition.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Disable, "ScheduledJob", SupportsShouldProcess = true, DefaultParameterSetName = DisableScheduledJobDefinitionBase.DefinitionParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223927")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223927")]
     [OutputType(typeof(ScheduledJobDefinition))]
     public sealed class DisableScheduledJobCommand : DisableScheduledJobDefinitionBase
     {
         #region Properties
 
         /// <summary>
-        /// Returns true if scheduled job defintion should be enabled,
+        /// Returns true if scheduled job definition should be enabled,
         /// false otherwise.
         /// </summary>
         protected override bool Enabled

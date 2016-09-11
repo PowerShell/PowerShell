@@ -34,7 +34,7 @@ namespace System.Management.Automation.Provider
         /// 
         /// <returns>
         /// Nothing. An instance of an object that represents the security descriptor
-        /// for the item specifed by the path should be written to the context.
+        /// for the item specified by the path should be written to the context.
         /// </returns>
         /// 
         internal void GetSecurityDescriptor(

@@ -36,7 +36,7 @@ namespace System.Management.Automation
         /// Constructors will be traced
         /// </summary>
         /// <!--
-        /// The TraceConstrutor methods are enabled
+        /// The TraceConstructor methods are enabled
         /// -->
         Constructor = 0x00000001,
 
@@ -221,7 +221,7 @@ namespace System.Management.Automation
     /// <!--
     /// The StructuredTraceSource class is derived from TraceSource to provide granular
     /// control over the tracing in a program.  An instance of StructuredTraceSource
-    /// is created for each category of tracing such that seperate flags
+    /// is created for each category of tracing such that separate flags
     /// (filters) can be set. Each flag enables one or more method for tracing.
     /// 
     /// For instance, the Exception flag will enable tracing on these methods:

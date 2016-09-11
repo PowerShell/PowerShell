@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// parameter values and saves changes to job store and Task Scheduler.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "ScheduledJob", DefaultParameterSetName = SetScheduledJobCommand.ScriptBlockParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223924")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223924")]
     [OutputType(typeof(ScheduledJobDefinition))]
     public sealed class SetScheduledJobCommand : ScheduleJobCmdletBase
     {
@@ -364,7 +364,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         /// <summary>
         /// Create new ScheduledJobInvocationInfo object with update information and 
-        /// update the job defintion object.
+        /// update the job definition object.
         /// </summary>
         private void UpdateJobInvocationInfo()
         {

@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// implementation for the Send-MailMessage command
     /// </summary>
-    [Cmdlet(VerbsCommunications.Send, "MailMessage", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135256")]
+    [Cmdlet(VerbsCommunications.Send, "MailMessage", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135256")]
     public sealed class SendMailMessage : PSCmdlet
     {
         #region Command Line Parameters
@@ -342,7 +342,7 @@ namespace Microsoft.PowerShell.Commands
                 // return;
             }
 
-            // Set the recepient address of the mail message 
+            // Set the recipient address of the mail message 
             AddAddressesToMailMessage(_to, "to");
 
             // Set the BCC address of the mail message 

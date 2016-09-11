@@ -36,7 +36,7 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
         }
 
         public override bool YieldPackageSource(string name, string location, bool isTrusted, bool isRegistered, bool isValidated) {
-            Debug(String.Format(CultureInfo.CurrentCulture, "Yielding packge source for {0} at location {1}", name, location));
+            Debug(String.Format(CultureInfo.CurrentCulture, "Yielding package source for {0} at location {1}", name, location));
             Activity();
 
             CommitPackageSource();

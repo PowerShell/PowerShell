@@ -38,7 +38,7 @@ class A
             $errors[0].ErrorId | Should be 'LabelNotFound'
         }
 
-        It 'work fine, when break is legite' {
+        It 'work fine, when break is legit' {
             class C
             {
                 static [int] foo()

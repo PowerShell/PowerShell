@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
     /// command that is found.
     /// </summary>
     ///
-    [Cmdlet(VerbsCommon.Get, "Command", DefaultParameterSetName = "CmdletSet", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113309")]
+    [Cmdlet(VerbsCommon.Get, "Command", DefaultParameterSetName = "CmdletSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113309")]
     [OutputType(typeof(AliasInfo), typeof(ApplicationInfo), typeof(FunctionInfo),
                 typeof(CmdletInfo), typeof(ExternalScriptInfo), typeof(FilterInfo),
                 typeof(WorkflowInfo), typeof(string), typeof(PSObject))]
@@ -531,7 +531,7 @@ namespace Microsoft.PowerShell.Commands
 
             _timer.Stop();
 
-            // We want telemtry on commands people look for but don't exist - this should give us an idea
+            // We want telementry on commands people look for but don't exist - this should give us an idea
             // what sort of commands people expect but either don't exist, or maybe should be installed by default.
             // The StartsWith is to avoid logging telemetry when suggestion mode checks the
             // current directory for scripts/exes in the current directory and '.' is not in the path.

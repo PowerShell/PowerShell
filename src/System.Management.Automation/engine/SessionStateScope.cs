@@ -630,6 +630,24 @@ namespace System.Management.Automation
         } // SetVariable
 
         /// <summary>
+        /// Sets a variable to scope without any checks.
+        /// This is intended to be used only for global scope.
+        /// </summary>
+        /// <param name="variableToSet">PSVariable to set</param>
+        /// <param name="sessionState">SessionState for variable</param>
+        /// <returns></returns>
+        internal void SetVariableForce(PSVariable variableToSet, SessionStateInternal sessionState)
+        {
+            if (Parent != null)
+            {
+                throw new NotImplementedException("SetVariableForce");
+            }
+
+            variableToSet.SessionState = sessionState;
+            GetPrivateVariables()[variableToSet.Name] = variableToSet;
+        }
+
+        /// <summary>
         /// Sets a variable to the given value.
         /// </summary>
         ///
@@ -1948,7 +1966,7 @@ namespace System.Management.Automation
         {
             get
             {
-                // this is kind of our own lazy initization logic here.
+                // this is kind of our own lazy initialization logic here.
                 if (_typeResolutionState == null)
                 {
                     if (this.Parent != null)
@@ -2349,7 +2367,7 @@ namespace System.Management.Automation
         private Dictionary<string, List<string>> _commandsToAliasesCache = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Gets the alises by command name (used by metadata-driven help)
+        /// Gets the aliases by command name (used by metadata-driven help)
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>

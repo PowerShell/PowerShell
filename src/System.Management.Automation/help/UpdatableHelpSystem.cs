@@ -869,7 +869,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Downloads the help cotent
+        /// Downloads the help content
         /// </summary>
         /// <param name="commandType">command type</param>
         /// <param name="path">destination path</param>
@@ -1020,11 +1020,11 @@ namespace System.Management.Automation.Help
             {
                 if (_progressEvents.Count > 0)
                 {
-                    foreach (UpdatableHelpProgressEventArgs evnt in _progressEvents)
+                    foreach (UpdatableHelpProgressEventArgs evt in _progressEvents)
                     {
-                        evnt.CommandType = commandType;
+                        evt.CommandType = commandType;
 
-                        OnProgressChanged(this, evnt);
+                        OnProgressChanged(this, evt);
                     }
 
                     _progressEvents.Clear();
@@ -1267,7 +1267,7 @@ namespace System.Management.Automation.Help
 
             string cabDir = Path.GetDirectoryName(srcPath);
 
-            // Cabinet API doens't handle the trailing back slash
+            // Cabinet API doesn't handle the trailing back slash
             if (!cabDir.EndsWith("\\", StringComparison.Ordinal))
             {
                 cabDir += "\\";

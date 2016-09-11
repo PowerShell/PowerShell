@@ -443,7 +443,7 @@ namespace Microsoft.PowerShell.Internal
             {
                 int err = Marshal.GetLastWin32Error();
                 Win32Exception innerException = new Win32Exception(err);
-                throw new Exception("Failed to retreive the input console handle.", innerException);
+                throw new Exception("Failed to retrieve the input console handle.", innerException);
             }
 
             return new SafeFileHandle(handle, true);
@@ -466,7 +466,7 @@ namespace Microsoft.PowerShell.Internal
             {
                 int err = Marshal.GetLastWin32Error();
                 Win32Exception innerException = new Win32Exception(err);
-                throw new Exception("Failed to retreive the input console handle.", innerException);
+                throw new Exception("Failed to retrieve the input console handle.", innerException);
             }
 
             return new SafeFileHandle(handle, true);
@@ -713,10 +713,10 @@ namespace Microsoft.PowerShell.Internal
         internal static bool IsAnyDBCSCharSet(uint charSet)
         {
             const uint SHIFTJIS_CHARSET = 128;
-            const uint HANGEUL_CHARSET = 129;
+            const uint HANGUL_CHARSET = 129;
             const uint CHINESEBIG5_CHARSET = 136;
             const uint GB2312_CHARSET = 134;
-            return charSet == SHIFTJIS_CHARSET || charSet == HANGEUL_CHARSET ||
+            return charSet == SHIFTJIS_CHARSET || charSet == HANGUL_CHARSET ||
                    charSet == CHINESEBIG5_CHARSET || charSet == GB2312_CHARSET;
         }
 
@@ -798,7 +798,7 @@ namespace Microsoft.PowerShell.Internal
                      (0xffd2 <= c && c <= 0xffd7) ||
                      (0xffda <= c && c <= 0xffdc))
             {
-                /* Halfwidth Hangule variants */
+                /* Halfwidth Hangul variants */
                 return 1;
             }
             else if (0xffe0 <= c && c <= 0xffe6)

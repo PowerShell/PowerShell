@@ -1223,7 +1223,7 @@ namespace System.Management.Automation
                         resolvedPath = null;
 
                         CommandDiscovery.discoveryTracer.TraceError(
-                        "The relative path with wildcard resolved to mutiple paths. {0}",
+                        "The relative path with wildcard resolved to multiple paths. {0}",
                         path);
                     }
                     else
@@ -1483,7 +1483,7 @@ namespace System.Management.Automation
         private CommandPathSearch _pathSearcher;
 
         /// <summary>
-        /// Thge execution context instance for the current engine...
+        /// The execution context instance for the current engine...
         /// </summary>
         private ExecutionContext _context;
 

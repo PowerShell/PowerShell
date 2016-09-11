@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
     using Microsoft.PackageManagement.Internal.Utility.Extensions;
     using Microsoft.PackageManagement.Packaging;
 
-    [Cmdlet(VerbsCommon.Get, Constants.Nouns.PackageNoun, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=517135")]
+    [Cmdlet(VerbsCommon.Get, Constants.Nouns.PackageNoun, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=517135")]
     public class GetPackage : CmdletWithSearch {
         private readonly Dictionary<string, bool> _namesProcessed = new Dictionary<string, bool>();
         private readonly string _newSoftwareIdentityTypeName = "Microsoft.PackageManagement.Packaging.SoftwareIdentity#GetPackage";
@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                 requests = requests.FilterWithFinalizer(each => each.packages.IsConsumed, each => each.packages.Dispose()).ToArray();
             } // end of WaitForActivity()
             
-            // Peform post-processing only if -AllVersions is not specified            
+            // Perform post-processing only if -AllVersions is not specified            
             if (!AllVersions)
             {
                 // post processing the potential packages as we have to display only
@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
 
                 // However there are cases when the same package can be found by different providers. in that case, we will show
                 // the packages from different providers even through they have the same package name. This is important because uninstall-package 
-                // inherts from get-package, so that when the first provider does not implement the uninstall-package(), such as Programs, others will
+                // inherits from get-package, so that when the first provider does not implement the uninstall-package(), such as Programs, others will
                 // perform the uninstall.
 
                 //grouping packages by package name first

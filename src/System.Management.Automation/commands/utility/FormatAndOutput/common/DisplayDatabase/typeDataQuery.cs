@@ -362,7 +362,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             else
             {
-                Diagnostics.Assert(false, "unknonw shape: this should never happen unless a new shape is added");
+                Diagnostics.Assert(false, "unknown shape: this should never happen unless a new shape is added");
                 return null;
             }
             return GetView(expressionFactory, db, t, typeNames, viewName);
@@ -595,7 +595,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (tgr == null)
                         continue;
 
-                    // find the type group definition the rererence points to
+                    // find the type group definition the reference points to
                     TypeGroupDefinition tgd = FindGroupDefinition(db, tgr.name);
 
                     if (tgd == null)

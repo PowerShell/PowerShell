@@ -32,7 +32,7 @@ namespace System.Management.Automation.Language
 
     /// <summary>
     /// The parser that parses PowerShell script and returns a <see cref="ScriptBlockAst"/>, tokens, and error messages
-    /// if the script cannot be parsed successfullly.
+    /// if the script cannot be parsed successfully.
     /// </summary>
     public sealed class Parser
     {
@@ -3604,7 +3604,7 @@ namespace System.Management.Automation.Language
                 ExpressionAst body = null;
                 if (keywordData.BodyMode == DynamicKeywordBodyMode.ScriptBlock)
                 {
-                    var oldInConfiguraiton = _inConfiguration;
+                    var oldInConfiguration = _inConfiguration;
                     try
                     {
                         _inConfiguration = false;
@@ -3612,7 +3612,7 @@ namespace System.Management.Automation.Language
                     }
                     finally
                     {
-                        _inConfiguration = oldInConfiguraiton;
+                        _inConfiguration = oldInConfiguration;
                     }
                 }
                 else if (keywordData.BodyMode == DynamicKeywordBodyMode.Hashtable)
@@ -4126,7 +4126,7 @@ namespace System.Management.Automation.Language
                 {
                     // Incompleted input like:
                     // class foo { $private: }
-                    // Error message already emmited by tokenizer ScanVariable
+                    // Error message already emitted by tokenizer ScanVariable
 
                     RecordErrorAsts(attributeList, ref astsOnError);
                     RecordErrorAsts(typeConstraint, ref astsOnError);

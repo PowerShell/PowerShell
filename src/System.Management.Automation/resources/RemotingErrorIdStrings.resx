@@ -1268,7 +1268,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   <data name="InvalidIdleTimeoutOption" xml:space="preserve">
     <value>The specified IdleTimeout session option {0} (seconds) is not a valid period.  Specify an IdleTimeout value that is greater than or equal to the minimum allowed {1} (seconds).</value>
     <comment>{0} is a placeholder for the provided idletimeout
-{1} is a placeholder for the miniumum allowed idletimeout value</comment>
+{1} is a placeholder for the minimum allowed idletimeout value</comment>
   </data>
   <data name="DISCVisibilityAndAutoLoadingCannotBeBothSpecified" xml:space="preserve">
     <value>The cmdlet "{0}" or the alias "{1}" cannot be present when "{2}","{3}","{4}" or "{5}" keys are specified in the session configuration file.</value>
@@ -1393,7 +1393,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>The job cannot be debugged because there is no host UI available.  Make sure you are running this command in a PowerShell host that implements PSHostUserInterface.</value>
   </data>
   <data name="CannotDebugJobInvalidDebuggerMode" xml:space="preserve">
-    <value>The job cannot be debugged because the host debugger mode is set to None or Default.  The host debugger mode must be LocalScript and/or RemoteSript.</value>
+    <value>The job cannot be debugged because the host debugger mode is set to None or Default.  The host debugger mode must be LocalScript and/or RemoteScript.</value>
   </data>
   <data name="FoundMultipleJobsWithId" xml:space="preserve">
     <value>Multiple jobs were found with Id {0}.  Debug-Job can debug only one job at a time.</value>
@@ -1447,7 +1447,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>The supplied plugin context is not valid.</value>
   </data>
   <data name="WSManPluginInvalidArgSet" xml:space="preserve">
-    <value>Powershell plugin encounterd a fatal error while processing {0} arguments.</value>
+    <value>Powershell plugin encountered a fatal error while processing {0} arguments.</value>
   </data>
   <data name="WSManPluginInvalidCommandContext" xml:space="preserve">
     <value>The supplied command context is not valid.</value>
@@ -1489,19 +1489,19 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>PowerShell plugin does not understand the option {0}. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
   </data>
   <data name="WSManPluginProtocolVersionNotFound" xml:space="preserve">
-    <value>An option with name {0} is expected from the client. Make sure the client is compatible with the build {1} and the protocl version {2} of PowerShell.</value>
+    <value>An option with name {0} is expected from the client. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
   </data>
   <data name="WSManPluginProtocolVersionNotMatch" xml:space="preserve">
     <value>&lt;PSProtocolVersionError ServerProtocolVersion="{0}" ServerBuildVersion="{1}"&gt;Powershell plugin does not support the protocol version {2} requested by client.&lt;/PSProtocolVersionError&gt;</value>
   </data>
   <data name="WSManPluginReportContextFailed" xml:space="preserve">
-    <value>Powershell plugin encounterd a fatal error while reporting context to WSMan service.</value>
+    <value>Powershell plugin encountered a fatal error while reporting context to WSMan service.</value>
   </data>
   <data name="WSManPluginSessionCreationFailed" xml:space="preserve">
     <value>Unable to create managed server session.</value>
   </data>
   <data name="WSManPluginShutdownRegistrationFailed" xml:space="preserve">
-    <value>Powershell plugin encounterd a fatal error registering a wait handle for shutdown notification.</value>
+    <value>Powershell plugin encountered a fatal error registering a wait handle for shutdown notification.</value>
   </data>
   <data name="ServerDriverRemoteHostAlreadyPushed" xml:space="preserve">
     <value>Cannot enter Runspace because a Runspace is already pushed in this session.</value>

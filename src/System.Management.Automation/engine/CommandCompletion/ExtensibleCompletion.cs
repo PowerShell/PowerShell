@@ -90,7 +90,7 @@ namespace System.Management.Automation
     /// <summary>
     /// 
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Register, "ArgumentCompleter", HelpUri = "http://go.microsoft.com/fwlink/?LinkId=528576")]
+    [Cmdlet(VerbsLifecycle.Register, "ArgumentCompleter", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=528576")]
     public class RegisterArgumentCompleterCommand : PSCmdlet
     {
         /// <summary>

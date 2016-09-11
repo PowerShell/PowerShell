@@ -336,7 +336,7 @@ namespace System.Management.Automation.Language
 #endif
     }
 
-    internal static class DynamicMetaObjectBinderExtentions
+    internal static class DynamicMetaObjectBinderExtensions
     {
         internal static DynamicMetaObject DeferForPSObject(this DynamicMetaObjectBinder binder,
                                                            params DynamicMetaObject[] args)
@@ -1723,7 +1723,7 @@ namespace System.Management.Automation.Language
                     argIndex += 1;
                 }
 
-                // We wrap the block of assignements in a try/catch and issue a general error message whenever the assignment fails.
+                // We wrap the block of assignments in a try/catch and issue a general error message whenever the assignment fails.
                 var exception = Expression.Parameter(typeof(Exception));
                 var block = Expression.Block(
                     Expression.Assign(tmp, result),
@@ -2483,7 +2483,7 @@ namespace System.Management.Automation.Language
             //     tmp = Parser.ScanNumber(arg)
             //     if (tmp == null) { throw new RuntimeError("BadNumericConstant") }
             //     dynamic op target tmp
-            // For equality comparision operators, if the conversion fails, we shouldn't raise
+            // For equality comparison operators, if the conversion fails, we shouldn't raise
             // an exception, so those must be wrapped in try/catch, like:
             //     try { /* as above */ }
             //     catch (InvalidCastException) { true or false (depending on Operation type) }
@@ -2520,7 +2520,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Use the tokenzier to scan a number and convert it to a number of any type.
+        /// Use the tokenizer to scan a number and convert it to a number of any type.
         /// </summary>
         /// <param name="expr">
         /// The expression that refers to a string to be converted to a number of any type.
@@ -2933,7 +2933,7 @@ namespace System.Management.Automation.Language
 
                 // Figure out the smallest type necessary so we don't lose information.
                 // For uint, V2 promoted to long, but it's more correct to use uint.
-                // For ulong, V2 incorreclty used long, this is fixed here.
+                // For ulong, V2 incorrectly used long, this is fixed here.
                 // For float, double, and decimal operands, we used to use long because V2 did.
                 // Because we use unsigned for -bnot, to be consistent, we promote to unsigned here too (-band,-bor,-xor)
                 opType = GetBitwiseOpType((int)leftTypeCode >= (int)rightTypeCode ? leftTypeCode : rightTypeCode);
@@ -3120,7 +3120,7 @@ namespace System.Management.Automation.Language
             }
 
             return BinaryComparisonCommon(enumerable, target, arg)
-                ?? BinaryComparision(target, arg, e => Expression.LessThan(e, ExpressionCache.Constant(0)));
+                ?? BinaryComparison(target, arg, e => Expression.LessThan(e, ExpressionCache.Constant(0)));
         }
 
         private DynamicMetaObject CompareLE(DynamicMetaObject target,
@@ -3140,7 +3140,7 @@ namespace System.Management.Automation.Language
             }
 
             return BinaryComparisonCommon(enumerable, target, arg)
-                ?? BinaryComparision(target, arg, e => Expression.LessThanOrEqual(e, ExpressionCache.Constant(0)));
+                ?? BinaryComparison(target, arg, e => Expression.LessThanOrEqual(e, ExpressionCache.Constant(0)));
         }
 
         private DynamicMetaObject CompareGT(DynamicMetaObject target,
@@ -3162,7 +3162,7 @@ namespace System.Management.Automation.Language
             }
 
             return BinaryComparisonCommon(enumerable, target, arg)
-                ?? BinaryComparision(target, arg, e => Expression.GreaterThan(e, ExpressionCache.Constant(0)));
+                ?? BinaryComparison(target, arg, e => Expression.GreaterThan(e, ExpressionCache.Constant(0)));
         }
 
         private DynamicMetaObject CompareGE(DynamicMetaObject target,
@@ -3184,10 +3184,10 @@ namespace System.Management.Automation.Language
             }
 
             return BinaryComparisonCommon(enumerable, target, arg)
-                ?? BinaryComparision(target, arg, e => Expression.GreaterThanOrEqual(e, ExpressionCache.Constant(0)));
+                ?? BinaryComparison(target, arg, e => Expression.GreaterThanOrEqual(e, ExpressionCache.Constant(0)));
         }
 
-        private DynamicMetaObject BinaryComparision(DynamicMetaObject target, DynamicMetaObject arg, Func<Expression, Expression> toResult)
+        private DynamicMetaObject BinaryComparison(DynamicMetaObject target, DynamicMetaObject arg, Func<Expression, Expression> toResult)
         {
             if (target.LimitType == typeof(string))
             {
@@ -5821,7 +5821,7 @@ namespace System.Management.Automation.Language
             }
             Expression transformedExpression = originalExpression.Convert(typeof(object));
             var engineIntrinsicsTempVar = Expression.Variable(typeof(EngineIntrinsics));
-            // apply tranformation attributes from right to left
+            // apply transformation attributes from right to left
             for (int i = attributesArray.Length - 1; i >= 0; i--)
             {
                 transformedExpression = Expression.Call(Expression.Constant(attributesArray[i]),
@@ -6648,7 +6648,7 @@ namespace System.Management.Automation.Language
 
                 // If we're calling SteppablePipeline.{Begin|Process|End}, we don't want
                 // to wrap exceptions - this is very much a special case to help error
-                // propogation and ensure errors are attributed to the correct code (the
+                // propagation and ensure errors are attributed to the correct code (the
                 // cmdlet invoked, not the method call from some proxy.)
                 if (methodInfo.DeclaringType == typeof(SteppablePipeline)
                     && (methodInfo.Name.Equals("Begin", StringComparison.Ordinal))
@@ -6911,7 +6911,7 @@ namespace System.Management.Automation.Language
         /// <param name="target">The target to operate against</param>
         /// <param name="args">
         ///     Arguments to the operator. The first argument must be either a scriptblock
-        ///     or a string representing a 'simple where' expresson. The second is an enum that controls
+        ///     or a string representing a 'simple where' expression. The second is an enum that controls
         ///     the matching behaviour returning the first, last or all matching elements. 
         /// </param>
         /// <param name="argRestrictions">The binding restrictions for the arguments.</param>

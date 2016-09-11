@@ -13,13 +13,13 @@ namespace Microsoft.PowerShell.Commands
     /// The Invoke-RestMethod command
     /// This command makes an HTTP or HTTPS request to a web server and returns the results.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Invoke, "WebRequest", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=217035")]
+    [Cmdlet(VerbsLifecycle.Invoke, "WebRequest", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217035")]
     public class InvokeWebRequestCommand : WebRequestPSCmdlet
     {
         #region Virtual Method Overrides
 
         /// <summary>
-        /// Process the web reponse and output corresponding objects. 
+        /// Process the web response and output corresponding objects. 
         /// </summary>
         /// <param name="response"></param>
         internal override void ProcessResponse(WebResponse response)
@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
                 WebResponseObject ro = WebResponseObjectFactory.GetResponseObject(response, responseStream, this.Context, UseBasicParsing);
                 WriteObject(ro);
 
-                // use the rawcontent stream from WebRepsonseObject for further 
+                // use the rawcontent stream from WebResponseObject for further 
                 // processing of the stream. This is need because WebResponse's
                 // stream can be used only once.
                 responseStream = ro.RawContentStream;

@@ -69,7 +69,7 @@ function ParseMetaData
 
     # Check the OData version in the fetched metadata to make sure that
     # OData version (and hence the protocol) used in the metadata is
-    # supported by the adatapter used for executing the generated
+    # supported by the adapter used for executing the generated
     # proxy cmdlets.
     if(($metadataXML -ne $null) -and ($metadataXML.Edmx -ne $null))
     {
@@ -363,10 +363,10 @@ function VerifyMetaData
         $callerPSCmdlet.ThrowTerminatingError($errorRecord)
     }
     
-    # All the generated proxy cmdlets would have the following paramters added.
-    # The ODataAdpter has the default implementation on how to handle the 
+    # All the generated proxy cmdlets would have the following parameters added.
+    # The ODataAdapter has the default implementation on how to handle the 
     # scenario when these parameters are used during proxy invocations.
-    # The default implementaion can be overridden using adapter derivation model. 
+    # The default implementation can be overridden using adapter derivation model. 
     $reservedProperties = @("Filter", "IncludeTotalResponseCount", "OrderBy", "Select", "Skip", "Top", "ConnectionUri", "CertificateThumbprint", "Credential")
     $validEntitySets = @()
     $sessionCommands = Get-Command -All
@@ -492,8 +492,8 @@ function VerifyMetaData
 # GenerateClientSideProxyModule is a helper function used 
 # to generate a PowerShell module that serves as a client
 # side proxy for interacting with the server side 
-# OData endpoint. The proxy module conatins proxy cmdlets
-# implemneted in CDXML modules and they are exposed 
+# OData endpoint. The proxy module contains proxy cmdlets
+# implemented in CDXML modules and they are exposed 
 # through module manifest as nested modules.
 # One CDXML module is created for each EntitySet 
 # described in the metadata. Each CDXML module contains
@@ -528,11 +528,11 @@ function GenerateClientSideProxyModule
 
     # This function performs the following set of tasks 
     # while creating the client side proxy module:
-    # 1. If the server side endpoint exposes comlex types,
+    # 1. If the server side endpoint exposes complex types,
     #    the client side proxy complex types are created
-    #    as C# class in ComplexTypeDefinations.psm1 
-    # 2. Creates proxy cmdlets for CRUD opreations.
-    # 3. Creates proxy cmdlets for Serice action opreations.
+    #    as C# class in ComplexTypeDefinitions.psm1 
+    # 2. Creates proxy cmdlets for CRUD operations.
+    # 3. Creates proxy cmdlets for Service action operations.
     # 4. Creates module manifest.
 
     Write-Verbose ($LocalizedData.VerboseSavingModule -f $outputModule)
@@ -1169,7 +1169,7 @@ function GenerateServiceActionProxyCmdlet
 # to generate a wrapper module manifest file. The
 # generated module manifest is persisted to the disk at
 # the specified OutPutModule path. When the module 
-# manifest is imported, the following comands will 
+# manifest is imported, the following commands will 
 # be imported:
 # 1. Get, Set, New & Remove proxy cmdlets.
 # 2. If the server side Odata endpoint exposes complex
@@ -1466,11 +1466,11 @@ function GetEntitySetForEntityType
 #########################################################
 # ProcessStreamHelper is a helper function that performs 
 # the following utility tasks:
-# 1. Writes verobose messsages to the stream.
+# 1. Writes verbose messages to the stream.
 # 2. Writes FileInfo objects for the proxy modules 
 #    saved to the disk. This is done to keep the user 
 #    experience in consistent with Export-PSSession.
-# 3. Updates progess bar.
+# 3. Updates progress bar.
 #########################################################
 function ProcessStreamHelper 
 {
@@ -1660,8 +1660,8 @@ function AddParametersCDXML
 }
 
 #########################################################
-# GenerateComplexTypeDefination is a helper function used 
-# to generate comlplex type defination from the metadata.
+# GenerateComplexTypeDefinition is a helper function used 
+# to generate complex type definition from the metadata.
 #########################################################
 function GenerateComplexTypeDefination 
 {
@@ -1779,7 +1779,7 @@ using System.Management.Automation;
      return $complexTypeMapping
 }
 
-# Creating a single instace of CSharpCodeProvider that would be used 
+# Creating a single instance of CSharpCodeProvider that would be used 
 # for Identifier validation in the ValidateComplexTypeIdentifier helper method.
 $cSharpCodeProvider = [Microsoft.CSharp.CSharpCodeProvider]::new()
 

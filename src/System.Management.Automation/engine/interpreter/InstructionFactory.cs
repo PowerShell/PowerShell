@@ -18,7 +18,7 @@ using BigInt = System.Numerics.BigInteger;
 #endif
 
 #if CORECLR
-// Used for 'GetField' which is not available under 'Type' in CoreClR but provided as an extenstion method in 'System.Reflection.TypeExtensions'
+// Used for 'GetField' which is not available under 'Type' in CoreClR but provided as an extension method in 'System.Reflection.TypeExtensions'
 using System.Reflection;
 #endif
 

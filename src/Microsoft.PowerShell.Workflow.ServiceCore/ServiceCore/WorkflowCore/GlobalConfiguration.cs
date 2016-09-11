@@ -897,7 +897,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// Get Activity Run Mode InPocess or Out of process
+        /// Get Activity Run Mode InProcess or Out of process
         /// </summary>
         /// <param name="activity"></param>
         /// <returns></returns>

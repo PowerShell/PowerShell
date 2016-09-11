@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// implementation for the out-string command
     /// </summary>
-    [Cmdlet("Out", "String", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113368", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet("Out", "String", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113368", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(string))]
     public class OutStringCommand : FrontEndCommandBase
     {

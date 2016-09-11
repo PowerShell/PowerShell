@@ -135,7 +135,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Enables dependency injection after the static constructor is called.
-        /// This may be overridden in unit tests to enable different behavoir.
+        /// This may be overridden in unit tests to enable different behavior.
         /// It is static because static instances of this class use the facade. Otherwise,
         /// it would be passed in via a parameterized constructor.
         /// </summary>
@@ -159,7 +159,7 @@ namespace System.Management.Automation.Remoting
         static WSManPluginInstance()
         {
             // NOTE - the order is important here:
-            // because handler from WindowsErrorReporting is going to terminate the proces
+            // because handler from WindowsErrorReporting is going to terminate the process
             // we want it to fire last
 
 #if !CORECLR
@@ -312,7 +312,7 @@ namespace System.Management.Automation.Remoting
                     return;
                 }
 
-                // Create a shell session wrapper to track and service future interacations.
+                // Create a shell session wrapper to track and service future interactions.
                 mgdShellSession = new WSManPluginShellSession(requestDetails, serverTransportMgr, remoteShellSession, context);
                 AddToActiveShellSessions(mgdShellSession);
                 mgdShellSession.SessionClosed += new EventHandler<EventArgs>(HandleShellSessionClosed);
@@ -791,7 +791,7 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            // this connect is on a commad
+            // this connect is on a command
             WSManPluginCommandSession mgdCmdSession = mgdShellSession.GetCommandSession(commandContext);
             if (null == mgdCmdSession)
             {
@@ -1471,7 +1471,7 @@ namespace System.Management.Automation.Remoting
         /// Sets thread properties like UI Culture, Culture etc..This is needed as code is transitioning from
         /// unmanaged heap to managed heap...and thread properties are not set correctly during this 
         /// transition.
-        /// Currently WSMan provider supplies only UI Culture related data..so only UI Cutlure is set.
+        /// Currently WSMan provider supplies only UI Culture related data..so only UI Culture is set.
         /// </summary>
         /// <param name="requestDetails"></param>
         internal static void SetThreadProperties(
@@ -1487,7 +1487,7 @@ namespace System.Management.Automation.Remoting
                 WSManPluginConstants.WSManPluginParamsGetRequestedLocale,
                 outputStruct);
             //ref nativeLocaleData);
-            bool retreivingLocaleSucceeded = (0 == hResult);
+            bool retrievingLocaleSucceeded = (0 == hResult);
             WSManNativeApi.WSManData_UnToMan localeData = WSManNativeApi.WSManData_UnToMan.UnMarshal(outputStruct); // nativeLocaleData
 
             //IntPtr nativeDataLocaleData = IntPtr.Zero;
@@ -1496,13 +1496,13 @@ namespace System.Management.Automation.Remoting
                 WSManPluginConstants.WSManPluginParamsGetRequestedDataLocale,
                 outputStruct);
             //ref nativeDataLocaleData);
-            bool retreivingDataLocaleSucceeded = ((int)WSManPluginErrorCodes.NoError == hResult);
+            bool retrievingDataLocaleSucceeded = ((int)WSManPluginErrorCodes.NoError == hResult);
             WSManNativeApi.WSManData_UnToMan dataLocaleData = WSManNativeApi.WSManData_UnToMan.UnMarshal(outputStruct); // nativeDataLocaleData
 
             // Set the UI Culture
             try
             {
-                if (retreivingLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == localeData.Type))
+                if (retrievingLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == localeData.Type))
                 {
                     CultureInfo uiCultureToUse = new CultureInfo(localeData.Text);
                     ClrFacade.SetCurrentThreadUiCulture(uiCultureToUse);
@@ -1516,7 +1516,7 @@ namespace System.Management.Automation.Remoting
             // Set the Culture
             try
             {
-                if (retreivingDataLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == dataLocaleData.Type))
+                if (retrievingDataLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == dataLocaleData.Type))
                 {
                     CultureInfo cultureToUse = new CultureInfo(dataLocaleData.Text);
                     ClrFacade.SetCurrentThreadCulture(cultureToUse);

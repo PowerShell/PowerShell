@@ -95,7 +95,7 @@ namespace Microsoft.PackageManagement.Internal.Utility.Extensions {
                 }
 
                 if (File.Exists(location)) {
-                    // err("Unable to forcably remove file '{0}'. This can't be good.", location);
+                    // err("Unable to forcibly remove file '{0}'. This can't be good.", location);
                 }
             }
             return;
@@ -146,7 +146,7 @@ namespace Microsoft.PackageManagement.Internal.Utility.Extensions {
                     catch { }
                 }
 
-                // delete all filese that is older than 2 days
+                // delete all files that is older than 2 days
                 foreach (var filePath in Directory.EnumerateFiles(TempPath))
                 {
                     try
@@ -202,7 +202,7 @@ namespace Microsoft.PackageManagement.Internal.Utility.Extensions {
                     }
 #endif
                 }
-                // not a remote (or resovably-remote) path or
+                // not a remote (or resolvable-remote) path or
                 // it is already a path that is in it's correct form (via localpath)
                 return pathUri.LocalPath;
             } catch (UriFormatException) {

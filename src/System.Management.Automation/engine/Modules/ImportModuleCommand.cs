@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements a cmdlet that loads a module
     /// </summary>
-    [Cmdlet("Import", "Module", DefaultParameterSetName = ParameterSet_Name, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=141553")]
+    [Cmdlet("Import", "Module", DefaultParameterSetName = ParameterSet_Name, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141553")]
     [OutputType(typeof(PSModuleInfo))]
     public sealed class ImportModuleCommand : ModuleCmdletBase, IDisposable
     {
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
                 if (value == null)
                     return;
                 _functionImportList = value;
-                // Create the list of patterns to match at patameter bind time
+                // Create the list of patterns to match at parameter bind time
                 // so errors will be reported before loading the module...
                 BaseFunctionPatterns = new List<WildcardPattern>();
                 foreach (string pattern in _functionImportList)
@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
 
                 _cmdletImportList = value;
-                // Create the list of patterns to match at patameter bind time
+                // Create the list of patterns to match at parameter bind time
                 // so errors will be reported before loading the module...
                 BaseCmdletPatterns = new List<WildcardPattern>();
                 foreach (string pattern in _cmdletImportList)
@@ -1430,7 +1430,7 @@ namespace Microsoft.PowerShell.Commands
 
                     //
                     // import the module 
-                    // (from memory - this avoids the authenticode singature problems 
+                    // (from memory - this avoids the authenticode signature problems 
                     // that would be introduced by rewriting the contents of the manifest)
                     //
                     moduleInfo = LoadModuleManifest(
@@ -1483,7 +1483,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     //
-                    // store the default sesion 
+                    // store the default session 
                     //
                     Dbg.Assert(moduleInfo.ModuleType == ModuleType.Manifest, "Remote discovery should always produce a 'manifest' module");
                     Dbg.Assert(moduleInfo.NestedModules != null, "Remote discovery should always produce a 'manifest' module with nested modules entry");
@@ -1523,7 +1523,7 @@ namespace Microsoft.PowerShell.Commands
                     moduleInfo.OnRemove = onRemoveScriptBlock;
 
                     //
-                    // Some procesing common for local and remote modules
+                    // Some processing common for local and remote modules
                     //
                     AddModuleToModuleTables(
                         this.Context,

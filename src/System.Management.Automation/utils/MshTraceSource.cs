@@ -24,7 +24,7 @@ namespace System.Management.Automation
     /// 
     /// The PSTraceSource class is derived from Switch to provide granular
     /// control over the tracing in a program.  An instance of PSTraceSource
-    /// is created for each category of tracing such that seperate flags
+    /// is created for each category of tracing such that separate flags
     /// (filters) can be set. Each flag enables one or more method for tracing.
     /// 
     /// For instance, the Exception flag will enable tracing on these methods:
@@ -127,7 +127,7 @@ namespace System.Management.Automation
                 // See if we can find an PSTraceSource for this category in the catalog.
                 PSTraceSource.TraceCatalog.TryGetValue(name, out result);
 
-                // If its not already in the catalog, see if we can find it in the
+                // If it's not already in the catalog, see if we can find it in the
                 // pre-configured trace source list
 
                 if (result == null)

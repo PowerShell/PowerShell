@@ -24,7 +24,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         "CimMethod",
         SupportsShouldProcess = true,
         DefaultParameterSetName = CimBaseCommand.ClassNameComputerSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227965")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227965")]
     public class InvokeCimMethodCommand : CimBaseCommand
     {
         #region constructor
@@ -392,7 +392,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// <para>
         /// Get <see cref="CimInvokeCimMethod"/> object, which is
-        /// used to delegate all Inovke-CimMethod operations.
+        /// used to delegate all Invoke-CimMethod operations.
         /// </para>
         /// </summary>
         CimInvokeCimMethod GetOperationAgent()

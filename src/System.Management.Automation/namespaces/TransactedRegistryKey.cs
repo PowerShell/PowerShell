@@ -768,7 +768,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             if (ret == 0 && !result.IsInvalid)
             {
                 TransactedRegistryKey key = new TransactedRegistryKey(result, writable, false, Transaction.Current, safeTransactionHandle);
-                key._checkMode = GetSubKeyPermissonCheck(writable);
+                key._checkMode = GetSubKeyPermissionCheck(writable);
                 key._keyName = _keyName + "\\" + name;
                 return key;
             }
@@ -854,7 +854,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             // Return null if we didn't find the key.
             if (ret == Win32Native.ERROR_ACCESS_DENIED || ret == Win32Native.ERROR_BAD_IMPERSONATION_LEVEL)
             {
-                // We need to throw SecurityException here for compatiblity reason,
+                // We need to throw SecurityException here for compatibility reason,
                 // although UnauthorizedAccessException will make more sense.
                 throw new SecurityException(RegistryProviderStrings.Security_RegistryPermission);
             }
@@ -1907,7 +1907,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         {
             if (_checkMode == RegistryKeyPermissionCheck.Default)
             {
-                // only need to check for default mode (dynamice check)
+                // only need to check for default mode (dynamic check)
                 new RegistryPermission(RegistryPermissionAccess.Read, _keyName + "\\" + valueName).Demand();
             }
         }
@@ -1918,7 +1918,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         {
             if (_checkMode == RegistryKeyPermissionCheck.Default)
             {
-                // only need to check for default mode (dynamice check)                
+                // only need to check for default mode (dynamic check)                
                 new RegistryPermission(RegistryPermissionAccess.Read, _keyName + "\\.").Demand();
             }
         }
@@ -1986,7 +1986,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-        private RegistryKeyPermissionCheck GetSubKeyPermissonCheck(bool subkeyWritable)
+        private RegistryKeyPermissionCheck GetSubKeyPermissionCheck(bool subkeyWritable)
         {
             if (_checkMode == RegistryKeyPermissionCheck.Default)
             {
@@ -2037,7 +2037,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         {
             if (0 != (rights & ~((int)RegistryRights.FullControl)))
             {
-                // We need to throw SecurityException here for compatiblity reason,
+                // We need to throw SecurityException here for compatibility reason,
                 // although UnauthorizedAccessException will make more sense.
                 throw new SecurityException(RegistryProviderStrings.Security_RegistryPermission);
             }

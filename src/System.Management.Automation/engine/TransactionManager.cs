@@ -408,7 +408,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Creates a new Transaction that should be managed idependently of
+        /// Creates a new Transaction that should be managed independently of
         /// any parent transactions.
         /// </summary>
         ///
@@ -418,7 +418,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Creates a new Transaction that should be managed idependently of
+        /// Creates a new Transaction that should be managed independently of
         /// any parent transactions.
         /// </summary>
         ///

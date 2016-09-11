@@ -108,7 +108,7 @@ namespace Microsoft.WSMan.Management
     /// <summary>
     /// connect wsman cmdlet
     /// </summary>
-    [Cmdlet(VerbsCommunications.Connect, "WSMan", DefaultParameterSetName = "ComputerName", HelpUri = "http://go.microsoft.com/fwlink/?LinkId=141437")]
+    [Cmdlet(VerbsCommunications.Connect, "WSMan", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141437")]
     public class ConnectWSManCommand : AuthenticatingWSManCommand
     {
 
@@ -214,7 +214,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".
-        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connnection to 
+        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to 
         /// the remote computer. If SSL is not available on the port specified by the 
         /// Port parameter, the command fails.
         /// </summary>
@@ -275,7 +275,7 @@ namespace Microsoft.WSMan.Management
     /// IP address to indicate the remote host(s)
     /// </summary>
 
-    [Cmdlet(VerbsCommunications.Disconnect, "WSMan", HelpUri = "http://go.microsoft.com/fwlink/?LinkId=141439")]
+    [Cmdlet(VerbsCommunications.Disconnect, "WSMan", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141439")]
     public class DisconnectWSManCommand : PSCmdlet, IDisposable
     {
         /// <summary>

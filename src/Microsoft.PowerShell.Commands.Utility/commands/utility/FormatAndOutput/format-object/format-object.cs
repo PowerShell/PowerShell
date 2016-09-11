@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// implementation for the format-custom command. It just calls the formatting
     /// engine on complex shape
     /// </summary>
-    [Cmdlet("Format", "Custom", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113301")]
+    [Cmdlet("Format", "Custom", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113301")]
     public class FormatCustomCommand : OuterFormatShapeCommandBase
     {
         /// <summary>
@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Positional parameter for properties, property sets and table sets
         /// specified on the command line.
-        /// The paramater is optional, since the defaults
+        /// The parameter is optional, since the defaults
         /// will be determined using property sets, etc.
         /// </summary>
         [Parameter(Position = 0)]

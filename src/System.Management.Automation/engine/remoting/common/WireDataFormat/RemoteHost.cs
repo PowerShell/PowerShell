@@ -417,7 +417,7 @@ namespace System.Management.Automation.Remoting
             // check if the incoming call is GetBufferContents
             // if so do the following:
             //      (a) Specify a warning message that the server is 
-            //          attemping to read the screen buffer contents 
+            //          attempting to read the screen buffer contents 
             //          on screen and it has been blocked
             //      (b) Modify the message so that call is not executed
             else if (MethodId == RemoteHostMethodId.GetBufferContents)

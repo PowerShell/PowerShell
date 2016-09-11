@@ -376,15 +376,15 @@ namespace System.Management.Automation.Interpreter
         {
         }
 
-        public HybridReferenceDictionary(int initialCapicity)
+        public HybridReferenceDictionary(int initialCapacity)
         {
-            if (initialCapicity > _arraySize)
+            if (initialCapacity > _arraySize)
             {
-                _dict = new Dictionary<TKey, TValue>(initialCapicity);
+                _dict = new Dictionary<TKey, TValue>(initialCapacity);
             }
             else
             {
-                _keysAndValues = new KeyValuePair<TKey, TValue>[initialCapicity];
+                _keysAndValues = new KeyValuePair<TKey, TValue>[initialCapacity];
             }
         }
 

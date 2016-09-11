@@ -48,7 +48,7 @@ It **requires** that `Start-PSBuild -CrossGen` has been run.
 Linux / macOS
 ------------
 
-The `Start-PSBuild` function delegates to `New-UnixPackage`.
+The `Start-PSPackage` function delegates to `New-UnixPackage`.
 This function will automatically deduce the correct version from the most recent annotated tag (using `git describe`).
 
 At this time, each package must be made on the corresponding platform.
@@ -56,7 +56,7 @@ The packages each have the .NET Core runtime-identifier appended to their filena
 This is necessary to differentiate the Ubuntu 14.04 and 16.04 packages,
 which must be separate due to having different dependencies.
 
-The `Start-PSBuild` function relies on the [Effing Package Management][fpm] project,
+The `Start-PSPackage` function relies on the [Effing Package Management][fpm] project,
 which makes building packages for any (non-Windows) platform a breeze.
 Similarly, the PowerShell man-page is generated from the Markdown-like file
 [`assets/powershell.1.ronn`][man] using [Ronn][].
@@ -123,7 +123,7 @@ package will instead be created.
 Windows
 -------
 
-The `Start-PSBuild` function delegates to `New-MSIPackage` which creates a Windows Installer Package of PowerShell.
+The `Start-PSPackage` function delegates to `New-MSIPackage` which creates a Windows Installer Package of PowerShell.
 The packages *must* be published in release mode, so use `Start-PSBuild -CrossGen -Configuration Release`.
 It uses the Windows Installer XML Toolset (WiX) to generate a `PowerShell_<version>.msi`,
 which installs a self-contained copy of the current version (commit) of PowerShell.

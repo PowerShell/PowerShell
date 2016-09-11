@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Workflow
 
 
         /// <summary>
-        /// Disope implementation.
+        /// Dispose implementation.
         /// </summary>
         public void Dispose()
         {
@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// Disope implementation.
+        /// Dispose implementation.
         /// </summary>
         /// <param name="disposing"></param>
         private void Dispose(bool disposing)
@@ -310,7 +310,7 @@ namespace Microsoft.PowerShell.Workflow
             {
                 lock (_syncObject)
                 {
-                    // Start the shudown timer when there is no inprogess job, no pending job requests and no active sessions
+                    // Start the shutdown timer when there is no inprogress job, no pending job requests and no active sessions
                     // Otherwise disable it
                     if (_activeSessionsCount == 0 && _inProgressCount == 0 && _pendingQueue.Count == 0)
                     {
@@ -395,7 +395,7 @@ namespace Microsoft.PowerShell.Workflow
 
                     if (_shutdownTimer != null)
                     {
-                        // Start the shudown timer when there is no inprogess job, no pending job requests and no active sessions
+                        // Start the shutdown timer when there is no inprogress job, no pending job requests and no active sessions
                         // Otherwise disable it
                         if (_activeSessionsCount == 0 && _inProgressCount == 0 && _pendingQueue.Count == 0)
                         {
@@ -987,7 +987,7 @@ namespace Microsoft.PowerShell.Workflow
         /// <returns>Returns the collection of workflow instances.</returns>
         internal IEnumerable<Job2> GetJobs(WorkflowFilterTypes type, Dictionary<string, object> filters)
         {
-            Tracer.WriteMessage(Facility + "Geting workflow instances based on filters");
+            Tracer.WriteMessage(Facility + "Getting workflow instances based on filters");
             return GetJobs(_wfJobTable.Values, type, filters);
         }
 
@@ -1118,7 +1118,7 @@ namespace Microsoft.PowerShell.Workflow
 
                     if ((filter.Value is string || filter.Value is WildcardPattern) && value is string)
                     {
-                        // at this point we are guaranteed that the key exists somewehere                    
+                        // at this point we are guaranteed that the key exists somewhere                    
                         WildcardPattern pattern;
                         string stringValue = filter.Value as string;
                         if (stringValue != null)
@@ -1315,7 +1315,7 @@ namespace Microsoft.PowerShell.Workflow
                         }
                         catch (ObjectDisposedException)
                         {
-                            Tracer.WriteMessage(Facility, "RemoveJob", job.PSWorkflowInstance.Id, "Worklfow Job is already disposed. so removing it.");
+                            Tracer.WriteMessage(Facility, "RemoveJob", job.PSWorkflowInstance.Id, "Workflow Job is already disposed. so removing it.");
                         }
                     }
                 }
@@ -1344,7 +1344,7 @@ namespace Microsoft.PowerShell.Workflow
 
             lock (lockObjects.GetLockObject(instanceId))
             {
-                Tracer.WriteMessage(Facility + "Forgeting job instance with id: " + instanceId);
+                Tracer.WriteMessage(Facility + "Forgetting job instance with id: " + instanceId);
 
                 PSWorkflowJob job = GetJob(instanceId);
 
@@ -1392,8 +1392,8 @@ namespace Microsoft.PowerShell.Workflow
             {
                 if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
                 {
-                    foreach (WaitHandle hanlde in waitHandles)
-                        hanlde.WaitOne();
+                    foreach (WaitHandle handle in waitHandles)
+                        handle.WaitOne();
                 }
                 else
                 {

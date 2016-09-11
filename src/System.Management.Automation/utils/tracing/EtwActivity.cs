@@ -64,7 +64,7 @@ namespace System.Management.Automation.Tracing
             private set;
         }
 
-        /// <summary> Gets whether the event is sucessfully written </summary>
+        /// <summary> Gets whether the event is successfully written </summary>
         public bool Success
         {
             get;
@@ -83,7 +83,7 @@ namespace System.Management.Automation.Tracing
         /// Creates a new instance of EtwEventArgs class.
         /// </summary>
         /// <param name="descriptor">Event descriptor</param>
-        /// <param name="success">Indicate whether the event is sucessfully written</param>
+        /// <param name="success">Indicate whether the event is successfully written</param>
         /// <param name="payload">Event payload</param>
         public EtwEventArgs(EventDescriptor descriptor, bool success, object[] payload)
         {
@@ -110,7 +110,7 @@ namespace System.Management.Automation.Tracing
             private AsyncCallback asyncCallback;
 
             /// <summary>
-            /// parantActivityId
+            /// parentActivityId
             /// </summary>
             protected readonly Guid parentActivityId;
             private readonly EtwActivity tracer;
@@ -366,8 +366,8 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         public void Correlate()
         {
-            Guid parentAcitvity = GetActivityId();
-            CorrelateWithActivity(parentAcitvity);
+            Guid parentActivity = GetActivityId();
+            CorrelateWithActivity(parentActivity);
         }
 
         /// <summary>

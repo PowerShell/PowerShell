@@ -196,7 +196,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets the Persist Switch parameter.
-        /// If this switch parmter is set then the created PSDrive
+        /// If this switch parameter is set then the created PSDrive
         /// would be persisted across PowerShell sessions.
         /// </summary>
         internal bool Persist { get; } = false;
@@ -208,7 +208,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets the UNC path of the drive. This property would be populated only
-        /// if the cereated PSDrive is targeting a network drive or else this property
+        /// if the created PSDrive is targeting a network drive or else this property
         /// would be null.
         /// </summary>
         public string DisplayRoot { get; internal set; } = null;
@@ -412,7 +412,7 @@ namespace System.Management.Automation
         /// If null, the current user credential is used.
         /// </param>
         /// <param name="displayRoot">
-        /// The network path of the drive. This field would be populted only if PSDriveInfo
+        /// The network path of the drive. This field would be populated only if PSDriveInfo
         /// is targeting the network drive or else this filed is null for local drives.
         /// </param>
         /// 

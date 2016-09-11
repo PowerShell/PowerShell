@@ -146,7 +146,7 @@ namespace System.Management.Automation
         public String Description { get; set; }
 
         /// <summary>
-        /// Gets the capabilies that are implemented by the provider.
+        /// Gets the capabilities that are implemented by the provider.
         /// </summary>
         public Provider.ProviderCapabilities Capabilities
         {
@@ -172,7 +172,7 @@ namespace System.Management.Automation
                     catch (Exception e) // Catch-all OK, 3rd party callout
                     {
                         CommandProcessorBase.CheckForSevereException(e);
-                        // Assume no capabilites for now
+                        // Assume no capabilities for now
                     }
                 }
                 return _capabilities;
@@ -623,7 +623,7 @@ namespace System.Management.Automation
             // Possible solutions are to not cache the provider instance, or to maintain
             // a CmdletProviderContext stack in ProviderBase.  Each method invocation pushes
             // the current context and the last action of the method pops back to the
-            // previos context.
+            // previous context.
 #if USE_TLS
             // Next see if we already have an instance in thread local storage
 

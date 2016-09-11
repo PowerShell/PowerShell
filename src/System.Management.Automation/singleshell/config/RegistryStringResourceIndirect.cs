@@ -414,7 +414,7 @@ namespace System.Management.Automation
         /// </summary>
         /// 
         /// <param name="assemblyName">
-        /// The FullName of the assembly to load. This takes precendence over the modulePath and
+        /// The FullName of the assembly to load. This takes precedence over the modulePath and
         /// will be passed to as a parameter to the ReflectionOnlyLoad.
         /// </param>
         /// 

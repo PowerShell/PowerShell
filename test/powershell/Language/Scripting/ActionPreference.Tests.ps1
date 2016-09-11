@@ -1,5 +1,4 @@
-﻿
-Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
+﻿Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         BeforeAll {
             $orgin = $GLOBAL:errorActionPreference
         }
@@ -111,6 +110,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         #issue 2076
         It 'ErrorAction and WarningAction are the only action preferences do not support suspend' -Pending{
             $params = [System.Management.Automation.Internal.CommonParameters].GetProperties().Name | Select-String Action
+
             $suspendErrors = $null 
             $num=0  
                         

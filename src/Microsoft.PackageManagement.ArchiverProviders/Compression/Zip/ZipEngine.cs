@@ -66,7 +66,7 @@ namespace Microsoft.PackageManagement.Archivers.Internal.Compression.Zip
         }
 
         /// <summary>
-        /// Registers a delegate that can create a warpper stream for
+        /// Registers a delegate that can create a wrapper stream for
         /// compressing or uncompressing the data of a source stream.
         /// </summary>
         /// <param name="compressionMethod">Compression method being registered.</param>

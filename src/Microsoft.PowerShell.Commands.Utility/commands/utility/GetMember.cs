@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements get-member command.  
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Member", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113322", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommon.Get, "Member", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113322", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(MemberDefinition))]
     public class GetMemberCommand : PSCmdlet
     {

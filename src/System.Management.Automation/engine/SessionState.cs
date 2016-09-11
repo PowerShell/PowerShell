@@ -188,7 +188,7 @@ namespace System.Management.Automation
         internal Dictionary<string, PSModuleInfo> ModuleTable { get; } = new Dictionary<string, PSModuleInfo>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Get/set constraints for this execution environemnt
+        /// Get/set constraints for this execution environment
         /// </summary>
         internal PSLanguageMode LanguageMode
         {
@@ -230,7 +230,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The list of appications that are allowed to be run. If the name "*"
+        /// The list of applications that are allowed to be run. If the name "*"
         /// is in the list, then all applications can be run. (This is the default.)
         /// </summary>
         public List<string> Applications { get; } = new List<string>(new string[] { "*" });
@@ -350,6 +350,10 @@ namespace System.Management.Automation
             // $PSUICulture
             v = new PSUICultureVariable();
             this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
+
+            // $?
+            v = new QuestionMarkVariable(this.ExecutionContext);
+            this.GlobalScope.SetVariableForce(v, this);
 
             // $ShellId - if there is no runspace config, use the default string
             string shellId = ExecutionContext.ShellID;

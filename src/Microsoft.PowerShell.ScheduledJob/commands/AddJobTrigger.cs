@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// This cmdlet adds ScheduledJobTriggers to ScheduledJobDefinition objects.
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "JobTrigger", DefaultParameterSetName = AddJobTriggerCommand.JobDefinitionParameterSet, 
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223913")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223913")]
     public sealed class AddJobTriggerCommand : ScheduleJobCmdletBase
     {
         #region Parameters
@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private ScheduledJobTrigger[] _triggers;
 
         /// <summary>
-        /// ScheduledJobDefition Id.
+        /// ScheduledJobDefinition Id.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, 
                    ParameterSetName = AddJobTriggerCommand.JobDefinitionIdParameterSet)]

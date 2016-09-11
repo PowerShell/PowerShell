@@ -29,7 +29,7 @@
 					name : moved to commandDetails
 					verb : moved to commandDetails
 					noun : moved to commandDetails
-					? Synposis : mapped to commandDetails.CommandDescription
+					? Synopsis : mapped to commandDetails.CommandDescription
 				-->
 				<!-- [gxie] items added:
 					keywords
@@ -102,7 +102,7 @@
 						<sequence>
 							<element name="synonym" type="maml:textType" maxOccurs="unbounded"/>
 						</sequence>
-						<!-- [gxie] ? what is usage of contentIdentficationsSharingAndConditionGroup-->
+						<!-- [gxie] ? what is usage of contentIdentificationSharingAndConditionGroup-->
 						<attributeGroup ref="maml:contentIdentificationSharingAndConditionGroup"/>
 					</complexType>
 				</element>

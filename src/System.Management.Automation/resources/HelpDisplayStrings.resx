@@ -193,7 +193,7 @@
     <value>    This cmdlet supports the common parameters: Verbose, Debug,
     ErrorAction, ErrorVariable, WarningAction, WarningVariable,
     OutBuffer, PipelineVariable, and OutVariable. For more information, see 
-    about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216). </value>
+    about_CommonParameters (https://go.microsoft.com/fwlink/?LinkID=113216). </value>
   </data>
   <data name="ParameterRequired" xml:space="preserve">
     <value>Required?                    </value>
@@ -457,7 +457,7 @@ To update help again, add the Force parameter to your command.</value>
     PSPrivateMetadata, InputObject,
     PSParameterCollection, AsJob, PSUseSSL, and PSAllowRedirection.
     For more information, see about_Workflow_Common_Parameters
-    (http://go.microsoft.com/fwlink/?LinkID=222527).</value>
+    (https://go.microsoft.com/fwlink/?LinkID=222527).</value>
   </data>
   <data name="InvalidHelpInfoUriFormat" xml:space="preserve">
     <value>The HelpInfoURI {0} does not start with HTTP.</value>
@@ -466,7 +466,7 @@ To update help again, add the Force parameter to your command.</value>
     <value>The root level element of the help content must be "helpItems".</value>
   </data>
   <data name="UpdateHelpPromptBody" xml:space="preserve">
-    <value>The Update-Help cmdlet downloads the most current Help files for Windows PowerShell modules, and installs them on your computer. For more information about the Update-Help cmdlet, see http://go.microsoft.com/fwlink/?LinkId=210614.</value>
+    <value>The Update-Help cmdlet downloads the most current Help files for Windows PowerShell modules, and installs them on your computer. For more information about the Update-Help cmdlet, see https://go.microsoft.com/fwlink/?LinkId=210614.</value>
   </data>
   <data name="UpdateHelpPromptTitle" xml:space="preserve">
     <value>Do you want to run Update-Help?</value>

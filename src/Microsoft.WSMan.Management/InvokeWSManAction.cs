@@ -26,7 +26,7 @@ namespace Microsoft.WSMan.Management
     /// -SelectorSet {Name=Spooler}
     /// </summary>
 
-    [Cmdlet(VerbsLifecycle.Invoke, "WSManAction", DefaultParameterSetName = "URI", HelpUri = "http://go.microsoft.com/fwlink/?LinkId=141446")]
+    [Cmdlet(VerbsLifecycle.Invoke, "WSManAction", DefaultParameterSetName = "URI", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141446")]
     public class InvokeWSManActionCommand : AuthenticatingWSManCommand, IDisposable
     {
         /// <summary>
@@ -178,7 +178,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".
-        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connnection to 
+        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to 
         /// the remote computer. If SSL is not available on the port specified by the 
         /// Port parameter, the command fails.
         /// </summary>

@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
     /// 
     /// Class that implements the Get-WinEvent cmdlet.
     /// 
-    [Cmdlet(VerbsCommon.Get, "WinEvent", DefaultParameterSetName = "GetLogSet", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=138336")]
+    [Cmdlet(VerbsCommon.Get, "WinEvent", DefaultParameterSetName = "GetLogSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=138336")]
     public sealed class GetWinEventCommand : PSCmdlet
     {
         /// <summary>
@@ -816,7 +816,7 @@ namespace Microsoft.PowerShell.Commands
 
         //
         // CreateSession creates an EventLogSession connected to a target machine or localhost.
-        // If _credential argment is PSCredential.Empty, the session will be created for the current context.
+        // If _credential argument is PSCredential.Empty, the session will be created for the current context.
         //
         private EventLogSession CreateSession()
         {
@@ -1139,7 +1139,7 @@ namespace Microsoft.PowerShell.Commands
 
                 //
                 // If none of the logs/paths/providers were valid, queriedLogsQueryMap is empty.
-                // Simply conitnue to the next hashtable since all the errors have been written already.
+                // Simply continue to the next hashtable since all the errors have been written already.
                 //
                 if (queriedLogsQueryMap.Count == 0)
                 {
@@ -1672,7 +1672,7 @@ namespace Microsoft.PowerShell.Commands
         // ValidateAndResolveFilePath helper.
         // Returns a string collection of resolved file paths.
         // Writes non-terminating errors for invalid paths
-        // and returns an empty colleciton.
+        // and returns an empty collection.
         // 
         private StringCollection ValidateAndResolveFilePath(string path)
         {
@@ -1899,7 +1899,7 @@ namespace Microsoft.PowerShell.Commands
         // AddLogsForProviderToInternalMap helper.
         // Retrieves log names to which _providerName writes.
         // NOTE: there are many misconfigured providers in the system.
-        // We therefore catch EventLogException excpetions and write them out as non-terminating errors.
+        // We therefore catch EventLogException exceptions and write them out as non-terminating errors.
         // The results are added to _providersByLogMap dictionary.  
         //
         private void AddLogsForProviderToInternalMap(EventLogSession eventLogSession, string providerName)

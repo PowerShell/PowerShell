@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to clear the value of a property of an item at a specified path
     /// </summary>
     [Cmdlet(VerbsCommon.Clear, "ItemProperty", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113284")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113284")]
     public class ClearItemPropertyCommand : PassThroughItemPropertyCommandBase
     {
         #region Parameters

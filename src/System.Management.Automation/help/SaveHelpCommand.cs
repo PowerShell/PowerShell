@@ -16,10 +16,10 @@ using System.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements the Save-Help cmdleto
+    /// This class implements the Save-Help cmdlet
     /// </summary>
     [Cmdlet(VerbsData.Save, "Help", DefaultParameterSetName = SaveHelpCommand.PathParameterSetName,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=210612")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210612")]
     public sealed class SaveHelpCommand : UpdatableHelpCommandBase
     {
         #region Constructor
@@ -443,33 +443,33 @@ namespace Microsoft.PowerShell.Commands
             IList iListArg = ParameterBinderBase.GetIList(argument);
             if (iListArg != null && iListArg.Count > 0)
             {
-                int elemtCount = iListArg.Count;
+                int elementCount = iListArg.Count;
                 int targetIndex = 0;
-                var target = Array.CreateInstance(typeof(object), elemtCount);
+                var target = Array.CreateInstance(typeof(object), elementCount);
 
-                foreach (object elemt in iListArg)
+                foreach (object element in iListArg)
                 {
-                    var elemtValue = PSObject.Base(elemt);
+                    var elementValue = PSObject.Base(element);
 
-                    if (elemtValue is PSModuleInfo)
+                    if (elementValue is PSModuleInfo)
                     {
-                        target.SetValue(elemtValue, targetIndex++);
+                        target.SetValue(elementValue, targetIndex++);
                     }
-                    else if (elemtValue is string)
+                    else if (elementValue is string)
                     {
-                        var elemtAsModuleObj = new PSModuleInfo(name: (string)elemtValue, path: null, context: null, sessionState: null);
-                        target.SetValue(elemtAsModuleObj, targetIndex++);
+                        var elementAsModuleObj = new PSModuleInfo(name: (string)elementValue, path: null, context: null, sessionState: null);
+                        target.SetValue(elementAsModuleObj, targetIndex++);
                     }
                     else
                     {
                         PSModuleInfo elementValueModuleInfo = null;
-                        if (TryConvertFromDeserializedModuleInfo(elemtValue, out elementValueModuleInfo))
+                        if (TryConvertFromDeserializedModuleInfo(elementValue, out elementValueModuleInfo))
                         {
                             target.SetValue(elementValueModuleInfo, targetIndex++);
                         }
                         else
                         {
-                            target.SetValue(elemt, targetIndex++);
+                            target.SetValue(element, targetIndex++);
                         }
                     }
                 }

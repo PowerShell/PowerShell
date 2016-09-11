@@ -971,7 +971,7 @@ Possible matches are</value>
     <value>Exception parsing MOF file '{0}':{1}.</value>
   </data>
   <data name="MissingConfigurationName" xml:space="preserve">
-    <value>The name for the configuration is missing. Provide the missing name as a simple name, string, or string-valued expresson.</value>
+    <value>The name for the configuration is missing. Provide the missing name as a simple name, string, or string-valued expression.</value>
   </data>
   <data name="MissingRequiredResourcesArgument" xml:space="preserve">
     <value>Missing argument to -Resources. The argument to the -Resource parameter must be a comma-separated list of names or constant strings naming modules to reference for resource type definitions.</value>
@@ -1008,7 +1008,7 @@ Possible matches are</value>
     <value>Missing '=' operator after key in property assignment.</value>
   </data>
   <data name="DuplicatePropertyInInstanceDefinition" xml:space="preserve">
-    <value>Duplicate property assignements are not allowed in an instance definition.</value>
+    <value>Duplicate property assignments are not allowed in an instance definition.</value>
   </data>
   <data name="DuplicateCimClassDefinition" xml:space="preserve">
     <value>A second CIM class definition for '{0}' was found while processing the schema file '{1}'. This class was already defined in the file(s) '{2}'. Remove the redundant definition, and then try again.</value>

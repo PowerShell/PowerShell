@@ -23,7 +23,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     [Cmdlet(VerbsCommon.Remove, "CimSession",
              SupportsShouldProcess = true,
              DefaultParameterSetName = CimSessionSet,
-             HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227968")]
+             HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227968")]
     public sealed class RemoveCimSessionCommand : CimBaseCommand
     {
         #region constructor

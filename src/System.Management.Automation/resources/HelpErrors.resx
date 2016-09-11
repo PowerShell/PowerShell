@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="HelpNotFound" xml:space="preserve">
-    <value>Get-Help could not find {0} in a help file in this session. To download updated help topics type: "Update-Help". To get help online, search for the help topic in the TechNet library at http://go.microsoft.com/fwlink/?LinkID=107116.</value>
+    <value>Get-Help could not find {0} in a help file in this session. To download updated help topics type: "Update-Help". To get help online, search for the help topic in the TechNet library at https://go.microsoft.com/fwlink/?LinkID=107116.</value>
   </data>
   <data name="HelpCategoryInvalid" xml:space="preserve">
     <value>Cannot process the Help category because "{0}" is not a valid Help category.</value>
@@ -133,7 +133,7 @@
     <value>The Help file "{0}" is not a valid xml document. Details: {1}.</value>
   </data>
   <data name="LoadHelpFileForTargetFailed" xml:space="preserve">
-    <value>An error occurred while loading Help content for {0} from file {1}. Details: {2}. To download updated Help topics, run the Update-Help cmdlet. To get help online, search for the Help topic in the TechNet library at http://go.microsoft.com/fwlink/?LinkID=107116.</value>
+    <value>An error occurred while loading Help content for {0} from file {1}. Details: {2}. To download updated Help topics, run the Update-Help cmdlet. To get help online, search for the Help topic in the TechNet library at https://go.microsoft.com/fwlink/?LinkID=107116.</value>
   </data>
   <data name="ProviderLoadError" xml:space="preserve">
     <value>The provider "{0}" cannot be loaded. Details: {1}.</value>

@@ -283,7 +283,7 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
 
             return _sessionState.GetItemDynamicParameters(path, context);
-        } // GetItemDynamicParamters
+        } // GetItemDynamicParameters
 
         #endregion GetItem
 
@@ -2505,7 +2505,7 @@ namespace System.Management.Automation
         CopyTargetContainer,
 
         /// <summary>
-        /// The children of the source contianer are copied.
+        /// The children of the source container are copied.
         /// </summary>
         CopyChildrenOfTargetContainer
     }

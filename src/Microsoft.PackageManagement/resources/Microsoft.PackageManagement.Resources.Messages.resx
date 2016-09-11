@@ -308,7 +308,7 @@
     <value>Version {0} of the Package Provider {1} is already loaded. Since this is an assembly-based provider, we cannot load another version.</value>
   </data>
   <data name="ProviderNameAndVersionNotAvailableFromFilePath" xml:space="preserve">
-    <value>The specified assembly '{0}' in \ProviderAssemblies, should be installed in ProviderAssemblies\ProviderName\Version. Either delete the provider assembly from \ProviderAssemblies, or create \ProviderAssemblies\ProvidernName\Version, and then move the assembly there.</value>
+    <value>The specified assembly '{0}' in \ProviderAssemblies, should be installed in ProviderAssemblies\ProviderName\Version. Either delete the provider assembly from \ProviderAssemblies, or create \ProviderAssemblies\ProviderName\Version, and then move the assembly there.</value>
   </data>
   <data name="SingleAssemblyAllowed" xml:space="preserve">
     <value>Multiple assemblies are found under path '{0}'. Please install a single provider assembly under each version folder.</value>

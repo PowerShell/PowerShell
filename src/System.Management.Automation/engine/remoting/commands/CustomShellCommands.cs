@@ -38,12 +38,12 @@ namespace Microsoft.PowerShell.Commands
 {
     #region Register-PSSessionConfiguration cmdlet
     /// <summary>
-    /// Class implemeting Register-PSSessionConfiguration
+    /// Class implementing Register-PSSessionConfiguration
     /// </summary>
     [Cmdlet(VerbsLifecycle.Register, RemotingConstants.PSSessionConfigurationNoun,
         DefaultParameterSetName = PSSessionConfigurationCommandBase.NameParameterSetName,
         SupportsShouldProcess = true,
-        ConfirmImpact = ConfirmImpact.Medium, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144306")]
+        ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144306")]
     public sealed class RegisterPSSessionConfigurationCommand : PSSessionConfigurationCommandBase
     {
         #region Private Data
@@ -1364,7 +1364,7 @@ else
         /// Checks if the current thread is running elevated. If not, throws an error.
         /// </summary>
         /// <exception cref="InvalidOperationException">
-        /// 1. Acess is denied. You need to run this cmdlet from an elevated process.
+        /// 1. Access is denied. You need to run this cmdlet from an elevated process.
         /// </exception>
         internal static void ThrowIfNotAdministrator()
         {
@@ -1641,7 +1641,7 @@ else
             sb.Append(prologue);
 
             //
-            // Convert to condtional ACE
+            // Convert to conditional ACE
             // Beginning (Regular) ACE has exactly 6 required fields and one (optional) field.
             // We only manipulate ACEs that we create and we currently do not use the optional resource field,
             // so we always expect a beginning ACE with exactly 6 fields.
@@ -1764,13 +1764,13 @@ else
         private const string MemberOfFormat = "Member_of {{SID({0})}}";
 
         /// <summary>
-        /// Parse RequiredGroups configruation and build conditional ACE string.
+        /// Parse RequiredGroups configuration and build conditional ACE string.
         /// </summary>
         /// <param name="configTable"></param>
         /// <returns></returns>
         // RequiredGroups:  @{ And = @{ Or = '2FA_GROUP_1', '2FA_GROUP_2' }, @{ Or = 'TRUSTEDHOSTS_1', 'TRUSTEDHOSTS_2' } }
-        // User ACE:        (XA;;GA;;;S-1-5-21-2127438184-1604012920-1882527527;CondionalPart)
-        // CondionalPart:   ((Member_of {SID(2FA_GROUP_1)} || Member_of {SID(2FA_GROUP_2)}) && (Member_of {SID(TRUSTEDHOSTS_1)} || Member_of {TRUSTEDHOSTS_2}))
+        // User ACE:        (XA;;GA;;;S-1-5-21-2127438184-1604012920-1882527527;ConditionalPart)
+        // ConditionalPart:   ((Member_of {SID(2FA_GROUP_1)} || Member_of {SID(2FA_GROUP_2)}) && (Member_of {SID(TRUSTEDHOSTS_1)} || Member_of {TRUSTEDHOSTS_2}))
         //         where:   2FA_GROUP_1, 2FA_GROUP_2, TRUSTEDHOSTS_1, TRUSTEDHOSTS_2 are resolved SIDs of the group names.
         // (https://msdn.microsoft.com/en-us/library/windows/desktop/dd981030(v=vs.85).aspx)
         internal static string CreateConditionalACEFromConfig(
@@ -2040,7 +2040,7 @@ else
         /// <summary>
         /// This parameter should be specified with AssemblyName. This supplies
         /// the type to load to get the InitialSessionState. The type should
-        /// be derivided from <see cref="PSSessionConfiguration"/>.
+        /// be derived from <see cref="PSSessionConfiguration"/>.
         /// </summary>
         [Parameter(Position = 2, Mandatory = true, ParameterSetName = PSSessionConfigurationCommandBase.AssemblyNameParameterSetName)]
         public string ConfigurationTypeName
@@ -2446,10 +2446,10 @@ else
     #region Unregister-PSSessionConfiguration cmdlet
 
     /// <summary>
-    /// Class implemeting Unregister-PSSessionConfiguration
+    /// Class implementing Unregister-PSSessionConfiguration
     /// </summary>
     [Cmdlet(VerbsLifecycle.Unregister, RemotingConstants.PSSessionConfigurationNoun,
-        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144308")]
+        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144308")]
     public sealed class UnregisterPSSessionConfigurationCommand : PSCmdlet
     {
         #region Private Data
@@ -2668,9 +2668,9 @@ else
     #region Get-PSSessionConfiguration cmdlet
 
     /// <summary>
-    /// Class implemeting Get-PSSessionConfiguration
+    /// Class implementing Get-PSSessionConfiguration
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, RemotingConstants.PSSessionConfigurationNoun, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144304")]
+    [Cmdlet(VerbsCommon.Get, RemotingConstants.PSSessionConfigurationNoun, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144304")]
     [OutputType("Microsoft.PowerShell.Commands.PSSessionConfigurationCommands#PSSessionConfiguration")]
     public sealed class GetPSSessionConfigurationCommand : PSCmdlet
     {
@@ -2904,12 +2904,12 @@ $args[0] | foreach {{
     #region Set-PSSessionConfiguration cmdlet
 
     /// <summary>
-    /// Class implemeting Set-PSSessionConfiguration
+    /// Class implementing Set-PSSessionConfiguration
     /// </summary>
     [Cmdlet(VerbsCommon.Set, RemotingConstants.PSSessionConfigurationNoun,
        DefaultParameterSetName = PSSessionConfigurationCommandBase.NameParameterSetName,
        SupportsShouldProcess = true,
-       ConfirmImpact = ConfirmImpact.Medium, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144307")]
+       ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144307")]
     public sealed class SetPSSessionConfigurationCommand : PSSessionConfigurationCommandBase
     {
         #region Private Data
@@ -2952,8 +2952,8 @@ Set-SessionPluginQuota $args[0]
 ";
 
         private const string setSessionConfigurationTimeoutQuotasSbFormat = @"
-function Set-SessionPluginIdleTimeoutQuotas([int] $maxIdleTimeoutms, [int] $idleTimeoutms, [bool] $setMaxIdleTimoutFirst) {{
-    if ($setMaxIdleTimoutFirst) {{
+function Set-SessionPluginIdleTimeoutQuotas([int] $maxIdleTimeoutms, [int] $idleTimeoutms, [bool] $setMaxIdleTimeoutFirst) {{
+    if ($setMaxIdleTimeoutFirst) {{
         set-item -WarningAction SilentlyContinue 'WSMan:\localhost\Plugin\{0}\Quotas\MaxIdleTimeoutms' -Value $maxIdleTimeoutms -confirm:$false
         set-item -WarningAction SilentlyContinue 'WSMan:\localhost\Plugin\{0}\Quotas\IdleTimeoutms' -Value $idleTimeoutms -confirm:$false
     }}
@@ -3571,7 +3571,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
 
                 if (idleTimeOut != 0 && quotas.ContainsKey(WSManConfigurationOption.AttribMaxIdleTimeout))
                 {
-                    bool setMaxIdleTimoutFirst = true;
+                    bool setMaxIdleTimeoutFirst = true;
                     int maxIdleTimeOut;
 
                     if (LanguagePrimitives.TryConvertTo<int>(quotas[WSManConfigurationOption.AttribMaxIdleTimeout], out maxIdleTimeOut))
@@ -3594,7 +3594,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
 
                         if (currentIdleTimeoutms >= maxIdleTimeOut && currentIdleTimeoutms >= idleTimeOut)
                         {
-                            setMaxIdleTimoutFirst = false;
+                            setMaxIdleTimeoutFirst = false;
                         }
                     }
 
@@ -3609,7 +3609,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                         dollarUnder: AutomationNull.Value,
                         input: Utils.EmptyArray<object>(),
                         scriptThis: AutomationNull.Value,
-                        args: new object[] { maxIdleTimeOut, idleTimeOut, setMaxIdleTimoutFirst });
+                        args: new object[] { maxIdleTimeOut, idleTimeOut, setMaxIdleTimeoutFirst });
 
                     // Remove Idle timeout values as we have set them above
                     // 
@@ -3958,7 +3958,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                                     }
                                 }
                                 // if ModulesToImport doesn't exist in the pssessionConfigurationData, we don't need to do anything.
-                                // in this case, if the current config is of type workfolw, it's not a valid config.
+                                // in this case, if the current config is of type workflow, it's not a valid config.
                             }
                             else
                             {
@@ -4037,7 +4037,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
     /// Class implementing Enable-PSSessionConfiguration cmdlet
     /// </summary>
     [Cmdlet(VerbsLifecycle.Enable, RemotingConstants.PSSessionConfigurationNoun,
-        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144301")]
+        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144301")]
     public sealed class EnablePSSessionConfigurationCommand : PSCmdlet
     {
         #region Private Data
@@ -4410,7 +4410,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
 
             string qcCaptionMessage = StringUtil.Format(RemotingErrorIdStrings.EcsWSManQCCaption);
             string qcQueryMessage = StringUtil.Format(RemotingErrorIdStrings.EcsWSManQCQuery, setWSManConfigCommand);
-            string qcShoudProcessDesc = StringUtil.Format(RemotingErrorIdStrings.EcsWSManShouldProcessDesc, setWSManConfigCommand);
+            string qcShouldProcessDesc = StringUtil.Format(RemotingErrorIdStrings.EcsWSManShouldProcessDesc, setWSManConfigCommand);
             string setCaptionMessage = StringUtil.Format(RemotingErrorIdStrings.CSShouldProcessAction,
                 "Set-PSSessionConfiguration");
             string setQueryMessage = RemotingErrorIdStrings.EcsShouldProcessTarget;
@@ -4434,7 +4434,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
                                                qcCaptionMessage,
                                                whatIf,
                                                confirm,
-                                               qcShoudProcessDesc,
+                                               qcShouldProcessDesc,
                                                setEnabledTarget,
                                                setEnabledAction,
                                                _skipNetworkProfileCheck,
@@ -4464,7 +4464,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
     /// 
     /// </summary>
     [Cmdlet(VerbsLifecycle.Disable, RemotingConstants.PSSessionConfigurationNoun,
-        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144299")]
+        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144299")]
     public sealed class DisablePSSessionConfigurationCommand : PSCmdlet
     {
         #region Private Data
@@ -4697,7 +4697,7 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
     /// </summary>
 #if !CORECLR
     [Cmdlet(VerbsLifecycle.Enable, RemotingConstants.PSRemotingNoun,
-        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144300")]
+        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144300")]
 #endif
     public sealed class EnablePSRemotingCommand : PSCmdlet
     {
@@ -4786,7 +4786,7 @@ param(
             if ($pa -eq ""x86"")
             {{
                 # on 64-bit platforms, wow64 bit process has the correct architecture
-                # available in processor_architew6432 varialbe
+                # available in processor_architew6432 variable
                 $pa = $env:PROCESSOR_ARCHITEW6432
             }}
             if ((($pa -eq ""amd64"")) -and (test-path $env:windir\syswow64\pwrshplugin.dll))
@@ -5047,7 +5047,7 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
     /// </summary>
 #if !CORECLR
     [Cmdlet(VerbsLifecycle.Disable, RemotingConstants.PSRemotingNoun,
-        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144298")]
+        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144298")]
 #endif
     public sealed class DisablePSRemotingCommand : PSCmdlet
     {
@@ -5191,7 +5191,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
         #region Cmdlet Override
 
         /// <summary>
-        /// Check for prerequisites and eleveation mode
+        /// Check for prerequisites and elevation mode
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -5244,7 +5244,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
     /// <summary>
     /// Gets the capabilities of a constrained endpoint on the local machine for a specific user.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "PSSessionCapability", HelpUri = "http://go.microsoft.com/fwlink/?LinkId=623709")]
+    [Cmdlet(VerbsCommon.Get, "PSSessionCapability", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=623709")]
     [OutputType(new Type[] { typeof(System.Management.Automation.CommandInfo), typeof(System.Management.Automation.Runspaces.InitialSessionState) })]
     public sealed class GetPSSessionCapabilityCommand : PSCmdlet
     {

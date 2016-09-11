@@ -255,7 +255,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // set the alignment
                 if (a.OriginatingParameter != null)
                 {
-                    object key = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.AligmentEntryKey);
+                    object key = a.OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.AlignmentEntryKey);
 
                     if (key != AutomationNull.Value)
                         ci.alignment = (int)key;
@@ -404,7 +404,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return tableBody.defaultDefinition.rowItemDefinitionList;
             }
 
-            // the overriding row definition takes the precendence
+            // the overriding row definition takes the precedence
             if (matchingRowDefinition.multiLine)
                 multiLine = matchingRowDefinition.multiLine;
 
@@ -439,7 +439,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 FormatPropertyField fpf = GenerateFormatPropertyField(rowItem.formatTokenList, so, enumerationLimit);
 
-                // get the aligment from the row entry
+                // get the alignment from the row entry
                 // NOTE: if it's not set, the alignment sent with the header will prevail
                 fpf.alignment = rowItem.alignment;
 

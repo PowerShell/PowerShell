@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
     using Microsoft.PackageManagement.Internal.Utility.Collections;
     using Microsoft.PackageManagement.Internal.Utility.Extensions;
 
-    [Cmdlet(VerbsCommon.Get, Constants.Nouns.PackageProviderNoun, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=517136")]
+    [Cmdlet(VerbsCommon.Get, Constants.Nouns.PackageProviderNoun, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=517136")]
     public sealed class GetPackageProvider : CmdletBase {
         protected override IEnumerable<string> ParameterSets {
             get {

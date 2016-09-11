@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements get-help command
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Help", DefaultParameterSetName = "AllUsersView", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113316")]
+    [Cmdlet(VerbsCommon.Get, "Help", DefaultParameterSetName = "AllUsersView", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113316")]
     public sealed class GetHelpCommand : PSCmdlet
     {
         /// <summary>
@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _showWindow;
         /// <summary>
-        /// Gets and sets a value indicatuing whether the help should be displayed in a separate window
+        /// Gets and sets a value indicating whether the help should be displayed in a separate window
         /// </summary>
         [Parameter(ParameterSetName = "ShowWindow", Mandatory = true)]
         public SwitchParameter ShowWindow
@@ -397,7 +397,7 @@ namespace Microsoft.PowerShell.Commands
         /// Change <paramref name="originalHelpObject"/> as per user request.
         /// 
         /// This method creates a new type to the existing typenames 
-        /// depending on Detailed,Full,Example parameteres and adds this 
+        /// depending on Detailed,Full,Example parameters and adds this 
         /// new type(s) to the top of the list.
         /// </summary>
         /// <param name="originalHelpObject">Full help object to transform.</param>
@@ -456,7 +456,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets the paramater info for patterns identified Parameter property.
+        /// Gets the parameter info for patterns identified Parameter property.
         /// Writes the parameter info(s) to the output stream. An error is thrown
         /// if a parameter with a given pattern is not found.
         /// </summary>

@@ -6,7 +6,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 // defined here to call Diagnostics.Assert when only ASSERTIONS_TRACE is defined
 // Any #if DEBUG is pointless (always true) in this file because of this declaration.
 // The presence of the define will cause the System.Diagnostics.Debug.Asser calls
-// allways to be compiled in for this file. What can be compiled out are the calls to
+// always to be compiled in for this file. What can be compiled out are the calls to
 // System.Management.Automation.Diagnostics.Assert in other files when neither DEBUG
 // nor ASSERTIONS_TRACE is defined.
 #define DEBUG
@@ -115,7 +115,7 @@ namespace System.Management.Automation
         /// Basic assertion with logical condition and message
         /// </summary>
         /// <param name="condition">
-        /// logical condtion that should be true for program to proceed
+        /// logical condition that should be true for program to proceed
         /// </param>
         /// <param name="whyThisShouldNeverHappen">
         /// Message to explain why condition should always be true
@@ -144,7 +144,7 @@ namespace System.Management.Automation
         /// Basic assertion with logical condition, message and detailed message
         /// </summary>
         /// <param name="condition">
-        /// logical condtion that should be true for program to proceed
+        /// logical condition that should be true for program to proceed
         /// </param>
         /// <param name="whyThisShouldNeverHappen">
         /// Message to explain why condition should always be true

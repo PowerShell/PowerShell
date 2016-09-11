@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// This cmdlet disables triggers on a ScheduledJobDefinition object.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Enable, "JobTrigger", SupportsShouldProcess = true, DefaultParameterSetName = EnableJobTriggerCommand.EnabledParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223917")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223917")]
     public sealed class EnableJobTriggerCommand : EnableDisableScheduledJobCmdletBase
     {
        #region Enabled Implementation

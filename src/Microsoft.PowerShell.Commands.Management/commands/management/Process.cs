@@ -478,7 +478,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the get-process command
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Process", DefaultParameterSetName = NameParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113324", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113324", RemotingCapability = RemotingCapability.SupportedByCommand)]
     [OutputType(typeof(ProcessModule), typeof(FileVersionInfo), typeof(Process))]
     public sealed class GetProcessCommand : ProcessBaseCommand
     {
@@ -940,7 +940,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the Wait-process command
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Wait, "Process", DefaultParameterSetName = "Name", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135277")]
+    [Cmdlet(VerbsLifecycle.Wait, "Process", DefaultParameterSetName = "Name", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135277")]
     public sealed class WaitProcessCommand : ProcessBaseCommand
     {
         #region Parameters
@@ -970,7 +970,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Name of the processes to wait on for termintation
+        /// Name of the processes to wait on for termination
         /// </summary>
         [Parameter(
             ParameterSetName = "Name",
@@ -1165,7 +1165,7 @@ namespace Microsoft.PowerShell.Commands
     /// </remarks>
     [Cmdlet(VerbsLifecycle.Stop, "Process",
         DefaultParameterSetName = "Id",
-        SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113412")]
+        SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113412")]
     [OutputType(typeof(Process))]
     public sealed class StopProcessCommand : ProcessBaseCommand
     {
@@ -1540,7 +1540,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the Debug-process command
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Debug, "Process", DefaultParameterSetName = "Name", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135206")]
+    [Cmdlet(VerbsDiagnostic.Debug, "Process", DefaultParameterSetName = "Name", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135206")]
     public sealed class DebugProcessCommand : ProcessBaseCommand
     {
         #region Parameters
@@ -1570,7 +1570,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Name of the processes to wait on for termintation
+        /// Name of the processes to wait on for termination
         /// </summary>
         [Parameter(
             ParameterSetName = "Name",
@@ -1709,7 +1709,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the Start-process command
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Start, "Process", DefaultParameterSetName = "Default", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135261")]
+    [Cmdlet(VerbsLifecycle.Start, "Process", DefaultParameterSetName = "Default", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135261")]
     [OutputType(typeof(Process))]
     public sealed class StartProcessCommand : PSCmdlet, IDisposable
     {
@@ -2712,7 +2712,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Start API assignes the process to the JobObject and starts monitoring 
+        /// Start API assigns the process to the JobObject and starts monitoring 
         /// the child processes hosted by the process created by Start-Process cmdlet.
         /// </summary>
         internal bool AssignProcessToJobObject(Process process)

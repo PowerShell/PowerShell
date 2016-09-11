@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command that commits a transaction.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Complete, "Transaction", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135200")]
+    [Cmdlet(VerbsLifecycle.Complete, "Transaction", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135200")]
     public class CompleteTransactionCommand : PSCmdlet
     {
         /// <summary>

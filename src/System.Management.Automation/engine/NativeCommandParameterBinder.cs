@@ -190,7 +190,7 @@ namespace System.Management.Automation
                         // actually have quotes in different places, but the Win32 command line=>argv parser
                         // erases those differences.
                         //
-                        // We need to check quotes that the win32 arugment parser checks which is currently 
+                        // We need to check quotes that the win32 argument parser checks which is currently 
                         // just the normal double quotes, no other special quotes.  Also note that mismatched
                         // quotes are supported.
 

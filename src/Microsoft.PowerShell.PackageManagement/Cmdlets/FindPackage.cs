@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
     using Microsoft.PackageManagement.Packaging;
     using Utility;
 
-    [Cmdlet(VerbsCommon.Find, Constants.Nouns.PackageNoun, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=517132"), OutputType(new Type[1] { typeof(SoftwareIdentity) })]
+    [Cmdlet(VerbsCommon.Find, Constants.Nouns.PackageNoun, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=517132"), OutputType(new Type[1] { typeof(SoftwareIdentity) })]
     public sealed class FindPackage : CmdletWithSearchAndSource {
         public FindPackage()
             : base(new[] {
@@ -80,8 +80,8 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
                         // this dep is not processed yet
                         if (!processedDependencies.Contains(dep))
                         {
-                            var dependendcies = PackageManagementService.FindPackageByCanonicalId(dep, this);
-                            var depPkg = dependendcies.OrderByDescending(pp => pp, SoftwareIdentityVersionComparer.Instance).FirstOrDefault();
+                            var dependencies = PackageManagementService.FindPackageByCanonicalId(dep, this);
+                            var depPkg = dependencies.OrderByDescending(pp => pp, SoftwareIdentityVersionComparer.Instance).FirstOrDefault();
 
                             processedDependencies.Add(dep);
 

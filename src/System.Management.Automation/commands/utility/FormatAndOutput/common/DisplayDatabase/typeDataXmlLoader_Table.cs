@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (tableBody.header.columnHeaderDefinitionList.Count != 0)
                 {
                     // CHECK: if there are headers in the list, their number has to match
-                    // the default row definition intem count
+                    // the default row definition item count
                     if (tableBody.header.columnHeaderDefinitionList.Count !=
                         tableBody.defaultDefinition.rowItemDefinitionList.Count)
                     {
@@ -270,15 +270,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false; // fatal error
             }
 
-            if (string.Equals(n.InnerText, XMLStringValues.AligmentLeft, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(n.InnerText, XMLStringValues.AlignmentLeft, StringComparison.OrdinalIgnoreCase))
             {
                 alignmentValue = TextAlignment.Left;
             }
-            else if (string.Equals(n.InnerText, XMLStringValues.AligmentRight, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(n.InnerText, XMLStringValues.AlignmentRight, StringComparison.OrdinalIgnoreCase))
             {
                 alignmentValue = TextAlignment.Right;
             }
-            else if (string.Equals(n.InnerText, XMLStringValues.AligmentCenter, StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(n.InnerText, XMLStringValues.AlignmentCenter, StringComparison.OrdinalIgnoreCase))
             {
                 alignmentValue = TextAlignment.Center;
             }

@@ -43,7 +43,7 @@ namespace System.Management.Automation
         /// </summary>
         Property = 4,
         /// <summary>
-        /// A prorperty defined by a Name-Value pair
+        /// A property defined by a Name-Value pair
         /// </summary>
         NoteProperty = 8,
         /// <summary>
@@ -462,7 +462,7 @@ namespace System.Management.Automation
         /// When 
         ///     the alias has not been added to an PSObject or
         ///     the alias has a cycle or
-        ///     an aliased member is not presen
+        ///     an aliased member is not present
         /// </exception>
         public override bool IsSettable
         {
@@ -761,7 +761,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="name">name of the property</param>
         /// <param name="getterCodeReference">This should be a public static non void method taking one PSObject parameter.</param>
-        /// <exception cref="ArgumentException">if namme is null or empty or getterCodeReference is null</exception>
+        /// <exception cref="ArgumentException">if name is null or empty or getterCodeReference is null</exception>
         /// <exception cref="ExtendedTypeSystemException">if getterCodeReference doesn't have the right format.</exception>
         public PSCodeProperty(string name, MethodInfo getterCodeReference)
         {
@@ -1010,7 +1010,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructs this proprerty
+        /// Constructs this property
         /// </summary>
         /// <param name="name">name of the property</param>
         /// <param name="adapter">adapter used in DoGetProperty</param>
@@ -1246,7 +1246,7 @@ namespace System.Management.Automation
         internal object noteValue;
 
         /// <summary>
-        /// Initiializes a new instance of the PSNoteProperty class.
+        /// Initializes a new instance of the PSNoteProperty class.
         /// </summary>
         /// <param name="name">name of the property</param>
         /// <param name="value">value of the property</param>
@@ -1413,7 +1413,7 @@ namespace System.Management.Automation
         internal PSVariable _variable;
 
         /// <summary>
-        /// Initiializes a new instance of the PSVariableProperty class. This is
+        /// Initializes a new instance of the PSVariableProperty class. This is
         /// a subclass of the NoteProperty that wraps a variable instead of a simple value.
         /// </summary>
         /// <param name="variable">The variable to wrap</param>
@@ -2687,7 +2687,7 @@ namespace System.Management.Automation
         internal object baseObject;
 
         /// <summary>
-        /// Constructs this parameterized proprerty
+        /// Constructs this parameterized property
         /// </summary>
         /// <param name="name">name of the property</param>
         /// <param name="adapter">adapter used in DoGetMethod</param>
@@ -3501,7 +3501,7 @@ namespace System.Management.Automation
 
     #endregion PSMemberInfo
 
-    #region Member collection classes and its auxilliary classes
+    #region Member collection classes and its auxiliary classes
 
     /// <summary>
     /// /// This class is used in PSMemberInfoInternalCollection and ReadOnlyPSMemberInfoCollection
@@ -4532,7 +4532,7 @@ namespace System.Management.Automation
                     delegateOwner = PSObject.AsPSObject(delegateOwner);
                     foreach (CollectionEntry<T> collection in Collections)
                     {
-                        Diagnostics.Assert(delegateOwner != null, "all integrating collections with non emtpty collections have an associated PSObject");
+                        Diagnostics.Assert(delegateOwner != null, "all integrating collections with non empty collections have an associated PSObject");
                         T memberAsT = collection.GetMember((PSObject)delegateOwner, name);
                         if (memberAsT != null)
                         {
@@ -4812,7 +4812,7 @@ namespace System.Management.Automation
         }
     }
 
-    #endregion Member collection classes and its auxilliary classes
+    #endregion Member collection classes and its auxiliary classes
 }
 
 #pragma warning restore 56503

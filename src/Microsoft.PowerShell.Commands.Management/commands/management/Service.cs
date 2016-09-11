@@ -411,7 +411,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         /// <remarks>
         /// We do not use the ServiceController(string serviceName)
-        /// constructor variant, since thr resultant
+        /// constructor variant, since the resultant
         /// ServiceController.ServiceName is the provided serviceName
         /// even when that differs from the real ServiceName by case.
         /// </remarks>
@@ -595,7 +595,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the get-service command
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Service", DefaultParameterSetName = "Default",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113332", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113332", RemotingCapability = RemotingCapability.SupportedByCommand)]
     [OutputType(typeof(ServiceController))]
     public sealed class GetServiceCommand : MultipleServiceCommandBase
     {
@@ -683,9 +683,9 @@ namespace Microsoft.PowerShell.Commands
                     }
                     if (RequiredServices.IsPresent)
                     {
-                        foreach (ServiceController servdependedon in service.ServicesDependedOn)
+                        foreach (ServiceController servicedependedon in service.ServicesDependedOn)
                         {
-                            WriteObject(servdependedon);
+                            WriteObject(servicedependedon);
                         }
                     }
                 }
@@ -1210,7 +1210,7 @@ namespace Microsoft.PowerShell.Commands
     /// Note that the services will be sorted before being stopped.
     /// PM confirms that this is OK.
     /// </remarks>
-    [Cmdlet(VerbsLifecycle.Stop, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113414")]
+    [Cmdlet(VerbsLifecycle.Stop, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113414")]
     [OutputType(typeof(ServiceController))]
     public sealed class StopServiceCommand : ServiceOperationBaseCommand
     {
@@ -1263,7 +1263,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the start-service command
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Start, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113406")]
+    [Cmdlet(VerbsLifecycle.Start, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113406")]
     [OutputType(typeof(ServiceController))]
     public sealed class StartServiceCommand : ServiceOperationBaseCommand
     {
@@ -1295,7 +1295,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the suspend-service command
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Suspend, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113416")]
+    [Cmdlet(VerbsLifecycle.Suspend, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113416")]
     [OutputType(typeof(ServiceController))]
     public sealed class SuspendServiceCommand : ServiceOperationBaseCommand
     {
@@ -1328,7 +1328,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the resume-service command
     /// </summary>
     [Cmdlet(VerbsLifecycle.Resume, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113386")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113386")]
     [OutputType(typeof(ServiceController))]
     public sealed class ResumeServiceCommand : ServiceOperationBaseCommand
     {
@@ -1361,7 +1361,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the restart-service command
     /// </summary>
     [Cmdlet(VerbsLifecycle.Restart, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113385")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113385")]
     [OutputType(typeof(ServiceController))]
     public sealed class RestartServiceCommand : ServiceOperationBaseCommand
     {
@@ -1390,7 +1390,7 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                //Set the NoWait paramater to false since we are not adding this switch to this cmdlet.
+                //Set the NoWait parameter to false since we are not adding this switch to this cmdlet.
                 List<ServiceController> stoppedServices = DoStopService(serviceController, Force, true);
 
                 if (stoppedServices.Count > 0)
@@ -1415,7 +1415,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the set-service command
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "Service", SupportsShouldProcess = true, DefaultParameterSetName = "Name",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113399", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113399", RemotingCapability = RemotingCapability.SupportedByCommand)]
     [OutputType(typeof(ServiceController))]
     public class SetServiceCommand : ServiceOperationBaseCommand
     {
@@ -1809,7 +1809,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         if (PassThru.IsPresent)
                         {
-                            //to display the service,refreshing the service would not show the display name after updation
+                            //to display the service,refreshing the service would not show the display name after updating
                             ServiceController displayservice = new ServiceController(Name, ServiceComputerName);
                             WriteObject(displayservice);
                         }
@@ -1868,7 +1868,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the set-service command
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "Service", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113359")]
+    [Cmdlet(VerbsCommon.New, "Service", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113359")]
     [OutputType(typeof(ServiceController))]
     public class NewServiceCommand : ServiceBaseCommand
     {

@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// FormObjectColletion used in HtmlWebResponseObject
+    /// FormObjectCollection used in HtmlWebResponseObject
     /// </summary>
     public class FormObjectCollection : Collection<FormObject>
     {

@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// This cmdlet sets the provided scheduled job options to the provided ScheduledJobOptions objects.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "ScheduledJobOption", DefaultParameterSetName = ScheduledJobOptionCmdletBase.OptionsParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223921")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223921")]
     [OutputType(typeof(ScheduledJobOptions))]
     public class SetScheduledJobOptionCommand : ScheduledJobOptionCmdletBase
     {
@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         {
             // Update ScheduledJobOptions object with current parameters.
             // Update switch parameters only if they were selected.
-            // Also update the ScheduledJobDefintion object associated with this options object.
+            // Also update the ScheduledJobDefinition object associated with this options object.
             if (MyInvocation.BoundParameters.ContainsKey("StartIfOnBattery"))
             {
                 _jobOptions.StartIfOnBatteries = StartIfOnBattery;

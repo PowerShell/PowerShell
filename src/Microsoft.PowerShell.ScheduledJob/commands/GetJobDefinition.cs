@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// This cmdlet gets scheduled job definition objects from the local repository.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "ScheduledJob", DefaultParameterSetName = GetScheduledJobCommand.DefinitionIdParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223923")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223923")]
     [OutputType(typeof(ScheduledJobDefinition))]
     public sealed class GetScheduledJobCommand : ScheduleJobCmdletBase
     {
@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private const string DefinitionNameParameterSet = "DefinitionName";
 
         /// <summary>
-        /// ScheduledJobDefintion Id.
+        /// ScheduledJobDefinition Id.
         /// </summary>
         [Parameter(Position = 0, 
                    ParameterSetName = GetScheduledJobCommand.DefinitionIdParameterSet)]

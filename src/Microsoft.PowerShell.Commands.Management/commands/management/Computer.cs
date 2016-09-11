@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
     /// statistical summary when finished.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = RegularParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135266", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135266", RemotingCapability = RemotingCapability.OwnedByCommand)]
     [OutputType(typeof(Boolean))]
     [OutputType(@"System.Management.ManagementObject#root\cimv2\Win32_PingStatus")]
     public class TestConnectionCommand : PSCmdlet
@@ -668,7 +668,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Cmdlet for Enable-ComputerRestore
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Enable, "ComputerRestore", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135209")]
+    [Cmdlet(VerbsLifecycle.Enable, "ComputerRestore", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135209")]
     public sealed class EnableComputerRestoreCommand : PSCmdlet, IDisposable
     {
 #region Parameters
@@ -692,7 +692,7 @@ namespace Microsoft.PowerShell.Commands
         public void Dispose()
         {
             this.Dispose(true);
-            // Use SupressFinalize in case a subclass
+            // Use SuppressFinalize in case a subclass
             // of this type implements a finalizer.
             GC.SuppressFinalize(this);
         }
@@ -766,7 +766,7 @@ namespace Microsoft.PowerShell.Commands
                                 continue;
                             }
                             //parameter for Enable method
-                            //if the input drive is not sytem drive 
+                            //if the input drive is not system drive 
                             if (!driveNew.Equals(sysdrive, StringComparison.OrdinalIgnoreCase))
                             {
                                 object[] inputDrive = { driveNew };
@@ -779,7 +779,7 @@ namespace Microsoft.PowerShell.Commands
                                 }
                             }
                             //if not success and if it is not already enabled (error code is 1056 in XP) 
-                            // Error 1717 - The interface is unknown. Eventhough this comes sometimes . The Drive is getting enabled.
+                            // Error 1717 - The interface is unknown. Even though this comes sometimes . The Drive is getting enabled.
                             if (!(retValue.Equals(0)) && !(retValue.Equals(ComputerWMIHelper.ErrorCode_Service)) && !(retValue.Equals(ComputerWMIHelper.ErrorCode_Interface)))
                             {
                                 Exception Ex = new ArgumentException(StringUtil.Format(ComputerResources.NotEnabled, drive));
@@ -848,7 +848,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This cmdlet is to Disable Computer Restore points.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Disable, "ComputerRestore", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135207")]
+    [Cmdlet(VerbsLifecycle.Disable, "ComputerRestore", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135207")]
     public sealed class DisableComputerRestoreCommand : PSCmdlet, IDisposable
     {
 #region Parameters
@@ -873,7 +873,7 @@ namespace Microsoft.PowerShell.Commands
         public void Dispose()
         {
             this.Dispose(true);
-            // Use SupressFinalize in case a subclass
+            // Use SuppressFinalize in case a subclass
             // of this type implements a finalizer.
             GC.SuppressFinalize(this);
         }
@@ -940,7 +940,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         object[] input = { driveNew };
                         int retValue = Convert.ToInt32(WMIClass.InvokeMethod("Disable", input), System.Globalization.CultureInfo.CurrentCulture);
-                        // Error 1717 - The interface is unknown. Eventhough this comes sometimes . The Drive is getting disabled.
+                        // Error 1717 - The interface is unknown. Even though this comes sometimes . The Drive is getting disabled.
                         if (!(retValue.Equals(0)) && !(retValue.Equals(ComputerWMIHelper.ErrorCode_Interface)))
                         {
                             ErrorRecord er = new ErrorRecord(new ArgumentException(StringUtil.Format(ComputerResources.NotDisabled, drive)), null, ErrorCategory.InvalidOperation, null);
@@ -999,7 +999,7 @@ namespace Microsoft.PowerShell.Commands
     /// Creates the Restore Point for the Local computer 
     /// </summary>
 
-    [Cmdlet(VerbsData.Checkpoint, "Computer", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135197")]
+    [Cmdlet(VerbsData.Checkpoint, "Computer", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135197")]
     public class CheckpointComputerCommand : PSCmdlet, IDisposable
     {
 #region Parameters
@@ -1397,7 +1397,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This cmdlet is to Get Computer Restore points.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ComputerRestorePoint", DefaultParameterSetName = "ID", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135215")]
+    [Cmdlet(VerbsCommon.Get, "ComputerRestorePoint", DefaultParameterSetName = "ID", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135215")]
     [OutputType(@"System.Management.ManagementObject#root\default\SystemRestore")]
     public sealed class GetComputerRestorePointCommand : PSCmdlet, IDisposable
     {
@@ -1431,7 +1431,7 @@ namespace Microsoft.PowerShell.Commands
         public void Dispose()
         {
             this.Dispose(true);
-            // Use SupressFinalize in case a subclass
+            // Use SuppressFinalize in case a subclass
             // of this type implements a finalizer.
             GC.SuppressFinalize(this);
         }
@@ -1725,7 +1725,7 @@ namespace Microsoft.PowerShell.Commands
     /// Restarts  the computer 
     /// </summary>
     [Cmdlet(VerbsLifecycle.Restart, "Computer", SupportsShouldProcess = true, DefaultParameterSetName = DefaultParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135253", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135253", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class RestartComputerCommand : PSCmdlet, IDisposable
     {
 #region "Parameters and PrivateData"
@@ -2037,7 +2037,7 @@ $result
         public void Dispose()
         {
             this.Dispose(true);
-            // Use SupressFinalize in case a subclass
+            // Use SuppressFinalize in case a subclass
             // of this type implements a finalizer.
             GC.SuppressFinalize(this);
         }
@@ -2600,7 +2600,7 @@ $result
             }
             catch (PipelineStoppedException)
             {
-                // powershell.Stop() is invoked becaue timeout expires, or Ctrl+C is pressed
+                // powershell.Stop() is invoked because timeout expires, or Ctrl+C is pressed
             }
             catch (ObjectDisposedException)
             {
@@ -3188,7 +3188,7 @@ $result
     /// cmdlet to stop computer
     /// </summary>
     [Cmdlet(VerbsLifecycle.Stop, "Computer", SupportsShouldProcess = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135263", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135263", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public sealed class StopComputerCommand : PSCmdlet, IDisposable
     {
 #region Private Members
@@ -3612,7 +3612,7 @@ $result
     /// <summary>
     /// This cmdlet is to Restore Computer
     /// </summary>
-    [Cmdlet(VerbsData.Restore, "Computer", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135254")]
+    [Cmdlet(VerbsData.Restore, "Computer", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135254")]
     public sealed class RestoreComputerCommand : PSCmdlet, IDisposable
     {
 #region Parameters
@@ -3638,7 +3638,7 @@ $result
         public void Dispose()
         {
             this.Dispose(true);
-            // Use SupressFinalize in case a subclass
+            // Use SuppressFinalize in case a subclass
             // of this type implements a finalizer.
             GC.SuppressFinalize(this);
         }
@@ -3696,7 +3696,7 @@ $result
                         return;
                     }
                 }
-                //confrm with the user before restoring
+                //confirm with the user before restoring
                 string computerName = Environment.MachineName;
                 if (!ShouldProcess(computerName))
                 {
@@ -3817,7 +3817,7 @@ $result
         JoinReadOnly = 0x800,
 
         /// <summary>
-        /// Invoke during insatll
+        /// Invoke during install
         /// </summary>
         InstallInvoke = 0x40000
     }
@@ -3831,7 +3831,7 @@ $result
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1004AcceptForceParameterWhenCallingShouldContinue")]
     [Cmdlet(VerbsCommon.Add, "Computer", SupportsShouldProcess = true, DefaultParameterSetName = DomainParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135194", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135194", RemotingCapability = RemotingCapability.SupportedByCommand)]
     [OutputType(typeof(ComputerChangeInfo))]
     public class AddComputerCommand : PSCmdlet
     {
@@ -3868,7 +3868,7 @@ $result
         /// <summary>
         /// The domain credential.
         /// In DomainParameterSet, it is for the domain to join to.
-        /// In WorkgroupParameterSet, it is for the doamin to disjoin from.
+        /// In WorkgroupParameterSet, it is for the domain to disjoin from.
         /// </summary>
         [Parameter(ParameterSetName = DomainParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = WorkgroupParameterSet)]
@@ -3971,7 +3971,7 @@ $result
         /// In the DomainParameterSet, the UnjoinDomainCredential is our first choice to unjoin a domain.
         /// But if the UnjoinDomainCredential is not specified, the DomainCredential will be our second 
         /// choice. This is to keep the backward compatibility. In Win7, we can do:
-        ///      Add-Computer -DomianName domain1 -Credential $credForDomain1AndDomain2
+        ///      Add-Computer -DomainName domain1 -Credential $credForDomain1AndDomain2
         /// to switch the local machine that is currently in domain2 to domain1.
         /// 
         /// Since DomainCredential has an alias "Credential", the same command should still work for the
@@ -4628,7 +4628,7 @@ $result
     /// </summary>
 
     [Cmdlet(VerbsCommon.Remove, "Computer", SupportsShouldProcess = true, DefaultParameterSetName = LocalParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135246", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135246", RemotingCapability = RemotingCapability.SupportedByCommand)]
     [OutputType(typeof(ComputerChangeInfo))]
     public class RemoveComputerCommand : PSCmdlet
     {
@@ -4970,7 +4970,7 @@ $result
     /// </summary>
 
     [Cmdlet(VerbsCommon.Rename, "Computer", SupportsShouldProcess = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=219990", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=219990", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public class RenameComputerCommand : PSCmdlet
     {
 #region Private Members
@@ -5495,7 +5495,7 @@ $result
     /// rebuild the trust if specified.
     /// </summary>
 
-    [Cmdlet(VerbsDiagnostic.Test, "ComputerSecureChannel", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=137749")]
+    [Cmdlet(VerbsDiagnostic.Test, "ComputerSecureChannel", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=137749")]
     [OutputType(typeof(Boolean))]
     public class TestComputerSecureChannelCommand : PSCmdlet
     {
@@ -5716,7 +5716,7 @@ $result
     /// </summary>
 
     [Cmdlet("Reset", "ComputerMachinePassword",
-             SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135252")]
+             SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135252")]
     public class ResetComputerMachinePasswordCommand : PSCmdlet
     {
 #region "Parameter and PrivateData"
@@ -5893,7 +5893,7 @@ $result
                     ThrowOutLsaError(ret, cmdlet);
                 }
 
-                // Initialize sercret key, new secret
+                // Initialize secret key, new secret
                 SAMAPI.InitLsaString(SecretKey, ref key);
                 SAMAPI.InitLsaString(newPassword, ref newData);
                 bool secretCreated = false;
@@ -6250,7 +6250,7 @@ $result
         }
 
         /// <summary>
-        /// To Reset a passowrd for a computer in domain.
+        /// To Reset a password for a computer in domain.
         /// </summary>
         [DllImport("netapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern int I_NetLogonControl2(
@@ -6264,7 +6264,7 @@ $result
         [DllImport("Netapi32.dll", SetLastError = true)]
         internal static extern int NetApiBufferFree(IntPtr Buffer);
 
-        internal const int WorkrGroupMachine = 2692;
+        internal const int WorkGroupMachine = 2692;
         internal const int MaxMachineNameLength = 15;
     }
 
@@ -6281,7 +6281,7 @@ $result
         private const string MatchFormat = "{0}:{1}";
 
         /// <summary>
-        /// The HasSuceeded which shows the operation was success or not
+        /// The HasSucceeded which shows the operation was success or not
         /// </summary>
         public bool HasSucceeded { get; set; }
 
@@ -6580,7 +6580,7 @@ $result
         }
 
         /// <summary>
-        /// Chacks whether string[] contains System Drive.
+        /// Checks whether string[] contains System Drive.
         /// </summary>
         /// <param name="drives"></param>
         /// <param name="sysdrive"></param>

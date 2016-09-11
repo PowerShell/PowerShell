@@ -880,7 +880,7 @@ namespace System.Management.Automation.Host
 
         /// <summary>
         /// 
-        /// Gets and sets the bottom of the rectanngle
+        /// Gets and sets the bottom of the rectangle
         /// 
         /// </summary>
 
@@ -909,7 +909,7 @@ namespace System.Management.Automation.Host
         /// </param>
         /// <param name="bottom">
         /// 
-        /// The bottom of the rectanngle
+        /// The bottom of the rectangle
         /// 
         /// </param>
         /// <exception cref="ArgumentException">
@@ -2145,7 +2145,7 @@ namespace System.Management.Automation.Host
         /// equal to the largest number of cells a string in <paramref name="contents"/> takes. The
         /// foreground and background colors of the cells are initialized to
         /// <paramref name="foregroundColor"/> and <paramref name="backgroundColor"/>, respectively.
-        /// The resuling array is suitable for use with <see cref="PSHostRawUserInterface.SetBufferContents(Rectangle, BufferCell)"/>
+        /// The resulting array is suitable for use with <see cref="PSHostRawUserInterface.SetBufferContents(Rectangle, BufferCell)"/>
         /// and <see cref="PSHostRawUserInterface.SetBufferContents(Coordinates, BufferCell[,])"/>.
         /// 
         /// </remark>

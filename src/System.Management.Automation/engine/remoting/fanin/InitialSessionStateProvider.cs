@@ -332,7 +332,7 @@ namespace System.Management.Automation.Remoting
             {
             }
 
-            // if we are here, that means we are unble to load the type specified
+            // if we are here, that means we are unable to load the type specified
             // in the config xml.. notify the same.
             throw PSTraceSource.NewArgumentException("typeToLoad", RemotingErrorIdStrings.UnableToLoadType,
                     EndPointConfigurationTypeName, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
@@ -340,7 +340,7 @@ namespace System.Management.Automation.Remoting
     }
 
     /// <summary>
-    /// InitialSessionStateProvider is used by 3rd parties to provide shell configurtion
+    /// InitialSessionStateProvider is used by 3rd parties to provide shell configuration
     /// on the remote server.
     /// </summary>
     public abstract class PSSessionConfiguration : IDisposable
@@ -356,7 +356,7 @@ namespace System.Management.Automation.Remoting
         #region public interfaces
 
         /// <summary>
-        /// Derived classes must override this to supply an InitialSesionState
+        /// Derived classes must override this to supply an InitialSessionState
         /// to be used to construct a Runspace for the user
         /// </summary>
         /// <param name="senderInfo">
@@ -426,7 +426,7 @@ namespace System.Management.Automation.Remoting
         #region IDisposable Overrides
 
         /// <summary>
-        /// Disose this configuration object. This will be called when a Runspace/RunspacePool
+        /// Dispose this configuration object. This will be called when a Runspace/RunspacePool
         /// created using InitialSessionState from this object is Closed.
         /// </summary>
         public void Dispose()
@@ -587,7 +587,7 @@ namespace System.Management.Automation.Remoting
                 {
                 }
 
-                // if we are here, that means we are unble to load the type specified
+                // if we are here, that means we are unable to load the type specified
                 // in the config xml.. notify the same.
                 throw PSTraceSource.NewArgumentException("typeToLoad", RemotingErrorIdStrings.UnableToLoadType,
                         typeToLoad, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
@@ -601,7 +601,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Sets the application's current working directory to <paramref name="applicationBase"/> and 
         /// loads the assembly <paramref name="assemblyName"/>. Once the assembly is loaded, the application's
-        /// current working directory is set back to the orginal value.
+        /// current working directory is set back to the original value.
         /// </summary>
         /// <param name="applicationBase"></param>
         /// <param name="assemblyName"></param>
@@ -624,37 +624,37 @@ namespace System.Management.Automation.Remoting
                 }
                 catch (ArgumentException e)
                 {
-                    s_tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
+                    s_tracer.TraceWarning("Not able to change current working directory to {0}: {1}",
                         applicationBase, e.Message);
                 }
                 catch (PathTooLongException e)
                 {
-                    s_tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
+                    s_tracer.TraceWarning("Not able to change current working directory to {0}: {1}",
                            applicationBase, e.Message);
                 }
                 catch (FileNotFoundException e)
                 {
-                    s_tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
+                    s_tracer.TraceWarning("Not able to change current working directory to {0}: {1}",
                         applicationBase, e.Message);
                 }
                 catch (IOException e)
                 {
-                    s_tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
+                    s_tracer.TraceWarning("Not able to change current working directory to {0}: {1}",
                         applicationBase, e.Message);
                 }
                 catch (System.Security.SecurityException e)
                 {
-                    s_tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
+                    s_tracer.TraceWarning("Not able to change current working directory to {0}: {1}",
                            applicationBase, e.Message);
                 }
                 catch (UnauthorizedAccessException e)
                 {
-                    s_tracer.TraceWarning("Not able to change curent working directory to {0}: {1}",
+                    s_tracer.TraceWarning("Not able to change current working directory to {0}: {1}",
                         applicationBase, e.Message);
                 }
             }
 
-            // Even if there is erro changing current working directory..try to load the assembly
+            // Even if there is error changing current working directory..try to load the assembly
             // This is to allow assembly loading from GAC
             Assembly result = null;
             try
@@ -969,19 +969,19 @@ namespace System.Management.Automation.Remoting
             new ConfigTypeEntry(Copyright,                      new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
             new ConfigTypeEntry(Description,                    new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
             new ConfigTypeEntry(EnforceInputParameterValidation,new ConfigTypeEntry.TypeValidationCallback(BooleanTypeValidationCallback)),
-            new ConfigTypeEntry(EnvironmentVariables,           new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValiationCallback)),
+            new ConfigTypeEntry(EnvironmentVariables,           new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValidationCallback)),
             new ConfigTypeEntry(ExecutionPolicy,                new ConfigTypeEntry.TypeValidationCallback(ExecutionPolicyValidationCallback)),
             new ConfigTypeEntry(FormatsToProcess,               new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
             new ConfigTypeEntry(FunctionDefinitions,            new ConfigTypeEntry.TypeValidationCallback(FunctionDefinitionsTypeValidationCallback)),
             new ConfigTypeEntry(GMSAAccount,                    new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
             new ConfigTypeEntry(Guid,                           new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
-            new ConfigTypeEntry(LanguageMode,                   new ConfigTypeEntry.TypeValidationCallback(LanugageModeValidationCallback)),
+            new ConfigTypeEntry(LanguageMode,                   new ConfigTypeEntry.TypeValidationCallback(LanguageModeValidationCallback)),
             new ConfigTypeEntry(ModulesToImport,                new ConfigTypeEntry.TypeValidationCallback(StringOrHashtableArrayTypeValidationCallback)),
             new ConfigTypeEntry(MountUserDrive,                 new ConfigTypeEntry.TypeValidationCallback(BooleanTypeValidationCallback)),
             new ConfigTypeEntry(PowerShellVersion,              new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
-            new ConfigTypeEntry(RequiredGroups,                 new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValiationCallback)),
+            new ConfigTypeEntry(RequiredGroups,                 new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValidationCallback)),
             new ConfigTypeEntry(RoleCapabilities,               new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
-            new ConfigTypeEntry(RoleDefinitions,                new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValiationCallback)),
+            new ConfigTypeEntry(RoleDefinitions,                new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValidationCallback)),
             new ConfigTypeEntry(RunAsVirtualAccount,            new ConfigTypeEntry.TypeValidationCallback(BooleanTypeValidationCallback)),
             new ConfigTypeEntry(RunAsVirtualAccountGroups,      new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
             new ConfigTypeEntry(SchemaVersion,                  new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
@@ -1070,7 +1070,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
         /// <returns></returns>
-        private static bool LanugageModeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
+        private static bool LanguageModeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
             string value = obj as string;
 
@@ -1134,7 +1134,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
         /// <returns></returns>
-        private static bool HashtableTypeValiationCallback(string key, object obj, PSCmdlet cmdlet, string path)
+        private static bool HashtableTypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
             Hashtable hash = obj as Hashtable;
 
@@ -1935,10 +1935,10 @@ namespace System.Management.Automation.Remoting
             // Create the initial session state
             string initialSessionState = TryGetValue(_configHash, ConfigFileConstants.SessionType);
             SessionType sessionType = SessionType.Default;
-            bool cmdletVisibilityApplied = IsNonDefaultVisibiltySpecified(ConfigFileConstants.VisibleCmdlets);
-            bool functionVisiblityApplied = IsNonDefaultVisibiltySpecified(ConfigFileConstants.VisibleFunctions);
-            bool aliasVisibilityApplied = IsNonDefaultVisibiltySpecified(ConfigFileConstants.VisibleAliases);
-            bool providerVisibiltyApplied = IsNonDefaultVisibiltySpecified(ConfigFileConstants.VisibleProviders);
+            bool cmdletVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleCmdlets);
+            bool functionVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleFunctions);
+            bool aliasVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleAliases);
+            bool providerVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleProviders);
             bool processDefaultSessionStateVisibility = false;
 
             if (!String.IsNullOrEmpty(initialSessionState))
@@ -1965,8 +1965,8 @@ namespace System.Management.Automation.Remoting
                 processDefaultSessionStateVisibility = true;
             }
 
-            if (cmdletVisibilityApplied || functionVisiblityApplied || aliasVisibilityApplied || providerVisibiltyApplied ||
-                IsNonDefaultVisibiltySpecified(ConfigFileConstants.VisibleExternalCommands))
+            if (cmdletVisibilityApplied || functionVisibilityApplied || aliasVisibilityApplied || providerVisibilityApplied ||
+                IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleExternalCommands))
             {
                 iss.DefaultCommandVisibility = SessionStateEntryVisibility.Private;
 
@@ -1982,7 +1982,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // Add providers
-            if (providerVisibiltyApplied)
+            if (providerVisibilityApplied)
             {
                 string[] providers = TryGetStringArray(_configHash[ConfigFileConstants.VisibleProviders]);
 
@@ -2068,7 +2068,7 @@ namespace System.Management.Automation.Remoting
                                     // Win8: 627752 Cannot load microsoft.powershell.core module as part of DISC
                                     // Convert Microsoft.PowerShell.Core module -> Microsoft.PowerShell.Core snapin.
                                     // Doing this Import only in SessionType.Empty case, because other cases already do this.
-                                    // In V3, Micorosft.PowerShell.Core module is not installed externally.
+                                    // In V3, Microsoft.PowerShell.Core module is not installed externally.
                                     iss.ImportCorePSSnapIn();
                                 }
                                 // silently ignore Microsoft.PowerShell.Core for other cases ie., SessionType.RestrictedRemoteServer && SessionType.Default
@@ -2167,7 +2167,7 @@ namespace System.Management.Automation.Remoting
                 {
                     foreach (Hashtable function in functions)
                     {
-                        SessionStateFunctionEntry entry = CreateSessionStateFunctionEntry(function, functionVisiblityApplied);
+                        SessionStateFunctionEntry entry = CreateSessionStateFunctionEntry(function, functionVisibilityApplied);
 
                         if (entry != null)
                         {
@@ -2316,8 +2316,8 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            // Now apply visibilty logic
-            if (cmdletVisibilityApplied || functionVisiblityApplied || aliasVisibilityApplied || providerVisibiltyApplied)
+            // Now apply visibility logic
+            if (cmdletVisibilityApplied || functionVisibilityApplied || aliasVisibilityApplied || providerVisibilityApplied)
             {
                 if (sessionType == SessionType.Default)
                 {
@@ -2723,7 +2723,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="configFileKey"></param>
         /// <returns></returns>
-        private bool IsNonDefaultVisibiltySpecified(string configFileKey)
+        private bool IsNonDefaultVisibilitySpecified(string configFileKey)
         {
             if (_configHash.ContainsKey(configFileKey))
             {
@@ -2758,7 +2758,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Attempts to get a hastable array from an object
+        /// Attempts to get a hashtable array from an object
         /// </summary>
         /// <param name="hashObj"></param>
         /// <returns></returns>
@@ -2802,7 +2802,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Attemps to get a string array from a hashtable
+        /// Attempts to get a string array from a hashtable
         /// </summary>
         /// <param name="hashObj"></param>
         /// <returns></returns>

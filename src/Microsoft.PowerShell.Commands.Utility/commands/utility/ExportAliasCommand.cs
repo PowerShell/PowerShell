@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
     /// The implementation of the "export-alias" cmdlet
     /// </summary>
     /// 
-    [Cmdlet(VerbsData.Export, "Alias", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113296")]
+    [Cmdlet(VerbsData.Export, "Alias", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113296")]
     [OutputType(typeof(AliasInfo))]
     public class ExportAliasCommand : PSCmdlet
     {

@@ -18,14 +18,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// <para>
     /// Enables the user to enumerate the list of CIM Classes under a specific 
     /// Namespace. If no list of classes is given, the Cmdlet returns all
-    /// classes in the given namespce.
+    /// classes in the given namespace.
     /// </para>
     /// <para>
     /// NOTES: The class instance contains the  Namespace properties
     /// Should the class remember what Session it came from? No.
     /// </para>
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, GetCimClassCommand.Noun, DefaultParameterSetName = ComputerSetName, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227959")]
+    [Cmdlet(VerbsCommon.Get, GetCimClassCommand.Noun, DefaultParameterSetName = ComputerSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227959")]
     [OutputType(typeof(CimClass))]
     public class GetCimClassCommand : CimBaseCommand
     {

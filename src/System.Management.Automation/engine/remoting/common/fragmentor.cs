@@ -17,7 +17,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This class is used to hold a fragment of remoting PSObject for transporting to remote computer.
     /// 
-    /// A large remoting PSObject will be broken into fragments. Each fragment has a ObjectId and a FragementId.
+    /// A large remoting PSObject will be broken into fragments. Each fragment has a ObjectId and a FragmentId.
     /// The first fragment has a StartFragment marker. The last fragment also an EndFragment marker. 
     /// These fragments can be reassembled on the receiving
     /// end by sequencing the fragment ids.
@@ -271,7 +271,7 @@ namespace System.Management.Automation.Remoting
         /// If fragmentBytes is null.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// If startIndex is negative or fragmentBytes is not large enought to hold the entire header of
+        /// If startIndex is negative or fragmentBytes is not large enough to hold the entire header of
         /// a binary encoded FragmentedRemoteObject.
         /// </exception>
         internal static long GetObjectId(byte[] fragmentBytes, int startIndex)
@@ -305,7 +305,7 @@ namespace System.Management.Automation.Remoting
         /// If fragmentBytes is null.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// If startIndex is negative or fragmentBytes is not large enought to hold the entire header of
+        /// If startIndex is negative or fragmentBytes is not large enough to hold the entire header of
         /// a binary encoded FragmentedRemoteObject.
         /// </exception>
         internal static long GetFragmentId(byte[] fragmentBytes, int startIndex)
@@ -340,7 +340,7 @@ namespace System.Management.Automation.Remoting
         /// If fragmentBytes is null.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// If startIndex is negative or fragmentBytes is not large enought to hold the entire header of
+        /// If startIndex is negative or fragmentBytes is not large enough to hold the entire header of
         /// a binary encoded FragmentedRemoteObject.
         /// </exception>
         internal static bool GetIsStartFragment(byte[] fragmentBytes, int startIndex)
@@ -369,7 +369,7 @@ namespace System.Management.Automation.Remoting
         /// If fragmentBytes is null.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// If startIndex is negative or fragmentBytes is not large enought to hold the entire header of
+        /// If startIndex is negative or fragmentBytes is not large enough to hold the entire header of
         /// a binary encoded FragmentedRemoteObject.
         /// </exception>
         internal static bool GetIsEndFragment(byte[] fragmentBytes, int startIndex)
@@ -398,7 +398,7 @@ namespace System.Management.Automation.Remoting
         /// If fragmentBytes is null.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// If startIndex is negative or fragmentBytes is not large enought to hold the entire header of
+        /// If startIndex is negative or fragmentBytes is not large enough to hold the entire header of
         /// a binary encoded FragmentedRemoteObject.
         /// </exception>
         internal static int GetBlobLength(byte[] fragmentBytes, int startIndex)
@@ -613,7 +613,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Returns a byte[] which holds data of fragment size (or) serialized data of
         /// one object, which ever is greater. If data is not currently available, then
-        /// the callback is registerd and called whenever the data is available.
+        /// the callback is registered and called whenever the data is available.
         /// </summary>
         /// <param name="callback">
         /// callback to call once the data becomes available.
@@ -955,7 +955,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This class performs the fragmentation as well as defragmentation operations of large objects to be sent 
     /// to the other side. A large remoting PSObject will be broken into fragments. Each fragment has a ObjectId 
-    /// and a FragementId. The last fragment also has an end of fragment marker. These fragments can be reassembled 
+    /// and a FragmentId. The last fragment also has an end of fragment marker. These fragments can be reassembled 
     /// on the receiving end by sequencing the fragment ids.
     /// </summary>
     internal class Fragmentor
@@ -1005,7 +1005,7 @@ namespace System.Management.Automation.Remoting
         /// The object to be fragmented. Caller should make sure this is not null.
         /// </param>
         /// <param name="dataToBeSent">
-        /// Caller specified dataToStore to which the fragements are added 
+        /// Caller specified dataToStore to which the fragments are added 
         /// one-by-one
         /// </param>
         internal void Fragment<T>(RemoteDataObject<T> obj, SerializedDataStream dataToBeSent)
@@ -1098,7 +1098,7 @@ namespace System.Management.Automation.Remoting
         internal PSObject DeserializeToPSObject(Stream serializedDataStream)
         {
             Dbg.Assert(null != serializedDataStream, "Cannot Deserialize null data");
-            Dbg.Assert(serializedDataStream.Length != 0, "Cannot Deserialze empty data");
+            Dbg.Assert(serializedDataStream.Length != 0, "Cannot Deserialize empty data");
 
             object result = null;
             using (XmlReader xmlReader = XmlReader.Create(serializedDataStream, InternalDeserializer.XmlReaderSettingsForCliXml))

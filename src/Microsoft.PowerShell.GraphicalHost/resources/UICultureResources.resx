@@ -126,7 +126,7 @@
   </data>
   <data name="ErrorTextBoxTypeConversionErrorText" xml:space="preserve">
     <value>Value should be of Type {0}.</value>
-    <comment>This text reperesent the error which will be shown when the enterd type does not match the type we are expecting. {0} is the expected type.</comment>
+    <comment>This text represents the error which will be shown when the entered type does not match the type we are expecting. {0} is the expected type.</comment>
   </data>
   <data name="ValidatingSelectorValueOutOfBounds" xml:space="preserve">
     <value>The current selection is empty.</value>

@@ -36,7 +36,7 @@ function Compress-Archive
     [CmdletBinding(
     DefaultParameterSetName="Path", 
     SupportsShouldProcess=$true,
-    HelpUri="http://go.microsoft.com/fwlink/?LinkID=393252")]
+    HelpUri="https://go.microsoft.com/fwlink/?LinkID=393252")]
     param 
     (
         [parameter (mandatory=$true, Position=0, ParameterSetName="Path", ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
@@ -105,7 +105,7 @@ function Compress-Archive
         IsValidFileSystemPath $destinationParentDir | Out-Null
         $DestinationPath = Join-Path -Path $destinationParentDir -ChildPath $achiveFileName
 
-        # GetExtension API does not validate for the actual existance of the path.
+        # GetExtension API does not validate for the actual existence of the path.
         $extension = [system.IO.Path]::GetExtension($DestinationPath)
 
         # If user does not specify .Zip extension, we append it.
@@ -175,15 +175,15 @@ function Compress-Archive
     END 
     {
         # If archive file already exists and if -Force is specified, we delete the 
-        # existing artchive file and create a brand new one.
+        # existing archive file and create a brand new one.
         if(($PsCmdlet.ParameterSetName -eq "PathWithForce" -or 
         $PsCmdlet.ParameterSetName -eq "LiteralPathWithForce") -and $archiveFileExist)
         {
             Remove-Item -Path $DestinationPath -Force -ErrorAction Stop
         }
 
-        # Validate Source Path depeding on parameter set being used.
-        # The specified source path conatins one or more files or directories that needs
+        # Validate Source Path depending on parameter set being used.
+        # The specified source path contains one or more files or directories that needs
         # to be compressed.
         $isLiteralPathUsed = $false
         if($PsCmdlet.ParameterSetName -eq "LiteralPath" -or 
@@ -199,16 +199,16 @@ function Compress-Archive
     
         $sourcePath = $resolvedPaths;
 
-        # CSVHelper: This is a helper function used to append comma after each path specifid by
-        # the $sourcePath array. The comma saperated paths are displayed in the -WhatIf message.
+        # CSVHelper: This is a helper function used to append comma after each path specified by
+        # the $sourcePath array. The comma separated paths are displayed in the -WhatIf message.
         $sourcePathInCsvFormat = CSVHelper $sourcePath
         if($pscmdlet.ShouldProcess($sourcePathInCsvFormat))
         {
             try
             {
-                # StopProcessing is not avaliable in Script cmdlets. However the pipleline execution
+                # StopProcessing is not available in Script cmdlets. However the pipeline execution
                 # is terminated when ever 'CTRL + C' is entered by user to terminate the cmdlet execution.
-                # The finally block is executed whenever pipleline is terminated. 
+                # The finally block is executed whenever pipeline is terminated. 
                 # $isArchiveFileProcessingComplete variable is used to track if 'CTRL + C' is entered by the
                 # user. 
                 $isArchiveFileProcessingComplete = $false
@@ -222,7 +222,7 @@ function Compress-Archive
                 # The $isArchiveFileProcessingComplete would be set to $false if user has typed 'CTRL + C' to 
                 # terminate the cmdlet execution or if an unhandled exception is thrown.
                 # $numberOfItemsArchived contains the count of number of files or directories add to the archive file.
-                # If the newly created archive file is empty then we delete it as its not usable.
+                # If the newly created archive file is empty then we delete it as it's not usable.
                 if(($isArchiveFileProcessingComplete -eq $false) -or 
                 ($numberOfItemsArchived -eq 0))
                 {
@@ -247,7 +247,7 @@ function Expand-Archive
     [CmdletBinding(
     DefaultParameterSetName="Path", 
     SupportsShouldProcess=$true,
-    HelpUri="http://go.microsoft.com/fwlink/?LinkID=393253")]    
+    HelpUri="https://go.microsoft.com/fwlink/?LinkID=393253")]    
     param 
     (
         [parameter (
@@ -370,9 +370,9 @@ function Expand-Archive
 
             try
             {
-                # StopProcessing is not avaliable in Script cmdlets. However the pipleline execution
+                # StopProcessing is not available in Script cmdlets. However the pipeline execution
                 # is terminated when ever 'CTRL + C' is entered by user to terminate the cmdlet execution.
-                # The finally block is executed whenever pipleline is terminated. 
+                # The finally block is executed whenever pipeline is terminated. 
                 # $isArchiveFileProcessingComplete variable is used to track if 'CTRL + C' is entered by the
                 # user. 
                 $isArchiveFileProcessingComplete = $false
@@ -406,7 +406,7 @@ function Expand-Archive
                     if($expandedItems.Count -gt 0)
                     {
                         # delete the expanded file/directory as the archive 
-                        # file was not completly expanded.
+                        # file was not completely expanded.
                         $expandedItems | % { Remove-Item $_ -Force -Recurse }
                     }
                 }
@@ -572,7 +572,7 @@ function CompressArchiveHelper
         }
     }
 
-    # The Soure Path contains one or more directory (this directory can have files under it) and no files to be compressed.
+    # The Source Path contains one or more directory (this directory can have files under it) and no files to be compressed.
     if($sourceFilePaths.Count -eq 0 -and $sourceDirPaths.Count -gt 0)
     {
         $currentSegmentWeight = 100/[double]$sourceDirPaths.Count
@@ -585,7 +585,7 @@ function CompressArchiveHelper
         }
     }
 
-    # The Soure Path contains only files to be compressed.
+    # The Source Path contains only files to be compressed.
     elseIf($sourceFilePaths.Count -gt 0 -and $sourceDirPaths.Count -eq 0)
     {
         # $previousSegmentWeight is equal to 0 as there are no prior segments.
@@ -595,10 +595,10 @@ function CompressArchiveHelper
 
         $numberOfItemsArchived = CompressFilesHelper $sourceFilePaths $destinationPath $compressionLevel $isUpdateMode $previousSegmentWeight $currentSegmentWeight
     }
-    # The Soure Path contains one or more files and one or more directories (this directory can have files under it) to be compressed.
+    # The Source Path contains one or more files and one or more directories (this directory can have files under it) to be compressed.
     elseif($sourceFilePaths.Count -gt 0 -and $sourceDirPaths.Count -gt 0)
     {
-        # each directory is considered as an individual segments & all the individual files are clubed in to a separate sgemnet.
+        # each directory is considered as an individual segments & all the individual files are clubed in to a separate segment.
         $currentSegmentWeight = 100/[double]($sourceDirPaths.Count +1)
         $previousSegmentWeight = 0
 
@@ -683,7 +683,7 @@ function CompressSingleDirHelper
         {
             # The currentContent points to a directory.
             # We need to check if the directory is an empty directory, if so such a
-            # directory has to be explictly added to the archive file.
+            # directory has to be explicitly added to the archive file.
             # if there are no files in the directory the GetFiles() API returns an empty array.
             $files = $currentContent.GetFiles()
             if($files.Count -eq 0)
@@ -778,7 +778,7 @@ function ZipArchiveHelper
             $compression = CompressionLevelMapper $compressionLevel
 
             # If a directory needs to be added to an archive file, 
-            # by convention the .Net API's expect the path of the diretcory 
+            # by convention the .Net API's expect the path of the directory 
             # to end with '\' to detect the path as an directory.
             if(!$relativeFilePath.EndsWith(([io.path]::DirectorySeparatorChar), [StringComparison]::OrdinalIgnoreCase))
             {
@@ -890,7 +890,7 @@ function ValidateArchivePathHelper
     {
         $extension = [system.IO.Path]::GetExtension($archiveFile)
 
-        # Invalid file extension is specifed for the zip file.
+        # Invalid file extension is specified for the zip file.
         if($extension -ne $zipFileExtension)
         {
             $errorMessage = ($LocalizedData.InvalidZipFileExtensionError -f $extension, $zipFileExtension)
@@ -924,7 +924,7 @@ function ExpandArchiveHelper
 
     try
     {
-        # The existance of archive file has already been validated by ValidateArchivePathHelper 
+        # The existence of archive file has already been validated by ValidateArchivePathHelper 
         # before calling this helper function.
         $archiveFileStreamArgs = @($archiveFile, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read)
         $archiveFileStream = New-Object -TypeName System.IO.FileStream -ArgumentList $archiveFileStreamArgs
@@ -956,7 +956,7 @@ function ExpandArchiveHelper
                 $pathExists = Test-Path -LiteralPath $currentArchiveEntryPath
 
                 # The current archive entry expects an empty directory.
-                # Check if the existing directory is empty. If its not empty
+                # Check if the existing directory is empty. If it's not empty
                 # then it means that user has added this directory by other means.
                 if($pathExists -eq $false)
                 {
@@ -986,7 +986,7 @@ function ExpandArchiveHelper
                         if(!(Test-Path -LiteralPath $currentArchiveEntryFileInfo.DirectoryName -PathType Container))
                         {
                             # The directory referred by $currentArchiveEntryFileInfo.DirectoryName was not successfully created.
-                            # This could be because the user has specified -Confirm paramter when Expand-Archive was invoked
+                            # This could be because the user has specified -Confirm parameter when Expand-Archive was invoked
                             # and authorization was not provided when confirmation was prompted. In such a scenario, 
                             # we skip the current file in the archive and continue with the remaining archive file contents.
                             Continue
@@ -1012,7 +1012,7 @@ function ExpandArchiveHelper
                             if(Test-Path -LiteralPath $currentArchiveEntryFileInfo.FullName -PathType Leaf)
                             {
                                 # The file referred by $currentArchiveEntryFileInfo.FullName was not successfully removed.
-                                # This could be because the user has specified -Confirm paramter when Expand-Archive was invoked
+                                # This could be because the user has specified -Confirm parameter when Expand-Archive was invoked
                                 # and authorization was not provided when confirmation was prompted. In such a scenario, 
                                 # we skip the current file in the archive and continue with the remaining archive file contents.
                                 Continue
@@ -1111,7 +1111,7 @@ function ProgressBarHelper
 }
 
 <############################################################################################ 
-# CSVHelper: This is a helper function used to append comma after each path specifid by
+# CSVHelper: This is a helper function used to append comma after each path specified by
 # the SourcePath array. This helper function is used to display all the user supplied paths
 # in the WhatIf message.
 ############################################################################################>
@@ -1122,7 +1122,7 @@ function CSVHelper
         [string[]] $sourcePath
     )
 
-    # SourcePath has already been validated by the calling funcation.
+    # SourcePath has already been validated by the calling function.
     if($sourcePath.Count -gt 1)
     {
         $sourcePathInCsvFormat = "`n"

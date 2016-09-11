@@ -420,10 +420,10 @@ namespace System.Management.Automation
             do
             {
                 // Use 'for' loop to avoid construct new ArrayEnumerator object
-                for (int constorIndex = 0; constorIndex < constructors.Length; constorIndex++)
+                for (int constructorIndex = 0; constructorIndex < constructors.Length; constructorIndex++)
                 {
-                    var constor = constructors[constorIndex];
-                    ParameterInfo[] parameters = constor.GetParameters();
+                    var constructor = constructors[constructorIndex];
+                    ParameterInfo[] parameters = constructor.GetParameters();
                     if (types.Length == parameters.Length)
                     {
                         bool success = true;
@@ -438,7 +438,7 @@ namespace System.Management.Automation
 
                         if (success)
                         {
-                            matchConstructors.Add(constor);
+                            matchConstructors.Add(constructor);
                         }
                     }
                 }
@@ -1032,7 +1032,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// The API set 'api-ms-win-shell-shellfolders-l1-1-0.dll' was removed from NanoServer, so we cannot depend on 'SHGetFolderPathW'
-        /// to get the special folder paths. Instead, we need to rely on the baisc environment variables to get the special folder paths.
+        /// to get the special folder paths. Instead, we need to rely on the basic environment variables to get the special folder paths.
         /// </summary>
         /// <returns>
         /// The path to the specified system special folder, if that folder physically exists on your computer.
@@ -1110,7 +1110,7 @@ namespace System.Management.Automation
                     break;
                 case SpecialFolder.LocalApplicationData:
                     folderPath = System.Environment.GetEnvironmentVariable("LOCALAPPDATA");
-                    // When powershell gets executed in SetupComplete.cmd during NanoSrever's first boot, 'LOCALAPPDATA' won't be set yet.
+                    // When powershell gets executed in SetupComplete.cmd during NanoServer's first boot, 'LOCALAPPDATA' won't be set yet.
                     // In this case, we need to return an alternate path, so that module auto-loading can continue to work properly.
                     if (folderPath == null)
                     {
@@ -1227,12 +1227,12 @@ namespace System.Management.Automation
             // Win32 return type is BOOLEAN (which is 1 byte and not BOOL which is 4bytes)
             internal static extern byte GetUserNameEx(int format, [Out] StringBuilder domainName, ref uint domainNameLen);
 
-            [DllImport("api-ms-win-core-localization-l1-2-1.dll", CharSet = CharSet.Unicode)]
+            [DllImport(PinvokeDllNames.FormatMessageDllName, CharSet = CharSet.Unicode)]
             internal static extern int FormatMessage(int dwFlags, IntPtr lpSource, int dwMessageId,
                                                      int dwLanguageId, [Out]StringBuilder lpBuffer,
                                                      int nSize, IntPtr va_list_arguments);
 
-            [DllImport("api-ms-win-core-sysinfo-l1-2-1.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+            [DllImport(PinvokeDllNames.GetVersionExDllName, CharSet = CharSet.Unicode, SetLastError = true)]
             internal static extern bool GetVersionEx(ref OSVERSIONINFOEX osVerEx);
 
             [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]

@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class for Tee-object implementation
     /// </summary>
-    [Cmdlet("Tee", "Object", DefaultParameterSetName = "File", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113417")]
+    [Cmdlet("Tee", "Object", DefaultParameterSetName = "File", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113417")]
     public sealed class TeeObjectCommand : PSCmdlet, IDisposable
     {
         /// <summary>
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Dispose method in IDisposeable
+        /// Dispose method in IDisposable
         /// </summary>
         public void Dispose()
         {

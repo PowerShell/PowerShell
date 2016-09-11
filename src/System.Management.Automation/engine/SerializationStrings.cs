@@ -34,7 +34,7 @@ namespace System.Management.Automation
         /// </summary>
         internal const string TypeNamesTag = "TN";
         /// <summary>
-        /// Tag for type item in typeanmes
+        /// Tag for type item in typenames
         /// </summary>
         internal const string TypeNamesItemTag = "T";
         /// <summary>
@@ -77,12 +77,12 @@ namespace System.Management.Automation
         internal const string DictionaryEntryTag = "En";
 
         /// <summary>
-        /// Value of name attribute for dictionary key part in dictnary entry
+        /// Value of name attribute for dictionary key part in dictionary entry
         /// </summary>
         internal const string DictionaryKey = "Key";
 
         /// <summary>
-        /// Value of name attribute for dictionary value part in dictnary entry
+        /// Value of name attribute for dictionary value part in dictionary entry
         /// </summary>
         internal const string DictionaryValue = "Value";
 

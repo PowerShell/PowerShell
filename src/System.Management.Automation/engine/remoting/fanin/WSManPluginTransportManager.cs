@@ -105,9 +105,9 @@ namespace System.Management.Automation.Remoting
             {
                 RaiseClosingEvent();
 
-                foreach (var cmdTrsprtKvp in _activeCmdTransportManagers)
+                foreach (var cmdTransportKvp in _activeCmdTransportManagers)
                 {
-                    cmdTrsprtKvp.Value.Close(reasonForClose);
+                    cmdTransportKvp.Value.Close(reasonForClose);
                 }
                 _activeCmdTransportManagers.Clear();
 
@@ -391,7 +391,7 @@ namespace System.Management.Automation.Remoting
         private WSManPluginServerTransportManager _serverTransportMgr;
         private System.Guid _cmdId;
 
-        // Create Cmd Transport Manager for this sessn trnsprt manager
+        // Create Cmd Transport Manager for this sessn transport manager
         internal WSManPluginCommandTransportManager(WSManPluginServerTransportManager srvrTransportMgr)
             : base(srvrTransportMgr.Fragmentor.FragmentSize, srvrTransportMgr.CryptoHelper)
         {

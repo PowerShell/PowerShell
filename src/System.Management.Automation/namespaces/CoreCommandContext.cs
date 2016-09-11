@@ -15,7 +15,7 @@ namespace System.Management.Automation
     /// This allows the providers to be called in a variety of situations.
     /// The most common will be from the core cmdlets themselves but they
     /// can also be called programmatically either by having the results
-    /// accumulated or by providing delgates for the various streams.
+    /// accumulated or by providing delegates for the various streams.
     /// 
     /// NOTE:  USER Feedback mechanism are only enabled for the CoreCmdlet
     /// case.  This is because we have not seen a use-case for them in the

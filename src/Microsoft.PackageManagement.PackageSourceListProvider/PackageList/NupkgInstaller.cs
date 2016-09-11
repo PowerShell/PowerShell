@@ -154,7 +154,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                     var provider = request.PackageManagementService.GetAvailableProviders(request, new[] {"NuGet"}).FirstOrDefault();
                     if (provider != null)
                     {                      
-                        var donwloadrequest = PackageSourceListRequest.ExtendRequest(
+                        var downloadrequest = PackageSourceListRequest.ExtendRequest(
                             new Dictionary<string, string[]>
                             {
                                 {"Destination", new[] {package.Destination ?? ""}}
@@ -163,7 +163,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                             package.IsTrustedSource, 
                             request);
 
-                        var downloading = provider.DownloadPackage(pkgs[0], location, donwloadrequest);
+                        var downloading = provider.DownloadPackage(pkgs[0], location, downloadrequest);
 
                         foreach (var i in downloading)
                         {

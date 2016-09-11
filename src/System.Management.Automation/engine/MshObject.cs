@@ -206,7 +206,7 @@ namespace System.Management.Automation
         private static Collection<CollectionEntry<PSPropertyInfo>> s_propertyCollection = GetPropertyCollection(PSMemberViewTypes.All);
 
         /// <summary>
-        /// A collection of delegates to get Extended/Adapated/Dotnet members based on the 
+        /// A collection of delegates to get Extended/Adapted/Dotnet members based on the 
         /// <paramref name="viewType"/>
         /// </summary>
         /// <param name="viewType">
@@ -219,7 +219,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// A collection of delegates to get Extended/Adapated/Dotnet members based on the 
+        /// A collection of delegates to get Extended/Adapted/Dotnet members based on the 
         /// <paramref name="viewType"/>
         /// </summary>
         /// <param name="viewType">
@@ -293,7 +293,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// A collection of delegates to get Extended/Adapated/Dotnet properties based on the 
+        /// A collection of delegates to get Extended/Adapted/Dotnet properties based on the 
         /// <paramref name="viewType"/>
         /// </summary>
         /// <param name="viewType">
@@ -307,7 +307,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// A collection of delegates to get Extended/Adapated/Dotnet properties based on the 
+        /// A collection of delegates to get Extended/Adapted/Dotnet properties based on the 
         /// <paramref name="viewType"/>
         /// </summary>
         /// <param name="viewType">
@@ -632,7 +632,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is the adapter set that will contain the adapter of the baseObject 
-        /// and the ultimate .net member lookup adater.
+        /// and the ultimate .net member lookup adapter.
         /// See <see cref="PSObject.AdapterSet"/> for explanation.
         /// </summary>
         private AdapterSet InternalAdapterSet
@@ -1207,7 +1207,7 @@ namespace System.Management.Automation
         /// enumerating and if that fails we call obj.ToString.
         /// If this is an PSObject, we look for a brokered ToString. 
         /// If it is not present, and the BaseObject is null we try listing the properties.
-        /// If the BaseObject is not null we try enumerationg. If that fails we try the BaseObject's ToString.
+        /// If the BaseObject is not null we try enumerating. If that fails we try the BaseObject's ToString.
         /// </param>
         /// <returns>A string representation of the object</returns>
         /// <exception cref="ExtendedTypeSystemException">
@@ -1239,7 +1239,7 @@ namespace System.Management.Automation
         /// enumerating and if that fails we call obj.ToString.
         /// If this is an PSObject, we look for a brokered ToString. 
         /// If it is not present, and the BaseObject is null we try listing the properties.
-        /// If the BaseObject is not null we try enumerationg. If that fails we try the BaseObject's ToString.
+        /// If the BaseObject is not null we try enumerating. If that fails we try the BaseObject's ToString.
         /// </param>
         /// <param name="separator">The separator between elements, if this is an enumeration</param>
         /// <param name="format">the format to be passed to ToString</param>
@@ -1521,8 +1521,8 @@ namespace System.Management.Automation
         /// CodeMethod or ScriptMethod will be used, if available. Enumerations items are
         /// concatenated using $ofs.
         /// </summary>
-        /// <param name="format">repassed to baseObject's IFormatable if present</param>
-        /// <param name="formatProvider">repassed to baseObject's IFormatable if present</param>
+        /// <param name="format">repassed to baseObject's IFormattable if present</param>
+        /// <param name="formatProvider">repassed to baseObject's IFormattable if present</param>
         /// <returns>the string representation for baseObject</returns>
         /// <exception cref="ExtendedTypeSystemException">if an exception was thrown by the BaseObject's ToString</exception>
         public string ToString(string format, IFormatProvider formatProvider)
@@ -1648,11 +1648,11 @@ namespace System.Management.Automation
         ///     Greater than zero This instance is greater than obj.
         /// </returns>
         /// <exception cref="ExtendedTypeSystemException"> If <paramref name="obj"/> has a different type
-        /// than this intance's BaseObject or if the BaseObject does not implement IComparable.
+        /// than this instance's BaseObject or if the BaseObject does not implement IComparable.
         /// </exception>
         public int CompareTo(object obj)
         {
-            // This ReferenceEqulas is not just an optimization. 
+            // This ReferenceEquals is not just an optimization. 
             // It is necessary so that mshObject.Equals(mshObject) returns 0. 
             // Please see the comments inside the Equals implementation.
             if (Object.ReferenceEquals(this, obj))
@@ -1691,7 +1691,7 @@ namespace System.Management.Automation
             }
 
             // The above check validates if we are comparing with the same object references
-            // This check "shortcuts" the comparision if the first object is a CustomObject
+            // This check "shortcuts" the comparison if the first object is a CustomObject
             // since 2 custom objects are not equal.
             if (Object.ReferenceEquals(this.BaseObject, PSCustomObject.SelfInstance))
             {
@@ -1748,7 +1748,7 @@ namespace System.Management.Automation
         /// The name of the member set for adapted members
         /// </summary>
         /// <remarks>
-        /// This needs to be Lower cased as it saves some comparision time elsewhere.
+        /// This needs to be Lower cased as it saves some comparison time elsewhere.
         /// </remarks>
         public const string AdaptedMemberSetName = "psadapted";
 
@@ -1756,7 +1756,7 @@ namespace System.Management.Automation
         /// The name of the member set for extended members
         /// </summary>
         /// <remarks>
-        /// This needs to be Lower cased as it saves some comparision time elsewhere.
+        /// This needs to be Lower cased as it saves some comparison time elsewhere.
         /// </remarks>
         public const string ExtendedMemberSetName = "psextended";
 
@@ -1764,7 +1764,7 @@ namespace System.Management.Automation
         /// The name of the member set for the BaseObject's members
         /// </summary>
         /// <remarks>
-        /// This needs to be Lower cased as it saves some comparision time elsewhere.
+        /// This needs to be Lower cased as it saves some comparison time elsewhere.
         /// </remarks>
         public const string BaseObjectMemberSetName = "psbase";
 
@@ -1773,7 +1773,7 @@ namespace System.Management.Automation
         /// The PSObject's properties
         /// </summary>
         /// <remarks>
-        /// This needs to be Lower cased as it saves some comparision time elsewhere.
+        /// This needs to be Lower cased as it saves some comparison time elsewhere.
         /// </remarks>
         internal const string PSObjectMemberSetName = "psobject";
 
@@ -1781,7 +1781,7 @@ namespace System.Management.Automation
         /// a shortcut to .PSObject.TypeNames
         /// </summary>
         /// <remarks>
-        /// This needs to be Lower cased as it saves some comparision time elsewhere.
+        /// This needs to be Lower cased as it saves some comparison time elsewhere.
         /// </remarks>
         internal const string PSTypeNames = "pstypenames";
 
@@ -1817,7 +1817,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Used in the serialization dupplicate entry hashtable to detect when an PSObject has been serialized
+        /// Used in the serialization duplicate entry hashtable to detect when an PSObject has been serialized
         /// </summary>
         /// <returns>The System.Object implementation of GetHashCode</returns>
         internal int GetReferenceHashCode()
@@ -1836,7 +1836,7 @@ namespace System.Management.Automation
         /// true to make this PSObject as the owner of the memberset.
         /// </param>
         /// <param name="ownerObject">
-        /// PSObject to be used while replicating the owner for PSMemeberSet
+        /// PSObject to be used while replicating the owner for PSMemberSet
         /// </param>
         /// <returns></returns>
         internal static object GetNoteSettingValue(PSMemberSet settings, string noteName,
@@ -2147,7 +2147,7 @@ namespace System.Management.Automation
         /// 3. This will fix v1.0 ADSI adapter where most of the complaints were about
         ///    discovering original .net members.
         /// 
-        /// Use of this class will allow us to customize the utlitmate .net member lookup.
+        /// Use of this class will allow us to customize the ultimate .net member lookup.
         /// For example, XML adapter already exposes .net methods. 
         /// Using this class you can choose exact .net adapter to support .net
         /// member lookup and avoid lookup duplication.
@@ -2159,7 +2159,7 @@ namespace System.Management.Automation
         {
             #region Private Data
 
-            // orginal adapter like Xml, ManagementClass, DirectoryEntry etc.
+            // original adapter like Xml, ManagementClass, DirectoryEntry etc.
             // .net adapter
 
             #endregion
@@ -2407,7 +2407,7 @@ namespace System.Management.Automation
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// Contains auxilliary ToString CodeMethod implementations for some types
+    /// Contains auxiliary ToString CodeMethod implementations for some types
     /// </summary>
     public static partial class ToStringCodeMethods
     {
@@ -2464,7 +2464,7 @@ namespace Microsoft.PowerShell
                     {
                         if (typeinfo.IsNested)
                         {
-                            // For nested types, we should return OutterType+InnerType. For example,
+                            // For nested types, we should return OuterType+InnerType. For example,
                             //  System.Environment+SpecialFolder ->  Environment+SpecialFolder
                             string fullName = type.ToString();
                             result = type.Namespace == null

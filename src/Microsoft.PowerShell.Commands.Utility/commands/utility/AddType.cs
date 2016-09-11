@@ -267,7 +267,7 @@ namespace Microsoft.PowerShell.Commands
                     Collection<string> newPaths = SessionState.Path.GetResolvedProviderPathFromPSPath(path, out provider);
 
                     // If it didn't resolve, add the original back
-                    // for a better error mesage.
+                    // for a better error message.
                     if (newPaths.Count == 0)
                     {
                         resolvedPaths.Add(path);
@@ -912,7 +912,7 @@ namespace Microsoft.PowerShell.Commands
     /// Adds a new type to the Application Domain. 
     /// This version is based on CodeAnalysis (Roslyn).
     /// </summary>
-    [Cmdlet(VerbsCommon.Add, "Type", DefaultParameterSetName = "FromSource", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135195")]
+    [Cmdlet(VerbsCommon.Add, "Type", DefaultParameterSetName = "FromSource", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135195")]
     [OutputType(typeof(Type))]
     public sealed class AddTypeCommand : AddTypeCommandBase
     {
@@ -959,7 +959,7 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (string assemblyName in assemblies)
             {
-                // CoreCLR doesn't allow re-load TPA assemblis with different API (i.e. we load them by name and now want to load by path).
+                // CoreCLR doesn't allow re-load TPA assemblies with different API (i.e. we load them by name and now want to load by path).
                 // LoadAssemblyHelper helps us avoid re-loading them, if they already loaded.
                 Assembly assembly = LoadAssemblyHelper(assemblyName);
                 if (assembly == null)
@@ -1018,8 +1018,8 @@ namespace Microsoft.PowerShell.Commands
         private static string s_frameworkFolder = System.IO.Path.GetDirectoryName(typeof(object).GetTypeInfo().Assembly.Location);
 
         // there are two different assemblies: framework contract and framework implementation.
-        // Version 1.1.1 of Microsoft.CodeAnalysis doesn't provide a good way to handle contract separetely from implementation.
-        // To simplify user expirience we always add both of them to references.
+        // Version 1.1.1 of Microsoft.CodeAnalysis doesn't provide a good way to handle contract separately from implementation.
+        // To simplify user experience we always add both of them to references.
         // 1) It's a legitimate scenario, when user provides a custom referenced assembly that was built against the contract assembly 
         // (i.e. System.Management.Automation), so we need the contract one.
         // 2) We have to provide implementation assembly explicitly, Roslyn doesn't have a way to figure out implementation by itself.
@@ -1042,7 +1042,7 @@ namespace Microsoft.PowerShell.Commands
             MetadataReference.CreateFromFile(typeof(System.Security.SecureString).GetTypeInfo().Assembly.Location);
 
 
-        // These assemlbies are always automatically added to ReferencedAssemblies.
+        // These assemblies are always automatically added to ReferencedAssemblies.
         private static PortableExecutableReference[] s_autoReferencedAssemblies = new PortableExecutableReference[]
         {
             s_mscorlibAssemblyReference,
@@ -1051,7 +1051,7 @@ namespace Microsoft.PowerShell.Commands
             s_objectImplementationAssemblyReference
         };
 
-        // These assemlbies are used, when ReferencedAssemblies parameter is not specified.
+        // These assemblies are used, when ReferencedAssemblies parameter is not specified.
         private static PortableExecutableReference[] s_defaultAssemblies = new PortableExecutableReference[]
         {
             s_mscorlibAssemblyReference,
@@ -1282,7 +1282,7 @@ namespace Microsoft.PowerShell.Commands
     /// Adds a new type to the Application Domain. 
     /// This version is based on CodeDomProvider.
     /// </summary>
-    [Cmdlet(VerbsCommon.Add, "Type", DefaultParameterSetName = "FromSource", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135195")]
+    [Cmdlet(VerbsCommon.Add, "Type", DefaultParameterSetName = "FromSource", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135195")]
     [OutputType(typeof(Type))]
     public sealed class AddTypeCommand : AddTypeCommandBase
     {
@@ -1441,7 +1441,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // Generate if user has specified CompilerParmeters and
+            // Generate if user has specified CompilerParameters and
             // (referencedAssemblies | ignoreWarnings | outputAssembly | outputType)
             if (null != CompilerParameters)
             {

@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
     using Microsoft.PackageManagement.Packaging;
     using Utility;
 
-    [Cmdlet("Find", Constants.Nouns.PackageProviderNoun, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=626939"), OutputType(new Type[1] {typeof(SoftwareIdentity)})]
+    [Cmdlet("Find", Constants.Nouns.PackageProviderNoun, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=626939"), OutputType(new Type[1] {typeof(SoftwareIdentity)})]
     public sealed class FindPackageProvider : CmdletWithSearchAndSource {
         private const string FilterOnTag = "FilterOnTag";
 
@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
         public SwitchParameter IncludeDependencies { get; set; }
     
         protected override void GenerateCmdletSpecificParameters(Dictionary<string, object> unboundArguments) {
-            //this will supress the dynamic parameters from the parent classes
+            //this will suppress the dynamic parameters from the parent classes
             //Noop       
         }
 
@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
                     return false;
                 }
             }
-            //Error out for the case where multiple provider names with any version specififed
+            //Error out for the case where multiple provider names with any version specified
             if (Name.IsNullOrEmpty()) {
                 if ((!string.IsNullOrWhiteSpace(RequiredVersion)) || (!string.IsNullOrWhiteSpace(MinimumVersion)) || (!string.IsNullOrWhiteSpace(MaximumVersion))) {
                     Error(Constants.Errors.MultipleNamesWithVersionNotAllowed);
@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
         {
             var host = this.ProviderSpecific(pv);
             var host1 = host;
-            //add filterontag for finding providers.  Provider keys are: PackageManagment and Provider
+            //add filterontag for finding providers.  Provider keys are: PackageManagement and Provider
             host = host.Extend<IRequest>(
                 new
                 {
@@ -163,8 +163,8 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets
                 if (IncludeDependencies) {
                     var missingDependencies = new HashSet<string>();
                     foreach (var dep in package.Dependencies) {
-                        var dependendcies = PackageManagementService.FindPackageByCanonicalId(dep, this);
-                        var depPkg = dependendcies.OrderByDescending(pp => pp, SoftwareIdentityVersionComparer.Instance).FirstOrDefault();
+                        var dependencies = PackageManagementService.FindPackageByCanonicalId(dep, this);
+                        var depPkg = dependencies.OrderByDescending(pp => pp, SoftwareIdentityVersionComparer.Instance).FirstOrDefault();
 
                         if (depPkg == null) {
                             missingDependencies.Add(dep);

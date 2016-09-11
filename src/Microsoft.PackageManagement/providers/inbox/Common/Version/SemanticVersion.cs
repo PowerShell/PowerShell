@@ -14,7 +14,7 @@ namespace Microsoft.PackageManagement.Provider.Utility
     /// Example: EntityFramework 6.1.3-beta1 
     /// Version: 6.1.3
     /// SpecialVersion: -beta1 
-    /// OrginalString: 6.1.3-beta1 
+    /// OriginalString: 6.1.3-beta1 
     /// 
     /// </summary>    
     [TypeConverter(typeof(SemanticVersionTypeConverter))]

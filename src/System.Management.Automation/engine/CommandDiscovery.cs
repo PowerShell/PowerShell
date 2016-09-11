@@ -558,7 +558,7 @@ namespace System.Management.Automation
         // #Requires -Module
         internal static void VerifyScriptRequirements(ExternalScriptInfo scriptInfo, ExecutionContext context)
         {
-            VerifyElevatedPriveleges(scriptInfo);
+            VerifyElevatedPrivileges(scriptInfo);
             VerifyPSVersion(scriptInfo);
             VerifyPSEdition(scriptInfo);
             VerifyRequiredModules(scriptInfo, context);
@@ -616,7 +616,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal static void VerifyElevatedPriveleges(ExternalScriptInfo scriptInfo)
+        internal static void VerifyElevatedPrivileges(ExternalScriptInfo scriptInfo)
         {
             bool requiresElevation = scriptInfo.RequiresElevation;
             bool isAdministrator = Utils.IsAdministrator();
@@ -1271,7 +1271,7 @@ namespace System.Management.Automation
 
                         cleanupModuleAnalysisAppDomain = context.TakeResponsibilityForModuleAnalysisAppDomain();
 
-                        // Get the available module files, prefering modules from $PSHOME so that user modules don't
+                        // Get the available module files, preferring modules from $PSHOME so that user modules don't
                         // override system modules during auto-loading
                         if (etwEnabled) CommandDiscoveryEventSource.Log.SearchingForModuleFilesStart();
                         var defaultAvailableModuleFiles = ModuleUtils.GetDefaultAvailableModuleFiles(true, true, context);

@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.New, "LocalUser",
             DefaultParameterSetName = "Password",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717981")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717981")]
     [Alias("nlu")]
     public class NewLocalUserCommand : PSCmdlet
     {

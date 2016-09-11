@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Defines the implementation of the get-pfxcertificate cmdlet
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "PfxCertificate", DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113323")]
+    [Cmdlet(VerbsCommon.Get, "PfxCertificate", DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113323")]
     [OutputType(typeof(X509Certificate2))]
     public sealed class GetPfxCertificateCommand : PSCmdlet
     {

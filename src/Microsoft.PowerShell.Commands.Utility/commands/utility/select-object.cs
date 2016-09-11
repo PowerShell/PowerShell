@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
     internal sealed class MshExpressionFilter
     {
         /// <summary>
-        /// construnt the class, using an array of patterns
+        /// construct the class, using an array of patterns
         /// </summary>
         /// <param name="wildcardPatternsStrings">array of pattern strings to use</param>
         internal MshExpressionFilter(string[] wildcardPatternsStrings)
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
     /// 
     /// </summary>
     [Cmdlet("Select", "Object", DefaultParameterSetName = "DefaultParameter",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113387", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113387", RemotingCapability = RemotingCapability.None)]
     public sealed class SelectObjectCommand : PSCmdlet
     {
         #region Command Line Switches
@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// Skips the sepecified number of items from top when used with First,from end when used with Last
+        /// Skips the specified number of items from top when used with First,from end when used with Last
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
@@ -267,7 +267,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    //if last paramater is not mentioned,remove the objects and decrement the skip
+                    //if last parameter is not mentioned,remove the objects and decrement the skip
                     if (_last == 0)
                     {
                         Dequeue();
@@ -361,15 +361,15 @@ namespace Microsoft.PowerShell.Commands
                 PSObject result = new PSObject();
                 if (matchedProperties.Count != 0)
                 {
-                    HashSet<string> propertNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    HashSet<string> propertyNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
                     foreach (PSNoteProperty noteProperty in matchedProperties)
                     {
                         try
                         {
-                            if (!propertNames.Contains(noteProperty.Name))
+                            if (!propertyNames.Contains(noteProperty.Name))
                             {
-                                propertNames.Add(noteProperty.Name);
+                                propertyNames.Add(noteProperty.Name);
                                 result.Properties.Add(noteProperty);
                             }
                             else

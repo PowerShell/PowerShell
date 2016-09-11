@@ -264,7 +264,7 @@ namespace Microsoft.PackageManagement.Internal.Packaging {
         /// <returns>The ResourceCollection added. If the Payload already exists, returns the current Payload.</returns>
         internal Payload AddPayload() {
             // should we just detect and add the evidence element when a provider is adding items to the evidence
-            // instead of requiring someone to explicity add the element?
+            // instead of requiring someone to explicitly add the element?
             if (Element.Elements(Iso19770_2.Elements.Payload).Any()) {
                 return Payload;
             }
@@ -294,7 +294,7 @@ namespace Microsoft.PackageManagement.Internal.Packaging {
         /// <returns>The added Evidence element. If the Evidence element already exists, returns the current element.</returns>
         internal Evidence AddEvidence() {
             // should we just detect and add the evidence element when a provider is adding items to the evidence
-            // instead of requiring someone to explicity add the element?
+            // instead of requiring someone to explicitly add the element?
             if (Element.Elements(Iso19770_2.Elements.Evidence).Any()) {
                 return Evidence;
             }

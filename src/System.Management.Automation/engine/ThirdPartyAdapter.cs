@@ -284,7 +284,7 @@ namespace System.Management.Automation
     public abstract class PSPropertyAdapter
     {
         /// <summary>
-        /// Returns the type hiercharchy for the given object
+        /// Returns the type hierarchy for the given object
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "object")]
         public virtual Collection<string> GetTypeNameHierarchy(object baseObject)

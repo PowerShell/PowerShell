@@ -361,7 +361,7 @@ namespace System.Management.Automation.Interpreter
                 if (index == _tryHandler.GotoEndTargetIndex)
                 {
                     // run the 'Goto' that jumps out of the try/catch/finally blocks
-                    Debug.Assert(instructions[index] is GotoInstruction, "should be the 'Goto' instruction that jumpes out the try/catch/finally");
+                    Debug.Assert(instructions[index] is GotoInstruction, "should be the 'Goto' instruction that jumps out the try/catch/finally");
                     frame.InstructionIndex += instructions[index].Run(frame);
                 }
             }
@@ -376,7 +376,7 @@ namespace System.Management.Automation.Interpreter
                 // rethrow if there is no catch blocks defined for this try block
                 if (!_tryHandler.IsCatchBlockExist) { throw; }
 
-                // Search for the best handler in the TryCatchFianlly block. If no suitable handler is found, rethrow
+                // Search for the best handler in the TryCatchFinally block. If no suitable handler is found, rethrow
                 ExceptionHandler exHandler;
                 frame.InstructionIndex += _tryHandler.GotoHandler(frame, exception, out exHandler);
                 if (exHandler == null) { throw; }
@@ -404,7 +404,7 @@ namespace System.Management.Automation.Interpreter
                     if (index == _tryHandler.GotoEndTargetIndex)
                     {
                         // run the 'Goto' that jumps out of the try/catch/finally blocks
-                        Debug.Assert(instructions[index] is GotoInstruction, "should be the 'Goto' instruction that jumpes out the try/catch/finally");
+                        Debug.Assert(instructions[index] is GotoInstruction, "should be the 'Goto' instruction that jumps out the try/catch/finally");
                         frame.InstructionIndex += instructions[index].Run(frame);
                     }
                 }
@@ -484,7 +484,7 @@ namespace System.Management.Automation.Interpreter
         {
             // If _pendingContinuation == -1 then we were getting into the finally block because an exception was thrown
             //      in this case we need to set the stack depth
-            // Else we were getting into this finnaly block from a 'Goto' jump, and the stack depth is alreayd set properly
+            // Else we were getting into this finally block from a 'Goto' jump, and the stack depth is already set properly
             if (!frame.IsJumpHappened())
             {
                 frame.SetStackDepth(GetLabel(frame).StackDepth);

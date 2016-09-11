@@ -21,14 +21,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// is called the source instance, via a given association. In an
     /// association each instance has a named role, and the same instance can
     /// participate in an association in different roles. Hence, the Cmdlet
-    /// takes SourceRole and AssciatorRole parameters in addition to the
+    /// takes SourceRole and AssociatorRole parameters in addition to the
     /// Association parameter.
     /// </para>
     /// </summary>
     [Cmdlet(VerbsCommon.Get,
         GetCimAssociatedInstanceCommand.Noun,
         DefaultParameterSetName = CimBaseCommand.ComputerSetName,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227958")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227958")]
     [OutputType(typeof(CimInstance))]
     public class GetCimAssociatedInstanceCommand : CimBaseCommand
     {

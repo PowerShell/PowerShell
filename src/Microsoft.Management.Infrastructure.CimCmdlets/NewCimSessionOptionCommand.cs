@@ -38,7 +38,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// DComSessionOptions or WSManSessionOptions, which derive from 
     /// CimSessionOptions.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "CimSessionOption", DefaultParameterSetName = ProtocolNameParameterSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227969")]
+    [Cmdlet(VerbsCommon.New, "CimSessionOption", DefaultParameterSetName = ProtocolNameParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227969")]
     [OutputType(typeof(CimSessionOptions))]
     public sealed class NewCimSessionOptionCommand : CimBaseCommand
     {
@@ -58,7 +58,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region cmdlet parameters
 
         /// <summary>
-        /// The following is the definition of the input parameter "NoEncruption".
+        /// The following is the definition of the input parameter "NoEncryption".
         /// Switch indicating if WSMan can use no encryption in the given CimSession (there are also global client and server WSMan settings - AllowUnencrypted).
         /// </summary>
         [Parameter(ParameterSetName = WSManParameterSet)]
@@ -154,7 +154,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// The following is the definition of the input parameter "Encoding".
         /// Defined the message encoding. 
-        /// The allowed encodings are { Defauolt | Utf8 | Utf16 }. The default value 
+        /// The allowed encodings are { Default | Utf8 | Utf16 }. The default value 
         /// should be Utf8.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,

@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     /// <!-- author: LukaszA -->
     [Cmdlet(VerbsCommon.Get, "Random", DefaultParameterSetName = GetRandomCommand.RandomNumberParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113446", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113446", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(Int32), typeof(Int64), typeof(Double))]
     public class GetRandomCommand : PSCmdlet
     {

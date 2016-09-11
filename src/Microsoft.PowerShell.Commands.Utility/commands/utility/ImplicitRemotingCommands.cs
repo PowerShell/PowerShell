@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Export-PSSession cmdlet.  
     /// Spec: TBD
     /// </summary>
-    [Cmdlet(VerbsData.Export, "PSSession", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135213")]
+    [Cmdlet(VerbsData.Export, "PSSession", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135213")]
     [OutputType(typeof(FileInfo))]
     public sealed class ExportPSSessionCommand : ImplicitRemotingCommandBase
     {
@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Import-PSSession cmdlet.  
     /// Spec: http://cmdletdesigner/SpecViewer/Default.aspx?Project=PowerShell&amp;Cmdlet=Import-Command
     /// </summary>
-    [Cmdlet(VerbsData.Import, "PSSession", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135221")]
+    [Cmdlet(VerbsData.Import, "PSSession", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135221")]
     [OutputType(typeof(PSModuleInfo))]
     public sealed class ImportPSSessionCommand : ImplicitRemotingCommandBase
     {
@@ -1389,9 +1389,9 @@ namespace Microsoft.PowerShell.Commands
             Dictionary<string, string> alias2resolvedCommandName,
             PSObject remoteCommandInfo)
         {
-            Dbg.Assert(name2commandMetadata != null, "name2commandMetadata paremeter != null");
-            Dbg.Assert(alias2resolvedCommandName != null, "alias2resolvedCommandName paremeter != null");
-            Dbg.Assert(remoteCommandInfo != null, "remoteCommandInfo paremeter != null");
+            Dbg.Assert(name2commandMetadata != null, "name2commandMetadata parameter != null");
+            Dbg.Assert(alias2resolvedCommandName != null, "alias2resolvedCommandName parameter != null");
+            Dbg.Assert(remoteCommandInfo != null, "remoteCommandInfo parameter != null");
 
             string resolvedCommandName;
             CommandMetadata commandMetadata = RehydrateCommandMetadata(remoteCommandInfo, out resolvedCommandName);
@@ -1455,8 +1455,8 @@ namespace Microsoft.PowerShell.Commands
 
         private void AddRemoteTypeDefinition(IList<ExtendedTypeDefinition> listOfTypeDefinitions, PSObject remoteTypeDefinition)
         {
-            Dbg.Assert(listOfTypeDefinitions != null, "listOfTypeDefinitions paremeter != null");
-            Dbg.Assert(remoteTypeDefinition != null, "remoteTypeDefinition paremeter != null");
+            Dbg.Assert(listOfTypeDefinitions != null, "listOfTypeDefinitions parameter != null");
+            Dbg.Assert(remoteTypeDefinition != null, "remoteTypeDefinition parameter != null");
 
             ExtendedTypeDefinition typeDefinition = ConvertTo<ExtendedTypeDefinition>("Get-FormatData", remoteTypeDefinition);
             if (!IsSafeTypeDefinition(typeDefinition))

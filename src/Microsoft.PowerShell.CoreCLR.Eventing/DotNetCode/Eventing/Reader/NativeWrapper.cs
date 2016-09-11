@@ -6,7 +6,7 @@
 ** This internal class contains wrapper methods over the Native
 ** Methods of the Eventlog API.   Unlike the raw Native Methods,
 ** these methods throw EventLogExceptions, check platform 
-** availablity and perform additional helper functionality 
+** availability and perform additional helper functionality 
 ** specific to function.  Also, all methods of this class expose
 ** the Link Demand for Unmanaged Permission to callers.
 ** 
@@ -950,7 +950,7 @@ namespace System.Diagnostics.Eventing.Reader
             {
                 //
                 // ERROR_EVT_UNRESOLVED_VALUE_INSERT can be returned.  It means
-                // message may have one or more unsubstitued strings.  This is 
+                // message may have one or more unsubstituted strings.  This is 
                 // not an exception, but we have no way to convey the partial
                 // success out to enduser.
                 //
@@ -1109,7 +1109,7 @@ namespace System.Diagnostics.Eventing.Reader
             {
                 //
                 // ERROR_EVT_UNRESOLVED_VALUE_INSERT can be returned.  It means
-                // message may have one or more unsubstitued strings.  This is 
+                // message may have one or more unsubstituted strings.  This is 
                 // not an exception, but we have no way to convey the partial
                 // success out to enduser.
                 //

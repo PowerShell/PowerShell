@@ -18,13 +18,13 @@ namespace Microsoft.PowerShell.Commands
     /// Intended to work against the wide spectrum of "RESTful" web services 
     /// currently deployed across the web.  
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Invoke, "RestMethod", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=217034")]
+    [Cmdlet(VerbsLifecycle.Invoke, "RestMethod", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217034")]
     public partial class InvokeRestMethodCommand : WebRequestPSCmdlet
     {
         #region Virtual Method Overrides
 
         /// <summary>
-        /// Process the web reponse and output corresponding objects. 
+        /// Process the web response and output corresponding objects. 
         /// </summary>
         /// <param name="response"></param>
         internal override void ProcessResponse(HttpResponseMessage response)
@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
                 if (ShouldWriteToPipeline)
                 {
                     // First see if it is an RSS / ATOM feed, in which case we can 
-                    // stream it - unless the user has overriden it with a return type of "XML"
+                    // stream it - unless the user has overridden it with a return type of "XML"
                     if (TryProcessFeedStream(responseStream))
                     {
                         // Do nothing, content has been processed.
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
                         string str = StreamHelper.DecodeStream(responseStream, encoding);
                         bool convertSuccess = false;
 
-                        // On CoreCLR, we need to explicity load Json.NET
+                        // On CoreCLR, we need to explicitly load Json.NET
                         JsonObject.ImportJsonDotNetModule(this);
                         if (returnType == RestReturnType.Json)
                         {

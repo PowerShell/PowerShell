@@ -316,7 +316,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return ce;
             }
 
-            // falied any match: return the default handler
+            // failed any match: return the default handler
             return _defaultCommandEntry;
         }
 

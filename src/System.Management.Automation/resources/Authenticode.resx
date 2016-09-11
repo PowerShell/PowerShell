@@ -127,7 +127,7 @@
     <value>File {0} is published by {1}. This publisher is explicitly not trusted on your system. The script will not run on the system. For more information, run the command "get-help about_signing".</value>
   </data>
   <data name="Reason_RestrictedMode" xml:space="preserve">
-    <value>File {0} cannot be loaded because running scripts is disabled on this system. For more information, see about_Execution_Policies at http://go.microsoft.com/fwlink/?LinkID=135170.</value>
+    <value>File {0} cannot be loaded because running scripts is disabled on this system. For more information, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.</value>
   </data>
   <data name="Reason_Unknown" xml:space="preserve">
     <value>File {0} cannot be loaded. {1}.</value>

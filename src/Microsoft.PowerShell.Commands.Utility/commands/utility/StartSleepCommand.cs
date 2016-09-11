@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Suspend shell, script, or runspace activity for the specified period of time.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Start, "Sleep", DefaultParameterSetName = "Seconds", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113407")]
+    [Cmdlet(VerbsLifecycle.Start, "Sleep", DefaultParameterSetName = "Seconds", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113407")]
     public sealed class StartSleepCommand : PSCmdlet, IDisposable
     {
         private bool _disposed = false;
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
         //Wait handle which is used by thread to sleep.
         private ManualResetEvent _waitHandle;
 
-        //object used for synchornizes pipeline thread and stop thread
+        //object used for synchronizes pipeline thread and stop thread
         //access to waitHandle
         private object _syncObject = new object();
 

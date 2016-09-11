@@ -55,7 +55,7 @@ namespace System.Management.Automation
     //  3. Parsing Logic
     //  
     //  Script parsing is done through instances of PSParser object. Each PSParser object 
-    //  wraps an interal Parser object. It is PSParser object's responsibility to 
+    //  wraps an internal Parser object. It is PSParser object's responsibility to 
     //      a. setup local runspace and retrieve internal Parser object from it. 
     //      b. call internal parser for actual parsing
     //      c. translate parsing result from internal Token and RuntimeException type
@@ -144,7 +144,7 @@ namespace System.Management.Automation
         /// collection, there are some scenarios where resource limits will result
         /// in an exception being thrown by this API. This allows the caller to
         /// distinguish between a successful parse with errors and a failed parse.
-        /// All exceptions thrown will be derived from System.Mnagement.Automation.RuntimeException
+        /// All exceptions thrown will be derived from System.Management.Automation.RuntimeException
         /// but may contain an inner exception that describes the real issue.
         /// </exception>
         public static Collection<PSToken> Tokenize(string script, out Collection<PSParseError> errors)
@@ -171,7 +171,7 @@ namespace System.Management.Automation
         /// collection, there are some scenarios where resource limits will result
         /// in an exception being thrown by this API. This allows the caller to
         /// distinguish between a successful parse with errors and a failed parse.
-        /// All exceptions thrown will be derived from System.Mnagement.Automation.RuntimeException
+        /// All exceptions thrown will be derived from System.Management.Automation.RuntimeException
         /// but may contain an inner exception that describes the real issue.
         /// </exception>
         public static Collection<PSToken> Tokenize(object[] script, out Collection<PSParseError> errors)

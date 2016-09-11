@@ -56,7 +56,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private IDictionary property;
 
         /// <summary>
-        /// <para>prameter set name</para>
+        /// <para>parameter set name</para>
         /// </summary>
         internal string ParameterSetName
         {
@@ -141,17 +141,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         }
 
                         Exception exception = null;
-                        CimInstance intance = cmdlet.CimInstance;
+                        CimInstance instance = cmdlet.CimInstance;
                         // For CimInstance parameter sets, Property is an optional parameter
                         if (cmdlet.Property != null)
                         {
-                            if (!SetProperty(cmdlet.Property, ref intance, ref exception))
+                            if (!SetProperty(cmdlet.Property, ref instance, ref exception))
                             {
                                 cmdlet.ThrowTerminatingError(exception, action);
                                 return;
                             }
                         }
-                        proxy.ModifyInstanceAsync(nameSpace, intance);
+                        proxy.ModifyInstanceAsync(nameSpace, instance);
                     }
                     break;
                 case CimBaseCommand.QueryComputerSet:
@@ -193,7 +193,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// <para>
         /// Set the properties value to be modified to the given
-        /// <see cref="CimInstanace"/>
+        /// <see cref="CimInstance"/>
         /// </para>
         /// </summary>
         /// <param name="properties"></param>

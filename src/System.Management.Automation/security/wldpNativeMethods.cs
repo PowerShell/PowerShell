@@ -105,7 +105,7 @@ namespace System.Management.Automation.Security
             MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle")]
         private static SystemEnforcementMode GetWldpPolicy(string path, SafeHandle handle)
         {
-            // If the WLDP assembly is missing (such as windows 7 or down OS), return default/None to skip WLDP valification
+            // If the WLDP assembly is missing (such as windows 7 or down OS), return default/None to skip WLDP validation
             if (s_hadMissingWldpAssembly || !IO.File.Exists(IO.Path.Combine(Environment.SystemDirectory, "wldp.dll")))
             {
                 s_hadMissingWldpAssembly = true;

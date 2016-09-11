@@ -135,7 +135,7 @@ namespace System.Management.Automation.Remoting
         private void HandleConnectComplete(object sender, EventArgs args)
         {
             //No-OP. Once the negotiation messages are exchanged and the session gets into established state,
-            //it will take care of spawning the receieve operation on the connected session
+            //it will take care of spawning the receive operation on the connected session
             // There is however a caveat. 
             // A rouge remote server if it does not send the required negotiation data in the Connect Response,
             // then the state machine can never get into the established state and the runspace can never get into a opened state
@@ -309,7 +309,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // Close the transport manager only after powershell's close their transports
-            // Powershell's close their transport using the ConnectionStateChaged event notification.
+            // Powershell's close their transport using the ConnectionStateChanged event notification.
             if (arg.SessionStateInfo.State == RemoteSessionState.ClosingConnection)
             {
                 CloseConnectionAsync();
@@ -535,7 +535,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="dataArg">
-        /// arg which contains the data recevied from input queue
+        /// arg which contains the data received from input queue
         /// </param>
         internal void DispatchInputQueueData(object sender, RemoteDataEventArgs dataArg)
         {
@@ -575,7 +575,7 @@ namespace System.Management.Automation.Remoting
                     //Non Session messages do not change the state of the statemachine. 
                     //However instead of forwarding them to Runspace/pipeline here, an
                     //event is raised in state machine which verified that state is
-                    //suitable for accpeting these messages. if state is suitable statemachine
+                    //suitable for accepting these messages. if state is suitable statemachine
                     //will call DoMessageForwading which will forward the messages appropriately
                     RemoteSessionStateMachineEventArgs msgRcvArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.MessageReceived, null);
                     if (StateMachine.CanByPassRaiseEvent(msgRcvArg))
@@ -600,10 +600,10 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// This processes the object received from transport which are 
-        /// targetted for session
+        /// targeted for session
         /// </summary>
         /// <param name="arg">
-        /// argument containg the data object
+        /// argument contains the data object
         /// </param>
         private void ProcessSessionMessages(RemoteDataEventArgs arg)
         {
@@ -671,7 +671,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// This processes the object received from transport which are 
-        /// not targetted for session
+        /// not targeted for session
         /// </summary>
         /// <param name="rcvdData">
         /// received data.

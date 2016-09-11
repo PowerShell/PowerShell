@@ -130,7 +130,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
                 if (AdminPrivilege.IsElevated) {
                     return pms.SystemAssemblyLocation;
                 } else {
-                    //a user specifies 'AllUsers' that requires Admin provilege. However his console gets launched by non-elevated.
+                    //a user specifies 'AllUsers' that requires Admin privilege. However his console gets launched by non-elevated.
                     Error(ErrorCategory.InvalidOperation, ErrorCategory.InvalidOperation.ToString(),
                         PackageManagement.Resources.Messages.InstallRequiresCurrentUserScopeParameterForNonAdminUser, pms.SystemAssemblyLocation, pms.UserAssemblyLocation);
                     return null;
@@ -330,7 +330,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
 
         private bool ValidateFileHash(string fileFullPath, Payload payload) {
 
-            Debug("BoostrapRequest::ValidateFileHash");
+            Debug("BootstrapRequest::ValidateFileHash");
             /* format: 
              * <Payload>
              *   <File name="nuget-anycpu-2.8.5.205.exe"  sha512:hash="a314fc2dc663ae7a6b6bc6787594057396e6b3f569cd50fd5ddb4d1bbafd2b6a" />
@@ -373,7 +373,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
                     hashAlgorithm = MD5.Create();
                     packageHash = fileTag.GetAttribute(Iso19770_2.Hash.Md5);
                 } else {
-                    //hash alroghtme not supported, we support 512, 256, md5 only 
+                    //hash algorithm not supported, we support 512, 256, md5 only 
                     Error(ErrorCategory.InvalidData, "Payload", Constants.Messages.UnsupportedHashAlgorithm, hashtag,
                         new[] {Iso19770_2.HashAlgorithm.Sha512, Iso19770_2.HashAlgorithm.Sha256, Iso19770_2.HashAlgorithm.Md5}.JoinWithComma());
                     return false;
@@ -484,7 +484,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
                     return !IsCanceled;
                 }
 
-                //installing a package from bootstrap site needs to prompt a user. Only auto-boostrap is not prompted.
+                //installing a package from bootstrap site needs to prompt a user. Only auto-bootstrap is not prompted.
                 var pm = PackageManagementService as PackageManagementService;
                 string isTrustedSource = pm.InternalPackageManagementInstallOnly ? "false" : "true";
                 if (AddMetadata(fastPackageReference, "FromTrustedSource", isTrustedSource) == null) {
@@ -516,7 +516,7 @@ namespace Microsoft.PackageManagement.Providers.Internal.Bootstrap {
                 return null;
             }
 
-            // support providers with .dll file extention only
+            // support providers with .dll file extension only
             if (!Path.GetExtension(filePath).EqualsIgnoreCase(".dll")) {
                 if (!suppressErrorsAndWarnings)
                 {

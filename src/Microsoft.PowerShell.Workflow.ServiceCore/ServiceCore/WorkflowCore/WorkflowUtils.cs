@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Workflow
 
             if (connectionInfo1.ProxyAccessType == ProxyAccessType.None)
             {
-                return true; //stop here if no proxy acess type
+                return true; //stop here if no proxy access type
             }
 
             if (connectionInfo1.ProxyAuthentication != connectionInfo2.ProxyAuthentication)

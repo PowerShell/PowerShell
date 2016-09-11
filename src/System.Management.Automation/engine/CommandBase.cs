@@ -237,12 +237,12 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// IDisposable implementation
-        /// When the command is complete, release the associated memmbers
+        /// When the command is complete, release the associated members
         /// </summary>
         /// <remarks>
         /// Using InternalDispose instead of Dispose pattern because this
         /// interface was shipped in PowerShell V1 and 3rd cmdlets indirectly
-        /// derive from this inerface. If we depend on Dispose() and 3rd
+        /// derive from this interface. If we depend on Dispose() and 3rd
         /// party cmdlets do not call base.Dispose (which is the case), we 
         /// will still end up having this leak.
         /// </remarks>
@@ -393,7 +393,7 @@ namespace System.Management.Automation
         } // Events
 
         /// <summary>
-        /// Repostiory for jobs 
+        /// Repository for jobs 
         /// </summary>
         public JobRepository JobRepository
         {

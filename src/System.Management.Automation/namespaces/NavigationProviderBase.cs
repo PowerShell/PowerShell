@@ -582,9 +582,9 @@ namespace System.Management.Automation.Provider
         /// is encouraged that the provider actually use the path to lookup in its store
         /// and create a relative path that matches the casing, and standardized path syntax.
         /// 
-        /// Note, the base class implemenation uses GetParentPath, GetChildName, and MakePath
+        /// Note, the base class implementation uses GetParentPath, GetChildName, and MakePath
         /// to normalize the path and then make it relative to basePath. All string comparisons
-        /// are done using StringComparison.InvariantCultureIngoreCase.
+        /// are done using StringComparison.InvariantCultureIgnoreCase.
         /// </remarks>
         protected virtual string NormalizeRelativePath(
             string path,
@@ -952,7 +952,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a 
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         /// 
-        /// The default implemenation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters)
         /// </returns>
         protected virtual object MoveItemDynamicParameters(
             string path,
@@ -1047,7 +1047,7 @@ namespace System.Management.Automation.Provider
         /// 
         /// <returns>
         /// A stack containing the tokenized path with leaf elements on the bottom
-        /// of the stack and the most ancestoral parent at the top.
+        /// of the stack and the most ancestral parent at the top.
         /// </returns>
         /// 
         private Stack<string> TokenizePathToStack(string path, string basePath)
@@ -1087,12 +1087,12 @@ namespace System.Management.Automation.Provider
         } // TokenizePathToStack
 
         /// <summary>
-        /// Given the tokenized path, the relative pathing elements are removed.
+        /// Given the tokenized path, the relative path elements are removed.
         /// </summary>
         /// 
         /// <param name="tokenizedPathStack">
         /// A stack containing path elements where the leaf most element is at
-        /// the bottom of the stack and the most ancestoral parent is on the top.
+        /// the bottom of the stack and the most ancestral parent is on the top.
         /// Generally this stack comes from TokenizePathToStack().
         /// </param>
         /// 
@@ -1110,7 +1110,7 @@ namespace System.Management.Automation.Provider
         /// 
         /// <returns>
         /// A stack in reverse order with the path elements normalized and all relative
-        /// pathing tokens removed.
+        /// path tokens removed.
         /// </returns>
         /// 
         private static Stack<string> NormalizeThePath(

@@ -35,7 +35,7 @@ namespace System.Management.Automation
     ///     1. accessing system registry
     ///     2. support of additional command line parameters. 
     ///     3. writing registry files
-    ///     4. automatically extract informaton like vender, version, etc.
+    ///     4. automatically extract information like vender, version, etc.
     /// 
     /// Different monad component will derive from this class. Two common
     /// components that need install include, 

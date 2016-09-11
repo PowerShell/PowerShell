@@ -181,7 +181,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a new job of the appropriate type given by JobDefinition passed in.
         /// </summary>
-        /// <param name="definition">JobDefiniton defining the command.</param>
+        /// <param name="definition">JobDefinition defining the command.</param>
         /// <returns>Job2 object of the appropriate type specified by the definition.</returns>
         /// <exception cref="InvalidOperationException">If JobSourceAdapter type specified
         /// in definition is not registered.</exception>

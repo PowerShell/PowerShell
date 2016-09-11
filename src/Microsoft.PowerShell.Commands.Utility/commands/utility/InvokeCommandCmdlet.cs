@@ -8,9 +8,9 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Class implemeting Invoke-Expression
+    /// Class implementing Invoke-Expression
     /// </summary>
-    [Cmdlet("Invoke", "Expression", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113343")]
+    [Cmdlet("Invoke", "Expression", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113343")]
     public sealed
     class
     InvokeExpressionCommand : PSCmdlet

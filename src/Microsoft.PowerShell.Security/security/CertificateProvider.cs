@@ -553,7 +553,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     //
                     // the pre-Win8 CAPI2 code does not provide an easy way
-                    // to directly acccess a specific certificate.
+                    // to directly access a specific certificate.
                     // We have to iterate through all certs to find
                     // what we want.
                     //
@@ -975,7 +975,7 @@ namespace Microsoft.PowerShell.Commands
                 if (destElements.Length == 3 &&
                    (String.Equals(pathElements[2], destElements[2], StringComparison.OrdinalIgnoreCase)))
                 {
-                    //in this case we think of destination path as vaild 
+                    //in this case we think of destination path as valid 
                     //and strip the thumbprint part
                     destination = Path.GetDirectoryName(destination);
                 }
@@ -2074,7 +2074,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                //do remove certifiate
+                //do remove certificate
                 //should not use the original handle
 
                 if (!Security.NativeMethods.CertDeleteCertificateFromStore(
@@ -2686,7 +2686,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Get cert objects or their name at the specifed path
+        /// Get cert objects or their name at the specified path
         /// </summary>
         ///
         /// <param name="path"> path to cert </param>

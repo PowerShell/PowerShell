@@ -20,9 +20,8 @@ and use`Start-PSBootstrap` to install the dependencies.
 The `Start-PSBootstrap` function does the following:
 
 - Uses `brew` to install CMake, OpenSSL, and GNU WGet
-- Links OpenSSL
 - Uninstalls any prior versions of .NET CLI
-- Downloads and installs the latest .NET CLI 1.0.0-preview2 SDK to `~/.dotnet`
+- Downloads and installs the latest .NET CLI 1.0.0-preview3 SDK to `~/.dotnet`
 
 If you want to use `dotnet` outside of `Start-PSBuild`,
 add `~/.dotnet` to your `PATH` environment variable.
@@ -40,7 +39,7 @@ We cannot do this for you in the build module due to #[847][].
 [847]: https://github.com/PowerShell/PowerShell/issues/847
 
 error: dotnet restore
--------------------------
+---------------------
 
 If you run `dotnet restore` and get error like
 
@@ -55,18 +54,11 @@ error:   The type initializer for 'Crypto' threw an exception.
 error:   The type initializer for 'CryptoInitializer' threw an exception.
 error:   Unable to load DLL 'System.Security.Cryptography.Native': The specified module could not be found.
 error:    (Exception from HRESULT: 0x8007007E)
-
 ```
 
-Try the following
-
-* Make sure you have latest openssl and re-link it
-
-```
-brew update
-brew install openssl
-brew link --force openssl
-```
+These means you did not use our `Start-PSBootstrap` function to setup your environment,
+which handles patching .NET Core's bad cryptography libraries.
+Please see our [macOS installation instructions](../installation/linux.md#openssl) for explanation.
 
 Build using our module
 ======================

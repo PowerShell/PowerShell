@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// running job definition based jobs but can also save and load job
     /// results data from file.  This class is used to load job result
     /// data from previously run jobs so that a user can view results of
-    /// scheduled job runs.  This class also contains the defintion of 
+    /// scheduled job runs.  This class also contains the definition of 
     /// the scheduled job and so can run an instance of the scheduled
     /// job and optionally save results to file.
     /// </summary>

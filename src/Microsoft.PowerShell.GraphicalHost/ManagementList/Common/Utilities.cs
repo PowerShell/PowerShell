@@ -169,8 +169,8 @@ namespace Microsoft.Management.UI.Internal
         /// <remarks>
         /// Parameter <paramref name="sorted"/> is not generic to type T
         /// since it may be a collection of a subclass of type T,
-        /// and IEnumerable'subclass is not compatible with
-        /// IEnumerable'baseclass.
+        /// and IEnumerable's subclass is not compatible with
+        /// IEnumerable's baseclass.
         /// </remarks>
         public static void ResortObservableCollection<T>(
             ObservableCollection<T> modify,

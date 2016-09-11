@@ -296,7 +296,7 @@ namespace System.Management.Automation
         Ignore = 1,
 
         /// <summary>
-        /// Wait on unhandled breakpoint events until a handler is avaialable.
+        /// Wait on unhandled breakpoint events until a handler is available.
         /// </summary>
         Wait
     }
@@ -594,7 +594,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="command">Command string</param>
         /// <param name="output">Output collection</param>
-        /// <returns>DebuggerCommand containing information on whether and how the command was procssed.</returns>
+        /// <returns>DebuggerCommand containing information on whether and how the command was processed.</returns>
         internal virtual DebuggerCommand InternalProcessCommand(string command, IList<PSObject> output)
         {
             throw new PSNotImplementedException();
@@ -1330,7 +1330,7 @@ namespace System.Management.Automation
         #region enabling/disabling breakpoints
 
         /// <summary>
-        /// Implmentation of Enable-PSBreakpoint cmdlet.
+        /// Implementation of Enable-PSBreakpoint cmdlet.
         /// </summary>
         internal void EnableBreakpoint(Breakpoint bp)
         {
@@ -2337,7 +2337,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="command">Command string</param>
         /// <param name="output">output</param>
-        /// <returns>DebuggerCommand containing information on whether and how the command was procssed.</returns>
+        /// <returns>DebuggerCommand containing information on whether and how the command was processed.</returns>
         internal override DebuggerCommand InternalProcessCommand(string command, IList<PSObject> output)
         {
             if (!DebuggerStopped)
@@ -3818,7 +3818,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Process debugger or PowerShell command/script.
         /// </summary>
-        /// <param name="command">PowreShell command</param>
+        /// <param name="command">PowerShell command</param>
         /// <param name="output">Output collection</param>
         /// <returns>DebuggerCommandResults</returns>
         public override DebuggerCommandResults ProcessCommand(PSCommand command, PSDataCollection<PSObject> output)
@@ -4313,7 +4313,7 @@ namespace System.Management.Automation
             if (parentStackFrame == null) { return null; }
 
             // Attempt to find parent script file create script block with Ast to 
-            // find correct line and offset adjustements.
+            // find correct line and offset adjustments.
             if ((_parentScriptBlockAst == null) &&
                 !string.IsNullOrEmpty(parentStackFrame.ScriptName) &&
                 System.IO.File.Exists(parentStackFrame.ScriptName))

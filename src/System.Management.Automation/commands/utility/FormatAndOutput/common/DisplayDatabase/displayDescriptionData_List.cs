@@ -336,7 +336,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Public constructor for ListControlEntryItem
-        /// Lable and Entry could be null
+        /// Label and Entry could be null
         /// </summary>
         /// <param name="label"></param>
         /// <param name="entry"></param>

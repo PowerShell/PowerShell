@@ -321,12 +321,12 @@ namespace Microsoft.PowerShell
             // get corresponding scan code
             uint scanCode = NativeMethods.MapVirtualKey(virtualKey, NativeMethods.MAPVK_VK_TO_VSC);
 
-            // get corresponding character  - maybe be 0, 1 or 2 in length (diacriticals)
+            // get corresponding character  - maybe be 0, 1 or 2 in length (diacritics)
             var chars = new char[2];
             int charCount = NativeMethods.ToUnicode(
                 virtualKey, scanCode, state, chars, chars.Length, NativeMethods.MENU_IS_INACTIVE);
 
-            // TODO: support diacriticals (charCount == 2)
+            // TODO: support diacritics (charCount == 2)
             if (charCount == 1)
             {
                 keyChar = chars[0];

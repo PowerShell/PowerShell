@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// 
-        /// Entry point in to ConsoleShell. This method is called by the MSHManagedEntrace
+        /// Entry point in to ConsoleShell. This method is called from the native or managed exe host application
         /// 
         /// </summary>
         /// <param name="configuration">

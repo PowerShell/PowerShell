@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This cmdlet start invocation of jobs in background.
     /// </summary>
-    [Cmdlet("Start", "Job", DefaultParameterSetName = StartJobCommand.ComputerNameParameterSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113405")]
+    [Cmdlet("Start", "Job", DefaultParameterSetName = StartJobCommand.ComputerNameParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113405")]
     [OutputType(typeof(PSRemotingJob))]
     public class StartJobCommand : PSExecutionCmdlet, IDisposable
     {
@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         private const string DefinitionNameParameterSet = "DefinitionName";
 
         /// <summary>
-        /// JobDefintion Name.
+        /// JobDefinition Name.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true,
                    ParameterSetName = StartJobCommand.DefinitionNameParameterSet)]
@@ -671,7 +671,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 CloseAllInputStreams();
             }
-        } // Dipose
+        } // Dispose
 
         #endregion IDisposable Overrides
     }

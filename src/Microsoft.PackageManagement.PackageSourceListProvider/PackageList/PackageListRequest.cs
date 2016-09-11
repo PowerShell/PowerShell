@@ -43,10 +43,10 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
         private string _configurationFileLocation;
         private XDocument _config;
         private string _defaultConfig;
-        private string PowerShellSourceURL = @"http://go.microsoft.com/fwlink/?LinkID=821777&clcid=0x409";
-        private string PowerShellNanoSourceURL = @"http://go.microsoft.com/fwlink/?LinkID=821783&clcid=0x409";
-        private string PowerShellSourceCatalogURL = @"http://go.microsoft.com/fwlink/?LinkID=823093&clcid=0x409";
-        private string PowerShellNanoSourceCatalogURL = @"http://go.microsoft.com/fwlink/?LinkID=823094&clcid=0x409";
+        private string PowerShellSourceURL = @"https://go.microsoft.com/fwlink/?LinkID=821777&clcid=0x409";
+        private string PowerShellNanoSourceURL = @"https://go.microsoft.com/fwlink/?LinkID=821783&clcid=0x409";
+        private string PowerShellSourceCatalogURL = @"https://go.microsoft.com/fwlink/?LinkID=823093&clcid=0x409";
+        private string PowerShellNanoSourceCatalogURL = @"https://go.microsoft.com/fwlink/?LinkID=823094&clcid=0x409";
         private IEnumerable<string> _packageSources;
         private const string _PackageSourceListRequest = "PackageSourceListRequest";
         private HttpClient _httpClient;
@@ -97,7 +97,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
             }
         }
 
-        internal string DefaultCatlogFileLocation
+        internal string DefaultCatalogFileLocation
         {
             get
             {
@@ -970,9 +970,9 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                             if (force || this.ShouldContinue(Resources.Messages.QueryDownloadPackageSourceList.format(DefaultJSONSourceLocation), Resources.Messages.PackageSourceListNotFound.format(DefaultJSONFileLocation)))
                             {
                                 WebDownloader.DownloadFile(DefaultJSONSourceLocation, DefaultJSONFileLocation, this, null);
-                                WebDownloader.DownloadFile(DefaultJSONCatalogFileLocation, DefaultCatlogFileLocation, this, null);
-                                if (System.IO.File.Exists(DefaultJSONFileLocation) && System.IO.File.Exists(DefaultCatlogFileLocation) && 
-                                    PackageSourceListProvider.TestCatalogFile(DefaultJSONFileLocation, DefaultCatlogFileLocation, this))
+                                WebDownloader.DownloadFile(DefaultJSONCatalogFileLocation, DefaultCatalogFileLocation, this, null);
+                                if (System.IO.File.Exists(DefaultJSONFileLocation) && System.IO.File.Exists(DefaultCatalogFileLocation) && 
+                                    PackageSourceListProvider.TestCatalogFile(DefaultJSONFileLocation, DefaultCatalogFileLocation, this))
                                 {
                                    addDefaultConfig = true;
                                 }                            

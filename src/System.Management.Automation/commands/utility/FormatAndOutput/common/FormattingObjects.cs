@@ -18,7 +18,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 // representation that mig have been introduced by serialization.
 // 
 // There is also the need to preserve type information across serialization
-// boudaries, therefore the objects provide a GUID based machanism to
+// boundaries, therefore the objects provide a GUID based machanism to
 // preserve the information.
 //
 
@@ -205,7 +205,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Advisory, the outputter can decide otherwise
         /// 
         /// A zero value signifies let the outputter get the
-        /// best fit on the screen (possibily blocking until the end)
+        /// best fit on the screen (possibly blocking until the end)
         /// </summary>
         public int columns = 0;
     }

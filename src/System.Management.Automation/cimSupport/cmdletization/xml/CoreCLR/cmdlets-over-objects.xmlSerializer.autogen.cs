@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             {
                 // XmlSerializationReader implementation is:
                 //    return checkDeserializeAdvances ? countingReader.AdvanceCount : 0;
-                // and checkDeserializeAdvances is set in the static constrcutor:
+                // and checkDeserializeAdvances is set in the static constructor:
                 //    XmlSerializerSection configSection = ConfigurationManager.GetSection(ConfigurationStrings.XmlSerializerSectionPath) as XmlSerializerSection;
                 //    checkDeserializeAdvances = (configSection == null) ? false : configSection.CheckDeserializeAdvances;
                 // When XmlSerializationReader is used in powershell, there is no configuration file defined for it, so 'checkDeserializeAdvances' will actually

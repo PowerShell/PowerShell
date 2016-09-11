@@ -18,11 +18,11 @@ namespace System.Management.Automation.ComInterop
     /// This class implements an event sink for a particular RCW.
     /// Unlike the implementation of events in TlbImp'd assemblies,
     /// we will create only one event sink per RCW (theoretically RCW might have
-    /// several ComEventSink evenk sinks - but all these implement different source intefaces).
+    /// several ComEventSink evenk sinks - but all these implement different source interfaces).
     /// Each ComEventSink contains a list of ComEventSinkMethod objects - which represent
     /// a single method on the source interface an a multicast delegate to redirect 
     /// the calls. Notice that we are chaining multicast delegates so that same 
-    /// ComEventSinkMedhod can invoke multiple event handlers).
+    /// ComEventSinkMethod can invoke multiple event handlers).
     /// 
     /// ComEventSink implements an IDisposable pattern to Unadvise from the connection point.
     /// Typically, when RCW is finalized the corresponding Dispose will be triggered by 

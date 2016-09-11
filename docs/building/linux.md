@@ -92,7 +92,7 @@ If you have followed the toolchain setup section above, you should have `powersh
 
 > If you cannot or do not want to self-host, `Start-PSBuild` is just a
 > convenience; you can execute each step of the build process yourself
-> in Bash; see [Build manually][#Build manually] below.
+> in Bash; see [Build manually](#build-manually) below.
 
 ```powershell
 Import-Module ./build.psm1

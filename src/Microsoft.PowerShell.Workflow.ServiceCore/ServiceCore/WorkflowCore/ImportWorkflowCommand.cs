@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
     /// A cmdlet to load WF Workflows, expressed as XAML and wrap them
     /// in functions.
     /// </summary>
-    [Cmdlet("Import", "PSWorkflow", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=210606")]
+    [Cmdlet("Import", "PSWorkflow", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210606")]
     public class ImportWorkflowCommand : PSCmdlet
     {
         private static readonly PowerShellTraceSource Tracer = PowerShellTraceSourceFactory.GetTraceSource();
@@ -442,7 +442,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Executes an instance of the workflow object graph identified by the passed
-        /// GUID, binding parameters from the Parameters hastable.
+        /// GUID, binding parameters from the Parameters hashtable.
         /// </summary>
         /// <param name="command">The powershell command.</param>
         /// <param name="workflowGuid">The GUID used to identify the workflow to run.</param>
@@ -459,7 +459,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Executes an instance of the workflow object graph identified by the passed
-        /// GUID, binding parameters from the Parameters hastable.
+        /// GUID, binding parameters from the Parameters hashtable.
         /// </summary>
         /// <param name="command">The powershell command.</param>
         /// <param name="workflowGuid">The GUID used to identify the workflow to run.</param>
@@ -477,7 +477,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Executes an instance of the workflow object graph identified by the passed
-        /// GUID, binding parameters from the Parameters hastable.
+        /// GUID, binding parameters from the Parameters hashtable.
         /// </summary>
         /// <param name="command">The powershell command.</param>
         /// <param name="workflowGuid">The GUID used to identify the workflow to run.</param>
@@ -585,7 +585,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else if (parameters.Length == 1 && !parameterCollectionProcessed)
             {
-                // If the paramter collection is just the $PSBoundParameters
+                // If the parameter collection is just the $PSBoundParameters
                 // i.e. did not come through the PSParameterCollection list
                 // then just we can use it as is since it's already been processed through the parameter
                 // binder...
@@ -1164,7 +1164,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    // If the parameter name is one of the expected collisons, don't add it to the list. 
+                    // If the parameter name is one of the expected collisions, don't add it to the list. 
                     if (p.Name.Equals(Constants.ComputerName, StringComparison.OrdinalIgnoreCase) || p.Name.Equals(Constants.PrivateMetadata, StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
@@ -1195,7 +1195,7 @@ namespace Microsoft.PowerShell.Commands
                             var attributeAst = attribute as AttributeAst;
                             if (attributeAst == null || !string.Equals(attribute.TypeName.Name, "Parameter", StringComparison.OrdinalIgnoreCase))
                             {
-                                // If we have a Credential Attribute, it has been added to the inner function, it does not need to be added to the outer definiton.
+                                // If we have a Credential Attribute, it has been added to the inner function, it does not need to be added to the outer definition.
                                 // This will prevent prompting for the cred twice.
                                 if (!string.Equals(attribute.TypeName.FullName, "System.Management.Automation.CredentialAttribute", StringComparison.OrdinalIgnoreCase))
                                 {
@@ -1239,7 +1239,7 @@ namespace Microsoft.PowerShell.Commands
                     // Scriptworkflow ALSO comes through this path.
                     else
                     {
-                        // If the parameter is an In parameter with the RequiredArguement attribute then make it mandatory
+                        // If the parameter is an In parameter with the RequiredArgument attribute then make it mandatory
                         if (typeof(System.Activities.InArgument).IsAssignableFrom(p.Type))
                         {
                             if (p.Attributes != null)
@@ -1341,7 +1341,7 @@ namespace Microsoft.PowerShell.Commands
                             $validated
                         }
 
-                        # If there was no '*' collection, added the paramter defaults
+                        # If there was no '*' collection, added the parameter defaults
                         # to each individual collection if the parameter isn't already there... 
                         if (-not $PSParameterCollectionDefaultsMember)
                         {
@@ -1546,7 +1546,7 @@ namespace Microsoft.PowerShell.Commands
 
             // For inner function, don't add -PSParameterCollection param. AsJob and JobName are needed in the inner function for
             // parameter validation in non-PSParameterCollection cases. For PSParameterCollection, they will be checked for
-            // with a seperate check.
+            // with a separate check.
             // We want it at workflow function, but not in the subfunction that validates the parameter for PSParameterCollection
             if (!innerfunction)
             {

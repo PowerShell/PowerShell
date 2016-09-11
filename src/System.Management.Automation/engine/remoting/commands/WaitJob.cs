@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This cmdlet waits for job to complete.
     /// </summary>
-    [Cmdlet("Wait", "Job", DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113422")]
+    [Cmdlet("Wait", "Job", DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113422")]
     [OutputType(typeof(Job))]
     public class WaitJobCommand : JobCmdletBase, IDisposable
     {
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         public override string[] Command { get; set; }
         #endregion Parameters
 
-        #region Coordinating how different events (timeout, stopprocesing, job finished, job blocked) affect what happens in EndProcessing
+        #region Coordinating how different events (timeout, stopprocessing, job finished, job blocked) affect what happens in EndProcessing
 
         private readonly object _endProcessingActionLock = new object();
         private Action _endProcessingAction;
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void InvokeEndProcesingAction()
+        private void InvokeEndProcessingAction()
         {
             _endProcessingActionIsReady.Wait();
 
@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
                 endProcessingAction = _endProcessingAction;
             }
 
-            // Inovke action outside lock.
+            // Invoke action outside lock.
             if (endProcessingAction != null)
             {
                 endProcessingAction();
@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-        #region Support for triggering EndProcesing when jobs are finished or blocked
+        #region Support for triggering EndProcessing when jobs are finished or blocked
 
         private readonly HashSet<Job> _finishedJobs = new HashSet<Job>();
         private readonly HashSet<Job> _blockedJobs = new HashSet<Job>();
@@ -270,7 +270,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void CleanUpTimoutTracking()
+        private void CleanUpTimeoutTracking()
         {
             lock (_timerLock)
             {
@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void EndProcessing()
         {
             this.StartJobChangesTracking();
-            this.InvokeEndProcesingAction();
+            this.InvokeEndProcessingAction();
             if (_warnNotTerminal)
             {
                 WriteWarning(RemotingErrorIdStrings.JobSuspendedDisconnectedWaitWithForce);
@@ -420,7 +420,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _isDisposed = true;
 
-                        this.CleanUpTimoutTracking();
+                        this.CleanUpTimeoutTracking();
                         this.CleanUpJobChangesTracking();
                         this.CleanUpEndProcessing(); // <- has to be last
                     }

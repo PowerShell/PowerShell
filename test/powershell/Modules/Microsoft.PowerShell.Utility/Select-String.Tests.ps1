@@ -37,7 +37,7 @@ Describe "Select-String" -Tags "CI" {
 	    {$testinputone | Select-String -Pattern "hello" -ca } | Should Not Throw
 	}
 
-	it "Should use the ca alias for casesenstive" {
+	it "Should use the ca alias for casesensitive" {
 	    $firstMatch = $testinputtwo  | Select-String -Pattern "hello" -CaseSensitive
 	    $secondMatch = $testinputtwo | Select-String -Pattern "hello" -ca
 
@@ -86,7 +86,7 @@ Describe "Select-String" -Tags "CI" {
 	}
     }
 
-    Context "Filesytem actions" {
+    Context "Filesystem actions" {
 	$testDirectory = $TestDrive
 	$testInputFile = Join-Path -Path $testDirectory -ChildPath testfile1.txt
 

@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
     using Microsoft.PowerShell.Commands.ShowCommandExtension;
 
     /// <summary>
-    /// Implements thw WPF window part of the show-command cmdlet
+    /// Implements the WPF window part of the show-command cmdlet
     /// </summary>
     internal class ShowCommandHelper : IDisposable
     {
@@ -414,7 +414,7 @@ Function PSGetSerializedShowCommandInfo
 
         #region public Dispose
         /// <summary>
-        /// Dispose method in IDisposeable
+        /// Dispose method in IDisposable
         /// </summary>
         public void Dispose()
         {
@@ -681,7 +681,7 @@ Function PSGetSerializedShowCommandInfo
         /// <summary>
         /// Gets an error message to be displayed when failed to import a module
         /// </summary>
-        /// <param name="command">command belongiong to the module to import</param>
+        /// <param name="command">command belonging to the module to import</param>
         /// <param name="module">module to import</param>
         /// <param name="error">error importing the module</param>
         /// <returns>an error message to be displayed when failed to import a module</returns>
@@ -993,7 +993,7 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// Called from CallMethodThatShowsDialog as the thtead start when there is no host window
+        /// Called from CallMethodThatShowsDialog as the thread start when there is no host window
         /// </summary>
         private void PlainInvokeAndShowDialog()
         {
@@ -1252,7 +1252,7 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// Sets a succesfull dialog result and then closes the window
+        /// Sets a successful dialog result and then closes the window
         /// </summary>
         /// <param name="sender">event sender</param>
         /// <param name="e">event arguments</param>

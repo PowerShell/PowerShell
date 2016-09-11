@@ -24,9 +24,9 @@
 Describe "Object cmdlets" -Tags "CI" {
     Context "Measure-Object" {
         BeforeAll {
-            ## Powershell language prefers , as an array seperator without "". 
-            ## If a number has comma in them it considers it to be the 1000 seperator like "1,000".
-            ## In de-DE language the comma is used as decimal point, but powershell still uses it as a 1000 seperator.
+            ## Powershell language prefers , as an array separator without "". 
+            ## If a number has comma in them it considers it to be the 1000 separator like "1,000".
+            ## In de-DE language the comma is used as decimal point, but powershell still uses it as a 1000 separator.
             ## In case the number has a comma, it is ignored. So, "99,1" becomes 991. 
             ## To work around that behavior, we use ToString() on the expected answer and . for decimal in the input.
             

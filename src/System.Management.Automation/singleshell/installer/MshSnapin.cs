@@ -28,7 +28,7 @@ namespace System.Management.Automation
     /// Developers should derive from this class when implementing their own 
     /// mshsnapins. 
     /// 
-    /// Derived mshsnapins should be denotated with [RunInstaller] attribute
+    /// Derived mshsnapins should be denoted with [RunInstaller] attribute
     /// so that installutil.exe can directly install the mshsnapin into registry. 
     /// </remarks>
     public abstract class PSSnapIn : PSSnapInInstaller

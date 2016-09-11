@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Cmdlet to get available list of results
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Job", DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113328")]
+    [Cmdlet(VerbsCommon.Get, "Job", DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113328")]
     [OutputType(typeof(Job))]
     public class GetJobCommand : JobCmdletBase
     {
@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Extract resutl objects corresponding to the specified 
+        /// Extract result objects corresponding to the specified 
         /// names or expressions
         /// </summary>
         protected override void ProcessRecord()

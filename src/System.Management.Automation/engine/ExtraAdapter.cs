@@ -114,7 +114,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="property">PSProperty coming from a previous call to DoGetProperty</param>
         /// <param name="setValue">value to set the property with</param>
-        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter suports conversion</param>
+        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
             DataRow dataRow = (DataRow)property.baseObject;
@@ -220,7 +220,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="property">PSProperty coming from a previous call to DoGetProperty</param>
         /// <param name="setValue">value to set the property with</param>
-        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter suports conversion</param>
+        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
             DataRowView dataRowView = (DataRowView)property.baseObject;
@@ -314,7 +314,7 @@ namespace System.Management.Automation
                     // Adapter engine resolve's members in the following steps:
                     //  1. Extended members -> 2. Adapted members -> 3. Dotnet members
                     // We cannot say from DirectoryEntryAdapter if a method with name "memberName"
-                    // is available. So check if a DotNet proeperty with the same name is available
+                    // is available. So check if a DotNet property with the same name is available
                     // If yes, return null from the adapted view and let adapter engine
                     // take care of DotNet member resolution. If not, assume memberName method
                     // is available on native adsi object.
@@ -400,7 +400,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="property">PSProperty coming from a previous call to GetMember</param>
         /// <param name="setValue">value to set the property with</param>
-        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter suports conversion</param>
+        /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
             PropertyValueCollection values = property.adapterData as PropertyValueCollection;
@@ -539,7 +539,7 @@ namespace System.Management.Automation
             // First try to invoke method on the native adsi object. If the method
             // call fails, try to invoke dotnet method with same name, if one available.
             // This will ensure dotnet methods are exposed for DE objects.
-            // The problem is in GetMemeber<T>(), DE adapter cannot check if a requested
+            // The problem is in GetMember<T>(), DE adapter cannot check if a requested
             // method is available as it doesn't have access to native adsi object's
             // method metadata. So GetMember<T> returns PSMethod assuming a method
             // is available. This behavior will never give a chance to dotnet adapter

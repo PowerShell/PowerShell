@@ -22,7 +22,7 @@ namespace System.Management.Automation.Internal
 
         #region IDisposable Interface
         //
-        // This is a special case of the IDisposable pattern becaue the resource
+        // This is a special case of the IDisposable pattern because the resource
         // to be disposed is managed by the derived class. The implementation here
         // enables derived classes to handle it cleanly.
         //

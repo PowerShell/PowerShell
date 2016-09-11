@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
     /// Cmdlet for Get-Hotfix Proxy
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "HotFix", DefaultParameterSetName = "Default",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135217", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135217", RemotingCapability = RemotingCapability.SupportedByCommand)]
     [OutputType(@"System.Management.ManagementObject#root\cimv2\Win32_QuickFixEngineering")]
     public sealed class GetHotFixCommand : PSCmdlet, IDisposable
     {
@@ -218,7 +218,7 @@ namespace Microsoft.PowerShell.Commands
         public void Dispose()
         {
             this.Dispose(true);
-            // Use SupressFinalize in case a subclass
+            // Use SuppressFinalize in case a subclass
             // of this type implements a finalizer.
             GC.SuppressFinalize(this);
         }

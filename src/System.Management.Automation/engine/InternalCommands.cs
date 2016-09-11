@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet("ForEach", "Object", SupportsShouldProcess = true, DefaultParameterSetName = "ScriptBlockSet",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113300", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113300", RemotingCapability = RemotingCapability.None)]
     public sealed class ForEachObjectCommand : PSCmdlet
     {
         /// <summary>
@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell.Commands
             // Win8: 176403: ScriptCmdlets sets the global WhatIf and Confirm preferences
             // This effects the new W8 foreach-object cmdlet with -whatif and -confirm
             // implemented. -whatif and -confirm needed only for PropertyAndMethodSet
-            // parmaeter set. So erring out in cases where these are used with ScriptBlockSet.
+            // parameter set. So erring out in cases where these are used with ScriptBlockSet.
             // Not using MshCommandRuntime, as those variables will be affected by ScriptCmdlet
             // infrastructure (wherein ScriptCmdlet modifies the global preferences).
             Dictionary<string, object> psBoundParameters = this.MyInvocation.BoundParameters;
@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
             _end = _scripts.Count;
             _start = _scripts.Count > 1 ? 1 : 0;
 
-            // and set the end script if it wasn't explicilty set with a named parameter.
+            // and set the end script if it wasn't explicitly set with a named parameter.
             if (!_setEndScript)
             {
                 if (_scripts.Count > 2)
@@ -334,11 +334,11 @@ namespace Microsoft.PowerShell.Commands
                             // get the matched member(s)
                             ReadOnlyPSMemberInfoCollection<PSMemberInfo> members =
                                 _inputObject.Members.Match(_propertyOrMethodName, PSMemberTypes.All);
-                            Dbg.Assert(members != null, "The retrun value of Members.Match shoudl never be null");
+                            Dbg.Assert(members != null, "The return value of Members.Match should never be null");
 
                             if (members.Count > 1)
                             {
-                                // write error record: property method ambigious
+                                // write error record: property method ambiguous
                                 StringBuilder possibleMatches = new StringBuilder();
                                 foreach (PSMemberInfo item in members)
                                 {
@@ -505,7 +505,7 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert(methods != null, "The return value of Members.Match should never be null.");
             if (methods.Count > 1)
             {
-                // write error record: method ambigious
+                // write error record: method ambiguous
                 StringBuilder possibleMatches = new StringBuilder();
                 foreach (PSMemberInfo item in methods)
                 {
@@ -765,7 +765,7 @@ namespace Microsoft.PowerShell.Commands
     /// is passed on, otherwise it is dropped.
     /// </summary>
     [Cmdlet("Where", "Object", DefaultParameterSetName = "EqualSet",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113423", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113423", RemotingCapability = RemotingCapability.None)]
     public sealed class WhereObjectCommand : PSCmdlet
     {
         /// <summary>
@@ -1495,7 +1495,7 @@ namespace Microsoft.PowerShell.Commands
                                                        "ValueNotSpecifiedForWhereObject", null));
                 }
 
-                // The binary operation needs to be specified if the user specifies both the -Propery and -Value
+                // The binary operation needs to be specified if the user specifies both the -Property and -Value
                 if (!_valueNotSpecified && (_binaryOperator == TokenKind.Ieq && _forceBooleanEvaluation))
                 {
                     // The -Property and -Value are specified explicitly by the user but the binary operation is not
@@ -1644,13 +1644,13 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!WildcardPattern.ContainsWildcardCharacters(_property))
             {
-                PSMemberInfoInternalCollection<PSMemberInfo> restuls = new PSMemberInfoInternalCollection<PSMemberInfo>();
+                PSMemberInfoInternalCollection<PSMemberInfo> results = new PSMemberInfoInternalCollection<PSMemberInfo>();
                 PSMemberInfo member = _inputObject.Members[_property];
                 if (member != null)
                 {
-                    restuls.Add(member);
+                    results.Add(member);
                 }
-                return new ReadOnlyPSMemberInfoCollection<PSMemberInfo>(restuls);
+                return new ReadOnlyPSMemberInfoCollection<PSMemberInfo>(results);
             }
 
             ReadOnlyPSMemberInfoCollection<PSMemberInfo> members = _inputObject.Members.Match(_property, PSMemberTypes.All);
@@ -1664,7 +1664,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements a cmdlet that sets the script debugging options.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "PSDebug", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113398")]
+    [Cmdlet(VerbsCommon.Set, "PSDebug", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113398")]
     public sealed class SetPSDebugCommand : PSCmdlet
     {
         /// <summary>
@@ -1755,7 +1755,7 @@ namespace Microsoft.PowerShell.Commands
     /// Unlike Set-PSDebug -strict, Set-StrictMode is not engine-wide, and only 
     /// affects the scope it was defined in.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "StrictMode", DefaultParameterSetName = "Version", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113450")]
+    [Cmdlet(VerbsCommon.Set, "StrictMode", DefaultParameterSetName = "Version", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113450")]
     public class SetStrictModeCommand : PSCmdlet
     {
         /// <summary>

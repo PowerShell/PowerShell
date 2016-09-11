@@ -189,7 +189,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Get object data from serizliation information.
+        /// Get object data from serialization information.
         /// </summary>
         /// <param name="info"> Serialization information </param>
         /// <param name="context"> Streaming context </param>

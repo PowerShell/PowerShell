@@ -238,10 +238,10 @@
     <value>The binding of default value '{0}' to parameter '{1}' failed: {2}</value>
   </data>
   <data name="SingleKeyInBadFormat" xml:space="preserve">
-    <value>The key '{0}' does not have a valid format. For information about the correct format, see about_Parameters_Default_Values at http://go.microsoft.com/fwlink/?LinkId=228266.</value>
+    <value>The key '{0}' does not have a valid format. For information about the correct format, see about_Parameters_Default_Values at https://go.microsoft.com/fwlink/?LinkId=228266.</value>
   </data>
   <data name="MultipleKeysInBadFormat" xml:space="preserve">
-    <value>The keys '{0}' do not have valid formats. For information about the correct format, see about_Parameters_Default_Values at http://go.microsoft.com/fwlink/?LinkId=228266.</value>
+    <value>The keys '{0}' do not have valid formats. For information about the correct format, see about_Parameters_Default_Values at https://go.microsoft.com/fwlink/?LinkId=228266.</value>
   </data>
   <data name="UseOfDeprecatedParameterWarning" xml:space="preserve">
     <value>Parameter '{0}' is obsolete. {1}</value>

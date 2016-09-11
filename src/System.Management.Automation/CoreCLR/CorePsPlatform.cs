@@ -241,7 +241,7 @@ namespace System.Management.Automation
             switch (dirpath)
             {
                 case Platform.XDG_Type.CONFIG:
-                    //the user has set XDG_CONFIG_HOME corrresponding to profile path
+                    //the user has set XDG_CONFIG_HOME corresponding to profile path
                     if (String.IsNullOrEmpty(xdgconfighome))
                     {
                         //xdg values have not been set

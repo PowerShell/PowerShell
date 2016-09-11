@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell
 {
     /// <summary>
     /// 
-    /// ProgressPane is a class that represents the "window" in which outstanding activities for which the host has recevied 
+    /// ProgressPane is a class that represents the "window" in which outstanding activities for which the host has received 
     /// progress updates are shown. 
     /// 
     ///</summary>
@@ -205,7 +205,7 @@ namespace Microsoft.PowerShell
             else
             {
                 // We have shown the pane before. We have to be smart about when we restore the saved region to minimize
-                // flicker. We need to decide if the new contents will change the dimmensions of the progress pane
+                // flicker. We need to decide if the new contents will change the dimensions of the progress pane
                 // currently being shown.  If it will, then restore the saved region, and show the new one.  Otherwise,
                 // just blast the new one on top of the last one shown.
 

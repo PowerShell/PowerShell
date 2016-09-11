@@ -12,9 +12,12 @@ using System.Linq;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Numerics;
 using System.Reflection;
 using System.Security;
+using System.Security.AccessControl;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Microsoft.Management.Infrastructure;
@@ -49,7 +52,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Inherited from InvalidCastException, because it happens in [string] -> [Type] convertion.
+        /// Inherited from InvalidCastException, because it happens in [string] -> [Type] conversion.
         /// </summary>
         internal class AmbiguousTypeException : InvalidCastException
         {
@@ -64,7 +67,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private static Type LookForTypeInAssemblies(TypeName typeName, IEnumerable<Assembly> assemblies, TypeResolutionState typeResolutionState, bool reportAmbigousException, out Exception exception)
+        private static Type LookForTypeInAssemblies(TypeName typeName, IEnumerable<Assembly> assemblies, TypeResolutionState typeResolutionState, bool reportAmbiguousException, out Exception exception)
         {
             exception = null;
             string alternateNameToFind = typeResolutionState.GetAlternateTypeName(typeName.Name);
@@ -82,7 +85,7 @@ namespace System.Management.Automation.Language
 
                     if (targetType != null)
                     {
-                        if (!reportAmbigousException)
+                        if (!reportAmbiguousException)
                         {
                             // accelerator  for the common case, when we are not interested  in ambiguity exception.
                             return targetType;
@@ -156,7 +159,7 @@ namespace System.Management.Automation.Language
             return true;
         }
 
-        private static Type ResolveTypeNameWorker(TypeName typeName, SessionStateScope currentScope, IEnumerable<Assembly> loadedAssemblies, TypeResolutionState typeResolutionState, bool reportAmbigousException, out Exception exception)
+        private static Type ResolveTypeNameWorker(TypeName typeName, SessionStateScope currentScope, IEnumerable<Assembly> loadedAssemblies, TypeResolutionState typeResolutionState, bool reportAmbiguousException, out Exception exception)
         {
             Type result;
             exception = null;
@@ -176,7 +179,7 @@ namespace System.Management.Automation.Language
             }
 
             exception = null;
-            result = LookForTypeInAssemblies(typeName, loadedAssemblies, typeResolutionState, reportAmbigousException, out exception);
+            result = LookForTypeInAssemblies(typeName, loadedAssemblies, typeResolutionState, reportAmbiguousException, out exception);
             if (exception != null)
             {
                 // skip the rest of lookups, if exception reported.
@@ -202,7 +205,7 @@ namespace System.Management.Automation.Language
             try
             {
                 // We shouldn't really bother looking for the type in System namespace, but
-                // we've always done that.  We explictily are not supporting arbitrary
+                // we've always done that.  We explicitly are not supporting arbitrary
                 // 'using namespace' here because there is little value, if you need the assembly
                 // qualifier, it's best to just fully specify the type.
                 var result = Type.GetType(typeName.FullName, false, true) ??
@@ -266,14 +269,14 @@ namespace System.Management.Automation.Language
             //             Consider this code
             //                  Add-Type 'public class Q {}' # ok
             //                  Add-Type 'public class Q { }' # get error about the same name
-            //                  [Q] # we would get error about ambigious type, because we added assembly with duplicated type
+            //                  [Q] # we would get error about ambiguous type, because we added assembly with duplicated type
             //                      # before we can report TYPE_ALREADY_EXISTS error.
             //      
             //                  Add-Type 'public class Q2 {}' # ok
             //                  [Q2] # caching Q2 type
             //                  Add-Type 'public class Q2 { }' # get error about the same name
-            //                  [Q2] # we don't get an error about ambigious type, because it's cached already
-            //          2) NuGet (VS Package Management console) uses MEF extensability model. 
+            //                  [Q2] # we don't get an error about ambiguous type, because it's cached already
+            //          2) NuGet (VS Package Management console) uses MEF extensibility model. 
             //             Different assemblies includes same interface (i.e. NuGet.VisualStudio.IVsPackageInstallerServices), 
             //             where they include only methods that they are interested in the interface declaration (result interfaces are different!).
             //             Then, at runtime VS provides an instance. Everything work as far as instance has compatible API.
@@ -301,10 +304,10 @@ namespace System.Management.Automation.Language
                 return typeName._typeDefinitionAst.Type;
             }
 
-            result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, typeResolutionState, /* reportAmbigousException */ true, out exception);
+            result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, typeResolutionState, /* reportAmbiguousException */ true, out exception);
             if (exception == null && result == null)
             {
-                result = ResolveTypeNameWorker(typeName, currentScope, assemList, typeResolutionState, /* reportAmbigousException */ false, out exception);
+                result = ResolveTypeNameWorker(typeName, currentScope, assemList, typeResolutionState, /* reportAmbiguousException */ false, out exception);
             }
 
             if (result != null)
@@ -329,10 +332,10 @@ namespace System.Management.Automation.Language
                         assemList = ClrFacade.GetAssemblies(typeResolutionState, newTypeName);
                     }
 #endif
-                    var newResult = ResolveTypeNameWorker(newTypeName, currentScope, typeResolutionState.assemblies, typeResolutionState, /* reportAmbigousException */ true, out exception);
+                    var newResult = ResolveTypeNameWorker(newTypeName, currentScope, typeResolutionState.assemblies, typeResolutionState, /* reportAmbiguousException */ true, out exception);
                     if (exception == null && newResult == null)
                     {
-                        newResult = ResolveTypeNameWorker(newTypeName, currentScope, assemList, typeResolutionState, /* reportAmbigousException */ false, out exception);
+                        newResult = ResolveTypeNameWorker(newTypeName, currentScope, assemList, typeResolutionState, /* reportAmbiguousException */ false, out exception);
                     }
 
                     if (exception != null)
@@ -677,10 +680,13 @@ namespace System.Management.Automation
                     { typeof(Microsoft.Management.Infrastructure.CimType), new[] { "cimtype" } },
                     { typeof(CimConverter),                                new[] { "cimconverter" } },
                     { typeof(ModuleSpecification),                         null },
+                    { typeof(IPEndPoint),                                  new[] { "IPEndpoint" } },
                     { typeof(NullString),                                  new[] { "NullString" } },
                     { typeof(OutputTypeAttribute),                         new[] { "OutputType" } },
                     { typeof(Object[]),                                    null },
+                    { typeof(ObjectSecurity),                              new[] { "ObjectSecurity" } },
                     { typeof(ParameterAttribute),                          new[] { "Parameter" } },
+                    { typeof(PhysicalAddress),                             new[] { "PhysicalAddress" } },
                     { typeof(PSCredential),                                new[] { "pscredential" } },
                     { typeof(PSDefaultValueAttribute),                     new[] { "PSDefaultValue" } },
                     { typeof(PSListModifier),                              new[] { "pslistmodifier" } },
@@ -716,9 +722,13 @@ namespace System.Management.Automation
                     { typeof(void),                                        new[] { "void" } },
                     { typeof(IPAddress),                                   new[] { "ipaddress" } },
                     { typeof(DscLocalConfigurationManagerAttribute),       new[] {"DscLocalConfigurationManager"}},
+                    { typeof(WildcardPattern),                             new[] { "WildcardPattern" } },
+                    { typeof(X509Certificate),                             new[] { "X509Certificate" } },
+                    { typeof(X500DistinguishedName),                       new[] { "X500DistinguishedName" } },
                     { typeof(XmlDocument),                                 new[] { "xml" } },
+                    { typeof(CimSession),                                  new[] { "CimSession" } },
 #if !CORECLR
-                    // Following types not int CoreCLR
+                    // Following types not in CoreCLR
                     { typeof(DirectoryEntry),                              new[] { "adsi" } },
                     { typeof(DirectorySearcher),                           new[] { "adsisearcher" } },
                     { typeof(ManagementClass),                             new[] { "wmiclass" } },
@@ -751,14 +761,14 @@ namespace System.Management.Automation
 
     /// <summary>
     /// A class to view and modify the type accelerators used by the PowerShell engine.  Builtin
-    /// type accelerators are read only, but user defined type accerators may be added.
+    /// type accelerators are read only, but user defined type accelerators may be added.
     /// </summary>
     internal static class TypeAccelerators
     {
         // builtins are not exposed publicly in a direct manner so they can't be changed at all
         internal static Dictionary<string, Type> builtinTypeAccelerators = new Dictionary<string, Type>(64, StringComparer.OrdinalIgnoreCase);
 
-        // users can add to user added accelerators (but not currently remove any.)  Keeping a seperate
+        // users can add to user added accelerators (but not currently remove any.)  Keeping a separate
         // list allows us to add removing in the future w/o worrying about breaking the builtins.
         internal static Dictionary<string, Type> userTypeAccelerators = new Dictionary<string, Type>(64, StringComparer.OrdinalIgnoreCase);
 
@@ -847,7 +857,7 @@ namespace System.Management.Automation
         /// to the dictionary will not affect PowerShell scripts in any way.  Use
         /// <see cref="TypeAccelerators.Add"/> and
         /// <see cref="TypeAccelerators.Remove"/> to
-        /// affect the type resolutin in PowerShell scripts.
+        /// affect the type resolution in PowerShell scripts.
         /// </remarks>
         public static Dictionary<string, Type> Get
         {

@@ -1093,7 +1093,7 @@ namespace System.Management.Automation
         private string _serializedFullyQualifiedErrorId = null;
 
         /// <summary>
-        /// Message overidee for CategoryInfo.GetMessage method
+        /// Message overridee for CategoryInfo.GetMessage method
         /// </summary>
         internal string _serializedErrorCategoryMessageOverride = null;
 
@@ -1634,7 +1634,7 @@ namespace System.Management.Automation
         private ReadOnlyCollection<int> _pipelineIterationInfo = Utils.EmptyReadOnlyCollection<int>();
 
         /// <summary>
-        /// Whether to serizalize the InvocationInfo during remote calls
+        /// Whether to serialize the InvocationInfo during remote calls
         /// </summary>
         internal bool SerializeExtendedInfo
         {

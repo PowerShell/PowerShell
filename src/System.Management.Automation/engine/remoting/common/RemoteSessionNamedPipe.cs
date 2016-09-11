@@ -169,7 +169,7 @@ namespace System.Management.Automation.Remoting
         internal const uint TRUNCATE_EXISTING = 5;
 
         internal const uint SECURITY_IMPERSONATIONLEVEL_ANONYMOUS = 0;
-        internal const uint SECURITY_IMPERSONATIONLEVEL_IDENTIFCATION = 1;
+        internal const uint SECURITY_IMPERSONATIONLEVEL_IDENTIFICATION = 1;
         internal const uint SECURITY_IMPERSONATIONLEVEL_IMPERSONATION = 2;
         internal const uint SECURITY_IMPERSONATIONLEVEL_DELEGATION = 3;
 
@@ -264,7 +264,7 @@ namespace System.Management.Automation.Remoting
         #region Properties
 
         /// <summary>
-        /// Exception reson for listener end event.  Can be null
+        /// Exception reason for listener end event.  Can be null
         /// which indicates listener thread end is not due to an error.
         /// </summary>
         public Exception Reason
@@ -503,7 +503,7 @@ namespace System.Management.Automation.Remoting
             s_syncObject = new object();
 
             // All PowerShell instances will start with the named pipe
-            // and listner created and running.
+            // and listener created and running.
             if (Platform.IsWindows)
             {
                 IPCNamedPipeServerEnabled = true;
@@ -579,10 +579,10 @@ namespace System.Management.Automation.Remoting
                 IsListenerRunning = true;
 
                 // Create listener thread.
-                Thread listenterThread = new Thread(ProcessListeningThread);
-                listenterThread.Name = _threadName;
-                listenterThread.IsBackground = true;
-                listenterThread.Start(clientConnectCallback);
+                Thread listenerThread = new Thread(ProcessListeningThread);
+                listenerThread.Name = _threadName;
+                listenerThread.IsBackground = true;
+                listenerThread.Start(clientConnectCallback);
             } // Lock _syncObject.
         }
 
@@ -962,7 +962,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Connect to named pipe server.  This is a blocking call until a 
-        /// connection occurs or the timeout time has ellapsed.
+        /// connection occurs or the timeout time has elapsed.
         /// </summary>
         /// <param name="timeout">Connection attempt timeout in milliseconds</param>
         public void Connect(

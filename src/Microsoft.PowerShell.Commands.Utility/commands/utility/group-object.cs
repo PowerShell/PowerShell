@@ -194,7 +194,7 @@ namespace Microsoft.PowerShell.Commands
     /// Group-Object implementation
     ///
     /// </summary>
-    [Cmdlet("Group", "Object", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113338", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet("Group", "Object", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113338", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(Hashtable), typeof(GroupInfo))]
     public class GroupObjectCommand : ObjectBase
     {
@@ -228,7 +228,7 @@ namespace Microsoft.PowerShell.Commands
         }
         private bool _noElement;
         /// <summary>
-        /// the Ashashtable parameter
+        /// the AsHashTable parameter
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "HashTable")]
@@ -257,7 +257,7 @@ namespace Microsoft.PowerShell.Commands
         /// Utility function called by Group-Object to create Groups.
         /// </summary>
         /// <param name="currentObjectEntry">Input object that needs to be grouped.</param>
-        /// <param name="noElement">true if we are not acumulating objects</param>
+        /// <param name="noElement">true if we are not accumulating objects</param>
         /// <param name="groups">List containing Groups.</param>
         /// <param name="groupInfoDictionary">Dictionary used to keep track of the groups with hash of the property values being the key.</param>
         /// <param name="orderByPropertyComparer">The Comparer to be used while comparing to check if new group has to be created.</param>

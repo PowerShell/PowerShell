@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
     /// backward and try to leave off the repeated entries.
     /// </remarks>
     [Cmdlet(VerbsCommon.Get, "EventLog", DefaultParameterSetName = "LogName",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113314", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113314", RemotingCapability = RemotingCapability.SupportedByCommand)]
     [OutputType(typeof(EventLog), typeof(EventLogEntry), typeof(String))]
     public sealed class GetEventLogCommand : PSCmdlet
     {
@@ -419,7 +419,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     if (!AsBaseObject)
                     {
-                        //wraping in PSobject to insert into PStypesnames
+                        //wrapping in PSobject to insert into PStypesnames
                         PSObject logentry = new PSObject(entry);
                         //inserting at zero position in reverse order
                         logentry.TypeNames.Insert(0, logentry.ImmediateBaseObject + "#" + log.Log + "/" + entry.Source);
@@ -601,7 +601,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
 
     [Cmdlet(VerbsCommon.Clear, "EventLog", SupportsShouldProcess = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135198", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135198", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public sealed class ClearEventLogCommand : PSCmdlet
     {
         #region Parameters
@@ -694,7 +694,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the Write-EventLog command
     /// </summary>
 
-    [Cmdlet("Write", "EventLog", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135281", RemotingCapability = RemotingCapability.SupportedByCommand)]
+    [Cmdlet("Write", "EventLog", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135281", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public sealed class WriteEventLogCommand : PSCmdlet
     {
         #region Parameters
@@ -843,7 +843,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
 
     [Cmdlet(VerbsData.Limit, "EventLog", SupportsShouldProcess = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135227", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135227", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public sealed class LimitEventLogCommand : PSCmdlet
     {
         #region Parameters
@@ -1045,7 +1045,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the Show-EventLog command
     /// </summary>
 
-    [Cmdlet(VerbsCommon.Show, "EventLog", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135257", RemotingCapability = RemotingCapability.SupportedByCommand)]
+    [Cmdlet(VerbsCommon.Show, "EventLog", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135257", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public sealed class ShowEventLogCommand : PSCmdlet
     {
         #region Parameters
@@ -1122,7 +1122,7 @@ namespace Microsoft.PowerShell.Commands
     /// all three types of strings.
     /// </summary>
 
-    [Cmdlet(VerbsCommon.New, "EventLog", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135235", RemotingCapability = RemotingCapability.SupportedByCommand)]
+    [Cmdlet(VerbsCommon.New, "EventLog", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135235", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public class NewEventLogCommand : PSCmdlet
     {
         # region Parameter
@@ -1276,7 +1276,7 @@ namespace Microsoft.PowerShell.Commands
 
     [Cmdlet(VerbsCommon.Remove, "EventLog",
              SupportsShouldProcess = true, DefaultParameterSetName = "Default",
-             HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135248", RemotingCapability = RemotingCapability.SupportedByCommand)]
+             HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135248", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public class RemoveEventLogCommand : PSCmdlet
     {
         /// <summary>

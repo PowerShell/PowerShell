@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private Assembly LoadAssemblyFromResourceReference(StringResourceReference resourceReference, out bool foundInGac)
         {
             // NOTE: we keep the function signature as and the calling code is able do deal
-            // with dynamically loaded assemblies. If this functinality is implemented, this
+            // with dynamically loaded assemblies. If this functionality is implemented, this
             // method will have to be changed accordingly
             foundInGac = false; // it always be false, since we return already loaded assemblies
             return _assemblyNameResolver.ResolveAssemblyName(resourceReference.assemblyName);

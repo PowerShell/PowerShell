@@ -145,10 +145,10 @@ namespace System.Management.Automation
             }
         }
 
-#if !CORECLR // .NET Frmework Version is not applicable to CoreCLR
+#if !CORECLR // .NET Framework Version is not applicable to CoreCLR
         /// <summary>
-        /// Detects the installation of Frmework Versions 1.1, 2.0, 3.0 and 3.5 and 4.0 through
-        /// the official registry instalation keys.
+        /// Detects the installation of Framework Versions 1.1, 2.0, 3.0 and 3.5 and 4.0 through
+        /// the official registry installation keys.
         /// </summary>
         internal static class FrameworkRegistryInstallation
         {
@@ -586,7 +586,7 @@ namespace System.Management.Automation
             }
 #else
             // Important:
-            // this functiona has a clone in Workflow.ServiceCore in admin\monad\src\m3p\product\ServiceCore\WorkflowCore\WorkflowRuntimeCompilation.cs
+            // this function has a clone in Workflow.ServiceCore in admin\monad\src\m3p\product\ServiceCore\WorkflowCore\WorkflowRuntimeCompilation.cs
             // if you are making any changes specific to this function then update the clone as well.
 
             var sysInfo = new NativeMethods.SYSTEM_INFO();
@@ -682,7 +682,7 @@ namespace System.Management.Automation
         /// 
         /// This method is used when handling a script block that contains $using for Invoke-Command.
         /// 
-        /// When run Invoke-Command targetting a machine that runs PSv3 or above, we pass a dictionary
+        /// When run Invoke-Command targeting a machine that runs PSv3 or above, we pass a dictionary
         /// to the remote end that contains the key of each UsingExpressionAst and its value. This method
         /// is used to generate the key.
         /// </summary>

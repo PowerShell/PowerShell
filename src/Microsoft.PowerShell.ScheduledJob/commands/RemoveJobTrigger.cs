@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// This cmdlet removes ScheduledJobTriggers from ScheduledJobDefinition objects.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "JobTrigger", DefaultParameterSetName = RemoveJobTriggerCommand.JobDefinitionParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223914")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223914")]
     public sealed class RemoveJobTriggerCommand : ScheduleJobCmdletBase
     {
         #region Parameters
@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private Int32[] _definitionIds;
 
         /// <summary>
-        /// ScheduledJobDefintion Name.
+        /// ScheduledJobDefinition Name.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, 
                    ParameterSetName = RemoveJobTriggerCommand.JobDefinitionNameParameterSet)]

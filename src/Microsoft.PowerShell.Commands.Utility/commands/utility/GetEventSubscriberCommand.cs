@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Lists all event subscribers.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "EventSubscriber", DefaultParameterSetName = "BySource", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135155")]
+    [Cmdlet(VerbsCommon.Get, "EventSubscriber", DefaultParameterSetName = "BySource", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135155")]
     [OutputType(typeof(PSEventSubscriber))]
     public class GetEventSubscriberCommand : PSCmdlet
     {

@@ -70,7 +70,7 @@ namespace System.Management.Automation.Language
                 {
                     // Duplicate members are an error, but we catch that later after all types
                     // have been resolved.  We could report errors for properties here, but
-                    // we couldn't compare methods becaues overloads can't be compared until types
+                    // we couldn't compare methods because overloads can't be compared until types
                     // are resolved.
                     if (!_variableTable.ContainsKey(propertyMember.Name))
                     {
@@ -423,7 +423,7 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// Resolves using module to a collection of PSModuleInfos. Doesn't throw.
-        /// PSModuleInfo objects are retunred in the right order: i.e. if multiply verions of the module
+        /// PSModuleInfo objects are returned in the right order: i.e. if multiply versions of the module
         /// is presented on the system and user didn't specify version, we will return all of them, but newer one would go first.
         /// </summary>
         /// <param name="usingStatementAst">using statement</param>

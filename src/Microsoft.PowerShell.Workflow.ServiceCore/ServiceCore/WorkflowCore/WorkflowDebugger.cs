@@ -998,7 +998,7 @@ namespace Microsoft.PowerShell.Workflow
                         debugSource = new DebugSource(
                             debugSource.Script,                 // Update script
                             debugSource.ScriptFile,             // Update script filename
-                            existingInfo.XamlDefinition);       // Keep XamlDefintion
+                            existingInfo.XamlDefinition);       // Keep XamlDefinition
                     }
 
                     funcToSourceMap.Add(fName, debugSource);
@@ -1524,7 +1524,7 @@ namespace Microsoft.PowerShell.Workflow
                     return false;
                 }
 
-                // Check assigments to known workflow variables.
+                // Check assignments to known workflow variables.
                 foreach (var workflowVariable in allWFVariables)
                 {
                     variableName = workflowVariable.Key;

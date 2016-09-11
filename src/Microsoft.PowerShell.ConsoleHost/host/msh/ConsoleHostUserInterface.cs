@@ -813,7 +813,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// 
         /// This is a poor-man's word-wrapping routine.  It breaks a single string into segments small enough to fit within a
-        /// given number of cells.  A break is determined by the last occurrance of whitespace that allows all prior characters 
+        /// given number of cells.  A break is determined by the last occurrence of whitespace that allows all prior characters 
         /// on a line to be written within a given number of cells.  If there is no whitespace found within that span, then the
         /// largest span that will fit in the bounds is used.
         /// 
@@ -1472,7 +1472,7 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// 
-        /// Reads a line of input from the console.  Returns when the user hits enter, a break key, a break event occurrs.  In 
+        /// Reads a line of input from the console.  Returns when the user hits enter, a break key, a break event occurs.  In 
         /// the case that stdin has been redirected, reads from the stdin stream instead of the console.
         /// 
         /// </summary>
@@ -1557,6 +1557,7 @@ namespace Microsoft.PowerShell
             if (initialContent != null)
             {
                 sb.Append(initialContent);
+                sb.Append('\n');
             }
 
             while (true)
@@ -1579,7 +1580,11 @@ namespace Microsoft.PowerShell
                         if (!NoPrompt) Console.Out.Write('\n');
                         Console.In.Read();
                     }
-                    sb.Append('\n');
+                    break;
+                }
+
+                if (c == '\n')
+                {
                     break;
                 }
 
@@ -1590,12 +1595,6 @@ namespace Microsoft.PowerShell
                 else
                 {
                     sb.Append(c);
-                }
-
-
-                if (c == '\n')
-                {
-                    break;
                 }
             }
 
@@ -1745,7 +1744,7 @@ namespace Microsoft.PowerShell
                         Coordinates c = RawUI.CursorPosition;
 
                         // before cleaning up the screen, read the active screen buffer to retrieve the character that
-                        // is overriden by the tab
+                        // is overridden by the tab
                         char charUnderCursor = GetCharacterUnderCursor(c);
 
                         Write(new string(' ', leftover));

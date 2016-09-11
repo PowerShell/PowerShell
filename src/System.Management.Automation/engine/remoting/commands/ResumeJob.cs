@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
 #if !CORECLR
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsLifecycle.Resume, "Job", SupportsShouldProcess = true, DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=210611")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210611")]
 #endif
     [OutputType(typeof(Job))]
     public class ResumeJobCommand : JobCmdletBase, IDisposable
@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell.Commands
 
             _allJobsToResume.AddRange(jobsToResume);
 
-            // Blue: 151804 When resuming a single suspended workfllow job, Resume-job cmdlet doesn't wait for the job to be in running state
+            // Blue: 151804 When resuming a single suspended workflow job, Resume-job cmdlet doesn't wait for the job to be in running state
             // Setting Wait to true so that this cmdlet will wait for the running job state.
             if (_allJobsToResume.Count == 1)
                 Wait = true;

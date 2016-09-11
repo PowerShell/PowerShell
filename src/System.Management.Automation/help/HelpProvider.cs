@@ -143,7 +143,7 @@ namespace System.Management.Automation
         /// Retrieve help info that exactly match the target.
         /// </summary>
         /// <param name="helpRequest">help request object</param>
-        /// <returns>List of HelpInfo objects retrived</returns>
+        /// <returns>List of HelpInfo objects retrieved</returns>
         internal abstract IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest);
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace System.Management.Automation
         /// If true, searches for pattern in the help content. Individual 
         /// provider can decide which content to search in.
         /// 
-        /// If false, seraches for pattern in the command names.
+        /// If false, searches for pattern in the command names.
         /// </param>       
         /// <returns>a collection of help info objects</returns>
         internal abstract IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent);

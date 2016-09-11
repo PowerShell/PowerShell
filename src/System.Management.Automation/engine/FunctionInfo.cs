@@ -16,7 +16,7 @@ namespace System.Management.Automation
         #region ctor
 
         /// <summary>
-        /// Creates an instance of the FunctonInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock
         /// </summary>
         /// 
         /// <param name="name">
@@ -40,7 +40,7 @@ namespace System.Management.Automation
         } // FunctionInfo ctor
 
         /// <summary>
-        /// Creates an instance of the FunctonInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock
         /// </summary>
         /// 
         /// <param name="name">
@@ -79,7 +79,7 @@ namespace System.Management.Automation
         } // FunctionInfo ctor
 
         /// <summary>
-        /// Creates an instance of the FunctonInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock
         /// </summary>
         /// 
         /// <param name="name">
@@ -107,7 +107,7 @@ namespace System.Management.Automation
         } // FunctionInfo ctor
 
         /// <summary>
-        /// Creates an instance of the FunctonInfo class with the specified name and ScriptBlock
+        /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock
         /// </summary>
         /// 
         /// <param name="name">

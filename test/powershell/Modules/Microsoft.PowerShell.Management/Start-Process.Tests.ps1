@@ -14,7 +14,7 @@ Describe "Start-Process" -Tags @("CI","SLOW") {
     # This has been fixed on Linux, but not on OS X
 
     It "Should process arguments without error" {
-	$process = Start-Process ping -ArgumentList $pingParam -PassThru
+	$process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"
 
 	$process.Length      | Should Be 1
 	$process.Id          | Should BeGreaterThan 1
@@ -22,7 +22,7 @@ Describe "Start-Process" -Tags @("CI","SLOW") {
     }
 
     It "Should work correctly when used with full path name" {
-	$process = Start-Process $pingCommand -ArgumentList $pingParam -PassThru
+	$process = Start-Process $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"
 
 	$process.Length      | Should Be 1
 	$process.Id          | Should BeGreaterThan 1
@@ -30,7 +30,7 @@ Describe "Start-Process" -Tags @("CI","SLOW") {
     }
 
     It "Should invoke correct path when used with FilePath argument" {
-	$process = Start-Process -FilePath $pingCommand -ArgumentList $pingParam -PassThru
+	$process = Start-Process -FilePath $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"
 
 	$process.Length      | Should Be 1
 	$process.Id          | Should BeGreaterThan 1
@@ -38,11 +38,11 @@ Describe "Start-Process" -Tags @("CI","SLOW") {
     }
 
     It "Should wait for command completion if used with Wait argument" {
-	$process = Start-Process ping -ArgumentList $pingParam -Wait -PassThru
+	$process = Start-Process ping -ArgumentList $pingParam -Wait -PassThru -RedirectStandardOutput "$TESTDRIVE/output"
     }
 
     It "Should work correctly with WorkingDirectory argument" {
-	$process = Start-Process ping -WorkingDirectory $pingDirectory -ArgumentList $pingParam -PassThru
+	$process = Start-Process ping -WorkingDirectory $pingDirectory -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"
 
 	$process.Length      | Should Be 1
 	$process.Id          | Should BeGreaterThan 1
@@ -50,7 +50,7 @@ Describe "Start-Process" -Tags @("CI","SLOW") {
     }
 
     It "Should should handle stderr redirection without error" {
-	$process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardError $tempFile
+	$process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardError $tempFile -RedirectStandardOutput "$TESTDRIVE/output"
 
 	$process.Length      | Should Be 1
 	$process.Id          | Should BeGreaterThan 1
@@ -59,13 +59,13 @@ Describe "Start-Process" -Tags @("CI","SLOW") {
 
     It "Should should handle stdout redirection without error" {
 	$process = Start-Process ping -ArgumentList $pingParam -Wait -RedirectStandardOutput $tempFile
-	$dirEntry = dir $tempFile
+	$dirEntry = get-childitem $tempFile
 	$dirEntry.Length | Should BeGreaterThan 0
     }
 
     It "Should should handle stdin redirection without error" {
 	$process = Start-Process sort -Wait -RedirectStandardOutput $tempFile -RedirectStandardInput $assetsFile
-	$dirEntry = dir $tempFile
+	$dirEntry = get-childitem $tempFile
 	$dirEntry.Length | Should BeGreaterThan 0
     }
 

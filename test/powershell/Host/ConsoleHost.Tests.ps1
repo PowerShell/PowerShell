@@ -165,7 +165,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         # even though it is redirected - we want to make sure we don't hang.
         # So none of these tests should close StandardInput
 
-        It "Redirected input w/ implict -Command w/ -NonInteractive" {
+        It "Redirected input w/ implicit -Command w/ -NonInteractive" {
             $si = NewProcessStartInfo "-NonInteractive -noprofile 1+1" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardOutput.ReadToEnd() | Should Be 2
@@ -179,7 +179,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             EnsureChildHasExited $process
         }
 
-        It "Redirected input w/ explict -Command w/ -NonInteractive" {
+        It "Redirected input w/ explicit -Command w/ -NonInteractive" {
             $si = NewProcessStartInfo "-NonInteractive -noprofile -Command 1+1" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardOutput.ReadToEnd() | Should Be 2
@@ -214,7 +214,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         $nl = [Environment]::Newline
 
         # All of the following tests replace the prompt (either via an initial command or interactively)
-        # so that we can read StandardOutput and realiably know exactly what the prompt is.
+        # so that we can read StandardOutput and reliably know exactly what the prompt is.
 
         It "Interactive redirected input" {
             $si = NewProcessStartInfo "-noprofile -nologo" -RedirectStdIn
@@ -263,8 +263,23 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $si = NewProcessStartInfo "-noprofile -" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("1+1`n")
+            $process.StandardOutput.ReadLine() | Should Be "2"
+
+            # Multi-line input
+            $process.StandardInput.Write("if (1)`n{`n    42`n}`n`n")
+            $process.StandardOutput.ReadLine() | Should Be "42"
+            $process.StandardInput.Write(@"
+function foo
+{
+    'in foo'
+}
+
+foo
+
+"@)
+            $process.StandardOutput.ReadLine() | Should Be "in foo"
+
             $process.StandardInput.Close()
-            $process.StandardOutput.ReadToEnd() | Should Be "2${nl}"
             EnsureChildHasExited $process
         }
 

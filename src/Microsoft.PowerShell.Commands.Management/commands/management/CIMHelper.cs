@@ -228,7 +228,7 @@ namespace Microsoft.PowerShell.Commands
         /// A string that may contain backslash characters.
         /// </param>
         /// <returns>
-        /// A new string in which any backshlash characters have been "escaped"
+        /// A new string in which any backslash characters have been "escaped"
         /// by prefacing then with an additional backslash
         /// </returns>
         internal static string EscapePath(string path)
@@ -261,9 +261,9 @@ namespace Extensions
         }
 
         /// <summary>
-        /// Execute a CIM query and return only the first intance in the result.
+        /// Execute a CIM query and return only the first instance in the result.
         /// </summary>
-        /// <param name="session">The CimSesson to be queried</param>
+        /// <param name="session">The CimSession to be queried</param>
         /// <param name="nameSpace">A string containing the namespace to run the query against</param>
         /// <param name="query">A string containing the query to be run</param>
         /// <returns>
@@ -290,9 +290,9 @@ namespace Extensions
         }
 
         /// <summary>
-        /// Execute a CIM query and return only the first intance in the result.
+        /// Execute a CIM query and return only the first instance in the result.
         /// </summary>
-        /// <param name="session">The CimSesson to be queried</param>
+        /// <param name="session">The CimSession to be queried</param>
         /// <param name="query">A string containing the query to be run</param>
         /// <returns>
         /// A <see cref="Microsoft.Management.Infrastructure.CimInstance"/> object

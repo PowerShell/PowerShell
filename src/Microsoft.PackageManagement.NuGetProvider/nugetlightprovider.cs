@@ -18,7 +18,7 @@ namespace Microsoft.PackageManagement.NuGetProvider
     ///
     /// Important notes:
     ///    - Required Methods: Not all methods are required; some package providers do not support some features. If the methods isn't used or implemented it should be removed (or commented out)
-    ///    - Error Handling: Avoid throwing exceptions from these methods. To properly return errors to the user, use the request.Error(...) method to notify the user of an error conditionm and then return.
+    ///    - Error Handling: Avoid throwing exceptions from these methods. To properly return errors to the user, use the request.Error(...) method to notify the user of an error condition and then return.
     ///    - Communicating with the HOST and CORE: each method takes a Request (in reality, an alias for System.Object), which can be used in one of two ways:
     ///         - use the c# 'dynamic' keyword, and call functions on the object directly.
     ///         - use the <code><![CDATA[ .As<Request>() ]]></code> extension method to strongly-type it to the Request type (which calls upon the duck-typer to generate a strongly-typed wrapper). 
@@ -65,7 +65,7 @@ namespace Microsoft.PackageManagement.NuGetProvider
         }
 
         /// <summary>
-        /// This is just here as to give us some possibility of knowing when an unexception happens...
+        /// This is just here as to give us some possibility of knowing when an exception happens...
         /// At the very least, we'll write it to the system debug channel, so a developer can find it if they are looking for it.
         /// </summary>
         public void OnUnhandledException(string methodName, Exception exception) {
@@ -209,7 +209,7 @@ namespace Microsoft.PackageManagement.NuGetProvider
                 throw new ArgumentNullException("request");
             }
             try {
-                request.Debug(string.Format(CultureInfo.InvariantCulture, "AddPackageSource - ProvidenName = '{0}', name='{1}', location='{2}', trusted='{3}'", PackageProviderName, name, location, trusted));
+                request.Debug(string.Format(CultureInfo.InvariantCulture, "AddPackageSource - ProviderName = '{0}', name='{1}', location='{2}', trusted='{3}'", PackageProviderName, name, location, trusted));
 
                 // Error out if a user does not provide package source Name
                 if (string.IsNullOrWhiteSpace(name))
@@ -275,7 +275,7 @@ namespace Microsoft.PackageManagement.NuGetProvider
                     request.Verbose(Resources.Messages.SuccessfullyValidated, name);
                 }
 
-                // it's good to check just before you actaully write something to see if the user has cancelled the operation
+                // it's good to check just before you actually write something to see if the user has cancelled the operation
                 if (request.IsCanceled)
                 {
                     return;
@@ -397,7 +397,7 @@ namespace Microsoft.PackageManagement.NuGetProvider
                 return;
             }
 
-            // A user does not provide the package full Name at all Or used wildcard in the name. Let's try searching the entire reposiotry for matches.
+            // A user does not provide the package full Name at all Or used wildcard in the name. Let's try searching the entire repository for matches.
             request.YieldPackages(request.SearchForPackages(name), name);
             }
             catch (Exception ex)

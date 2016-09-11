@@ -51,9 +51,9 @@ namespace System.Management.Automation
         #region public_methods
 
         /// <summary>
-        /// Creates a command object corresponing to specified name. The command processor will use global scope.
+        /// Creates a command object corresponding to specified name. The command processor will use global scope.
         /// </summary>
-        /// <param name="commandName">Creates a command object corresponing to specified name.</param>
+        /// <param name="commandName">Creates a command object corresponding to specified name.</param>
         /// <param name="commandOrigin"> Location where the command was dispatched from. </param>
         /// <returns>Created command processor object.</returns>
         /// <exception cref="InvalidOperationException">
@@ -65,9 +65,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a command object corresponing to specified name.
+        /// Creates a command object corresponding to specified name.
         /// </summary>
-        /// <param name="commandName">Creates a command object corresponing to specified name.</param>
+        /// <param name="commandName">Creates a command object corresponding to specified name.</param>
         /// <param name="commandOrigin"> Location where the command was dispatched from. </param>
         /// <param name="useLocalScope"> 
         /// True if command processor should use local scope to execute the command,
@@ -84,9 +84,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a command object corresponing to specified name.
+        /// Creates a command object corresponding to specified name.
         /// </summary>
-        /// <param name="commandName">Creates a command object corresponing to specified name.</param>
+        /// <param name="commandName">Creates a command object corresponding to specified name.</param>
         /// <param name="executionContext">Execution Context.</param>
         /// <param name="commandOrigin"> Location where the command was dispatched from. </param>
         /// <returns>Created command processor object.</returns>

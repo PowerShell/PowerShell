@@ -19,12 +19,12 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Show-Command displays a GUI for a cmdlet, or for all cmdlets if no specific cmdlet is specified.
     /// </summary>
-    [Cmdlet(VerbsCommon.Show, "Command", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=217448")]
+    [Cmdlet(VerbsCommon.Show, "Command", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217448")]
     public class ShowCommandCommand : PSCmdlet, IDisposable
     {
         #region Private Fields
         /// <summary>
-        /// Set to true when ProcessRecord is reached, since it will allways open a window
+        /// Set to true when ProcessRecord is reached, since it will always open a window
         /// </summary>
         private bool _hasOpenedWindow;
 
@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Dispose method in IDisposeable
+        /// Dispose method in IDisposable
         /// </summary>
         public void Dispose()
         {
@@ -267,7 +267,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Methods
         /// <summary>
-        /// Runs the script in a new PowerShell instance and  hooks up error stream to pottentlially display error popup.
+        /// Runs the script in a new PowerShell instance and  hooks up error stream to potentially display error popup.
         /// This method has the inconvenience of not showing to the console user the script being executed.
         /// </summary>
         /// <param name="script">script to be run</param>
@@ -371,7 +371,7 @@ namespace Microsoft.PowerShell.Commands
         {
             CommandInfo commandInfo;
             this.GetCommandInfoAndModules(out commandInfo, out _importedModules);
-            Diagnostics.Assert(commandInfo != null, "GetCommandInfoAndModules would throw a termninating error/exception");
+            Diagnostics.Assert(commandInfo != null, "GetCommandInfoAndModules would throw a terminating error/exception");
 
             try
             {
@@ -505,7 +505,7 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             /// <param name="str">string to add to console input buffer</param>
             /// <param name="newLine">true to add Enter after the string</param>
-            /// <returns>true if it was succesfull in adding all characters to console input buffer</returns>
+            /// <returns>true if it was successful in adding all characters to console input buffer</returns>
             internal static bool AddToConsoleInputBuffer(string str, bool newLine)
             {
                 IntPtr handle = ConsoleInputWithNativeMethods.GetStdHandle(ConsoleInputWithNativeMethods.STD_INPUT_HANDLE);
@@ -526,13 +526,13 @@ namespace Microsoft.PowerShell.Commands
                 uint written;
                 if (!ConsoleInputWithNativeMethods.WriteConsoleInput(handle, records, strLen, out written) || written != strLen)
                 {
-                    // I do not know of a case where written is not going to be strlen. Maybe for some charcater that
+                    // I do not know of a case where written is not going to be strlen. Maybe for some character that
                     // is not supported in the console. The API suggests this can happen, 
                     // so we handle it by returning false
                     return false;
                 }
 
-                // Enter is written separetely, because if this is a command, and one of the characters in the command was not written
+                // Enter is written separately, because if this is a command, and one of the characters in the command was not written
                 // (written != strLen) it is desireable to fail (return false) before typing enter and running the command
                 if (newLine)
                 {

@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Base Cmdlet for object cmdlets that deal with Ordering and Camparison.
+    /// Base Cmdlet for object cmdlets that deal with Ordering and Comparison.
     /// </summary>
     public class OrderObjectBase : ObjectBase
     {

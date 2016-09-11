@@ -14,12 +14,13 @@ Microsoft.PowerShell.Core\Set-StrictMode -Version Latest
 # Check if this is nano server. [System.Runtime.Loader.AssemblyLoadContext] is only available on NanoServer
 $script:isNanoServer = $null -ne ('System.Runtime.Loader.AssemblyLoadContext' -as [Type])
 
+function IsInbox { $PSHOME.EndsWith('\WindowsPowerShell\v1.0', [System.StringComparison]::OrdinalIgnoreCase) }
 function IsWindows { $PSVariable = Get-Variable -Name IsWindows -ErrorAction Ignore; return (-not $PSVariable -or $PSVariable.Value) }
 function IsLinux { $PSVariable = Get-Variable -Name IsLinux -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
 function IsOSX { $PSVariable = Get-Variable -Name IsOSX -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
 function IsCoreCLR { $PSVariable = Get-Variable -Name IsCoreCLR -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
 
-if(IsWindows)
+if(IsInbox)
 {
     $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath "WindowsPowerShell"
 }
@@ -28,7 +29,7 @@ else
     $script:ProgramFilesPSPath = $PSHome
 }
 
-if(IsWindows)
+if(IsInbox)
 {
     try
     {
@@ -47,6 +48,10 @@ if(IsWindows)
                                 {
                                     Microsoft.PowerShell.Management\Join-Path -Path $env:USERPROFILE -ChildPath "Documents\WindowsPowerShell"
                                 }
+}
+elseif(IsWindows)
+{
+    $script:MyDocumentsPSPath = Microsoft.PowerShell.Management\Join-Path -Path $HOME -ChildPath 'Documents\PowerShell'
 }
 else
 {
@@ -121,7 +126,7 @@ $script:FastPackRefHastable = @{}
 $script:NuGetBinaryProgramDataPath=if(IsWindows) {"$env:ProgramFiles\PackageManagement\ProviderAssemblies"}
 $script:NuGetBinaryLocalAppDataPath=if(IsWindows) {"$env:LOCALAPPDATA\PackageManagement\ProviderAssemblies"}
 # go fwlink for 'https://nuget.org/nuget.exe'
-$script:NuGetClientSourceURL = 'http://go.microsoft.com/fwlink/?LinkID=690216&clcid=0x409'
+$script:NuGetClientSourceURL = 'https://go.microsoft.com/fwlink/?LinkID=690216&clcid=0x409'
 $script:NuGetExeName = 'NuGet.exe'
 $script:NuGetExePath = $null
 $script:NuGetProvider = $null
@@ -654,7 +659,7 @@ function Publish-Module
     #>
     [CmdletBinding(SupportsShouldProcess=$true,
                    PositionalBinding=$false,
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkID=398575',
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkID=398575',
                    DefaultParameterSetName="ModuleNameParameterSet")]
     Param
     (
@@ -1151,7 +1156,7 @@ function Find-Module
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(HelpUri='http://go.microsoft.com/fwlink/?LinkID=398574')]
+    [CmdletBinding(HelpUri='https://go.microsoft.com/fwlink/?LinkID=398574')]
     [outputtype("PSCustomObject[]")]
     Param
     (
@@ -1321,7 +1326,7 @@ function Save-Module
     .ExternalHelp PSGet.psm1-help.xml
     #>
     [CmdletBinding(DefaultParameterSetName='NameAndPathParameterSet',
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=531351',
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=531351',
                    SupportsShouldProcess=$true)]
     Param
     (
@@ -1565,7 +1570,7 @@ function Install-Module
     .ExternalHelp PSGet.psm1-help.xml
     #>
     [CmdletBinding(DefaultParameterSetName='NameParameterSet',
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkID=398573',
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkID=398573',
                    SupportsShouldProcess=$true)]
     Param
     (
@@ -1821,7 +1826,7 @@ function Update-Module
     .ExternalHelp PSGet.psm1-help.xml
     #>
     [CmdletBinding(SupportsShouldProcess=$true,
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkID=398576')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkID=398576')]
     Param
     (
         [Parameter(ValueFromPipelineByPropertyName=$true, 
@@ -1995,7 +2000,7 @@ function Uninstall-Module
     #>
     [CmdletBinding(DefaultParameterSetName='NameParameterSet',
                    SupportsShouldProcess=$true,
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=526864')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=526864')]
     Param
     (
         [Parameter(ValueFromPipelineByPropertyName=$true,
@@ -2098,7 +2103,7 @@ function Get-InstalledModule
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(HelpUri='http://go.microsoft.com/fwlink/?LinkId=526863')]
+    [CmdletBinding(HelpUri='https://go.microsoft.com/fwlink/?LinkId=526863')]
     Param
     (
         [Parameter(ValueFromPipelineByPropertyName=$true, 
@@ -2153,14 +2158,14 @@ function Get-InstalledModule
 
 #endregion *-Module cmdlets
 
-#region Find-DscResouce cmdlet
+#region Find-DscResource cmdlet
 
 function Find-DscResource
 {
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(HelpUri = 'http://go.microsoft.com/fwlink/?LinkId=517196')]
+    [CmdletBinding(HelpUri = 'https://go.microsoft.com/fwlink/?LinkId=517196')]
     [outputtype('PSCustomObject[]')]
     Param
     (
@@ -2259,7 +2264,7 @@ function Find-DscResource
     }
 }
 
-#endregion Find-DscResouce cmdlet
+#endregion Find-DscResource cmdlet
 
 #region Find-Command cmdlet
 
@@ -2268,7 +2273,7 @@ function Find-Command
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(HelpUri = 'http://go.microsoft.com/fwlink/?LinkId=733636')]
+    [CmdletBinding(HelpUri = 'https://go.microsoft.com/fwlink/?LinkId=733636')]
     [outputtype('PSCustomObject[]')]
     Param
     (
@@ -2378,7 +2383,7 @@ function Find-RoleCapability
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(HelpUri = 'http://go.microsoft.com/fwlink/?LinkId=718029')]
+    [CmdletBinding(HelpUri = 'https://go.microsoft.com/fwlink/?LinkId=718029')]
     [outputtype('PSCustomObject[]')]
     Param
     (
@@ -2488,7 +2493,7 @@ function Publish-Script
     [CmdletBinding(SupportsShouldProcess=$true,
                    PositionalBinding=$false,
                    DefaultParameterSetName='PathParameterSet',
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=619788')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=619788')]
     Param
     (
         [Parameter(Mandatory=$true, 
@@ -2791,7 +2796,7 @@ function Find-Script
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(HelpUri='http://go.microsoft.com/fwlink/?LinkId=619785')]
+    [CmdletBinding(HelpUri='https://go.microsoft.com/fwlink/?LinkId=619785')]
     [outputtype("PSCustomObject[]")]
     Param
     (
@@ -2936,7 +2941,7 @@ function Find-Script
             $psgalleryRepo = Get-PSRepository -Name $Script:PSGalleryModuleSource `
                                               -ErrorAction SilentlyContinue `
                                               -WarningAction SilentlyContinue
-            # And check for IsDeafult?
+            # And check for IsDefault?
             if($psgalleryRepo)
             {
                 $isRepositoryNullOrPSGallerySpecified = $true
@@ -2972,7 +2977,7 @@ function Save-Script
     .ExternalHelp PSGet.psm1-help.xml
     #>
     [CmdletBinding(DefaultParameterSetName='NameAndPathParameterSet',
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=619786',
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=619786',
                    SupportsShouldProcess=$true)]
     Param
     (
@@ -3230,7 +3235,7 @@ function Install-Script
     .ExternalHelp PSGet.psm1-help.xml
     #>
     [CmdletBinding(DefaultParameterSetName='NameParameterSet',
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=619784',
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=619784',
                    SupportsShouldProcess=$true)]
     Param
     (
@@ -3546,7 +3551,7 @@ function Update-Script
     .ExternalHelp PSGet.psm1-help.xml
     #>
     [CmdletBinding(SupportsShouldProcess=$true,
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=619787')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=619787')]
     Param
     (
         [Parameter(ValueFromPipelineByPropertyName=$true, 
@@ -3748,7 +3753,7 @@ function Uninstall-Script
     #>
     [CmdletBinding(DefaultParameterSetName='NameParameterSet',
                    SupportsShouldProcess=$true,
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=619789')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=619789')]
     Param
     (
         [Parameter(ValueFromPipelineByPropertyName=$true,
@@ -3846,7 +3851,7 @@ function Get-InstalledScript
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(HelpUri='http://go.microsoft.com/fwlink/?LinkId=619790')]
+    [CmdletBinding(HelpUri='https://go.microsoft.com/fwlink/?LinkId=619790')]
     Param
     (
         [Parameter(ValueFromPipelineByPropertyName=$true, 
@@ -3904,7 +3909,7 @@ function Register-PSRepository
     .ExternalHelp PSGet.psm1-help.xml
     #>
     [CmdletBinding(DefaultParameterSetName='NameParameterSet',
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkID=517129')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkID=517129')]
     Param 
     (
         [Parameter(Mandatory=$true,
@@ -4114,7 +4119,7 @@ function Set-PSRepository
     .ExternalHelp PSGet.psm1-help.xml
     #>
     [CmdletBinding(PositionalBinding=$false,
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkID=517128')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkID=517128')]
     Param
     (
         [Parameter(Mandatory=$true, Position=0)]
@@ -4313,7 +4318,7 @@ function Unregister-PSRepository
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(HelpUri='http://go.microsoft.com/fwlink/?LinkID=517130')]
+    [CmdletBinding(HelpUri='https://go.microsoft.com/fwlink/?LinkID=517130')]
     Param
     (
         [Parameter(ValueFromPipelineByPropertyName=$true,
@@ -4357,7 +4362,7 @@ function Get-PSRepository
     <#
     .ExternalHelp PSGet.psm1-help.xml
     #>
-    [CmdletBinding(HelpUri='http://go.microsoft.com/fwlink/?LinkID=517127')]
+    [CmdletBinding(HelpUri='https://go.microsoft.com/fwlink/?LinkID=517127')]
     Param
     (
         [Parameter(ValueFromPipelineByPropertyName=$true)]
@@ -4455,7 +4460,7 @@ function Test-ScriptFileInfo
     #>
     [CmdletBinding(PositionalBinding=$false,
                    DefaultParameterSetName='PathParameterSet',
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=619791')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=619791')]
     Param
     (
         [Parameter(Mandatory=$true,
@@ -4547,7 +4552,7 @@ function Test-ScriptFileInfo
 
         if($ast)
         {
-            # Get the block/group comment begining with <#PSScriptInfo
+            # Get the block/group comment beginning with <#PSScriptInfo
             $CommentTokens = $tokens | Microsoft.PowerShell.Core\Where-Object {$_.Kind -eq 'Comment'}
 
             $psscriptInfoComments = $CommentTokens | 
@@ -4788,7 +4793,7 @@ function New-ScriptFileInfo
     #>
     [CmdletBinding(PositionalBinding=$false,
                    SupportsShouldProcess=$true,
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=619792')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=619792')]
     Param
     (
         [Parameter(Mandatory=$false,
@@ -5029,7 +5034,7 @@ function Update-ScriptFileInfo
     [CmdletBinding(PositionalBinding=$false,
                    DefaultParameterSetName='PathParameterSet',
                    SupportsShouldProcess=$true,
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=619793')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=619793')]
     Param
     (
         [Parameter(Mandatory=$true,
@@ -6655,7 +6660,7 @@ function Set-ModuleSourcesVariable
             }
         }
 
-        # Already registed repositories may not have the ScriptSourceLocation property, try to populate it from the existing SourceLocation
+        # Already registered repositories may not have the ScriptSourceLocation property, try to populate it from the existing SourceLocation
         # Also populate the PublishLocation and ScriptPublishLocation from the SourceLocation if PublishLocation is empty/null.
         # 
         $script:PSGetModuleSources.Keys | Microsoft.PowerShell.Core\ForEach-Object { 
@@ -8930,7 +8935,7 @@ function Add-PackageSource
 
     if($Name -eq $Script:PSGalleryModuleSource)
     {
-        # Add or update the PSGallery repostory
+        # Add or update the PSGallery repository
         $repository = Set-PSGalleryRepository -Trusted:$Trusted
 
         if($repository)
@@ -10550,7 +10555,7 @@ function Install-PackageUtility
 
                 $destinationModulePath = Microsoft.PowerShell.Management\Join-Path -Path $moduleDestination -ChildPath $pkg.Name
 
-                # Side-by-Side module version is avialable on PowerShell 5.0 or later versions only
+                # Side-by-Side module version is available on PowerShell 5.0 or later versions only
                 # By default, PowerShell module versions will be installed/updated Side-by-Side.
                 if(Test-ModuleSxSVersionSupport)
                 {
@@ -12232,7 +12237,7 @@ function Save-ModuleSources
 
 function Test-ModuleSxSVersionSupport
 {
-    # Side-by-Side module version is avialable on PowerShell 5.0 or later versions only
+    # Side-by-Side module version is available on PowerShell 5.0 or later versions only
     # By default, PowerShell module versions will be installed/updated Side-by-Side.
     $PSVersionTable.PSVersion -ge '5.0.0'
 }
@@ -12491,7 +12496,7 @@ function Update-ModuleManifest
 #>
 [CmdletBinding(SupportsShouldProcess=$true,
                    PositionalBinding=$false,
-                   HelpUri='http://go.microsoft.com/fwlink/?LinkId=619311')]
+                   HelpUri='https://go.microsoft.com/fwlink/?LinkId=619311')]
     Param
     (
         [Parameter(Mandatory=$true,
@@ -12826,7 +12831,7 @@ function Update-ModuleManifest
     {
         $params.Add("ProcessorArchitecture",$ProcessorArchitecture)
     }
-    #Check if ProcessorArchitecture has a value and is not 'None' on lower verison PS
+    #Check if ProcessorArchitecture has a value and is not 'None' on lower version PS
     elseif($moduleInfo.ProcessorArchitecture -and $moduleInfo.ProcessorArchitecture -ne 'None')
     {
         $params.Add("ProcessorArchitecture",$moduleInfo.ProcessorArchitecture)
@@ -13237,7 +13242,7 @@ function Update-ModuleManifest
         }
         $PrivateDataInput = Get-PrivateData -PrivateData $Data
         
-        #Repleace the PrivateData section by first locating the linenumbers of start line and endline.  
+        #Replace the PrivateData section by first locating the linenumbers of start line and endline.  
         $PrivateDataBegin = Select-String -Path $tempPath -Pattern "PrivateData ="
         $PrivateDataBeginLine = $PrivateDataBegin.LineNumber
     

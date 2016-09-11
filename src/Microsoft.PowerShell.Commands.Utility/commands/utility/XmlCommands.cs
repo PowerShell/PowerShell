@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// implementation for the Export-Clixml command
     /// </summary>
-    [Cmdlet(VerbsData.Export, "Clixml", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113297")]
+    [Cmdlet(VerbsData.Export, "Clixml", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113297")]
     public sealed class ExportClixmlCommand : PSCmdlet, IDisposable
     {
         #region Command Line Parameters
@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements Import-Clixml command
     /// </summary>
-    [Cmdlet(VerbsData.Import, "Clixml", SupportsPaging = true, DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113340")]
+    [Cmdlet(VerbsData.Import, "Clixml", SupportsPaging = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113340")]
     public sealed class ImportClixmlCommand : PSCmdlet, IDisposable
     {
         #region Command Line Parameters
@@ -366,7 +366,7 @@ namespace Microsoft.PowerShell.Commands
     /// implementation for the convertto-xml command
     /// </summary>
     [Cmdlet(VerbsData.ConvertTo, "Xml", SupportsShouldProcess = false,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135204", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135204", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(XmlDocument), typeof(String))]
     public sealed class ConvertToXmlCommand : PSCmdlet, IDisposable
     {
@@ -564,7 +564,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (As.Equals("Stream", StringComparison.OrdinalIgnoreCase))
             {
-                // Omit xml declaration in this case becuase we will write out the declaration string in BeginProcess.
+                // Omit xml declaration in this case because we will write out the declaration string in BeginProcess.
                 xmlSettings.OmitXmlDeclaration = true;
             }
 
@@ -819,7 +819,7 @@ namespace Microsoft.PowerShell.Commands
     ///<summary>
     ///This cmdlet is used to search an xml document based on the XPath Query.
     ///</summary>
-    [Cmdlet(VerbsCommon.Select, "Xml", DefaultParameterSetName = "Xml", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135255")]
+    [Cmdlet(VerbsCommon.Select, "Xml", DefaultParameterSetName = "Xml", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135255")]
     [OutputType(typeof(SelectXmlInfo))]
     public class SelectXmlCommand : PSCmdlet
     {
@@ -1025,7 +1025,7 @@ namespace Microsoft.PowerShell.Commands
 
         # endregion private
 
-        #region overrdies
+        #region override
 
         /// <summary>
         /// ProcessRecord method.

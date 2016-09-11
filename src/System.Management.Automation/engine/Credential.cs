@@ -81,7 +81,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Declare a delegate which returns the encryption key and initialization vector for symmetric encryption algorithem.
+    /// Declare a delegate which returns the encryption key and initialization vector for symmetric encryption algorithm.
     /// </summary>
     /// <param name="context">The streaming context, which contains the searilization context.</param>
     /// <param name="key">Symmetric encryption key.</param>

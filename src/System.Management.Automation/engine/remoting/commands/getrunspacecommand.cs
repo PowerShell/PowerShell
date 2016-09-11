@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
     ///     
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "PSSession", DefaultParameterSetName = PSRunspaceCmdlet.NameParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135219", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135219", RemotingCapability = RemotingCapability.OwnedByCommand)]
     [OutputType(typeof(PSSession))]
     public class GetPSSessionCommand : PSRunspaceCmdlet, IDisposable
     {
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
         /// this is not set as well, then Microsoft.PowerShell is used.
         ///
         /// For VM/Container sessions:
-        /// If this parameter is not speficied then all sessions that match other filters are returned.
+        /// If this parameter is not specified then all sessions that match other filters are returned.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                            ParameterSetName = GetPSSessionCommand.ComputerNameParameterSet)]
@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
         public String ConfigurationName { get; set; }
 
         /// <summary>
-        /// The AllowRediraction parameter enables the implicit redirection functionality.
+        /// The AllowRedirection parameter enables the implicit redirection functionality.
         /// </summary>
         [Parameter(ParameterSetName = GetPSSessionCommand.ConnectionUriParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.ConnectionUriInstanceIdParameterSet)]
@@ -483,7 +483,7 @@ namespace Microsoft.PowerShell.Commands
             if (ParameterSetName != GetPSSessionCommand.ConnectionUriParameterSet &&
                 ParameterSetName != GetPSSessionCommand.ConnectionUriInstanceIdParameterSet)
             {
-                // uri redirection is supported only with URI parmeter set
+                // uri redirection is supported only with URI parameter set
                 connectionInfo.MaximumConnectionRedirectionCount = 0;
             }
 

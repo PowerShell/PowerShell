@@ -123,17 +123,17 @@ namespace System.Management.Automation
                     var hadFunctions = AddPsd1EntryToResult(result, moduleManifestProperties["FunctionsToExport"], CommandTypes.Function, ref sawWildcard);
                     var hadAliases = AddPsd1EntryToResult(result, moduleManifestProperties["AliasesToExport"], CommandTypes.Alias, ref sawWildcard);
 
-                    var analysisSuceeded = hadCmdlets && hadFunctions && hadAliases;
+                    var analysisSucceeded = hadCmdlets && hadFunctions && hadAliases;
 
-                    if (!analysisSuceeded && !sawWildcard && (hadCmdlets || hadFunctions))
+                    if (!analysisSucceeded && !sawWildcard && (hadCmdlets || hadFunctions))
                     {
                         // If we're missing CmdletsToExport, that might still be OK, but only if we have a script module.
                         // Likewise, if we're missing FunctionsToExport, that might be OK, but only if we have a binary module.
 
-                        analysisSuceeded = !CheckModulesTypesInManifestAgainstExportedCommands(moduleManifestProperties, hadCmdlets, hadFunctions, hadAliases);
+                        analysisSucceeded = !CheckModulesTypesInManifestAgainstExportedCommands(moduleManifestProperties, hadCmdlets, hadFunctions, hadAliases);
                     }
 
-                    if (analysisSuceeded)
+                    if (analysisSucceeded)
                     {
                         var moduleCacheEntry = new ModuleCacheEntry
                         {

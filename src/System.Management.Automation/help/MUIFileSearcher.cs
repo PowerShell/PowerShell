@@ -43,7 +43,7 @@ namespace System.Management.Automation
         ///     1. a file name
         ///     2. a search pattern
         /// It can also include a path, in that case, 
-        ///     1. the path will be searched first for the existense of the files.
+        ///     1. the path will be searched first for the existence of the files.
         /// </summary>
         internal string Target { get; } = null;
 

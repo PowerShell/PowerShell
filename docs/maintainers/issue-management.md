@@ -9,9 +9,9 @@ We use the following labels for issue classifications:
 
 * `Issue-Bug`: the issue is reporting a bug
 * `Issue-Discussion`: the issue may not have a clear classification yet.
-  The issue may generate a [RFC][ln-rfc] or maybe be reclassified as a bug or enhancement.
+  The issue may generate an [RFC][ln-rfc] or maybe be reclassified as a bug or enhancement.
 * `Issue-Enhancement`: the issue is more of a feature request than a bug.
-* `Issue-Meta`: an issue used to track multiple issues
+* `Issue-Meta`: an issue used to track multiple issues.
 * `Issue-Question`: ideally support can be provided via other mechanisms,
   but sometimes folks to open an issue to get a question answered and we will use this label for such issues.
 
@@ -19,18 +19,18 @@ We use the following labels for issue classifications:
 
 When an issue is resolved, the following labels are used to describe the resolution:
 
-* `Resolution-Answered`: the issue was a `Issue-Question` and was answered.
-* `Resolution-By Design`: the issue is not considered a bug, the behavior is working as designed
-* `Resolution-Duplicate`: the issue is a duplicate - there must be a comment linking to another issue
+* `Resolution-Answered`: the issue was an `Issue-Question` and was answered.
+* `Resolution-By Design`: the issue is not considered a bug, the behavior is working as designed.
+* `Resolution-Duplicate`: the issue is a duplicate - there must be a comment linking to another issue.
 * `Resolution-External`: the issue cannot be address by this repo.  Should be addressed externally.
-* `Resolution-Fixed`: the issue is has been fixed and should be referenced from a PR
+* `Resolution-Fixed`: the issue has been fixed and should be referenced from a PR.
 * `Resolution-Won't Fix`: the issue may be considered a bug or enhancement but won't be fixed.
   If there is an inadequate explanation as to why the issue was closed,
   anyone should feel free to reopen the issue.
 
 ### Feature areas
 
-These labels describe what feature area of PowerShell that an issue affects.
+These labels describe what feature area of PowerShell that an issue affects:
 
 * `Area-Build`: build issues
 * `Area-Cmdlets`: cmdlets in any module
@@ -52,9 +52,9 @@ These labels describe what feature area of PowerShell that an issue affects.
 * `Area-SideBySide`: side by side support
 * `Area-Test`:issues in a test or in test infrastructure
 
-### Operating systems
+### Operating Systems
 
-These are for issues that are specific to certain operating systems:
+These are for issues that are specific to certain Operating Systems:
 * `OS-Linux`
 * `OS-macOS`
 * `OS-Windows`
@@ -66,7 +66,7 @@ Issues can be in one of the following states:
 * `0 - Backlog` : We've acknowledged the issue but have no immediate plans to address it.
   If you're looking for a way to contribute, these issues can be a good place to start.
 * `1 - Planning` : The issue requires some design or discussion before coding can begin.
-* `2 - Ready` : Any design or discussion is essentially done, coding has not yet begun though.
+* `2 - Ready` : Any design or discussion is essentially done, coding has not yet begun.
 * `3 - Working` : The assignee(s) are actively working on the issue.
 * `4 - In Review` : The issue is being reviewed.
   The assignee(s) are responsible for signing off before the PR will be merged.
@@ -75,8 +75,10 @@ The following labels are used on PRs:
 
 * `Review - Needed` : The PR is being reviewed.  Please see [Pull Request - Code Review](../../.github/CONTRIBUTING.md#pull-request-code-review)
 * `Review - Waiting on Author` : The PR was reviewed by the team and requires changes or comments from the author before being accepted.
+* `Review - Abandoned` : The PR was not updated for significant number of days (the exact number could vary over time).
+  Maintainers should look into such PRs and re-evaluate them.
 
-### Random labels
+### Miscellaneous labels
 
 * `Blocked`: an issue cannot be addressed due to external factors,
   but should not be closed because those external factors are temporary.

@@ -159,13 +159,13 @@ namespace Microsoft.PowerShell.Commands
 
             // TODO: assign real TechNet addresses
 
-            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "http://go.microsoft.com/fwlink/?linkid=390783");
-            s_metadataCache.Add("Microsoft.PowerShell.Core", "http://go.microsoft.com/fwlink/?linkid=390782");
-            s_metadataCache.Add("Microsoft.PowerShell.Utility", "http://go.microsoft.com/fwlink/?linkid=390787");
-            s_metadataCache.Add("Microsoft.PowerShell.Host", "http://go.microsoft.com/fwlink/?linkid=390784");
-            s_metadataCache.Add("Microsoft.PowerShell.Management", " http://go.microsoft.com/fwlink/?linkid=390785");
-            s_metadataCache.Add("Microsoft.PowerShell.Security", " http://go.microsoft.com/fwlink/?linkid=390786");
-            s_metadataCache.Add("Microsoft.WSMan.Management", "http://go.microsoft.com/fwlink/?linkid=390788");
+            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "https://go.microsoft.com/fwlink/?linkid=390783");
+            s_metadataCache.Add("Microsoft.PowerShell.Core", "https://go.microsoft.com/fwlink/?linkid=390782");
+            s_metadataCache.Add("Microsoft.PowerShell.Utility", "https://go.microsoft.com/fwlink/?linkid=390787");
+            s_metadataCache.Add("Microsoft.PowerShell.Host", "https://go.microsoft.com/fwlink/?linkid=390784");
+            s_metadataCache.Add("Microsoft.PowerShell.Management", " https://go.microsoft.com/fwlink/?linkid=390785");
+            s_metadataCache.Add("Microsoft.PowerShell.Security", " https://go.microsoft.com/fwlink/?linkid=390786");
+            s_metadataCache.Add("Microsoft.WSMan.Management", "https://go.microsoft.com/fwlink/?linkid=390788");
         }
 
         /// <summary>
@@ -799,7 +799,7 @@ namespace Microsoft.PowerShell.Commands
         #region Logging
 
         /// <summary>
-        /// Loggs a command message
+        /// Logs a command message
         /// </summary>
         /// <param name="message">message to log</param>
         internal void LogMessage(string message)

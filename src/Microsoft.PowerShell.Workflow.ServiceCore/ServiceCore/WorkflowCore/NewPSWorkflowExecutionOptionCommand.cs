@@ -569,7 +569,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Command to create an object for PSWorkflowExecutionOption
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "PSWorkflowExecutionOption",HelpUri = "http://go.microsoft.com/fwlink/?LinkID=210609")]
+    [Cmdlet(VerbsCommon.New, "PSWorkflowExecutionOption",HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210609")]
     [OutputType(typeof(PSWorkflowExecutionOption))]
     public sealed class NewPSWorkflowExecutionOptionCommand : PSCmdlet
     {
@@ -636,7 +636,7 @@ namespace Microsoft.PowerShell.Commands
         }
         
         /// <summary>
-        /// UseEnctyption
+        /// UseEncryption
         /// </summary>
         [Parameter]
         public SwitchParameter PersistWithEncryption {

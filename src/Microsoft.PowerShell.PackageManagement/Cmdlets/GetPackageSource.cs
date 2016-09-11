@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
     using Microsoft.PackageManagement.Packaging;
     using Utility;
 
-    [Cmdlet(VerbsCommon.Get, Constants.Nouns.PackageSourceNoun, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=517137")]
+    [Cmdlet(VerbsCommon.Get, Constants.Nouns.PackageSourceNoun, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=517137")]
     public sealed class GetPackageSource : CmdletWithProvider {
         private readonly List<PackageSource> _unregistered = new List<PackageSource>();
         private bool _found;
@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
             set {
                 _originalName = value;
                 if (!string.IsNullOrWhiteSpace(_originalName) && _originalName.ContainsWildcards()){
-                    //'Name' means package Source Name here. if we pass down the source name with any wildcard charaters, providers cannot resolve them.
+                    //'Name' means package Source Name here. if we pass down the source name with any wildcard characters, providers cannot resolve them.
                     //set it to "" here just as a user does not provide -Name. With that Get-PackageSource returns all and we'll filter on results.
                     _name = string.Empty;
                 } else {

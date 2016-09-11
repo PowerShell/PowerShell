@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Workflow
                     }
 
                     // Start the workflow job manager, if not started, to add an event handler for zero active sessions changed events
-                    // This is required to auto shudown the workflow type shared process when no workflow jobs have scheduled/inprogress and when no active sessions
+                    // This is required to auto shutdown the workflow type shared process when no workflow jobs have scheduled/inprogress and when no active sessions
                     WorkflowJobSourceAdapter.GetInstance().GetJobManager();
                 }
                 catch(Exception)

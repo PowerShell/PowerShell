@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
     /// 
     /// See Declarative Initial Session State (DISC)
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "PSSessionConfigurationFile", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=217036")]
+    [Cmdlet(VerbsCommon.New, "PSSessionConfigurationFile", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217036")]
     public class NewPSSessionConfigurationFileCommand : PSCmdlet
     {
         #region Parameters
@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
         private IDictionary _requiredGroups;
 
         /// <summary>
-        /// Languange mode
+        /// Language mode
         /// </summary>
         [Parameter()]
         public PSLanguageMode LanguageMode
@@ -446,7 +446,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _visibleProviders = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// A list of alises
+        /// A list of aliases
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1074,7 +1074,7 @@ namespace Microsoft.PowerShell.Commands
     /// 
     /// Creates a role capability file suitable for use in a Role Capability (which can be referenced in a Session Configuration file)
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "PSRoleCapabilityFile", HelpUri = "http://go.microsoft.com/fwlink/?LinkId=623708")]
+    [Cmdlet(VerbsCommon.New, "PSRoleCapabilityFile", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=623708")]
     public class NewPSRoleCapabilityFileCommand : PSCmdlet
     {
         #region Parameters
@@ -1309,7 +1309,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _scriptsToProcess = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// A list of alises
+        /// A list of aliases
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1915,7 +1915,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 for (int i = 0; i < values.Length;)
                 {
-                    WriteRequriedGroup(values[i++], sb);
+                    WriteRequiredGroup(values[i++], sb);
 
                     if (i < values.Length)
                     {
@@ -1925,7 +1925,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                WriteRequriedGroup(keyObject, sb);
+                WriteRequiredGroup(keyObject, sb);
             }
 
             sb.Append(" }");
@@ -1933,7 +1933,7 @@ namespace Microsoft.PowerShell.Commands
             return sb.ToString();
         }
 
-        private static void WriteRequriedGroup(object value, StringBuilder sb)
+        private static void WriteRequiredGroup(object value, StringBuilder sb)
         {
             string strValue = value as string;
             if (strValue != null)

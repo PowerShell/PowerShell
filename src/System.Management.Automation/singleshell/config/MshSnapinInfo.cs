@@ -227,7 +227,7 @@ namespace System.Management.Automation
         public bool IsDefault { get; }
 
         /// <summary>
-        /// Retuns applicationbase for mshsnapin
+        /// Returns applicationbase for mshsnapin
         /// </summary>
         public string ApplicationBase { get; }
 
@@ -501,22 +501,22 @@ namespace System.Management.Automation
 
             // PS V3 snapin information is stored under 1 registry key..
             // so no need to iterate over twice.
-            Collection<string> filterdVersions = new Collection<string>();
+            Collection<string> filteredVersions = new Collection<string>();
             foreach (string version in versions)
             {
-                string temp = PSVersionInfo.GetRegisteryVersionKeyForSnapinDiscovery(version);
+                string temp = PSVersionInfo.GetRegistryVersionKeyForSnapinDiscovery(version);
                 if (string.IsNullOrEmpty(temp))
                 {
                     temp = version;
                 }
 
-                if (!filterdVersions.Contains(temp))
+                if (!filteredVersions.Contains(temp))
                 {
-                    filterdVersions.Add(temp);
+                    filteredVersions.Add(temp);
                 }
             }
 
-            foreach (string version in filterdVersions)
+            foreach (string version in filteredVersions)
             {
                 if (string.IsNullOrEmpty(version))
                 {
@@ -630,7 +630,7 @@ namespace System.Management.Automation
                 {
                     mshsnapins.Add(ReadOne(mshsnapinRoot, id));
                 }
-                //If we cannot read some mshsnapins, we should contiune
+                //If we cannot read some mshsnapins, we should continue
                 catch (SecurityException)
                 {
                 }
@@ -906,7 +906,7 @@ namespace System.Management.Automation
                 string.Format(CultureInfo.CurrentCulture, "{0} is null", RegistryStrings.MonadEngine_MonadVersion));
 
             // Get version number in x.x.x.x format
-            // This information is available from the exeucting assembly
+            // This information is available from the executing assembly
             //
             // PROBLEM: The following code assumes all assemblies have the same version,
             // culture, publickeytoken...This will break the scenarios where only one of
@@ -1173,7 +1173,7 @@ namespace System.Management.Automation
             Dbg.Assert(!string.IsNullOrEmpty(psVersion), "caller should validate the parameter");
             Dbg.Assert(rootKey != null, "caller should validate the parameter");
 
-            string versionKey = PSVersionInfo.GetRegisteryVersionKeyForSnapinDiscovery(psVersion);
+            string versionKey = PSVersionInfo.GetRegistryVersionKeyForSnapinDiscovery(psVersion);
             RegistryKey versionRoot = rootKey.OpenSubKey(versionKey);
             if (versionRoot == null)
             {

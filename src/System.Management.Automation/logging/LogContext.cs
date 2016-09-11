@@ -72,7 +72,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Type of the command, which can be Alias, CommandLet, Script, Application, etc.
         /// 
-        /// The value of this property is a usually coversion of CommandTypes enum into a string.
+        /// The value of this property is a usually conversion of CommandTypes enum into a string.
         /// </summary>
         /// <value></value>
         internal string CommandType { get; set; } = "";

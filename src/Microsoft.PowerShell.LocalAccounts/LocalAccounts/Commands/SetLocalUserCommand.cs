@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.Set, "LocalUser",
             SupportsShouldProcess = true,
             DefaultParameterSetName = "Name",
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717984")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717984")]
     [Alias("slu")]
     public class SetLocalUserCommand : PSCmdlet
     {

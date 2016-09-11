@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         private string _commandName;
 
         /// <summary>
-        /// Intitializes a new instance of the SecureStringCommandBase
+        /// Initializes a new instance of the SecureStringCommandBase
         /// class.
         /// </summary>
         ///
@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
     /// uses the DPAPI to encrypt the string. When a key is specified, the
     /// command uses the AES algorithm to encrypt the string.
     /// </summary>
-    [Cmdlet(VerbsData.ConvertFrom, "SecureString", DefaultParameterSetName = "Secure", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113287")]
+    [Cmdlet(VerbsData.ConvertFrom, "SecureString", DefaultParameterSetName = "Secure", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113287")]
     [OutputType(typeof(string))]
     public sealed class ConvertFromSecureStringCommand : ConvertFromToSecureStringCommandBase
     {
@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
     /// When a key is specified, the command uses the AES algorithm 
     /// to decrypt the data.
     /// </summary>
-    [Cmdlet(VerbsData.ConvertTo, "SecureString", DefaultParameterSetName = "Secure", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113291")]
+    [Cmdlet(VerbsData.ConvertTo, "SecureString", DefaultParameterSetName = "Secure", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113291")]
     [OutputType(typeof(SecureString))]
     public sealed class ConvertToSecureStringCommand : ConvertFromToSecureStringCommandBase
     {

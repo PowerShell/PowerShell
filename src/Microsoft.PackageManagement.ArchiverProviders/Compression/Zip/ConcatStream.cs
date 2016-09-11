@@ -14,7 +14,7 @@ namespace Microsoft.PackageManagement.Archivers.Internal.Compression.Zip
 
     /// <summary>
     /// Used to trick a DeflateStream into reading from or writing to
-    /// a series of (chunked) streams instead of a single steream.
+    /// a series of (chunked) streams instead of a single stream.
     /// </summary>
     internal class ConcatStream : Stream
     {
@@ -155,7 +155,7 @@ namespace Microsoft.PackageManagement.Archivers.Internal.Compression.Zip
 
 #if !CORECLR
         /// <summary>
-        /// Closes underying stream
+        /// Closes underlying stream
         /// </summary>
         public override void Close()
         {

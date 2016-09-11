@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
     using Utility;
     using System.Security;
 
-    [Cmdlet(VerbsLifecycle.Register, Constants.Nouns.PackageSourceNoun, SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=517139")]
+    [Cmdlet(VerbsLifecycle.Register, Constants.Nouns.PackageSourceNoun, SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=517139")]
     public sealed class RegisterPackageSource : CmdletWithProvider {
         public RegisterPackageSource()
             : base(new[] {OptionCategory.Provider, OptionCategory.Source}) {

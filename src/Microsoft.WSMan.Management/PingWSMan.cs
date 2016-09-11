@@ -25,7 +25,7 @@ namespace Microsoft.WSMan.Management
     /// service is running
     /// </summary>
 
-    [Cmdlet(VerbsDiagnostic.Test, "WSMan", HelpUri = "http://go.microsoft.com/fwlink/?LinkId=141464")]
+    [Cmdlet(VerbsDiagnostic.Test, "WSMan", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141464")]
     public class TestWSManCommand : AuthenticatingWSManCommand, IDisposable
     {
         /// <summary>
@@ -98,7 +98,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".
-        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connnection to 
+        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to 
         /// the remote computer. If SSL is not available on the port specified by the 
         /// Port parameter, the command fails.
         /// </summary>

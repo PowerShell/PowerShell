@@ -856,7 +856,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method generates a Remoting data structure handler message for 
-        /// that contains a repsonse to SetMaxRunspaces or SetMinRunspaces
+        /// that contains a response to SetMaxRunspaces or SetMinRunspaces
         /// </summary>
         /// <param name="clientRunspacePoolId">id of the clientRunspacePool</param>
         /// <param name="callId">call id of the call at client</param>
@@ -896,7 +896,7 @@ namespace System.Management.Automation
         /// --------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |      Data     |        Type          |
         /// ---------------------------------------------------------------------------
-        /// | S | Runspace  | CRPID  |    0    |     null      |GetAvailalbeRunspaces |
+        /// | S | Runspace  | CRPID  |    0    |     null      |GetAvailableRunspaces |
         /// |   |   Pool    |        |         |               |                      |
         /// --------------------------------------------------------------------------
         internal static RemoteDataObject GenerateGetAvailableRunspaces(Guid clientRunspacePoolId,
@@ -914,13 +914,13 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method generates a remoting data structure handler message for
-        /// transfering a roles public key to the other side
+        /// transferring a roles public key to the other side
         /// </summary>
         /// <param name="runspacePoolId">runspace pool id</param>
         /// <param name="publicKey">public key to send across</param>
         /// <param name="destination">destination that this message is
-        /// targetted to</param>
-        /// <returns>data strucutre message</returns>
+        /// targeted to</param>
+        /// <returns>data structure message</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |      Data     |        Type          |
@@ -946,7 +946,7 @@ namespace System.Management.Automation
         /// requesting a public key from the client to the server
         /// </summary>
         /// <param name="runspacePoolId">runspace pool id</param>
-        /// <returns>data strucutre message</returns>
+        /// <returns>data structure message</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |      Data     |        Type          |
@@ -969,7 +969,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="runspacePoolId">runspace pool id</param>
         /// <param name="encryptedSessionKey">encrypted session key</param>
-        /// <returns>data strucutre message</returns>
+        /// <returns>data structure message</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |      Data     |        Type          |
@@ -1312,7 +1312,7 @@ namespace System.Management.Automation
         /// --------------------------------------------------------------------------------------
         /// | D |    TI     |  RPID  |   PID   |   Action   |      Data     |        Type         |
         /// --------------------------------------------------------------------------------------
-        /// | S |PowerShell | CRPID  |   CPID  |    Data    |  intput data  |   PowerShellInput   |
+        /// | S |PowerShell | CRPID  |   CPID  |    Data    |  input data   |   PowerShellInput   |
         /// |   |           |        |         |            |               |                     |
         /// --------------------------------------------------------------------------------------
         internal static RemoteDataObject GeneratePowerShellInput(object data, Guid clientRemoteRunspacePoolId,
@@ -1998,7 +1998,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Generates RunspacePoolInitInfo object from a recevied PSObject
+        /// Generates RunspacePoolInitInfo object from a received PSObject
         /// </summary>
         /// <param name="dataAsPSObject">data object to decode</param>
         /// <returns>RunspacePoolInitInfo generated</returns>
@@ -2049,7 +2049,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the exception if any from the serializaed state info object
+        /// Gets the exception if any from the serialized state info object
         /// </summary>
         /// <param name="stateInfo"></param>
         /// <returns></returns>

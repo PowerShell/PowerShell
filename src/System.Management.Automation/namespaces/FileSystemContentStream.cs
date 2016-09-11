@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
     /// 
     /// <remarks>
     /// Note, this class does no specific error handling. All errors are allowed to
-    /// propogate to the caller so that they can be written to the error pipeline
+    /// propagate to the caller so that they can be written to the error pipeline
     /// if necessary.
     /// </remarks>
     /// 
@@ -556,7 +556,7 @@ namespace Microsoft.PowerShell.Commands
                             // If the delimiter is at the end of the file, we need to read one more
                             // to get to the right position. For example:
                             //      ua123ua456ua -- -Tail 1
-                            // If we read backward only once, we get 'ua', and cannot get to the rigth position
+                            // If we read backward only once, we get 'ua', and cannot get to the right position
                             // So we read one more time, get 'ua456ua', and then we can get the right position
                             lastDelimiterMatch = (string)blocks[0];
                             if (currentBlock == 0 && lastDelimiterMatch.Equals(actualDelimiter, StringComparison.Ordinal))
@@ -643,7 +643,7 @@ namespace Microsoft.PowerShell.Commands
             // dealing with a "find the substring" algorithm, but with
             // the additional restriction that we cannot read past the
             // end of the delimiter.  If we read past the end of the delimiter,
-            // then we'll eat up bytes that we nede from the filestream.
+            // then we'll eat up bytes that we need from the filestream.
             // The solution is a modified Boyer-Moore string search algorithm.
             // This version retains the sub-linear search performance (via the 
             // lookup tables,) but offloads much of the dirty work to the
@@ -1469,7 +1469,7 @@ namespace Microsoft.PowerShell.Commands
                 // The BufferSize will be a multiple of 4, so we can just read toRead number of bytes
                 // if the current file is encoded by any of these formatting
 
-                // If IsSignleByteCharacterSet() reutrns true, we are sure that the given encoding is OEM 
+                // If IsSingleByteCharacterSet() returns true, we are sure that the given encoding is OEM 
                 // or Default, and it is SBCS(single byte character set) code page -- one byte per character
                 _currentPosition = _stream.Position;
                 _byteCount = _stream.Read(_byteBuff, 0, toRead);

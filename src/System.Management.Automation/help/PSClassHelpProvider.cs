@@ -126,7 +126,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the help in for the PS Class Info.        /// 
         /// </summary>
-        /// <param name="searcher">Searcher for PS Classses.</param>
+        /// <param name="searcher">Searcher for PS Classes.</param>
         /// <returns>Next HelpInfo object.</returns>
         private IEnumerable<HelpInfo> GetHelpInfo(PSClassSearcher searcher)
         {
@@ -226,7 +226,7 @@ namespace System.Management.Automation
                     LoadHelpFile(helpFile, helpFile, classInfo.Name, reportErrors);
                 }
 
-                return GetFromPSClasseHelpCache(helpFile, Automation.HelpCategory.Class);
+                return GetFromPSClassHelpCache(helpFile, Automation.HelpCategory.Class);
             }
 
             return null;
@@ -238,7 +238,7 @@ namespace System.Management.Automation
         /// <param name="helpFileIdentifier">help file identifier (either name of PSSnapIn or simply full path to help file)</param>
         /// <param name="helpCategory">Help Category for search.</param>
         /// <returns>HelpInfo object.</returns>
-        private HelpInfo GetFromPSClasseHelpCache(string helpFileIdentifier, HelpCategory helpCategory)
+        private HelpInfo GetFromPSClassHelpCache(string helpFileIdentifier, HelpCategory helpCategory)
         {
             Debug.Assert(!string.IsNullOrEmpty(helpFileIdentifier), "helpFileIdentifier should not be null or empty.");
 

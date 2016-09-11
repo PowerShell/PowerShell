@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Workflow
         internal string BuildLogPath { get; set; }
 
         /// <summary>
-        /// The runtime gnerated assembly name.
+        /// The runtime generated assembly name.
         /// </summary>
         internal string AssemblyName { get; set; }
 

@@ -459,7 +459,7 @@ namespace System.Management.Automation
         /// </param>
         /// 
         /// <param name="origin">
-        /// Specifies the origin of the comannd setting the alias.
+        /// Specifies the origin of the command setting the alias.
         /// </param>
         /// 
         /// <returns>
@@ -670,7 +670,7 @@ namespace System.Management.Automation
         } // RemoveAlias
 
         /// <summary>
-        /// Gets the alises by command name (used by metadata-driven help)
+        /// Gets the aliases by command name (used by metadata-driven help)
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>

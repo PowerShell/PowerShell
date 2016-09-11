@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell
                 // UI fallback language.
                 // CLR does not support this (non-traditional) fallback mechanism. 
                 // The currentUICulture returned NativeCultureResolver supports this non
-                // traditional fallback on Vista. So it is important to set currentUICuluture
+                // traditional fallback on Vista. So it is important to set currentUICulture
                 // in the beginning before we do anything.
                 ClrFacade.SetCurrentThreadUiCulture(NativeCultureResolver.UICulture);
                 ClrFacade.SetCurrentThreadCulture(NativeCultureResolver.Culture);

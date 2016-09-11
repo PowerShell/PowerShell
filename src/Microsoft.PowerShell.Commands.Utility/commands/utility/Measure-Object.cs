@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands
     /// measure object cmdlet
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Measure, "Object", DefaultParameterSetName = GenericParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113349", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113349", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(GenericMeasureInfo), typeof(TextMeasureInfo), typeof(GenericObjectMeasureInfo))]
     public sealed class MeasureObjectCommand : PSCmdlet
     {
@@ -500,7 +500,7 @@ namespace Microsoft.PowerShell.Commands
 
                     AnalyzeValue(propertyName, tempExprRes[0].Result);
 
-                    // Remember resolved propertNames that have been counted
+                    // Remember resolved propertyNames that have been counted
                     countedProperties[propertyName] = null;
                 }
             }

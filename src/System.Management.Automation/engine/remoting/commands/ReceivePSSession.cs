@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
     ///    until the running command completes and all output data is received on 
     ///    the client.
     /// b) To a job object.  This is the asynchronous mode of the cmdlet which will
-    ///    return immmediately providing the job object that is collecting the 
+    ///    return immediately providing the job object that is collecting the 
     ///    running command output data.
     ///    
     /// The running command becomes disconnected when the associated runspace is 
@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Receive, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = ReceivePSSessionCommand.SessionParameterSet,
-         HelpUri = "http://go.microsoft.com/fwlink/?LinkID=217037", RemotingCapability = RemotingCapability.OwnedByCommand)]
+         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217037", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class ReceivePSSessionCommand : PSRemotingCmdlet
     {
         #region Parameters
@@ -408,7 +408,7 @@ namespace Microsoft.PowerShell.Commands
         /// in a job object that is returned (OutTarget.Job).
         /// </summary>
         /// <param name="name">Name of session to find.</param>
-        /// <param name="instanceId">Instnace Id of session to find.</param>
+        /// <param name="instanceId">Instance Id of session to find.</param>
         private void QueryForAndConnectCommands(string name, Guid instanceId)
         {
             WSManConnectionInfo connectionInfo = GetConnectionObject();
@@ -601,7 +601,7 @@ namespace Microsoft.PowerShell.Commands
             if (ParameterSetName != ReceivePSSessionCommand.ConnectionUriInstanceIdParameterSet &&
                 ParameterSetName != ReceivePSSessionCommand.ConnectionUriSessionNameParameterSet)
             {
-                // uri redirection is supported only with URI parmeter set
+                // uri redirection is supported only with URI parameter set
                 connectionInfo.MaximumConnectionRedirectionCount = 0;
             }
 
@@ -1313,7 +1313,7 @@ namespace Microsoft.PowerShell.Commands
         Host = 1,
 
         /// <summary>
-        /// Asyncronous mode.  Receive-PSSession ouput data goes to returned job object.
+        /// Asynchronous mode.  Receive-PSSession ouput data goes to returned job object.
         /// </summary>
         Job = 2
     }

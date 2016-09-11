@@ -168,7 +168,7 @@ namespace System.Management.Automation
             /*               Equals */ PSTokenType.Operator,
             /*           PlusEquals */ PSTokenType.Operator,
             /*          MinusEquals */ PSTokenType.Operator,
-            /*        MultipyEquals */ PSTokenType.Operator,
+            /*       MultiplyEquals */ PSTokenType.Operator,
             /*         DivideEquals */ PSTokenType.Operator,
             /*      RemainderEquals */ PSTokenType.Operator,
             /*          Redirection */ PSTokenType.Operator,

@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsLifecycle.Disable, "LocalUser",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717986")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717986")]
     [Alias("dlu")]
     public class DisableLocalUserCommand : Cmdlet
     {

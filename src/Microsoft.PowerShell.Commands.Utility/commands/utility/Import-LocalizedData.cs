@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// The implementation of the "import-localizeddata" cmdlet
     /// </summary>
     /// 
-    [Cmdlet(VerbsData.Import, "LocalizedData", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113342")]
+    [Cmdlet(VerbsData.Import, "LocalizedData", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113342")]
     public sealed class ImportLocalizedData : PSCmdlet
     {
         #region Parameters
@@ -333,7 +333,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // 197751: WR BUG BASH: Powershell: localized text display as garbage
                 // leaving the encoding to be decided by the StreamReader. StreamReader
-                // will read the preamable and decide proper encoding.
+                // will read the preamble and decide proper encoding.
                 using (FileStream scriptStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 using (StreamReader scriptReader = new StreamReader(scriptStream))
                 {

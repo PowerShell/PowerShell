@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// implementation for the new-timespan command 
     /// </summary> 
     [Cmdlet(VerbsCommon.New, "TimeSpan", DefaultParameterSetName = "Date",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113360", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113360", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(TimeSpan))]
     public sealed class NewTimeSpanCommand : PSCmdlet
     {
@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            // initally set start and end time to be equal
+            // initially set start and end time to be equal
             DateTime startTime = DateTime.Now;
             DateTime endTime = startTime;
             TimeSpan result;

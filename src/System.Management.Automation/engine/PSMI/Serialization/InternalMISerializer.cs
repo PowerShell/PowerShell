@@ -42,7 +42,7 @@ namespace System.Management.Automation
 
         /// Used by Remoting infrastructure. This TypeTable instance
         /// will be used by Serializer if ExecutionContext is not
-        /// avaliable (to get the ExecutionContext's TypeTable)
+        /// available (to get the ExecutionContext's TypeTable)
         private TypeTable _typeTable;
 
         private Collection<CollectionEntry<PSPropertyInfo>> _allPropertiesCollection;

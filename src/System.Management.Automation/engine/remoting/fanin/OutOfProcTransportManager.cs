@@ -478,12 +478,12 @@ namespace System.Management.Automation.Remoting.Client
             _dataProcessingCallbacks.CommandCreationPacketReceived += new OutOfProcessUtils.CommandCreationPacketReceived(OnCommandCreationPacketReceived);
             _dataProcessingCallbacks.CommandCreationAckReceived += new OutOfProcessUtils.CommandCreationAckReceived(OnCommandCreationAckReceived);
             _dataProcessingCallbacks.SignalPacketReceived += new OutOfProcessUtils.SignalPacketReceived(OnSignalPacketReceived);
-            _dataProcessingCallbacks.SignalAckPacketReceived += new OutOfProcessUtils.SignalAckPacketReceived(OnSiganlAckPacketReceived);
+            _dataProcessingCallbacks.SignalAckPacketReceived += new OutOfProcessUtils.SignalAckPacketReceived(OnSignalAckPacketReceived);
             _dataProcessingCallbacks.ClosePacketReceived += new OutOfProcessUtils.ClosePacketReceived(OnClosePacketReceived);
             _dataProcessingCallbacks.CloseAckPacketReceived += new OutOfProcessUtils.CloseAckPacketReceived(OnCloseAckReceived);
 
             dataToBeSent.Fragmentor = base.Fragmentor;
-            // session transport manager can recieve unlimited data..however each object is limited
+            // session transport manager can receive unlimited data..however each object is limited
             // by maxRecvdObjectSize. this is to allow clients to use a session for an unlimited time..
             // also the messages that can be sent to a session are limited and very controlled.
             // However a command transport manager can be restricted to receive only a fixed amount of data
@@ -708,7 +708,7 @@ namespace System.Management.Automation.Remoting.Client
                 }
 
                 // dont let the writer write new data as the process is exited.
-                // Not asssigning null to stdInWriter to fix the race condition between OnExited() and CloseAsync() methods.
+                // Not assigning null to stdInWriter to fix the race condition between OnExited() and CloseAsync() methods.
                 // 
                 stdInWriter.StopWriting();
             }
@@ -860,7 +860,7 @@ namespace System.Management.Automation.Remoting.Client
                    OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_TAG);
         }
 
-        private void OnSiganlAckPacketReceived(Guid psGuid)
+        private void OnSignalAckPacketReceived(Guid psGuid)
         {
             if (psGuid == Guid.Empty)
             {
@@ -1044,7 +1044,7 @@ namespace System.Management.Automation.Remoting.Client
                 return;
             }
 
-            // Send one fragement
+            // Send one fragment
             SendOneItem();
         }
 
@@ -2242,7 +2242,7 @@ namespace System.Management.Automation.Remoting.Server
 
             lock (_syncObject)
             {
-                // the dictinoary is cleared by ServerPowershellDataStructure handler
+                // the dictionary is cleared by ServerPowershellDataStructure handler
                 // once the clean up is complete for the transport manager
                 Dbg.Assert(!_cmdTransportManagers.ContainsKey(powerShellCmdId), "key already exists");
                 _cmdTransportManagers.Add(powerShellCmdId, cmdTM);

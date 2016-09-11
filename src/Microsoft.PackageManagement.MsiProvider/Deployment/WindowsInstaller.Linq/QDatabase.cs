@@ -141,7 +141,7 @@ namespace Microsoft.PackageManagement.Msi.Internal.Deployment.WindowsInstaller.L
         public TextWriter Log { get; set; }
 
         /// <summary>
-        /// Gets a queryable table from the datbaase.
+        /// Gets a queryable table from the database.
         /// </summary>
         /// <param name="table">name of the table</param>
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]

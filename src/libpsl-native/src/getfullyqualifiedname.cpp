@@ -9,7 +9,7 @@
 #include "getcomputername.h"
 #include "getfullyqualifiedname.h"
 
-//! @brief GetFullyQualifiedName retrieves the fully qualifed dns name of the host
+//! @brief GetFullyQualifiedName retrieves the fully qualified dns name of the host
 //!
 //! @exception errno Passes these errors via errno to GetLastError:
 //! - ERROR_INVALID_FUNCTION: getlogin_r() returned an unrecognized error code (from GetComputerName)
@@ -28,11 +28,6 @@ char *GetFullyQualifiedName()
     if (computerName == NULL)
     {
         return NULL;
-    }
-
-    if (strchr(computerName, '.') != NULL)
-    {
-        return computerName;
     }
 
     struct addrinfo hints, *info;

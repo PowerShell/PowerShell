@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     /// 
     [Cmdlet(VerbsCommon.New, "PSSession", DefaultParameterSetName = "ComputerName",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135237", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135237", RemotingCapability = RemotingCapability.OwnedByCommand)]
     [OutputType(typeof(PSSession))]
     public class NewPSSessionCommand : PSRemotingBaseCmdlet, IDisposable
     {
@@ -246,7 +246,7 @@ namespace Microsoft.PowerShell.Commands
 
                 default:
                     {
-                        Dbg.Assert(false, "Missing paramenter set in switch statement");
+                        Dbg.Assert(false, "Missing parameter set in switch statement");
                         remoteRunspaces = new List<RemoteRunspace>(); // added to avoid prefast warning
                     }
                     break;
@@ -325,7 +325,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         protected override void StopProcessing()
         {
-            // close the outputStream so that futher writes to the outputStream
+            // close the outputStream so that further writes to the outputStream
             // are not possible
             _stream.ObjectWriter.Close();
 
@@ -487,9 +487,9 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         // add host identification information in data structure handler message
-                        PSRemotingDataStructureException protoExeption = reason as PSRemotingDataStructureException;
+                        PSRemotingDataStructureException protoException = reason as PSRemotingDataStructureException;
 
-                        if (protoExeption != null)
+                        if (protoException != null)
                         {
                             OpenRunspaceOperation senderAsOp = sender as OpenRunspaceOperation;
 
@@ -497,7 +497,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 String host = senderAsOp.OperatedRunspace.ConnectionInfo.ComputerName;
 
-                                errorDetails = "[" + host + "] " + protoExeption.Message;
+                                errorDetails = "[" + host + "] " + protoException.Message;
                             }
                         }
 
@@ -603,7 +603,7 @@ namespace Microsoft.PowerShell.Commands
         {
             List<RemoteRunspace> remoteRunspaces = new List<RemoteRunspace>();
 
-            // validate the runspaces specfied before processing them.
+            // validate the runspaces specified before processing them.
             // The function will result in terminating errors, if any
             // validation failure is encountered
             ValidateRemoteRunspacesSpecified();
@@ -1300,7 +1300,7 @@ namespace Microsoft.PowerShell.Commands
         /// Handler for handling runspace state changed events. This method will be
         /// registered in the StartOperation and StopOperation methods. This handler
         /// will in turn invoke the OperationComplete event for all events that are 
-        /// necesary - Opened, Closed, Disconnected, Broken. It will ignore all other state 
+        /// necessary - Opened, Closed, Disconnected, Broken. It will ignore all other state 
         /// changes.
         /// </summary>
         /// <remarks>

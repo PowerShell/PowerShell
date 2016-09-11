@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     /// <remarks>Currently supports only table controls
     /// </remarks>
-    [Cmdlet(VerbsCommon.Get, "FormatData", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=144303")]
+    [Cmdlet(VerbsCommon.Get, "FormatData", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144303")]
     [OutputType(typeof(System.Management.Automation.ExtendedTypeDefinition))]
     public class GetFormatDataCommand : PSCmdlet
     {
@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                // Older version of PowerShell do not know about someting in the control, so
+                // Older version of PowerShell do not know about something in the control, so
                 // don't return it.
                 if (writeOldWay && !control.CompatibleWithOldPowerShell())
                     continue;

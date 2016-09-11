@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
     /// Enter-PSSession cmdlet.
     /// </summary>
     [Cmdlet(VerbsCommon.Enter, "PSSession", DefaultParameterSetName = "ComputerName",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135210", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135210", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class EnterPSSessionCommand : PSRemotingBaseCmdlet
     {
         #region Strings

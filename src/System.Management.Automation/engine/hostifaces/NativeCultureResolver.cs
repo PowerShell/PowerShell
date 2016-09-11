@@ -1,7 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
  
-Descripton: 
+Description: 
  
 Windows Vista and later support non-traditional UI fallback ie., a 
 user on an Arabic machine can choose either French or English(US) as
@@ -61,8 +61,8 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                // First traverse the parent heirarchy as established by CLR.
-                // This is required because there is difference in the parent heirarchy
+                // First traverse the parent hierarchy as established by CLR.
+                // This is required because there is difference in the parent hierarchy
                 // between CLR and Windows for Chinese. Ex: Native windows has
                 // zh-CN->zh-Hans->neutral whereas CLR has zh-CN->zh-CHS->zh-Hans->neutral
                 if ((null != base.Parent) && (!string.IsNullOrEmpty(base.Parent.Name)))
@@ -120,7 +120,7 @@ namespace Microsoft.PowerShell
                         {
                             string parentCulture = base.Parent.Name;
                             // remove the parentCulture from the m_fallbacks list.
-                            // ie., remove duplicates from the parent heirarchy.
+                            // ie., remove duplicates from the parent hierarchy.
                             string[] fallbacksForTheParent = null;
                             if (null != _fallbacks)
                             {
@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell
                                     }
                                 }
 
-                                // There is atlease 1 duplicate in m_fallbacks which was not added to
+                                // There is atleast 1 duplicate in m_fallbacks which was not added to
                                 // fallbacksForTheParent array. Resize the array to take care of  this.
                                 if (_fallbacks.Length != currentIndex)
                                 {
@@ -290,7 +290,7 @@ namespace Microsoft.PowerShell
                     // filter out languages that console cannot display..
                     // Sometimes GetConsoleFallbackUICulture returns neutral cultures
                     // like "en" on "ar-SA". However neutral culture cannot be 
-                    // asssigned as CurrentCulture. CreateSpecificCulture fixes
+                    // assigned as CurrentCulture. CreateSpecificCulture fixes
                     // this problem.
                     returnValue = CultureInfo.CreateSpecificCulture(
                         returnValue.GetConsoleFallbackUICulture().Name);
@@ -352,7 +352,7 @@ namespace Microsoft.PowerShell
         /// the UI languages a user has chosen.
         /// </summary>
         /// <returns>
-        /// List of ThredPreferredUILanguages.
+        /// List of ThreadPreferredUILanguages.
         /// </returns>
         /// <remarks>
         /// This method will work only on Vista and later.
@@ -367,7 +367,7 @@ namespace Microsoft.PowerShell
             if (filterOutNonConsoleCultures)
             {
                 // Filter out languages that do not support console.
-                // The third paramter should be null otherwise this API will not 
+                // The third parameter should be null otherwise this API will not 
                 // set Console CodePage filter.
                 // The MSDN documentation does not call this out explicitly. Opened
                 // Bug 950 (Windows Developer Content) to track this.
@@ -451,7 +451,7 @@ namespace Microsoft.PowerShell
         /// <returns>
         /// Returns the size of the buffer containing the locale name, including 
         /// the terminating null character, if successful. The function returns 0 
-        /// if it does not succeed. To get extended error information, the applciation
+        /// if it does not succeed. To get extended error information, the application
         /// can call GetLastError. Possible returns from GetLastError
         /// include ERR_INSUFFICIENT_BUFFER.
         /// </returns>

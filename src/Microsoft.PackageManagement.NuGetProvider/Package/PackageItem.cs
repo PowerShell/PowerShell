@@ -130,7 +130,7 @@
         }
     }
     
-    //Comparer for packges using version and id
+    //Comparer for packages using version and id
     internal class PackageItemComparer : IEqualityComparer<PackageItem>
     {
         public bool Equals(PackageItem packageOne, PackageItem packageTwo)

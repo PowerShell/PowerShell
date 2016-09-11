@@ -11,10 +11,10 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// Defines the implementation of the 'Clear-RecycleBin' cmdlet.
-    /// This cmldet clear all files in the RecycleBin for the given DriveLetter. 
+    /// This cmdlet clear all files in the RecycleBin for the given DriveLetter. 
     /// If not DriveLetter is specified, then the RecycleBin for all drives are cleared. 
     /// </summary>
-    [Cmdlet(VerbsCommon.Clear, "RecycleBin", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=524082", ConfirmImpact = ConfirmImpact.High)]
+    [Cmdlet(VerbsCommon.Clear, "RecycleBin", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=524082", ConfirmImpact = ConfirmImpact.High)]
     public class ClearRecycleBinCommand : PSCmdlet
     {
         private string[] _drivesList;
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_force || (ShouldProcess(clearRecycleBinShouldProcessTarget, "Clear-RecycleBin")))
             {
-                // If driveName is null, then clear the recyclebin for all drives; otherwise, just for the specified drivename. 
+                // If driveName is null, then clear the recyclebin for all drives; otherwise, just for the specified driveName. 
 
                 string activity = String.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.ClearRecycleBinProgressActivity);
                 string statusDescription;

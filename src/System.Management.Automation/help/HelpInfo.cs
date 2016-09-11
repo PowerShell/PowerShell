@@ -100,7 +100,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Target object in forward-help-provider that should process this HelpInfo.
-        /// This will serve as auxilliary information to be passed to forward help provider.
+        /// This will serve as auxiliary information to be passed to forward help provider.
         /// 
         /// In the case of AliasHelpInfo, for example, it needs to be forwarded to 
         /// CommandHelpProvider to fill in detailed helpInfo. In that case, ForwardHelpCategory
@@ -140,7 +140,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returs help information for a parameter(s) identified by pattern
+        /// Returns help information for a parameter(s) identified by pattern
         /// </summary>
         /// <param name="pattern">pattern to search for parameters</param>
         /// <returns>A collection of parameters that match pattern</returns>

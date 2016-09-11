@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     /// 
     /// </summary>
 
-    [Cmdlet("Write", "Progress", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113428", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet("Write", "Progress", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113428", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteProgressCommand : PSCmdlet
     {
         /// <summary>
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// 
         /// Identifies whether the activity has completed (and the display for it should be removed),
-        /// or if it is proceededing (and the display for it should be shown).
+        /// or if it is proceeding (and the display for it should be shown).
         /// 
         /// </summary>
         /// <value></value>

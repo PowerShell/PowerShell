@@ -548,7 +548,7 @@
     <comment>Foreach-Object should not be localized, or -Sequence. They are cmdlet and parameter names.</comment>
   </data>
   <data name="CannotNestIterativePipeline" xml:space="preserve">
-    <value>Connot define pipeline. An iterative pipeline may not be nested within another iterative pipeline.</value>
+    <value>Cannot define pipeline. An iterative pipeline may not be nested within another iterative pipeline.</value>
   </data>
   <data name="InvalidWhereSequenceParameter" xml:space="preserve">
     <value>Cannot call command. When used with the 'Sequence' parameter, the Where-Object cmdlet supports only the 'PipelineVariable' and 'Sequence' parameters.</value>

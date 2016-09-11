@@ -125,7 +125,7 @@ namespace System.Management.Automation.Runspaces
         /// <!--
         /// This is a RunspaceConfiguration factory function which will create an instance
         /// of default RunspaceConfiguration-derived type, whose name is decided by an 
-        /// assemly attribute in mini-shell.
+        /// assembly attribute in mini-shell.
         /// -->
         internal static RunspaceConfiguration Create()
         {
@@ -153,7 +153,7 @@ namespace System.Management.Automation.Runspaces
         /// <!--
         /// This is a RunspaceConfiguration factory function which will create an instance
         /// of default RunspaceConfiguration-derived type, whose name is decided by an 
-        /// assemly attribute in the assembly specified.
+        /// assembly attribute in the assembly specified.
         /// -->
         public static RunspaceConfiguration Create(string assemblyName)
         {

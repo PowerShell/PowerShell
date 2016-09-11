@@ -637,7 +637,7 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// 
-        /// Generates an array of strings representing as much of the outstanding progress activties as possible within the given
+        /// Generates an array of strings representing as much of the outstanding progress activities as possible within the given
         /// space.  As more outstanding activities are collected, nodes are "compressed" (i.e. rendered in an increasing terse
         /// fashion) in order to display as many as possible.  Ultimately, some nodes may be compressed to the point of 
         /// invisibility. The oldest nodes are compressed first.
@@ -1072,7 +1072,7 @@ namespace Microsoft.PowerShell
 
             int nodesCompressed = 0;
 
-            // This algorithm potentially makes many, many passeses over the tree.  It might be possible to optimize 
+            // This algorithm potentially makes many, many passes over the tree.  It might be possible to optimize 
             // that some, but I'm not trying to be too clever just yet.
 
             if (

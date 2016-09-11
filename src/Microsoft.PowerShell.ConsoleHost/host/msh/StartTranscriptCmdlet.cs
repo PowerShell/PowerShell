@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     /// 
     /// </summary>
 
-    [Cmdlet(VerbsLifecycle.Start, "Transcript", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113408")]
+    [Cmdlet(VerbsLifecycle.Start, "Transcript", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113408")]
     [OutputType(typeof(String))]
     public sealed class StartTranscriptCommand : PSCmdlet
     {
@@ -261,7 +261,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        /// resolve a user provided file name or path (cluding globbing characters)
+        /// resolve a user provided file name or path (including globbing characters)
         /// to a fully qualified file path, using the file system provider
         private string ResolveFilePath(string filePath, bool isLiteralPath)
         {

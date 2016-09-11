@@ -258,7 +258,7 @@ namespace System.Management.Automation
         /// <returns>ITypeInfo reference to the Dispatch interface </returns>
         internal static COM.ITypeInfo GetDispatchTypeInfoFromCoClassTypeInfo(COM.ITypeInfo typeinfo)
         {
-            //Get the number of interfaces implmented by this CoClass.
+            //Get the number of interfaces implemented by this CoClass.
             COM.TYPEATTR typeattr = GetTypeAttr(typeinfo);
             int count = typeattr.cImplTypes;
             int href;

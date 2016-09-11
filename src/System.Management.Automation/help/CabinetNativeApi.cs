@@ -196,7 +196,7 @@ namespace System.Management.Automation.Internal
 
     internal static class CabinetNativeApi
     {
-        #region Delegates and function defintions
+        #region Delegates and function definitions
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         internal delegate IntPtr FdiAllocDelegate(int size);
@@ -617,7 +617,7 @@ namespace System.Management.Automation.Internal
 
         #endregion
 
-        #region PInvoke Defintions
+        #region PInvoke Definitions
 
         /// <summary>
         /// Creates an FDI context

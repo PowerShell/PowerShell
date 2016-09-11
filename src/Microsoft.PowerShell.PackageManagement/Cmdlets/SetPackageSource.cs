@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
     using Utility;
     using System.Security;
 
-    [Cmdlet(VerbsCommon.Set, Constants.Nouns.PackageSourceNoun, SupportsShouldProcess = true, DefaultParameterSetName = Constants.ParameterSets.SourceBySearchSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=517141")]
+    [Cmdlet(VerbsCommon.Set, Constants.Nouns.PackageSourceNoun, SupportsShouldProcess = true, DefaultParameterSetName = Constants.ParameterSets.SourceBySearchSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=517141")]
     public sealed class SetPackageSource : CmdletWithProvider {
         [Parameter(ValueFromPipeline = true, ParameterSetName = Constants.ParameterSets.SourceByInputObjectSet, Mandatory = true)]
         public PackageSource InputObject;

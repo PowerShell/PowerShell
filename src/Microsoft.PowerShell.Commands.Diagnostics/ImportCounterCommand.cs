@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
     /// 
     /// Class that implements the Get-Counter cmdlet.
     /// 
-    [Cmdlet("Import", "Counter", DefaultParameterSetName = "GetCounterSet", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=138338")]
+    [Cmdlet("Import", "Counter", DefaultParameterSetName = "GetCounterSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=138338")]
     public sealed class ImportCounterCommand : PSCmdlet
     {
         //
@@ -555,7 +555,7 @@ namespace Microsoft.PowerShell.Commands
         // ResolveFilePath helper.
         // Returns a string collection of resolved file paths.
         // Writes non-terminating errors for invalid paths
-        // and returns an empty colleciton.
+        // and returns an empty collection.
         // 
         private bool ResolveFilePaths()
         {

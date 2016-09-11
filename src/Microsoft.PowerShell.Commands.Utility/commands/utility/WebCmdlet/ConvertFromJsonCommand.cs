@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// The ConvertFrom-Json command
     /// This command convert a Json string representation to a JsonObject
     /// </summary>
-    [Cmdlet(VerbsData.ConvertFrom, "Json", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=217031", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsData.ConvertFrom, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217031", RemotingCapability = RemotingCapability.None)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public class ConvertFromJsonCommand : Cmdlet
     {
@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
         public string InputObject { get; set; }
 
         /// <summary>
-        /// inputObjectBuffer buffers all InputObjet contents avaliable in the pipeline.
+        /// inputObjectBuffer buffers all InputObjet contents available in the pipeline.
         /// </summary>
         private List<string> _inputObjectBuffer = new List<string>();
 
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///  Buffers InputObjet contents avaliable in the pipeline.
+        ///  Buffers InputObjet contents available in the pipeline.
         /// </summary>
         protected override void ProcessRecord()
         {
