@@ -1,4 +1,4 @@
-﻿Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
+﻿Describe "Tests for (error, warning, etc) action preference" -Tags "low" {
         BeforeAll {
             $orgin = $GLOBAL:errorActionPreference
         }

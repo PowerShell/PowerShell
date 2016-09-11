@@ -1,4 +1,4 @@
-﻿Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
+﻿Describe "Test restricted language check method on scriptblocks" -Tags "Feature" {
         BeforeAll {
             set-strictmode -v 2
             function list {
