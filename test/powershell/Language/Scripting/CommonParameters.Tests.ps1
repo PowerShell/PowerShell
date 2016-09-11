@@ -1,82 +1,90 @@
 ﻿Describe "Common parameters support for script cmdlets" -Tags "FeatureSet-StrictMode -Off" {
-    BeforeAll {
-        $rp = [system.management.automation.runspaces.runspacefactory]::createrunspacepool(1, 1)
-        $rp.open()
-    }    
+    BeforeEach {        
+        $rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace()
+        $rs.open()
+        $ps = [System.Management.Automation.PowerShell]::Create()
+        $ps.Runspace = $rs        
+    }
+
+    AfterEach {
+            $ps.Dispose()
+            $rs.Dispose()
+    }
 
     Context "Debug" {
-        $script = "
-            function get-foo
-            {
-                [CmdletBinding()]
-                param()
+        BeforeAll {
+            $script = "
+                function get-foo
+                {
+                    [CmdletBinding()]
+                    param()
         
-                write-output 'output foo'
-                write-debug  'debug foo'
-            }"
-        
-        $command = 'get-foo'
+                    write-output 'output foo'
+                    write-debug  'debug foo'
+                }"
+        }
 
-        $ps = [system.management.automation.powershell]::Create()
-        [void] $ps.AddScript($script + $command)
-        $ps.RunspacePool = $rp
-        $asyncResult = $ps.BeginInvoke()
-        $output = $ps.EndInvoke($asyncResult)
+        It "Debug get-foo" {
+            $command = 'get-foo'                
+            [void] $ps.AddScript($script + $command)            
+            $asyncResult = $ps.BeginInvoke()
+            $output = $ps.EndInvoke($asyncResult)
 
-        It '$output[0]' { $output[0] | Should be "output foo" }
-        It '$ps.Streams.Debug.Count' { $ps.Streams.Debug.Count | Should Be 0 }
+            $output[0] | Should be "output foo"
+            $ps.Streams.Debug.Count | Should Be 0
+        }
+
+        It 'get-foo -debug' {        
+            $command = 'get-foo -debug'    
+            [void] $ps.AddScript($script + $command)        
+            $asyncResult = $ps.BeginInvoke()
+            $output = $ps.EndInvoke($asyncResult)
         
-        $command = 'get-foo -debug'    
-        $ps = [system.management.automation.powershell]::Create()
-        [void] $ps.AddScript($script + $command)
-        $ps.RunspacePool = $rp
-        $asyncResult = $ps.BeginInvoke()
-        $output = $ps.EndInvoke($asyncResult)
-        
-        It '$output[0]' { $output[0] | Should Be "output foo" }
-        It '$ps.Streams.Debug[0].Message' { $ps.Streams.Debug[0].Message | Should Be "debug foo" }
-        It '$ps.InvocationStateInfo.State' { $ps.InvocationStateInfo.State | Should Be 'Completed' }
+            $output[0] | Should Be "output foo"
+            $ps.Streams.Debug[0].Message | Should Be "debug foo"
+            $ps.InvocationStateInfo.State | Should Be 'Completed'
+        }
     }
 
     Context "verbose" {
-
-        $script = "
-            function get-foo
-            {
-                [CmdletBinding()]
-                param()
+        BeforeAll {
+            $script = "
+                function get-foo
+                {
+                    [CmdletBinding()]
+                    param()
             
-                write-output 'output foo'
-                write-verbose  'verbose foo'
-            }"
+                    write-output 'output foo'
+                    write-verbose  'verbose foo'
+                }"
+        }
 
-        $command = 'get-foo'
-    
-        $ps = [system.management.automation.powershell]::Create()
-        [void] $ps.AddScript($script + $command)
-        $ps.RunspacePool = $rp
-        $asyncResult = $ps.BeginInvoke()
-        $output = $ps.EndInvoke($asyncResult)
+        It 'get-foo' {
+            $command = 'get-foo'    
+            [void] $ps.AddScript($script + $command)            
+            $asyncResult = $ps.BeginInvoke()
+            $output = $ps.EndInvoke($asyncResult)
 
-        It '$output[0]' { $output[0] | Should Be "output foo" }
-        It '$ps.streams.verbose.Count' { $ps.streams.verbose.Count | Should Be 0 }
+            $output[0] | Should Be "output foo"
+            $ps.streams.verbose.Count | Should Be 0
+        }
 
-        $command = 'get-foo -verbose'
+        It 'get-foo -verbose' {
+            $command = 'get-foo -verbose'
+                
+            [void] $ps.AddScript($script + $command)        
+            $asyncResult = $ps.BeginInvoke()
+            $output = $ps.EndInvoke($asyncResult)
 
-        $ps = [system.management.automation.powershell]::Create()
-        [void] $ps.AddScript($script + $command)
-        $ps.RunspacePool = $rp
-        $asyncResult = $ps.BeginInvoke()
-        $output = $ps.EndInvoke($asyncResult)
-
-        It '$output[0]' { $output[0] | Should Be "output foo" }
-        It '$ps.Streams.verbose[0].Message' { $ps.Streams.verbose[0].Message | Should Be "verbose foo" }
-        It '$ps.InvocationStateInfo.State' { $ps.InvocationStateInfo.State | Should Be 'Completed' }
+            $output[0] | Should Be "output foo"
+            $ps.Streams.verbose[0].Message | Should Be "verbose foo"
+            $ps.InvocationStateInfo.State | Should Be 'Completed'
+        }
     }
 
     Context "erroraction" {
         BeforeAll {
-        $script = "
+            $script = "
                 function get-foo
                 {
                     [CmdletBinding()]
@@ -89,36 +97,30 @@
 
         It 'erroraction' {
     
-            $command = 'get-foo'    
-            $ps = [system.management.automation.powershell]::Create()
+            $command = 'get-foo'
             [void] $ps.AddScript($script + $command)
-            $ps.RunspacePool = $rp
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
             $output[0] | Should Be "output foo"
-            ($ps.Streams.error[0].ToString() -like "error foo") | Should Be $true
+            $ps.Streams.error[0].ToString() | Should match "error foo"
         }
 
         It 'erroraction continue' {
 
             $command = 'get-foo -erroraction Continue'
-            $ps = [system.management.automation.powershell]::Create()
             [void] $ps.AddScript($script + $command)
-            $ps.RunspacePool = $rp
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
             $output[0] | Should Be "output foo"
-            ($ps.Streams.error[0].ToString() -like "error foo") | Should Be $true
+            $ps.Streams.error[0].ToString() | Should match "error foo"
         }
 
         It 'erroraction SilentlyContinue' {
 
             $command = 'get-foo -erroraction SilentlyContinue'
-            $ps = [system.management.automation.powershell]::Create()
             [void] $ps.AddScript($script + $command)
-            $ps.RunspacePool = $rp
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
@@ -130,9 +132,7 @@
 
             $command = 'get-foo -erroraction Stop'
 
-            $ps = [system.management.automation.powershell]::Create()
             [void] $ps.AddScript($script + $command)
-            $ps.RunspacePool = $rp
             $asyncResult = $ps.BeginInvoke()
             
             try
@@ -153,7 +153,6 @@
     }
 
     Context "SupportShouldprocess" {
-
         $script = '
                 function get-foo
                 {
@@ -193,11 +192,8 @@
         It 'shouldprocess support -confirm under the non-interactive host' {
 
             $command = 'get-foo -confirm'
-
-            $ps = [system.management.automation.powershell]::Create()
             [void] $ps.AddScript($script + $command)
-            $ps.RunspacePool = $rp
-
+            
             $asyncResult = $ps.BeginInvoke()
             $ps.EndInvoke($asyncResult)
             
@@ -206,171 +202,172 @@
         }
     }
 
-    It 'confirmimpact support: none' {
-
-        $script = '
-            function get-foo
-            {
-                [CmdletBinding(supportsshouldprocess=$true, ConfirmImpact="none")]
-                param()
-                
-                if($pscmdlet.shouldprocess("foo", "foo action"))
+    Context 'confirmimpact support: none' {
+        BeforeAll {
+            $script = '
+                function get-foo
                 {
-                    write-output "foo action"
-                }
-            }'
+                    [CmdletBinding(supportsshouldprocess=$true, ConfirmImpact="none")]
+                    param()
+                
+                    if($pscmdlet.shouldprocess("foo", "foo action"))
+                    {
+                        write-output "foo action"
+                    }
+                }'
+        }
 
-        $command = 'get-foo'
+        It 'get-foo' {
+            $command = 'get-foo'
+            [void] $ps.AddScript($script + $command)
+            $asyncResult = $ps.BeginInvoke()
+            $output = $ps.EndInvoke($asyncResult)
 
-        $ps = [system.management.automation.powershell]::Create()
-        [void] $ps.AddScript($script + $command)
-        $ps.RunspacePool = $rp
-        $asyncResult = $ps.BeginInvoke()
-        $output = $ps.EndInvoke($asyncResult)
+            $output[0] | Should Be 'foo action'
+        }
 
-        $output[0] | Should Be 'foo action'
+        It 'get-foo -confirm' {
+            $command = 'get-foo -confirm'
+            [void] $ps.AddScript($script + $command)
+            $asyncResult = $ps.BeginInvoke()
+            $output = $ps.EndInvoke($asyncResult)
 
-        $command = 'get-foo -confirm'
-        $ps = [system.management.automation.powershell]::Create()
-        [void] $ps.AddScript($script + $command)
-        $ps.RunspacePool = $rp
-        $asyncResult = $ps.BeginInvoke()
-        $output = $ps.EndInvoke($asyncResult)
-
-        $output[0] | Should Be 'foo action'
+            $output[0] | Should Be 'foo action'
+        }
     }
 
     Context 'confirmimpact support: low under the non-interactive host' {
-        $script = '
-            function get-foo
-            {
-                [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="low")]
-                param()
-            
-                if($pscmdlet.shouldprocess("foo", "foo action"))
+        BeforeAll {
+            $script = '
+                function get-foo
                 {
-                    write-output "foo action"
-                }
-            }'
+                    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="low")]
+                    param()
+            
+                    if($pscmdlet.shouldprocess("foo", "foo action"))
+                    {
+                        write-output "foo action"
+                    }
+                }'
+        }
+        It 'get-foo' {
+            $command = 'get-foo'
+            [void] $ps.AddScript($script + $command)
+            $asyncResult = $ps.BeginInvoke()
+            $output = $ps.EndInvoke($asyncResult)
 
-        $command = 'get-foo'
+            $output[0] | Should Be 'foo action'
+        }
 
-        $ps = [system.management.automation.powershell]::Create()
-        [void] $ps.AddScript($script + $command)
-        $ps.RunspacePool = $rp
-        $asyncResult = $ps.BeginInvoke()
-        $output = $ps.EndInvoke($asyncResult)
+        It 'get-foo -confirm' {
+            $command = 'get-foo -confirm'
 
-        It '$output[0]' { $output[0] | Should Be 'foo action' }
+            [void] $ps.AddScript($script + $command)
+            $asyncResult = $ps.BeginInvoke()
+            $ps.EndInvoke($asyncResult)
 
-        $command = 'get-foo -confirm'
-
-        $ps = [system.management.automation.powershell]::Create()
-        [void] $ps.AddScript($script + $command)
-        $ps.RunspacePool = $rp
-
-        $asyncResult = $ps.BeginInvoke()
-        $ps.EndInvoke($asyncResult)
-
-        It '$ps.Streams.Error.Count' { $ps.Streams.Error.Count | Should Be 1 }  # the host does not implement it.
-        It '$ps.InvocationStateInfo.State' { $ps.InvocationStateInfo.State | Should Be 'Completed' }
+            $ps.Streams.Error.Count | Should Be 1  # the host does not implement it.
+            $ps.InvocationStateInfo.State | Should Be 'Completed'
+        }
     }
 
     Context 'confirmimpact support: Medium under the non-interactive host' {
-        $script = '
-            function get-foo
-            {
-                [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="medium")]
-                param()
-        
-                if($pscmdlet.shouldprocess("foo", "foo action"))
+        BeforeAll {
+            $script = '
+                function get-foo
                 {
-                    write-output "foo action"
-                }
-            }'
+                    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="medium")]
+                    param()
+        
+                    if($pscmdlet.shouldprocess("foo", "foo action"))
+                    {
+                        write-output "foo action"
+                    }
+                }'
+        }
 
-        $command = 'get-foo'
+        It 'get-foo' {
+            $command = 'get-foo'
+            [void] $ps.AddScript($script + $command)
+            $asyncResult = $ps.BeginInvoke()
+            $output = $ps.EndInvoke($asyncResult)
 
-        $ps = [system.management.automation.powershell]::Create()
-        [void] $ps.AddScript($script + $command)
-        $ps.RunspacePool = $rp
-        $asyncResult = $ps.BeginInvoke()
-        $output = $ps.EndInvoke($asyncResult)
+            $output[0] | Should Be 'foo action'
+        }
 
-        It '$output[0]' { $output[0] | Should Be 'foo action' }
+        It 'get-foo -confirm' {
+            $command = 'get-foo -confirm'
+            [void] $ps.AddScript($script + $command)
 
-        $command = 'get-foo -confirm'
-        $ps = [system.management.automation.powershell]::Create()
-        [void] $ps.AddScript($script + $command)
-        $ps.RunspacePool = $rp
+            $asyncResult = $ps.BeginInvoke()
+            $ps.EndInvoke($asyncResult)
 
-        $asyncResult = $ps.BeginInvoke()
-        $ps.EndInvoke($asyncResult)
-
-        It '$ps.Streams.Error.Count' { $ps.Streams.Error.Count | Should Be 1}  # the host does not implement it.
-        It '$ps.InvocationStateInfo.State' { $ps.InvocationStateInfo.State | Should Be 'Completed' }
+            $ps.Streams.Error.Count | Should Be 1  # the host does not implement it.
+            $ps.InvocationStateInfo.State | Should Be 'Completed'
+        }
     }
 
 
     Context 'confirmimpact support: High under the non-interactive host' {
-        $script = '
-            function get-foo
-            {
-                [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="high")]
-                param()
-        
-                if($pscmdlet.shouldprocess("foo", "foo action"))
+        BeforeAll {
+            $script = '
+                function get-foo
                 {
-                    write-output "foo action"
-                }
-            }'
+                    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="high")]
+                    param()
+        
+                    if($pscmdlet.shouldprocess("foo", "foo action"))
+                    {
+                        write-output "foo action"
+                    }
+                }'
+        }
 
-        $command = 'get-foo'
-        $ps = [system.management.automation.powershell]::Create()
-        [void] $ps.AddScript($script + $command)
-        $ps.RunspacePool = $rp
+        It 'get-foo' {
+            $command = 'get-foo'
+            [void] $ps.AddScript($script + $command)
+            $asyncResult = $ps.BeginInvoke()
+            $ps.EndInvoke($asyncResult)
 
-        $asyncResult = $ps.BeginInvoke()
-        $ps.EndInvoke($asyncResult)
+            $ps.Streams.Error.Count | Should Be 1 # the host does not implement it.
+            $ps.InvocationStateInfo.State | Should Be 'Completed'
+        }
 
-        It '$ps.Streams.Error.Count' { $ps.Streams.Error.Count | Should Be 1 } # the host does not implement it.
-        It '$ps.InvocationStateInfo.State' { $ps.InvocationStateInfo.State | Should Be 'Completed' }
+        It 'get-foo -confirm' {
+            $command = 'get-foo -confirm'
+            [void] $ps.AddScript($script + $command)
+            $asyncResult = $ps.BeginInvoke()
+            $ps.EndInvoke($asyncResult)
 
-
-        $command = 'get-foo -confirm'
-        $ps = [system.management.automation.powershell]::Create()
-        [void] $ps.AddScript($script + $command)
-        $ps.RunspacePool = $rp
-
-        $asyncResult = $ps.BeginInvoke()
-        $ps.EndInvoke($asyncResult)
-
-        It '$ps.Streams.Error.Count' { $ps.Streams.Error.Count | Should Be 1 } # the host does not implement it.
-        It '$ps.InvocationStateInfo.State' { $ps.InvocationStateInfo.State | Should be 'Completed' }
+            $ps.Streams.Error.Count | Should Be 1 # the host does not implement it.
+            $ps.InvocationStateInfo.State | Should be 'Completed'
+        }
     }
 
     Context 'ShouldContinue Support under the non-interactive host' {
-        $script = '
-            function get-foo 
-            {
-                [CmdletBinding()]
-                param()
-        
-                if($pscmdlet.shouldcontinue("foo", "foo action"))
+        BeforeAll {
+            $script = '
+                function get-foo 
                 {
-                    write-output "foo action"
-                }
-            }'
+                    [CmdletBinding()]
+                    param()
+        
+                    if($pscmdlet.shouldcontinue("foo", "foo action"))
+                    {
+                        write-output "foo action"
+                    }
+                }'
+        }
 
-        $command = 'get-foo'
-        $ps = [system.management.automation.powershell]::Create()
-        [void] $ps.AddScript($script + $command)
-        $ps.RunspacePool = $rp
+        It 'get-foo' {
+            $command = 'get-foo'
+            [void] $ps.AddScript($script + $command)
 
-        $asyncResult = $ps.BeginInvoke()
-        $ps.EndInvoke($asyncResult)
+            $asyncResult = $ps.BeginInvoke()
+            $ps.EndInvoke($asyncResult)
 
-        It '$ps.Streams.Error.Count' { $ps.Streams.Error.Count | Should Be 1 }   # the host does not implement it.
-        It '$ps.InvocationStateInfo.State' { $ps.InvocationStateInfo.State | Should Be 'Completed' }
+            $ps.Streams.Error.Count | Should Be 1   # the host does not implement it.
+            $ps.InvocationStateInfo.State | Should Be 'Completed'
+        }
     }   
 }
