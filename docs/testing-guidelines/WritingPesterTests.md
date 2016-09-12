@@ -12,7 +12,7 @@ When creating tests, keep the following in mind:
 Examples:
 Here's the simplest of tests
 
-```
+```powershell
 Describe "A variable can be assigned and retrieved" {
     It "Create a variable and make sure it's value is correct" {
        $a = 1
@@ -23,7 +23,7 @@ Describe "A variable can be assigned and retrieved" {
 
 If you need to do type checking, that can be done as well
 
-```
+```powershell
 Describe "One is really one" {
     It "Compare 1 to 1" {
        $a = 1
@@ -35,8 +35,10 @@ Describe "One is really one" {
     }
 } 
 ```
+
 alternatively, you could do the following:
-```
+
+```powershell
 Describe "One is really one" {
     It "Compare 1 to 1" {
        $a = 1
@@ -50,7 +52,8 @@ Describe "One is really one" {
 ```
 
 If you are checking for proper errors, do that in a `try/catch`, and then check `FullyQualifiedErrorId`. Checking against `FullyQualifiedErrorId` is recommended because it does not change based on culture as an error message might.
-```
+
+```powershell
 ...
 it "Get-Item on a nonexisting file should have error PathNotFound" {
     try
@@ -87,7 +90,7 @@ A test may need to work with file operations and validate certain types of file 
 
 The following example illustrates the feature:
 
-```
+```powershell
 function Add-Footer($path, $footer) {
     Add-Content $path -Value $footer
 }
@@ -107,8 +110,8 @@ Describe "Add-Footer" {
 When this test completes, the contents of the TestDrive PSDrive will be removed.
 
 #### Parameter Generation
-```
 
+```powershell
 $testCases = @(
     @{ a = 0; b = 1; ExpectedResult = 1 }
     @{ a = 1; b = 0; ExpectedResult = 1 }
@@ -129,7 +132,8 @@ You can also construct loops and pass values as parameters, including the expect
 #### Mocking
 Mocks the behavior of an existing command with an alternate implementation. This creates new behavior for any existing command within the scope of a Describe or Context block. The function allows you to specify a script block that will become the command's new behavior.
 The following example illustrates simple use:
-```
+
+```powershell
 Context "Get-Random is not random" {
         Mock Get-Random { return 3 }
         It "Get-Random returns 3" {
@@ -137,10 +141,12 @@ Context "Get-Random is not random" {
         }
     }
 ```
+
 More information may be found on the [wiki](https://github.com/pester/Pester/wiki/Mock)
 ### Free Code in a Describe block
 Code execution in Pester can be very subtle and can cause issues when executing test code. The execution of code which lays outside of the usual code blocks may not happen as you expect. Consider the following:
-```
+
+```powershell
 Describe it {
     Write-Host -For DarkRed "Before Context"
     Context "subsection" {
