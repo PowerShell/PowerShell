@@ -1,14 +1,11 @@
 Describe "Get-Runspace cmdlet tests" -Tag "CI" {
     BeforeAll {
-        # Clear out all unexpected runspaces
-        # id 1 is the one we started with
-        Get-Runspace |?{$_.id -ne 1} | %{$_.dispose()}
         $CurrentRunspace = $ExecutionContext.Host.Runspace
         $ExpectedInstanceId = $CurrentRunspace.InstanceId
         $ExpectedId = $currentRunspace.Id
     }
     It "Get-Runspace should return the current runspace" {
-        $runspace = get-runspace
+        $runspace = get-runspace |Sort-Object -property id | Select-Object -first 1
         $runspace.InstanceId | Should be $ExpectedInstanceId
     }
     It "Get-Runspace with runspace InstanceId should return the correct runspace" {
@@ -31,9 +28,11 @@ Describe "Get-Runspace cmdlet tests" -Tag "CI" {
             $r1.Dispose()
             $r2.Dispose()
         }
-        It "Get-Runspace should return all runspaces" {
-            $expectedCount = $runspaceCount + 2
-            (get-runspace).Count | should be $expectedCount
+        It "Get-Runspace should return the new runspaces" {
+            $result = get-runspace
+            # if the ids don't match, we'll get null passed to should
+            $result.id | ?{$_ -eq $r1.id } | should be $r1.id
+            $result.id | ?{$_ -eq $r2.id } | should be $r2.id
         }
     }
 }
