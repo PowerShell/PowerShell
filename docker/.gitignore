@@ -1,0 +1,3 @@
+logs/*.log
+packages/
+unstable/*/bootstrap.ps1
