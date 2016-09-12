@@ -202,7 +202,7 @@ Describe "Runspace Debugging API tests" -tag CI {
             $ps.dispose()
         }
         
-        It "PSStandaloneMonitorRunspaceInfo should throw when called with a null constructor" {
+        It "PSStandaloneMonitorRunspaceInfo should throw when called with a null argument to the constructor" {
             try {
                 [PSStandaloneMonitorRunspaceInfo]::new($null)
                 throw "Execution should have thrown"
