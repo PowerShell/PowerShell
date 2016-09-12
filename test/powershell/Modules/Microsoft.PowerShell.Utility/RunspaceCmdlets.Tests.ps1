@@ -1,5 +1,8 @@
 Describe "Get-Runspace cmdlet tests" -Tag "CI" {
     BeforeAll {
+        # Clear out all unexpected runspaces
+        # id 1 is the one we started with
+        Get-Runspace |?{$_.id -ne 1} | %{$_.dispose()}
         $CurrentRunspace = $ExecutionContext.Host.Runspace
         $ExpectedInstanceId = $CurrentRunspace.InstanceId
         $ExpectedId = $currentRunspace.Id
