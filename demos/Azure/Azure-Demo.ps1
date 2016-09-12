@@ -10,56 +10,56 @@
 ###
 ### Install-Package -Name AzureRM.NetCore.Preview -Source https://www.powershellgallery.com/api/v2 -ProviderName NuGet -ExcludeVersion -Destination <Folder you want this to be installed>
 ###
-### Ensure $ENV:PSMODULEPATH is updated with the location you used to install.
+### Ensure $env:PSMODULEPATH is updated with the location you used to install.
 Import-Module AzureRM.NetCore.Preview
 
 ### Supply your Azure Credentials
-Login-AzureRMAccount
+Login-AzureRmAccount
 
-### Get a name for Azure Resource Group
-$resourceGroupName = "PSAzDemo" + (new-guid | % guid) -replace "-",""
+### Specify a name for Azure Resource Group
+$resourceGroupName = "PSAzDemo" + (New-Guid | % guid) -replace "-",""
 $resourceGroupName
 
-### Creating a New Azure Resource Group 
-New-AzureRMResourceGroup -Name $resourceGroupName -Location "West US"
+### Create a new Azure Resource Group 
+New-AzureRmResourceGroup -Name $resourceGroupName -Location "West US"
 
 ### Deploy an Ubuntu 14.04 VM using Resource Manager cmdlets
-### Template is available is at 
+### Template is available at 
 ### http://armviz.io/#/?load=https:%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-quickstart-templates%2Fmaster%2F101-vm-simple-linux%2Fazuredeploy.json
 $dnsLabelPrefix = $resourceGroupName | % tolower
 $dnsLabelPrefix
-$password = Convertto-Securestring -String "PowerShellRocks!" -AsPlainText -Force
-New-AzureRMResourceGroupDeployment -ResourceGroupName $resourceGroupName  -TemplateFile ./Compute-Linux.json -adminUserName psuser  -adminPassword $password  -dnsLabelPrefix $dnsLabelPrefix
+$password = ConvertTo-SecureString -String "PowerShellRocks!" -AsPlainText -Force
+New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile ./Compute-Linux.json -adminUserName psuser -adminPassword $password -dnsLabelPrefix $dnsLabelPrefix
 
 ### Monitor the status of the deployment
-Get-AzureRMResourceGroupDeployment -ResourceGroupName $resourceGroupName 
+Get-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName 
 
 ### Discover the resources we created by the previous deployment
-Find-AzureRMResource -ResourceGroupName $resourceGroupName  | select Name,ResourceType,Location
+Find-AzureRmResource -ResourceGroupName $resourceGroupName | select Name,ResourceType,Location
 
 ### Get the state of the VM we created
 ### Notice: The VM is in running state
-Get-AzureRMResource -ResourceName MyUbuntuVM  -ResourceType Microsoft.Compute/virtualMachines -ResourceGroupName $resourceGroupName  -ODataQuery '$expand=instanceView' | % properties | % instanceview | % statuses
+Get-AzureRmResource -ResourceName MyUbuntuVM -ResourceType Microsoft.Compute/virtualMachines -ResourceGroupName $resourceGroupName -ODataQuery '$expand=instanceView' | % properties | % instanceview | % statuses
 
-### Discover the Operations we can perform on the compute resource
+### Discover the operations we can perform on the compute resource
 ### Notice: Operations like "Power Off Virtual Machine", "Start Virtual Machine", "Create Snapshot", "Delete Snapshot", "Delete Virtual Machine"
-Get-AzureRMProviderOperation -OperationSearchString Microsoft.Compute/* | select  OperationName,Operation
+Get-AzureRmProviderOperation -OperationSearchString Microsoft.Compute/* | select OperationName,Operation
 
 ### Power Off the Virtual Machine we created
-Invoke-AzureRmResourceAction -ResourceGroupName $resourceGroupName  -ResourceType Microsoft.Compute/virtualMachines -ResourceName MyUbuntuVM -Action poweroff 
+Invoke-AzureRmResourceAction -ResourceGroupName $resourceGroupName -ResourceType Microsoft.Compute/virtualMachines -ResourceName MyUbuntuVM -Action poweroff 
 
-### Check the VM State again. It should be stopped now.
-Get-AzureRMResource -ResourceName MyUbuntuVM  -ResourceType Microsoft.Compute/virtualMachines -ResourceGroupName $resourceGroupName  -ODataQuery '$expand=instanceView' | % properties | % instanceview | % statuses
+### Check the VM state again. It should be stopped now.
+Get-AzureRmResource -ResourceName MyUbuntuVM -ResourceType Microsoft.Compute/virtualMachines -ResourceGroupName $resourceGroupName -ODataQuery '$expand=instanceView' | % properties | % instanceview | % statuses
 
 ### As you know, you may still be incurring charges even if the VM is in stopped state
 ### Deallocate the resource to avoid this charge
-Invoke-AzureRmResourceAction -ResourceGroupName $resourceGroupName  -ResourceType Microsoft.Compute/virtualMachines -ResourceName MyUbuntuVM -Action deallocate 
+Invoke-AzureRmResourceAction -ResourceGroupName $resourceGroupName -ResourceType Microsoft.Compute/virtualMachines -ResourceName MyUbuntuVM -Action deallocate 
 
 ### The following command removes the Virtual Machine
 Remove-AzureRmResource -ResourceName MyUbuntuVM -ResourceType Microsoft.Compute/virtualMachines -ResourceGroupName $resourceGroupName 
 
 ### Look at the resources that still exists
-Find-AzureRMResource -ResourceGroupName $resourceGroupName  | select Name,ResourceType,Location
+Find-AzureRmResource -ResourceGroupName $resourceGroupName | select Name,ResourceType,Location
 
-### Remove the ResourceGroup which removes all the resources in the ResourceGroup
+### Remove the resource group and its resources
 Remove-AzureRmResourceGroup -Name $resourceGroupName 
