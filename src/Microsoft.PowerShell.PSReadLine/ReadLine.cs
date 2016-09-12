@@ -882,8 +882,8 @@ namespace Microsoft.PowerShell
             _singleton.Render();
         }
 
-        private const string s_PromptCommand = "prompt";
-        private const string s_DefaultPrompt = "PS>";
+        private const string PromptCommand = "prompt";
+        private const string DefaultPrompt = "PS>";
 
         /// <summary>
         /// Gets the current prompt as possibly defined by the user through the
@@ -901,16 +901,12 @@ namespace Microsoft.PowerShell
                 // This handles remote runspace debugging and nested debugger scenarios.
                 PSDataCollection<PSObject> results = new PSDataCollection<PSObject>();
                 var command = new PSCommand();
-                command.AddCommand(s_PromptCommand);
+                command.AddCommand(PromptCommand);
                 _singleton._runspace.Debugger.ProcessCommand(
                     command,
                     results);
 
-                newPrompt = (results.Count == 1) ? (results[0].BaseObject as string) : s_DefaultPrompt;
-                if (newPrompt == null)
-                {
-                    newPrompt = s_DefaultPrompt;
-                }
+                newPrompt = (results.Count == 1) ? (results[0].BaseObject as string) : DefaultPrompt;
             }
             else
             {
@@ -926,10 +922,15 @@ namespace Microsoft.PowerShell
                 }
                 using (ps)
                 {
-                    ps.AddCommand(s_PromptCommand);
+                    ps.AddCommand(PromptCommand);
                     var result = ps.Invoke<string>();
-                    newPrompt = result.Count == 1 ? result[0] : s_DefaultPrompt;
+                    newPrompt = result.Count == 1 ? result[0] : DefaultPrompt;
                 }
+            }
+
+            if (string.IsNullOrEmpty(newPrompt))
+            {
+                newPrompt = DefaultPrompt;
             }
 
             if (runspaceIsRemote)
@@ -940,6 +941,7 @@ namespace Microsoft.PowerShell
                     newPrompt = string.Format(CultureInfo.InvariantCulture, "[{0}]: {1}", connectionInfo.ComputerName, newPrompt);
                 }
             }
+
             return newPrompt;
         }
 
