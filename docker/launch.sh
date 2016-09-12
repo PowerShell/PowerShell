@@ -22,9 +22,9 @@ fi
 
 for build in $BUILDS; do
     # cd so $distro is only the distro name
-    cd $build
+    pushd "$build"
     for distro in $DISTROS; do
-        image="$build/$distro"
+        image="powershell/powershell:$build-$distro"
         if [[ "$TEST" -eq 1 ]]; then
             echo "Testing $image"
             command="cd PowerShell; Import-Module ./build.psm1; Install-Dotnet -NoSudo; Start-PSPester -powershell powershell -Pester ./src/Modules/Shared/Pester"
@@ -34,18 +34,18 @@ for build in $BUILDS; do
             fi
             # run Pester tests inside container
             # RUNARGS can be set in the environment
-            docker run -it $RUNARGS powershell/powershell:$build-$distro -c "$command"
+            docker run -it $RUNARGS "$image" -c "$command"
         else
             echo "Building $image"
             # copy the common script because it lives outside the docker build context
             if [[ "$build" = unstable ]]; then
-                cp bootstrap.ps1 $distro
+                cp bootstrap.ps1 "$distro"
                 buildargs="--build-arg fork=$FORK --build-arg branch=$BRANCH"
             fi
             # build and tag the image so they can be derived from
             # BUILDARGS can be set in the environment
-            docker build $buildargs $BUILDARGS -t powershell/powershell:$build-$distro $distro
+            docker build $buildargs $BUILDARGS -t "$image" "$distro"
         fi
     done
-    cd ..
+    popd
 done
