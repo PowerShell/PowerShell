@@ -4,23 +4,21 @@
 Describe "Tests for -NoNewline parameter of Out-File, Add-Content and Set-Content" -tags "Feature" {
     
     It "NoNewline parameter works on Out-File" {
-         $temp = New-TemporaryFile
-         1..5 | Out-File $temp.FullName -Encoding 'ASCII' -NoNewline
+         $temp = "${TESTDRIVE}/test1.txt"
+         1..5 | Out-File $temp -Encoding 'ASCII' -NoNewline
          (Get-Content $temp -Encoding Byte).Count | Should Be 5
-         Remove-Item $temp -ErrorAction SilentlyContinue -Force
     }
 
     It "NoNewline parameter works on Set-Content" {
-         $temp = New-TemporaryFile
-         Set-Content -Path $temp.FullName -Value 'a','b','c' -Encoding 'ASCII' -NoNewline
+         $temp = "${TESTDRIVE}/test2.txt"
+         Set-Content -Path $temp -Value 'a','b','c' -Encoding 'ASCII' -NoNewline
          (Get-Content $temp -Encoding Byte).Count | Should Be 3
-         Remove-Item $temp -ErrorAction SilentlyContinue -Force
     }
 
     It "NoNewline parameter works on Add-Content" {
+         $temp = "${TESTDRIVE}/test3.txt"
          $temp = New-TemporaryFile
-         1..9 | %{Add-Content -Path $temp.FullName -Value $_ -Encoding 'ASCII' -NoNewline}
+         1..9 | %{Add-Content -Path $temp -Value $_ -Encoding 'ASCII' -NoNewline}
          (Get-Content $temp -Encoding Byte).Count | Should Be 9
-         Remove-Item $temp -ErrorAction SilentlyContinue -Force
     }
 }
