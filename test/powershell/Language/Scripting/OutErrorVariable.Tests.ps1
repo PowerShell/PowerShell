@@ -383,3 +383,4 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
         $script:bar_err | Should be @("bar-error", "foo-error", "foo-error")
     }
 }
+

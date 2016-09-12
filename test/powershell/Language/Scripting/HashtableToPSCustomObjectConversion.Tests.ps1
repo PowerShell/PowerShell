@@ -130,3 +130,4 @@
 	    $obj.PSTypeNames[0] | Should Be 'System.Object'
     }
 }
+
