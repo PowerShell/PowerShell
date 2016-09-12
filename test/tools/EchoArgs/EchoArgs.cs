@@ -19,10 +19,6 @@ namespace Pscx.Applications
             {
                 Console.WriteLine("Arg {0} is <{1}>", i, args[i]);
             }
-
-            /*Console.WriteLine("\nCommand line:");
-            Console.WriteLine(Environment.CommandLine);*/
-            Console.WriteLine();
         }
     }
 }

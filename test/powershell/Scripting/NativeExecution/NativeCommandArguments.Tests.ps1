@@ -4,27 +4,18 @@ Describe "Native Command Arguments" -tags "CI" {
     while ($powershellTestDir -notmatch 'test[\\/]powershell$') {
         $powershellTestDir = Split-Path $powershellTestDir
     }
-    $echoArgsDir = Join-Path (Split-Path $powershellTestDir) EchoArgs
-
-    function Start-EchoArgs {
-        Push-Location $echoArgsDir
-        try {
-            dotnet run $args
-        } finally {
-            Pop-Location
-        }
-    }
+    $echoArgs = Join-Path (Split-Path $powershellTestDir) tools/EchoArgs/run/echoargs
 
     It "Should handle quoted spaces correctly" {
         $a = 'a"b c"d'
-        Start-EchoArgs $a 'a"b c"d' a"b c"d >$testPath
+        & $echoArgs $a 'a"b c"d' a"b c"d >$testPath
         $testPath | Should Contain 'Arg 0 is <ab cd>'
         $testPath | Should Contain 'Arg 1 is <ab cd>'
         $testPath | Should Contain 'Arg 2 is <ab cd>'
     }
 
     It "Should handle spaces between escaped quotes" {
-        Start-EchoArgs 'a\"b c\"d' "a\`"b c\`"d" >$testPath
+        & $echoArgs 'a\"b c\"d' "a\`"b c\`"d" >$testPath
         $testPath | Should Contain 'Arg 0 is <a"b c"d>'
         $testPath | Should Contain 'Arg 1 is <a"b c"d>'
     }
