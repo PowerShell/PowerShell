@@ -4,7 +4,7 @@ Describe "Native Command Arguments" -tags "CI" {
     while ($powershellTestDir -notmatch 'test[\\/]powershell$') {
         $powershellTestDir = Split-Path $powershellTestDir
     }
-    $echoArgs = Join-Path (Split-Path $powershellTestDir) tools/EchoArgs/run/echoargs
+    $echoArgs = Join-Path (Split-Path $powershellTestDir) tools/EchoArgs/bin/echoargs
 
     It "Should handle quoted spaces correctly" {
         $a = 'a"b c"d'

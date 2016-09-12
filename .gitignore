@@ -1,12 +1,11 @@
 bin/
 obj/
-run/
 project.lock.json
 *-tests.xml
 /debug/
 /staging/
 /Packages/
-test/csharp/csharp.nuget.props
+*.nuget.props
 
 # dotnet cli install/uninstall scripts
 dotnet-install.ps1

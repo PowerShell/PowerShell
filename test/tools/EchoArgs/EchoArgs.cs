@@ -1,5 +1,6 @@
 ﻿//---------------------------------------------------------------------
 // Author: Keith Hill
+// Source: https://github.com/Pscx/Pscx/blob/master/Src/EchoArgs/EchoArgs.cs
 //
 // Description: Very simple little console class that you can use to see
 //              how PowerShell is passing parameters to legacy console
