@@ -2,6 +2,18 @@
 
 set -e
 
+# This is borrowed from https://github.com/dotnet/cli/blob/18456af5caeae44defc23ad5579c838c1fda3c3d/run.sh
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+    DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+    SOURCE="$(readlink "$SOURCE")"
+    [[ "$SOURCE" != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
+# run from directory of launch.sh so artifacts are placed appropriately
+pushd "$DIR"
+
 if [[ -z "$FORK" ]]; then
     FORK=PowerShell
 fi
@@ -30,7 +42,7 @@ for build in $BUILDS; do
         echo "Logging to docker/$logfile"
         (
             image="powershell/powershell:$build-$distro"
-            cd "$build"
+            pushd "$build"
             if [[ "$TEST" -eq 1 ]]; then
                 echo "LOG: testing $image"
                 command="cd PowerShell; Import-Module ./build.psm1; Install-Dotnet -NoSudo; Start-PSPester -powershell powershell -Pester ./src/Modules/Shared/Pester"
@@ -51,9 +63,19 @@ for build in $BUILDS; do
                 # build and tag the image so they can be derived from
                 # BUILDARGS can be set in the environment
                 docker build $buildargs $BUILDARGS -t "$image" "$distro"
+                if [[ "$build" = unstable ]]; then
+                    echo "LOG: Saving package to docker/packages"
+                    popd
+                    mkdir -p packages
+                    command='cp -vf /PowerShell/powershell*{deb,rpm} /mnt 2> /dev/null'
+                    # override entrypoint to be bash so we can use globbing
+                    docker run --rm --volume "$(pwd)/packages:/mnt" --entrypoint bash "$image" -c "$command"
+                fi
             fi
         ) &>> "$logfile" &
     done
     echo "Waiting for $build containers to finish; tail the logs for more information."
     wait
 done
+
+popd
