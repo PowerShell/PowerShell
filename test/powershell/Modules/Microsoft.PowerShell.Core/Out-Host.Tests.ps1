@@ -1,8 +1,8 @@
 
 if ( ! (get-module -ea silentlycontinue TestHostCS ))
 {
-    $root = git rev-parse --show-toplevel
-    $pestertestroot = join-path $root test/powershell
+    # this is sensitive to the location of this test and the common directory"
+    $pestertestroot = resolve-path "$psscriptroot/../.."
     $common = join-path $pestertestroot Common
     $hostmodule = join-path $common TestHostCS.psm1
     import-module $hostmodule
