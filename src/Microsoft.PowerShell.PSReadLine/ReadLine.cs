@@ -881,6 +881,9 @@ namespace Microsoft.PowerShell
             _singleton.Render();
         }
 
+        private const string PromptCommand = "prompt";
+        private const string DefaultPrompt = "PS>";
+
         /// <summary>
         /// Gets the current prompt as possibly defined by the user through the
         /// prompt function, and returns a default prompt if no other is
@@ -888,23 +891,45 @@ namespace Microsoft.PowerShell
         /// </summary>
         public static string GetPrompt()
         {
+            string newPrompt;
             var runspaceIsRemote = _singleton._mockableMethods.RunspaceIsRemote(_singleton._runspace);
-            System.Management.Automation.PowerShell ps;
-            if (!runspaceIsRemote)
+
+            if ((_singleton._runspace.Debugger != null) && _singleton._runspace.Debugger.InBreakpoint)
             {
-                ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+                // Run prompt command in debugger API to ensure it is run correctly on the runspace.
+                // This handles remote runspace debugging and nested debugger scenarios.
+                PSDataCollection<PSObject> results = new PSDataCollection<PSObject>();
+                var command = new PSCommand();
+                command.AddCommand(PromptCommand);
+                _singleton._runspace.Debugger.ProcessCommand(
+                    command,
+                    results);
+
+                newPrompt = (results.Count == 1) ? (results[0].BaseObject as string) : DefaultPrompt;
             }
             else
             {
-                ps = System.Management.Automation.PowerShell.Create();
-                ps.Runspace = _singleton._runspace;
+                System.Management.Automation.PowerShell ps;
+                if (!runspaceIsRemote)
+                {
+                    ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+                }
+                else
+                {
+                    ps = System.Management.Automation.PowerShell.Create();
+                    ps.Runspace = _singleton._runspace;
+                }
+                using (ps)
+                {
+                    ps.AddCommand(PromptCommand);
+                    var result = ps.Invoke<string>();
+                    newPrompt = result.Count == 1 ? result[0] : DefaultPrompt;
+                }
             }
-            string newPrompt;
-            using (ps)
+
+            if (string.IsNullOrEmpty(newPrompt))
             {
-                ps.AddCommand("prompt");
-                var result = ps.Invoke<string>();
-                newPrompt = result.Count == 1 ? result[0] : "PS>";
+                newPrompt = DefaultPrompt;
             }
 
             if (runspaceIsRemote)
@@ -915,6 +940,7 @@ namespace Microsoft.PowerShell
                     newPrompt = string.Format(CultureInfo.InvariantCulture, "[{0}]: {1}", connectionInfo.ComputerName, newPrompt);
                 }
             }
+
             return newPrompt;
         }
 

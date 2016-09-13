@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.PowerShell.Commands;
 using System.Management.Automation.Host;
@@ -863,6 +864,65 @@ namespace System.Management.Automation
 
         #region Public Access
 
+        #region Runspace Invoke
+
+        /// <summary>
+        /// Helper method to invoke a PSCommand on a given runspace.  This method correctly invokes the command for 
+        /// these runspace cases:
+        ///   1. Local runspace.  If the local runspace is busy it will invoke as a nested command.
+        ///   2. Remote runspace.
+        ///   3. Runspace that is stopped in the debugger at a breakpoint.
+        ///   
+        /// Error and information streams are ignored and only the command result output is returned.
+        /// 
+        /// This method is NOT thread safe.  It does not support running commands from different threads on the 
+        /// provided runspace.  It assumes the thread invoking this method is the same that runs all other 
+        /// commands on the provided runspace.
+        /// </summary>
+        /// <param name="runspace">Runspace to invoke the command on</param>
+        /// <param name="command">Command to invoke</param>
+        /// <returns>Collection of command output result objects</returns>
+        public static Collection<PSObject> InvokeOnRunspace(PSCommand command, Runspace runspace)
+        {
+            if (command == null)
+            {
+                throw new PSArgumentNullException("command");
+            }
+
+            if (runspace == null)
+            {
+                throw new PSArgumentNullException("runspace");
+            }
+
+            if ((runspace.Debugger != null) && runspace.Debugger.InBreakpoint)
+            {
+                // Use the Debugger API to run the command when a runspace is stopped in the debugger.
+                PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
+                runspace.Debugger.ProcessCommand(
+                    command,
+                    output);
+
+                return new Collection<PSObject>(output);
+            }
+
+            // Otherwise run command directly in runspace.
+            PowerShell ps = PowerShell.Create();
+            ps.Runspace = runspace;
+            ps.IsRunspaceOwner = false;
+            if (runspace.ConnectionInfo == null)
+            {
+                // Local runspace.  Make a nested PowerShell object as needed.
+                ps.SetIsNested(runspace.GetCurrentlyRunningPipeline() != null);
+            }
+            using (ps)
+            {
+                ps.Commands = command;
+                return ps.Invoke<PSObject>();
+            }
+        }
+
+        #endregion
+
         #region PSEdit Support
 
         /// <summary>
@@ -878,10 +938,10 @@ namespace System.Management.Automation
                 dir $file -File | foreach {
                     $filePathName = $_.FullName
 
-# Get file contents
+                    # Get file contents
                     $contentBytes = Get-Content -Path $filePathName -Raw -Encoding Byte
 
-# Notify client for file open.
+                    # Notify client for file open.
                     New-Event -SourceIdentifier PSISERemoteSessionOpenFile -EventArguments @($filePathName, $contentBytes) > $null
                 }
             }
