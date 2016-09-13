@@ -47,7 +47,7 @@ Please see the [Contributor Guide in `PowerShell/PowerShell-Docs`](https://githu
 ### Contributing to documentation related to maintaining or contributing to the PowerShell project
 
 * When writing Markdown documentation, use [semantic linefeeds][].
-  In most cases, it means "once clause / idea per line".
+  In most cases, it means "one clause/idea per line".
 * Otherwise, these issues should be treated like any other issue in this repo.
 
 Contributing to Code
