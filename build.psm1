@@ -557,13 +557,14 @@ function Start-PSPester {
         [string]$Path = "$PSScriptRoot/test/powershell",
         [switch]$ThrowOnFailure,
         [switch]$FullCLR,
-        [string]$binDir = (Split-Path (New-PSOptions -FullCLR:$FullCLR).Output) 
+        [string]$binDir = (Split-Path (New-PSOptions -FullCLR:$FullCLR).Output),
+        [string]$powershell = (Join-Path $binDir 'powershell'),
+        [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester"))
     )
 
     Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
     # All concatenated commands/arguments are suffixed with the delimiter (space)
     $Command = ""
-    $powershell = Join-Path $binDir 'powershell'
 
     # Windows needs the execution policy adjusted
     if ($IsWindows) {
@@ -571,10 +572,9 @@ function Start-PSPester {
     }
     $startParams = @{binDir=$binDir}
 
-    $PesterModule = [IO.Path]::Combine($binDir, "Modules", "Pester")
     if(!$FullCLR)
     {
-        $Command += "Import-Module '$PesterModule'; "
+        $Command += "Import-Module '$Pester'; "
     }
     $Command += "Invoke-Pester "
 
@@ -679,21 +679,80 @@ function Start-PSxUnit {
 }
 
 
+function Install-Dotnet {
+    [CmdletBinding()]
+    param(
+        [string]$Channel = "rel-1.0.0",
+        [string]$Version = "latest",
+        [switch]$NoSudo
+    )
+
+    # This allows sudo install to be optional; needed when running in containers / as root
+    # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
+    $sudo = if (!$NoSudo) { "sudo" }
+
+    $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain"
+
+    # Install for Linux and OS X
+    if ($IsLinux -or $IsOSX) {
+        # Uninstall all previous dotnet packages
+        $uninstallScript = if ($IsUbuntu) {
+            "dotnet-uninstall-debian-packages.sh"
+        } elseif ($IsOSX) {
+            "dotnet-uninstall-pkgs.sh"
+        }
+
+        if ($uninstallScript) {
+            Start-NativeExecution {
+                curl -sO $obtainUrl/uninstall/$uninstallScript
+                Invoke-Expression "$sudo bash ./$uninstallScript"
+            }
+        } else {
+            Write-Warning "This script only removes prior versions of dotnet for Ubuntu 14.04 and OS X"
+        }
+
+        # Install new dotnet 1.0.0 preview packages
+        $installScript = "dotnet-install.sh"
+        Start-NativeExecution {
+            curl -sO $obtainUrl/$installScript
+            bash ./$installScript -c $Channel -v $Version
+        }
+
+        # .NET Core's crypto library needs brew's OpenSSL libraries added to its rpath
+        if ($IsOSX) {
+            # This is the library shipped with .NET Core
+            # This is allowed to fail as the user may have installed other versions of dotnet
+            Write-Warning ".NET Core links the incorrect OpenSSL, correcting .NET CLI libraries..."
+            find $env:HOME/.dotnet -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
+        }
+    } elseif ($IsWindows) {
+        Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
+        $installScript = "dotnet-install.ps1"
+        Invoke-WebRequest -Uri $obtainUrl/$installScript -OutFile $installScript
+        & ./$installScript -c $Channel -v $Version
+    }
+}
+
+
 function Start-PSBootstrap {
     [CmdletBinding(
         SupportsShouldProcess=$true,
         ConfirmImpact="High")]
     param(
-        [ValidateSet("dev", "beta", "preview")]
         [string]$Channel = "rel-1.0.0",
         [string]$Version = "latest",
         [switch]$Package,
+        [switch]$NoSudo,
         [switch]$Force
     )
 
     log "Installing PowerShell build dependencies"
 
     Push-Location $PSScriptRoot/tools
+
+    # This allows sudo install to be optional; needed when running in containers / as root
+    # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
+    $sudo = if (!$NoSudo) { "sudo" }
 
     try {
         # Update googletest submodule for linux native cmake
@@ -720,10 +779,13 @@ function Start-PSBootstrap {
             elseif ($IsUbuntu16) { $Deps += "libicu55" }
 
             # Packaging tools
-            if ($Package) { $Deps += "ruby-dev" }
+            if ($Package) { $Deps += "ruby-dev", "groff" }
 
             # Install dependencies
-            sudo apt-get install -y -qq $Deps
+            Start-NativeExecution {
+                Invoke-Expression "$sudo apt-get update"
+                Invoke-Expression "$sudo apt-get install -y -qq $Deps"
+            }
         } elseif ($IsCentOS) {
             # Build tools
             $Deps += "which", "curl", "gcc-c++", "cmake", "make"
@@ -732,10 +794,12 @@ function Start-PSBootstrap {
             $Deps += "libicu", "libunwind"
 
             # Packaging tools
-            if ($Package) { $Deps += "ruby-devel", "rpm-build" }
+            if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff" }
 
             # Install dependencies
-            sudo yum install -y -q $Deps
+            Start-NativeExecution {
+                Invoke-Expression "$sudo yum install -y -q $Deps"
+            }
         } elseif ($IsOSX) {
             precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
 
@@ -746,55 +810,24 @@ function Start-PSBootstrap {
             $Deps += "openssl"
 
             # Install dependencies
-            brew install $Deps
+            Start-NativeExecution { brew install $Deps }
         }
 
         # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
         if ($Package) {
-            gem install fpm ronn
-        }
-
-        $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain"
-
-        # Install for Linux and OS X
-        if ($IsLinux -or $IsOSX) {
-            # Uninstall all previous dotnet packages
-            $uninstallScript = if ($IsUbuntu) {
-                "dotnet-uninstall-debian-packages.sh"
-            } elseif ($IsOSX) {
-                "dotnet-uninstall-pkgs.sh"
-            }
-
-            if ($uninstallScript) {
-                curl -s $obtainUrl/uninstall/$uninstallScript -o $uninstallScript
-                chmod +x $uninstallScript
-                sudo ./$uninstallScript
-            } else {
-                Write-Warning "This script only removes prior versions of dotnet for Ubuntu 14.04 and OS X"
-            }
-
-            # Install new dotnet 1.0.0 preview packages
-            $installScript = "dotnet-install.sh"
-            curl -s $obtainUrl/$installScript -o $installScript
-            chmod +x $installScript
-            bash ./$installScript -c $Channel -v $Version
-
-            # .NET Core's crypto library needs brew's OpenSSL libraries added to its rpath
-            if ($IsOSX) {
-                # This is the library shipped with .NET Core
-                # This is allowed to fail as the user may have installed other versions of dotnet
-                Write-Warning ".NET Core links the incorrect OpenSSL, correcting .NET CLI libraries..."
-                find $env:HOME/.dotnet -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
+            try {
+                # We cannot guess if the user wants to run gem install as root
+                Start-NativeExecution { gem install fpm ronn }
+            } catch {
+                Write-Warning "Installation of fpm and ronn gems failed! Must resolve manually."
             }
         }
+
+        $DotnetArguments = @{ Channel=$Channel; Version=$Version; NoSudo=$NoSudo }
+        Install-Dotnet @DotnetArguments
 
         # Install for Windows
-        if ($IsWindows -and -not $IsCoreCLR) {
-            Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
-            $installScript = "dotnet-install.ps1"
-            Invoke-WebRequest -Uri $obtainUrl/$installScript -OutFile $installScript
-            & ./$installScript -c $Channel -v $Version
-
+        if ($IsWindows) {
             $machinePath = [Environment]::GetEnvironmentVariable('Path', 'MACHINE')
             $newMachineEnvironmentPath = $machinePath
 
@@ -861,8 +894,6 @@ function Start-PSBootstrap {
                 }
             }
 
-        } elseif ($IsWindows) {
-            Write-Warning "Start-PSBootstrap cannot be run in Core PowerShell on Windows (need Invoke-WebRequest!)"
         }
     } finally {
         Pop-Location
