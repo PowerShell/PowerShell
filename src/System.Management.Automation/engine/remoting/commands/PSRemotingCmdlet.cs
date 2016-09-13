@@ -864,9 +864,10 @@ namespace Microsoft.PowerShell.Commands
             base.BeginProcessing();
 
             // Validate KeyFilePath parameter.
-            if (ParameterSetName == PSRemotingBaseCmdlet.SSHHostParameterSet)
+            if ((ParameterSetName == PSRemotingBaseCmdlet.SSHHostParameterSet) &&
+                (this.KeyFilePath != null))
             {
-                // Resolve the key file path.
+                // Resolve the key file path when set.
                 this.KeyFilePath = PathResolver.ResolveProviderAndPath(this.KeyFilePath, true, this, false, RemotingErrorIdStrings.FilePathNotFromFileSystemProvider);
             }
 
