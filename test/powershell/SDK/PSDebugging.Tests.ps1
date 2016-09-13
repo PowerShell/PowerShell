@@ -232,6 +232,9 @@ Describe "Runspace Debugging API tests" -tag CI {
             $associationId = [guid]::newguid()
             $runspaceInfo = [PSStandaloneMonitorRunspaceInfo]::new($runspace)
         }
+        AfterAll {
+            $runspace.Dispose()
+        }
 
         It "DebuggerUtils StartMonitoringRunspace requires non-null debugger" {
             try {
