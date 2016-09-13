@@ -709,16 +709,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty()]
         public virtual string KeyFilePath
         {
-            get { return _keyFilePath; }
-
-            set
-            {
-                // Resolve the key file path.
-                PathResolver resolver = new PathResolver();
-                _keyFilePath = resolver.ResolveProviderAndPath(value, true, this, false, RemotingErrorIdStrings.FilePathNotFromFileSystemProvider);
-            }
+            get;
+            set;
         }
-        private string _keyFilePath;
 
         #endregion
 
@@ -869,6 +862,13 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             base.BeginProcessing();
+
+            // Validate KeyFilePath parameter.
+            if (ParameterSetName == PSRemotingBaseCmdlet.SSHHostParameterSet)
+            {
+                // Resolve the key file path.
+                this.KeyFilePath = PathResolver.ResolveProviderAndPath(this.KeyFilePath, true, this, false, RemotingErrorIdStrings.FilePathNotFromFileSystemProvider);
+            }
 
             // Validate IdleTimeout parameter.
             int idleTimeout = (int)SessionOption.IdleTimeout.TotalMilliseconds;
@@ -1731,8 +1731,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             //Resolve file path
-            PathResolver resolver = new PathResolver();
-            string resolvedPath = resolver.ResolveProviderAndPath(filePath, isLiteralPath, this, false, RemotingErrorIdStrings.FilePathNotFromFileSystemProvider);
+            string resolvedPath = PathResolver.ResolveProviderAndPath(filePath, isLiteralPath, this, false, RemotingErrorIdStrings.FilePathNotFromFileSystemProvider);
 
             //read content of file
             ExternalScriptInfo scriptInfo = new ExternalScriptInfo(filePath, resolvedPath, this.Context);
@@ -3327,10 +3326,12 @@ namespace Microsoft.PowerShell.Commands
         } // RaiseOperationCompleteEvent
     } // ExecutionCmdletHelperComputerName
 
+    #region Path Resolver
+
     /// <summary>
     /// A helper class to resolve the path
     /// </summary>
-    internal class PathResolver
+    internal static class PathResolver
     {
         /// <summary>
         /// Resolves the specified path and verifies the path belongs to
@@ -3343,7 +3344,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="allowNonexistingPaths"></param>
         /// <param name="resourceString">resource string for error when path is not from filesystem provider</param>
         /// <returns>A fully qualified string representing filename.</returns>
-        internal string ResolveProviderAndPath(string path, bool isLiteralPath, PSCmdlet cmdlet, bool allowNonexistingPaths, string resourceString)
+        internal static string ResolveProviderAndPath(string path, bool isLiteralPath, PSCmdlet cmdlet, bool allowNonexistingPaths, string resourceString)
         {
             // First resolve path
             PathInfo resolvedPath = ResolvePath(path, isLiteralPath, allowNonexistingPaths, cmdlet);
@@ -3380,7 +3381,7 @@ namespace Microsoft.PowerShell.Commands
         /// A string representing the resolved path.
         /// </returns>
         /// 
-        private PathInfo ResolvePath(
+        private static PathInfo ResolvePath(
             string pathToResolve,
             bool isLiteralPath,
             bool allowNonexistingPaths,
@@ -3472,6 +3473,8 @@ namespace Microsoft.PowerShell.Commands
             }
         } // ResolvePath
     }
+
+    #endregion
 
     #endregion Helper Classes
 }
