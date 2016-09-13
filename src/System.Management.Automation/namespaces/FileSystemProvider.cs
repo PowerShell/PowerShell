@@ -1474,6 +1474,20 @@ namespace Microsoft.PowerShell.Commands
             return true;
         }
 
+        private bool DetectRecursiveSymLink(DirectoryInfo path)
+        {
+            var readSymLink = Platform.NonWindowsInternalGetTarget(path.FullName);
+
+            if (path.FullName.Contains(readSymLink))
+            {
+                Console.WriteLine("\n Detected recursive symlink pointing to its parent directory.");
+                Console.WriteLine(" Skipping: " + path.FullName + " ==> " + readSymLink);
+                return true;
+            }
+
+            return false;
+        }
+
         private void GetPathItems(
             string path,
             bool recurse,
@@ -1727,6 +1741,15 @@ namespace Microsoft.PowerShell.Commands
                                 return;
                             }
 
+                            //If symlink points to its parent directory then do not pursue symlink further
+                            if (!Platform.IsWindows && Platform.NonWindowsIsSymLink(recursiveDirectory))
+                            {
+                                if (DetectRecursiveSymLink(recursiveDirectory))
+                                {
+                                    recurse=false;
+                                    return;
+                                 }
+                            }
 
                             bool hidden = false;
                             if (!Force) hidden = (recursiveDirectory.Attributes & FileAttributes.Hidden) != 0;
