@@ -203,6 +203,51 @@ Passed: 1 Failed: 0 Skipped: 0 Pending: 0
 The DESCRIBE BeforeAll block is executed before any other code even though it was at the bottom of the Describe block, so if state is set elsewhere in the describe BLOCK, that state will not be visible (as the code will not yet been run). Notice, too, that the BEFOREALL block in Context is executed before any other code in that block.
 Generally, you should have code reside in one of the code block elements of `[Before|After][All|Each]`, especially if those block rely on state set by free code elsewhere in the block.
 
+#### Multi-line strings
+
+You may want to have a test like
+
+```powershell
+It 'tests multi-line string' {
+    Get-MultiLineString | Should Be @'
+first line
+second line
+'@
+}
+```
+
+There are problems with using here-strings with verifying the output results.
+The reason for it are line-ends.
+
+They cause problems for two reasons:
+
+* They are different on different platforms (`\r\n` on windows and `\n` on unix).
+* Even on the same system, they depends on the way how the repo was cloned.
+
+Particularly, in the default AppVeyour CI windows image, you will get `\n` line ends in all your files.
+That causes problems, because at runtime `Get-MultiLineString` would likely produce `\r\n` line ends on windows.
+
+Some workaround could be added, but they are sub-optimal and make reading test code harder.
+
+```powershell
+function normalizeEnds([string]$text)
+{
+    $text -replace "`r`n?|`n", "`r`n"
+}
+
+It 'tests multi-line string' {
+    normalizeEnds (Get-MultiLineString) | Should Be (normalizeEnds @'
+first line
+second line
+'@)
+}
+```
+
+When appropriate, you can avoid creating multi-line strings at the first place.
+These commands create an array of strings:
+
+* `Get-Content`
+* `Out-String -Stream`
 
 Pester Do and Don't
 ===================
