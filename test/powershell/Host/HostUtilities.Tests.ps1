@@ -1,7 +1,9 @@
 ﻿Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
 
-    $command = [System.Management.Automation.PSCommand]::new()
-    $localRunspace = $host.Runspace
+    BeforeAll {
+        $command = [System.Management.Automation.PSCommand]::new()
+        $localRunspace = $host.Runspace
+    }
 
     It "Null argument exception should be thrown for null PSCommand argument" {
 
