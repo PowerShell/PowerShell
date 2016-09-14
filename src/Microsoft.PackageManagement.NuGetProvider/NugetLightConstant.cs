@@ -48,7 +48,7 @@ namespace Microsoft.PackageManagement.NuGetProvider
         /// <summary>
         /// Represents a method that the V2 web service supports to search packages with filtering
         /// </summary>
-        public static readonly string SearchFilterAllersions = "Search()?$orderby=DownloadCount%20desc,Id";
+        public static readonly string SearchFilterAllVersions = "Search()?$orderby=DownloadCount%20desc,Id";
 
         /// <summary>
         /// Represents a method that the V2 web service supports to search packages with filtering. The result returned is already

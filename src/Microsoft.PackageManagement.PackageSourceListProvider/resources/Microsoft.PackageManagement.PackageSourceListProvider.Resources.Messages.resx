@@ -273,7 +273,7 @@
   <data name="UninstalledPackage" xml:space="preserve">
     <value>Uninstalled '{0}' package.</value>
   </data>
-  <data name="UnkownCategory" xml:space="preserve">
+  <data name="UnknownCategory" xml:space="preserve">
     <value>Unknown category for '{0}'::'{1}': '{2}'</value>
   </data>
   <data name="UriSchemeNotSupported" xml:space="preserve">
