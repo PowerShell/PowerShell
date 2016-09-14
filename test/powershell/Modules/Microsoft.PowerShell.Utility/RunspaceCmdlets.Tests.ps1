@@ -12,6 +12,10 @@ Describe "Get-Runspace cmdlet tests" -Tag "CI" {
         $runspace = get-runspace -instanceid $CurrentRunspace.InstanceId
         $runspace.InstanceId | Should be $ExpectedInstanceId
     }
+    It "Get-Runspace with runspace name should return the correct runspace" {
+        $runspace = get-runspace -name $currentRunspace.Name
+        $runspace.InstanceId | Should be $ExpectedInstanceId
+    }
     It "Get-Runspace with runspace Id should return the correct runspace" {
         $runspace = get-runspace -id $CurrentRunspace.Id
         $runspace.InstanceId | Should be $ExpectedInstanceId
@@ -24,7 +28,6 @@ Describe "Get-Runspace cmdlet tests" -Tag "CI" {
             $r2 = [runspacefactory]::CreateRunspace()
         }
         AfterAll {
-            $r1.Close()
             $r1.Dispose()
             $r2.Dispose()
         }
