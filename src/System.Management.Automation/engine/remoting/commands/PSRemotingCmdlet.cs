@@ -683,7 +683,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// SSH Target Host Name
         /// </summary>
-        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet, Mandatory = true)]
         [ValidateNotNullOrEmpty()]
         public virtual string HostName
         {
@@ -694,7 +694,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// SSH User Name
         /// </summary>
-        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet, Mandatory = true)]
         [ValidateNotNullOrEmpty()]
         public virtual string UserName
         {
@@ -703,11 +703,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// SSH Key Path
+        /// SSH Key File Path
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
         [ValidateNotNullOrEmpty()]
-        public virtual string KeyPath
+        public virtual string KeyFilePath
         {
             get;
             set;
@@ -862,6 +862,14 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             base.BeginProcessing();
+
+            // Validate KeyFilePath parameter.
+            if ((ParameterSetName == PSRemotingBaseCmdlet.SSHHostParameterSet) &&
+                (this.KeyFilePath != null))
+            {
+                // Resolve the key file path when set.
+                this.KeyFilePath = PathResolver.ResolveProviderAndPath(this.KeyFilePath, true, this, false, RemotingErrorIdStrings.FilePathNotFromFileSystemProvider);
+            }
 
             // Validate IdleTimeout parameter.
             int idleTimeout = (int)SessionOption.IdleTimeout.TotalMilliseconds;
@@ -1166,7 +1174,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected void CreateHelpersForSpecifiedHostNames()
         {
-            var sshConnectionInfo = new SSHConnectionInfo(this.UserName, this.HostName, this.KeyPath);
+            var sshConnectionInfo = new SSHConnectionInfo(this.UserName, this.HostName, this.KeyFilePath);
             var typeTable = TypeTable.LoadDefaultTypeFiles();
             var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
             var pipeline = CreatePipeline(remoteRunspace);
@@ -1724,8 +1732,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             //Resolve file path
-            PathResolver resolver = new PathResolver();
-            string resolvedPath = resolver.ResolveProviderAndPath(filePath, isLiteralPath, this, false, RemotingErrorIdStrings.FilePathNotFromFileSystemProvider);
+            string resolvedPath = PathResolver.ResolveProviderAndPath(filePath, isLiteralPath, this, false, RemotingErrorIdStrings.FilePathNotFromFileSystemProvider);
 
             //read content of file
             ExternalScriptInfo scriptInfo = new ExternalScriptInfo(filePath, resolvedPath, this.Context);
@@ -3320,10 +3327,12 @@ namespace Microsoft.PowerShell.Commands
         } // RaiseOperationCompleteEvent
     } // ExecutionCmdletHelperComputerName
 
+    #region Path Resolver
+
     /// <summary>
     /// A helper class to resolve the path
     /// </summary>
-    internal class PathResolver
+    internal static class PathResolver
     {
         /// <summary>
         /// Resolves the specified path and verifies the path belongs to
@@ -3336,7 +3345,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="allowNonexistingPaths"></param>
         /// <param name="resourceString">resource string for error when path is not from filesystem provider</param>
         /// <returns>A fully qualified string representing filename.</returns>
-        internal string ResolveProviderAndPath(string path, bool isLiteralPath, PSCmdlet cmdlet, bool allowNonexistingPaths, string resourceString)
+        internal static string ResolveProviderAndPath(string path, bool isLiteralPath, PSCmdlet cmdlet, bool allowNonexistingPaths, string resourceString)
         {
             // First resolve path
             PathInfo resolvedPath = ResolvePath(path, isLiteralPath, allowNonexistingPaths, cmdlet);
@@ -3373,7 +3382,7 @@ namespace Microsoft.PowerShell.Commands
         /// A string representing the resolved path.
         /// </returns>
         /// 
-        private PathInfo ResolvePath(
+        private static PathInfo ResolvePath(
             string pathToResolve,
             bool isLiteralPath,
             bool allowNonexistingPaths,
@@ -3465,6 +3474,8 @@ namespace Microsoft.PowerShell.Commands
             }
         } // ResolvePath
     }
+
+    #endregion
 
     #endregion Helper Classes
 }
