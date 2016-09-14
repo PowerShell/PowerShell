@@ -11,6 +11,7 @@ Once the package is installed, run `powershell` from a terminal.
 [u16]: #ubuntu-1604
 [cos]: #centos-7
 [osx]: #os-x-1011
+[paths]:#paths
 
 Ubuntu 14.04
 ============
@@ -25,6 +26,13 @@ Then execute the following in the terminal:
 sudo apt-get install libunwind8 libicu52
 sudo dpkg -i powershell_6.0.0-alpha.9-1ubuntu1.14.04.1_amd64.deb
 ```
+**Uninstallation**
+
+`sudo apt-get remove powershell`
+
+or
+
+`sudo dpkg -r powershell`
 
 [Ubuntu 14.04]: http://releases.ubuntu.com/14.04/
 
@@ -43,6 +51,13 @@ Then execute the following in the terminal:
 sudo apt-get install libunwind8 libicu55
 sudo dpkg -i powershell_6.0.0-alpha.9-1ubuntu1.16.04.1_amd64.deb
 ```
+**Uninstallation**
+
+`sudo apt-get remove powershell`
+
+or
+
+`sudo dpkg -r powershell`
 
 [Ubuntu 16.04]: http://releases.ubuntu.com/16.04/
 
@@ -63,11 +78,17 @@ sudo yum install powershell-6.0.0_alpha.9-1.el7.centos.x86_64.rpm
 
 You can also install the RPM without the intermediate step of downloading it:
 
+
+
 ```sh
 sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.9/powershell-6.0.0_alpha.9-1.el7.centos.x86_64.rpm
 ```
 
 > This package works on Oracle Linux 7. It should work on Red Hat Enterprise Linux 7 too.
+
+**Uninstallation**
+
+`sudo yum remove powershell`
 
 [CentOS 7]: https://www.centos.org/download/
 
@@ -84,6 +105,16 @@ or install it from the terminal:
 ```sh
 sudo installer -pkg powershell-6.0.0-alpha.9.pkg -target /
 ```
+
+**Uninstallation**
+
+PowerShell on MacOS must be removed manually.
+
+To remove the installed package:
+```sh
+sudo rm -rf /usr/local/bin/powershell usr/local/microsoft/powershell
+```
+To uninstall the additional PowerShell paths (such as the user profile path) please see the [paths][paths] section below in this document and remove the desired the paths with `sudo rm`.
 
 OpenSSL
 -------
