@@ -1,11 +1,20 @@
-﻿Describe "ConvertTo-Html DRT Unit Tests" -Tags "CI" {
-    $customObject = [pscustomobject]@{"Name" = "John Doe"; "Age" = 42; "Friends" = ("Jack", "Jill")}
-    $newLine = [System.Environment]::NewLine
+﻿Describe "ConvertTo-Html Tests" -Tags "CI" {
+
+    BeforeAll {
+        $customObject = [pscustomobject]@{"Name" = "John Doe"; "Age" = 42; "Friends" = ("Jack", "Jill")}
+        $newLine = "`r`n"
+    }
+
+    function normalizeLineEnds([string]$text)
+    {
+        $text -replace "`r`n?|`n", "`r`n"
+    }
+
     It "Test ConvertTo-Html with no parameters" {
         $returnObject = $customObject | ConvertTo-Html
         $returnObject -is [System.Array] | Should Be $true
         $returnString = $returnObject -join $newLine
-        $expectedValue = @"
+        $expectedValue = normalizeLineEnds @"
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -23,7 +32,7 @@
 
     It "Test ConvertTo-Html Fragment parameter" {
         $returnString = ($customObject | ConvertTo-Html -Fragment) -join $newLine
-        $expectedValue = @"
+        $expectedValue = normalizeLineEnds @"
 <table>
 <colgroup><col/><col/><col/></colgroup>
 <tr><th>Name</th><th>Age</th><th>Friends</th></tr>
@@ -35,7 +44,7 @@
 
     It "Test ConvertTo-Html as List" {
         $returnString = ($customObject | ConvertTo-Html -As List) -join $newLine
-        $expectedValue = @"
+        $expectedValue = normalizeLineEnds @"
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -53,7 +62,7 @@
 
     It "Test ConvertTo-Html specified properties" {
         $returnString = ($customObject | ConvertTo-Html -Property Name, Friends -As List) -join $newLine
-        $expectedValue = @"
+        $expectedValue = normalizeLineEnds @"
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -70,7 +79,7 @@
 
     It "Test ConvertTo-Html using page parameters" {
         $returnString = ($customObject | ConvertTo-Html -Title "Custom Object" -Body "Body Text" -CssUri "page.css" -As List) -join $newLine
-        $expectedValue = @"
+        $expectedValue = normalizeLineEnds @"
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -90,7 +99,7 @@ Body Text
 
     It "Test ConvertTo-Html pre and post" {
         $returnString = ($customObject | ConvertTo-Html -PreContent "Before the object" -PostContent "After the object") -join $newLine
-        $expectedValue = @"
+        $expectedValue = normalizeLineEnds @"
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
