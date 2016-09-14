@@ -760,7 +760,7 @@ namespace System.Management.Automation
         /// show up in current process module path. It doesn't make sense for B to load modules from
         /// A's pshome module path, so remove it in such case.
         /// </summary>
-        private static string RemoveSxSPsHomeModulePath(string currentProcessModulePath)
+        private static string RemoveSxSPsHomeModulePath(string currentProcessModulePath, string personalModulePath, string sharedModulePath, string psHomeModulePath)
         {
 #if UNIX
             const string powershellExeName = "powershell";
@@ -773,17 +773,25 @@ namespace System.Management.Automation
             foreach (var path in currentProcessModulePath.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
             {
                 string trimedPath = path.Trim().TrimEnd(Path.DirectorySeparatorChar);
-                if (trimedPath == string.Empty || trimedPath.IndexOfAny(invalidPathChars) != -1)
+                if (trimedPath.IndexOfAny(invalidPathChars) != -1 || !Path.IsPathRooted(trimedPath))
                 {
-                    // Path contains invalid characters. Ignore it.
+                    // Path contains invalid characters or it's not an absolute path. Ignore it.
                     continue;
                 }
 
-                string psExePath = Path.Combine(Path.GetDirectoryName(trimedPath), powershellExeName);
-                if (File.Exists(psExePath))
+                if (!trimedPath.Equals(personalModulePath, StringComparison.OrdinalIgnoreCase) && 
+                    !trimedPath.Equals(sharedModulePath, StringComparison.OrdinalIgnoreCase) &&
+                    !trimedPath.Equals(psHomeModulePath, StringComparison.OrdinalIgnoreCase) &&
+                    trimedPath.EndsWith("Modules", StringComparison.OrdinalIgnoreCase))
                 {
-                    // Path is a PSHome module path. Ignore it.
-                    continue;
+                    string parentDir = Path.GetDirectoryName(trimedPath);
+                    string psExePath = Path.Combine(parentDir, powershellExeName);
+                    string psDepsPath = Path.Combine(parentDir, "powershell.deps.json");
+                    if (File.Exists(psExePath) && File.Exists(psDepsPath))
+                    {
+                        // Path is a PSHome module path from a different powershell core instance. Ignore it.
+                        continue;
+                    }
                 }
 
                 if (modulePathString.Length > 0)
@@ -852,7 +860,7 @@ namespace System.Management.Automation
             else if (runningSxS) // The running powershell is an SxS PS instance
             {
                 // When SxS PS instance A starts SxS PS instance B, A's PSHome module path might be inherited by B. We need to remove that path from B
-                currentProcessModulePath = RemoveSxSPsHomeModulePath(currentProcessModulePath);
+                currentProcessModulePath = RemoveSxSPsHomeModulePath(currentProcessModulePath, personalModulePath, sharedModulePath, psHomeModulePath);
 
                 string personalModulePathToUse = string.IsNullOrEmpty(hkcuUserModulePath) ? personalModulePath : hkcuUserModulePath;
                 string systemModulePathToUse = string.IsNullOrEmpty(hklmMachineModulePath) ? psHomeModulePath : hklmMachineModulePath;
