@@ -189,7 +189,7 @@ PSVersion                      6.0.0-alpha
 PSEdition                      Core
 PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0...}
 BuildVersion                   3.0.0.0
-GitCommitId                    v6.0.0-alpha.9
+GitCommitId                    v6.0.0-alpha.10
 CLRVersion                     
 WSManStackVersion              3.0
 PSRemotingProtocolVersion      2.3

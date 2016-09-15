@@ -17,14 +17,14 @@ Ubuntu 14.04
 ============
 
 Using [Ubuntu 14.04][], download the Debian package
-`powershell_6.0.0-alpha.9-1ubuntu1.14.04.1_amd64.deb`
+`powershell_6.0.0-alpha.10-1ubuntu1.14.04.1_amd64.deb`
 from the [releases][] page onto the Ubuntu machine.
 
 Then execute the following in the terminal:
 
 ```sh
 sudo apt-get install libunwind8 libicu52
-sudo dpkg -i powershell_6.0.0-alpha.9-1ubuntu1.14.04.1_amd64.deb
+sudo dpkg -i powershell_6.0.0-alpha.10-1ubuntu1.14.04.1_amd64.deb
 ```
 **Uninstallation**
 
@@ -40,7 +40,7 @@ Ubuntu 16.04
 ============
 
 Using [Ubuntu 16.04][], download the Debian package
-`powershell_6.0.0-alpha.9-1ubuntu1.16.04.1_amd64.deb`
+`powershell_6.0.0-alpha.10-1ubuntu1.16.04.1_amd64.deb`
 from the [releases][] page onto the Ubuntu machine.
 
 Then execute the following in the terminal:
@@ -49,7 +49,7 @@ Then execute the following in the terminal:
 
 ```sh
 sudo apt-get install libunwind8 libicu55
-sudo dpkg -i powershell_6.0.0-alpha.9-1ubuntu1.16.04.1_amd64.deb
+sudo dpkg -i powershell_6.0.0-alpha.10-1ubuntu1.16.04.1_amd64.deb
 ```
 **Uninstallation**
 
@@ -67,13 +67,13 @@ CentOS 7
 ========
 
 Using [CentOS 7][], download the RPM package
-`powershell-6.0.0_alpha.9-1.el7.centos.x86_64.rpm`
+`powershell-6.0.0_alpha.10-1.el7.centos.x86_64.rpm`
 from the [releases][] page onto the CentOS machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo yum install powershell-6.0.0_alpha.9-1.el7.centos.x86_64.rpm
+sudo yum install powershell-6.0.0_alpha.10-1.el7.centos.x86_64.rpm
 ```
 
 You can also install the RPM without the intermediate step of downloading it:
@@ -81,7 +81,7 @@ You can also install the RPM without the intermediate step of downloading it:
 
 
 ```sh
-sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.9/powershell-6.0.0_alpha.9-1.el7.centos.x86_64.rpm
+sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.10/powershell-6.0.0_alpha.10-1.el7.centos.x86_64.rpm
 ```
 
 > This package works on Oracle Linux 7. It should work on Red Hat Enterprise Linux 7 too.
@@ -96,14 +96,14 @@ macOS 10.11
 ===========
 
 Using macOS 10.11, download the PKG package
-`powershell-6.0.0-alpha.9.pkg`
+`powershell-6.0.0-alpha.10.pkg`
 from the [releases][] page onto the macOS machine.
 
 Either double-click the file and follow the prompts,
 or install it from the terminal:
 
 ```sh
-sudo installer -pkg powershell-6.0.0-alpha.9.pkg -target /
+sudo installer -pkg powershell-6.0.0-alpha.10.pkg -target /
 ```
 
 **Uninstallation**
@@ -163,7 +163,7 @@ You *can* run this command manually if you're having trouble with .NET Core's cr
 Paths
 =====
 
-* `$PSHOME` is `/opt/microsoft/powershell/6.0.0-alpha.9/`
+* `$PSHOME` is `/opt/microsoft/powershell/6.0.0-alpha.10/`
 * User profiles will be read from `~/.config/powershell/profile.ps1`
 * Default profiles will be read from `$PSHOME/profile.ps1`
 * User modules will be read from `~/.local/share/powershell/Modules`
@@ -179,7 +179,7 @@ On Linux and macOS, the [XDG Base Directory Specification][xdg-bds] is respected
 
 Note that because macOS is a derivation of BSD,
 instead of `/opt`, the prefix used is `/usr/local`.
-Thus, `$PSHOME` is `/usr/local/microsoft/powershell/6.0.0-alpha.9/`,
+Thus, `$PSHOME` is `/usr/local/microsoft/powershell/6.0.0-alpha.10/`,
 and the symlink is placed at `/usr/local/bin/powershell`.
 
 [releases]: https://github.com/PowerShell/PowerShell/releases/latest
