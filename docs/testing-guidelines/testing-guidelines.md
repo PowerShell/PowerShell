@@ -8,7 +8,7 @@ Having all of those tests available for the initial release of PowerShell was no
 we believe will provide us the ability to catch regressions in the areas which have had the largest changes for PowerShell. 
 It is our intent to continue to release more and more of our tests until we have the coverage we need.
 
-For creating new tests, please review the [documents](https://github.com/PowerShell/PowerShell/tree/master/docs/testing-guidelines) on how to create tests for PowerShell. There is a best practices document for [writing Pester tests](https://github.com/PowerShell/PowerShell/tree/master/docs/testing-guidelines/WritingPesterTests.md) and a list of [Pester Do's and Don'ts](https://github.com/PowerShell/PowerShell/tree/master/docs/testing-guidelines/PesterDoAndDont.md). When adding new tests, place them in the directories as [outlined below](#Test-Layout).
+For creating new tests, please review the [documents](https://github.com/PowerShell/PowerShell/tree/master/docs/testing-guidelines) on how to create tests for PowerShell. There is a best practices document for [writing Pester tests](https://github.com/PowerShell/PowerShell/tree/master/docs/testing-guidelines/WritingPesterTests.md). When adding new tests, place them in the directories as [outlined below](#test-layout).
 
 ## CI System
 
@@ -116,6 +116,7 @@ The current layout of tests is:
 * test/powershell/engine/Logging
 * test/powershell/engine/Module
 * test/powershell/engine/ParameterBinding
+* test/powershell/engine/Remoting
 * test/powershell/engine/Runspace
 * test/powershell/engine/Logging/MessageAnalyzer
 * test/powershell/Host
