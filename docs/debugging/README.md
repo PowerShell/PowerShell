@@ -15,6 +15,11 @@ addition to being able to build PowerShell, you need:
 - .NET Core debugger installed (semi-automatic)
 - `powershell` executable in your path (self-host if not on Windows)
 
+The .NET CLI tools *must* be on your path for Visual Studio Code.
+`Start-PSBootstrap` installs the tools to `~/.dotnet`,
+but does not add this to your `PATH`.
+You can do this in Bash with `export PATH=$PATH:$HOME/.dotnet`.
+
 Once the extension is installed, you have to open a C# file to force VS Code to
 install the actual .NET Core debugger (the editor will tell you to do this if
 you attempt to debug and haven't already open a C# file).
