@@ -547,6 +547,21 @@ function Get-PesterTag {
     $o
 }
 
+function Publish-PSTestTools {
+    [CmdletBinding()]
+    param()
+
+    Find-Dotnet
+
+    # Publish EchoArgs so it can be run by tests
+    Push-Location "$PSScriptRoot/test/tools/EchoArgs"
+    try {
+        dotnet publish --output bin
+    } finally {
+        Pop-Location
+    }
+}
+
 function Start-PSPester {
     [CmdletBinding()]
     param(
@@ -563,6 +578,7 @@ function Start-PSPester {
     )
 
     Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
+    Publish-PSTestTools
     # All concatenated commands/arguments are suffixed with the delimiter (space)
     $Command = ""
 

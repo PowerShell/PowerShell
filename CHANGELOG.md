@@ -4,6 +4,8 @@ Changelog
 Unreleased
 ----------
 
+- Fix passing escaped double quoted spaces to native executables
+
 v6.0.0-alpha.9 - 2016-08-15
 ---------------------------
 

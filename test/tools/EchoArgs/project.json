@@ -1,0 +1,28 @@
+{
+    "name": "echoargs",
+    "version": "1.0.0-*",
+    "description": "Very simple little console class that you can use to see how PowerShell is passing parameters to legacy console apps.",
+
+    "buildOptions": {
+        "emitEntryPoint": true
+    },
+
+    "frameworks": {
+        "netcoreapp1.0": {
+            "dependencies": {
+                "Microsoft.NETCore.App": "1.0.0"
+            }
+        }
+    },
+
+    "runtimes": {
+        "ubuntu.16.04-x64": { },
+        "ubuntu.14.04-x64": { },
+        "debian.8-x64": { },
+        "centos.7-x64": { },
+        "win7-x64": { },
+        "win81-x64": { },
+        "win10-x64": { },
+        "osx.10.11-x64": { }
+    }
+}
