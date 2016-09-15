@@ -1,8 +1,8 @@
 FROM centos:7
 MAINTAINER Andrew Schwartzmeyer <andschwa@microsoft.com>
 
-ARG POWERSHELL_RELEASE=v6.0.0-alpha.9
-ARG POWERSHELL_PACKAGE=powershell-6.0.0_alpha.9-1.el7.centos.x86_64.rpm
+ARG POWERSHELL_RELEASE=v6.0.0-alpha.10
+ARG POWERSHELL_PACKAGE=powershell-6.0.0_alpha.10-1.el7.centos.x86_64.rpm
 
 # Setup the locale
 ENV LANG en_US.UTF-8
