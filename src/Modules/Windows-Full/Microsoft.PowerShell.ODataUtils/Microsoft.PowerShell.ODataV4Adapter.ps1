@@ -1230,8 +1230,8 @@ function GenerateClientSideProxyModule
     Write-Verbose ($LocalizedData.VerboseSavingModule -f $OutputModule)
     
     # Save ComplexTypes for all metadata schemas in single file
-    $typeDefinationFileName = "ComplexTypeDefinitions.psm1"
-    $complexTypeMapping = GenerateComplexTypeDefinition $GlobalMetadata $OutputModule $typeDefinationFileName $NormalizedNamespaces
+    $typeDefinitionFileName = "ComplexTypeDefinitions.psm1"
+    $complexTypeMapping = GenerateComplexTypeDefinition $GlobalMetadata $OutputModule $typeDefinitionFileName $NormalizedNamespaces
 
     ProgressBarHelper "Export-ODataEndpointProxy" $progressBarStatus 20 20 1  1
 
@@ -1273,11 +1273,11 @@ function GenerateClientSideProxyModule
 
     if ($actions.Count -gt 0 -or $functions.Count -gt 0)
     {
-        $additionalModules = @($typeDefinationFileName, 'ServiceActions.cdxml')
+        $additionalModules = @($typeDefinitionFileName, 'ServiceActions.cdxml')
     }
     else
     {
-        $additionalModules = @($typeDefinationFileName)
+        $additionalModules = @($typeDefinitionFileName)
     }
 
     GenerateModuleManifest $GlobalMetadata $OutputModule\$moduleManifestName $additionalModules $resourceNameMappings $progressBarStatus
@@ -1300,7 +1300,7 @@ function SaveCDXML
         [string] $CmdletAdapter,
         [Hashtable] $resourceNameMappings,
         [Hashtable] $CustomData,
-        [Hashtable] $compexTypeMapping,
+        [Hashtable] $complexTypeMapping,
         [string] $UriResourcePathKeyFormat,
         $normalizedNamespaces
     )
@@ -1335,7 +1335,7 @@ function SaveCDXML
     
     $navigationProperties = $EntitySet.Type.NavigationProperties
 
-    SaveCDXMLInstanceCmdlets $xmlWriter $Metadata $GlobalMetadata $EntitySet.Type $keys $navigationProperties $CmdletAdapter $compexTypeMapping $false
+    SaveCDXMLInstanceCmdlets $xmlWriter $Metadata $GlobalMetadata $EntitySet.Type $keys $navigationProperties $CmdletAdapter $complexTypeMapping $false
 
     $nonKeyProperties = $EntitySet.Type.EntityProperties | ? { -not $_.isKey }
     $nullableProperties = $nonKeyProperties | ? { $_.isNullable }
@@ -1345,11 +1345,11 @@ function SaveCDXML
 
         $keyProperties = $keys
 
-        SaveCDXMLNewCmdlet $xmlWriter $Metadata $GlobalMetadata $keyProperties $nonNullableProperties $nullableProperties $navigationProperties $CmdletAdapter $compexTypeMapping
+        SaveCDXMLNewCmdlet $xmlWriter $Metadata $GlobalMetadata $keyProperties $nonNullableProperties $nullableProperties $navigationProperties $CmdletAdapter $complexTypeMapping
         
-        GenerateSetProxyCmdlet $xmlWriter $keyProperties $nonKeyProperties $compexTypeMapping
+        GenerateSetProxyCmdlet $xmlWriter $keyProperties $nonKeyProperties $complexTypeMapping
 
-        SaveCDXMLRemoveCmdlet $xmlWriter $Metadata $GlobalMetadata $keyProperties $navigationProperties $CmdletAdapter $compexTypeMapping
+        SaveCDXMLRemoveCmdlet $xmlWriter $Metadata $GlobalMetadata $keyProperties $navigationProperties $CmdletAdapter $complexTypeMapping
 
         $entityActions = $Metadata.Actions | Where-Object { ($_.EntitySet.Namespace -eq $EntitySet.Namespace) -and ($_.EntitySet.Name -eq $EntitySet.Name) }
 
@@ -1456,7 +1456,7 @@ function SaveCDXMLSingletonCmdlets
         [string] $CmdletAdapter,
         [Hashtable] $resourceNameMappings,
         [Hashtable] $CustomData,
-        [Hashtable] $compexTypeMapping,
+        [Hashtable] $complexTypeMapping,
         $normalizedNamespaces
     )
 
@@ -1508,7 +1508,7 @@ function SaveCDXMLSingletonCmdlets
 
 		$navigationProperties = $associatedEntityType.NavigationProperties
 
-		SaveCDXMLInstanceCmdlets $xmlWriter $Metadata $GlobalMetadata $associatedEntityType $keys $navigationProperties $CmdletAdapter $compexTypeMapping $true 
+		SaveCDXMLInstanceCmdlets $xmlWriter $Metadata $GlobalMetadata $associatedEntityType $keys $navigationProperties $CmdletAdapter $complexTypeMapping $true 
 
 		$nonKeyProperties = $associatedEntityType.EntityProperties | ? { -not $_.isKey }
 		$nullableProperties = $nonKeyProperties | ? { $_.isNullable }
@@ -1518,7 +1518,7 @@ function SaveCDXMLSingletonCmdlets
 
 			$keyProperties = $keys
 
-			GenerateSetProxyCmdlet $xmlWriter $keyProperties $nonKeyProperties $compexTypeMapping
+			GenerateSetProxyCmdlet $xmlWriter $keyProperties $nonKeyProperties $complexTypeMapping
 
 			$entityActions = $Metadata.Actions | Where-Object { $_.EntitySet.Name -eq $associatedEntityType.Name }
 
@@ -1621,7 +1621,7 @@ function SaveCDXMLInstanceCmdlets
             # to be used by GET cmdlet
             if (($keys.Length -gt 0) -or ($navigationProperties.Length -gt 0))
             { 
-                $querableNavProperties = @{} 
+                $queryableNavProperties = @{} 
                 
                 if ($isSingleton -eq $false)
                 {
@@ -1636,16 +1636,16 @@ function SaveCDXMLInstanceCmdlets
                             # Otherwise the Uri for associated navigation property won't be valid
                             if ($associatedTypeKeyProperties.Length -gt 0 -and (ShouldBeAssociatedParameter $GlobalMetadata $EntityType $associatedType $isSingleton))
                             {                            
-                                $querableNavProperties.Add($navProperty, $associatedTypeKeyProperties)
+                                $queryableNavProperties.Add($navProperty, $associatedTypeKeyProperties)
                             }
                         }
                     }
                 }
                 
                 $defaultCmdletParameterSet = 'Default'
-                if ($isSingleton -eq $true -and $querableNavProperties.Count -gt 0)
+                if ($isSingleton -eq $true -and $queryableNavProperties.Count -gt 0)
                 {
-                    foreach($item in $querableNavProperties.GetEnumerator()) 
+                    foreach($item in $queryableNavProperties.GetEnumerator()) 
                     {
                         $defaultCmdletParameterSet = $item.Key.Name
                         break
@@ -1683,9 +1683,9 @@ function SaveCDXMLInstanceCmdlets
                         }
                 }
     
-                if ($querableNavProperties.Count -gt 0)
+                if ($queryableNavProperties.Count -gt 0)
                 {
-                    foreach($item in $querableNavProperties.GetEnumerator()) 
+                    foreach($item in $queryableNavProperties.GetEnumerator()) 
                     {
                         $xmlWriter.WriteStartElement('Property')
                         $xmlWriter.WriteAttributeString('PropertyName', $item.Key.Name + ':' + $item.Value.Name + ':Key')
@@ -1940,7 +1940,7 @@ function SaveCDXMLRemoveCmdlet
             
         $xmlWriter.WriteEndElement()
 
-        $navigationPrperties | ? { $_ -ne $null } | % {
+        $navigationProperties | ? { $_ -ne $null } | % {
 
             $associatedType = GetAssociatedType $Metadata $GlobalMetadata $_
             $associatedEntitySet = GetEntitySetForEntityType $Metadata $associatedType
