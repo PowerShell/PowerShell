@@ -84,7 +84,7 @@ namespace Microsoft.PackageManagement.Internal.Providers {
         /// <remarks>
         ///     PowerShellMetaProvider notes:
         ///         - may use Resolve-PackageSource as the function name 
-        ///         - $request object is not passed as a parameter, but inserted as a variable before the ca New-PackageSource.
+        ///         - $request object is not passed as a parameter, but inserted as a variable before the New-PackageSource call.
         ///         - Values can be returned using Write-Object for objects returned from the function
         /// </remarks>
         void ResolvePackageSources(IRequest requestObject);
