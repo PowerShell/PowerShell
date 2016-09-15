@@ -8,9 +8,7 @@ Having all of those tests available for the initial release of PowerShell was no
 we believe will provide us the ability to catch regressions in the areas which have had the largest changes for PowerShell. 
 It is our intent to continue to release more and more of our tests until we have the coverage we need.
 
-For creating new tests, please review the 
-[documents](https://github.com/PowerShell/PowerShell/tree/master/docs/testing-guidelines) on how to
-create tests for PowerShell.
+For creating new tests, please review the [documents](https://github.com/PowerShell/PowerShell/tree/master/docs/testing-guidelines) on how to create tests for PowerShell. There is a best practices document for [writing Pester tests](https://github.com/PowerShell/PowerShell/tree/master/docs/testing-guidelines/WritingPesterTests.md) and a list of [Pester Do's and Don'ts](https://github.com/PowerShell/PowerShell/tree/master/docs/testing-guidelines/PesterDoAndDont.md). When adding new tests, place them in the directories as [outlined below](#Test-Layout).
 
 ## CI System
 
@@ -60,7 +58,14 @@ Substantial changes were required, to get Pester executing on non-Windows system
 These changes are not yet in the official Pester code base. 
 Some features of Pester may not be available or may have incorrect behavior. 
 Please make sure to create issues in [PowerShell/PowerShell](https://github.com/PowerShell/PowerShell/issues) (not Pester) for anything that you find.
+#### Test Tags
+The Pester framework allows `Describe` blocks to be tagged, and our CI system relies on those tags to invoke our tests. One of the following tags must be used:
+* `CI` - this tag indicates that the tests in the `Describe` block will be executed as part of the CI/PR process
+* `Feature` - tests with this tag will not be executed as part of the CI/PR process, but they will be executed on a daily basis as part of a `cron` driven build. They indicate that the test will be validating more behavior, or will be using remote network resources (ex: package management tests)
+* `Scenario` - this tag indicates a larger scale test interacting with multiple areas of functionality and/or remote resources, these tests are also run daily.
 
+Additionally, the tag:
+* `SLOW` indicates that the test takes a somewhat longer time to execute (97% of our `CI` tests take 100ms or less), a test which takes longer than 1 second should be considered as a candidate for being tagged `Slow`
 ### xUnit
 For those tests which are not easily run via Pester, we have decided to use [xUnit](https://xunit.github.io/) as the test framework. 
 Currently, we have a minuscule number of tests which are run by using xUnit.

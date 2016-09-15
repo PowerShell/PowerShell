@@ -203,6 +203,69 @@ Passed: 1 Failed: 0 Skipped: 0 Pending: 0
 The DESCRIBE BeforeAll block is executed before any other code even though it was at the bottom of the Describe block, so if state is set elsewhere in the describe BLOCK, that state will not be visible (as the code will not yet been run). Notice, too, that the BEFOREALL block in Context is executed before any other code in that block.
 Generally, you should have code reside in one of the code block elements of `[Before|After][All|Each]`, especially if those block rely on state set by free code elsewhere in the block.
 
+#### Skipping tests in bulk
+Sometimes it is beneficial to skip all the tests in a particular `Describe` block. For example, tests which are not applicable to a platform could be skipped, and they would be reported as skipped. The following is an example of how this may be done:
+```powershell
+Describe "Should not run these tests on non-Windows platforms" {
+    BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        if ( ! $IsWindows ) {
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+    }
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+    }
+    Context "Block 1" {
+        It "This block 1 test 1" {
+            1 | should be 1
+        }
+        It "This is block 1 test 2" {
+            1 | should be 1
+        }
+    }
+    Context "Block 2" {
+        It "This block 2 test 1" {
+            2 | should be 1
+        }
+        It "This is block 2 test 2" {
+            2 | should be 1
+        }
+    }
+}  
+```
+Here is the output when run on a Linux distribution:
+```
+Describing Should not run these tests on non-Windows platforms
+   Context Block 1
+    [!] This block 1 test 1 691ms
+    [!] This is block 1 test 2 114ms
+   Context Block 2
+    [!] This block 2 test 1 73ms
+    [!] This is block 2 test 2 6ms
+```
+and here is the output when run on a Windows distribution:
+```
+Describing Should not run these tests on non-Windows platforms
+   Context Block 1
+    [+] This block 1 test 1 86ms
+    [+] This is block 1 test 2 33ms
+   Context Block 2
+    [-] This block 2 test 1 52ms
+      Expected: {1}
+      But was:  {2}
+      22:             2 | should be 1
+      at <ScriptBlock>, <No file>: line 22
+    [-] This is block 2 test 2 77ms
+      Expected: {1}
+      But was:  {2}
+      25:             2 | should be 1
+      at <ScriptBlock>, <No file>: line 25
+```
+
+this technique uses the `$PSDefaultParameterValues` feature of PowerShell to temporarily set the It block parameter `-skip` to true (or in the case of Windows, it is not set at all)
+
+
 #### Multi-line strings
 
 You may want to have a test like
