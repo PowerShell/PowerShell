@@ -76,7 +76,7 @@ else
 
 #endregion
 
-Describe "PowerShellGet - Module tests" -tags "CI" {
+Describe "PowerShellGet - Module tests" -tags "Feature" {
 
     BeforeEach {
         Get-InstalledModule -Name $ContosoServer -AllVersions -ErrorAction SilentlyContinue | Uninstall-Module -Force
@@ -119,7 +119,7 @@ Describe "PowerShellGet - Module tests" -tags "CI" {
     }
 }
 
-Describe "PowerShellGet - Script tests" -tags "CI" {
+Describe "PowerShellGet - Script tests" -tags "Feature" {
 
     BeforeEach {
         Get-InstalledScript -Name $FabrikamServerScript -ErrorAction SilentlyContinue | Uninstall-Script -Force
