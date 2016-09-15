@@ -2823,7 +2823,7 @@ namespace System.Management.Automation.Runspaces
             // If a user has any module with the same name as that of the core module( or nested module inside the core module)
             // in his module path, then that will get loaded instead of the actual nested module (from the GAC - in our case)
             // Hence, searching only from the system module path while loading the core modules
-            ProcessImportModule(initializedRunspace, CoreModulesToImport, ModuleIntrinsics.GetSystemwideModulePath(), publicCommands);
+            ProcessImportModule(initializedRunspace, CoreModulesToImport, ModuleIntrinsics.GetPSHomeModulePath(), publicCommands);
 
             // Win8:328748 - functions defined in global scope end up in a module
             // Since we import the core modules, EngineSessionState's module is set to the last imported module. So, if a function is defined in global scope, it ends up in that module.
