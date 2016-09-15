@@ -477,7 +477,7 @@ namespace System.Management.Automation.Remoting
                     }
                     catch (System.OverflowException)
                     {
-                        s_baseTracer.WriteLine("Fragement too big.");
+                        s_baseTracer.WriteLine("Fragment too big.");
                         ResetReceiveData();
                         PSRemotingTransportException e = new PSRemotingTransportException(RemotingErrorIdStrings.ObjectIsTooBig);
                         throw e;

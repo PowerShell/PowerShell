@@ -3625,7 +3625,7 @@ namespace System.Management.Automation
                     else
                     {
                         //We have an unknown tag
-                        s_trace.WriteLine("Unknwon tag {0} encountered", _reader.LocalName);
+                        s_trace.WriteLine("Unknown tag {0} encountered", _reader.LocalName);
                         if (UnknownTagsAllowed)
                         {
                             Skip();
@@ -3903,7 +3903,7 @@ namespace System.Management.Automation
             Dbg.Assert(ct == ContainerType.Enumerable ||
                        ct == ContainerType.List ||
                        ct == ContainerType.Queue ||
-                       ct == ContainerType.Stack, "ct should be queue, stack, enumberable or list");
+                       ct == ContainerType.Stack, "ct should be queue, stack, enumerable or list");
 
             ArrayList list = new ArrayList();
             if (ReadStartElementAndHandleEmpty(_reader.LocalName))

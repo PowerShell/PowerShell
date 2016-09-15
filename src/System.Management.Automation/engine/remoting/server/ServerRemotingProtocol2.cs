@@ -641,7 +641,7 @@ namespace System.Management.Automation
                 case RemotingDataType.RemotePowerShellHostResponseData:
                     {
                         Dbg.Assert(HostResponseReceived != null,
-                            "ServerPowerShellDriver should subscribe to all data strucutre handler events");
+                            "ServerPowerShellDriver should subscribe to all data structure handler events");
 
                         RemoteHostResponse remoteHostResponse = RemoteHostResponse.Decode(receivedData.Data);
 

@@ -983,7 +983,7 @@ namespace System.Management.Automation
                             }
                             string name = psvar.Name;
                             Diagnostics.Assert(!(string.Equals(name, "this") || string.Equals(name, "_") || string.Equals(name, "input")),
-                                "The list of variables to set in the scriptblock's scope cannot contain 'this', '_' or 'input'. These variables shoujld be removed before passing the collection to this routine.");
+                                "The list of variables to set in the scriptblock's scope cannot contain 'this', '_' or 'input'. These variables should be removed before passing the collection to this routine.");
                             index++;
                             newScope.Variables.Add(name, psvar);
                         }

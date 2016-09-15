@@ -2178,7 +2178,7 @@ namespace System.Management.Automation.Language
 
             return (errorSuggestion ??
                     new DynamicMetaObject(
-                        Compiler.CreateThrow(typeof(object), typeof(PSNotImplementedException), "Unimplemented operaton"),
+                        Compiler.CreateThrow(typeof(object), typeof(PSNotImplementedException), "Unimplemented operation"),
                         target.CombineRestrictions(arg))).WriteToDebugLog(this);
         }
 
