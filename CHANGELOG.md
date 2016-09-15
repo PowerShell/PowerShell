@@ -4,7 +4,17 @@ Changelog
 Unreleased
 ----------
 
+v6.0.0-alpha.10 - 2016-09-15
+----------------------------
 - Fix passing escaped double quoted spaces to native executables
+- Add Dockerfiles to build each Linux distribution
+- `~/.config/PowerShell` capitalization bug fixed
+- Fix crash on Windows 7
+- Fix remote debugging on Windows client
+- Fix multi-line input with redirected stdin
+- Add PowerShell to `/etc/shells` on installation
+- Fix `Install-Module` version comparison bug
+- Spelling fixes
 
 v6.0.0-alpha.9 - 2016-08-15
 ---------------------------
