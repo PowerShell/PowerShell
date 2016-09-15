@@ -70,11 +70,10 @@ namespace Microsoft.PowerShell.Commands
       
         /// <summary>
         /// The following is the definition of the input parameter "Description".
-        /// A descriptive comment for this user account (48 characters).
+        /// A descriptive comment for this user account.
         /// </summary>
         [Parameter]
         [ValidateNotNull]
-        [ValidateLength(0, 48)]
         public string Description
         {
             get { return this.description;}
