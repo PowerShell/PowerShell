@@ -1855,7 +1855,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private string _redirectstandardoutput;
 
-#if !CORECLR
         /// <summary>
         /// Verb
         /// </summary>
@@ -1867,7 +1866,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string Verb { get; set; }
 
-
+#if !CORECLR
         /// <summary>
         /// Window style of the process window
         /// </summary>
@@ -1922,6 +1921,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+#if CORECLR
+            if(this.ParameterSetName.Equals("UseShellExecute"))
+            {
+                String errorMessage = StringUtil.Format(ProcessResources.ParameterNotSupportedOnPSEdition, "-Verb", "Start-Process");
+                ErrorRecord er =  new ErrorRecord(new NotSupportedException(errorMessage), "NotSupportedException", ErrorCategory.NotImplemented, null);
+                ThrowTerminatingError(er);
+            }
+#endif
             //create an instance of the ProcessStartInfo Class
             ProcessStartInfo startInfo = new ProcessStartInfo();
             string message = String.Empty;
