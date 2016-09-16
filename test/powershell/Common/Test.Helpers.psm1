@@ -44,6 +44,27 @@ function Test-IsElevated
     }
     return $IsElevated
 }
+#This function follows the pester naming convention
+function ShouldBeErrorId
+{
+    param([Parameter(ValueFromPipeline, Mandatory)]
+        [ScriptBlock]
+        $sb,
+          
+        [Parameter(Mandatory, Position=0)]
+        [string]
+        $FullyQualifiedErrorId)
 
-export-modulemember -function Wait-CompleteExecution,Test-IsElevated
+        try
+        {
+            & $sb
+            Throw "Exception expected, execution should not have reached here"
+        }
+        catch
+        {
+            $_.FullyQualifiedErrorId | Should Be $FullyQualifiedErrorId
+        }
+}
+
+export-modulemember -function Wait-CompleteExecution,Test-IsElevated, ShouldBeErrorId
 
