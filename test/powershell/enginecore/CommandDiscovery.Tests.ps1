@@ -33,7 +33,8 @@
         {
             New-Item -Path "$TestDrive\TestFunctionA" -ItemType Directory
             New-Item -Path "$TestDrive\\TestFunctionA\TestFunctionA.psm1" -Value "function TestFunctionA {}" | Out-Null
-            $env:PSModulePath += ";$TestDrive;$TestDrive"
+
+            $env:PSModulePath += [System.IO.Path]::PathSeparator + "$TestDrive" + [System.IO.Path]::PathSeparator + "$TestDrive"
             (Get-command 'TestFunctionA').count | Should Be 1               
         }
         finally
