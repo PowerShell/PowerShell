@@ -1,5 +1,5 @@
-﻿Import-Module -Force $PSScriptRoot\..\..\Common\Test.Helpers.psm1
-Import-Module -Force $PSScriptRoot\..\..\Common\TestHostCS.psm1
+﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+Import-Module $PSScriptRoot\..\..\Common\TestHostCS.psm1
 
 Describe "Tests for parameter binding" -Tags "CI" {    
     Context 'Test of Mandatory parameters' {
