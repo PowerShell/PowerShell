@@ -104,7 +104,7 @@ Logging to docker/logs/unstable-ubuntu16.04.log
 Waiting for unstable containers to finish; tail the logs for more information.
 
 $ ls packages
-powershell_6.0.0-alpha.9-310-g5ded651-1ubuntu1.16.04.1_amd64.deb
+powershell_6.0.0-alpha.10-310-g5ded651-1ubuntu1.16.04.1_amd64.deb
 
 $ tail logs/unstable-ubuntu16.04.log
 Step 5 : COPY bootstrap.ps1 /
@@ -116,5 +116,5 @@ Step 6 : RUN powershell -f bootstrap.ps1     && dpkg -i PowerShell/powershell*.d
 Successfully built 9cd8b1ef79b3
 LOG: Saving package to docker/packages
 ~/src/PowerShell/docker ~/src/PowerShell/docker
-'/PowerShell/powershell_6.0.0-alpha.9-310-g5ded651-1ubuntu1.16.04.1_amd64.deb' -> '/mnt/powershell_6.0.0-alpha.9-310-g5ded651-1ubuntu1.16.04.1_amd64.deb'
+'/PowerShell/powershell_6.0.0-alpha.10-310-g5ded651-1ubuntu1.16.04.1_amd64.deb' -> '/mnt/powershell_6.0.0-alpha.10-310-g5ded651-1ubuntu1.16.04.1_amd64.deb'
 ```

@@ -1,8 +1,8 @@
 FROM ubuntu:trusty
 MAINTAINER Andrew Schwartzmeyer <andschwa@microsoft.com>
 
-ARG POWERSHELL_RELEASE=v6.0.0-alpha.9
-ARG POWERSHELL_PACKAGE=powershell_6.0.0-alpha.9-1ubuntu1.14.04.1_amd64.deb
+ARG POWERSHELL_RELEASE=v6.0.0-alpha.10
+ARG POWERSHELL_PACKAGE=powershell_6.0.0-alpha.10-1ubuntu1.14.04.1_amd64.deb
 
 # Setup the locale
 ENV LANG en_US.UTF-8
