@@ -50,7 +50,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
         }
     }
 
-    It 'Non positional parameters' {        
+    It 'Test of positional parameters' {        
         function get-foo
         {
             [CmdletBinding()]
@@ -59,7 +59,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
         }
 
         get-foo a | Should Be a
-        $b = get-foo -a b | Should Be b
+        get-foo -a b | Should Be b
     }
 
     It 'Positional parameters when only one position specified: position = 1' {
@@ -109,9 +109,10 @@ Describe "Tests for parameter binding" -Tags "CI" {
         
     }
 
-    It 'Multiple positional parameters case 2' {
+    It 'Multiple positional parameters case 2:  the parameters are put in different order?' {
         function get-foo
         {
+            # the parameters are purposefully out of order.
             param(
             [Parameter(position=2)] $a,
             [Parameter(position=1)] $b
@@ -181,7 +182,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
         ( get-foo a b -a c -q d ) -join ',' | Should Be 'a,b,-q,d'
     }
 
-    It 'Parameter set' {
+    It 'Multiple parameter sets with Value from remaining arguments' {
         function get-foo
         {
             param(
@@ -201,7 +202,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
         ( get-foo -b b a c d ) -join ',' | Should Be 'a,c,d'
     }
 
-    It 'Default parameter set' {
+    It 'Default parameter set with value from remaining arguments case 1' {
         function get-foo
         {
             [CmdletBinding(DefaultParameterSetName="set1")]
@@ -221,7 +222,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
         $z -join ',' | Should Be 'b,c,d'
     }
 
-    It 'Default parameter set 2' {
+    It 'Default parameter set with value from remaining argument case 2' {
         function get-foo
         {
             [CmdletBinding(DefaultParameterSetName="set2")]
@@ -241,7 +242,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
         $z -join ',' | Should Be 'b,c,d'
     }
 
-    It 'Alias for parameters' {
+    It 'Alias are specified for parameters' {
         function get-foo
         {
             param( [Parameter(mandatory=$true)][alias("foo", "bar")] $a )
@@ -266,7 +267,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
         ( foo a b ) -join ',' | Should Be 'b,a'       
     }
 
-    It 'Null Not is Allowed when AllowNull attribute is not set' {
+    It 'Null is not Allowed when AllowNull attribute is not set' {
         function get-foo
         {
             param( [Parameter(mandatory=$true)] $a )
@@ -310,7 +311,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
         get-foo -a '' | Should Be ''
     }
 
-    It 'Error should be reported when AllowEmptyCollection it not set' {        
+    It 'Empty collection is not allowed when AllowEmptyCollection it not set' {        
 
         function get-foo
         {
@@ -331,7 +332,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
         get-foo -a @() | Should Be $null
     }
 
-    It 'Unspecified non-mandatory bool shouldn not cause exception' {
+    It 'Unspecified non-mandatory bool should not cause exception' {
         function get-foo
         {
             param([Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)] $a,
@@ -384,8 +385,8 @@ Describe "Tests for parameter binding" -Tags "CI" {
 
     }
 
-    Context 'default values not converted properly' {
-        It 'default values not converted properly' {
+    Context 'Default value conversion tests' {
+        It 'Parameter default value is converted correctly to the proper type when nothing is set on parameter' {
             function get-fooa
             {
                 param(
@@ -398,7 +399,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             get-fooa
         }
 
-        It "Default value not converted to proper type" {
+        It "Parameter default value is converted correctly to the proper type when CmdletBinding is set on param" {
 
             function get-foob
             {
@@ -413,7 +414,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             get-foob
         }
 
-        It "No default value should not cause error" {
+        It "No default value specified should not cause error when parameter attribute is set on the parameter" {
 
             function get-fooc
             {
@@ -427,7 +428,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
         }
         
 
-        It "no default value should not cause error" {
+        It "No default value specified should not cause error when nothing is set on parameter" {
             function get-food
             {
                 param(
@@ -440,7 +441,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             get-food
         }
 
-        It "Validation attributes should not run on default values" {
+        It "Validation attributes should not run on default values when nothing is set on the parameter" {
             function get-fooe
             {
                 param([ValidateRange(1,42)] $p = 55)
@@ -450,7 +451,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             get-fooe| Should Be 55
         }
 
-        It "Validation attributes should not run on default values" {
+        It "Validation attributes should not run on default values when CmdletBinding is set on the parameter" {
             function get-foof
             {
                 [CmdletBinding()]
@@ -471,7 +472,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             { get-foog } | Should not throw
         }
 
-        It "Validation attributes should not run on default values" {
+        It "Validation attributes should not run on default values when CmdletBinding is set" {
 
             function get-fooh
             {
