@@ -54,7 +54,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets and sets the user supplied message providing description about which script/function is 
         /// requesting the PSCredential from the user.
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = messageSet)]
+        [Parameter(Mandatory = false, ParameterSetName = messageSet)]
+        [ValidateNotNullOrEmpty]
         public string Message
         {
             get { return _message; }
@@ -74,6 +75,18 @@ namespace Microsoft.PowerShell.Commands
         private string _userName = null;
 
         /// <summary>
+        /// Gets and sets the title on the window prompt.
+        /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = messageSet)]
+        [ValidateNotNullOrEmpty]
+        public string Title
+        {
+            get { return _title; }
+            set { _title = value; }
+        }
+        private string _title = UtilsStrings.PromptForCredential_DefaultCaption;
+
+        /// <summary>
         /// Initializes a new instance of the GetCredentialCommand
         /// class
         /// </summary>
@@ -86,20 +99,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (!string.IsNullOrEmpty(this.Message))
+            try
             {
-                string caption = UtilsStrings.PromptForCredential_DefaultCaption;
-                string message = this.Message;
-
-                try
-                {
-                    Credential = this.Host.UI.PromptForCredential(caption, message, _userName, string.Empty);
-                }
-                catch (ArgumentException exception)
-                {
-                    ErrorRecord errorRecord = new ErrorRecord(exception, "CouldNotPromptForCredential", ErrorCategory.InvalidOperation, null);
-                    WriteError(errorRecord);
-                }
+                Credential = this.Host.UI.PromptForCredential(_title, _message, _userName, string.Empty);
+            }
+            catch (ArgumentException exception)
+            {
+                ErrorRecord errorRecord = new ErrorRecord(exception, "CouldNotPromptForCredential", ErrorCategory.InvalidOperation, null);
+                WriteError(errorRecord);
             }
 
             if (Credential != null)
