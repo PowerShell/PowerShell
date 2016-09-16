@@ -27,8 +27,7 @@ Describe "Get-Credential Test" -tag "CI" {
         $netcred = $cred.GetNetworkCredential()
         $netcred.UserName | Should be "Joe"
         $netcred.Password | Should be "this is a test"
-        # Resx file only include english language, this should be changed to reflect Current Culture if title change by language.
-        $th.ui.Streams.Prompt[-1] | should be "Credential:Windows PowerShell credential request.:Foo" 
+        $th.ui.Streams.Prompt[-1] | Should Match "Credential:[^:]+:Foo" 
     }
     It "Get-Credential with title, produces a credential object" {
         $cred = $ps.AddScript("Get-Credential -UserName Joe -Title CustomTitle").Invoke() | Select-Object -First 1
@@ -44,8 +43,7 @@ Describe "Get-Credential Test" -tag "CI" {
         $netcred = $cred.GetNetworkCredential()
         $netcred.UserName | Should be "Joe"
         $netcred.Password | Should be "this is a test"
-        # Resx file only include english language, this should be changed to reflect Current Culture if title change by language.
-        $th.ui.Streams.Prompt[-1] | should be "Credential:Windows PowerShell credential request.:"
+        $th.ui.Streams.Prompt[-1] | Should Match "Credential:[^:]+:"
     }
     It "Get-Credential with title and message, produces a credential object" {
         $cred = $ps.AddScript("Get-Credential -UserName Joe -Message Foo -Title CustomTitle").Invoke() | Select-Object -First 1
