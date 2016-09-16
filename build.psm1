@@ -19,6 +19,11 @@ try {
     catch { }
 }
 
+if ($IsWindows)
+{
+    $IsAdmin = (New-Object Security.Principal.WindowsPrincipal ([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
+}
+
 if ($IsLinux) {
     $LinuxInfo = Get-Content /etc/os-release | ConvertFrom-StringData
 
@@ -586,7 +591,7 @@ function Start-PSPester {
     param(
         [string]$OutputFormat = "NUnitXml",
         [string]$OutputFile = "pester-tests.xml",
-        [string[]]$ExcludeTag = "Slow",
+        [string[]]$ExcludeTag = 'Slow',
         [string[]]$Tag = "CI",
         [string]$Path = "$PSScriptRoot/test/powershell",
         [switch]$ThrowOnFailure,
@@ -594,7 +599,34 @@ function Start-PSPester {
         [string]$binDir = (Split-Path (New-PSOptions -FullCLR:$FullCLR).Output),
         [string]$powershell = (Join-Path $binDir 'powershell'),
         [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester"))
+        [switch]$Unelevate
     )
+
+    # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
+    if ($Unelevate)
+    {
+        if (-not $IsWindows)
+        {
+            throw '-Unelevate is currently not supported on non-Windows platforms'
+        }
+
+        if (-not $IsAdmin)
+        {
+            throw '-Unelevate cannot be applied because the current user is not Administrator'
+        }
+
+        if (-not $PSBoundParameters.ContainsKey('RequireAdminOnWindows'))
+        {
+            $ExcludeTag += 'RequireAdminOnWindows'
+        }
+    }
+    elseif ($IsWindows -and (-not $IsAdmin))
+    {
+        if (-not $PSBoundParameters.ContainsKey('RequireAdminOnWindows'))
+        {
+            $ExcludeTag += 'RequireAdminOnWindows'
+        }
+    }
 
     Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
     Publish-PSTestTools
@@ -611,6 +643,12 @@ function Start-PSPester {
     {
         $Command += "Import-Module '$Pester'; "
     }
+
+    if ($Unelevate)
+    {
+        $outputBufferFilePath = [System.IO.Path]::GetTempFileName()
+        $Command += "Start-Transcript -Force -Path $outputBufferFilePath;"
+    }
     $Command += "Invoke-Pester "
 
     $Command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
@@ -622,7 +660,11 @@ function Start-PSPester {
     }
 
     $Command += "'" + $Path + "'"
-        
+    if ($Unelevate)
+    {
+        $Command += "; Stop-Transcript; '__THE_END__' > $outputBufferFilePath"
+    }
+
     Write-Verbose $Command
 
     # To ensure proper testing, the module path must not be inherited by the spawned process
@@ -633,16 +675,62 @@ function Start-PSPester {
     else {
         try {
             $originalModulePath = $env:PSMODULEPATH
-            
-            & $powershell -noprofile -c $Command
+            if ($Unelevate)
+            {
+                Start-UnelevatedProcess -process $powershell -arguments @('-noprofile', '-c', $Command)
+                $currentLines = 0
+                while ($true)
+                {
+                    $lines = Get-Content $outputBufferFilePath | Select-Object -Skip $currentLines
+                    $count = ($lines | measure-object).Count
+                    # Write-Verbose "Read $count lines"
+                    $line = $lines | Select-Object -Last 1
+                    if ($line -eq '__THE_END__')
+                    {
+                        break
+                    }
+
+                    $lines | Write-Host
+                    if ($count -eq 0)
+                    {
+                        sleep 1
+                    }
+                    else
+                    {
+                        $currentLines += $count
+                    }
+                }
+            }
+            else
+            {
+                & $powershell -noprofile -c $Command
+            }
         } finally {
             $env:PSMODULEPATH = $originalModulePath
+            if ($Unelevate)
+            {
+                Remove-Item $outputBufferFilePath
+            }
         }        
     }
     if($ThrowOnFailure)
     {
         Test-PSPesterResults -TestResultsFile $OutputFile
     }
+}
+
+function script:Start-UnelevatedProcess
+{
+    param(
+        [string]$process,
+        [string[]]$arguments
+    )
+    if (-not $IsWindows)
+    {
+        throw "Start-UnelevatedProcess is currently not supported on non-Windows platforms"
+    }
+
+    runas.exe /trustlevel:0x20000 "$process $arguments"
 }
 
 #
