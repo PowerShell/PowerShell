@@ -171,27 +171,6 @@ function Test-Ast
                 $asts[$i].Extent.Text | Should Be $a[$i]
             }
         }
-    }
-    
-    function ShouldBeErrorId
-    {
-        param([Parameter(ValueFromPipeline, Mandatory)]
-              [ScriptBlock]
-              $sb,
-          
-              [Parameter(Mandatory, Position=0)]
-              [string]
-              $FullyQualifiedErrorId)
+    }    
 
-        try
-        {
-            & $sb
-            throw "Unexpected"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Be $FullyQualifiedErrorId
-        }
-    }
-
-Export-ModuleMember -Function Test-ErrorStmt, Test-Ast, ShouldBeParseError, Get-ParseResults, Get-RuntimeError, Test-ErrorStmtForSwitchFlag, ShouldBeErrorId
+Export-ModuleMember -Function Test-ErrorStmt, Test-Ast, ShouldBeParseError, Get-ParseResults, Get-RuntimeError, Test-ErrorStmtForSwitchFlag

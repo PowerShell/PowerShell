@@ -271,9 +271,16 @@ namespace TestHost
 ## '
 function New-TestHost
 {
-    $references = "System","mscorlib","System.Management.Automation",
-        "System.Collections.NonGeneric","System.Console","System.Collections",
-        "System.Globalization"
+    If ($IsCoreCLR) 
+    {
+        $references = "System","mscorlib","System.Management.Automation",
+            "System.Collections.NonGeneric","System.Console","System.Collections",
+            "System.Globalization"
+    }
+    else
+    {
+        $references = "System.Management.Automation"
+    }
 
     if ( ! ("TestHost.TestHost" -as "type" )) {
        $t = add-Type -pass $definition -ref $references
