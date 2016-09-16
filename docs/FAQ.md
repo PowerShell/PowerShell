@@ -46,7 +46,7 @@ Where do I get the PowerShell Core SDK package?
 =============================================================
 
 The SDK NuGet package `Microsoft.PowerShell.SDK` is provided for developers to write .NET Core C# code targeting PowerShell Core.
-PowerShell NuGet packages for releases starting from v6.0.0-alpha.10 will be published to the [powershell-core][] myget feed.
+PowerShell NuGet packages for releases starting from v6.0.0-alpha.9 will be published to the [powershell-core][] myget feed.
 
 To use the `Microsoft.PowerShell.SDK` NuGet package, declare the `frameworks` section in your `project.json` file as follows:
 
@@ -55,7 +55,7 @@ To use the `Microsoft.PowerShell.SDK` NuGet package, declare the `frameworks` se
     "netstandard1.6": {
         "imports": [ "dnxcore50", "portable-net45+win8" ],
         "dependencies": {
-            "Microsoft.PowerShell.SDK": "1.0.0-alpha9"
+            "Microsoft.PowerShell.SDK": "1.0.0-alpha10"
         }
     }
 }
