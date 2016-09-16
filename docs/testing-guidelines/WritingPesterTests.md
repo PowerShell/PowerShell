@@ -82,6 +82,15 @@ Provides logical grouping of It blocks within a single Describe block. Any Mocks
 #### It
 The  It  block is intended to be used inside of a  Describe  or  Context  Block. If you are familiar with the AAA pattern (Arrange-Act-Assert), the body of the  It  block is the appropriate location for an assert. The convention is to assert a single expectation for each  It  block. The code inside of the  It  block should throw a terminating error if the expectation of the test is not met and thus cause the test to fail. The name of the  It  block should expressively state the expectation of the test.
 
+### Admin privileges in tests
+Tests that require admin privileges **on windows** should be additionally marked with 'RequireAdminOnWindows' Pester tag.
+In the AppVeyor CI, we run two different passes:
+
+- The pass with exclusion of tests with 'RequireAdminOnWindows' tag
+- The pass where we run only 'RequireAdminOnWindows' tests
+
+In each case, tests are executed with appropriate privileges.
+
 ### Selected Features
 
 #### Test Drive

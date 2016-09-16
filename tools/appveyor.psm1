@@ -173,48 +173,63 @@ function Invoke-AppVeyorTest
     
     $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish -Configuration $buildConfiguration))
     Write-Host -Foreground Green 'Run CoreCLR tests'
-    $testResultsFile = "$pwd\TestsResults.xml"
+    $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
+    $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"
+    $testResultsFileFullCLR = "$pwd\TestsResults.FullCLR.xml"
     if(!(Test-Path "$env:CoreOutput\powershell.exe"))
     {
         throw "CoreCLR PowerShell.exe was not built"
     }
     
     $coreClrTestParams = @{
-        Tag = @('CI')
-        ExcludeTag = @('Slow')
+        Tag = @()
+        ExcludeTag = @()
+        Unelevate = $true
     }
     
-    if(Test-DailyBuild)
+    if(-not (Test-DailyBuild))
     {
-        Write-Host -Foreground Green 'Running all CorCLR tests..'    
-        $coreClrTestParams.Tag = $null
-        $coreClrTestParams.ExcludeTag = $null
+        # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
+        # https://github.com/pester/Pester/issues/608
+        # To work-around it, we exlude all categories, but 'CI' from the list
+        $coreClrTestParams.ExcludeTag += @('Slow', 'Feature', 'Scenario')
+        Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
     }
     else 
     {
-        Write-Host -Foreground Green 'Running "CI" CorCLR tests..'     
+        Write-Host -Foreground Green 'Running all CoreCLR tests..'
     }
     
-    Start-PSPester -bindir $env:CoreOutput -outputFile $testResultsFile @coreClrTestParams
-    Write-Host -Foreground Green 'Upload CoreCLR test results'
-    Update-AppVeyorTestResults -resultsFile $testResultsFile
+    Start-PSPester -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile @coreClrTestParams
+    Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
+    Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
+
+    $coreClrTestParams.Tag += 'RequireAdminOnWindows'
+    $coreClrTestParams.Unelevate = $false
+
+    Start-PSPester -bindir $env:CoreOutput -outputFile $testResultsAdminFile @coreClrTestParams
+    Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
+    Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
     
     #
     # FullCLR
     $env:FullOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -FullCLR))
     Write-Host -Foreground Green 'Run FullCLR tests'
-    $testResultsFileFullCLR = "$pwd\TestsResults.FullCLR.xml"
     Start-PSPester -FullCLR -bindir $env:FullOutput -outputFile $testResultsFileFullCLR -Tag $null -path 'test/fullCLR'
 
     Write-Host -Foreground Green 'Upload FullCLR test results'
     Update-AppVeyorTestResults -resultsFile $testResultsFileFullCLR
  
-
     #
     # Fail the build, if tests failed
-    Test-PSPesterResults -TestResultsFile $testResultsFile
+    @(
+        $testResultsNonAdminFile,
+        $testResultsAdminFile,
+        $testResultsFileFullCLR
+    ) | % {
+        Test-PSPesterResults -TestResultsFile $_
+    }
 
-    Test-PSPesterResults -TestResultsFile $testResultsFileFullCLR
     Set-BuildVariable -Name TestPassed -Value True
 }
 

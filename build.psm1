@@ -545,13 +545,19 @@ function Get-PesterTag {
                         $warnings += "TAGS must be static strings, error in ${fullname}, line $lineno"
                     }
                     $values = $vAst.FindAll({$args[0] -is "System.Management.Automation.Language.StringConstantExpressionAst"},$true).Value
-                    $values | %{
-                        if ( $_ -notmatch "CI|FEATURE|SCENARIO|SLOW" ) {
+                    $values | % {
+                        if (@('REQUIREADMINONWINDOWS', 'SLOW') -contains $_) {
+                            # These are valid tags also, but they are not the priority tags
+                        }
+                        elseif (@('CI', 'FEATURE', 'SCENARIO') -contains $_) {
+                            $foundTag = $true
+                        }
+                        else {
                             $warnings += "${fullname} includes improper tag '$_', line '$lineno'"
                         }
+
                         $alltags[$_]++
-                        }
-                    $foundTag = $true
+                    }
                 }
             }
             if ( ! $foundTag ) {
@@ -598,7 +604,7 @@ function Start-PSPester {
         [switch]$FullCLR,
         [string]$binDir = (Split-Path (New-PSOptions -FullCLR:$FullCLR).Output),
         [string]$powershell = (Join-Path $binDir 'powershell'),
-        [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester"))
+        [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester")),
         [switch]$Unelevate
     )
 
@@ -662,7 +668,7 @@ function Start-PSPester {
     $Command += "'" + $Path + "'"
     if ($Unelevate)
     {
-        $Command += "; Stop-Transcript; '__THE_END__' > $outputBufferFilePath"
+        $Command += "; Stop-Transcript; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
     }
 
     Write-Verbose $Command
@@ -682,15 +688,13 @@ function Start-PSPester {
                 while ($true)
                 {
                     $lines = Get-Content $outputBufferFilePath | Select-Object -Skip $currentLines
-                    $count = ($lines | measure-object).Count
-                    # Write-Verbose "Read $count lines"
-                    $line = $lines | Select-Object -Last 1
-                    if ($line -eq '__THE_END__')
+                    $lines | Write-Host
+                    if ($lines | ? { $_ -eq '__UNELEVATED_TESTS_THE_END__'})
                     {
                         break
                     }
 
-                    $lines | Write-Host
+                    $count = ($lines | measure-object).Count
                     if ($count -eq 0)
                     {
                         sleep 1
