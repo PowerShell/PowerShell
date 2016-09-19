@@ -1194,17 +1194,40 @@ esac
         chmod 755 "$Staging/$Name" # only the executable should be executable
     }
 
-    $libunwind = switch ($Type) {
-        "deb" { "libunwind8" }
-        "rpm" { "libunwind" }
-    }
-
-    $libicu = switch ($Type) {
-        "deb" {
-            if ($IsUbuntu14) { "libicu52" }
-            elseif ($IsUbuntu16) { "libicu55" }
+    # Setup package dependencies
+    # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
+    $Dependencies = @()
+    if ($IsUbuntu) {
+        $Dependencies = @(
+            "libc6",
+            "libcurl3",
+            "libgcc1",
+            "libssl1.0.0",
+            "libstdc++6",
+            "libtinfo5",
+            "libunwind8",
+            "libuuid1",
+            "zlib1g"
+        )
+        # Please note the different libicu package dependency!
+        if ($IsUbuntu14) {
+            $Dependencies += "libicu52"
+        } elseif ($IsUbuntu16) {
+            $Dependencies += "libicu55"
         }
-        "rpm" { "libicu" }
+    } elseif ($IsCentOS) {
+        $Dependencies = @(
+            "glibc",
+            "libcurl",
+            "libgcc",
+            "libicu",
+            "openssl",
+            "libstdc++",
+            "ncurses-base",
+            "libunwind",
+            "uuid",
+            "zlib"
+        )
     }
 
     # iteration is "debian_revision"
@@ -1232,11 +1255,12 @@ esac
         "--description", $Description,
         "--category", "shells",
         "--rpm-os", "linux",
-        "--depends", $libunwind,
-        "--depends", $libicu,
         "-t", $Type,
         "-s", "dir"
     )
+    foreach ($Dependency in $Dependencies) {
+        $Arguments += @("--depends", $Dependency)
+    }
     if ($AfterInstallScript) {
        $Arguments += @("--after-install", $AfterInstallScript)
     }
