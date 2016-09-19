@@ -71,24 +71,17 @@ case "$OSTYPE" in
     linux*)
         source /etc/os-release
         # Install dependencies
+        echo "Installing PowerShell with sudo..."
         case "$ID" in
             centos)
-                echo "Installing libicu, libunwind, and $package with sudo ..."
-                sudo yum install -y libicu libunwind
+                # yum automatically resolves dependencies for local packages
                 sudo yum install "./$package"
                 ;;
             ubuntu)
-                case "$VERSION_ID" in
-                    14.04)
-                        icupackage=libicu52
-                        ;;
-                    16.04)
-                        icupackage=libicu55
-                        ;;
-                esac
-                echo "Installing $libicupackage, libunwind8, and $package with sudo ..."
-                sudo apt-get install -y libunwind8 "$icupackage"
-                sudo dpkg -i "./$package"
+                # dpkg does not automatically resolve dependencies, but spouts ugly errors
+                sudo dpkg -i "./$package" &> /dev/null
+                # Resolve dependencies
+                sudo apt-get install -f
                 ;;
             *)
         esac
