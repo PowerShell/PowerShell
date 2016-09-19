@@ -23,16 +23,19 @@ from the [releases][] page onto the Ubuntu machine.
 Then execute the following in the terminal:
 
 ```sh
-sudo apt-get install libunwind8 libicu52
 sudo dpkg -i powershell_6.0.0-alpha.10-1ubuntu1.14.04.1_amd64.deb
+sudo apt-get install -f
 ```
+
+> Please note that `dpkg -i` will fail with unmet dependencies;
+> the next command, `apt-get install -f` resolves these
+> and then finishes configuring the PowerShell package.
+
 **Uninstallation**
 
-`sudo apt-get remove powershell`
-
-or
-
-`sudo dpkg -r powershell`
+```sh
+sudo apt-get remove powershell
+```
 
 [Ubuntu 14.04]: http://releases.ubuntu.com/14.04/
 
@@ -45,19 +48,20 @@ from the [releases][] page onto the Ubuntu machine.
 
 Then execute the following in the terminal:
 
-> Please note the different libicu package dependency!
-
 ```sh
-sudo apt-get install libunwind8 libicu55
 sudo dpkg -i powershell_6.0.0-alpha.10-1ubuntu1.16.04.1_amd64.deb
+sudo apt-get install -f
 ```
+
+> Please note that `dpkg -i` will fail with unmet dependencies;
+> the next command, `apt-get install -f` resolves these
+> and then finishes configuring the PowerShell package.
+
 **Uninstallation**
 
-`sudo apt-get remove powershell`
-
-or
-
-`sudo dpkg -r powershell`
+```sh
+sudo apt-get remove powershell
+```
 
 [Ubuntu 16.04]: http://releases.ubuntu.com/16.04/
 
@@ -73,12 +77,10 @@ from the [releases][] page onto the CentOS machine.
 Then execute the following in the terminal:
 
 ```sh
-sudo yum install powershell-6.0.0_alpha.10-1.el7.centos.x86_64.rpm
+sudo yum install ./powershell-6.0.0_alpha.10-1.el7.centos.x86_64.rpm
 ```
 
 You can also install the RPM without the intermediate step of downloading it:
-
-
 
 ```sh
 sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.10/powershell-6.0.0_alpha.10-1.el7.centos.x86_64.rpm
@@ -88,7 +90,9 @@ sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0
 
 **Uninstallation**
 
-`sudo yum remove powershell`
+```sh
+sudo yum remove powershell
+```
 
 [CentOS 7]: https://www.centos.org/download/
 
@@ -111,10 +115,14 @@ sudo installer -pkg powershell-6.0.0-alpha.10.pkg -target /
 PowerShell on MacOS must be removed manually.
 
 To remove the installed package:
+
 ```sh
-sudo rm -rf /usr/local/bin/powershell usr/local/microsoft/powershell
+sudo rm -rf /usr/local/bin/powershell /usr/local/microsoft/powershell
 ```
-To uninstall the additional PowerShell paths (such as the user profile path) please see the [paths][paths] section below in this document and remove the desired the paths with `sudo rm`.
+
+To uninstall the additional PowerShell paths (such as the user profile path)
+please see the [paths][paths] section below in this document
+and remove the desired the paths with `sudo rm`.
 
 OpenSSL
 -------
