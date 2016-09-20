@@ -46,7 +46,7 @@ Describe "Get-Credential Test" -tag "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.GetCredentialCommand"
+            $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCredentialCommand"
         }
         # when Message is empty            
         try 
@@ -56,7 +56,7 @@ Describe "Get-Credential Test" -tag "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.GetCredentialCommand"
+            $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCredentialCommand"
         }
     }
 
