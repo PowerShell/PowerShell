@@ -1213,7 +1213,7 @@ namespace Microsoft.WSMan.Management
 
                         try
                         {
-                            pluginConfiguration.PutConfiguraitonOnServer(resourceUri);
+                            pluginConfiguration.PutConfigurationOnServer(resourceUri);
 
                             // Show Win RM service restart warning only when the changed setting is not picked up dynamically
                             if (settingPickedUpDynamically == false)
