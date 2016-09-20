@@ -1,3 +1,5 @@
+
+
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -1474,18 +1476,45 @@ namespace Microsoft.PowerShell.Commands
             return true;
         }
 
-        private bool DetectRecursiveSymLink(DirectoryInfo path)
+        //Returns true if a given DirectoryInfo path is a recursive sym link.
+        private bool IsRecursiveSymLink(DirectoryInfo path)
         {
-            var readSymLink = Platform.NonWindowsInternalGetTarget(path.FullName);
+            string readSymLink = "";
 
-            if (path.FullName.Contains(readSymLink))
+            if (Platform.IsWindows)
             {
-                Console.WriteLine("\n Detected recursive symlink pointing to its parent directory.");
-                Console.WriteLine(" Skipping: " + path.FullName + " ==> " + readSymLink);
-                return true;
+                PSObject obj = PSObject.AsPSObject(path);
+
+                try
+                {
+                    readSymLink = InternalSymbolicLinkLinkCodeMethods.GetTarget(obj).First().ToString();
+                }
+                catch
+                {
+                    readSymLink = null;
+                }
+
+                //if the read symlink is not null or empty, and what it points to is the parent directory then it is recursive
+                if (!String.IsNullOrEmpty(readSymLink) && path.Parent.FullName.Contains(readSymLink))
+                {
+                    return true;
+                }
+
+                return false;
             }
 
-            return false;
+            //Platform is Linux or Windows
+            else
+            {
+                readSymLink = Platform.NonWindowsInternalGetTarget(path.FullName);
+
+                if (readSymLink != null && path.FullName.Contains(readSymLink))
+                {
+                    return true;
+                }
+
+                return false;
+            }
         }
 
         private void GetPathItems(
@@ -1742,13 +1771,10 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             //If symlink points to its parent directory then do not pursue symlink further
-                            if (!Platform.IsWindows && Platform.NonWindowsIsSymLink(recursiveDirectory))
+                            if (IsRecursiveSymLink(recursiveDirectory))
                             {
-                                if (DetectRecursiveSymLink(recursiveDirectory))
-                                {
                                     recurse=false;
                                     return;
-                                 }
                             }
 
                             bool hidden = false;
