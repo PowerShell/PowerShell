@@ -222,6 +222,7 @@ function Start-PSBuild {
             # This is allowed to fail since the user may have already restored
             Write-Warning ".NET Core links the incorrect OpenSSL, correcting NuGet package libraries..."
             find $env:HOME/.nuget -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
+            find $env:HOME/.nuget -name System.Net.Http.Native.dylib | xargs sudo install_name_tool -change /usr/lib/libcurl.4.dylib /usr/local/opt/curl/lib/libcurl.4.dylib
         }
     }
 
@@ -820,13 +821,16 @@ function Start-PSBootstrap {
             precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
 
             # Build tools
-            $Deps += "curl", "cmake"
+            $Deps += "cmake"
 
             # .NET Core required runtime libraries
             $Deps += "openssl"
 
             # Install dependencies
             Start-NativeExecution { brew install $Deps }
+
+            # Install patched version of curl
+            Start-NativeExecution { brew install curl --with-openssl }
         }
 
         # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)

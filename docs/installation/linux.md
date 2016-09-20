@@ -142,6 +142,7 @@ Also install [Homebrew's OpenSSL][openssl]:
 
 ```
 brew install openssl
+brew install curl --with-openssl
 ```
 
 [Homebrew][brew] is the missing package manager for macOS.
@@ -167,6 +168,7 @@ To patch .NET Core's cryptography libraries, we use `install_name_tool`:
 
 ```
 find ~/.nuget -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
+find ~/.nuget -name System.Net.Http.Native.dylib | xargs sudo install_name_tool -change /usr/lib/libcurl.4.dylib /usr/local/opt/curl/lib/libcurl.4.dylib
 ```
 
 This updates .NET Core's library to look in Homebrew's OpenSSL installation location instead of the system library location.

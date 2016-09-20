@@ -87,14 +87,22 @@ case "$OSTYPE" in
         esac
         ;;
     darwin*)
+        patched=0
         if hash brew 2>/dev/null; then
             if [[ ! -d $(brew --prefix openssl) ]]; then
                echo "Installing OpenSSL with brew..."
                if ! brew install openssl; then
                    echo "ERROR: OpenSSL failed to install! Crypto functions will not work..." >&2
                    # Don't abort because it is not fatal
+               elif ! brew install curl --with-openssl; then
+                   echo "ERROR: curl failed to build against OpenSSL; SSL functions will not work..." >&2
+                   # Still not fatal
+               else
+                   # OpenSSL installation succeeded; remember to patch System.Net.Http after PowerShell installation
+                   patched=1
                fi
             fi
+
         else
             echo "ERROR: brew not found! OpenSSL may not be available..." >&2
             # Don't abort because it is not fatal
@@ -102,6 +110,10 @@ case "$OSTYPE" in
 
         echo "Installing $package with sudo ..."
         sudo installer -pkg "./$package" -target /
+        if [[ $patched -eq 1 ]]; then
+            echo "Patching System.Net.Http for libcurl and OpenSSL..."
+            find /usr/local/microsoft/powershell -name System.Net.Http.Native.dylib | xargs sudo install_name_tool -change /usr/lib/libcurl.4.dylib /usr/local/opt/curl/lib/libcurl.4.dylib
+        fi
         ;;
 esac
 
