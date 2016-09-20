@@ -379,7 +379,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
                 if (nameset.Count == 0)
                 {
-                    throw new PSArgumentException(Strings.UnableToResolvePareameterSetName);
+                    throw new PSArgumentException(Strings.UnableToResolveParameterSetName);
                 }
                 else
                 {
@@ -433,7 +433,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     if (boundParameterSetName != null)
                     {
-                        throw new PSArgumentException(Strings.UnableToResolvePareameterSetName);
+                        throw new PSArgumentException(Strings.UnableToResolveParameterSetName);
                     }
                     boundParameterSetName = parameterSetName;
                 }
@@ -445,7 +445,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 // throw if there are > 1 parameter set
                 if (noMandatoryParameterSet.Count > 1)
                 {
-                    throw new PSArgumentException(Strings.UnableToResolvePareameterSetName);
+                    throw new PSArgumentException(Strings.UnableToResolveParameterSetName);
                 }
                 else if (noMandatoryParameterSet.Count == 1)
                 {
@@ -462,7 +462,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             // throw if still can not find the parameter set name
             if (boundParameterSetName == null)
             {
-                throw new PSArgumentException(Strings.UnableToResolvePareameterSetName);
+                throw new PSArgumentException(Strings.UnableToResolveParameterSetName);
             }
             return boundParameterSetName;
         }

@@ -255,7 +255,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
     public class OSRequirement
     {
         public List<string> architecture { get; set; }
-        public string minimunVersion { get; set; }
+        public string minimumVersion { get; set; }
         public List<string> installationOption { get; set; }
     }
 
@@ -342,7 +342,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                     // check whether source is http instead of https
                     if (!Uri.TryCreate(value, UriKind.Absolute, out uri))
                     {
-                        throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.Messages.UnsuportedUriFormat, Constants.ProviderName, value));
+                        throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.Messages.UnsupportedUriFormat, Constants.ProviderName, value));
                     }
 
                     if (!uri.IsFile)

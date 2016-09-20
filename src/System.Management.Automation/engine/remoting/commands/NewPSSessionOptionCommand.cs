@@ -112,7 +112,7 @@ namespace System.Management.Automation.Remoting
                         _proxyAuthentication = value;
                         break;
                     default:
-                        string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ProxyAmbiguosAuthentication,
+                        string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ProxyAmbiguousAuthentication,
                             value,
                             AuthenticationMechanism.Basic.ToString(),
                             AuthenticationMechanism.Negotiate.ToString(),

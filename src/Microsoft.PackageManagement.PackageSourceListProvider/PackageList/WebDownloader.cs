@@ -194,7 +194,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
 
                 if (!Uri.TryCreate(queryUrl, UriKind.Absolute, out uri))
                 {
-                    request.Error(Internal.ErrorCategory.InvalidOperation, Resources.Messages.UnsuportedUriFormat, Constants.ProviderName, queryUrl);
+                    request.Error(Internal.ErrorCategory.InvalidOperation, Resources.Messages.UnsupportedUriFormat, Constants.ProviderName, queryUrl);
                     return null;
                 }
 
@@ -287,7 +287,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                     }
                     else
                     {
-                        request.Verbose(Resources.Messages.HashValidationSuccessfull);
+                        request.Verbose(Resources.Messages.HashValidationSuccessful);
                     }
                 }
             }

@@ -735,7 +735,7 @@ namespace Microsoft.PowerShell.Commands
             if ((credential != null) && (thumbprint != null))
             {
                 String message = PSRemotingErrorInvariants.FormatResourceString(
-                    RemotingErrorIdStrings.NewRunspaceAmbiguosAuthentication,
+                    RemotingErrorIdStrings.NewRunspaceAmbiguousAuthentication,
                         "CertificateThumbPrint", "Credential");
 
                 throw new InvalidOperationException(message);
@@ -744,7 +744,7 @@ namespace Microsoft.PowerShell.Commands
             if ((authentication != AuthenticationMechanism.Default) && (thumbprint != null))
             {
                 String message = PSRemotingErrorInvariants.FormatResourceString(
-                    RemotingErrorIdStrings.NewRunspaceAmbiguosAuthentication,
+                    RemotingErrorIdStrings.NewRunspaceAmbiguousAuthentication,
                         "CertificateThumbPrint", authentication.ToString());
 
                 throw new InvalidOperationException(message);
@@ -754,7 +754,7 @@ namespace Microsoft.PowerShell.Commands
                 (credential != null))
             {
                 string message = PSRemotingErrorInvariants.FormatResourceString(
-                    RemotingErrorIdStrings.NewRunspaceAmbiguosAuthentication,
+                    RemotingErrorIdStrings.NewRunspaceAmbiguousAuthentication,
                     "Credential", authentication.ToString());
                 throw new InvalidOperationException(message);
             }

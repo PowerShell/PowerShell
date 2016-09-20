@@ -275,7 +275,7 @@ namespace Microsoft.PowerShell.Commands
 
             if ((_transportProtocol == TransportProtocol.DCOM) && haveWsmanAuthenticationParam)
             {
-                string errMsg = StringUtil.Format(ComputerResources.StopCommandWSManAuthProtcolConflict, ComputerResources.StopCommandParamMessage);
+                string errMsg = StringUtil.Format(ComputerResources.StopCommandWSManAuthProtocolConflict, ComputerResources.StopCommandParamMessage);
                 ThrowTerminatingError(
                     new ErrorRecord(
                         new PSArgumentException(errMsg),
@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Commands
 
             if ((_transportProtocol == TransportProtocol.WSMan) && (haveDcomAuthenticationParam || haveDcomImpersonation))
             {
-                string errMsg = StringUtil.Format(ComputerResources.StopCommandAuthProtcolConflict, ComputerResources.StopCommandParamMessage);
+                string errMsg = StringUtil.Format(ComputerResources.StopCommandAuthProtocolConflict, ComputerResources.StopCommandParamMessage);
                 ThrowTerminatingError(
                     new ErrorRecord(
                         new PSArgumentException(errMsg),
@@ -1481,7 +1481,7 @@ namespace Microsoft.PowerShell.Commands
                     if (restoreStatus.Equals(0))
                         WriteObject(ComputerResources.RestoreFailed);
                     else if (restoreStatus.Equals(1))
-                        WriteObject(ComputerResources.RestoreSuceess);
+                        WriteObject(ComputerResources.RestoreSuccess);
                     else if (restoreStatus.Equals(2))
                         WriteObject(ComputerResources.RestoreInterrupted);
                 }
@@ -1533,7 +1533,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             foreach (int id in sequenceList.Keys)
                             {
-                                string message = StringUtil.Format(ComputerResources.NoResorePoint, id);
+                                string message = StringUtil.Format(ComputerResources.NoRestorePoint, id);
                                 ArgumentException e = new ArgumentException(message);
                                 ErrorRecord errorrecord = new ErrorRecord(e, "NoRestorePoint", ErrorCategory.InvalidArgument, null);
                                 WriteError(errorrecord);
@@ -3368,7 +3368,7 @@ $result
 
             if ((_transportProtocol == TransportProtocol.DCOM) && haveWsmanAuthenticationParam)
             {
-                string errMsg = StringUtil.Format(ComputerResources.StopCommandWSManAuthProtcolConflict, ComputerResources.StopCommandParamMessage);
+                string errMsg = StringUtil.Format(ComputerResources.StopCommandWSManAuthProtocolConflict, ComputerResources.StopCommandParamMessage);
                 ThrowTerminatingError(
                     new ErrorRecord(
                         new PSArgumentException(errMsg),
@@ -3379,7 +3379,7 @@ $result
 
             if ((_transportProtocol == TransportProtocol.WSMan) && (haveDcomAuthenticationParam || haveDcomImpersonation))
             {
-                string errMsg = StringUtil.Format(ComputerResources.StopCommandAuthProtcolConflict, ComputerResources.StopCommandParamMessage);
+                string errMsg = StringUtil.Format(ComputerResources.StopCommandAuthProtocolConflict, ComputerResources.StopCommandParamMessage);
                 ThrowTerminatingError(
                     new ErrorRecord(
                         new PSArgumentException(errMsg),

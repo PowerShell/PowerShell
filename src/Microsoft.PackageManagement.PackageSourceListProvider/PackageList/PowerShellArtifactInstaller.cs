@@ -87,7 +87,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
           
             if (installing == null || !installing.Any())
             {
-                request.Verbose(Resources.Messages.NumberOfPackagesRecevied, 0, provider.Name, "InstallPackage");
+                request.Verbose(Resources.Messages.NumberOfPackagesReceived, 0, provider.Name, "InstallPackage");
                 request.Warning(Resources.Messages.FailToInstallPackage, Constants.ProviderName, packages[0].Name);
                 return;
             }
@@ -114,7 +114,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
                 packagesReceived++;
             }
 
-            request.Verbose(Resources.Messages.NumberOfPackagesRecevied, packagesReceived, provider.Name, "install-package");
+            request.Verbose(Resources.Messages.NumberOfPackagesReceived, packagesReceived, provider.Name, "install-package");
         }
 
         internal static void GeInstalledPowershellArtifacts(PackageJson package, string requiredVersion, string minimumVersion, string maximumVersion, Dictionary<string, SoftwareIdentity> fastPackReftable, PackageSourceListRequest request)
@@ -136,7 +136,7 @@ namespace Microsoft.PackageManagement.PackageSourceListProvider
 
             if (packagesInstalled == null || !packagesInstalled.Any())
             {
-                request.Verbose(Resources.Messages.NumberOfPackagesRecevied, 0, provider.Name, "GetInstalledPackages");
+                request.Verbose(Resources.Messages.NumberOfPackagesReceived, 0, provider.Name, "GetInstalledPackages");
                 return;
             }          
             

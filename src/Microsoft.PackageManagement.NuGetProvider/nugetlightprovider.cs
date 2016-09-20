@@ -126,7 +126,7 @@ namespace Microsoft.PackageManagement.NuGetProvider
 
             if (category == null)
             {
-                request.Warning(Resources.Messages.UnkownCategory, PackageProviderName, "GetDynamicOptions", category);
+                request.Warning(Resources.Messages.UnknownCategory, PackageProviderName, "GetDynamicOptions", category);
                 return;
             }
 
@@ -155,7 +155,7 @@ namespace Microsoft.PackageManagement.NuGetProvider
                     request.YieldDynamicOption("AllowPrereleaseVersions", Constants.OptionType.Switch, false);
                     break;
                 default:
-                    request.Warning(Resources.Messages.UnkownCategory, PackageProviderName, "GetDynamicOptions", category);
+                    request.Warning(Resources.Messages.UnknownCategory, PackageProviderName, "GetDynamicOptions", category);
                     break;
             }
         }

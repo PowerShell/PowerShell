@@ -148,7 +148,7 @@
     <value>PowerShell Script '{0}' Function '{1}' returns null.</value>
     <comment>{0} script name, {1} function name</comment>
   </data>
-  <data name="ProvideNameMismatch" xml:space="preserve">
+  <data name="ProviderNameMismatch" xml:space="preserve">
     <value>Unable to find provider '{0}'. Please check if the ProviderName is set to '{1}' in '{2}'. </value>
     <comment>{0} provider name, {1} provider path, {2} provider name</comment>
   </data>

@@ -991,7 +991,7 @@ Possible matches are</value>
     <value>The ThrottleLimit parameter of the foreach statement is missing a value. Supply a throttle limit to the parameter.</value>
     <comment>'ThrottleLimit' must not be localized.</comment>
   </data>
-  <data name="ThrottleLimitRequresParallelFlag" xml:space="preserve">
+  <data name="ThrottleLimitRequiresParallelFlag" xml:space="preserve">
     <value>The ThrottleLimit parameter is only supported on foreach statements that use the Parallel parameter.</value>
     <comment>'ThrottleLimit' and 'Parallel' must not be localized.</comment>
   </data>

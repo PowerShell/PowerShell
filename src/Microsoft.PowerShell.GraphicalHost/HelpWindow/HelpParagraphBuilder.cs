@@ -106,17 +106,17 @@ namespace Microsoft.Management.UI.Internal
             switch (category)
             {
                 case HelpCategory.Class:
-                    this.AddDescription(HelpWindowSettings.Default.HelpSynopsysDisplayed, HelpWindowResources.SynopsisTitle, "Introduction");
+                    this.AddDescription(HelpWindowSettings.Default.HelpSynopsisDisplayed, HelpWindowResources.SynopsisTitle, "Introduction");
                     this.AddMembers(HelpWindowSettings.Default.HelpParametersDisplayed, HelpWindowResources.PropertiesTitle);
                     this.AddMembers(HelpWindowSettings.Default.HelpParametersDisplayed, HelpWindowResources.MethodsTitle);
                     break;
                 case HelpCategory.DscResource:
-                    this.AddStringSection(HelpWindowSettings.Default.HelpSynopsysDisplayed, "Synopsis", HelpWindowResources.SynopsisTitle);
+                    this.AddStringSection(HelpWindowSettings.Default.HelpSynopsisDisplayed, "Synopsis", HelpWindowResources.SynopsisTitle);
                     this.AddDescription(HelpWindowSettings.Default.HelpDescriptionDisplayed, HelpWindowResources.DescriptionTitle, "Description");
                     this.AddParameters(HelpWindowSettings.Default.HelpParametersDisplayed, HelpWindowResources.PropertiesTitle, "Properties", HelpCategory.DscResource);
                     break;
                 default:
-                    this.AddStringSection(HelpWindowSettings.Default.HelpSynopsysDisplayed, "Synopsis", HelpWindowResources.SynopsisTitle);
+                    this.AddStringSection(HelpWindowSettings.Default.HelpSynopsisDisplayed, "Synopsis", HelpWindowResources.SynopsisTitle);
                     this.AddDescription(HelpWindowSettings.Default.HelpDescriptionDisplayed, HelpWindowResources.DescriptionTitle, "Description");
                     this.AddParameters(HelpWindowSettings.Default.HelpParametersDisplayed, HelpWindowResources.ParametersTitle, "Parameters", HelpCategory.Default);
                     this.AddSyntax(HelpWindowSettings.Default.HelpSyntaxDisplayed, HelpWindowResources.SyntaxTitle);

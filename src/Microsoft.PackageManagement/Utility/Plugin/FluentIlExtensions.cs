@@ -102,7 +102,7 @@ namespace Microsoft.PackageManagement.Internal.Utility.Plugin {
             il.Emit(OpCodes.Brfalse_S, label);
         }
 
-        public static void CallVirutal(this ILGenerator il, MethodInfo methodInfo) {
+        public static void CallVirtual(this ILGenerator il, MethodInfo methodInfo) {
             il.Emit(OpCodes.Callvirt, methodInfo);
         }
 

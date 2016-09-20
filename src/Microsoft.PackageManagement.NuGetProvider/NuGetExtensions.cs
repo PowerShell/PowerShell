@@ -20,7 +20,7 @@ namespace Microsoft.PackageManagement.NuGetProvider
             var newSearchTerm = string.Format(CultureInfo.InvariantCulture, NuGetConstant.SearchTerm, searchTerm, allowPrereleaseVersions ? "true" : "false");
 
             // Make the uri query string
-            return PathUtility.UriCombine(baseUrl, String.Concat((allVersions ? NuGetConstant.SearchFilterAllersions : NuGetConstant.SearchFilter), newSearchTerm));
+            return PathUtility.UriCombine(baseUrl, String.Concat((allVersions ? NuGetConstant.SearchFilterAllVersions : NuGetConstant.SearchFilter), newSearchTerm));
         }
 
         internal static string InsertSkipAndTop(this string query)

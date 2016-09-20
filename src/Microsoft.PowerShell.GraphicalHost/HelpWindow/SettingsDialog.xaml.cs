@@ -31,7 +31,7 @@ namespace Microsoft.Management.UI
             this.Parameters.IsChecked = HelpWindowSettings.Default.HelpParametersDisplayed;
             this.RelatedLinks.IsChecked = HelpWindowSettings.Default.HelpRelatedLinksDisplayed;
             this.Remarks.IsChecked = HelpWindowSettings.Default.HelpRemarksDisplayed;
-            this.Synopsys.IsChecked = HelpWindowSettings.Default.HelpSynopsysDisplayed;
+            this.Synopsis.IsChecked = HelpWindowSettings.Default.HelpSynopsisDisplayed;
             this.Syntax.IsChecked = HelpWindowSettings.Default.HelpSyntaxDisplayed;
             this.CaseSensitive.IsChecked = HelpWindowSettings.Default.HelpSearchMatchCase;
             this.WholeWord.IsChecked = HelpWindowSettings.Default.HelpSearchWholeWord;
@@ -52,7 +52,7 @@ namespace Microsoft.Management.UI
             HelpWindowSettings.Default.HelpParametersDisplayed = this.Parameters.IsChecked == true;
             HelpWindowSettings.Default.HelpRelatedLinksDisplayed = this.RelatedLinks.IsChecked == true;
             HelpWindowSettings.Default.HelpRemarksDisplayed = this.Remarks.IsChecked == true;
-            HelpWindowSettings.Default.HelpSynopsysDisplayed = this.Synopsys.IsChecked == true;
+            HelpWindowSettings.Default.HelpSynopsisDisplayed = this.Synopsis.IsChecked == true;
             HelpWindowSettings.Default.HelpSyntaxDisplayed = this.Syntax.IsChecked == true;
             HelpWindowSettings.Default.HelpSearchMatchCase = this.CaseSensitive.IsChecked == true;
             HelpWindowSettings.Default.HelpSearchWholeWord = this.WholeWord.IsChecked == true;

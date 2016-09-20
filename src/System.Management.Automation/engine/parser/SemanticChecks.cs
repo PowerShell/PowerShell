@@ -469,7 +469,7 @@ namespace System.Management.Automation.Language
             if ((forEachStatementAst.ThrottleLimit != null) &&
                 ((forEachStatementAst.Flags & ForEachFlags.Parallel) != ForEachFlags.Parallel))
             {
-                _parser.ReportError(forEachStatementAst.Extent, () => ParserStrings.ThrottleLimitRequresParallelFlag);
+                _parser.ReportError(forEachStatementAst.Extent, () => ParserStrings.ThrottleLimitRequiresParallelFlag);
             }
 
             return AstVisitAction.Continue;

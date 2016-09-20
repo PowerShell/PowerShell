@@ -820,7 +820,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (otherInfo != null)
                 {
-                    output.CsPhyicallyInstalledMemory = otherInfo.physicallyInstalledMemory;
+                    output.CsPhysicallyInstalledMemory = otherInfo.physicallyInstalledMemory;
                 }
             }
 
@@ -2749,7 +2749,7 @@ namespace Microsoft.PowerShell.Commands
         /// Size of physically installed memory, as reported by the Windows API
         /// function GetPhysicallyInstalledSystemMemory
         /// </summary>
-        public UInt64? CsPhyicallyInstalledMemory { get; internal set; }
+        public UInt64? CsPhysicallyInstalledMemory { get; internal set; }
 
         /// <summary>
         /// Name of a user that is logged on currently.
@@ -3427,7 +3427,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Availability status is Not Installed
         /// </summary>
-        NotIntalled = 11,
+        NotInstalled = 11,
 
         /// <summary>
         /// Availability status is Install Error
