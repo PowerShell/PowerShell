@@ -222,6 +222,7 @@ function Start-PSBuild {
             # This is allowed to fail since the user may have already restored
             Write-Warning ".NET Core links the incorrect OpenSSL, correcting NuGet package libraries..."
             find $env:HOME/.nuget -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
+            find $env:HOME/.nuget -name System.Net.Http.Native.dylib | xargs sudo install_name_tool -change /usr/lib/libcurl.4.dylib /usr/local/opt/curl/lib/libcurl.4.dylib
         }
     }
 
@@ -820,13 +821,16 @@ function Start-PSBootstrap {
             precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
 
             # Build tools
-            $Deps += "curl", "cmake"
+            $Deps += "cmake"
 
             # .NET Core required runtime libraries
             $Deps += "openssl"
 
             # Install dependencies
             Start-NativeExecution { brew install $Deps }
+
+            # Install patched version of curl
+            Start-NativeExecution { brew install curl --with-openssl }
         }
 
         # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
@@ -1194,17 +1198,40 @@ esac
         chmod 755 "$Staging/$Name" # only the executable should be executable
     }
 
-    $libunwind = switch ($Type) {
-        "deb" { "libunwind8" }
-        "rpm" { "libunwind" }
-    }
-
-    $libicu = switch ($Type) {
-        "deb" {
-            if ($IsUbuntu14) { "libicu52" }
-            elseif ($IsUbuntu16) { "libicu55" }
+    # Setup package dependencies
+    # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
+    $Dependencies = @()
+    if ($IsUbuntu) {
+        $Dependencies = @(
+            "libc6",
+            "libcurl3",
+            "libgcc1",
+            "libssl1.0.0",
+            "libstdc++6",
+            "libtinfo5",
+            "libunwind8",
+            "libuuid1",
+            "zlib1g"
+        )
+        # Please note the different libicu package dependency!
+        if ($IsUbuntu14) {
+            $Dependencies += "libicu52"
+        } elseif ($IsUbuntu16) {
+            $Dependencies += "libicu55"
         }
-        "rpm" { "libicu" }
+    } elseif ($IsCentOS) {
+        $Dependencies = @(
+            "glibc",
+            "libcurl",
+            "libgcc",
+            "libicu",
+            "openssl",
+            "libstdc++",
+            "ncurses-base",
+            "libunwind",
+            "uuid",
+            "zlib"
+        )
     }
 
     # iteration is "debian_revision"
@@ -1232,11 +1259,12 @@ esac
         "--description", $Description,
         "--category", "shells",
         "--rpm-os", "linux",
-        "--depends", $libunwind,
-        "--depends", $libicu,
         "-t", $Type,
         "-s", "dir"
     )
+    foreach ($Dependency in $Dependencies) {
+        $Arguments += @("--depends", $Dependency)
+    }
     if ($AfterInstallScript) {
        $Arguments += @("--after-install", $AfterInstallScript)
     }
