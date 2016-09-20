@@ -5,13 +5,22 @@ Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16],
 [CentOS 7][cos], and [macOS 10.11][osx].
 All packages are available on our GitHub [releases][] page.
 
+All of these steps can be down automatically by the [`download.sh`][download] script.
+You should *never* run a script without reading it first!
+
+Please **read the [download][] script first**, and then if you want to run it, use:
+
+```sh
+bash <(curl -fsSL https://raw.githubusercontent.com/PowerShell/PowerShell/v6.0.0-alpha.10/tools/download.sh)
+```
+
 Once the package is installed, run `powershell` from a terminal.
 
 [u14]: #ubuntu-1404
 [u16]: #ubuntu-1604
 [cos]: #centos-7
 [osx]: #os-x-1011
-[paths]:#paths
+[download]: https://github.com/PowerShell/PowerShell/blob/v6.0.0-alpha.10/tools/download.sh
 
 Ubuntu 14.04
 ============
@@ -123,6 +132,8 @@ sudo rm -rf /usr/local/bin/powershell /usr/local/microsoft/powershell
 To uninstall the additional PowerShell paths (such as the user profile path)
 please see the [paths][paths] section below in this document
 and remove the desired the paths with `sudo rm`.
+
+[paths]:#paths
 
 OpenSSL
 -------
