@@ -29,22 +29,6 @@ Describe "Get-Credential Test" -tag "CI" {
         $netcred.Password | Should be "this is a test"
         $th.ui.Streams.Prompt[-1] | Should Match "Credential:[^:]+:Foo" 
     }
-    It "Get-Credential with title, produces a credential object" {
-        $cred = $ps.AddScript("Get-Credential -UserName Joe -Title CustomTitle").Invoke() | Select-Object -First 1
-        $cred.gettype().FullName | Should Be "System.Management.Automation.PSCredential"
-        $netcred = $cred.GetNetworkCredential()
-        $netcred.UserName | Should be "Joe"
-        $netcred.Password | Should be "this is a test"
-        $th.ui.Streams.Prompt[-1] | should be "Credential:CustomTitle:"
-    }
-    It "Get-Credential with only username, produces a credential object" {
-        $cred = $ps.AddScript("Get-Credential -UserName Joe").Invoke() | Select-Object -First 1
-        $cred.gettype().FullName | Should Be "System.Management.Automation.PSCredential"
-        $netcred = $cred.GetNetworkCredential()
-        $netcred.UserName | Should be "Joe"
-        $netcred.Password | Should be "this is a test"
-        $th.ui.Streams.Prompt[-1] | Should Match "Credential:[^:]+:"
-    }
     It "Get-Credential with title and message, produces a credential object" {
         $cred = $ps.AddScript("Get-Credential -UserName Joe -Message Foo -Title CustomTitle").Invoke() | Select-Object -First 1
         $cred.gettype().FullName | Should Be "System.Management.Automation.PSCredential"
@@ -53,4 +37,27 @@ Describe "Get-Credential Test" -tag "CI" {
         $netcred.Password | Should be "this is a test"
         $th.ui.Streams.Prompt[-1] | should be "Credential:CustomTitle:Foo"
     }
+    It "Mandatory parameters should not be null nor empty" {
+        # when Message is null 
+        try 
+        {
+            Get-Credential -Message $null 
+            Throw "Execution OK"
+        }
+        catch
+        {
+            $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.GetCredentialCommand"
+        }
+        # when Message is empty            
+        try 
+        {
+            Get-Credential -Message "" 
+            Throw "Execution OK"
+        }
+        catch
+        {
+            $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.GetCredentialCommand"
+        }
+    }
+
 }
