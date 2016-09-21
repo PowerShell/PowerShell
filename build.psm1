@@ -653,8 +653,8 @@ function Start-PSPester {
     if ($Unelevate)
     {
         $outputBufferFilePath = [System.IO.Path]::GetTempFileName()
-        $Command += "Start-Transcript -Force -Path $outputBufferFilePath;"
     }
+    
     $Command += "Invoke-Pester "
 
     $Command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
@@ -668,7 +668,7 @@ function Start-PSPester {
     $Command += "'" + $Path + "'"
     if ($Unelevate)
     {
-        $Command += "; Stop-Transcript; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
+        $Command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
     }
 
     Write-Verbose $Command
