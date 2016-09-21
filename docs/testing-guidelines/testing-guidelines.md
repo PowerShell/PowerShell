@@ -119,9 +119,6 @@ The current layout of tests is:
 * test/powershell/Language
 * test/powershell/Modules
 * test/powershell/Provider
-* test/powershell/Scripting
-* test/powershell/Scripting/Debugging
-* test/powershell/Scripting/NativeExecution
 * test/powershell/SDK
 * test/powershell/Security
 * test/powershell/Language/Classes
@@ -129,6 +126,9 @@ The current layout of tests is:
 * test/powershell/Language/Operators
 * test/powershell/Language/Parser
 * test/powershell/Language/Interop/DotNet
+* test/powershell/Language/Scripting
+* test/powershell/Language/Scripting/Debugging
+* test/powershell/Language/Scripting/NativeExecution
 * test/powershell/Modules/Microsoft.PowerShell.Archive
 * test/powershell/Modules/Microsoft.PowerShell.Core
 * test/powershell/Modules/Microsoft.PowerShell.Diagnostics
