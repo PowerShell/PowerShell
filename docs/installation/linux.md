@@ -5,13 +5,22 @@ Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16],
 [CentOS 7][cos], and [macOS 10.11][osx].
 All packages are available on our GitHub [releases][] page.
 
+All of these steps can be down automatically by the [`download.sh`][download] script.
+You should *never* run a script without reading it first!
+
+Please **read the [download][] script first**, and then if you want to run it, use:
+
+```sh
+bash <(curl -fsSL https://raw.githubusercontent.com/PowerShell/PowerShell/v6.0.0-alpha.10/tools/download.sh)
+```
+
 Once the package is installed, run `powershell` from a terminal.
 
 [u14]: #ubuntu-1404
 [u16]: #ubuntu-1604
 [cos]: #centos-7
 [osx]: #os-x-1011
-[paths]:#paths
+[download]: https://github.com/PowerShell/PowerShell/blob/v6.0.0-alpha.10/tools/download.sh
 
 Ubuntu 14.04
 ============
@@ -23,16 +32,19 @@ from the [releases][] page onto the Ubuntu machine.
 Then execute the following in the terminal:
 
 ```sh
-sudo apt-get install libunwind8 libicu52
 sudo dpkg -i powershell_6.0.0-alpha.10-1ubuntu1.14.04.1_amd64.deb
+sudo apt-get install -f
 ```
+
+> Please note that `dpkg -i` will fail with unmet dependencies;
+> the next command, `apt-get install -f` resolves these
+> and then finishes configuring the PowerShell package.
+
 **Uninstallation**
 
-`sudo apt-get remove powershell`
-
-or
-
-`sudo dpkg -r powershell`
+```sh
+sudo apt-get remove powershell
+```
 
 [Ubuntu 14.04]: http://releases.ubuntu.com/14.04/
 
@@ -45,19 +57,20 @@ from the [releases][] page onto the Ubuntu machine.
 
 Then execute the following in the terminal:
 
-> Please note the different libicu package dependency!
-
 ```sh
-sudo apt-get install libunwind8 libicu55
 sudo dpkg -i powershell_6.0.0-alpha.10-1ubuntu1.16.04.1_amd64.deb
+sudo apt-get install -f
 ```
+
+> Please note that `dpkg -i` will fail with unmet dependencies;
+> the next command, `apt-get install -f` resolves these
+> and then finishes configuring the PowerShell package.
+
 **Uninstallation**
 
-`sudo apt-get remove powershell`
-
-or
-
-`sudo dpkg -r powershell`
+```sh
+sudo apt-get remove powershell
+```
 
 [Ubuntu 16.04]: http://releases.ubuntu.com/16.04/
 
@@ -73,12 +86,10 @@ from the [releases][] page onto the CentOS machine.
 Then execute the following in the terminal:
 
 ```sh
-sudo yum install powershell-6.0.0_alpha.10-1.el7.centos.x86_64.rpm
+sudo yum install ./powershell-6.0.0_alpha.10-1.el7.centos.x86_64.rpm
 ```
 
 You can also install the RPM without the intermediate step of downloading it:
-
-
 
 ```sh
 sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.10/powershell-6.0.0_alpha.10-1.el7.centos.x86_64.rpm
@@ -88,7 +99,9 @@ sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0
 
 **Uninstallation**
 
-`sudo yum remove powershell`
+```sh
+sudo yum remove powershell
+```
 
 [CentOS 7]: https://www.centos.org/download/
 
@@ -111,10 +124,16 @@ sudo installer -pkg powershell-6.0.0-alpha.10.pkg -target /
 PowerShell on MacOS must be removed manually.
 
 To remove the installed package:
+
 ```sh
-sudo rm -rf /usr/local/bin/powershell usr/local/microsoft/powershell
+sudo rm -rf /usr/local/bin/powershell /usr/local/microsoft/powershell
 ```
-To uninstall the additional PowerShell paths (such as the user profile path) please see the [paths][paths] section below in this document and remove the desired the paths with `sudo rm`.
+
+To uninstall the additional PowerShell paths (such as the user profile path)
+please see the [paths][paths] section below in this document
+and remove the desired the paths with `sudo rm`.
+
+[paths]:#paths
 
 OpenSSL
 -------
@@ -123,6 +142,7 @@ Also install [Homebrew's OpenSSL][openssl]:
 
 ```
 brew install openssl
+brew install curl --with-openssl
 ```
 
 [Homebrew][brew] is the missing package manager for macOS.
@@ -148,6 +168,7 @@ To patch .NET Core's cryptography libraries, we use `install_name_tool`:
 
 ```
 find ~/.nuget -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
+find ~/.nuget -name System.Net.Http.Native.dylib | xargs sudo install_name_tool -change /usr/lib/libcurl.4.dylib /usr/local/opt/curl/lib/libcurl.4.dylib
 ```
 
 This updates .NET Core's library to look in Homebrew's OpenSSL installation location instead of the system library location.

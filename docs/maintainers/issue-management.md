@@ -9,7 +9,7 @@ We use the following labels for issue classifications:
 
 * `Issue-Bug`: the issue is reporting a bug
 * `Issue-Discussion`: the issue may not have a clear classification yet.
-  The issue may generate an [RFC][ln-rfc] or maybe be reclassified as a bug or enhancement.
+  The issue may generate an [RFC][ln-rfc] or may be reclassified as a bug or enhancement.
 * `Issue-Enhancement`: the issue is more of a feature request than a bug.
 * `Issue-Meta`: an issue used to track multiple issues.
 * `Issue-Question`: ideally support can be provided via other mechanisms,
