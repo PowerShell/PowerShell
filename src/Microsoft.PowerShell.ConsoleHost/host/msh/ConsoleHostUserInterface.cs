@@ -1590,7 +1590,9 @@ namespace Microsoft.PowerShell
                     break;
                 }
 
-                if (c == '\b')
+                // If NoPrompt is true, we are in a sort of server mode where we shouldn't
+                // do anything like edit the command line - every character is part of the input.
+                if (c == '\b' && !NoPrompt)
                 {
                     sb.Remove(sb.Length - 1, 1);
                 }
