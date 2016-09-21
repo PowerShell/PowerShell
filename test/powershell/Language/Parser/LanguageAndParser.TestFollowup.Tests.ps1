@@ -140,6 +140,11 @@ Describe "Assign automatic variables" -Tags "CI" {
       & { [string]$PSScriptRoot = 'abc'; $PSScriptRoot } | Should Be abc
       & { [string]$PSCommandPath = 'abc'; $PSCommandPath } | Should Be abc
     }
+
+    It "Assign `$? w/o type constraint" {
+        { & { $? = 1 } } | Should Throw
+        { . { $? = 1 } } | Should Throw
+    }
 }
 
 Describe "Attribute error position" -Tags "CI" {
