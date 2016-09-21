@@ -1554,7 +1554,7 @@ namespace Microsoft.PowerShell
         private string ReadLineFromFile(string initialContent)
         {
             var sb = new StringBuilder();
-            if (initialContent != null)
+            if (!string.IsNullOrEmpty(initialContent))
             {
                 sb.Append(initialContent);
                 sb.Append('\n');
@@ -1566,7 +1566,9 @@ namespace Microsoft.PowerShell
                 if (inC == -1)
                 {
                     // EOF - we return null which tells our caller to exit
-                    return null;
+                    // but only if we don't have any input, we could have
+                    // input and then stdin was closed, but never saw a newline.
+                    return sb.Length == 0 ? null : sb.ToString();
                 }
 
                 var c = unchecked((char)inC);

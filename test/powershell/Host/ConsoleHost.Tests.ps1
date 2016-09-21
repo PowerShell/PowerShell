@@ -279,7 +279,12 @@ foo
 "@)
             $process.StandardOutput.ReadLine() | Should Be "in foo"
 
+            # Last command with no newline - should be accepted and
+            # produce output after closing stdin.
+            $process.StandardInput.Write('22 + 22')
             $process.StandardInput.Close()
+            $process.StandardOutput.ReadLine() | Should Be "44"
+
             EnsureChildHasExited $process
         }
 
