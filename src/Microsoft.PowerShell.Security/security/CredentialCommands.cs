@@ -34,21 +34,10 @@ namespace Microsoft.PowerShell.Commands
         /// the instance.
         /// </summary>
         ///
-        [Parameter(Position = 0, Mandatory = true, ParameterSetName = credentialSet)]
+        [Parameter(Position = 0, ParameterSetName = credentialSet)]
+        [ValidateNotNull]
         [Credential()]
-        public PSCredential Credential
-        {
-            get
-            {
-                return _cred;
-            }
-
-            set
-            {
-                _cred = value;
-            }
-        }
-        private PSCredential _cred;
+        public PSCredential Credential { get; set; }
 
         /// <summary>
         /// Gets and sets the user supplied message providing description about which script/function is 
@@ -61,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _message; }
             set { _message = value; }
         }
-        private string _message = null;
+        private string _message = UtilsStrings.PromptForCredential_DefaultMessage;
 
         /// <summary>
         /// Gets and sets the user supplied username to be used while creating the PSCredential.
@@ -99,6 +88,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            if (Credential != null)
+            {
+                WriteObject(Credential);
+                return;
+            }
+
             try
             {
                 Credential = this.Host.UI.PromptForCredential(_title, _message, _userName, string.Empty);
