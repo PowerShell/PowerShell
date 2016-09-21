@@ -131,14 +131,14 @@ Describe "Assign automatic variables" -Tags "CI" {
     }
 
     It "Assign auto w/ correct type constraint" {
-      & { [object]$_ = 1; $_ } | Should Be 1
-      & { [object[]]$args = 1; $args } | Should Be 1
-      & { [object]$this = 1; $this } | Should Be 1
-      & { [object]$input = 1; $input } | Should Be 1
-      # Can't test PSCmdlet or PSBoundParameters, they use an internal type
-      & { [System.Management.Automation.InvocationInfo]$myInvocation = $myInvocation; $myInvocation.Line } | Should Match Automation.InvocationInfo
-      & { [string]$PSScriptRoot = 'abc'; $PSScriptRoot } | Should Be abc
-      & { [string]$PSCommandPath = 'abc'; $PSCommandPath } | Should Be abc
+        & { [object]$_ = 1; $_ } | Should Be 1
+        & { [object[]]$args = 1; $args } | Should Be 1
+        & { [object]$this = 1; $this } | Should Be 1
+        & { [object]$input = 1; $input } | Should Be 1
+        # Can't test PSCmdlet or PSBoundParameters, they use an internal type
+        & { [System.Management.Automation.InvocationInfo]$myInvocation = $myInvocation; $myInvocation.Line } | Should Match Automation.InvocationInfo
+        & { [string]$PSScriptRoot = 'abc'; $PSScriptRoot } | Should Be abc
+        & { [string]$PSCommandPath = 'abc'; $PSCommandPath } | Should Be abc
     }
 
     It "Assign `$? w/o type constraint" {
