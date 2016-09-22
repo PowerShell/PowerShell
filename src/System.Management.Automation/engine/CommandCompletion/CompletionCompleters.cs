@@ -825,7 +825,9 @@ namespace System.Management.Automation
 
         private static string GetOperatorDescription(string op)
         {
-            return ResourceManagerCache.GetResourceString(typeof(CompletionCompleters).GetTypeInfo().Assembly, "TabCompletionStrings", op + "OperatorDescription");
+            return ResourceManagerCache.GetResourceString(typeof(CompletionCompleters).GetTypeInfo().Assembly,
+                                                          "System.Management.Automation.resources.TabCompletionStrings",
+                                                          op + "OperatorDescription");
         }
 
         #endregion Command Parameters
