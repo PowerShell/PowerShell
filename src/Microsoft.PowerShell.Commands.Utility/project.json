@@ -42,7 +42,6 @@
                         "commands/utility/ShowCommand/ShowCommandParameterSetInfo.cs",
                         "commands/utility/ShowCommand/ShowCommandParameterType.cs",
                         "commands/utility/ShowCommand/ShowCommandProxy.cs",                        
-                        "commands/utility/convert-HTML.cs",
                         "commands/utility/update-list.cs",
                         "singleshell/installer/MshUtilityMshSnapin.cs",
                         "commands/utility/WebCmdlet/FullClr/BasicHtmlWebResponseObject.FullClr.cs",
