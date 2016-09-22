@@ -1,8 +1,8 @@
 ﻿Describe "Command Discovery tests" -Tags "CI" {
 
     BeforeAll {
-        setup -f testscript.ps1 -content "TestScript"
-		setup -f testscripp.ps1 -content "TestScripp"
+        setup -f testscript.ps1 -content "'This script should not run. Running from testscript.ps1'"
+        setup -f testscripp.ps1 -content "'This script should not run. Running from testscripp.ps1'"
 
         $TestCasesCommandNotFound = @(
                         @{command = 'CommandThatDoesnotExist' ; testName = 'Non-existent command'}
@@ -18,7 +18,7 @@
         try
         {
             & $command
-            throw "Command '$command' was found"
+            throw "Should not have found command: '$command'"
         }
         catch
         {
@@ -34,7 +34,7 @@
             New-Item -Path "$TestDrive\TestFunctionA" -ItemType Directory
             New-Item -Path "$TestDrive\\TestFunctionA\TestFunctionA.psm1" -Value "function TestFunctionA {}" | Out-Null
 
-            $env:PSMODULEPATH += [System.IO.Path]::PathSeparator + "$TestDrive" + [System.IO.Path]::PathSeparator + "$TestDrive"
+            $env:PSMODULEPATH = "$TestDrive" + [System.IO.Path]::PathSeparator + "$TestDrive"
             (Get-command 'TestFunctionA').count | Should Be 1               
         }
         finally
@@ -45,53 +45,53 @@
 
     It "Alias can be set for a cmdlet" {
 
-        try
-        {
             Set-Alias 'AliasCommandDiscoveryTest' Get-ChildItem
-    
             $commands = (Get-Command 'AliasCommandDiscoveryTest')
 
             $commands.Count | Should Be 1        
             $aliasResult = $commands -as [System.Management.Automation.AliasInfo] 
-            $aliasResult | Should Not BeNullOrEmpty
-
+            $aliasResult | Should BeOfType [System.Management.Automation.AliasInfo]
             $aliasResult.Name | Should Be 'AliasCommandDiscoveryTest'
-        }
-        finally
-        {
-            Remove-Item alias:AliasCommandDiscoveryTest -Force -ErrorAction SilentlyContinue       
-        }
     }
 
-    It "Cyclic aliases" { 
-        
+    It "Cyclic aliases - direct" {
         try
         {
             Set-Alias CyclicAliasA CyclicAliasB -Force
             Set-Alias CyclicAliasB CyclicAliasA -Force
             & CyclicAliasA
-            throw "'CyclicAliasA' should be not found"
+            throw "Execution should not reach here. '& CyclicAliasA' should have thrown."
         }
         catch
         {
             $_.FullyQualifiedErrorId | Should Be 'CommandNotFoundException'
         }
-        finally
+    }
+
+    It "Cyclic aliases - indirect" {
+        try
         {
-            Remove-Item Alias:\CyclicAliasA -ErrorAction SilentlyContinue -Force
-            Remove-Item Alias:\CyclicAliasB -ErrorAction SilentlyContinue -Force
+            Set-Alias CyclicAliasA CyclicAliasB -Force
+            Set-Alias CyclicAliasB CyclicAliasC -Force
+            Set-Alias CyclicAliasC CyclicAliasA -Force
+            & CyclicAliasA
+            throw "Execution should not reach here. '& CyclicAliasA' should have thrown."
+        }
+        catch
+        {
+            $_.FullyQualifiedErrorId | Should Be 'CommandNotFoundException'
         }
     }
 
     It "Get-Command should return only CmdletInfo, FunctionInfo, AliasInfo or FilterInfo" {
          
-         $commands = @(Get-Command)
+         $commands = Get-Command
          $commands.Count | Should BeGreaterThan 0
 
-		foreach($command in $commands)
-		{
-			$command.GetType().Name | should be @("AliasInfo","FunctionInfo","CmdletInfo","FilterInfo")
-		}
+        foreach($command in $commands)
+        {
+            $command.GetType().Name | should be @("AliasInfo","FunctionInfo","CmdletInfo","FilterInfo")
+        }
     }
 
     It "Non-existent commands with wildcard should not write errors" {
