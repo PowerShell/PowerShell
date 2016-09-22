@@ -69,7 +69,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
         try
         {
             Compress-Archive -Path $path -DestinationPath $destinationPath -CompressionLevel $compressionLevel
-            trow "ValidateNotNullOrEmpty attribute is missing on one of parameters belonging to Path parameterset."
+            throw "ValidateNotNullOrEmpty attribute is missing on one of parameters belonging to Path parameterset."
         }
         catch
         {
@@ -645,7 +645,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
     }
 
     Context "Expand-Archive - Parameter validation test cases" {
-        It "Validate non existing archive -Path trows expected error message" {
+        It "Validate non existing archive -Path throws expected error message" {
             $sourcePath = "$TestDrive/SourceDir"
             $destinationPath = "$TestDrive/ExpandedArchive"
             try
