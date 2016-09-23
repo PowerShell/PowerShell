@@ -23,6 +23,8 @@ install:
   - pushd tools
   - ./download.sh
   - popd
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rvm use 2.2.1; fi # Default 2.0.0 Ruby is buggy
+  # Default 2.0.0 Ruby is buggy
+  # Default bundler version is buggy
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rvm use 2.2.1; gem uninstall bundler -v1.13.1; fi
 
 script: ./tools/travis.sh
