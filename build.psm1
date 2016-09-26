@@ -406,14 +406,30 @@ function New-PSOptions {
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
+    $ConfigWarningMsg = "The passed-in Configuration value '{0}' is not supported on '{1}'. Use '{2}' instead."
     if (-not $Configuration) {
         $Configuration = if ($IsLinux -or $IsOSX) {
             "Linux"
         } elseif ($IsWindows) {
             "Debug"
         }
-        Write-Verbose "Using configuration '$Configuration'"
+    } else {
+        switch ($Configuration) {
+            "Linux" {
+                if ($IsWindows) {
+                    $Configuration = "Debug"
+                    Write-Warning ($ConfigWarningMsg -f $switch.Current, "Windows", $Configuration)
+                }
+            }
+            Default {
+                if ($IsLinux -or $IsOSX) {
+                    $Configuration = "Linux"
+                    Write-Warning ($ConfigWarningMsg -f $switch.Current, $LinuxInfo.PRETTY_NAME, $Configuration)
+                }
+            }
+        }
     }
+    Write-Verbose "Using configuration '$Configuration'"
 
     $PowerShellDir = if ($FullCLR) {
         "powershell-win-full"
@@ -946,7 +962,7 @@ function Start-PSPackage {
     ($Runtime, $Configuration) = if ($WindowsDownLevel) {
         $WindowsDownLevel, "Release"
     } else {
-        New-PSOptions | ForEach-Object { $_.Runtime, $_.Configuration -replace "Debug", "Release" }
+        New-PSOptions -Configuration "Release" | ForEach-Object { $_.Runtime, $_.Configuration }
     }
     Write-Verbose "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'" -Verbose
 
