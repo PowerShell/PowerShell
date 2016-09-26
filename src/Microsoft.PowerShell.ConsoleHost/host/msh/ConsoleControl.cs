@@ -3467,6 +3467,9 @@ namespace Microsoft.PowerShell
             [DllImport(PinvokeDllNames.GetLargestConsoleWindowSizeDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern COORD GetLargestConsoleWindowSize(NakedWin32Handle consoleOutput);
 
+            [DllImport(PinvokeDllNames.GetStdHandleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            internal static extern IntPtr GetStdHandle(int handleId);
+
             [DllImport(PinvokeDllNames.ReadConsoleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern bool ReadConsole
             (

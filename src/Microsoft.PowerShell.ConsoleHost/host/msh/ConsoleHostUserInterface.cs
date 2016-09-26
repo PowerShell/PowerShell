@@ -1560,9 +1560,10 @@ namespace Microsoft.PowerShell
                 sb.Append('\n');
             }
 
+            var consoleIn = _parent.ConsoleIn.Value;
             while (true)
             {
-                var inC = Console.In.Read();
+                var inC = consoleIn.Read();
                 if (inC == -1)
                 {
                     // EOF - we return null which tells our caller to exit
@@ -1577,10 +1578,10 @@ namespace Microsoft.PowerShell
                 if (c == '\r')
                 {
                     // Treat as newline, but consume \n if there is one.
-                    if (Console.In.Peek() == '\n')
+                    if (consoleIn.Peek() == '\n')
                     {
                         if (!NoPrompt) Console.Out.Write('\n');
-                        Console.In.Read();
+                        consoleIn.Read();
                     }
                     break;
                 }
