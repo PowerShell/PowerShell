@@ -41,56 +41,6 @@ namespace System.Management.Automation
             }
         } // SessionStateScope constructor
 
-        private SessionStateCapacityVariable CreateCapacityVariable(
-            string variableName,
-            int defaultCapacity,
-            int maxCapacity,
-            int minCapacity,
-            string descriptionResourceString
-            )
-        {
-            // First do the lookup to see if a variable already exists.
-
-            SessionStateCapacityVariable capacityVariable = null;
-
-            if (Parent != null)
-            {
-                capacityVariable =
-                    Parent.GetVariable(variableName) as SessionStateCapacityVariable;
-            }
-
-            if (capacityVariable == null)
-            {
-                // Since we weren't able to find an existing one, create a new one
-                capacityVariable =
-                    new SessionStateCapacityVariable(
-                        variableName,
-                        defaultCapacity,
-                        maxCapacity,
-                        minCapacity,
-                        ScopedItemOptions.None);
-            }
-            else
-            {
-                // Since we did find one, create a local capacity variable with a reference
-                // to it.
-
-                capacityVariable =
-                    new SessionStateCapacityVariable(
-                        variableName,
-                        capacityVariable,
-                        ScopedItemOptions.None);
-            }
-
-            // Only initialize the description if it is null or empty.  Initializing it every time
-            // causes a measurable performance degradation.
-            if (String.IsNullOrEmpty(capacityVariable.Description))
-            {
-                capacityVariable.Description = descriptionResourceString;
-            }
-            return capacityVariable;
-        }
-
         #endregion constructor
 
         #region Internal properties
@@ -196,20 +146,6 @@ namespace System.Management.Automation
                         "DriveAlreadyExists",
                         SessionStateStrings.DriveAlreadyExists,
                         ErrorCategory.ResourceExists);
-
-                throw e;
-            }
-
-            if (!newDrive.IsAutoMounted &&
-                driveInfos.Count > DriveCapacity.FastValue - 1)
-            {
-                SessionStateOverflowException e =
-                    new SessionStateOverflowException(
-                        newDrive.Name,
-                        SessionStateCategory.Drive,
-                        "DriveOverflow",
-                        SessionStateStrings.DriveOverflow,
-                        DriveCapacity.FastValue);
 
                 throw e;
             }
@@ -592,22 +528,6 @@ namespace System.Management.Automation
                 variable = (LocalsTuple != null ? LocalsTuple.TrySetVariable(name, value) : null) ?? new PSVariable(name, value);
             }
 
-            // Now check to make sure we don't exceed the max variable count
-            // if this is a new variable.
-
-            if (!varExists && _variables.Count > VariableCapacity.FastValue - 1)
-            {
-                SessionStateOverflowException e =
-                    new SessionStateOverflowException(
-                            name,
-                            SessionStateCategory.Variable,
-                            "VariableOverflow",
-                                SessionStateStrings.VariableOverflow,
-                            VariableCapacity.FastValue);
-
-                throw e;
-            }
-
             // Don't let people set AllScope variables in ConstrainedLanguage,
             // as they can be used to interfere with the session state of
             // trusted commands.
@@ -727,22 +647,6 @@ namespace System.Management.Automation
                 variable = newVariable;
             }
 
-            // Now check to make sure we don't exceed the max variable count
-            // if this is a new variable.
-
-            if (!varExists && _variables.Count > VariableCapacity.FastValue - 1)
-            {
-                SessionStateOverflowException e =
-                    new SessionStateOverflowException(
-                            newVariable.Name,
-                            SessionStateCategory.Variable,
-                            "VariableOverflow",
-                                SessionStateStrings.VariableOverflow,
-                            VariableCapacity.FastValue);
-
-                throw e;
-            }
-
             // Don't let people set AllScope variables in ConstrainedLanguage,
             // as they can be used to interfere with the session state of
             // trusted commands.
@@ -795,18 +699,6 @@ namespace System.Management.Automation
                             SessionStateCategory.Variable,
                             "VariableNotRemovable",
                             SessionStateStrings.VariableNotRemovable);
-
-                throw e;
-            }
-
-            if (variable is SessionStateCapacityVariable)
-            {
-                SessionStateUnauthorizedAccessException e =
-                    new SessionStateUnauthorizedAccessException(
-                            name,
-                            SessionStateCategory.Variable,
-                            "VariableNotRemovableSystem",
-                            SessionStateStrings.VariableNotRemovableSystem);
 
                 throw e;
             }
@@ -949,18 +841,6 @@ namespace System.Management.Automation
             AliasInfo aliasInfo;
             if (!aliasInfos.TryGetValue(name, out aliasInfo))
             {
-                if (aliasInfos.Count > AliasCapacity.FastValue - 1)
-                {
-                    SessionStateOverflowException e =
-                        new SessionStateOverflowException(
-                                name,
-                                SessionStateCategory.Alias,
-                                "AliasOverflow",
-                            SessionStateStrings.AliasOverflow,
-                                AliasCapacity.FastValue);
-
-                    throw e;
-                }
                 aliasInfos[name] = new AliasInfo(name, value, context);
             }
             else
@@ -1056,18 +936,6 @@ namespace System.Management.Automation
             AliasInfo result;
             if (!aliasInfos.TryGetValue(name, out aliasInfo))
             {
-                if (aliasInfos.Count > AliasCapacity.FastValue - 1)
-                {
-                    SessionStateOverflowException e =
-                        new SessionStateOverflowException(
-                                name,
-                                SessionStateCategory.Alias,
-                                "AliasOverflow",
-                                SessionStateStrings.AliasOverflow,
-                                AliasCapacity.FastValue);
-
-                    throw e;
-                }
                 result = new AliasInfo(name, value, context, options);
                 aliasInfos[name] = result;
             }
@@ -1180,22 +1048,7 @@ namespace System.Management.Automation
 
             var aliasInfos = GetAliases();
             AliasInfo aliasInfo;
-            if (!aliasInfos.TryGetValue(aliasToSet.Name, out aliasInfo))
-            {
-                if (aliasInfos.Count > AliasCapacity.FastValue - 1)
-                {
-                    SessionStateOverflowException e =
-                        new SessionStateOverflowException(
-                                aliasToSet.Name,
-                                SessionStateCategory.Alias,
-                                "AliasOverflow",
-                                SessionStateStrings.AliasOverflow,
-                                AliasCapacity.FastValue);
-
-                    throw e;
-                }
-            }
-            else
+            if (aliasInfos.TryGetValue(aliasToSet.Name, out aliasInfo))
             {
                 // An existing alias cannot be set if it is ReadOnly or Constant unless
                 // force is specified, in which case an existing ReadOnly alias can
@@ -1569,19 +1422,6 @@ namespace System.Management.Automation
             FunctionInfo result;
             if (!functionInfos.TryGetValue(name, out existingValue))
             {
-                if (functionInfos.Count > FunctionCapacity.FastValue - 1)
-                {
-                    SessionStateOverflowException e =
-                        new SessionStateOverflowException(
-                                name,
-                                SessionStateCategory.Function,
-                                "FunctionOverflow",
-                                SessionStateStrings.FunctionOverflow,
-                                FunctionCapacity.FastValue);
-
-                    throw e;
-                }
-
                 result = functionFactory(name, function, originalFunction, options, context, helpFile);
                 functionInfos[name] = result;
 
@@ -2123,55 +1963,6 @@ namespace System.Management.Automation
                         _variables.Add(variable.Name, variable);
                 }
             }
-
-
-            // Now create the capacity variables with a reference to a parent scope
-            // capacity variable if one exists. If not, the defaults will be used.
-
-            string varName = "MaximumErrorCount";
-            _errorCapacity = CreateCapacityVariable(
-                varName,
-                SessionStateConstants.DefaultErrorCapacity,
-                SessionStateConstants.MaxErrorCapacity,
-                SessionStateConstants.MinErrorCapacity,
-                SessionStateStrings.MaxErrorCountDescription);
-            _variables.Add(varName, _errorCapacity);
-
-            varName = "MaximumVariableCount";
-            _variableCapacity = CreateCapacityVariable(
-                varName,
-                SessionStateConstants.DefaultVariableCapacity,
-                SessionStateConstants.MaxVariablesCapacity,
-                SessionStateConstants.MinVariablesCapacity,
-                SessionStateStrings.MaxVariableCountDescription);
-            _variables.Add(varName, _variableCapacity);
-
-            varName = "MaximumFunctionCount";
-            _functionCapacity = CreateCapacityVariable(
-                varName,
-                SessionStateConstants.DefaultFunctionCapacity,
-                SessionStateConstants.MaxFunctionCapacity,
-                SessionStateConstants.MinFunctionCapacity,
-                SessionStateStrings.MaxFunctionCountDescription);
-            _variables.Add(varName, _functionCapacity);
-
-            varName = "MaximumAliasCount";
-            _aliasCapacity = CreateCapacityVariable(
-                varName,
-                SessionStateConstants.DefaultAliasCapacity,
-                SessionStateConstants.MaxAliasCapacity,
-                SessionStateConstants.MinAliasCapacity,
-                SessionStateStrings.MaxAliasCountDescription);
-            _variables.Add(varName, _aliasCapacity);
-
-            varName = "MaximumDriveCount";
-            _driveCapacity = CreateCapacityVariable(
-                varName,
-                SessionStateConstants.DefaultDriveCapacity,
-                SessionStateConstants.MaxDriveCapacity,
-                SessionStateConstants.MinDriveCapacity,
-                SessionStateStrings.MaxDriveCountDescription);
-            _variables.Add(varName, _driveCapacity);
         }
 
         /// <summary>
@@ -2273,57 +2064,6 @@ namespace System.Management.Automation
         /// </summary>
 
         private readonly Dictionary<string, List<CmdletInfo>> _allScopeCmdlets = new Dictionary<string, List<CmdletInfo>>(StringComparer.OrdinalIgnoreCase);
-
-
-        internal SessionStateCapacityVariable ErrorCapacity
-        {
-            get
-            {
-                GetPrivateVariables(); // Make sure that the variable table is initialized...
-                return _errorCapacity;
-            }
-        }
-        private SessionStateCapacityVariable _errorCapacity;
-
-        internal SessionStateCapacityVariable VariableCapacity
-        {
-            get
-            {
-                GetPrivateVariables(); // Make sure that the variable table is initialized...
-                return _variableCapacity;
-            }
-        }
-        private SessionStateCapacityVariable _variableCapacity;
-
-        private SessionStateCapacityVariable FunctionCapacity
-        {
-            get
-            {
-                GetPrivateVariables(); // Make sure that the variable table is initialized...
-                return _functionCapacity;
-            }
-        }
-        private SessionStateCapacityVariable _functionCapacity;
-
-        private SessionStateCapacityVariable AliasCapacity
-        {
-            get
-            {
-                GetPrivateVariables(); // Make sure that the variable table is initialized...
-                return _aliasCapacity;
-            }
-        }
-        private SessionStateCapacityVariable _aliasCapacity;
-
-        private SessionStateCapacityVariable DriveCapacity
-        {
-            get
-            {
-                GetPrivateVariables(); // Make sure that the variable table is initialized...
-                return _driveCapacity;
-            }
-        }
-        private SessionStateCapacityVariable _driveCapacity;
 
         /// <summary>
         /// The variable that represents $true in the language.

@@ -71,10 +71,6 @@ namespace System.Management.Automation
         /// If the provider threw an exception or returned null.
         /// </exception>
         /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If creating the drive will overflow the MaximumDriveCount limit.
-        /// </exception>
-        /// 
         internal PSDriveInfo NewDrive(PSDriveInfo drive, string scopeID)
         {
             if (drive == null)
@@ -158,10 +154,6 @@ namespace System.Management.Automation
         /// 
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception or returned null.
-        /// </exception>
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If creating the drive will overflow the MaximumDriveCount limit.
         /// </exception>
         /// 
         internal void NewDrive(PSDriveInfo drive, string scopeID, CmdletProviderContext context)
