@@ -962,7 +962,7 @@ function Start-PSPackage {
     ($Runtime, $Configuration) = if ($WindowsDownLevel) {
         $WindowsDownLevel, "Release"
     } else {
-        New-PSOptions -Configuration "Release" | ForEach-Object { $_.Runtime, $_.Configuration }
+        New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
     }
     Write-Verbose "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'" -Verbose
 
