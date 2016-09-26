@@ -621,14 +621,14 @@ function Start-PSPester {
             throw '-Unelevate cannot be applied because the current user is not Administrator'
         }
 
-        if (-not $PSBoundParameters.ContainsKey('RequireAdminOnWindows'))
+        if (-not $PSBoundParameters.ContainsKey('ExcludeTag'))
         {
             $ExcludeTag += 'RequireAdminOnWindows'
         }
     }
     elseif ($IsWindows -and (-not $IsAdmin))
     {
-        if (-not $PSBoundParameters.ContainsKey('RequireAdminOnWindows'))
+        if (-not $PSBoundParameters.ContainsKey('ExcludeTag'))
         {
             $ExcludeTag += 'RequireAdminOnWindows'
         }
