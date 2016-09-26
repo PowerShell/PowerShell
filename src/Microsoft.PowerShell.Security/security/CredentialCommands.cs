@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets and sets the user supplied message providing description about which script/function is 
         /// requesting the PSCredential from the user.
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = messageSet)]
+        [Parameter(Mandatory = true, ParameterSetName = messageSet)]
         [ValidateNotNullOrEmpty]
         public string Message
         {
