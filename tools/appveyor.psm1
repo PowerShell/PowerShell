@@ -181,33 +181,25 @@ function Invoke-AppVeyorTest
         throw "CoreCLR PowerShell.exe was not built"
     }
     
-    $coreClrTestParams = @{
-        Tag = @()
-        ExcludeTag = @()
-        Unelevate = $true
-    }
-    
     if(-not (Test-DailyBuild))
     {
         # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
         # https://github.com/pester/Pester/issues/608
         # To work-around it, we exlude all categories, but 'CI' from the list
-        $coreClrTestParams.ExcludeTag += @('Slow', 'Feature', 'Scenario')
+        $ExcludeTag = @('Slow', 'Feature', 'Scenario')
         Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
     }
     else 
     {
+        $ExcludeTag = @()
         Write-Host -Foreground Green 'Running all CoreCLR tests..'
     }
     
-    Start-PSPester -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile @coreClrTestParams
+    Start-PSPester -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
     Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
     Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
 
-    $coreClrTestParams.Tag += 'RequireAdminOnWindows'
-    $coreClrTestParams.Unelevate = $false
-
-    Start-PSPester -bindir $env:CoreOutput -outputFile $testResultsAdminFile @coreClrTestParams
+    Start-PSPester -bindir $env:CoreOutput -outputFile $testResultsAdminFile -Tag @('RequireAdminOnWindows') -ExcludeTag $ExcludeTag
     Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
     Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
     
