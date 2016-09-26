@@ -50,6 +50,14 @@ Describe "InvokeOnRunspace method on remote runspace" -tags "Feature" {
     
     BeforeAll {
         $wc = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
+
+        # Use AppVeyor credentials if running in AppVeyor, rather than implicit credentials.
+        if ($global:AppveyorCredential)
+        {
+            $wc.ComputerName = '127.0.0.1'
+            $wc.Credential = $global:AppveyorCredential
+        }
+
         $remoteRunspace = [runspacefactory]::CreateRunspace($host, $wc)
         $remoteRunspace.Open()
     }

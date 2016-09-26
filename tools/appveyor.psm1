@@ -108,6 +108,20 @@ function Invoke-AppVeyorInstall
         Update-AppveyorBuild -message $buildName
     }
 
+    # Generate credentials for appveyor remoting tests.
+    $randomObj = [System.Random]::new()
+    $password = ""
+    1..(Get-Random -Minimum 15 -Maximum 126) | ForEach { $password = $password + [char]$randomObj.next(45,126) }
+
+    # Update user with new password
+    $objUser = [ADSI]("WinNT://$($env:computername)/appveyor")
+    $objUser.SetPassword($password)
+
+    # Save credentials globally for tests.
+    $ss = ConvertTo-SecureString -String $password -AsPlainText -Force
+    $global:AppveyorCredential = [PSCredential]::new('appveyor', $ss)
+
+
     Set-BuildVariable -Name TestPassed -Value False
     Start-PSBootstrap -Force
 }
