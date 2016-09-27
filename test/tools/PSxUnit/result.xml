@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestResult name="powershell-tests.dll" environment="64-bit .NET (unknown version) [collection-per-class, parallel (8 threads)]" test-framework="xUnit.net 2.2.0.3300" run-date="2016-09-27" run-time="11:28:40" total="1" passed="1" failed="0" skipped="0" time="0.200" errors="0">
+  <errors />
+  <collection total="1" passed="1" failed="0" skipped="0" name="AssemblyLoadContext" time="0.018">
+    <test name="PSTests.PSEnumerableBinderTests.TestIsComObject" type="PSTests.PSEnumerableBinderTests" method="TestIsComObject" time="0.0178747" result="Pass" />
+  </collection>
+</TestResult><?xml version="1.0" encoding="utf-8"?>
+<TestResult name="powershell-tests.dll" environment="64-bit .NET (unknown version) [collection-per-class, parallel (8 threads)]" test-framework="xUnit.net 2.2.0.3300" run-date="2016-09-27" run-time="11:28:40" total="1" passed="1" failed="0" skipped="0" time="0.062" errors="0">
+  <errors />
+  <collection total="1" passed="1" failed="0" skipped="0" name="AssemblyLoadContext" time="0.002">
+    <test name="PSTests.CorePsExtensionsTests.TestEnvironmentOSVersion" type="PSTests.CorePsExtensionsTests" method="TestEnvironmentOSVersion" time="0.0018936" result="Pass" />
+  </collection>
+</TestResult><?xml version="1.0" encoding="utf-8"?>
+<TestResult name="powershell-tests.dll" environment="64-bit .NET (unknown version) [collection-per-class, parallel (8 threads)]" test-framework="xUnit.net 2.2.0.3300" run-date="2016-09-27" run-time="11:28:40" total="1" passed="1" failed="0" skipped="0" time="0.064" errors="0">
+  <errors />
+  <collection total="1" passed="1" failed="0" skipped="0" name="AssemblyLoadContext" time="0.009">
+    <test name="PSTests.PSTypeExtensionsTests.TestIsComObject" type="PSTests.PSTypeExtensionsTests" method="TestIsComObject" time="0.0092431" result="Pass" />
+  </collection>
+</TestResult><?xml version="1.0" encoding="utf-8"?>
+<TestResult name="powershell-tests.dll" environment="64-bit .NET (unknown version) [collection-per-class, parallel (8 threads)]" test-framework="xUnit.net 2.2.0.3300" run-date="2016-09-27" run-time="11:28:40">
+  <errors />
+</TestResult><?xml version="1.0" encoding="utf-8"?>
+<TestResult name="powershell-tests.dll" environment="64-bit .NET (unknown version) [collection-per-class, parallel (8 threads)]" test-framework="xUnit.net 2.2.0.3300" run-date="2016-09-27" run-time="11:28:49" total="1" passed="1" failed="0" skipped="0" time="0.116" errors="0">
+  <errors />
+  <collection total="1" passed="1" failed="0" skipped="0" name="AssemblyLoadContext" time="0.037">
+    <test name="PSTests.FileSystemProviderTests.TestGetHelpMaml" type="PSTests.FileSystemProviderTests" method="TestGetHelpMaml" time="0.0368634" result="Pass" />
+  </collection>
+</TestResult><?xml version="1.0" encoding="utf-8"?>
+<TestResult name="powershell-tests.dll" environment="64-bit .NET (unknown version) [collection-per-class, parallel (8 threads)]" test-framework="xUnit.net 2.2.0.3300" run-date="2016-09-27" run-time="11:28:49" total="1" passed="0" failed="1" skipped="0" time="3.205" errors="0">
+  <errors />
+  <collection total="1" passed="0" failed="1" skipped="0" name="AssemblyLoadContext" time="3.126">
+    <test name="PSTests.FileSystemProviderTests.TestMode" type="PSTests.FileSystemProviderTests" method="TestMode" time="3.1262546" result="Fail">
+      <failure exception-type="Xunit.Sdk.EqualException">
+        <message><![CDATA[Assert.Equal() Failure\r\n             ↓ (pos 3)\r\nExpected: d--hs-\r\nActual:   d-----\r\n             ↑ (pos 3)]]></message>
+        <stack-trace><![CDATA[   at PSTests.FileSystemProviderTests.TestMode() in C:\GitHub\powershell2\PowerShell\test\csharp\test_FileSystemProvider.cs:line 80]]></stack-trace>
+      </failure>
+    </test>
+  </collection>
+</TestResult><?xml version="1.0" encoding="utf-8"?>
+<TestResult name="powershell-tests.dll" environment="64-bit .NET (unknown version) [collection-per-class, parallel (8 threads)]" test-framework="xUnit.net 2.2.0.3300" run-date="2016-09-27" run-time="11:28:52">
+  <errors />
+</TestResult>
