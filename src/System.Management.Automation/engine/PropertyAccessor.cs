@@ -145,41 +145,11 @@ namespace System.Management.Automation
 
             //
             // Sets the per-user configuration directory
+            // Note: This directory may or may not exist depending upon the 
+            // execution scenario. Writes will attempt to create the directory
+            // if it does not already exist.
             //
             appDataConfigDirectory = Utils.GetUserConfigurationDirectory();
-            if (!Directory.Exists(appDataConfigDirectory))
-            {
-                try
-                {
-                    Directory.CreateDirectory(appDataConfigDirectory);
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    // Do nothing now. This failure shouldn't block initialization
-                    appDataConfigDirectory = null;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Enables delayed creation of the user settings directory so it does 
-        /// not interfere with PowerShell initialization
-        /// </summary>
-        /// <returns>Returns the directory if present or creatable. Throws otherwise.</returns>
-        private string GetCurrentUserConfigDirectory()
-        {
-            if (null == appDataConfigDirectory)
-            {
-                string tempAppDataConfigDir = Utils.GetUserConfigurationDirectory();
-                if (!Directory.Exists(tempAppDataConfigDir))
-                {
-                    Directory.CreateDirectory(tempAppDataConfigDir);
-                    // Only assign it if creation succeeds. It will throw if it fails.
-                    appDataConfigDirectory = tempAppDataConfigDir;
-                }
-                // Do not catch exceptions here. Let them flow up.
-            }
-            return appDataConfigDirectory;
         }
 
         /// <summary>
@@ -194,7 +164,7 @@ namespace System.Management.Automation
             // Defaults to system wide.
             if (PropertyScope.CurrentUser == scope)
             {
-                scopeDirectory = GetCurrentUserConfigDirectory();
+                scopeDirectory = appDataConfigDirectory;
             }
 
             string fileName = Path.Combine(scopeDirectory, configFileName);
@@ -229,7 +199,7 @@ namespace System.Management.Automation
             // Defaults to system wide.
             if(PropertyScope.CurrentUser == scope)
             {
-                scopeDirectory = GetCurrentUserConfigDirectory();
+                scopeDirectory = appDataConfigDirectory;
             }
 
             string fileName = Path.Combine(scopeDirectory, configFileName);
@@ -250,7 +220,7 @@ namespace System.Management.Automation
             // Defaults to system wide.
             if (PropertyScope.CurrentUser == scope)
             {
-                scopeDirectory = GetCurrentUserConfigDirectory();
+                scopeDirectory = appDataConfigDirectory;
             }
 
             string fileName = Path.Combine(scopeDirectory, configFileName);
@@ -265,7 +235,12 @@ namespace System.Management.Automation
             // Defaults to system wide.
             if (PropertyScope.CurrentUser == scope)
             {
-                scopeDirectory = GetCurrentUserConfigDirectory();
+                // Exceptions are not caught so that they will propagate to the
+                // host for display to the user.
+                // CreateDirectory will succeed if the directory already exists
+                // so there is no reason to check Directory.Exists().
+                Directory.CreateDirectory(appDataConfigDirectory);
+                scopeDirectory = appDataConfigDirectory;
             }
 
             string fileName = Path.Combine(scopeDirectory, configFileName);
@@ -374,6 +349,11 @@ namespace System.Management.Automation
             {
                 // The file doesn't exist. Treat this the same way as if the 
                 // key was not present in the file.
+            }
+            catch (DirectoryNotFoundException)
+            {
+                // A directory in the path does not exist. Treat this as if the
+                // key is not present in the file.
             }
             finally
             {
@@ -507,7 +487,11 @@ namespace System.Management.Automation
         /// <param name="key"></param>
         private void RemoveValueFromFile<T>(string fileName, string key)
         {
-            UpdateValueInFile<T>(fileName, key, default(T), false);
+            // Optimization: If the file doesn't exist, there is nothing to remove
+            if (File.Exists(fileName))
+            {
+                UpdateValueInFile<T>(fileName, key, default(T), false);
+            }
         }
     }
 
