@@ -537,7 +537,7 @@ function Get-PesterTag {
         foreach( $describe in $des) {
             $elements = $describe.CommandElements
             $lineno = $elements[0].Extent.StartLineNumber
-            $foundTag = $false
+            $foundPriorityTags = @()
             for ( $i = 0; $i -lt $elements.Count; $i++) {
                 if ( $elements[$i].extent.text -match "^-t" ) {
                     $vAst = $elements[$i+1]
@@ -550,7 +550,7 @@ function Get-PesterTag {
                             # These are valid tags also, but they are not the priority tags
                         }
                         elseif (@('CI', 'FEATURE', 'SCENARIO') -contains $_) {
-                            $foundTag = $true
+                            $foundPriorityTags += $_
                         }
                         else {
                             $warnings += "${fullname} includes improper tag '$_', line '$lineno'"
@@ -560,8 +560,11 @@ function Get-PesterTag {
                     }
                 }
             }
-            if ( ! $foundTag ) {
-                $warnings += "${fullname} does not include -Tag in Describe, line '$lineno'"
+            if ( $foundPriorityTags.Count -eq 0 ) {
+                $warnings += "${fullname}:$lineno does not include -Tag in Describe"
+            }
+            elseif ( $foundPriorityTags.Count -gt 1 ) {
+                $warnings += "${fullname}:$lineno includes more then one scope -Tag: $foundPriorityTags"
             }
         }
     }
