@@ -2868,6 +2868,25 @@ namespace Microsoft.PowerShell
         private System.Threading.Thread _breakHandlerThread;
         private bool _isDisposed;
         internal ConsoleHostUserInterface ui;
+
+#if CORECLR
+        internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() => Console.In);
+#else
+        internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() =>
+        {
+            // This is a workaround for a full clr issue that causes a hang when calling PowerShell from ruby.
+            // They use named pipes instead of anonymous pipes, and for some reason that triggers a hang
+            // reading from Console.In.
+            var inputHandle = ConsoleControl.NativeMethods.GetStdHandle(-10);
+            var s = new FileStream(new ConsoleHandle(inputHandle, false), FileAccess.Read);
+
+            uint codePage = (uint) ConsoleControl.NativeMethods.GetConsoleCP();
+            Encoding encoding = Encoding.GetEncoding((int) codePage);
+
+            return TextReader.Synchronized(new StreamReader(s, encoding, false));
+        });
+#endif
+
         private string _savedWindowTitle = "";
         private Version _ver = PSVersionInfo.PSVersion;
         private int _exitCodeFromRunspace;

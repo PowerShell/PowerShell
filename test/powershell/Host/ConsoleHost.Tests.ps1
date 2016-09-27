@@ -227,6 +227,12 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $process.StandardInput.Write("1+2`n")
             $process.StandardOutput.ReadLine() | Should Be "PS> 1+2"
             $process.StandardOutput.ReadLine() | Should Be "3"
+
+            # Backspace should work as expected
+            $process.StandardInput.Write("1+2`b3`n")
+            # A real console should render 2`b3 as just 3, but we're just capturing exactly what is written
+            $process.StandardOutput.ReadLine() | Should Be "PS> 1+2`b3"
+            $process.StandardOutput.ReadLine() | Should Be "4"
             $process.StandardInput.Close()
             $process.StandardOutput.ReadToEnd() | Should Be "PS> "
             EnsureChildHasExited $process
@@ -279,7 +285,16 @@ foo
 "@)
             $process.StandardOutput.ReadLine() | Should Be "in foo"
 
+            # Backspace sent through stdin should be in the final string
+            $process.StandardInput.Write("`"a`bc`".Length`n")
+            $process.StandardOutput.ReadLine() | Should Be "3"
+
+            # Last command with no newline - should be accepted and
+            # produce output after closing stdin.
+            $process.StandardInput.Write('22 + 22')
             $process.StandardInput.Close()
+            $process.StandardOutput.ReadLine() | Should Be "44"
+
             EnsureChildHasExited $process
         }
 
