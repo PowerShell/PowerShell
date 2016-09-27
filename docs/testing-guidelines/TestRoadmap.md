@@ -81,7 +81,7 @@ We need to be sure that we can easily enable remoting for the non-Windows platfo
 The infrastructure used for these tests is STEX which is not an open environment.
 We will need to create automation to create and configure the test systems in the test matrix and then invoke tests on them.
 It is not clear that our current CI systems can accomodate our needs here as neither AppVeyor or Travis can supply us with all of the OS images needed.
-We may need to create our own heterogeneous environment in Azure, or look to other teams (MS Build Lab) for assistance.
+We may need to create our own heterogeneous environment in Azure, or look to other teams (MS Build Lab/Jenkins) for assistance.
 
 We need to investigate whether there are solutions available, and if not, design/implement an environment to meet our needs.
 
@@ -94,7 +94,7 @@ We are also collecting data for a daily build, but not yet report on the followi
 
 There are a number of KPIs which we could report on:
 * Code KPIs
-    * What is the coverage of our `CI` tests
+    * What is the coverage (% blocks covered) of our `CI` tests
     * What is the coverage of all tests
     * How long is the CI system taking
         * build time
@@ -135,7 +135,8 @@ We must start defining the release criteria for a production ready release of Po
 * No open issues for the release
 * 80% code coverage of high use cmdlets (cmdlets used by 70% of users, as captured via telemetry)
 * 90% code coverage of language elements (coverage error code paths may not be 100%) 
-* 60% Code Coverage on Windows via Github tests
+* 60% code Coverage on Windows via Github tests
+* 100% of our mininum remoting matrix tested
 * Acceptance by 50% PowerShell MVPs (via Survey)
 * Acceptance by Partners (via Survey)
 
