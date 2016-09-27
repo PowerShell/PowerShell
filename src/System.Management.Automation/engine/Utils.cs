@@ -996,7 +996,27 @@ namespace System.Management.Automation
                     Win32Exception win32Exception = new Win32Exception(errorCode);
                     exception = new UnauthorizedAccessException(win32Exception.Message, win32Exception);
                 }
-
+                else if (errorCode == 32)
+                {
+                    // Errorcode 32 is 'ERROR_SHARING_VIOLATION' i.e. 
+                    // The process cannot access the file because it is being used by another process.
+                    // GetFileAttributes may return INVALID_FILE_ATTRIBUTES for a system file or directory because of this error.
+                    // GetFileAttributes function tries to open the file with FILE_READ_ATTRIBUTES access right but it fails if the
+                    // sharing flag for the file is set to 0x00000000.This flag prevents it from opening a file for delete, read, or
+                    // write access. For example: C:\pagefile.sys is always opened by OS with sharing flag 0x00000000. 
+                    // But FindFirstFile is still able to get attributes as this api retrieves the required information using a find
+                    // handle generated with FILE_LIST_DIRECTORY access.
+                    // Fall back to FindFirstFile to check if the file actually exists.
+                    IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
+                    NativeMethods.WIN32_FIND_DATA findData;
+                    IntPtr findHandle = NativeMethods.FindFirstFile(path, out findData);
+                    if (findHandle != INVALID_HANDLE_VALUE)
+                    {
+                        isDirectory = (findData.dwFileAttributes & NativeMethods.FileAttributes.Directory) != 0;
+                        NativeMethods.FindClose(findHandle);
+                        return true;
+                    }
+                }
                 else if (errorCode == 53)
                 {
                     // ERROR_BAD_NETPATH - The network path was not found.
