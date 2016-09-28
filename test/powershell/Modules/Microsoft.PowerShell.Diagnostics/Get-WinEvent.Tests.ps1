@@ -58,6 +58,20 @@ Describe 'Get-WinEvent' -Tags "CI" {
             $results = Get-WinEvent -filterHashtable $filter
             $results | Should not BeNullOrEmpty
         }
+        It 'Get-WinEvent can retrieve event via XmlQuery' {
+            $level = $events[0].Level
+            $logname = $providerForTests.loglinks.logname
+            $filter = "<QueryList><Query><Select Path='${logname}'>*[System[Level=${level}]]</Select></Query></QueryList>"
+            $results = Get-WinEvent -filterXml $filter -max 3
+            $results | should Not BeNullOrEmpty
+        }
+        It 'Get-WinEvent can retrieve event via XPath' {
+            $level = $events[0].Level
+            $logname  = $providerForTests.loglinks.logname
+            $xpathFilter = "*[System[Level=$level]]"
+            $results = Get-WinEvent -logname $logname -filterXPath $xpathFilter -max 3
+            $results | should Not BeNullOrEmpty
+        }
     }
     # Get-WinEvent works only on windows
     It 'can query a System log' {
