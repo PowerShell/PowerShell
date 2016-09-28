@@ -170,6 +170,7 @@ function Start-PSBuild {
     # set output options
     $OptionsArguments = @{
         Publish=$Publish
+        CrossGen=$CrossGen
         Output=$Output
         FullCLR=$FullCLR
         Runtime=$Runtime
@@ -392,6 +393,9 @@ function New-PSOptions {
         [string]$Runtime,
 
         [switch]$Publish,
+
+        [switch]$CrossGen,
+
         [string]$Output,
 
         [switch]$FullCLR,
@@ -402,27 +406,39 @@ function New-PSOptions {
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
+    $ConfigWarningMsg = "The passed-in Configuration value '{0}' is not supported on '{1}'. Use '{2}' instead."
     if (-not $Configuration) {
         $Configuration = if ($IsLinux -or $IsOSX) {
             "Linux"
         } elseif ($IsWindows) {
             "Debug"
         }
-        Write-Verbose "Using configuration '$Configuration'"
-    }
-
-    if ($FullCLR) {
-        $Top = "$PSScriptRoot/src/powershell-win-full"
     } else {
-        if ($Configuration -eq 'Linux')
-        {
-            $Top = "$PSScriptRoot/src/powershell-unix"
-        }
-        else
-        {
-            $Top = "$PSScriptRoot/src/powershell-win-core"
+        switch ($Configuration) {
+            "Linux" {
+                if ($IsWindows) {
+                    $Configuration = "Debug"
+                    Write-Warning ($ConfigWarningMsg -f $switch.Current, "Windows", $Configuration)
+                }
+            }
+            Default {
+                if ($IsLinux -or $IsOSX) {
+                    $Configuration = "Linux"
+                    Write-Warning ($ConfigWarningMsg -f $switch.Current, $LinuxInfo.PRETTY_NAME, $Configuration)
+                }
+            }
         }
     }
+    Write-Verbose "Using configuration '$Configuration'"
+
+    $PowerShellDir = if ($FullCLR) {
+        "powershell-win-full"
+    } elseif ($Configuration -eq 'Linux') {
+        "powershell-unix"
+    } else {
+        "powershell-win-core"
+    }
+    $Top = [IO.Path]::Combine($PSScriptRoot, "src", $PowerShellDir)
     Write-Verbose "Top project directory is $Top"
 
 
@@ -472,7 +488,7 @@ function New-PSOptions {
     $RealFramework = $Framework
     if ($SMAOnly)
     {
-        $Top = "$PSScriptRoot/src/System.Management.Automation"
+        $Top = [IO.Path]::Combine($PSScriptRoot, "src", "System.Management.Automation")
         if ($Framework -match 'netcoreapp')
         {
             $RealFramework = 'netstandard1.6'
@@ -483,7 +499,9 @@ function New-PSOptions {
               Configuration = $Configuration;
               Framework = $RealFramework;
               Runtime = $Runtime;
-              Output = $Output }
+              Output = $Output;
+              Publish = $Publish;
+              CrossGen = $CrossGen }
 }
 
 
@@ -931,28 +949,57 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, and OS X, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "appx")]
-        [string[]]$Types
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "appx", "zip")]
+        [string[]]$Type,
+
+        # Generate windows downlevel package 
+        [ValidateSet("win81-x64", "win7-x64")]
+        [ValidateScript({$IsWindows})]
+        [string]$WindowsDownLevel
     )
+
+    # Runtime and Configuration settings required by the package
+    ($Runtime, $Configuration) = if ($WindowsDownLevel) {
+        $WindowsDownLevel, "Release"
+    } else {
+        New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+    }
+    Write-Verbose "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'" -Verbose
+
+    # Make sure the most recent build satisfies the package requirement
+    if (-not $Script:Options -or                       ## Start-PSBuild hasn't been executed yet
+        -not $Script:Options.CrossGen -or              ## Last build didn't specify -CrossGen
+        $Script:Options.Runtime -ne $Runtime -or       ## Last build wasn't for the required RID
+        $Script:Options.Configuration -eq "Debug" -or  ## Last build was with 'Debug' configuration
+        $Script:Options.Framework -ne "netcoreapp1.0") ## Last build wasn't for CoreCLR
+    {
+        # It's possible that the most recent build doesn't satisfy the package requirement but
+        # an earlier build does. e.g., run the following in order on win10-x64:
+        #    Start-PSBuild -Clean -CrossGen -Runtime win10-x64 -Configuration Release
+        #    Start-PSBuild -FullCLR
+        #    Start-PSPackage -Type msi
+        # It's also possible that the last build actually satisfies the package requirement but
+        # then `Start-PSPackage` runs from a new PS session or `build.psm1` was reloaded.
+        #
+        # In these cases, the user will be asked to build again even though it's technically not
+        # necessary. However, we want it that way -- being very explict when generating packages.
+        # This check serves as a simple gate to ensure that the user knows what he is doing, and
+        # also ensure `Start-PSPackage` does what the user asks/expects, because once packages
+        # are generated, it'll be hard to verify if they were built from the correct content.
+        throw "Please ensure you have run 'Start-PSBuild -Clean -CrossGen -Runtime $Runtime -Configuration $Configuration'!"
+    }
 
     # Use Git tag if not given a version
     if (-not $Version) {
         $Version = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
     }
 
-    if ($IsWindows) {
-        Write-Warning "Please ensure you have previously run Start-PSBuild -Clean -CrossGen -Configuration Release!"
-        $Source = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish -Configuration Release))
-    } else {
-        Write-Warning "Please ensure you have previously run Start-PSBuild -Clean -CrossGen!"
-        $Source = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
-    }
-
-    Write-Verbose "Packaging $Source"
+    $Source = Split-Path -Path $Script:Options.Output -Parent
+    Write-Verbose "Packaging Source: '$Source'" -Verbose
 
     # Decide package output type
-    if (-not $Types) {
-        $Types = if ($IsLinux) {
+    if (-not $Type) {
+        $Type = if ($IsLinux) {
             if ($LinuxInfo.ID -match "ubuntu") {
                 "deb"
             } elseif ($LinuxInfo.ID -match "centos") {
@@ -965,12 +1012,27 @@ function Start-PSPackage {
         } elseif ($IsWindows) {
             "msi", "appx"
         }
-        Write-Warning "-Types was not specified, continuing with $Types!"
+        Write-Warning "-Type was not specified, continuing with $Type!"
     }
 
-    switch ($Types) {
+    # Build the name suffix for win-plat packages
+    if ($IsWindows) {
+        $VersionTokens = $Version -split "-"
+        if ($VersionTokens.Count -gt 1) {
+            # Get the suffix like 'alpha.10-win81-x64'
+            $NameSuffix = $VersionTokens[1], $Runtime -join "-"
+        }
+    }
+
+    switch ($Type) {
+        "zip" {
+            $zipPackagePath = Join-Path $PWD "$Name-$Version-$Runtime.zip"
+            Compress-Archive -Path $Source\* -DestinationPath $zipPackagePath
+            Write-Output $zipPackagePath
+        }
         "msi" {
             $Arguments = @{
+                ProductNameSuffix = $NameSuffix
                 ProductSourcePath = $Source;
                 ProductVersion = $Version;
                 AssetsPath = "$PSScriptRoot\assets";
@@ -982,6 +1044,7 @@ function Start-PSPackage {
         }
         "appx" {
             $Arguments = @{
+                PackageNameSuffix = $NameSuffix
                 PackageVersion = $Version;
                 SourcePath = $Source;
                 AssetsPath = "$PSScriptRoot\assets"
@@ -1925,7 +1988,7 @@ function Get-PackageVersionAsMajorMinorBuildRevision
     } elseif (1 -lt $packageVersionTokens.Count) {
         # We have all the four fields
         $packageBuildTokens = ([regex]::Matches($packageVersionTokens[1], "\d+"))[0].value
-        $packageVersion = $packageVersion + '.' + $packageBuildTokens[0]
+        $packageVersion = $packageVersion + '.' + $packageBuildTokens
     }
 
     return $packageVersion
@@ -1938,7 +2001,10 @@ function New-MSIPackage
     
         # Name of the Product
         [ValidateNotNullOrEmpty()]
-        [string] $ProductName = 'PowerShell', 
+        [string] $ProductName = 'PowerShell',
+
+        # Suffix of the Name
+        [string] $ProductNameSuffix,
 
         # Version of the Product
         [Parameter(Mandatory = $true)]
@@ -1956,7 +2022,7 @@ function New-MSIPackage
 
         # File describing the MSI Package creation semantics
         [ValidateNotNullOrEmpty()]
-        [string] $ProductWxsPath = (Join-Path $pwd '\assets\Product.wxs'),
+        [string] $ProductWxsPath = "$PSScriptRoot\assets\Product.wxs",
 
         # Path to Assets folder containing artifacts such as icons, images
         [Parameter(Mandatory = $true)]
@@ -1968,14 +2034,14 @@ function New-MSIPackage
         [ValidateNotNullOrEmpty()]
         [string] $LicenseFilePath
 
-    )    
+    )
 
     $wixToolsetBinPath = "${env:ProgramFiles(x86)}\WiX Toolset v3.10\bin"
 
     Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
     if (-not (Test-Path $wixToolsetBinPath))
     {
-        throw "Install Wix Toolset prior to running this script - https://wix.codeplex.com/downloads/get/1540240"
+        throw "Wix Toolset is required to create MSI package. Please install Wix from https://wix.codeplex.com/downloads/get/1540240"
     }
 
     Write-Verbose "Initialize Wix executables - Heat.exe, Candle.exe, Light.exe"
@@ -1985,10 +2051,8 @@ function New-MSIPackage
 
     $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion -Verbose
     
-    $assetsInSourcePath = "$ProductSourcePath" + '\assets'
-    New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
-
     $assetsInSourcePath = Join-Path $ProductSourcePath 'assets'
+    New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
 
     Write-Verbose "Place dependencies such as icons to $assetsInSourcePath" 
     Copy-Item "$AssetsPath\*.ico" $assetsInSourcePath -Force
@@ -2005,13 +2069,17 @@ function New-MSIPackage
     $wixFragmentPath = (Join-path $env:Temp "Fragment.wxs")
     $wixObjProductPath = (Join-path $env:Temp "Product.wixobj")
     $wixObjFragmentPath = (Join-path $env:Temp "Fragment.wixobj")
-    
-    $msiLocationPath = Join-Path $pwd "$productVersionWithName.msi"    
+
+    $packageName = $productVersionWithName
+    if ($ProductNameSuffix) {
+        $packageName += "-$ProductNameSuffix"
+    }
+    $msiLocationPath = Join-Path $pwd "$packageName.msi"    
     Remove-Item -ErrorAction SilentlyContinue $msiLocationPath -Force
 
     & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v | Write-Verbose
     & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -arch x64 -v | Write-Verbose
-    & $wixLightExePath -out "$productVersionWithName.msi" $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -dWixUILicenseRtf="$LicenseFilePath" -v | Write-Verbose
+    & $wixLightExePath -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -dWixUILicenseRtf="$LicenseFilePath" -v | Write-Verbose
     
     Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
 
@@ -2028,6 +2096,9 @@ function New-AppxPackage
         # Name of the Package
         [ValidateNotNullOrEmpty()]
         [string] $PackageName = 'PowerShell',
+
+        # Suffix of the Name
+        [string] $PackageNameSuffix,
 
         # Version of the Package
         [Parameter(Mandatory = $true)]
@@ -2103,15 +2174,16 @@ function New-AppxPackage
     Write-Verbose "Place Appx Manifest in $SourcePath"
     $appxManifest | Out-File "$SourcePath\AppxManifest.xml" -Force
 
-    $assetsInSourcePath = "$SourcePath" + '\Assets'
-    New-Item $assetsInSourcePath -type directory -Force | Out-Null
-
     $assetsInSourcePath = Join-Path $SourcePath 'Assets'
+    New-Item $assetsInSourcePath -type directory -Force | Out-Null
 
     Write-Verbose "Place AppxManifest dependencies such as images to $assetsInSourcePath"
     Copy-Item "$AssetsPath\*.png" $assetsInSourcePath -Force
 
     $appxPackageName = $PackageName + "_" + $PackageVersion
+    if ($PackageNameSuffix) {
+        $appxPackageName = $appxPackageName, $PackageNameSuffix -join "-"
+    }
     $appxPackagePath = "$pwd\$appxPackageName.appx"
     Write-Verbose "Calling MakeAppx from $makeappxExePath to create the package @ $appxPackagePath"
     & $makeappxExePath pack /o /v /d $SourcePath  /p $appxPackagePath | Write-Verbose
