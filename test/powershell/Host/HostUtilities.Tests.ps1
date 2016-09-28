@@ -46,32 +46,37 @@ Describe "InvokeOnRunspace method as nested command" -tags "Feature" {
     }
 }
 
-Describe "InvokeOnRunspace method on remote runspace" -tags "Feature" {
+Describe "InvokeOnRunspace method on remote runspace" -tags "CI" {
     
     BeforeAll {
-        $wc = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
 
-        # Use AppVeyor credentials if running in AppVeyor, rather than implicit credentials.
-        if ($global:AppveyorCredential)
-        {
-            $wc.ComputerName = '127.0.0.1'
-            $wc.Credential = $global:AppveyorCredential
+        $script:skipTest = $true
+        It "Set up remoting session for test" {
+            $wc = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
+
+            # Use AppVeyor credentials if running in AppVeyor, rather than implicit credentials.
+            if ($global:AppveyorRemoteCredential)
+            {
+                $wc.Credential = $global:AppveyorRemoteCredential
+            }
+
+            $script:remoteRunspace = [runspacefactory]::CreateRunspace($host, $wc)
+            $script:remoteRunspace.Open()
+
+            $script:skipTest = $false
         }
-
-        $remoteRunspace = [runspacefactory]::CreateRunspace($host, $wc)
-        $remoteRunspace.Open()
     }
 
     AfterAll {
-        $remoteRunspace.Dispose();
+        $script:remoteRunspace.Dispose();
     }
 
-    It "Method should successfully invoke command on remote runspace" {
+    It "Method should successfully invoke command on remote runspace" -Skip:$script:skipTest {
 
         $command = [System.Management.Automation.PSCommand]::new()
         $command.AddScript('"Hello!"')
 
-        $results = [System.Management.Automation.HostUtilities]::InvokeOnRunspace($command, $remoteRunspace)
+        $results = [System.Management.Automation.HostUtilities]::InvokeOnRunspace($command, $script:remoteRunspace)
 
         $results[0] | Should Be "Hello!"
     }
