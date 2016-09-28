@@ -357,11 +357,16 @@ namespace System.Management.Automation
                 using (StreamReader streamRdr = new StreamReader(fs))
                 using (JsonTextReader jsonReader = new JsonTextReader(streamRdr))
                 {
-                    JObject jsonObject = (JObject) JToken.ReadFrom(jsonReader);
-                    JToken value = jsonObject.GetValue(key);
-                    if (null != value)
+                    // Safely determines whether there is content to read from the file
+                    bool isReadSuccess = jsonReader.Read();
+                    if (isReadSuccess)
                     {
-                        return value.ToObject<T>();
+                        JObject jsonObject = (JObject) JToken.ReadFrom(jsonReader);
+                        JToken value = jsonObject.GetValue(key);
+                        if (null != value)
+                        {
+                            return value.ToObject<T>();
+                        }
                     }
                 }
             }
