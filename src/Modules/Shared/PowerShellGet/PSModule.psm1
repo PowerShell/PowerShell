@@ -14,13 +14,13 @@ Microsoft.PowerShell.Core\Set-StrictMode -Version Latest
 # Check if this is nano server. [System.Runtime.Loader.AssemblyLoadContext] is only available on NanoServer
 $script:isNanoServer = $null -ne ('System.Runtime.Loader.AssemblyLoadContext' -as [Type])
 
-function IsInbox { $PSHOME.EndsWith('\WindowsPowerShell\v1.0', [System.StringComparison]::OrdinalIgnoreCase) }
-function IsWindows { $PSVariable = Get-Variable -Name IsWindows -ErrorAction Ignore; return (-not $PSVariable -or $PSVariable.Value) }
-function IsLinux { $PSVariable = Get-Variable -Name IsLinux -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
-function IsOSX { $PSVariable = Get-Variable -Name IsOSX -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
-function IsCoreCLR { $PSVariable = Get-Variable -Name IsCoreCLR -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
+$script:IsInbox = $PSHOME.EndsWith('\WindowsPowerShell\v1.0', [System.StringComparison]::OrdinalIgnoreCase)
+$script:IsWindows = (-not (Get-Variable -Name IsWindows -ErrorAction Ignore)) -or $IsWindows
+$script:IsLinux = (Get-Variable -Name IsLinux -ErrorAction Ignore) -and $IsLinux
+$script:IsOSX = (Get-Variable -Name IsOSX -ErrorAction Ignore) -and $IsOSX
+$script:IsCoreCLR = (Get-Variable -Name IsCoreCLR -ErrorAction Ignore) -and $IsCoreCLR
 
-if(IsInbox)
+if($script:IsInbox)
 {
     $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath "WindowsPowerShell"
 }
@@ -29,7 +29,7 @@ else
     $script:ProgramFilesPSPath = $PSHome
 }
 
-if(IsInbox)
+if($script:IsInbox)
 {
     try
     {
@@ -49,7 +49,7 @@ if(IsInbox)
                                     Microsoft.PowerShell.Management\Join-Path -Path $env:USERPROFILE -ChildPath "Documents\WindowsPowerShell"
                                 }
 }
-elseif(IsWindows)
+elseif($script:IsWindows)
 {
     $script:MyDocumentsPSPath = Microsoft.PowerShell.Management\Join-Path -Path $HOME -ChildPath 'Documents\PowerShell'
 }
@@ -65,10 +65,10 @@ $script:ProgramFilesScriptsPath = Microsoft.PowerShell.Management\Join-Path -Pat
 
 $script:MyDocumentsScriptsPath = Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsPSPath -ChildPath "Scripts"
 
-$script:TempPath = if(IsWindows){ ([System.IO.DirectoryInfo]$env:TEMP).FullName } else { '/tmp' }
+$script:TempPath = if($script:IsWindows){ ([System.IO.DirectoryInfo]$env:TEMP).FullName } else { '/tmp' }
 $script:PSGetItemInfoFileName = "PSGetModuleInfo.xml"
 
-if(IsWindows)
+if($script:IsWindows)
 {
     $script:PSGetProgramDataPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramData -ChildPath 'Microsoft\Windows\PowerShell\PowerShellGet\'
     $script:PSGetAppLocalPath = Microsoft.PowerShell.Management\Join-Path -Path $env:LOCALAPPDATA -ChildPath 'Microsoft\Windows\PowerShell\PowerShellGet\'
@@ -123,8 +123,8 @@ $script:NuGetProviderVersion  = [Version]'2.8.5.201'
 
 $script:SupportsPSModulesFeatureName="supports-powershell-modules"
 $script:FastPackRefHashtable = @{}
-$script:NuGetBinaryProgramDataPath=if(IsWindows) {"$env:ProgramFiles\PackageManagement\ProviderAssemblies"}
-$script:NuGetBinaryLocalAppDataPath=if(IsWindows) {"$env:LOCALAPPDATA\PackageManagement\ProviderAssemblies"}
+$script:NuGetBinaryProgramDataPath=if($script:IsWindows) {"$env:ProgramFiles\PackageManagement\ProviderAssemblies"}
+$script:NuGetBinaryLocalAppDataPath=if($script:IsWindows) {"$env:LOCALAPPDATA\PackageManagement\ProviderAssemblies"}
 # go fwlink for 'https://nuget.org/nuget.exe'
 $script:NuGetClientSourceURL = 'https://go.microsoft.com/fwlink/?LinkID=690216&clcid=0x409'
 $script:NuGetExeName = 'NuGet.exe'
@@ -430,7 +430,28 @@ Microsoft.PowerShell.Utility\Import-LocalizedData  LocalizedData -filename PSGet
 # This code is required to add a .Net type and call the Telemetry APIs 
 # This is required since PowerShell does not support generation of .Net Anonymous types
 #
-$requiredAssembly = @( "system.management.automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" )
+$requiredAssembly = @( [System.Management.Automation.PSCmdlet].Assembly.FullName )
+
+$script:IsSafeX509ChainHandleAvailable = ($null -ne ('Microsoft.Win32.SafeHandles.SafeX509ChainHandle' -as [Type]))
+
+if($script:IsSafeX509ChainHandleAvailable)
+{  
+   # It is not possible to define a single internal SafeHandle class in PowerShellGet namespace for all the supported versions of .Net Framework including .Net Core.
+   # SafeHandleZeroOrMinusOneIsInvalid is not a public class on .Net Core,
+   # therefore SafeX509ChainHandle will be used if it is available otherwise InternalSafeX509ChainHandle is defined below.
+   #
+   # ChainContext is not available on .Net Core, we must have to use SafeX509ChainHandle on .Net Core.
+   #
+   $SafeX509ChainHandleClassName = 'SafeX509ChainHandle'      
+   $requiredAssembly += [Microsoft.Win32.SafeHandles.SafeX509ChainHandle].Assembly.FullName
+}
+else
+{
+   # SafeX509ChainHandle is not available on .Net Framework 4.5 or older versions,
+   # therefore InternalSafeX509ChainHandle is defined below.
+   #
+   $SafeX509ChainHandleClassName = 'InternalSafeX509ChainHandle'
+}
 
 $source = @" 
 using System; 
@@ -439,6 +460,9 @@ using System.Management.Automation;
 using Microsoft.Win32.SafeHandles;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
+using System.Runtime.ConstrainedExecution;
+using System.Runtime.Versioning;
+using System.Security;
 
 namespace Microsoft.PowerShell.Commands.PowerShellGet 
 { 
@@ -484,22 +508,87 @@ namespace Microsoft.PowerShell.Commands.PowerShellGet
         public IntPtr pvExtraPolicyStatus; 
     }
 
+    // Internal SafeHandleZeroOrMinusOneIsInvalid class to remove the dependency on .Net Framework 4.6.
+    public abstract class InternalSafeHandleZeroOrMinusOneIsInvalid : SafeHandle
+    {
+        protected InternalSafeHandleZeroOrMinusOneIsInvalid(bool ownsHandle)
+            : base(IntPtr.Zero, ownsHandle)
+        {
+        }
+
+        public override bool IsInvalid
+        {
+            get
+            {
+                return handle == IntPtr.Zero || handle == new IntPtr(-1);
+            }
+        }
+    }
+
+    // Internal SafeX509ChainHandle class to remove the dependency on .Net Framework 4.6.
+    [SecurityCritical]
+    public sealed class InternalSafeX509ChainHandle : InternalSafeHandleZeroOrMinusOneIsInvalid { 
+        private InternalSafeX509ChainHandle () : base(true) {}
+ 
+        internal InternalSafeX509ChainHandle (IntPtr handle) : base (true) {
+            SetHandle(handle); 
+        }
+  
+        internal static InternalSafeX509ChainHandle InvalidHandle { 
+            get { return new InternalSafeX509ChainHandle(IntPtr.Zero); }
+        } 
+ 
+        [SecurityCritical]
+        override protected bool ReleaseHandle() 
+        {
+            CertFreeCertificateChain(handle);
+            return true;
+        } 
+
+        [DllImport("Crypt32.dll", SetLastError=true)]
+$(if(-not $script:isNanoServer)
+{
+        '
+        [SuppressUnmanagedCodeSecurity,
+         ResourceExposure(ResourceScope.None),
+         ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+        '
+})
+        private static extern void CertFreeCertificateChain(IntPtr handle); 
+    }
+
     public class Win32Helpers
     {
         [DllImport("Crypt32.dll", CharSet=CharSet.Auto, SetLastError=true)]
         public extern static 
         bool CertVerifyCertificateChainPolicy(
             [In]     IntPtr                       pszPolicyOID,
-            [In]     SafeX509ChainHandle pChainContext,
+            [In]     $SafeX509ChainHandleClassName  pChainContext,
             [In]     ref CERT_CHAIN_POLICY_PARA   pPolicyPara,
             [In,Out] ref CERT_CHAIN_POLICY_STATUS pPolicyStatus);
 
         [DllImport("Crypt32.dll", CharSet=CharSet.Auto, SetLastError=true)]
         public static extern
-        SafeX509ChainHandle CertDuplicateCertificateChain(
+        $SafeX509ChainHandleClassName CertDuplicateCertificateChain(
             [In]     IntPtr pChainContext);
 
-        public static bool IsMicrosoftCertificate([In] SafeX509ChainHandle pChainContext)
+$(if($script:IsSafeX509ChainHandleAvailable)
+{
+@"
+        [DllImport("Crypt32.dll", CharSet=CharSet.Auto, SetLastError=true)]
+    $(if(-not $script:isNanoServer)
+    {
+    '
+        [ResourceExposure(ResourceScope.None)]
+    '
+    })
+        public static extern
+        SafeX509ChainHandle CertDuplicateCertificateChain(
+            [In]     SafeX509ChainHandle pChainContext);
+"@
+})
+
+        public static bool IsMicrosoftCertificate([In] $SafeX509ChainHandleClassName pChainContext)
         {
             //-------------------------------------------------------------------------
             //  CERT_CHAIN_POLICY_MICROSOFT_ROOT  
@@ -525,7 +614,7 @@ namespace Microsoft.PowerShell.Commands.PowerShellGet
             //  to NULL.  
             //--------------------------------------------------------------------------  
             const uint MICROSOFT_ROOT_CERT_CHAIN_POLICY_ENABLE_TEST_ROOT_FLAG       = 0x00010000;
-            //const uint MICROSOFT_ROOT_CERT_CHAIN_POLICY_CHECK_APPLICATION_ROOT_FLAG = 0x00020000;
+            const uint MICROSOFT_ROOT_CERT_CHAIN_POLICY_CHECK_APPLICATION_ROOT_FLAG = 0x00020000;
             //const uint MICROSOFT_ROOT_CERT_CHAIN_POLICY_DISABLE_FLIGHT_ROOT_FLAG    = 0x00040000;
 
             CERT_CHAIN_POLICY_PARA PolicyPara = new CERT_CHAIN_POLICY_PARA(Marshal.SizeOf(typeof(CERT_CHAIN_POLICY_PARA)));
@@ -533,16 +622,39 @@ namespace Microsoft.PowerShell.Commands.PowerShellGet
             int CERT_CHAIN_POLICY_MICROSOFT_ROOT = 7;
             
             PolicyPara.dwFlags = (uint) MICROSOFT_ROOT_CERT_CHAIN_POLICY_ENABLE_TEST_ROOT_FLAG;
-            
-            if(!CertVerifyCertificateChainPolicy(new IntPtr(CERT_CHAIN_POLICY_MICROSOFT_ROOT),
-                                                 pChainContext,
-                                                 ref PolicyPara,
-                                                 ref PolicyStatus))
+            bool isMicrosoftRoot = false;
+
+            if(CertVerifyCertificateChainPolicy(new IntPtr(CERT_CHAIN_POLICY_MICROSOFT_ROOT),
+                                                pChainContext,
+                                                ref PolicyPara,
+                                                ref PolicyStatus))
             {
-                return false;
+                isMicrosoftRoot = (PolicyStatus.dwError == 0);
             }
 
-            return (PolicyStatus.dwError == 0);
+            // Also check for the Microsoft root for application signing if the Microsoft product root verification is unsuccessful.
+            if(!isMicrosoftRoot)
+            {
+                // Some Microsoft modules can be signed with Microsoft Application Root instead of Microsoft Product Root,
+                // So we need to use the MICROSOFT_ROOT_CERT_CHAIN_POLICY_CHECK_APPLICATION_ROOT_FLAG for the certificate verification.
+                // MICROSOFT_ROOT_CERT_CHAIN_POLICY_CHECK_APPLICATION_ROOT_FLAG can not be used
+                // with MICROSOFT_ROOT_CERT_CHAIN_POLICY_ENABLE_TEST_ROOT_FLAG,
+                // so additional CertVerifyCertificateChainPolicy call is required to verify the given certificate is in Microsoft Application Root.
+                //
+                CERT_CHAIN_POLICY_PARA PolicyPara2 = new CERT_CHAIN_POLICY_PARA(Marshal.SizeOf(typeof(CERT_CHAIN_POLICY_PARA)));
+                CERT_CHAIN_POLICY_STATUS PolicyStatus2 = new CERT_CHAIN_POLICY_STATUS(Marshal.SizeOf(typeof(CERT_CHAIN_POLICY_STATUS)));
+                PolicyPara2.dwFlags = (uint) MICROSOFT_ROOT_CERT_CHAIN_POLICY_CHECK_APPLICATION_ROOT_FLAG;
+
+                if(CertVerifyCertificateChainPolicy(new IntPtr(CERT_CHAIN_POLICY_MICROSOFT_ROOT),
+                                                    pChainContext,
+                                                    ref PolicyPara2,
+                                                    ref PolicyStatus2))
+                {
+                    isMicrosoftRoot = (PolicyStatus2.dwError == 0);
+                }
+            }
+
+            return isMicrosoftRoot;
         }
     }
 } 
@@ -567,7 +679,7 @@ catch
     # Ignore the error and try adding the type below
 }
 
-if(-not $script:TelemetryEnabled -and (IsWindows))
+if(-not $script:TelemetryEnabled -and $script:IsWindows)
 {
     try
     {
@@ -589,8 +701,8 @@ if(-not $script:TelemetryEnabled -and (IsWindows))
     }
 }
 
-$RequiredAssembliesForInternalWebProxy = @( "$([System.Net.IWebProxy].AssemblyQualifiedName)".Substring('System.Net.IWebProxy'.Length+1).Trim(), 
-                                            "$([System.Uri].AssemblyQualifiedName)".Substring('System.Uri'.Length+1).Trim() )
+$RequiredAssembliesForInternalWebProxy = @( [System.Net.IWebProxy].Assembly.FullName, 
+                                            [System.Uri].Assembly.FullName )
 
 $SourceForInternalWebProxy = @" 
 using System; 
@@ -732,7 +844,7 @@ function Publish-Module
 
     Begin
     {
-        if($script:isNanoServer -or (IsCoreCLR)) {
+        if($script:isNanoServer -or $script:IsCoreCLR) {
             $message = $LocalizedData.PublishPSArtifactUnsupportedOnNano -f "Module"
             ThrowError -ExceptionName "System.InvalidOperationException" `
                         -ExceptionMessage $message `
@@ -2531,7 +2643,7 @@ function Publish-Script
 
     Begin
     {
-        if($script:isNanoServer -or (IsCoreCLR)) {
+        if($script:isNanoServer -or $script:IsCoreCLR) {
             $message = $LocalizedData.PublishPSArtifactUnsupportedOnNano -f "Script"
             ThrowError -ExceptionName "System.InvalidOperationException" `
                         -ExceptionMessage $message `
@@ -4931,7 +5043,7 @@ function New-ScriptFileInfo
 
         if(-not $Author)
         {
-            if(IsWindows)
+            if($script:IsWindows)
             {
                 $Author = (Get-EnvironmentVariable -Name 'USERNAME' -Target $script:EnvironmentVariableTarget.Process -ErrorAction SilentlyContinue)
             }
@@ -5219,7 +5331,7 @@ function Update-ScriptFileInfo
 
             if(-not $Author)
             {
-                if(IsWindows)
+                if($script:IsWindows)
                 {
                     $Author = (Get-EnvironmentVariable -Name 'USERNAME' -Target $script:EnvironmentVariableTarget.Process -ErrorAction SilentlyContinue)
                 }
@@ -6194,7 +6306,7 @@ function Ping-Endpoint
     $results = @{}
 
     $WebProxy = $null
-    if($Proxy -and (IsWindows))
+    if($Proxy -and $script:IsWindows)
     {
         $ProxyNetworkCredential = $null
         if($ProxyCredential)
@@ -6424,7 +6536,7 @@ function ValidateAndSet-PATHVariableIfUserAccepts
         $Request
     )
 
-    if(-not (IsWindows))
+    if(-not $script:IsWindows)
     {
         return
     }
@@ -7224,7 +7336,7 @@ function Install-NuGetClientBinaries
         $Force
     )
 
-    if(-not (IsWindows) -or
+    if(-not $script:IsWindows -or
        ($script:NuGetProvider -and 
         (-not $BootstrapNuGetExe -or 
         ($script:NuGetExePath -and (Microsoft.PowerShell.Management\Test-Path -Path $script:NuGetExePath)))))
@@ -7327,7 +7439,7 @@ function Install-NuGetClientBinaries
     }
     
     # On Nano server we don't need NuGet.exe
-    if(-not $bootstrapNuGetProvider -and ($script:isNanoServer -or (IsCoreCLR) -or -not $BootstrapNuGetExe))
+    if(-not $bootstrapNuGetProvider -and ($script:isNanoServer -or $script:IsCoreCLR -or -not $BootstrapNuGetExe))
     {
         return
     }
@@ -7384,7 +7496,7 @@ function Install-NuGetClientBinaries
             }
         }
 
-        if($BootstrapNuGetExe -and -not $script:isNanoServer -and -not (IsCoreCLR))
+        if($BootstrapNuGetExe -and -not $script:isNanoServer -and -not $script:IsCoreCLR)
         {
             Write-Verbose -Message $LocalizedData.DownloadingNugetExe
 
@@ -7468,14 +7580,14 @@ function Test-RunningAsElevated
     [OutputType([bool])]
     Param()
 
-    if(IsWindows)
+    if($script:IsWindows)
     {
         $wid=[System.Security.Principal.WindowsIdentity]::GetCurrent()
         $prp=new-object System.Security.Principal.WindowsPrincipal($wid)
         $adm=[System.Security.Principal.WindowsBuiltInRole]::Administrator
         return $prp.IsInRole($adm)
     }
-    elseif((IsLinux) -or (IsOSX))
+    elseif($script:IsCoreCLR)
     {
         # Permission models on *nix can be very complex, to the point that you could never possibly guess without simply trying what you need to try;
         # This is totally different from Windows where you can know what you can or cannot do with/without admin rights.
@@ -11728,7 +11840,7 @@ function Set-InstalledModulesVariable
             WarningAction = 'SilentlyContinue'
         }
 
-        if(IsWindows)
+        if($script:IsWindows)
         {
             $GetChildItemParams['Attributes'] = 'Hidden'
         }
@@ -13914,7 +14026,7 @@ function Validate-ModuleCommandAlreadyAvailable
                                                                       -ErrorAction SilentlyContinue `
                                                                       -WarningAction SilentlyContinue | 
                                     Microsoft.PowerShell.Core\Where-Object { ($CommandNames -contains $_.Name) -and 
-                                                                             ($_.Source -ne $CurrentModuleInfo.Name) } |
+                                                                             ($_.ModuleName -ne $CurrentModuleInfo.Name) } |
                                         Microsoft.PowerShell.Utility\Select-Object -First 1 -ErrorAction Ignore
             if($AvailableCommand)
             {
@@ -13979,7 +14091,7 @@ function ValidateAndGet-AuthenticodeSignature
             # Skip the PSGetModuleInfo.xml and ModuleName.cat files in the catalog validation
             $TestFileCatalogResult = Microsoft.PowerShell.Security\Test-FileCatalog -Path $ModuleBasePath `
                                                                                     -CatalogFilePath $CatalogFilePath `
-                                                                                    -FilesToSkip $script:PSGetItemInfoFileName,'*.cat' `
+                                                                                    -FilesToSkip $script:PSGetItemInfoFileName,'*.cat','*.nupkg','*.nuspec' `
                                                                                     -Detailed `
                                                                                     -ErrorAction SilentlyContinue
             if(-not $TestFileCatalogResult -or 
@@ -14152,23 +14264,45 @@ function Test-MicrosoftCertificate
         $AuthenticodeSignature
     )
 
+    $IsMicrosoftCertificate = $false
+
     if($AuthenticodeSignature.SignerCertificate)
     {
+        $X509Chain = $null
+        $SafeX509ChainHandle = $null
+
         try
         {
             $X509Chain = New-Object System.Security.Cryptography.X509Certificates.X509Chain
             $null = $X509Chain.Build($AuthenticodeSignature.SignerCertificate)
+            
+            if($script:IsSafeX509ChainHandleAvailable)
+            {
+                $SafeX509ChainHandle = [Microsoft.PowerShell.Commands.PowerShellGet.Win32Helpers]::CertDuplicateCertificateChain($X509Chain.SafeHandle)
+            }
+            else
+            {
+                $SafeX509ChainHandle = [Microsoft.PowerShell.Commands.PowerShellGet.Win32Helpers]::CertDuplicateCertificateChain($X509Chain.ChainContext)
+            }
+
+            $IsMicrosoftCertificate = [Microsoft.PowerShell.Commands.PowerShellGet.Win32Helpers]::IsMicrosoftCertificate($SafeX509ChainHandle)
         }
         catch
         {
-            return $false
+            Write-Debug "Exception in Test-MicrosoftCertificate function:  $_"
         }
+        finally
+        {
+            if($SafeX509ChainHandle) { $SafeX509ChainHandle.Dispose() }
 
-        $SafeX509ChainHandle = [Microsoft.PowerShell.Commands.PowerShellGet.Win32Helpers]::CertDuplicateCertificateChain($X509Chain.ChainContext)
-        return [Microsoft.PowerShell.Commands.PowerShellGet.Win32Helpers]::IsMicrosoftCertificate($SafeX509ChainHandle)
+            # On .NET Framework 4.5.2 and earlier versions, 
+            # the X509Chain class does not implement the IDisposable interface and 
+            # therefore does not have a Dispose method.
+            if($X509Chain -and (Get-Member -InputObject $X509Chain -Name Dispose -ErrorAction SilentlyContinue)) { $X509Chain.Dispose() }
+        }
     }
 
-    return $false
+    return $IsMicrosoftCertificate
 }
 
 function Test-ValidManifestModule
@@ -14217,7 +14351,7 @@ function Test-ValidManifestModule
                        -CallerPSCmdlet $PSCmdlet `
                        -ErrorCategory InvalidOperation
         }
-        elseif(IsWindows)
+        elseif($script:IsWindows)
         {
             $ValidationResult = Validate-ModuleAuthenticodeSignature -CurrentModuleInfo $PSModuleInfo `
                                                                      -InstallLocation $InstallLocation `
