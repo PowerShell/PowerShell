@@ -370,6 +370,19 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
     }
 }
 
+function Compress-TestContent {
+    [CmdletBinding()]
+    param(
+        $Destination
+    )
+
+    $powerShellTestRoot =  Join-Path $PSScriptRoot 'test\powershell'    
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+    $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Destination)
+    [System.IO.Compression.ZipFile]::CreateFromDirectory($powerShellTestRoot, $resolvedPath)    
+}
+
 function New-PSOptions {
     [CmdletBinding()]
     param(
