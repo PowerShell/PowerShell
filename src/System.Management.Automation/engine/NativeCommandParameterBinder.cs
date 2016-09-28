@@ -163,8 +163,13 @@ namespace System.Management.Automation
                 }
 
 #if UNIX
-                Collection<string> resolvedPaths = null;
+                Collection<string> resolvedPaths = new Collection<string>();
+                Collection<PathInfo> globbedPaths = null;
+                string currentLocation =
+                    context.EngineSessionState.GetNamespaceCurrentLocation(
+                        context.ProviderNames.FileSystem).ProviderPath + "/";
 #endif
+
                 if (!String.IsNullOrEmpty(arg))
                 {
                     // This implements globbing of arguments given to native tools on UNIX.
@@ -182,24 +187,37 @@ namespace System.Management.Automation
                         // this enables globbing all (including hidden) files
                         cmdletProviderContext.Force = true;
                         Provider.CmdletProvider providerInstance;
-                        ProviderInfo provider;
+
                         try
                         {
-                            resolvedPaths =
-                                context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(
-                                    arg, false, cmdletProviderContext, out provider, out providerInstance);
+                            globbedPaths =
+                                context.LocationGlobber.GetGlobbedMonadPathsFromMonadPath(
+                                    arg, false, cmdletProviderContext, out providerInstance);
                         }
                         catch
                         {
-                            resolvedPaths = null;
+                            globbedPaths = null;
                         }
                     }
 
-                    // either no there was no globbing to perform, or it failed, so add the original argument
-                    if (resolvedPaths == null)
+                    // For each globbed path, we strip the current directory to sort-of
+                    // turn them back into relative links so as to not break the use of
+                    // subcommands that share names with existing files.
+                    // Unfortunately, this approach still loses information about ../.. etc.
+                    if (globbedPaths != null)
                     {
-                        resolvedPaths = new Collection<string>() { arg };
+                        foreach (PathInfo pathInfo in globbedPaths)
+                        {
+                            string path = pathInfo.ProviderPath;
+                            if (path.StartsWith(currentLocation))
+                            {
+                                path = path.Substring(currentLocation.Length);
+                            }
+
+                            resolvedPaths.Add(path);
+                        }
                     }
+
                     // globber may have returned an empty collection
                     if (resolvedPaths.Count == 0)
                     {
