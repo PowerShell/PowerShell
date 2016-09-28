@@ -248,6 +248,14 @@ function Invoke-AppveyorFinish
         $artifacts.Add($zipFilePath)
         $artifacts.Add($zipFileFullPath)
 
+        # Create archive for test content
+        if(Test-DailyBuild) 
+        {
+            $zipTestContentPath = Join-Path $pwd 'tests.zip' 
+            Compress-TestContent -Destination $zipTestContentPath
+            $artifacts.Add($zipTestContentPath)
+        }
+
         if ($env:APPVEYOR_REPO_TAG_NAME)
         {
             # ignore the first part of semver, use the preview part
