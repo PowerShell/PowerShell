@@ -26,6 +26,7 @@ Describe 'Get-WinEvent' -Tags "CI" {
     Context "Get-WinEvent can retrieve events" {
         # for this set of tests we need to have a provider which has multiple events
         BeforeAll {
+            if ( ! $IsWindows ) { return }
             $foundEvents = $false
             $providers = Get-WinEvent -listprovider * -erroraction ignore
             foreach($provider in $providers) {
