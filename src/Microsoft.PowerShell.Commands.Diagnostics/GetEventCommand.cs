@@ -1240,12 +1240,16 @@ namespace Microsoft.PowerShell.Commands
                         default:
                             {
                                 //
-                                // None of the recognized values: this must be a named payload field
+                                // None of the recognized values: this must be a named event data field
                                 //
-                                ExtendPredicate(ref xpathString);
-                                xpathString += string.Format(CultureInfo.InvariantCulture,
-                                                            "([EventData[Data[@Name='{0}']='{1}']] or [UserData/*/{0}='{1}'])",
-                                                            key, hash[key]);
+                                // Fix Issue #2327
+                                added = HandleNamedDataHashValue(key, hash[key]);
+                                if (added.Length > 0)
+                                {
+                                    ExtendPredicate(ref xpathString);
+                                    xpathString += added;
+                                }
+
                             }
                             break;
                     }
@@ -1531,6 +1535,41 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 ret += string.Format(CultureInfo.InvariantCulture, "(EventData/Data='{0}')", value);
+            }
+
+            return ret;
+        }
+
+
+        //
+        // HandleNamedDataHashValue helper for hashtable structured query builder.
+        // Constructs and returns named event data field XPath portion as a string.
+        // Fix Issue #2327
+        //
+        private string HandleNamedDataHashValue(String key, Object value)
+        {
+            string ret = "";
+            if (value is Array)
+            {
+                Array dataArray = (Array)(value);
+                ret += "(";
+                for (int i = 0; i < dataArray.Length; i++)
+                {
+                    ret += string.Format(CultureInfo.InvariantCulture,
+                                         "((EventData[Data[@Name='{0}']='{1}']) or (UserData/*/{0}='{1}'))",
+                                         key, dataArray.GetValue(i).ToString());
+                    if (i < (dataArray.Length - 1))
+                    {
+                        ret += " or ";
+                    }
+                }
+                ret += ")";
+            }
+            else
+            {
+                ret += string.Format(CultureInfo.InvariantCulture,
+                                         "((EventData[Data[@Name='{0}']='{1}']) or (UserData/*/{0}='{1}'))",
+                                         key, value);
             }
 
             return ret;
