@@ -1873,7 +1873,6 @@ namespace System.Management.Automation.Runspaces
             string computerName,
             string keyFilePath)
         {
-            if (userName == null) { throw new PSArgumentNullException("userName"); }
             if (computerName == null) { throw new PSArgumentNullException("computerName"); }
 
             this.UserName = userName;
@@ -1980,9 +1979,9 @@ namespace System.Management.Automation.Runspaces
 
             // Extract an optional domain name if provided.
             string domainName = null;
-            string userName = this.UserName;
+            string userName = this.UserName ?? GetCurrentUserName();
 #if !UNIX
-            var parts = this.UserName.Split(Utils.Separators.Backslash);
+            var parts = userName.Split(Utils.Separators.Backslash);
             if (parts.Length == 2)
             {
                 domainName = parts[0];
@@ -2026,6 +2025,19 @@ namespace System.Management.Automation.Runspaces
         }
 
         #endregion
+
+        #region Private Methods
+
+        private string GetCurrentUserName()
+        {
+#if UNIX
+            return System.Environment.GetEnvironmentVariable("USER") ?? string.Empty;
+#else
+            return System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+#endif
+        }
+
+#endregion
 
         #region SSH Process Creation
 

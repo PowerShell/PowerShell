@@ -182,6 +182,11 @@ namespace Microsoft.PowerShell.Commands
         protected const string SSHHostParameterSet = "SSHHost";
 
         /// <summary>
+        /// SSH host parmeter set supporting hash connection parameters
+        /// </summary>
+        protected const string SSHHostHashParameterSet = "SSHHostHashParam";
+
+        /// <summary>
         /// runspace parameter set
         /// </summary>
         protected const string SessionParameterSet = "Session";
@@ -262,6 +267,13 @@ namespace Microsoft.PowerShell.Commands
         #endregion
     }
 
+    internal struct SSHConnection
+    {
+        public string ComputerName;
+        public string UserName;
+        public string KeyFilePath;
+    }
+
     /// <summary>
     /// Base class for any cmdlet which takes a -Session parameter
     /// or a -ComputerName parameter (along with its other associated
@@ -273,6 +285,8 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public abstract partial class PSRemotingBaseCmdlet : PSRemotingCmdlet
     {
+        #region Enums
+
         /// <summary>
         /// State of virtual machine. This is the same as VMState in 
         /// \vm\ux\powershell\objects\common\Types.cs
@@ -414,6 +428,8 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             FastSavingCritical,
         }
+
+        #endregion
 
         #region Tracer
 
@@ -681,20 +697,9 @@ namespace Microsoft.PowerShell.Commands
         #region SSHHostParameters
 
         /// <summary>
-        /// SSH Target Host Name
-        /// </summary>
-        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet, Mandatory = true)]
-        [ValidateNotNullOrEmpty()]
-        public virtual string HostName
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// SSH User Name
         /// </summary>
-        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet, Mandatory = true)]
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
         [ValidateNotNullOrEmpty()]
         public virtual string UserName
         {
@@ -707,7 +712,35 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
         [ValidateNotNullOrEmpty()]
+        [Alias("IdentityFilePath")]
         public virtual string KeyFilePath
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// This parameter specifies that SSH is used to establish the remote
+        /// connection and act as the remoting transport.  By default WinRM is used
+        /// as the remoting transport.  Using the SSH transport requires that SSH is
+        /// installed and PowerShell remoting is enabled on both client and remote machines.
+        /// </summary>
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet, Mandatory = true)]
+        public virtual SwitchParameter SSHTransport
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Hashtable array containing SSH connection parameters for each remote target
+        ///   ComputerName  (Alias: HostName)           (required)
+        ///   UserName                                  (optional)
+        ///   KeyFilePath   (Alias: IdentityFilePath)   (optional)
+        /// </summary>
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostHashParameterSet, Mandatory = true)]
+        [ValidateNotNullOrEmpty()]
+        public virtual Hashtable[] SSHConnection
         {
             get;
             set;
@@ -758,6 +791,69 @@ namespace Microsoft.PowerShell.Commands
                     "Credential", authentication.ToString());
                 throw new InvalidOperationException(message);
             }
+        }
+
+        #endregion
+
+        #region Internal Methods
+
+        /// <summary>
+        /// Parse the Connection parameter HashTable array.
+        /// </summary>
+        /// <returns></returns>
+        internal SSHConnection[] ParseSSHConnectionHashTable()
+        {
+            List<string> resolvedComputerNames = new List<string>();
+            List<SSHConnection> connections = new List<SSHConnection>();
+            foreach (var item in this.SSHConnection)
+            {
+                SSHConnection connectionInfo = new SSHConnection();
+
+                foreach (var key in item.Keys)
+                {
+                    string paramName = key as string;
+                    if (string.IsNullOrEmpty(paramName))
+                    {
+                        // TODO:
+                        throw new PSInvalidOperationException("Invalid Connection parmeter element.");
+                    }
+
+                    string paramValue = item[paramName] as string;
+                    if (string.IsNullOrEmpty(paramValue))
+                    {
+                        // TODO:
+                        throw new PSInvalidOperationException("Invalid Connection parmeter element.");
+                    }
+
+                    if (paramName.Equals("ComputerName", StringComparison.OrdinalIgnoreCase) || paramName.Equals("HostName", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var resolvedComputerName = ResolveComputerName(paramValue);
+                        ValidateComputerName(new string[] { resolvedComputerName });
+                        resolvedComputerNames.Add(resolvedComputerName);
+                        connectionInfo.ComputerName = resolvedComputerName;
+                    }
+                    else if (paramName.Equals("UserName", StringComparison.OrdinalIgnoreCase))
+                    {
+                        connectionInfo.UserName = paramValue;
+                    }
+                    else if (paramName.Equals("KeyFilePath", StringComparison.OrdinalIgnoreCase) || paramName.Equals("IdentityFilePath", StringComparison.OrdinalIgnoreCase))
+                    {
+                        connectionInfo.KeyFilePath = paramValue;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(connectionInfo.ComputerName))
+                {
+                    // TODO:
+                    throw new PSInvalidOperationException("Invalid connection information: missing required ComputerName parameter");
+                }
+
+                connections.Add(connectionInfo);
+            }
+
+            ResolvedComputerNames = resolvedComputerNames.ToArray();
+
+            return connections.ToArray();
         }
 
         #endregion
@@ -919,6 +1015,11 @@ namespace Microsoft.PowerShell.Commands
         /// SSH Host file path parameter set.
         /// </summary>
         protected const string FilePathSSHHostParameterSet = "FilePathSSHHost";
+
+        /// <summary>
+        /// SSH Host file path parameter set with HashTable connection parameter
+        /// </summary>
+        protected const string FilePathSSHHostHashParameterSet = "FilePathSSHHostHash";
 
         #endregion
 
@@ -1169,18 +1270,45 @@ namespace Microsoft.PowerShell.Commands
         }// CreateHelpersForSpecifiedComputerNames
 
         /// <summary>
-        /// Creates helper objects for host names for PSRP over SSH
+        /// Creates helper objects for SSH remoting computer names
         /// remoting.
         /// </summary>
-        protected void CreateHelpersForSpecifiedHostNames()
+        protected void CreateHelpersForSpecifiedSSHComputerNames()
         {
-            var sshConnectionInfo = new SSHConnectionInfo(this.UserName, this.HostName, this.KeyFilePath);
-            var typeTable = TypeTable.LoadDefaultTypeFiles();
-            var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
-            var pipeline = CreatePipeline(remoteRunspace);
+            ValidateComputerName(ResolvedComputerNames);
 
-            var operation = new ExecutionCmdletHelperComputerName(remoteRunspace, pipeline);
-            Operations.Add(operation);
+            foreach (string computerName in ResolvedComputerNames)
+            {
+                var sshConnectionInfo = new SSHConnectionInfo(this.UserName, computerName, this.KeyFilePath);
+                var typeTable = TypeTable.LoadDefaultTypeFiles();
+                var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
+                var pipeline = CreatePipeline(remoteRunspace);
+
+                var operation = new ExecutionCmdletHelperComputerName(remoteRunspace, pipeline);
+                Operations.Add(operation);
+            }
+        }
+
+        /// <summary>
+        /// Creates helper objects for SSH remoting from HashTable parameters.
+        /// </summary>
+        protected void CreateHelpersForSpecifiedSSHHashComputerNames()
+        {
+            var sshConnections = ParseSSHConnectionHashTable();
+            var remoteRunspaces = new List<RemoteRunspace>();
+            foreach (var sshConnection in sshConnections)
+            {
+                var sshConnectionInfo = new SSHConnectionInfo(
+                    sshConnection.UserName,
+                    sshConnection.ComputerName,
+                    sshConnection.KeyFilePath);
+                var typeTable = TypeTable.LoadDefaultTypeFiles();
+                var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
+                var pipeline = CreatePipeline(remoteRunspace);
+
+                var operation = new ExecutionCmdletHelperComputerName(remoteRunspace, pipeline);
+                Operations.Add(operation);
+            }
         }
 
         /// <summary>
@@ -1791,7 +1919,20 @@ namespace Microsoft.PowerShell.Commands
 
                 case PSExecutionCmdlet.SSHHostParameterSet:
                 case PSExecutionCmdlet.FilePathSSHHostParameterSet:
-                    CreateHelpersForSpecifiedHostNames();
+                    {
+                        String[] resolvedComputerNames = null;
+                        ResolveComputerNames(ComputerName, out resolvedComputerNames);
+                        ResolvedComputerNames = resolvedComputerNames;
+
+                        CreateHelpersForSpecifiedSSHComputerNames();
+                    }
+                    break;
+
+                case PSExecutionCmdlet.SSHHostHashParameterSet:
+                case PSExecutionCmdlet.FilePathSSHHostHashParameterSet:
+                    {
+                        CreateHelpersForSpecifiedSSHHashComputerNames();
+                    }
                     break;
 
                 case PSExecutionCmdlet.FilePathSessionParameterSet:

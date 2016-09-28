@@ -72,7 +72,11 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipeline = true,
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = NewPSSessionCommand.ComputerNameParameterSet)]
-        [Alias("Cn")]
+        [Parameter(Position = 0,
+            Mandatory = true,
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        [Alias("Cn","HostName")]
         [ValidateNotNullOrEmpty]
         public override String[] ComputerName { get; set; }
 
@@ -241,6 +245,12 @@ namespace Microsoft.PowerShell.Commands
                 case NewPSSessionCommand.SSHHostParameterSet:
                     {
                         remoteRunspaces = CreateRunspacesForSSHHostParameterSet();
+                    }
+                    break;
+
+                case NewPSSessionCommand.SSHHostHashParameterSet:
+                    {
+                        remoteRunspaces = CreateRunspacesForSSHHostHashParameterSet();
                     }
                     break;
 
@@ -1061,13 +1071,38 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private List<RemoteRunspace> CreateRunspacesForSSHHostParameterSet()
         {
+            // Resolve all the machine names
+            String[] resolvedComputerNames;
+            ResolveComputerNames(ComputerName, out resolvedComputerNames);
+            ValidateComputerName(resolvedComputerNames);
+
             var remoteRunspaces = new List<RemoteRunspace>();
-            var sshConnectionInfo = new SSHConnectionInfo(
-                this.UserName,
-                this.HostName,
-                this.KeyFilePath);
-            var typeTable = TypeTable.LoadDefaultTypeFiles();
-            remoteRunspaces.Add(RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace);
+            foreach (var computerName in resolvedComputerNames)
+            {
+                var sshConnectionInfo = new SSHConnectionInfo(
+                    this.UserName,
+                    computerName,
+                    this.KeyFilePath);
+                var typeTable = TypeTable.LoadDefaultTypeFiles();
+                remoteRunspaces.Add(RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace);
+            }
+
+            return remoteRunspaces;
+        }
+
+        private List<RemoteRunspace> CreateRunspacesForSSHHostHashParameterSet()
+        {
+            var sshConnections = ParseSSHConnectionHashTable();
+            var remoteRunspaces = new List<RemoteRunspace>();
+            foreach (var sshConnection in sshConnections)
+            {
+                var sshConnectionInfo = new SSHConnectionInfo(
+                    sshConnection.UserName,
+                    sshConnection.ComputerName,
+                    sshConnection.KeyFilePath);
+                var typeTable = TypeTable.LoadDefaultTypeFiles();
+                remoteRunspaces.Add(RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace);
+            }
 
             return remoteRunspaces;
         }
