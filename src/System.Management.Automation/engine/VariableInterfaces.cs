@@ -305,10 +305,6 @@ namespace System.Management.Automation
         /// If the variable is read-only or constant.
         /// </exception> 
         /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of variables has been reached for this scope.
-        /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="name"/> refers to a provider that could not be found.
         /// </exception>
@@ -353,9 +349,6 @@ namespace System.Management.Automation
         /// If the variable is read-only or constant.
         /// </exception> 
         /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of variables has been reached for this scope.
-        /// </exception>
         public void Set(PSVariable variable)
         {
             Dbg.Diagnostics.Assert(

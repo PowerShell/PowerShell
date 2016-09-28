@@ -158,9 +158,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Execute the begin scriptblock at the start of processing
         /// </summary>
-        /// <exception cref="SessionStateOverflowException">
-        /// The maximum scope depth would be exceeded
-        /// </exception>
         /// <exception cref="ParseException">could not parse script</exception>
         /// <exception cref="RuntimeException">see Pipeline.Invoke</exception>
         /// <exception cref="ParameterBindingException">see Pipeline.Invoke</exception>
@@ -242,9 +239,6 @@ namespace Microsoft.PowerShell.Commands
         /// Execute the processing script blocks on the current pipeline object
         /// which is passed as it's only parameter.
         /// </summary>
-        /// <exception cref="SessionStateOverflowException">
-        /// The maximum scope depth would be exceeded
-        /// </exception>
         /// <exception cref="ParseException">could not parse script</exception>
         /// <exception cref="RuntimeException">see Pipeline.Invoke</exception>
         /// <exception cref="ParameterBindingException">see Pipeline.Invoke</exception>
@@ -733,9 +727,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Execute the end scriptblock when the pipeline is complete
         /// </summary>
-        /// <exception cref="SessionStateOverflowException">
-        /// The maximum scope depth would be exceeded
-        /// </exception>
         /// <exception cref="ParseException">could not parse script</exception>
         /// <exception cref="RuntimeException">see Pipeline.Invoke</exception>
         /// <exception cref="ParameterBindingException">see Pipeline.Invoke</exception>
@@ -1456,9 +1447,6 @@ namespace Microsoft.PowerShell.Commands
         /// Execute the script block passing in the current pipeline object as
         /// it's only parameter.
         /// </summary>
-        /// <exception cref="SessionStateOverflowException">
-        /// The maximum scope depth would be exceeded
-        /// </exception>
         /// <exception cref="ParseException">could not parse script</exception>
         /// <exception cref="RuntimeException">see Pipeline.Invoke</exception>
         /// <exception cref="ParameterBindingException">see Pipeline.Invoke</exception>

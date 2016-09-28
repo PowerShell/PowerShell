@@ -122,10 +122,6 @@ namespace System.Management.Automation
         /// If a drive of the same name already exists in this scope.
         /// </exception>
         /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum drive count has been reached for this scope.
-        /// </exception>
-        /// 
         internal void NewDrive(PSDriveInfo newDrive)
         {
             if (newDrive == null)
@@ -427,10 +423,6 @@ namespace System.Management.Automation
         /// If the variable is read-only or constant.
         /// </exception> 
         /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of variables has been reached for this scope.
-        /// </exception>
-        /// 
         internal PSVariable SetVariable(string name, object value, bool asValue, bool force, SessionStateInternal sessionState, CommandOrigin origin = CommandOrigin.Internal, bool fastPath = false)
         {
             Diagnostics.Assert(name != null, "The caller should verify the name");
@@ -590,10 +582,6 @@ namespace System.Management.Automation
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the variable is read-only or constant.
         /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of variables has been reached for this scope.
-        /// </exception>
         /// 
         internal PSVariable NewVariable(PSVariable newVariable, bool force, SessionStateInternal sessionState)
         {
@@ -827,10 +815,6 @@ namespace System.Management.Automation
         /// if the alias is read-only or constant.
         /// </exception>
         /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of aliases has been reached for this scope.
-        /// </exception>
-        /// 
         internal AliasInfo SetAliasValue(string name, string value, ExecutionContext context, bool force, CommandOrigin origin)
         {
             Diagnostics.Assert(
@@ -913,10 +897,6 @@ namespace System.Management.Automation
         ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the alias is read-only or constant.
-        /// </exception>
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of aliases has been reached for this scope.
         /// </exception>
         /// 
         internal AliasInfo SetAliasValue(
@@ -1033,10 +1013,6 @@ namespace System.Management.Automation
         ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the alias is read-only or constant.
-        /// </exception>
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of aliases has been reached for this scope.
         /// </exception>
         /// 
         internal AliasInfo SetAliasItem(AliasInfo aliasToSet, bool force, CommandOrigin origin = CommandOrigin.Internal)
@@ -1214,10 +1190,6 @@ namespace System.Management.Automation
         /// If the function is read-only or constant.
         /// </exception> 
         /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of functions have been reached for this scope.
-        /// </exception>
-        /// 
         internal FunctionInfo SetFunction(
             string name,
             ScriptBlock function,
@@ -1263,10 +1235,6 @@ namespace System.Management.Automation
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of functions have been reached for this scope.
-        /// </exception>
         /// 
         internal FunctionInfo SetFunction(
             string name,
@@ -1319,10 +1287,6 @@ namespace System.Management.Automation
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of functions have been reached for this scope.
-        /// </exception>
         /// 
         internal FunctionInfo SetFunction(
             string name,
@@ -1397,10 +1361,6 @@ namespace System.Management.Automation
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of functions have been reached for this scope.
-        /// </exception>
         /// 
         internal FunctionInfo SetFunction(
             string name,
