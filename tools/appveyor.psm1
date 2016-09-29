@@ -8,14 +8,11 @@ Import-Module (Join-Path $repoRoot 'build.psm1')
 # or is a pushed tag
 Function Test-DailyBuild
 {
-    if($env:APPVEYOR_SCHEDULED_BUILD -eq 'True')
+    if(($env:PS_DAILY_BUILD -eq 'True') -or ($env:APPVEYOR_SCHEDULED_BUILD -eq 'True') -or ($env:APPVEYOR_REPO_TAG_NAME))
     {
         return $true
     }
-    if($env:APPVEYOR_REPO_TAG_NAME)
-    {
-        return $true
-    }
+
     return $false
 }
 
