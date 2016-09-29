@@ -1021,7 +1021,25 @@ ZoneId=$FileType
             }
         }
 
-        It "-Scope LocalMachine is Settable" {
+        It '-Scope LocalMachine is Settable, but overridden' {
+            # setup
+            Set-ExecutionPolicy -Scope Process -ExecutionPolicy Undefined
+            Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Restricted
+            $errorId = $null
+            try
+            {
+                Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy ByPass
+            }
+            catch [System.Security.SecurityException] {
+                $errorId = $_.FullyQualifiedErrorId
+            }
+
+            $errorId | Should Be 'ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand'
+            Get-ExecutionPolicy -Scope LocalMachine | Should Be "ByPass"
+        }
+
+        It '-Scope LocalMachine is Settable' {
+            Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Undefined
             Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy ByPass
             Get-ExecutionPolicy -Scope LocalMachine | Should Be "ByPass"
         }
