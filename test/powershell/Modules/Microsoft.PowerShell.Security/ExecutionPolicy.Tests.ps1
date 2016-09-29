@@ -1022,24 +1022,38 @@ ZoneId=$FileType
         }
 
         It '-Scope LocalMachine is Settable, but overridden' {
-            # setup
+            # In this test, we first setup execution policy in the following way:
+            # CurrentUser is specified and takes precedence over LocalMachine.
+            # That's why we will get an error, when we are setting up LocalMachine policy.
+            # The error is:
+            #
+            # Set-ExecutionPolicy : Windows PowerShell updated your execution policy successfully, but the setting is overridden by
+            # a policy defined at a more specific scope.  Due to the override, your shell will retain its current effective
+            # execution policy of RemoteSigned. Type "Get-ExecutionPolicy -List" to view your execution policy settings. For more
+            # information please see "Get-Help Set-ExecutionPolicy".
+            #
+            # Regrdless of that error, the operation should succeed.
+
             Set-ExecutionPolicy -Scope Process -ExecutionPolicy Undefined
             Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Restricted
-            $errorId = $null
             try
             {
                 Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy ByPass
+                throw "Expected exception: ExecutionPolicyOverride"
             }
             catch [System.Security.SecurityException] {
-                $errorId = $_.FullyQualifiedErrorId
+                $_.FullyQualifiedErrorId | Should Be 'ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand'
             }
 
-            $errorId | Should Be 'ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand'
             Get-ExecutionPolicy -Scope LocalMachine | Should Be "ByPass"
         }
 
         It '-Scope LocalMachine is Settable' {
+            # We need to make sure that both Process and CurrentUser policies are Undefined
+            # before we can set LocalMachine policy without ExecutionPolicyOverride error.
+            Set-ExecutionPolicy -Scope Process -ExecutionPolicy Undefined
             Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Undefined
+            
             Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy ByPass
             Get-ExecutionPolicy -Scope LocalMachine | Should Be "ByPass"
         }
