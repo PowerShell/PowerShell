@@ -1135,11 +1135,6 @@ namespace System.Management.Automation
         /// provider tries to add.
         /// </exception>
         /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the provider tries to add default drives which exceed the maximum
-        /// limit for the number of drives in the current scope.
-        /// </exception>
-        /// 
         internal void InitializeProvider(
             Provider.CmdletProvider providerInstance,
             ProviderInfo provider,

@@ -1846,10 +1846,6 @@ namespace System.Management.Automation
                     args: new object[] { value });
                 return value;
             }
-            catch (SessionStateOverflowException e)
-            {
-                throw NewSetValueException(e, "ScriptSetValueSessionStateOverflowException");
-            }
             catch (RuntimeException e)
             {
                 throw NewSetValueException(e, "ScriptSetValueRuntimeException");
@@ -1880,10 +1876,6 @@ namespace System.Management.Automation
                     input: AutomationNull.Value,
                     scriptThis: scriptThis,
                     args: Utils.EmptyArray<object>());
-            }
-            catch (SessionStateOverflowException e)
-            {
-                throw NewGetValueException(e, "ScriptGetValueSessionStateOverflowException");
             }
             catch (RuntimeException e)
             {
@@ -2423,14 +2415,6 @@ namespace System.Management.Automation
                     input: AutomationNull.Value,
                     scriptThis: @this,
                     args: arguments);
-            }
-            catch (SessionStateOverflowException e)
-            {
-                throw new MethodInvocationException(
-                    "ScriptMethodSessionStateOverflowException",
-                    e,
-                    ExtendedTypeSystem.MethodInvocationException,
-                    methodName, arguments.Length, e.Message);
             }
             catch (RuntimeException e)
             {

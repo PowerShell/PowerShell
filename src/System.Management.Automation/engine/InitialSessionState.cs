@@ -3138,7 +3138,6 @@ namespace System.Management.Automation.Runspaces
             catch (NotSupportedException e) { ex = e; }
             catch (ProviderNotFoundException e) { ex = e; }
             catch (ProviderInvocationException e) { ex = e; }
-            catch (SessionStateOverflowException e) { ex = e; }
             catch (KeyNotFoundException e) { ex = e; }
             catch (IOException e) { ex = e; }
             catch (UnauthorizedAccessException e) { ex = e; }

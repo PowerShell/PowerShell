@@ -1732,11 +1732,6 @@ namespace Microsoft.PowerShell.Commands
                                 pathNotFound));
                         return;
                     }
-                    catch (SessionStateOverflowException)
-                    {
-                        // This is terminating condition
-                        throw;
-                    }
                     catch (SessionStateException sessionStateException)
                     {
                         WriteError(

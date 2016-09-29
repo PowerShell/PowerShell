@@ -277,10 +277,6 @@ namespace System.Management.Automation
         /// If the alias is read-only or constant.
         /// </exception>
         /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of aliases has been reached for this scope.
-        /// </exception>
-        /// 
         internal AliasInfo SetAliasValue(string aliasName, string value, bool force, CommandOrigin origin)
         {
             if (String.IsNullOrEmpty(aliasName))
@@ -328,10 +324,6 @@ namespace System.Management.Automation
         /// If the alias is read-only or constant.
         /// </exception>
         /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of aliases has been reached for this scope.
-        /// </exception>
-        /// 
         internal AliasInfo SetAliasValue(string aliasName, string value, bool force)
         {
             return SetAliasValue(aliasName, value, force, CommandOrigin.Internal);
@@ -371,10 +363,6 @@ namespace System.Management.Automation
         /// 
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the alias is read-only or constant.
-        /// </exception>
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of aliases has been reached for this scope.
         /// </exception>
         /// 
         internal AliasInfo SetAliasValue(
@@ -432,10 +420,6 @@ namespace System.Management.Automation
         /// If the alias is read-only or constant.
         /// </exception>
         /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of aliases has been reached for this scope.
-        /// </exception>
-        /// 
         internal AliasInfo SetAliasValue(
             string aliasName,
             string value,
@@ -472,10 +456,6 @@ namespace System.Management.Automation
         /// 
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the alias is read-only or constant.
-        /// </exception>
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of aliases has been reached for this scope.
         /// </exception>
         /// 
         internal AliasInfo SetAliasItem(AliasInfo alias, bool force, CommandOrigin origin)
@@ -533,10 +513,6 @@ namespace System.Management.Automation
         /// 
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the alias is read-only or constant.
-        /// </exception>
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of aliases has been reached for this scope.
         /// </exception>
         /// 
         internal AliasInfo SetAliasItemAtScope(AliasInfo alias, string scopeID, bool force, CommandOrigin origin)
@@ -600,10 +576,6 @@ namespace System.Management.Automation
         /// 
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the alias is read-only or constant.
-        /// </exception>
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of aliases has been reached for this scope.
         /// </exception>
         /// 
         internal AliasInfo SetAliasItemAtScope(AliasInfo alias, string scopeID, bool force)

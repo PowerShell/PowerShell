@@ -582,6 +582,8 @@ namespace System.Management.Automation
         #endregion Private
     } // SessionStateException
 
+    // This class is no longer used, but kept in Windows PowerShell for backwards compatibility
+#if !CORECLR
     /// <summary>
     /// SessionStateOverflowException occurs when the number of
     /// session state objects of this type in this scope
@@ -678,6 +680,7 @@ namespace System.Management.Automation
         }
         #endregion Serialization
     } // SessionStateOverflowException
+#endif // !CORECLR
 
     /// <summary>
     /// SessionStateUnauthorizedAccessException occurs when

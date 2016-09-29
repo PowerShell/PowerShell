@@ -377,7 +377,6 @@ namespace System.Management.Automation
         /// <param name="args">The arguments to this script.</param>
         /// <returns>The object(s) generated during the execution of
         /// the script block returned as a collection of PSObjects</returns>
-        /// <exception cref="SessionStateOverflowException">Thrown if the maximum scope depth has been exceeded</exception>
         /// <exception cref="RuntimeException">Thrown if a script runtime exceptionexception occurred</exception>
         /// <exception cref="FlowControlException">An internal (non-public) exception from a flow control statement</exception>
         public Collection<PSObject> Invoke(params object[] args)
@@ -499,7 +498,6 @@ namespace System.Management.Automation
         /// <param name="args">The arguments to pass to this scriptblock.</param>
         /// <returns>The object(s) generated during the execution of the 
         /// script block. They may or may not be wrapped in PSObject. It's up to the caller to check.</returns>
-        /// <exception cref="SessionStateOverflowException">Thrown if the maximum scope depth has been exceeded</exception>
         /// <exception cref="RuntimeException">Thrown if a script runtime exceptionexception occurred</exception>
         /// <exception cref="FlowControlException">An internal (non-public) exception from a flow control statement</exception>
         public object InvokeReturnAsIs(params object[] args)
@@ -833,7 +831,6 @@ namespace System.Management.Automation
         /// <param name="args">The arguments to this script.</param>
         /// <returns>The object(s) generated during the execution of
         /// the script block returned as a collection of PSObjects</returns>
-        /// <exception cref="SessionStateOverflowException">The maximum scope depth would be exceeded</exception>
         /// <exception cref="RuntimeException">A script exception occurred</exception>
         /// <exception cref="FlowControlException">Internal exception from a flow control statement</exception>
         internal Collection<PSObject> DoInvoke(object dollarUnder, object input, object[] args)
@@ -893,7 +890,6 @@ namespace System.Management.Automation
         /// 
         /// <returns>The object(s) generated during the execution of
         /// the script block returned as a collection of PSObjects</returns>
-        /// <exception cref="SessionStateOverflowException">The maximum scope depth would be exceeded</exception>
         /// <exception cref="RuntimeException">A script exception occurred</exception>
         /// <exception cref="FlowControlException">Internal exception from a flow control statement</exception>
         internal object DoInvokeReturnAsIs(bool useLocalScope,

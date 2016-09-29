@@ -802,39 +802,8 @@ namespace System.Management.Automation
                     return;
             }
 
-            // 1045384-2004/12/14-JonN implementing $MaximumErrorCount
-            object maxcountobj = EngineSessionState.CurrentScope.ErrorCapacity.FastValue;
-            if (null != maxcountobj)
-            {
-                try
-                {
-                    maxcountobj = LanguagePrimitives.ConvertTo(maxcountobj, typeof(int), CultureInfo.InvariantCulture);
-                }
-                catch (PSInvalidCastException)
-                {
-                }
-                catch (System.OverflowException)
-                {
-                }
-                catch (Exception e)
-                {
-                    Diagnostics.Assert(false,
-                        "Unexpected exception in LanguagePrimitives.ConvertTo: "
-                        + e.GetType().FullName);
-                    throw;
-                }
-            }
-            int maxErrorCount = (maxcountobj is int) ? (int)maxcountobj : 256;
-            if (0 > maxErrorCount)
-                maxErrorCount = 0;
-            else if (32768 < maxErrorCount)
-                maxErrorCount = 32768;
+            const int maxErrorCount = 256;
 
-            if (0 >= maxErrorCount)
-            {
-                arraylist.Clear();
-                return;
-            }
             int numToErase = arraylist.Count - (maxErrorCount - 1);
             if (0 < numToErase)
             {

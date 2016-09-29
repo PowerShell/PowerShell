@@ -114,10 +114,6 @@ namespace System.Management.Automation
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception or returned null.
         /// </exception>
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If creating the drive will overflow the MaximumDriveCount limit.
-        /// </exception>
         public PSDriveInfo New(PSDriveInfo drive, string scope)
         {
             Dbg.Diagnostics.Assert(
@@ -173,11 +169,6 @@ namespace System.Management.Automation
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception or returned null.
         /// </exception>
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If creating the drive will overflow the MaximumDriveCount limit.
-        /// </exception>
-        /// 
         internal void New(
             PSDriveInfo drive,
             string scope,
