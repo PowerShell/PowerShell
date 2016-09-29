@@ -195,7 +195,7 @@ namespace System.Management.Automation.Runspaces
         public SessionStateTypeEntry(string fileName)
             : base(fileName)
         {
-            if (String.IsNullOrEmpty(fileName) || fileName.Trim().Length == 0)
+            if (string.IsNullOrWhiteSpace(fileName))
             {
                 throw PSTraceSource.NewArgumentException("fileName");
             }
@@ -300,7 +300,7 @@ namespace System.Management.Automation.Runspaces
         public SessionStateFormatEntry(string fileName)
             : base("*")
         {
-            if (String.IsNullOrEmpty(fileName) || fileName.Trim().Length == 0)
+            if (string.IsNullOrWhiteSpace(fileName))
             {
                 throw PSTraceSource.NewArgumentException("fileName");
             }
