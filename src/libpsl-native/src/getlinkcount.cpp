@@ -2,13 +2,14 @@
 //! @author George FLeming <v-geflem@microsoft.com>
 //! @brief Retrieve link count of a file
 
+#include "getlinkcount.h"
+
 #include <errno.h>
 #include <locale.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string>
-#include "getlinkcount.h"
 
 //! @brief GetLinkCount retrieves the file link count (number of hard links)
 //! for the given file

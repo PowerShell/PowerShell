@@ -2,16 +2,17 @@
 //! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
 //! @brief returns if the path is a directory
 
+#include "getstat.h"
+#include "getpwuid.h"
+#include "getfileowner.h"
+#include "isdirectory.h"
+
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <pwd.h>
 #include <string.h>
 #include <unistd.h>
-#include "getstat.h"
-#include "getpwuid.h"
-#include "getfileowner.h"
-#include "isdirectory.h"
 
 //! @brief returns if the path is a directory; uses stat and so follows symlinks
 //!

@@ -2,13 +2,14 @@
 //! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
 //! @brief returns the lstat of a file
 
+#include "getlstat.h"
+
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <pwd.h>
 #include <string.h>
 #include <unistd.h>
-#include "getlstat.h"
 
 //! @brief GetLStat returns the lstat of a file. This simply delegates to the
 //! lstat() system call and maps errno to the expected values for GetLastError.

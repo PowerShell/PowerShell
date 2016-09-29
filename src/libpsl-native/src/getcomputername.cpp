@@ -2,10 +2,11 @@
 //! @author George Fleming <v-geflem@microsoft>
 //! @brief Implements GetComputerName Win32 API
 
+#include "getcomputername.h"
+
 #include <errno.h>
 #include <unistd.h>
 #include <string>
-#include "getcomputername.h"
 
 //! @brief GetComputerName retrieves the name of the host associated with
 //! the current thread.

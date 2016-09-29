@@ -2,12 +2,13 @@
 //! @author George FLeming <v-geflem@microsoft.com>
 //! @brief returns whether a path is a symbolic link
 
+#include "followsymlink.h"
+#include "issymlink.h"
+
 #include <errno.h>
 #include <unistd.h>
 #include <string>
 #include <iostream>
-#include "followsymlink.h"
-#include "issymlink.h"
 
 //! @brief Followsymlink determines target path of a sym link
 //!

@@ -2,13 +2,14 @@
 //! @author George FLeming <v-geflem@microsoft.com>
 //! @brief set local/system date and time
 
+#include "setdate.h"
+
 #include <errno.h>
 #include <langinfo.h>
 #include <locale.h>
 #include <string>
 #include <time.h>
 #include <sys/time.h>
-#include "setdate.h"
 
 //! @brief SetDate sets the date and time on local computer.  You must 
 //!      be super-user to set the time.

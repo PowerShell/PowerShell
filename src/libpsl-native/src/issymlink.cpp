@@ -2,13 +2,14 @@
 //! @author George FLeming <v-geflem@microsoft.com>
 //! @brief returns whether a path is a symbolic link
 
+#include "getlstat.h"
+#include "issymlink.h"
+
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string>
-#include "getlstat.h"
-#include "issymlink.h"
 
 //! @brief IsSymlink determines if path is a symbolic link
 //!

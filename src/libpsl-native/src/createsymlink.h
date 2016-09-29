@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pal.h"
+
 #include <stdbool.h>
 
 PAL_BEGIN_EXTERNC

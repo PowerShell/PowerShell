@@ -2,15 +2,16 @@
 //! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
 //! @brief returns the owner of a file
 
+#include "getstat.h"
+#include "getpwuid.h"
+#include "getfileowner.h"
+
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <pwd.h>
 #include <string.h>
 #include <unistd.h>
-#include "getstat.h"
-#include "getpwuid.h"
-#include "getfileowner.h"
 
 //! @brief GetFileOwner returns the owner of a file
 //!

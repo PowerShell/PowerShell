@@ -2,13 +2,14 @@
 //! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
 //! @brief returns the username for a uid
 
+#include "getpwuid.h"
+
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <pwd.h>
 #include <string.h>
 #include <unistd.h>
-#include "getpwuid.h"
 
 //! @brief GetPwUid returns the username for a uid
 //!

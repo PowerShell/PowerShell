@@ -1,11 +1,12 @@
-#include <string>
-#include <sstream>
-#include <errno.h>
-#include <sys/sysctl.h>
 #include "pal.h"
 #include "getfileowner.h"
 #include "getpwuid.h"
 #include "getuserfrompid.h"
+
+#include <string>
+#include <sstream>
+#include <errno.h>
+#include <sys/sysctl.h>
 
 char* GetUserFromPid(pid_t pid)
 {

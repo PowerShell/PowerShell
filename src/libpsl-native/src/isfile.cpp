@@ -2,6 +2,9 @@
 //! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
 //! @brief returns if the path exists
 
+#include "getlstat.h"
+#include "isfile.h"
+
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -9,8 +12,6 @@
 #include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include "getlstat.h"
-#include "isfile.h"
 
 //! @brief returns if the path is a file or directory
 //!

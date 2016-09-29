@@ -2,10 +2,11 @@
 //! @author George Fleming <v-geflem@microsoft.com>
 //! @brief returns whether a file is executable
 
+#include "isexecutable.h"
+
 #include <errno.h>
 #include <unistd.h>
 #include <string>
-#include "isexecutable.h"
 
 //! @brief IsExecutable determines if path is executable
 //!

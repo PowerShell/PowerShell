@@ -2,13 +2,14 @@
 //! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
 //! @brief returns the stat of a file
 
+#include "getstat.h"
+
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <pwd.h>
 #include <string.h>
 #include <unistd.h>
-#include "getstat.h"
 
 //! @brief GetStat returns the stat of a file. This simply delegates to the
 //! stat() system call and maps errno to the expected values for GetLastError.
