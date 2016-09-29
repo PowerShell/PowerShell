@@ -210,7 +210,8 @@ function Invoke-AppVeyorInstall
     catch { }
     if (!$haveLocalAccountTokenFilterPolicy)
     {
-        Write-Warning "LocalAccountTokenFilterPolicy not set.  Remoting tests will fail!"
+        Write-Warning "Setting the LocalAccountTokenFilterPolicy for remoting tests"
+		Set-ItemProperty -Path HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name LocalAccountTokenFilterPolicy -Value 1
     }
 
     Set-BuildVariable -Name TestPassed -Value False
