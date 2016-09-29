@@ -911,73 +911,78 @@ ZoneId=$FileType
         }
     }
 
+    function VerfiyBlockedSetExecutionPolicy
+    {
+        param(
+            [string]
+            $policyScope
+        )
+        try {
+            Set-ExecutionPolicy -Scope $policyScope -ExecutionPolicy Restricted
+        }
+        catch {
+            $_.FullyQualifiedErrorId | Should Be "CantSetGroupPolicy,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand"
+        }
+    }
+
+    function RestoreExecutionPolicy
+    {
+        param($originalPolicies)
+
+        foreach ($scopedPolicy in $originalPolicies)
+        {
+            if (($scopedPolicy.Scope -eq "Process") -or
+                ($scopedPolicy.Scope -eq "CurrentUser"))
+            {
+                try {
+                    Set-ExecutionPolicy -Scope $scopedPolicy.Scope -ExecutionPolicy $scopedPolicy.ExecutionPolicy -Force
+                }
+                catch {
+                    if ($_.FullyQualifiedErrorId -ne "ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand")
+                    {
+                        # Re-throw unrecognized exceptions. Otherwise, swallow 
+                        # the exception that warns about overridden policies
+                        throw $_
+                    }
+                }
+            }
+            elseif($scopedPolicy.Scope -eq "LocalMachine")
+            {
+                try {
+                    Set-ExecutionPolicy -Scope $scopedPolicy.Scope -ExecutionPolicy $scopedPolicy.ExecutionPolicy -Force
+                }
+                catch {
+                    if ($_.FullyQualifiedErrorId -eq "System.UnauthorizedAccessException,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand")
+                    {
+                        # Do nothing. Depending on the ownership of the file, 
+                        # regular users may or may not be able to set its 
+                        # value. 
+                        #
+                        # When targetting the Registry, regular users cannot
+                        # modify this value.
+                    }
+                    elseif ($_.FullyQualifiedErrorId -ne "ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand")
+                    {
+                        # Re-throw unrecognized exceptions. Otherwise, swallow 
+                        # the exception that warns about overridden policies
+                        throw $_
+                    }
+                }
+            }
+        }
+    }
+
     Describe "Validate Set-ExecutionPolicy -Scope" -Tags "CI" {
 
         BeforeAll {
             if ($IsNotSkipped) {
                 $originalPolicies = Get-ExecutionPolicy -list
-
-                # Calls Set-ExecutionPolicy with a known-bad Scope and expects failure.
-                # It is defined here so that it will be available at It scope.
-                function VerfiyBlockedSetExecutionPolicy
-                {
-                    param(
-                        [string]
-                        $policyScope
-                    )
-                    try {
-                        Set-ExecutionPolicy -Scope $policyScope -ExecutionPolicy Restricted
-                    }
-                    catch {
-                        $_.FullyQualifiedErrorId | Should Be "CantSetGroupPolicy,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand"
-                    }
-                }
             }
         }
 
         AfterAll {
             if ($IsNotSkipped) {
-                foreach ($scopedPolicy in $originalPolicies)
-                {
-                    if (($scopedPolicy.Scope -eq "Process") -or
-                        ($scopedPolicy.Scope -eq "CurrentUser"))
-                    {
-                        try {
-                            Set-ExecutionPolicy -Scope $scopedPolicy.Scope -ExecutionPolicy $scopedPolicy.ExecutionPolicy -Force
-                        }
-                        catch {
-                            if ($_.FullyQualifiedErrorId -ne "ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand")
-                            {
-                                # Re-throw unrecognized exceptions. Otherwise, swallow 
-                                # the exception that warns about overridden policies
-                                throw $_
-                            }
-                        }
-                    }
-                    elseif($scopedPolicy.Scope -eq "LocalMachine")
-                    {
-                        try {
-                            Set-ExecutionPolicy -Scope $scopedPolicy.Scope -ExecutionPolicy $scopedPolicy.ExecutionPolicy -Force
-                        }
-                        catch {
-                            if ($_.FullyQualifiedErrorId -eq "System.UnauthorizedAccessException,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand")
-                            {
-                                # Do nothing. Depending on the ownership of the file, 
-                                # regular users may or may not be able to set its 
-                                # value. 
-                                #
-                                # When targetting the Registry, regular users cannot
-                                # modify this value.
-                            }
-                            elseif ($_.FullyQualifiedErrorId -ne "ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand")
-                            {
-                                # Re-throw unrecognized exceptions. Otherwise, swallow 
-                                # the exception that warns about overridden policies
-                                throw $_
-                            }
-                        }
-                    }
-                }
+                RestoreExecutionPolicy $originalPolicies
             }
         }
 
@@ -998,9 +1003,57 @@ ZoneId=$FileType
             Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy ByPass
             Get-ExecutionPolicy -Scope CurrentUser | Should Be "ByPass"
         }
+    }
 
-        # This test requires Administrator privileges on Windows.
-        It "-Scope LocalMachine is Settable" {
+    Describe "Validate Set-ExecutionPolicy -Scope (Admin)" -Tags @('CI', 'RequireAdminOnWindows') {
+
+        BeforeAll {
+            if ($IsNotSkipped)
+            {
+                $originalPolicies = Get-ExecutionPolicy -list
+            }
+        }
+
+        AfterAll {
+            if ($IsNotSkipped)
+            {
+                RestoreExecutionPolicy $originalPolicies
+            }
+        }
+
+        It '-Scope LocalMachine is Settable, but overridden' {
+            # In this test, we first setup execution policy in the following way:
+            # CurrentUser is specified and takes precedence over LocalMachine.
+            # That's why we will get an error, when we are setting up LocalMachine policy.
+            # The error is:
+            #
+            # Set-ExecutionPolicy : Windows PowerShell updated your execution policy successfully, but the setting is overridden by
+            # a policy defined at a more specific scope.  Due to the override, your shell will retain its current effective
+            # execution policy of RemoteSigned. Type "Get-ExecutionPolicy -List" to view your execution policy settings. For more
+            # information please see "Get-Help Set-ExecutionPolicy".
+            #
+            # Regrdless of that error, the operation should succeed.
+
+            Set-ExecutionPolicy -Scope Process -ExecutionPolicy Undefined
+            Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Restricted
+            try
+            {
+                Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy ByPass
+                throw "Expected exception: ExecutionPolicyOverride"
+            }
+            catch [System.Security.SecurityException] {
+                $_.FullyQualifiedErrorId | Should Be 'ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand'
+            }
+
+            Get-ExecutionPolicy -Scope LocalMachine | Should Be "ByPass"
+        }
+
+        It '-Scope LocalMachine is Settable' {
+            # We need to make sure that both Process and CurrentUser policies are Undefined
+            # before we can set LocalMachine policy without ExecutionPolicyOverride error.
+            Set-ExecutionPolicy -Scope Process -ExecutionPolicy Undefined
+            Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Undefined
+            
             Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy ByPass
             Get-ExecutionPolicy -Scope LocalMachine | Should Be "ByPass"
         }

@@ -44,7 +44,7 @@ try {
     $IsNotSkipped = ($IsWindows -eq $true);
     $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
 
-    Describe "Verify Expected LocalUser Cmdlets are present" -Tags "CI" {
+    Describe "Verify Expected LocalUser Cmdlets are present" -Tags 'CI' {
 
         It "Test command presence" {
             $result = Get-Command -Module Microsoft.PowerShell.LocalAccounts | % Name
@@ -59,7 +59,7 @@ try {
         }
     }
 
-    Describe "Verify Expected LocalUser Aliases are present" -Tags "CI" {
+    Describe "Verify Expected LocalUser Aliases are present" -Tags @('CI', 'RequireAdminOnWindows') {
 
         It "Test command presence" {
             $result = get-alias | % { if ($_.Source -eq "Microsoft.PowerShell.LocalAccounts") {$_}}
@@ -82,7 +82,7 @@ try {
         }
     }
 
-    Describe "Validate simple New-LocalUser" -Tags "CI" {
+    Describe "Validate simple New-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') {
 
         AfterEach {
             if ($IsNotSkipped) {
@@ -101,7 +101,7 @@ try {
         }
     }
 
-    Describe "Validate New-LocalUser cmdlet" -Tags "Feature" {
+    Describe "Validate New-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
 
         AfterEach {
             if ($IsNotSkipped) {
@@ -385,7 +385,7 @@ try {
         }
     }
 
-    Describe "Validate simple Get-LocalUser" -Tags "CI" {
+    Describe "Validate simple Get-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -409,7 +409,7 @@ try {
         }
     }
 
-    Describe "Validate Get-LocalUser cmdlet" -Tags "Feature" {
+    Describe "Validate Get-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -554,7 +554,7 @@ try {
         }
     }
 
-    Describe "Validate simple Set-LocalUser" -Tags "CI" {
+    Describe "Validate simple Set-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -584,7 +584,7 @@ try {
         }
     }
 
-    Describe "Validate Set-LocalUser cmdlet" -Tags "Feature" {
+    Describe "Validate Set-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -803,7 +803,7 @@ try {
         }
     }
 
-    Describe "Validate simple Rename-LocalUser" -Tags "CI" {
+    Describe "Validate simple Rename-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -833,7 +833,7 @@ try {
         }
     }
 
-    Describe "Validate Rename-LocalUser cmdlet" -Tags "Feature" {
+    Describe "Validate Rename-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -984,7 +984,7 @@ try {
         }
     }
 
-    Describe "Validate simple Remove-LocalUser" -Tags "CI" {
+    Describe "Validate simple Remove-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -1023,7 +1023,7 @@ try {
         }
     }
 
-    Describe "Validate Remove-LocalUser cmdlet" -Tags "Feature" {
+    Describe "Validate Remove-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -1197,7 +1197,7 @@ try {
         }
     }
 
-    Describe "Validate simple Enable-LocalUser" -Tags "CI" {
+    Describe "Validate simple Enable-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -1227,7 +1227,7 @@ try {
         }
     }
 
-    Describe "Validate Enable-LocalUser cmdlet" -Tags "Feature" {
+    Describe "Validate Enable-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -1368,7 +1368,7 @@ try {
         }
     }
 
-    Describe "Validate simple Disable-LocalUser" -Tags "CI" {
+    Describe "Validate simple Disable-LocalUser" -Tags @('CI', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -1398,7 +1398,7 @@ try {
         }
     }
 
-    Describe "Validate Disable-LocalUser cmdlet" -Tags "Feature" {
+    Describe "Validate Disable-LocalUser cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {

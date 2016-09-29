@@ -53,7 +53,7 @@ try {
         }
     }
 
-    Describe "Validate simple New-LocalGroup" -Tags "CI" {
+    Describe "Validate simple New-LocalGroup" -Tags @('CI', 'RequireAdminOnWindows') {
 
         AfterEach {
             if ($IsNotSkipped) {
@@ -69,7 +69,7 @@ try {
         }
     }
 
-    Describe "Validate New-LocalGroup cmdlet" -Tags "Feature" {
+    Describe "Validate New-LocalGroup cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
 
         AfterEach {
             if ($IsNotSkipped) {
@@ -224,7 +224,7 @@ try {
         }
     }
 
-    Describe "Validate simple Get-LocalGroup" -Tags "CI" {
+    Describe "Validate simple Get-LocalGroup" -Tags @('CI', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -247,7 +247,7 @@ try {
         }
     }
 
-    Describe "Validate Get-LocalGroup cmdlet" -Tags "Feature" {
+    Describe "Validate Get-LocalGroup cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
        
         BeforeAll {
             if ($IsNotSkipped) {
@@ -365,7 +365,7 @@ try {
         }
     }
 
-    Describe "Validate simple Set-LocalGroup" -Tags "CI" {
+    Describe "Validate simple Set-LocalGroup" -Tags @('CI', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -394,7 +394,7 @@ try {
         }
     }
 
-    Describe "Validate Set-LocalGroup cmdlet" -Tags "Feature" {
+    Describe "Validate Set-LocalGroup cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -468,7 +468,7 @@ try {
         }
     }
 
-    Describe "Validate simple Rename-LocalGroup" -Tags "CI" {
+    Describe "Validate simple Rename-LocalGroup" -Tags @('CI', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -505,7 +505,7 @@ try {
         }
     }
 
-    Describe "Validate Rename-LocalGroup cmdlet" -Tags "Feature" {
+    Describe "Validate Rename-LocalGroup cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -678,7 +678,7 @@ try {
         }
     }
 
-    Describe "Validate simple Remove-LocalGroup" -Tags "CI" {
+    Describe "Validate simple Remove-LocalGroup" -Tags @('CI', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {
@@ -716,7 +716,7 @@ try {
         }
     }
 
-    Describe "Validate Remove-LocalGroup cmdlet" -Tags "Feature" {
+    Describe "Validate Remove-LocalGroup cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
 
         BeforeAll {
             if ($IsNotSkipped) {

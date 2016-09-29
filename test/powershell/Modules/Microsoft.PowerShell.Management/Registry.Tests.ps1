@@ -1,4 +1,4 @@
-Describe "Validate Registry Provider" -Tags "CI" {
+Describe "Validate Registry Provider" -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
         $registryBase = "HKLM:\software\Microsoft\PowerShell\3\"
         $testKey = "TestKeyThatWillNotConflict"

@@ -68,7 +68,7 @@ try {
         }
     }
 
-    Describe "Validate simple Add-LocalGroupMember" -Tags "CI" {
+    Describe "Validate simple Add-LocalGroupMember" -Tags @('CI', 'RequireAdminOnWindows') {
 
         BeforeEach {
             if ($IsNotSkipped) {
@@ -93,7 +93,7 @@ try {
         }
     }
 
-    Describe "Validate Add-LocalGroupMember cmdlet" -Tags "Feature" {
+    Describe "Validate Add-LocalGroupMember cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
 
         BeforeAll {
             $OptDomainPrefix="(.+\\)?"
@@ -241,7 +241,7 @@ try {
         }
     }
 
-    Describe "Validate simple Get-LocalGroupMember" -Tags "CI" {
+    Describe "Validate simple Get-LocalGroupMember" -Tags @('CI', 'RequireAdminOnWindows') {
 
         BeforeEach {
             if ($IsNotSkipped) {
@@ -273,7 +273,7 @@ try {
         }
     }
 
-    Describe "Validate Get-LocalGroupMember cmdlet" -Tags "Feature" {
+    Describe "Validate Get-LocalGroupMember cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
 
         BeforeAll {
             $OptDomainPrefix="(.+\\)?"
@@ -407,7 +407,7 @@ try {
         #TODO: 10.A valid user attempts to get membership from a group to which they don't have access
     }
 
-    Describe "Validate simple Remove-LocalGroupMember" -Tags "CI" {
+    Describe "Validate simple Remove-LocalGroupMember" -Tags @('CI', 'RequireAdminOnWindows') {
 
         BeforeEach {
             if ($IsNotSkipped) {
@@ -434,7 +434,7 @@ try {
         }
     }
 
-    Describe "Validate Remove-LocalGroupMember cmdlet" -Tags "Feature" {
+    Describe "Validate Remove-LocalGroupMember cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
 
         BeforeEach {
             if ($IsNotSkipped) {

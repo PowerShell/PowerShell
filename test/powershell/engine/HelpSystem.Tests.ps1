@@ -65,17 +65,17 @@ function RunTestCase
     }
 }
 
-Describe "Validate that get-help <cmdletName> works" -Tags "CI" {
+Describe "Validate that get-help <cmdletName> works" -Tags @('CI', 'RequireAdminOnWindows') {
 
     RunTestCase -tag "CI"
 }
 
-Describe "Validate Get-Help for all cmdlets in 'Microsoft.PowerShell.Core'" -Tags "Feature" {
+Describe "Validate Get-Help for all cmdlets in 'Microsoft.PowerShell.Core'" -Tags @('Feature', 'RequireAdminOnWindows') {
 
     RunTestCase -tag "Feature"
 }
 
-Describe "Validate that Get-Help returns provider-specific help" -Tags "CI" {
+Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
         $namespaces = @{
             command = 'http://schemas.microsoft.com/maml/dev/command/2004/10'

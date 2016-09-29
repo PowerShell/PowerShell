@@ -260,7 +260,7 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
 
     It "install-package with array of sources, Expect succeed" {
 
-        $x= install-package jquery -force -Source @('foooobarrrr', 'https://www.nuget.org/api/v2')  -ProviderName @('PowershellGet', 'NuGet')    
+        $x= install-package -Scope CurrentUser jquery -force -Source @('foooobarrrr', 'https://www.nuget.org/api/v2')  -ProviderName @('PowershellGet', 'NuGet')
                 
         $x | ?{ $_.name -eq "jquery" } | should not BeNullOrEmpty
         #$x | ?{ $_.Source -eq "https://www.nuget.org/api/v2" } | should not BeNullOrEmpty
