@@ -3337,6 +3337,14 @@ namespace System.Management.Automation
                         }
                     }
                 }
+                else
+                {
+                    if (path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal) || 
+                        path.StartsWith(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal)) 
+                    {
+                        treatAsRelative = false;
+                    }
+                }
             }
             else
             {
