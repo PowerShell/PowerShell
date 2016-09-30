@@ -403,10 +403,10 @@ namespace System.Management.Automation
             return Unix.CreateHardLink(path, strTargetPath);
         }
 
-        internal static void NonWindowsSetDate(DateTime dateToUse)
+        internal static bool NonWindowsSetDate(DateTime dateToUse)
         {
             Unix.SetDateInfoInternal date = new Unix.SetDateInfoInternal(dateToUse);
-            Unix.SetDate(date);
+            return Unix.NativeMethods.SetDate(date) == 0;
         }
 
         internal static string NonWindowsGetDomainName()
@@ -521,15 +521,6 @@ namespace System.Management.Automation
                     return count > 1;
                 }
                 else
-                {
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
-                }
-            }
-
-            public static void SetDate(SetDateInfoInternal info)
-            {
-                int ret = NativeMethods.SetDate(info);
-                if (ret == -1)
                 {
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 }

@@ -17,6 +17,6 @@ typedef struct setDateInfo
     int32_t DST;
 } SetDateInfo;
 
-int32_t SetDate(const SetDateInfo &info);
+int32_t SetDate(const SetDateInfo info);
 
 PAL_END_EXTERNC
