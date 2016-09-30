@@ -184,6 +184,7 @@ function Invoke-AppVeyorInstall
     #
     # Generate new credential for appveyor remoting tests.
     #
+    Write-Verbose "Creating account for remoting tests in AppVeyor."
 
     # Password
     $randomObj = [System.Random]::new()
@@ -202,6 +203,7 @@ function Invoke-AppVeyorInstall
 
     # Check that LocalAccountTokenFilterPolicy policy is set, since it is needed for remoting
     # using above local admin account.
+    Write-Verbose "Checking for LocalAccountTokenFilterPolicy in AppVeyor."
     $haveLocalAccountTokenFilterPolicy = $false
     try
     {
@@ -210,8 +212,8 @@ function Invoke-AppVeyorInstall
     catch { }
     if (!$haveLocalAccountTokenFilterPolicy)
     {
-        Write-Warning "Setting the LocalAccountTokenFilterPolicy for remoting tests"
-		Set-ItemProperty -Path HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name LocalAccountTokenFilterPolicy -Value 1
+        Write-Verbose "Setting the LocalAccountTokenFilterPolicy for remoting tests"
+        Set-ItemProperty -Path HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name LocalAccountTokenFilterPolicy -Value 1
     }
 
     Set-BuildVariable -Name TestPassed -Value False
