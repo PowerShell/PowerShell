@@ -55,9 +55,20 @@ Describe "InvokeOnRunspace method on remote runspace" -tags "CI" {
             $wc = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
 
             # Use AppVeyor credentials if running in AppVeyor, rather than implicit credentials.
-            if ($global:AppveyorRemoteCredential)
+			try
+			{
+				$appveyorRemoteCredential = Import-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml"
+			}
+			catch { }
+            if ($appveyorRemoteCredential)
             {
-                $wc.Credential = $global:AppveyorRemoteCredential
+                Write-Verbose "Using global AppVeyor credential";
+                $wc.Credential = $appveyorRemoteCredential
+            }
+            else
+            {
+                Write-Verbose "Using implicit credentials"
+				throw "Should not use implict credentials in AppVeyor"
             }
 
             $script:remoteRunspace = [runspacefactory]::CreateRunspace($host, $wc)
