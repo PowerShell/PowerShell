@@ -1,4 +1,29 @@
-﻿Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
+﻿function Get-RemoteRunspace {
+    $wc = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
+
+    # Use AppVeyor credentials if running in AppVeyor, rather than implicit credentials.
+    try
+    {
+	    $appveyorRemoteCredential = Import-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml"
+    }
+    catch { }
+    if ($appveyorRemoteCredential)
+    {
+        Write-Verbose "Using global AppVeyor credential";
+        $wc.Credential = $appveyorRemoteCredential
+    }
+    else
+    {
+        Write-Verbose "Using implicit credentials"
+    }
+
+    $remoteRunspace = [runspacefactory]::CreateRunspace($host, $wc)
+    $remoteRunspace.Open()
+
+    return $remoteRunspace
+}
+
+Describe "InvokeOnRunspace method argument error handling" -tags "CI" {
 
     BeforeAll {
         $command = [System.Management.Automation.PSCommand]::new()
@@ -32,7 +57,7 @@
     }
 }
 
-Describe "InvokeOnRunspace method as nested command" -tags "Feature" {
+Describe "InvokeOnRunspace method as nested command" -tags "CI" {
 
     It "Method should successfully invoke command as nested on busy runspace" {
 
@@ -49,37 +74,18 @@ Describe "InvokeOnRunspace method as nested command" -tags "Feature" {
 Describe "InvokeOnRunspace method on remote runspace" -tags "CI" {
     
     BeforeAll {
-
         $script:skipTest = $true
-        It "Set up remoting session for test" {
-            $wc = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
-
-            # Use AppVeyor credentials if running in AppVeyor, rather than implicit credentials.
-			try
-			{
-				$appveyorRemoteCredential = Import-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml"
-			}
-			catch { }
-            if ($appveyorRemoteCredential)
-            {
-                Write-Verbose "Using global AppVeyor credential";
-                $wc.Credential = $appveyorRemoteCredential
-            }
-            else
-            {
-                Write-Verbose "Using implicit credentials"
-				throw "Should not use implict credentials in AppVeyor"
-            }
-
-            $script:remoteRunspace = [runspacefactory]::CreateRunspace($host, $wc)
-            $script:remoteRunspace.Open()
-
+        It "Get remote runspace for test" -Skip:(!$IsWindows) {
+            $script:remoteRunspace = Get-RemoteRunspace
             $script:skipTest = $false
         }
     }
 
     AfterAll {
-        $script:remoteRunspace.Dispose();
+        if ($script:remoteRunspace)
+        {
+            $script:remoteRunspace.Dispose();
+        }
     }
 
     It "Method should successfully invoke command on remote runspace" -Skip:$script:skipTest {
