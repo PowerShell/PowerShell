@@ -85,7 +85,6 @@ Describe 'Get-WinEvent' -Tags "CI" {
             @($results).Count | Should be 1
             $results.RecordId | should be 10
         }
-        <#
         It 'Get-WinEvent can retrieve events with UserData queries using FilterHashtable' {
             # this relies on apriori knowledge about the log file
             # the provided log file has been edited to remove MS PII, so we must use -ea silentlycontinue
@@ -95,7 +94,6 @@ Describe 'Get-WinEvent' -Tags "CI" {
             @($results).Count | Should be 1
             $results.RecordId | should be 10
         }
-        #>
         It 'Get-WinEvent can retrieve events with UserData queries using FilterXPath' {
             # this relies on apriori knowledge about the log file
             # the provided log file has been edited to remove MS PII, so we must use -ea silentlycontinue
