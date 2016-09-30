@@ -360,6 +360,7 @@ namespace Microsoft.PowerShell.Commands
         private const string propOpen = "[";
         private const string propClose = "]";
         private const string filePrefix = "file://";
+        private const string NamedDataTemplate = "((EventData[Data[@Name='{0}']='{1}']) or (UserData/*/{0}='{1}'))";
 
         //
         // Other private members and constants
@@ -1549,14 +1550,14 @@ namespace Microsoft.PowerShell.Commands
         private string HandleNamedDataHashValue(String key, Object value)
         {
             string ret = "";
-            if (value is Array)
+            Array dataArray = value as Array;
+            if (dataArray != null)
             {
-                Array dataArray = (Array)(value);
                 ret += "(";
                 for (int i = 0; i < dataArray.Length; i++)
                 {
                     ret += string.Format(CultureInfo.InvariantCulture,
-                                         "((EventData[Data[@Name='{0}']='{1}']) or (UserData/*/{0}='{1}'))",
+                                         NamedDataTemplate,
                                          key, dataArray.GetValue(i).ToString());
                     if (i < (dataArray.Length - 1))
                     {
@@ -1568,7 +1569,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 ret += string.Format(CultureInfo.InvariantCulture,
-                                         "((EventData[Data[@Name='{0}']='{1}']) or (UserData/*/{0}='{1}'))",
+                                         NamedDataTemplate,
                                          key, value);
             }
 
