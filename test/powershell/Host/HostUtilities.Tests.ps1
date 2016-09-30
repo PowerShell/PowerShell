@@ -23,7 +23,7 @@
     return $remoteRunspace
 }
 
-Describe "InvokeOnRunspace method argument error handling" -tags "CI" {
+Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
 
     BeforeAll {
         $command = [System.Management.Automation.PSCommand]::new()
@@ -57,7 +57,7 @@ Describe "InvokeOnRunspace method argument error handling" -tags "CI" {
     }
 }
 
-Describe "InvokeOnRunspace method as nested command" -tags "CI" {
+Describe "InvokeOnRunspace method as nested command" -tags "Feature" {
 
     It "Method should successfully invoke command as nested on busy runspace" {
 
@@ -71,7 +71,7 @@ Describe "InvokeOnRunspace method as nested command" -tags "CI" {
     }
 }
 
-Describe "InvokeOnRunspace method on remote runspace" -tags "CI" {
+Describe "InvokeOnRunspace method on remote runspace" -tags "Feature" {
     
     BeforeAll {
         $script:skipTest = $true
