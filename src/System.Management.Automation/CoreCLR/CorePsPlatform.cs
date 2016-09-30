@@ -453,6 +453,11 @@ namespace System.Management.Automation
 
         internal static class Unix
         {
+            internal static string GetLastPerror()
+            {
+                return Unix.NativeMethods.GetStrError(Marshal.GetLastWin32Error());
+            }
+
             private static string s_userName;
             public static string UserName
             {
@@ -567,6 +572,10 @@ namespace System.Management.Automation
                 // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and OS X
 
                 // C bools are 1 byte and so must be marshaled as I1
+
+                [DllImport(psLib, CharSet = CharSet.Ansi)]
+                [return: MarshalAs(UnmanagedType.LPStr)]
+                internal static extern string GetStrError(int errno);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.LPStr)]

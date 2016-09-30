@@ -9,4 +9,5 @@ Testing/
 test/psl-native-test
 src/libpsl-native.so
 src/libpsl-native.dylib
+src/config.h
 test/native-tests.xml
