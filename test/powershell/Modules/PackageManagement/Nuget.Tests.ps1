@@ -819,7 +819,7 @@ Describe "install-package with Whatif" -Tags "Feature" {
     }
 }
 
-Describe "install-package with Scope" -tags "Feature" {
+Describe "install-package with Scope" -tags @('Feature', 'RequireAdminOnWindows') {
 
      it "EXPECTED Success: Get and Install-Package without Scope without destination" {
             
