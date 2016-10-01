@@ -690,24 +690,21 @@ namespace Microsoft.PowerShell.Commands
                 // Query the registry to find the web browser path.
                 using (RegistryKey browserRegKey = Registry.ClassesRoot.OpenSubKey(progId + "\\shell\\open\\command", false))
                 {
-                    if (browserRegKey != null)
+                    string browserPath = browserRegKey?.GetValue(null)?.ToString().Replace(/* remove the quotes */ "\"", "");
+                    if (!string.IsNullOrEmpty(browserPath))
                     {
-                        string browserPath = browserRegKey?.GetValue(null)?.ToString().Replace(/* remove the quotes */ "\"", "");
-                        if (!string.IsNullOrEmpty(browserPath))
+                        const string exeExtension = ".exe";
+                        if (!browserPath.EndsWith(exeExtension, StringComparison.OrdinalIgnoreCase))
                         {
-                            const string exeExtension = ".exe";
-                            if (!browserPath.EndsWith(exeExtension, StringComparison.OrdinalIgnoreCase))
-                            {
-                                // Remove any extra chars in the path after ".exe".
-                                int extIndex = browserPath.LastIndexOf(exeExtension, StringComparison.OrdinalIgnoreCase);
-                                browserPath = extIndex > 0 ? browserPath.Substring(0, extIndex + exeExtension.Length) : string.Empty;
-                            }
+                            // Remove any extra chars in the path after ".exe".
+                            int extIndex = browserPath.LastIndexOf(exeExtension, StringComparison.OrdinalIgnoreCase);
+                            browserPath = extIndex > 0 ? browserPath.Substring(0, extIndex + exeExtension.Length) : string.Empty;
+                        }
 
-                            // Make sure the path to the default browser exists.
-                            if (File.Exists(browserPath))
-                            {
-                                return browserPath;
-                            }
+                        // Make sure the path to the default browser exists.
+                        if (File.Exists(browserPath))
+                        {
+                            return browserPath;
                         }
                     }
                 }
