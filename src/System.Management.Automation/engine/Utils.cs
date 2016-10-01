@@ -1564,6 +1564,7 @@ namespace System.Management.Automation.Internal
         internal static bool ForceScriptBlockLogging;
         internal static bool UseDebugAmsiImplementation;
         internal static bool BypassAppLockerPolicyCaching;
+        internal static bool BypassOnlineHelpRetrieval;
         // It's useful to test that we don't depend on the ScriptBlock and AST objects and can use a re-parsed version.
         internal static bool IgnoreScriptBlockCache;
 
