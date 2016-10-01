@@ -3,10 +3,6 @@
     $skipTest = [System.Management.Automation.Platform]::IsLinux -or [System.Management.Automation.Platform]::IsOSX
 
     BeforeAll {
-
-        # Verify that test resouces are available
-        
-
         if (-not $skipTest)
         {
             # Enable the test hook
@@ -38,7 +34,7 @@
                 # TopicTitle - is the cmdlet name in the csv file
                 # HelpURI - is the expected help URI in the csv file
 
-                It "Validate 'get-help $($cmdlet.TopicTitle) -Online'" {
+                It "Validate 'get-help $($cmdlet.TopicTitle) -Online'" -skip:$skipTest {
                     $actualURI = Get-Help $cmdlet.TopicTitle -Online
                     $actualURI = $actualURI.Replace("Help URI:","").Trim()
                     $actualURI | Should Be $cmdlet.HelpURI
