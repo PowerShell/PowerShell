@@ -7,3 +7,6 @@
 	path = src/libpsl-native/test/googletest
 	url = https://github.com/google/googletest.git
 	ignore = dirty
+[submodule "src/Modules/Shared/PowerShellGet"]
+	path = src/Modules/Shared/PowerShellGet
+	url = https://github.com/PowerShell/PowerShellGet.git
