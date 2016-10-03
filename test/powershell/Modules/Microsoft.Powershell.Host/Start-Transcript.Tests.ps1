@@ -96,4 +96,12 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $expectedError = "CannotStartTranscription,Microsoft.PowerShell.Commands.StartTranscriptCommand"
         ValidateTranscription -scriptToExecute $script -outputFilePath $null -expectedError $expectedError
     }
+    It "Should return an error if file path is invalid" {
+        $fileName = (Get-Random).ToString()
+        $inputPath = join-path $TestDrive $fileName
+        $null = New-Item -Path $inputPath -ItemType File -Force -ErrorAction SilentlyContinue
+        $script = "Start-Transcript -OutputDirectory $inputPath"
+        $expectedError = "CannotStartTranscription,Microsoft.PowerShell.Commands.StartTranscriptCommand"
+        ValidateTranscription -scriptToExecute $script -outputFilePath $null -expectedError $expectedError
+    }
 }
