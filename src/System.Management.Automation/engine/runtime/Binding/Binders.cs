@@ -2940,13 +2940,15 @@ namespace System.Management.Automation.Language
 
                 if (numericTarget != null && numericArg != null)
                 {
-                    var expr = exprGenerator(numericTarget.Expression.Cast(target.LimitType).Cast(opType),
-                        numericArg.Expression.Cast(numericArg.LimitType).Cast(opType)).Cast(typeof(object));
+                    var expr = exprGenerator(numericTarget.Expression.Cast(numericTarget.LimitType).Cast(opType),
+                                             numericArg.Expression.Cast(numericArg.LimitType).Cast(opType));
 
                     if (target.LimitType.GetTypeInfo().IsEnum)
                     {
-                        expr = expr.Cast(target.LimitType).Cast(typeof(object));
+                        expr = expr.Cast(target.LimitType);
                     }
+
+                    expr = expr.Cast(typeof(object));
                     return new DynamicMetaObject(expr, numericTarget.CombineRestrictions(numericArg));
                 }
             }
