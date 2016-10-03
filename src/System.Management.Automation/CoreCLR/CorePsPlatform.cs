@@ -395,7 +395,7 @@ namespace System.Management.Automation
         internal static bool NonWindowsCreateSymbolicLink(string path, string target)
         {
             // Linux doesn't care if target is a directory or not
-            return Unix.NativeMethods.CreateSymLink(path, target);
+            return Unix.NativeMethods.CreateSymLink(path, target) == 0;
         }
 
         internal static bool NonWindowsCreateHardLink(string path, string strTargetPath)
@@ -597,9 +597,8 @@ namespace System.Management.Automation
                 internal static extern int SetDate(SetDateInfoInternal info);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool CreateSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath,
-                                                          [MarshalAs(UnmanagedType.LPStr)]string target);
+                internal static extern int CreateSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath,
+                                                         [MarshalAs(UnmanagedType.LPStr)]string target);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 internal static extern int CreateHardLink([MarshalAs(UnmanagedType.LPStr)]string filePath,

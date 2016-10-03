@@ -65,7 +65,7 @@ TEST_F(isSymLinkTest, FilePathNameDoesNotExist)
 {
     std::string invalidFile = "/tmp/symlinktest_invalidFile";
     EXPECT_FALSE(IsSymLink(invalidFile.c_str()));
-    EXPECT_EQ(ERROR_FILE_NOT_FOUND, errno);
+    EXPECT_EQ(ENOENT, errno);
 }
 
 TEST_F(isSymLinkTest, NormalFileIsNotSymLink)

@@ -2208,14 +2208,11 @@ namespace Microsoft.PowerShell.Commands
 
                     if (itemType == ItemType.SymbolicLink)
                     {
-                        if (Platform.IsWindows)
-                        {
-                            success = WinCreateSymbolicLink(path, strTargetPath, isDirectory);
-                        }
-                        else
-                        {
-                            success = Platform.NonWindowsCreateSymbolicLink(path, strTargetPath);
-                        }
+#if UNIX
+                        success = Platform.NonWindowsCreateSymbolicLink(path, strTargetPath);
+#else
+                        success = WinCreateSymbolicLink(path, strTargetPath, isDirectory);
+#endif
                     }
                     else if (itemType == ItemType.HardLink)
                     {

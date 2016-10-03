@@ -171,4 +171,14 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
         # Remove the link explicitly to avoid broken symlink issue
         Remove-Item $FullyQualifiedLink -Force
     }
+
+    It "Should error correctly when failing to create a symbolic link" -Skip:($IsWindows -or $IsElevated) {
+        # This test expects that /sbin exists but is not writable by the user
+        try {
+            New-Item -ItemType SymbolicLink -Path "/sbin/powershell-test" -Target $FullyQualifiedFolder -ErrorAction Stop
+            throw "Execution OK"
+        } catch {
+            $_.FullyQualifiedErrorId | Should Be "NewItemSymbolicLinkElevationRequired,Microsoft.PowerShell.Commands.NewItemCommand"
+        }
+    }
 }
