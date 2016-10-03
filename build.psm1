@@ -197,7 +197,7 @@ function Start-PSBuild {
         $Arguments += "build"
     }
     if ($Output) {
-        $Arguments += "--output", (Join-Path $PSScriptRoot $Output)
+        $Arguments += "--output", $Output
     }
     elseif ($SMAOnly) {
         $Arguments += "--output", (Split-Path $script:Options.Output)
@@ -490,9 +490,7 @@ function New-PSOptions {
     }
 
     # Build the Output path
-    if ($Output) {
-        $Output = Join-Path $PSScriptRoot $Output
-    } else {
+    if (!$Output) {
         $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime)
 
         # Publish injects the publish directory
