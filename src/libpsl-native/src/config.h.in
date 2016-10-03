@@ -1,1 +1,0 @@
-#cmakedefine HAVE_GNU_STRERROR_R 1

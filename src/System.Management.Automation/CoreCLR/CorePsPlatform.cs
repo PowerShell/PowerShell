@@ -4,6 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
 using System.IO;
@@ -451,13 +452,15 @@ namespace System.Management.Automation
             return 0;
         }
 
+        // Unix specific implementations of required functionality
+        //
+        // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
+        // works *correctly* on Linux in that it creates an exception with
+        // the string perror would give you for the last set value of errno.
+        // No manual mapping is required. .NET Core maps the Linux errno
+        // to a PAL value and calls strerror_r underneath to generate the message.
         internal static class Unix
         {
-            internal static string GetLastPerror()
-            {
-                return Unix.NativeMethods.GetStrError(Marshal.GetLastWin32Error());
-            }
-
             private static string s_userName;
             public static string UserName
             {
@@ -513,8 +516,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    int lastError = Marshal.GetLastWin32Error();
-                    throw new InvalidOperationException("Unix.IsHardLink error: " + lastError);
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
                 }
             }
 
@@ -523,8 +525,7 @@ namespace System.Management.Automation
                 int ret = NativeMethods.SetDate(info);
                 if (ret == -1)
                 {
-                    int lastError = Marshal.GetLastWin32Error();
-                    throw new InvalidOperationException("Unix.NonWindowsSetDate error: " + lastError);
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
                 }
             }
 
@@ -572,10 +573,6 @@ namespace System.Management.Automation
                 // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and OS X
 
                 // C bools are 1 byte and so must be marshaled as I1
-
-                [DllImport(psLib, CharSet = CharSet.Ansi)]
-                [return: MarshalAs(UnmanagedType.LPStr)]
-                internal static extern string GetStrError(int errno);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.LPStr)]

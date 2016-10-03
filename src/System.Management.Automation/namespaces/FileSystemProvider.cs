@@ -2231,6 +2231,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!success)
                     {
+                        // Porting note: The Win32Exception will report the correct error on Linux
                         int errorCode = Marshal.GetLastWin32Error();
 
                         Win32Exception w32Exception = new Win32Exception((int)errorCode);
