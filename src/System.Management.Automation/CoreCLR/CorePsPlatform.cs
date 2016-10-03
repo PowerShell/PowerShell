@@ -461,6 +461,12 @@ namespace System.Management.Automation
         // to a PAL value and calls strerror_r underneath to generate the message.
         internal static class Unix
         {
+            // This is a helper that attempts to map errno into a PowerShell ErrorCategory
+            internal static ErrorCategory GetErrorCategory(int errno)
+            {
+                return (ErrorCategory)Unix.NativeMethods.GetErrorCategory(errno);
+            }
+
             private static string s_userName;
             public static string UserName
             {
@@ -573,6 +579,9 @@ namespace System.Management.Automation
                 // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and OS X
 
                 // C bools are 1 byte and so must be marshaled as I1
+
+                [DllImport(psLib, CharSet = CharSet.Ansi)]
+                internal static extern int GetErrorCategory(int errno);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.LPStr)]

@@ -2236,7 +2236,11 @@ namespace Microsoft.PowerShell.Commands
 
                         Win32Exception w32Exception = new Win32Exception((int)errorCode);
 
+#if UNIX
+                        if (Platform.Unix.GetErrorCategory(errorCode) == ErrorCategory.PermissionDenied)
+#else
                         if (errorCode == 1314) //ERROR_PRIVILEGE_NOT_HELD
+#endif
                         {
                             string message = FileSystemProviderStrings.ElevationRequired;
                             WriteError(new ErrorRecord(new UnauthorizedAccessException(message, w32Exception), "NewItemSymbolicLinkElevationRequired", ErrorCategory.PermissionDenied, value.ToString()));
