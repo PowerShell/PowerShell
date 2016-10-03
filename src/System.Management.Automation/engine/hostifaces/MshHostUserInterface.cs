@@ -676,7 +676,11 @@ namespace System.Management.Automation.Host
                     string baseDirectory = Path.GetDirectoryName(transcript.Path);
                     if (Directory.Exists(transcript.Path) || (String.Equals(baseDirectory, transcript.Path.TrimEnd(Path.DirectorySeparatorChar), StringComparison.Ordinal)))
                     {
-                        throw new ArgumentException(InternalHostUserInterfaceStrings.InvalidTranscriptFilePath);
+                        string errorMessage = String.Format(
+                            System.Globalization.CultureInfo.CurrentCulture,
+                            InternalHostUserInterfaceStrings.InvalidTranscriptFilePath,
+                            transcript.Path);
+                        throw new ArgumentException(errorMessage);
                     }
                     if(!Directory.Exists(baseDirectory))
                     {

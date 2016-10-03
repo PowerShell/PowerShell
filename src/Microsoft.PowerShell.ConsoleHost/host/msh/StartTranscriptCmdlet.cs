@@ -256,8 +256,12 @@ namespace Microsoft.PowerShell.Commands
                     CommandProcessorBase.CheckForSevereException(e);
                 }
 
+                string errorMessage = String.Format(
+                    System.Globalization.CultureInfo.CurrentCulture,
+                    TranscriptStrings.CannotStartTranscription,
+                    e.Message);
                 ErrorRecord er = new ErrorRecord(
-                    PSTraceSource.NewInvalidOperationException(e, TranscriptStrings.CannotStartTranscription),
+                    PSTraceSource.NewInvalidOperationException(e, errorMessage),
                     "CannotStartTranscription", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
             }

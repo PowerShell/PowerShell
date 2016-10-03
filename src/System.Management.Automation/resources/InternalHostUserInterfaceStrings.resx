@@ -214,6 +214,6 @@ End time: {0:yyyyMMddHHmmss}
 **********************</value>
   </data>
    <data name="InvalidTranscriptFilePath" xml:space="preserve">
-    <value>Cannot perform operation because file path resolves to a directory.</value>
+    <value>File path {0} resolves to a directory.</value>
   </data>
 </root>
