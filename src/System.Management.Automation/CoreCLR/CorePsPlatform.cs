@@ -400,7 +400,7 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsCreateHardLink(string path, string strTargetPath)
         {
-            return Unix.CreateHardLink(path, strTargetPath);
+            return Unix.NativeMethods.CreateHardLink(path, strTargetPath) == 0;
         }
 
         internal static bool NonWindowsSetDate(DateTime dateToUse)
@@ -524,12 +524,6 @@ namespace System.Management.Automation
                 {
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 }
-            }
-
-            public static bool CreateHardLink(string path, string strTargetPath)
-            {
-                int ret = NativeMethods.CreateHardLink(path, strTargetPath);
-                return ret == 1 ? true : false;
             }
 
             [StructLayout(LayoutKind.Sequential)]

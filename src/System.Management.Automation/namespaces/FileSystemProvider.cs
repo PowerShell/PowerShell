@@ -2216,14 +2216,11 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else if (itemType == ItemType.HardLink)
                     {
-                        if (Platform.IsWindows)
-                        {
-                            success = WinCreateHardLink(path, strTargetPath);
-                        }
-                        else
-                        {
-                            success = Platform.NonWindowsCreateHardLink(path, strTargetPath);
-                        }
+#if UNIX
+                        success = Platform.NonWindowsCreateHardLink(path, strTargetPath);
+#else
+                        success = WinCreateHardLink(path, strTargetPath);
+#endif
                     }
 
                     if (!success)
