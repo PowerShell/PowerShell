@@ -127,7 +127,7 @@
     <value>Transcript stopped, output file is {0}</value>
   </data>
   <data name="CannotStartTranscription" xml:space="preserve">
-    <value>Transcription cannot be started.</value>
+    <value>Transcription cannot be started due to the error: {0}</value>
   </data>
   <data name="ReadWriteFileNotFileSystemProvider" xml:space="preserve">
     <value>The current provider ({0}) cannot open a file.</value>
