@@ -3,42 +3,43 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
     BeforeAll {
 
         function ValidateTranscription {
-            param
-            (
+            param (
                 [string] $scriptToExecute,
                 [string] $outputFilePath,
                 [switch] $append,
                 [switch] $noClobber,
                 [string] $expectedError
             )
-            if($append -or $noClobber)
-            {
+            if($append -or $noClobber) {
                 #Add sample text to the file
                 $content = "This is sample text!"
                 $content | Out-File -FilePath $outputFilePath
                 Test-Path $outputFilePath | Should be $true
             }
-            #execute script
-            $ps = [powershell]::Create()
-            $ps.addscript($scriptToExecute).Invoke()
-            $ps.commands.clear()
 
-            if($expectedError)
-            {
-                $ps.hadErrors | Should be $true
-                $ps.Streams.Error.FullyQualifiedErrorId | Should be $expectedError
-            }
-            else 
-            {
-                $ps.addscript("Get-Date").Invoke()
+            try {
+                #execute script
+                $ps = [powershell]::Create()
+                $ps.addscript($scriptToExecute).Invoke()
                 $ps.commands.clear()
-                $ps.addscript("Stop-Transcript").Invoke()
 
-                Test-Path $outputFilePath | Should be $true
-                $outputFilePath | should contain "Get-Date"
-                if($append)
-                {
-                    $outputFilePath | Should contain $content
+                if($expectedError) {
+                    $ps.hadErrors | Should be $true
+                    $ps.Streams.Error.FullyQualifiedErrorId | Should be $expectedError
+                } else {
+                    $ps.addscript("Get-Date").Invoke()
+                    $ps.commands.clear()
+                    $ps.addscript("Stop-Transcript").Invoke()
+
+                    Test-Path $outputFilePath | Should be $true
+                    $outputFilePath | should contain "Get-Date"
+                    if($append) {
+                        $outputFilePath | Should contain $content
+                    }
+                }
+            } finally {
+                if ($ps -ne $null) {
+                    $ps.Dispose()
                 }
             }
         }
@@ -55,19 +56,20 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
     It "Should create Transcript file at default path" {
         $script = "Start-Transcript"
-        if ($isWindows)
-        {
+        if ($isWindows) {
             $defaultTranscriptFilePath = [io.path]::Combine($env:USERPROFILE, "Documents", "PowerShell_transcript*")
-        }
-        else 
-        {
+        } else {
             $defaultTranscriptFilePath = [io.path]::Combine($env:HOME, "PowerShell_transcript*")
         }
-        #Make sure there is no stale data
-        Remove-Item $defaultTranscriptFilePath -Force -ErrorAction SilentlyContinue
-        ValidateTranscription -scriptToExecute $script -outputFilePath $defaultTranscriptFilePath
-        #Remove test data
-        Remove-Item $defaultTranscriptFilePath -ErrorAction SilentlyContinue
+
+        try {
+            #Make sure there is no stale data
+            Remove-Item $defaultTranscriptFilePath -Force -ErrorAction SilentlyContinue
+            ValidateTranscription -scriptToExecute $script -outputFilePath $defaultTranscriptFilePath
+        } finally {
+            #Remove test data
+            Remove-Item $defaultTranscriptFilePath -ErrorAction SilentlyContinue
+        }
     }
     It "Should create Transcript file with 'Path' parameter" {
         $script = "Start-Transcript -path $transcriptFilePath"
