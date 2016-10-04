@@ -9,7 +9,7 @@
     "tasks": [
         {
             "taskName": "build",
-            "args": [ "Import-Module ${workspaceRoot}/build.psm1; Start-PSBuild -Output debug" ],
+            "args": [ "Import-Module ${workspaceRoot}/build.psm1; Start-PSBuild -Output ${workspaceRoot}/debug" ],
             "isBuildCommand": true,
             "problemMatcher": "$msCompile"
         }
