@@ -8033,17 +8033,18 @@ namespace Microsoft.PowerShell.Commands
         private static List<string> InternalGetTarget(string filePath)
         {
             var links = new List<string>();
-            if (!Platform.IsWindows)
+#if UNIX
+            string link = Platform.NonWindowsInternalGetTarget(filePath);
+            if (!String.IsNullOrEmpty(link))
             {
-                string link = Platform.NonWindowsInternalGetTarget(filePath);
-                if (!String.IsNullOrEmpty(link))
-                {
-                    links.Add(link);
-                }
-                return links;
+                links.Add(link);
+            }
+            else
+            {
+                throw new Win32Exception(Marshal.GetLastWin32Error());
             }
 
-#if !CORECLR //FindFirstFileName, FindNextFileName and FindClose are not available on Core Clr 
+#elif !CORECLR //FindFirstFileName, FindNextFileName and FindClose are not available on Core Clr
             UInt32 linkStringLength = 0;
             var linkName = new StringBuilder();
 
@@ -8101,7 +8102,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 InternalSymbolicLinkLinkCodeMethods.FindClose(fileHandle);
             }
-#endif 
+#endif
             return links;
         }
 
