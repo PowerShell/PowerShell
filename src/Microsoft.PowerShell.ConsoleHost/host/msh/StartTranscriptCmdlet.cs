@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Commands
                         else
                         {
                             string errorMessage = String.Format(
-                                System.Globalization.CultureInfo.InvariantCulture,
+                                System.Globalization.CultureInfo.CurrentCulture,
                                 TranscriptStrings.TranscriptFileReadOnly,
                                 effectiveFilePath);
                             Exception innerException = new ArgumentException(errorMessage);
