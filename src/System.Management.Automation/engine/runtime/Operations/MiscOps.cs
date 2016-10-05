@@ -1263,59 +1263,72 @@ namespace System.Management.Automation
 
         internal static int FindMatchingHandler(MutableTuple tuple, RuntimeException rte, Type[] types, ExecutionContext context)
         {
-            Exception exceptionToPass = rte;
-            Exception inner = rte.InnerException;
+            Exception exceptionToPass = null;
+            ErrorRecord errorRecordToPass = null;
             int handler = -1;
-            if (inner != null)
-            {
-                handler = FindMatchingHandlerByType(inner.GetType(), types);
-                exceptionToPass = inner;
-            }
+            bool continueToSearch = false;
 
-            // If no handler was found, or if the handler we found was the catch all handler,
-            // then look again, this time using the outer exception.  If we found the catch all,
-            // there may be a handler that catches outer but not inner.  Furthermore, rethrow
-            // should throw the original exception from a catchall, not the inner.
-            if (handler == -1 || types[handler].Equals(typeof(CatchAll)))
-            {
-                handler = FindMatchingHandlerByType(rte.GetType(), types);
-                exceptionToPass = rte;
-            }
-
-            // If we still didn't find a specific handler, we'll try unwrapping a few other of our exceptions:
-            //     ActionPreferenceStopException - to cover -ea stop
-            //         try { gci nosuchfile -ea stop } catch [System.Management.Automation.ItemNotFoundException] { 'caught' }
-            //     CmdletInvocationException - to cover cmdlets like Invoke-Expression
-            //
-            if ((handler == -1 || types[handler].Equals(typeof(CatchAll))))
-            {
-                var apse = rte as ActionPreferenceStopException;
-                if (apse != null)
+            do {
+                // Always assume no need to repeat the search for another interation
+                continueToSearch = false;
+                // The 'ErrorRecord' of the current RuntimeException would be passed to $_
+                errorRecordToPass = rte.ErrorRecord;
+                
+                Exception inner = rte.InnerException;
+                if (inner != null)
                 {
-                    exceptionToPass = apse.ErrorRecord.Exception;
-                    if (exceptionToPass is RuntimeException)
-                    {
-                        return FindMatchingHandler(tuple, (RuntimeException)exceptionToPass, types, context);
-                    }
+                    handler = FindMatchingHandlerByType(inner.GetType(), types);
+                    exceptionToPass = inner;
+                }
 
-                    if (exceptionToPass != null)
+                // If no handler was found, or if the handler we found was the catch all handler,
+                // then look again, this time using the outer exception.  If we found the catch all,
+                // there may be a handler that catches outer but not inner.  Furthermore, rethrow
+                // should throw the original exception from a catchall, not the inner.
+                if (handler == -1 || types[handler].Equals(typeof(CatchAll)))
+                {
+                    handler = FindMatchingHandlerByType(rte.GetType(), types);
+                    exceptionToPass = rte;
+                }
+
+                // If we still didn't find a specific handler, we'll try unwrapping a few other of our exceptions:
+                //     ActionPreferenceStopException - to cover -ea stop
+                //         try { gci nosuchfile -ea stop } catch [System.Management.Automation.ItemNotFoundException] { 'caught' }
+                //     CmdletInvocationException - to cover cmdlets like Invoke-Expression
+                //
+                if ((handler == -1 || types[handler].Equals(typeof(CatchAll))))
+                {
+                    var apse = rte as ActionPreferenceStopException;
+                    if (apse != null)
                     {
-                        handler = FindMatchingHandlerByType(exceptionToPass.GetType(), types);
+                        exceptionToPass = apse.ErrorRecord.Exception;
+                        
+                        // If it's also a RuntimeException, then we need to repeat the search using it
+                        rte = exceptionToPass as RuntimeException;
+                        if (rte != null)
+                        {
+                            continueToSearch = true;
+                            continue;
+                        }
+                        else if (exceptionToPass != null)
+                        {
+                            handler = FindMatchingHandlerByType(exceptionToPass.GetType(), types);
+                        }
+                    }
+                    else if (rte is CmdletInvocationException && inner != null)
+                    {
+                        exceptionToPass = inner.InnerException;
+                        if (exceptionToPass != null)
+                        {
+                            handler = FindMatchingHandlerByType(exceptionToPass.GetType(), types);
+                        }
                     }
                 }
-                else if (rte is CmdletInvocationException && inner != null)
-                {
-                    exceptionToPass = inner.InnerException;
-                    if (exceptionToPass != null)
-                    {
-                        handler = FindMatchingHandlerByType(exceptionToPass.GetType(), types);
-                    }
-                }
-            }
+            } while (continueToSearch);
 
             if (handler != -1)
             {
-                var errorRecord = new ErrorRecord(rte.ErrorRecord, exceptionToPass);
+                var errorRecord = new ErrorRecord(errorRecordToPass, exceptionToPass);
                 tuple.SetAutomaticVariable(AutomaticVariable.Underbar, errorRecord, context);
             }
             return handler;
