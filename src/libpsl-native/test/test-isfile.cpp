@@ -20,11 +20,5 @@ TEST(IsFileTest, BinLsIsFile)
 TEST(IsFileTest, CannotGetOwnerOfFakeFile)
 {
     EXPECT_FALSE(IsFile("SomeMadeUpFileNameThatDoesNotExist"));
-    EXPECT_EQ(errno, ERROR_FILE_NOT_FOUND);
-}
-
-TEST(IsFileTest, ReturnsFalseForNullInput)
-{
-    EXPECT_FALSE(IsFile(NULL));
-    EXPECT_EQ(errno, ERROR_INVALID_PARAMETER);
+    EXPECT_EQ(errno, ENOENT);
 }

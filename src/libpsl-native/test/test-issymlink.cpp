@@ -55,12 +55,6 @@ protected:
     }
 };
 
-TEST_F(isSymLinkTest, FilePathNameIsNull)
-{
-    EXPECT_FALSE(IsSymLink(NULL));
-    EXPECT_EQ(ERROR_INVALID_PARAMETER, errno);
-}
-
 TEST_F(isSymLinkTest, FilePathNameDoesNotExist)
 {
     std::string invalidFile = "/tmp/symlinktest_invalidFile";
