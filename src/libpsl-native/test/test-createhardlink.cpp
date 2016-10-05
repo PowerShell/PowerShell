@@ -76,7 +76,7 @@ TEST_F(CreateHardLinkTest, FilePathNameDoesNotExist)
 TEST_F(CreateHardLinkTest, VerifyLinkCount)
 {
     int count = 0;
-    int retVal = GetLinkCount(fileHardLink.c_str(), &count);
-    EXPECT_EQ(1, retVal);
+    int ret = GetLinkCount(fileHardLink.c_str(), &count);
+    EXPECT_EQ(0, ret);
     EXPECT_EQ(2, count);
 }

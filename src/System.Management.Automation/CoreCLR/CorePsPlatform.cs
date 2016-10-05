@@ -516,7 +516,7 @@ namespace System.Management.Automation
                 int count;
                 string filePath = fs.FullName;
                 int ret = NativeMethods.GetLinkCount(filePath, out count);
-                if (ret == 1)
+                if (ret == 0)
                 {
                     return count > 1;
                 }

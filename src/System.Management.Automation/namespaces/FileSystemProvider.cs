@@ -8179,10 +8179,11 @@ namespace Microsoft.PowerShell.Commands
 
         internal static bool IsHardLink(FileSystemInfo fileInfo)
         {
-            if (Platform.IsWindows)
-                return WinIsHardLink(fileInfo);
-            else
-                return Platform.NonWindowsIsHardLink(fileInfo);
+#if UNIX
+            return Platform.NonWindowsIsHardLink(fileInfo);
+#else
+            return WinIsHardLink(fileInfo);
+#endif
         }
 
         internal static bool IsReparsePoint(FileSystemInfo fileInfo)
@@ -8238,10 +8239,11 @@ namespace Microsoft.PowerShell.Commands
 
         internal static bool IsHardLink(ref IntPtr handle)
         {
-            if (Platform.IsWindows)
-                return WinIsHardLink(ref handle);
-            else
-                return Platform.NonWindowsIsHardLink(ref handle);
+#if UNIX
+            return Platform.NonWindowsIsHardLink(ref handle);
+#else
+            return WinIsHardLink(ref handle);
+#endif
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
