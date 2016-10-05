@@ -337,6 +337,11 @@ namespace Microsoft.PowerShell.Commands
             if (ExcludeProperty != null)
             {
                 _exclusionFilter = new MshExpressionFilter(ExcludeProperty);
+                if ((Property == null) || (Property.Length == 0))
+                {
+                    Property = new Object[]{"*"};
+                    _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
+                }
             }
         }
 
@@ -414,7 +419,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (expressionResults.Count == 0)
+            if (expressionResults.Count == 0 && !ex.HasWildCardCharacters)
             {
                 //Commented out for bug 1107600
                 //if (!ex.HasWildCardCharacters)
