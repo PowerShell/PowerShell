@@ -23,7 +23,7 @@
     return $remoteRunspace
 }
 
-Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
+Describe "InvokeOnRunspace method argument error handling" -tags "CI" {
 
     BeforeAll {
         $command = [System.Management.Automation.PSCommand]::new()
@@ -57,7 +57,7 @@ Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
     }
 }
 
-Describe "InvokeOnRunspace method as nested command" -tags "Feature" {
+Describe "InvokeOnRunspace method as nested command" -tags "CI" {
 
     It "Method should successfully invoke command as nested on busy runspace" {
 
@@ -71,13 +71,12 @@ Describe "InvokeOnRunspace method as nested command" -tags "Feature" {
     }
 }
 
-Describe "InvokeOnRunspace method on remote runspace" -tags "Feature" {
+Describe "InvokeOnRunspace method on remote runspace" -tags "CI" {
     
     BeforeAll {
-        $script:skipTest = $true
-        It "Get remote runspace for test" -Skip:(!$IsWindows) {
+
+        It "Configures remote runspace for tests"  -Skip:(!$IsWindows) {
             $script:remoteRunspace = Get-RemoteRunspace
-            $script:skipTest = $false
         }
     }
 
@@ -88,7 +87,7 @@ Describe "InvokeOnRunspace method on remote runspace" -tags "Feature" {
         }
     }
 
-    It "Method should successfully invoke command on remote runspace" -Skip:$script:skipTest {
+    It "Method should successfully invoke command on remote runspace" -Skip:(!$IsWindows) {
 
         $command = [System.Management.Automation.PSCommand]::new()
         $command.AddScript('"Hello!"')

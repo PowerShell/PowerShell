@@ -181,39 +181,42 @@ function Invoke-AppVeyorInstall
         Update-AppveyorBuild -message $buildName
     }
 
-    #
-    # Generate new credential for appveyor remoting tests.
-    #
-    Write-Verbose "Creating account for remoting tests in AppVeyor."
-
-    # Password
-    $randomObj = [System.Random]::new()
-    $password = ""
-    1..(Get-Random -Minimum 15 -Maximum 126) | ForEach { $password = $password + [char]$randomObj.next(45,126) }
-
-    # Account
-    $userName = 'appVeyorRemote'
-    New-LocalUser -username $userName -password $password
-    Add-UserToGroup -username $userName -groupSid $script:administratorsGroupSID
-
-    # Provide credentials globally for remote tests.
-    $ss = ConvertTo-SecureString -String $password -AsPlainText -Force
-    $appveyorRemoteCredential = [PSCredential]::new("$env:COMPUTERNAME\$userName", $ss)
-	$appveyorRemoteCredential | Export-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml" -Force
-
-    # Check that LocalAccountTokenFilterPolicy policy is set, since it is needed for remoting
-    # using above local admin account.
-    Write-Verbose "Checking for LocalAccountTokenFilterPolicy in AppVeyor."
-    $haveLocalAccountTokenFilterPolicy = $false
-    try
+    if ($APPVEYOR)
     {
-        $haveLocalAccountTokenFilterPolicy = ((Get-ItemPropertyValue -Path HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name LocalAccountTokenFilterPolicy) -eq 1)
-    }
-    catch { }
-    if (!$haveLocalAccountTokenFilterPolicy)
-    {
-        Write-Verbose "Setting the LocalAccountTokenFilterPolicy for remoting tests"
-        Set-ItemProperty -Path HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name LocalAccountTokenFilterPolicy -Value 1
+        #
+        # Generate new credential for appveyor (only) remoting tests.
+        #
+        Write-Verbose "Creating account for remoting tests in AppVeyor."
+
+        # Password
+        $randomObj = [System.Random]::new()
+        $password = ""
+        1..(Get-Random -Minimum 15 -Maximum 126) | ForEach { $password = $password + [char]$randomObj.next(45,126) }
+
+        # Account
+        $userName = 'appVeyorRemote'
+        New-LocalUser -username $userName -password $password
+        Add-UserToGroup -username $userName -groupSid $script:administratorsGroupSID
+
+        # Provide credentials globally for remote tests.
+        $ss = ConvertTo-SecureString -String $password -AsPlainText -Force
+        $appveyorRemoteCredential = [PSCredential]::new("$env:COMPUTERNAME\$userName", $ss)
+	    $appveyorRemoteCredential | Export-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml" -Force
+
+        # Check that LocalAccountTokenFilterPolicy policy is set, since it is needed for remoting
+        # using above local admin account.
+        Write-Verbose "Checking for LocalAccountTokenFilterPolicy in AppVeyor."
+        $haveLocalAccountTokenFilterPolicy = $false
+        try
+        {
+            $haveLocalAccountTokenFilterPolicy = ((Get-ItemPropertyValue -Path HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name LocalAccountTokenFilterPolicy) -eq 1)
+        }
+        catch { }
+        if (!$haveLocalAccountTokenFilterPolicy)
+        {
+            Write-Verbose "Setting the LocalAccountTokenFilterPolicy for remoting tests"
+            Set-ItemProperty -Path HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name LocalAccountTokenFilterPolicy -Value 1
+        }
     }
 
     Set-BuildVariable -Name TestPassed -Value False
