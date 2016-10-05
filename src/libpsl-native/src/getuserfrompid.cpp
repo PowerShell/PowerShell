@@ -33,7 +33,6 @@ char* GetUserFromPid(pid_t pid)
     int ret = sysctl(name, namelen, &oldp, &oldlenp, NULL, 0);
     if (ret != 0 || oldlenp == 0)
     {
-        errno = ERROR_GEN_FAILURE;
         return NULL;
     }
 
