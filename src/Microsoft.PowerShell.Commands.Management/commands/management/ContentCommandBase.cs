@@ -684,6 +684,10 @@ namespace Microsoft.PowerShell.Commands
                                 currentCommandContext,
                                 out provider,
                                 out drive);
+#if UNIX
+                        // we need to pass null for non-Windows as we have a single rooted filesystem
+                        drive = null;
+#endif
 
                         PathInfo pathInfo =
                             new PathInfo(
