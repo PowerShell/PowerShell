@@ -19,9 +19,9 @@ char* GetComputerName()
     // Get computername from system, note that gethostname(2) gets the
     // nodename from uname
     std::string computername(_POSIX_HOST_NAME_MAX, 0);
-    int err = gethostname(&computername[0], computername.length());
+    int32_t ret = gethostname(&computername[0], computername.length());
     // Map errno to Win32 Error Codes
-    if (err != 0)
+    if (ret != 0)
     {
         return NULL;
     }
