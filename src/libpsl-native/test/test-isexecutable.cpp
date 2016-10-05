@@ -47,17 +47,11 @@ protected:
     }
 };
 
-TEST_F(IsExecutableTest, FilePathNameIsNull)
-{
-    EXPECT_FALSE(IsExecutable(NULL));
-    EXPECT_EQ(ERROR_INVALID_PARAMETER, errno);
-}
-
 TEST_F(IsExecutableTest, FilePathNameDoesNotExist)
 {
     std::string invalidFile = "/tmp/isexecutabletest_invalidFile";
     EXPECT_FALSE(IsExecutable(invalidFile.c_str()));
-    EXPECT_EQ(ERROR_FILE_NOT_FOUND, errno);
+    EXPECT_EQ(ENOENT, errno);
 }
 
 TEST_F(IsExecutableTest, NormalFileIsNotIsexecutable)
