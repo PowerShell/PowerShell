@@ -181,7 +181,7 @@ function Invoke-AppVeyorInstall
         Update-AppveyorBuild -message $buildName
     }
 
-    if ($APPVEYOR)
+    if ($env:APPVEYOR)
     {
         #
         # Generate new credential for appveyor (only) remoting tests.

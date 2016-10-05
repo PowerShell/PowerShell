@@ -75,7 +75,7 @@ Describe "InvokeOnRunspace method on remote runspace" -tags "CI" {
     
     BeforeAll {
 
-        It "Configures remote runspace for tests"  -Skip:(!$IsWindows) {
+        if ($IsWindows) {
             $script:remoteRunspace = Get-RemoteRunspace
         }
     }
