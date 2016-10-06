@@ -113,6 +113,8 @@ If you have any problems, please consult the [known issues][], developer [FAQ][]
 If you do not see your problem captured, please file a [new issue][] and follow the provided template.
 If you are developing .NET Core C# applications targeting PowerShell Core, please [check out our FAQ][] to learn more about the PowerShell SDK NuGet package.
 
+Also make sure to check out our [PowerShell-RFC repository](https://github.com/powershell/powershell-rfc) for request-for-comments (RFC) documents to submit and give comments on proposed and future designs.
+
 [check out our FAQ]: docs/FAQ.md#where-do-i-get-the-powershell-core-sdk-package
 [Contribution Guide]: .github/CONTRIBUTING.md
 [known issues]: docs/KNOWNISSUES.md
