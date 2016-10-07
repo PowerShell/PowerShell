@@ -638,7 +638,7 @@ namespace Microsoft.PowerShell.Commands
                 browserProcess.Start();
 #elif CORECLR
                 // On FullCLR, ProcessStartInfo.UseShellExecute is true by default. This means that the shell will be used when starting the process.
-                // On CoreCLR, this property doesn't exist. To work around this, we check if there is a default browser in the system.
+                // On CoreCLR, UseShellExecute is not supported. To work around this, we check if there is a default browser in the system.
                 // If there is, we lunch it to open the HelpURI. If there isn't, we error out.
                 string webBrowserPath = GetDefaultWebBrowser();
                 if (webBrowserPath == null)

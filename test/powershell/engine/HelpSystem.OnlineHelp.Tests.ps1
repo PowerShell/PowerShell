@@ -1,5 +1,17 @@
 ﻿Describe 'Online help tests for PowerShell Core Cmdlets' -Tags "CI" {
 
+    # The csv files (V2Cmdlets.csv and V3Cmdlets.csv) contain a list of cmdlets and expected HelpURIs.
+    # The HelpURI is part of the cmdlet metadata, and when the user runs 'get-help <cmdletName> -online'
+    # the browser navigates to the address in the HelpURI. However, if a help file is present, the HelpURI
+    # on the file take precedence over the one in the cmdlet metadata. Therefore, the help content
+    # in the box needs to be deleted before running the tests, because otherwise, the HelpURI
+    # (when calling get-help -online) might not matched the one in the csv file.
+
+    # Currently update-help does not work on Linux (see  https://github.com/PowerShell/PowerShell/issues/951),
+    # so if the help content is deleted, we do not have a way to install it back, and any subsequent
+    # 'get-help' tests which depend on the help content will fail. Until this update-help issue is fixed,
+    # we need to skip these tests on Linux and OSX.
+
     $skipTest = [System.Management.Automation.Platform]::IsLinux -or [System.Management.Automation.Platform]::IsOSX
 
     BeforeAll {
@@ -36,7 +48,7 @@
 
                 It "Validate 'get-help $($cmdlet.TopicTitle) -Online'" -skip:$skipTest {
                     $actualURI = Get-Help $cmdlet.TopicTitle -Online
-                    $actualURI = $actualURI.Replace("Help URI:","").Trim()
+                    $actualURI = $actualURI.Replace("Help URI: ","")
                     $actualURI | Should Be $cmdlet.HelpURI
                 }
             }
@@ -47,9 +59,7 @@
 Describe 'Get-Help -Online opens the default web browser and navigates to the cmdlet help content' -Tags "Feature" {
 
     $skipTest = [System.Management.Automation.Platform]::IsIoT -or
-                [System.Management.Automation.Platform]::IsNanoServer -or
-                [System.Management.Automation.Platform]::IsLinux -or
-                [System.Management.Automation.Platform]::IsOSX
+                [System.Management.Automation.Platform]::IsNanoServer
 
     It "Get-Help get-process -online" -skip:$skipTest {
 
