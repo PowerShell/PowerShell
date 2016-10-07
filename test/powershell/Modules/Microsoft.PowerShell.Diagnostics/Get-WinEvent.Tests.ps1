@@ -85,8 +85,7 @@ Describe 'Get-WinEvent' -Tags "CI" {
             @($results).Count | Should be 1
             $results.RecordId | should be 10
         }
-        <#
-        It 'Get-WinEvent can retrieve events with UserData queries using FilterHashtable' {
+        It 'Get-WinEvent can retrieve events with UserData queries using FilterHashtable (one value)' {
             # this relies on apriori knowledge about the log file
             # the provided log file has been edited to remove MS PII, so we must use -ea silentlycontinue
             $eventLogFile = [io.path]::Combine($PSScriptRoot, "assets", "Saved-Events.evtx")
@@ -95,7 +94,26 @@ Describe 'Get-WinEvent' -Tags "CI" {
             @($results).Count | Should be 1
             $results.RecordId | should be 10
         }
-        #>
+        It 'Get-WinEvent can retrieve events with UserData queries using FilterHashtable (array of values)' {
+            # this relies on apriori knowledge about the log file
+            # the provided log file has been edited to remove MS PII, so we must use -ea silentlycontinue
+            $eventLogFile = [io.path]::Combine($PSScriptRoot, "assets", "Saved-Events.evtx")
+            $filter = @{ path = "$eventLogFile"; DriverName = "Remote Desktop Easy Print", "Microsoft enhanced Point and Print compatibility driver" } 
+            $results = Get-WinEvent -filterHashtable $filter -ea silentlycontinue
+            @($results).Count | Should be 2
+            ($results.RecordId -contains 9) | should be $true
+            ($results.RecordId -contains 11) | should be $true
+        }
+        It 'Get-WinEvent can retrieve events with UserData queries using FilterHashtable (multiple named params)' {
+            # this relies on apriori knowledge about the log file
+            # the provided log file has been edited to remove MS PII, so we must use -ea silentlycontinue
+            $eventLogFile = [io.path]::Combine($PSScriptRoot, "assets", "Saved-Events.evtx")
+            $filter = @{ path = "$eventLogFile"; PackageAware="Not package aware"; DriverName = "Remote Desktop Easy Print", "Microsoft enhanced Point and Print compatibility driver" } 
+            $results = Get-WinEvent -filterHashtable $filter -ea silentlycontinue
+            @($results).Count | Should be 2
+            ($results.RecordId -contains 9) | should be $true
+            ($results.RecordId -contains 11) | should be $true
+        }
         It 'Get-WinEvent can retrieve events with UserData queries using FilterXPath' {
             # this relies on apriori knowledge about the log file
             # the provided log file has been edited to remove MS PII, so we must use -ea silentlycontinue

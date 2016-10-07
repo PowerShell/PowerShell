@@ -360,6 +360,7 @@ namespace Microsoft.PowerShell.Commands
         private const string propOpen = "[";
         private const string propClose = "]";
         private const string filePrefix = "file://";
+        private const string NamedDataTemplate = "((EventData[Data[@Name='{0}']='{1}']) or (UserData/*/{0}='{1}'))";
 
         //
         // Other private members and constants
@@ -1240,12 +1241,16 @@ namespace Microsoft.PowerShell.Commands
                         default:
                             {
                                 //
-                                // None of the recognized values: this must be a named payload field
+                                // None of the recognized values: this must be a named event data field
                                 //
-                                ExtendPredicate(ref xpathString);
-                                xpathString += string.Format(CultureInfo.InvariantCulture,
-                                                            "([EventData[Data[@Name='{0}']='{1}']] or [UserData/*/{0}='{1}'])",
-                                                            key, hash[key]);
+                                // Fix Issue #2327
+                                added = HandleNamedDataHashValue(key, hash[key]);
+                                if (added.Length > 0)
+                                {
+                                    ExtendPredicate(ref xpathString);
+                                    xpathString += added;
+                                }
+
                             }
                             break;
                     }
@@ -1299,9 +1304,9 @@ namespace Microsoft.PowerShell.Commands
         private string HandleEventIdHashValue(Object value)
         {
             string ret = "";
-            if (value is Array)
+            Array idsArray = value as Array;
+            if (idsArray != null)
             {
-                Array idsArray = (Array)(value);
                 ret += "(";
                 for (int i = 0; i < idsArray.Length; i++)
                 {
@@ -1328,10 +1333,9 @@ namespace Microsoft.PowerShell.Commands
         private string HandleLevelHashValue(Object value)
         {
             string ret = "";
-
-            if (value is Array)
+            Array levelsArray = value as Array;
+            if (levelsArray != null)
             {
-                Array levelsArray = (Array)(value);
                 ret += "(";
                 for (int i = 0; i < levelsArray.Length; i++)
                 {
@@ -1360,9 +1364,10 @@ namespace Microsoft.PowerShell.Commands
             Int64 keywordsMask = 0;
             Int64 keywordLong = 0;
 
-            if (value is Array)
+            Array keywordArray = value as Array;
+            if (keywordArray != null)
             {
-                foreach (Object keyword in (Array)value)
+                foreach (Object keyword in keywordArray)
                 {
                     if (KeywordStringToInt64(keyword.ToString(), ref keywordLong))
                     {
@@ -1514,9 +1519,9 @@ namespace Microsoft.PowerShell.Commands
         private string HandleDataHashValue(Object value)
         {
             string ret = "";
-            if (value is Array)
+            Array dataArray = value as Array;
+            if (dataArray != null)
             {
-                Array dataArray = (Array)(value);
                 ret += "(";
                 for (int i = 0; i < dataArray.Length; i++)
                 {
@@ -1531,6 +1536,41 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 ret += string.Format(CultureInfo.InvariantCulture, "(EventData/Data='{0}')", value);
+            }
+
+            return ret;
+        }
+
+
+        //
+        // HandleNamedDataHashValue helper for hashtable structured query builder.
+        // Constructs and returns named event data field XPath portion as a string.
+        // Fix Issue #2327
+        //
+        private string HandleNamedDataHashValue(String key, Object value)
+        {
+            string ret = "";
+            Array dataArray = value as Array;
+            if (dataArray != null)
+            {
+                ret += "(";
+                for (int i = 0; i < dataArray.Length; i++)
+                {
+                    ret += string.Format(CultureInfo.InvariantCulture,
+                                         NamedDataTemplate,
+                                         key, dataArray.GetValue(i).ToString());
+                    if (i < (dataArray.Length - 1))
+                    {
+                        ret += " or ";
+                    }
+                }
+                ret += ")";
+            }
+            else
+            {
+                ret += string.Format(CultureInfo.InvariantCulture,
+                                         NamedDataTemplate,
+                                         key, value);
             }
 
             return ret;
@@ -1766,15 +1806,19 @@ namespace Microsoft.PowerShell.Commands
                         Exception exc = new Exception(string.Format(CultureInfo.InvariantCulture, msg, key));
                         ThrowTerminatingError(new ErrorRecord(exc, "NullNotAllowedInHashtable", ErrorCategory.InvalidArgument, key));
                     }
-                    else if (value is Array)
+                    else
                     {
-                        foreach (Object elt in (Array)value)
+                        Array eltArray = value as Array;
+                        if (eltArray != null)
                         {
-                            if (elt == null)
+                            foreach (Object elt in eltArray)
                             {
-                                string msg = _resourceMgr.GetString("NullNotAllowedInHashtable");
-                                Exception exc = new Exception(string.Format(CultureInfo.InvariantCulture, msg, key));
-                                ThrowTerminatingError(new ErrorRecord(exc, "NullNotAllowedInHashtable", ErrorCategory.InvalidArgument, key));
+                                if (elt == null)
+                                {
+                                    string msg = _resourceMgr.GetString("NullNotAllowedInHashtable");
+                                    Exception exc = new Exception(string.Format(CultureInfo.InvariantCulture, msg, key));
+                                    ThrowTerminatingError(new ErrorRecord(exc, "NullNotAllowedInHashtable", ErrorCategory.InvalidArgument, key));
+                                }
                             }
                         }
                     }
