@@ -403,10 +403,10 @@ namespace System.Management.Automation
             return Unix.NativeMethods.CreateHardLink(path, strTargetPath) == 0;
         }
 
-        internal static bool NonWindowsSetDate(DateTime dateToUse)
+        internal static unsafe bool NonWindowsSetDate(DateTime dateToUse)
         {
-            Unix.SetDateInfoInternal date = new Unix.SetDateInfoInternal(dateToUse);
-            return Unix.NativeMethods.SetDate(date) == 0;
+            Unix.NativeMethods.UnixTm tm = Unix.NativeMethods.DateTimeToUnixTm(dateToUse);
+            return Unix.NativeMethods.SetDate(&tm) == 0;
         }
 
         internal static string NonWindowsGetDomainName()
@@ -526,37 +526,6 @@ namespace System.Management.Automation
                 }
             }
 
-            [StructLayout(LayoutKind.Sequential)]
-            internal class SetDateInfoInternal
-            {
-                public int Year;
-                public int Month;
-                public int Day;
-                public int Hour;
-                public int Minute;
-                public int Second;
-                public int Millisecond;
-                public int DST;
-
-                public SetDateInfoInternal(DateTime d)
-                {
-                    Year = d.Year;
-                    Month = d.Month;
-                    Day = d.Day;
-                    Hour = d.Hour;
-                    Minute = d.Minute;
-                    Second = d.Second;
-                    Millisecond = d.Millisecond;
-                    DST = d.IsDaylightSavingTime() ? 1 : 0;
-                }
-
-                public override string ToString()
-                {
-                    string ret = String.Format("Year = {0}; Month = {1}; Day = {2}; Hour = {3}; Minute = {4}; Second = {5}; Millisec = {6}; DST = {7}", Year, Month, Day, Hour, Minute, Second, Millisecond, DST);
-                    return ret;
-                }
-            }
-
             internal static class NativeMethods
             {
                 private const string psLib = "libpsl-native";
@@ -587,8 +556,38 @@ namespace System.Management.Automation
                 [return: MarshalAs(UnmanagedType.LPStr)]
                 internal static extern string GetFullyQualifiedName();
 
+                // This is a struct tm from <time.h>
+                [StructLayout(LayoutKind.Sequential)]
+                internal unsafe struct UnixTm
+                {
+                    public int tm_sec;    /* Seconds (0-60) */
+                    public int tm_min;    /* Minutes (0-59) */
+                    public int tm_hour;   /* Hours (0-23) */
+                    public int tm_mday;   /* Day of the month (1-31) */
+                    public int tm_mon;    /* Month (0-11) */
+                    public int tm_year;   /* Year - 1900 */
+                    public int tm_wday;   /* Day of the week (0-6, Sunday = 0) */
+                    public int tm_yday;   /* Day in the year (0-365, 1 Jan = 0) */
+                    public int tm_isdst;  /* Daylight saving time */
+                }
+
+                internal static UnixTm DateTimeToUnixTm(DateTime date)
+                {
+                    UnixTm tm;
+                    tm.tm_sec = date.Second;
+                    tm.tm_min = date.Minute;
+                    tm.tm_hour = date.Hour;
+                    tm.tm_mday = date.Day;
+                    tm.tm_mon = date.Month - 1; // needs to be 0 indexed
+                    tm.tm_year = date.Year - 1900; // years since 1900
+                    tm.tm_wday = 0; // this is ignored by mktime
+                    tm.tm_yday = 0; // this is also ignored
+                    tm.tm_isdst = date.IsDaylightSavingTime() ? 1 : 0;
+                    return tm;
+                }
+
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int SetDate(SetDateInfoInternal info);
+                internal static extern unsafe int SetDate(UnixTm* tm);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 internal static extern int CreateSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath,
