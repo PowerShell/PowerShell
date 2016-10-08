@@ -21,6 +21,7 @@
             [system.management.automation.internal.internaltesthooks]::SetTestHook('BypassOnlineHelpRetrieval', $true)
 
             # Remove the help content
+            Write-Verbose "Deleting help content for get-help -online tests" -Verbose
             $path = Join-Path $PSHOME (Get-UICulture).Name
             Get-ChildItem "$path\*dll-help.xml" -Recurse -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
         }
