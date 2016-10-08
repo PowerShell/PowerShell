@@ -12,9 +12,16 @@
     # 'get-help' tests which depend on the help content will fail. Until this update-help issue is fixed,
     # we need to skip these tests on Linux and OSX.
 
-    $skipTest = [System.Management.Automation.Platform]::IsLinux -or [System.Management.Automation.Platform]::IsOSX
+    $skipTest = ([System.Management.Automation.Platform]::IsLinux -or [System.Management.Automation.Platform]::IsOSX)
 
     BeforeAll {
+
+        # There is a bug in Linux in which a 'Boolean value defined inside Describe block cannot be evaluated properly 
+        # in if statement inside BeforeAll block on Linux' Becuase of this, I need to define the bool value again inside the block.
+        # See https://github.com/PowerShell/PowerShell/issues/2445
+        #
+        $skipTest = ([System.Management.Automation.Platform]::IsLinux -or [System.Management.Automation.Platform]::IsOSX)
+
         if (-not $skipTest)
         {
             # Enable the test hook
