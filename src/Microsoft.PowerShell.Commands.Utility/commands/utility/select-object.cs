@@ -129,6 +129,7 @@ namespace Microsoft.PowerShell.Commands
         // NTRAID#Windows Out Of Band Releases-927878-2006/03/02
         // Allow zero
         [ValidateRange(0, int.MaxValue)]
+        [Alias("Bottom")]
         public int Last
         {
             get { return _last; }
@@ -144,6 +145,7 @@ namespace Microsoft.PowerShell.Commands
         // NTRAID#Windows Out Of Band Releases-927878-2006/03/02
         // Allow zero
         [ValidateRange(0, int.MaxValue)]
+        [Alias("Top")]
         public int First
         {
             get { return _first; }
