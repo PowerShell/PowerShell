@@ -448,8 +448,7 @@ namespace System.Management.Automation
 
         internal static uint NonWindowsGetThreadId()
         {
-            // TODO:PSL clean this up
-            return 0;
+            return Unix.NativeMethods.GetCurrentThreadId();
         }
 
         // Unix specific implementations of required functionality
@@ -551,6 +550,9 @@ namespace System.Management.Automation
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.I1)]
                 internal static extern bool IsExecutable([MarshalAs(UnmanagedType.LPStr)]string filePath);
+
+                [DllImport(psLib, CharSet = CharSet.Ansi)]
+                internal static extern uint GetCurrentThreadId();
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.LPStr)]

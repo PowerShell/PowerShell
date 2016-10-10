@@ -3,6 +3,7 @@ add_library(psl-native SHARED
   getpwuid.cpp
   getuserfrompid.cpp
   getfileowner.cpp
+  getcurrentthreadid.cpp
   getcurrentprocessorid.cpp
   getusername.cpp
   getcomputername.cpp
