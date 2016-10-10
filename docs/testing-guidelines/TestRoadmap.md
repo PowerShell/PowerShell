@@ -184,6 +184,7 @@ Unfortunately, the current logging mechanism used in our in-lab tests are not av
 # Action Plan
 This document represents a number of initiatives, all of which will take resources.
 Below is my suggestion for prioritization to reduce risk and improve confidence in our overall quality:
+
 1. Implement telemetry feeds for PowerShell Core
 2. Implement data collection feeds from our CI systems
 3. Create a public dashboard to visualize our KPIs
@@ -192,3 +193,5 @@ Below is my suggestion for prioritization to reduce risk and improve confidence 
 5. Design/Implement remoting test infrastructure
 6. Replace in-lab tests with PowerShell Core tests
 7. Investigate feasibility of running current in-lab tests on PowerShell Core
+
+These are [tracked](https://github.com/PowerShell/PowerShell/issues?utf8=%E2%9C%93&q=is%3Aissue%20%23testability%20) as issues
