@@ -1,7 +1,80 @@
 $ErrorActionPreference = 'Stop'
 $repoRoot = Join-Path $PSScriptRoot '..'
+$script:administratorsGroupSID = "S-1-5-32-544"
+$script:usersGroupSID = "S-1-5-32-545"
 
 Import-Module (Join-Path $repoRoot 'build.psm1')
+
+function New-LocalUser
+{
+  <#
+    .SYNOPSIS
+        Creates a local user with the specified username and password
+    .DESCRIPTION
+    .EXAMPLE
+    .PARAMETER
+        username Username of the user which will be created
+    .PARAMETER
+        password Password of the user which will be created
+    .OUTPUTS
+    .NOTES
+  #>
+  param(
+    [Parameter(Mandatory=$true)]
+    [string] $username,
+
+    [Parameter(Mandatory=$true)]
+    [string] $password
+
+  )
+
+  $LocalComputer = [ADSI] "WinNT://$env:computername";
+  $user = $LocalComputer.Create('user', $username);
+  $user.SetPassword($password) | out-null;
+  $user.SetInfo() | out-null;
+}
+
+<#
+  Converts SID to NT Account Name
+#>
+function ConvertTo-NtAccount
+{
+  param(
+    [Parameter(Mandatory=$true)]
+    [string] $sid
+  )
+	(new-object System.Security.Principal.SecurityIdentifier($sid)).translate([System.Security.Principal.NTAccount]).Value
+}
+
+<#
+  Add a user to a local security group
+#>
+function Add-UserToGroup
+{
+  param(
+    [Parameter(Mandatory=$true)]
+    [string] $username,
+
+    [Parameter(Mandatory=$true, ParameterSetName = "SID")]
+    [string] $groupSid,
+
+    [Parameter(Mandatory=$true, ParameterSetName = "Name")]
+    [string] $group
+  )
+
+  $userAD = [ADSI] "WinNT://$env:computername/${username},user"
+
+  if($PsCmdlet.ParameterSetName -eq "SID")
+  {
+    $ntAccount=ConvertTo-NtAccount $groupSid
+    $group =$ntAccount.Split("\\")[1]
+  }
+
+  $groupAD = [ADSI] "WinNT://$env:computername/${group},group"
+
+  $groupAD.Add($userAD.AdsPath);
+}
+
 
 # tests if we should run a daily build
 # returns true if the build is scheduled 
@@ -103,6 +176,44 @@ function Invoke-AppVeyorInstall
         }
 
         Update-AppveyorBuild -message $buildName
+    }
+
+    if ($env:APPVEYOR)
+    {
+        #
+        # Generate new credential for appveyor (only) remoting tests.
+        #
+        Write-Verbose "Creating account for remoting tests in AppVeyor."
+
+        # Password
+        $randomObj = [System.Random]::new()
+        $password = ""
+        1..(Get-Random -Minimum 15 -Maximum 126) | ForEach { $password = $password + [char]$randomObj.next(45,126) }
+
+        # Account
+        $userName = 'appVeyorRemote'
+        New-LocalUser -username $userName -password $password
+        Add-UserToGroup -username $userName -groupSid $script:administratorsGroupSID
+
+        # Provide credentials globally for remote tests.
+        $ss = ConvertTo-SecureString -String $password -AsPlainText -Force
+        $appveyorRemoteCredential = [PSCredential]::new("$env:COMPUTERNAME\$userName", $ss)
+	    $appveyorRemoteCredential | Export-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml" -Force
+
+        # Check that LocalAccountTokenFilterPolicy policy is set, since it is needed for remoting
+        # using above local admin account.
+        Write-Verbose "Checking for LocalAccountTokenFilterPolicy in AppVeyor."
+        $haveLocalAccountTokenFilterPolicy = $false
+        try
+        {
+            $haveLocalAccountTokenFilterPolicy = ((Get-ItemPropertyValue -Path HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name LocalAccountTokenFilterPolicy) -eq 1)
+        }
+        catch { }
+        if (!$haveLocalAccountTokenFilterPolicy)
+        {
+            Write-Verbose "Setting the LocalAccountTokenFilterPolicy for remoting tests"
+            Set-ItemProperty -Path HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name LocalAccountTokenFilterPolicy -Value 1
+        }
     }
 
     Set-BuildVariable -Name TestPassed -Value False
