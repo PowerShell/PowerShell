@@ -334,9 +334,11 @@ namespace Microsoft.PowerShell.Commands
                 _expandMshParameterList = processor.ProcessParameters(new string[] { ExpandProperty }, invocationContext);
             }
 
-            if (ExcludeProperty != null)
+            // ExpandProperty skip processing ExcludeProperty
+            if (ExcludeProperty != null && string.IsNullOrEmpty(ExpandProperty))
             {
                 _exclusionFilter = new MshExpressionFilter(ExcludeProperty);
+                // ExcludeProperty implies -Property * for better UX
                 if ((Property == null) || (Property.Length == 0))
                 {
                     Property = new Object[]{"*"};
@@ -419,18 +421,10 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            // allow Select-Object -Property noexist-name to return a PSObject with property noexist-name,
+            // unless noexist-name itself contains wildcards
             if (expressionResults.Count == 0 && !ex.HasWildCardCharacters)
             {
-                //Commented out for bug 1107600
-                //if (!ex.HasWildCardCharacters)
-                //{
-                //    ErrorRecord errorRecord = new ErrorRecord(
-                //        tracer.NewArgumentException("Property", ResourcesBaseName, "PropertyNotFound", ex.ToString()),
-                //        "PropertyNotFound",
-                //         ErrorCategory.InvalidArgument,
-                //        inputObject);
-                //    WriteError(errorRecord);
-                //}
                 expressionResults.Add(new MshExpressionResult(null, ex, null));
             }
 

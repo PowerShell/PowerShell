@@ -254,13 +254,13 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
         # Issue #2420
 	It "Select-Object with implicit Property = '*' don't return property named '*'"{
 		$results = [pscustomobject]@{Thing="thing1"} | Select-Object -ExcludeProperty thing 
-		$results.psobject.Properties.Item("*").Name | Should Be $null
+		$results.psobject.Properties.Item("*") | Should Be $null
 	}
 
         # Issue #2420
 	It "Select-Object with explicit Property = '*' don't return property named '*'"{
 		$results = [pscustomobject]@{Thing="thing1"} | Select-Object -Property * -ExcludeProperty thing 
-		$results.psobject.Properties.Item("*").Name | Should Be $null
+		$results.psobject.Properties.Item("*") | Should Be $null
 	}
 
         # Issue #2351
@@ -280,14 +280,19 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
         # Issue #2351
 	It "Select-Object with implicit Property = '*' exclude not single prperty"{
 		$results = [pscustomobject]@{Thing="thing1";Param2="param2"} | Select-Object -ExcludeProperty Param2 
-                $results.Param2 | Should Be $null
+		$results.Param2 | Should Be $null
 		$results.Thing | Should Be "thing1"
 	}
 
         # Issue #2351
 	It "Select-Object with explicit Property = '*' exclude not single prperty"{
 		$results = [pscustomobject]@{Thing="thing1";Param2="param2"} | Select-Object -Property * -ExcludeProperty Param2 
-                $results.Param2 | Should Be $null
+		$results.Param2 | Should Be $null
 		$results.Thing | Should Be "thing1"
 	}
+
+    It "ExpandProperty skip processing ExcludeProperty without error" {
+		{ Get-Process -Id $pid | Select-Object -ExcludeProperty ProcessName -ExpandProperty Modules -ErrorAction Stop } | Should Not Throw
+    }
+
 }
