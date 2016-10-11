@@ -1,3 +1,2 @@
 logs/**/*.log
 packages/
-nightly/*/bootstrap.ps1
