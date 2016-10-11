@@ -74,6 +74,12 @@ If you have any problems building, please consult the developer [FAQ][].
 |--------------------------|--------------------------|
 | [![av-image][]][av-site] | [![tv-image][]][tv-site] |
 
+### Build status of nightly builds
+
+| AppVeyor (Windows)       |
+|--------------------------|
+| [![av-nightly-image][]][av-nightly-site] |
+
 [bd-linux]: docs/building/linux.md
 [bd-windows]: docs/building/windows-core.md
 [bd-macOS]: docs/building/macos.md
@@ -84,6 +90,8 @@ If you have any problems building, please consult the developer [FAQ][].
 [tv-site]: https://travis-ci.org/PowerShell/PowerShell/branches
 [av-image]: https://ci.appveyor.com/api/projects/status/nsng9iobwa895f98/branch/master?svg=true
 [av-site]: https://ci.appveyor.com/project/PowerShell/powershell
+[av-nightly-image]: https://ci.appveyor.com/api/projects/status/46yd4jogtm2jodcq?svg=true
+[av-nightly-site]: https://ci.appveyor.com/project/PowerShell/powershell-f975h
 
 Downloading the Source Code
 ---------------------------
