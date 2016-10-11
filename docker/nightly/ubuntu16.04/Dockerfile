@@ -1,4 +1,4 @@
-FROM powershell/powershell:stable-ubuntu16.04
+FROM microsoft/powershell:ubuntu16.04
 MAINTAINER Andrew Schwartzmeyer <andschwa@microsoft.com>
 
 ARG fork=PowerShell

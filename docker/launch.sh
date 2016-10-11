@@ -42,9 +42,9 @@ for build in $BUILDS; do
         echo "Logging to docker/$logfile"
 
         if [[ "$build" = release ]]; then
-            repo="powershell/powershell"
+            repo="microsoft/powershell"
         else
-            repo="powershell/powershell-nightly"
+            repo="microsoft/powershell-nightly"
         fi
 
         (
