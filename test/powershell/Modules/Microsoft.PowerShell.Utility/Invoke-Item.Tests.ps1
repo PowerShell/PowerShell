@@ -51,7 +51,7 @@ Describe "Invoke-Item on non-Windows" -Tags "CI" {
 #>
 }
 
-Describe "Invoke-Item deterministic tests on Windows" -Tags "CI","RequireAdminOnWindows" {
+Describe "Invoke-Item tests on Windows" -Tags "CI","RequireAdminOnWindows" {
     BeforeAll {
         $testfilename = "testfile.!!testext!!"
         $testfilepath = Join-Path $TestDrive $testfilename
@@ -60,26 +60,32 @@ Describe "Invoke-Item deterministic tests on Windows" -Tags "CI","RequireAdminOn
         remove-item $testfilepath -ErrorAction SilentlyContinue
         remove-item $renamedtestfilepath -ErrorAction SilentlyContinue
         new-item $testfilepath | Out-Null
-
+        if ( $IsWindows -and -not ($IsWindows -and $IsCoreCLR) ) {
+            cmd.exe /c assoc .!!testext!!=!!testext!!.FileType
+            cmd.exe /c ftype !!testext!!.FileType=cmd.exe /c rename $testfilepath $renamedtestfilename
+        }
     }
 
     AfterAll {
         remove-item $testfilepath -ErrorAction SilentlyContinue
         remove-item $renamedtestfilepath -ErrorAction SilentlyContinue
-
+        if ( $IsWindows -and -not ($IsWindows -and $IsCoreCLR) ) {
+            cmd.exe /c assoc !!testext!!=
+            cmd.exe /c ftype !!testext!!.FileType=
+        }
     }
 
     It "Should invoke a file without error on Windows w/o .NET Core" -Skip:(-not $IsWindows -or ($IsWindows -and $IsCoreCLR)) {
-        cmd.exe /c assoc .!!testext!!=!!testext!!.FileType
-        cmd.exe /c ftype !!testext!!.FileType=cmd.exe /c rename $testfilepath $renamedtestfilename
         invoke-item $testfilepath
-        $PSVersionTable | Out-File c:\1\1.txt
-        # Wiaiting subprocess start and rename file
-        Start-Sleep -Milliseconds 500
-        test-path $renamedtestfilepath | Should Be $true
-
-        cmd.exe /c assoc !!testext!!=
-        cmd.exe /c ftype !!testext!!.FileType=
+        # Waiting subprocess start and rename file
+        $startTime = [Datetime]::Now
+        $result = $true
+        while (-not (test-path $renamedtestfilepath))
+        {
+          Start-Sleep -Milliseconds  100
+          if (([Datetime]::Now - $startTime) -ge [timespan]"00:00:05") { $result = $false; break;}
+        }
+        $result | Should Be $true
     }
 
     It "Should throw 'not supported' on Windows with .NET Core" -Skip:(-not ($IsWindows -and $IsCoreCLR)) {
