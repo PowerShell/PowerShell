@@ -24,7 +24,7 @@ fi
 
 # Build both sets by default
 if [[ -z "$BUILDS" ]]; then
-    BUILDS="stable unstable"
+    BUILDS="release nightly"
 fi
 
 # Build specified distributions
@@ -33,21 +33,28 @@ if [[ -z $DISTROS ]]; then
 fi
 
 for build in $BUILDS; do
-    # each distro can be done in parallel; but stable must be done before unstable
+    # each distro can be done in parallel; but release must be done before nightly
     for distro in $DISTROS; do
-        logfile="$build-$distro.log"
+        logfile="$distro.log"
         if [[ "$TEST" -eq 1 ]]; then logfile="test-$logfile"; fi
-        mkdir -p logs
-        logfile="logs/$logfile"
+        mkdir -p "logs/$build"
+        logfile="logs/$build/$logfile"
         echo "Logging to docker/$logfile"
+
+        if [[ "$build" = release ]]; then
+            repo="powershell/powershell"
+        else
+            repo="powershell/powershell-nightly"
+        fi
+
         (
-            image="powershell/powershell:$build-$distro"
+            image="$repo:$distro"
             pushd "$build"
             if [[ "$TEST" -eq 1 ]]; then
                 echo "LOG: testing $image"
                 command="cd PowerShell; Import-Module ./build.psm1; Install-Dotnet -NoSudo; Start-PSPester -powershell powershell -Pester ./src/Modules/Shared/Pester"
-                # clone repo for stable images because it's not already done
-                if [[ "$build" = stable ]]; then
+                # clone repo for release images because it's not already done
+                if [[ "$build" = release ]]; then
                     command="git clone --recursive https://github.com/$FORK/PowerShell -b $BRANCH; $command"
                 fi
                 # run Pester tests inside container
@@ -56,14 +63,14 @@ for build in $BUILDS; do
             else
                 echo "LOG: building $image"
                 # copy the common script because it lives outside the docker build context
-                if [[ "$build" = unstable ]]; then
+                if [[ "$build" = nightly ]]; then
                     cp bootstrap.ps1 "$distro"
                     buildargs="--build-arg fork=$FORK --build-arg branch=$BRANCH"
                 fi
                 # build and tag the image so they can be derived from
                 # BUILDARGS can be set in the environment
                 docker build $buildargs $BUILDARGS -t "$image" "$distro"
-                if [[ "$build" = unstable ]]; then
+                if [[ "$build" = nightly ]]; then
                     echo "LOG: Saving package to docker/packages"
                     popd
                     mkdir -p packages
