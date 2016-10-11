@@ -1,2 +1,4 @@
 dotnet-install.sh
 dotnet-uninstall-debian-packages.sh
+pester-tests.xml
+/WorkSpace
