@@ -166,8 +166,7 @@ Function New-PsDockerImage (
   (Get-Content -path .\WorkSpace\Dockerfile).Replace('@BASE_IMAGE@',($BaseImage)) | Out-File .\WorkSpace\Dockerfile -Encoding utf8 -Force
   New-Item -Path .\WorkSpace\PowerShell -ItemType Directory -Force
   Get-LatestPS -Tag 'latest' -FilePrefix 'powershell-' -FileSuffix '-win10-x64.zip' -TargetPath (convert-Path '.\WorkSpace\PowerShell')
-  Build-ContainerImage -Path .\WorkSpace -Verbose -ErrorAction Stop
-  if ($?) {return $TargetPath} else {Throw ($error|select -first 1)}
+  Build-ContainerImage -Path .\WorkSpace -Verbose
 }
 
 <#
