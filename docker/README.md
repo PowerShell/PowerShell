@@ -8,9 +8,6 @@ This requires an up-to-date version of Docker, such as 1.12.
 It also expects you to be able to run Docker without `sudo`.
 Please follow [Docker's official instructions][install] to install `docker` correctly.
 
-> Note: we intend to publish automatically built containers on the Docker Hub,
-> but this work is still pending.
-
 [install]: https://docs.docker.com/engine/installation/
 
 Release
@@ -33,7 +30,7 @@ Nightly
 -------
 
 The nightly containers derive from their respective release images,
-such as `powershell/powershell:centos7`,
+such as `microsoft/powershell:centos7`,
 then run the `bootstrap.ps1` script which clones the repository,
 runs `Start-PSBootstrap -Package` to install building and packaging tools,
 runs `Start-PSBuild -Crossgen` to build PowerShell with native-image DLLs,
@@ -89,6 +86,29 @@ Use `set -x` to see exactly what commands it is running.
 Examples
 --------
 
+To run PowerShell from using a container:
+
+```sh
+$ docker run -it microsoft/powershell
+Unable to find image 'microsoft/powershell:latest' locally
+latest: Pulling from microsoft/powershell
+cad964aed91d: Already exists
+3a80a22fea63: Already exists
+50de990d7957: Already exists
+61e032b8f2cb: Already exists
+9f03ce1741bf: Already exists
+adf6ad28fa0e: Pull complete
+10db13a8ca02: Pull complete
+75bdb54ff5ae: Pull complete
+Digest: sha256:92c79c5fcdaf3027626643aef556344b8b4cbdaccf8443f543303319949c7f3a
+Status: Downloaded newer image for microsoft/powershell:latest
+PowerShell
+Copyright (C) 2016 Microsoft Corporation. All rights reserved.
+
+PS /> Write-Host "Hello, World!"
+Hello, World!
+```
+
 To build a CentOS container with the latest released package:
 
 ```sh
@@ -98,7 +118,7 @@ Waiting for release containers to finish; tail the logs for more information.
 
 $ docker images
 REPOSITORY                 TAG                    IMAGE ID            CREATED             SIZE
-powershell/powershell      centos7                f0a11a8009b7        20 minutes ago      438.3 MB
+microsoft/powershell       centos7                f0a11a8009b7        20 minutes ago      438.3 MB
 ...
 ```
 
