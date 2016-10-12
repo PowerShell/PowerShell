@@ -121,7 +121,7 @@ namespace System.Management.Automation
             else
             {
                 var tempSet = new HashSet<string>(_coreClrTypeCatalog.Values, StringComparer.OrdinalIgnoreCase);
-                _tpaSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                _tpaSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext" };
                 foreach (string tpa in tempSet)
                 {
                     string shortName = tpa.Substring(0, tpa.IndexOf(','));
@@ -813,3 +813,4 @@ namespace System.Management.Automation
 }
 
 #endif
+

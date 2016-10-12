@@ -85,9 +85,8 @@
             },
             "imports": [ "dnxcore50", "portable-net45+win8" ],
             "dependencies": {
-                "Microsoft.CodeAnalysis.CSharp": "1.1.1",
-                "Newtonsoft.Json": "9.0.1",
-                "System.Diagnostics.TextWriterTraceListener": "4.0.0"
+                "Microsoft.CodeAnalysis.CSharp": "1.3.1-beta1-20160616-03",
+                "System.Diagnostics.TextWriterTraceListener": "4.3.0-preview1-24530-04"
             }
         },
         "net451": {            
@@ -95,7 +94,7 @@
                 "System.Drawing": "",
                 "System.Web": "",
                 "System.Web.Extensions": "",
-                "Microsoft.JScript": "",
+                "Microsoft.JScript": ""
             },
 
             "dependencies": {

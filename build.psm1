@@ -2376,7 +2376,12 @@ function Start-CrossGen {
         throw "crossgen is not available for this platform"
     }
 
-    $crossGenPath = Get-ChildItem $crossGenSearchPath -Recurse | ? { $_.FullName -match $crossGenRuntime } | select -First 1 | % { $_.FullName }
+    # Get the CrossGen.exe for the correct runtime with the latest version
+    $crossGenPath = Get-ChildItem $crossGenSearchPath -Recurse | `
+                        Where-Object { $_.FullName -match $crossGenRuntime } | `
+                        Sort-Object -Property FullName -Descending | `
+                        Select-Object -First 1 | `
+                        ForEach-Object { $_.FullName }
     if (-not $crossGenPath) {
         throw "Unable to find latest version of crossgen.exe. 'Please run Start-PSBuild -Clean' first, and then try again."
     }
