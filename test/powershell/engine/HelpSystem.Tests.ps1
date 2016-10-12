@@ -41,7 +41,9 @@ function RunTestCase
     $cmdletsToSkip = @(
         "Get-PSHostProcessInfo",
         "Out-Default",
-        "Register-ArgumentCompleter"
+        "Register-ArgumentCompleter",
+        "New-PSRoleCapabilityFile",
+        "Get-PSSessionCapability"
     )
 
     foreach ($cmdletName in $cmdlets)
