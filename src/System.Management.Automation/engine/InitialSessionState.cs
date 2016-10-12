@@ -4595,7 +4595,12 @@ $RawUI.SetBufferContents(
             else
             {
                 // Porting note: non-Windows platforms use `clear`
-                return "& (Get-Command -CommandType Application clear | Select-Object -First 1).Definition";
+                return @"
+& (Get-Command -CommandType Application clear | Select-Object -First 1).Definition
+# .Link
+# https://go.microsoft.com/fwlink/?LinkID=225747
+# .ExternalHelp System.Management.Automation.dll-help.xml
+";
             }
         }
 

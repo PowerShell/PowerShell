@@ -161,6 +161,7 @@
                 "System.IO.FileSystem.DriveInfo": "4.3.0-preview1-24530-04",
                 "System.IO.FileSystem.Watcher": "4.3.0-preview1-24530-04",
                 "System.IO.Pipes": "4.3.0-preview1-24530-04",
+                "System.IO.Compression.ZipFile": "4.3.0-preview1-24530-04",
                 "System.Linq.Expressions": "4.3.0-preview1-24530-04",
                 "System.Net.Http": "4.3.0-preview1-24530-04",
                 "System.Net.NetworkInformation": "4.3.0-preview1-24530-04",
