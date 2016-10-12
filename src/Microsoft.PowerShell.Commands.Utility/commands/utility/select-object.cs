@@ -322,29 +322,45 @@ namespace Microsoft.PowerShell.Commands
                 new ParameterProcessor(new SelectObjectExpressionParameterDefinition());
             if ((Property != null) && (Property.Length != 0))
             {
+                // Build property list taking into account the wildcards and @{name=;expression=}
                 _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
+
+                if (ExcludeProperty != null)
+                {
+                    // Property exist -> processing ExcludeProperty
+                    _exclusionFilter = new MshExpressionFilter(ExcludeProperty);
+                    if (!string.IsNullOrEmpty(ExpandProperty))
+                    {
+                        // ExpandProperty exist but really ignored later.
+                        // Here only init _expandMshParameterList to exclude exception later.
+                        _expandMshParameterList = processor.ProcessParameters(new string[] { ExpandProperty }, invocationContext);
+                    }
+                }
             }
             else
             {
+                // Property don't exist
                 _propertyMshParameterList = new List<MshParameter>();
-            }
 
-            if (!string.IsNullOrEmpty(ExpandProperty))
-            {
-                _expandMshParameterList = processor.ProcessParameters(new string[] { ExpandProperty }, invocationContext);
-            }
-
-            // ExpandProperty skip processing ExcludeProperty
-            if (ExcludeProperty != null && string.IsNullOrEmpty(ExpandProperty))
-            {
-                _exclusionFilter = new MshExpressionFilter(ExcludeProperty);
-                // ExcludeProperty implies -Property * for better UX
-                if ((Property == null) || (Property.Length == 0))
+                if (!string.IsNullOrEmpty(ExpandProperty))
                 {
-                    Property = new Object[]{"*"};
-                    _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
+                    // ExpandProperty exist and really processing 
+                    _expandMshParameterList = processor.ProcessParameters(new string[] { ExpandProperty }, invocationContext);
+                }
+                else
+                {
+                    // ExpandProperty don't exist
+                    if (ExcludeProperty != null)
+                    {
+                        // ExcludeProperty exist (here Property and ExpandProperty don't exist)
+                        _exclusionFilter = new MshExpressionFilter(ExcludeProperty);
+                        // ExcludeProperty implies -Property * for better UX
+                        Property = new Object[]{"*"};
+                        _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
+                    }
                 }
             }
+
         }
 
         private void ProcessObject(PSObject inputObject)
@@ -421,7 +437,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // allow Select-Object -Property noexist-name to return a PSObject with property noexist-name,
+            // allow 'Select-Object -Property noexist-name' to return a PSObject with property noexist-name,
             // unless noexist-name itself contains wildcards
             if (expressionResults.Count == 0 && !ex.HasWildCardCharacters)
             {
