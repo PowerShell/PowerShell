@@ -46,9 +46,8 @@
                 }
             },
             "dependencies": {
-                "Newtonsoft.Json": "9.0.1",
-                "System.Xml.XDocument": "4.0.11",
-                "System.IO.MemoryMappedFiles": "4.0.0"
+                "System.Xml.XDocument": "4.3.0-preview1-24530-04",
+                "System.IO.MemoryMappedFiles": "4.3.0-preview1-24530-04"
             }
         },
         "net451": {
