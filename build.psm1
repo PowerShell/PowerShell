@@ -2437,6 +2437,12 @@ function Start-CrossGen {
         Generate-CrossGenAssembly -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath
     }
 
+    <#
+     # The latest dotnet.exe from .NET Core 1.1.0 preview packages starts
+     # to check the existence of all TPA assemblies, including those built
+     # from local projects (e.g. powershell assemblies). The TPA assemblies
+     # in '.deps.json' are IL assemblies, so we cannot remove those ILs.
+     #
     Write-Verbose "PowerShell Ngen assemblies have been generated, deleting ILs..." -Verbose
     foreach ($assemblyName in $psCoreAssemblyList) {
         # Remove the IL assembly and its symbols.
@@ -2445,6 +2451,7 @@ function Start-CrossGen {
         Remove-Item $assemblyPath -Force -ErrorAction SilentlyContinue
         Remove-Item $symbolsPath -Force -ErrorAction SilentlyContinue
     }
+    #>
 }
 
 # Cleans the PowerShell repo
