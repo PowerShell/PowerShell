@@ -323,6 +323,8 @@ namespace System.Management.Automation
             {
                 _inputWriter.Add(Command.CurrentPipelineObject);
             }
+
+            ConsumeAvailableNativeProcessOutput();
         }
 
         /// <summary>
@@ -801,10 +803,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Read the output from the native process and send it down the line
+        /// Read the output from the native process and send it down the line.
         /// </summary>
-        private void ConsumeAvailableNativeProcessOutput()
+        /// <returns>
+        /// True if there was any new input available, otherwise false.
+        /// </returns>
+        private bool ConsumeAvailableNativeProcessOutput()
         {
+            bool isNewData = false;
             if (_background == false)
             {
                 if (_startInfo.RedirectStandardOutput || _startInfo.RedirectStandardError)
@@ -813,9 +819,11 @@ namespace System.Management.Automation
                     while (_nativeProcessOutputQueue.TryDequeue(out record))
                     {
                         ProcessOutputRecord(record);
+                        isNewData = true;
                     }
                 }
             }
+            return isNewData;
         }
 
         internal override void Complete()
@@ -827,9 +835,16 @@ namespace System.Management.Automation
                     //Wait for input writer to finish.
                     _inputWriter.Done();
 
-                    //Wait for process to exit
-                    _nativeProcess.WaitForExit();
+                    //Wait for the process to exit and consume available output
+                    while (!_nativeProcess.HasExited)
+                    {
+                        // TODO: Currently the main pipeline Thread is just spinning.
+                        // It would be much better to park it until new input is available.
+                        ConsumeAvailableNativeProcessOutput();
+                    }
 
+                    // read all the available output one more time
+                    _nativeProcess.WaitForExit();
                     ConsumeAvailableNativeProcessOutput();
 
                     // Capture screen output if we are transcribing
