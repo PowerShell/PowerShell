@@ -1701,7 +1701,7 @@ namespace System.Management.Automation
             // streamWriter is present, only if we call Start method
             if (_streamWriter != null)
             {
-                _streamWriter.Close();
+                _streamWriter.Dispose();
                 _streamWriter = null;
             }
         }
