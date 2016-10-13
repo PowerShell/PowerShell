@@ -47,12 +47,13 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
     $availableEncodings = (get-command out-file).Parameters["Encoding"].Attributes.ValidValues
 
     foreach($encoding in $availableEncodings) {
+        $skipTest = $false
         if ($encoding -eq "default") {
             # [System.Text.Encoding]::Default is exposed by 'System.Private.CoreLib.dll' at
             # runtime via reflection. However,it isn't exposed in the reference contract of
             # 'System.Text.Encoding', and therefore we cannot use 'Encoding.Default' in our
             # code. So we need to skip this encoding in the test.
-            continue
+            $skipTest = $true
         }
 
         # some of the encodings accepted by out-file aren't real,
@@ -71,7 +72,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
             $asciiString > TESTDRIVE:/file.txt
             $observedBytes = Get-Content -encoding Byte TESTDRIVE:/file.txt
             # THE TEST
-            It $msg {
+            It $msg -Skip:$skipTest {
                 $observedBytes.Count | Should be $expectedBytes.Count
                 for($i = 0;$i -lt $observedBytes.Count; $i++) {
                     $observedBytes[$i] | Should be $expectedBytes[$i]
