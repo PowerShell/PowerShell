@@ -459,8 +459,8 @@ namespace System.Management.Automation.Remoting
                 object[] blockLongPathsSwitch = new object[] { "Switch.System.IO.BlockLongPaths", false };
                 object[] useLegacyPathHandlingSwitch = new object[] { "Switch.System.IO.UseLegacyPathHandling", false };
 
-                appContextType.InvokeMember("SetSwitch", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.InvokeMethod, null, null, blockLongPathsSwitch, CultureInfo.CurrentCulture);
-                appContextType.InvokeMember("SetSwitch", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.InvokeMethod, null, null, useLegacyPathHandlingSwitch, CultureInfo.CurrentCulture);
+                appContextType.InvokeMember("SetSwitch", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.InvokeMethod, null, null, blockLongPathsSwitch, CultureInfo.InvariantCulture);
+                appContextType.InvokeMember("SetSwitch", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.InvokeMethod, null, null, useLegacyPathHandlingSwitch, CultureInfo.InvariantCulture);
             }
             catch (Exception e)
             {
