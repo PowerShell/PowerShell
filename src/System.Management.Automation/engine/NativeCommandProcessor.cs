@@ -1631,15 +1631,19 @@ namespace System.Management.Automation
         /// <param name="input"></param>
         internal void Add(object input)
         {
+            if (_stopping || _streamWriter == null)
+            {
+                // if _streamWriter is already null, then we already called Done()
+                // so we should just discard the input.
+                return;
+            }
+
             Array formattedObjects = _pipeline.Process(input);
-            if (_stopping) return;
             foreach (var item in formattedObjects)
             {
                 string line = PSObject.ToStringParser(_command.Context, item);
                 _streamWriter.WriteLine(line);
             }
-
-            _streamWriter.Flush();
         }
 
         /// <summary>
@@ -1670,8 +1674,9 @@ namespace System.Management.Automation
             Encoding pipeEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as System.Text.Encoding ??
                                     Encoding.ASCII;
 
-            _streamWriter = new StreamWriter(process.StandardInput.BaseStream,
-                                            pipeEncoding);
+            _streamWriter = new StreamWriter(process.StandardInput.BaseStream, pipeEncoding);
+            _streamWriter.AutoFlush = true;
+
             _inputFormat = inputFormat;
         }
 
@@ -1696,7 +1701,8 @@ namespace System.Management.Automation
             // streamWriter is present, only if we call Start method
             if (_streamWriter != null)
             {
-                _streamWriter.Dispose();
+                _streamWriter.Close();
+                _streamWriter = null;
             }
         }
     }
