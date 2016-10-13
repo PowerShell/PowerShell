@@ -798,8 +798,16 @@ namespace System.Management.Automation
             return result;
         } // AutomountFileSystemDrive
 
+        /// <summary>
+        /// Automatically mount the specified drive
+        /// </summary>
+        /// <remarks>
+        /// Neither 'WSMan' nor 'Certificate' provider works in UNIX PS today.
+        /// So this method currently does nothing on UNIX.
+        /// </remarks>
         internal static void MountDefaultDrive(string name, ExecutionContext context)
         {
+#if !UNIX
             PSModuleAutoLoadingPreference moduleAutoLoadingPreference =
                 CommandDiscovery.GetCommandDiscoveryPreference(context, SpecialVariables.PSModuleAutoLoadingPreferenceVarPath, "PSModuleAutoLoadingPreference");
             if (moduleAutoLoadingPreference == PSModuleAutoLoadingPreference.None)
@@ -837,6 +845,7 @@ namespace System.Management.Automation
                     CommandProcessorBase.CheckForSevereException(exception);
                 }
             }
+#endif
         }
 
         /// <summary>
