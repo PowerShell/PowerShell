@@ -29,7 +29,7 @@
             $testCases += [TestData]::new("PS1", $ps1File, [NullString]::Value)
             $testCases += [TestData]::new("Empty string", "", "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.ExportAliasCommand")
             $testCases += [TestData]::new("Null", [NullString]::Value, "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ExportAliasCommand")
-            $testCases += [TestData]::new("Non filesystem provider", 'cert:\alias.ps1', "ReadWriteFileNotFileSystemProvider,Microsoft.PowerShell.Commands.ExportAliasCommand")
+            $testCases += [TestData]::new("Non filesystem provider", 'env:\alias.ps1', "ReadWriteFileNotFileSystemProvider,Microsoft.PowerShell.Commands.ExportAliasCommand")
         }
     
         $testCases | % {
@@ -116,7 +116,7 @@
             $testCases = @()
             $testCases += [TestData]::new("Empty string", "", "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.ImportAliasCommand")
             $testCases += [TestData]::new("Null", [NullString]::Value, "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ImportAliasCommand")
-            $testCases += [TestData]::new("Non filesystem provider", 'cert:\alias.ps1', "NotSupported,Microsoft.PowerShell.Commands.ImportAliasCommand")
+            $testCases += [TestData]::new("Non filesystem provider", 'env:\alias.ps1', "NotSupported,Microsoft.PowerShell.Commands.ImportAliasCommand")
         }
     
         $testCases | % {
