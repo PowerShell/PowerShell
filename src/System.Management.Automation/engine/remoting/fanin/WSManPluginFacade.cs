@@ -11,6 +11,7 @@ using System.Threading;
 using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Internal;
+using System.Globalization;
 
 namespace System.Management.Automation.Remoting
 {
