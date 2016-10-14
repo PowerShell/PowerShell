@@ -614,6 +614,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _exclude = new string[0];
     }
 
+#if !UNIX
     /// <summary>
     /// Defines the implementation of the 'get-acl' cmdlet.
     /// This cmdlet gets the security descriptor of an item at the specified path.  
@@ -1582,6 +1583,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
     } // class SetAclCommand
+#endif // !UNIX
+
 }// namespace Microsoft.PowerShell.Commands
 
 #pragma warning restore 56506

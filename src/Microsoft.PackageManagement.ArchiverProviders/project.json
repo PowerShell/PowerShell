@@ -1,52 +1,52 @@
 {
-	"name": "Microsoft.PackageManagement.ArchiverProviders",
-	"version": "1.0.0-*",
+    "name": "Microsoft.PackageManagement.ArchiverProviders",
+    "version": "1.0.0-*",
 
-	"buildOptions": {
-		"warningsAsErrors": true
-	},
+    "buildOptions": {
+        "warningsAsErrors": true
+    },
 
-	"configurations": {
-		"Linux": {
-			"buildOptions": {
-				"define": ["UNIX"]
-			}
-		}
-	},
+    "configurations": {
+        "Linux": {
+            "buildOptions": {
+                "define": ["UNIX"]
+            }
+        }
+    },
 
-	"dependencies": {
-		"System.Management.Automation": "1.0.0-*",
-		"Microsoft.PackageManagement": "1.0.0-*"
-	},
+    "dependencies": {
+        "System.Management.Automation": "1.0.0-*",
+        "Microsoft.PackageManagement": "1.0.0-*"
+    },
 
-	"frameworks": {
-		"net451": {
-			"frameworkAssemblies": {
-				"System.Runtime": "",
-				"System.Xml": "",
-				"System.Xml.Linq": "",
-				"System.Numerics": "",
-				"System.Data": "",
-				"System.DirectoryServices": "",
-				"System.Security": "",
-				"System.Transactions": "",
-				"System.Runtime.Serialization": "",
-				"System.Management": "",
-				"System.Configuration": "",
-				"System.Configuration.Install": "",
-				"System.Net": "",
-				"System.Net.Http": "",
-				"System.IO.Compression": "",
-				"System.IO.Compression.FileSystem": ""
-			}
-		},
+    "frameworks": {
+        "net451": {
+            "frameworkAssemblies": {
+                "System.Runtime": "",
+                "System.Xml": "",
+                "System.Xml.Linq": "",
+                "System.Numerics": "",
+                "System.Data": "",
+                "System.DirectoryServices": "",
+                "System.Security": "",
+                "System.Transactions": "",
+                "System.Runtime.Serialization": "",
+                "System.Management": "",
+                "System.Configuration": "",
+                "System.Configuration.Install": "",
+                "System.Net": "",
+                "System.Net.Http": "",
+                "System.IO.Compression": "",
+                "System.IO.Compression.FileSystem": ""
+            }
+        },
 
-		"netstandard1.6": {
-			"imports": ["dnxcore50"],
-			"buildOptions": {
-				"define": ["CORECLR"],
+        "netstandard1.6": {
+            "imports": ["dnxcore50"],
+            "buildOptions": {
+                "define": ["CORECLR"],
                 "debugType": "portable"
-			}
-		}
-	}
+            }
+        }
+    }
 }

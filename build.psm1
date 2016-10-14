@@ -2376,7 +2376,12 @@ function Start-CrossGen {
         throw "crossgen is not available for this platform"
     }
 
-    $crossGenPath = Get-ChildItem $crossGenSearchPath -Recurse | ? { $_.FullName -match $crossGenRuntime } | select -First 1 | % { $_.FullName }
+    # Get the CrossGen.exe for the correct runtime with the latest version
+    $crossGenPath = Get-ChildItem $crossGenSearchPath -Recurse | `
+                        Where-Object { $_.FullName -match $crossGenRuntime } | `
+                        Sort-Object -Property FullName -Descending | `
+                        Select-Object -First 1 | `
+                        ForEach-Object { $_.FullName }
     if (-not $crossGenPath) {
         throw "Unable to find latest version of crossgen.exe. 'Please run Start-PSBuild -Clean' first, and then try again."
     }
@@ -2432,6 +2437,12 @@ function Start-CrossGen {
         Generate-CrossGenAssembly -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath
     }
 
+    <#
+     # The latest dotnet.exe from .NET Core 1.1.0 preview packages starts
+     # to check the existence of all TPA assemblies, including those built
+     # from local projects (e.g. powershell assemblies). The TPA assemblies
+     # in '.deps.json' are IL assemblies, so we cannot remove those ILs.
+     #
     Write-Verbose "PowerShell Ngen assemblies have been generated, deleting ILs..." -Verbose
     foreach ($assemblyName in $psCoreAssemblyList) {
         # Remove the IL assembly and its symbols.
@@ -2440,6 +2451,7 @@ function Start-CrossGen {
         Remove-Item $assemblyPath -Force -ErrorAction SilentlyContinue
         Remove-Item $symbolsPath -Force -ErrorAction SilentlyContinue
     }
+    #>
 }
 
 # Cleans the PowerShell repo
