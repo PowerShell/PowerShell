@@ -128,6 +128,14 @@ namespace Microsoft.PowerShell.Commands
         public Int32 BufferSize { get; set; } = 32;
 
         /// <summary>
+        /// The following is the definition of the input parameter "BufferSize".
+        /// Buffer size sent with the this command. The default value is 32.
+        /// </summary>
+        [Parameter]
+        [ValidateRange((int)1, Int32.MaxValue)]
+        public Int32 TimeOut { get; set; } = 1000;
+
+        /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
         /// Value of the address requested. The form of the value can be either the 
         /// computer name ("wxyz1234"), IPv4 address ("192.168.177.124"), or IPv6 
@@ -399,7 +407,11 @@ namespace Microsoft.PowerShell.Commands
             FilterString.Append(" And ");
             FilterString.Append("BufferSize=");
             FilterString.Append(BufferSize);
+            FilterString.Append(" And ");
+            FilterString.Append("TimeOut=");
+            FilterString.Append(TimeOut);
             FilterString.Append(")");
+            WriteVerbose(FilterString.ToString());
             return FilterString.ToString();
         }
         private void ProcessPingStatus(Object pingStatusObj)
