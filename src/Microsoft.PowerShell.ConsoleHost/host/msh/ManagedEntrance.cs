@@ -8,6 +8,7 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
+using System.Globalization;
 #if CORECLR
 using System.Runtime.InteropServices;
 #endif
@@ -178,8 +179,8 @@ namespace Microsoft.PowerShell
                 object[] blockLongPathsSwitch = new object[] { "Switch.System.IO.BlockLongPaths", false };
                 object[] useLegacyPathHandlingSwitch = new object[] { "Switch.System.IO.UseLegacyPathHandling", false };
 
-                appContextType.InvokeMember("SetSwitch", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, blockLongPathsSwitch);
-                appContextType.InvokeMember("SetSwitch", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, useLegacyPathHandlingSwitch);
+                appContextType.InvokeMember("SetSwitch", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, blockLongPathsSwitch, CultureInfo.InvariantCulture);
+                appContextType.InvokeMember("SetSwitch", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, useLegacyPathHandlingSwitch, CultureInfo.InvariantCulture);
             }
             catch
             {
