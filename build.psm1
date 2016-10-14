@@ -2437,21 +2437,29 @@ function Start-CrossGen {
         Generate-CrossGenAssembly -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath
     }
 
-    <#
-     # The latest dotnet.exe from .NET Core 1.1.0 preview packages starts
-     # to check the existence of all TPA assemblies, including those built
-     # from local projects (e.g. powershell assemblies). The TPA assemblies
-     # in '.deps.json' are IL assemblies, so we cannot remove those ILs.
-     #
-    Write-Verbose "PowerShell Ngen assemblies have been generated, deleting ILs..." -Verbose
+    #
+    # With the latest dotnet.exe, the TPA list contains the assemblies produced by the local projects,
+    # and APP_PATHS/APP_NI_PATHS are no longer passed in. Therefore, powershell.exe starts to check the
+    # existence of all powershell assemblies, and CoreCLR by default will only load the TPAs which point
+    # to the IL assemblies. So we need to remove the ngen'ed IL assemblies and then rename the produced
+    # NI assemblies (.ni.dll) to the same as the corresponding IL assemblies.
+    # 
+    # In this way, we can make sure:
+    #   1. The dependency existence check will pass for all TPAs.
+    #   2. CoreCLR by default will load the NI images even though it's using names of the IL images.
+    #
+    Write-Verbose "PowerShell Ngen assemblies have been generated. Deploying ..." -Verbose
     foreach ($assemblyName in $psCoreAssemblyList) {
         # Remove the IL assembly and its symbols.
         $assemblyPath = Join-Path $PublishPath $assemblyName
-        $symbolsPath = $assemblyPath.Replace(".dll", ".pdb")
-        Remove-Item $assemblyPath -Force -ErrorAction SilentlyContinue
-        Remove-Item $symbolsPath -Force -ErrorAction SilentlyContinue
+        $symbolsPath = [System.IO.Path]::ChangeExtension($assemblyPath, ".pdb")
+        Remove-Item $assemblyPath -Force -ErrorAction Stop
+        Remove-Item $symbolsPath -Force -ErrorAction Stop
+
+        # Rename the corresponding ni.dll assembly to be the same as the IL assembly
+        $niAssemblyPath = [System.IO.Path]::ChangeExtension($assemblyPath, "ni.dll")
+        Rename-Item $niAssemblyPath $assemblyPath -Force -ErrorAction Stop
     }
-    #>
 }
 
 # Cleans the PowerShell repo
