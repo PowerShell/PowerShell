@@ -411,7 +411,6 @@ namespace Microsoft.PowerShell.Commands
             FilterString.Append("TimeOut=");
             FilterString.Append(TimeOut);
             FilterString.Append(")");
-            WriteVerbose(FilterString.ToString());
             return FilterString.ToString();
         }
         private void ProcessPingStatus(Object pingStatusObj)
@@ -624,6 +623,7 @@ namespace Microsoft.PowerShell.Commands
 
                         using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(sourceComp, this.Credential, WsmanAuthentication, cancel.Token, this))
                         {
+                            WriteVerbose(String.Format("WMI query {0} sent to {1}", querystring, sourceComp));
                             for (int echoRequestCount = 0; echoRequestCount < Count; echoRequestCount++)
                             {
                                 IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(
