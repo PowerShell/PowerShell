@@ -200,8 +200,12 @@ namespace System.Management.Automation
             return ecFromTLS.TypeTable;
         }
 
+#if !UNIX
         private static string s_pshome = null;
 
+        /// <summary>
+        /// Get the application base path of the shell from registry
+        /// </summary>
         internal static string GetApplicationBaseFromRegistry(string shellId)
         {
             bool wantPsHome = (object)shellId == (object)DefaultPowerShellShellID;
@@ -226,6 +230,7 @@ namespace System.Management.Automation
 
             return null;
         }
+#endif
 
         /// <summary>
         /// Gets the application base for current monad version
@@ -616,13 +621,18 @@ namespace System.Management.Automation
             return GetRegistryConfigurationPrefix() + "\\" + shellID;
         }
 
-        // Retrieves group policy settings based on the preference order provided:
-        // Dictionary<string, object> settings = GetGroupPolicySetting("Transcription", Registry.LocalMachine, Registry.CurrentUser);
-
+        // Calling static members of 'Registry' on UNIX will raise 'PlatformNotSupportedException' 
+#if UNIX
+        internal static RegistryKey[] RegLocalMachine = null;
+        internal static RegistryKey[] RegCurrentUser = null;
+        internal static RegistryKey[] RegLocalMachineThenCurrentUser = null;
+        internal static RegistryKey[] RegCurrentUserThenLocalMachine = null;
+#else
         internal static RegistryKey[] RegLocalMachine = new[] { Registry.LocalMachine };
         internal static RegistryKey[] RegCurrentUser = new[] { Registry.CurrentUser };
         internal static RegistryKey[] RegLocalMachineThenCurrentUser = new[] { Registry.LocalMachine, Registry.CurrentUser };
         internal static RegistryKey[] RegCurrentUserThenLocalMachine = new[] { Registry.CurrentUser, Registry.LocalMachine };
+#endif
 
         internal static Dictionary<string, object> GetGroupPolicySetting(string settingName, RegistryKey[] preferenceOrder)
         {

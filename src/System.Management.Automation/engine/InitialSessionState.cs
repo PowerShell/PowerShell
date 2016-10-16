@@ -6031,7 +6031,9 @@ if($paths) {
 
             providers = new Dictionary<string, SessionStateProviderEntry>(StringComparer.OrdinalIgnoreCase)
             {
+#if !UNIX
                 { "Registry",    new SessionStateProviderEntry("Registry", typeof(RegistryProvider), helpFile) },
+#endif
                 { "Alias",       new SessionStateProviderEntry("Alias", typeof(AliasProvider), helpFile) },
                 { "Environment", new SessionStateProviderEntry("Environment", typeof(EnvironmentProvider), helpFile) },
                 { "FileSystem" , new SessionStateProviderEntry("FileSystem", typeof(FileSystemProvider), helpFile) },

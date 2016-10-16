@@ -1,3 +1,4 @@
+#if !UNIX
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -135,7 +136,6 @@ namespace Microsoft.PowerShell.Commands
         {
             Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
 
-#if !UNIX
             drives.Add(
                 new PSDriveInfo(
                     "HKLM",
@@ -151,7 +151,6 @@ namespace Microsoft.PowerShell.Commands
                     "HKEY_CURRENT_USER",
                     RegistryProviderStrings.HKCUDriveDescription,
                     null));
-#endif
 
             return drives;
         } // InitializeDefaultDrives
@@ -5117,5 +5116,4 @@ namespace Microsoft.PowerShell.Commands
         public RegistryValueKind Type { get; set; } = RegistryValueKind.Unknown;
     }
 } // namespace System.Management.Automation
-
-
+#endif // !UNIX
