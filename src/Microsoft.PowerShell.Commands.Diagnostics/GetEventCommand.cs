@@ -363,8 +363,9 @@ namespace Microsoft.PowerShell.Commands
         private const string filePrefix = "file://";
         private const string NamedDataTemplate = "((EventData[Data[@Name='{0}']='{1}']) or (UserData/*/{0}='{1}'))";
         private const string DataTemplate = "(EventData/Data='{0}')";
-        private const string SystemTimeTemplate2 = "(System/TimeCreated[@SystemTime&gt;='{0}' and @SystemTime&lt;='{1}'])";
-        private const string SystemTimeTemplate = "(System/TimeCreated[@SystemTime&lt;='{0}'])";
+        private const string SystemTimePeriodTemplate = "(System/TimeCreated[@SystemTime&gt;='{0}' and @SystemTime&lt;='{1}'])";
+        private const string SystemTimeStartTemplate = "(System/TimeCreated[@SystemTime&gt;='{0}'])";
+        private const string SystemTimeEndTemplate = "(System/TimeCreated[@SystemTime&lt;='{0}'])";
         private const string SystemLevelTemplate = "(System/Level=";
         private const string SystemEventIDTemplate = "(System/EventID=";
         private const string SystemSecurityTemplate = "(System/Security[@UserID='{0}'])";
@@ -1456,14 +1457,14 @@ namespace Microsoft.PowerShell.Commands
                 string endTimeFormatted = endTime.ToString("s", CultureInfo.InvariantCulture) + "." + endTime.Millisecond.ToString("d3", CultureInfo.InvariantCulture) + "Z";
 
                 ret.AppendFormat(CultureInfo.InvariantCulture,
-                                 SystemTimeTemplate2,
+                                 SystemTimePeriodTemplate,
                                  startTimeFormatted,
                                  endTimeFormatted);
             }
             else
             {
                 ret.AppendFormat(CultureInfo.InvariantCulture,
-                                 SystemTimeTemplate,
+                                 SystemTimeStartTemplate,
                                  startTimeFormatted);
             }
 
@@ -1502,14 +1503,14 @@ namespace Microsoft.PowerShell.Commands
                                                                + startTime.Millisecond.ToString("d3", CultureInfo.InvariantCulture) + "Z";
 
                 ret.AppendFormat(CultureInfo.InvariantCulture,
-                                 SystemTimeTemplate2,
+                                 SystemTimePeriodTemplate,
                                  startTimeFormatted,
                                  endTimeFormatted);
             }
             else
             {
                 ret.AppendFormat(CultureInfo.InvariantCulture,
-                                 SystemTimeTemplate,
+                                 SystemTimeEndTemplate,
                                  endTimeFormatted);
             }
 
