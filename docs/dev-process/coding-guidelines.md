@@ -85,7 +85,7 @@ so runtime checks are currently necessary for some platform differences, e.g. ma
 
 ## Code comments
 
-It's strongly encouraged to add comments when you are making changes to the code,
+It's strongly encouraged to add comments when you are making changes to the code and tests,
 especially when the changes are not trivial or may raise confusion.
 Make sure the added comments are accurate and easy to understand.
 Good code comments would greatly improve readability of the code, and make it much more maintainable.
