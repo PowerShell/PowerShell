@@ -5,26 +5,21 @@ function UpdateHelpFromLocalContentPath
 {
     param ([string]$ModuleName, [string]$Tag = 'CI')
 
-    # Update-Help is not yet supported on non-Windows platforms;
-    # currently it is using Windows Cabinet API (cabinet.dll) internally
-    if ($IsWindows)
+    if ($Tag -eq 'CI')
     {
-        if ($Tag -eq 'CI')
-        {
-            $helpContentPath = Join-Path $PSScriptRoot "HelpContent"
-            $helpFiles = @(Get-ChildItem "$helpContentPath\*" -ea SilentlyContinue)
+        $helpContentPath = Join-Path $PSScriptRoot "assets"
+        $helpFiles = @(Get-ChildItem "$helpContentPath\*" -ea SilentlyContinue)
 
-            if ($helpFiles.Count -eq 0)
-            {
-                throw "Unable to find help content at '$helpContentPath'"
-            }
-
-            Update-Help -Module $ModuleName -SourcePath $helpContentPath -Force -ErrorAction Stop -Verbose
-        }
-        else
+        if ($helpFiles.Count -eq 0)
         {
-            Update-Help -Module $ModuleName -Force -Verbose -ErrorAction Stop
+            throw "Unable to find help content at '$helpContentPath'"
         }
+
+        Update-Help -Module $ModuleName -SourcePath $helpContentPath -Force -ErrorAction Stop
+    }
+    else
+    {
+        Update-Help -Module $ModuleName -Force -Verbose -ErrorAction Stop
     }
 }
 
@@ -88,7 +83,6 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
 
         # Currently these test cases are verified only on Windows, because
         # - WSMan:\ and Cert:\ providers are not yet supported on non-Windows platforms.
-        # - Update-Help is not yet supported on non-Windows platforms; it is using Windows Cabinet API (cabinet.dll) internally.
         $testCases = @(
             @{
                 helpFile    = "$PSHOME\$([Globalization.CultureInfo]::CurrentUICulture)\System.Management.Automation.dll-help.xml"
@@ -96,26 +90,33 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
                 helpContext = "[@id='FileSystem' or @ID='FileSystem']"
                 verb        = 'Add'
                 noun        = 'Content'
-            },
-            @{
-                helpFile    = "$PSHOME\$([Globalization.CultureInfo]::CurrentUICulture)\Microsoft.PowerShell.Security.dll-help.xml"
-                path        = 'Cert:\'
-                helpContext = $null  # CertificateProvider uses only verb and noun in XPath query
-                verb        = 'New'
-                noun        = 'Item'
-            },
-            @{
-                helpFile    = "$PSHOME\$([Globalization.CultureInfo]::CurrentUICulture)\Microsoft.WSMan.Management.dll-help.xml"
-                path        = 'WSMan:\localhost\ClientCertificate'
-                helpContext = "[@id='ClientCertificate' or @ID='ClientCertificate']"
-                verb        = 'New'
-                noun        = 'Item'
             }
         )
 
+        if ($IsWindows)
+        {
+            $testCases += @(
+                @{
+                    helpFile    = "$PSHOME\$([Globalization.CultureInfo]::CurrentUICulture)\Microsoft.WSMan.Management.dll-help.xml"
+                    path        = 'WSMan:\localhost\ClientCertificate'
+                    helpContext = "[@id='ClientCertificate' or @ID='ClientCertificate']"
+                    verb        = 'New'
+                    noun        = 'Item'
+                }
+                ,
+                @{
+                    helpFile    = "$PSHOME\$([Globalization.CultureInfo]::CurrentUICulture)\Microsoft.PowerShell.Security.dll-help.xml"
+                    path        = 'Cert:\'
+                    helpContext = $null  # CertificateProvider uses only verb and noun in XPath query
+                    verb        = 'New'
+                    noun        = 'Item'
+                }
+            )
+            UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.WSMan.Management' -Tag 'CI'
+            UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Security' -Tag 'CI'
+        }
+
         UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Tag 'CI'
-        UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Security' -Tag 'CI'
-        UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.WSMan.Management' -Tag 'CI'
     }
 
     It -Skip:(-not $IsWindows) "shows contextual help when Get-Help is invoked for provider-specific path (Get-Help -Name <verb>-<noun> -Path <path>)" -TestCases $testCases {
