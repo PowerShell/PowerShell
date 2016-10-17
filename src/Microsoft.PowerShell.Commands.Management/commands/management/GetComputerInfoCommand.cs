@@ -387,26 +387,29 @@ namespace Microsoft.PowerShell.Commands
 
         private static bool CheckDeviceGuardLicense()
         {
-#if !CORECLR
             const string propertyName = "CodeIntegrity-AllowConfigurablePolicy";
 
-            try
+            // DeviceGuard is supported on all versions of PowerShell that execute on "full" SKUs
+            if (Platform.IsWindows &&
+                !(Platform.IsNanoServer || Platform.IsIoT))
             {
-                int policy = 0;
-
-                if (Native.SLGetWindowsInformationDWORD(propertyName, out policy) == Native.S_OK
-                    && policy == 1)
+                try
                 {
-                    return true;
+                    int policy = 0;
+
+                    if (Native.SLGetWindowsInformationDWORD(propertyName, out policy) == Native.S_OK
+                        && policy == 1)
+                    {
+                        return true;
+                    }
+                }
+                catch (Exception)
+                {
+                    // if we fail to load the native dll or if the call fails
+                    // catastrophically there's not much we can do except to
+                    // consider there to be no license.
                 }
             }
-            catch (Exception)
-            {
-                // if we fail to load the native dll or if the call fails
-                // catastrophically there's not much we can do except to
-                // consider there to be no license.
-            }
-#endif
             return false;
         }
 
@@ -635,6 +638,7 @@ namespace Microsoft.PowerShell.Commands
                 output.WindowsRegisteredOrganization = regCurVer.RegisteredOrganization;
                 output.WindowsRegisteredOwner = regCurVer.RegisteredOwner;
                 output.WindowsSystemRoot = regCurVer.SystemRoot;
+                output.WindowsVersion = regCurVer.ReleaseId;
             }
 
             var os = osInfo.os;
@@ -1256,7 +1260,8 @@ namespace Microsoft.PowerShell.Commands
                         ProductName = (string)key.GetValue("ProductName"),
                         RegisteredOrganization = (string)key.GetValue("RegisteredOrganization"),
                         RegisteredOwner = (string)key.GetValue("RegisteredOwner"),
-                        SystemRoot = (string)key.GetValue("SystemRoot")
+                        SystemRoot = (string)key.GetValue("SystemRoot"),
+                        ReleaseId = (string)key.GetValue("ReleaseId")
                     };
                 }
             }
@@ -1505,13 +1510,10 @@ namespace Microsoft.PowerShell.Commands
                     guard.SecurityServicesRunning = listSoftware.ToArray();
                 }
 
-                var configCIStatus = EnumConverter<DeviceGuardConfigCodeIntegrityStatus>.Convert((int?)CodeIntegrityPolicyEnforcementStatus);
-                var userModeCIStatus = EnumConverter<DeviceGuardConfigCodeIntegrityStatus>.Convert((int?)UsermodeCodeIntegrityPolicyEnforcementStatus);
-                if (configCIStatus != null && configCIStatus != DeviceGuardConfigCodeIntegrityStatus.Off)
-                {
-                    guard.CodeIntegrityPolicyEnforcementStatus = configCIStatus;
-                    guard.UserModeCodeIntegrityPolicyEnforcementStatus = userModeCIStatus;
-                }
+                var configCiStatus = EnumConverter<DeviceGuardConfigCodeIntegrityStatus>.Convert((int?)CodeIntegrityPolicyEnforcementStatus);
+                var userModeCiStatus = EnumConverter<DeviceGuardConfigCodeIntegrityStatus>.Convert((int?)UsermodeCodeIntegrityPolicyEnforcementStatus);
+                guard.CodeIntegrityPolicyEnforcementStatus = configCiStatus;
+                guard.UserModeCodeIntegrityPolicyEnforcementStatus = userModeCiStatus;
 
                 return guard;
             }
@@ -1952,6 +1954,7 @@ namespace Microsoft.PowerShell.Commands
         public string RegisteredOrganization;
         public string RegisteredOwner;
         public string SystemRoot;
+        public string ReleaseId;
     }
     #endregion Other Intermediate classes
 
@@ -2222,6 +2225,11 @@ namespace Microsoft.PowerShell.Commands
         /// Path to the operating system's root directory, from the Windows Registry.
         /// </summary>
         public string WindowsSystemRoot { get; internal set; }
+
+        /// <summary>
+        /// The Windows ReleaseId, from the Windows Registry.
+        /// </summary>
+        public string WindowsVersion { get; internal set; }
         #endregion Registry
 
         #region BIOS
@@ -5091,7 +5099,6 @@ namespace Microsoft.PowerShell.Commands
         [DllImport(PInvokeDllNames.LCIDToLocaleNameDllName, SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuilder localeName, int localeNameSize, int flags);
 
-#if !CORECLR
         /// <summary>    
         /// Gets the data specified for the passed in property name from the
         /// Software Licensing API
@@ -5109,7 +5116,6 @@ namespace Microsoft.PowerShell.Commands
         [DllImport("Slc.dll", EntryPoint = "SLGetWindowsInformationDWORD", CharSet = CharSet.Unicode)]  
         public static extern UInt32 SLGetWindowsInformationDWORD(string pwszValueName, ref int pdwValue);  
          */
-#endif
     }
     #endregion Native
 }
