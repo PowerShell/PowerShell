@@ -21,11 +21,5 @@ TEST(IsDirectoryTest, BinLsIsNotDirectory)
 TEST(IsDirectoryTest, ReturnsFalseForFakeDirectory)
 {
     EXPECT_FALSE(IsDirectory("SomeMadeUpFileNameThatDoesNotExist"));
-    EXPECT_EQ(errno, ERROR_FILE_NOT_FOUND);
-}
-
-TEST(IsDirectoryTest, ReturnsFalseForNullInput)
-{
-    EXPECT_FALSE(IsDirectory(NULL));
-    EXPECT_EQ(errno, ERROR_INVALID_PARAMETER);
+    EXPECT_EQ(ENOENT, errno);
 }

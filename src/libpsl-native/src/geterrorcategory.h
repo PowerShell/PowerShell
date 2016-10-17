@@ -2,10 +2,8 @@
 
 #include "pal.h"
 
-#include <stdbool.h>
-
 PAL_BEGIN_EXTERNC
 
-bool IsSymLink(const char* path);
+int32_t GetErrorCategory(int32_t);
 
 PAL_END_EXTERNC

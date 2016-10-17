@@ -6,10 +6,13 @@ Describe "Set-Date" -Tag "CI" {
         Import-Module (join-path $psscriptroot "../../Common/Test.Helpers.psm1")
         $IsElevated = Test-IsElevated
     }
+
     It "Set-Date should be able to set the date in an elevated context" -Skip:(! $IsElevated) {
         { get-date | set-date } | Should not throw
     }
+
     It "Set-Date should produce an error in a non-elevated context" -Skip:($IsElevated) {
-        { get-date |set-date} | should throw
+        { get-date | set-date} | should throw
+        $Error[0].FullyQualifiedErrorId | should be "System.ComponentModel.Win32Exception,Microsoft.PowerShell.Commands.SetDateCommand"
     }
 }
