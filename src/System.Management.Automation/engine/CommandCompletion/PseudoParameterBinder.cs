@@ -335,16 +335,16 @@ namespace System.Management.Automation.Language
             {
                 // Handle static binding from a non-PowerShell / C# application
                 // DefaultRunspace is a thread static field, so race condition will not happen because different threads will access different instances of "DefaultRunspace"
-                if (bindCommandRunspace == null)
+                if (s_bindCommandRunspace == null)
                 {
                     // Create a mini runspace by remove the types and formats
                     InitialSessionState minimalState = InitialSessionState.CreateDefault2();
                     minimalState.Types.Clear();
                     minimalState.Formats.Clear();
-                    bindCommandRunspace = RunspaceFactory.CreateRunspace(minimalState);
-                    bindCommandRunspace.Open();
+                    s_bindCommandRunspace = RunspaceFactory.CreateRunspace(minimalState);
+                    s_bindCommandRunspace.Open();
                 }
-                Runspace.DefaultRunspace = bindCommandRunspace;
+                Runspace.DefaultRunspace = s_bindCommandRunspace;
                 // Static binding always does argument binding (not argument or parameter completion).
                 pseudoBinding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, null, PseudoParameterBinder.BindingType.ArgumentBinding);
                 Runspace.DefaultRunspace = null;
@@ -358,7 +358,7 @@ namespace System.Management.Automation.Language
             return new StaticBindingResult(commandAst, pseudoBinding);
         }
         [ThreadStatic]
-        static Runspace bindCommandRunspace = null;
+        static Runspace s_bindCommandRunspace = null;
     }
 
     /// <summary>
