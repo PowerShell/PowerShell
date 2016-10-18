@@ -50,9 +50,6 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
                 }
 
             }
-            It "Should be able to call without error" {
-                { Import-Csv $testCsv @HeaderParams } | Should Not Throw
-            }
 
             It "Should be able to assign to a variable" {
                 $actual = Import-Csv -Path $testCsv @HeaderParams
@@ -80,18 +77,6 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
                 $actual[0].'Column2'  | Should Be "1"
                 $actual[0].'Column 3' | Should Be "A"
             }
-            # Is the test unnecessary? Remove?
-            It "Should be able to use the alias without error" {
-                { ipcsv $testCsv } | Should Not Throw
-            }
-            # Is the test unnecessary? Remove?
-            It "Should have the same output between the alias and the full cmdlet name" {
-                $actualAlias = ipcsv -Path $testCsv @HeaderParams
-                $actualCmdlet = Import-Csv -Path $testCsv @HeaderParams
-                $actualAlias[0].'Column1'  | Should Be $actualCmdlet[0].'Column1'
-                $actualAlias[0].'Column2'  | Should Be $actualCmdlet[0].'Column2' 
-                $actualAlias[0].'Column 3' | Should Be $actualCmdlet[0].'Column 3'
-            }
 
         }
     }
@@ -106,10 +91,6 @@ Describe "Import-Csv #Type Tests" -Tags "CI" {
         # Import-Csv add "CSV:" before actual type
         # (Why #HandleCount ? See Issue #1812)
         $expectedProcessType = "CSV:System.Diagnostics.Process#HandleCount"
-    }
-
-    AfterAll {
-        Remove-Item -Path $testfile -Force
     }
 
     It "Test import-csv import Object" {
