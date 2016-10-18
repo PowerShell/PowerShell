@@ -333,24 +333,21 @@ namespace System.Management.Automation.Language
             PseudoBindingInfo pseudoBinding = null;
             if (Runspace.DefaultRunspace == null)
             {
-                lock (s_bindCommandLock)
+                // Handle static binding from a non-PowerShell / C# application
+                // DefaultRunspace is a thread static field, so race condition will not happen because different threads will access different instances of "DefaultRunspace"
+                if (bindCommandRunspace == null)
                 {
-                    if (s_bindCommandPowerShell == null)
-                    {
-                        // Create a mini runspace by remove the types and formats
-                        InitialSessionState minimalState = InitialSessionState.CreateDefault2();
-                        minimalState.Types.Clear();
-                        minimalState.Formats.Clear();
-
-                        s_bindCommandPowerShell = PowerShell.Create(minimalState);
-                    }
-
-                    // Handle static binding from a non-PowerShell / C# application
-                    Runspace.DefaultRunspace = s_bindCommandPowerShell.Runspace;
-                    // Static binding always does argument binding (not argument or parameter completion).
-                    pseudoBinding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, null, PseudoParameterBinder.BindingType.ArgumentBinding);
-                    Runspace.DefaultRunspace = null;
+                    // Create a mini runspace by remove the types and formats
+                    InitialSessionState minimalState = InitialSessionState.CreateDefault2();
+                    minimalState.Types.Clear();
+                    minimalState.Formats.Clear();
+                    bindCommandRunspace = RunspaceFactory.CreateRunspace(minimalState);
+                    bindCommandRunspace.Open();
                 }
+                Runspace.DefaultRunspace = bindCommandRunspace;
+                // Static binding always does argument binding (not argument or parameter completion).
+                pseudoBinding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, null, PseudoParameterBinder.BindingType.ArgumentBinding);
+                Runspace.DefaultRunspace = null;
             }
             else
             {
@@ -360,8 +357,8 @@ namespace System.Management.Automation.Language
 
             return new StaticBindingResult(commandAst, pseudoBinding);
         }
-        private static Object s_bindCommandLock = new Object();
-        private static PowerShell s_bindCommandPowerShell = null;
+        [ThreadStatic]
+        static Runspace bindCommandRunspace = null;
     }
 
     /// <summary>
