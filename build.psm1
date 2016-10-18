@@ -2438,15 +2438,10 @@ function Start-CrossGen {
     }
 
     #
-    # With the latest dotnet.exe, the TPA list contains the assemblies produced by the local projects,
-    # and APP_PATHS/APP_NI_PATHS are no longer passed in. Therefore, powershell.exe starts to check the
-    # existence of all powershell assemblies, and CoreCLR by default will only load the TPAs which point
-    # to the IL assemblies. So we need to remove the ngen'ed IL assemblies and then rename the produced
-    # NI assemblies (.ni.dll) to the same as the corresponding IL assemblies.
-    # 
-    # In this way, we can make sure:
-    #   1. The dependency existence check will pass for all TPAs.
-    #   2. CoreCLR by default will load the NI images even though it's using names of the IL images.
+    # With the latest dotnet.exe, the default load context is only able to load TPAs, and TPA
+    # only contains IL assembly names. In order to make the default load context able to load
+    # the NI PS assemblies, we need to replace the IL PS assemblies with the corresponding NI
+    # PS assemblies, but with the same IL assembly names.
     #
     Write-Verbose "PowerShell Ngen assemblies have been generated. Deploying ..." -Verbose
     foreach ($assemblyName in $psCoreAssemblyList) {
