@@ -30,12 +30,12 @@ You can download and install a PowerShell package for any of the following platf
 | macOS 10.11                    | [.pkg][rl-macos]       | [Instructions][in-macos]      |
 | Docker                         |                        | [Instructions][in-docker]     |
 
-[rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.10/PowerShell_6.0.0.10-alpha.10-win10-x64.msi
-[rl-windows81]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.10/PowerShell_6.0.0.10-alpha.10-win81-x64.msi
-[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.10/powershell_6.0.0-alpha.10-1ubuntu1.16.04.1_amd64.deb
-[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.10/powershell_6.0.0-alpha.10-1ubuntu1.14.04.1_amd64.deb
-[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.10/powershell-6.0.0_alpha.10-1.el7.centos.x86_64.rpm
-[rl-macOS]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.10/powershell-6.0.0-alpha.10.pkg
+[rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.11/PowerShell_6.0.0.10-alpha.11-win10-x64.msi
+[rl-windows81]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.11/PowerShell_6.0.0.10-alpha.11-win81-x64.msi
+[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.11/powershell_6.0.0-alpha.11-1ubuntu1.16.04.1_amd64.deb
+[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.11/powershell_6.0.0-alpha.11-1ubuntu1.14.04.1_amd64.deb
+[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.11/powershell-6.0.0_alpha.11-1.el7.centos.x86_64.rpm
+[rl-macOS]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.11/powershell-6.0.0-alpha.11.pkg
 
 [installation]: docs/installation
 [in-windows]: docs/installation/windows.md#msi
@@ -74,6 +74,12 @@ If you have any problems building, please consult the developer [FAQ][].
 |--------------------------|--------------------------|
 | [![av-image][]][av-site] | [![tv-image][]][tv-site] |
 
+### Build status of nightly builds
+
+| AppVeyor (Windows)       |
+|--------------------------|
+| [![av-nightly-image][]][av-nightly-site] |
+
 [bd-linux]: docs/building/linux.md
 [bd-windows]: docs/building/windows-core.md
 [bd-macOS]: docs/building/macos.md
@@ -84,6 +90,8 @@ If you have any problems building, please consult the developer [FAQ][].
 [tv-site]: https://travis-ci.org/PowerShell/PowerShell/branches
 [av-image]: https://ci.appveyor.com/api/projects/status/nsng9iobwa895f98/branch/master?svg=true
 [av-site]: https://ci.appveyor.com/project/PowerShell/powershell
+[av-nightly-image]: https://ci.appveyor.com/api/projects/status/46yd4jogtm2jodcq?svg=true
+[av-nightly-site]: https://ci.appveyor.com/project/PowerShell/powershell-f975h
 
 Downloading the Source Code
 ---------------------------
@@ -112,6 +120,8 @@ Please see the [Contribution Guide][] for how to develop and contribute.
 If you have any problems, please consult the [known issues][], developer [FAQ][], and [GitHub issues][].
 If you do not see your problem captured, please file a [new issue][] and follow the provided template.
 If you are developing .NET Core C# applications targeting PowerShell Core, please [check out our FAQ][] to learn more about the PowerShell SDK NuGet package.
+
+Also make sure to check out our [PowerShell-RFC repository](https://github.com/powershell/powershell-rfc) for request-for-comments (RFC) documents to submit and give comments on proposed and future designs.
 
 [check out our FAQ]: docs/FAQ.md#where-do-i-get-the-powershell-core-sdk-package
 [Contribution Guide]: .github/CONTRIBUTING.md

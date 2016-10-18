@@ -1,7 +1,8 @@
 #pragma once
 
-#include <sys/types.h>
 #include "pal.h"
+
+#include <sys/types.h>
 
 PAL_BEGIN_EXTERNC
 

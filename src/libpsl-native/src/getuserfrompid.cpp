@@ -1,11 +1,12 @@
-#include <string>
-#include <sstream>
-#include <errno.h>
-#include <sys/sysctl.h>
 #include "pal.h"
 #include "getfileowner.h"
 #include "getpwuid.h"
 #include "getuserfrompid.h"
+
+#include <string>
+#include <sstream>
+#include <errno.h>
+#include <sys/sysctl.h>
 
 char* GetUserFromPid(pid_t pid)
 {
@@ -32,7 +33,6 @@ char* GetUserFromPid(pid_t pid)
     int ret = sysctl(name, namelen, &oldp, &oldlenp, NULL, 0);
     if (ret != 0 || oldlenp == 0)
     {
-        errno = ERROR_GEN_FAILURE;
         return NULL;
     }
 

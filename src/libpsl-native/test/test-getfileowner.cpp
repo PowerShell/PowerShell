@@ -15,11 +15,5 @@ TEST(GetFileOwnerTest, CanGetOwnerOfRoot)
 TEST(GetFileOwnerTest, CannotGetOwnerOfFakeFile)
 {
     EXPECT_STREQ(GetFileOwner("SomeMadeUpFileNameThatDoesNotExist"), NULL);
-    EXPECT_EQ(errno, ERROR_FILE_NOT_FOUND);
-}
-
-TEST(GetFileOwnerTest, ReturnsNullForNullInput)
-{
-    EXPECT_STREQ(GetFileOwner(NULL), NULL);
-    EXPECT_EQ(errno, ERROR_INVALID_PARAMETER);
+    EXPECT_EQ(ENOENT, errno);
 }

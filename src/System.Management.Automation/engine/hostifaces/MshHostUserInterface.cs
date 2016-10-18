@@ -670,6 +670,27 @@ namespace System.Management.Automation.Host
                         }
                     }
 
+                    // Create the file in the main thread and flush the contents in the background thread.
+                    // Transcription should begin only if file generation is successful.
+                    // If there is an error in file generation, throw the exception.
+                    string baseDirectory = Path.GetDirectoryName(transcript.Path);
+                    if (Directory.Exists(transcript.Path) || (String.Equals(baseDirectory, transcript.Path.TrimEnd(Path.DirectorySeparatorChar), StringComparison.Ordinal)))
+                    {
+                        string errorMessage = String.Format(
+                            System.Globalization.CultureInfo.CurrentCulture,
+                            InternalHostUserInterfaceStrings.InvalidTranscriptFilePath,
+                            transcript.Path);
+                        throw new ArgumentException(errorMessage);
+                    }
+                    if(!Directory.Exists(baseDirectory))
+                    {
+                        Directory.CreateDirectory(baseDirectory);   
+                    }
+                    if(!File.Exists(transcript.Path))
+                    {
+                        File.Create(transcript.Path).Dispose();
+                    }
+                    
                     // Do the actual writing in the background so that it doesn't hold up the UI thread.
                     Task writer = Task.Run(() =>
                     {
@@ -682,12 +703,6 @@ namespace System.Management.Automation.Host
                         {
                             try
                             {
-                                string baseDirectory = Path.GetDirectoryName(transcript.Path);
-                                if (!Directory.Exists(baseDirectory))
-                                {
-                                    Directory.CreateDirectory(baseDirectory);
-                                }
-
                                 transcript.FlushContentToDisk();
                                 written = true;
                             }

@@ -10,8 +10,8 @@
     "frameworks": {
         "netcoreapp1.0": {
             "dependencies": {
-                "Microsoft.NETCore.App": "1.0.0",
-                "System.Xml.XDocument": "4.0.11"
+                "Microsoft.NETCore.App": "1.1.0-preview1-001100-00",
+                "System.Xml.XDocument": "4.3.0-preview1-24530-04"
             }
         }
     },

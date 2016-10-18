@@ -245,10 +245,6 @@ namespace System.Management.Automation
         /// If the function is read-only or constant.
         /// </exception> 
         /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of functions have been reached for this scope.
-        /// </exception>
-        /// 
         internal FunctionInfo SetFunctionRaw(
             string name,
             ScriptBlock function,
@@ -397,10 +393,6 @@ namespace System.Management.Automation
         /// If the function is read-only or constant.
         /// </exception> 
         /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of functions have been reached for this scope.
-        /// </exception>
-        /// 
         internal FunctionInfo SetFunction(
             string name,
             ScriptBlock function,
@@ -455,10 +447,6 @@ namespace System.Management.Automation
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of functions have been reached for this scope.
-        /// </exception>
         /// 
         internal FunctionInfo SetFunction(
             string name,
@@ -518,10 +506,6 @@ namespace System.Management.Automation
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of functions have been reached for this scope.
-        /// </exception>
         /// 
         internal FunctionInfo SetFunction(
             string name,
@@ -587,10 +571,6 @@ namespace System.Management.Automation
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of functions have been reached for this scope.
-        /// </exception>
         /// 
         internal FunctionInfo SetFunction(
             string name,
@@ -684,10 +664,6 @@ namespace System.Management.Automation
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of functions have been reached for this scope.
-        /// </exception>
         /// 
         internal FunctionInfo SetFunction(
             string name,
@@ -805,10 +781,6 @@ namespace System.Management.Automation
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
         /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of functions have been reached for this scope.
-        /// </exception>
         /// 
         internal FunctionInfo SetFunction(string name, ScriptBlock function, bool force)
         {

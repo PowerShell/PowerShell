@@ -4,6 +4,22 @@ Changelog
 Unreleased
 ----------
 
+v6.0.0-alpha.11 - 2016-10-17
+----------------------------
+- Add '-Title' to 'Get-Credential' and unify the prompt experience
+- Update dependency list for PowerShell Core on Linux and OS X
+- Fix 'powershell -Command -' to not hang and to not ignore the last command
+- Fix binary operator tab completion
+- Enable 'ConvertTo-Html' in PowerShell Core
+- Remove most Maximum* capacity variables
+- Fix 'Get-ChildItem -Hidden' to work on system hidden files on Windows
+- Fix 'JsonConfigFileAccessor' to handle corrupted 'PowerShellProperties.json'
+and defer creating the user setting directory until a write request comes
+- Fix variable assignment to not overwrite readonly variables
+- Fix 'Get-WinEvent -FilterHashtable' to work with named fields in UserData of event logs
+- Fix 'Get-Help -Online' in PowerShell Core on Windows
+- Spelling/grammar fixes
+
 v6.0.0-alpha.10 - 2016-09-15
 ----------------------------
 - Fix passing escaped double quoted spaces to native executables

@@ -1030,10 +1030,6 @@ namespace System.Management.Automation
         /// If the variable is read-only or constant.
         /// </exception> 
         /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of variables has been reached for this scope.
-        /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="name"/> refers to a provider that could not be found.
         /// </exception>
@@ -1089,10 +1085,6 @@ namespace System.Management.Automation
         /// If the variable is read-only or constant.
         /// </exception> 
         /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of variables has been reached for this scope.
-        /// </exception>
-        /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="name"/> refers to a provider that could not be found.
         /// </exception>
@@ -1145,10 +1137,6 @@ namespace System.Management.Automation
         /// If the variable is read-only or constant.
         /// </exception> 
         /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of variables has been reached for this scope.
-        /// </exception>
-        /// 
         internal object SetVariable(PSVariable variable, bool force, CommandOrigin origin)
         {
             if (variable == null || String.IsNullOrEmpty(variable.Name))
@@ -1194,10 +1182,6 @@ namespace System.Management.Automation
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the variable is read-only or constant.
         /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of variables has been reached for this scope.
-        /// </exception>
         /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="variablePath"/> refers to a provider that could not be found.
@@ -1262,10 +1246,6 @@ namespace System.Management.Automation
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the variable is read-only or constant.
         /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of variables has been reached for this scope.
-        /// </exception>
         /// 
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="variablePath"/> refers to a provider that could not be found.
@@ -1567,10 +1547,6 @@ namespace System.Management.Automation
         /// If the variable is read-only or constant.
         /// </exception> 
         /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of variables has been reached for this scope.
-        /// </exception>
-        /// 
         internal object SetVariableAtScope(PSVariable variable, string scopeID, bool force, CommandOrigin origin)
         {
             if (variable == null || String.IsNullOrEmpty(variable.Name))
@@ -1611,10 +1587,6 @@ namespace System.Management.Automation
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the variable is read-only or constant.
         /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of variables has been reached for this scope.
-        /// </exception>
         /// 
         internal object NewVariable(PSVariable variable, bool force)
         {
@@ -1667,10 +1639,6 @@ namespace System.Management.Automation
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the variable is read-only or constant.
         /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of variables has been reached for this scope.
-        /// </exception>
         /// 
         internal object NewVariableAtScope(PSVariable variable, string scopeID, bool force)
         {

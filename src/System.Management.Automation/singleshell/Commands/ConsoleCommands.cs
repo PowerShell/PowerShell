@@ -275,10 +275,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 e = sue;
             }
-            catch (SessionStateOverflowException sof)
-            {
-                e = sof;
-            }
             catch (ProviderNotFoundException pnf)
             {
                 e = pnf;

@@ -2,15 +2,15 @@
 //! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
 //! @brief returns if the path exists
 
-#include <errno.h>
+#include "isfile.h"
+
+#include <assert.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <pwd.h>
 #include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include "getlstat.h"
-#include "isfile.h"
 
 //! @brief returns if the path is a file or directory
 //!
@@ -23,21 +23,12 @@
 //! char* is marshaled as an LPStr, which on Linux is UTF-8.
 //! @endparblock
 //!
-//! @exception errno Passes this error via errno to GetLastError:
-//! - ERROR_INVALID_PARAMETER: parameter is not valid
-//!
 //! @retval true if path exists, false otherwise
 //!
 bool IsFile(const char* path)
 {
-    errno = 0;
-
-    if (!path)
-    {
-        errno = ERROR_INVALID_PARAMETER;
-        return false;
-    }
+    assert(path);
 
     struct stat buf;
-    return GetLStat(path, &buf) == 0;
+    return lstat(path, &buf) == 0;
 }

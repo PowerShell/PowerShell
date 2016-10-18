@@ -1,4 +1,29 @@
-﻿Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
+﻿function Get-RemoteRunspace {
+    $wc = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
+
+    # Use AppVeyor credentials if running in AppVeyor, rather than implicit credentials.
+    try
+    {
+	    $appveyorRemoteCredential = Import-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml"
+    }
+    catch { }
+    if ($appveyorRemoteCredential)
+    {
+        Write-Verbose "Using global AppVeyor credential";
+        $wc.Credential = $appveyorRemoteCredential
+    }
+    else
+    {
+        Write-Verbose "Using implicit credentials"
+    }
+
+    $remoteRunspace = [runspacefactory]::CreateRunspace($host, $wc)
+    $remoteRunspace.Open()
+
+    return $remoteRunspace
+}
+
+Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
 
     BeforeAll {
         $command = [System.Management.Automation.PSCommand]::new()
@@ -49,21 +74,25 @@ Describe "InvokeOnRunspace method as nested command" -tags "Feature" {
 Describe "InvokeOnRunspace method on remote runspace" -tags "Feature" {
     
     BeforeAll {
-        $wc = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
-        $remoteRunspace = [runspacefactory]::CreateRunspace($host, $wc)
-        $remoteRunspace.Open()
+
+        if ($IsWindows) {
+            $script:remoteRunspace = Get-RemoteRunspace
+        }
     }
 
     AfterAll {
-        $remoteRunspace.Dispose();
+        if ($script:remoteRunspace)
+        {
+            $script:remoteRunspace.Dispose();
+        }
     }
 
-    It "Method should successfully invoke command on remote runspace" {
+    It "Method should successfully invoke command on remote runspace" -Skip:(!$IsWindows) {
 
         $command = [System.Management.Automation.PSCommand]::new()
         $command.AddScript('"Hello!"')
 
-        $results = [System.Management.Automation.HostUtilities]::InvokeOnRunspace($command, $remoteRunspace)
+        $results = [System.Management.Automation.HostUtilities]::InvokeOnRunspace($command, $script:remoteRunspace)
 
         $results[0] | Should Be "Hello!"
     }

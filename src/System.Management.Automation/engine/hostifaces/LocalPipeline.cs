@@ -247,6 +247,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
+#if !CORECLR
         /// <summary>
         /// Stack Reserve setting for pipeline threads
         /// </summary>
@@ -262,6 +263,38 @@ namespace System.Management.Automation.Runspaces
                 return i * 1000000;
             }
         }
+
+        internal static int ReadRegistryInt(string policyValueName, int defaultValue)
+        {
+            RegistryKey key;
+            try
+            {
+                key = Registry.LocalMachine.OpenSubKey(Utils.GetRegistryConfigurationPrefix());
+            }
+            catch (System.Security.SecurityException)
+            {
+                return defaultValue;
+            }
+            if (null == key)
+                return defaultValue;
+
+            object temp;
+            try
+            {
+                temp = key.GetValue(policyValueName);
+            }
+            catch (System.Security.SecurityException)
+            {
+                return defaultValue;
+            }
+            if (!(temp is int))
+            {
+                return defaultValue;
+            }
+            int i = (int)temp;
+            return i;
+        }
+#endif
 
         ///<summary>
         /// Helper method for asynchronous invoke
@@ -529,40 +562,6 @@ namespace System.Management.Automation.Runspaces
             }
 
             return flowControlException;
-        }
-
-        // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
-        // Removed HandleUnexpectedExceptions infrastructure
-
-        internal static int ReadRegistryInt(string policyValueName, int defaultValue)
-        {
-            RegistryKey key;
-            try
-            {
-                key = Registry.LocalMachine.OpenSubKey(Utils.GetRegistryConfigurationPrefix());
-            }
-            catch (System.Security.SecurityException)
-            {
-                return defaultValue;
-            }
-            if (null == key)
-                return defaultValue;
-
-            object temp;
-            try
-            {
-                temp = key.GetValue(policyValueName);
-            }
-            catch (System.Security.SecurityException)
-            {
-                return defaultValue;
-            }
-            if (!(temp is int))
-            {
-                return defaultValue;
-            }
-            int i = (int)temp;
-            return i;
         }
 
         // NTRAID#Windows Out Of Band Releases-915506-2005/09/09

@@ -1340,7 +1340,6 @@ namespace System.Management.Automation
         /// <param name="callStatic">Set to true if you want to call a static method.</param>
         /// <param name="valueToSet">If not automation null, then this must be a settable property</param>
         /// <exception cref="RuntimeException">Wraps the exception returned from the method call</exception>
-        /// <exception cref="SessionStateOverflowException">The maximum scope depth would be exceeded</exception>
         /// <exception cref="FlowControlException">Internal exception from a flow control statement</exception>        
         /// <returns></returns>
         internal static object CallMethod(

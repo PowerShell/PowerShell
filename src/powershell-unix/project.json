@@ -69,8 +69,7 @@
                 "debugType": "portable"
             },
             "dependencies": {
-                "Microsoft.NETCore.App": "1.0.0",
-                "Microsoft.NETCore.Runtime.CoreCLR": "1.0.4"
+                "Microsoft.NETCore.App": "1.1.0-preview1-001100-00"
             }
         }
     },

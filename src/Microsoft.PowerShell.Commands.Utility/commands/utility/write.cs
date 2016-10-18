@@ -382,7 +382,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 errorRecord.SetInvocationInfo(myInvocation);
                 errorRecord.PreserveInvocationInfoOnce = true;
-                errorRecord.CategoryInfo.Activity = "Write-Error";
+                if (!String.IsNullOrEmpty(CategoryActivity))
+                    errorRecord.CategoryInfo.Activity = CategoryActivity;
+                else
+                    errorRecord.CategoryInfo.Activity = "Write-Error";
             }
 
             WriteError(errorRecord);

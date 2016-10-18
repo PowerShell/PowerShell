@@ -200,8 +200,12 @@ namespace System.Management.Automation
             return ecFromTLS.TypeTable;
         }
 
+#if !UNIX
         private static string s_pshome = null;
 
+        /// <summary>
+        /// Get the application base path of the shell from registry
+        /// </summary>
         internal static string GetApplicationBaseFromRegistry(string shellId)
         {
             bool wantPsHome = (object)shellId == (object)DefaultPowerShellShellID;
@@ -226,6 +230,7 @@ namespace System.Management.Automation
 
             return null;
         }
+#endif
 
         /// <summary>
         /// Gets the application base for current monad version
@@ -616,13 +621,18 @@ namespace System.Management.Automation
             return GetRegistryConfigurationPrefix() + "\\" + shellID;
         }
 
-        // Retrieves group policy settings based on the preference order provided:
-        // Dictionary<string, object> settings = GetGroupPolicySetting("Transcription", Registry.LocalMachine, Registry.CurrentUser);
-
+        // Calling static members of 'Registry' on UNIX will raise 'PlatformNotSupportedException' 
+#if UNIX
+        internal static RegistryKey[] RegLocalMachine = null;
+        internal static RegistryKey[] RegCurrentUser = null;
+        internal static RegistryKey[] RegLocalMachineThenCurrentUser = null;
+        internal static RegistryKey[] RegCurrentUserThenLocalMachine = null;
+#else
         internal static RegistryKey[] RegLocalMachine = new[] { Registry.LocalMachine };
         internal static RegistryKey[] RegCurrentUser = new[] { Registry.CurrentUser };
         internal static RegistryKey[] RegLocalMachineThenCurrentUser = new[] { Registry.LocalMachine, Registry.CurrentUser };
         internal static RegistryKey[] RegCurrentUserThenLocalMachine = new[] { Registry.CurrentUser, Registry.LocalMachine };
+#endif
 
         internal static Dictionary<string, object> GetGroupPolicySetting(string settingName, RegistryKey[] preferenceOrder)
         {
@@ -996,7 +1006,27 @@ namespace System.Management.Automation
                     Win32Exception win32Exception = new Win32Exception(errorCode);
                     exception = new UnauthorizedAccessException(win32Exception.Message, win32Exception);
                 }
-
+                else if (errorCode == 32)
+                {
+                    // Errorcode 32 is 'ERROR_SHARING_VIOLATION' i.e. 
+                    // The process cannot access the file because it is being used by another process.
+                    // GetFileAttributes may return INVALID_FILE_ATTRIBUTES for a system file or directory because of this error.
+                    // GetFileAttributes function tries to open the file with FILE_READ_ATTRIBUTES access right but it fails if the
+                    // sharing flag for the file is set to 0x00000000.This flag prevents it from opening a file for delete, read, or
+                    // write access. For example: C:\pagefile.sys is always opened by OS with sharing flag 0x00000000. 
+                    // But FindFirstFile is still able to get attributes as this api retrieves the required information using a find
+                    // handle generated with FILE_LIST_DIRECTORY access.
+                    // Fall back to FindFirstFile to check if the file actually exists.
+                    IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
+                    NativeMethods.WIN32_FIND_DATA findData;
+                    IntPtr findHandle = NativeMethods.FindFirstFile(path, out findData);
+                    if (findHandle != INVALID_HANDLE_VALUE)
+                    {
+                        isDirectory = (findData.dwFileAttributes & NativeMethods.FileAttributes.Directory) != 0;
+                        NativeMethods.FindClose(findHandle);
+                        return true;
+                    }
+                }
                 else if (errorCode == 53)
                 {
                     // ERROR_BAD_NETPATH - The network path was not found.
@@ -1544,6 +1574,7 @@ namespace System.Management.Automation.Internal
         internal static bool ForceScriptBlockLogging;
         internal static bool UseDebugAmsiImplementation;
         internal static bool BypassAppLockerPolicyCaching;
+        internal static bool BypassOnlineHelpRetrieval;
         // It's useful to test that we don't depend on the ScriptBlock and AST objects and can use a re-parsed version.
         internal static bool IgnoreScriptBlockCache;
 

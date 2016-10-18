@@ -212,8 +212,7 @@ namespace Microsoft.PowerShell
                 if ((options & ExecutionOptions.ReadInputObjects) > 0 && Console.IsInputRedirected)
                 {
                     // read input objects from stdin
-
-                    WrappedDeserializer des = new WrappedDeserializer(_parent.InputFormat, "Input", Console.In);
+                    WrappedDeserializer des = new WrappedDeserializer(_parent.InputFormat, "Input", _parent.ConsoleIn.Value);
                     while (!des.AtEnd)
                     {
                         object o = des.Deserialize();
