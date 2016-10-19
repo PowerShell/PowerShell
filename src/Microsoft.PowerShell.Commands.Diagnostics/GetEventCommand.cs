@@ -357,7 +357,10 @@ namespace Microsoft.PowerShell.Commands
         private const string queryListClose = "</QueryList>";
         private const string queryTemplate = "<Query Id=\"{0}\" Path=\"{1}\"><Select Path=\"{1}\">{2}</Select></Query>";
         private const string queryOpenerTemplate = "<Query Id=\"{0}\" Path=\"{1}\"><Select Path=\"{1}\">*";
-        private const string queryCloser = "</Select></Query>";
+        private const string queryCloser = "</Query>";
+        private const string SelectCloser = "</Select>";
+        private const string suppressOpener = "<Suppress>*";
+        private const string suppressCloser = "</Suppress>";
         private const string propOpen = "[";
         private const string propClose = "]";
         private const string filePrefix = "file://";
@@ -399,6 +402,7 @@ namespace Microsoft.PowerShell.Commands
         private const string hashkey_endtime_lc = "endtime";
         private const string hashkey_userid_lc = "userid";
         private const string hashkey_data_lc = "data";
+        private const string hashkey_supress_lc = "suppresshashfilter";
 
 
         /// <summary>
@@ -995,20 +999,109 @@ namespace Microsoft.PowerShell.Commands
         }
 
         //
+        // BuildXPathFromHashTable() build xpath from hashtable
+        //
+        private string BuildXPathFromHashTable(Hashtable hash)
+        {
+            StringBuilder xpathString = new StringBuilder("");
+            bool bDateTimeHandled = false;
+
+            foreach (string key in hash.Keys)
+            {
+                string added = "";
+
+                switch (key.ToLowerInvariant())
+                {
+                    case hashkey_logname_lc:
+                    case hashkey_path_lc:
+                    case hashkey_providername_lc:
+                        break;
+                    case hashkey_id_lc:
+                        added = HandleEventIdHashValue(hash[key]);
+                        break;
+
+                    case hashkey_level_lc:
+                        added = HandleLevelHashValue(hash[key]);
+                        break;
+
+                    case hashkey_keywords_lc:
+                        added = HandleKeywordHashValue(hash[key]);
+                        break;
+
+                    case hashkey_starttime_lc:
+                        if (bDateTimeHandled)
+                        {
+                            break;
+                        }
+
+                        added = HandleStartTimeHashValue(hash[key], hash);
+
+                        bDateTimeHandled = true;
+                        break;
+
+                    case hashkey_endtime_lc:
+                        if (bDateTimeHandled)
+                        {
+                            break;
+                        }
+
+                        added = HandleEndTimeHashValue(hash[key], hash);
+
+                        bDateTimeHandled = true;
+                        break;
+
+                    case hashkey_data_lc:
+                        added = HandleDataHashValue(hash[key]);
+                        break;
+
+                    case hashkey_userid_lc:
+                        added = HandleContextHashValue(hash[key]);
+                        break;
+
+                    case hashkey_supress_lc:
+                        break;
+                    default:
+                        {
+                            //
+                            // None of the recognized values: this must be a named event data field
+                            //
+                            // Fix Issue #2327
+                            added = HandleNamedDataHashValue(key, hash[key]);
+
+                        }
+                        break;
+                }
+
+                if (added.Length > 0)
+                {
+                    if (xpathString.Length != 0)
+                    {
+                        xpathString.Append(" and ");
+                    }
+                    xpathString.Append(added);
+                }
+                
+            }
+
+            return xpathString.ToString();
+        }
+
+        //
         // BuildStructuredQueryFromHashTable() helper.
         // Builds a structured query from the hashtable (Selector) argument.
         //
         private string BuildStructuredQueryFromHashTable(EventLogSession eventLogSession)
         {
-            string result = "";
+            StringBuilder result = new StringBuilder("");
 
-            result = queryListOpen;
+            result.Append(queryListOpen);
 
             uint queryId = 0;
 
             foreach (Hashtable hash in _selector)
             {
                 string xpathString = "";
+                string xpathStringSuppress = "";
 
                 CheckHashTableForQueryPathPresence(hash);
 
@@ -1017,6 +1110,11 @@ namespace Microsoft.PowerShell.Commands
                 // mapped to the actual query strings being built up.
                 //
                 Dictionary<string, string> queriedLogsQueryMap = new Dictionary<string, string>();
+
+                //
+                // queriedLogsQueryMapSuppress is the same as queriedLogsQueryMap but for <Suppress>
+                //
+                Dictionary<string, string> queriedLogsQueryMapSuppress = new Dictionary<string, string>();
 
                 //
                 // Process log, _path, or provider parameters first
@@ -1046,6 +1144,8 @@ namespace Microsoft.PowerShell.Commands
                     {
                         queriedLogsQueryMap.Add(logName.ToLowerInvariant(),
                                                 string.Format(CultureInfo.InvariantCulture, queryOpenerTemplate, queryId++, logName));
+                        queriedLogsQueryMapSuppress.Add(logName.ToLowerInvariant(),
+                                                        string.Format(CultureInfo.InvariantCulture, suppressOpener, queryId++, logName));
                     }
                 }
                 if (hash.ContainsKey(hashkey_path_lc))
@@ -1059,6 +1159,8 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 queriedLogsQueryMap.Add(filePrefix + resolvedPath.ToLowerInvariant(),
                                                         string.Format(CultureInfo.InvariantCulture, queryOpenerTemplate, queryId++, filePrefix + resolvedPath));
+                                queriedLogsQueryMapSuppress.Add(filePrefix + resolvedPath.ToLowerInvariant(),
+                                                                string.Format(CultureInfo.InvariantCulture, suppressOpener, queryId++, filePrefix + resolvedPath));
                             }
                         }
                     }
@@ -1069,6 +1171,8 @@ namespace Microsoft.PowerShell.Commands
                         {
                             queriedLogsQueryMap.Add(filePrefix + resolvedPath.ToLowerInvariant(),
                                                     string.Format(CultureInfo.InvariantCulture, queryOpenerTemplate, queryId++, filePrefix + resolvedPath));
+                            queriedLogsQueryMapSuppress.Add(filePrefix + resolvedPath.ToLowerInvariant(),
+                                                            string.Format(CultureInfo.InvariantCulture, suppressOpener, queryId++, filePrefix + resolvedPath));
                         }
                     }
                 }
@@ -1101,6 +1205,8 @@ namespace Microsoft.PowerShell.Commands
                             string query = string.Format(CultureInfo.InvariantCulture, queryOpenerTemplate, queryId++, keyLogName);
                             queriedLogsQueryMap.Add(keyLogName.ToLowerInvariant(),
                                                      query + "[" + providersPredicate);
+                            queriedLogsQueryMapSuppress.Add(keyLogName.ToLowerInvariant(),
+                                                            string.Format(CultureInfo.InvariantCulture, suppressOpener, queryId++, keyLogName.ToLowerInvariant()));
                         }
                     }
                     else
@@ -1124,6 +1230,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     WriteVerbose(string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("SpecifiedProvidersDontWriteToLog"), queriedLog));
                                     queriedLogsQueryMap.Remove(queriedLog);
+                                    queriedLogsQueryMapSuppress.Remove(queriedLog);
                                     bRemovedIrrelevantLogs = true;
                                 }
                             }
@@ -1154,119 +1261,28 @@ namespace Microsoft.PowerShell.Commands
                 // At this point queriedLogsQueryMap contains all the query openings: missing the actual XPaths
                 // Let's build xpathString to attach to each query opening.
                 //
-                bool bDateTimeHandled = false;
-                foreach (string key in hash.Keys)
+                xpathString = BuildXPathFromHashTable(hash);
+                
+                //
+                // Build xpath for <Suppress>
+                //
+                Hashtable suppresshash = hash[hashkey_supress_lc] as Hashtable;
+                if (suppresshash != null)
                 {
-                    string added = "";
-
-                    switch (key.ToLowerInvariant())
-                    {
-                        case hashkey_logname_lc:
-                        case hashkey_path_lc:
-                        case hashkey_providername_lc:
-                            break;
-                        case hashkey_id_lc:
-                            added = HandleEventIdHashValue(hash[key]);
-                            if (added.Length > 0)
-                            {
-                                ExtendPredicate(ref xpathString);
-                                xpathString += added;
-                            }
-                            break;
-
-                        case hashkey_level_lc:
-                            added = HandleLevelHashValue(hash[key]);
-                            if (added.Length > 0)
-                            {
-                                ExtendPredicate(ref xpathString);
-                                xpathString += added;
-                            }
-                            break;
-
-                        case hashkey_keywords_lc:
-                            added = HandleKeywordHashValue(hash[key]);
-                            if (added.Length > 0)
-                            {
-                                ExtendPredicate(ref xpathString);
-                                xpathString += added;
-                            }
-                            break;
-
-                        case hashkey_starttime_lc:
-                            if (bDateTimeHandled)
-                            {
-                                break;
-                            }
-                            added = HandleStartTimeHashValue(hash[key], hash);
-                            if (added.Length > 0)
-                            {
-                                ExtendPredicate(ref xpathString);
-                                xpathString += added;
-                            }
-
-                            bDateTimeHandled = true;
-                            break;
-
-                        case hashkey_endtime_lc:
-                            if (bDateTimeHandled)
-                            {
-                                break;
-                            }
-
-                            added = HandleEndTimeHashValue(hash[key], hash);
-                            if (added.Length > 0)
-                            {
-                                ExtendPredicate(ref xpathString);
-                                xpathString += added;
-                            }
-
-                            bDateTimeHandled = true;
-                            break;
-
-                        case hashkey_data_lc:
-                            added = HandleDataHashValue(hash[key]);
-                            if (added.Length > 0)
-                            {
-                                ExtendPredicate(ref xpathString);
-                                xpathString += added;
-                            }
-                            break;
-
-                        case hashkey_userid_lc:
-                            added = HandleContextHashValue(hash[key]);
-                            if (added.Length > 0)
-                            {
-                                ExtendPredicate(ref xpathString);
-                                xpathString += added;
-                            }
-                            break;
-
-                        default:
-                            {
-                                //
-                                // None of the recognized values: this must be a named event data field
-                                //
-                                // Fix Issue #2327
-                                added = HandleNamedDataHashValue(key, hash[key]);
-                                if (added.Length > 0)
-                                {
-                                    ExtendPredicate(ref xpathString);
-                                    xpathString += added;
-                                }
-
-                            }
-                            break;
-                    }
+                    xpathStringSuppress = BuildXPathFromHashTable(suppresshash);
                 }
 
                 //
                 // Complete each query with the XPath.
                 // Handle the case where the query opener already has provider predicate(s).
                 // Add the queries from queriedLogsQueryMap into the resulting string.
+                // Add <Suppress> from queriedLogsQueryMapSuppress into the resulting string.
                 //        
-                foreach (string query in queriedLogsQueryMap.Values)
+                foreach (string keyLogName in queriedLogsQueryMap.Keys)
                 {
-                    result += query;
+                    // For every Log a separate query is
+                    string query = queriedLogsQueryMap[keyLogName];
+                    result.Append(query);
 
                     if (query.EndsWith("*", StringComparison.OrdinalIgnoreCase))
                     {
@@ -1275,7 +1291,7 @@ namespace Microsoft.PowerShell.Commands
                         //
                         if (xpathString.Length != 0)
                         {
-                            result += propOpen + xpathString + propClose;
+                            result.Append(propOpen).Append(xpathString).Append(propClose);
                         }
                     }
                     else
@@ -1285,19 +1301,30 @@ namespace Microsoft.PowerShell.Commands
                         //
                         if (xpathString.Length != 0)
                         {
-                            result += " and " + xpathString;
+                            result.Append(" and ").Append(xpathString);
                         }
-                        result += propClose;
+                        result.Append(propClose);
                     }
 
-                    result += queryCloser;
+                    result.Append(SelectCloser);
+
+                    if (xpathStringSuppress.Length != 0)
+                    {
+                        // Add <Suppress>*xpathStringSuppress</Suppress> into query
+                        string suppress = queriedLogsQueryMapSuppress[keyLogName];
+                        result.Append(suppress);
+                        result.Append(propOpen).Append(xpathStringSuppress).Append(propClose);
+                        result.Append(suppressCloser);
+                    }
+
+                    result.Append(queryCloser);
                 }
             } //end foreach hashtable  
 
 
-            result += queryListClose;
+            result.Append(queryListClose);
 
-            return result;
+            return result.ToString();
         }
 
         //
@@ -1654,18 +1681,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             return true;
-        }
-
-        //
-        // ExtendPredicate helper for the query builder.
-        // Extends the XPath predicate string.
-        //
-        private void ExtendPredicate(ref string xpathString)
-        {
-            if (xpathString.Length != 0)
-            {
-                xpathString += " and ";
-            }
         }
 
 

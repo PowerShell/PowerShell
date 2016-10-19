@@ -123,7 +123,31 @@ Describe 'Get-WinEvent' -Tags "CI" {
             @($results).Count | Should be 1
             $results.RecordId | should be 10
         }
-    }    # Get-WinEvent works only on windows
+    }
+    Context "Get-WinEvent Queries with SuppressHashFilter" {
+        It 'Get-WinEvent can suppress events by Id' {
+            # this relies on apriori knowledge about the log file
+            # the provided log file has been edited to remove MS PII, so we must use -ea silentlycontinue
+            $eventLogFile = [io.path]::Combine($PSScriptRoot, "assets", "Saved-Events.evtx")
+            $filter = @{ path = "$eventLogFile"}
+            $results = Get-WinEvent -filterHashtable $filter -ea silentlycontinue
+            $filterSuppress = @{ path = "$eventLogFile";  SuppressHashFilter=@{Id=370}}
+            $resultsSuppress = Get-WinEvent -filterHashtable $filterSuppress -ea silentlycontinue
+            @($results).Count | Should be 3
+            @($resultsSuppress).Count | Should be 2
+        }
+        It 'Get-WinEvent can suppress events by UserData' {
+            # this relies on apriori knowledge about the log file
+            # the provided log file has been edited to remove MS PII, so we must use -ea silentlycontinue
+            $eventLogFile = [io.path]::Combine($PSScriptRoot, "assets", "Saved-Events.evtx")
+            $filter = @{ path = "$eventLogFile"}
+            $results = Get-WinEvent -filterHashtable $filter -ea silentlycontinue
+            $filterSuppress = @{ path = "$eventLogFile";  SuppressHashFilter=@{Param2 = "Windows x64"}}
+            $resultsSuppress = Get-WinEvent -filterHashtable $filterSuppress -ea silentlycontinue
+            @($results).Count | Should be 3
+            @($resultsSuppress).Count | Should be 2
+        }
+    }
     It 'can query a System log' {
         Get-WinEvent -LogName System -MaxEvents 1 | Should Not BeNullOrEmpty
     }
