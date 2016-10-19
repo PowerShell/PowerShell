@@ -2,7 +2,7 @@
 GUID="1DA87E53-152B-403E-98DC-74D7B4D63D59"
 Author="Microsoft Corporation"
 CompanyName="Microsoft Corporation"
-Copyright="© Microsoft Corporation. All rights reserved."
+Copyright="Â© Microsoft Corporation. All rights reserved."
 ModuleVersion="3.1.0.0"
 PowerShellVersion="3.0"
 CLRVersion="4.0"
@@ -26,8 +26,8 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Get-Runspace", "Debug-Runspace", "Enable-RunspaceDebug", "Disable-RunspaceDebug", "Get-RunspaceDebug", "Wait-Debugger",
     "ConvertFrom-String", "Convert-String"
 FunctionsToExport= "Get-FileHash", "New-TemporaryFile", "New-Guid", "Format-Hex", "Import-PowerShellDataFile",
-    "ConvertFrom-SddlString"
-AliasesToExport= "CFS", "fhx"
+    "ConvertFrom-SddlString", "Get-Uptime"
+AliasesToExport= "CFS", "fhx", "uptime"
 NestedModules="Microsoft.PowerShell.Commands.Utility.dll","Microsoft.PowerShell.Utility.psm1"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=390787'
 }
