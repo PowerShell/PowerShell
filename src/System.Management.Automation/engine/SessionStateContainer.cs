@@ -1853,8 +1853,16 @@ namespace System.Management.Automation
 
             // If the item is a container we have to filter its children
             // Use a hint + lazy evaluation to skip a container check
-
-            if (skipIsItemContainerCheck || IsItemContainer(providerInstance, path, context))
+            bool itemContainer = false;
+            try
+            {
+                itemContainer = IsItemContainer(providerInstance, path, context);
+            }
+            catch (UnauthorizedAccessException accessException)
+            {
+                context.WriteError(new ErrorRecord(accessException, "GetItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+            }  
+            if (skipIsItemContainerCheck || itemContainer)
             {
                 CmdletProviderContext newContext =
                     new CmdletProviderContext(context);
@@ -1976,16 +1984,43 @@ namespace System.Management.Automation
                     }
 
                     // Now recurse if it is a container
-                    if (recurse && IsItemContainer(providerInstance, qualifiedPath, context))
+                    if (recurse )
                     {
-                        // Making sure to obey the StopProcessing.
-                        if (context.Stopping)
+                        itemContainer = false;
+                        try
                         {
-                            return;
+                            itemContainer = IsItemContainer(providerInstance, qualifiedPath, context);
                         }
+                        catch (UnauthorizedAccessException accessException)
+                        {
+                            context.WriteError(new ErrorRecord(accessException, "GetItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, qualifiedPath));
+                        }
+                        catch ( ProviderInvocationException accessException)
+                        {
+                            // if providerinvocationexception is wrapping access denied error, it is ok to not terminate the pipeline
+                            if(accessException.InnerException != null && 
+                               accessException.InnerException.GetType().Equals(typeof(System.UnauthorizedAccessException)))
+                            {
+                                context.WriteError(new ErrorRecord(accessException, "GetItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, qualifiedPath));
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                            
+                        }
+                        if( itemContainer )
+                        {
 
-                        // The item is a container so recurse into it.
-                        ProcessPathItems(providerInstance, qualifiedPath, recurse, context, out childrenNotMatchingFilterCriteria, processMode, skipIsItemContainerCheck: true);
+                            // Making sure to obey the StopProcessing.
+                            if (context.Stopping)
+                            {
+                                return;
+                            }
+
+                            // The item is a container so recurse into it.
+                            ProcessPathItems(providerInstance, qualifiedPath, recurse, context, out childrenNotMatchingFilterCriteria, processMode, skipIsItemContainerCheck: true);
+                        }
                     }
                 } // for each childName
             }
