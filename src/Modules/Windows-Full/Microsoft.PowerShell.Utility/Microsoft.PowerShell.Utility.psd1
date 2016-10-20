@@ -27,7 +27,7 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "ConvertFrom-String", "Convert-String"
 FunctionsToExport= "Get-FileHash", "New-TemporaryFile", "New-Guid", "Format-Hex", "Import-PowerShellDataFile",
     "ConvertFrom-SddlString", "Get-Uptime"
-AliasesToExport= "CFS", "fhx", "uptime"
+AliasesToExport= "CFS", "fhx"
 NestedModules="Microsoft.PowerShell.Commands.Utility.dll","Microsoft.PowerShell.Utility.psm1"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=390787'
 }

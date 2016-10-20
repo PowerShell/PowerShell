@@ -742,13 +742,18 @@ function ConvertFrom-SddlString
 function Get-Uptime
 {
     [CmdletBinding()]
-    [Alias("uptime")]
     [OutputType([System.Timespan])]
     Param()
 
     Process
     {
         # It is portable
-        [TimeSpan]::FromSeconds([system.diagnostics.stopwatch]::GetTimestamp()/[system.diagnostics.stopwatch]::Frequency)
+        if ([system.diagnostics.stopwatch]::IsHighResolution)
+        {
+            [TimeSpan]::FromSeconds([system.diagnostics.stopwatch]::GetTimestamp()/[system.diagnostics.stopwatch]::Frequency)
+        } else
+        {
+            Throw "Get-Uptime is not supported on this platform"
+        }
     }
 }
