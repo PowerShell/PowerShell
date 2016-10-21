@@ -48,117 +48,331 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\AssemblyInfo.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\cimChildJobBase.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\cimCmdletDefinitionContext.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\cimCmdletInvocationContext.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\cimConverter.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\cimJobContext.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\CimJobException.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\cimOperationOptionsHelper.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\cimQuery.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\cimWrapper.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\clientSideQuery.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\CreateInstanceJob.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\DeleteInstanceJob.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\EnumerateAssociatedInstancesJob.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\ExtrinsicMethodInvocationJob.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\InstanceMethodInvocationJob.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\MethodInvocationJobBase.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\ModifyInstanceJob.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\PropertySettingJob.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\QueryJob.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\QueryJobBase.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\StaticMethodInvocationJob.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\TerminatingErrorTracker.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\SessionBasedWrapper.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\AddContentCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\CIMHelper.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ClearContentCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ClearPropertyCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ClearRecycleBinCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\CombinePathCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\CommandsCommon.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\CommitTransactionCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\Computer.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ContentCommandBase.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ControlPanelItemCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ConvertPathCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\CopyPropertyCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\Eventlog.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\GetChildrenCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\GetClipboardCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\GetComputerInfoCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\GetContentCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\GetPropertyCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\GetTransactionCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\GetWMIObjectCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\Hotfix.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\InvokeWMIMethodCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\MovePropertyCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\Navigation.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\NewPropertyCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ParsePathCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\PassThroughContentCommandBase.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\PassThroughPropertyCommandBase.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\PingPathCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\Process.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\PropertyCommandBase.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\RegisterWMIEventCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\RemovePropertyCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\RemoveWMIObjectCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\RenamePropertyCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ResolvePathCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\RollbackTransactionCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\Service.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\SetClipboardCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\SetContentCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\SetPropertyCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\SetWMIInstanceCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\StartTransactionCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\UseTransactionCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\WebServiceProxy.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\WMIHelper.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\WriteContentCommandBase.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\ClearRecycleBinResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\ClipboardResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\CmdletizationResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\ComputerInfoResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\ComputerResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\ControlPanelResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\EventlogResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\HotFixResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\ManagementMshSnapInResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\NavigationResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\ProcessCommandHelpResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\ProcessResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\ServiceResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\TransactionResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\WebServiceResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\WmiResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\singleshell\installer\MshManagementMshSnapin.cs" />
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\cimChildJobBase.cs">
+      <Link>cimSupport\cmdletization\cim\cimChildJobBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\cimCmdletDefinitionContext.cs">
+      <Link>cimSupport\cmdletization\cim\cimCmdletDefinitionContext.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\cimCmdletInvocationContext.cs">
+      <Link>cimSupport\cmdletization\cim\cimCmdletInvocationContext.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\cimConverter.cs">
+      <Link>cimSupport\cmdletization\cim\cimConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\cimJobContext.cs">
+      <Link>cimSupport\cmdletization\cim\cimJobContext.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\CimJobException.cs">
+      <Link>cimSupport\cmdletization\cim\CimJobException.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\cimOperationOptionsHelper.cs">
+      <Link>cimSupport\cmdletization\cim\cimOperationOptionsHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\cimQuery.cs">
+      <Link>cimSupport\cmdletization\cim\cimQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\cimWrapper.cs">
+      <Link>cimSupport\cmdletization\cim\cimWrapper.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\clientSideQuery.cs">
+      <Link>cimSupport\cmdletization\cim\clientSideQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\CreateInstanceJob.cs">
+      <Link>cimSupport\cmdletization\cim\CreateInstanceJob.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\DeleteInstanceJob.cs">
+      <Link>cimSupport\cmdletization\cim\DeleteInstanceJob.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\EnumerateAssociatedInstancesJob.cs">
+      <Link>cimSupport\cmdletization\cim\EnumerateAssociatedInstancesJob.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\ExtrinsicMethodInvocationJob.cs">
+      <Link>cimSupport\cmdletization\cim\ExtrinsicMethodInvocationJob.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\InstanceMethodInvocationJob.cs">
+      <Link>cimSupport\cmdletization\cim\InstanceMethodInvocationJob.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\MethodInvocationJobBase.cs">
+      <Link>cimSupport\cmdletization\cim\MethodInvocationJobBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\ModifyInstanceJob.cs">
+      <Link>cimSupport\cmdletization\cim\ModifyInstanceJob.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\PropertySettingJob.cs">
+      <Link>cimSupport\cmdletization\cim\PropertySettingJob.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\QueryJob.cs">
+      <Link>cimSupport\cmdletization\cim\QueryJob.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\QueryJobBase.cs">
+      <Link>cimSupport\cmdletization\cim\QueryJobBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\StaticMethodInvocationJob.cs">
+      <Link>cimSupport\cmdletization\cim\StaticMethodInvocationJob.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\cim\TerminatingErrorTracker.cs">
+      <Link>cimSupport\cmdletization\cim\TerminatingErrorTracker.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\cimSupport\cmdletization\SessionBasedWrapper.cs">
+      <Link>cimSupport\cmdletization\SessionBasedWrapper.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\AddContentCommand.cs">
+      <Link>commands\management\AddContentCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\CIMHelper.cs">
+      <Link>commands\management\CIMHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ClearContentCommand.cs">
+      <Link>commands\management\ClearContentCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ClearPropertyCommand.cs">
+      <Link>commands\management\ClearPropertyCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ClearRecycleBinCommand.cs">
+      <Link>commands\management\ClearRecycleBinCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\CombinePathCommand.cs">
+      <Link>commands\management\CombinePathCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\CommandsCommon.cs">
+      <Link>commands\management\CommandsCommon.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\CommitTransactionCommand.cs">
+      <Link>commands\management\CommitTransactionCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\Computer.cs">
+      <Link>commands\management\Computer.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ContentCommandBase.cs">
+      <Link>commands\management\ContentCommandBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ControlPanelItemCommand.cs">
+      <Link>commands\management\ControlPanelItemCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ConvertPathCommand.cs">
+      <Link>commands\management\ConvertPathCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\CopyPropertyCommand.cs">
+      <Link>commands\management\CopyPropertyCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\Eventlog.cs">
+      <Link>commands\management\Eventlog.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\GetChildrenCommand.cs">
+      <Link>commands\management\GetChildrenCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\GetClipboardCommand.cs">
+      <Link>commands\management\GetClipboardCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\GetComputerInfoCommand.cs">
+      <Link>commands\management\GetComputerInfoCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\GetContentCommand.cs">
+      <Link>commands\management\GetContentCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\GetPropertyCommand.cs">
+      <Link>commands\management\GetPropertyCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\GetTransactionCommand.cs">
+      <Link>commands\management\GetTransactionCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\GetWMIObjectCommand.cs">
+      <Link>commands\management\GetWMIObjectCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\Hotfix.cs">
+      <Link>commands\management\Hotfix.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\InvokeWMIMethodCommand.cs">
+      <Link>commands\management\InvokeWMIMethodCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\MovePropertyCommand.cs">
+      <Link>commands\management\MovePropertyCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\Navigation.cs">
+      <Link>commands\management\Navigation.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\NewPropertyCommand.cs">
+      <Link>commands\management\NewPropertyCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ParsePathCommand.cs">
+      <Link>commands\management\ParsePathCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\PassThroughContentCommandBase.cs">
+      <Link>commands\management\PassThroughContentCommandBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\PassThroughPropertyCommandBase.cs">
+      <Link>commands\management\PassThroughPropertyCommandBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\PingPathCommand.cs">
+      <Link>commands\management\PingPathCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\Process.cs">
+      <Link>commands\management\Process.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\PropertyCommandBase.cs">
+      <Link>commands\management\PropertyCommandBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\RegisterWMIEventCommand.cs">
+      <Link>commands\management\RegisterWMIEventCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\RemovePropertyCommand.cs">
+      <Link>commands\management\RemovePropertyCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\RemoveWMIObjectCommand.cs">
+      <Link>commands\management\RemoveWMIObjectCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\RenamePropertyCommand.cs">
+      <Link>commands\management\RenamePropertyCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ResolvePathCommand.cs">
+      <Link>commands\management\ResolvePathCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\RollbackTransactionCommand.cs">
+      <Link>commands\management\RollbackTransactionCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\Service.cs">
+      <Link>commands\management\Service.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\SetClipboardCommand.cs">
+      <Link>commands\management\SetClipboardCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\SetContentCommand.cs">
+      <Link>commands\management\SetContentCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\SetPropertyCommand.cs">
+      <Link>commands\management\SetPropertyCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\SetWMIInstanceCommand.cs">
+      <Link>commands\management\SetWMIInstanceCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\StartTransactionCommand.cs">
+      <Link>commands\management\StartTransactionCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\UseTransactionCommand.cs">
+      <Link>commands\management\UseTransactionCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\WebServiceProxy.cs">
+      <Link>commands\management\WebServiceProxy.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\WMIHelper.cs">
+      <Link>commands\management\WMIHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\WriteContentCommandBase.cs">
+      <Link>commands\management\WriteContentCommandBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\ClearRecycleBinResources.cs">
+      <Link>gen\ClearRecycleBinResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\ClipboardResources.cs">
+      <Link>gen\ClipboardResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\CmdletizationResources.cs">
+      <Link>gen\CmdletizationResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\ComputerInfoResources.cs">
+      <Link>gen\ComputerInfoResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\ComputerResources.cs">
+      <Link>gen\ComputerResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\ControlPanelResources.cs">
+      <Link>gen\ControlPanelResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\EventlogResources.cs">
+      <Link>gen\EventlogResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\HotFixResources.cs">
+      <Link>gen\HotFixResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\ManagementMshSnapInResources.cs">
+      <Link>gen\ManagementMshSnapInResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\NavigationResources.cs">
+      <Link>gen\NavigationResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\ProcessCommandHelpResources.cs">
+      <Link>gen\ProcessCommandHelpResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\ProcessResources.cs">
+      <Link>gen\ProcessResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\ServiceResources.cs">
+      <Link>gen\ServiceResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\TransactionResources.cs">
+      <Link>gen\TransactionResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\WebServiceResources.cs">
+      <Link>gen\WebServiceResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\gen\WmiResources.cs">
+      <Link>gen\WmiResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\singleshell\installer\MshManagementMshSnapin.cs">
+      <Link>singleshell\installer\MshManagementMshSnapin.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Microsoft.PowerShell.Commands.Management\map.json" />
-    <None Include="..\Microsoft.PowerShell.Commands.Management\project.json" />
+    <None Include="..\Microsoft.PowerShell.Commands.Management\map.json">
+      <Link>map.json</Link>
+    </None>
+    <None Include="..\Microsoft.PowerShell.Commands.Management\project.json">
+      <Link>project.json</Link>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ClearRecycleBinResources.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ClipboardResources.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\CmdletizationResources.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ComputerInfoResources.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ComputerResources.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ControlPanelResources.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\EventlogResources.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\HotFixResources.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ManagementMshSnapInResources.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\NavigationResources.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ProcessCommandHelpResources.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ProcessResources.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ServiceResources.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\TransactionResources.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\WebServiceResources.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\WmiResources.resx" />
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ClearRecycleBinResources.resx">
+      <Link>resources\ClearRecycleBinResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ClipboardResources.resx">
+      <Link>resources\ClipboardResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\CmdletizationResources.resx">
+      <Link>resources\CmdletizationResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ComputerInfoResources.resx">
+      <Link>resources\ComputerInfoResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ComputerResources.resx">
+      <Link>resources\ComputerResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ControlPanelResources.resx">
+      <Link>resources\ControlPanelResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\EventlogResources.resx">
+      <Link>resources\EventlogResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\HotFixResources.resx">
+      <Link>resources\HotFixResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ManagementMshSnapInResources.resx">
+      <Link>resources\ManagementMshSnapInResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\NavigationResources.resx">
+      <Link>resources\NavigationResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ProcessCommandHelpResources.resx">
+      <Link>resources\ProcessCommandHelpResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ProcessResources.resx">
+      <Link>resources\ProcessResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ServiceResources.resx">
+      <Link>resources\ServiceResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\TransactionResources.resx">
+      <Link>resources\TransactionResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\WebServiceResources.resx">
+      <Link>resources\WebServiceResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\WmiResources.resx">
+      <Link>resources\WmiResources.resx</Link>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="System.Management.Automation.csproj">

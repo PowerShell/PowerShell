@@ -52,219 +52,637 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\AssemblyInfo.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\AddMember.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\AddType.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\compare-object.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ConsoleColorCmdlet.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\convert-HTML.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ConvertFrom-StringData.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Csv.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\CSVCommands.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\CustomSerialization.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\CustomSerializationStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\DebugRunspaceCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Disable-PSBreakpoint.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Enable-PSBreakpoint.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\EnableDisableRunspaceDebugCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ExportAliasCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\common\GetFormatDataCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\common\WriteFormatDataCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\format-list\Format-List.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\format-object\format-object.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\format-table\Format-Table.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\format-wide\Format-Wide.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\out-file\Out-File.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\out-printer\out-printer.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\out-printer\PrinterLineOutput.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\out-string\out-string.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\OutGridView\ColumnInfo.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\OutGridView\ExpressionColumnInfo.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\OutGridView\HeaderInfo.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\OutGridView\OriginalColumnInfo.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\OutGridView\OutGridViewCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\OutGridView\OutWindowProxy.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\OutGridView\ScalarTypeColumnInfo.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\OutGridView\TableView.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Get-PSBreakpoint.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Get-PSCallStack.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetAliasCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetCultureCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetDateCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetEventCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetEventSubscriberCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetHostCmdlet.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetMember.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetRandomCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetRunspaceCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetUICultureCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetUnique.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\group-object.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ImplicitRemotingCommands.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Import-LocalizedData.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ImportAliasCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\InvokeCommandCmdlet.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\MatchString.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Measure-Object.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\new-object.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\NewAliasCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\neweventcommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\NewTimeSpanCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ObjectCommandComparer.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\OrderObjectBase.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ReadConsoleCmdlet.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\RegisterObjectEventCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\RegisterPSEventCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Remove-PSBreakpoint.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\RemoveEventCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\select-object.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Send-MailMessage.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Set-PSBreakpoint.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\SetAliasCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\SetDateCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ShowCommand\ShowCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ShowCommand\ShowCommandCommandInfo.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ShowCommand\ShowCommandModuleInfo.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ShowCommand\ShowCommandParameterInfo.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ShowCommand\ShowCommandParameterSetInfo.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ShowCommand\ShowCommandParameterType.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ShowCommand\ShowCommandProxy.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\sort-object.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\StartSleepCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\tee-object.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\TimeExpressionCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\trace\GetTracerCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\trace\MshHostTraceListener.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\trace\SetTracerCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\trace\TraceCommandBase.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\trace\TraceExpressionCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\trace\TraceListenerCommandBase.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\UnblockFile.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\UnregisterEventCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Update-Data.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\update-list.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Update-TypeData.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\UtilityCommon.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Var.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WaitEventCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\Common\BasicHtmlWebResponseObject.Common.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\Common\ContentHelper.Common.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\Common\HtmlWebResponseObject.Common.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\Common\InvokeRestMethodCommand.Common.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\Common\WebRequestPSCmdlet.Common.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\Common\WebResponseObject.Common.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\BasicHtmlWebResponseObject.CoreClr.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\ContentHelper.CoreClr.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\HtmlWebResponseObject.CoreClr.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\HttpKnownHeaderNames.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\InvokeRestMethodCommand.CoreClr.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\InvokeWebRequestCommand.CoreClr.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\WebProxy.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\WebRequestPSCmdlet.CoreClr.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\WebResponseHelper.CoreClr.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\WebResponseObject.CoreClr.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\WebResponseObjectFactory.CoreClr.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\BasicHtmlWebResponseObject.FullClr.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\ContentHelper.FullClr.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\HtmlWebResponseObject.FullClr.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\InvokeRestMethodCommand.FullClr.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\InvokeWebRequestCommand.FullClr.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\JsonObjectTypeResolver.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\WebRequestPSCmdlet.FullClr.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\WebResponseHelper.FullClr.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\WebResponseObject.FullClr.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\WebResponseObjectFactory.FullClr.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\ConvertFromJsonCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\ConvertToJsonCommand.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FormObject.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FormObjectCollection.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\JsonObject.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\PSUserAgent.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\StreamHelper.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\WebCmdletElementCollection.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\WebRequestMethod.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\WebRequestSession.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Write-Object.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\write.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WriteAliasCommandBase.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WriteConsoleCmdlet.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WriteProgressCmdlet.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\XmlCommands.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\AddMember.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\AddTypeStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\AliasCommandStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\ConvertFromStringData.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\ConvertFromStringResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\ConvertStringResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\CsvCommandStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\Debugger.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\EventingStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\FlashExtractStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\FormatAndOut_out_gridview.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\GetMember.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\GetRandomCommandStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\HostStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\HttpCommandStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\ImmutableStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\ImplicitRemotingStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\ImportLocalizedDataStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\MatchStringStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\MeasureObjectStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\NewObjectStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\OutPrinterDisplayStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\SelectObjectStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\SendMailMessageStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\SortObjectStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\TraceCommandStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\UpdateDataStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\UpdateListStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\UtilityCommonStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\UtilityMshSnapinResources.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\VariableCommandStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\WebCmdletStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\WriteErrorStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\WriteProgressResourceStrings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\singleshell\installer\MshUtilityMshSnapin.cs" />
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\AddMember.cs">
+      <Link>commands\utility\AddMember.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\AddType.cs">
+      <Link>commands\utility\AddType.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\compare-object.cs">
+      <Link>commands\utility\compare-object.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ConsoleColorCmdlet.cs">
+      <Link>commands\utility\ConsoleColorCmdlet.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\convert-HTML.cs">
+      <Link>commands\utility\convert-HTML.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ConvertFrom-StringData.cs">
+      <Link>commands\utility\ConvertFrom-StringData.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Csv.cs">
+      <Link>commands\utility\Csv.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\CSVCommands.cs">
+      <Link>commands\utility\CSVCommands.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\CustomSerialization.cs">
+      <Link>commands\utility\CustomSerialization.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\CustomSerializationStrings.cs">
+      <Link>commands\utility\CustomSerializationStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\DebugRunspaceCommand.cs">
+      <Link>commands\utility\DebugRunspaceCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Disable-PSBreakpoint.cs">
+      <Link>commands\utility\Disable-PSBreakpoint.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Enable-PSBreakpoint.cs">
+      <Link>commands\utility\Enable-PSBreakpoint.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\EnableDisableRunspaceDebugCommand.cs">
+      <Link>commands\utility\EnableDisableRunspaceDebugCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ExportAliasCommand.cs">
+      <Link>commands\utility\ExportAliasCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\common\GetFormatDataCommand.cs">
+      <Link>commands\utility\FormatAndOutput\common\GetFormatDataCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\common\WriteFormatDataCommand.cs">
+      <Link>commands\utility\FormatAndOutput\common\WriteFormatDataCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\format-list\Format-List.cs">
+      <Link>commands\utility\FormatAndOutput\format-list\Format-List.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\format-object\format-object.cs">
+      <Link>commands\utility\FormatAndOutput\format-object\format-object.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\format-table\Format-Table.cs">
+      <Link>commands\utility\FormatAndOutput\format-table\Format-Table.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\format-wide\Format-Wide.cs">
+      <Link>commands\utility\FormatAndOutput\format-wide\Format-Wide.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\out-file\Out-File.cs">
+      <Link>commands\utility\FormatAndOutput\out-file\Out-File.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\out-printer\out-printer.cs">
+      <Link>commands\utility\FormatAndOutput\out-printer\out-printer.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\out-printer\PrinterLineOutput.cs">
+      <Link>commands\utility\FormatAndOutput\out-printer\PrinterLineOutput.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\out-string\out-string.cs">
+      <Link>commands\utility\FormatAndOutput\out-string\out-string.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\OutGridView\ColumnInfo.cs">
+      <Link>commands\utility\FormatAndOutput\OutGridView\ColumnInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\OutGridView\ExpressionColumnInfo.cs">
+      <Link>commands\utility\FormatAndOutput\OutGridView\ExpressionColumnInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\OutGridView\HeaderInfo.cs">
+      <Link>commands\utility\FormatAndOutput\OutGridView\HeaderInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\OutGridView\OriginalColumnInfo.cs">
+      <Link>commands\utility\FormatAndOutput\OutGridView\OriginalColumnInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\OutGridView\OutGridViewCommand.cs">
+      <Link>commands\utility\FormatAndOutput\OutGridView\OutGridViewCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\OutGridView\OutWindowProxy.cs">
+      <Link>commands\utility\FormatAndOutput\OutGridView\OutWindowProxy.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\OutGridView\ScalarTypeColumnInfo.cs">
+      <Link>commands\utility\FormatAndOutput\OutGridView\ScalarTypeColumnInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\FormatAndOutput\OutGridView\TableView.cs">
+      <Link>commands\utility\FormatAndOutput\OutGridView\TableView.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Get-PSBreakpoint.cs">
+      <Link>commands\utility\Get-PSBreakpoint.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Get-PSCallStack.cs">
+      <Link>commands\utility\Get-PSCallStack.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetAliasCommand.cs">
+      <Link>commands\utility\GetAliasCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetCultureCommand.cs">
+      <Link>commands\utility\GetCultureCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetDateCommand.cs">
+      <Link>commands\utility\GetDateCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetEventCommand.cs">
+      <Link>commands\utility\GetEventCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetEventSubscriberCommand.cs">
+      <Link>commands\utility\GetEventSubscriberCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetHostCmdlet.cs">
+      <Link>commands\utility\GetHostCmdlet.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetMember.cs">
+      <Link>commands\utility\GetMember.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetRandomCommand.cs">
+      <Link>commands\utility\GetRandomCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetRunspaceCommand.cs">
+      <Link>commands\utility\GetRunspaceCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetUICultureCommand.cs">
+      <Link>commands\utility\GetUICultureCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetUnique.cs">
+      <Link>commands\utility\GetUnique.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\group-object.cs">
+      <Link>commands\utility\group-object.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ImplicitRemotingCommands.cs">
+      <Link>commands\utility\ImplicitRemotingCommands.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Import-LocalizedData.cs">
+      <Link>commands\utility\Import-LocalizedData.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ImportAliasCommand.cs">
+      <Link>commands\utility\ImportAliasCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\InvokeCommandCmdlet.cs">
+      <Link>commands\utility\InvokeCommandCmdlet.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\MatchString.cs">
+      <Link>commands\utility\MatchString.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Measure-Object.cs">
+      <Link>commands\utility\Measure-Object.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\new-object.cs">
+      <Link>commands\utility\new-object.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\NewAliasCommand.cs">
+      <Link>commands\utility\NewAliasCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\neweventcommand.cs">
+      <Link>commands\utility\neweventcommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\NewTimeSpanCommand.cs">
+      <Link>commands\utility\NewTimeSpanCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ObjectCommandComparer.cs">
+      <Link>commands\utility\ObjectCommandComparer.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\OrderObjectBase.cs">
+      <Link>commands\utility\OrderObjectBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ReadConsoleCmdlet.cs">
+      <Link>commands\utility\ReadConsoleCmdlet.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\RegisterObjectEventCommand.cs">
+      <Link>commands\utility\RegisterObjectEventCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\RegisterPSEventCommand.cs">
+      <Link>commands\utility\RegisterPSEventCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Remove-PSBreakpoint.cs">
+      <Link>commands\utility\Remove-PSBreakpoint.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\RemoveEventCommand.cs">
+      <Link>commands\utility\RemoveEventCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\select-object.cs">
+      <Link>commands\utility\select-object.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Send-MailMessage.cs">
+      <Link>commands\utility\Send-MailMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Set-PSBreakpoint.cs">
+      <Link>commands\utility\Set-PSBreakpoint.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\SetAliasCommand.cs">
+      <Link>commands\utility\SetAliasCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\SetDateCommand.cs">
+      <Link>commands\utility\SetDateCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ShowCommand\ShowCommand.cs">
+      <Link>commands\utility\ShowCommand\ShowCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ShowCommand\ShowCommandCommandInfo.cs">
+      <Link>commands\utility\ShowCommand\ShowCommandCommandInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ShowCommand\ShowCommandModuleInfo.cs">
+      <Link>commands\utility\ShowCommand\ShowCommandModuleInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ShowCommand\ShowCommandParameterInfo.cs">
+      <Link>commands\utility\ShowCommand\ShowCommandParameterInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ShowCommand\ShowCommandParameterSetInfo.cs">
+      <Link>commands\utility\ShowCommand\ShowCommandParameterSetInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ShowCommand\ShowCommandParameterType.cs">
+      <Link>commands\utility\ShowCommand\ShowCommandParameterType.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ShowCommand\ShowCommandProxy.cs">
+      <Link>commands\utility\ShowCommand\ShowCommandProxy.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\sort-object.cs">
+      <Link>commands\utility\sort-object.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\StartSleepCommand.cs">
+      <Link>commands\utility\StartSleepCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\tee-object.cs">
+      <Link>commands\utility\tee-object.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\TimeExpressionCommand.cs">
+      <Link>commands\utility\TimeExpressionCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\trace\GetTracerCommand.cs">
+      <Link>commands\utility\trace\GetTracerCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\trace\MshHostTraceListener.cs">
+      <Link>commands\utility\trace\MshHostTraceListener.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\trace\SetTracerCommand.cs">
+      <Link>commands\utility\trace\SetTracerCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\trace\TraceCommandBase.cs">
+      <Link>commands\utility\trace\TraceCommandBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\trace\TraceExpressionCommand.cs">
+      <Link>commands\utility\trace\TraceExpressionCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\trace\TraceListenerCommandBase.cs">
+      <Link>commands\utility\trace\TraceListenerCommandBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\UnblockFile.cs">
+      <Link>commands\utility\UnblockFile.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\UnregisterEventCommand.cs">
+      <Link>commands\utility\UnregisterEventCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Update-Data.cs">
+      <Link>commands\utility\Update-Data.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\update-list.cs">
+      <Link>commands\utility\update-list.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Update-TypeData.cs">
+      <Link>commands\utility\Update-TypeData.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\UtilityCommon.cs">
+      <Link>commands\utility\UtilityCommon.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Var.cs">
+      <Link>commands\utility\Var.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WaitEventCommand.cs">
+      <Link>commands\utility\WaitEventCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\Common\BasicHtmlWebResponseObject.Common.cs">
+      <Link>commands\utility\WebCmdlet\Common\BasicHtmlWebResponseObject.Common.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\Common\ContentHelper.Common.cs">
+      <Link>commands\utility\WebCmdlet\Common\ContentHelper.Common.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\Common\HtmlWebResponseObject.Common.cs">
+      <Link>commands\utility\WebCmdlet\Common\HtmlWebResponseObject.Common.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\Common\InvokeRestMethodCommand.Common.cs">
+      <Link>commands\utility\WebCmdlet\Common\InvokeRestMethodCommand.Common.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\Common\WebRequestPSCmdlet.Common.cs">
+      <Link>commands\utility\WebCmdlet\Common\WebRequestPSCmdlet.Common.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\Common\WebResponseObject.Common.cs">
+      <Link>commands\utility\WebCmdlet\Common\WebResponseObject.Common.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\BasicHtmlWebResponseObject.CoreClr.cs">
+      <Link>commands\utility\WebCmdlet\CoreCLR\BasicHtmlWebResponseObject.CoreClr.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\ContentHelper.CoreClr.cs">
+      <Link>commands\utility\WebCmdlet\CoreCLR\ContentHelper.CoreClr.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\HtmlWebResponseObject.CoreClr.cs">
+      <Link>commands\utility\WebCmdlet\CoreCLR\HtmlWebResponseObject.CoreClr.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\HttpKnownHeaderNames.cs">
+      <Link>commands\utility\WebCmdlet\CoreCLR\HttpKnownHeaderNames.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\InvokeRestMethodCommand.CoreClr.cs">
+      <Link>commands\utility\WebCmdlet\CoreCLR\InvokeRestMethodCommand.CoreClr.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\InvokeWebRequestCommand.CoreClr.cs">
+      <Link>commands\utility\WebCmdlet\CoreCLR\InvokeWebRequestCommand.CoreClr.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\WebProxy.cs">
+      <Link>commands\utility\WebCmdlet\CoreCLR\WebProxy.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\WebRequestPSCmdlet.CoreClr.cs">
+      <Link>commands\utility\WebCmdlet\CoreCLR\WebRequestPSCmdlet.CoreClr.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\WebResponseHelper.CoreClr.cs">
+      <Link>commands\utility\WebCmdlet\CoreCLR\WebResponseHelper.CoreClr.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\WebResponseObject.CoreClr.cs">
+      <Link>commands\utility\WebCmdlet\CoreCLR\WebResponseObject.CoreClr.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\CoreCLR\WebResponseObjectFactory.CoreClr.cs">
+      <Link>commands\utility\WebCmdlet\CoreCLR\WebResponseObjectFactory.CoreClr.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\BasicHtmlWebResponseObject.FullClr.cs">
+      <Link>commands\utility\WebCmdlet\FullClr\BasicHtmlWebResponseObject.FullClr.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\ContentHelper.FullClr.cs">
+      <Link>commands\utility\WebCmdlet\FullClr\ContentHelper.FullClr.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\HtmlWebResponseObject.FullClr.cs">
+      <Link>commands\utility\WebCmdlet\FullClr\HtmlWebResponseObject.FullClr.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\InvokeRestMethodCommand.FullClr.cs">
+      <Link>commands\utility\WebCmdlet\FullClr\InvokeRestMethodCommand.FullClr.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\InvokeWebRequestCommand.FullClr.cs">
+      <Link>commands\utility\WebCmdlet\FullClr\InvokeWebRequestCommand.FullClr.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\JsonObjectTypeResolver.cs">
+      <Link>commands\utility\WebCmdlet\FullClr\JsonObjectTypeResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\WebRequestPSCmdlet.FullClr.cs">
+      <Link>commands\utility\WebCmdlet\FullClr\WebRequestPSCmdlet.FullClr.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\WebResponseHelper.FullClr.cs">
+      <Link>commands\utility\WebCmdlet\FullClr\WebResponseHelper.FullClr.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\WebResponseObject.FullClr.cs">
+      <Link>commands\utility\WebCmdlet\FullClr\WebResponseObject.FullClr.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FullClr\WebResponseObjectFactory.FullClr.cs">
+      <Link>commands\utility\WebCmdlet\FullClr\WebResponseObjectFactory.FullClr.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\ConvertFromJsonCommand.cs">
+      <Link>commands\utility\WebCmdlet\ConvertFromJsonCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\ConvertToJsonCommand.cs">
+      <Link>commands\utility\WebCmdlet\ConvertToJsonCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FormObject.cs">
+      <Link>commands\utility\WebCmdlet\FormObject.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\FormObjectCollection.cs">
+      <Link>commands\utility\WebCmdlet\FormObjectCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\JsonObject.cs">
+      <Link>commands\utility\WebCmdlet\JsonObject.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\PSUserAgent.cs">
+      <Link>commands\utility\WebCmdlet\PSUserAgent.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\StreamHelper.cs">
+      <Link>commands\utility\WebCmdlet\StreamHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\WebCmdletElementCollection.cs">
+      <Link>commands\utility\WebCmdlet\WebCmdletElementCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\WebRequestMethod.cs">
+      <Link>commands\utility\WebCmdlet\WebRequestMethod.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WebCmdlet\WebRequestSession.cs">
+      <Link>commands\utility\WebCmdlet\WebRequestSession.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\Write-Object.cs">
+      <Link>commands\utility\Write-Object.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\write.cs">
+      <Link>commands\utility\write.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WriteAliasCommandBase.cs">
+      <Link>commands\utility\WriteAliasCommandBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WriteConsoleCmdlet.cs">
+      <Link>commands\utility\WriteConsoleCmdlet.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\WriteProgressCmdlet.cs">
+      <Link>commands\utility\WriteProgressCmdlet.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\XmlCommands.cs">
+      <Link>commands\utility\XmlCommands.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\AddMember.cs">
+      <Link>gen\AddMember.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\AddTypeStrings.cs">
+      <Link>gen\AddTypeStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\AliasCommandStrings.cs">
+      <Link>gen\AliasCommandStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\ConvertFromStringData.cs">
+      <Link>gen\ConvertFromStringData.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\ConvertFromStringResources.cs">
+      <Link>gen\ConvertFromStringResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\ConvertStringResources.cs">
+      <Link>gen\ConvertStringResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\CsvCommandStrings.cs">
+      <Link>gen\CsvCommandStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\Debugger.cs">
+      <Link>gen\Debugger.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\EventingStrings.cs">
+      <Link>gen\EventingStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\FlashExtractStrings.cs">
+      <Link>gen\FlashExtractStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\FormatAndOut_out_gridview.cs">
+      <Link>gen\FormatAndOut_out_gridview.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\GetMember.cs">
+      <Link>gen\GetMember.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\GetRandomCommandStrings.cs">
+      <Link>gen\GetRandomCommandStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\HostStrings.cs">
+      <Link>gen\HostStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\HttpCommandStrings.cs">
+      <Link>gen\HttpCommandStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\ImmutableStrings.cs">
+      <Link>gen\ImmutableStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\ImplicitRemotingStrings.cs">
+      <Link>gen\ImplicitRemotingStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\ImportLocalizedDataStrings.cs">
+      <Link>gen\ImportLocalizedDataStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\MatchStringStrings.cs">
+      <Link>gen\MatchStringStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\MeasureObjectStrings.cs">
+      <Link>gen\MeasureObjectStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\NewObjectStrings.cs">
+      <Link>gen\NewObjectStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\OutPrinterDisplayStrings.cs">
+      <Link>gen\OutPrinterDisplayStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\SelectObjectStrings.cs">
+      <Link>gen\SelectObjectStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\SendMailMessageStrings.cs">
+      <Link>gen\SendMailMessageStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\SortObjectStrings.cs">
+      <Link>gen\SortObjectStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\TraceCommandStrings.cs">
+      <Link>gen\TraceCommandStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\UpdateDataStrings.cs">
+      <Link>gen\UpdateDataStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\UpdateListStrings.cs">
+      <Link>gen\UpdateListStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\UtilityCommonStrings.cs">
+      <Link>gen\UtilityCommonStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\UtilityMshSnapinResources.cs">
+      <Link>gen\UtilityMshSnapinResources.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\VariableCommandStrings.cs">
+      <Link>gen\VariableCommandStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\WebCmdletStrings.cs">
+      <Link>gen\WebCmdletStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\WriteErrorStrings.cs">
+      <Link>gen\WriteErrorStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\WriteProgressResourceStrings.cs">
+      <Link>gen\WriteProgressResourceStrings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\singleshell\installer\MshUtilityMshSnapin.cs">
+      <Link>singleshell\installer\MshUtilityMshSnapin.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Microsoft.PowerShell.Commands.Utility\map.json" />
-    <None Include="..\Microsoft.PowerShell.Commands.Utility\project.json" />
+    <None Include="..\Microsoft.PowerShell.Commands.Utility\map.json">
+      <Link>map.json</Link>
+    </None>
+    <None Include="..\Microsoft.PowerShell.Commands.Utility\project.json">
+      <Link>project.json</Link>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\AddMember.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\AddTypeStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\AliasCommandStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\ConvertFromStringData.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\ConvertFromStringResources.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\ConvertStringResources.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\CsvCommandStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\Debugger.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\EventingStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\FlashExtractStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\FormatAndOut_out_gridview.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\GetMember.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\GetRandomCommandStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\HostStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\HttpCommandStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\ImmutableStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\ImplicitRemotingStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\ImportLocalizedDataStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\MatchStringStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\MeasureObjectStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\NewObjectStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\OutPrinterDisplayStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\SelectObjectStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\SendMailMessageStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\SortObjectStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\TraceCommandStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\UpdateDataStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\UpdateListStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\UtilityCommonStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\UtilityMshSnapinResources.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\VariableCommandStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\WebCmdletStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\WriteErrorStrings.resx" />
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\WriteProgressResourceStrings.resx" />
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\AddMember.resx">
+      <Link>resources\AddMember.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\AddTypeStrings.resx">
+      <Link>resources\AddTypeStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\AliasCommandStrings.resx">
+      <Link>resources\AliasCommandStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\ConvertFromStringData.resx">
+      <Link>resources\ConvertFromStringData.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\ConvertFromStringResources.resx">
+      <Link>resources\ConvertFromStringResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\ConvertStringResources.resx">
+      <Link>resources\ConvertStringResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\CsvCommandStrings.resx">
+      <Link>resources\CsvCommandStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\Debugger.resx">
+      <Link>resources\Debugger.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\EventingStrings.resx">
+      <Link>resources\EventingStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\FlashExtractStrings.resx">
+      <Link>resources\FlashExtractStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\FormatAndOut_out_gridview.resx">
+      <Link>resources\FormatAndOut_out_gridview.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\GetMember.resx">
+      <Link>resources\GetMember.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\GetRandomCommandStrings.resx">
+      <Link>resources\GetRandomCommandStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\HostStrings.resx">
+      <Link>resources\HostStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\HttpCommandStrings.resx">
+      <Link>resources\HttpCommandStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\ImmutableStrings.resx">
+      <Link>resources\ImmutableStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\ImplicitRemotingStrings.resx">
+      <Link>resources\ImplicitRemotingStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\ImportLocalizedDataStrings.resx">
+      <Link>resources\ImportLocalizedDataStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\MatchStringStrings.resx">
+      <Link>resources\MatchStringStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\MeasureObjectStrings.resx">
+      <Link>resources\MeasureObjectStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\NewObjectStrings.resx">
+      <Link>resources\NewObjectStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\OutPrinterDisplayStrings.resx">
+      <Link>resources\OutPrinterDisplayStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\SelectObjectStrings.resx">
+      <Link>resources\SelectObjectStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\SendMailMessageStrings.resx">
+      <Link>resources\SendMailMessageStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\SortObjectStrings.resx">
+      <Link>resources\SortObjectStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\TraceCommandStrings.resx">
+      <Link>resources\TraceCommandStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\UpdateDataStrings.resx">
+      <Link>resources\UpdateDataStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\UpdateListStrings.resx">
+      <Link>resources\UpdateListStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\UtilityCommonStrings.resx">
+      <Link>resources\UtilityCommonStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\UtilityMshSnapinResources.resx">
+      <Link>resources\UtilityMshSnapinResources.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\VariableCommandStrings.resx">
+      <Link>resources\VariableCommandStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\WebCmdletStrings.resx">
+      <Link>resources\WebCmdletStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\WriteErrorStrings.resx">
+      <Link>resources\WriteErrorStrings.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Utility\resources\WriteProgressResourceStrings.resx">
+      <Link>resources\WriteProgressResourceStrings.resx</Link>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="System.Management.Automation.csproj">

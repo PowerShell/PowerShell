@@ -47,12 +47,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\PSReadLine\AssemblyInfo.cs" />
-    <Compile Include="..\PSReadLine\Program.cs" />
+    <Compile Include="..\PSReadLine\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\PSReadLine\Program.cs">
+      <Link>Program.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\PSReadLine\App.config" />
-    <None Include="..\PSReadLine\packages.config" />
+    <None Include="..\PSReadLine\App.config">
+      <Link>App.config</Link>
+    </None>
+    <None Include="..\PSReadLine\packages.config">
+      <Link>packages.config</Link>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PSReadLine\PSReadLine.csproj">

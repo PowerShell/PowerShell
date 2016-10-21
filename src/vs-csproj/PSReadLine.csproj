@@ -55,41 +55,102 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\AssemblyInfo.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\BasicEditing.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Cmdlets.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Completion.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Completion.vi.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\ConsoleBufferBuilder.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\ConsoleKeyChordConverter.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\ConsoleLib.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Disposable.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\History.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\HistoryQueue.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\KeyBindings.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\KeyBindings.vi.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Keys.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\KillYank.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Movement.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Movement.vi.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Options.cs" />
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\BasicEditing.cs">
+      <Link>BasicEditing.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Cmdlets.cs">
+      <Link>Cmdlets.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Completion.cs">
+      <Link>Completion.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Completion.vi.cs">
+      <Link>Completion.vi.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\ConsoleBufferBuilder.cs">
+      <Link>ConsoleBufferBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\ConsoleKeyChordConverter.cs">
+      <Link>ConsoleKeyChordConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\ConsoleLib.cs">
+      <Link>ConsoleLib.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Disposable.cs">
+      <Link>Disposable.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\History.cs">
+      <Link>History.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\HistoryQueue.cs">
+      <Link>HistoryQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\KeyBindings.cs">
+      <Link>KeyBindings.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\KeyBindings.vi.cs">
+      <Link>KeyBindings.vi.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Keys.cs">
+      <Link>Keys.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\KillYank.cs">
+      <Link>KillYank.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Movement.cs">
+      <Link>Movement.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Movement.vi.cs">
+      <Link>Movement.vi.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Options.cs">
+      <Link>Options.cs</Link>
+    </Compile>
     <Compile Include="..\Microsoft.PowerShell.PSReadLine\PSReadLineResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>..\Microsoft.PowerShell.PSReadLine\PSReadLineResources.resx</DependentUpon>
+      <Link>PSReadLineResources.Designer.cs</Link>
     </Compile>
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\PublicAPI.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\ReadLine.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Replace.vi.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\ReadLine.vi.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Render.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\ScreenCapture.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\UndoRedo.vi.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\UndoRedo.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\VisualEditing.vi.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Words.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Words.vi.cs" />
-    <Compile Include="..\Microsoft.PowerShell.PSReadLine\YankPaste.vi.cs" />
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\PublicAPI.cs">
+      <Link>PublicAPI.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\ReadLine.cs">
+      <Link>ReadLine.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Replace.vi.cs">
+      <Link>Replace.vi.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\ReadLine.vi.cs">
+      <Link>ReadLine.vi.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Render.cs">
+      <Link>Render.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\ScreenCapture.cs">
+      <Link>ScreenCapture.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\UndoRedo.vi.cs">
+      <Link>UndoRedo.vi.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\UndoRedo.cs">
+      <Link>UndoRedo.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\VisualEditing.vi.cs">
+      <Link>VisualEditing.vi.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Words.cs">
+      <Link>Words.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\Words.vi.cs">
+      <Link>Words.vi.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.PSReadLine\YankPaste.vi.cs">
+      <Link>YankPaste.vi.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
@@ -101,36 +162,46 @@
       <LastGenOutput>..\Microsoft.PowerShell.PSReadLine\PSReadlineResources.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Microsoft.PowerShell</CustomToolNamespace>
       <SubType>Designer</SubType>
+      <Link>PSReadLineResources.resx</Link>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Microsoft.PowerShell.PSReadLine\packages.config" />
+    <None Include="..\Microsoft.PowerShell.PSReadLine\packages.config">
+      <Link>packages.config</Link>
+    </None>
     <None Include="..\Microsoft.PowerShell.PSReadLine\PSReadLine.psd1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>PSReadLine.psd1</Link>
     </None>
     <None Include="..\Microsoft.PowerShell.PSReadLine\PSReadLine.psm1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>PSReadLine.psm1</Link>
     </None>
     <None Include="..\Microsoft.PowerShell.PSReadLine\SamplePSReadlineProfile.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>SamplePSReadlineProfile.ps1</Link>
     </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Microsoft.PowerShell.PSReadLine\en-US\about_PSReadline.help.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>en-US\about_PSReadline.help.txt</Link>
     </None>
     <None Include="..\Microsoft.PowerShell.PSReadLine\en-US\PSReadline.dll-help.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>en-US\PSReadline.dll-help.xml</Link>
     </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Microsoft.PowerShell.PSReadLine\Changes.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Changes.txt</Link>
     </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Microsoft.PowerShell.PSReadLine\License.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>License.txt</Link>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
