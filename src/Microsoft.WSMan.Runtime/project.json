@@ -17,7 +17,7 @@
                 "debugType": "portable"
             },
             "dependencies": {
-                "NETStandard.Library": "1.6.0",
+                "NETStandard.Library": "1.6.1-preview1-24530-04"
             }
         },
         "net451": {

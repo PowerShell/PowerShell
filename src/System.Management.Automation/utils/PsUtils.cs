@@ -624,19 +624,11 @@ namespace System.Management.Automation
 
         internal static uint GetNativeThreadId()
         {
-            if (Platform.IsWindows)
-            {
-                return WinGetNativeThreadId();
-            }
-            else
-            {
-                return Platform.NonWindowsGetThreadId();
-            }
-        }
-
-        internal static uint WinGetNativeThreadId()
-        {
+#if UNIX
+            return Platform.NonWindowsGetThreadId();
+#else
             return NativeMethods.GetCurrentThreadId();
+#endif
         }
 
         private static class NativeMethods

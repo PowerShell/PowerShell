@@ -1,4 +1,4 @@
-// 
+ï»¿// 
 //  Copyright (c) Microsoft Corporation. All rights reserved. 
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -812,7 +812,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
 
         protected override sealed void BeginProcessing() {
 #if DEBUG
-            Log("BeginProcessing","[{0}/{1}] «{2}»".format( MyInvocation.PipelineLength, MyInvocation.PipelinePosition, MyInvocation.Line));
+            Log("BeginProcessing","[{0}/{1}] Â«{2}Â»".format( MyInvocation.PipelineLength, MyInvocation.PipelinePosition, MyInvocation.Line));
 #endif
             try {
                 CmdletState = AsyncCmdletState.BeginProcess;
@@ -844,7 +844,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
 
         protected override sealed void ProcessRecord() {
 #if DEBUG
-            Log("ProcessRecord", "[{0}/{1}] «{2}»".format(  MyInvocation.PipelineLength, MyInvocation.PipelinePosition, MyInvocation.Line));
+            Log("ProcessRecord", "[{0}/{1}] Â«{2}Â»".format(  MyInvocation.PipelineLength, MyInvocation.PipelinePosition, MyInvocation.Line));
 #endif
 
             try {
@@ -873,7 +873,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
 
         protected override sealed void EndProcessing() {
 #if DEBUG
-            Log("EndProcessing","[{0}/{1}] «{2}»".format(  MyInvocation.PipelineLength, MyInvocation.PipelinePosition, MyInvocation.Line));
+            Log("EndProcessing","[{0}/{1}] Â«{2}Â»".format(  MyInvocation.PipelineLength, MyInvocation.PipelinePosition, MyInvocation.Line));
 #endif
 
             try {
@@ -907,7 +907,7 @@ namespace Microsoft.PowerShell.PackageManagement.Cmdlets {
 
         protected override sealed void StopProcessing() {
 #if DEBUG
-            Log("StopProcessing","[{0}/{1}] «{2}»".format(  MyInvocation.PipelineLength, MyInvocation.PipelinePosition, MyInvocation.Line));
+            Log("StopProcessing","[{0}/{1}] Â«{2}Â»".format(  MyInvocation.PipelineLength, MyInvocation.PipelinePosition, MyInvocation.Line));
 #endif
 
             try {

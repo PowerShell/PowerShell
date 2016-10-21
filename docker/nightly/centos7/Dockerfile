@@ -1,4 +1,4 @@
-FROM powershell/powershell:stable-ubuntu14.04
+FROM microsoft/powershell:centos7
 MAINTAINER Andrew Schwartzmeyer <andschwa@microsoft.com>
 
 ARG fork=PowerShell
@@ -6,4 +6,4 @@ ARG branch=master
 
 COPY bootstrap.ps1 /
 RUN powershell -f bootstrap.ps1 \
-    && dpkg -i PowerShell/powershell*.deb
+    && yum install -y PowerShell/powershell*.rpm

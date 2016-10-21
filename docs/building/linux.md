@@ -111,6 +111,10 @@ Build manually
 
 The following goes into detail about what `Start-PSBuild` does.
 
+There are two preliminary steps that apply to all operating systems,
+the [ResGen](internals.md#resgen) and [type catalog generation](internals.md#type-catalog),
+documented in [internals of build process](internals.md#preliminary-steps).
+
 Build the native library
 ------------------------
 

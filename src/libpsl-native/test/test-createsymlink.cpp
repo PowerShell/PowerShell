@@ -39,12 +39,12 @@ protected:
         EXPECT_TRUE(dir != NULL);
 
         // Create symbolic link to file
-        bool ret1 = CreateSymLink(fileSymLink.c_str(), file);
-        EXPECT_TRUE(ret1);
+        int ret = CreateSymLink(fileSymLink.c_str(), file);
+        EXPECT_EQ(0, ret);
 
         // Create symbolic link to directory
-        bool ret2 = CreateSymLink(dirSymLink.c_str(), dir);
-        EXPECT_TRUE(ret2);
+        ret = CreateSymLink(dirSymLink.c_str(), dir);
+        EXPECT_EQ(0, ret);
     }
 
     ~CreateSymLinkTest()
@@ -65,13 +65,6 @@ protected:
     }
 };
 
-TEST_F(CreateSymLinkTest, FilePathNameIsNull)
-{
-    bool retVal = CreateSymLink(NULL, NULL);
-    EXPECT_FALSE(retVal);
-    EXPECT_EQ(ERROR_INVALID_PARAMETER, errno);
-}
-
 TEST_F(CreateSymLinkTest, FilePathNameDoesNotExist)
 {
     std::string invalidFile = "/tmp/symlinktest_invalidFile";
@@ -82,8 +75,8 @@ TEST_F(CreateSymLinkTest, FilePathNameDoesNotExist)
     unlink(invalidLink.c_str());
 
     // Linux allows creation of symbolic link that points to an invalid file
-    bool retVal = CreateSymLink(invalidLink.c_str(), invalidFile.c_str());
-    EXPECT_TRUE(retVal);
+    int ret = CreateSymLink(invalidLink.c_str(), invalidFile.c_str());
+    EXPECT_EQ(0, ret);
 
     std::string target = FollowSymLink(invalidLink.c_str());
     EXPECT_EQ(target, invalidFile);
@@ -93,8 +86,8 @@ TEST_F(CreateSymLinkTest, FilePathNameDoesNotExist)
 
 TEST_F(CreateSymLinkTest, SymLinkToFile)
 {
-    bool retVal = IsSymLink(fileSymLink.c_str());
-    EXPECT_TRUE(retVal);
+    bool ret = IsSymLink(fileSymLink.c_str());
+    EXPECT_TRUE(ret);
 
     std::string target = FollowSymLink(fileSymLink.c_str());
     char buffer[PATH_MAX];
@@ -104,8 +97,8 @@ TEST_F(CreateSymLinkTest, SymLinkToFile)
 
 TEST_F(CreateSymLinkTest, SymLinkToDirectory)
 {
-    bool retVal = IsSymLink(dirSymLink.c_str());
-    EXPECT_TRUE(retVal);
+    bool ret = IsSymLink(dirSymLink.c_str());
+    EXPECT_TRUE(ret);
 
     std::string target = FollowSymLink(dirSymLink.c_str());
     char buffer[PATH_MAX];
@@ -115,7 +108,7 @@ TEST_F(CreateSymLinkTest, SymLinkToDirectory)
 
 TEST_F(CreateSymLinkTest, SymLinkAgain)
 {
-    bool retVal = CreateSymLink(fileSymLink.c_str(), file);
-    EXPECT_FALSE(retVal);
-    EXPECT_EQ(ERROR_FILE_EXISTS, errno);
+    int ret = CreateSymLink(fileSymLink.c_str(), file);
+    EXPECT_EQ(-1, ret);
+    EXPECT_EQ(EEXIST, errno);
 }

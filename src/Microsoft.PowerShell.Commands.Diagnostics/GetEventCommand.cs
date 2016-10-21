@@ -16,6 +16,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.Security.Principal;
 using System.Resources;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 [assembly: CLSCompliant(false)]
 
@@ -361,6 +362,14 @@ namespace Microsoft.PowerShell.Commands
         private const string propClose = "]";
         private const string filePrefix = "file://";
         private const string NamedDataTemplate = "((EventData[Data[@Name='{0}']='{1}']) or (UserData/*/{0}='{1}'))";
+        private const string DataTemplate = "(EventData/Data='{0}')";
+        private const string SystemTimePeriodTemplate = "(System/TimeCreated[@SystemTime&gt;='{0}' and @SystemTime&lt;='{1}'])";
+        private const string SystemTimeStartTemplate = "(System/TimeCreated[@SystemTime&gt;='{0}'])";
+        private const string SystemTimeEndTemplate = "(System/TimeCreated[@SystemTime&lt;='{0}'])";
+        private const string SystemLevelTemplate = "(System/Level=";
+        private const string SystemEventIDTemplate = "(System/EventID=";
+        private const string SystemSecurityTemplate = "(System/Security[@UserID='{0}'])";
+        private const string SystemKeywordsTemplate = "System[band(Keywords,{0})]";
 
         //
         // Other private members and constants
@@ -922,7 +931,7 @@ namespace Microsoft.PowerShell.Commands
         //
         private string BuildStructuredQuery(EventLogSession eventLogSession)
         {
-            string result = "";
+            StringBuilder result = new StringBuilder();
 
             switch (ParameterSetName)
             {
@@ -934,51 +943,45 @@ namespace Microsoft.PowerShell.Commands
 
                 case "GetProviderSet":
                     {
-                        result = queryListOpen;
+                        result.Append(queryListOpen);
                         uint queryId = 0;
 
                         foreach (string log in _providersByLogMap.Keys)
                         {
                             string providerFilter = AddProviderPredicatesToFilter(_providersByLogMap[log]);
-                            string addedQuery;
-                            addedQuery = string.Format(CultureInfo.InvariantCulture, queryTemplate, new object[] { queryId++, log, providerFilter });
-                            result += addedQuery;
+                            result.AppendFormat(CultureInfo.InvariantCulture, queryTemplate, new object[] { queryId++, log, providerFilter });
                         }
-                        result += queryListClose;
+                        result.Append(queryListClose);
                     }
                     break;
 
                 case "GetLogSet":
                     {
-                        result = queryListOpen;
+                        result.Append(queryListOpen);
                         uint queryId = 0;
                         foreach (string log in _logNamesMatchingWildcard)
                         {
-                            string addedQuery;
-                            addedQuery = string.Format(CultureInfo.InvariantCulture, queryTemplate, new object[] { queryId++, log, _filter });
-                            result += addedQuery;
+                            result.AppendFormat(CultureInfo.InvariantCulture, queryTemplate, new object[] { queryId++, log, _filter });
                         }
-                        result += queryListClose;
+                        result.Append(queryListClose);
                     }
                     break;
 
                 case "FileSet":
                     {
-                        result = queryListOpen;
+                        result.Append(queryListOpen);
                         uint queryId = 0;
                         foreach (string filePath in _resolvedPaths)
                         {
                             string properFilePath = filePrefix + filePath;
-                            string addedQuery;
-                            addedQuery = string.Format(CultureInfo.InvariantCulture, queryTemplate, new object[] { queryId++, properFilePath, _filter });
-                            result += addedQuery;
+                            result.AppendFormat(CultureInfo.InvariantCulture, queryTemplate, new object[] { queryId++, properFilePath, _filter });
                         }
-                        result += queryListClose;
+                        result.Append(queryListClose);
                     }
                     break;
 
                 case "HashQuerySet":
-                    result = BuildStructuredQueryFromHashTable(eventLogSession);
+                    result.Append(BuildStructuredQueryFromHashTable(eventLogSession));
                     break;
 
                 default:
@@ -986,9 +989,9 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            WriteVerbose(string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("QueryTrace"), result));
+            WriteVerbose(string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("QueryTrace"), result.ToString()));
 
-            return result;
+            return result.ToString();
         }
 
         //
@@ -1303,27 +1306,27 @@ namespace Microsoft.PowerShell.Commands
         //
         private string HandleEventIdHashValue(Object value)
         {
-            string ret = "";
+            StringBuilder ret = new StringBuilder();
             Array idsArray = value as Array;
             if (idsArray != null)
             {
-                ret += "(";
+                ret.Append("(");
                 for (int i = 0; i < idsArray.Length; i++)
                 {
-                    ret += "(System/EventID=" + idsArray.GetValue(i).ToString() + ")";
+                    ret.Append(SystemEventIDTemplate).Append(idsArray.GetValue(i).ToString()).Append(")");
                     if (i < (idsArray.Length - 1))
                     {
-                        ret += " or ";
+                        ret.Append(" or ");
                     }
                 }
-                ret += ")";
+                ret.Append(")");
             }
             else
             {
-                ret += "(System/EventID=" + value + ")";
+                ret.Append(SystemEventIDTemplate).Append(value).Append(")");
             }
 
-            return ret;
+            return ret.ToString();
         }
 
         //
@@ -1332,27 +1335,27 @@ namespace Microsoft.PowerShell.Commands
         //
         private string HandleLevelHashValue(Object value)
         {
-            string ret = "";
+            StringBuilder ret = new StringBuilder();
             Array levelsArray = value as Array;
             if (levelsArray != null)
             {
-                ret += "(";
+                ret.Append("(");
                 for (int i = 0; i < levelsArray.Length; i++)
                 {
-                    ret += "(System/Level=" + levelsArray.GetValue(i).ToString() + ")";
+                    ret.Append(SystemLevelTemplate).Append(levelsArray.GetValue(i).ToString()).Append(")");
                     if (i < (levelsArray.Length - 1))
                     {
-                        ret += " or ";
+                        ret.Append(" or ");
                     }
                 }
-                ret += ")";
+                ret.Append(")");
             }
             else
             {
-                ret += "(System/Level=" + value + ")";
+                ret.Append(SystemLevelTemplate).Append(value).Append(")");
             }
 
-            return ret;
+            return ret.ToString();
         }
 
         //
@@ -1384,7 +1387,7 @@ namespace Microsoft.PowerShell.Commands
                 keywordsMask |= keywordLong;
             }
 
-            return string.Format(CultureInfo.InvariantCulture, "System[band(Keywords,{0})]", keywordsMask);
+            return string.Format(CultureInfo.InvariantCulture, SystemKeywordsTemplate, keywordsMask);
         }
 
         //
@@ -1421,7 +1424,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return string.Format(CultureInfo.InvariantCulture, "(System/Security[@UserID='{0}'])", sidCandidate.ToString());
+            return string.Format(CultureInfo.InvariantCulture, SystemSecurityTemplate, sidCandidate.ToString());
         }
 
 
@@ -1432,8 +1435,7 @@ namespace Microsoft.PowerShell.Commands
         //
         private string HandleStartTimeHashValue(Object value, Hashtable hash)
         {
-            string ret = "";
-
+            StringBuilder ret = new StringBuilder();
             DateTime startTime = new DateTime();
             if (!StringToDateTime(value.ToString(), ref startTime))
             {
@@ -1454,18 +1456,19 @@ namespace Microsoft.PowerShell.Commands
                 endTime = endTime.ToUniversalTime();
                 string endTimeFormatted = endTime.ToString("s", CultureInfo.InvariantCulture) + "." + endTime.Millisecond.ToString("d3", CultureInfo.InvariantCulture) + "Z";
 
-                ret += string.Format(CultureInfo.InvariantCulture,
-                                             "(System/TimeCreated[@SystemTime&gt;='{0}' and @SystemTime&lt;='{1}'])",
-                                             startTimeFormatted, endTimeFormatted);
+                ret.AppendFormat(CultureInfo.InvariantCulture,
+                                 SystemTimePeriodTemplate,
+                                 startTimeFormatted,
+                                 endTimeFormatted);
             }
             else
             {
-                ret += string.Format(CultureInfo.InvariantCulture,
-                                             "(System/TimeCreated[@SystemTime&gt;='{0}'])",
-                                             startTimeFormatted);
+                ret.AppendFormat(CultureInfo.InvariantCulture,
+                                 SystemTimeStartTemplate,
+                                 startTimeFormatted);
             }
 
-            return ret;
+            return ret.ToString();
         }
 
 
@@ -1476,8 +1479,7 @@ namespace Microsoft.PowerShell.Commands
         //
         private string HandleEndTimeHashValue(Object value, Hashtable hash)
         {
-            string ret = "";
-
+            StringBuilder ret = new StringBuilder();
             DateTime endTime = new DateTime();
             if (!StringToDateTime(value.ToString(), ref endTime))
             {
@@ -1500,16 +1502,19 @@ namespace Microsoft.PowerShell.Commands
                 string startTimeFormatted = startTime.ToString("s", CultureInfo.InvariantCulture) + "."
                                                                + startTime.Millisecond.ToString("d3", CultureInfo.InvariantCulture) + "Z";
 
-                ret += string.Format(CultureInfo.InvariantCulture, "(System/TimeCreated[@SystemTime&gt;='{0}' and @SystemTime&lt;='{1}'])",
-                                             startTimeFormatted, endTimeFormatted);
+                ret.AppendFormat(CultureInfo.InvariantCulture,
+                                 SystemTimePeriodTemplate,
+                                 startTimeFormatted,
+                                 endTimeFormatted);
             }
             else
             {
-                ret += string.Format(CultureInfo.InvariantCulture, "(System/TimeCreated[@SystemTime&lt;='{0}'])",
-                                             endTimeFormatted);
+                ret.AppendFormat(CultureInfo.InvariantCulture,
+                                 SystemTimeEndTemplate,
+                                 endTimeFormatted);
             }
 
-            return ret;
+            return ret.ToString();
         }
 
         //
@@ -1518,27 +1523,27 @@ namespace Microsoft.PowerShell.Commands
         //
         private string HandleDataHashValue(Object value)
         {
-            string ret = "";
+            StringBuilder ret = new StringBuilder();
             Array dataArray = value as Array;
             if (dataArray != null)
             {
-                ret += "(";
+                ret.Append("(");
                 for (int i = 0; i < dataArray.Length; i++)
                 {
-                    ret += string.Format(CultureInfo.InvariantCulture, "(EventData/Data='{0}')", dataArray.GetValue(i).ToString());
+                    ret.AppendFormat(CultureInfo.InvariantCulture, DataTemplate, dataArray.GetValue(i).ToString());
                     if (i < (dataArray.Length - 1))
                     {
-                        ret += " or ";
+                        ret.Append(" or ");
                     }
                 }
-                ret += ")";
+                ret.Append(")");
             }
             else
             {
-                ret += string.Format(CultureInfo.InvariantCulture, "(EventData/Data='{0}')", value);
+                ret.AppendFormat(CultureInfo.InvariantCulture, DataTemplate, value);
             }
 
-            return ret;
+            return ret.ToString();
         }
 
 
@@ -1549,31 +1554,31 @@ namespace Microsoft.PowerShell.Commands
         //
         private string HandleNamedDataHashValue(String key, Object value)
         {
-            string ret = "";
+            StringBuilder ret = new StringBuilder();
             Array dataArray = value as Array;
             if (dataArray != null)
             {
-                ret += "(";
+                ret.Append("(");
                 for (int i = 0; i < dataArray.Length; i++)
                 {
-                    ret += string.Format(CultureInfo.InvariantCulture,
+                    ret.AppendFormat(CultureInfo.InvariantCulture,
                                          NamedDataTemplate,
                                          key, dataArray.GetValue(i).ToString());
                     if (i < (dataArray.Length - 1))
                     {
-                        ret += " or ";
+                        ret.Append(" or ");
                     }
                 }
-                ret += ")";
+                ret.Append(")");
             }
             else
             {
-                ret += string.Format(CultureInfo.InvariantCulture,
+                ret.AppendFormat(CultureInfo.InvariantCulture,
                                          NamedDataTemplate,
                                          key, value);
             }
 
-            return ret;
+            return ret.ToString();
         }
 
 
@@ -1879,18 +1884,18 @@ namespace Microsoft.PowerShell.Commands
                 return "";
             }
 
-            string predicate = "System/Provider[";
+            StringBuilder predicate = new StringBuilder("System/Provider[");
             for (int i = 0; i < providers.Count; i++)
             {
-                predicate += "@Name='" + providers[i] + "'";
+                predicate.Append("@Name='").Append(providers[i]).Append("'");
                 if (i < (providers.Count - 1))
                 {
-                    predicate += " or ";
+                    predicate.Append(" or ");
                 }
             }
-            predicate += "]";
+            predicate.Append("]");
 
-            return predicate;
+            return predicate.ToString();
         }
 
 
@@ -1908,7 +1913,7 @@ namespace Microsoft.PowerShell.Commands
                 return "";
             }
 
-            string predicate = "System/Provider[";
+            StringBuilder predicate = new StringBuilder("System/Provider[");
 
             List<string> uniqueProviderNames = new List<string>();
 
@@ -1926,16 +1931,16 @@ namespace Microsoft.PowerShell.Commands
 
             for (int i = 0; i < uniqueProviderNames.Count; i++)
             {
-                predicate += "@Name='" + uniqueProviderNames[i] + "'";
+                predicate.Append("@Name='").Append(uniqueProviderNames[i]).Append("'");
                 if (i < uniqueProviderNames.Count - 1)
                 {
-                    predicate += " or ";
+                    predicate.Append(" or ");
                 }
             }
 
-            predicate += "]";
+            predicate.Append("]");
 
-            return predicate;
+            return predicate.ToString();
         }
 
 

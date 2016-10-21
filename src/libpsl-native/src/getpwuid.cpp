@@ -2,13 +2,14 @@
 //! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
 //! @brief returns the username for a uid
 
+#include "getpwuid.h"
+
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <pwd.h>
 #include <string.h>
 #include <unistd.h>
-#include "getpwuid.h"
 
 //! @brief GetPwUid returns the username for a uid
 //!
@@ -18,11 +19,6 @@
 //! @parblock
 //! The user identifier to lookup.
 //! @endparblock
-//!
-//! @exception errno Passes these errors via errno to GetLastError:
-//! - ERROR_NO_SUCH_USER: user lookup unsuccessful
-//! - ERROR_OUTOFMEMORY insufficient kernel memory
-//! - ERROR_GEN_FAILURE: anything else
 //!
 //! @retval username as UTF-8 string, or NULL if unsuccessful
 //!
@@ -42,27 +38,16 @@ char* GetPwUid(uid_t uid)
 allocate:
     buf = (char*)calloc(buflen, sizeof(char));
 
+    errno = 0;
     ret = getpwuid_r(uid, &pwd, buf, buflen, &result);
 
     if (ret != 0)
     {
-        switch(errno)
+        if (errno == ERANGE)
         {
-        case ERANGE:
             free(buf);
             buflen *= 2;
             goto allocate;
-        case ENOENT:
-        case ESRCH:
-        case EBADF:
-        case EPERM:
-            errno = ERROR_NO_SUCH_USER;
-            break;
-        case ENOMEM:
-            errno = ERROR_OUTOFMEMORY;
-            break;
-        default:
-            errno = ERROR_GEN_FAILURE;
         }
         return NULL;
     }

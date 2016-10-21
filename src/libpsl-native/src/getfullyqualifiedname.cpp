@@ -2,12 +2,13 @@
 //! @author George Fleming <v-geflem@microsoft.com>
 //! @brief Implements GetFullyQualifiedName on Linux
 
+#include "getcomputername.h"
+#include "getfullyqualifiedname.h"
+
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
-#include "getcomputername.h"
-#include "getfullyqualifiedname.h"
 
 //! @brief GetFullyQualifiedName retrieves the fully qualified dns name of the host
 //!

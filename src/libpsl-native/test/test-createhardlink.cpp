@@ -3,7 +3,6 @@
 //! @brief Implements test for CreateHardLink()
 
 #include <gtest/gtest.h>
-#include <errno.h>
 #include <unistd.h>
 #include "getlinkcount.h"
 #include "createhardlink.h"
@@ -31,19 +30,19 @@ protected:
         // First create a temp file
         int fd = mkstemp(fileTemplateBuf);
         EXPECT_TRUE(fd != -1);
-	file = fileTemplateBuf;
+        file = fileTemplateBuf;
 
-	// Create a temp directory
-	dir = mkdtemp(dirTemplateBuf);
+        // Create a temp directory
+        dir = mkdtemp(dirTemplateBuf);
         EXPECT_TRUE(dir != NULL);
 
         // Create hard link to file
-	int ret1 = CreateHardLink(fileHardLink.c_str(), file);
-	EXPECT_EQ(ret1, 1);
-        
+        int ret = CreateHardLink(fileHardLink.c_str(), file);
+        EXPECT_EQ(ret, 0);
+
         // Create hard link to directory - should fail
-	int ret2 = CreateHardLink(dirHardLink.c_str(), dir);
-	EXPECT_EQ(ret2, 0);
+        ret = CreateHardLink(dirHardLink.c_str(), dir);
+        EXPECT_EQ(ret, -1);
     }
 
     ~CreateHardLinkTest()
@@ -51,41 +50,33 @@ protected:
         int ret;
 
         ret = unlink(fileHardLink.c_str());
-	EXPECT_EQ(0, ret);
+        EXPECT_EQ(0, ret);
 
         ret = unlink(file);
-	EXPECT_EQ(0, ret);
+        EXPECT_EQ(0, ret);
 
-	ret = rmdir(dir);
-	EXPECT_EQ(0, ret);       
+        ret = rmdir(dir);
+        EXPECT_EQ(0, ret);
     }
 };
-
-TEST_F(CreateHardLinkTest, FilePathNameIsNull)
-{
-    int retVal = CreateHardLink(NULL, NULL);
-    EXPECT_EQ(retVal, 0);
-    EXPECT_EQ(ERROR_INVALID_PARAMETER, errno);
-}
 
 TEST_F(CreateHardLinkTest, FilePathNameDoesNotExist)
 {
     std::string invalidFile = "/tmp/symlinktest_invalidFile";
     std::string invalidLink = "/tmp/symlinktest_invalidLink";
 
-    // make sure neither exists    
+    // make sure neither exists
     unlink(invalidFile.c_str());
     unlink(invalidLink.c_str());
 
-    int retVal = CreateHardLink(invalidLink.c_str(), invalidFile.c_str());
-    EXPECT_EQ(retVal, 0);
+    int ret = CreateHardLink(invalidLink.c_str(), invalidFile.c_str());
+    EXPECT_EQ(-1, ret);
 }
 
 TEST_F(CreateHardLinkTest, VerifyLinkCount)
 {
     int count = 0;
-    int retVal = GetLinkCount(fileHardLink.c_str(), &count);
-    EXPECT_EQ(1, retVal);
+    int ret = GetLinkCount(fileHardLink.c_str(), &count);
+    EXPECT_EQ(0, ret);
     EXPECT_EQ(2, count);
 }
-

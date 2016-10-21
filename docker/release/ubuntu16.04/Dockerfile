@@ -1,8 +1,8 @@
-FROM ubuntu:trusty
+FROM ubuntu:xenial
 MAINTAINER Andrew Schwartzmeyer <andschwa@microsoft.com>
 
-ARG POWERSHELL_RELEASE=v6.0.0-alpha.10
-ARG POWERSHELL_PACKAGE=powershell_6.0.0-alpha.10-1ubuntu1.14.04.1_amd64.deb
+ARG POWERSHELL_RELEASE=v6.0.0-alpha.11
+ARG POWERSHELL_PACKAGE=powershell_6.0.0-alpha.11-1ubuntu1.16.04.1_amd64.deb
 
 # Setup the locale
 ENV LANG en_US.UTF-8
@@ -16,7 +16,7 @@ RUN apt-get update \
         libcurl3 \
         ca-certificates \
         libgcc1 \
-        libicu52 \
+        libicu55 \
         libssl1.0.0 \
         libstdc++6 \
         libtinfo5 \

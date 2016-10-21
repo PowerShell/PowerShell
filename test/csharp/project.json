@@ -17,8 +17,8 @@
         "netcoreapp1.0": {
             "imports": [ "dnxcore50", "portable-net45+win8" ],
             "dependencies": {
-                "xunit": "2.1.0",
-                "dotnet-test-xunit": "1.0.0-rc2-build10025"
+                "xunit": "2.2.0-beta3-build3402",
+                "dotnet-test-xunit": "2.2.0-preview2-build1029"
             }
         }
     },

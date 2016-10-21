@@ -1,12 +1,10 @@
+#if !UNIX
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
-
 using System;
-using Dbg = System.Management.Automation;
 using System.Runtime.Serialization;
-using System.Reflection;
 
 #if CORECLR
 // Use stub for SerializableAttribute, SystemException, ThreadAbortException and ISerializable related types.
@@ -312,4 +310,4 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-
+#endif // !UNIX
