@@ -5,6 +5,7 @@ Unreleased
 ----------
 
 - Added -Top and -Bottom parameters to Sort-Object
+
 v6.0.0-alpha.11 - 2016-10-17
 ----------------------------
 - Add '-Title' to 'Get-Credential' and unify the prompt experience
