@@ -4,6 +4,8 @@ Changelog
 Unreleased
 ----------
 
+- Added -Top and -Bottom parameters to Sort-Object
+
 v6.0.0-alpha.10 - 2016-09-15
 ----------------------------
 - Fix passing escaped double quoted spaces to native executables
