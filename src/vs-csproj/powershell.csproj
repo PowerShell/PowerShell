@@ -29,12 +29,20 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\powershell\.gitignore" />
-    <None Include="..\powershell\project.json" />
-    <None Include="..\powershell\README.md" />
+    <None Include="..\powershell\.gitignore">
+      <Link>.gitignore</Link>
+    </None>
+    <None Include="..\powershell\project.json">
+      <Link>project.json</Link>
+    </None>
+    <None Include="..\powershell\README.md">
+      <Link>README.md</Link>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\powershell\Program.cs" />
+    <Compile Include="..\powershell\Program.cs">
+      <Link>Program.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include=".vs\" />
