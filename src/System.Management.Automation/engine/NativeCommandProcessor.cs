@@ -1642,7 +1642,20 @@ namespace System.Management.Automation
             foreach (var item in formattedObjects)
             {
                 string line = PSObject.ToStringParser(_command.Context, item);
-                _streamWriter.WriteLine(line);
+                // if process is already finished and we are trying to write something to it,
+                // we will get IOException
+                try
+                {
+                    _streamWriter.WriteLine(line);
+                }
+                catch (IOException)
+                {
+                    // we are assuming that process is already finished
+                    // we should just stop processing at this point
+                    this.Done();
+                    // stop foreach execution
+                    break;
+                }
             }
         }
 
@@ -1695,13 +1708,30 @@ namespace System.Management.Automation
         /// </summary>
         internal void Done()
         {
-            _pipeline.End();
-            _pipeline.Dispose();
+            // we allow call Done() multiply times.
+            // For example one time from Process() code path, 
+            // when we detect that process already finished
+            // and once from End() code path.
+            if (_pipeline != null)
+            {
+                _pipeline.End();
+                _pipeline.Dispose();
+                _pipeline = null;
+            }
 
             // streamWriter is present, only if we call Start method
             if (_streamWriter != null)
             {
-                _streamWriter.Dispose();
+                try
+                {
+                    _streamWriter.Dispose();
+                }
+                catch (IOException)
+                {
+                    // on unix, if process is already finished attempt to dispose it will
+                    // lead to "Broken pipe" exception.
+                    // we are ignoring it here
+                }
                 _streamWriter = null;
             }
         }

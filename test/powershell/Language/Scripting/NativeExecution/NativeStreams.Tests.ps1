@@ -61,6 +61,10 @@ Describe 'piping powershell objects to finished native executable' -Tags 'CI' {
     $echoArgs = Join-Path (Split-Path $powershellTestDir) tools/EchoArgs/bin/echoargs
 
     It 'doesn''t throw any exceptions, when we are piping to the closed executable' {
-        1..3 | % { Start-Sleep -Milliseconds 100; $_ } | & $echoArgs | Should Be $null
+        1..3 | % {
+            Start-Sleep -Milliseconds 100
+            # yeild some multi-line formatted object
+            @{'a' = 'b'}
+        } | & $echoArgs | Should Be $null
     }
 }
