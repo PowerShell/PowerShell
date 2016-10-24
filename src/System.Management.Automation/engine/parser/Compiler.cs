@@ -5160,7 +5160,8 @@ namespace System.Management.Automation.Language
                         new[] { temp },
                         BuildHashtable(hashTableAst.KeyValuePairs, temp, ordered: true));
                 }
-                if (typeName.FullName.Equals("PSCustomObject", StringComparison.OrdinalIgnoreCase))
+                if (typeName.FullName.Equals("PSCustomObject", StringComparison.OrdinalIgnoreCase)
+                    || typeName.FullName.Equals("System.Management.Automation.PSCustomObject", StringComparison.OrdinalIgnoreCase))
                 {
                     // pure laziness here - we should construct the PSObject directly.  Instead, we're relying on the conversion
                     // to create the PSObject from an OrderedDictionary.
@@ -5193,7 +5194,8 @@ namespace System.Management.Automation.Language
                 childExpr = Compile(convertExpressionAst.Child);
             }
 
-            if (typeName.FullName.Equals("PSCustomObject", StringComparison.OrdinalIgnoreCase))
+            if (typeName.FullName.Equals("PSCustomObject", StringComparison.OrdinalIgnoreCase)
+               || typeName.FullName.Equals("System.Management.Automation.PSCustomObject", StringComparison.OrdinalIgnoreCase))
             {
                 // We can't use the normal PSConvertBinder because it is strongly typed, and we
                 // play some funny games with the PSCustomObject type (externally, it's just an

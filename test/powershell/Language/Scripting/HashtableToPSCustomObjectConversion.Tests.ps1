@@ -15,11 +15,11 @@
         },
         @{ Name = 'Hashtable conversion to PSCustomObject succeeds (Insertion Order is not retained)';
            Cmd = "[pscustomobject][hashtable]`@{one=1;two=2}";
-           ExpectedType = 'System.Management.automation.psobject'
+           ExpectedType = 'System.Management.automation.PSCustomObject'
         },
         @{ Name = 'Hashtable(Stored in a variable) conversion to  PSCustomObject succeeds (Insertion Order is not retained)';
            Cmd = "`$ht = @{one=1;two=2};[pscustomobject]`$ht";
-           ExpectedType = 'System.Management.automation.psobject'
+           ExpectedType = 'System.Management.automation.PSCustomObject'
         }
     )
 
