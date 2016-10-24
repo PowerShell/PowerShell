@@ -9,7 +9,7 @@ function getIndex
 	return -1
 }
 
-Describe "CIM Objects are adapted properly" {
+Describe "CIM Objects are adapted properly" -Tag @("CI") {
     BeforeAll {
         if ( ! $IsWindows ) {
             $PSDefaultParameterValues["it:pending"] = $true

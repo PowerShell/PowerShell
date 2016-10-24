@@ -3,7 +3,7 @@ try {
         $global:PSDefaultParameterValues['it:pending'] = $true
         $script:SkipTests = $true
     }
-    Describe "New-CimSession" {
+    Describe "New-CimSession" -Tag @("CI") {
         BeforeAll {
             $sessions = @()
         }

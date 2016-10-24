@@ -2,7 +2,7 @@ Try {
     if ( ! $IsWindows ) {
         $PSDefaultParameterValues["it:pending"] = $true
     }
-    Describe "CimInstance cmdlet tests" {
+    Describe "CimInstance cmdlet tests" -Tag @("CI") {
         BeforeAll {
             if ( ! $IsWindows ) { return }
             $instance = get-ciminstance cim_computersystem

@@ -3,7 +3,7 @@ try {
     if ( ! $IsWindows ) {
         $PSDefaultParameterValues['it:skip'] = $true
     }
-    Describe " WSMan SessionOption object" {
+    Describe " WSMan SessionOption object" -Tag @("CI") {
         It "The SessionOption type exists" {
             "Microsoft.WSMan.Management.SessionOption" -as "Type" | Should Not BeNullOrEmpty
         }
