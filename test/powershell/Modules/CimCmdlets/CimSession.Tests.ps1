@@ -1,7 +1,6 @@
 try {
     if ( ! $IsWindows ) {
-        $global:PSDefaultParameterValues['it:pending'] = $true
-        $script:SkipTests = $true
+        $PSDefaultParameterValues['it:pending'] = $true
     }
     Describe "New-CimSession" -Tag @("CI") {
         BeforeAll {
@@ -18,14 +17,14 @@ try {
         It "A cim session can be created" {
             $sessionName = [guid]::NewGuid()
             $session = New-CimSession -ComputerName . -name $sessionName
-            $sessions += $session 
+            $sessions += $session
             $session.Name | Should be $sessionName
             $session.InstanceId  | should BeOfType "System.Guid"
         }
         It "A Cim session can be retrieved" {
             $sessionName = [guid]::NewGuid()
             $session = New-CimSession -ComputerName . -name $sessionName
-            $sessions += $session 
+            $sessions += $session
             (get-cimsession -Name $sessionName).InstanceId | should be $session.InstanceId
             (get-cimsession -Id $session.Id).InstanceId | should be $session.InstanceId
             (get-cimsession -InstanceId $session.InstanceId).InstanceId | should be $session.InstanceId
@@ -41,5 +40,5 @@ try {
     }
 }
 finally {
-    $global:PSDefaultParameterValues.remove("it:pending")
+    $PSDefaultParameterValues.remove('it:pending')
 }

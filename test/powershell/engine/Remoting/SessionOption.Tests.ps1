@@ -1,5 +1,4 @@
 try {
-    $defaultParameterValues = $PSDefaultParameterValues.Clone()
     if ( ! $IsWindows ) {
         $PSDefaultParameterValues['it:skip'] = $true
     }
@@ -27,7 +26,7 @@ try {
         It "The values of SessionOption may be set" {
             $result = [Microsoft.WSMan.Management.SessionOption]::new()
             $result.SkipCACheck = $true
-            $result.SkipCNCheck = $true 
+            $result.SkipCNCheck = $true
             $result.SkipRevocationCheck = $true
             $result.UseUtf16 = $True
             $result.UseEncryption = $false
@@ -36,7 +35,7 @@ try {
             $result.OperationTimeout = 10
             $result.ProxyAccessType = "ProxyAutoDetect"
             $result.ProxyCredential = [System.Net.NetworkCredential]::new("user","pass")
-            
+
             $result.SkipCACheck         | should be $true
             $result.SkipCNCheck         | should be $true
             $result.SkipRevocationCheck | should be $true
@@ -51,5 +50,5 @@ try {
     }
 }
 finally {
-    $global:PSDefaultParameterValues = $defaultParameterValues
+    $PSDefaultParameterValues.remove("it:skip")
 }

@@ -1,6 +1,6 @@
 Try {
     if ( ! $IsWindows ) {
-        $PSDefaultParameterValues["it:pending"] = $true
+        $PSDefaultParameterValues['it:pending'] = $true
     }
     Describe "CimInstance cmdlet tests" -Tag @("CI") {
         BeforeAll {
@@ -33,9 +33,9 @@ Try {
             catch {
                 $_.FullyQualifiedErrorId | should be "HRESULT 0x80041010,Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand"
             }
-        }        
+        }
     }
 }
 finally {
-    $PSDefaultParameterValues.Remove("it:pending")
+    $PSDefaultParameterValues.Remove('it:pending')
 }
