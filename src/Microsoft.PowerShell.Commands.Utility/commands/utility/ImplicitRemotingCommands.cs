@@ -14,6 +14,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -542,7 +543,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return new ErrorDetails(
-                this.GetType().Assembly,
+                typeof(ImplicitRemotingCommandBase).GetTypeInfo().Assembly,
                 "ImplicitRemotingStrings",
                 errorId,
                 args);
@@ -740,7 +741,7 @@ namespace Microsoft.PowerShell.Commands
             // output a generic error message if exception is not recognized
             //
             errorId = "ErrorFromRemoteCommand";
-            errorDetails = this.GetErrorDetails(errorId, "Get-Command", runtimeException.Message);
+            errorDetails = this.GetErrorDetails(errorId, commandName, runtimeException.Message);
 
             errorRecord = new ErrorRecord(
                 new RuntimeException(errorDetails.Message, runtimeException),
@@ -1012,7 +1013,7 @@ namespace Microsoft.PowerShell.Commands
             return ConvertTo<T>(commandName, property.Value, nullOk);
         }
 
-        private List<T> RehydrateList<T>(string commandName, PSObject deserializedObject, string propertyName, Converter<PSObject, T> itemRehydrator)
+        private List<T> RehydrateList<T>(string commandName, PSObject deserializedObject, string propertyName, Func<PSObject, T> itemRehydrator)
         {
             Dbg.Assert(deserializedObject != null, "deserializedObject parameter != null");
 
@@ -1026,7 +1027,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private List<T> RehydrateList<T>(string commandName, object deserializedList, Converter<PSObject, T> itemRehydrator)
+        private List<T> RehydrateList<T>(string commandName, object deserializedList, Func<PSObject, T> itemRehydrator)
         {
             if (itemRehydrator == null)
             {
@@ -1050,7 +1051,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private Dictionary<K, V> RehydrateDictionary<K, V>(string commandName, PSObject deserializedObject, string propertyName, Converter<PSObject, V> valueRehydrator)
+        private Dictionary<K, V> RehydrateDictionary<K, V>(string commandName, PSObject deserializedObject, string propertyName, Func<PSObject, V> valueRehydrator)
         {
             Dbg.Assert(deserializedObject != null, "deserializedObject parameter != null");
             Dbg.Assert(!string.IsNullOrEmpty(propertyName), "propertyName parameter != null");
@@ -3082,9 +3083,10 @@ function Get-PSImplicitRemotingClientSideParameters
                 string applicationArgumentsFile = Path.Combine(moduleRootDirectory.FullName, "ApplicationArguments.xml");
                 result.Add(applicationArgumentsFile);
 
-                using (XmlWriter xw = XmlTextWriter.Create(applicationArgumentsFile))
+                using (var stream = new FileStream(applicationArgumentsFile, FileMode.Create, FileAccess.Write, FileShare.Read))
+                using (var xmlWriter = XmlWriter.Create(stream))
                 {
-                    Serializer serializer = new Serializer(xw);
+                    Serializer serializer = new Serializer(xmlWriter);
                     serializer.Serialize(applicationArguments);
                     serializer.Done();
                 }
