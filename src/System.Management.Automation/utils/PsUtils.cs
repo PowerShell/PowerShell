@@ -104,6 +104,7 @@ namespace System.Management.Automation
         {
             int parentPid = 0;
 
+#if !UNIX
             PlatformInvokes.PROCESSENTRY32 pe32 = new PlatformInvokes.PROCESSENTRY32 { };
             pe32.dwSize = (uint)ClrFacade.SizeOf<PlatformInvokes.PROCESSENTRY32>();
 
@@ -127,6 +128,7 @@ namespace System.Management.Automation
 
                 } while (PlatformInvokes.Process32Next(hSnapshot, ref pe32));
             }
+#endif
 
             if (parentPid == 0)
                 return null;
