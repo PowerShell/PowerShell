@@ -502,6 +502,31 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         }
     }
 
+    /// <summary>
+    /// Stub for SafeHandleMinusOneIsInvalid
+    /// </summary>
+    public abstract class SafeHandleMinusOneIsInvalid : SafeHandle
+    {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        protected SafeHandleMinusOneIsInvalid(bool ownsHandle) 
+            : base(new IntPtr(-1), ownsHandle)
+        {
+        }
+
+        /// <summary>
+        /// IsInvalid
+        /// </summary>
+        public override bool IsInvalid
+        {
+            get
+            {
+                return handle == new IntPtr(-1);
+            }
+        }
+    }
+
     #endregion SafeHandle_Related
 
     #region Misc_Types
