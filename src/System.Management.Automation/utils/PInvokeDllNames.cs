@@ -132,6 +132,9 @@ namespace System.Management.Automation
         internal const string ReadConsoleInputDllName = "api-ms-win-core-console-l1-1-0.dll";                /*117*/
         internal const string GetVersionExDllName = "api-ms-win-core-sysinfo-l1-1-0.dll";                    /*118*/
         internal const string FormatMessageDllName = "api-ms-win-core-localization-l1-2-0.dll";              /*119*/
+        internal const string CreateToolhelp32SnapshotDllName = "api-ms-win-core-toolhelp-l1-1-0";           /*120*/
+        internal const string Process32FirstDllName = "api-ms-win-core-toolhelp-l1-1-0";                     /*121*/
+        internal const string Process32NextDllName = "api-ms-win-core-toolhelp-l1-1-0";                      /*122*/               
 #else
         internal const string QueryDosDeviceDllName = "kernel32.dll";                                        /*1*/
         internal const string CreateSymbolicLinkDllName = "kernel32.dll";                                    /*2*/
@@ -251,6 +254,9 @@ namespace System.Management.Automation
         internal const string ReadConsoleInputDllName = "kernel32.dll";                                      /*117*/
         internal const string GetVersionExDllName = "kernel32.dll";                                          /*118*/
         internal const string FormatMessageDllName = "wevtapi.dll";                                          /*119*/
+        internal const string CreateToolhelp32SnapshotDllName = "kernel32.dll";                              /*120*/
+        internal const string Process32FirstDllName = "kernel32.dll";                                        /*121*/
+        internal const string Process32NextDllName = "kernel32.dll";                                         /*122*/                
 #endif
     }
 }
