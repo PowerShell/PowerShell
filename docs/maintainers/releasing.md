@@ -123,6 +123,8 @@ package will instead be created.
 Windows
 -------
 
+### Overview
+
 The `Start-PSPackage` function delegates to `New-MSIPackage` which creates a Windows Installer Package of PowerShell.
 The packages *must* be published in release mode, so use `Start-PSBuild -CrossGen -Configuration Release`.
 It uses the Windows Installer XML Toolset (WiX) to generate a `PowerShell_<version>.msi`,
@@ -133,3 +135,30 @@ It can be uninstalled through Programs and Features.
 
 Note that PowerShell is always self-contained, thus using it does not require installing it.
 The output of `Start-PSBuild` includes a `powershell.exe` executable which can simply be launched.
+
+### Package Creation
+
+To create release packages, create a new branch at the release tag. For example:
+``` powershell
+git checkout -b local-alpha-11-release-branch v.6.0.0-alpha.11
+``` 
+
+#### Windows 10 and Server 2016 
+
+``` powershell
+Import-Module .\build.psm1 
+Start-PSBootstrap -Package 
+Start-PSBuild -Clean -CrossGen -Runtime win10-x64 -Configuration Release 
+Start-PSPackage -Type msi
+Start-PSPackage -Type zip
+```
+
+#### Windows 8.1 and Server 2012r2 
+
+``` powershell
+Import-Module .\build.psm1 
+Start-PSBootstrap -Package 
+Start-PSBuild -Clean -CrossGen -Runtime win81-x64 -Configuration Release 
+Start-PSPackage -Type msi -WindowsDownLevel win81-x64  
+Start-PSPackage -Type zip -WindowsDownLevel win81-x64
+```
