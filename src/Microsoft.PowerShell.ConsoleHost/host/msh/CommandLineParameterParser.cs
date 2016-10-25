@@ -19,15 +19,11 @@ namespace Microsoft.PowerShell
 {
     internal class CommandLineParameterParser
     {
-        internal CommandLineParameterParser(ConsoleHost p, Version ver, string bannerText, string helpText)
+        internal CommandLineParameterParser(ConsoleHost p, string bannerText, string helpText)
         {
-            Dbg.Assert(p != null, "parent ConsoleHost must be supplied");
-
             _bannerText = bannerText;
             _helpText = helpText;
-            _parent = p;
-            _ui = (ConsoleHostUserInterface)p.UI;
-            _ver = ver;
+            _ui = (p != null) ? (ConsoleHostUserInterface)p.UI : null;
         }
 
         internal bool AbortStartup
@@ -220,16 +216,16 @@ namespace Microsoft.PowerShell
 
         private void ShowHelp()
         {
-            _ui.WriteLine("");
+            ConsoleWriteLine("");
             if (_helpText == null)
             {
-                _ui.WriteLine(CommandLineParameterParserStrings.DefaultHelp);
+                ConsoleWriteLine(CommandLineParameterParserStrings.DefaultHelp);
             }
             else
             {
-                _ui.Write(_helpText);
+                ConsoleWrite(_helpText);
             }
-            _ui.WriteLine("");
+            ConsoleWriteLine("");
         }
 
         private void DisplayBanner()
@@ -237,8 +233,8 @@ namespace Microsoft.PowerShell
             // If banner text is not supplied do nothing.
             if (!String.IsNullOrEmpty(_bannerText))
             {
-                _ui.WriteLine(_bannerText);
-                _ui.WriteLine();
+                ConsoleWriteLine(_bannerText);
+                ConsoleWriteLine("");
             }
         }
 
@@ -715,9 +711,33 @@ namespace Microsoft.PowerShell
                 "if exit code is failure, then abortstartup should be true");
         }
 
+        private void ConsoleWriteLine(string msg)
+        {
+            if (_ui != null)
+            {
+                _ui.WriteLine(msg);
+            }
+        }
+
+        private void ConsoleWrite(string msg)
+        {
+            if (_ui != null)
+            {
+                _ui.Write(msg);
+            }
+        }
+
+        private void ConsoleWriteErrorLine(string msg)
+        {
+            if (_ui != null)
+            {
+                _ui.WriteErrorLine(msg);
+            }
+        }
+
         private void WriteCommandLineError(string msg, bool showHelp = false, bool showBanner = false)
         {
-            _ui.WriteErrorLine(msg);
+            ConsoleWriteErrorLine(msg);
             _showHelp = showHelp;
             _showBanner = showBanner;
             _abortStartup = true;
@@ -755,7 +775,7 @@ namespace Microsoft.PowerShell
             ++i;
             if (i >= args.Length)
             {
-                _ui.WriteErrorLine(
+                ConsoleWriteErrorLine(
                     StringUtil.Format(
                         resourceStr,
                         sb.ToString()));
@@ -771,7 +791,7 @@ namespace Microsoft.PowerShell
             }
             catch (ArgumentException)
             {
-                _ui.WriteErrorLine(
+                ConsoleWriteErrorLine(
                     StringUtil.Format(
                         CommandLineParameterParserStrings.BadFormatParameterValue,
                         args[i],
@@ -787,7 +807,7 @@ namespace Microsoft.PowerShell
             ++i;
             if (i >= args.Length)
             {
-                _ui.WriteErrorLine(resourceStr);
+                ConsoleWriteErrorLine(resourceStr);
 
                 _showHelp = true;
                 _abortStartup = true;
@@ -804,7 +824,7 @@ namespace Microsoft.PowerShell
             {
                 // we've already set the command, so squawk
 
-                _ui.WriteErrorLine(CommandLineParameterParserStrings.CommandAlreadySpecified);
+                ConsoleWriteErrorLine(CommandLineParameterParserStrings.CommandAlreadySpecified);
                 _showHelp = true;
                 _abortStartup = true;
                 _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
@@ -814,7 +834,7 @@ namespace Microsoft.PowerShell
             ++i;
             if (i >= args.Length)
             {
-                _ui.WriteErrorLine(CommandLineParameterParserStrings.MissingCommandParameter);
+                ConsoleWriteErrorLine(CommandLineParameterParserStrings.MissingCommandParameter);
                 _showHelp = true;
                 _abortStartup = true;
                 _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
@@ -830,7 +850,7 @@ namespace Microsoft.PowerShell
                 // decoding failed
                 catch
                 {
-                    _ui.WriteErrorLine(CommandLineParameterParserStrings.BadCommandValue);
+                    ConsoleWriteErrorLine(CommandLineParameterParserStrings.BadCommandValue);
                     _showHelp = true;
                     _abortStartup = true;
                     _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
@@ -849,7 +869,7 @@ namespace Microsoft.PowerShell
                 {
                     // there are more parameters to -command than -, which is an error.
 
-                    _ui.WriteErrorLine(CommandLineParameterParserStrings.TooManyParametersToCommand);
+                    ConsoleWriteErrorLine(CommandLineParameterParserStrings.TooManyParametersToCommand);
                     _showHelp = true;
                     _abortStartup = true;
                     _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
@@ -858,7 +878,7 @@ namespace Microsoft.PowerShell
 
                 if (!Console.IsInputRedirected)
                 {
-                    _ui.WriteErrorLine(CommandLineParameterParserStrings.StdinNotRedirected);
+                    ConsoleWriteErrorLine(CommandLineParameterParserStrings.StdinNotRedirected);
                     _showHelp = true;
                     _abortStartup = true;
                     _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
@@ -899,7 +919,7 @@ namespace Microsoft.PowerShell
         {
             if (_collectedArgs.Count != 0)
             {
-                _ui.WriteErrorLine(CommandLineParameterParserStrings.ArgsAlreadySpecified);
+               ConsoleWriteErrorLine(CommandLineParameterParserStrings.ArgsAlreadySpecified);
                 _showHelp = true;
                 _abortStartup = true;
                 _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
@@ -909,7 +929,7 @@ namespace Microsoft.PowerShell
             ++i;
             if (i >= args.Length)
             {
-                _ui.WriteErrorLine(CommandLineParameterParserStrings.MissingArgsValue);
+                ConsoleWriteErrorLine(CommandLineParameterParserStrings.MissingArgsValue);
                 _showHelp = true;
                 _abortStartup = true;
                 _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
@@ -931,7 +951,7 @@ namespace Microsoft.PowerShell
             {
                 // decoding failed
 
-                _ui.WriteErrorLine(CommandLineParameterParserStrings.BadArgsValue);
+                ConsoleWriteErrorLine(CommandLineParameterParserStrings.BadArgsValue);
                 _showHelp = true;
                 _abortStartup = true;
                 _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
@@ -946,7 +966,6 @@ namespace Microsoft.PowerShell
         private bool _namedPipeServerMode;
         private bool _sshServerMode;
         private string _configurationName;
-        private ConsoleHost _parent;
         private ConsoleHostUserInterface _ui;
         private bool _showHelp;
         private bool _showBanner = true;
@@ -969,7 +988,6 @@ namespace Microsoft.PowerShell
         private bool _wasCommandEncoded;
         private uint _exitCode = ConsoleHost.ExitCodeSuccess;
         private bool _dirty;
-        private Version _ver;
         private Serialization.DataFormat _outFormat = Serialization.DataFormat.Text;
         private Serialization.DataFormat _inFormat = Serialization.DataFormat.Text;
         private Collection<CommandParameter> _collectedArgs = new Collection<CommandParameter>();
