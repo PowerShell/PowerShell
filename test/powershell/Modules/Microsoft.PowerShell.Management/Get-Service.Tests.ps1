@@ -11,25 +11,23 @@ Describe "Get-Service cmdlet tests" -Tags "CI" {
   AfterAll {
       $global:PSDefaultParameterValues = $originalDefaultParameterValues
   }
+
+  $testCases = 
+    @{ data = $null; value = 'null' },
+    @{ data = [String]::Empty; value = 'empty string' }
+
   Context 'Check null or empty value to the -Name parameter' {
-    It 'Should throw if null is passed to -Name parameter' {
-      try {Get-Service -Name $null }
-      catch [System.Management.Automation.ParameterBindingException] {$_.Exception.ErrorId | Should Be 'ParameterArgumentValidationError'}
-    }
-    It 'Should throw if empty string is passed to -Name parameter' {
-      try {Get-Service -Name [String]::Empty }
+    It 'Should throw if <value> is passed to -Name parameter' -TestCases $testCases {
+      param($data)
+      try {Get-Service -Name $data }
       catch [System.Management.Automation.ParameterBindingException] {$_.Exception.ErrorId | Should Be 'ParameterArgumentValidationError'}
     }
   }
   Context 'Check null or empty value to the -Name parameter via pipeline' {
-    It 'Should throw if null is passed through pipeline to -Name parameter' {
-      try {$null | Get-Service -ErrorAction Stop}
+    It 'Should throw if <value> is passed through pipeline to -Name parameter' -TestCases $testCases {
+      param($data)
+      try {$data | Get-Service -ErrorAction Stop}
       catch [System.Management.Automation.ParameterBindingException] {$_.Exception.ErrorId | Should Be 'ParameterArgumentValidationError'}
-    }
-    It 'Should throw if empty string is passed through pipeline to -Name parameter' {
-      try {[String]::Empty | Get-Service -ErrorAction Stop}
-      catch [System.Management.Automation.ParameterBindingException] {$_.Exception.ErrorId | Should Be 'ParameterArgumentValidationError'}
-
     }
   }
 }
