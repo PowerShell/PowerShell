@@ -2437,21 +2437,24 @@ function Start-CrossGen {
         Generate-CrossGenAssembly -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath
     }
 
-    <#
-     # The latest dotnet.exe from .NET Core 1.1.0 preview packages starts
-     # to check the existence of all TPA assemblies, including those built
-     # from local projects (e.g. powershell assemblies). The TPA assemblies
-     # in '.deps.json' are IL assemblies, so we cannot remove those ILs.
-     #
-    Write-Verbose "PowerShell Ngen assemblies have been generated, deleting ILs..." -Verbose
+    #
+    # With the latest dotnet.exe, the default load context is only able to load TPAs, and TPA
+    # only contains IL assembly names. In order to make the default load context able to load
+    # the NI PS assemblies, we need to replace the IL PS assemblies with the corresponding NI
+    # PS assemblies, but with the same IL assembly names.
+    #
+    Write-Verbose "PowerShell Ngen assemblies have been generated. Deploying ..." -Verbose
     foreach ($assemblyName in $psCoreAssemblyList) {
         # Remove the IL assembly and its symbols.
         $assemblyPath = Join-Path $PublishPath $assemblyName
-        $symbolsPath = $assemblyPath.Replace(".dll", ".pdb")
-        Remove-Item $assemblyPath -Force -ErrorAction SilentlyContinue
-        Remove-Item $symbolsPath -Force -ErrorAction SilentlyContinue
+        $symbolsPath = [System.IO.Path]::ChangeExtension($assemblyPath, ".pdb")
+        Remove-Item $assemblyPath -Force -ErrorAction Stop
+        Remove-Item $symbolsPath -Force -ErrorAction Stop
+
+        # Rename the corresponding ni.dll assembly to be the same as the IL assembly
+        $niAssemblyPath = [System.IO.Path]::ChangeExtension($assemblyPath, "ni.dll")
+        Rename-Item $niAssemblyPath $assemblyPath -Force -ErrorAction Stop
     }
-    #>
 }
 
 # Cleans the PowerShell repo
