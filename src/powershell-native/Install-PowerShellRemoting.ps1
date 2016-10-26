@@ -142,7 +142,7 @@ else
     Write-Verbose "Using PowerShell Version: $targetPsVersion" -Verbose
 }
 
-$pluginBasePath = Join-Path "$env:WINDIR\System32\PowerShell" $powerShellVersion
+$pluginBasePath = Join-Path "$env:WINDIR\System32\PowerShell" $targetPsVersion
 
 $resolvedPluginAbsolutePath = ""
 if (! (Test-Path $pluginBasePath))
