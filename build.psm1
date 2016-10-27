@@ -1010,7 +1010,7 @@ function Start-PSBootstrap {
                 log "Cmake is already installed. Skipping installation."
             } else {
                 log "Cmake not present. Installing cmake."
-                choco install cmake -y --version 3.6.0
+                Start-NativeExecution { choco install cmake -y --version 3.6.0 }
                 if (-not ($machinePath.ToLower().Contains($cmakePath.ToLower()))) {
                     log "Adding $cmakePath to Path environment variable"
                     $env:Path += ";$cmakePath"
@@ -1025,7 +1025,7 @@ function Start-PSBootstrap {
 
             if (-not $sdkPresent) {
                 log "Windows 10 SDK not present. Installing $packageName."
-                choco install windows-sdk-10.0 -y
+                Start-NativeExecution { choco install windows-sdk-10.0 -y }
             } else {
                 log "Windows 10 SDK present. Skipping installation."
             }
