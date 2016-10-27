@@ -14,16 +14,164 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Internal;
 using System.Diagnostics;
 using Dbg = System.Management.Automation.Diagnostics;
+using System.Management.Automation.Host;
+using System.Collections.Generic;
+using System.Security;
 
 namespace Microsoft.PowerShell
 {
+    /// <summary>
+    /// Null class implementation of PSHostUserInterface used when no console is available and when PowerShell
+    /// is run in servmode where no console is needed.
+    /// </summary>
+    internal class NullHostUserInterface : PSHostUserInterface
+    {
+        /// <summary>
+        /// RawUI
+        /// </summary>
+        public override PSHostRawUserInterface RawUI
+        {
+            get { return null; }
+        }
+
+        /// <summary>
+        /// Prompt
+        /// </summary>
+        /// <param name="caption"></param>
+        /// <param name="message"></param>
+        /// <param name="descriptions"></param>
+        /// <returns></returns>
+        public override Dictionary<string, PSObject> Prompt(string caption, string message, Collection<FieldDescription> descriptions)
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
+        /// PromptForChoice
+        /// </summary>
+        /// <param name="caption"></param>
+        /// <param name="message"></param>
+        /// <param name="choices"></param>
+        /// <param name="defaultChoice"></param>
+        /// <returns></returns>
+        public override int PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices, int defaultChoice)
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
+        /// PromptForCredential
+        /// </summary>
+        /// <param name="caption"></param>
+        /// <param name="message"></param>
+        /// <param name="userName"></param>
+        /// <param name="targetName"></param>
+        /// <returns></returns>
+        public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName)
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
+        /// PromptForCredential
+        /// </summary>
+        /// <param name="caption"></param>
+        /// <param name="message"></param>
+        /// <param name="userName"></param>
+        /// <param name="targetName"></param>
+        /// <param name="allowedCredentialTypes"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
+        /// ReadLine
+        /// </summary>
+        /// <returns></returns>
+        public override string ReadLine()
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
+        /// ReadLineAsSecureString
+        /// </summary>
+        /// <returns></returns>
+        public override SecureString ReadLineAsSecureString()
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
+        /// Write
+        /// </summary>
+        /// <param name="value"></param>
+        public override void Write(string value)
+        { }
+
+        /// <summary>
+        /// Write
+        /// </summary>
+        /// <param name="foregroundColor"></param>
+        /// <param name="backgroundColor"></param>
+        /// <param name="value"></param>
+        public override void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
+        { }
+
+        /// <summary>
+        /// WriteDebugLine
+        /// </summary>
+        /// <param name="message"></param>
+        public override void WriteDebugLine(string message)
+        { }
+
+        /// <summary>
+        /// WriteErrorLine
+        /// </summary>
+        /// <param name="value"></param>
+        public override void WriteErrorLine(string value)
+        { }
+
+        /// <summary>
+        /// WriteLine
+        /// </summary>
+        /// <param name="value"></param>
+        public override void WriteLine(string value)
+        { }
+
+        /// <summary>
+        /// WriteProgress
+        /// </summary>
+        /// <param name="sourceId"></param>
+        /// <param name="record"></param>
+        public override void WriteProgress(long sourceId, ProgressRecord record)
+        { }
+
+        /// <summary>
+        /// WriteVerboseLine
+        /// </summary>
+        /// <param name="message"></param>
+        public override void WriteVerboseLine(string message)
+        { }
+
+        /// <summary>
+        /// WriteWarningLine
+        /// </summary>
+        /// <param name="message"></param>
+        public override void WriteWarningLine(string message)
+        { }
+    }
+
     internal class CommandLineParameterParser
     {
         internal CommandLineParameterParser(ConsoleHost p, string bannerText, string helpText)
         {
             _bannerText = bannerText;
             _helpText = helpText;
-            _ui = (p != null) ? (ConsoleHostUserInterface)p.UI : null;
+            _hostUI = (p != null) ? p.UI : (new NullHostUserInterface());
         }
 
         internal bool AbortStartup
@@ -216,16 +364,16 @@ namespace Microsoft.PowerShell
 
         private void ShowHelp()
         {
-            ConsoleWriteLine("");
+            _hostUI.WriteLine("");
             if (_helpText == null)
             {
-                ConsoleWriteLine(CommandLineParameterParserStrings.DefaultHelp);
+                _hostUI.WriteLine(CommandLineParameterParserStrings.DefaultHelp);
             }
             else
             {
-                ConsoleWrite(_helpText);
+                _hostUI.Write(_helpText);
             }
-            ConsoleWriteLine("");
+            _hostUI.WriteLine("");
         }
 
         private void DisplayBanner()
@@ -233,8 +381,8 @@ namespace Microsoft.PowerShell
             // If banner text is not supplied do nothing.
             if (!String.IsNullOrEmpty(_bannerText))
             {
-                ConsoleWriteLine(_bannerText);
-                ConsoleWriteLine("");
+                _hostUI.WriteLine(_bannerText);
+                _hostUI.WriteLine();
             }
         }
 
@@ -574,9 +722,9 @@ namespace Microsoft.PowerShell
                 else if (MatchSwitch(switchKey, "wait", "w"))
                 {
                     // This does not need to be localized: its chk only 
-
-                    _ui.WriteToConsole("Waiting - type enter to continue:", false);
-                    _ui.ReadLine();
+                    
+                    ((ConsoleHostUserInterface)_hostUI).WriteToConsole("Waiting - type enter to continue:", false);
+                    _hostUI.ReadLine();
                 }
 
                 // this option is useful for testing the initial InitialSessionState experience
@@ -624,7 +772,7 @@ namespace Microsoft.PowerShell
                     }
                     if (moduleCount < 1)
                     {
-                        _ui.WriteErrorLine("No modules specified for -module option");
+                        _hostUI.WriteErrorLine("No modules specified for -module option");
                     }
                 }
 #endif
@@ -711,33 +859,9 @@ namespace Microsoft.PowerShell
                 "if exit code is failure, then abortstartup should be true");
         }
 
-        private void ConsoleWriteLine(string msg)
-        {
-            if (_ui != null)
-            {
-                _ui.WriteLine(msg);
-            }
-        }
-
-        private void ConsoleWrite(string msg)
-        {
-            if (_ui != null)
-            {
-                _ui.Write(msg);
-            }
-        }
-
-        private void ConsoleWriteErrorLine(string msg)
-        {
-            if (_ui != null)
-            {
-                _ui.WriteErrorLine(msg);
-            }
-        }
-
         private void WriteCommandLineError(string msg, bool showHelp = false, bool showBanner = false)
         {
-            ConsoleWriteErrorLine(msg);
+            _hostUI.WriteErrorLine(msg);
             _showHelp = showHelp;
             _showBanner = showBanner;
             _abortStartup = true;
@@ -775,7 +899,7 @@ namespace Microsoft.PowerShell
             ++i;
             if (i >= args.Length)
             {
-                ConsoleWriteErrorLine(
+                _hostUI.WriteErrorLine(
                     StringUtil.Format(
                         resourceStr,
                         sb.ToString()));
@@ -791,7 +915,7 @@ namespace Microsoft.PowerShell
             }
             catch (ArgumentException)
             {
-                ConsoleWriteErrorLine(
+                _hostUI.WriteErrorLine(
                     StringUtil.Format(
                         CommandLineParameterParserStrings.BadFormatParameterValue,
                         args[i],
@@ -807,7 +931,7 @@ namespace Microsoft.PowerShell
             ++i;
             if (i >= args.Length)
             {
-                ConsoleWriteErrorLine(resourceStr);
+                _hostUI.WriteErrorLine(resourceStr);
 
                 _showHelp = true;
                 _abortStartup = true;
@@ -824,7 +948,7 @@ namespace Microsoft.PowerShell
             {
                 // we've already set the command, so squawk
 
-                ConsoleWriteErrorLine(CommandLineParameterParserStrings.CommandAlreadySpecified);
+                _hostUI.WriteErrorLine(CommandLineParameterParserStrings.CommandAlreadySpecified);
                 _showHelp = true;
                 _abortStartup = true;
                 _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
@@ -834,7 +958,7 @@ namespace Microsoft.PowerShell
             ++i;
             if (i >= args.Length)
             {
-                ConsoleWriteErrorLine(CommandLineParameterParserStrings.MissingCommandParameter);
+                _hostUI.WriteErrorLine(CommandLineParameterParserStrings.MissingCommandParameter);
                 _showHelp = true;
                 _abortStartup = true;
                 _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
@@ -850,7 +974,7 @@ namespace Microsoft.PowerShell
                 // decoding failed
                 catch
                 {
-                    ConsoleWriteErrorLine(CommandLineParameterParserStrings.BadCommandValue);
+                    _hostUI.WriteErrorLine(CommandLineParameterParserStrings.BadCommandValue);
                     _showHelp = true;
                     _abortStartup = true;
                     _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
@@ -869,7 +993,7 @@ namespace Microsoft.PowerShell
                 {
                     // there are more parameters to -command than -, which is an error.
 
-                    ConsoleWriteErrorLine(CommandLineParameterParserStrings.TooManyParametersToCommand);
+                    _hostUI.WriteErrorLine(CommandLineParameterParserStrings.TooManyParametersToCommand);
                     _showHelp = true;
                     _abortStartup = true;
                     _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
@@ -878,7 +1002,7 @@ namespace Microsoft.PowerShell
 
                 if (!Console.IsInputRedirected)
                 {
-                    ConsoleWriteErrorLine(CommandLineParameterParserStrings.StdinNotRedirected);
+                    _hostUI.WriteErrorLine(CommandLineParameterParserStrings.StdinNotRedirected);
                     _showHelp = true;
                     _abortStartup = true;
                     _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
@@ -919,7 +1043,7 @@ namespace Microsoft.PowerShell
         {
             if (_collectedArgs.Count != 0)
             {
-               ConsoleWriteErrorLine(CommandLineParameterParserStrings.ArgsAlreadySpecified);
+                _hostUI.WriteErrorLine(CommandLineParameterParserStrings.ArgsAlreadySpecified);
                 _showHelp = true;
                 _abortStartup = true;
                 _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
@@ -929,7 +1053,7 @@ namespace Microsoft.PowerShell
             ++i;
             if (i >= args.Length)
             {
-                ConsoleWriteErrorLine(CommandLineParameterParserStrings.MissingArgsValue);
+                _hostUI.WriteErrorLine(CommandLineParameterParserStrings.MissingArgsValue);
                 _showHelp = true;
                 _abortStartup = true;
                 _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
@@ -951,7 +1075,7 @@ namespace Microsoft.PowerShell
             {
                 // decoding failed
 
-                ConsoleWriteErrorLine(CommandLineParameterParserStrings.BadArgsValue);
+                _hostUI.WriteErrorLine(CommandLineParameterParserStrings.BadArgsValue);
                 _showHelp = true;
                 _abortStartup = true;
                 _exitCode = ConsoleHost.ExitCodeBadCommandLineParameter;
@@ -966,7 +1090,7 @@ namespace Microsoft.PowerShell
         private bool _namedPipeServerMode;
         private bool _sshServerMode;
         private string _configurationName;
-        private ConsoleHostUserInterface _ui;
+        private PSHostUserInterface _hostUI;
         private bool _showHelp;
         private bool _showBanner = true;
         private bool _noInteractive;
