@@ -1,26 +1,8 @@
-﻿function Get-RemoteRunspace {
-    $wc = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
-
-    # Use AppVeyor credentials if running in AppVeyor, rather than implicit credentials.
-    try
-    {
-	    $appveyorRemoteCredential = Import-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml"
-    }
-    catch { }
-    if ($appveyorRemoteCredential)
-    {
-        Write-Verbose "Using global AppVeyor credential";
-        $wc.Credential = $appveyorRemoteCredential
-    }
-    else
-    {
-        Write-Verbose "Using implicit credentials"
-    }
-
-    $remoteRunspace = [runspacefactory]::CreateRunspace($host, $wc)
-    $remoteRunspace.Open()
-
-    return $remoteRunspace
+﻿if (-not (Get-Module TestRemoting -ErrorAction SilentlyContinue))
+{
+    $root = git rev-parse --show-toplevel
+    $remotingModule = Join-Path $root test/powershell/Common/TestRemoting.psm1
+    Import-Module $remotingModule
 }
 
 Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
@@ -76,7 +58,7 @@ Describe "InvokeOnRunspace method on remote runspace" -tags "Feature" {
     BeforeAll {
 
         if ($IsWindows) {
-            $script:remoteRunspace = Get-RemoteRunspace
+            $script:remoteRunspace = New-RemoteRunspace
         }
     }
 
