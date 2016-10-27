@@ -1,10 +1,13 @@
 Describe "Native Command Processor" -tags "CI" {
-    # Find where test/powershell is so we can find the createchildprocess command relative to it
-    $powershellTestDir = $PSScriptRoot
-    while ($powershellTestDir -notmatch 'test[\\/]powershell$') {
-        $powershellTestDir = Split-Path $powershellTestDir
+
+    BeforeAll {
+        # Find where test/powershell is so we can find the createchildprocess command relative to it
+        $powershellTestDir = $PSScriptRoot
+        while ($powershellTestDir -notmatch 'test[\\/]powershell$') {
+            $powershellTestDir = Split-Path $powershellTestDir
+        }
+        $createchildprocess = Join-Path (Split-Path $powershellTestDir) tools/CreateChildProcess/bin/createchildprocess
     }
-    $createchildprocess = Join-Path (Split-Path $powershellTestDir) tools/CreateChildProcess/bin/createchildprocess
 
     # If powershell receives a StopProcessing, it should kill the native process and all child processes
 
@@ -18,7 +21,7 @@ Describe "Native Command Processor" -tags "CI" {
         $async = $ps.BeginInvoke()
         $ps.Stop() | Out-Null
 
-        Get-Process CreateChildProcess -ErrorAction SilentlyContinue | Should BeNullOrEmpty
+        Get-Process createchildprocess -ErrorAction SilentlyContinue | Should BeNullOrEmpty
     }
 
 }
