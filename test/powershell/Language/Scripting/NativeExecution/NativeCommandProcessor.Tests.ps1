@@ -1,4 +1,4 @@
-Describe "Native Command Arguments" -tags "CI" {
+Describe "Native Command Processor" -tags "CI" {
     # Find where test/powershell is so we can find the createchildprocess command relative to it
     $powershellTestDir = $PSScriptRoot
     while ($powershellTestDir -notmatch 'test[\\/]powershell$') {
