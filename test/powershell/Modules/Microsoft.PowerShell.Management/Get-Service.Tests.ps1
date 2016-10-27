@@ -1,4 +1,4 @@
-Describe "Get-Service cmdlet tests" -Tags "CI" {
+﻿Describe "Get-Service cmdlet tests" -Tags "CI" {
   # Service cmdlet is currently working on windows only
   # So skip the tests on non-Windows
   BeforeAll {
@@ -19,15 +19,25 @@ Describe "Get-Service cmdlet tests" -Tags "CI" {
   Context 'Check null or empty value to the -Name parameter' {
     It 'Should throw if <value> is passed to -Name parameter' -TestCases $testCases {
       param($data)
-      try {Get-Service -Name $data }
-      catch [System.Management.Automation.ParameterBindingException] {$_.Exception.ErrorId | Should Be 'ParameterArgumentValidationError'}
+      try {
+        $null = Get-Service -Name $data -ErrorAction Stop
+        throw 'Expected error on previous command'
+      }
+      catch {
+        $_.FullyQualifiedErrorId | Should Be 'ParameterArgumentValidationError,Microsoft.Powershell.Commands.GetServiceCommand'
+      }
     }
   }
   Context 'Check null or empty value to the -Name parameter via pipeline' {
     It 'Should throw if <value> is passed through pipeline to -Name parameter' -TestCases $testCases {
       param($data)
-      try {$data | Get-Service -ErrorAction Stop}
-      catch [System.Management.Automation.ParameterBindingException] {$_.Exception.ErrorId | Should Be 'ParameterArgumentValidationError'}
+      try {
+        $null = Get-Service -Name $data -ErrorAction Stop
+        throw 'Expected error on previous command'
+      }      
+      catch {
+        $_.FullyQualifiedErrorId | Should Be 'ParameterArgumentValidationError,Microsoft.Powershell.Commands.GetServiceCommand'
+      }
     }
   }
 }
