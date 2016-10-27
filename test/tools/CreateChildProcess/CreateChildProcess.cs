@@ -18,6 +18,7 @@ namespace CreateChildProcess
                     child.Start();
                 }
             }
+            // sleep is needed so the process doesn't exit before the test case kill it
             Thread.Sleep(100000);
         }
     }

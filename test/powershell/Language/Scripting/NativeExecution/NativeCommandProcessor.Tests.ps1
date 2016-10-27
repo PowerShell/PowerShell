@@ -16,9 +16,22 @@ Describe "Native Command Processor" -tags "CI" {
         # make sure no test processes are running
         Get-Process createchildprocess -ErrorAction SilentlyContinue | Stop-Process
         
+        [int] $numToCreate = 2
+
         $ps = [PowerShell]::Create().AddCommand($createchildprocess)
-        $ps.AddParameter("5")
+        $ps.AddParameter($numToCreate)
         $async = $ps.BeginInvoke()
+
+        [bool] $found = $false
+        while (!$found)
+        {
+            $childprocesses = Get-Process createchildprocess -ErrorAction SilentlyContinue
+            if ($childprocesses.count -eq $numToCreate+1)
+            {
+                $found = $true
+            }
+        }
+
         $ps.Stop() | Out-Null
 
         Get-Process createchildprocess -ErrorAction SilentlyContinue | Should BeNullOrEmpty
