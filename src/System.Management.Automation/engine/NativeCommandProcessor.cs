@@ -142,7 +142,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class NativeCommandProcessor : CommandProcessorBase
     {
-        private static string XmlCliTag = "#< CLIXML";
+        private const string XmlCliTag = "#< CLIXML";
 
         #region ctor/native command properties
 
@@ -347,9 +347,7 @@ namespace System.Management.Automation
         /// Indicate whether we need to consider redirecting the output/error of the current native command.
         /// Usually a windows program which is the last command in a pipeline can be executed as 'background' -- we don't need to capture its output/error streams.
         /// </summary>        
-        private bool _background;
-
-        private ProcessStartInfo _startInfo;
+        private bool _isRunningInBackground;
 
         /// <summary>
         /// This output queue helps us keep the output and error (if redirected) order correct.
@@ -360,15 +358,7 @@ namespace System.Management.Automation
 
         private bool _scrapeHostOutput;
 
-        private bool _redirectInput;
-
         private Host.Coordinates _startPosition;
-
-        /// <summary>
-        /// If a problem occurred in running the program, this exception will
-        /// be set and should be rethrown at the end of the try/catch block...
-        /// </summary> 
-        private Exception _exceptionToRethrow = null;
 
         /// <summary>
         /// object used for synchronization between StopProcessing thread and 
@@ -394,14 +384,15 @@ namespace System.Management.Automation
             //Calculate if input and output are redirected.
             bool redirectOutput;
             bool redirectError;
+            bool redirectInput;
 
-            CalculateIORedirection(out redirectOutput, out redirectError, out _redirectInput);
+            CalculateIORedirection(out redirectOutput, out redirectError, out redirectInput);
 
             // Find out if it's the only command in the pipeline.
             bool soloCommand = this.Command.MyInvocation.PipelineLength == 1;
 
             // Get the start info for the process. 
-            _startInfo = GetProcessStartInfo(redirectOutput, redirectError, _redirectInput, soloCommand);
+            ProcessStartInfo startInfo = GetProcessStartInfo(redirectOutput, redirectError, redirectInput, soloCommand);
 
             if (this.Command.Context.CurrentPipelineStopping)
             {
@@ -411,6 +402,7 @@ namespace System.Management.Automation
             _startPosition = new Host.Coordinates();
             _scrapeHostOutput = false;
 
+            Exception exceptionToRethrow = null;
             try
             {
                 // If this process is being run standalone, tell the host, which might want
@@ -454,7 +446,7 @@ namespace System.Management.Automation
                     try
                     {
                         _nativeProcess = new Process();
-                        _nativeProcess.StartInfo = _startInfo;
+                        _nativeProcess.StartInfo = startInfo;
                         _nativeProcess.Start();
                     }
                     catch (Win32Exception)
@@ -466,7 +458,7 @@ namespace System.Management.Automation
                         // See if there is a file association for this command. If so
                         // then we'll use that. If there's no file association, then
                         // try shell execute...
-                        string executable = FindExecutable(_startInfo.FileName);
+                        string executable = FindExecutable(startInfo.FileName);
                         bool notDone = true;
                         if (!String.IsNullOrEmpty(executable))
                         {
@@ -476,10 +468,10 @@ namespace System.Management.Automation
                                 ConsoleVisibility.AllocateHiddenConsole();
                             }
 
-                            string oldArguments = _startInfo.Arguments;
-                            string oldFileName = _startInfo.FileName;
-                            _startInfo.Arguments = "\"" + _startInfo.FileName + "\" " + _startInfo.Arguments;
-                            _startInfo.FileName = executable;
+                            string oldArguments = startInfo.Arguments;
+                            string oldFileName = startInfo.FileName;
+                            startInfo.Arguments = "\"" + startInfo.FileName + "\" " + startInfo.Arguments;
+                            startInfo.FileName = executable;
                             try
                             {
                                 _nativeProcess.Start();
@@ -488,8 +480,8 @@ namespace System.Management.Automation
                             catch (Win32Exception)
                             {
                                 // Restore the old filename and arguments to try shell execute last...
-                                _startInfo.Arguments = oldArguments;
-                                _startInfo.FileName = oldFileName;
+                                startInfo.Arguments = oldArguments;
+                                startInfo.FileName = oldFileName;
                             }
                         }
                         // We got here because there was either no executable found for this 
@@ -497,12 +489,12 @@ namespace System.Management.Automation
                         // we will try launching one last time using ShellExecute...
                         if (notDone)
                         {
-                            if (soloCommand && _startInfo.UseShellExecute == false)
+                            if (soloCommand && startInfo.UseShellExecute == false)
                             {
-                                _startInfo.UseShellExecute = true;
-                                _startInfo.RedirectStandardInput = false;
-                                _startInfo.RedirectStandardOutput = false;
-                                _startInfo.RedirectStandardError = false;
+                                startInfo.UseShellExecute = true;
+                                startInfo.RedirectStandardInput = false;
+                                startInfo.RedirectStandardOutput = false;
+                                startInfo.RedirectStandardError = false;
                                 _nativeProcess.Start();
                             }
                             else
@@ -520,21 +512,21 @@ namespace System.Management.Automation
                     // Something like
                     //    ls | notepad | sort.exe
                     // should block until the notepad process is terminated.
-                    _background = false;
+                    _isRunningInBackground = false;
                 }
                 else
                 {
-                    _background = true;
-                    if (_startInfo.UseShellExecute == false)
+                    _isRunningInBackground = true;
+                    if (startInfo.UseShellExecute == false)
                     {
-                        _background = IsWindowsApplication(_nativeProcess.StartInfo.FileName);
+                        _isRunningInBackground = IsWindowsApplication(_nativeProcess.StartInfo.FileName);
                     }
                 }
 
                 try
                 {
                     //If input is redirected, start input to process.
-                    if (_startInfo.RedirectStandardInput)
+                    if (startInfo.RedirectStandardInput)
                     {
                         NativeCommandIOFormat inputFormat = NativeCommandIOFormat.Text;
                         if (_isMiniShell)
@@ -556,14 +548,14 @@ namespace System.Management.Automation
                     throw;
                 }
 
-                if (_background == false)
+                if (_isRunningInBackground == false)
                 {
                     InitOutputQueue();
                 }
             }
             catch (Win32Exception e)
             {
-                _exceptionToRethrow = e;
+                exceptionToRethrow = e;
 
             } // try
             catch (PipelineStoppedException)
@@ -575,18 +567,18 @@ namespace System.Management.Automation
             {
                 CommandProcessorBase.CheckForSevereException(e);
 
-                _exceptionToRethrow = e;
+                exceptionToRethrow = e;
             }
 
             // An exception was thrown while attempting to run the program
             // so wrap and rethrow it here...
-            if (_exceptionToRethrow != null)
+            if (exceptionToRethrow != null)
             {
                 // It's a system exception so wrap it in one of ours and re-throw.
                 string message = StringUtil.Format(ParserStrings.ProgramFailedToExecute,
-                    this.NativeCommandName, _exceptionToRethrow.Message,
+                    this.NativeCommandName, exceptionToRethrow.Message,
                     this.Command.MyInvocation.PositionMessage);
-                ApplicationFailedException appFailedException = new ApplicationFailedException(message, _exceptionToRethrow);
+                ApplicationFailedException appFailedException = new ApplicationFailedException(message, exceptionToRethrow);
 
                 // There is no need to set this exception here since this exception will eventually be caught by pipeline processor.
                 // this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
@@ -713,7 +705,7 @@ namespace System.Management.Automation
         private void InitOutputQueue()
         {
             //if output is redirected, start reading output of process in queue.
-            if (_startInfo.RedirectStandardOutput || _startInfo.RedirectStandardError)
+            if (_nativeProcess.StartInfo.RedirectStandardOutput || _nativeProcess.StartInfo.RedirectStandardError)
             {
                 lock (_sync)
                 {
@@ -721,7 +713,7 @@ namespace System.Management.Automation
                     {
                         _nativeProcessOutputQueue = new ConcurrentQueue<ProcessOutputObject>();
 
-                        if (_startInfo.RedirectStandardOutput)
+                        if (_nativeProcess.StartInfo.RedirectStandardOutput)
                         {
                             bool isFirstOutput = true;
                             bool isXmlCliOutput = false;
@@ -755,7 +747,7 @@ namespace System.Management.Automation
                             _nativeProcess.BeginOutputReadLine();
                         }
 
-                        if (_startInfo.RedirectStandardError)
+                        if (_nativeProcess.StartInfo.RedirectStandardError)
                         {
                             bool isFirstError = true;
                             bool isXmlCliError = false;
@@ -805,32 +797,33 @@ namespace System.Management.Automation
         /// <summary>
         /// Read the output from the native process and send it down the line.
         /// </summary>
-        /// <returns>
-        /// True if there was any new input available, otherwise false.
-        /// </returns>
-        private bool ConsumeAvailableNativeProcessOutput()
+        private void ConsumeAvailableNativeProcessOutput()
         {
-            bool isNewData = false;
-            if (_background == false)
+            if (_isRunningInBackground == false)
             {
-                if (_startInfo.RedirectStandardOutput || _startInfo.RedirectStandardError)
+                if (_nativeProcess.StartInfo.RedirectStandardOutput || _nativeProcess.StartInfo.RedirectStandardError)
                 {
                     ProcessOutputObject record;
                     while (_nativeProcessOutputQueue.TryDequeue(out record))
                     {
+                        if (this.Command.Context.CurrentPipelineStopping)
+                        {
+                            this.StopProcessing();
+                            return;
+                        }
+
                         ProcessOutputRecord(record);
-                        isNewData = true;
                     }
                 }
             }
-            return isNewData;
         }
 
         internal override void Complete()
         {
+            Exception exceptionToRethrow = null;
             try
             {
-                if (_background == false)   
+                if (_isRunningInBackground == false)   
                 {
                     //Wait for input writer to finish.
                     _inputWriter.Done();
@@ -892,7 +885,7 @@ namespace System.Management.Automation
             }
             catch (Win32Exception e)
             {
-                _exceptionToRethrow = e;
+                exceptionToRethrow = e;
             } // try
             catch (PipelineStoppedException)
             {
@@ -903,11 +896,11 @@ namespace System.Management.Automation
             {
                 CommandProcessorBase.CheckForSevereException(e);
 
-                _exceptionToRethrow = e;
+                exceptionToRethrow = e;
             }
             finally
             {
-                if (!_startInfo.RedirectStandardOutput)
+                if (!_nativeProcess.StartInfo.RedirectStandardOutput)
                 {
                     this.Command.Context.EngineHostInterface.NotifyEndApplication();
                 }
@@ -917,13 +910,13 @@ namespace System.Management.Automation
 
             // An exception was thrown while attempting to run the program
             // so wrap and rethrow it here...
-            if (_exceptionToRethrow != null)
+            if (exceptionToRethrow != null)
             {
                 // It's a system exception so wrap it in one of ours and re-throw.
                 string message = StringUtil.Format(ParserStrings.ProgramFailedToExecute,
-                    this.NativeCommandName, _exceptionToRethrow.Message,
+                    this.NativeCommandName, exceptionToRethrow.Message,
                     this.Command.MyInvocation.PositionMessage);
-                ApplicationFailedException appFailedException = new ApplicationFailedException(message, _exceptionToRethrow);
+                ApplicationFailedException appFailedException = new ApplicationFailedException(message, exceptionToRethrow);
 
                 // There is no need to set this exception here since this exception will eventually be caught by pipeline processor.
                 // this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
@@ -1197,7 +1190,6 @@ namespace System.Management.Automation
         private void ProcessOutputRecord(ProcessOutputObject outputValue)
         {
             Dbg.Assert(outputValue != null, "only object of type ProcessOutputObject expected");
-
             
             if (outputValue.Stream == MinishellStream.Error)
             {
@@ -1256,12 +1248,6 @@ namespace System.Management.Automation
                 InformationRecord record = outputValue.Data as InformationRecord;
                 Dbg.Assert(record != null, "ProcessReader should ensure that data is InformationRecord");
                 this.commandRuntime.WriteInformation(record);
-            }
-
-            if (this.Command.Context.CurrentPipelineStopping)
-            {
-                this.StopProcessing();
-                return;
             }
         }
 
@@ -1367,7 +1353,7 @@ namespace System.Management.Automation
         /// <param name="redirectInput"></param>
         private void CalculateIORedirection(out bool redirectOutput, out bool redirectError, out bool redirectInput)
         {
-            redirectInput = this.Command.MyInvocation.PipelineLength > 0;
+            redirectInput = this.Command.MyInvocation.PipelinePosition > 0;
             redirectOutput = true;
             redirectError = true;
 
