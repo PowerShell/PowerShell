@@ -211,3 +211,25 @@ Describe "Get-Alias" -Tags "CI" {
         }
     }
 }
+
+Describe "Get-Alias null tests" -Tags "CI" {
+
+  $testCases = 
+    @{ data = $null; value = 'null' },
+    @{ data = [String]::Empty; value = 'empty string' }
+
+  Context 'Check null or empty value to the -Name parameter' {
+    It 'Should throw if <value> is passed to -Name parameter' -TestCases $testCases {
+      param($data)
+      try {Get-Alias -Name $data }
+      catch [System.Management.Automation.ParameterBindingException] {$_.Exception.ErrorId | Should Be 'ParameterArgumentValidationError'}
+    }
+  }
+  Context 'Check null or empty value to the -Name parameter via pipeline' {
+    It 'Should throw if <value> is passed through pipeline to -Name parameter' -TestCases $testCases {
+      param($data)
+      try {$data | Get-Alias -ErrorAction Stop}
+      catch [System.Management.Automation.ParameterBindingException] {$_.Exception.ErrorId | Should Be 'ParameterArgumentValidationError'}
+    }
+  }
+}
