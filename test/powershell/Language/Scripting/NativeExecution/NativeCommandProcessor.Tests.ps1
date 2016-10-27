@@ -18,7 +18,7 @@ Describe "Native Command Arguments" -tags "CI" {
         $async = $ps.BeginInvoke()
         $ps.Stop() | Out-Null
 
-        Get-Process CreateChildProcess | Should BeNullOrEmpty
+        Get-Process CreateChildProcess -ErrorAction SilentlyContinue | Should BeNullOrEmpty
     }
 
 }
