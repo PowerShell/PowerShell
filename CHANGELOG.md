@@ -4,6 +4,11 @@ Changelog
 Unreleased
 ----------
 
+v6.0.0-alpha.12 - 2016-10-31
+----------------------------
+- Add support <Suppress> in Get-WinEvent -FilterHashtable
+
+
 v6.0.0-alpha.11 - 2016-10-17
 ----------------------------
 - Add '-Title' to 'Get-Credential' and unify the prompt experience
