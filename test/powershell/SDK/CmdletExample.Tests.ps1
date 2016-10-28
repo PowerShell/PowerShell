@@ -11,7 +11,8 @@ InModuleScope Pester {
 Describe 'SDK Send Greeting Sample Tests' -Tag CI {
     
     try {
-        $enlistmentRoot = git rev-parse --show-toplevel
+        $enlistmentRoot = Join-Path $PSScriptRoot "../../../"
+        $enlistmentRoot = Resolve-Path $enlistmentRoot | % Path
         $docLocation = Join-Path -Path $enlistmentRoot -ChildPath '\docs\cmdlet-example'
         $testResultPath = Join-Path $TestDrive 'sendgreetingresults.xml'
         $sampleCopy = Join-Path $TestDrive 'sendgreeting'
