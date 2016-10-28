@@ -544,7 +544,7 @@ namespace Microsoft.PowerShell.Commands
 
             return new ErrorDetails(
                 typeof(ImplicitRemotingCommandBase).GetTypeInfo().Assembly,
-                "ImplicitRemotingStrings",
+                "Microsoft.PowerShell.Commands.Utility.resources.ImplicitRemotingStrings",
                 errorId,
                 args);
         }
