@@ -376,14 +376,15 @@ namespace Microsoft.PowerShell.Commands
             )
         {
             List<OrderByPropertyEntry> orderMatrixToCreate = new List<OrderByPropertyEntry>();
-            foreach (PSObject so in inputObjects)
+            for (int index = 0; index < inputObjects.Count; index++)
             {
+                PSObject so = inputObjects[index];
                 if (so == null || so == AutomationNull.Value)
                     continue;
                 List<ErrorRecord> evaluationErrors = new List<ErrorRecord>();
                 List<string> propertyNotFoundMsgs = new List<string>();
                 OrderByPropertyEntry result =
-                    OrderByPropertyEntryEvaluationHelper.ProcessObject(so, mshParameterList, evaluationErrors, propertyNotFoundMsgs);
+                    OrderByPropertyEntryEvaluationHelper.ProcessObject(so, mshParameterList, evaluationErrors, propertyNotFoundMsgs, originalIndex: index);
                 foreach (ErrorRecord err in evaluationErrors)
                 {
                     cmdlet.WriteError(err);
@@ -532,17 +533,19 @@ namespace Microsoft.PowerShell.Commands
     internal static class OrderByPropertyEntryEvaluationHelper
     {
         internal static OrderByPropertyEntry ProcessObject(PSObject inputObject, List<MshParameter> mshParameterList,
-            List<ErrorRecord> errors, List<string> propertyNotFoundMsgs, bool isCaseSensitive = false, CultureInfo cultureInfo = null)
+            List<ErrorRecord> errors, List<string> propertyNotFoundMsgs, bool isCaseSensitive = false, CultureInfo cultureInfo = null, int originalIndex = -1)
         {
             Diagnostics.Assert(errors != null, "errors cannot be null!");
             Diagnostics.Assert(propertyNotFoundMsgs != null, "propertyNotFoundMsgs cannot be null!");
             OrderByPropertyEntry entry = new OrderByPropertyEntry();
             entry.inputObject = inputObject;
+            entry.originalIndex = originalIndex;
 
             if (mshParameterList == null || mshParameterList.Count == 0)
             {
                 // we do not have a property to evaluate, we sort on $_
                 entry.orderValues.Add(new ObjectCommandPropertyValue(inputObject, isCaseSensitive, cultureInfo));
+                entry.comparable = true;
                 return entry;
             }
 
@@ -550,12 +553,13 @@ namespace Microsoft.PowerShell.Commands
             foreach (MshParameter p in mshParameterList)
             {
                 string propertyNotFoundMsg = null;
-                EvaluateSortingExpression(p, inputObject, entry.orderValues, errors, out propertyNotFoundMsg);
+                EvaluateSortingExpression(p, inputObject, entry.orderValues, errors, out propertyNotFoundMsg, ref entry.comparable);
                 if (!string.IsNullOrEmpty(propertyNotFoundMsg))
                 {
                     propertyNotFoundMsgs.Add(propertyNotFoundMsg);
                 }
             }
+
             return entry;
         }
 
@@ -563,7 +567,9 @@ namespace Microsoft.PowerShell.Commands
             MshParameter p,
             PSObject inputObject,
             List<ObjectCommandPropertyValue> orderValues,
-            List<ErrorRecord> errors, out string propertyNotFoundMsg)
+            List<ErrorRecord> errors,
+            out string propertyNotFoundMsg,
+            ref bool comparable)
         {
             // NOTE: we assume globbing was not allowed in input
             MshExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as MshExpression;
@@ -597,6 +603,7 @@ namespace Microsoft.PowerShell.Commands
                     errors.Add(errorRecord);
                     orderValues.Add(ObjectCommandPropertyValue.ExistingNullProperty);
                 }
+                comparable = true;
             }
         }
     }
@@ -608,6 +615,11 @@ namespace Microsoft.PowerShell.Commands
     {
         internal PSObject inputObject = null;
         internal List<ObjectCommandPropertyValue> orderValues = new List<ObjectCommandPropertyValue>();
+        // The originalIndex field was added to enable stable heap-sorts (Top N/Bottom N)
+        internal int originalIndex = -1;
+
+        // The comparable field enables faster identification of uncomparable data
+        internal bool comparable = false;
     }
 
     internal class OrderByPropertyComparer : IComparer<OrderByPropertyEntry>
@@ -637,6 +649,7 @@ namespace Microsoft.PowerShell.Commands
                 if (order != 0)
                     return order;
             }
+
             return order;
         }
 
@@ -675,6 +688,34 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private ObjectCommandComparer[] _propertyComparers = null;
+    }
+
+    internal class IndexedOrderByPropertyComparer : IComparer<OrderByPropertyEntry>
+    {
+        internal IndexedOrderByPropertyComparer(OrderByPropertyComparer orderByPropertyComparer)
+        {
+            _orderByPropertyComparer = orderByPropertyComparer;
+        }
+
+        public int Compare(OrderByPropertyEntry lhs, OrderByPropertyEntry rhs)
+        {
+            // Non-comparable items always fall after comparable items
+            if (lhs.comparable != rhs.comparable)
+            {
+                return lhs.comparable.CompareTo(rhs.comparable) * -1;
+            }
+            int result = _orderByPropertyComparer.Compare(lhs, rhs);
+            // When items are identical according to the internal comparison, compare by index
+            // to preserve the original order
+            if (result == 0)
+            {
+                return lhs.originalIndex.CompareTo(rhs.originalIndex);
+            }
+            // Otherwise, return the default comparison results
+            return result;
+        }
+
+        OrderByPropertyComparer _orderByPropertyComparer = null;
     }
 }
 
