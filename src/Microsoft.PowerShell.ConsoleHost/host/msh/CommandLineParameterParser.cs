@@ -133,7 +133,9 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="value"></param>
         public override void WriteErrorLine(string value)
-        { }
+        {
+            Console.Out.WriteLine(value);
+        }
 
         /// <summary>
         /// WriteLine
@@ -167,11 +169,13 @@ namespace Microsoft.PowerShell
 
     internal class CommandLineParameterParser
     {
-        internal CommandLineParameterParser(ConsoleHost p, string bannerText, string helpText)
+        internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
         {
+            if (hostUI == null) { throw new PSArgumentNullException("hostUI"); }
+            _hostUI = hostUI;
+
             _bannerText = bannerText;
             _helpText = helpText;
-            _hostUI = (p != null) ? p.UI : (new NullHostUserInterface());
         }
 
         internal bool AbortStartup

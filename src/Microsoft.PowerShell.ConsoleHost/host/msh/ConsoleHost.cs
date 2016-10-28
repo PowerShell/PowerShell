@@ -202,26 +202,28 @@ namespace Microsoft.PowerShell
 
             System.Threading.Thread.CurrentThread.Name = "ConsoleHost main thread";
 
-            // We might be able to ignore console host creation error if we are running in 
-            // server mode, which does not require a console.
-            HostException hostException = null;
             try
             {
-                s_theConsoleHost = ConsoleHost.CreateSingletonInstance(configuration);
-            }
-            catch (HostException e)
-            {
-                hostException = e;
-            }
+                // We might be able to ignore console host creation error if we are running in 
+                // server mode, which does not require a console.
+                HostException hostException = null;
+                try
+                {
+                    s_theConsoleHost = ConsoleHost.CreateSingletonInstance(configuration);
+                }
+                catch (HostException e)
+                {
+                    hostException = e;
+                }
 
-            if (args == null)
-            {
-                args = new string[0];
-            }
+                if (args == null)
+                {
+                    args = new string[0];
+                }
 
-            try
-            {
-                s_cpp = new CommandLineParameterParser(s_theConsoleHost, bannerText, helpText);
+                s_cpp = new CommandLineParameterParser(
+                    (s_theConsoleHost != null) ? s_theConsoleHost.UI : (new NullHostUserInterface()),
+                    bannerText, helpText);
                 string[] tempArgs = new string[args.GetLength(0)];
                 args.CopyTo(tempArgs, 0);
 
@@ -231,7 +233,10 @@ namespace Microsoft.PowerShell
                 if ((s_cpp.ServerMode && s_cpp.NamedPipeServerMode) || (s_cpp.ServerMode && s_cpp.SocketServerMode) || (s_cpp.NamedPipeServerMode && s_cpp.SocketServerMode))
                 {
                     s_tracer.TraceError("Conflicting server mode parameters, parameters must be used exclusively.");
-                    s_theConsoleHost.ui.WriteErrorLine(ConsoleHostStrings.ConflictingServerModeParameters);
+                    if (s_theConsoleHost != null)
+                    {
+                        s_theConsoleHost.ui.WriteErrorLine(ConsoleHostStrings.ConflictingServerModeParameters);
+                    }
                     unchecked
                     {
                         return (int)ExitCodeBadCommandLineParameter;
@@ -1419,7 +1424,7 @@ namespace Microsoft.PowerShell
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         private uint Run(string bannerText, string helpText, bool isPrestartWarned, string[] args)
         {
-            s_cpp = new CommandLineParameterParser(this, bannerText, helpText);
+            s_cpp = new CommandLineParameterParser(this.UI, bannerText, helpText);
             s_cpp.Parse(args);
             return Run(s_cpp, isPrestartWarned);
         }
