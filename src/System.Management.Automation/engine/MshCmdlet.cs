@@ -359,6 +359,12 @@ namespace System.Management.Automation
         public System.EventHandler<CommandLookupEventArgs> PostCommandLookupAction { get; set; }
 
         /// <summary>
+        /// This event handler is called before a string is converted into a ScriptBlock. It
+        /// should have a single string parameter that is the string being converted.
+        /// </summary>
+        public static System.EventHandler<DynamicScriptBlockCreationEventArgs> PreDynamicScriptBlockCreationAction { get; set; }
+
+        /// <summary>
         /// Returns the CmdletInfo object that corresponds to the name argument
         /// </summary>
         /// <param name="commandName">The name of the cmdlet to look for</param>

@@ -2329,6 +2329,7 @@
     <Compile Include="..\System.Management.Automation\utils\WindowsErrorReporting.cs">
       <Link>utils\WindowsErrorReporting.cs</Link>
     </Compile>
+    <Compile Include="engine\DynamicScriptBlockCreationEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\System.Management.Automation\map.json">
