@@ -18,7 +18,7 @@ There is a shortcut placed in the Start Menu upon installation.
 
 # Instructions to Create a Remoting Endpoint
 
-Beginning with 6.0.0-alpha.9, the PowerShell package for Windows includes a WinRM plugin (pwrshplugin.dll) and an installation script (Install-PowerShellRemoting.ps1). 
+Beginning with 6.0.0-alpha.9, the PowerShell package for Windows includes a WinRM plug-in (pwrshplugin.dll) and an installation script (Install-PowerShellRemoting.ps1). 
 These files enable PowerShell to accept incoming PowerShell remote connections when its endpoint is specified. 
 
 ## Motivation
@@ -33,10 +33,10 @@ For more details, please see issue [#1193](https://github.com/PowerShell/PowerSh
 
 The script
 
-1. Creates a directory for the plugin within %windir%\System32\PowerShell
+1. Creates a directory for the plug-in within %windir%\System32\PowerShell
 2. Copies pwrshplugin.dll to that location
 3. Generates a configuration file
-4. Registers that plugin with WinRM
+4. Registers that plug-in with WinRM
 
 ## Registration
 The script must be executed within an Administrator-level PowerShell session and runs in two modes.

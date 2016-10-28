@@ -221,7 +221,7 @@ The follow table represents the test coverage of the PowerShell Core Cmdlets in 
 |Remove-PSDrive|delivered|delivered|yes|
 |Enter-PSHostProcess|delivered|delivered|yes|
 |Exit-PSHostProcess|delivered|delivered|yes|
-|Get-PSHostProcessInfo|delivered|delivered|fails on linux|
+|Get-PSHostProcessInfo|delivered|delivered|fails on Linux|
 |Get-PSProvider|delivered|delivered|yes|
 |Get-PSReadlineKeyHandler|delivered|delivered|yes|
 |Remove-PSReadlineKeyHandler|delivered|delivered||

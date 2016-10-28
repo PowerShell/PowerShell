@@ -80,7 +80,7 @@ We need to be sure that we can easily enable remoting for the non-Windows platfo
 * Our current multi-machine tests do not test the connection code, they simply execute test code remotely and retrieve results and assume a good connection.
 The infrastructure used for these tests is STEX which is not an open environment.
 We will need to create automation to create and configure the test systems in the test matrix and then invoke tests on them.
-It is not clear that our current CI systems can accomodate our needs here as neither AppVeyor or Travis can supply us with all of the OS images needed.
+It is not clear that our current CI systems can accommodate our needs here as neither AppVeyor or Travis can supply us with all of the OS images needed.
 We may need to create our own heterogeneous environment in Azure, or look to other teams (MS Build Lab/Jenkins) for assistance.
 
 We need to investigate whether there are solutions available, and if not, design/implement an environment to meet our needs.
@@ -136,7 +136,7 @@ We must start defining the release criteria for a production ready release of Po
 * 80% code coverage of high use cmdlets (cmdlets used by 70% of users, as captured via telemetry)
 * 90% code coverage of language elements (coverage error code paths may not be 100%) 
 * 60% code Coverage on Windows via Github tests
-* 100% of our mininum remoting matrix tested
+* 100% of our minimum remoting matrix tested
 * Acceptance by 50% PowerShell MVPs (via Survey)
 * Acceptance by Partners (via Survey)
 
