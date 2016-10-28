@@ -32,7 +32,7 @@ try {
         It "A cim session can be removed" {
             $sessionName = [guid]::NewGuid()
             $session = New-CimSession -ComputerName . -name $sessionName
-            $sessiosn += $session
+            $sessions += $session
             $session.Name | Should be $sessionName
             $session | Remove-CimSession
             Get-CimSession $session.Id -ErrorAction SilentlyContinue | should BeNullOrEmpty
