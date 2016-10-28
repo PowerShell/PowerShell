@@ -704,10 +704,14 @@ should.not
 _be
 GH-38
 GH-26
+fynctions
+cleanup
+eg
  - src/Modules/Shared/Pester/README.md
 v1.0.
 powershell-bdd-testing-pester-screencast
 pester-bdd-for-the-system-administrator
+hoc
  - src/powershell/README.md
 powershell-unix
  - src/TypeCatalogGen/README.md
