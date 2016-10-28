@@ -91,11 +91,11 @@ The `-PSHost` specifies the sink, in this case the console host,
 so we can see the tracing messages.
 The `-Name` chooses the list of tracers to enable.
 
-LLDB with SOS plugin
-====================
+LLDB with SOS plug-in
+=====================
 
 The `./tools/debug.sh` script can be used to launch PowerShell inside of LLDB
-with the SOS plugin provided by .NET Core. This provides an additional way to
+with the SOS plug-in provided by .NET Core. This provides an additional way to
 debug PowerShell on Linux, but VS Code is recommended for a better user
 experience (and its single-stepping capabilities).
 
