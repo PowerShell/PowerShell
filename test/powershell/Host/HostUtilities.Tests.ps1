@@ -1,7 +1,6 @@
 ﻿if (-not (Get-Module TestRemoting -ErrorAction SilentlyContinue))
 {
-    $root = git rev-parse --show-toplevel
-    $remotingModule = Join-Path $root test/powershell/Common/TestRemoting.psm1
+    $remotingModule = Join-Path $PSScriptRoot "../Common/TestRemoting.psm1"
     Import-Module $remotingModule
 }
 
