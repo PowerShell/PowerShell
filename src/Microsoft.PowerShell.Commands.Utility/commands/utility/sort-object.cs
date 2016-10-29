@@ -85,14 +85,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sort unsorted OrderByPropertyEntry data using an indexed min-/max-heap sort
         /// </summary>
-        private List<OrderByPropertyEntry> Heapify(List<OrderByPropertyEntry> dataToSort, OrderByPropertyComparer orderByPropertyComparer, out int heapCount)
+        private int Heapify(List<OrderByPropertyEntry> dataToSort, OrderByPropertyComparer orderByPropertyComparer)
         {
             // Instantiate the Heapify comparer, which takes index into account for sort stability
             var comparer = new IndexedOrderByPropertyComparer(orderByPropertyComparer);
 
             // Identify how many items will be in the heap and the current number of items
+            int heapCount = 0;
             int heapCapacity = Top > 0 ? Top : Bottom;
-            heapCount = 0;
 
             // Identify the comparator (the value all comparisons will be made against based on whether we're
             // doing a Top N or Bottom N sort)
@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
 
             dataToSort.Sort(0, heapCount, comparer);
 
-            return dataToSort;
+            return heapCount;
         }
 
         /// <summary>
@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Commands
             // all objects, remove duplicates if necessary, and identify the list of items to return
             if (_unique || (Top == 0 && Bottom == 0) || Top >= dataToProcess.Count || Bottom >= dataToProcess.Count)
             {
-                // Note: It may be worth compariing List.Sort with SortedSet.Sort when handling unique records in
+                // Note: It may be worth comparing List.Sort with SortedSet.Sort when handling unique records in
                 // case SortedSet.Sort is faster (SortedSet was not an option in earlier versions of PowerShell).
                 dataToProcess.Sort(comparer);
                 int dataToProcessCount = dataToProcess.Count;
@@ -243,8 +243,7 @@ namespace Microsoft.PowerShell.Commands
             // Otherwise, use an indexed min-/max-heap to perform an in-place sort of all objects
             else
             {
-                int heapCount = 0;
-                var indexedMinMaxHeap = Heapify(dataToProcess, comparer, out heapCount);
+                int heapCount = Heapify(dataToProcess, comparer);
                 outputEndIndex = heapCount - 1;
             }
 

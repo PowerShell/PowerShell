@@ -230,8 +230,9 @@ Describe 'Sort-Object Top and Bottom Unit Tests' -Tags 'CI' {
 	{
 		param($nSortEntry, $fullSortEntry)
 		if ($nSortEntry -is [System.Array]) {
-			# Arrays must be compared differently than everything else
-			$nSortEntry.Equals($fullSortEntry) | Should Be $true
+			# Arrays are compared using reference equality to ensure that the original array was
+			# moved to the correct position in both sorts; value equality doesn't verify this
+			[object]::ReferenceEquals($nSortEntry, $fullSortEntry) | Should Be $true
 		} else {
 			$nSortEntry | Should Be $fullSortEntry
 		}
@@ -282,13 +283,13 @@ Describe 'Sort-Object Top and Bottom Unit Tests' -Tags 'CI' {
 
 		It 'Return the <nSortType> N sorted in <orderType> order' -TestCases $topBottomAscendingDescending {
 			param([string]$nSortType, [string]$orderType)
-			$baseSortParameters = if ($orderType -eq 'Descending') {@{Descending = $true}} else {@{}}
+			$baseSortParameters = @{Descending = $orderType -eq 'descending'}
 			Test-SortObject $unsortedData $baseSortParameters $nSortType ($unsortedData.Count - 1)
 		}
 
 		It 'Return all sorted in <ordertype> order when -<nSortType> is too large' -TestCases $topBottomAscendingDescending {
 			param([string]$nSortType, [string]$orderType)
-			$baseSortParameters = if ($orderType -eq 'Descending') {@{Descending = $true}} else {@{}}
+			$baseSortParameters = @{Descending = $orderType -eq 'descending'}
 			Test-SortObject $unsortedData $baseSortParameters $nSortType ($unsortedData.Count + 10)
 		}
 
@@ -297,22 +298,22 @@ Describe 'Sort-Object Top and Bottom Unit Tests' -Tags 'CI' {
 	Context 'Heterogeneous n-sort' {
 
 		$unsortedData = @(
-			($item0 = 'x')
-			($item1 = Get-Alias where)
-			($item2 = 'c')
-			($item3 = ([pscustomobject]@{}) | Add-Member -Name ToString -Force -MemberType ScriptMethod -Value {$null} -PassThru) # Use this syntax to get $null from a default sort (uses ToString)
-			($item4 = 42)
-			($item5 = Get-Alias foreach)
-			,($item6 =@('a','b','c')) # Use this syntax to pass an array with a few values to sort-object (also useful when testing sorts with unexpected data)
-			($item7 = [pscustomobject]@{Name='NotAnAlias'})
-			($item8 = [pscustomobject]@{Name=$null;Definition='Custom'})
-			($item9 = 'z')
-			,($item10 = ,$null) # Use this syntax to pass an array with a single $null value to sort-object (also useful when testing sorts with unexpected data)
+			'x'
+			Get-Alias where
+			'c'
+			([pscustomobject]@{}) | Add-Member -Name ToString -Force -MemberType ScriptMethod -Value {$null} -PassThru # Use this syntax to get $null from a default sort (uses ToString)
+			42
+			Get-Alias foreach
+			,@('a','b','c') # Use this syntax to pass an array with a few values to sort-object (also useful when testing sorts with unexpected data)
+			[pscustomobject]@{Name='NotAnAlias'}
+			[pscustomobject]@{Name=$null;Definition='Custom'}
+			'z'
+			,@($null) # Use this syntax to pass an array with a single $null value to sort-object (also useful when testing sorts with unexpected data)
 		)
 
 		It 'Return the <nSortType> N sorted in <orderType> order' -TestCases $topBottomAscendingDescending {
 			param([string]$nSortType, [string]$orderType)
-			$baseSortParameters = if ($orderType -eq 'Descending') {@{Descending = $true}} else {@{}}
+			$baseSortParameters = @{Descending = $orderType -eq 'descending'}
 			Test-SortObject $unsortedData $baseSortParameters $nSortType ($unsortedData.Count - 1)
 		}
 
@@ -328,14 +329,14 @@ Describe 'Sort-Object Top and Bottom Unit Tests' -Tags 'CI' {
 	Context 'Homogeneous n-sort' {
 
 		$unsortedData = @(
-			($item0 = [pscustomobject]@{PSTypeName='Employee';FirstName='Dwayne';LastName='Smith' ;YearsInMS=8    })
-			($item1 = [pscustomobject]@{PSTypeName='Employee';FirstName='Lucy'  ;                 ;YearsInMS=$null})
-			($item2 = [pscustomobject]@{PSTypeName='Employee';FirstName='Jack'  ;LastName='Jones' ;YearsInMS=-2   })
-			($item3 = [pscustomobject]@{PSTypeName='Employee';FirstName='Sylvie';LastName='Landry';YearsInMS=1    })
-			($item4 = [pscustomobject]@{PSTypeName='Employee';FirstName='Jack'  ;LastName='Frank' ;YearsInMS=5    })
-			($item5 = [pscustomobject]@{PSTypeName='Employee';FirstName='John'  ;LastName='smith' ;YearsInMS=6    })
-			($item6 = [pscustomobject]@{PSTypeName='Employee';FirstName='Joseph';LastName='Smith' ;YearsInMS=15   })
-			($item7 = [pscustomobject]@{PSTypeName='Employee';FirstName='John'  ;LastName='Smyth' ;YearsInMS=12   })
+			[pscustomobject]@{PSTypeName='Employee';FirstName='Dwayne';LastName='Smith' ;YearsInMS=8    }
+			[pscustomobject]@{PSTypeName='Employee';FirstName='Lucy'  ;                 ;YearsInMS=$null}
+			[pscustomobject]@{PSTypeName='Employee';FirstName='Jack'  ;LastName='Jones' ;YearsInMS=-2   }
+			[pscustomobject]@{PSTypeName='Employee';FirstName='Sylvie';LastName='Landry';YearsInMS=1    }
+			[pscustomobject]@{PSTypeName='Employee';FirstName='Jack'  ;LastName='Frank' ;YearsInMS=5    }
+			[pscustomobject]@{PSTypeName='Employee';FirstName='John'  ;LastName='smith' ;YearsInMS=6    }
+			[pscustomobject]@{PSTypeName='Employee';FirstName='Joseph';LastName='Smith' ;YearsInMS=15   }
+			[pscustomobject]@{PSTypeName='Employee';FirstName='John'  ;LastName='Smyth' ;YearsInMS=12   }
 		)
 
 		It 'Return the <nSortType> N sorted by property in <orderType> order' -TestCases $topBottomAscendingDescending {
@@ -407,14 +408,14 @@ Describe 'Sort-Object Top and Bottom Unit Tests' -Tags 'CI' {
 
 		Add-Type -TypeDefinition 'public enum PipelineState{NotStarted,Running,Stopping,Stopped,Completed,Failed,Disconnected}'
 		$unsortedData = @(
-			($item0 = [pscustomobject]@{PipelineId=1;Cmdline='cmd3';Status=[PipelineState]::Completed;StartTime=[DateTime]::Now;EndTime=[DateTime]::Now.AddSeconds(5.0)})
-			($item1 = [pscustomobject]@{PipelineId=2;Cmdline='cmd1';Status=[PipelineState]::Completed;StartTime=[DateTime]::Now;EndTime=[DateTime]::Now.AddSeconds(5.0)})
-			($item2 = [pscustomobject]@{PipelineId=3;Cmdline='cmd2';Status=[PipelineState]::Completed;StartTime=[DateTime]::Now;EndTime=[DateTime]::Now.AddSeconds(5.0)})
+			[pscustomobject]@{PipelineId=1;Cmdline='cmd3';Status=[PipelineState]::Completed;StartTime=[DateTime]::Now;EndTime=[DateTime]::Now.AddSeconds(5.0)}
+			[pscustomobject]@{PipelineId=2;Cmdline='cmd1';Status=[PipelineState]::Completed;StartTime=[DateTime]::Now;EndTime=[DateTime]::Now.AddSeconds(5.0)}
+			[pscustomobject]@{PipelineId=3;Cmdline='cmd2';Status=[PipelineState]::Completed;StartTime=[DateTime]::Now;EndTime=[DateTime]::Now.AddSeconds(5.0)}
 		)
 
 		It 'Return the <nSortType> N sorted in <orderType> order' -TestCases $topBottomAscendingDescending {
 			param([string]$nSortType, [string]$orderType)
-			$baseSortParameters = if ($orderType -eq 'Descending') {@{Descending = $true}} else {@{}}
+			$baseSortParameters = @{Descending = $orderType -eq 'descending'}
 			Test-SortObject $unsortedData $baseSortParameters $nSortType ($unsortedData.Count - 1)
 		}
 
