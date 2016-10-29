@@ -1,4 +1,4 @@
-Describe "Native Command Processor" -tags "CI" {
+Describe "Native Command Processor" -tags "Feature" {
 
     BeforeAll {
         # Find where test/powershell is so we can find the createchildprocess command relative to it
@@ -11,30 +11,45 @@ Describe "Native Command Processor" -tags "CI" {
 
     # If powershell receives a StopProcessing, it should kill the native process and all child processes
 
+    # this test should pass and no longer Penidng when #2561 is fixed
     It "Should kill native process tree" {
         
+        Test-Path $createchildprocess | Should Be $true
+
         # make sure no test processes are running
-        Get-Process createchildprocess -ErrorAction SilentlyContinue | Stop-Process
+        # on Linux, the Process class truncates the name so filter using Where-Object
+        Get-Process | Where-Object {$_.Name -like 'createchildproc'} | Stop-Process
         
         [int] $numToCreate = 2
 
         $ps = [PowerShell]::Create().AddCommand($createchildprocess)
         $ps.AddParameter($numToCreate)
         $async = $ps.BeginInvoke()
+        $ps.InvocationStateInfo.State | Should Be "Running"
 
-        [bool] $found = $false
-        while (!$found)
+        [bool] $childrenCreated = $false
+        while (-not $childrenCreated)
         {
-            $childprocesses = Get-Process createchildprocess -ErrorAction SilentlyContinue
+            $childprocesses = Get-Process | Where-Object {$_.Name -like 'createchildproc'} 
             if ($childprocesses.count -eq $numToCreate+1)
             {
-                $found = $true
+                $childrenCreated = $true
             }
         }
 
-        $ps.Stop() | Out-Null
-
-        Get-Process createchildprocess -ErrorAction SilentlyContinue | Should BeNullOrEmpty
+        $startTime = Get-Date
+        $beginsync = $ps.BeginStop($null, $async)
+        # wait no more than 5 secs for the processes to be terminated, otherwise test has failed
+        while (((Get-Date) - $startTime).TotalSeconds -lt 5)
+        {
+            if (($childprocesses.hasexited -eq $true).count -eq $numToCreate+1)
+            {
+                break
+            }
+        }
+        $childprocesses = Get-Process | Where-Object {$_.Name -like 'createchildproc'}
+        $count = $childprocesses.count 
+        $childprocesses | Stop-Process
+        $count | Should Be 0
     }
-
 }
