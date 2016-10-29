@@ -24,7 +24,7 @@ You can download and install a PowerShell package for any of the following platf
 | ------------------------------ | ---------------------- | ----------------------------- |
 | Windows 10 / Server 2016       | [.msi][rl-windows10]   | [Instructions][in-windows]    |
 | Windows 8.1 / Server 2012 R2   | [.msi][rl-windows81]   | [Instructions][in-windows]    |
-| Ubuntu 16.04                   | [.deb][rl-ubuntu16]    | [Instructions][in-ubuntu16]   |
+| Ubuntu 16.04 / Debian Testing  | [.deb][rl-ubuntu16]    | [Instructions][in-ubuntu16]   |
 | Ubuntu 14.04                   | [.deb][rl-ubuntu14]    | [Instructions][in-ubuntu14]   |
 | CentOS 7                       | [.rpm][rl-centos]      | [Instructions][in-centos]     |
 | macOS 10.11                    | [.pkg][rl-macos]       | [Instructions][in-macos]      |
