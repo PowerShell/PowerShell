@@ -3339,8 +3339,11 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    if (path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal) || 
-                        path.StartsWith(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal)) 
+                    // Check if the path begins with "\" or "/" (UNC Path or Path in Unix).
+                    // Ignore if the path resolves to a drive path, this will happen when path is equal to "\" or "/".
+                    // Drive path still need formatting, so treat them as relative.
+                    if (path.Length > 1 && (path.StartsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal) || 
+                        path.StartsWith(StringLiterals.AlternatePathSeparatorString, StringComparison.Ordinal)))
                     {
                         treatAsRelative = false;
                     }
