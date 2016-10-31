@@ -33,6 +33,22 @@ if ($IsLinux) {
     $IsCentOS = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'
 }
 
+#
+# At the moment, we just support x64 builds. When we support x86 builds, this 
+# check may need to verify the SDK for the specified architecture.
+#
+function Get-Win10SDKBinDir {
+    return "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64"
+}
+
+function Test-Win10SDK {
+    # The Windows 10 SDK is installed to "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64",
+    # but the directory may exist even if the SDK has not been installed.
+    #
+    # A slightly more robust check is for the mc.exe binary within that directory.
+    # It is only present if the SDK is installed.
+    return (Test-Path "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64\mc.exe")
+}
 
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName='CoreCLR')]
@@ -137,9 +153,8 @@ function Start-PSBuild {
         Use-MSBuild
 
         #mc.exe is Message Compiler for native resources
-        $mcexe = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\" -Recurse -Filter 'mc.exe' | ? {$_.FullName -match 'x64'} | select -First 1 | % {$_.FullName}
-        if (-not $mcexe) {
-            throw 'mc.exe not found. Run Start-PSBootstrap or install Microsoft Windows 10 SDK from https://developer.microsoft.com/en-US/windows/downloads/windows-10-sdk'
+        if (-Not (Test-Win10SDK)) {
+            throw 'Win 10 SDK not found. Run Start-PSBootstrap or install Microsoft Windows 10 SDK from https://developer.microsoft.com/en-US/windows/downloads/windows-10-sdk'
         }
 
         $vcVarsPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
@@ -982,8 +997,7 @@ function Start-PSBootstrap {
             $newMachineEnvironmentPath = $machinePath
 
             $cmakePresent = precheck 'cmake' $null
-            $win10sdkBinPath = "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64"
-            $sdkPresent = Test-Path -Path $win10sdkBinPath -PathType Container
+            $sdkPresent = Test-Win10SDK
 
             # Install chocolatey
             $chocolateyPath = "$env:AllUsersProfile\chocolatey\bin"
@@ -2231,10 +2245,10 @@ function New-AppxPackage
     $PackageVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $PackageVersion -Verbose
     Write-Verbose "Package Version is $PackageVersion"
 
-    $win10sdkBinPath = "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64"
+    $win10sdkBinPath = Get-Win10SDKBinDir
 
     Write-Verbose "Ensure Win10 SDK is present on the machine @ $win10sdkBinPath"
-    if (-not (Test-Path $win10sdkBinPath)) {
+    if (-not (Test-Win10SDK)) {
         throw "Install Win10 SDK prior to running this script - https://go.microsoft.com/fwlink/p/?LinkID=698771"
     }
 
