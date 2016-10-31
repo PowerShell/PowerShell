@@ -739,5 +739,67 @@ namespace System.Management.Automation
 #endif
 
         #endregion
+
+        #region CreateToolhelp32Snapshot
+
+#if !UNIX
+
+        [DllImport(PinvokeDllNames.CreateToolhelp32SnapshotDllName, SetLastError = true)]
+        internal static extern SafeSnapshotHandle CreateToolhelp32Snapshot(SnapshotFlags flags, uint id);
+        [DllImport(PinvokeDllNames.Process32FirstDllName, SetLastError = true)]
+        internal static extern bool Process32First(SafeSnapshotHandle hSnapshot, ref PROCESSENTRY32 lppe);
+        [DllImport(PinvokeDllNames.Process32NextDllName, SetLastError = true)]
+        internal static extern bool Process32Next(SafeSnapshotHandle hSnapshot, ref PROCESSENTRY32 lppe);
+
+        internal sealed class SafeSnapshotHandle : SafeHandleMinusOneIsInvalid
+        {
+            internal SafeSnapshotHandle() : base(true)
+            {
+            }
+
+            [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+            internal SafeSnapshotHandle(IntPtr handle) : base(true)
+            {
+                base.SetHandle(handle);
+            }
+
+            protected override bool ReleaseHandle()
+            {
+                return CloseHandle(base.handle);
+            }
+        }
+
+        [Flags]
+        internal enum SnapshotFlags : uint
+        {
+            HeapList = 0x00000001,
+            Process = 0x00000002,
+            Thread = 0x00000004,
+            Module = 0x00000008,
+            Module32 = 0x00000010,
+            All = (HeapList | Process | Thread | Module),
+            Inherit = 0x80000000,
+            NoHeaps = 0x40000000
+        }
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct PROCESSENTRY32
+        {
+            public uint dwSize;
+            public uint cntUsage;
+            public uint th32ProcessID;
+            public IntPtr th32DefaultHeapID;
+            public uint th32ModuleID;
+            public uint cntThreads;
+            public uint th32ParentProcessID;
+            public int pcPriClassBase;
+            public uint dwFlags;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string szExeFile;
+        };
+
+        internal const int ERROR_NO_MORE_FILES = 0x12;        
+
+#endif
+
+        #endregion
     }
 }

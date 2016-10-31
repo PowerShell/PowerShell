@@ -597,13 +597,19 @@ function Publish-PSTestTools {
 
     Find-Dotnet
 
+    $tools = "$PSScriptRoot/test/tools/EchoArgs","$PSScriptRoot/test/tools/CreateChildProcess"
     # Publish EchoArgs so it can be run by tests
-    Push-Location "$PSScriptRoot/test/tools/EchoArgs"
-    try {
-        dotnet publish --output bin
-    } finally {
-        Pop-Location
+
+    foreach ($tool in $tools)
+    {
+        Push-Location $tool
+        try {
+            dotnet publish --output bin
+        } finally {
+            Pop-Location
+        }
     }
+
 }
 
 function Start-PSPester {

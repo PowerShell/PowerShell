@@ -4,7 +4,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System.Collections;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -16,7 +15,10 @@ using System.Xml;
 using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Management.Automation.Language;
-using Microsoft.Management.Infrastructure;
+#if CORECLR
+// Use stubs for SerializableAttribute, SecurityPermissionAttribute, ReliabilityContractAttribute and ISerializable related types.
+using Microsoft.PowerShell.CoreClr.Stubs;
+#endif
 
 namespace System.Management.Automation
 {
@@ -91,57 +93,64 @@ namespace System.Management.Automation
         /// <summary>
         /// Retrieve the parent process of a process.
         /// 
-        /// This is an extremely expensive operation, as WMI
-        /// needs to work with an ugly Win32 API. The Win32 API
-        /// creates a snapshot of every process in the system, which
-        /// you then need to iterate through to find your process and
-        /// its parent PID.
-        ///
-        /// Also, since this is PID based, this API is only reliable
-        /// when the process has not yet exited.
+        /// Previously this code used WMI, but WMI is causing a CPU spike whenever the query gets called as it results in 
+        /// tzres.dll and tzres.mui.dll being loaded into every process to conver the time information to local format.
+        /// For perf reasons, we result to P/Invoke.
         /// </summary>
         ///
         /// <param name="current">The process we want to find the
         /// parent of</param>
         internal static Process GetParentProcess(Process current)
         {
-            string wmiQuery = String.Format(CultureInfo.CurrentCulture,
-                                            "Select * From Win32_Process Where Handle='{0}'",
-                                            current.Id);
+            int parentPid = 0;
 
-            using (CimSession cimSession = CimSession.Create(null))
+#if !UNIX
+            PlatformInvokes.PROCESSENTRY32 pe32 = new PlatformInvokes.PROCESSENTRY32 { };
+            pe32.dwSize = (uint)ClrFacade.SizeOf<PlatformInvokes.PROCESSENTRY32>();
+
+            using (PlatformInvokes.SafeSnapshotHandle hSnapshot = PlatformInvokes.CreateToolhelp32Snapshot(PlatformInvokes.SnapshotFlags.Process, (uint)current.Id))
             {
-                IEnumerable<CimInstance> processCollection =
-                    cimSession.QueryInstances("root/cimv2", "WQL", wmiQuery);
-
-                int parentPid =
-                    processCollection.Select(
-                        cimProcess =>
-                        Convert.ToInt32(cimProcess.CimInstanceProperties["ParentProcessId"].Value,
-                                        CultureInfo.CurrentCulture)).FirstOrDefault();
-
-                if (parentPid == 0)
-                    return null;
-
-                try
+                if (!PlatformInvokes.Process32First(hSnapshot, ref pe32))
                 {
-                    Process returnProcess = Process.GetProcessById(parentPid);
-
-                    // Ensure the process started before the current
-                    // process, as it could have gone away and had the
-                    // PID recycled.
-                    if (returnProcess.StartTime <= current.StartTime)
-                        return returnProcess;
-                    else
+                    int errno = Marshal.GetLastWin32Error();
+                    if (errno == PlatformInvokes.ERROR_NO_MORE_FILES)
+                    {
                         return null;
+                    }
                 }
-                catch (ArgumentException)
+                do
                 {
-                    // GetProcessById throws an ArgumentException when
-                    // you reach the top of the chain -- Explorer.exe
-                    // has a parent process, but you cannot retrieve it.
+                    if (pe32.th32ProcessID == (uint)current.Id)
+                    {
+                        parentPid = (int)pe32.th32ParentProcessID;
+                        break;
+                    }
+
+                } while (PlatformInvokes.Process32Next(hSnapshot, ref pe32));
+            }
+#endif
+
+            if (parentPid == 0)
+                return null;
+
+            try
+            {
+                Process returnProcess = Process.GetProcessById(parentPid);
+
+                // Ensure the process started before the current
+                // process, as it could have gone away and had the
+                // PID recycled.
+                if (returnProcess.StartTime <= current.StartTime)
+                    return returnProcess;
+                else
                     return null;
-                }
+            }
+            catch (ArgumentException)
+            {
+                // GetProcessById throws an ArgumentException when
+                // you reach the top of the chain -- Explorer.exe
+                // has a parent process, but you cannot retrieve it.
+                return null;
             }
         }
 
