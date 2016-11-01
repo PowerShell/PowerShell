@@ -278,14 +278,14 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
 	}
 
         # Issue #2351
-	It "Select-Object with implicit Property = '*' exclude not single prperty"{
+	It "Select-Object with implicit Property = '*' exclude not single property"{
 		$results = [pscustomobject]@{Thing="thing1";Param2="param2"} | Select-Object -ExcludeProperty Param2 
 		$results.Param2 | Should Be $null
 		$results.Thing | Should Be "thing1"
 	}
 
         # Issue #2351
-	It "Select-Object with explicit Property = '*' exclude not single prperty"{
+	It "Select-Object with explicit Property = '*' exclude not single property"{
 		$results = [pscustomobject]@{Thing="thing1";Param2="param2"} | Select-Object -Property * -ExcludeProperty Param2 
 		$results.Param2 | Should Be $null
 		$results.Thing | Should Be "thing1"
