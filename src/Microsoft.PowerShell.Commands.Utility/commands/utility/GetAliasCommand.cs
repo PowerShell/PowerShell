@@ -26,6 +26,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// 
         [Parameter(ParameterSetName = "Default", Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [ValidateNotNullOrEmpty()]
         public string[] Name
         {
             get { return _names; }
