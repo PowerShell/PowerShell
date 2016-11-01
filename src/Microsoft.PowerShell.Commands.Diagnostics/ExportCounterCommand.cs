@@ -156,15 +156,16 @@ namespace Microsoft.PowerShell.Commands
             // Determine the OS version: this cmdlet requires Windows 7
             // because it uses new Pdh functionality.
             //
-            if (System.Environment.OSVersion.Version.Major < 6 ||
-                (System.Environment.OSVersion.Version.Major == 6 && System.Environment.OSVersion.Version.Minor < 1))
+            Version osVersion = CommonUtilities.OsVersion;
+            if (osVersion.Major < 6 ||
+                (osVersion.Major == 6 && osVersion.Minor < 1))
             {
                 string msg = _resourceMgr.GetString("ExportCtrWin7Required");
                 Exception exc = new Exception(msg);
                 ThrowTerminatingError(new ErrorRecord(exc, "ExportCtrWin7Required", ErrorCategory.NotImplemented, null));
             }
 
-            _pdhHelper = new PdhHelper(System.Environment.OSVersion.Version.Major < 6);
+            _pdhHelper = new PdhHelper(osVersion.Major < 6);
 
             //
             // Validate the Format and CounterSamples arguments
@@ -225,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!_queryInitialized)
             {
-                if (_format.ToLower(CultureInfo.InvariantCulture).Equals("blg"))
+                if (_format.ToLowerInvariant().Equals("blg"))
                 {
                     res = _pdhHelper.AddRelogCounters(_counterSampleSets[0]);
                 }
@@ -303,7 +304,7 @@ namespace Microsoft.PowerShell.Commands
         //
         private void ValidateFormat()
         {
-            switch (_format.ToLower(CultureInfo.InvariantCulture))
+            switch (_format.ToLowerInvariant())
             {
                 case "blg":
                     _outputFormat = PdhLogFileType.PDH_LOG_TYPE_BINARY;
