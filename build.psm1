@@ -902,7 +902,10 @@ function Start-PSBootstrap {
         ConfirmImpact="High")]
     param(
         [string]$Channel = "rel-1.0.0",
-        [string]$Version = "latest",
+        # we currently pin dotnet-cli version, because tool
+        # is currently migrating to msbuild toolchain
+        # and requires constant updates to our build process.
+        [string]$Version = "1.0.0-preview3-003930",
         [switch]$Package,
         [switch]$NoSudo,
         [switch]$Force
