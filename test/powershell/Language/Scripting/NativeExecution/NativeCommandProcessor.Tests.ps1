@@ -11,14 +11,12 @@ Describe "Native Command Processor" -tags "Feature" {
 
     # If powershell receives a StopProcessing, it should kill the native process and all child processes
 
-    # this test should pass and no longer Penidng when #2561 is fixed
-    It "Should kill native process tree" {
-        
-        Test-Path $createchildprocess | Should Be $true
+    # this test should pass and no longer Pending when #2561 is fixed
+    It "Should kill native process tree" -Pending {
 
         # make sure no test processes are running
         # on Linux, the Process class truncates the name so filter using Where-Object
-        Get-Process | Where-Object {$_.Name -like 'createchildproc'} | Stop-Process
+        Get-Process | Where-Object {$_.Name -like 'createchildproc*'} | Stop-Process
         
         [int] $numToCreate = 2
 
@@ -30,7 +28,7 @@ Describe "Native Command Processor" -tags "Feature" {
         [bool] $childrenCreated = $false
         while (-not $childrenCreated)
         {
-            $childprocesses = Get-Process | Where-Object {$_.Name -like 'createchildproc'} 
+            $childprocesses = Get-Process | Where-Object {$_.Name -like 'createchildproc*'} 
             if ($childprocesses.count -eq $numToCreate+1)
             {
                 $childrenCreated = $true
@@ -47,7 +45,7 @@ Describe "Native Command Processor" -tags "Feature" {
                 break
             }
         }
-        $childprocesses = Get-Process | Where-Object {$_.Name -like 'createchildproc'}
+        $childprocesses = Get-Process | Where-Object {$_.Name -like 'createchildproc*'}
         $count = $childprocesses.count 
         $childprocesses | Stop-Process
         $count | Should Be 0
