@@ -3142,8 +3142,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
-
                     SetHadErrors(true);
 
                     // Stop if necessarily
@@ -3226,7 +3224,6 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 RunningExtraCommands = false;
-                CommandProcessorBase.CheckForSevereException(e);
 
                 SetHadErrors(true);
 
@@ -3688,7 +3685,6 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 failed = true;
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new RuntimeException(PipelineStrings.CannotCreatePipeline, e);
             }
             finally
@@ -4405,8 +4401,6 @@ namespace System.Management.Automation
                         }
                         catch (Exception e)
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
-
                             SetHadErrors(true);
 
                             // Stop if necessarily
@@ -4937,7 +4931,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 // report non-severe exceptions to the user via the
                 // asyncresult object
                 exception = e;
@@ -5162,13 +5155,7 @@ namespace System.Management.Automation
                                new PipelineStateInfo(PipelineState.Failed,
                                    e)));
 
-
-                    if (!isSync)
-                    {
-                        // eat the exception but check if it is severe.
-                        CommandProcessorBase.CheckForSevereException(e);
-                    }
-                    else
+                    if (isSync)
                     {
                         throw;
                     }
@@ -5208,7 +5195,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     // PipelineStateChangedEvent is not raised
                     // if there is an exception calling BeginInvoke
                     // So raise the event here and notify the caller.

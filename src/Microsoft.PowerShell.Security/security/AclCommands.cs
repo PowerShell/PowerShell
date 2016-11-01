@@ -783,11 +783,9 @@ namespace Microsoft.PowerShell.Commands
                             customDescriptor = new CommonSecurityDescriptor(false, false, customDescriptor.ToString());
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         // Calling user code, Catch-all OK
-                        CommandProcessorBase.CheckForSevereException(e);
-
                         ErrorRecord er =
                         SecurityUtils.CreateNotSupportedErrorRecord(
                             UtilsStrings.MethodInvokeFail,
@@ -1357,11 +1355,9 @@ namespace Microsoft.PowerShell.Commands
                     {
                         methodInfo.Invoke(sddl);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         // Calling user code, Catch-all OK
-                        CommandProcessorBase.CheckForSevereException(e);
-
                         ErrorRecord er =
                         SecurityUtils.CreateNotSupportedErrorRecord(
                             UtilsStrings.MethodInvokeFail,

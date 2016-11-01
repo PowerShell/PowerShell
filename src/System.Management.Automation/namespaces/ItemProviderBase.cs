@@ -297,10 +297,8 @@ namespace System.Management.Automation.Provider
                 // throw an exception here.
                 itemExists = ItemExists(path);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                // ignore non-severe exceptions
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             return itemExists;

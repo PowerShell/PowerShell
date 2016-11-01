@@ -121,7 +121,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK. 3rd party callout
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 authorizationManagerException = e;
 
                 defaultCatch = true;

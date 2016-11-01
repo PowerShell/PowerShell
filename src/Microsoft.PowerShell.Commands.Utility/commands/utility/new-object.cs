@@ -401,7 +401,6 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 info.e = e;
                 info.success = false;
             }

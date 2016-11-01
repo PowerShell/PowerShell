@@ -963,7 +963,6 @@ namespace System.Management.Automation.Runspaces
             catch (Exception e)
             {
                 failed = true;
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new RuntimeException(PipelineStrings.CannotCreatePipeline, e);
             }
             finally

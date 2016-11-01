@@ -306,8 +306,6 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception ex)
             {
-                CommandProcessorBase.CheckForSevereException(ex);
-
                 ErrorRecord errorRecord = new ErrorRecord(
                 new PSInvalidOperationException(string.Format(CultureInfo.InvariantCulture, Debugger.PersistDebugPreferenceFailure, processName), ex),
                 fullyQualifiedErrorId,

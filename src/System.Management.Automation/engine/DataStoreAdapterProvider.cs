@@ -169,9 +169,8 @@ namespace System.Management.Automation
                             _capabilitiesRead = true;
                         }
                     }
-                    catch (Exception e) // Catch-all OK, 3rd party callout
+                    catch (Exception) // Catch-all OK, 3rd party callout
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                         // Assume no capabilities for now
                     }
                 }

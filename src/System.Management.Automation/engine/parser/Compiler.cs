@@ -73,9 +73,6 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo CommandParameterInternal_CreateParameterWithArgument =
             typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateParameterWithArgument), staticFlags);
 
-        internal static readonly MethodInfo CommandProcessorBase_CheckForSevereException =
-            typeof(CommandProcessorBase).GetMethod(nameof(CommandProcessorBase.CheckForSevereException), staticFlags);
-
         internal static readonly MethodInfo CommandRedirection_UnbindForExpression =
             typeof(CommandRedirection).GetMethod(nameof(CommandRedirection.UnbindForExpression), instanceFlags);
 
@@ -3692,7 +3689,6 @@ namespace System.Management.Automation.Language
                 var exception = NewTemp(typeof(Exception), "exception");
                 var catchAllBlock = Expression.Block(
                     tryBlock.Type,
-                    Expression.Call(CachedReflectionInfo.CommandProcessorBase_CheckForSevereException, exception),
                     ThrowRuntimeErrorWithInnerException("FileReadError",
                                                         ParserStrings.FileReadError,
                                                         exception,
@@ -5294,9 +5290,8 @@ namespace System.Management.Automation.Language
                 // If creating the type throws an exception, just defer that error until runtime.
                 type = typeName.GetReflectionType();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 type = null;
             }
 

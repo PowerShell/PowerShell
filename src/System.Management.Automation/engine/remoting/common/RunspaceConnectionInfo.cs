@@ -2115,9 +2115,8 @@ namespace System.Management.Automation.Runspaces
                 stdOutReaderVar = new StreamReader(new NamedPipeServerStream(PipeDirection.In, true, true, stdOutPipeServer));
                 stdErrReaderVar = new StreamReader(new NamedPipeServerStream(PipeDirection.In, true, true, stdErrPipeServer));
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 if (stdInWriterVar != null) { stdInWriterVar.Dispose(); } else { stdInPipeServer.Dispose(); }
                 if (stdOutReaderVar != null) { stdInWriterVar.Dispose(); } else { stdOutPipeServer.Dispose(); }
                 if (stdErrReaderVar != null) { stdInWriterVar.Dispose(); } else { stdErrPipeServer.Dispose(); }
@@ -2165,10 +2164,8 @@ namespace System.Management.Automation.Runspaces
                 stdErrPipeServer = CreateNamedPipe(stdErrPipeName, securityDesc);
                 stdErrPipeClient = GetNamedPipeHandle(stdErrPipeName);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 if (stdInPipeServer != null) { stdInPipeServer.Dispose(); }
                 if (stdInPipeClient != null) { stdInPipeClient.Dispose(); }
                 if (stdOutPipeServer != null) { stdOutPipeServer.Dispose(); }
@@ -2224,9 +2221,8 @@ namespace System.Management.Automation.Runspaces
 
                 return result;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 if (stdInPipeServer != null) { stdInPipeServer.Dispose(); }
                 if (stdInPipeClient != null) { stdInPipeClient.Dispose(); }
                 if (stdOutPipeServer != null) { stdOutPipeServer.Dispose(); }
@@ -2896,8 +2892,6 @@ namespace System.Management.Automation.Runspaces
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 if (e is FileNotFoundException || e is FileLoadException)
                 {
                     //
@@ -2987,8 +2981,6 @@ namespace System.Management.Automation.Runspaces
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 if (e.InnerException != null &&
                     StringComparer.Ordinal.Equals(
                         e.InnerException.GetType().FullName,

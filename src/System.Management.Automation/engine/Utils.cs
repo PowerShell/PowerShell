@@ -804,10 +804,9 @@ namespace System.Management.Automation
 
                         ps.Invoke<PSModuleInfo>();
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         // Call-out to user code, catch-all OK
-                        CommandProcessorBase.CheckForSevereException(e);
                     }
                     finally
                     {
@@ -870,10 +869,9 @@ namespace System.Management.Automation
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Call-out to user code, catch-all OK
-                CommandProcessorBase.CheckForSevereException(e);
             }
             finally
             {
@@ -932,10 +930,9 @@ namespace System.Management.Automation
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Call-out to user code, catch-all OK
-                CommandProcessorBase.CheckForSevereException(e);
             }
             finally
             {

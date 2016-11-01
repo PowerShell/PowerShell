@@ -446,7 +446,6 @@ namespace System.Management.Automation
                             }
                             catch (Exception e) // Catch-all OK, 3rd party callout
                             {
-                                CommandProcessorBase.CheckForSevereException(e);
                                 bindingTracer.WriteLine(
                                     "ERROR: DATA GENERATION: {0}",
                                     e.Message);
@@ -530,7 +529,6 @@ namespace System.Management.Automation
                                 }
                                 catch (Exception e) // Catch-all OK, 3rd party callout
                                 {
-                                    CommandProcessorBase.CheckForSevereException(e);
                                     bindingTracer.WriteLine(
                                         "ERROR: VALIDATION FAILED: {0}",
                                         e.Message);
@@ -672,9 +670,8 @@ namespace System.Management.Automation
                                 stringToPrint = parameterValue.ToString();
                             }
                         }
-                        catch (Exception e) // Catch-all OK, 3rd party callout
+                        catch (Exception) // Catch-all OK, 3rd party callout
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
                         }
                         if (stringToPrint != null)
                         {
@@ -1792,8 +1789,6 @@ namespace System.Management.Automation
                         }
                         catch (Exception error) // OK, we catch all here by design
                         {
-                            CommandProcessorBase.CheckForSevereException(error);
-
                             // The inner exception to TargetInvocationException
                             // (if present) has a better Message
                             if (error is TargetInvocationException &&
@@ -1891,8 +1886,6 @@ namespace System.Management.Automation
                     }
                     catch (Exception error) // OK, we catch all here by design
                     {
-                        CommandProcessorBase.CheckForSevereException(error);
-
                         // The inner exception to TargetInvocationException
                         // (if present) has a better Message
                         if (error is TargetInvocationException &&

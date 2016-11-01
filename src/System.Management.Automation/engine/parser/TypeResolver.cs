@@ -110,9 +110,8 @@ namespace System.Management.Automation.Language
                         }
                     }
                 }
-                catch (Exception e) // Assembly.GetType might throw unadvertised exceptions
+                catch (Exception) // Assembly.GetType might throw unadvertised exceptions
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
 
@@ -218,7 +217,6 @@ namespace System.Management.Automation.Language
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 exception = e;
             }
 
@@ -403,7 +401,6 @@ namespace System.Management.Automation.Language
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     exception = e;
                     return null;
                 }

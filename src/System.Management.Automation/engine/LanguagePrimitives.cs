@@ -506,8 +506,6 @@ namespace System.Management.Automation
             }
             catch (Exception innerException)
             {
-                CommandProcessorBase.CheckForSevereException(innerException);
-
                 e = GetEnumerableFromIEnumerableT(obj);
                 if (e != null)
                 {
@@ -1033,15 +1031,13 @@ namespace System.Management.Automation
                     double otherDouble = (double)Convert.ChangeType(otherNumber, typeof(System.Double), CultureInfo.InvariantCulture);
                     return ((IComparable)wasDecimal).CompareTo(otherDouble);
                 }
-                catch (Exception e) // We need to catch the generic exception because ChangeType throws unadvertised exceptions
+                catch (Exception) // We need to catch the generic exception because ChangeType throws unadvertised exceptions
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     return -1;
                 }
             }
-            catch (Exception e) // We need to catch the generic exception because ChangeType throws unadvertised exceptions
+            catch (Exception) // We need to catch the generic exception because ChangeType throws unadvertised exceptions
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 return -1;
             }
 
@@ -1426,7 +1422,6 @@ namespace System.Management.Automation
                     }
                     catch (Exception e)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                         TargetInvocationException inner = e as TargetInvocationException;
                         string message = (inner == null) || (inner.InnerException == null) ? e.Message : inner.InnerException.Message;
                         typeConversion.WriteLine("Creating an instance of type \"{0}\" caused an exception to be thrown: \"{1}\"", assemblyQualifiedTypeName, message);
@@ -2007,9 +2002,8 @@ namespace System.Management.Automation
                         ThrowForUndefinedEnum("UndefinedInEnumSingleTypeConverter", result, sourceValueString, destinationType);
                         return result;
                     }
-                    catch (Exception e) // Enum.ToObject and Convert.ChangeType might throw unadvertised exceptions
+                    catch (Exception) // Enum.ToObject and Convert.ChangeType might throw unadvertised exceptions
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                         // we still want to try non numeric match
                     }
                 }
@@ -2211,7 +2205,6 @@ namespace System.Management.Automation
             }
             catch (Exception wmiObjectException)
             {
-                CommandProcessorBase.CheckForSevereException(wmiObjectException);
                 typeConversion.WriteLine("Exception creating WMI object: \"{0}\".", wmiObjectException.Message);
                 throw new PSInvalidCastException("InvalidCastToWMI", wmiObjectException,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
@@ -2247,7 +2240,6 @@ namespace System.Management.Automation
             }
             catch (Exception objectSearcherException)
             {
-                CommandProcessorBase.CheckForSevereException(objectSearcherException);
                 typeConversion.WriteLine("Exception running WMI object query: \"{0}\".", objectSearcherException.Message);
                 throw new PSInvalidCastException("InvalidCastToWMISearcher", objectSearcherException,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
@@ -2293,7 +2285,6 @@ namespace System.Management.Automation
             }
             catch (Exception wmiClassException)
             {
-                CommandProcessorBase.CheckForSevereException(wmiClassException);
                 typeConversion.WriteLine("Exception creating WMI class: \"{0}\".", wmiClassException.Message);
                 throw new PSInvalidCastException("InvalidCastToWMIClass", wmiClassException,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
@@ -2344,7 +2335,6 @@ namespace System.Management.Automation
             }
             catch (Exception adsiClassException)
             {
-                CommandProcessorBase.CheckForSevereException(adsiClassException);
                 typeConversion.WriteLine("Exception creating ADSI class: \"{0}\".", adsiClassException.Message);
                 throw new PSInvalidCastException("InvalidCastToADSIClass", adsiClassException,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
@@ -2367,7 +2357,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 typeConversion.WriteLine("Exception creating ADSI searcher: \"{0}\".", e.Message);
                 throw new PSInvalidCastException("InvalidCastToADSISearcher", e,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
@@ -2407,7 +2396,6 @@ namespace System.Management.Automation
             }
             catch (Exception ex)
             {
-                CommandProcessorBase.CheckForSevereException(ex);
                 typeConversion.WriteLine("Exception creating StringCollection class: \"{0}\".", ex.Message);
                 throw new PSInvalidCastException(StringUtil.Format("InvalidCastTo{0}Class", resultType.Name), ex,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException, valueToConvert.ToString(), resultType.ToString(), ex.Message);
@@ -2456,7 +2444,6 @@ namespace System.Management.Automation
                 catch (Exception loadXmlException)
                 {
                     typeConversion.WriteLine("Exception loading XML: \"{0}\".", loadXmlException.Message);
-                    CommandProcessorBase.CheckForSevereException(loadXmlException);
                     throw new PSInvalidCastException("InvalidCastToXmlDocument", loadXmlException,
                         ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                         valueToConvert.ToString(), resultType.ToString(), loadXmlException.Message);
@@ -2505,7 +2492,6 @@ namespace System.Management.Automation
                             catch (Exception e)
                             {
                                 typeConversion.WriteLine("Exception converting with Original type's TypeConverter: \"{0}\".", e.Message);
-                                CommandProcessorBase.CheckForSevereException(e);
                                 throw new PSInvalidCastException("InvalidCastTypeConvertersConvertTo", e,
                                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                                     valueToConvert.ToString(), resultType.ToString(), e.Message);
@@ -2532,7 +2518,6 @@ namespace System.Management.Automation
                             catch (Exception e)
                             {
                                 typeConversion.WriteLine("Exception converting with Original type's PSTypeConverter: \"{0}\".", e.Message);
-                                CommandProcessorBase.CheckForSevereException(e);
                                 throw new PSInvalidCastException("InvalidCastPSTypeConvertersConvertTo", e,
                                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                                     valueToConvert.ToString(), resultType.ToString(), e.Message);
@@ -2565,7 +2550,6 @@ namespace System.Management.Automation
                             catch (Exception e)
                             {
                                 typeConversion.WriteLine("Exception converting with Destination type's TypeConverter: \"{0}\".", e.Message);
-                                CommandProcessorBase.CheckForSevereException(e);
                                 throw new PSInvalidCastException("InvalidCastTypeConvertersConvertFrom", e,
                                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                                     valueToConvert.ToString(), resultType.ToString(), e.Message);
@@ -2592,7 +2576,6 @@ namespace System.Management.Automation
                             catch (Exception e)
                             {
                                 typeConversion.WriteLine("Exception converting with Destination type's PSTypeConverter: \"{0}\".", e.Message);
-                                CommandProcessorBase.CheckForSevereException(e);
                                 throw new PSInvalidCastException("InvalidCastPSTypeConvertersConvertFrom", e,
                                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                                     valueToConvert.ToString(), resultType.ToString(), e.Message);
@@ -2627,7 +2610,6 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 typeConversion.WriteLine("Exception converting with IConvertible: \"{0}\".", e.Message);
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new PSInvalidCastException("InvalidCastIConvertible", e,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                     valueToConvert.ToString(), resultType.ToString(), e.Message);
@@ -2650,7 +2632,6 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 typeConversion.WriteLine("Exception converting with IConvertible: \"{0}\".", e.Message);
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new PSInvalidCastException("InvalidCastIConvertible", e,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                     valueToConvert.ToString(), resultType.ToString(), e.Message);
@@ -2687,7 +2668,6 @@ namespace System.Management.Automation
             catch (Exception regexException)
             {
                 typeConversion.WriteLine("Exception in RegEx constructor: \"{0}\".", regexException.Message);
-                CommandProcessorBase.CheckForSevereException(regexException);
                 throw new PSInvalidCastException("InvalidCastFromStringToRegex", regexException,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                     valueToConvert.ToString(), resultType.ToString(), regexException.Message);
@@ -2764,7 +2744,6 @@ namespace System.Management.Automation
             catch (Exception uriException)
             {
                 typeConversion.WriteLine("Exception in Uri constructor: \"{0}\".", uriException.Message);
-                CommandProcessorBase.CheckForSevereException(uriException);
                 throw new PSInvalidCastException("InvalidCastFromStringToUri", uriException,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                     valueToConvert.ToString(), resultType.ToString(), uriException.Message);
@@ -2799,13 +2778,11 @@ namespace System.Management.Automation
             {
                 // This catch has one extra reason to be generic (Exception e). 
                 // integerConverter.ConvertFrom warps its exceptions in a System.Exception.
-                CommandProcessorBase.CheckForSevereException(e);
                 if (e.InnerException != null)
                 {
                     e = e.InnerException;
                 }
                 typeConversion.WriteLine("Exception converting to integer: \"{0}\".", e.Message);
-                CommandProcessorBase.CheckForSevereException(e);
                 if (e is FormatException)
                 {
                     typeConversion.WriteLine("Converting to integer passing through double.");
@@ -2816,7 +2793,6 @@ namespace System.Management.Automation
                     catch (Exception ex) // swallow non-severe exceptions
                     {
                         typeConversion.WriteLine("Exception converting to integer through double: \"{0}\".", ex.Message);
-                        CommandProcessorBase.CheckForSevereException(ex);
                     }
                 }
                 throw new PSInvalidCastException("InvalidCastFromStringToInteger", e,
@@ -2850,7 +2826,6 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 typeConversion.WriteLine("Exception converting to decimal: \"{0}\". Converting to decimal passing through double.", e.Message);
-                CommandProcessorBase.CheckForSevereException(e);
                 if (e is FormatException)
                 {
                     try
@@ -2860,7 +2835,6 @@ namespace System.Management.Automation
                     catch (Exception ex)
                     {
                         typeConversion.WriteLine("Exception converting to integer through double: \"{0}\".", ex.Message);
-                        CommandProcessorBase.CheckForSevereException(ex);
                     }
                 }
                 throw new PSInvalidCastException("InvalidCastFromStringToDecimal", e,
@@ -2894,7 +2868,6 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 typeConversion.WriteLine("Exception converting to double or single: \"{0}\".", e.Message);
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new PSInvalidCastException("InvalidCastFromStringToDoubleOrSingle", e,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                     valueToConvert.ToString(), resultType.ToString(), e.Message);
@@ -3152,7 +3125,6 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 typeConversion.WriteLine("Converting numeric to string Exception: \"{0}\".", e.Message);
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new PSInvalidCastException("InvalidCastFromNumericToString", e,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                     valueToConvert.ToString(), resultType.ToString(), e.Message);
@@ -3309,7 +3281,6 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 typeConversion.WriteLine("Element conversion exception: \"{0}\".", e.Message);
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new PSInvalidCastException("InvalidCastExceptionEnumerableToArray", e,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                     valueToConvert.ToString(), resultType.ToString(), e.Message);
@@ -3341,7 +3312,6 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 typeConversion.WriteLine("Element conversion exception: \"{0}\".", e.Message);
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new PSInvalidCastException("InvalidCastExceptionScalarToArray", e,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                     valueToConvert.ToString(), resultType.ToString(), e.Message);
@@ -3364,7 +3334,6 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 typeConversion.WriteLine("Integer to System.Enum exception: \"{0}\".", e.Message);
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new PSInvalidCastException("InvalidCastExceptionIntegerToEnum", e,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                     valueToConvert.ToString(), resultType.ToString(), e.Message);
@@ -3410,7 +3379,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception ex) // Enum.Parse might throw unadvertised exceptions
                 {
-                    CommandProcessorBase.CheckForSevereException(ex);
                     typeConversion.WriteLine("Case insensitive Enum.Parse threw an exception.");
                     throw new PSInvalidCastException("CaseInsensitiveEnumParseThrewAnException", ex,
                             ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
@@ -3419,7 +3387,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Enum.Parse might throw unadvertised exceptions
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 typeConversion.WriteLine("Case Sensitive Enum.Parse threw an exception.");
                 throw new PSInvalidCastException("CaseSensitiveEnumParseThrewAnException", e,
                         ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
@@ -3436,7 +3403,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e) // Wrap exceptions in type conversion exceptions
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     typeConversion.WriteLine("Substring disambiguation threw an exception.");
                     throw new PSInvalidCastException("SubstringDisambiguationEnumParseThrewAnException", e,
                             ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
@@ -3517,7 +3483,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     typeConversion.WriteLine("Exception calling Parse method with CultureInfo: \"{0}\".", e.Message);
                     throw new PSInvalidCastException("InvalidCastParseExceptionWithFormatProvider", e,
                         ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
@@ -3548,7 +3513,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     typeConversion.WriteLine("Exception calling Parse method: \"{0}\".", e.Message);
                     throw new PSInvalidCastException("InvalidCastParseException", e,
                         ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
@@ -3584,7 +3548,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     typeConversion.WriteLine("Exception invoking Constructor: \"{0}\".", e.Message);
                     throw new PSInvalidCastException("InvalidCastConstructorException", e,
                         ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
@@ -3636,9 +3599,8 @@ namespace System.Management.Automation
 
                     resultAsList = ListCtorLambda(listSize);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     ThrowInvalidCastException(valueToConvert, resultType);
                     Diagnostics.Assert(false, "ThrowInvalidCastException always throws");
                     return null;
@@ -3688,7 +3650,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     typeConversion.WriteLine("Exception invoking IEnumerable Constructor: \"{0}\".", e.Message);
                     throw new PSInvalidCastException("InvalidCastConstructorException", e,
                         ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
@@ -3786,7 +3747,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     typeConversion.WriteLine("Exception invoking Constructor: \"{0}\".", e.Message);
                     throw new PSInvalidCastException("InvalidCastConstructorException", e,
                         ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
@@ -3820,7 +3780,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     typeConversion.WriteLine("Cast operator exception: \"{0}\".", e.Message);
                     throw new PSInvalidCastException("InvalidCastException" + cast.Name, e,
                         ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
@@ -3845,7 +3804,6 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 typeConversion.WriteLine("Exception converting with IConvertible: \"{0}\".", e.Message);
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new PSInvalidCastException("InvalidCastIConvertible", e,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                     valueToConvert.ToString(), resultType.ToString(), e.Message);
@@ -4950,7 +4908,6 @@ namespace System.Management.Automation
                     }
                     catch (Exception e)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                         typeConversion.WriteLine("Exception building constructor lambda: \"{0}\"", e.Message);
                         return null;
                     }
@@ -5032,7 +4989,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 typeConversion.WriteLine("Exception building constructor lambda: \"{0}\"", e.Message);
                 return null;
             }

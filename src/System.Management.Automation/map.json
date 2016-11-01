@@ -213,7 +213,6 @@
     "monad/src/engine/interpreter/DynamicInstructions.Generated.cs":  "engine/interpreter/DynamicInstructions.Generated.cs",
     "monad/src/engine/parser/FusionAssemblyIdentity.cs":  "engine/parser/FusionAssemblyIdentity.cs",
     "monad/src/engine/interpreter/LoopCompiler.cs":  "engine/interpreter/LoopCompiler.cs",
-    "monad/src/utils/WindowsErrorReporting.cs":  "utils/WindowsErrorReporting.cs",
     "monad/src/engine/ComInterop/StringArgBuilder.cs":  "engine/ComInterop/StringArgBuilder.cs",
     "monad/src/engine/resources/GetErrorText.resx":  "resources/GetErrorText.resx",
     "monad/src/namespaces/TransactedRegistryKey.cs":  "namespaces/TransactedRegistryKey.cs",

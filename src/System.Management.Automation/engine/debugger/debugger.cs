@@ -704,9 +704,8 @@ namespace System.Management.Automation
                     {
                         NestedDebuggingCancelledEvent.SafeInvoke<EventArgs>(this, null);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                     }
                 });
         }
@@ -3517,10 +3516,9 @@ namespace System.Management.Automation
                 RaiseDebuggerStopEvent(args);
                 _lastActiveDebuggerAction = args.ResumeAction;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Catch all external user generated exceptions thrown on event thread.
-                CommandProcessorBase.CheckForSevereException(ex);
             }
             finally
             {

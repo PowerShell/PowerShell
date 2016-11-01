@@ -1455,9 +1455,8 @@ namespace System.Management.Automation
                         StringUtil.Format(resourceString, arguments));
                 }
             }
-            catch (Exception ex) // swallow all exceptions
+            catch (Exception) // swallow all exceptions
             {
-                CommandProcessorBase.CheckForSevereException(ex);
             }
         }
 
@@ -1485,9 +1484,8 @@ namespace System.Management.Automation
                     ui.WriteErrorLine(error);
                 }
             }
-            catch (Exception ex) // swallow all exceptions
+            catch (Exception) // swallow all exceptions
             {
-                CommandProcessorBase.CheckForSevereException(ex);
             }
         }
 
@@ -1521,9 +1519,8 @@ namespace System.Management.Automation
                     ui.WriteErrorLine(e.Message);
                 }
             }
-            catch (Exception ex) // swallow all exceptions
+            catch (Exception) // swallow all exceptions
             {
-                CommandProcessorBase.CheckForSevereException(ex);
             }
         }
 
@@ -1550,9 +1547,8 @@ namespace System.Management.Automation
                     ui.WriteErrorLine(errorRecord.ToString());
                 }
             }
-            catch (Exception ex) // swallow all exceptions
+            catch (Exception) // swallow all exceptions
             {
-                CommandProcessorBase.CheckForSevereException(ex);
             }
         }
 

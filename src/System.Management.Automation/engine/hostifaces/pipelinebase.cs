@@ -540,8 +540,6 @@ namespace System.Management.Automation.Runspaces
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 //If we fail in any of the above three steps, set the correct states.
                 RunspaceBase.RemoveFromRunningPipelineList(this);
                 SetPipelineState(PipelineState.Failed, exception);
@@ -879,9 +877,8 @@ namespace System.Management.Automation.Runspaces
                         {
                             stateChanged(this, new PipelineStateEventArgs(queueItem.PipelineStateInfo));
                         }
-                        catch (Exception exception) // ignore non-severe exceptions
+                        catch (Exception)
                         {
-                            CommandProcessorBase.CheckForSevereException(exception);
                         }
                     }
 #pragma warning restore 56500

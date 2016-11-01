@@ -230,7 +230,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "ItemExistsProviderException",
                     SessionStateStrings.ItemExistsProviderException,
@@ -392,7 +391,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "ItemExistsDynamicParametersProviderException",
                     SessionStateStrings.ItemExistsDynamicParametersProviderException,
@@ -587,7 +585,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "IsValidPathProviderException",
                     SessionStateStrings.IsValidPathProviderException,
@@ -805,7 +802,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e) // Catch-all OK, 3rd party callout.
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     throw NewProviderInvocationException(
                         "IsItemContainerProviderException",
                     SessionStateStrings.IsItemContainerProviderException,
@@ -1166,7 +1162,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "RemoveItemProviderException",
                     SessionStateStrings.RemoveItemProviderException,
@@ -1335,7 +1330,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "RemoveItemProviderException",
                     SessionStateStrings.RemoveItemProviderException,
@@ -1754,7 +1748,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "GetChildrenProviderException",
                     SessionStateStrings.GetChildrenProviderException,
@@ -2295,7 +2288,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "GetChildrenDynamicParametersProviderException",
                     SessionStateStrings.GetChildrenDynamicParametersProviderException,
@@ -2949,7 +2941,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "GetChildNamesProviderException",
                     SessionStateStrings.GetChildNamesProviderException,
@@ -3140,7 +3131,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "GetChildNamesDynamicParametersProviderException",
                     SessionStateStrings.GetChildNamesDynamicParametersProviderException,
@@ -3380,7 +3370,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "RenameItemProviderException",
                     SessionStateStrings.RenameItemProviderException,
@@ -3551,7 +3540,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "RenameItemDynamicParametersProviderException",
                     SessionStateStrings.RenameItemDynamicParametersProviderException,
@@ -3892,7 +3880,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "NewItemProviderException",
                     SessionStateStrings.NewItemProviderException,
@@ -4072,7 +4059,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "NewItemDynamicParametersProviderException",
                     SessionStateStrings.NewItemDynamicParametersProviderException,
@@ -4377,7 +4363,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "HasChildItemsProviderException",
                     SessionStateStrings.HasChildItemsProviderException,
@@ -4886,7 +4871,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "CopyItemProviderException",
                     SessionStateStrings.CopyItemProviderException,
@@ -5184,7 +5168,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "CopyItemDynamicParametersProviderException",
                     SessionStateStrings.CopyItemDynamicParametersProviderException,

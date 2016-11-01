@@ -324,9 +324,8 @@ namespace System.Management.Automation
                     {
                         targetInString = _errorRecord.TargetObject.ToString();
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                         targetInString = null;
                     }
 

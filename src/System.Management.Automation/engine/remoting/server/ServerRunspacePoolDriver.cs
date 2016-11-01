@@ -653,12 +653,11 @@ namespace System.Management.Automation
                 string personalfolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                 args.Runspace.ExecutionContext.EngineSessionState.SetLocation(personalfolder);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // SetLocation API can call 3rd party code and so there is no telling what exception may be thrown.
                 // Setting location is not critical and is expected not to work with some account types, so we want
                 // to ignore all but critical errors.
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Run startup scripts
@@ -1183,9 +1182,8 @@ namespace System.Management.Automation
                 // Local runspace state reset.
                 runspaceToReset.ResetRunspaceState();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 return false;
             }
 
@@ -1234,10 +1232,8 @@ namespace System.Management.Automation
             {
                 driver.Start();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // Pop runspace on error.
                 _remoteHost.PopRunspace();
 
@@ -1634,9 +1630,8 @@ namespace System.Management.Automation
                                     IsBusy = true;
                                     driver.InvokeMain();
                                 }
-                                catch (Exception e)
+                                catch (Exception)
                                 {
-                                    CommandProcessorBase.CheckForSevereException(e);
                                 }
                                 finally
                                 {
@@ -2123,7 +2118,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     _exception = e;
                 }
                 finally
@@ -2261,9 +2255,8 @@ namespace System.Management.Automation
                 // Restore original context remote host.
                 _runspace.ExecutionContext.InternalHost.SetHostRef(contextHost);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                CommandProcessor.CheckForSevereException(ex);
             }
             finally
             {
@@ -2298,9 +2291,8 @@ namespace System.Management.Automation
                     args: new object[] { e },
                     extraData: null);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                CommandProcessor.CheckForSevereException(ex);
             }
         }
 
@@ -2346,9 +2338,8 @@ namespace System.Management.Automation
                     _driverInvoker.EnterNestedPipeline();
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessor.CheckForSevereException(e);
             }
             finally
             {
@@ -2414,9 +2405,8 @@ namespace System.Management.Automation
 
                 _runspace.ExecutionContext.SetVariable(SpecialVariables.NestedPromptCounterVarPath, 0);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessor.CheckForSevereException(e);
             }
         }
 
@@ -2548,10 +2538,8 @@ namespace System.Management.Automation
 
                 driver.Start();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 runspace.Close();
                 runspace.Dispose();
             }

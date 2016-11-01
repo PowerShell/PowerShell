@@ -101,9 +101,8 @@ namespace System.Management.Automation
             {
                 return BreakpointAction.Break;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             return BreakpointAction.Continue;

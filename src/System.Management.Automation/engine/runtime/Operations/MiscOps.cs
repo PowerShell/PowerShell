@@ -692,9 +692,8 @@ namespace System.Management.Automation
                     exitCode = ParserOps.ConvertTo<int>(exitCodeObj, PositionUtilities.EmptyExtent);
                 }
             }
-            catch (Exception e) // ignore non-severe exceptions
+            catch (Exception) // ignore non-severe exceptions
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             return new ExitException(exitCode);
@@ -1124,8 +1123,6 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 var rte = exception as RuntimeException;
                 if (rte == null)
                 {
@@ -1154,8 +1151,6 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 var rte = exception as RuntimeException;
                 if (rte == null)
                 {
@@ -1168,8 +1163,6 @@ namespace System.Management.Automation
 
             if (parseErrors != null && parseErrors.Errors != null)
             {
-                CommandProcessorBase.CheckForSevereException(parseErrors);
-
                 InterpreterError.UpdateExceptionErrorRecordPosition(parseErrors, scriptBlockAst.Extent);
                 throw parseErrors;
             }
@@ -1373,8 +1366,6 @@ namespace System.Management.Automation
                 // Always unwrap TargetInvocationException.
                 exception = exception.InnerException;
             }
-
-            CommandProcessorBase.CheckForSevereException(exception);
 
             var rte = exception as RuntimeException;
             if (rte == null)
@@ -1777,8 +1768,6 @@ namespace System.Management.Automation
                 exception = exception.InnerException;
             }
 
-            CommandProcessorBase.CheckForSevereException(exception);
-
             // Win8: 178063. Allow flow control related exceptions for PowerShell hosting API
             if ((exception is FlowControlException ||
                 exception is ScriptCallDepthException ||
@@ -1871,7 +1860,6 @@ namespace System.Management.Automation
                     }
                     catch (Exception e)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                         throw InterpreterError.NewInterpreterException(typeName, typeof(RuntimeException), errorPos,
                                                                        "TypeNotFoundWithMessage",
                                                                        ParserStrings.TypeNotFoundWithMessage,
@@ -2969,7 +2957,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new ExtendedTypeSystemException(
                     "ExceptionInGetEnumerator",
                     e,
@@ -3039,9 +3026,8 @@ namespace System.Management.Automation
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             return targetValue as IEnumerator ?? NonEnumerableObjectEnumerator.Create(obj);
@@ -3060,7 +3046,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new ExtendedTypeSystemException(
                     "ExceptionInGetEnumerator",
                     e,
@@ -3102,7 +3087,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw InterpreterError.NewInterpreterExceptionWithInnerException(enumerator, typeof(RuntimeException),
                     null, "BadEnumeration", ParserStrings.BadEnumeration, e, e.Message);
             }
@@ -3133,7 +3117,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw InterpreterError.NewInterpreterExceptionWithInnerException(enumerator, typeof(RuntimeException),
                     null, "BadEnumeration", ParserStrings.BadEnumeration, e, e.Message);
             }

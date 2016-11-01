@@ -3117,9 +3117,8 @@ namespace System.Management.Automation.Language
                     }
                     return true;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
 

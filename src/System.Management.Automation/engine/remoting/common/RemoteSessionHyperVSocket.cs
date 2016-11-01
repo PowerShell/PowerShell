@@ -266,7 +266,6 @@ namespace System.Management.Automation.Remoting
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 ex = e;
             }
 

@@ -257,7 +257,6 @@ namespace Microsoft.PowerShell
             }
             catch (Exception e)
             {
-                ConsoleHost.CheckForSevereException(e);
                 exceptionThrown = e;
             }
             finally
@@ -412,7 +411,6 @@ namespace Microsoft.PowerShell
             }
             catch (Exception e)
             {
-                ConsoleHost.CheckForSevereException(e);
                 exceptionThrown = e;
             }
             finally

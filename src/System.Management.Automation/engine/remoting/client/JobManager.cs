@@ -211,7 +211,6 @@ namespace System.Management.Automation
 
                 // sourceAdapter.NewJob returned unknown error.
                 _tracer.TraceException(exception);
-                CommandProcessorBase.CheckForSevereException(exception);
                 throw;
             }
 #pragma warning restore 56500
@@ -257,7 +256,6 @@ namespace System.Management.Automation
 
                 // sourceAdapter.NewJob returned unknown error.
                 _tracer.TraceException(exception);
-                CommandProcessorBase.CheckForSevereException(exception);
                 throw;
             }
 #pragma warning restore 56500
@@ -300,7 +298,6 @@ namespace System.Management.Automation
 
                 // sourceAdapter.NewJob returned unknown error.
                 _tracer.TraceException(exception);
-                CommandProcessorBase.CheckForSevereException(exception);
                 throw;
             }
         }
@@ -607,7 +604,6 @@ namespace System.Management.Automation
 
                         // sourceAdapter.GetJobsByFilter() threw unknown exception.
                         _tracer.TraceException(exception);
-                        CommandProcessorBase.CheckForSevereException(exception);
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterGetJobsError", sourceAdapter);
                     }
 #pragma warning restore 56500
@@ -774,7 +770,6 @@ namespace System.Management.Automation
 
                         // sourceAdapter.GetJobByInstanceId threw unknown exception.
                         _tracer.TraceException(exception);
-                        CommandProcessorBase.CheckForSevereException(exception);
 
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterGetJobByInstanceIdError", sourceAdapter);
                     }
@@ -849,7 +844,6 @@ namespace System.Management.Automation
                         // needs to be caught.
 
                         _tracer.TraceException(exception);
-                        CommandProcessorBase.CheckForSevereException(exception);
 
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterGetJobByInstanceIdError", sourceAdapter);
                     }
@@ -955,7 +949,6 @@ namespace System.Management.Automation
 
                         // sourceAdapter.GetJobByInstanceId() threw unknown exception.
                         _tracer.TraceException(exception);
-                        CommandProcessorBase.CheckForSevereException(exception);
                         if (throwExceptions) throw;
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterGetJobError", sourceAdapter);
                     }
@@ -979,7 +972,6 @@ namespace System.Management.Automation
                         // sourceAdapter.RemoveJob() threw unknown exception.
 
                         _tracer.TraceException(exception);
-                        CommandProcessorBase.CheckForSevereException(exception);
                         if (throwExceptions) throw;
                         WriteErrorOrWarning(writeErrorOnException, cmdlet, exception, "JobSourceAdapterRemoveJobError", sourceAdapter);
                     }

@@ -271,7 +271,6 @@ namespace System.Management.Automation.Remoting
             catch (Exception e)
             {
                 // Catch-all OK, 3rd party callout.
-                CommandProcessorBase.CheckForSevereException(e);
                 exception = e.InnerException;
             }
 

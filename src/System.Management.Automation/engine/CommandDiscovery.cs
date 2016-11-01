@@ -974,9 +974,8 @@ namespace System.Management.Automation
 
                     discoveryTracer.WriteLine("PreCommandLookupAction returned: {0}", eventArgs.Command);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
                 finally { context.CommandDiscovery.UnregisterLookupCommandInfoAction("ActivePreLookup", commandName); }
             }
@@ -1051,9 +1050,8 @@ namespace System.Management.Automation
                             discoveryTracer.WriteLine("PreCommandLookupAction returned: {0}", eventArgs.Command);
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                     }
                     finally
                     {
@@ -1139,7 +1137,6 @@ namespace System.Management.Automation
                 exception = e;
                 discoveryTracer.WriteLine("Encountered error importing module: {0}", e.Message);
                 //Call-out to user code, catch-all OK
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             return matchingModules;
@@ -1161,9 +1158,8 @@ namespace System.Management.Automation
                     cmdNotFoundHandler.Invoke(originalCommandName, eventArgs);
                     result = eventArgs.Command;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
                 finally { context.CommandDiscovery.UnregisterLookupCommandInfoAction("ActiveCommandNotFound", originalCommandName); }
             }
@@ -1330,9 +1326,8 @@ namespace System.Management.Automation
                 }
             }
             catch (CommandNotFoundException) { throw; }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
             finally
             {
@@ -1438,9 +1433,8 @@ namespace System.Management.Automation
                 }
             }
             catch (CommandNotFoundException) { throw; }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
             finally { context.CommandDiscovery.UnregisterLookupCommandInfoAction("ActiveModuleSearch", commandName); }
 
@@ -1953,10 +1947,8 @@ namespace System.Management.Automation
                     return LanguagePrimitives.ConvertTo<PSModuleAutoLoadingPreference>(psEnvironmentVariable);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 return PSModuleAutoLoadingPreference.All;
             }
 

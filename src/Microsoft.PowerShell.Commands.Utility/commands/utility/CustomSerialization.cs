@@ -845,9 +845,8 @@ namespace System.Management.Automation
                 enumerator = enumerable.GetEnumerator();
                 enumerator.Reset();
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
                 enumerator = null;
             }
 
@@ -869,9 +868,8 @@ namespace System.Management.Automation
                             item = enumerator.Current;
                         }
                     }
-                    catch (Exception exception)
+                    catch (Exception)
                     {
-                        CommandProcessorBase.CheckForSevereException(exception);
                         break;
                     }
                     WriteOneObject(item, null, depth);
@@ -891,9 +889,8 @@ namespace System.Management.Automation
             {
                 dictionaryEnum = (IDictionaryEnumerator)dictionary.GetEnumerator();
             }
-            catch (Exception e) // ignore non-severe exceptions
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             if (dictionaryEnum != null)
@@ -974,9 +971,8 @@ namespace System.Management.Automation
                         // if we have a string serialization value, return it
                         result = val.ToString();
                     }
-                    catch (Exception exception)
+                    catch (Exception)
                     {
-                        CommandProcessorBase.CheckForSevereException(exception);
                     }
                 }
             }
@@ -987,9 +983,8 @@ namespace System.Management.Automation
                     // fall back value
                     result = source.ToString();
                 }
-                catch (Exception exception)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(exception);
                 }
             }
 

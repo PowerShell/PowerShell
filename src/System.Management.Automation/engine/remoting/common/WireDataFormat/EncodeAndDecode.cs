@@ -590,8 +590,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 Dbg.Assert(false, "Internal code shouldn't throw exceptions during serialization");
 
                 PSEtwLog.LogAnalyticWarning(

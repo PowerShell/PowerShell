@@ -2021,7 +2021,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                             }
                             catch (Exception e)
                             {
-                                CommandProcessorBase.CheckForSevereException(e);
                                 errorList.Add(new ParseError(scriptExtent,
                                                              "ExceptionParsingMOFFile",
                                                              string.Format(CultureInfo.CurrentCulture, ParserStrings.ExceptionParsingMOFFile, schemaMofFilePath, e.Message)));
@@ -2042,7 +2041,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                             catch (Exception e)
                             {
                                 // This shouldn't happen so just report the error as is
-                                CommandProcessorBase.CheckForSevereException(e);
                                 errorList.Add(new ParseError(scriptExtent,
                                                              "UnexpectedParseError",
                                                              string.Format(CultureInfo.CurrentCulture, e.ToString())));

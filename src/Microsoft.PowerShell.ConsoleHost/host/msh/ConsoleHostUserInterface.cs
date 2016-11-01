@@ -2235,9 +2235,8 @@ namespace Microsoft.PowerShell
                         return true;
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
 

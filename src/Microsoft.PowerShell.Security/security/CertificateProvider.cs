@@ -1539,9 +1539,8 @@ namespace Microsoft.PowerShell.Commands
                                 .AddParameter("Debug", false);
                 ps.Invoke();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             _hasAttemptedToLoadPkiModule = true;

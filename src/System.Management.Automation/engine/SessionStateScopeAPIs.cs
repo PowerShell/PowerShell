@@ -310,9 +310,8 @@ namespace System.Management.Automation
                 {
                     throw;
                 }
-                catch (Exception e) // Catch-all OK, 3rd party callout.
+                catch (Exception) // Catch-all OK, 3rd party callout.
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     // Ignore all exceptions from the provider as we are 
                     // going to force the removal anyway
                 }

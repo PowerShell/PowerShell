@@ -304,8 +304,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
-
                     throw new UpdatableHelpSystemException("UnableToRetrieveHelpInfoXml",
                         StringUtil.Format(HelpDisplayStrings.UnableToRetrieveHelpInfoXml, culture), ErrorCategory.ResourceUnavailable,
                         null, e);
@@ -419,8 +417,6 @@ namespace Microsoft.PowerShell.Commands
                                 }
                                 catch (Exception e)
                                 {
-                                    CommandProcessorBase.CheckForSevereException(e);
-
                                     throw new UpdatableHelpSystemException("HelpContentNotFound", StringUtil.Format(HelpDisplayStrings.HelpContentNotFound),
                                         ErrorCategory.ResourceUnavailable, null, e);
                                 }
@@ -462,8 +458,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Exception e)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
-
                         ProcessException(module.ModuleName, contentUri.Culture.Name, e);
                     }
                 }

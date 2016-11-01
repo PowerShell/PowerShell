@@ -1504,9 +1504,6 @@
     <Compile Include="..\System.Management.Automation\engine\SessionStateAliasAPIs.cs">
       <Link>engine\SessionStateAliasAPIs.cs</Link>
     </Compile>
-    <Compile Include="..\System.Management.Automation\engine\SessionStateCapacityVariable.cs">
-      <Link>engine\SessionStateCapacityVariable.cs</Link>
-    </Compile>
     <Compile Include="..\System.Management.Automation\engine\SessionStateCmdletAPIs.cs">
       <Link>engine\SessionStateCmdletAPIs.cs</Link>
     </Compile>
@@ -2325,9 +2322,6 @@
     </Compile>
     <Compile Include="..\System.Management.Automation\utils\Verbs.cs">
       <Link>utils\Verbs.cs</Link>
-    </Compile>
-    <Compile Include="..\System.Management.Automation\utils\WindowsErrorReporting.cs">
-      <Link>utils\WindowsErrorReporting.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
