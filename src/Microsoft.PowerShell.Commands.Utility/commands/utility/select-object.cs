@@ -322,10 +322,12 @@ namespace Microsoft.PowerShell.Commands
                 new ParameterProcessor(new SelectObjectExpressionParameterDefinition());
             if ((Property != null) && (Property.Length != 0))
             {
+                // Build property list taking into account the wildcards and @{name=;expression=}
                 _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
             }
             else
             {
+                // Property don't exist
                 _propertyMshParameterList = new List<MshParameter>();
             }
 
@@ -337,6 +339,12 @@ namespace Microsoft.PowerShell.Commands
             if (ExcludeProperty != null)
             {
                 _exclusionFilter = new MshExpressionFilter(ExcludeProperty);
+                // ExcludeProperty implies -Property * for better UX
+                if ((Property == null) || (Property.Length == 0))
+                {
+                    Property = new Object[]{"*"};
+                    _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
+                }
             }
         }
 
@@ -414,18 +422,10 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (expressionResults.Count == 0)
+            // allow 'Select-Object -Property noexist-name' to return a PSObject with property noexist-name,
+            // unless noexist-name itself contains wildcards
+            if (expressionResults.Count == 0 && !ex.HasWildCardCharacters)
             {
-                //Commented out for bug 1107600
-                //if (!ex.HasWildCardCharacters)
-                //{
-                //    ErrorRecord errorRecord = new ErrorRecord(
-                //        tracer.NewArgumentException("Property", ResourcesBaseName, "PropertyNotFound", ex.ToString()),
-                //        "PropertyNotFound",
-                //         ErrorCategory.InvalidArgument,
-                //        inputObject);
-                //    WriteError(errorRecord);
-                //}
                 expressionResults.Add(new MshExpressionResult(null, ex, null));
             }
 
