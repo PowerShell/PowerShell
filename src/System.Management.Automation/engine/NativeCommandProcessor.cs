@@ -842,9 +842,12 @@ namespace System.Management.Automation
         [ArchitectureSensitive]
         private static bool IsWindowsApplication(string fileName)
         {
-#if CORECLR
+#if UNIX
             return false;
 #else
+            if (Platform.IsNanoServer)
+                return false;
+
             SHFILEINFO shinfo = new SHFILEINFO();
             IntPtr type = SHGetFileInfo(fileName, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), SHGFI_EXETYPE);
 
@@ -1223,7 +1226,7 @@ namespace System.Management.Automation
             return false;
         }
 
-#if !CORECLR // Shell doesn't exist on OneCore, so documents cannot be associated with applications.
+#if !UNIX // Shell doesn't exist on OneCore, so documents cannot be associated with applications.
         #region Interop for FindExecutable...
 
         // Constant used to determine the buffer size for a path
@@ -1258,7 +1261,11 @@ namespace System.Management.Automation
                 // If we got an index-out-of-range exception here, it's because
                 // of a buffer overrun error so we fail fast instead of
                 // continuing to run in an possibly unstable environment....
+#if CORECLR
+                System.Environment.FailFast(e.Message);
+#else
                 WindowsErrorReporting.FailFast(e);
+#endif
             }
 
             // If FindExecutable returns a result >= 32, then it succeeded
