@@ -976,7 +976,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     // Marshal.PtrToStructure will allocate managed memory for the object, 
                     // so the unmanaged ptr can be freed safely
                     //
-                    pCounterPathElements = (PDH_COUNTER_PATH_ELEMENTS)Marshal.PtrToStructure(structPtr, typeof(PDH_COUNTER_PATH_ELEMENTS));
+                    pCounterPathElements = Marshal.PtrToStructure<PDH_COUNTER_PATH_ELEMENTS>(structPtr);
                 }
             }
             finally
@@ -1011,12 +1011,12 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
 
             // Check if the path is local and assert if not:
-            string machineNameMassaged = pathElts.MachineName.ToLower(CultureInfo.InvariantCulture);
+            string machineNameMassaged = pathElts.MachineName.ToLowerInvariant();
             machineNameMassaged = machineNameMassaged.TrimStart('\\');
-            Debug.Assert(machineNameMassaged == System.Environment.MachineName.ToLower(CultureInfo.InvariantCulture));
+            Debug.Assert(machineNameMassaged == System.Environment.MachineName.ToLowerInvariant());
 
-            string lowerEngCtrName = pathElts.CounterName.ToLower(CultureInfo.InvariantCulture);
-            string lowerEngObjectName = pathElts.ObjectName.ToLower(CultureInfo.InvariantCulture);
+            string lowerEngCtrName = pathElts.CounterName.ToLowerInvariant();
+            string lowerEngObjectName = pathElts.ObjectName.ToLowerInvariant();
 
             // Get the registry index
             RegistryKey rootKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Perflib\\009");
@@ -1029,7 +1029,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             for (uint enumIndex = 1; enumIndex < regCounters.Length; enumIndex++)
             {
                 string regString = regCounters[enumIndex];
-                if (regString.ToLower(CultureInfo.InvariantCulture) == lowerEngCtrName)
+                if (regString.ToLowerInvariant() == lowerEngCtrName)
                 {
                     try
                     {
@@ -1040,7 +1040,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                         return (uint)PdhResults.PDH_INVALID_PATH;
                     }
                 }
-                else if (regString.ToLower(CultureInfo.InvariantCulture) == lowerEngObjectName)
+                else if (regString.ToLowerInvariant() == lowerEngObjectName)
                 {
                     try
                     {
@@ -1195,12 +1195,12 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     res = ParsePath(counterPath, ref pathElts);
                     if (res == 0 && pathElts.InstanceName != null)
                     {
-                        chi.InstanceName = pathElts.InstanceName.ToLower(CultureInfo.InvariantCulture);
+                        chi.InstanceName = pathElts.InstanceName.ToLowerInvariant();
                     }
 
-                    if (!_consumerPathToHandleAndInstanceMap.ContainsKey(counterPath.ToLower(CultureInfo.InvariantCulture)))
+                    if (!_consumerPathToHandleAndInstanceMap.ContainsKey(counterPath.ToLowerInvariant()))
                     {
-                        _consumerPathToHandleAndInstanceMap.Add(counterPath.ToLower(CultureInfo.InvariantCulture), chi);
+                        _consumerPathToHandleAndInstanceMap.Add(counterPath.ToLowerInvariant(), chi);
                     }
 
                     bAtLeastOneAdded = true;
@@ -1236,9 +1236,9 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     continue;
                 }
 
-                string lowerCaseMachine = pathElts.MachineName.ToLower(CultureInfo.InvariantCulture);
-                string lowerCaseObject = pathElts.ObjectName.ToLower(CultureInfo.InvariantCulture);
-                string lowerCaseCounter = pathElts.CounterName.ToLower(CultureInfo.InvariantCulture);
+                string lowerCaseMachine = pathElts.MachineName.ToLowerInvariant();
+                string lowerCaseObject = pathElts.ObjectName.ToLowerInvariant();
+                string lowerCaseCounter = pathElts.CounterName.ToLowerInvariant();
 
                 string lcPathMinusInstance = @"\\" + lowerCaseMachine + @"\" + lowerCaseObject + @"\" + lowerCaseCounter;
 
@@ -1311,12 +1311,12 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
                     if (pathElts.InstanceName != null)
                     {
-                        chi.InstanceName = pathElts.InstanceName.ToLower(CultureInfo.InvariantCulture);
+                        chi.InstanceName = pathElts.InstanceName.ToLowerInvariant();
                     }
 
-                    if (!_reloggerPathToHandleAndInstanceMap.ContainsKey(sample.Path.ToLower(CultureInfo.InvariantCulture)))
+                    if (!_reloggerPathToHandleAndInstanceMap.ContainsKey(sample.Path.ToLowerInvariant()))
                     {
-                        _reloggerPathToHandleAndInstanceMap.Add(sample.Path.ToLower(CultureInfo.InvariantCulture), chi);
+                        _reloggerPathToHandleAndInstanceMap.Add(sample.Path.ToLowerInvariant(), chi);
                         //Console.WriteLine ("added map path:" + sample.Path );
                     }
                 }
@@ -1370,12 +1370,12 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 chi.hCounter = counterHandle;
                 if (pathElts.InstanceName != null)
                 {
-                    chi.InstanceName = pathElts.InstanceName.ToLower(CultureInfo.InvariantCulture);
+                    chi.InstanceName = pathElts.InstanceName.ToLowerInvariant();
                 }
 
-                if (!_reloggerPathToHandleAndInstanceMap.ContainsKey(sample.Path.ToLower(CultureInfo.InvariantCulture)))
+                if (!_reloggerPathToHandleAndInstanceMap.ContainsKey(sample.Path.ToLowerInvariant()))
                 {
-                    _reloggerPathToHandleAndInstanceMap.Add(sample.Path.ToLower(CultureInfo.InvariantCulture), chi);
+                    _reloggerPathToHandleAndInstanceMap.Add(sample.Path.ToLowerInvariant(), chi);
                 }
             }
 
@@ -1756,7 +1756,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             bUnknownPath = false;
 
-            string lcPath = sample.Path.ToLower(CultureInfo.InvariantCulture);
+            string lcPath = sample.Path.ToLowerInvariant();
 
             if (!_reloggerPathToHandleAndInstanceMap.ContainsKey(lcPath))
             {

@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
         private EventWaitHandle _cancelEventArrived = new EventWaitHandle(false, EventResetMode.ManualReset);
 
         // Culture identifier(s) 
-        private const int FrenchCultureId = 0x040C;
+        private const string FrenchCultureId = "fr-FR";
         // The localized Pdh resource strings might use Unicode characters that are different from
         // what the user can type with the keyboard to represent a special character.
         //
@@ -184,8 +184,8 @@ namespace Microsoft.PowerShell.Commands
         // in the resource strings.
         //
         // With this dictionary, we can add special mapping if we find other special cases in the future.
-        private readonly Dictionary<int, List<Tuple<char, char>>> _cultureAndSpecialCharacterMap =
-            new Dictionary<int, List<Tuple<char, char>>>()
+        private readonly Dictionary<string, List<Tuple<char, char>>> _cultureAndSpecialCharacterMap =
+            new Dictionary<string, List<Tuple<char, char>>>()
                 {
                    {
                        FrenchCultureId, new List<Tuple<char, char>>()
@@ -207,7 +207,8 @@ namespace Microsoft.PowerShell.Commands
         {
             _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
 
-            _pdhHelper = new PdhHelper(System.Environment.OSVersion.Version.Major < 6);
+            _pdhHelper = new PdhHelper(CommonUtilities.OsVersion.Major < 6);
+
             uint res = _pdhHelper.ConnectToDataSource();
             if (res != 0)
             {
@@ -317,11 +318,16 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
+#if !CORECLR
             CultureInfo culture = Thread.CurrentThread.CurrentUICulture;
+#else
+            CultureInfo culture = System.Globalization.CultureInfo.CurrentCulture;
+#endif
+
             List<Tuple<char, char>> characterReplacementList = null;
             StringCollection validPaths = new StringCollection();
 
-            _cultureAndSpecialCharacterMap.TryGetValue(culture.LCID, out characterReplacementList);
+            _cultureAndSpecialCharacterMap.TryGetValue(culture.Name, out characterReplacementList);
 
             foreach (string pattern in _listSet)
             {
@@ -426,14 +432,18 @@ namespace Microsoft.PowerShell.Commands
             // 4. OpenQuery/ AddCounters
             // 5. Skip the first reading       
 
+#if !CORECLR
             CultureInfo culture = Thread.CurrentThread.CurrentUICulture;
+#else
+            CultureInfo culture = System.Globalization.CultureInfo.CurrentCulture;
+#endif
             List<Tuple<char, char>> characterReplacementList = null;
             List<string> paths = CombineMachinesAndCounterPaths();
             uint res = 0;
 
             if (!_defaultCounters)
             {
-                _cultureAndSpecialCharacterMap.TryGetValue(culture.LCID, out characterReplacementList);
+                _cultureAndSpecialCharacterMap.TryGetValue(culture.Name, out characterReplacementList);
             }
 
 
@@ -552,7 +562,12 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
 
+#if !CORECLR
                 bool cancelled = _cancelEventArrived.WaitOne((int)_sampleInterval * 1000, true);
+#else
+    //TODO: Is there no exitContext in CORECLR?
+                bool cancelled = _cancelEventArrived.WaitOne((int)_sampleInterval * 1000);
+#endif
                 if (cancelled)
                 {
                     break;

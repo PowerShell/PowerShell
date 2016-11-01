@@ -22,15 +22,7 @@
                 "debugType": "portable",
                 "compile": {
                     "excludeFiles": [
-                        "PdhSafeHandle.cs",
                         "GetEventSnapin.cs",
-                        "CounterSample.cs",
-                        "CounterSet.cs",
-                        "PdhHelper.cs",
-                        "ExportCounterCommand.cs",
-                        "GetCounterCommand.cs",
-                        "ImportCounterCommand.cs",
-                        "CounterFileInfo.cs",
 
                         "gen/GetEventResources.cs"
                     ]
@@ -41,7 +33,10 @@
         "net451": {
             "buildOptions": {
                 "compile": {
-                    "excludeFiles": [ "gen/GetEventResources.cs" ]
+                    "excludeFiles": [
+                        "CoreCLR/Stubs.cs",
+                        "gen/GetEventResources.cs"
+                    ]
                 }
             }
         }

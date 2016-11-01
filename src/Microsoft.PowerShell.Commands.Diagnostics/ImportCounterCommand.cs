@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
-            _pdhHelper = new PdhHelper(System.Environment.OSVersion.Version.Major < 6);
+            _pdhHelper = new PdhHelper(CommonUtilities.OsVersion.Major < 6);
         }
 
         //
@@ -607,7 +607,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    _resolvedPaths.Add(pi.ProviderPath.ToLower(CultureInfo.InvariantCulture));
+                    _resolvedPaths.Add(pi.ProviderPath.ToLowerInvariant());
                 }
             }
 
