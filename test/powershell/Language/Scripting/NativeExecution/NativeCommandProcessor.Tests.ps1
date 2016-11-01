@@ -51,7 +51,7 @@ Describe "Native Command Processor" -tags "Feature" {
         $count | Should Be 0
     }
 
-    It "Should not block running Windows executables" -Skip:(!$IsWindows -and !(Get-Command notepad.exe)) {
+    It "Should not block running Windows executables" -Skip:(!$IsWindows -or !(Get-Command notepad.exe)) {
         function FindNewNotepad
         {
             Get-Process -Name notepad -ErrorAction Ignore | Where-Object { $_.Id -notin $dontKill }
