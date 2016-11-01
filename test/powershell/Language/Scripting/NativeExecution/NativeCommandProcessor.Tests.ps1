@@ -50,4 +50,46 @@ Describe "Native Command Processor" -tags "Feature" {
         $childprocesses | Stop-Process
         $count | Should Be 0
     }
+
+    It "Should not block running Windows executables" -Skip:(!$IsWindows -and !(Get-Command notepad.exe)) {
+        function FindNewNotepad
+        {
+            Get-Process -Name notepad -ErrorAction Ignore | Where-Object { $_.Id -notin $dontKill }
+        }
+
+        # We need to kill the windows process we start and can't know the process id, so get a list of
+        # notepad processes already running and don't kill any of those.
+        $dontKill = Get-Process -Name notepad -ErrorAction Ignore | ForEach-Object { $_.Id }
+
+        try
+        {
+            $ps = [powershell]::Create().AddScript('notepad.exe; "ran notepad"')
+            $async = $ps.BeginInvoke()
+
+            # Wait for up to 30 seconds for either the pipeline to finish (should mean the test succeeded) or
+            # for a new instance of notepad to have started (which mean we're blocked)
+            $counter = 0
+            while (!$async.AsyncWaitHandle.WaitOne(10000) -and $counter -lt 3 -and !(FindNewNotepad))
+            {
+                $counter++
+            }
+
+            # Stop the new instance of notepad
+            $newNotepad = FindNewNotepad
+            $newNotepad | Should Not Be $null
+            $newNotepad | Stop-Process
+
+            $async.IsCompleted | Should Be $true
+            $ps.EndInvoke($async) | Should Be "ran notepad"
+        }
+        finally
+        {
+            if (!$async.IsCompleted)
+            {
+                $ps.Stop()
+            }
+            $ps.Dispose()
+        }
+    }
+
 }
