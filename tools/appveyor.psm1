@@ -363,12 +363,16 @@ function Invoke-AppveyorFinish
         $artifacts.Add($zipFilePath)
         $artifacts.Add($zipFileFullPath)
 
-        # Create archive for test content
+        # Create archive for test content and OpenCover
         if(Test-DailyBuild) 
         {
             $zipTestContentPath = Join-Path $pwd 'tests.zip' 
             Compress-TestContent -Destination $zipTestContentPath
             $artifacts.Add($zipTestContentPath)
+
+            $zipOpenCoverPath = Join-Path $pwd 'OpenCover.zip'
+            Compress-Archive -DestinationPath $zipOpenCoverPath -Path (Join-Path $pwd  '..\test\tools\OpenCover')
+            $artifacts.Add($zipOpenCoverPath)
         }
 
         if ($env:APPVEYOR_REPO_TAG_NAME)
