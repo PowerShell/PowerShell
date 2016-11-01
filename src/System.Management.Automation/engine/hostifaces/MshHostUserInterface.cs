@@ -507,11 +507,10 @@ namespace System.Management.Automation.Host
                 }
                 TranscribeCommandComplete(null);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Ignoring errors when stopping transcription (i.e.: file in use, access denied)
                 // since this is probably handling exactly that error.
-                CommandProcessorBase.CheckForSevereException(e);
             }
         }
 

@@ -363,7 +363,6 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewException(e, "CatchFromBaseGetTypeNameHierarchy", "CatchFromBaseGetTypeNameHierarchyTI",
                                    ExtendedTypeSystem.ExceptionRetrievingTypeNameHierarchy);
             }
@@ -378,7 +377,6 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewException(e, "CatchFromBaseGetMember", "CatchFromBaseGetMemberTI",
                     ExtendedTypeSystem.ExceptionGettingMember, memberName);
             }
@@ -393,7 +391,6 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewException(e, "CatchFromBaseGetMembers", "CatchFromBaseGetMembersTI",
                     ExtendedTypeSystem.ExceptionGettingMembers);
             }
@@ -420,7 +417,6 @@ namespace System.Management.Automation
             catch (GetValueException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new GetValueInvocationException("CatchFromBaseAdapterGetValue",
                     e,
                     ExtendedTypeSystem.ExceptionWhenGetting,
@@ -445,7 +441,6 @@ namespace System.Management.Automation
             catch (SetValueException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new SetValueInvocationException("CatchFromBaseAdapterSetValue",
                     e,
                     ExtendedTypeSystem.ExceptionWhenSetting,
@@ -462,7 +457,6 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewException(e, "CatchFromBasePropertyIsSettable", "CatchFromBasePropertyIsSettableTI",
                     ExtendedTypeSystem.ExceptionRetrievingPropertyWriteState, property.Name);
             }
@@ -477,7 +471,6 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewException(e, "CatchFromBasePropertyIsGettable", "CatchFromBasePropertyIsGettableTI",
                     ExtendedTypeSystem.ExceptionRetrievingPropertyReadState, property.Name);
             }
@@ -492,7 +485,6 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewException(e, "CatchFromBasePropertyType", "CatchFromBasePropertyTypeTI",
                     ExtendedTypeSystem.ExceptionRetrievingPropertyType, property.Name);
             }
@@ -507,7 +499,6 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewException(e, "CatchFromBasePropertyToString", "CatchFromBasePropertyToStringTI",
                     ExtendedTypeSystem.ExceptionRetrievingPropertyString, property.Name);
             }
@@ -522,7 +513,6 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewException(e, "CatchFromBasePropertyAttributes", "CatchFromBasePropertyAttributesTI",
                     ExtendedTypeSystem.ExceptionRetrievingPropertyAttributes, property.Name);
             }
@@ -551,8 +541,6 @@ namespace System.Management.Automation
             catch (MethodException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 if (method.baseObject is SteppablePipeline
                     && (method.Name.Equals("Begin", StringComparison.OrdinalIgnoreCase) ||
                         method.Name.Equals("Process", StringComparison.OrdinalIgnoreCase) ||
@@ -577,7 +565,6 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewException(e, "CatchFromBaseMethodDefinitions", "CatchFromBaseMethodDefinitionsTI",
                     ExtendedTypeSystem.ExceptionRetrievingMethodDefinitions, method.Name);
             }
@@ -592,7 +579,6 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewException(e, "CatchFromBaseMethodToString", "CatchFromBaseMethodToStringTI",
                     ExtendedTypeSystem.ExceptionRetrievingMethodString, method.Name);
             }
@@ -610,7 +596,6 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewException(e, "CatchFromBaseParameterizedPropertyType", "CatchFromBaseParameterizedPropertyTypeTI",
                     ExtendedTypeSystem.ExceptionRetrievingParameterizedPropertytype, property.Name);
             }
@@ -625,7 +610,6 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewException(e, "CatchFromBaseParameterizedPropertyIsSettable", "CatchFromBaseParameterizedPropertyIsSettableTI",
                     ExtendedTypeSystem.ExceptionRetrievingParameterizedPropertyWriteState, property.Name);
             }
@@ -640,7 +624,6 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewException(e, "CatchFromBaseParameterizedPropertyIsGettable", "CatchFromBaseParameterizedPropertyIsGettableTI",
                     ExtendedTypeSystem.ExceptionRetrievingParameterizedPropertyReadState, property.Name);
             }
@@ -655,7 +638,6 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewException(e, "CatchFromBaseParameterizedPropertyDefinitions", "CatchFromBaseParameterizedPropertyDefinitionsTI",
                     ExtendedTypeSystem.ExceptionRetrievingParameterizedPropertyDefinitions, property.Name);
             }
@@ -678,7 +660,6 @@ namespace System.Management.Automation
             catch (GetValueException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new GetValueInvocationException("CatchFromBaseParameterizedPropertyAdapterGetValue",
                     e,
                     ExtendedTypeSystem.ExceptionWhenGetting,
@@ -703,7 +684,6 @@ namespace System.Management.Automation
             catch (SetValueException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new SetValueInvocationException("CatchFromBaseAdapterParameterizedPropertySetValue",
                     e,
                     ExtendedTypeSystem.ExceptionWhenSetting,
@@ -723,7 +703,6 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewException(e, "CatchFromBaseParameterizedPropertyToString", "CatchFromBaseParameterizedPropertyToStringTI",
                     ExtendedTypeSystem.ExceptionRetrievingParameterizedPropertyString, property.Name);
             }
@@ -3801,7 +3780,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new MethodInvocationException(
                     "DotNetconstructorException",
                     e,
@@ -3862,8 +3840,6 @@ namespace System.Management.Automation
             catch (PipelineStoppedException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 if (methodInformation.method.DeclaringType == typeof(SteppablePipeline) &&
                     (methodInformation.method.Name.Equals("Begin") ||
                      methodInformation.method.Name.Equals("Process") ||

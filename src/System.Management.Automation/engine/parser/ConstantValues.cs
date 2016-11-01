@@ -41,12 +41,11 @@ namespace System.Management.Automation.Language
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // If we get an exception, ignore it and assume the expression isn't constant.
                 // This can happen, e.g. if a cast is invalid:
                 //     [int]"zed"
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             constantValue = null;

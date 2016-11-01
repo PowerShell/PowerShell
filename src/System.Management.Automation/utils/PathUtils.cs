@@ -400,8 +400,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 string errorMessage = string.Format(
                     CultureInfo.InvariantCulture, // directory name should be treated as culture-invariant
                     PathUtilsStrings.ExportPSSession_CannotCreateOutputDirectory,

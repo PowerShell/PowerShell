@@ -1599,9 +1599,8 @@ namespace Microsoft.PowerShell.Commands
                     this,
                     new OutputProcessingStateEventArgs(processingOutput));
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
         }
     }

@@ -43,7 +43,6 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception e)
             {
-                ConsoleHost.CheckForSevereException(e);
                 throw PSTraceSource.NewInvalidOperationException(
                         e, TranscriptStrings.ErrorStoppingTranscript, e.Message);
             }

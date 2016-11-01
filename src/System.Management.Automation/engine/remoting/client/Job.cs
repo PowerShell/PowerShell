@@ -1400,9 +1400,8 @@ namespace System.Management.Automation
                             // Still marked as processing output.  Send final state changed.
                             HandleOutputProcessingStateChanged(this, new OutputProcessingStateEventArgs(false));
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
                         }
                     }
                 }
@@ -1420,7 +1419,6 @@ namespace System.Management.Automation
                     tracer.WriteMessage("Job", "SetJobState", Guid.Empty, this,
                                         "Some Job StateChange event handler threw an unhandled exception.", null);
                     tracer.TraceException(exception);
-                    CommandProcessorBase.CheckForSevereException(exception);
                 }
 
                 // finished needs to be set after StateChanged event 

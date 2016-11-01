@@ -408,7 +408,6 @@ namespace System.Management.Automation
                 ModuleIntrinsics.Tracer.WriteLine("Module analysis generated an exception: {0}", e);
 
                 // Catch-all OK, third-party call-out.
-                CommandProcessorBase.CheckForSevereException(e);
             }
             finally
             {
@@ -449,7 +448,6 @@ namespace System.Management.Automation
                 ModuleIntrinsics.Tracer.WriteLine("Module analysis generated an exception: {0}", e);
 
                 // Catch-all OK, third-party call-out.
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             return null;
@@ -569,7 +567,6 @@ namespace System.Management.Automation
                 ModuleIntrinsics.Tracer.WriteLine("Module analysis generated an exception: {0}", e);
 
                 // Catch-all OK, third-party call-out.
-                CommandProcessorBase.CheckForSevereException(e);
             }
         }
 

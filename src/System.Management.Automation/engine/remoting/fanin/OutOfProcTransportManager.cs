@@ -668,8 +668,6 @@ namespace System.Management.Automation.Remoting.Client
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 PSRemotingTransportException psrte =
                     new PSRemotingTransportException(PSRemotingErrorId.IPCErrorProcessingServerData,
                         RemotingErrorIdStrings.IPCErrorProcessingServerData,
@@ -1034,8 +1032,6 @@ namespace System.Management.Automation.Remoting.Client
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 PSRemotingTransportException psrte = new PSRemotingTransportException(PSRemotingErrorId.IPCExceptionLaunchingProcess,
                 RemotingErrorIdStrings.IPCExceptionLaunchingProcess,
                     e.Message);
@@ -1126,14 +1122,12 @@ namespace System.Management.Automation.Remoting.Client
                     // If the process was not found, we won't get here...
                     if (_processCreated) newHandle.Kill();
                 }
-                catch (Exception e) // ignore non-severe exceptions
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
-            catch (Exception e) // ignore non-severe exceptions
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
         }
 
@@ -1237,8 +1231,6 @@ namespace System.Management.Automation.Remoting.Client
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 if (e is ArgumentOutOfRangeException)
                 {
                     Dbg.Assert(false, "Need to adjust transport fragmentor to accomodate read buffer size.");
@@ -1546,8 +1538,6 @@ namespace System.Management.Automation.Remoting.Client
             catch (ObjectDisposedException) { }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 string errorMsg = (e.Message != null) ? e.Message : string.Empty;
                 _tracer.WriteMessage("SSHClientSessionTransportManager", "ProcessErrorThread", Guid.Empty,
                     "Transport manager error thread ended with error: {0}", errorMsg);
@@ -1608,8 +1598,6 @@ namespace System.Management.Automation.Remoting.Client
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 if (e is ArgumentOutOfRangeException)
                 {
                     Dbg.Assert(false, "Need to adjust transport fragmentor to accomodate read buffer size.");
@@ -1737,8 +1725,6 @@ namespace System.Management.Automation.Remoting.Client
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 if (e is ArgumentOutOfRangeException)
                 {
                     Dbg.Assert(false, "Need to adjust transport fragmentor to accomodate read buffer size.");

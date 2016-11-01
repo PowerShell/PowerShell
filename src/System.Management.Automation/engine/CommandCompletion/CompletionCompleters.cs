@@ -220,9 +220,8 @@ namespace System.Management.Automation
                     // (syntax errors, security exceptions, etc.)  If so, the name is fine for the tooltip.
                     syntax = commandInfo.Syntax;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
 
@@ -2041,9 +2040,8 @@ namespace System.Management.Automation
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
             switch (commandName)
@@ -2407,9 +2405,8 @@ namespace System.Management.Automation
             {
                 customResults = scriptBlock.Invoke(argumentsToCompleter);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             if (customResults == null || !customResults.Any())
@@ -4169,9 +4166,8 @@ namespace System.Management.Automation
                                            provider.Name.Equals(FileSystemProvider.ProviderName,
                                                                 StringComparison.OrdinalIgnoreCase);
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
                         }
                     }
 
@@ -4190,9 +4186,8 @@ namespace System.Management.Automation
                             {
                                 leaf = Path.GetFileName(pathWithoutProvider);
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
-                                CommandProcessorBase.CheckForSevereException(e);
                             }
 
                             var notHiddenEntries = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -4227,9 +4222,8 @@ namespace System.Management.Automation
                                     {
                                         entries = Directory.GetFileSystemEntries(parentPath, leaf);
                                     }
-                                    catch (Exception e)
+                                    catch (Exception)
                                     {
-                                        CommandProcessorBase.CheckForSevereException(e);
                                     }
 
                                     if (entries != null)
@@ -4326,11 +4320,10 @@ namespace System.Management.Automation
                                 if (!completionText.StartsWith(parentDirectory, StringComparison.Ordinal))
                                     completionText = Path.Combine(".", completionText);
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
                                 // The object at the specified path is not accessable, such as c:\hiberfil.sys (for hibernation) or c:\pagefile.sys (for paging)
                                 // We ignore those files
-                                CommandProcessorBase.CheckForSevereException(e);
                                 continue;
                             }
                         }
@@ -6139,9 +6132,8 @@ namespace System.Management.Automation
             {
                 files = Directory.GetFiles(dirPath, wordToComplete);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             if (files != null)
@@ -6163,9 +6155,8 @@ namespace System.Management.Automation
                         var completionText = fileName.Substring(0, fileName.Length - 9);
                         results.Add(new CompletionResult(completionText));
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                         continue;
                     }
                 }
@@ -6554,9 +6545,8 @@ namespace System.Management.Automation
                         return strValue + extraText;
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
             return null;

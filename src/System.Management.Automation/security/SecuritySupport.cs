@@ -1277,10 +1277,9 @@ namespace System.Management.Automation
                 X509Certificate2 newCertificate = new X509Certificate2(messageBytes);
                 certificatesToProcess.Add(newCertificate);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // User call-out, catch-all OK
-                CommandProcessorBase.CheckForSevereException(e);
 
                 // Wasn't certificate data
                 return;
@@ -1355,10 +1354,9 @@ namespace System.Management.Automation
                     {
                         certificate = new X509Certificate2(path);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         // User call-out, catch-all OK
-                        CommandProcessorBase.CheckForSevereException(e);
                         continue;
                     }
 

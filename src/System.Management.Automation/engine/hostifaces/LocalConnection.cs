@@ -632,9 +632,8 @@ namespace System.Management.Automation.Runspaces
             {
                 DoOpenHelper();
             }
-            catch (Exception exception) // ignore non-severe exceptions
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
                 //This exception is reported by raising RunspaceState
                 //change event.
             }
@@ -686,7 +685,6 @@ namespace System.Management.Automation.Runspaces
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
                 s_runspaceInitTracer.WriteLine("Runspace open failed");
 
                 //Log engine health event
@@ -840,9 +838,8 @@ namespace System.Management.Automation.Runspaces
             {
                 DoCloseHelper();
             }
-            catch (Exception exception) // ignore non-severe exceptions
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
             }
 #pragma warning restore 56500
         }

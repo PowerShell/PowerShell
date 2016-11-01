@@ -1432,7 +1432,6 @@ namespace System.Management.Automation.Language
                     indexResult.Expression,
                     Expression.Catch(exception,
                         Expression.Block(
-                            Expression.Call(CachedReflectionInfo.CommandProcessorBase_CheckForSevereException, exception),
                             result)));
             }
             else
@@ -1731,7 +1730,6 @@ namespace System.Management.Automation.Language
                         Expression.Catch(
                             exception,
                             Expression.Block(
-                               Expression.Call(CachedReflectionInfo.CommandProcessorBase_CheckForSevereException, exception),
                                Compiler.ThrowRuntimeErrorWithInnerException("PropertyAssignmentException", Expression.Property(exception, "Message"), exception, typeof(void))))),
                     // The result of the block is the object constructed, so the tmp must be the last expr in the block.
                     tmp);
@@ -4051,7 +4049,6 @@ namespace System.Management.Automation.Language
             //           index = index + len
             //       obj[index] 
             //    } catch (Exception e) {
-            //        CheckForSevereException(e);
             //        if (StrictMode(3)) { throw }
             //        $null
             //    }
@@ -4322,7 +4319,6 @@ namespace System.Management.Automation.Language
                 Expression.Catch(
                     exception,
                     Expression.Block(
-                        Expression.Call(CachedReflectionInfo.CommandProcessorBase_CheckForSevereException, exception),
                         Expression.IfThen(Compiler.IsStrictMode(3), Expression.Rethrow()),
                         GetNullResult())));
         }
@@ -5375,7 +5371,6 @@ namespace System.Management.Automation.Language
                 Expression.Catch(typeof(PropertyNotFoundException), Expression.Rethrow(typeof(object))),
                 Expression.Catch(ex,
                     Expression.Block(
-                        Expression.Call(CachedReflectionInfo.CommandProcessorBase_CheckForSevereException, ex),
                         ExpressionCache.NullConstant)));
         }
 

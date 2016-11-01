@@ -1373,9 +1373,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     callbackDelegate.SafeInvoke(this, operationStateEventArgs);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
         }

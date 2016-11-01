@@ -1492,9 +1492,8 @@ namespace System.Management.Automation
                             return result;
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                         return result;
                     }
                 }

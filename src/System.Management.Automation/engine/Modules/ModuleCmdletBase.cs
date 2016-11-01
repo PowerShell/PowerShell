@@ -1296,10 +1296,9 @@ namespace Microsoft.PowerShell.Commands
                     moduleInfo.RootModule = moduleInfo.Path;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // 3rd-part call out, catch-all OK
-                CommandProcessorBase.CheckForSevereException(e);
 
                 // return fake PSModuleInfo if can't read the file for any reason
                 if (moduleInfo == null)
@@ -2418,7 +2417,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Exception e)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                         this.RemoveTypesAndFormatting(exportedFormatFiles, exportedTypeFiles);
                         ErrorRecord er = new ErrorRecord(e, "FormatXmlUpdateException", ErrorCategory.InvalidOperation,
                             null);
@@ -2443,7 +2441,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Exception e)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                         this.RemoveTypesAndFormatting(exportedFormatFiles, exportedTypeFiles);
                         ErrorRecord er = new ErrorRecord(e, "FormatXmlUpdateException", ErrorCategory.InvalidOperation,
                             null);
@@ -3919,7 +3916,6 @@ namespace Microsoft.PowerShell.Commands
             Exception e,
             ManifestProcessingFlags manifestProcessingFlags)
         {
-            CommandProcessorBase.CheckForSevereException(e);
             if (0 != (manifestProcessingFlags & ManifestProcessingFlags.WriteErrors))
             {
                 ErrorRecord er = GenerateInvalidModuleMemberErrorRecord(manifestElement, moduleManifestPath, e);
@@ -4581,8 +4577,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Exception e)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
-
                         WriteInvalidManifestMemberError(this, key, moduleManifestPath, e, manifestProcessingFlags);
                         return false;
                     }
@@ -4634,8 +4628,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Exception e)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
-
                         list = null;
                         WriteInvalidManifestMemberError(this, key, moduleManifestPath, e, manifestProcessingFlags);
                         return false;
@@ -4713,7 +4705,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Exception e)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                         if (0 != (manifestProcessingFlags & ManifestProcessingFlags.WriteErrors))
                         {
                             this.ThrowTerminatingError(GenerateInvalidModuleMemberErrorRecord(key, moduleManifestPath, e));
@@ -5015,9 +5006,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     filePaths = context.SessionState.Path.GetResolvedProviderPathFromPSPath(filePath, true /* allowNonExistentPaths */, out provider);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessor.CheckForSevereException(e);
                     return null;
                 }
                 // Make sure that the path is in the file system - that's all we can handle currently...
@@ -5054,9 +5044,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     filePaths = context.SessionState.Path.GetResolvedProviderPathFromPSPath(filePath, true /* allowNonExistentPaths */, out provider);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessor.CheckForSevereException(e);
                     return null;
                 }
                 // Make sure that the path is in the file system - that's all we can handle currently...
@@ -6236,8 +6225,6 @@ namespace Microsoft.PowerShell.Commands
                         }
                         catch (Exception e)
                         {
-                            CommandProcessor.CheckForSevereException(e);
-
                             string xmlErrorMessage = string.Format(
                                 CultureInfo.InvariantCulture, // file name is culture agnostic, we want to copy exception message verbatim
                                 CmdletizationCoreResources.ExportCimCommand_ErrorInCmdletizationXmlFile,
@@ -6485,9 +6472,8 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
                 // Catch-all OK, analyzing user code.
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
 
                 if (assembly != null)
@@ -6496,9 +6482,8 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             // Catch-all OK, analyzing user code.
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             List<string> detectedCmdlets = new List<string>();
@@ -7218,9 +7203,8 @@ namespace Microsoft.PowerShell.Commands
                 AssemblyName asn = assemblyToLoad.GetName();
                 assemblyVersion = asn.Version;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 assemblyVersion = new Version(0, 0);
             }
             return assemblyVersion;

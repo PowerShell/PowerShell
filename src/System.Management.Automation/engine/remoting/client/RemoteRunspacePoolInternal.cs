@@ -1685,10 +1685,9 @@ namespace System.Management.Automation.Runspaces.Internal
             {
                 RaiseStateChangeEvent(finishedStateInfo);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Don't throw exception on notification thread.
-                CommandProcessor.CheckForSevereException(e);
             }
 
             // Check if we have either an existing disconnect or connect async object
@@ -1866,9 +1865,8 @@ namespace System.Management.Automation.Runspaces.Internal
             {
                 RaiseStateChangeEvent(info);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set Opened async object.

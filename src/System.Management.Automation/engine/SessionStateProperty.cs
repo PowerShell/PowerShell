@@ -242,7 +242,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "GetPropertyProviderException",
                     SessionStateStrings.GetPropertyProviderException,
@@ -411,7 +410,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "GetPropertyDynamicParametersProviderException",
                     SessionStateStrings.GetPropertyDynamicParametersProviderException,
@@ -663,7 +661,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "SetPropertyProviderException",
                     SessionStateStrings.SetPropertyProviderException,
@@ -833,7 +830,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "SetPropertyDynamicParametersProviderException",
                     SessionStateStrings.SetPropertyDynamicParametersProviderException,
@@ -1073,7 +1069,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "ClearPropertyProviderException",
                     SessionStateStrings.ClearPropertyProviderException,
@@ -1243,7 +1238,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "ClearPropertyDynamicParametersProviderException",
                     SessionStateStrings.ClearPropertyDynamicParametersProviderException,

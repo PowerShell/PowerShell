@@ -644,9 +644,7 @@ namespace Microsoft.PowerShell
                         catch (Exception e)
                         {
                             // Catch all exceptions - we're just going to exit anyway so there's
-                            // no issue of the system being destabilized. We'll still
-                            // Watson on "severe" exceptions to get the reports.
-                            ConsoleHost.CheckForSevereException(e);
+                            // no issue of the system being destabilized.
                             exceptionMessage = e.Message;
                         }
 

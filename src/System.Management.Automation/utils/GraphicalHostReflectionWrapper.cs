@@ -119,7 +119,6 @@ namespace System.Management.Automation.Internal
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 parentCmdlet.ThrowTerminatingError(
                     new ErrorRecord(
                         e,

@@ -662,9 +662,8 @@ namespace System.Management.Automation.Runspaces
                 {
                     eh(this, e);
                 }
-                catch (Exception exception) // ignore non-severe exceptions
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(exception);
                 }
             }
         }
@@ -805,9 +804,8 @@ namespace System.Management.Automation.Runspaces
                         {
                             stateChanged(this, new RunspaceStateEventArgs(queueItem.RunspaceStateInfo));
                         }
-                        catch (Exception exception) // ignore non-severe exceptions
+                        catch (Exception)
                         {
-                            CommandProcessorBase.CheckForSevereException(exception);
                         }
                     }
 #pragma warning restore 56500

@@ -2991,8 +2991,6 @@ namespace System.Management.Automation.Language
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // In theory this should never happen so if it does, we'll report the actual exception rather than introducing a new message
                 ReportError(configurationKeywordToken.Extent, () => "ConfigurationStatementToken: " + e);
                 return null;

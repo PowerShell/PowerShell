@@ -980,7 +980,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new MethodInvocationException(
                     "WMIMethodException",
                     e,
@@ -1094,8 +1093,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // TODO: Bug 251457. This is a workaround to unblock partners and find out the root cause.
                 Tracing.PSEtwLogProvider provider = new Tracing.PSEtwLogProvider();
 
@@ -1135,7 +1132,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new MethodInvocationException(
                     "WMIMethodException",
                     e,

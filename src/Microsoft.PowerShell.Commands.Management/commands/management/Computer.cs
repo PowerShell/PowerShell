@@ -2296,9 +2296,8 @@ $result
                 {
                     restartStageTestList.Add(computer);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(ex);
                     restartStageTestList.Add(computer);
                 }
             }
@@ -2431,7 +2430,6 @@ $result
                 }
                 catch (Exception ex)
                 {
-                    CommandProcessorBase.CheckForSevereException(ex);
                     string errMsg = StringUtil.Format(ComputerResources.RestartComputerSkipped, computer, ex.Message);
                     var error = new ErrorRecord(new InvalidOperationException(errMsg), "RestartComputerSkipped",
                                                         ErrorCategory.OperationStopped, computer);
@@ -2504,9 +2502,8 @@ $result
                 {
                     wmiTestList.Add(computer);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(ex);
                     wmiTestList.Add(computer);
                 }
             }
@@ -2544,9 +2541,8 @@ $result
                 {
                     winrmTestList.Add(computerName);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(ex);
                     winrmTestList.Add(computerName);
                 }
             }
@@ -4520,9 +4516,8 @@ $result
                     {
                         Dns.GetHostEntry(Server);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        CommandsCommon.CheckForSevereException(this, ex);
                         WriteErrorHelper(ComputerResources.CannotResolveServerName, "AddressResolutionException",
                                          Server, ErrorCategory.InvalidArgument, true, Server);
                     }
@@ -5273,8 +5268,6 @@ $result
             }
             catch (Exception ex)
             {
-                CommandProcessorBase.CheckForSevereException(ex);
-
                 string errMsg = StringUtil.Format(ComputerResources.FailToConnectToComputer, computerName, ex.Message);
                 ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "RenameComputerException",
                                                     ErrorCategory.OperationStopped, computerName);
@@ -5620,8 +5613,6 @@ $result
                 }
                 catch (Exception exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(exception);
-
                     string errMsg = StringUtil.Format(ComputerResources.CannotResolveComputerName, Server, exception.Message);
                     ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "AddressResolutionException", ErrorCategory.InvalidArgument, Server);
                     ThrowTerminatingError(error);
@@ -5985,8 +5976,6 @@ $result
                 }
                 catch (Exception exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(exception);
-
                     string errMsg = StringUtil.Format(ComputerResources.CannotResolveComputerName, Server, exception.Message);
                     ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "AddressResolutionException", ErrorCategory.InvalidArgument, Server);
                     ThrowTerminatingError(error);
@@ -6849,7 +6838,6 @@ $result
             }
             catch (Exception ex)
             {
-                CommandProcessorBase.CheckForSevereException(ex);
                 string errMsg = StringUtil.Format(formatErrorMessage, computerName, ex.Message);
                 ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), ErrorFQEID,
                                                     ErrorCategory.OperationStopped, computerName);
@@ -6896,9 +6884,8 @@ $result
                     IPAddress unused;
                     isIPAddress = IPAddress.TryParse(nameToCheck, out unused);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
 
                 try
@@ -6917,8 +6904,6 @@ $result
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
-
                     // If GetHostEntry() throw exception, then the target should not be the local machine
                     if (!isIPAddress)
                     {

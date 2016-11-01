@@ -551,8 +551,6 @@ namespace System.Management.Automation.Remoting
             }
             catch (System.Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // if there is an exception creating remote session send the message to client.
                 WSManPluginInstance.ReportOperationComplete(
                     requestDetails,

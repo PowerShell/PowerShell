@@ -382,7 +382,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessor.CheckForSevereException(e);
                 ex = e;
             }
 

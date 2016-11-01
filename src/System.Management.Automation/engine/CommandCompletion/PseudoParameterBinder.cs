@@ -1198,11 +1198,9 @@ namespace System.Management.Automation.Language
             {
                 processor = PrepareFromAst(context, out commandName) ?? context.CreateCommand(commandName, dotSource);
             }
-            catch (RuntimeException rte)
+            catch (RuntimeException)
             {
                 // Failed to create the CommandProcessor;
-                CommandProcessorBase.CheckForSevereException(rte);
-
                 if (_commandAst.IsInWorkflow() &&
                     commandName != null &&
                     CompletionCompleters.PseudoWorkflowCommands.Contains(commandName, StringComparer.OrdinalIgnoreCase))
@@ -1307,9 +1305,8 @@ namespace System.Management.Automation.Language
                             if (e.ErrorId == "MissingArgument" || e.ErrorId == "AmbiguousParameter")
                                 retryWithNoArgs = true;
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
                         }
                         finally
                         {

@@ -797,9 +797,8 @@ namespace System.Management.Automation.Internal
                 {
                     commandProcessor.Command.DoStopProcessing();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     // 2004/04/26-JonN We swallow exceptions
                     // which occur during StopProcessing.
                     continue;
@@ -878,9 +877,8 @@ namespace System.Management.Automation.Internal
                 }
                 throw;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 DisposeCommands();
                 throw;
             }
@@ -1302,8 +1300,6 @@ namespace System.Management.Automation.Internal
                         // exemption.
                         catch (Exception e) // Catch-all OK, 3rd party callout.
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
-
                             InvocationInfo myInvocation = null;
                             if (null != commandProcessor.Command)
                                 myInvocation = commandProcessor.Command.MyInvocation;
@@ -1355,9 +1351,8 @@ namespace System.Management.Automation.Internal
                             redirPipe.Dispose();
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                     }
 #pragma warning restore 56500
                 }

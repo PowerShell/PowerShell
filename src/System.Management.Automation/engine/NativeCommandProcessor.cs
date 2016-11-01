@@ -563,8 +563,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 exceptionToRethrow = e;
             }
 
@@ -727,8 +725,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 exceptionToRethrow = e;
             }
             finally
@@ -793,14 +789,12 @@ namespace System.Management.Automation
                     // If the process was not found, we won't get here...
                     newHandle.Kill();
                 }
-                catch (Exception e) // ignore non-severe exceptions
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
-            catch (Exception e) // ignore non-severe exceptions
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
         }
 
@@ -900,14 +894,12 @@ namespace System.Management.Automation
                     // If the process was not found, we won't get here...
                     newHandle.Kill();
                 }
-                catch (Exception e) // ignore non-severe exceptions
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
-            catch (Exception e) // ignore non-severe exceptions
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
         }
 
@@ -1014,9 +1006,8 @@ namespace System.Management.Automation
                     _nativeProcess.Dispose();
                 }
             }
-            catch (Exception e) // ignore non-severe exceptions
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
         }
 
@@ -1337,11 +1328,7 @@ namespace System.Management.Automation
                 // If we got an index-out-of-range exception here, it's because
                 // of a buffer overrun error so we fail fast instead of
                 // continuing to run in an possibly unstable environment....
-#if CORECLR
-                System.Environment.FailFast(e.Message);
-#else
-                WindowsErrorReporting.FailFast(e);
-#endif
+                Environment.FailFast(e.Message, e);
             }
 
             // If FindExecutable returns a result >= 32, then it succeeded

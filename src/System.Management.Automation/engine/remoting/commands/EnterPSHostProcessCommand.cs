@@ -159,7 +159,6 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 namedPipeRunspace.Close();
 
                 ThrowTerminatingError(
@@ -244,10 +243,8 @@ namespace Microsoft.PowerShell.Commands
                     // Set pushed runspace prompt.
                     ps.AddScript(promptFn).Invoke();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    // Ignore all non-severe errors.
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
         }

@@ -287,7 +287,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "NewPropertyProviderException",
                     SessionStateStrings.NewPropertyProviderException,
@@ -477,7 +476,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "NewPropertyDynamicParametersProviderException",
                     SessionStateStrings.NewPropertyDynamicParametersProviderException,
@@ -713,7 +711,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "RemovePropertyProviderException",
                     SessionStateStrings.RemovePropertyProviderException,
@@ -884,7 +881,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "RemovePropertyDynamicParametersProviderException",
                     SessionStateStrings.RemovePropertyDynamicParametersProviderException,
@@ -1225,7 +1221,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "CopyPropertyProviderException",
                     SessionStateStrings.CopyPropertyProviderException,
@@ -1425,7 +1420,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "CopyPropertyDynamicParametersProviderException",
                     SessionStateStrings.CopyPropertyDynamicParametersProviderException,
@@ -1771,7 +1765,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "MovePropertyProviderException",
                     SessionStateStrings.MovePropertyProviderException,
@@ -1973,7 +1966,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "MovePropertyDynamicParametersProviderException",
                     SessionStateStrings.MovePropertyDynamicParametersProviderException,
@@ -2248,7 +2240,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "RenamePropertyProviderException",
                     SessionStateStrings.RenamePropertyProviderException,
@@ -2436,7 +2427,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "RenamePropertyDynamicParametersProviderException",
                     SessionStateStrings.RenamePropertyDynamicParametersProviderException,
