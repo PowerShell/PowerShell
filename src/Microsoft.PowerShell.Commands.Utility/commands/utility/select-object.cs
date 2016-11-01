@@ -341,11 +341,11 @@ namespace Microsoft.PowerShell.Commands
                 _exclusionFilter = new MshExpressionFilter(ExcludeProperty);
                 // ExcludeProperty implies -Property * for better UX
                 if ((Property == null) || (Property.Length == 0))
-                 {
+                {
                     Property = new Object[]{"*"};
-                    _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);                }
+                    _propertyMshParameterList = processor.ProcessParameters(Property, invocationContext);
+                }
             }
-
         }
 
         private void ProcessObject(PSObject inputObject)
