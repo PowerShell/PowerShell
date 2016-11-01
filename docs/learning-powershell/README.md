@@ -104,6 +104,7 @@ Note that all bash commands should continue working on PowerShell session.
 
 Recommended Training and Reading
 ----
+- [Microsoft Exchange Server PowerShell Essentials](https://www.packtpub.com/networking-and-servers/microsoft-exchange-server-powershell-essentials) from Packt
 - Microsoft Virtual Academy: [Getting Started with PowerShell][getstarted-with-powershell]
 - [Why Learn PowerShell][why-learn-powershell] by Ed Wilson
 - PowerShell Web Docs: [Basic cookbooks][basic-cookbooks]
