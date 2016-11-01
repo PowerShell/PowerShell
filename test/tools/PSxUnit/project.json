@@ -1,0 +1,37 @@
+{
+  "version": "1.0.0-*",
+  "testRunner": "xunit",
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
+
+  "runtimes": {
+    "win10-x64": {},
+    "ubuntu.14.04-x64": {},
+    "ubuntu.16.04-x64": {},
+    "debian.8-x64": {},
+    "centos.7-x64": {},
+    "osx.10.10-x64": {}
+  },
+
+  "dependencies": {
+    "xunit": "2.2.0-beta2-build3300",
+    "System.Collections.NonGeneric": "4.0.1",
+    "dotnet-test-xunit": "2.2.0-preview2-build1029",
+    "xunit.runner.reporters": "2.2.0-beta3-build3328",
+    "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext": "1.0.0-alpha9",
+    "System.Management.Automation": "1.0.0-*"
+  },
+
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": [ "dnxcore50", "dotnet", "portable-net45+win8" ],
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0"
+        }
+      }
+    }
+  }
+}
