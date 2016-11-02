@@ -55,7 +55,7 @@ To use the `Microsoft.PowerShell.SDK` NuGet package, declare the `frameworks` se
     "netstandard1.6": {
         "imports": [ "dnxcore50", "portable-net45+win8" ],
         "dependencies": {
-            "Microsoft.PowerShell.SDK": "1.0.0-alpha11"
+            "Microsoft.PowerShell.SDK": "1.0.0-alpha12"
         }
     }
 }

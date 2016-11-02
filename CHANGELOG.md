@@ -4,12 +4,26 @@ Changelog
 Unreleased
 ----------
 
-v6.0.0-alpha.12 - 2016-10-31
+v6.0.0-alpha.12 - 2016-11-03
 ----------------------------
-- Add support <Suppress> in Get-WinEvent -FilterHashtable
+- Fix `Get-ChildItem -Recurse -ErrorAction Ignore` to ignore additional errors
+- Don't block pipeline when running Windows exes
+- Fix for PowerShell SSH remoting with recent Win32-OpenSSH change.
+- `Select-Object` with `-ExcludeProperty` now implies `-Property *` if -Property is not specified.
+- Adding ValidateNotNullOrEmpty to `-Name` parameter of `Get-Alias`
+- Enable Implicit remoting commands in PowerShell Core
+- Fix GetParentProcess() to replace an expensive WMI query with Win32 API calls
+- Fix `Set-Content` failure to create a file in PSDrive under certain conditions.
+- Adding ValidateNotNullOrEmpty to `-Name` parameter of `Get-Service`
+- Adding support <Suppress> in `Get-WinEvent -FilterHashtable`
+- Adding WindowsVersion to `Get-ComputerInfo`
+- Remove the unnecessary use of lock in PseudoParameterBinder to avoid deadlock
+- Refactor `Get-WinEvent` to use StringBuilder for XPath query construction
+- Clean up and fix error handling of libpsl-native
+- Exclude Registry and Certificate providers from UNIX PS
+- Update PowerShell Core to consume .Net Core preview1-24530-04
 
-
-v6.0.0-alpha.11 - 2016-10-17
+v6.0.0-alpha.12 - 2016-10-17
 ----------------------------
 - Add '-Title' to 'Get-Credential' and unify the prompt experience
 - Update dependency list for PowerShell Core on Linux and OS X
