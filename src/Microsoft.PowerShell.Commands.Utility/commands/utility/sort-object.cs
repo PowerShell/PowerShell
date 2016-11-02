@@ -86,6 +86,29 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Sort unsorted OrderByPropertyEntry data using a full sort
+        /// </summary>
+        private int FullSort(List<OrderByPropertyEntry> dataToSort, OrderByPropertyComparer comparer)
+        {
+            // Track how many items in the list are sorted
+            int sortedItemCount = dataToSort.Count;
+
+            // Future: It may be worth comparing List.Sort with SortedSet when handling unique
+            // records in case SortedSet is faster (SortedSet was not an option in earlier
+            // versions of PowerShell).
+            dataToSort.Sort(comparer);
+
+            if (_unique)
+            {
+                // Move unique entries to the front of the list (this is significantly faster
+                // than removing them)
+                sortedItemCount = MoveUniqueEntriesToFront(dataToSort, comparer);
+            }
+
+            return sortedItemCount;
+        }
+
+        /// <summary>
         /// Sort unsorted OrderByPropertyEntry data using an indexed min-/max-heap sort
         /// </summary>
         private int Heapify(List<OrderByPropertyEntry> dataToSort, OrderByPropertyComparer orderByPropertyComparer)
@@ -202,17 +225,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Outputs a subset of the sorted data
-        /// </summary>
-        private void WritePartial(List<OrderByPropertyEntry> sortedData, int startIndex, int endIndex)
-        {
-            for (int index = startIndex; index <= endIndex; index++)
-            {
-                WriteObject(sortedData[index].inputObject);
-            }
-        }
-
-        /// <summary>
         /// 
         /// </summary>
         protected override void EndProcessing()
@@ -227,36 +239,26 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // Track the range of sorted data in the data that we are processing
-            int outputStartIndex = 0;
-            int outputEndIndex = dataToProcess.Count - 1;
+            // Track the number of items that will be output from the data once it is sorted
+            int sortedItemCount = dataToProcess.Count;
 
-            // If -Top & -Bottom were not used, or if -Top or -Bottom would return all objects, sort
-            // all objects, remove duplicates if necessary, and identify the list of items to return
+            // If -Top & -Bottom were not used, or if -Top or -Bottom would return all objects, invoke
+            // an in-place full sort
             if ((Top == 0 && Bottom == 0) || Top >= dataToProcess.Count || Bottom >= dataToProcess.Count)
             {
-                // Note: It may be worth comparing List.Sort with SortedSet.Sort when handling unique records in
-                // case SortedSet.Sort is faster (SortedSet was not an option in earlier versions of PowerShell).
-                dataToProcess.Sort(comparer);
-                int dataToProcessCount = dataToProcess.Count;
-
-                if (_unique)
-                {
-                    // Move unique entries to the front of the list (this is significantly faster than deleting them)
-                    int uniqueCount = MoveUniqueEntriesToFront(dataToProcess, comparer);
-                    dataToProcessCount = uniqueCount;
-                    outputEndIndex = uniqueCount - 1;
-                }
+                sortedItemCount = FullSort(dataToProcess, comparer);
             }
             // Otherwise, use an indexed min-/max-heap to perform an in-place sort of all objects
             else
             {
-                int heapCount = Heapify(dataToProcess, comparer);
-                outputEndIndex = heapCount - 1;
+                sortedItemCount = Heapify(dataToProcess, comparer);
             }
 
-            // Write out the portion of the processed data that was requested
-            WritePartial(dataToProcess, outputStartIndex, outputEndIndex);
+            // Write out the portion of the processed data that was sorted
+            for (int index = 0; index < sortedItemCount; index++)
+            {
+                WriteObject(dataToProcess[index].inputObject);
+            }
         }
     }
 }
