@@ -86,7 +86,12 @@ namespace System.Management.Automation
             return mainModule;
         }
 
+        // Cache of the current process' parentId 
+        private static int? s_currentParentProcessId;
+        private static readonly int s_currentProcessId = Process.GetCurrentProcess().Id;
+
         /// <summary>
+<<<<<<< HEAD
         /// Retrieve the parent process of a process.
         ///
         /// Previously this code used WMI, but WMI is causing a CPU spike whenever the query gets called as it results in
@@ -98,33 +103,88 @@ namespace System.Management.Automation
         /// parent of</param>
         internal static Process GetParentProcess(Process current)
         {
+=======
+        /// Gets the parent process id for the specified process
+        /// </summary>        
+        /// <remarks>
+        /// Caching is used for the current process
+        /// </remarks>
+        /// <param name="processId">the id of the process whose parent id should be retreived</param>
+        /// <returns>0 on failure, else a parent process id. Note that the parent process id may have been recycled</returns>
+        internal static int GetParentProcessId(int processId)
+        {            
+>>>>>>> Caching the parent id of the current process
             int parentPid = 0;
 
+            // This is a common query (parent id for the current process)
+            // Use cached value if available
+            if (processId == s_currentProcessId && s_currentParentProcessId.HasValue)
+            {
+                return s_currentParentProcessId.Value;
+            }
+
+            parentPid = GetParentProcessIdNative(processId);
+
+            // cache the current process parent pid if it hasn't been done yet
+            if (processId == s_currentProcessId && !s_currentParentProcessId.HasValue)
+            {
+                s_currentParentProcessId = parentPid;
+            }
+            return parentPid;
+        }
+
+        /// <summary>
+        /// Helper function to get the parent process id from the win32 Toolhelp apis
+        /// </summary>
+        /// <remarks>
+        /// This could potentially be replaced with calls to NTQueryInformationProcess
+        /// </remarks>
+        /// <param name="processId">The child process id to get the parent from</param>
+        /// <returns></returns>
+        private static int GetParentProcessIdNative(int processId)
+        {            
+            int parentPid = 0;
 #if !UNIX
             PlatformInvokes.PROCESSENTRY32 pe32 = new PlatformInvokes.PROCESSENTRY32 { };
             pe32.dwSize = (uint)ClrFacade.SizeOf<PlatformInvokes.PROCESSENTRY32>();
 
-            using (PlatformInvokes.SafeSnapshotHandle hSnapshot = PlatformInvokes.CreateToolhelp32Snapshot(PlatformInvokes.SnapshotFlags.Process, (uint)current.Id))
+            using (PlatformInvokes.SafeSnapshotHandle hSnapshot = PlatformInvokes.CreateToolhelp32Snapshot(PlatformInvokes.SnapshotFlags.Process, (uint)processId))
             {
                 if (!PlatformInvokes.Process32First(hSnapshot, ref pe32))
                 {
                     int errno = Marshal.GetLastWin32Error();
                     if (errno == PlatformInvokes.ERROR_NO_MORE_FILES)
                     {
-                        return null;
+                        return 0;
                     }
                 }
                 do
                 {
-                    if (pe32.th32ProcessID == (uint)current.Id)
+                    if (pe32.th32ProcessID == (uint) processId)
                     {
                         parentPid = (int)pe32.th32ParentProcessID;
                         break;
                     }
-
                 } while (PlatformInvokes.Process32Next(hSnapshot, ref pe32));
             }
 #endif
+            return parentPid;
+        }
+
+        /// <summary>
+        /// Retrieve the parent process of a process.
+        /// 
+        /// Previously this code used WMI, but WMI is causing a CPU spike whenever the query gets called as it results in 
+        /// tzres.dll and tzres.mui.dll being loaded into every process to conver the time information to local format.
+        /// For perf reasons, we result to P/Invoke.
+        /// </summary>
+        ///
+        /// <param name="current">The process we want to find the
+        /// parent of</param>
+        internal static Process GetParentProcess(Process current)
+        {
+            
+            int parentPid = GetParentProcessId(current.Id);
 
             if (parentPid == 0)
                 return null;
