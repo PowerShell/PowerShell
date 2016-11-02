@@ -370,8 +370,10 @@ function Invoke-AppveyorFinish
             Compress-TestContent -Destination $zipTestContentPath
             $artifacts.Add($zipTestContentPath)
 
+            Add-Type -AssemblyName System.IO.Compression.FileSystem
+            $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath((Join-Path $PSScriptRoot '..\test\tools\OpenCover'))
             $zipOpenCoverPath = Join-Path $pwd 'OpenCover.zip'
-            Compress-Archive -DestinationPath $zipOpenCoverPath -Path (Join-Path $pwd  '..\test\tools\OpenCover')
+            [System.IO.Compression.ZipFile]::CreateFromDirectory($resolvedPath, $zipOpenCoverPath) 
             $artifacts.Add($zipOpenCoverPath)
         }
 
