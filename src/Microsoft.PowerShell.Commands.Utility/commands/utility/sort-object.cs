@@ -57,10 +57,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Moves unique entries to the front of the list.
         /// </summary>
-        private void MoveUniqueEntriesToFront(List<OrderByPropertyEntry> sortedData, OrderByPropertyComparer comparer, out int uniqueCount)
+        private int MoveUniqueEntriesToFront(List<OrderByPropertyEntry> sortedData, OrderByPropertyComparer comparer)
         {
             // If we have sorted data then we know we have at least one unique item
-            uniqueCount = sortedData.Count > 0 ? 1 : 0;
+            int uniqueCount = sortedData.Count > 0 ? 1 : 0;
+
             // Move the first of each unique entry to the front of the list
             for (int uniqueItemIndex = 0, nextUniqueItemIndex = 1; uniqueItemIndex < sortedData.Count && uniqueCount != Top; uniqueItemIndex++, nextUniqueItemIndex++)
             {
@@ -80,6 +81,8 @@ namespace Microsoft.PowerShell.Commands
                 sortedData[uniqueItemIndex + 1] = sortedData[nextUniqueItemIndex];
                 uniqueCount++;
             }
+
+            return uniqueCount;
         }
 
         /// <summary>
@@ -107,14 +110,31 @@ namespace Microsoft.PowerShell.Commands
             // Max-heap: used for faster processing of a top N ascending sort and a bottom N descending sort
             int comparator = Top > 0 ? -1 : 1;
 
+            // For unique sorts, use a sorted set to avoid adding unique items to the heap
+            SortedSet<OrderByPropertyEntry> uniqueSet = _unique ? new SortedSet<OrderByPropertyEntry>(orderByPropertyComparer) : null;
+
             // Tracking the index is necessary so that unsortable items can be output at the end, in the order
             // in which they were received.
-            for (int dataIndex = 0; dataIndex < dataToSort.Count; dataIndex++)
+            for (int dataIndex = 0, discardedDuplicates = 0; dataIndex < dataToSort.Count - discardedDuplicates; dataIndex++)
             {
                 // Min-heap: if the heap is full and the root item is larger than the entry, discard the entry
                 // Max-heap: if the heap is full and the root item is smaller than the entry, discard the entry
                 if (heapCount == heapCapacity && comparer.Compare(dataToSort[0], dataToSort[dataIndex]) == comparator)
                 {
+                    continue;
+                }
+
+                // If we're doing a unique sort and the entry is not unique, discard the duplicate entry
+                if (_unique && !uniqueSet.Add(dataToSort[dataIndex]))
+                {
+                    discardedDuplicates++;
+                    if (dataIndex != dataToSort.Count - discardedDuplicates)
+                    {
+                        // When discarding duplicates, replace them with an item at the end of the list and
+                        // adjust our counter so that we check the item we just swapped in next
+                        dataToSort[dataIndex] = dataToSort[dataToSort.Count - discardedDuplicates];
+                        dataIndex--;
+                    }
                     continue;
                 }
 
@@ -211,9 +231,9 @@ namespace Microsoft.PowerShell.Commands
             int outputStartIndex = 0;
             int outputEndIndex = dataToProcess.Count - 1;
 
-            // If -Unique was used, if -Top & -Bottom were not used, or if -Top or -Bottom would return all objects, sort
+            // If -Top & -Bottom were not used, or if -Top or -Bottom would return all objects, sort
             // all objects, remove duplicates if necessary, and identify the list of items to return
-            if (_unique || (Top == 0 && Bottom == 0) || Top >= dataToProcess.Count || Bottom >= dataToProcess.Count)
+            if ((Top == 0 && Bottom == 0) || Top >= dataToProcess.Count || Bottom >= dataToProcess.Count)
             {
                 // Note: It may be worth comparing List.Sort with SortedSet.Sort when handling unique records in
                 // case SortedSet.Sort is faster (SortedSet was not an option in earlier versions of PowerShell).
@@ -223,21 +243,9 @@ namespace Microsoft.PowerShell.Commands
                 if (_unique)
                 {
                     // Move unique entries to the front of the list (this is significantly faster than deleting them)
-                    int uniqueCount = 0;
-                    MoveUniqueEntriesToFront(dataToProcess, comparer, out uniqueCount);
+                    int uniqueCount = MoveUniqueEntriesToFront(dataToProcess, comparer);
                     dataToProcessCount = uniqueCount;
                     outputEndIndex = uniqueCount - 1;
-                }
-
-                if (Top > 0 && Top < dataToProcessCount)
-                {
-                    // Write the top N list items to the output stream
-                    outputEndIndex = Top - 1;
-                }
-                else if (Bottom > 0 && Bottom < dataToProcessCount)
-                {
-                    // Write the bottom N list items to the output stream
-                    outputStartIndex = outputEndIndex - Bottom + 1;
                 }
             }
             // Otherwise, use an indexed min-/max-heap to perform an in-place sort of all objects
