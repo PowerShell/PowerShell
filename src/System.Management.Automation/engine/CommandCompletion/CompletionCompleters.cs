@@ -3793,7 +3793,68 @@ namespace System.Management.Automation
             }
 
             CompleteMemberByInferredType(context, prevType, result, wordToComplete + "*", filter: IsPropertyMember, isStatic: false);
+            if (result.Count == 0)
+            {
+                // if we get here, we have not been able to infer the type to complete.
+                // try looking at the value of the closest commandexpression upstream
+                CommandExpressionAst commandExpression = null;
+                for (int pipelineElementIndex = i - 1; pipelineElementIndex >= 0 && commandExpression == null; --pipelineElementIndex)
+                {
+                    var command = pipelineAst.PipelineElements[pipelineElementIndex] as CommandAst;
+                    // skip where,sort etc since they don't change they type of the pipeline object
+                    if (command != null && !IsCompletionTypeInvariantCommand(command))
+                    {
+                        break;
+                    }
+                    commandExpression = pipelineAst.PipelineElements[pipelineElementIndex] as CommandExpressionAst;
+                }
+                if (commandExpression != null)
+                {
+                    var expr = commandExpression.Expression;
+                    // if expr is $p.Where{...}, use $p
+                    if (IsCompletionTypeInvariantInvokeMemberExpression(expr))
+                    {
+                        expr = ((InvokeMemberExpressionAst)expr).Expression;
+                    }
+                    object value;
+                    SafeExprEvaluator.TrySafeEval(expr, context.ExecutionContext, out value);
+                    if (value != null)
+                    {
+                        var list = value as IList;
+                        if (list != null && list.Count > 0)
+                        {
+                            value = list[0];
+                        }
+                        value = PSObject.Base(value);
+                        CompleteMemberByActualType(context, new PSTypeName(value.GetType()), result, wordToComplete + "*", filter: IsPropertyMember, isStatic: false);
+                    }
+                }
+            }
             result.Add(CompletionResult.Null);
+        }
+
+        static bool IsCompletionTypeInvariantCommand(CommandAst commandAst)
+        {
+            var commandName = commandAst.CommandElements[0].Extent.Text;
+            if (string.Compare(commandName, "where", StringComparison.OrdinalIgnoreCase) == 0) return true;
+            if (string.Compare(commandName, "sort", StringComparison.OrdinalIgnoreCase) == 0) return true;
+            if (string.Compare(commandName, "where-object", StringComparison.OrdinalIgnoreCase) == 0) return true;
+            if (string.Compare(commandName, "sort-object", StringComparison.OrdinalIgnoreCase) == 0) return true;
+
+            return false;
+        }
+        static bool IsCompletionTypeInvariantInvokeMemberExpression(ExpressionAst commandAst)
+        {
+            var invokeExpr = commandAst as InvokeMemberExpressionAst;
+            if (invokeExpr != null)
+            {
+                if (string.Compare(invokeExpr.Member.ToString(), "where", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static void NativeCompletionTypeName(CompletionContext context, List<CompletionResult> result)
@@ -5180,6 +5241,38 @@ namespace System.Management.Automation
         {
             return Ast.GetAncestorAst<ConfigurationDefinitionAst>(expression) != null;
         }
+
+        private static void CompleteMemberByActualType(CompletionContext context, PSTypeName actualType, List<CompletionResult> results, string memberName, Func<object, bool> filter, bool isStatic)
+        {
+            WildcardPattern memberNamePattern = WildcardPattern.Get(memberName, WildcardOptions.IgnoreCase);
+
+            var members = GetMembersByInferredType(actualType, context, isStatic, filter);
+            foreach (var member in members)
+            {
+                AddInferredMember(member, memberNamePattern, results);
+            }
+
+            // Check if we need to complete against the extension methods 'Where' and 'ForEach'
+            if (actualType.Type != null && IsStaticTypeEnumerable(actualType.Type))
+            {
+                // Complete extension methods 'Where' and 'ForEach' for Enumerable types				
+                CompleteExtensionMethods(memberNamePattern, results);
+            }
+
+
+            if (results.Count > 0)
+            {
+                // Sort the results
+                AddCommandWithPreferenceSetting(context.Helper.CurrentPowerShell, "Microsoft.PowerShell.Utility\\Sort-Object")
+                    .AddParameter("Property", new[] { "ResultType", "ListItemText" })
+                    .AddParameter("Unique");
+                Exception unused;
+                var sortedResults = context.Helper.ExecuteCurrentPowerShell(out unused, results);
+                results.Clear();
+                results.AddRange(sortedResults.Select(psobj => PSObject.Base(psobj) as CompletionResult));
+            }
+        }
+
 
         private static void CompleteMemberByInferredType(CompletionContext context, IEnumerable<PSTypeName> inferredTypes, List<CompletionResult> results, string memberName, Func<object, bool> filter, bool isStatic)
         {
