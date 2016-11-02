@@ -114,14 +114,14 @@ Remoting Support
 ----------------
 
 Client-side remoting from Linux/macOS is not supported with the initial package. 
-This will be enabled shortly after the Alpha release by installing an additional package.
+The work is being done in the [psl-omi-provider](https://github.com/PowerShell/psl-omi-provider) repo.
 
 Just-Enough-Administration (JEA) Support
 ----------------------------------------
 
 The ability to create constrained administration (JEA) remoting
 endpoints is not currently available in PowerShell on Linux/macOS. 
-This feature will be enabled shortly after the Alpha release by installing new package.
+This feature is currently not in scope for 6.0 and something we will consider post 6.0 but requires significant design work.
 
 sudo, exec, and PowerShell
 -------------------------
