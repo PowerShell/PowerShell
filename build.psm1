@@ -661,9 +661,9 @@ function Format-PSPesterFailure {
                 $currentSuiteName = $Failure.SuiteName
                 Write-Host $currentSuiteName -ForegroundColor Magenta
             }
-            Write-Host "`n`t$($Failure.TestDescription)" -ForegroundColor Green
-            Write-Host "`t`t$($Failure.FailMessage)" -ForegroundColor Red
-            Write-Host "`t`t$($Failure.Failstack)" -ForegroundColor Gray
+            Write-Host "$($Failure.TestDescription)" -ForegroundColor Green
+            Write-Host "$($Failure.FailMessage)" -ForegroundColor Red
+            Write-Host "$($Failure.Failstack)" -ForegroundColor Gray
             $totalFailures++
         }
     }
