@@ -9,9 +9,11 @@ using System.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements Get-Uptime.
+    /// This class implements Get-Uptime
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Uptime", DefaultParameterSetName = "Timespan", HelpUri = "")]
+    [OutputType(typeof(System.TimeSpan))]
+    [OutputType(typeof(System.DateTime))]
     public class GetUptimeCommand : PSCmdlet
     {
         /// <summary>
@@ -31,51 +33,36 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Since { get; set; } = new SwitchParameter();
 
         /// <summary>
-        /// Pretty parameter
-        /// Convert output to default formated string
-        /// </summary>
-        /// <value></value>
-        [Parameter(ParameterSetName = "Timespan")]
-        [Parameter(ParameterSetName = "Since")]
-        public SwitchParameter Pretty { get; set; } = new SwitchParameter();
-
-        /// <summary>
-        /// ProcessRecord() override.
-        /// This is the main entry point for the cmdlet.
+        /// ProcessRecord() override
+        /// This is the main entry point for the cmdlet
         /// </summary>
         protected override void ProcessRecord()
         {
-            // Get-Uptime return null if IsHighResolution = false  
+            // Get-Uptime throw if IsHighResolution = false  
             // because stopwatch.GetTimestamp() return DateTime.UtcNow.Ticks
             // instead of ticks from system startup
             if (System.Diagnostics.Stopwatch.IsHighResolution)
             {
-                TimeSpan uptime = TimeSpan.FromSeconds(System.Diagnostics.Stopwatch.GetTimestamp()/System.Diagnostics.Stopwatch.Frequency); 
+                TimeSpan uptime = TimeSpan.FromSeconds(System.Diagnostics.Stopwatch.GetTimestamp()/System.Diagnostics.Stopwatch.Frequency);
     
                 switch (ParameterSetName)
                 {
                     case "Timespan":
-                        if (Pretty.IsPresent) {
-                            WriteObject(uptime.ToString());
-                        } 
-                        else
-                        {
-                            // return TimeSpan of time since the system started up
-                            WriteObject(uptime);
-                        }
+                        // return TimeSpan of time since the system started up
+                        WriteObject(uptime);
                         break;
                     case "Since":
-                        if (Pretty.IsPresent) {
-                            // return formated string when the system started up
-                            WriteObject(System.DateTime.Now.Subtract(uptime).ToString("F"));
-                        } 
-                        else
-                        {
-                            // return Datetime when the system started up
-                            WriteObject(System.DateTime.Now.Subtract(uptime));
-                        }
+                        // return Datetime when the system started up
+                        WriteObject(System.DateTime.Now.Subtract(uptime));
                         break;
                 }
+            }
+            else
+            {
+                WriteDebug("System.Diagnostics.Stopwatch.IsHighResolution return 'False'.");
+                string msg = "Platform is not supported";
+                Exception exc = new Exception(msg);
+                ThrowTerminatingError(new ErrorRecord(exc, "UptimePlatformUnsupported", ErrorCategory.NotImplemented, null));
             }
         }
    }
