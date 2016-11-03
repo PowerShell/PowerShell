@@ -15,3 +15,12 @@ Describe "Get-Process" -Tags "CI" {
         Get-Process | foreach-object { $_.Name | Should Not BeNullOrEmpty }
     }
 }
+
+Describe "Get-Process Formatting" -Tags "Feature" {
+    It "Should not have Handle in table format header" {
+        $formatData = Get-FormatData -TypeName System.Diagnostics.Process
+        $tableControl = $formatData.FormatViewDefinition | Where-Object {$_.Control -is "System.Management.Automation.TableControl"}
+        $tableControl.Control.Headers.Label -match "Handles" | Should BeNullOrEmpty
+        $tableControl.Control.Rows.Columns.DisplayEntry.Value -eq "HandleCount" | Should BeNullOrEmpty
+    }
+}

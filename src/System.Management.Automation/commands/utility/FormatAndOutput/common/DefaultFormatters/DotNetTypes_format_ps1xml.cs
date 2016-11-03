@@ -533,7 +533,6 @@ namespace System.Management.Automation.Runspaces
         {
             yield return new FormatViewDefinition("process",
                 TableControl.Create()
-                    .AddHeader(Alignment.Right, label: "Handles", width: 7)
                     .AddHeader(Alignment.Right, label: "NPM(K)", width: 7)
                     .AddHeader(Alignment.Right, label: "PM(K)", width: 8)
                     .AddHeader(Alignment.Right, label: "WS(K)", width: 10)
@@ -542,7 +541,6 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(Alignment.Right, width: 3)
                     .AddHeader()
                     .StartRowDefinition()
-                        .AddPropertyColumn("HandleCount")
                         .AddScriptBlockColumn("[long]($_.NPM / 1024)")
                         .AddScriptBlockColumn("[long]($_.PM / 1024)")
                         .AddScriptBlockColumn("[long]($_.WS / 1024)")
