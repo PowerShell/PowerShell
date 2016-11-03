@@ -674,7 +674,7 @@ function Format-PSPesterFailure {
     }
 }
 
-function Get-PSPesterFailures {
+function Get-PSPesterFailure {
     param(
         [string]$NUnitLog = "pester-tests.xml"
     )
