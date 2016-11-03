@@ -627,6 +627,87 @@ function Publish-PSTestTools {
 
 }
 
+function Format-PSPesterFailure {
+    [CmdletBinding(DefaultParameterSetName="file")]
+    param(
+        [Parameter(ParameterSetName="file")]
+        [string]$NUnitLog = "pester-tests.xml",
+
+        [Parameter(ParameterSetName="object",ValueFromPipeline=$true)]
+        [PSCustomObject]$PesterFailure  
+    )
+
+    begin
+    {
+        if ($PSBoundParameters.Count -eq 0 -or $PSBoundParameters.ContainsKey("NUnitLog"))
+        {
+            $PesterFailure = Get-PSPesterFailures -NUnitLog $NUnitLog
+        }
+        [int]$totalFailures = 0
+        [string]$currentSuiteName = [String]::Empty
+    }
+
+    process
+    {
+        foreach ($Failure in $PesterFailure)
+        {
+            if (!$Failure.PSTypeNames.Contains("Pester.Failure"))
+            {
+                throw "Only [Pester.Failure] objects supported"
+            }
+
+            if ($Failure.SuiteName -ne $currentSuiteName)
+            {
+                $currentSuiteName = $Failure.SuiteName
+                Write-Host $currentSuiteName -ForegroundColor Magenta
+            }
+            Write-Host "`n`t$($Failure.TestDescription)" -ForegroundColor Green
+            Write-Host "`t`t$($Failure.FailMessage)" -ForegroundColor Red
+            Write-Host "`t`t$($Failure.Failstack)" -ForegroundColor Gray
+            $totalFailures++
+        }
+    }
+    
+    end
+    {
+        Write-Host "Failures: $totalFailures" -ForegroundColor Yellow
+    }
+}
+
+function Get-PSPesterFailures {
+    param(
+        [string]$NUnitLog = "pester-tests.xml"
+    )
+
+    function SelectNodes ($xml, [string] $xpath)
+    {
+        if ($psversiontable.PSEdition -eq 'Desktop')
+        {
+            $xml.SelectNodes($xpath)
+        }
+        else 
+        {
+            [System.Xml.XmlDocumentXPathExtensions]::SelectNodes($xml, $xpath)
+        }
+    }
+
+    $outputxml = [xml](get-content $NUnitLog)
+    $failureSuites = SelectNodes -xml $outputxml -xpath "/test-results/test-suite/results/test-suite[@result='Failure']" 
+
+    foreach ($failureSuite in $failureSuites)
+    {
+        $failureTests = SelectNodes -xml $failureSuite -xpath "results/test-case[@result='Failure']"
+        foreach ($failureTest in $failureTests)
+        {
+            $totalFailures++
+            $failure = New-Object -TypeName PSCustomObject -Property @{SuiteName=$failureSuite.Name;TestDescription=$failureTest.Description;
+                FailMessage=$failureTest.failure.message;FailStack=$failuretest.failure.'stack-trace'}
+            $failure.PSTypeNames.Insert(0,"Pester.Failure")
+            $failure
+        }
+    }
+}
+
 function Start-PSPester {
     [CmdletBinding()]
     param(
