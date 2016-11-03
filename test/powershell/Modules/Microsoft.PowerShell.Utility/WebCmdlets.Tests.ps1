@@ -379,6 +379,19 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
+    It "Validate Invoke-WebRequest -SkipCertificateCheck" {
+
+        # validate that exception is thrown for URI with expired certificate
+        $command = "Invoke-WebRequest -Uri 'https://expired.badssl.com'"
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+
+        # validate that no exception is thrown for URI with expired certificate when using -SkipCertificateCheck option
+        $command = "Invoke-WebRequest -Uri 'https://expired.badssl.com' -SkipCertificateCheck"
+        $result = ExecuteWebCommand -command $command
+        $result.Error | Should BeNullOrEmpty
+    }
+
 }
 
 Describe "Invoke-RestMethod tests" -Tags "Feature" {
@@ -593,4 +606,19 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $jsonContent.headers.Host | Should Match "httpbin.org"
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
+
+    It "Validate Invoke-RestMethod -SkipCertificateCheck" {
+
+        # HTTP method HEAD must be used to not retrieve an unparsable HTTP body
+        # validate that exception is thrown for URI with expired certificate
+        $command = "Invoke-RestMethod -Uri 'https://expired.badssl.com' -Method HEAD"
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+
+        # validate that no exception is thrown for URI with expired certificate when using -SkipCertificateCheck option
+        $command = "Invoke-RestMethod -Uri 'https://expired.badssl.com' -SkipCertificateCheck -Method HEAD"
+        $result = ExecuteWebCommand -command $command
+        $result.Error | Should BeNullOrEmpty
+    }
+
 }
