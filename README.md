@@ -30,12 +30,12 @@ You can download and install a PowerShell package for any of the following platf
 | macOS 10.11                    | [.pkg][rl-macos]       | [Instructions][in-macos]      |
 | Docker                         |                        | [Instructions][in-docker]     |
 
-[rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.11/PowerShell_6.0.0.11-alpha.11-win10-x64.msi
-[rl-windows81]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.11/PowerShell_6.0.0.11-alpha.11-win81-x64.msi
-[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.11/powershell_6.0.0-alpha.11-1ubuntu1.16.04.1_amd64.deb
-[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.11/powershell_6.0.0-alpha.11-1ubuntu1.14.04.1_amd64.deb
-[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.11/powershell-6.0.0_alpha.11-1.el7.centos.x86_64.rpm
-[rl-macOS]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.11/powershell-6.0.0-alpha.11.pkg
+[rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.12/PowerShell_6.0.0.12-alpha.12-win10-x64.msi
+[rl-windows81]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.12/PowerShell_6.0.0.12-alpha.12-win81-x64.msi
+[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.12/powershell_6.0.0-alpha.12-1ubuntu1.16.04.1_amd64.deb
+[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.12/powershell_6.0.0-alpha.12-1ubuntu1.14.04.1_amd64.deb
+[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.12/powershell-6.0.0_alpha.12-1.el7.centos.x86_64.rpm
+[rl-macOS]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.12/powershell-6.0.0-alpha.12.pkg
 
 [installation]: docs/installation
 [in-windows]: docs/installation/windows.md#msi

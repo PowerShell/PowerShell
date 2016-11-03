@@ -140,7 +140,7 @@ The output of `Start-PSBuild` includes a `powershell.exe` executable which can s
 
 To create release packages, create a new branch at the release tag. For example:
 ``` powershell
-git checkout -b local-alpha-11-release-branch v.6.0.0-alpha.11
+git checkout -b local-release-branch v.6.0.0-alpha.12
 ``` 
 
 #### Windows 10 and Server 2016 
