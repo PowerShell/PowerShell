@@ -1,6 +1,6 @@
 {
     "name": "Microsoft.PowerShell.PackageManagement",
-    "version": "1.0.0-*",
+    "version": "6.0.0-*",
 
     "buildOptions": {
         "warningsAsErrors": true
@@ -15,12 +15,12 @@
     },
 
     "dependencies": {
-        "System.Management.Automation": "1.0.0-*",
-        "Microsoft.PackageManagement": "1.0.0-*",
-        "Microsoft.PackageManagement.NuGetProvider": "1.0.0-*",
-        "Microsoft.PackageManagement.CoreProviders": "1.0.0-*",
-        "Microsoft.PackageManagement.MetaProvider.PowerShell": "1.0.0-*",
-        "Microsoft.PackageManagement.ArchiverProviders": "1.0.0-*"
+        "System.Management.Automation": "6.0.0-*",
+        "Microsoft.PackageManagement": "6.0.0-*",
+        "Microsoft.PackageManagement.NuGetProvider": "6.0.0-*",
+        "Microsoft.PackageManagement.CoreProviders": "6.0.0-*",
+        "Microsoft.PackageManagement.MetaProvider.PowerShell": "6.0.0-*",
+        "Microsoft.PackageManagement.ArchiverProviders": "6.0.0-*"
     },
 
     "frameworks": {
@@ -44,8 +44,8 @@
                 "System.IO.Compression.FileSystem": ""
             },
             "dependencies": {
-                "Microsoft.PackageManagement.MsiProvider": "1.0.0-*",
-                "Microsoft.PackageManagement.MsuProvider": "1.0.0-*"
+                "Microsoft.PackageManagement.MsiProvider": "6.0.0-*",
+                "Microsoft.PackageManagement.MsuProvider": "6.0.0-*"
             }
         },
 

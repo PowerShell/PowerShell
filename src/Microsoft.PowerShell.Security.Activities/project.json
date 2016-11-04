@@ -1,6 +1,6 @@
 {
     "name": "Microsoft.PowerShell.Security.Activities",
-    "version": "1.0.0-*",
+    "version": "6.0.0-*",
 
     "buildOptions": {
         "xmlDoc": true,
@@ -11,7 +11,7 @@
     },
 
     "dependencies": {
-        "Microsoft.PowerShell.Activities": "1.0.0-*"
+        "Microsoft.PowerShell.Activities": "6.0.0-*"
     },
 
     "frameworks": {

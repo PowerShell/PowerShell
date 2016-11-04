@@ -1,6 +1,6 @@
 {
     "name": "powershell",
-    "version": "1.0.0-*",
+    "version": "6.0.0-*",
     "description": "PowerShell top-level project with .NET CLI host",
 
     "buildOptions": {
@@ -53,11 +53,11 @@
     },
 
     "dependencies": {
-        "Microsoft.PowerShell.SDK": "1.0.0-*",
-        "Microsoft.PowerShell.PSReadLine": "1.0.0-*",
+        "Microsoft.PowerShell.SDK": "6.0.0-*",
+        "Microsoft.PowerShell.PSReadLine": "6.0.0-*",
         "libmi": "1.0.0-alpha01",
         "PSDesiredStateConfiguration": "1.0.0-alpha01",
-        "Microsoft.PowerShell.PackageManagement": "1.0.0-*",
+        "Microsoft.PowerShell.PackageManagement": "6.0.0-*",
         "PowerShellHelpFiles": "1.0.0-alpha01"
     },
 

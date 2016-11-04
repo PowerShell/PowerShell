@@ -1,6 +1,6 @@
 {
     "name": "Microsoft.PowerShell.ConsoleHost",
-    "version": "1.0.0-*",
+    "version": "6.0.0-*",
     "description": "PowerShell Host",
 
     "buildOptions": {
@@ -22,7 +22,7 @@
     },
 
     "dependencies": {
-        "System.Management.Automation": "1.0.0-*"
+        "System.Management.Automation": "6.0.0-*"
     },
 
     "frameworks": {

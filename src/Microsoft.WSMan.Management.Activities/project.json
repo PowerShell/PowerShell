@@ -1,6 +1,6 @@
 {
     "name": "Microsoft.WSMan.Management.Activities",
-    "version": "1.0.0-*",
+    "version": "6.0.0-*",
 
     "buildOptions": {
         "keyFile": "../signing/visualstudiopublic.snk",
@@ -10,7 +10,7 @@
     },
 
     "dependencies": {
-        "Microsoft.PowerShell.Workflow.ServiceCore": "1.0.0-*"
+        "Microsoft.PowerShell.Workflow.ServiceCore": "6.0.0-*"
     },
 
     "frameworks": {
