@@ -1,6 +1,6 @@
 {
     "name": "System.Management.Automation",
-    "version": "1.0.0-*",
+    "version": "6.0.0-*",
 
     "buildOptions": {
         "nowarn": [ "CS1570", "CS1734" ],
@@ -140,8 +140,8 @@
                 }
             },
             "dependencies": {
-                "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext": "1.0.0-*",
-                "Microsoft.PowerShell.CoreCLR.Eventing": "1.0.0-*",
+                "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext": "6.0.0-*",
+                "Microsoft.PowerShell.CoreCLR.Eventing": "6.0.0-*",
 
                 "Microsoft.CSharp": "4.3.0-preview1-24530-04",
                 "Microsoft.Win32.Registry.AccessControl": "4.3.0-preview1-24530-04",

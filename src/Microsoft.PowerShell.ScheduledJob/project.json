@@ -1,6 +1,6 @@
 {
     "name": "Microsoft.PowerShell.ScheduledJob",
-    "version": "1.0.0-*",
+    "version": "6.0.0-*",
 
     "buildOptions": {
         "xmlDoc": true,
@@ -11,7 +11,7 @@
     },
 
     "dependencies": {
-        "System.Management.Automation": "1.0.0-*",
+        "System.Management.Automation": "6.0.0-*",
         "Microsoft.PowerShell.ScheduledJob.Interop": "1.0.0-*"
     },
 

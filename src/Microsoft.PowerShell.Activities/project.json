@@ -1,6 +1,6 @@
 {
     "name": "Microsoft.PowerShell.Activities",
-    "version": "1.0.0-*",
+    "version": "6.0.0-*",
 
     "buildOptions": {
         "nowarn": [ "CS1570" ],
@@ -22,7 +22,7 @@
     },
 
     "dependencies": {
-        "Microsoft.PowerShell.Utility.Activities": "1.0.0-*" 
+        "Microsoft.PowerShell.Utility.Activities": "6.0.0-*" 
     },
 
     "frameworks": {
