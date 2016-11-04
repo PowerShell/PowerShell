@@ -3,6 +3,12 @@ Changelog
 
 Unreleased
 ----------
+- Added -Top and -Bottom parameters to Sort-Object
+
+v6.0.0-alpha.12 - 2016-10-31
+----------------------------
+- Add support <Suppress> in Get-WinEvent -FilterHashtable
+
 
 v6.0.0-alpha.12 - 2016-11-03
 ----------------------------
