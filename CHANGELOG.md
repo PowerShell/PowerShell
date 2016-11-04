@@ -5,11 +5,6 @@ Unreleased
 ----------
 - Added -Top and -Bottom parameters to Sort-Object
 
-v6.0.0-alpha.12 - 2016-10-31
-----------------------------
-- Add support <Suppress> in Get-WinEvent -FilterHashtable
-
-
 v6.0.0-alpha.12 - 2016-11-03
 ----------------------------
 - Fix `Get-ChildItem -Recurse -ErrorAction Ignore` to ignore additional errors
@@ -28,6 +23,10 @@ v6.0.0-alpha.12 - 2016-11-03
 - Clean up and fix error handling of libpsl-native
 - Exclude Registry and Certificate providers from UNIX PS
 - Update PowerShell Core to consume .Net Core preview1-24530-04
+
+v6.0.0-alpha.12 - 2016-10-31
+----------------------------
+- Add support <Suppress> in Get-WinEvent -FilterHashtable
 
 v6.0.0-alpha.12 - 2016-10-17
 ----------------------------
