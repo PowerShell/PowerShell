@@ -190,11 +190,6 @@ The following table lists commands that are known not to work in PowerShell on L
 <td>Returns a message saying not supported on this platform. Execution policy is a user-focused "safety belt" that helps prevent the user from making expensive mistakes. It is not a security boundary.
 </tr>
 <tr>
-<td>Select-Xml
-<td>Available but doesn't work.
-<td>The underlying Select.Xml.Node classes are missing on Linux/.NET Core. This is unlikely to be fixed in the near term so this cmdlet will be probably be removed.
-</tr>
-<tr>
 <td>New-PSSession, New-PSSessionOption, New-PSTransportOption
 <td>Available but New-PSSession doesn't work.
 <td>New-PSSessionOption and New-PSTransportOption do work but are useless without New-PSSession. The underlying client remoting layer code for WSMan is missing. This will be fixed soon in a future release.
