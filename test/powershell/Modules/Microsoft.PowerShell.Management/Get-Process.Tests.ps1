@@ -21,6 +21,7 @@ Describe "Get-Process Formatting" -Tags "Feature" {
         $formatData = Get-FormatData -TypeName System.Diagnostics.Process
         $tableControl = $formatData.FormatViewDefinition | Where-Object {$_.Control -is "System.Management.Automation.TableControl"}
         $tableControl.Control.Headers.Label -match "Handles" | Should BeNullOrEmpty
+        # verify that rows without headers isn't the handlecount (as PowerShell will create a header that matches the property name)
         $tableControl.Control.Rows.Columns.DisplayEntry.Value -eq "HandleCount" | Should BeNullOrEmpty
     }
 }
