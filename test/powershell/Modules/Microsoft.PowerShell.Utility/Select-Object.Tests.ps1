@@ -296,11 +296,15 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
 		$p[0].psobject.Properties.Item("ProcessorAffinity") | Should Be $null
     }
 
-    It "'Select-Object -ExpandProperty' implies '*' only if '-ExpandProperty' is specified and not empty" {
+    It "'Select-Object -ExcludeProperty' implies '-Property *' only if '-ExcludeProperty' is specified and not empty" {
         $p = Get-Process -Id $PID | Select-Object -ExcludeProperty @()
         $p.GetType().FullName | Should Be "System.Diagnostics.Process"
 
         $p = Get-Process -Id $PID | Select-Object -Property * -ExcludeProperty @()
         $p.GetType().FullName | Should Be "System.Management.Automation.PSCustomObject"
+
+        ## No property from the input Process object should be attached to the expanded ProcessModule objects.
+        ## Therefore, no error should be thrown.
+        $null = Get-Process -Id $PID | Select-Object -ExcludeProperty @() -ExpandProperty Modules
     }
 }
