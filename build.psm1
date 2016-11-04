@@ -891,7 +891,7 @@ function Install-Dotnet {
         Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
         $installScript = "dotnet-install.ps1"
         Invoke-WebRequest -Uri $obtainUrl/$installScript -OutFile $installScript
-        & ./$installScript -c $Channel -v $Version
+        & ./$installScript -Channel $Channel -Version $Version
     }
 }
 
