@@ -76,7 +76,7 @@ exe
 init
 labeled
  - demos/Azure/README.md
-alpha.11
+alpha.12
 AzureRM.NetCore.Preview
 AzureRM.Profile.NetCore.Preview
 AzureRM.Resources.NetCore.Preview
