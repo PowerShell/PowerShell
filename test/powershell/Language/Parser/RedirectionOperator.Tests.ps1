@@ -81,5 +81,14 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
 
         }
     }
+}
 
+Describe "File redirection mixed with Out-Null" -Tags CI {
+    It "File redirection before Out-Null should work" {
+        "some text" > $TestDrive\out.txt | Out-Null
+        Get-Content $TestDrive\out.txt | Should Be "some text"
+
+        echo "some more text" > $TestDrive\out.txt | Out-Null
+        Get-Content $TestDrive\out.txt | Should Be "some more text"
+    }
 }
