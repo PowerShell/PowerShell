@@ -22,7 +22,7 @@ Describe "Get-Process Formatting" -Tags "Feature" {
 
         foreach ($type in $types)
         {
-            $formatData = Get-FormatData -TypeName $type
+            $formatData = Get-FormatData -TypeName $type -PowerShellVersion $PSVersionTable.PSVersion
             $tableControls = $formatData.FormatViewDefinition | Where-Object {$_.Control -is "System.Management.Automation.TableControl"}
             foreach ($tableControl in $tableControls)
             {
