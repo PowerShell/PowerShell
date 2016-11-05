@@ -1832,6 +1832,35 @@ namespace Microsoft.PowerShell
         {
             throw new NotImplementedException("The method or operation is not implemented.");
         }
+
+        /// <summary>
+        /// See base class
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+
+        public override
+        int LengthInBufferCells(string s)
+        {
+            return this.LengthInBufferCells(s, 0);
+        }
+
+        /// <summary>
+        /// See base class
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+
+        public override
+        int LengthInBufferCells(string s, int offset)
+        {
+            if (s == null)
+            {
+                throw PSTraceSource.NewArgumentNullException("str");
+            }
+            return ConsoleControl.LengthInBufferCells(s, offset, _parent.SupportsVirtualTerminal);
+        }
     }
 }
 #endif
