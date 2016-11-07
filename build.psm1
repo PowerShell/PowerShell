@@ -641,7 +641,7 @@ function Format-PSPesterFailure {
     {
         if ($PSBoundParameters.Count -eq 0 -or $PSBoundParameters.ContainsKey("NUnitLog"))
         {
-            $PesterFailure = Get-PSPesterFailures -NUnitLog $NUnitLog
+            $PesterFailure = Get-PSPesterFailure -NUnitLog $NUnitLog
         }
         [int]$totalFailures = 0
         [string]$currentSuiteName = [String]::Empty
