@@ -533,7 +533,6 @@ namespace System.Management.Automation.Runspaces
         {
             yield return new FormatViewDefinition("process",
                 TableControl.Create()
-                    .AddHeader(Alignment.Right, label: "Handles", width: 7)
                     .AddHeader(Alignment.Right, label: "NPM(K)", width: 7)
                     .AddHeader(Alignment.Right, label: "PM(K)", width: 8)
                     .AddHeader(Alignment.Right, label: "WS(K)", width: 10)
@@ -542,7 +541,6 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(Alignment.Right, width: 3)
                     .AddHeader()
                     .StartRowDefinition()
-                        .AddPropertyColumn("HandleCount")
                         .AddScriptBlockColumn("[long]($_.NPM / 1024)")
                         .AddScriptBlockColumn("[long]($_.PM / 1024)")
                         .AddScriptBlockColumn("[long]($_.WS / 1024)")
@@ -557,12 +555,10 @@ namespace System.Management.Automation.Runspaces
                     .GroupByProperty("PriorityClass", label: "PriorityClass")
                     .AddHeader(width: 20)
                     .AddHeader(Alignment.Right, width: 10)
-                    .AddHeader(Alignment.Right, width: 13)
                     .AddHeader(Alignment.Right, width: 12)
                     .StartRowDefinition()
                         .AddPropertyColumn("ProcessName")
                         .AddPropertyColumn("Id")
-                        .AddPropertyColumn("HandleCount")
                         .AddPropertyColumn("WorkingSet64")
                     .EndRowDefinition()
                 .EndTable());
@@ -571,12 +567,10 @@ namespace System.Management.Automation.Runspaces
                     .GroupByScriptBlock("$_.StartTime.ToShortDateString()", label: "StartTime.ToShortDateString()")
                     .AddHeader(width: 20)
                     .AddHeader(Alignment.Right, width: 10)
-                    .AddHeader(Alignment.Right, width: 13)
                     .AddHeader(Alignment.Right, width: 12)
                     .StartRowDefinition()
                         .AddPropertyColumn("ProcessName")
                         .AddPropertyColumn("Id")
-                        .AddPropertyColumn("HandleCount")
                         .AddPropertyColumn("WorkingSet64")
                     .EndRowDefinition()
                 .EndTable());
@@ -591,14 +585,12 @@ namespace System.Management.Automation.Runspaces
         {
             yield return new FormatViewDefinition("ProcessWithUserName",
                 TableControl.Create()
-                    .AddHeader(Alignment.Right, label: "Handles", width: 7)
                     .AddHeader(Alignment.Right, label: "WS(K)", width: 10)
                     .AddHeader(Alignment.Right, label: "CPU(s)", width: 8)
                     .AddHeader(Alignment.Right, width: 6)
                     .AddHeader(width: 22)
                     .AddHeader()
                     .StartRowDefinition()
-                        .AddPropertyColumn("HandleCount")
                         .AddScriptBlockColumn("[long]($_.WS / 1024)")
                         .AddScriptBlockColumn(@"if ($_.CPU -ne $()) { $_.CPU.ToString(""N"") }")
                         .AddPropertyColumn("Id")
