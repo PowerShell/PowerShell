@@ -9,9 +9,25 @@
     "configurations": {
         "Linux": {
             "buildOptions": {
-                "define": ["UNIX"]
+                "define": [ "UNIX" ],
+                "debugType": "portable"
             }
-        }
+        },
+        "Debug": {
+                "buildOptions": {
+                    "debugType": "portable"
+                }
+            },
+        "Release": {
+                "buildOptions": {
+                    "debugType": "portable"
+                }
+            },
+        "CodeCoverage": {
+                "buildOptions": {
+                    "debugType": "full"
+                }
+            }
     },
 
     "dependencies": {
@@ -44,8 +60,7 @@
         "netstandard1.6": {
             "imports": ["dnxcore50"],
             "buildOptions": {
-                "define": ["CORECLR"],
-                "debugType": "portable"
+                "define": ["CORECLR"]
             }
         }
     }

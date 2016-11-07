@@ -9,9 +9,25 @@
     "configurations": {
         "Linux": {
             "buildOptions": {
-                "define": [ "UNIX" ]
+                "define": [ "UNIX" ],
+                "debugType": "portable"
             }
-        }
+        },
+        "Debug": {
+                "buildOptions": {
+                    "debugType": "portable"
+                }
+            },
+        "Release": {
+                "buildOptions": {
+                    "debugType": "portable"
+                }
+            },
+        "CodeCoverage": {
+                "buildOptions": {
+                    "debugType": "full"
+                }
+            }
     },
 
     "dependencies": {
@@ -54,7 +70,6 @@
             "imports": ["dnxcore50"],
             "buildOptions": {
                 "define": ["CORECLR"],
-                "debugType": "portable",
                 "compile": {
                     "include": [
                         "../Microsoft.PackageManagement/Providers/Inbox/Common/Extensions/*.cs",

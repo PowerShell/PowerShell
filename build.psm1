@@ -91,7 +91,7 @@ function Start-PSBuild {
         [ValidateSet('x86', 'x64')] # TODO: At some point, we need to add ARM support to match CoreCLR
         [string]$NativeHostArch = "x64",
 
-        [ValidateSet('Linux', 'Debug', 'Release', '')] # We might need "Checked" as well
+        [ValidateSet('Linux', 'Debug', 'Release', 'CodeCoverage', '')] # We might need "Checked" as well
         [string]$Configuration,
 
         [Parameter(ParameterSetName='CoreCLR')]
@@ -406,7 +406,7 @@ function Compress-TestContent {
 function New-PSOptions {
     [CmdletBinding()]
     param(
-        [ValidateSet("Linux", "Debug", "Release", "")]
+        [ValidateSet("Linux", "Debug", "Release", "CodeCoverage", "")]
         [string]$Configuration,
 
         [ValidateSet("netcoreapp1.0", "net451")]
@@ -452,6 +452,12 @@ function New-PSOptions {
                 if ($IsWindows) {
                     $Configuration = "Debug"
                     Write-Warning ($ConfigWarningMsg -f $switch.Current, "Windows", $Configuration)
+                }
+            }
+            "CodeCoverage" {
+                if(-not $IsWindows) {
+                    $Configuration = "Linux"
+                    Write-Warning ($ConfigWarningMsg -f $switch.Current, $LinuxInfo.PRETTY_NAME, $Configuration)
                 }
             }
             Default {
