@@ -2,10 +2,10 @@
 FROM microsoft/nanoserver
 MAINTAINER brycem@microsoft.com
 LABEL Readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
-LABEL Description="This Dockerfile will install and build the latest reslease of PS on NanoServer."
+LABEL Description="This Dockerfile will install and build the latest release of PS on NanoServer."
 
-ARG POWERSHELL_ZIP=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.11/powershell-6.0.0-alpha.11-win10-x64.zip
-ARG POWERSHELL_SHA256=b41504ee24b27fb7bcbc6b495dc380d5a8a61bd0490c5920d79b90dca5dfcde5
+ARG POWERSHELL_ZIP=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.12/powershell-6.0.0-alpha.12-win10-x64.zip
+ARG POWERSHELL_SHA256=257D5F081C112713DF17F6D0E4CBC794E5099664EDA8DBC543B996915834D5CE
 
 # Setup PowerShell - Log-to > C:\Docker.log
 SHELL ["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-command"]

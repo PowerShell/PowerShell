@@ -2,10 +2,10 @@
 FROM microsoft/windowsservercore
 MAINTAINER brycem@microsoft.com
 LABEL Readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
-LABEL Description="This Dockerfile will install and build the latest reslease of PS on WindowsServerCore."
+LABEL Description="This Dockerfile will install and build the latest release of PS on WindowsServerCore."
 
-ARG POWERSHELL_MSI=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.11/PowerShell_6.0.0.11-alpha.11-win10-x64.msi
-ARG POWERSHELL_SHA256=ad15b3a3d7eccc2c604c51b5b2262e486ee05b55c532b9bf230a8f216db9f2b3
+ARG POWERSHELL_MSI=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.12/PowerShell_6.0.0.12-alpha.12-win10-x64.msi
+ARG POWERSHELL_SHA256=F3C3F3276462588E24BFE197DAA8795140E37557596861126D54462561C98671
 
 # Setup PowerShell - Log-to > C:\Docker.log
 SHELL ["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-command"]
