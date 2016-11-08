@@ -92,6 +92,11 @@ function Get-CoverageData($xmlPath)
         Assembly = $assemblies
     }
 
+    $null = $CoverageXml
+
+    ## Adding explicit garbage collection as the $CoverageXml object tends to be very large, in order of 1 GB.
+    [gc]::Collect()
+
     return $CoverageData
 }
 
