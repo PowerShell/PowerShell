@@ -2,7 +2,7 @@
 FROM microsoft/windowsservercore
 MAINTAINER brycem@microsoft.com
 LABEL Readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
-LABEL Description="This Dockerfile will install and build the latest release of PS on WindowsServerCore."
+LABEL Description="This Dockerfile will install the latest release of PS."
 
 ARG POWERSHELL_MSI=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.12/PowerShell_6.0.0.12-alpha.12-win10-x64.msi
 ARG POWERSHELL_SHA256=F3C3F3276462588E24BFE197DAA8795140E37557596861126D54462561C98671
@@ -34,9 +34,6 @@ RUN $ErrorActionPreference='Stop'; `
       $psexe=Get-Item -Path $Env:ProgramFiles\PowerShell\*\powershell.exe ; `
       New-Item -Type SymbolicLink -Path $Env:ProgramFiles\PowerShell\ -Name Core -Value $psexe.DirectoryName `
     } else { throw 'Installation failed!  See c:\PowerShell-win10-x64.msi.log' } ;
-
-# Cleanup %POWERSHELL_SHA256%
-ENV POWERSHELL_SHA256=
 
 # Verify New Powershell.exe runs
 SHELL ["C:\\Program Files\\PowerShell\\Core\\PowerShell.exe", "-command"]
