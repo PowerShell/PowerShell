@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell
         private PendingProgress _pendingProgress = null;
         // The timer update 'ProgressPane' every 'UpdateTimerThreshold' milliseconds
         private Timer _progPaneUpdateTimer;
-        private const int UpdateTimerThreshold = 200;
+        private const int UpdateTimerThreshold = 100;
     }
 }   // namespace 
 
