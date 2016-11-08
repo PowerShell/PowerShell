@@ -84,18 +84,29 @@ When running tests in this way, be sure that you have started PowerShell with `-
 environment is not the default or has any customization.
 
 For example, to run all the Pester tests for CI (assuming you are at the root of the PowerShell repo):
-```
+```PowerShell
 Import-Module ./build.psm1
 Start-PSPester
 ```
 If you wish to run specific tests, that is possible as well:
-```
+```PowerShell
 Start-PSPester -Directory test/powershell/engine/Api
 ```
 Or a specific Pester test file:
-```
+```PowerShell
 Start-PSPester -Directory test/powershell/engine/Api -Test XmlAdapter.Tests.Api
 ```
+If you added a `Feature` test and not a `CI` test, then you would specify the tag:
+```PowerShell
+Start-PSPester -Path ./myTest.ps1 -Tag Feature
+```
+
+### How to deal with failures?
+As part of your PR, you must ensure all existing tests pass.
+If you see any failures from `Start-PSPester` (summary reported at end), then you must investigate them and fix your PR so those tests pass or fix the test if the test case is wrong.
+Two helper functions are part of the build.psm1 module to help with that:
+* `Get-PSPesterFailure` will parse the NUnit test result log and return PowerShell objects for each failure so you can do additional filtering, sorting, grouping, etc...
+* `Format-PSPesterFailure` will call `Get-PSPesterFailure` if no parameters are provided and show just the failures at the console simliar to what Pester displays
 
 ### What happens after your PR?
 When your PR has successfully passed the CI test gates, your changes will be used to create PowerShell binaries which can be run
