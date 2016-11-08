@@ -41,4 +41,23 @@ Describe "Get-Uptime" -Tags "CI" {
             $_.FullyQualifiedErrorId | Should be "AmbiguousParameterSet,Microsoft.PowerShell.Commands.GetUptimeCommand"
         }
     }
+    It "Get-Uptime throw if IsHighResolution == false" {
+        try
+        {
+            # Enable the test hook
+            [system.management.automation.internal.internaltesthooks]::SetTestHook('StopwatchIsHighResolutionIsFalse', $true) 
+
+            Get-Uptime
+            throw "No Exception!"
+        }
+        catch
+        {
+            $_.FullyQualifiedErrorId | Should be "UptimePlatformUnsupported,Microsoft.PowerShell.Commands.GetUptimeCommand"
+        }
+        finally
+        {
+            # Disable the test hook
+            [system.management.automation.internal.internaltesthooks]::SetTestHook('StopwatchIsHighResolutionIsFalse', $false) 
+        }
+    }
 }
