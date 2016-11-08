@@ -1,4 +1,10 @@
-﻿Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
+﻿if (-not (Get-Module TestRemoting -ErrorAction SilentlyContinue))
+{
+    $remotingModule = Join-Path $PSScriptRoot "../Common/TestRemoting.psm1"
+    Import-Module $remotingModule
+}
+
+Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
 
     BeforeAll {
         $command = [System.Management.Automation.PSCommand]::new()
@@ -49,21 +55,25 @@ Describe "InvokeOnRunspace method as nested command" -tags "Feature" {
 Describe "InvokeOnRunspace method on remote runspace" -tags "Feature" {
     
     BeforeAll {
-        $wc = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
-        $remoteRunspace = [runspacefactory]::CreateRunspace($host, $wc)
-        $remoteRunspace.Open()
+
+        if ($IsWindows) {
+            $script:remoteRunspace = New-RemoteRunspace
+        }
     }
 
     AfterAll {
-        $remoteRunspace.Dispose();
+        if ($script:remoteRunspace)
+        {
+            $script:remoteRunspace.Dispose();
+        }
     }
 
-    It "Method should successfully invoke command on remote runspace" {
+    It "Method should successfully invoke command on remote runspace" -Skip:(!$IsWindows) {
 
         $command = [System.Management.Automation.PSCommand]::new()
         $command.AddScript('"Hello!"')
 
-        $results = [System.Management.Automation.HostUtilities]::InvokeOnRunspace($command, $remoteRunspace)
+        $results = [System.Management.Automation.HostUtilities]::InvokeOnRunspace($command, $script:remoteRunspace)
 
         $results[0] | Should Be "Hello!"
     }

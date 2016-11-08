@@ -2,9 +2,10 @@
 //! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
 //! @brief Implements GetUserName for Linux
 
-#include <unistd.h>
 #include "getpwuid.h"
 #include "getusername.h"
+
+#include <unistd.h>
 
 //! @brief GetUserName retrieves the name of the user associated with
 //! the current thread.

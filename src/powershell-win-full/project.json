@@ -1,6 +1,6 @@
 {
     "name": "powershell",
-    "version": "1.0.0-*",
+    "version": "6.0.0-*",
     "description": "PowerShell top-level project for FullCLR package with native host",
 
     "publishOptions": {
@@ -26,22 +26,22 @@
     },
 
     "dependencies": {
-        "Microsoft.PowerShell.SDK": "1.0.0-*",
-        "Microsoft.Management.Infrastructure.CimCmdlets": "1.0.0-*",
-        "Microsoft.PowerShell.Activities": "1.0.0-*",
-        "Microsoft.PowerShell.Commands.Diagnostics": "1.0.0-*",
-        "Microsoft.PowerShell.Core.Activities": "1.0.0-*",
-        "Microsoft.PowerShell.Diagnostics.Activities": "1.0.0-*",
-        "Microsoft.PowerShell.GraphicalHost": "1.0.0-*",
-        "Microsoft.PowerShell.LocalAccounts": "1.0.0-*",
-        "Microsoft.PowerShell.Management.Activities": "1.0.0-*",
-        "Microsoft.PowerShell.PackageManagement": "1.0.0-*",
-        "Microsoft.PowerShell.PSReadLine": "1.0.0-*",
-        "Microsoft.PowerShell.ScheduledJob": "1.0.0-*",
-        "Microsoft.PowerShell.Security.Activities": "1.0.0-*",
-        "Microsoft.PowerShell.Utility.Activities": "1.0.0-*",
-        "Microsoft.PowerShell.Workflow.ServiceCore": "1.0.0-*",
-        "Microsoft.WSMan.Management.Activities": "1.0.0-*"
+        "Microsoft.PowerShell.SDK": "6.0.0-*",
+        "Microsoft.Management.Infrastructure.CimCmdlets": "6.0.0-*",
+        "Microsoft.PowerShell.Activities": "6.0.0-*",
+        "Microsoft.PowerShell.Commands.Diagnostics": "6.0.0-*",
+        "Microsoft.PowerShell.Core.Activities": "6.0.0-*",
+        "Microsoft.PowerShell.Diagnostics.Activities": "6.0.0-*",
+        "Microsoft.PowerShell.GraphicalHost": "6.0.0-*",
+        "Microsoft.PowerShell.LocalAccounts": "6.0.0-*",
+        "Microsoft.PowerShell.Management.Activities": "6.0.0-*",
+        "Microsoft.PowerShell.PackageManagement": "6.0.0-*",
+        "Microsoft.PowerShell.PSReadLine": "6.0.0-*",
+        "Microsoft.PowerShell.ScheduledJob": "6.0.0-*",
+        "Microsoft.PowerShell.Security.Activities": "6.0.0-*",
+        "Microsoft.PowerShell.Utility.Activities": "6.0.0-*",
+        "Microsoft.PowerShell.Workflow.ServiceCore": "6.0.0-*",
+        "Microsoft.WSMan.Management.Activities": "6.0.0-*"
     },
 
     "frameworks": {

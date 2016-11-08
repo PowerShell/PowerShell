@@ -3,6 +3,42 @@ Changelog
 
 Unreleased
 ----------
+- Added -Top and -Bottom parameters to Sort-Object
+
+v6.0.0-alpha.12 - 2016-11-03
+----------------------------
+- Fix `Get-ChildItem -Recurse -ErrorAction Ignore` to ignore additional errors
+- Don't block pipeline when running Windows exes
+- Fix for PowerShell SSH remoting with recent Win32-OpenSSH change.
+- `Select-Object` with `-ExcludeProperty` now implies `-Property *` if -Property is not specified.
+- Adding ValidateNotNullOrEmpty to `-Name` parameter of `Get-Alias`
+- Enable Implicit remoting commands in PowerShell Core
+- Fix GetParentProcess() to replace an expensive WMI query with Win32 API calls
+- Fix `Set-Content` failure to create a file in PSDrive under certain conditions.
+- Adding ValidateNotNullOrEmpty to `-Name` parameter of `Get-Service`
+- Adding support <Suppress> in `Get-WinEvent -FilterHashtable`
+- Adding WindowsVersion to `Get-ComputerInfo`
+- Remove the unnecessary use of lock in PseudoParameterBinder to avoid deadlock
+- Refactor `Get-WinEvent` to use StringBuilder for XPath query construction
+- Clean up and fix error handling of libpsl-native
+- Exclude Registry and Certificate providers from UNIX PS
+- Update PowerShell Core to consume .Net Core preview1-24530-04
+
+v6.0.0-alpha.11 - 2016-10-17
+----------------------------
+- Add '-Title' to 'Get-Credential' and unify the prompt experience
+- Update dependency list for PowerShell Core on Linux and OS X
+- Fix 'powershell -Command -' to not hang and to not ignore the last command
+- Fix binary operator tab completion
+- Enable 'ConvertTo-Html' in PowerShell Core
+- Remove most Maximum* capacity variables
+- Fix 'Get-ChildItem -Hidden' to work on system hidden files on Windows
+- Fix 'JsonConfigFileAccessor' to handle corrupted 'PowerShellProperties.json'
+and defer creating the user setting directory until a write request comes
+- Fix variable assignment to not overwrite readonly variables
+- Fix 'Get-WinEvent -FilterHashtable' to work with named fields in UserData of event logs
+- Fix 'Get-Help -Online' in PowerShell Core on Windows
+- Spelling/grammar fixes
 
 v6.0.0-alpha.10 - 2016-09-15
 ----------------------------

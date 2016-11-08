@@ -608,6 +608,7 @@ namespace Microsoft.PowerShell.Commands
         /// since it is optional for GetService and mandatory otherwise.
         /// </remarks>
         [Parameter(Position = 0, ParameterSetName = "Default", ValueFromPipelineByPropertyName = true, ValueFromPipeline = true)]
+        [ValidateNotNullOrEmpty()]
         [Alias("ServiceName")]
         public string[] Name
         {

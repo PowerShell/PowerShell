@@ -1,9 +1,6 @@
 if ( ! (get-module -ea silentlycontinue TestHostCS ))
 {
-    $root = git rev-parse --show-toplevel
-    $pestertestroot = join-path $root test/powershell
-    $common = join-path $pestertestroot Common
-    $hostmodule = join-path $common TestHostCS.psm1
+    $hostmodule = Join-Path $PSScriptRoot "../../Common/TestHostCS.psm1"
     import-module $hostmodule
 }
 Describe "Read-Host Test" -tag "CI" {

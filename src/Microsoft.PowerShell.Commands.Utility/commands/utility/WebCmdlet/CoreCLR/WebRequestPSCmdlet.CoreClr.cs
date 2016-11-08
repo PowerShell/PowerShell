@@ -97,6 +97,11 @@ namespace Microsoft.PowerShell.Commands
                 handler.ClientCertificates = WebSession.Certificates;
             }*/
 
+            if (SkipCertificateCheck)
+            {
+                handler.ServerCertificateCustomValidationCallback = delegate { return true; };
+            }
+
             if (WebSession.MaximumRedirection > -1)
             {
                 if (WebSession.MaximumRedirection == 0)

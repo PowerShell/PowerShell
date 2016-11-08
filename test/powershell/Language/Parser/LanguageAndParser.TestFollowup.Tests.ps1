@@ -140,10 +140,32 @@ Describe "Assign automatic variables" -Tags "CI" {
         & { [string]$PSScriptRoot = 'abc'; $PSScriptRoot } | Should Be abc
         & { [string]$PSCommandPath = 'abc'; $PSCommandPath } | Should Be abc
     }
+}
 
-    It "Assign `$? w/o type constraint" {
-        { & { $? = 1 } } | Should Throw
-        { . { $? = 1 } } | Should Throw
+Describe "Assign readonly/constant variables" -Tags "CI" {
+
+    $testCase = @(
+        @{ sb_wo_conversion = { $? = 1 }; name = '$? = 1' }
+        @{ sb_wo_conversion = { $HOME = 1 }; name = '$HOME = 1' }
+        @{ sb_wo_conversion = { $PID = 1 }; name = '$PID = 1' }
+    )
+
+    It "Assign readonly/constant variables w/o type constraint - '<name>'" -TestCases $testCase {
+        param($sb_wo_conversion)
+        { & $sb_wo_conversion } | Should Throw
+        { . $sb_wo_conversion } | Should Throw
+    }
+
+    $testCase = @(
+        @{ sb_w_conversion = { [datetime]$? = 1 }; name = '[datetime]$? = 1' }
+        @{ sb_w_conversion = { [datetime]$HOME = 1 }; name = '[datetime]$HOME = 1' }
+        @{ sb_w_conversion = { [datetime]$PID = 1 }; name = '[datetime]$PID = 1' }
+    )
+
+    It "Assign readonly/constant variables w/ type constraint - '<name>'" -TestCases $testCase {
+        param($sb_w_conversion)
+        { & $sb_w_conversion } | Should Throw
+        { . $sb_w_conversion } | Should Throw
     }
 }
 

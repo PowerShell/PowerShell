@@ -50,6 +50,20 @@ Please see the [Contributor Guide in `PowerShell/PowerShell-Docs`](https://githu
   In most cases, it means "one clause/idea per line".
 * Otherwise, these issues should be treated like any other issue in this repo.
 
+#### Spellchecking documentation
+
+Documentation are spellchecked. We make use of the
+[markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) command line tool,
+which can be run in interactive mode to correct typos or add words to the ignore list
+(`.spelling` at the repository root).
+
+To run the spellchecker, follow the steps as follows:
+  * install [Node.js](https://nodejs.org/en/) (v6.4.0 or up)
+  * install [markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) by
+`npm install -g markdown-spellcheck` (v0.11.0 or up)
+  * run `mdspell "**/*.md" --ignore-numbers --ignore-acronyms`
+  * if the `.spelling` file is updated, commit and push it
+
 Contributing to Code
 --------------------
 
@@ -148,6 +162,10 @@ See [Contributing to documentation related to PowerShell](#contributing-to-docum
 * After submitting your pull request,
   our [CI system (Travis CI and AppVeyor)][ci-system]
   will run a suite of tests and automatically update the status of the pull request.
+
+* Our CI contains automated spellchecking. If there is any false-positive,
+  [run the spellchecker command line tool in interactive mode](#spellchecking-documentation) 
+  to add words to the `.spelling` file.
 
 #### Pull Request - Code Review
 

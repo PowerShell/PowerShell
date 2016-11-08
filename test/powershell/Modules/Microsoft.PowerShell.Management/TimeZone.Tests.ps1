@@ -118,7 +118,7 @@ Describe "Get-Timezone test cases" -Tags "CI" {
     }
 }
 
-Describe "Set-Timezone test case: call by single Id" -Tags "CI" {
+Describe "Set-Timezone test case: call by single Id" -Tags @('CI', 'RequireAdminOnWindows') {
     $originalTimeZoneId
     BeforeAll {
         $originalTimeZoneId = (Get-TimeZone).Id
@@ -145,7 +145,7 @@ Describe "Set-Timezone test case: call by single Id" -Tags "CI" {
     }
 }
 
-Describe "Set-Timezone test cases" -Tags "Feature" {
+Describe "Set-Timezone test cases" -Tags @('Feature', 'RequireAdminOnWindows') {
     $originalTimeZoneId
     BeforeAll {
         $originalTimeZoneId = (Get-TimeZone).Id

@@ -114,14 +114,14 @@ Remoting Support
 ----------------
 
 Client-side remoting from Linux/macOS is not supported with the initial package. 
-This will be enabled shortly after the Alpha release by installing an additional package.
+The work is being done in the [psl-omi-provider](https://github.com/PowerShell/psl-omi-provider) repo.
 
 Just-Enough-Administration (JEA) Support
 ----------------------------------------
 
 The ability to create constrained administration (JEA) remoting
 endpoints is not currently available in PowerShell on Linux/macOS. 
-This feature will be enabled shortly after the Alpha release by installing new package.
+This feature is currently not in scope for 6.0 and something we will consider post 6.0 but requires significant design work.
 
 sudo, exec, and PowerShell
 -------------------------
@@ -190,11 +190,6 @@ The following table lists commands that are known not to work in PowerShell on L
 <td>Returns a message saying not supported on this platform. Execution policy is a user-focused "safety belt" that helps prevent the user from making expensive mistakes. It is not a security boundary.
 </tr>
 <tr>
-<td>Select-Xml
-<td>Available but doesn't work.
-<td>The underlying Select.Xml.Node classes are missing on Linux/.NET Core. This is unlikely to be fixed in the near term so this cmdlet will be probably be removed.
-</tr>
-<tr>
 <td>New-PSSession, New-PSSessionOption, New-PSTransportOption
 <td>Available but New-PSSession doesn't work.
 <td>New-PSSessionOption and New-PSTransportOption do work but are useless without New-PSSession. The underlying client remoting layer code for WSMan is missing. This will be fixed soon in a future release.
@@ -221,6 +216,6 @@ Remoting Endpoint Creation on Nano Server TP5
 
 The [script](https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md) to create a new WinRM remoting 
 endpoint (`Install-PowerShellRemoting.ps1`) encounters a bug in the in-box PowerShell Core on Nano Server TP5.
-The bug causes the script to create an incorrect directory for the plugin and may result in creation of an invalid remoting endpoint.
+The bug causes the script to create an incorrect directory for the plug-in and may result in creation of an invalid remoting endpoint.
 When the same command is run for the second time, the script executes as expected and successfully creates the WinRM remoting endpoint. 
 The bug in in-box PowerShell Core on Nano Server TP5 does not occur in later versions of Nano Server.

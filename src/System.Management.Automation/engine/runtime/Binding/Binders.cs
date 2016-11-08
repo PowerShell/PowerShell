@@ -66,7 +66,7 @@ namespace System.Management.Automation.Language
 
         internal static DynamicMetaObject WriteToDebugLog(this DynamicMetaObject obj, DynamicMetaObjectBinder binder)
         {
-#if ENABLE_BINDER_DEBUG_LOGGING && !CORECLR
+#if ENABLE_BINDER_DEBUG_LOGGING 
             if (obj != FakeError)
             {
                 System.Diagnostics.Debug.WriteLine("Binder: {0}\r\n    Restrictions: {2}\r\n    Target: {1}",
@@ -328,7 +328,7 @@ namespace System.Management.Automation.Language
                                          bindingRestrictions);
         }
 
-#if ENABLE_BINDER_DEBUG_LOGGING && !CORECLR
+#if ENABLE_BINDER_DEBUG_LOGGING
         internal static string ToDebugString(this BindingRestrictions restrictions)
         {
             return restrictions.ToExpression().ToDebugString();
@@ -400,35 +400,34 @@ namespace System.Management.Automation.Language
 
         internal static BindingRestrictions GetLanguageModeCheckIfHasEverUsedConstrainedLanguage()
         {
-            BindingRestrictions languageModeRestriction = BindingRestrictions.Empty;
-
             // Also add a language mode check to detect toggling between language modes
             if (ExecutionContext.HasEverUsedConstrainedLanguage)
             {
                 var context = LocalPipeline.GetExecutionContextFromTLS();
 
-                switch (context.LanguageMode)
-                {
-                    case PSLanguageMode.ConstrainedLanguage:
-                        languageModeRestriction = BindingRestrictions.GetExpressionRestriction(
-                             Expression.Equal(
-                                 Expression.Property(
-                                     ExpressionCache.GetExecutionContextFromTLS,
-                                     CachedReflectionInfo.ExecutionContext_LanguageMode),
-                                 Expression.Constant(PSLanguageMode.ConstrainedLanguage)));
-                        break;
-                    default:
-                        languageModeRestriction = BindingRestrictions.GetExpressionRestriction(
-                             Expression.NotEqual(
-                                 Expression.Property(
-                                     ExpressionCache.GetExecutionContextFromTLS,
-                                     CachedReflectionInfo.ExecutionContext_LanguageMode),
-                                 Expression.Constant(PSLanguageMode.ConstrainedLanguage)));
-                        break;
-                }
+                var tmp = Expression.Variable(typeof(ExecutionContext));
+                var langModeFromContext = Expression.Property(tmp, CachedReflectionInfo.ExecutionContext_LanguageMode);
+                var constrainedLanguageMode = Expression.Constant(PSLanguageMode.ConstrainedLanguage);
+
+                // Execution context might be null if we're called from a thread with no runspace (e.g. a PSObject
+                // is used in some C# w/ dynamic). This is sometimes fine, we don't always need a runspace to access
+                // properties.
+                Expression test = context?.LanguageMode == PSLanguageMode.ConstrainedLanguage
+                    ? Expression.AndAlso(
+                          Expression.NotEqual(tmp, ExpressionCache.NullExecutionContext),
+                          Expression.Equal(langModeFromContext, constrainedLanguageMode))
+                    : Expression.OrElse(
+                          Expression.Equal(tmp, ExpressionCache.NullExecutionContext),
+                          Expression.NotEqual(langModeFromContext, constrainedLanguageMode));
+
+                return BindingRestrictions.GetExpressionRestriction(
+                    Expression.Block(
+                        new[] {tmp},
+                        Expression.Assign(tmp, ExpressionCache.GetExecutionContextFromTLS),
+                        test));
             }
 
-            return languageModeRestriction;
+            return BindingRestrictions.Empty;
         }
 
         internal static BindingRestrictions GetOptionalVersionAndLanguageCheckForType(DynamicMetaObjectBinder binder, Type targetType, int expectedVersionNumber)
@@ -2940,13 +2939,15 @@ namespace System.Management.Automation.Language
 
                 if (numericTarget != null && numericArg != null)
                 {
-                    var expr = exprGenerator(numericTarget.Expression.Cast(target.LimitType).Cast(opType),
-                        numericArg.Expression.Cast(numericArg.LimitType).Cast(opType)).Cast(typeof(object));
+                    var expr = exprGenerator(numericTarget.Expression.Cast(numericTarget.LimitType).Cast(opType),
+                                             numericArg.Expression.Cast(numericArg.LimitType).Cast(opType));
 
                     if (target.LimitType.GetTypeInfo().IsEnum)
                     {
-                        expr = expr.Cast(target.LimitType).Cast(typeof(object));
+                        expr = expr.Cast(target.LimitType);
                     }
+
+                    expr = expr.Cast(typeof(object));
                     return new DynamicMetaObject(expr, numericTarget.CombineRestrictions(numericArg));
                 }
             }
@@ -5311,10 +5312,10 @@ namespace System.Management.Automation.Language
                                         new object[] { Name });
         }
 
-        internal static DynamicMetaObject EnsureAllowedInLanguageMode(PSLanguageMode languageMode, DynamicMetaObject target, Object targetValue,
+        internal static DynamicMetaObject EnsureAllowedInLanguageMode(ExecutionContext context, DynamicMetaObject target, Object targetValue,
             string name, bool isStatic, DynamicMetaObject[] args, BindingRestrictions moreTests, string errorID, string resourceString)
         {
-            if (languageMode == PSLanguageMode.ConstrainedLanguage)
+            if (context != null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
                 if (!IsAllowedInConstrainedLanguage(targetValue, name, isStatic))
                 {
@@ -5968,7 +5969,7 @@ namespace System.Management.Automation.Language
                 // Validate that this is allowed in the current language mode
                 var context = LocalPipeline.GetExecutionContextFromTLS();
                 DynamicMetaObject runtimeError = PSGetMemberBinder.EnsureAllowedInLanguageMode(
-                    context.LanguageMode, target, targetValue, Name, _static, new[] { value }, restrictions,
+                    context, target, targetValue, Name, _static, new[] { value }, restrictions,
                     "PropertySetterNotSupportedInConstrainedLanguage", ParserStrings.PropertySetConstrainedLanguage);
                 if (runtimeError != null)
                 {
@@ -6458,7 +6459,7 @@ namespace System.Management.Automation.Language
                 // Validate that this is allowed in the current language mode
                 var context = LocalPipeline.GetExecutionContextFromTLS();
                 DynamicMetaObject runtimeError = PSGetMemberBinder.EnsureAllowedInLanguageMode(
-                    context.LanguageMode, target, targetValue, Name, _static, args, restrictions,
+                    context, target, targetValue, Name, _static, args, restrictions,
                     "MethodInvocationNotSupportedInConstrainedLanguage", ParserStrings.InvokeMethodConstrainedLanguage);
                 if (runtimeError != null)
                 {

@@ -14,6 +14,10 @@ using System.Globalization;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Help;
 using System.Runtime.InteropServices;
+using System.IO;
+#if !UNIX
+using Microsoft.Win32;
+#endif
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -615,18 +619,39 @@ namespace Microsoft.PowerShell.Commands
                     "https");
             }
 
+            // we use this test hook is to avoid actually calling out to another process
+            if (InternalTestHooks.BypassOnlineHelpRetrieval)
+            {
+                this.WriteObject(string.Format(CultureInfo.InvariantCulture, HelpDisplayStrings.OnlineHelpUri, uriToLaunch.OriginalString));
+                return;
+            }
+
             Exception exception = null;
+            bool wrapCaughtException = true;
             try
             {
                 this.WriteVerbose(string.Format(CultureInfo.InvariantCulture, HelpDisplayStrings.OnlineHelpUri, uriToLaunch.OriginalString));
                 System.Diagnostics.Process browserProcess = new System.Diagnostics.Process();
-
 #if UNIX
                 browserProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
                 browserProcess.StartInfo.Arguments = uriToLaunch.OriginalString;
                 browserProcess.Start();
 #elif CORECLR
-                throw new PlatformNotSupportedException();
+                // On FullCLR, ProcessStartInfo.UseShellExecute is true by default. This means that the shell will be used when starting the process.
+                // On CoreCLR, UseShellExecute is not supported. To work around this, we check if there is a default browser in the system.
+                // If there is, we lunch it to open the HelpURI. If there isn't, we error out.
+                string webBrowserPath = GetDefaultWebBrowser();
+                if (webBrowserPath == null)
+                {
+                    wrapCaughtException = false;
+                    exception = PSTraceSource.NewInvalidOperationException(HelpErrors.CannotLaunchURI, uriToLaunch.OriginalString);
+                }
+                else
+                {
+                    browserProcess.StartInfo = new ProcessStartInfo(webBrowserPath);
+                    browserProcess.StartInfo.Arguments = "\"" + uriToLaunch.OriginalString + "\"";
+                    browserProcess.Start();
+                }
 #else
                 browserProcess.StartInfo.FileName = uriToLaunch.OriginalString;
                 browserProcess.Start();
@@ -643,9 +668,52 @@ namespace Microsoft.PowerShell.Commands
 
             if (null != exception)
             {
-                throw PSTraceSource.NewInvalidOperationException(exception, HelpErrors.CannotLaunchURI, uriToLaunch.OriginalString);
+                if (wrapCaughtException)
+                    throw PSTraceSource.NewInvalidOperationException(exception, HelpErrors.CannotLaunchURI, uriToLaunch.OriginalString);
+                else
+                    throw exception;
             }
         }
+
+#if !UNIX
+        /// <summary>
+        /// Gets the path to the default browser by querying the Windows registry.
+        /// </summary>
+        /// <returns></returns>
+        private string GetDefaultWebBrowser()
+        {
+            // Check if there is a default browser in the system.
+            const string httpRegkey = @"HKEY_CURRENT_USER\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice";
+            object progId = Registry.GetValue(httpRegkey, "ProgId", null);
+            if (progId != null)
+            {
+                // Query the registry to find the web browser path.
+                using (RegistryKey browserRegKey = Registry.ClassesRoot.OpenSubKey(progId + "\\shell\\open\\command", false))
+                {
+                    string browserPath = browserRegKey?.GetValue(null)?.ToString().Replace(/* remove the quotes */ "\"", "");
+                    if (!string.IsNullOrEmpty(browserPath))
+                    {
+                        const string exeExtension = ".exe";
+                        if (!browserPath.EndsWith(exeExtension, StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Remove any extra chars in the path after ".exe".
+                            int extIndex = browserPath.LastIndexOf(exeExtension, StringComparison.OrdinalIgnoreCase);
+                            browserPath = extIndex > 0 ? browserPath.Substring(0, extIndex + exeExtension.Length) : string.Empty;
+                        }
+
+                        // Make sure the path to the default browser exists.
+                        if (File.Exists(browserPath))
+                        {
+                            return browserPath;
+                        }
+                    }
+                }
+            }
+
+            // By default, return null.
+            return null;
+        }
+#endif
 
         #endregion
 

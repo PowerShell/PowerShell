@@ -229,7 +229,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 return;
             }
-            if (!module.HelpInfoUri.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
+            if (!(module.HelpInfoUri.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || module.HelpInfoUri.StartsWith("https://", StringComparison.OrdinalIgnoreCase)))
             {
                 if (!noErrors)
                 {

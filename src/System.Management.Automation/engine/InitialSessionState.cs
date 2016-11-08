@@ -3138,7 +3138,6 @@ namespace System.Management.Automation.Runspaces
             catch (NotSupportedException e) { ex = e; }
             catch (ProviderNotFoundException e) { ex = e; }
             catch (ProviderInvocationException e) { ex = e; }
-            catch (SessionStateOverflowException e) { ex = e; }
             catch (KeyNotFoundException e) { ex = e; }
             catch (IOException e) { ex = e; }
             catch (UnauthorizedAccessException e) { ex = e; }
@@ -4596,7 +4595,12 @@ $RawUI.SetBufferContents(
             else
             {
                 // Porting note: non-Windows platforms use `clear`
-                return "& (Get-Command -CommandType Application clear | Select-Object -First 1).Definition";
+                return @"
+& (Get-Command -CommandType Application clear | Select-Object -First 1).Definition
+# .Link
+# https://go.microsoft.com/fwlink/?LinkID=225747
+# .ExternalHelp System.Management.Automation.dll-help.xml
+";
             }
         }
 
@@ -6032,7 +6036,9 @@ if($paths) {
 
             providers = new Dictionary<string, SessionStateProviderEntry>(StringComparer.OrdinalIgnoreCase)
             {
+#if !UNIX
                 { "Registry",    new SessionStateProviderEntry("Registry", typeof(RegistryProvider), helpFile) },
+#endif
                 { "Alias",       new SessionStateProviderEntry("Alias", typeof(AliasProvider), helpFile) },
                 { "Environment", new SessionStateProviderEntry("Environment", typeof(EnvironmentProvider), helpFile) },
                 { "FileSystem" , new SessionStateProviderEntry("FileSystem", typeof(FileSystemProvider), helpFile) },

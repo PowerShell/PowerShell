@@ -112,7 +112,8 @@ namespace TestHost
         public string ReadLineData = "This is readline data";
         public int PromptedChoice = 0;
         public string StringForSecureString = "TEST";
-        public string promptResponse = "this is a prompt response";
+        public string UserNameForCredential = "Admin";
+        public object promptResponse = "this is a prompt response";
 
         public Streams Streams = new Streams();
         public override PSHostRawUserInterface RawUI
@@ -122,11 +123,15 @@ namespace TestHost
 
         public override Dictionary<string, PSObject> Prompt(string caption, string message, Collection<FieldDescription> descriptions)
         {
-            string s = String.Empty;
-            if ( descriptions[0] != null ) { s = descriptions[0].Name; }
+            if (descriptions == null || descriptions[0] == null)
+            {
+                throw new ArgumentException("descriptions");
+            }
+
+            string s = descriptions[0].Name;
             Streams.Prompt.Add(caption + ":" + message + ":" + s);
             Dictionary<string, PSObject> d = new Dictionary<string, PSObject>();
-            d.Add(descriptions[0].ToString(), new PSObject(promptResponse));
+            d.Add(s, new PSObject(promptResponse));
             return d;
         }
 
@@ -140,14 +145,16 @@ namespace TestHost
         {
             Streams.Prompt.Add("Credential:" + caption + ":" + message);
             SecureString ss = ReadLineAsSecureString();
-            return new PSCredential(userName, ss);
+            string userNameToUse = string.IsNullOrEmpty(userName) ? UserNameForCredential : userName;
+            return new PSCredential(userNameToUse, ss);
         }
 
         public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
         {
             Streams.Prompt.Add("Credential:" + caption + ":" + message);
             SecureString ss = ReadLineAsSecureString();
-            return new PSCredential(userName, ss);
+            string userNameToUse = string.IsNullOrEmpty(userName) ? UserNameForCredential : userName;
+            return new PSCredential(userNameToUse, ss);
         }
 
         public override string ReadLine()

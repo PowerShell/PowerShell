@@ -74,6 +74,7 @@ Describe "Stream writer tests" -Tags "CI" {
            # redirect the streams is sufficient
            $result = Write-Information "Test Message" *>&1
            $result.GetType().Fullname | Should be "System.Management.Automation.InformationRecord"
+           $result.NativeThreadId | Should Not Be 0
            "$result" | Should be "Test Message"
        }
     }

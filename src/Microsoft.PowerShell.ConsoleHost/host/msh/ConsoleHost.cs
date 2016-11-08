@@ -202,24 +202,28 @@ namespace Microsoft.PowerShell
 
             System.Threading.Thread.CurrentThread.Name = "ConsoleHost main thread";
 
-            s_theConsoleHost = ConsoleHost.CreateSingletonInstance(configuration);
-            s_theConsoleHost.BindBreakHandler();
-
-            PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
-
-            if (args == null)
-            {
-                args = new string[0];
-            }
-
-            if (!string.IsNullOrEmpty(preStartWarning))
-            {
-                s_theConsoleHost.UI.WriteWarningLine(preStartWarning);
-            }
-
             try
             {
-                s_cpp = new CommandLineParameterParser(s_theConsoleHost, s_theConsoleHost._ver, bannerText, helpText);
+                // We might be able to ignore console host creation error if we are running in 
+                // server mode, which does not require a console.
+                HostException hostException = null;
+                try
+                {
+                    s_theConsoleHost = ConsoleHost.CreateSingletonInstance(configuration);
+                }
+                catch (HostException e)
+                {
+                    hostException = e;
+                }
+
+                if (args == null)
+                {
+                    args = new string[0];
+                }
+
+                s_cpp = new CommandLineParameterParser(
+                    (s_theConsoleHost != null) ? s_theConsoleHost.UI : (new NullHostUserInterface()),
+                    bannerText, helpText);
                 string[] tempArgs = new string[args.GetLength(0)];
                 args.CopyTo(tempArgs, 0);
 
@@ -229,13 +233,17 @@ namespace Microsoft.PowerShell
                 if ((s_cpp.ServerMode && s_cpp.NamedPipeServerMode) || (s_cpp.ServerMode && s_cpp.SocketServerMode) || (s_cpp.NamedPipeServerMode && s_cpp.SocketServerMode))
                 {
                     s_tracer.TraceError("Conflicting server mode parameters, parameters must be used exclusively.");
-                    s_theConsoleHost.ui.WriteErrorLine(ConsoleHostStrings.ConflictingServerModeParameters);
+                    if (s_theConsoleHost != null)
+                    {
+                        s_theConsoleHost.ui.WriteErrorLine(ConsoleHostStrings.ConflictingServerModeParameters);
+                    }
                     unchecked
                     {
                         return (int)ExitCodeBadCommandLineParameter;
                     }
                 }
 
+                // First check for and handle PowerShell running in a server mode.
                 if (s_cpp.ServerMode)
                 {
                     ClrFacade.StartProfileOptimization("StartupProfileData-ServerMode");
@@ -264,6 +272,21 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
+                    // Run PowerShell in normal console mode.
+                    if (hostException != null)
+                    {
+                        // Unable to create console host.
+                        throw hostException;
+                    }
+
+                    s_theConsoleHost.BindBreakHandler();
+                    PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
+
+                    if (!string.IsNullOrEmpty(preStartWarning))
+                    {
+                        s_theConsoleHost.UI.WriteWarningLine(preStartWarning);
+                    }
+
                     ClrFacade.StartProfileOptimization(
                         s_theConsoleHost.LoadPSReadline()
                             ? "StartupProfileData-Interactive"
@@ -273,8 +296,11 @@ namespace Microsoft.PowerShell
             }
             finally
             {
-                TelemetryAPI.ReportExitTelemetry(s_theConsoleHost);
-                s_theConsoleHost.Dispose();
+                if (s_theConsoleHost != null)
+                {
+                    TelemetryAPI.ReportExitTelemetry(s_theConsoleHost);
+                    s_theConsoleHost.Dispose();
+                }
             }
 
             unchecked
@@ -1138,7 +1164,10 @@ namespace Microsoft.PowerShell
 #if !UNIX
                 Dbg.Assert(breakHandlerGcHandle != null, "break handler should be set");
                 ConsoleControl.RemoveBreakHandler();
-                breakHandlerGcHandle.Free();
+                if (breakHandlerGcHandle.IsAllocated)
+                {
+                    breakHandlerGcHandle.Free();
+                }
 #endif
 
                 if (isDisposingNotFinalizing)
@@ -1395,7 +1424,7 @@ namespace Microsoft.PowerShell
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         private uint Run(string bannerText, string helpText, bool isPrestartWarned, string[] args)
         {
-            s_cpp = new CommandLineParameterParser(this, _ver, bannerText, helpText);
+            s_cpp = new CommandLineParameterParser(this.UI, bannerText, helpText);
             s_cpp.Parse(args);
             return Run(s_cpp, isPrestartWarned);
         }
@@ -2868,6 +2897,25 @@ namespace Microsoft.PowerShell
         private System.Threading.Thread _breakHandlerThread;
         private bool _isDisposed;
         internal ConsoleHostUserInterface ui;
+
+#if CORECLR
+        internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() => Console.In);
+#else
+        internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() =>
+        {
+            // This is a workaround for a full clr issue that causes a hang when calling PowerShell from ruby.
+            // They use named pipes instead of anonymous pipes, and for some reason that triggers a hang
+            // reading from Console.In.
+            var inputHandle = ConsoleControl.NativeMethods.GetStdHandle(-10);
+            var s = new FileStream(new ConsoleHandle(inputHandle, false), FileAccess.Read);
+
+            uint codePage = (uint) ConsoleControl.NativeMethods.GetConsoleCP();
+            Encoding encoding = Encoding.GetEncoding((int) codePage);
+
+            return TextReader.Synchronized(new StreamReader(s, encoding, false));
+        });
+#endif
+
         private string _savedWindowTitle = "";
         private Version _ver = PSVersionInfo.PSVersion;
         private int _exitCodeFromRunspace;

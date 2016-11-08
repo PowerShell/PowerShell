@@ -1058,8 +1058,7 @@ namespace System.Management.Automation
         }
 
         internal static string[] _builtinVariables = new string[] { "_", "this", "input", "args", "true", "false", "null",
-            "MaximumErrorCount", "MaximumVariableCount", "MaximumFunctionCount","MaximumAliasCount", "PSDefaultParameterValues",
-            "MaximumDriveCount", "Error", "PSScriptRoot", "PSCommandPath", "MyInvocation", "ExecutionContext", "StackTrace" };
+            "PSDefaultParameterValues", "Error", "PSScriptRoot", "PSCommandPath", "MyInvocation", "ExecutionContext", "StackTrace" };
 
         /// <summary>
         /// Lists the variables exported by this module.

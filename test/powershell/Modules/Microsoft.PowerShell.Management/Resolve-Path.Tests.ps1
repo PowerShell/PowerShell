@@ -15,4 +15,12 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
             $_.fullyqualifiederrorid | should be "PathNotFound,Microsoft.PowerShell.Commands.ResolvePathCommand"
         }
     }
+    It "Resolve-Path -Path should return correct drive path" {
+        $result = Resolve-Path -Path "TestDrive:\\\\\"
+        ($result.Path.TrimEnd('/\')) | Should Be "TestDrive:"
+    }
+    It "Resolve-Path -LiteralPath should return correct drive path" {
+        $result = Resolve-Path -LiteralPath "TestDrive:\\\\\"
+        ($result.Path.TrimEnd('/\')) | Should Be "TestDrive:"
+    }
 }

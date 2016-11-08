@@ -215,9 +215,11 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            Exception innerException = PSTraceSource.NewArgumentException(effectiveFilePath,
+                            string errorMessage = String.Format(
+                                System.Globalization.CultureInfo.CurrentCulture,
                                 TranscriptStrings.TranscriptFileReadOnly,
                                 effectiveFilePath);
+                            Exception innerException = new ArgumentException(errorMessage);
                             ThrowTerminatingError(new ErrorRecord(innerException, "FileReadOnly", ErrorCategory.InvalidArgument, effectiveFilePath));
                         }
                     }
@@ -254,8 +256,12 @@ namespace Microsoft.PowerShell.Commands
                     CommandProcessorBase.CheckForSevereException(e);
                 }
 
+                string errorMessage = String.Format(
+                    System.Globalization.CultureInfo.CurrentCulture,
+                    TranscriptStrings.CannotStartTranscription,
+                    e.Message);
                 ErrorRecord er = new ErrorRecord(
-                    PSTraceSource.NewInvalidOperationException(e, TranscriptStrings.CannotStartTranscription),
+                    PSTraceSource.NewInvalidOperationException(e, errorMessage),
                     "CannotStartTranscription", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
             }

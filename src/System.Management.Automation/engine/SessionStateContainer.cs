@@ -1765,6 +1765,53 @@ namespace System.Management.Automation
         } // GetChildItems
 
         /// <summary>
+        /// Determines if the item at the specified path is a container.
+        /// </summary>
+        /// 
+        /// <param name="providerInstance">
+        /// The provider instance to use.
+        /// </param>
+        /// 
+        /// <param name="path">
+        /// The path to the item if it was specified on the command line.
+        /// </param>
+        /// 
+        /// <param name="context">
+        /// The context which the core command is running.
+        /// </param>
+        /// 
+        private bool IsPathContainer(
+            CmdletProvider providerInstance,
+            string path,
+            CmdletProviderContext context)
+        {
+           bool itemContainer = false;
+           try
+           {
+               itemContainer = IsItemContainer(providerInstance, path, context);
+           }
+           catch (UnauthorizedAccessException accessException)
+           {
+               context.WriteError(new ErrorRecord(accessException, "GetItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+           }
+           catch (ProviderInvocationException accessException)
+           {
+                // if providerinvocationexception is wrapping access denied error, it is ok to not terminate the pipeline
+                if (accessException.InnerException != null &&
+                    accessException.InnerException.GetType().Equals(typeof(System.UnauthorizedAccessException)))
+                {
+                    context.WriteError(new ErrorRecord(accessException, "GetItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+                }
+                else
+                {
+                    throw;
+                }
+           }
+           return itemContainer;
+       
+        } // IsPathContainer
+
+        /// <summary>
         /// Since we can't do include and exclude filtering on items we have to
         /// do the recursion ourselves. We get each child name and see if it matches
         /// the include and exclude filters. If the child is a container we recurse
@@ -1852,9 +1899,8 @@ namespace System.Management.Automation
                     WildcardOptions.IgnoreCase);
 
             // If the item is a container we have to filter its children
-            // Use a hint + lazy evaluation to skip a container check
-
-            if (skipIsItemContainerCheck || IsItemContainer(providerInstance, path, context))
+            // Use a hint + lazy evaluation to skip a container check 
+            if (skipIsItemContainerCheck || IsPathContainer(providerInstance, path, context))
             {
                 CmdletProviderContext newContext =
                     new CmdletProviderContext(context);
@@ -1976,14 +2022,13 @@ namespace System.Management.Automation
                     }
 
                     // Now recurse if it is a container
-                    if (recurse && IsItemContainer(providerInstance, qualifiedPath, context))
+                    if (recurse && IsPathContainer(providerInstance, qualifiedPath, context))
                     {
                         // Making sure to obey the StopProcessing.
                         if (context.Stopping)
                         {
                             return;
                         }
-
                         // The item is a container so recurse into it.
                         ProcessPathItems(providerInstance, qualifiedPath, recurse, context, out childrenNotMatchingFilterCriteria, processMode, skipIsItemContainerCheck: true);
                     }

@@ -1554,19 +1554,22 @@ namespace Microsoft.PowerShell
         private string ReadLineFromFile(string initialContent)
         {
             var sb = new StringBuilder();
-            if (initialContent != null)
+            if (!string.IsNullOrEmpty(initialContent))
             {
                 sb.Append(initialContent);
                 sb.Append('\n');
             }
 
+            var consoleIn = _parent.ConsoleIn.Value;
             while (true)
             {
-                var inC = Console.In.Read();
+                var inC = consoleIn.Read();
                 if (inC == -1)
                 {
                     // EOF - we return null which tells our caller to exit
-                    return null;
+                    // but only if we don't have any input, we could have
+                    // input and then stdin was closed, but never saw a newline.
+                    return sb.Length == 0 ? null : sb.ToString();
                 }
 
                 var c = unchecked((char)inC);
@@ -1575,10 +1578,10 @@ namespace Microsoft.PowerShell
                 if (c == '\r')
                 {
                     // Treat as newline, but consume \n if there is one.
-                    if (Console.In.Peek() == '\n')
+                    if (consoleIn.Peek() == '\n')
                     {
                         if (!NoPrompt) Console.Out.Write('\n');
-                        Console.In.Read();
+                        consoleIn.Read();
                     }
                     break;
                 }
@@ -1588,7 +1591,9 @@ namespace Microsoft.PowerShell
                     break;
                 }
 
-                if (c == '\b')
+                // If NoPrompt is true, we are in a sort of server mode where we shouldn't
+                // do anything like edit the command line - every character is part of the input.
+                if (c == '\b' && !NoPrompt)
                 {
                     sb.Remove(sb.Length - 1, 1);
                 }

@@ -30,8 +30,7 @@ Describe "Write-Error DRT Unit Tests" -Tags "CI" {
         $e.InvocationInfo.MyCommand.Name | Should BeNullOrEmpty     
     }
 
-    #Blocked by issue #846
-    It "Should be works with all parameters" -Pending { 
+    It "Should be works with all parameters" {
         $exception = New-Object -TypeName System.ArgumentNullException -ArgumentList paramname 
         $e = Write-Error -Message myerrortext -Exception $exception -ErrorId myerrorid -Category syntaxerror -TargetObject TargetObject -CategoryActivity myactivity -CategoryReason myreason -CategoryTargetName mytargetname -CategoryTargetType mytargettype -RecommendedAction myrecommendedaction 2>&1
         $e | Should Not BeNullOrEmpty
@@ -69,8 +68,7 @@ Describe "Write-Error DRT Unit Tests" -Tags "CI" {
         $e.InvocationInfo.MyCommand.Name | Should BeNullOrEmpty  
     }
 
-    #Blocked by issue #846
-    It "Should be works with all parameters" -Pending {
+    It "Should be works with all parameters" {
         $e = write-error -Activity fooAct -Reason fooReason -TargetName fooTargetName -TargetType fooTargetType -Message fooMessage 2>&1
         $e.CategoryInfo.Activity | Should Be 'fooAct'
         $e.CategoryInfo.Reason | Should Be 'fooReason'

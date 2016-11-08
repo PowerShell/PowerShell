@@ -88,6 +88,12 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public virtual X509Certificate Certificate { get; set; }
 
+        /// <summary>
+        /// gets or sets the SkipCertificateCheck property
+        /// </summary>
+        [Parameter]
+        public virtual SwitchParameter SkipCertificateCheck { get; set; }
+
         #endregion
 
         #region Headers

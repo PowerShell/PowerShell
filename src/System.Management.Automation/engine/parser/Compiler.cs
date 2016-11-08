@@ -630,7 +630,7 @@ namespace System.Management.Automation.Language
             return Expression.Convert(expr, type);
         }
 
-#if ENABLE_BINDER_DEBUG_LOGGING && !CORECLR
+#if ENABLE_BINDER_DEBUG_LOGGING 
         internal static string ToDebugString(this Expression expr)
         {
             using (var writer = new StringWriter(CultureInfo.InvariantCulture))

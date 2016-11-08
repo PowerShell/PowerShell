@@ -76,29 +76,21 @@ else
 
 #endregion
 
+function Remove-InstalledModules
+{
+    Get-InstalledModule -Name $ContosoServer -AllVersions -ErrorAction SilentlyContinue | Uninstall-Module -Force
+}
+
 Describe "PowerShellGet - Module tests" -tags "Feature" {
 
     BeforeEach {
-        Get-InstalledModule -Name $ContosoServer -AllVersions -ErrorAction SilentlyContinue | Uninstall-Module -Force
+        Remove-InstalledModules
     }
 
     It "Should find a module correctly" {
         $psgetModuleInfo = Find-Module -Name $ContosoServer -Repository $RepositoryName
         $psgetModuleInfo.Name | Should Be $ContosoServer
         $psgetModuleInfo.Repository | Should Be $RepositoryName
-    }
-
-    It "Should install a module correctly to the required location with default AllUsers scope" {
-        Install-Module -Name $ContosoServer -Repository $RepositoryName
-        $installedModuleInfo = Get-InstalledModule -Name $ContosoServer
-
-        $installedModuleInfo | Should Not Be $null        
-        $installedModuleInfo.Name | Should Be $ContosoServer
-        $installedModuleInfo.InstalledLocation.StartsWith($script:programFilesModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should Be $true
-
-        $module = Get-Module $ContosoServer -ListAvailable
-        $module.Name | Should be $ContosoServer
-        $module.ModuleBase | Should Be $installedModuleInfo.InstalledLocation
     }
 
     It "Should install a module correctly to the required location with CurrentUser scope" {
@@ -115,29 +107,49 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
     }
 
     AfterAll {
-        Get-InstalledModule -Name $ContosoServer -AllVersions -ErrorAction SilentlyContinue | Uninstall-Module -Force
+        Remove-InstalledModules
     }
+}
+
+Describe "PowerShellGet - Module tests (Admin)" -tags @('Feature', 'RequireAdminOnWindows') {
+
+    BeforeEach {
+        Remove-InstalledModules
+    }
+
+    It "Should install a module correctly to the required location with default AllUsers scope" {
+        Install-Module -Name $ContosoServer -Repository $RepositoryName
+        $installedModuleInfo = Get-InstalledModule -Name $ContosoServer
+
+        $installedModuleInfo | Should Not Be $null
+        $installedModuleInfo.Name | Should Be $ContosoServer
+        $installedModuleInfo.InstalledLocation.StartsWith($script:programFilesModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should Be $true
+
+        $module = Get-Module $ContosoServer -ListAvailable
+        $module.Name | Should be $ContosoServer
+        $module.ModuleBase | Should Be $installedModuleInfo.InstalledLocation
+    }
+
+    AfterAll {
+        Remove-InstalledModules
+    }
+}
+
+function Remove-InstalledScripts
+{
+    Get-InstalledScript -Name $FabrikamServerScript -ErrorAction SilentlyContinue | Uninstall-Script -Force
 }
 
 Describe "PowerShellGet - Script tests" -tags "Feature" {
 
     BeforeEach {
-        Get-InstalledScript -Name $FabrikamServerScript -ErrorAction SilentlyContinue | Uninstall-Script -Force
+        Remove-InstalledScripts
     }
 
     It "Should find a script correctly" {
         $psgetScriptInfo = Find-Script -Name $FabrikamServerScript -Repository $RepositoryName
         $psgetScriptInfo.Name | Should Be $FabrikamServerScript
         $psgetScriptInfo.Repository | Should Be $RepositoryName
-    }
-
-    It "Should install a script correctly to the required location with default AllUsers scope" {
-        Install-Script -Name $FabrikamServerScript -Repository $RepositoryName -NoPathUpdate
-        $installedScriptInfo = Get-InstalledScript -Name $FabrikamServerScript
-
-        $installedScriptInfo | Should Not Be $null
-        $installedScriptInfo.Name | Should Be $FabrikamServerScript
-        $installedScriptInfo.InstalledLocation.StartsWith($script:ProgramFilesScriptsPath, [System.StringComparison]::OrdinalIgnoreCase) | Should Be $true
     }
 
     It "Should install a script correctly to the required location with CurrentUser scope" {
@@ -150,7 +162,27 @@ Describe "PowerShellGet - Script tests" -tags "Feature" {
     }
 
     AfterAll {
-        Get-InstalledScript -Name $FabrikamServerScript -ErrorAction SilentlyContinue | Uninstall-Script -Force
+        Remove-InstalledScripts
+    }
+}
+
+Describe "PowerShellGet - Script tests (Admin)" -tags @('Feature', 'RequireAdminOnWindows') {
+
+    BeforeEach {
+        Remove-InstalledScripts
+    }
+
+    It "Should install a script correctly to the required location with default AllUsers scope" {
+        Install-Script -Name $FabrikamServerScript -Repository $RepositoryName -NoPathUpdate
+        $installedScriptInfo = Get-InstalledScript -Name $FabrikamServerScript
+
+        $installedScriptInfo | Should Not Be $null
+        $installedScriptInfo.Name | Should Be $FabrikamServerScript
+        $installedScriptInfo.InstalledLocation.StartsWith($script:ProgramFilesScriptsPath, [System.StringComparison]::OrdinalIgnoreCase) | Should Be $true
+    }
+
+    AfterAll {
+        Remove-InstalledScripts
     }
 }
 

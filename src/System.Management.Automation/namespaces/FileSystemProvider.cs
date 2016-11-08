@@ -2208,34 +2208,33 @@ namespace Microsoft.PowerShell.Commands
 
                     if (itemType == ItemType.SymbolicLink)
                     {
-                        if (Platform.IsWindows)
-                        {
-                            success = WinCreateSymbolicLink(path, strTargetPath, isDirectory);
-                        }
-                        else
-                        {
-                            success = Platform.NonWindowsCreateSymbolicLink(path, strTargetPath);
-                        }
+#if UNIX
+                        success = Platform.NonWindowsCreateSymbolicLink(path, strTargetPath);
+#else
+                        success = WinCreateSymbolicLink(path, strTargetPath, isDirectory);
+#endif
                     }
                     else if (itemType == ItemType.HardLink)
                     {
-                        if (Platform.IsWindows)
-                        {
-                            success = WinCreateHardLink(path, strTargetPath);
-                        }
-                        else
-                        {
-                            success = Platform.NonWindowsCreateHardLink(path, strTargetPath);
-                        }
+#if UNIX
+                        success = Platform.NonWindowsCreateHardLink(path, strTargetPath);
+#else
+                        success = WinCreateHardLink(path, strTargetPath);
+#endif
                     }
 
                     if (!success)
                     {
+                        // Porting note: The Win32Exception will report the correct error on Linux
                         int errorCode = Marshal.GetLastWin32Error();
 
                         Win32Exception w32Exception = new Win32Exception((int)errorCode);
 
+#if UNIX
+                        if (Platform.Unix.GetErrorCategory(errorCode) == ErrorCategory.PermissionDenied)
+#else
                         if (errorCode == 1314) //ERROR_PRIVILEGE_NOT_HELD
+#endif
                         {
                             string message = FileSystemProviderStrings.ElevationRequired;
                             WriteError(new ErrorRecord(new UnauthorizedAccessException(message, w32Exception), "NewItemSymbolicLinkElevationRequired", ErrorCategory.PermissionDenied, value.ToString()));
@@ -6991,6 +6990,26 @@ namespace Microsoft.PowerShell.Commands
                     Win32Exception win32Exception = new Win32Exception(errorCode);
                     throw new UnauthorizedAccessException(win32Exception.Message, win32Exception);
                 }
+                else if (errorCode == 32)
+                {
+                    // Errorcode 32 is 'ERROR_SHARING_VIOLATION' i.e. 
+                    // The process cannot access the file because it is being used by another process.
+                    // GetFileAttributes may return INVALID_FILE_ATTRIBUTES for a system file or directory because of this error.
+                    // GetFileAttributes function tries to open the file with FILE_READ_ATTRIBUTES access right but it fails if the
+                    // sharing flag for the file is set to 0x00000000.This flag prevents it from opening a file for delete, read, or
+                    // write access. For example: C:\pagefile.sys is always opened by OS with sharing flag 0x00000000. 
+                    // But FindFirstFile is still able to get attributes as this api retrieves the required information using a find
+                    // handle generated with FILE_LIST_DIRECTORY access.
+                    // Fall back to FindFirstFile to check if the file actually exists.
+                    IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
+                    Utils.NativeMethods.WIN32_FIND_DATA findData;
+                    IntPtr findHandle = Utils.NativeMethods.FindFirstFile(path, out findData);
+                    if (findHandle != INVALID_HANDLE_VALUE) 
+                    {
+                        Utils.NativeMethods.FindClose(findHandle);
+                        return (int)findData.dwFileAttributes;
+                    }
+                }
             }
 
             return result;
@@ -8008,17 +8027,18 @@ namespace Microsoft.PowerShell.Commands
         private static List<string> InternalGetTarget(string filePath)
         {
             var links = new List<string>();
-            if (!Platform.IsWindows)
+#if UNIX
+            string link = Platform.NonWindowsInternalGetTarget(filePath);
+            if (!String.IsNullOrEmpty(link))
             {
-                string link = Platform.NonWindowsInternalGetTarget(filePath);
-                if (!String.IsNullOrEmpty(link))
-                {
-                    links.Add(link);
-                }
-                return links;
+                links.Add(link);
+            }
+            else
+            {
+                throw new Win32Exception(Marshal.GetLastWin32Error());
             }
 
-#if !CORECLR //FindFirstFileName, FindNextFileName and FindClose are not available on Core Clr 
+#elif !CORECLR //FindFirstFileName, FindNextFileName and FindClose are not available on Core Clr
             UInt32 linkStringLength = 0;
             var linkName = new StringBuilder();
 
@@ -8076,7 +8096,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 InternalSymbolicLinkLinkCodeMethods.FindClose(fileHandle);
             }
-#endif 
+#endif
             return links;
         }
 
@@ -8159,10 +8179,11 @@ namespace Microsoft.PowerShell.Commands
 
         internal static bool IsHardLink(FileSystemInfo fileInfo)
         {
-            if (Platform.IsWindows)
-                return WinIsHardLink(fileInfo);
-            else
-                return Platform.NonWindowsIsHardLink(fileInfo);
+#if UNIX
+            return Platform.NonWindowsIsHardLink(fileInfo);
+#else
+            return WinIsHardLink(fileInfo);
+#endif
         }
 
         internal static bool IsReparsePoint(FileSystemInfo fileInfo)
@@ -8218,10 +8239,11 @@ namespace Microsoft.PowerShell.Commands
 
         internal static bool IsHardLink(ref IntPtr handle)
         {
-            if (Platform.IsWindows)
-                return WinIsHardLink(ref handle);
-            else
-                return Platform.NonWindowsIsHardLink(ref handle);
+#if UNIX
+            return Platform.NonWindowsIsHardLink(ref handle);
+#else
+            return WinIsHardLink(ref handle);
+#endif
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
