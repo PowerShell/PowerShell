@@ -23,13 +23,13 @@ Describe "Import-Csv DRT Unit Tests" -Tags "CI" {
 Describe "Import-Csv File Format Tests" -Tags "CI" {
     BeforeAll {
         # The file is w/o header
-        $testImportCsv1 = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsv1.csv
+        $TestImportCsv_NoHeader = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsv_NoHeader.csv
         # The file is with header
-        $testImportCsv2 = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsv2.csv
+        $TestImportCsv_WithHeader = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsv_WithHeader.csv
         # The file is W3C Extended Log File Format
-        $testImportCsv3 = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsv3.csv
+        $TestImportCsv_W3C_ELF = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath TestImportCsv_W3C_ELF.csv
         
-        $testCSVfiles = $testImportCsv1, $testImportCsv2, $testImportCsv3
+        $testCSVfiles = $TestImportCsv_NoHeader, $TestImportCsv_WithHeader, $TestImportCsv_W3C_ELF
         $orginalHeader = "Column1","Column2","Column 3"
         $customHeader = "test1","test2","test3"
     }
@@ -38,15 +38,14 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
        $FileName = (dir $testCsv).Name
         Context "Next test file: $FileName" {
             BeforeAll {
-                if ($FileName -eq "TestImportCsv1.csv") {
+                $CustomHeaderParams = @{Header = $customHeader; Delimiter = ","}
+                if ($FileName -eq "TestImportCsv_NoHeader.csv") {
                     # The file does not have header
                     # (w/o Delimiter here we get throw (bug?)) 
                     $HeaderParams = @{Header = $orginalHeader; Delimiter = ","}
-                    $CustomHeaderParams = @{Header = $customHeader; Delimiter = ","}
                 } else {
                     # The files have header
                     $HeaderParams = @{Delimiter = ","}
-                    $CustomHeaderParams = @{Header = $customHeader; Delimiter = ","}
                 }
 
             }
@@ -71,7 +70,7 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
                 $actualfields | Should Be $customHeader
             }
 
-            It "Should be able to import rights values" {
+            It "Should be able to import correct values" {
                 $actual = Import-Csv -Path $testCsv @HeaderParams
                 $actual[0].'Column1'  | Should Be "data1"
                 $actual[0].'Column2'  | Should Be "1"
