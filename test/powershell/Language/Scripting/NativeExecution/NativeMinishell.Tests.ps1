@@ -1,5 +1,5 @@
 # Minishell is a powershell concept.
-# It's primare use-case is when somebody executes a scriptblock in the new powershell process.
+# Its primare use-case is when somebody executes a scriptblock in the new powershell process.
 # The objects are automatically marshelled back to the parent session, so users can avoid custom
 # serialization to pass objects between two processes.
 
