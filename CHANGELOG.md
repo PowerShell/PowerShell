@@ -3,6 +3,9 @@ Changelog
 
 Unreleased
 ----------
+- Improve pipeline for native commands.
+  Start native process in Prepare() instead of Complete().
+  `ping | grep` doesn't block anymore.
 - Added -Top and -Bottom parameters to Sort-Object
 
 v6.0.0-alpha.12 - 2016-11-03
