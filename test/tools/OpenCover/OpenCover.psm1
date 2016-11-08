@@ -2,43 +2,23 @@
 
 function Get-AssemblyCoverageData([xml.xmlelement] $element)
 {
-    $AssemblyCoverageData = New-Object System.Management.Automation.PSObject
-    $AssemblyCoverageData | Add-Member -MemberType NoteProperty -Name AssemblyName -TypeName [string] -Value ([string]::Empty)
-    $AssemblyCoverageData | Add-Member -MemberType NoteProperty -Name Branch -TypeName [double] -Value -1
-    $AssemblyCoverageData | Add-Member -MemberType NoteProperty -Name Sequence -TypeName [double] -Value -1
-    $AssemblyCoverageData | Add-Member -MemberType NoteProperty -Name CoverageSummary -TypeName [PSObject] -Value $null
-    $AssemblyCoverageData | Add-Member -MemberType ScriptMethod -Name ToString -Value { "{0} ({1})" -f $this.AssemblyName,$this.CoverageSummary.BranchCoverage } -Force
+    $coverageSummary = (Get-CoverageSummary -element $element.Summary)
+    $AssemblyCoverageData = [PSCustomObject] @{ 
+        AssemblyName = $element.ModuleName
+        CoverageSummary = $coverageSummary
+        Branch = $coverageSummary.BranchCoverage
+        Sequence = $coverageSummary.SequenceCoverage
+    }
 
-    $AssemblyCoverageData.AssemblyName = $element.ModuleName    
-    $AssemblyCoverageData.CoverageSummary = (Get-CoverageSummary -element $element.Summary)
-    $AssemblyCoverageData.Branch = $AssemblyCoverageData.CoverageSummary.BranchCoverage
-    $AssemblyCoverageData.Sequence = $AssemblyCoverageData.CoverageSummary.SequenceCoverage
+    $AssemblyCoverageData | Add-Member -MemberType ScriptMethod -Name ToString -Value { "{0} ({1})" -f $this.AssemblyName,$this.CoverageSummary.BranchCoverage } -Force
     
     return $AssemblyCoverageData
 }
 
 function Get-CodeCoverageChange($r1, $r2)
 {
-    $CoverageChange = New-Object System.Management.Automation.PSObject
-    $CoverageChange | Add-Member -MemberType NoteProperty -Name Run1 -TypeName [psobject] -Value $null
-    $CoverageChange | Add-Member -MemberType NoteProperty -Name Run2 -TypeName [psobject] -Value $null
-    $CoverageChange | Add-Member -MemberType NoteProperty -Name Deltas -TypeName [psobject[]] -Value $null
-    $CoverageChange | Add-Member -MemberType NoteProperty -Name Branch -TypeName [double] -Value -1
-    $CoverageChange | Add-Member -MemberType NoteProperty -Name BranchDelta -TypeName [double] -Value -1
-    $CoverageChange | Add-Member -MemberType NoteProperty -Name Sequence -TypeName [double] -Value -1
-    $CoverageChange | Add-Member -MemberType NoteProperty -Name SequenceDelta -TypeName [double] -Value -1
-
-    $CoverageChange.Run1 = $r1
-    $CoverageChange.Run2 = $r2
-    $CoverageChange.Branch = $r2.Summary.BranchCoverage
-    $CoverageChange.Sequence = $r2.Summary.SequenceCoverage
-    $CoverageChange.BranchDelta = $r2.Summary.BranchCoverage - $r1.Summary.BranchCoverage
-    $CoverageChange.SequenceDelta = $r2.Summary.SequenceCoverage - $r1.Summary.SequenceCoverage
-    if ( compare-object ($r2.Assembly.AssemblyName|sort-object)  ($r2.Assembly.AssemblyName|sort-object) ) {
-        Write-Warning "Assembly list differs from run1 to run2"
-    }
     $h = @{}
-    $CoverageChange.Deltas = new-object "System.Collections.ArrayList"
+    $Deltas = new-object "System.Collections.ArrayList"
 
     $r1.assembly | % { $h[$_.assemblyname] = @($_) }
     $r2.assembly | % { 
@@ -55,8 +35,18 @@ function Get-CodeCoverageChange($r1, $r2)
     foreach($kvPair in $h.GetEnumerator())
     {
         $runs = @($h[$kvPair.Name])
-        $assemblyCoverageChange = Get-AssemblyCoverageChange -r1 $runs[0] -r2 $runs[1]
-        $CoverageChange.Deltas.Add($assemblyCoverageChange) | Out-Null
+        $assemblyCoverageChange = (Get-AssemblyCoverageChange -r1 $runs[0] -r2 $runs[1])
+        $Deltas.Add($assemblyCoverageChange) | Out-Null
+    }
+
+    $CoverageChange = [PSCustomObject] @{
+        Run1 = $r1
+        Run2 = $r2
+        Branch = $r2.Summary.BranchCoverage
+        Sequence = $r2.Summary.SequenceCoverage
+        BranchDelta = [double] ($r2.Summary.BranchCoverage - $r1.Summary.BranchCoverage)
+        SequenceDelta = [double] ($r2.Summary.SequenceCoverage - $r1.Summary.SequenceCoverage)
+        Deltas = $Deltas
     }
 
     return $CoverageChange
@@ -75,18 +65,13 @@ function Get-AssemblyCoverageChange($r1, $r2)
 
     if ( compare-object $r1.assemblyname $r2.assemblyname ) { throw "different assemblies" }
 
-    $AssemblyCoverageChange = New-Object System.Management.Automation.PSObject
-    $AssemblyCoverageChange | Add-Member -MemberType NoteProperty -Name AssemblyName -TypeName [string] -Value $null
-    $AssemblyCoverageChange | Add-Member -MemberType NoteProperty -Name Branch -TypeName [double] -Value $null
-    $AssemblyCoverageChange | Add-Member -MemberType NoteProperty -Name BranchDelta -TypeName [double] -Value $null
-    $AssemblyCoverageChange | Add-Member -MemberType NoteProperty -Name Sequence -TypeName [double] -Value $null
-    $AssemblyCoverageChange | Add-Member -MemberType NoteProperty -Name SequenceDelta -TypeName [double] -Value $null
-    
-    $AssemblyCoverageChange.AssemblyName = $r1.AssemblyName
-    $AssemblyCoverageChange.Branch = $r2.Branch
-    $AssemblyCoverageChange.BranchDelta = $r2.Branch - $r1.Branch
-    $AssemblyCoverageChange.Sequence = $r2.Sequence
-    $AssemblyCoverageChange.SequenceDelta = $r2.Sequence - $r1.Sequence
+    $AssemblyCoverageChange = [pscustomobject] @{
+        AssemblyName = $r1.AssemblyName
+        Branch = $r2.Branch
+        BranchDelta = $r2.Branch - $r1.Branch
+        Sequence = $r2.Sequence
+        SequenceDelta = $r2.Sequence - $r1.Sequence
+    }
 
     return $AssemblyCoverageChange
 }
@@ -96,53 +81,38 @@ function Get-CoverageData($xmlPath)
     [xml]$CoverageXml = get-content -readcount 0 $xmlPath
     if ( $CoverageXml.CoverageSession -eq $null ) { throw "CoverageSession data not found" }        
 
-    $CoverageData = New-Object System.Management.Automation.PSObject
-    $CoverageData | Add-Member -MemberType NoteProperty -Name CoverageSummary -TypeName [PSObject] -Value $null
-    $CoverageData | Add-Member -MemberType NoteProperty -Name Assembly -TypeName [System.Collections.ArrayList] -Value (New-Object "System.Collections.ArrayList")    
-    $CoverageData | Add-Member -MemberType ScriptMethod -Name GetCoverageSummary -Value { return $this.CoverageSummary }
-    $CoverageData | Add-Member -MemberType ScriptMethod -Name GetAssembly -Value { return $this.Assembly }
-            
+    $assemblies = New-Object System.Collections.ArrayList
+
     foreach( $module in $CoverageXml.CoverageSession.modules.module|?{$_.skippedDueTo -ne "MissingPdb"}) {
-        $CoverageData.Assembly.Add((Get-AssemblyCoverageData -element $module)) | Out-Null
+        $assemblies.Add((Get-AssemblyCoverageData -element $module)) | Out-Null
     }
 
-    $CoverageData.CoverageSummary = (Get-CoverageSummary -element $CoverageXml.CoverageSession.Summary)
+    $CoverageData = [PSCustomObject] @{
+        CoverageSummary = (Get-CoverageSummary -element $CoverageXml.CoverageSession.Summary)
+        Assembly = $assemblies
+    }
 
-    remove-variable CoverageXml
-    [gc]::Collect()
-    
     return $CoverageData
 }
 
 function Get-CoverageSummary([xml.xmlelement] $element)
 {
-    $CoverageSummary = New-Object System.Management.Automation.PSObject
-    $CoverageSummary | Add-Member -MemberType NoteProperty -Name NumSequencePoints -TypeName [int] -Value -1
-    $CoverageSummary | Add-Member -MemberType NoteProperty -Name VisitedSequencePoints -TypeName [int] -Value -1
-    $CoverageSummary | Add-Member -MemberType NoteProperty -Name NumBranchPoints -TypeName [int] -Value -1
-    $CoverageSummary | Add-Member -MemberType NoteProperty -Name VisitedBranchPoints -TypeName [int] -Value -1
-    $CoverageSummary | Add-Member -MemberType NoteProperty -Name MaxCyclomaticComplexity -TypeName [int] -Value -1
-    $CoverageSummary | Add-Member -MemberType NoteProperty -Name MinCyclomaticComplexity -TypeName [int] -Value -1
-    $CoverageSummary | Add-Member -MemberType NoteProperty -Name VisitedClasses -TypeName [int] -Value -1
-    $CoverageSummary | Add-Member -MemberType NoteProperty -Name NumClasses -TypeName [int] -Value -1
-    $CoverageSummary | Add-Member -MemberType NoteProperty -Name VisitedMethods -TypeName [int] -Value -1
-    $CoverageSummary | Add-Member -MemberType NoteProperty -Name NumMethods -TypeName [int] -Value -1
-    $CoverageSummary | Add-Member -MemberType NoteProperty -Name SequenceCoverage -TypeName [double] -Value -1
-    $CoverageSummary | Add-Member -MemberType NoteProperty -Name BranchCoverage -TypeName [double] -Value -1
+    $CoverageSummary = [PSCustomObject] @{
+        NumSequencePoints = $element.numSequencePoints
+        VisitedSequencePoints = $element.visitedSequencePoints
+        NumBranchPoints = $element.numBranchPoints
+        VisitedBranchPoints = $element.visitedBranchPoints
+        SequenceCoverage = $element.sequenceCoverage
+        BranchCoverage = $element.branchCoverage
+        MaxCyclomaticComplexity = $element.maxCyclomaticComplexity
+        MinCyclomaticComplexity = $element.minCyclomaticComplexity
+        VisitedClasses = $element.visitedClasses
+        NumClasses = $element.numClasses
+        VisitedMethods = $element.visitedMethods
+        NumMethods = $element.numMethods
+    }
+
     $CoverageSummary | Add-Member -MemberType ScriptMethod -Name ToString -Value { "Branch:{0,3} Sequence:{1,3}" -f $this.BranchCoverage,$this.SequenceCoverage } -Force
-        
-    $CoverageSummary.numSequencePoints = $element.numSequencePoints
-    $CoverageSummary.visitedSequencePoints = $element.visitedSequencePoints
-    $CoverageSummary.numBranchPoints = $element.numBranchPoints
-    $CoverageSummary.visitedBranchPoints = $element.visitedBranchPoints
-    $CoverageSummary.sequenceCoverage = $element.sequenceCoverage
-    $CoverageSummary.branchCoverage = $element.branchCoverage
-    $CoverageSummary.maxCyclomaticComplexity = $element.maxCyclomaticComplexity
-    $CoverageSummary.minCyclomaticComplexity = $element.minCyclomaticComplexity
-    $CoverageSummary.visitedClasses = $element.visitedClasses
-    $CoverageSummary.numClasses = $element.numClasses
-    $CoverageSummary.visitedMethods = $element.visitedMethods
-    $CoverageSummary.numMethods = $element.numMethods     
         
     return $CoverageSummary
 }
@@ -319,7 +289,6 @@ function Compare-CodeCoverage
     }
     
     (Get-CodeCoverageChange -r1 $Run1 -r2 $Run2)
-    [gc]::Collect()
 }
 
 ## We are taking dependency on private build of OpenCover till a new release is available.
