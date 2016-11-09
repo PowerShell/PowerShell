@@ -330,4 +330,17 @@ foo
             }
         }
     }
+
+    Context "String escape sequences" {
+        It "Should properly calculate buffer cell width" {
+            $esc = [char]0x1b
+            $host.UI.RawUI.LengthInBufferCells("abc") | Should Be 3
+            $host.UI.RawUI.LengthInBufferCells("$esc[31mabc") | Should Be 3
+            $host.UI.RawUI.LengthInBufferCells("$esc[31mabc$esc[0m") | Should Be 3
+
+            $host.UI.RawUI.LengthInBufferCells("${esc} [31mabc") | Should Be 9
+            $host.UI.RawUI.LengthInBufferCells("${esc}abc") | Should Be 4
+            $host.UI.RawUI.LengthInBufferCells("[31mabc") | Should Be 7
+        }
+    }
 }
