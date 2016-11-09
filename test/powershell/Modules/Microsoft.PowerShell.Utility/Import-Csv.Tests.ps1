@@ -50,14 +50,6 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
 
             }
 
-            It "Should be able to assign to a variable" {
-                $actual = Import-Csv -Path $testCsv @HeaderParams
-
-                $actual                     | Should Not BeNullOrEmpty
-                $actual.GetType().BaseType  | Should Be array
-                $actual.count               | Should Be 4
-            }
-
             It "Should be able to import all fields" {
                 $actual = Import-Csv -Path $testCsv @HeaderParams
                 $actualfields = $actual[0].psobject.Properties.Name
@@ -72,6 +64,7 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
 
             It "Should be able to import correct values" {
                 $actual = Import-Csv -Path $testCsv @HeaderParams
+                $actual.count         | Should Be 4
                 $actual[0].'Column1'  | Should Be "data1"
                 $actual[0].'Column2'  | Should Be "1"
                 $actual[0].'Column 3' | Should Be "A"
