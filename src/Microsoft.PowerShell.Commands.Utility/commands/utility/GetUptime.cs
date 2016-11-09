@@ -12,25 +12,17 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Get-Uptime
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Uptime", DefaultParameterSetName = "Timespan", HelpUri = "")]
+    [Cmdlet(VerbsCommon.Get, "Uptime", DefaultParameterSetName = TimespanParameterSet, HelpUri = "")]
     [OutputType(typeof(System.TimeSpan))]
     [OutputType(typeof(System.DateTime))]
     public class GetUptimeCommand : PSCmdlet
     {
         /// <summary>
-        /// Timespan parameter
-        /// Time since the system started up
-        /// </summary>
-        /// <value></value>
-        [Parameter(ParameterSetName = "Timespan")]
-        public SwitchParameter Timespan { get; set; } = new SwitchParameter();
-
-        /// <summary>
         /// Since parameter
         /// The system startup time
         /// </summary>
         /// <value></value>
-        [Parameter(ParameterSetName = "Since")]
+        [Parameter(ParameterSetName = SinceParameterSet)]
         public SwitchParameter Since { get; set; } = new SwitchParameter();
 
         /// <summary>
@@ -42,30 +34,39 @@ namespace Microsoft.PowerShell.Commands
             // Get-Uptime throw if IsHighResolution = false  
             // because stopwatch.GetTimestamp() return DateTime.UtcNow.Ticks
             // instead of ticks from system startup.
-            // InternalTestHooks.StopwatchIsHighResolutionIsFalse is used as test hook.
-            if (System.Diagnostics.Stopwatch.IsHighResolution && !InternalTestHooks.StopwatchIsHighResolutionIsFalse)
+            // InternalTestHooks.StopwatchIsNotHighResolution is used as test hook.
+            if (Stopwatch.IsHighResolution && !InternalTestHooks.StopwatchIsNotHighResolution)
             {
-                TimeSpan uptime = TimeSpan.FromSeconds(System.Diagnostics.Stopwatch.GetTimestamp()/System.Diagnostics.Stopwatch.Frequency);
-    
+                TimeSpan uptime = TimeSpan.FromSeconds(Stopwatch.GetTimestamp()/Stopwatch.Frequency); 
+
                 switch (ParameterSetName)
                 {
-                    case "Timespan":
+                    case TimespanParameterSet:
                         // return TimeSpan of time since the system started up
                         WriteObject(uptime);
                         break;
-                    case "Since":
+                    case SinceParameterSet:
                         // return Datetime when the system started up
-                        WriteObject(System.DateTime.Now.Subtract(uptime));
+                        WriteObject(DateTime.Now.Subtract(uptime));
                         break;
                 }
             }
             else
             {
-                WriteDebug("System.Diagnostics.Stopwatch.IsHighResolution return 'False'.");
-                string msg = "Platform is not supported";
-                Exception exc = new Exception(msg);
-                ThrowTerminatingError(new ErrorRecord(exc, "UptimePlatformUnsupported", ErrorCategory.NotImplemented, null));
+                WriteDebug("System.Diagnostics.Stopwatch.IsHighResolution returns 'False'.");
+                Exception exc = new NotSupportedException(GetUptimeStrings.GetUptimePlatformIsNotSupported);
+                ThrowTerminatingError(new ErrorRecord(exc, "GetUptimePlatformIsNotSupported", ErrorCategory.NotImplemented, null));
             }
         }
+
+        /// <summary>
+        /// Parameter set name for Timespan OutputType.
+        /// </summary>
+        private const string TimespanParameterSet = "Timespan";
+
+        /// <summary>
+        /// Parameter set name for DateTime OutputType.
+        /// </summary>
+        private const string SinceParameterSet = "Since";
    }
 }
