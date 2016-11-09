@@ -21,17 +21,17 @@
                 "buildOptions": {
                     "debugType": "portable"
                 }
-            },
+        },
         "Release": {
                 "buildOptions": {
                     "debugType": "portable"
                 }
-            },
+        },
         "CodeCoverage": {
                 "buildOptions": {
                     "debugType": "full"
                 }
-            }
+        }
     },
 
     "dependencies": {
@@ -50,6 +50,9 @@
                 "System.Windows.Forms": {
                     "type": "build"
                 }
+            },
+            "buildOptions": {
+                "debugType": "full"
             }
         }
     }

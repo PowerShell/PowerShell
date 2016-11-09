@@ -23,17 +23,17 @@
                 "buildOptions": {
                     "debugType": "portable"
                 }
-            },
+        },
         "Release": {
                 "buildOptions": {
                     "debugType": "portable"
                 }
-            },
+        },
         "CodeCoverage": {
                 "buildOptions": {
                     "debugType": "full"
                 }
-            }
+        }
     },
 
     "frameworks": {

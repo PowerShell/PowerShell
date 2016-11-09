@@ -25,17 +25,17 @@
                 "buildOptions": {
                     "debugType": "portable"
                 }
-            },
+        },
         "Release": {
                 "buildOptions": {
                     "debugType": "portable"
                 }
-            },
+        },
         "CodeCoverage": {
                 "buildOptions": {
                     "debugType": "full"
                 }
-            }
+        }
     },
 
     "frameworks": {
@@ -53,7 +53,10 @@
         "net451": {
             "frameworkAssemblies": {
                 "System.ServiceProcess": ""
-            } 
+            },
+            "buildOptions": {
+                "debugType": "full"
+            }
         }
     }
 }

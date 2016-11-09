@@ -23,17 +23,17 @@
                 "buildOptions": {
                     "debugType": "portable"
                 }
-            },
+        },
         "Release": {
                 "buildOptions": {
                     "debugType": "portable"
                 }
-            },
+        },
         "CodeCoverage": {
                 "buildOptions": {
                     "debugType": "full"
                 }
-            }
+        }
     },
 
     "dependencies": {
@@ -120,7 +120,8 @@
                     "exclude": [
                         "resources/ControlPanelResources.resx"
                     ]
-                }
+                },
+                "debugType": "full"
             }
         }
     }

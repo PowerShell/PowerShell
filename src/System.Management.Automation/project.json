@@ -23,17 +23,17 @@
                 "buildOptions": {
                     "debugType": "portable"
                 }
-            },
+        },
         "Release": {
                 "buildOptions": {
                     "debugType": "portable"
                 }
-            },
+        },
         "CodeCoverage": {
                 "buildOptions": {
                     "debugType": "full"
                 }
-            }
+        }
     },
 
     "dependencies": {
@@ -199,7 +199,8 @@
                 },
                 "embed": {
                     "exclude": [ "resources/CoreClrStubResources.resx" ]
-                }
+                },
+                "debugType": "full"
             },
             "frameworkAssemblies": {
                 "System.Runtime": "",

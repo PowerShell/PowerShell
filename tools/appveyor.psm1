@@ -157,12 +157,14 @@ function Invoke-AppVeyorBuild
         $result.Warnings
         throw "Tags must be CI, Feature, Scenario, or Slow"
       }
-      Start-PSBuild -FullCLR
-      Start-PSBuild -CrossGen -Configuration $buildConfiguration
+
       if(Test-DailyBuild)
       {
-          Start-PSBuild -CrossGen -Configuration 'CodeCoverage'
+          Start-PSBuild -Configuration 'CodeCoverage'
       }
+
+      Start-PSBuild -FullCLR
+      Start-PSBuild -CrossGen -Configuration $buildConfiguration
 }
 
 # Implements the AppVeyor 'install' step

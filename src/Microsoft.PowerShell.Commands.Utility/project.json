@@ -23,17 +23,17 @@
                 "buildOptions": {
                     "debugType": "portable"
                 }
-            },
+        },
         "Release": {
                 "buildOptions": {
                     "debugType": "portable"
                 }
-            },
+        },
         "CodeCoverage": {
                 "buildOptions": {
                     "debugType": "full"
                 }
-            }
+        }
     },
 
     "dependencies": {
@@ -138,7 +138,8 @@
                         "commands/utility/WebCmdlet/CoreCLR/WebResponseObject.CoreClr.cs",
                         "commands/utility/WebCmdlet/CoreCLR/WebResponseObjectFactory.CoreClr.cs"
                     ]
-                }
+                },
+                "debugType": "full"
             }
         }
     }

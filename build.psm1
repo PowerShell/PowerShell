@@ -1102,10 +1102,11 @@ function Start-PSPackage {
     Write-Verbose "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'" -Verbose
 
     # Make sure the most recent build satisfies the package requirement
-    if (-not $Script:Options -or                       ## Start-PSBuild hasn't been executed yet
-        -not $Script:Options.CrossGen -or              ## Last build didn't specify -CrossGen
-        $Script:Options.Runtime -ne $Runtime -or       ## Last build wasn't for the required RID
-        $Script:Options.Configuration -eq "Debug" -or  ## Last build was with 'Debug' configuration
+    if (-not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
+        -not $Script:Options.CrossGen -or                       ## Last build didn't specify -CrossGen
+        $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
+        $Script:Options.Configuration -eq "Debug" -or           ## Last build was with 'Debug' configuration
+        $Script:Options.Configuration -ne $Configuration -or    ## Last build was with 'CodeCoverage' configuration
         $Script:Options.Framework -ne "netcoreapp1.0") ## Last build wasn't for CoreCLR
     {
         # It's possible that the most recent build doesn't satisfy the package requirement but

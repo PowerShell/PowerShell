@@ -296,56 +296,54 @@ function Compare-CodeCoverage
     (Get-CodeCoverageChange -r1 $Run1 -r2 $Run2)
 }
 
-## We are taking dependency on private build of OpenCover till a new release is available.
-## This is required for collecting code coverage numbers with portable PDBs.  
 <#
 .Synopsis
-   Install OpenCover by downloading the 4.6.589 version.  
+   Install OpenCover by downloading the 4.6.519 version.
 .Description
-   Install OpenCover version 4.6.589. This version supports debugType as portable.
+   Install OpenCover version 4.6.519.
 #>
 function Install-OpenCover
 {
     param ( 
-        [parameter()][string]$version = "4.6.589",
-        [parameter()][string]$targetDirectory = $PWD,
-        [parameter()][switch]$force
+        [parameter()][string]$Version = "4.6.519",
+        [parameter(Mandatory=$true)][string]$TargetDirectory,
+        [parameter()][switch]$Force
         )
 
-    $webclient = [System.Net.WebClient]::New()
+    $webclient = New-Object System.Net.WebClient
     $filename =  "opencover.${version}.zip"
-    $packageUrl = "https://ci.appveyor.com/api/buildjobs/xj78v6dac42uob8q/artifacts/main%2Fbin%2Fzip%2Fopencover.4.6.589.zip"
-    if ( test-path $PWD/$Filename ) 
+    $packageUrl = "https://github.com/OpenCover/opencover/releases/download/${version}/${filename}"
+    if ( test-path $env:TEMP/$Filename )
     {
         if ( $force ) 
         {
-            remove-item -force "$PWD/$Filename"
+            remove-item -force "$env:TEMP/$Filename"
         }
         else 
         {
-            throw "package already exists, not downloading"
+            throw "package already exists at $env:TEMP/$Filename, not downloading"
         }
     }
-    if ( test-path "$targetDirectory/OpenCover" ) 
+    if ( test-path "$TargetDirectory/OpenCover" )
     {
         if ( $force ) 
         {
-            remove-item -recurse -force "$targetDirectory/OpenCover"
+            remove-item -recurse -force "$TargetDirectory/OpenCover"
         }
         else 
         {
-            throw "$targetDirectory/OpenCover exists"
+            throw "$TargetDirectory/OpenCover exists"
         }
     }
 
-    $webclient.DownloadFile($packageUrl, "$PWD/$filename")
-    if ( ! (test-path $filename) ) 
+    $webclient.DownloadFile($packageUrl, "$env:TEMP/$filename")
+    if ( ! (test-path $env:TEMP/$Filename) )
     {
         throw "Download failed: $packageUrl"
     }
     
     import-module Microsoft.PowerShell.Archive
-    Expand-ZipArchive -Path "$PWD/$filename" -DestinationPath "$targetDirectory/OpenCover"
+    Expand-ZipArchive -Path "$env:TEMP/$filename" -DestinationPath "$TargetDirectory/OpenCover"
 }
 
 <#
@@ -362,7 +360,7 @@ function Invoke-OpenCover
     param ( 
         [parameter()]$OutputLog = "$pwd/OpenCover.xml",
         [parameter(Mandatory=$true)]$TestDirectory,
-        [parameter()]$OpenCoverPath = "$HOME\AppData\Local\Apps\OpenCover", # this is the default install location for open cover
+        [parameter(Mandatory=$true)]$OpenCoverPath,
         [parameter(Mandatory=$true)]$PowerShellExeDirectory,
         [switch]$CIOnly
         )

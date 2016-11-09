@@ -9,25 +9,9 @@
     "configurations": {
         "Linux": {
             "buildOptions": {
-                "define": [ "UNIX" ],
-                "debugType": "portable"
+                "define": [ "UNIX" ]
             }
-        },
-        "Debug": {
-                "buildOptions": {
-                    "debugType": "portable"
-                }
-            },
-        "Release": {
-                "buildOptions": {
-                    "debugType": "portable"
-                }
-            },
-        "CodeCoverage": {
-                "buildOptions": {
-                    "debugType": "full"
-                }
-            }
+        }
     },
 
     "dependencies": {
@@ -65,6 +49,7 @@
             "imports": [ "dnxcore50" ],
             "buildOptions": {
                 "define": [ "CORECLR", "PORTABLE" ],
+                "debugType": "portable",
                 "compile": {
                     "exclude": [ "Providers/Inbox/Common/*" ]
                 }

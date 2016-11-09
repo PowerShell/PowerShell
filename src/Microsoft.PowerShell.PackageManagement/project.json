@@ -17,17 +17,17 @@
                 "buildOptions": {
                     "debugType": "portable"
                 }
-            },
+        },
         "Release": {
                 "buildOptions": {
                     "debugType": "portable"
                 }
-            },
+        },
         "CodeCoverage": {
                 "buildOptions": {
                     "debugType": "full"
                 }
-            }
+        }
     },
 
     "dependencies": {
@@ -62,6 +62,9 @@
             "dependencies": {
                 "Microsoft.PackageManagement.MsiProvider": "6.0.0-*",
                 "Microsoft.PackageManagement.MsuProvider": "6.0.0-*"
+            },
+            "buildOptions": {
+                "debugType": "full"
             }
         },
 

@@ -24,17 +24,17 @@
                 "buildOptions": {
                     "debugType": "portable"
                 }
-            },
+        },
         "Release": {
                 "buildOptions": {
                     "debugType": "portable"
                 }
-            },
+        },
         "CodeCoverage": {
                 "buildOptions": {
                     "debugType": "full"
                 }
-            }
+        }
     },
 
     "dependencies": {
@@ -66,6 +66,9 @@
             }
         },
         "net451": {
+            "buildOptions": {
+                "debugType": "full"
+            }
         }
     }
 }
