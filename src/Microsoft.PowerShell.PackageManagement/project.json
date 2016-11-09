@@ -13,19 +13,19 @@
             }
         },
         "Debug": {
-                "buildOptions": {
-                    "debugType": "portable"
-                }
+            "buildOptions": {
+                "debugType": "portable"
+            }
         },
         "Release": {
-                "buildOptions": {
-                    "debugType": "portable"
-                }
+            "buildOptions": {
+                "debugType": "portable"
+            }
         },
         "CodeCoverage": {
-                "buildOptions": {
-                    "debugType": "full"
-                }
+            "buildOptions": {
+                "debugType": "full"
+            }
         }
     },
 
