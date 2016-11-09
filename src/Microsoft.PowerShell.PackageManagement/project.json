@@ -9,8 +9,7 @@
     "configurations": {
         "Linux": {
             "buildOptions": {
-                "define": [ "UNIX" ],
-                "debugType": "portable"
+                "define": ["UNIX"]
             }
         },
         "Debug": {
