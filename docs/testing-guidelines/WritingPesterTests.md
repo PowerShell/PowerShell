@@ -14,7 +14,7 @@ Here's the simplest of tests
 
 ```powershell
 Describe "A variable can be assigned and retrieved" {
-    It "Create a variable and make sure it's value is correct" {
+    It "Create a variable and make sure its value is correct" {
        $a = 1
        $a | Should be 1
    }
