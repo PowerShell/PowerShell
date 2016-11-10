@@ -1037,10 +1037,15 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
                 throw new ArgumentNullException("request");
             }
 
+            var providerAssemblies = Enumerable.Empty<string>();
+
+#if !CORECLR
             //looks like registry needs to be here for supporting .msi packages
-            var providerAssemblies = (_initialized ? Enumerable.Empty<string>() : _defaultProviders)
+             providerAssemblies = (_initialized ? Enumerable.Empty<string>() : _defaultProviders)
                 .Concat(GetProvidersFromRegistry(Registry.LocalMachine, "SOFTWARE\\MICROSOFT\\PACKAGEMANAGEMENT"))
                 .Concat(GetProvidersFromRegistry(Registry.CurrentUser, "SOFTWARE\\MICROSOFT\\PACKAGEMANAGEMENT"));
+
+#endif
 
 #if !COMMUNITY_BUILD
             // todo: these should just be strong-named references. for now, just load them from the same directory.
