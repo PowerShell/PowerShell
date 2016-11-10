@@ -122,7 +122,7 @@ package will instead be created.
 
 On macOS, create a new branch at the release tag. For example:
 ``` powershell
-git checkout -b local-release-branch v.6.0.0-alpha.12
+git checkout -b local-release-branch v6.0.0-alpha.11
 ``` 
 Then run the following commands:
 ``` powershell
@@ -141,7 +141,7 @@ you can either run `Start-PSPackage` function manually on each of the Linux dist
 
 On a supported Linux distro, Ubuntu 14.04 for instance, create a new branch at the release tag. For example:
 ``` powershell
-git checkout -b local-release-branch v.6.0.0-alpha.12
+git checkout -b local-release-branch v6.0.0-alpha.11
 ``` 
 Then run the following commands:
 ``` powershell
@@ -162,7 +162,7 @@ It will start building 3 Docker images in parallel -- CentOS7, Ubuntu 14.04 and 
 When it's done, the created packages will be copied to "/PowerShell/docker/packages". For example:
 ``` sh
 cd /PowerShell/docker
-BUILDS=nightly BRANCH=v6.0.0-alpha.12 ./launch.sh
+BUILDS=nightly BRANCH=v6.0.0-alpha.11 ./launch.sh
 ```
 3. You can verify each package by starting a container of the corresponding Docker image.
 The created package is installed on the Docker image as the last step of building it.
@@ -197,7 +197,7 @@ The output of `Start-PSBuild` includes a `powershell.exe` executable which can s
 
 To create release packages, create a new branch at the release tag. For example:
 ``` powershell
-git checkout -b local-release-branch v.6.0.0-alpha.12
+git checkout -b local-release-branch v6.0.0-alpha.11
 ``` 
 
 #### Windows 10 and Server 2016 
@@ -219,3 +219,26 @@ Start-PSBuild -Clean -CrossGen -Runtime win81-x64 -Configuration Release
 Start-PSPackage -Type msi -WindowsDownLevel win81-x64  
 Start-PSPackage -Type zip -WindowsDownLevel win81-x64
 ```
+
+NuGet Packages
+==============
+
+Create a new branch at the release tag. For example:
+``` powershell
+git checkout -b local-release-branch v6.0.0-alpha.11
+```
+
+Run `Publish-NuGetFeed` to generate PowerShell NuGet packages:
+``` powershell
+Import-Module .\build.psm1 
+Start-PSBootstrap -Package
+Start-PSBuild -Clean -Publish
+$VersionSuffix = ((git describe) -split '-')[-1] -replace "\."
+Publish-NuGetFeed -VersionSuffix $VersionSuffix
+```
+
+PowerShell NuGet packages and the corresponding symbol packages will be generated at `PowerShell/nuget-artifacts` by default.
+Currently the NuGet packages published to [powershell-core feed][ps-core-feed] only contain assemblies built for Windows.
+Maintainers are working on including the assemblies built for non-Windows platforms.
+
+[ps-core-feed]: https://powershell.myget.org/gallery/powershell-core
