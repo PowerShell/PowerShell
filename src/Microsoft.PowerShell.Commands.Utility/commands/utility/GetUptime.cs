@@ -13,8 +13,8 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Get-Uptime
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Uptime", DefaultParameterSetName = TimespanParameterSet, HelpUri = "")]
-    [OutputType(typeof(System.TimeSpan))]
-    [OutputType(typeof(System.DateTime))]
+    [OutputType(typeof(TimeSpan), ParameterSetName = new string[] { TimespanParameterSet })]
+    [OutputType(typeof(DateTime), ParameterSetName = new string[] { SinceParameterSet })]
     public class GetUptimeCommand : PSCmdlet
     {
         /// <summary>
