@@ -135,7 +135,7 @@ Start-PSPackage
 ### Linux Package Creation
 
 To create packages for the supported Linux distros,
-you can either run `Start-PSPackage` function manually on each of the Linux distros or use Docker Build.
+you can either run `Start-PSPackage` manually on each of the Linux distros or use Docker Build.
 
 #### Manual Steps
 
@@ -150,21 +150,21 @@ Start-PSBootstrap -Package
 Start-PSBuild -Crossgen
 Start-PSPackage
 ```
-Repeat the steps on other supported Linux distros to generate the corresponding powershell core packages for those distros.
+Repeat the steps on other supported Linux distros to generate the corresponding powershell core packages.
 
 #### Docker Build
 
-1. Install Docker on Linux following [`docker/README.md`][docker-readme].
+- Install Docker on Linux following [`docker/README.md`][docker-readme].
 If the Docker container cannot access internet after installation,
 you may be able to fix it in [this way][docker-network-fix].
-2. In bash, run `/PowerShell/docker/launch.sh` with the release tag.
+- In bash, run `/PowerShell/docker/launch.sh` with the release tag.
 It will start building 3 Docker images in parallel -- CentOS7, Ubuntu 14.04 and Ubuntu 16.04.
 When it's done, the created packages will be copied to "/PowerShell/docker/packages". For example:
 ``` sh
 cd /PowerShell/docker
 BUILDS=nightly BRANCH=v6.0.0-alpha.11 ./launch.sh
 ```
-3. You can verify each package by starting a container of the corresponding Docker image.
+- You can verify each package by starting a container of the corresponding Docker image.
 The created package is installed on the Docker image as the last step of building it.
 For example:
 ``` sh
