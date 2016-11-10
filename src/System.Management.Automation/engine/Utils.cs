@@ -1577,6 +1577,8 @@ namespace System.Management.Automation.Internal
         internal static bool BypassOnlineHelpRetrieval;
         // It's useful to test that we don't depend on the ScriptBlock and AST objects and can use a re-parsed version.
         internal static bool IgnoreScriptBlockCache;
+        // Simulate 'System.Diagnostics.Stopwatch.IsHighResolution is false' to test Get-Uptime throw
+        internal static bool StopwatchIsNotHighResolution;
 
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, bool value)
