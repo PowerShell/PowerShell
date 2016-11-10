@@ -360,13 +360,22 @@ function Invoke-OpenCover
     param ( 
         [parameter()]$OutputLog = "$pwd/OpenCover.xml",
         [parameter(Mandatory=$true)]$TestDirectory,
-        [parameter(Mandatory=$true)]$OpenCoverPath,
+        [parameter()]$OpenCoverPath,
         [parameter(Mandatory=$true)]$PowerShellExeDirectory,
         [switch]$CIOnly
         )
 
     # check to be sure that OpenCover is present
-    $OpenCoverBin = "$OpenCoverPath\opencover.console.exe"
+
+    if(-not $PSBoundParameters.ContainsKey('OpenCoverPath'))
+    {        
+        $openCoverBin = (Get-Command -Name 'opencover.console' -ErrorAction Ignore).Source         
+    }
+    else 
+    {
+        $OpenCoverBin = "$OpenCoverPath\opencover.console.exe"
+    }
+
     if ( ! (test-path $OpenCoverBin)) 
     {
         throw "$OpenCoverBin does not exist"
