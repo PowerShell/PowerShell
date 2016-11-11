@@ -351,7 +351,18 @@ namespace Microsoft.PowerShell.Commands
                     HttpResponseMessage response = GetResponse(client, request);
                     response.EnsureSuccessStatusCode();
 
-                    string contentType = ContentHelper.GetContentType(response);
+                    //added try/catch due to possible lack of content type in the response header.
+                    //seems the only reason we are getting it here is for a log message?
+
+                    string contentType = null;
+                    try 
+                    { 
+                        ContentHelper.GetContentType(response);
+                    }
+                    catch {
+                        contentType = null;
+                    }
+
                     string respVerboseMsg = string.Format(CultureInfo.CurrentCulture,
                         "received {0}-byte response of content type {1}",
                         response.Content.Headers.ContentLength,
