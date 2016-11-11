@@ -1,5 +1,52 @@
 using namespace System.Diagnostics
 
+# Minishell (Singleshell) is a powershell concept.
+# Its primary use-case is when somebody executes a scriptblock in the new powershell process.
+# The objects are automatically marshelled to the child process and 
+# back to the parent session, so users can avoid custom
+# serialization to pass objects between two processes.
+
+Describe 'minishell for native executables' -Tag 'CI' {
+    
+    BeforeAll {
+        $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+    }
+
+    Context 'Streams from minishell' {
+
+        It 'gets a hashtable object from minishell' {
+            $output = & $powershell -noprofile { @{'a' = 'b'} }
+            ($output | measure).Count | Should Be 1
+            ($output.GetType().Name) | Should Be 'Hashtable'
+            $output['a'] | Should Be 'b'
+        }
+
+        It 'gets the error stream from minishell' {
+            $output = & $powershell -noprofile { Write-Error 'foo' } 2>&1
+            ($output | measure).Count | Should Be 1
+            ($output.GetType().Name) | Should Be 'ErrorRecord'
+            $output.FullyQualifiedErrorId | Should Be 'Microsoft.PowerShell.Commands.WriteErrorException'
+        }
+
+        It 'gets the information stream from minishell' {
+            $output = & $powershell -noprofile { Write-Information 'foo' } 6>&1
+            ($output.GetType().Name) | Should Be 'InformationRecord'
+            $output | Should Be 'foo'
+        }
+    }
+
+    Context 'Streams to minishell' {
+        It "passes input into minishell" {
+            $a = 1,2,3
+            $val  = $a | & $powershell -noprofile -command { $input }
+            $val.Count | Should Be 3
+            $val[0] | Should Be 1
+            $val[1] | Should Be 2
+            $val[2] | Should Be 3
+        }
+    }
+}
+
 Describe "ConsoleHost unit tests" -tags "Feature" {
 
     BeforeAll {
@@ -51,15 +98,6 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             {
                 $_.FullyQualifiedErrorId | Should Be "IncorrectValueForFormatParameter"
             }
-        }
-        
-        It "Verify Simple Interop Scenario Child Single Shell" {
-            $a = 1,2,3
-            $val  = $a | & $powershell  -noprofile -command { $input }
-            $val.Count | Should Be 3
-            $val[0] | Should Be 1
-            $val[1] | Should Be 2
-            $val[2] | Should Be 3
         }
         
         It "Verify Validate Dollar Error Populated should throw exception" {
