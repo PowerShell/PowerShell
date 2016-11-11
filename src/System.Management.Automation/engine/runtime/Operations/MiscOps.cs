@@ -410,6 +410,27 @@ namespace System.Management.Automation
                                                   commandRedirection, context);
                 }
 
+                var cmdletInfo = commandProcessor?.CommandInfo as CmdletInfo;
+                if (cmdletInfo?.ImplementingType == typeof(OutNullCommand))
+                {
+                    var commandsCount = pipelineProcessor.Commands.Count;
+                    if (commandsCount == 1)
+                    {
+                        // Out-Null is the only command, bail without running anything
+                        return;
+                    }
+
+                    // Out-Null is the last command, rewrite command before Out-Null to a null pipe, but
+                    // only if it didn't redirect anything, e.g. `Get-Stuff > o.txt | Out-Null`
+                    var nextToLastCommand = pipelineProcessor.Commands[commandsCount - 2];
+                    if (!nextToLastCommand.CommandRuntime.OutputPipe.IsRedirected)
+                    {
+                        pipelineProcessor.Commands.RemoveAt(commandsCount - 1);
+                        commandProcessor = nextToLastCommand;
+                        nextToLastCommand.CommandRuntime.OutputPipe = new Pipe {NullPipe = true};
+                    }
+                }
+
                 if (commandProcessor != null && !commandProcessor.CommandRuntime.OutputPipe.IsRedirected)
                 {
                     pipelineProcessor.LinkPipelineSuccessOutput(outputPipe ?? new Pipe(new List<object>()));
