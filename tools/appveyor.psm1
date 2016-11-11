@@ -157,6 +157,12 @@ function Invoke-AppVeyorBuild
         $result.Warnings
         throw "Tags must be CI, Feature, Scenario, or Slow"
       }
+
+      if(Test-DailyBuild)
+      {
+          Start-PSBuild -Configuration 'CodeCoverage'
+      }
+
       Start-PSBuild -FullCLR
       Start-PSBuild -CrossGen -Configuration $buildConfiguration
 }
@@ -319,6 +325,9 @@ function Invoke-AppVeyorTest
 
     Write-Host -Foreground Green 'Upload FullCLR test results'
     Update-AppVeyorTestResults -resultsFile $testResultsFileFullCLR
+
+    ## CodeCoverage
+    $env:CodeCoverageOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Configuration CodeCoverage))
  
     #
     # Fail the build, if tests failed
@@ -349,6 +358,7 @@ function Invoke-AppveyorFinish
 
         $zipFilePath = Join-Path $pwd "$name.zip"
         $zipFileFullPath = Join-Path $pwd "$name.FullCLR.zip"
+
         Add-Type -assemblyname System.IO.Compression.FileSystem
         Write-Verbose "Zipping ${env:CoreOutput} into $zipFilePath" -verbose
         [System.IO.Compression.ZipFile]::CreateFromDirectory($env:CoreOutput, $zipFilePath)
@@ -363,12 +373,23 @@ function Invoke-AppveyorFinish
         $artifacts.Add($zipFilePath)
         $artifacts.Add($zipFileFullPath)
 
-        # Create archive for test content
+        # Create archive for test content, OpenCover module and CodeCoverage build
         if(Test-DailyBuild) 
         {
             $zipTestContentPath = Join-Path $pwd 'tests.zip' 
             Compress-TestContent -Destination $zipTestContentPath
             $artifacts.Add($zipTestContentPath)
+
+            Add-Type -AssemblyName System.IO.Compression.FileSystem
+            $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath((Join-Path $PSScriptRoot '..\test\tools\OpenCover'))
+            $zipOpenCoverPath = Join-Path $pwd 'OpenCover.zip'
+            [System.IO.Compression.ZipFile]::CreateFromDirectory($resolvedPath, $zipOpenCoverPath) 
+            $artifacts.Add($zipOpenCoverPath)
+
+            $zipCodeCoveragePath = Join-Path $pwd "$name.CodeCoverage.zip"
+            Write-Verbose "Zipping ${env:CodeCoverageOutput} into $zipCodeCoveragePath" -verbose
+            [System.IO.Compression.ZipFile]::CreateFromDirectory($env:CodeCoverageOutput, $zipCodeCoveragePath)
+            $artifacts.Add($zipCodeCoveragePath)
         }
 
         if ($env:APPVEYOR_REPO_TAG_NAME)

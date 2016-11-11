@@ -1,14 +1,37 @@
 {
     "buildOptions": {
         "warningsAsErrors": true,
-        "emitEntryPoint": true,
-        "debugType": "portable"
+        "emitEntryPoint": true
     },
 
     "dependencies": {
         "Microsoft.NETCore.App": "1.1.0-preview1-001100-00",
         "Microsoft.DotNet.ProjectModel": "1.0.0-rc3-003121",
         "Microsoft.DotNet.Cli.Utils": "1.0.0-preview2-003121"
+    },
+
+    "configurations": {
+        "Linux": {
+            "buildOptions": {
+                "define": [ "UNIX" ],
+                "debugType": "portable"
+            }
+        },
+        "Debug": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "Release": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "CodeCoverage": {
+            "buildOptions": {
+                "debugType": "full"
+            }
+        }
     },
 
     "frameworks": {

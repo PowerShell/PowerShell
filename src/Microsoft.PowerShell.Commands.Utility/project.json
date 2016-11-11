@@ -15,7 +15,23 @@
     "configurations": {
         "Linux": {
             "buildOptions": {
-                "define": [ "UNIX" ]
+                "define": [ "UNIX" ],
+                "debugType": "portable"
+            }
+        },
+        "Debug": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "Release": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "CodeCoverage": {
+            "buildOptions": {
+                "debugType": "full"
             }
         }
     },
@@ -28,7 +44,6 @@
         "netstandard1.6": {
             "buildOptions": {
                 "define": [ "CORECLR" ],
-                "debugType": "portable",
                 "compile": {
                     "exclude": [
                         "commands/utility/FormatAndOutput/OutGridView/ColumnInfo.cs",
@@ -123,7 +138,8 @@
                         "commands/utility/WebCmdlet/CoreCLR/WebResponseObject.CoreClr.cs",
                         "commands/utility/WebCmdlet/CoreCLR/WebResponseObjectFactory.CoreClr.cs"
                     ]
-                }
+                },
+                "debugType": "full"
             }
         }
     }

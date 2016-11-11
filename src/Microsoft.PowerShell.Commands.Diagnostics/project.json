@@ -10,6 +10,30 @@
         "warningsAsErrors": true
     },
 
+    "configurations": {
+        "Linux": {
+            "buildOptions": {
+                "define": [ "UNIX" ],
+                "debugType": "portable"
+            }
+        },
+        "Debug": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "Release": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "CodeCoverage": {
+            "buildOptions": {
+                "debugType": "full"
+            }
+        }
+    },
+
     "dependencies": {
         "System.Management.Automation": "6.0.0-*"
     },
@@ -19,7 +43,6 @@
             "imports": [ "dnxcore50" ],
             "buildOptions": {
                 "define": [ "CORECLR" ],
-                "debugType": "portable",
                 "compile": {
                     "excludeFiles": [
                         "PdhSafeHandle.cs",
@@ -42,7 +65,8 @@
             "buildOptions": {
                 "compile": {
                     "excludeFiles": [ "gen/GetEventResources.cs" ]
-                }
+                },
+                "debugType": "full"
             }
         }
     }
