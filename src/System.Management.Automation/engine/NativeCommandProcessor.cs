@@ -1433,7 +1433,7 @@ namespace System.Management.Automation
 
     internal class ProcessOutputHandler
     {
-        private const string XmlCliTag = "#< CLIXML";
+        internal const string XmlCliTag = "#< CLIXML";
 
         private int _refCount;
         private BlockingCollection<ProcessOutputObject> _queue;
@@ -1686,14 +1686,12 @@ namespace System.Management.Automation
         {
             Dbg.Assert(command != null, "Caller should validate the parameter");
             _command = command;
-
-            _pipeline = ScriptBlock.Create("Out-String -Stream").GetSteppablePipeline();
-            _pipeline.Begin(true);
         }
 
         #endregion constructor
 
         private SteppablePipeline _pipeline;
+        private Serializer _xmlSerializer;
 
         /// <summary>
         /// Add an object to write to process
@@ -1708,6 +1706,18 @@ namespace System.Management.Automation
                 return;
             }
 
+            if (_inputFormat == NativeCommandIOFormat.Text)
+            {
+                AddTextInput(input);
+            }
+            else // Xml
+            {
+                AddXmlInput(input);
+            }
+        }
+
+        private void AddTextInput(object input)
+        {
             Array formattedObjects = _pipeline.Process(input);
             foreach (var item in formattedObjects)
             {
@@ -1726,6 +1736,20 @@ namespace System.Management.Automation
                     // stop foreach execution
                     break;
                 }
+            }
+        }
+
+        private void AddXmlInput(object input)
+        {
+            try
+            {
+                _xmlSerializer.Serialize(input);
+            }
+            catch (IOException)
+            {
+                // we are assuming that process is already finished
+                // we should just stop processing at this point
+                this.Done();
             }
         }
 
@@ -1761,6 +1785,17 @@ namespace System.Management.Automation
             _streamWriter.AutoFlush = true;
 
             _inputFormat = inputFormat;
+
+            if (_inputFormat == NativeCommandIOFormat.Xml)
+            {
+                _streamWriter.WriteLine(ProcessOutputHandler.XmlCliTag);
+                _xmlSerializer = new Serializer(XmlWriter.Create(_streamWriter));
+            }
+            else // Text
+            {
+                _pipeline = ScriptBlock.Create("Out-String -Stream").GetSteppablePipeline();
+                _pipeline.Begin(true);
+            }
         }
 
         bool _stopping = false;
@@ -1789,6 +1824,12 @@ namespace System.Management.Automation
                 _pipeline.End();
                 _pipeline.Dispose();
                 _pipeline = null;
+            }
+
+            if (_xmlSerializer != null)
+            {
+                _xmlSerializer.Done();
+                _xmlSerializer = null;
             }
 
             // streamWriter is present, only if we call Start method
