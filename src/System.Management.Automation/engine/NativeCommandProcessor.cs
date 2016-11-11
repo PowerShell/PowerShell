@@ -1825,9 +1825,14 @@ namespace System.Management.Automation
             // the calls are on the same thread, so there is no race condition.
             if (_pipeline != null)
             {
-                AddTextInputFromFormattedArray(_pipeline.End());
+                var finalResults = _pipeline.End();
                 _pipeline.Dispose();
                 _pipeline = null;
+                // AddTextInputFromFormattedArray can recursively call Done(),
+                // if the downstream process already exited.
+                // to Prevent it, we first finalize the pipeline and set it to null,
+                // then calling the result processing for the last time
+                AddTextInputFromFormattedArray(finalResults);
             }
 
             if (_xmlSerializer != null)
