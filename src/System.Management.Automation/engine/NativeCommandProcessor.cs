@@ -1718,7 +1718,11 @@ namespace System.Management.Automation
 
         private void AddTextInput(object input)
         {
-            Array formattedObjects = _pipeline.Process(input);
+            AddTextInputFromFormattedArray(_pipeline.Process(input));
+        }
+
+        private void AddTextInputFromFormattedArray(Array formattedObjects)
+        {
             foreach (var item in formattedObjects)
             {
                 string line = PSObject.ToStringParser(_command.Context, item);
@@ -1821,7 +1825,7 @@ namespace System.Management.Automation
             // the calls are on the same thread, so there is no race condition.
             if (_pipeline != null)
             {
-                _pipeline.End();
+                AddTextInputFromFormattedArray(_pipeline.End());
                 _pipeline.Dispose();
                 _pipeline = null;
             }
