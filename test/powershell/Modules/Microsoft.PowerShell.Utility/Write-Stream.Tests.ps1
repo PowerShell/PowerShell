@@ -75,6 +75,18 @@ Describe "Stream writer tests" -Tags "CI" {
            $result = Write-Information "Test Message" *>&1
            $result.GetType().Fullname | Should be "System.Management.Automation.InformationRecord"
            $result.NativeThreadId | Should Not Be 0
+           $result.ProcessId | Should Be $pid
+           if ($IsWindows)
+           {
+               # Use Match instead of Be so we can avoid dealing with a potential domain name
+               $result.Computer | Should Match ".*${env:COMPUTERNAME}"
+               $result.User | Should Match ".*${env:USERNAME}"
+           }
+           else
+           {
+               $result.Computer | Should Be $(uname -n)
+               $result.User | Should Be $(whoami)
+           }
            "$result" | Should be "Test Message"
        }
     }
