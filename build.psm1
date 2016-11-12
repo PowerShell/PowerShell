@@ -1247,7 +1247,7 @@ function New-UnixPackage {
     }
 
     foreach ($Dependency in "fpm", "ronn") {
-        if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Publish")) {
+        if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
             throw "Dependency precheck failed!"
         }
     }
