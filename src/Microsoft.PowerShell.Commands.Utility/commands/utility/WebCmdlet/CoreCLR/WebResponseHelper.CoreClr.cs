@@ -46,7 +46,6 @@ namespace Microsoft.PowerShell.Commands
             }
             catch 
             {
-
                 contentType = null;
             }
             return ContentHelper.IsText(contentType);

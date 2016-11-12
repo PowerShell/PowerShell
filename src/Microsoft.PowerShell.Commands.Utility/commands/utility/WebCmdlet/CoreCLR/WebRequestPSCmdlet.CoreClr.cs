@@ -353,11 +353,10 @@ namespace Microsoft.PowerShell.Commands
 
                     //added try/catch due to possible lack of content type in the response header.
                     //seems the only reason we are getting it here is for a log message?
-
                     string contentType = null;
                     try 
                     { 
-                        ContentHelper.GetContentType(response);
+                        contentType = ContentHelper.GetContentType(response);
                     }
                     catch {
                         contentType = null;
