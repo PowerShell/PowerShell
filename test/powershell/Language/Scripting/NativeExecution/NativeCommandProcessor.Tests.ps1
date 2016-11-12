@@ -1,4 +1,4 @@
-Describe 'native commands lifecycle' -tags 'CI' {
+Describe 'native commands lifecycle' -tags 'Feature' {
 
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
@@ -6,7 +6,7 @@ Describe 'native commands lifecycle' -tags 'CI' {
 
     It "native | ps | native doesn't block" {
         $first = $true
-        & $powershell -command '1..5 | % {Start-Sleep -mill 100; $_}' | %{$_} | & $powershell -command '$input' | % {
+        & $powershell -command '1..10 | % {Start-Sleep -mill 100; $_}' | %{$_} | & $powershell -command '$input' | % {
             if ($first)
             {
                 $first = $false
