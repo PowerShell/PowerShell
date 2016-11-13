@@ -4,6 +4,7 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
+using System;
 using System.Net.Http;
 using System.Globalization;
 
@@ -44,9 +45,8 @@ namespace Microsoft.PowerShell.Commands
             try { 
                 contentType = response.Content.Headers.ContentType.MediaType;
             }
-            catch 
+            catch (NullReferenceException) 
             {
-                contentType = null;
             }
             return ContentHelper.IsText(contentType);
         }

@@ -351,15 +351,16 @@ namespace Microsoft.PowerShell.Commands
                     HttpResponseMessage response = GetResponse(client, request);
                     response.EnsureSuccessStatusCode();
 
-                    //added try/catch due to possible lack of content type in the response header.
-                    //seems the only reason we are getting it here is for a log message?
+                    //It is possible for a response to not include Content-Type in the reponse
+                    //header in which case GetContentType will throw a nullReference exception.
+                    //Try to get the ContentType, otherwise catch the resulting exception.
                     string contentType = null;
                     try 
                     { 
                         contentType = ContentHelper.GetContentType(response);
                     }
-                    catch {
-                        contentType = null;
+                    catch (NullReferenceException) 
+                    {
                     }
 
                     string respVerboseMsg = string.Format(CultureInfo.CurrentCulture,
