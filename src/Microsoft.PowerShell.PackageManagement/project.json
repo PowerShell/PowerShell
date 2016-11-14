@@ -11,6 +11,21 @@
             "buildOptions": {
                 "define": ["UNIX"]
             }
+        },
+        "Debug": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "Release": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "CodeCoverage": {
+            "buildOptions": {
+                "debugType": "full"
+            }
         }
     },
 
@@ -46,14 +61,16 @@
             "dependencies": {
                 "Microsoft.PackageManagement.MsiProvider": "6.0.0-*",
                 "Microsoft.PackageManagement.MsuProvider": "6.0.0-*"
+            },
+            "buildOptions": {
+                "debugType": "full"
             }
         },
 
         "netstandard1.6": {
             "imports": [ "dnxcore50" ],
             "buildOptions": {
-                "define": ["CORECLR"],
-                "debugType": "portable"
+                "define": ["CORECLR"]
             }
         }
     }

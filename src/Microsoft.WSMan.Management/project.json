@@ -14,12 +14,35 @@
         "Microsoft.WSMan.Runtime": "6.0.0-*"
     },
 
+    "configurations": {
+        "Linux": {
+            "buildOptions": {
+                "define": [ "UNIX" ],
+                "debugType": "portable"
+            }
+        },
+        "Debug": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "Release": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "CodeCoverage": {
+            "buildOptions": {
+                "debugType": "full"
+            }
+        }
+    },
+
     "frameworks": {
         "netstandard1.6": {
             "imports": [ "dnxcore50" ],
             "buildOptions": {
                 "define": [ "CORECLR" ],
-                "debugType": "portable",
                 "compile": {
                     "exclude": [
                         "WsManSnapin.cs"
@@ -30,7 +53,10 @@
         "net451": {
             "frameworkAssemblies": {
                 "System.ServiceProcess": ""
-            } 
+            },
+            "buildOptions": {
+                "debugType": "full"
+            }
         }
     }
 }

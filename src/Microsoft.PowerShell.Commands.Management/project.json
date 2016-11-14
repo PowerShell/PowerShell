@@ -15,7 +15,23 @@
     "configurations": {
         "Linux": {
             "buildOptions": {
-                "define": [ "UNIX" ]
+                "define": [ "UNIX" ],
+                "debugType": "portable"
+            }
+        },
+        "Debug": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "Release": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "CodeCoverage": {
+            "buildOptions": {
+                "debugType": "full"
             }
         }
     },
@@ -29,7 +45,6 @@
             "imports": [ "dnxcore50" ],
             "buildOptions": {
                 "define": [ "CORECLR" ],
-                "debugType": "portable",
                 "compile": {
                     "exclude": [
                         "commands/management/ClearRecycleBinCommand.cs",
@@ -105,7 +120,8 @@
                     "exclude": [
                         "resources/ControlPanelResources.resx"
                     ]
-                }
+                },
+                "debugType": "full"
             }
         }
     }

@@ -1,9 +1,17 @@
 FROM microsoft/powershell:ubuntu14.04
 MAINTAINER Andrew Schwartzmeyer <andschwa@microsoft.com>
+LABEL Readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
+LABEL Description="This Dockerfile will install and build the latest release of PS."
 
 ARG fork=PowerShell
 ARG branch=master
+SHELL ["powershell", "-command"]
+RUN git clone --recursive https://github.com/$env:fork/PowerShell.git -b $env:branch; \
+    Set-Location PowerShell; \
+    Import-Module ./build.psm1; \
+    Start-PSBootstrap -Package -NoSudo; \
+    Start-PSBuild -Crossgen; \
+    Start-PSPackage;
 
-COPY bootstrap.ps1 /
-RUN powershell -f bootstrap.ps1 \
-    && dpkg -i PowerShell/powershell*.deb
+SHELL ["/bin/sh", "-c"]
+RUN dpkg -i PowerShell/powershell*.deb

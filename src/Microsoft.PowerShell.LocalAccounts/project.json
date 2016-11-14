@@ -14,18 +14,44 @@
         "System.Management.Automation": "6.0.0-*"
     },
 
+    "configurations": {
+        "Linux": {
+            "buildOptions": {
+                "define": [ "UNIX" ],
+                "debugType": "portable"
+            }
+        },
+        "Debug": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "Release": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "CodeCoverage": {
+            "buildOptions": {
+                "debugType": "full"
+            }
+        }
+    },
+
     "frameworks": {
         "netstandard1.6": {
             "imports": [ "dnxcore50" ],
             "buildOptions": {
-                "define": [ "CORECLR" ],
-                "debugType": "portable"
+                "define": [ "CORECLR" ]
             },
             "dependencies": {
                 "System.Net.NameResolution": "4.3.0-preview1-24530-04"
             }
         },
         "net451": {
+            "buildOptions": {
+                "debugType": "full"
+            }
         }
     }
 }

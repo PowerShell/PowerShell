@@ -3,6 +3,30 @@
     "version": "6.0.0-*",
     "description": "PowerShell top-level project with .NET CLI PowerShell app",
 
+    "configurations": {
+        "Linux": {
+            "buildOptions": {
+                "define": [ "UNIX" ],
+                "debugType": "portable"
+            }
+        },
+        "Debug": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "Release": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "CodeCoverage": {
+            "buildOptions": {
+                "debugType": "full"
+            }
+        }
+    },
+
     "buildOptions": {
         "xmlDoc": true,
         "warningsAsErrors": true,
@@ -69,8 +93,7 @@
         "netcoreapp1.0": {
             "imports": [ "dnxcore50", "portable-net45+win8" ],
             "buildOptions": {
-                "define": [ "CORECLR" ],
-                "debugType": "portable"
+                "define": [ "CORECLR" ]
             },
             "dependencies": {
                 "Microsoft.NETCore.App": "1.1.0-preview1-001100-00"
