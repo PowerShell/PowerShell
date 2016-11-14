@@ -171,13 +171,13 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Write-Information command
     /// 
     /// </summary>
-    [Cmdlet("Write", "Information", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=525909", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommunications.Write, "Information", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=525909", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteInformationCommand : PSCmdlet
     {
         /// <summary>
         /// Object to be sent to the Information stream.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true)]
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [Alias("Msg")]
         public Object MessageData { get; set; }
 
@@ -206,10 +206,18 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+        }
 
+        /// <summary>
+        /// This method implements the ProcessRecord method for Write-Information command
+        /// </summary>
+        protected override void ProcessRecord()
+        {
             WriteInformation(MessageData, Tags);
         }
+
     }//WriteInformationCommand
+
     #endregion WriteInformationCommand
 
 
