@@ -108,6 +108,11 @@ Two helper functions are part of the build.psm1 module to help with that:
 * `Get-PSPesterFailure` will parse the NUnit test result log and return PowerShell objects for each failure so you can do additional filtering, sorting, grouping, etc...
 * `Format-PSPesterFailure` will call `Get-PSPesterFailure` if no parameters are provided and show just the failures at the console similar to what Pester displays
 
+```PowerShell
+Start-PSPester    # summary shows failures
+Format-PSPesterFailure
+```
+
 ### What happens after your PR?
 When your PR has successfully passed the CI test gates, your changes will be used to create PowerShell binaries which can be run
 in Microsoft's internal test frameworks.
