@@ -34,7 +34,7 @@ Contributing to Issues
 * If you can't find your issue already,
   [open a new issue](https://github.com/PowerShell/PowerShell/issues/new),
   making sure to follow the directions as best you can.
-* If the issue is marked as [`0 - Backlog`][help-wanted-issue],
+* If the issue is marked as [`Up-for-Grabs`][up-for-grabs],
   the PowerShell maintainers are looking for help with the issue.
 
 Contributing to Documentation
@@ -289,5 +289,5 @@ Once you sign a CLA, all your existing and future pull requests will be labeled 
 [good-git-resources]: https://help.github.com/articles/good-resources-for-learning-git-and-github/
 [contribute-issues]: #contributing-to-issues
 [open-issue]: https://github.com/PowerShell/PowerShell/issues
-[help-wanted-issue]: https://github.com/PowerShell/PowerShell/issues?q=is%3Aopen+is%3Aissue+label%3A%220%20-%20Backlog%22
+[help-wanted-issue]: https://github.com/powershell/powershell/issues?q=is%3Aopen+is%3Aissue+label%3AUp-for-Grabs
 [semantic linefeeds]: http://rhodesmill.org/brandon/2012/one-sentence-per-line/
