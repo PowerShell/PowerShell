@@ -851,7 +851,7 @@ function Install-Dotnet {
     [CmdletBinding()]
     param(
         [string]$Channel = "rel-1.0.0",
-        [string]$Version = "latest",
+        [string]$Version,
         [switch]$NoSudo
     )
 
