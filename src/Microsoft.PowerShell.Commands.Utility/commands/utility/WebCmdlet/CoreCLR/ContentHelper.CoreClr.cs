@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
         internal static Encoding GetEncoding(HttpResponseMessage response)
         {
                 
-            //ContentType may not exist in response header.
+            // ContentType may not exist in response header.
             string charSet = response.Content.Headers.ContentType?.CharSet;
             return GetEncodingOrDefault(charSet);
         }
@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         internal static string GetContentType(HttpResponseMessage response)
         {
             
-            //ContentType may not exist in response header.  Return null if not.
+            // ContentType may not exist in response header.  Return null if not.
             string contentType = response.Content.Headers.ContentType?.MediaType;
             return contentType;
         }
