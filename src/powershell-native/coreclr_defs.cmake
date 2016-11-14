@@ -61,7 +61,7 @@ if (BUILD_ARCH_AMD64)
     add_definitions(-D_WIN64)
     add_definitions(-DAMD64)
     add_definitions(-DBIT64=1)
-elseif (BUILD_ARCH_I386)
+elseif (BUILD_ARCH_X86)
     add_definitions(-D_X86_)
 elseif (BUILD_ARCH_ARM)
     add_definitions(-D_ARM_)
@@ -116,9 +116,9 @@ add_compile_options(/Zm200) # Specify Precompiled Header Memory Allocation Limit
 add_compile_options(/Zi) # enable debugging information
 add_compile_options(/ZH:SHA_256) # use SHA256 for generating hashes of compiler processed source files.
 
-if (BUILD_ARCH_I386)
+if (BUILD_ARCH_X86)
    add_compile_options(/Gz)
-endif (BUILD_ARCH_I386)
+endif (BUILD_ARCH_X86)
 
 add_compile_options($<$<OR:$<CONFIG:Release>,$<CONFIG:Relwithdebinfo>>:/GL>)
 add_compile_options($<$<OR:$<OR:$<CONFIG:Release>,$<CONFIG:Relwithdebinfo>>,$<CONFIG:Checked>>:/O1>)
@@ -146,7 +146,7 @@ if (BUILD_ARCH_AMD64)
   add_definitions(-D_TARGET_AMD64_=1)
 elseif (BUILD_ARCH_ARM)
   add_definitions(-D_TARGET_ARM_=1)
-elseif (BUILD_ARCH_I386)
+elseif (BUILD_ARCH_X86)
   add_definitions(-D_TARGET_X86_=1)
 endif (BUILD_ARCH_AMD64)
 
@@ -157,11 +157,11 @@ add_definitions(-D_WIN32_WINNT=${WIN_VERSION_WIN8})
 add_definitions(-DWIN32_LEAN_AND_MEAN=1)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
-if(BUILD_ARCH_AMD64 OR BUILD_ARCH_I386)
+if(BUILD_ARCH_AMD64 OR BUILD_ARCH_X86)
     # Only enable edit and continue on windows x86 and x64.
     # Exclude arm & arm64
     add_definitions(-DEnC_SUPPORTED)
-endif(BUILD_ARCH_AMD64 OR BUILD_ARCH_I386)
+endif(BUILD_ARCH_AMD64 OR BUILD_ARCH_X86)
 
 add_definitions(-DUNICODE)
 add_definitions(-D_UNICODE)
