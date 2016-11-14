@@ -330,17 +330,31 @@ foo
             }
         }
     }
+}
 
+Describe "Console host api tests" -Tag CI {
     Context "String escape sequences" {
-        It "Should properly calculate buffer cell width" {
-            $esc = [char]0x1b
-            $host.UI.RawUI.LengthInBufferCells("abc") | Should Be 3
-            $host.UI.RawUI.LengthInBufferCells("$esc[31mabc") | Should Be 3
-            $host.UI.RawUI.LengthInBufferCells("$esc[31mabc$esc[0m") | Should Be 3
+        $esc = [char]0x1b
+        $testCases = 
+            @{InputObject = "abc"; Length = 3; Name = "No escapes"},
+            @{InputObject = "${esc} [31mabc"; Length = 9; Name = "Malformed escape - extra space"},
+            @{InputObject = "${esc}abc"; Length = 4; Name = "Malformed escape - no csi"},
+            @{InputObject = "[31mabc"; Length = 7; Name = "Malformed escape - no escape"}
 
-            $host.UI.RawUI.LengthInBufferCells("${esc} [31mabc") | Should Be 9
-            $host.UI.RawUI.LengthInBufferCells("${esc}abc") | Should Be 4
-            $host.UI.RawUI.LengthInBufferCells("[31mabc") | Should Be 7
+        $testCases += if ($host.UI.SupportsVirtualTerminal)
+        {
+            @{InputObject = "$esc[31mabc"; Length = 3; Name = "Escape at start"}
+            @{InputObject = "$esc[31mabc$esc[0m"; Length = 3; Name = "Escape at start and end"}
+        }
+        else
+        {
+            @{InputObject = "$esc[31mabc"; Length = 8; Name = "Escape at start - no virtual term support"}
+            @{InputObject = "$esc[31mabc$esc[0m"; Length = 12; Name = "Escape at start and end - no virtual term support"}
+        }
+
+        It "Should properly calculate buffer cell width of '<Name>'" -TestCases $testCases {
+            param($InputObject, $Length)
+            $host.UI.RawUI.LengthInBufferCells($InputObject) | Should Be $Length
         }
     }
 }
