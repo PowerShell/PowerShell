@@ -350,19 +350,8 @@ namespace Microsoft.PowerShell.Commands
 
                     HttpResponseMessage response = GetResponse(client, request);
                     response.EnsureSuccessStatusCode();
-
-                    //It is possible for a response to not include Content-Type in the reponse
-                    //header in which case GetContentType will throw a nullReference exception.
-                    //Try to get the ContentType, otherwise catch the resulting exception.
-                    string contentType = null;
-                    try 
-                    { 
-                        contentType = ContentHelper.GetContentType(response);
-                    }
-                    catch (NullReferenceException) 
-                    {
-                    }
-
+                    
+                    string contentType = ContentHelper.GetContentType(response);
                     string respVerboseMsg = string.Format(CultureInfo.CurrentCulture,
                         "received {0}-byte response of content type {1}",
                         response.Content.Headers.ContentLength,

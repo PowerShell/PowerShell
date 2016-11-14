@@ -628,4 +628,11 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result.Error | Should BeNullOrEmpty
     }
 
+    It "Validate Invoke-RestMethod handles missing Content-Type in response header" {
+
+        #Validate that exception is not thrown when response headers are missing Content-Type.
+        $command = "Invoke-RestMethod -Uri 'http://httpbin.org/response-headers?Content-Type='"
+        $result = ExecuteWebCommand -command $command
+        $result.Error | Should BeNullOrEmpty
+    }
 }

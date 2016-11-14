@@ -40,13 +40,11 @@ namespace Microsoft.PowerShell.Commands
         internal static bool IsText(HttpResponseMessage response)
         {
 
-            //catching exception in the event that the contenttype is not defined in the response Headers
+            //ContentType may not exist in response header.  Return null if not.
             string contentType = null;
-            try { 
+            if ( response.Content.Headers.ContentType != null)
+            { 
                 contentType = response.Content.Headers.ContentType.MediaType;
-            }
-            catch (NullReferenceException) 
-            {
             }
             return ContentHelper.IsText(contentType);
         }
