@@ -80,3 +80,13 @@ Describe "Adapter Tests" -tags "CI" {
         $val | Should Be "book"
     }
 }
+
+Describe "Adapter XML Tests" -tags "CI" {
+    It "Can set XML node property to non-string object" {
+        [xml]$x  = "<root><data/></root>"
+        $rval = @{c=1}
+        # rval will be implicitly converted to `string` type
+        { $x.root.data = $rval } | Should Not Throw
+        $x.root.data | Should Be $rval.ToString()
+    }
+}

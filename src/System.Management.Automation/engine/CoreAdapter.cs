@@ -4911,7 +4911,8 @@ namespace System.Management.Automation
         /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
-            string valueString = setValue as string;
+            // XML is always a string so implicitly convert to string
+            string valueString = setValue?.ToString();
             if (valueString == null)
             {
                 throw new SetValueException("XmlNodeSetShouldBeAString",
