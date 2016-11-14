@@ -9,12 +9,6 @@ if (NOT $ENV{${WindowsSDKVersion}})
     message (FATAL_ERROR "WindowsSDKVersion environment variable not found")
 endif ()
 
-if (NOT $ENV{${Platform}})
-    message(FATAL_ERROR "Platform environment variable not found")
-else ()
-    SET(WindowsSDKPlatform "$ENV{Platform}")
-endif ()
-
 #
 # Normalize the platform name
 #
@@ -22,6 +16,15 @@ endif ()
 #
 SET(BUILD_ARCH_ARM 0)
 SET(BUILD_ARCH_ARM64 0)
+SET(BUILD_ARCH_X86 0) 
+SET(BUILD_ARCH_AMD64 0)
+
+if (BUILD_TARGET_ARCH)
+    SET(WindowsSDKPlatform ${BUILD_TARGET_ARCH})
+else ()
+    message(FATAL_ERROR "Target architecture value should be specified through BUILD_TARGET_ARCH. Supported values are x64 or x86.")
+endif (BUILD_TARGET_ARCH)
+
 if (WindowsSDKPlatform STREQUAL "x64" OR WindowsSDKPlatform STREQUAL "X64" OR WindowsSDKPlatform STREQUAL "amd64" OR WindowsSDKPlatform STREQUAL "AMD64")
     SET(WindowsSDKPlatform "x64")
     SET(BUILD_ARCH_AMD64 1)
@@ -29,7 +32,7 @@ elseif (WindowsSDKPlatform STREQUAL "x86" OR WindowsSDKPlatform STREQUAL "X86")
     SET(WindowsSDKPlatform "x86")
     SET(BUILD_ARCH_X86 1)
 else()
-    message(FATAL_ERROR "Unsupported WindowsSDKPlatform ${WindowsSDKPlatform}")
+    message(FATAL_ERROR "Unsupported WindowsSDKPlatform: " ${WindowsSDKPlatform})
 endif ()
 
 #

@@ -75,6 +75,7 @@ function Start-PSBuild {
                      "debian.8-x64",
                      "centos.7-x64",
                      "win7-x64",
+                     "win7-x86",
                      "win81-x64",
                      "win10-x64",
                      "osx.10.11-x64")]
@@ -87,7 +88,6 @@ function Start-PSBuild {
         [Parameter(ParameterSetName='FullCLR')]
         [switch]$XamlGen,
 
-        [Parameter(ParameterSetName='FullCLR')]
         [ValidateSet('x86', 'x64')] # TODO: At some point, we need to add ARM support to match CoreCLR
         [string]$NativeHostArch = "x64",
 
@@ -320,7 +320,7 @@ cmd.exe /C cd /d "$currentLocation" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeH
                 $location = Get-Location
 
                 $command = @"
-cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=$OneCoreValue -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$msbuildConfiguration"
+cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=$OneCoreValue -DBUILD_TARGET_ARCH=$NativeHostArch -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$msbuildConfiguration"
 "@
                 log "  Executing Build Command: $command"
                 Start-NativeExecution { Invoke-Expression -Command:$command }
