@@ -40,11 +40,7 @@ namespace Microsoft.PowerShell.Commands
         {
 
             //ContentType may not exist in response header.  Return null if not.
-            string contentType = null;
-            if ( response.Content.Headers.ContentType != null)
-            { 
-                contentType = response.Content.Headers.ContentType.MediaType;
-            }
+            string contentType = response.Content.Headers.ContentType?.MediaType;
             return ContentHelper.IsText(contentType);
         }
     }

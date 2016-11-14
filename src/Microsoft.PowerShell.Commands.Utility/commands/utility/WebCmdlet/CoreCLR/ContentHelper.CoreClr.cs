@@ -16,11 +16,7 @@ namespace Microsoft.PowerShell.Commands
         {
                 
             //ContentType may not exist in response header.
-            string charSet = null;
-            if ( response.Content.Headers.ContentType != null)
-            { 
-                charSet = response.Content.Headers.ContentType.CharSet;
-            }
+            string charSet = response.Content.Headers.ContentType?.CharSet;
             return GetEncodingOrDefault(charSet);
         }
 
@@ -28,11 +24,7 @@ namespace Microsoft.PowerShell.Commands
         {
             
             //ContentType may not exist in response header.  Return null if not.
-            string contentType = null;
-            if ( response.Content.Headers.ContentType != null)
-            { 
-                contentType = response.Content.Headers.ContentType.MediaType;
-            }
+            string contentType = response.Content.Headers.ContentType?.MediaType;
             return contentType;
         }
 
