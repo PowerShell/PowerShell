@@ -350,7 +350,7 @@ namespace Microsoft.PowerShell.Commands
 
                     HttpResponseMessage response = GetResponse(client, request);
                     response.EnsureSuccessStatusCode();
-                    
+
                     string contentType = ContentHelper.GetContentType(response);
                     string respVerboseMsg = string.Format(CultureInfo.CurrentCulture,
                         "received {0}-byte response of content type {1}",
