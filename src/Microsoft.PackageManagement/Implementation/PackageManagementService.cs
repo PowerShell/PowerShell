@@ -1037,14 +1037,14 @@ namespace Microsoft.PackageManagement.Internal.Implementation {
                 throw new ArgumentNullException("request");
             }
 
+#if CORECLR
             var providerAssemblies = Enumerable.Empty<string>();
 
-#if !CORECLR
+#else
             //looks like registry needs to be here for supporting .msi packages
-             providerAssemblies = (_initialized ? Enumerable.Empty<string>() : _defaultProviders)
+            var providerAssemblies = (_initialized ? Enumerable.Empty<string>() : _defaultProviders)
                 .Concat(GetProvidersFromRegistry(Registry.LocalMachine, "SOFTWARE\\MICROSOFT\\PACKAGEMANAGEMENT"))
                 .Concat(GetProvidersFromRegistry(Registry.CurrentUser, "SOFTWARE\\MICROSOFT\\PACKAGEMANAGEMENT"));
-
 #endif
 
 #if !COMMUNITY_BUILD
