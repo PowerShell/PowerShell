@@ -859,7 +859,9 @@ function Install-Dotnet {
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
 
-    $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain"
+    # this url is temporarely alternated because of https://github.com/dotnet/cli/issues/4715
+    # it should be reverted back to "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain" ASAP
+    $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/9855dc0088cf7e56e24860c734f33fe8353f38a6/scripts/obtain"
 
     # Install for Linux and OS X
     if ($IsLinux -or $IsOSX) {
