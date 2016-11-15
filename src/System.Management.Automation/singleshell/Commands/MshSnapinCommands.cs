@@ -712,6 +712,7 @@ namespace Microsoft.PowerShell.Commands
         /// Name(s) of PSSnapIn(s).
         /// </summary>
         [Parameter(Position = 0, Mandatory = false)]
+        [ValidateNotNullOrEmpty()]
         public string[] Name
         {
             get

@@ -56,6 +56,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets and sets the user supplied username to be used while creating the PSCredential.
         /// </summary>
         [Parameter(Position = 0, Mandatory = false, ParameterSetName = messageSet)]
+        [ValidateNotNullOrEmpty()]
         public string UserName
         {
             get { return _userName; }
