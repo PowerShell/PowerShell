@@ -419,6 +419,7 @@ function New-PSOptions {
                      "ubuntu.16.04-x64",
                      "debian.8-x64",
                      "centos.7-x64",
+                     "win7-x86",
                      "win7-x64",
                      "win81-x64",
                      "win10-x64",
@@ -1090,7 +1091,7 @@ function Start-PSPackage {
         [string[]]$Type,
 
         # Generate windows downlevel package 
-        [ValidateSet("win81-x64", "win7-x64")]
+        [ValidateSet("win81-x64", "win7-x86", "win7-x64")]
         [ValidateScript({$IsWindows})]
         [string]$WindowsDownLevel
     )
