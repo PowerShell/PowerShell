@@ -1,7 +1,7 @@
 ﻿<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
-  <!-- MSI installs on Win8 and above -->
-  <?define MinOSVersionSupported = "VersionNT > 601" ?>
+  <!-- MSI installs on Win7 and above -->
+  <?define MinOSVersionSupported = "VersionNT >= 601" ?>
 
   <!-- The URL for add/remove programs -->
   <!-- TBD:Point to the actual release -->
@@ -14,7 +14,7 @@
 
   <!-- Generate Your Own GUID for both ID and UpgradeCode attributes. -->
   <!-- Note:  UpgradeCode GUID MUST REMAIN SAME THROUGHOUT ALL VERSIONS -->
-  <!-- Otherwise, updates won’t occur -->
+  <!-- Otherwise, updates won't occur -->
   <Product Id="$(var.ProductGuid)" Name="$(var.ProductVersionWithName)" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Microsoft Corporation" UpgradeCode="{f7ba3e58-0be8-443b-ac91-f99dd1e7bd3b}">
     <!-- Properties About The Package -->
     <Package Id="*" Keywords="Installer" InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="PowerShell package" Comments="PowerShell for every system" />
