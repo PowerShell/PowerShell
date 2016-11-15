@@ -4912,7 +4912,7 @@ namespace System.Management.Automation
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
             // XML is always a string so implicitly convert to string
-            string valueString = setValue?.ToString();
+            string valueString = LanguagePrimitives.ConvertTo<string>(setValue);
             if (valueString == null)
             {
                 throw new SetValueException("XmlNodeSetShouldBeAString",
