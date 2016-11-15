@@ -1701,7 +1701,7 @@ namespace System.Management.Automation
         {
             if (_stopping || _streamWriter == null)
             {
-                // if _streamWriter is already null, then we already called Done()
+                // if _streamWriter is already null, then we already called Dispose()
                 // so we should just discard the input.
                 return;
             }
@@ -1736,7 +1736,7 @@ namespace System.Management.Automation
                 {
                     // we are assuming that process is already finished
                     // we should just stop processing at this point
-                    this.Done();
+                    this.Dispose();
                     // stop foreach execution
                     break;
                 }
@@ -1753,7 +1753,7 @@ namespace System.Management.Automation
             {
                 // we are assuming that process is already finished
                 // we should just stop processing at this point
-                this.Done();
+                this.Dispose();
             }
         }
 
@@ -1812,36 +1812,26 @@ namespace System.Management.Automation
             _stopping = true;
         }
 
-        /// <summary>
-        /// This method wait for writer thread to finish.
-        /// </summary>
-        internal void Done()
+        internal void Dispose()
         {
-            // we allow call Done() multiply times.
+            // we allow call Dispose() multiply times.
             // For example one time from ProcessRecord() code path,
             // when we detect that process already finished
-            // and once from Complete() code path.
-            // Even though Done() could be called multiple times,
-            // the calls are on the same thread, so there is no race condition.
+            // and once from Done() code path.
+            // Even though Dispose() could be called multiple times,
+            // the calls are on the same thread, so there is no race condition
             if (_pipeline != null)
             {
-                var finalResults = _pipeline.End();
                 _pipeline.Dispose();
                 _pipeline = null;
-                // AddTextInputFromFormattedArray can recursively call Done(),
-                // if the downstream process already exited.
-                // to Prevent it, we first finalize the pipeline and set it to null,
-                // then calling the result processing for the last time
-                AddTextInputFromFormattedArray(finalResults);
             }
 
             if (_xmlSerializer != null)
             {
-                _xmlSerializer.Done();
                 _xmlSerializer = null;
             }
 
-            // streamWriter is present, only if we call Start method
+            // streamWriter can be null if we didn't call Start method
             if (_streamWriter != null)
             {
                 try
@@ -1856,6 +1846,29 @@ namespace System.Management.Automation
                 }
                 _streamWriter = null;
             }
+        }
+
+        internal void Done()
+        {
+            if (_inputFormat == NativeCommandIOFormat.Xml)
+            {
+                if (_xmlSerializer != null)
+                {
+                    _xmlSerializer.Done();
+                }
+            }
+            else // Text
+            {
+                // if _pipeline == null, we already called Dispose(),
+                // for example, because downstream process finished
+                if (_pipeline != null)
+                {
+                    var finalResults = _pipeline.End();
+                    AddTextInputFromFormattedArray(finalResults);
+                }
+            }
+
+            Dispose();
         }
     }
    
