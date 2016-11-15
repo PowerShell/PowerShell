@@ -82,11 +82,22 @@ Describe "Adapter Tests" -tags "CI" {
 }
 
 Describe "Adapter XML Tests" -tags "CI" {
-    It "Can set XML node property to non-string object" {
+    BeforeAll {
         [xml]$x  = "<root><data/></root>"
-        $rval = @{c=1}
-        # rval will be implicitly converted to `string` type
-        { $x.root.data = $rval } | Should Not Throw
-        $x.root.data | Should Be $rval.ToString()
+        $testCases =
+            @{ rval = @{testprop = 1}; value = 'hash (psobject)' },
+            @{ rval = 1;               value = 'int (codemethod)' },
+            @{ rval = "teststring";    value = 'string (codemethod)' }
+    }
+
+    Context "Can set XML node property to non-string object" {
+        It "rval is <value>" -TestCases $testCases {
+            # rval will be implicitly converted to 'string' type
+            param($rval)
+            {
+                { $x.root.data = $rval } | Should Not Throw
+                $x.root.data | Should Be $rval.ToString()
+            }
+        }
     }
 }
