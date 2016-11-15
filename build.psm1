@@ -1152,28 +1152,42 @@ function Start-PSPackage {
         Write-Warning "-Type was not specified, continuing with $Type!"
     }
 
+    # Split the version tokens
+    $VersionTokens = $Version -split "-"
+    
     # Build the name suffix for win-plat packages
     if ($IsWindows) {
-        $VersionTokens = $Version -split "-"
         if ($VersionTokens.Count -gt 1) {
+
+            # Add the server name to the $RunTime. $runtime produced by dotnet is same for client or server
+            switch ($Runtime)
+            {
+                'win81-x64' {$modifiedRuntime = 'win81-w2k12r2-x64'}
+                'win10-x64' {$modifiedRuntime = 'win10-w2k16-x64'}
+                Default {$modifiedRuntime = $Runtime}
+            }
+
             # Get the suffix like 'alpha.10-win81-x64'
-            $NameSuffix = $VersionTokens[1], $Runtime -join "-"
+            $NameSuffix = $VersionTokens[1], $modifiedRuntime -join "-"
         }
     }
 
     switch ($Type) {
         "zip" {
-            $zipPackagePath = Join-Path $PWD "$Name-$Version-$Runtime.zip"
-            Compress-Archive -Path $Source\* -DestinationPath $zipPackagePath
-            Write-Output $zipPackagePath
+            $Arguments = @{
+                ProductNameSuffix = $NameSuffix
+                ProductSourcePath = $Source
+                ProductVersion = $Version
+            }
+            New-ZipPackage @Arguments
         }
         "msi" {
             $Arguments = @{
                 ProductNameSuffix = $NameSuffix
-                ProductSourcePath = $Source;
-                ProductVersion = $Version;
-                AssetsPath = "$PSScriptRoot\assets";
-                LicenseFilePath = "$PSScriptRoot\assets\license.rtf";
+                ProductSourcePath = $Source
+                ProductVersion = $Version
+                AssetsPath = "$PSScriptRoot\assets"
+                LicenseFilePath = "$PSScriptRoot\assets\license.rtf"
                 # Product Guid needs to be unique for every PowerShell version to allow SxS install
                 ProductGuid = [Guid]::NewGuid()
             }
@@ -1182,17 +1196,17 @@ function Start-PSPackage {
         "appx" {
             $Arguments = @{
                 PackageNameSuffix = $NameSuffix
-                PackageVersion = $Version;
-                SourcePath = $Source;
+                PackageVersion = $Version
+                PackageSourcePath = $Source
                 AssetsPath = "$PSScriptRoot\assets"
             }
             New-AppxPackage @Arguments
         }
         default {
             $Arguments = @{
-                Type = $_;
-                Source = $Source;
-                Name = $Name;
+                Type = $_
+                PackageSourcePath = $Source
+                Name = $Name
                 Version = $Version
             }
             New-UnixPackage @Arguments
@@ -1202,13 +1216,14 @@ function Start-PSPackage {
 
 
 function New-UnixPackage {
-    [CmdletBinding()]param(
+    [CmdletBinding()]
+    param(
         [Parameter(Mandatory)]
         [ValidateSet("deb", "osxpkg", "rpm")]
         [string]$Type,
 
         [Parameter(Mandatory)]
-        [string]$Source,
+        [string]$PackageSourcePath,
 
         # Must start with 'powershell' but may have any suffix
         [Parameter(Mandatory)]
@@ -1269,7 +1284,7 @@ It consists of a cross-platform command-line shell and associated scripting lang
     # Setup staging directory so we don't change the original source directory
     $Staging = "$PSScriptRoot/staging"
     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $Staging
-    Copy-Item -Recurse $Source $Staging
+    Copy-Item -Recurse $PackageSourcePath $Staging
 
     # Rename files to given name if not "powershell"
     if ($Name -ne "powershell") {
@@ -2220,8 +2235,8 @@ function New-MSIPackage
     
     Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
 
-    Write-Verbose "You can find the MSI @ $msiLocationPath"
-    return $msiLocationPath
+    Write-Verbose "You can find the MSI @ $msiLocationPath" -Verbose
+    $msiLocationPath
 }
 
 # Function to create an Appx package compatible with Windows 8.1 and above
@@ -2245,7 +2260,7 @@ function New-AppxPackage
         # Source Path to the Binplaced Files
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $SourcePath,
+        [string] $PackageSourcePath,
 
         # Path to Assets folder containing Appx specific artifacts
         [Parameter(Mandatory = $true)]
@@ -2263,9 +2278,9 @@ function New-AppxPackage
         throw "Install Win10 SDK prior to running this script - https://go.microsoft.com/fwlink/p/?LinkID=698771"
     }
 
-    Write-Verbose "Ensure Source Path is valid - $SourcePath"
-    if (-not (Test-Path $SourcePath)) {
-        throw "Invalid SourcePath - $SourcePath"
+    Write-Verbose "Ensure Source Path is valid - $PackageSourcePath"
+    if (-not (Test-Path $PackageSourcePath)) {
+        throw "Invalid PackageSourcePath - $PackageSourcePath"
     }
 
     Write-Verbose "Ensure Assets Path is valid - $AssetsPath"
@@ -2308,10 +2323,10 @@ function New-AppxPackage
     $appxManifest = $appxManifest.Replace('#SQUARE150x150LOGO#', 'Assets\Powershell_256.png')
     $appxManifest = $appxManifest.Replace('#SQUARE44x44LOGO#', 'Assets\Powershell_48.png')
 
-    Write-Verbose "Place Appx Manifest in $SourcePath"
-    $appxManifest | Out-File "$SourcePath\AppxManifest.xml" -Force
+    Write-Verbose "Place Appx Manifest in $PackageSourcePath"
+    $appxManifest | Out-File "$PackageSourcePath\AppxManifest.xml" -Force
 
-    $assetsInSourcePath = Join-Path $SourcePath 'Assets'
+    $assetsInSourcePath = Join-Path $PackageSourcePath 'Assets'
     New-Item $assetsInSourcePath -type directory -Force | Out-Null
 
     Write-Verbose "Place AppxManifest dependencies such as images to $assetsInSourcePath"
@@ -2321,16 +2336,64 @@ function New-AppxPackage
     if ($PackageNameSuffix) {
         $appxPackageName = $appxPackageName, $PackageNameSuffix -join "-"
     }
-    $appxPackagePath = "$pwd\$appxPackageName.appx"
-    Write-Verbose "Calling MakeAppx from $makeappxExePath to create the package @ $appxPackagePath"
-    & $makeappxExePath pack /o /v /d $SourcePath  /p $appxPackagePath | Write-Verbose
+    $appxLocationPath = "$pwd\$appxPackageName.appx"
+    Write-Verbose "Calling MakeAppx from $makeappxExePath to create the package @ $appxLocationPath"
+    & $makeappxExePath pack /o /v /d $PackageSourcePath  /p $appxLocationPath | Write-Verbose
 
     Write-Verbose "Clean-up Appx artifacts and Assets from $SourcePath"
     Remove-Item $assetsInSourcePath -Recurse -Force -ErrorAction SilentlyContinue
-    Remove-Item "$SourcePath\AppxManifest.xml" -Force -ErrorAction SilentlyContinue
+    Remove-Item "$PackageSourcePath\AppxManifest.xml" -Force -ErrorAction SilentlyContinue
 
-    return $appxPackagePath
+    Write-Verbose "You can find the APPX @ $appxLocationPath" -Verbose
+    $appxLocationPath
 }
+
+# Function to create a zip file for Nano Server and xcopy deployment
+function New-ZipPackage
+{
+    [CmdletBinding()]
+    param (
+    
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductName = 'PowerShell',
+
+        # Suffix of the Name
+        [string] $ProductNameSuffix,
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductVersion,
+
+        # Source Path to the Product Files - required to package the contents into an Zip
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductSourcePath
+    )
+
+
+    If(Get-Command Compress-Archive -ErrorAction Ignore)
+    {
+        $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion -Verbose
+    
+        $productVersionWithName = $ProductName + "_" + $ProductVersion
+        Write-Verbose "Create Zip for Product $productVersionWithName"
+
+        $zipLocationPath = Join-Path $PWD "$productVersionWithName-$ProductNameSuffix.zip"
+        Compress-Archive -Path $ProductSourcePath\* -DestinationPath $zipPackagePath
+
+        Write-Verbose "You can find the Zip @ $zipLocationPath" -Verbose
+        $zipLocationPath
+
+    }
+    #TODO: Use .NET Api to do compresss-archive equivalent if the cmdlet is not present    
+    else
+    {
+        Write-Error -Message "Compress-Archive cmdlet is missing on this version of PowerShell"
+    }
+}
+
 
 function Start-CrossGen {
     [CmdletBinding()]
