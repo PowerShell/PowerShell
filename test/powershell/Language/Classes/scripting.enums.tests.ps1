@@ -3,6 +3,11 @@
 #
 
 Describe 'enums' -Tags "CI" {
+    Context 'Enum definition' {
+        It "Enum values definition have space-insensitive syntax" {
+            { enum E0 {e=0} } | Should Not Throw
+        }
+    }
 
     Context 'basic enums' {
         enum E1
