@@ -70,6 +70,19 @@ Describe "Stream writer tests" -Tags "CI" {
     }
 
     Context "Write-Information cmdlet" {
+        BeforeAll {
+            $ps = [powershell]::Create()
+        }
+
+        BeforeEach {
+            $ps.Commands.Clear()
+            $ps.Streams.ClearStreams()
+        }
+
+        AfterAll {
+            $ps.Dispose()
+        }
+
        It "Write-Information outputs an information object" {
            # redirect the streams is sufficient
            $result = Write-Information "Test Message" *>&1
@@ -88,6 +101,14 @@ Describe "Stream writer tests" -Tags "CI" {
                $result.User | Should Be $(whoami)
            }
            "$result" | Should be "Test Message"
+       }
+
+       It "Write-Information accept objects from pipe" {
+            $ps.AddScript("'teststring',12345 | Write-Information -InformationAction Continue").Invoke()
+            $result = $ps.Streams.Information
+            $result.Count | Should be 2
+            $result[0].MessageData | Should be "teststring"
+            $result[1].MessageData | Should be "12345"
        }
     }
 }
