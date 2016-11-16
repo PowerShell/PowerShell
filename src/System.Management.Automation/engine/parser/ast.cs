@@ -9580,7 +9580,7 @@ namespace System.Management.Automation.Language
             return ok;
         }
 
-        private bool AstAssignsToSameVariable(Ast ast)
+        internal bool AstAssignsToSameVariable(Ast ast)
         {
             var parameterAst = ast as ParameterAst;
             if (parameterAst != null)
