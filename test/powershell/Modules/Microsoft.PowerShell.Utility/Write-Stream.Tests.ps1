@@ -71,10 +71,6 @@ Describe "Stream writer tests" -Tags "CI" {
 
     Context "Write-Information cmdlet" {
         BeforeAll {
-            $rs = [runspacefactory]::Createrunspace()
-            $rs.open()
-            $ps = [powershell]::Create()
-            $ps.Runspace = $rs
             $ps = [powershell]::Create()
         }
 
@@ -83,8 +79,6 @@ Describe "Stream writer tests" -Tags "CI" {
         }
 
         AfterAll {
-            $rs.Close()
-            $rs.Dispose()
             $ps.Dispose()
         }
 
