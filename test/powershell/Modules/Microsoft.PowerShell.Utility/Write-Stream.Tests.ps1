@@ -76,6 +76,7 @@ Describe "Stream writer tests" -Tags "CI" {
 
         BeforeEach {
             $ps.Commands.Clear()
+            $ps.Streams.ClearStreams()
         }
 
         AfterAll {
