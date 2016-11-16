@@ -62,24 +62,17 @@ These are for issues that are specific to certain Operating Systems:
 
 ### Process Tags
 
-Issues can be in one of the following states:
-* `0 - Backlog` : We've acknowledged the issue but have no immediate plans to address it.
-  If you're looking for a way to contribute, these issues can be a good place to start.
-* `1 - Planning` : The issue requires some design or discussion before coding can begin.
-* `2 - Ready` : Any design or discussion is essentially done, coding has not yet begun.
-* `3 - Working` : The assignee(s) are actively working on the issue.
-* `4 - In Review` : The issue is being reviewed.
-  The assignee(s) are responsible for signing off before the PR will be merged.
-
 The following labels are used on PRs:
 
-* `Review - Needed` : The PR is being reviewed.  Please see [Pull Request - Code Review](../../.github/CONTRIBUTING.md#pull-request-code-review)
+* `Review - Needed` : The PR is being reviewed.  Please see [Pull Request - Code Review](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#pull-request---code-review)
 * `Review - Waiting on Author` : The PR was reviewed by the team and requires changes or comments from the author before being accepted.
 * `Review - Abandoned` : The PR was not updated for significant number of days (the exact number could vary over time).
   Maintainers should look into such PRs and re-evaluate them.
 
 ### Miscellaneous labels
 
+* `Up-for-Grabs`: We've acknowledged the issue but have no immediate plans to address it.
+  If you're looking for a way to contribute, these issues can be a good place to start.
 * `Blocked`: an issue cannot be addressed due to external factors,
   but should not be closed because those external factors are temporary.
 * `BVT/DRT`: an issue affecting or exposed by tests that have not been open sourced.
