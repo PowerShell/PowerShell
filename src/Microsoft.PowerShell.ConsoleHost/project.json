@@ -16,7 +16,23 @@
     "configurations": {
         "Linux": {
             "buildOptions": {
-                "define": [ "UNIX" ]
+                "define": [ "UNIX" ],
+                "debugType": "portable"
+            }
+        },
+        "Debug": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "Release": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "CodeCoverage": {
+            "buildOptions": {
+                "debugType": "full"
             }
         }
     },
@@ -30,7 +46,6 @@
             "imports": [ "dnxcore50", "portable-net45+win8" ],
             "buildOptions": {
                 "define": [ "CORECLR" ],
-                "debugType": "portable",
                 "compile": {
                     "exclude": [
                         "singleshell/installer/EngineInstaller.cs",
@@ -51,6 +66,9 @@
             }
         },
         "net451": {
+            "buildOptions": {
+                "debugType": "full"
+            }
         }
     }
 }

@@ -3,9 +3,32 @@
     "version": "1.0.0-*",
     "description": "Generates CorePsTypeCatalog.cs given powershell.inc",
 
+    "configurations": {
+        "Linux": {
+            "buildOptions": {
+                "define": [ "UNIX" ],
+                "debugType": "portable"
+            }
+        },
+        "Debug": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "Release": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "CodeCoverage": {
+            "buildOptions": {
+                "debugType": "full"
+            }
+        }
+    },
+
     "buildOptions": {
-        "emitEntryPoint": true,
-        "debugType": "portable"
+        "emitEntryPoint": true
     },
 
     "frameworks": {

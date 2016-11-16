@@ -13,7 +13,23 @@
     "configurations": {
         "Linux": {
             "buildOptions": {
-                "define": [ "UNIX" ]
+                "define": [ "UNIX" ],
+                "debugType": "portable"
+            }
+        },
+        "Debug": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "Release": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "CodeCoverage": {
+            "buildOptions": {
+                "debugType": "full"
             }
         }
     },
@@ -25,8 +41,7 @@
     "frameworks": {
         "netstandard1.6": {
             "buildOptions": {
-                "define": [ "CORECLR" ],
-                "debugType": "portable"
+                "define": [ "CORECLR" ]
             },
             "imports": [ "dnxcore50", "portable-net45+win8" ]
         },
@@ -35,6 +50,9 @@
                 "System.Windows.Forms": {
                     "type": "build"
                 }
+            },
+            "buildOptions": {
+                "debugType": "full"
             }
         }
     }

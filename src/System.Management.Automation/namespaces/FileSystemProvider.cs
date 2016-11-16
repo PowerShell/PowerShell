@@ -936,12 +936,15 @@ namespace Microsoft.PowerShell.Commands
                         }
 
 #if UNIX
-                        // Porting notes: On platforms with single root filesystems, only
-                        // add the filesystem with the root "/" to the initial drive list,
+                        // Porting notes: On platforms with single root filesystems, ensure
+                        // that we add a filesystem with the root "/" to the initial drive list,
                         // otherwise path handling will not work correctly because there
                         // is no : available to separate the filesystems from each other
-                        if (root != StringLiterals.DefaultPathSeparatorString)
-                            continue;
+                        if (root != StringLiterals.DefaultPathSeparatorString
+                            && newDriveName == StringLiterals.DefaultPathSeparatorString)
+                        {
+                            root = StringLiterals.DefaultPathSeparatorString;
+                        }
 #endif
 
                         // Porting notes: On non-windows platforms .net can report two

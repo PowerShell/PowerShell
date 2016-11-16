@@ -15,7 +15,23 @@
     "configurations": {
         "Linux": {
             "buildOptions": {
-                "define": [ "UNIX" ]
+                "define": [ "UNIX" ],
+                "debugType": "portable"
+            }
+        },
+        "Debug": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "Release": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "CodeCoverage": {
+            "buildOptions": {
+                "debugType": "full"
             }
         }
     },
@@ -29,7 +45,6 @@
             "imports": [ "dnxcore50" ],
             "buildOptions": {
                 "define": [ "CORECLR", "PORTABLE" ],
-                "debugType": "portable",
                 "compile": {
                     "exclude": [
                         "cimSupport/cmdletization/xml/cmdlets-over-objects.objectModel.autogen.cs",
@@ -184,7 +199,8 @@
                 },
                 "embed": {
                     "exclude": [ "resources/CoreClrStubResources.resx" ]
-                }
+                },
+                "debugType": "full"
             },
             "frameworkAssemblies": {
                 "System.Runtime": "",

@@ -51,3 +51,20 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
         }
     }
 }
+
+Describe 'piping powershell objects to finished native executable' -Tags 'CI' {
+    # Find where test/powershell is so we can find the echoargs command relative to it
+    $powershellTestDir = $PSScriptRoot
+    while ($powershellTestDir -notmatch 'test[\\/]powershell$') {
+        $powershellTestDir = Split-Path $powershellTestDir
+    }
+    $echoArgs = Join-Path (Split-Path $powershellTestDir) tools/EchoArgs/bin/echoargs
+
+    It 'doesn''t throw any exceptions, when we are piping to the closed executable' {
+        1..3 | % {
+            Start-Sleep -Milliseconds 100
+            # yeild some multi-line formatted object
+            @{'a' = 'b'}
+        } | & $echoArgs | Should Be $null
+    }
+}

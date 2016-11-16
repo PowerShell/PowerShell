@@ -14,13 +14,15 @@ namespace Microsoft.PowerShell.Commands
     {
         internal static Encoding GetEncoding(HttpResponseMessage response)
         {
-            string charSet = response.Content.Headers.ContentType.CharSet;
+            // ContentType may not exist in response header.
+            string charSet = response.Content.Headers.ContentType?.CharSet;
             return GetEncodingOrDefault(charSet);
         }
 
         internal static string GetContentType(HttpResponseMessage response)
         {
-            return response.Content.Headers.ContentType.MediaType;
+            // ContentType may not exist in response header.  Return null if not.
+            return response.Content.Headers.ContentType?.MediaType;
         }
 
         internal static StringBuilder GetRawContentHeader(HttpResponseMessage response)

@@ -91,7 +91,7 @@ function Start-PSBuild {
         [ValidateSet('x86', 'x64')] # TODO: At some point, we need to add ARM support to match CoreCLR
         [string]$NativeHostArch = "x64",
 
-        [ValidateSet('Linux', 'Debug', 'Release', '')] # We might need "Checked" as well
+        [ValidateSet('Linux', 'Debug', 'Release', 'CodeCoverage', '')] # We might need "Checked" as well
         [string]$Configuration,
 
         [Parameter(ParameterSetName='CoreCLR')]
@@ -406,7 +406,7 @@ function Compress-TestContent {
 function New-PSOptions {
     [CmdletBinding()]
     param(
-        [ValidateSet("Linux", "Debug", "Release", "")]
+        [ValidateSet("Linux", "Debug", "Release", "CodeCoverage", "")]
         [string]$Configuration,
 
         [ValidateSet("netcoreapp1.0", "net451")]
@@ -452,6 +452,12 @@ function New-PSOptions {
                 if ($IsWindows) {
                     $Configuration = "Debug"
                     Write-Warning ($ConfigWarningMsg -f $switch.Current, "Windows", $Configuration)
+                }
+            }
+            "CodeCoverage" {
+                if(-not $IsWindows) {
+                    $Configuration = "Linux"
+                    Write-Warning ($ConfigWarningMsg -f $switch.Current, $LinuxInfo.PRETTY_NAME, $Configuration)
                 }
             }
             Default {
@@ -845,7 +851,7 @@ function Install-Dotnet {
     [CmdletBinding()]
     param(
         [string]$Channel = "rel-1.0.0",
-        [string]$Version = "latest",
+        [string]$Version,
         [switch]$NoSudo
     )
 
@@ -853,7 +859,9 @@ function Install-Dotnet {
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
 
-    $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain"
+    # this url is temporarely alternated because of https://github.com/dotnet/cli/issues/4715
+    # it should be reverted back to "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain" ASAP
+    $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/9855dc0088cf7e56e24860c734f33fe8353f38a6/scripts/obtain"
 
     # Install for Linux and OS X
     if ($IsLinux -or $IsOSX) {
@@ -1096,10 +1104,10 @@ function Start-PSPackage {
     Write-Verbose "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'" -Verbose
 
     # Make sure the most recent build satisfies the package requirement
-    if (-not $Script:Options -or                       ## Start-PSBuild hasn't been executed yet
-        -not $Script:Options.CrossGen -or              ## Last build didn't specify -CrossGen
-        $Script:Options.Runtime -ne $Runtime -or       ## Last build wasn't for the required RID
-        $Script:Options.Configuration -eq "Debug" -or  ## Last build was with 'Debug' configuration
+    if (-not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
+        -not $Script:Options.CrossGen -or                       ## Last build didn't specify -CrossGen
+        $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
+        $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
         $Script:Options.Framework -ne "netcoreapp1.0") ## Last build wasn't for CoreCLR
     {
         # It's possible that the most recent build doesn't satisfy the package requirement but
@@ -1241,7 +1249,7 @@ function New-UnixPackage {
     }
 
     foreach ($Dependency in "fpm", "ronn") {
-        if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Publish")) {
+        if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
             throw "Dependency precheck failed!"
         }
     }

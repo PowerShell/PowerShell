@@ -1,3 +1,24 @@
+Describe 'native commands lifecycle' -tags 'Feature' {
+
+    BeforeAll {
+        $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+    }
+
+    It "native | ps | native doesn't block" {
+        $first = $true
+        & $powershell -command '1..10 | % {Start-Sleep -mill 100; $_}' | %{$_} | & $powershell -command '$input' | % {
+            if ($first)
+            {
+                $first = $false
+                $firstTime = [datetime]::Now
+            }
+            $lastTime = [datetime]::Now
+        }
+
+        $lastTime - $firstTime | Should BeGreaterThan ([timespan]::new(0, 0, 0, 0, 100)) # 100 milliseconds
+    }
+}
+
 Describe "Native Command Processor" -tags "Feature" {
 
     BeforeAll {

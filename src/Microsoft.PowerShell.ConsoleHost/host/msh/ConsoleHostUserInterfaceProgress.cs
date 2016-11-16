@@ -7,6 +7,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation.Diagnostics;
+using System.Threading;
 
 
 namespace Microsoft.PowerShell
@@ -28,6 +29,12 @@ namespace Microsoft.PowerShell
             // destroy the data structures representing outstanding progress records
             // take down and destroy the progress display
 
+            if (_progPaneUpdateTimer != null)
+            {
+                // Stop update 'ProgressPane' and destroy timer
+                _progPaneUpdateTimer.Dispose();
+                _progPaneUpdateTimer = null;
+            }
             if (_progPane != null)
             {
                 Dbg.Assert(_pendingProgress != null, "How can you have a progress pane and no backing data structure?");
@@ -64,14 +71,42 @@ namespace Microsoft.PowerShell
 
             if (_progPane == null)
             {
-                // This is the first time we've received a progress record.  Create a pane to show it, and 
-                // then show it.
+                // This is the first time we've received a progress record.
+                // Create a progress pane,
+                // then show it,
+                // then create and start timer to update it.
 
                 _progPane = new ProgressPane(this);
+
+                if (_progPaneUpdateTimer == null && _progPane != null)
+                {
+                    _progPane.Show(_pendingProgress);
+                    _progPaneUpdateTimer = new Timer( new TimerCallback(ProgressPaneUpdateTimerElapsed), null, UpdateTimerThreshold, Timeout.Infinite);
+                }
             }
-            _progPane.Show(_pendingProgress);
         }
 
+
+
+        /// <summary>
+        ///
+        /// TimerCallback for _progPaneUpdateTimer to update 'ProgressPane' and restart the timer.
+        ///
+        /// </summary>
+
+        private
+        void
+        ProgressPaneUpdateTimerElapsed(object sender)
+        {
+            if (_progPane != null)
+            {
+                _progPane.Show(_pendingProgress);
+            }
+            if (_progPaneUpdateTimer != null)
+            {
+                _progPaneUpdateTimer.Change(UpdateTimerThreshold, Timeout.Infinite);
+            }
+        }
 
 
 
@@ -170,6 +205,9 @@ namespace Microsoft.PowerShell
 
         private ProgressPane _progPane = null;
         private PendingProgress _pendingProgress = null;
+        // The timer update 'ProgressPane' every 'UpdateTimerThreshold' milliseconds
+        private Timer _progPaneUpdateTimer;
+        private const int UpdateTimerThreshold = 100;
     }
 }   // namespace 
 

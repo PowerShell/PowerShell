@@ -12,12 +12,35 @@
         "allowUnsafe": true
     },
 
+    "configurations": {
+        "Linux": {
+            "buildOptions": {
+                "define": [ "UNIX" ],
+                "debugType": "portable"
+            }
+        },
+        "Debug": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "Release": {
+            "buildOptions": {
+                "debugType": "portable"
+            }
+        },
+        "CodeCoverage": {
+            "buildOptions": {
+                "debugType": "full"
+            }
+        }
+    },
+
     "frameworks": {
         "netstandard1.6": {
             "imports": [ "dnxcore50" ],
             "buildOptions": {
-                "define": [ "CORECLR" ],
-                "debugType": "portable"
+                "define": [ "CORECLR" ]
             },
             "dependencies": {
                 "NETStandard.Library": "1.6.1-preview1-24530-04",

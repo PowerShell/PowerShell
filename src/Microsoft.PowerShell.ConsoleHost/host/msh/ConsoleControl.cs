@@ -16,7 +16,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
 using System.Text;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Management.Automation;
 using System.Management.Automation.Host;
@@ -27,7 +26,6 @@ using System.Globalization;
 using System.Diagnostics;
 using Microsoft.Win32.SafeHandles;
 
-using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 
 using WORD = System.UInt16;
@@ -36,6 +34,11 @@ using DWORD = System.UInt32;
 using NakedWin32Handle = System.IntPtr;
 using HWND = System.IntPtr;
 using HDC = System.IntPtr;
+
+#endif
+
+using System.Diagnostics.CodeAnalysis;
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell
 {
@@ -48,6 +51,7 @@ namespace Microsoft.PowerShell
 
     internal static class ConsoleControl
     {
+#if !UNIX
 #region structs
 
         internal enum InputRecordEventTypes : ushort
@@ -2812,8 +2816,9 @@ namespace Microsoft.PowerShell
             }
         }
 
-
+#endif
 #region Dealing with CJK
+#if !UNIX
 
         /// <summary>
         /// From IsConsoleFullWidth in \windows\core\ntcon\server\dbcs.c
@@ -3035,6 +3040,7 @@ namespace Microsoft.PowerShell
             }
         }
 
+#endif
 
         // Return the length of a VT100 control sequence character in str starting
         // at the given offset.
@@ -3101,6 +3107,9 @@ namespace Microsoft.PowerShell
                 }
             }
 
+#if UNIX
+            return str.Length - offset - escapeSequenceAdjustment;
+#else
             uint codePage = NativeMethods.GetConsoleOutputCP();
             if (!IsAvailableFarEastCodePage(codePage))
             {
@@ -3129,8 +3138,10 @@ namespace Microsoft.PowerShell
                     NativeMethods.ReleaseDC(hwnd, hDC);
                 }
             }
+#endif
         }
 
+#if !UNIX
 
         /// <summary>
         /// Check if the output buffer code page is Japanese, Simplified Chinese, Korean, or Traditional Chinese
@@ -3146,7 +3157,10 @@ namespace Microsoft.PowerShell
                 codePage == 950;  // Traditional Chinese
         }
 
+#endif
 #endregion Dealing with CJK
+
+#if !UNIX
 
 #region Cursor
 
@@ -3606,6 +3620,6 @@ namespace Microsoft.PowerShell
 
         [TraceSourceAttribute("ConsoleControl", "Console control methods")]
         private static PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleControl", "Console control methods");
+#endif
     }
 }   // namespace 
-#endif
