@@ -606,19 +606,9 @@ namespace System.Management.Automation
         {
             if (blocking)
             {
-                // If adding was completed and collection is empty,
-                // there is no need to do a blocking Take().
-                if (_nativeProcessOutputQueue.IsAddingCompleted)
-                {
-                    if (_nativeProcessOutputQueue.Count > 0)
-                    {
-                        // This is a common codepath and although it has a duplicated code,
-                        // we are keeping it outside of try {} catch {} to improve the perf
-                        // for the common case.
-                        return _nativeProcessOutputQueue.Take();
-                    }
-                }
-                else
+                // If adding was completed and collection is empty (IsCompleted == true)
+                // there is no need to do a blocking Take(), we should just return.
+                if (!_nativeProcessOutputQueue.IsCompleted)
                 {
                     try
                     {
@@ -635,7 +625,6 @@ namespace System.Management.Automation
                     }
                 }
 
-                // collection is empty
                 return null;
             }
             else
