@@ -630,7 +630,7 @@ namespace System.Management.Automation.Remoting
             int clientRequestedMinRunspaces = -1;
             int clientRequestedMaxRunspaces = -1;
             bool clientRequestedRunspaceCount = false;
-            if (connectRunspacePoolObject.Data.Properties[RemoteDataNameStrings.MinRunspaces] != null && connectRunspacePoolObject.Data.Properties[RemoteDataNameStrings.MinRunspaces] != null)
+            if (connectRunspacePoolObject.Data.Properties[RemoteDataNameStrings.MinRunspaces] != null && connectRunspacePoolObject.Data.Properties[RemoteDataNameStrings.MaxRunspaces] != null)
             {
                 try
                 {

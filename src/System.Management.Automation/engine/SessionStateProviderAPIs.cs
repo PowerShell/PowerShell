@@ -1001,7 +1001,7 @@ namespace System.Management.Automation
             {
                 ProviderNotFoundException e =
                     new ProviderNotFoundException(
-                        providerName.ToString(),
+                        "null",
                         SessionStateCategory.CmdletProvider,
                         "ProviderNotFound",
                         SessionStateStrings.ProviderNotFound);
