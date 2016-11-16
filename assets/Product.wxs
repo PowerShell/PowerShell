@@ -11,13 +11,15 @@
   <?define ProductGuid = "$(env.ProductGuid)" ?>
   <?define ProductVersion = "$(env.ProductVersion)" ?>
   <?define ProductVersionWithName = "$(var.ProductName)_$(var.ProductVersion)"?>
+  <?define ProductTargetArchitecture = "$(env.ProductTargetArchitecture)"?>
+  <?define ProductProgFilesDir = "$(env.ProductProgFilesDir)" ?>
 
   <!-- Generate Your Own GUID for both ID and UpgradeCode attributes. -->
   <!-- Note:  UpgradeCode GUID MUST REMAIN SAME THROUGHOUT ALL VERSIONS -->
   <!-- Otherwise, updates won't occur -->
   <Product Id="$(var.ProductGuid)" Name="$(var.ProductVersionWithName)" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Microsoft Corporation" UpgradeCode="{f7ba3e58-0be8-443b-ac91-f99dd1e7bd3b}">
     <!-- Properties About The Package -->
-    <Package Id="*" Keywords="Installer" InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="PowerShell package" Comments="PowerShell for every system" />
+    <Package Id="*" Keywords="Installer" Platform="$(var.ProductTargetArchitecture)" InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="PowerShell package" Comments="PowerShell for every system" />
 
     <!-- Add PowerShell icon for executable -->
     <Icon Id="PowerShellExe.ico" SourceFile="assets\Powershell_256.ico" />
@@ -51,7 +53,7 @@
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
 
     <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFiles64Folder">
+      <Directory Id="$(var.ProductProgFilesDir)">
         <Directory Id="INSTALLFOLDER" Name="PowerShell">
           <Directory Id="$(var.ProductVersionWithName)" Name="$(var.ProductVersion)">
             <Component Id="ProductVersionFolder" Guid="{e1a7f05e-0cd6-4227-80a8-e4fb311f045c}">

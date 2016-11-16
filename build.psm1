@@ -88,9 +88,6 @@ function Start-PSBuild {
         [Parameter(ParameterSetName='FullCLR')]
         [switch]$XamlGen,
 
-        [ValidateSet('x86', 'x64')] # TODO: At some point, we need to add ARM support to match CoreCLR
-        [string]$NativeHostArch = "x64",
-
         [ValidateSet('Linux', 'Debug', 'Release', 'CodeCoverage', '')] # We might need "Checked" as well
         [string]$Configuration,
 
@@ -169,13 +166,6 @@ function Start-PSBuild {
             $msbuildConfiguration = 'Release'
         }
 
-        # setup cmakeGenerator
-        if ($NativeHostArch -eq 'x86') {
-            $cmakeGenerator = 'Visual Studio 14 2015'
-        } else {
-            $cmakeGenerator = 'Visual Studio 14 2015 Win64'
-        }
-
     } elseif ($IsLinux -or $IsOSX) {
         foreach ($Dependency in 'cmake', 'make', 'g++') {
             $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run Start-PSBootstrap.")
@@ -199,6 +189,12 @@ function Start-PSBuild {
         SMAOnly=[bool]$SMAOnly
     }
     $script:Options = New-PSOptions @OptionsArguments
+
+    if (($script:Options.Runtime -match "-x86") -AND
+        ($CrossGen))
+    {
+        throw "CrossGen is not currently supported for x86 releases."
+    }
 
     if ($StopDevPowerShell) {
         Stop-DevPowerShell
@@ -290,6 +286,19 @@ function Start-PSBuild {
 
         try {
             Push-Location "$PSScriptRoot\src\powershell-native"
+
+            $NativeHostArch = "x64"
+            if ($script:Options.Runtime -match "-x86")
+            {
+                $NativeHostArch = "x86"
+            }
+
+            # setup cmakeGenerator
+            if ($NativeHostArch -eq 'x86') {
+                $cmakeGenerator = 'Visual Studio 14 2015'
+            } else {
+                $cmakeGenerator = 'Visual Studio 14 2015 Win64'
+            }
 
             # Compile native resources
             $currentLocation = Get-Location
@@ -1105,11 +1114,11 @@ function Start-PSPackage {
     Write-Verbose "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'" -Verbose
 
     # Make sure the most recent build satisfies the package requirement
-    if (-not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
-        -not $Script:Options.CrossGen -or                       ## Last build didn't specify -CrossGen
-        $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
-        $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
-        $Script:Options.Framework -ne "netcoreapp1.0") ## Last build wasn't for CoreCLR
+    if (-not $Script:Options -or                                                    ## Start-PSBuild hasn't been executed yet
+        ((-not $Script:Options.CrossGen) -AND -not ($Runtime -match "-x86")) -or    ## Last build didn't specify -CrossGen OR CrossGen check skipped since it is not supported for x86
+        $Script:Options.Runtime -ne $Runtime -or                                    ## Last build wasn't for the required RID
+        $Script:Options.Configuration -ne $Configuration -or                        ## Last build was with configuration other than 'Release'
+        $Script:Options.Framework -ne "netcoreapp1.0")                              ## Last build wasn't for CoreCLR
     {
         # It's possible that the most recent build doesn't satisfy the package requirement but
         # an earlier build does. e.g., run the following in order on win10-x64:
@@ -1169,14 +1178,21 @@ function Start-PSPackage {
             Write-Output $zipPackagePath
         }
         "msi" {
+            $TargetArchitecture = "x64"
+            if ($Runtime -match "-x86")
+            {
+                $TargetArchitecture = "x86"
+            }
+
             $Arguments = @{
-                ProductNameSuffix = $NameSuffix
+                ProductNameSuffix = $NameSuffix;
                 ProductSourcePath = $Source;
                 ProductVersion = $Version;
                 AssetsPath = "$PSScriptRoot\assets";
                 LicenseFilePath = "$PSScriptRoot\assets\license.rtf";
                 # Product Guid needs to be unique for every PowerShell version to allow SxS install
-                ProductGuid = [Guid]::NewGuid()
+                ProductGuid = [Guid]::NewGuid();
+                ProductTargetArchitecture = $TargetArchitecture;
             }
             New-MSIPackage @Arguments
         }
@@ -2170,7 +2186,13 @@ function New-MSIPackage
         # Path to license.rtf file - for the EULA
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $LicenseFilePath
+        [string] $LicenseFilePath,
+
+        # Architecture to use when creating the MSI
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("x86", "x64")]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductTargetArchitecture
 
     )
 
@@ -2203,6 +2225,13 @@ function New-MSIPackage
     [Environment]::SetEnvironmentVariable("ProductGuid", $ProductGuid, "Process")
     [Environment]::SetEnvironmentVariable("ProductVersion", $ProductVersion, "Process")
     [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
+    [Environment]::SetEnvironmentVariable("ProductTargetArchitecture", $ProductTargetArchitecture, "Process")
+    $ProductProgFilesDir = "ProgramFiles64Folder"
+    if ($ProductTargetArchitecture -eq "x86")
+    {
+        $ProductProgFilesDir = "ProgramFilesFolder"
+    }
+    [Environment]::SetEnvironmentVariable("ProductProgFilesDir", $ProductProgFilesDir, "Process")
 
     $wixFragmentPath = (Join-path $env:Temp "Fragment.wxs")
     $wixObjProductPath = (Join-path $env:Temp "Product.wixobj")
