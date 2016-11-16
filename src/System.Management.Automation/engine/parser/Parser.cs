@@ -4972,7 +4972,6 @@ namespace System.Management.Automation.Language
                     {
                         errorAsts.AddRange(exceptionTypes);
                     }
-                    // REVIEW: seems like some code is missing here, errorAsts isn't used
                 }
                 return null;
             }
