@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<SoftwareIdentity
-    name="Core Providers for PackageManagement"
-	version="1.0.0.0" versionScheme="multipartnumeric"
-	media="(windows) and (PackageManagement) and (min-PackageManagement.api:2)"
-	xmlns="http://standards.iso.org/iso/19770/-2/2015/schema.xsd">
-
-</SoftwareIdentity>
