@@ -1901,7 +1901,7 @@ namespace System.Management.Automation
                 }
             }
 
-            foreach (PSTypeName typeName in argumentAst.GetInferredType(context))
+            foreach (PSTypeName typeName in AstTypeInference.InferTypeOf(argumentAst, context.TypeInferenceContext))
             {
                 yield return typeName;
             }
@@ -3792,11 +3792,11 @@ namespace System.Management.Automation
                 {
                     return;
                 }
-                prevType = astPair.Argument.GetInferredType(context);
+                prevType = AstTypeInference.InferTypeOf(astPair.Argument, context.TypeInferenceContext);
             }
             else
             {
-                prevType = pipelineAst.PipelineElements[i - 1].GetInferredType(context);
+                prevType = AstTypeInference.InferTypeOf(pipelineAst.PipelineElements[i - 1], context.TypeInferenceContext);
             }
 
             CompleteMemberByInferredType(context, prevType, result, wordToComplete + "*", filter: IsPropertyMember, isStatic: false);
@@ -4625,7 +4625,7 @@ namespace System.Management.Automation
                             var commandAst = ast as CommandAst;
                             if (commandAst != null)
                             {
-                                PSTypeName discoveredType = ast.GetInferredType(context).FirstOrDefault<PSTypeName>();
+                                PSTypeName discoveredType = AstTypeInference.InferTypeOf(ast, context.TypeInferenceContext).FirstOrDefault<PSTypeName>();
                                 if (discoveredType != null)
                                 {
                                     tooltip = StringUtil.Format("[{0}]${1}", discoveredType.Name, userPath);
@@ -5074,7 +5074,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    inferredTypes = targetExpr.GetInferredType(context).ToArray();
+                    inferredTypes = AstTypeInference.InferTypeOf(targetExpr, context.TypeInferenceContext).ToArray();
                 }
 
                 if (inferredTypes != null && inferredTypes.Length > 0)
@@ -5377,9 +5377,10 @@ namespace System.Management.Automation
             List<object> results = new List<object>();
 
             Func<object, bool> filterToCall = filter;
+            var typeInferenceContext = context.TypeInferenceContext;
             if (typename.Type != null)
             {
-                if (context.CurrentTypeDefinitionAst == null || context.CurrentTypeDefinitionAst.Type != typename.Type)
+                if (typeInferenceContext.CurrentTypeDefinitionAst == null || typeInferenceContext.CurrentTypeDefinitionAst.Type != typename.Type)
                 {
                     if (filterToCall == null)
                         filterToCall = o => !IsMemberHidden(o);
@@ -5413,7 +5414,7 @@ namespace System.Management.Automation
             }
             else if (typename.TypeDefinitionAst != null)
             {
-                if (context.CurrentTypeDefinitionAst != typename.TypeDefinitionAst)
+                if (typeInferenceContext.CurrentTypeDefinitionAst != typename.TypeDefinitionAst)
                 {
                     if (filterToCall == null)
                         filterToCall = o => !IsMemberHidden(o);
@@ -6329,7 +6330,7 @@ namespace System.Management.Automation
             {
                 var result = new List<CompletionResult>();
                 CompleteMemberByInferredType(
-                    completionContext, typeAst.GetInferredType(completionContext),
+                    completionContext, AstTypeInference.InferTypeOf(typeAst, completionContext.TypeInferenceContext),
                     result, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false);
                 return result;
             }
@@ -6432,7 +6433,7 @@ namespace System.Management.Automation
                         switch (binding.CommandName)
                         {
                             case "New-Object":
-                                var inferredType = commandAst.GetInferredType(completionContext);
+                                var inferredType = AstTypeInference.InferTypeOf(commandAst, completionContext.TypeInferenceContext);
                                 var result = new List<CompletionResult>();
                                 CompleteMemberByInferredType(
                                     completionContext, inferredType,
@@ -6473,26 +6474,7 @@ namespace System.Management.Automation
 
         internal static PowerShell AddCommandWithPreferenceSetting(PowerShell powershell, string command, Type type = null)
         {
-            Diagnostics.Assert(powershell != null, "the passed-in powershell cannot be null");
-            Diagnostics.Assert(!String.IsNullOrWhiteSpace(command), "the passed-in command name should not be null or whitespaces");
-
-            if (type != null)
-            {
-                var cmdletInfo = new CmdletInfo(command, type);
-                powershell.AddCommand(cmdletInfo);
-            }
-            else
-            {
-                powershell.AddCommand(command);
-            }
-            powershell
-                .AddParameter("ErrorAction", ActionPreference.Ignore)
-                .AddParameter("WarningAction", ActionPreference.Ignore)
-                .AddParameter("InformationAction", ActionPreference.Ignore)
-                .AddParameter("Verbose", false)
-                .AddParameter("Debug", false);
-
-            return powershell;
+            return TypeInferenceContext.AddCommandWithPreferenceSetting(powershell, command, type);
         }
 
         internal static bool IsPathSafelyExpandable(ExpandableStringExpressionAst expandableStringAst, string extraText, ExecutionContext executionContext, out string expandedString)

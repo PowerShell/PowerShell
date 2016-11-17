@@ -457,12 +457,6 @@ namespace System.Management.Automation.Language
                 Diagnostics.Assert(false, "This code is unreachable.");
                 return AstVisitAction.Continue;
             }
-
-            internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-            {
-                Diagnostics.Assert(false, "This code is unreachable.");
-                return Ast.EmptyPSTypeNameArray;
-            }
         }
 
         internal static string GetUnaliasedVariableName(string varName)

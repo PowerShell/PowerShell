@@ -1167,8 +1167,7 @@ namespace System.Management.Automation
                     cursorIndexInString = strValue.Length;
 
                 var analysis = new CompletionAnalysis(_ast, _tokens, _cursorPosition, _options);
-                var subContext = analysis.CreateCompletionContext(completionContext.ExecutionContext);
-                subContext.Helper = completionContext.Helper;
+                var subContext = analysis.CreateCompletionContext(completionContext.TypeInferenceContext.Helper.CurrentPowerShell);
 
                 int subReplaceIndex, subReplaceLength;
                 var subResult = analysis.GetResultHelper(subContext, out subReplaceIndex, out subReplaceLength, true);

@@ -147,46 +147,6 @@ namespace System.Management.Automation
 
         public TypeInferenceRuntimePermissions RuntimePermissions { get; set; }
 
-        internal IEnumerable<PSTypeName> InferType(Ast ast, TypeInferenceVisitor visitor)
-        {
-            var res = ast.Accept(visitor);
-            if (res == null)
-            {
-                return EmptyPSTypeNameArray;
-            }
-            return (IEnumerable<PSTypeName>)res;
-        }
-
-        public bool TryGetRepresentativeTypeNameFromExpressionSafeEval(ExpressionAst expression, out PSTypeName typeName)
-        {
-            typeName = null;
-            if (!RuntimePermissions.HasFlag(TypeInferenceRuntimePermissions.AllowSafeEval)) return false;
-            object value;
-            return expression != null &&
-                   SafeExprEvaluator.TrySafeEval(expression, ExecutionContext, out value) &&
-                   TryGetRepresentativeTypeNameFromValue(value, out typeName);
-        }
-
-        internal static bool TryGetRepresentativeTypeNameFromValue(object value, out PSTypeName type)
-        {
-            type = null;
-            if (value != null)
-            {
-                var list = value as IList;
-                if (list != null && list.Count > 0)
-                {
-                    value = list[0];
-                }
-                value = PSObject.Base(value);
-                if (value != null)
-                {
-                    type = new PSTypeName(value.GetType());
-                    return true;
-                }
-            }
-            return false;
-        }
-
         public IList<object> GetMembersByInferredType(PSTypeName typename, bool isStatic, Func<object, bool> filter)
         {
             List<object> results = new List<object>();
@@ -352,10 +312,6 @@ namespace System.Management.Automation
             }
         }
 
-        public TypeDefinitionAst CurrentTypeDefinitionAst { get; set; }
-        public TypeInferenceRuntimePermissions RuntimePermissions { get; set; }
-        internal ExecutionContext ExecutionContext => _powerShell.Runspace.ExecutionContext;
-
         internal IEnumerable<PSTypeName> InferType(Ast ast, TypeInferenceVisitor visitor)
         {
             var res = ast.Accept(visitor);
@@ -439,27 +395,6 @@ namespace System.Management.Automation
             cimNamespace = match.Groups["CimNamespace"].Value;
             className = match.Groups["CimClassName"].Value;
             return true;
-        }
-
-        private static bool IsWriteablePropertyMember(object member)
-        {
-            var propertyInfo = member as PropertyInfo;
-            if (propertyInfo != null)
-            {
-                return propertyInfo.CanWrite;
-            }
-
-            var psPropertyInfo = member as PSPropertyInfo;
-            return psPropertyInfo != null && psPropertyInfo.IsSettable;
-        }
-
-        private static bool IsPropertyMember(object member)
-        {
-            return member is PropertyInfo
-                   || member is FieldInfo
-                   || member is PSPropertyInfo
-                   || member is CimPropertyDeclaration
-                   || member is PropertyMemberAst;
         }
 
         private static bool IsMemberHidden(object member)
