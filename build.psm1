@@ -63,6 +63,7 @@ function Start-PSBuild {
         [switch]$ResGen,
         [switch]$TypeGen,
         [switch]$Clean,
+        [switch]$NoPSModuleRestore,
 
         # this switch will re-build only System.Management.Automation.dll
         # it's useful for development, to do a quick changes in the engine
@@ -396,6 +397,15 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
         }
     } finally {
         Pop-Location
+    }
+
+    if(-not $NoPSModuleRestore)
+    {
+        # downloading the PackageManagement module
+        # $Options.Output is pointing to something like "...\src\powershell-win-core\bin\Debug\netcoreapp1.0\win10-x64\powershell.exe", 
+        # so we need to get its parent directory
+        $PowerShellPath = Split-Path $Options.Output -Parent
+        Restore-PSModule -Name PackageManagement -Destination "$PowerShellPath\Modules"
     }
 }
 
@@ -2477,7 +2487,6 @@ function Start-CrossGen {
         "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll",
         "Microsoft.PowerShell.CoreCLR.Eventing.dll",
         "Microsoft.PowerShell.ConsoleHost.dll",
-        "Microsoft.PowerShell.PackageManagement.dll",
         "Microsoft.PowerShell.PSReadLine.dll",
         "System.Management.Automation.dll"
     )
@@ -2535,6 +2544,95 @@ function Clear-PSRepo
     if($IncludePackages)
     {
         remove-item $RepoRoot\Packages\ -Recurse -Force  -ErrorAction SilentlyContinue
+    }
+}
+
+# Install PowerShell modules such as PackageManagement, PowerShellGet
+function Restore-PSModule
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Name,
+
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Destination,
+
+        [string]$SourceLocation="https://powershell.myget.org/F/powershellmodule/api/v2",
+
+        [string]$RequiredVersion
+        )
+
+    $needRegister = $true
+    $RepositoryName = "mygetpsmodule"
+
+    # Check if the PackageManagement works in the base-oS or PowerShellCore
+    Get-PackageProvider -Name NuGet -ForceBootstrap -Verbose:$VerbosePreference
+
+    # Get the existing registered PowerShellGet repositories
+    $psrepos = PowerShellGet\Get-PSRepository
+
+    foreach ($repo in $psrepos)
+    {
+        if(($repo.SourceLocation -eq $SourceLocation) -or ($repo.SourceLocation.TrimEnd("/") -eq $SourceLocation.TrimEnd("/")))
+        {
+            # found a registered repository that matches the source location
+            $needRegister = $false
+            $RepositoryName = $repo.Name
+            break
+        }
+    }
+
+    if($needRegister)
+    {
+        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName -ErrorAction SilentlyContinue
+        if($regVar)
+        {
+            PowerShellGet\UnRegister-PSRepository -Name $RepositoryName
+        }
+
+        log "Registering PSRepository with name: $RepositoryName and sourcelocation: $SourceLocation"
+        PowerShellGet\Register-PSRepository -Name $RepositoryName -SourceLocation $SourceLocation -ErrorVariable ev -verbose
+        if($ev)
+        {
+            throw ("Failed to register repository '{0}'" -f $RepositoryName)
+        }
+
+        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName
+        if(-not $regVar)
+        {
+            throw ("'{0}' is not registered" -f $RepositoryName)
+        }
+    }
+
+    log ("Name='{0}', Dsetination='{1}', Repository='{2}'" -f $Name, $Destination, $RepositoryName)
+
+    $command = @{
+                    Name=$Name
+                    Path = $Destination
+                    Repository =$RepositoryName
+                }
+
+    if($RequiredVersion)
+    {
+        $command.Add("RequiredVersion", $RequiredVersion)
+    }
+
+    # pull down the module
+    log ("running save-module $Name")
+    PowerShellGet\Save-Module @command -Force -Verbose:$VerbosePreference
+
+    # Clean up
+    if($needRegister)
+    {
+        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName -ErrorAction SilentlyContinue
+        if($regVar)
+        {
+            log "Unregistering PSRepository with name: $RepositoryName"
+            PowerShellGet\UnRegister-PSRepository -Name $RepositoryName
+        }
     }
 }
 
