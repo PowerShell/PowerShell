@@ -1,6 +1,6 @@
 @{
 RootModule = 'OpenCover.psm1'
-ModuleVersion = '1.0.0.0'
+ModuleVersion = '1.1.0.0'
 GUID = '4eedcffd-26e8-4172-8aad-9b882c13d370'
 Author = 'Microsoft Corporation'
 CompanyName = 'Microsoft Corporation'

@@ -1,5 +1,7 @@
 ﻿#region privateFunctions
 
+$script:psRepoPath = git rev-parse --show-toplevel
+
 function Get-AssemblyCoverageData([xml.xmlelement] $element)
 {
     $coverageSummary = (Get-CoverageSummary -element $element.Summary)
@@ -11,7 +13,8 @@ function Get-AssemblyCoverageData([xml.xmlelement] $element)
     }
 
     $AssemblyCoverageData | Add-Member -MemberType ScriptMethod -Name ToString -Value { "{0} ({1})" -f $this.AssemblyName,$this.CoverageSummary.BranchCoverage } -Force
-    
+    $AssemblyCoverageData.PSTypeNames.Insert(0,"OpenCover.AssemblyCoverageData")
+
     return $AssemblyCoverageData
 }
 
@@ -48,6 +51,7 @@ function Get-CodeCoverageChange($r1, $r2)
         SequenceDelta = [double] ($r2.Summary.SequenceCoverage - $r1.Summary.SequenceCoverage)
         Deltas = $Deltas
     }
+    $CoverageChange.PSTypeNames.Insert(0,"OpenCover.CoverageChange")
 
     return $CoverageChange
 }
@@ -72,6 +76,7 @@ function Get-AssemblyCoverageChange($r1, $r2)
         Sequence = $r2.Sequence
         SequenceDelta = $r2.Sequence - $r1.Sequence
     }
+    $AssemblyCoverageChange.PSTypeNames.Insert(0,"OpenCover.AssemblyCoverageChange")
 
     return $AssemblyCoverageChange
 }
@@ -91,6 +96,7 @@ function Get-CoverageData($xmlPath)
         CoverageSummary = (Get-CoverageSummary -element $CoverageXml.CoverageSession.Summary)
         Assembly = $assemblies
     }
+    $CoverageData.PSTypeNames.Insert(0,"OpenCover.CoverageData")
 
     $null = $CoverageXml
 
@@ -118,43 +124,9 @@ function Get-CoverageSummary([xml.xmlelement] $element)
     }
 
     $CoverageSummary | Add-Member -MemberType ScriptMethod -Name ToString -Value { "Branch:{0,3} Sequence:{1,3}" -f $this.BranchCoverage,$this.SequenceCoverage } -Force
-        
+    $CoverageSummary.PSTypeNames.Insert(0,"OpenCover.CoverageSummary")
+
     return $CoverageSummary
-}
-
-function Expand-ZipArchive([string] $Path, [string] $DestinationPath)
-{
-    try
-    {
-        Add-Type -AssemblyName System.IO.Compression
-        Add-Type -AssemblyName System.IO.Compression.FileSystem
-
-        $fileStream = New-Object System.IO.FileStream -ArgumentList @($Path, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read) 
-        $zipArchive = New-Object System.IO.Compression.ZipArchive -ArgumentList @($fileStream, [System.IO.Compression.ZipArchiveMode]::Read, $false)
-
-        foreach($entry in $zipArchive.Entries)
-        {
-            $extractPath = (Join-Path $DestinationPath $entry.FullName)
-
-            $fileInfo = New-Object System.IO.FileInfo -ArgumentList $extractPath
-            if(-not $fileInfo.Directory.Exists) { New-Item -Path $fileInfo.Directory.FullName -ItemType Directory | Out-Null }
-
-            try
-            {
-                $newfileStream = [System.IO.File]::Create($extractPath)
-                $entry.Open().CopyTo($newfileStream)
-            }
-            finally
-            {                
-                if($newfileStream) { $newfileStream.Dispose() }
-            }
-        }
-    }
-    finally
-    {
-        if($zipArchive) { $zipArchive.Dispose() }
-        if($fileStream) { $fileStream.Dispose() }
-    }    
 }
 
 #endregion
@@ -209,7 +181,7 @@ function Expand-ZipArchive([string] $Path, [string] $DestinationPath)
 #>
 function Get-CodeCoverage
 {
-    param ( [string]$CoverageXmlFile )
+    param ( [string]$CoverageXmlFile = "$pwd/OpenCover.xml" )
     $xmlPath = (get-item $CoverageXmlFile).Fullname
     (Get-CoverageData -xmlPath $xmlPath)
 }
@@ -306,22 +278,22 @@ function Install-OpenCover
 {
     param ( 
         [parameter()][string]$Version = "4.6.519",
-        [parameter(Mandatory=$true)][string]$TargetDirectory,
+        [parameter()][string]$TargetDirectory = "~/",
         [parameter()][switch]$Force
         )
 
-    $webclient = New-Object System.Net.WebClient
     $filename =  "opencover.${version}.zip"
+    $tempPath = "$env:TEMP/$Filename"
     $packageUrl = "https://github.com/OpenCover/opencover/releases/download/${version}/${filename}"
-    if ( test-path $env:TEMP/$Filename )
+    if ( test-path $tempPath )
     {
         if ( $force ) 
         {
-            remove-item -force "$env:TEMP/$Filename"
+            remove-item -force $tempPath
         }
         else 
         {
-            throw "package already exists at $env:TEMP/$Filename, not downloading"
+            throw "Package already exists at $tempPath, not continuing.  Use -force to re-install"
         }
     }
     if ( test-path "$TargetDirectory/OpenCover" )
@@ -332,18 +304,19 @@ function Install-OpenCover
         }
         else 
         {
-            throw "$TargetDirectory/OpenCover exists"
+            throw "$TargetDirectory/OpenCover exists, not continuing.  Use -force to re-install"
         }
     }
 
-    $webclient.DownloadFile($packageUrl, "$env:TEMP/$filename")
-    if ( ! (test-path $env:TEMP/$Filename) )
+    Invoke-WebRequest -Uri $packageUrl -OutFile "$tempPath"
+    if ( ! (test-path $tempPath) )
     {
         throw "Download failed: $packageUrl"
     }
     
     import-module Microsoft.PowerShell.Archive
-    Expand-ZipArchive -Path "$env:TEMP/$filename" -DestinationPath "$TargetDirectory/OpenCover"
+    Expand-Archive -Path $tempPath -DestinationPath "$TargetDirectory/OpenCover"
+    Remove-Item -force $tempPath
 }
 
 <#
@@ -359,22 +332,15 @@ function Invoke-OpenCover
     [CmdletBinding(SupportsShouldProcess=$true)]
     param ( 
         [parameter()]$OutputLog = "$pwd/OpenCover.xml",
-        [parameter(Mandatory=$true)]$TestDirectory,
-        [parameter()]$OpenCoverPath,
-        [parameter(Mandatory=$true)]$PowerShellExeDirectory,
+        [parameter()]$TestDirectory = "$($script:psRepoPath)/test/powershell",
+        [parameter()]$OpenCoverPath = "~/OpenCover",
+        [parameter()]$PowerShellExeDirectory = "$($script:psRepoPath)/src/powershell-win-core/bin/debug/netcoreapp1.0/win10-x64",
         [switch]$CIOnly
         )
 
     # check to be sure that OpenCover is present
 
-    if(-not $PSBoundParameters.ContainsKey('OpenCoverPath'))
-    {        
-        $openCoverBin = (Get-Command -Name 'opencover.console' -ErrorAction Ignore).Source         
-    }
-    else 
-    {
-        $OpenCoverBin = "$OpenCoverPath\opencover.console.exe"
-    }
+    $OpenCoverBin = "$OpenCoverPath\opencover.console.exe"
 
     if ( ! (test-path $OpenCoverBin)) 
     {
@@ -389,7 +355,7 @@ function Invoke-OpenCover
     }
 
     # create the arguments for OpenCover
-    $targetArgs = "-c", "Set-ExecutionPolicy Bypass -Force;", "Invoke-Pester","${TestDirectory}" 
+    $targetArgs = "-c", "Set-ExecutionPolicy Bypass -Force -Scope Process;", "Invoke-Pester","${TestDirectory}" 
     
     if ( $CIOnly ) 
     {
