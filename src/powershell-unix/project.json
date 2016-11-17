@@ -81,7 +81,6 @@
         "Microsoft.PowerShell.PSReadLine": "6.0.0-*",
         "libmi": "1.0.0-alpha01",
         "PSDesiredStateConfiguration": "1.0.0-alpha01",
-        "Microsoft.PowerShell.PackageManagement": "6.0.0-*",
         "PowerShellHelpFiles": "1.0.0-alpha01"
     },
 
