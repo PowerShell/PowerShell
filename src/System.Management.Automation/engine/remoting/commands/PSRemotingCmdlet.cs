@@ -726,6 +726,7 @@ namespace Microsoft.PowerShell.Commands
         /// installed and PowerShell remoting is enabled on both client and remote machines.
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        [ValidateSet("true")]
         public virtual SwitchParameter SSHTransport
         {
             get;
@@ -803,7 +804,6 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         internal SSHConnection[] ParseSSHConnectionHashTable()
         {
-            List<string> resolvedComputerNames = new List<string>();
             List<SSHConnection> connections = new List<SSHConnection>();
             foreach (var item in this.SSHConnection)
             {
@@ -814,22 +814,19 @@ namespace Microsoft.PowerShell.Commands
                     string paramName = key as string;
                     if (string.IsNullOrEmpty(paramName))
                     {
-                        // TODO:
-                        throw new PSInvalidOperationException("Invalid Connection parmeter element.");
+                        throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
                     }
 
                     string paramValue = item[paramName] as string;
                     if (string.IsNullOrEmpty(paramValue))
                     {
-                        // TODO:
-                        throw new PSInvalidOperationException("Invalid Connection parmeter element.");
+                        throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
                     }
 
                     if (paramName.Equals("ComputerName", StringComparison.OrdinalIgnoreCase) || paramName.Equals("HostName", StringComparison.OrdinalIgnoreCase))
                     {
                         var resolvedComputerName = ResolveComputerName(paramValue);
                         ValidateComputerName(new string[] { resolvedComputerName });
-                        resolvedComputerNames.Add(resolvedComputerName);
                         connectionInfo.ComputerName = resolvedComputerName;
                     }
                     else if (paramName.Equals("UserName", StringComparison.OrdinalIgnoreCase))
@@ -840,18 +837,20 @@ namespace Microsoft.PowerShell.Commands
                     {
                         connectionInfo.KeyFilePath = paramValue;
                     }
+                    else
+                    {
+                        throw new PSArgumentException(
+                            StringUtil.Format(RemotingErrorIdStrings.UnknownSSHConnectionParameter, paramName));
+                    }
                 }
 
                 if (string.IsNullOrEmpty(connectionInfo.ComputerName))
                 {
-                    // TODO:
-                    throw new PSInvalidOperationException("Invalid connection information: missing required ComputerName parameter");
+                    throw new PSArgumentException(RemotingErrorIdStrings.MissingRequiredSSHParameter);
                 }
 
                 connections.Add(connectionInfo);
             }
-
-            ResolvedComputerNames = resolvedComputerNames.ToArray();
 
             return connections.ToArray();
         }

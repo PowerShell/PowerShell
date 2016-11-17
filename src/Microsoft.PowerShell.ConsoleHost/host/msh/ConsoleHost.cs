@@ -279,6 +279,16 @@ namespace Microsoft.PowerShell
                         throw hostException;
                     }
 
+                    // For NanoServer:
+                    // 1. There is no GetCurrentConsoleFontEx / SetCurrentConsoleFontEx on NanoServer;
+                    // 2. We don't handle CJK locales on NanoServer due to lack of win32 API supports on NanoServer.
+#if !CORECLR
+                    // The default font face used for Powershell Console is Lucida Console. 
+                    // However certain CJK locales dont support Lucida Console font. Hence for such 
+                    // locales the console font is updated to Raster dynamically.
+                    ConsoleControl.UpdateLocaleSpecificFont();
+#endif
+
                     s_theConsoleHost.BindBreakHandler();
                     PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
 
