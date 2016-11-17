@@ -83,6 +83,10 @@ function Remove-InstalledModules
 
 Describe "PowerShellGet - Module tests" -tags "Feature" {
 
+    BeforeAll {
+        $PSDefaultParameterValues = @{"It:Skip" = $true }
+    }
+
     BeforeEach {
         Remove-InstalledModules
     }
@@ -108,10 +112,16 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
 
     AfterAll {
         Remove-InstalledModules
+
+        $PSDefaultParameterValues.Remove("It:Skip")
     }
 }
 
 Describe "PowerShellGet - Module tests (Admin)" -tags @('Feature', 'RequireAdminOnWindows') {
+
+    BeforeAll {
+        $PSDefaultParameterValues = @{"It:Skip" = $true }
+    }
 
     BeforeEach {
         Remove-InstalledModules
@@ -132,6 +142,8 @@ Describe "PowerShellGet - Module tests (Admin)" -tags @('Feature', 'RequireAdmin
 
     AfterAll {
         Remove-InstalledModules
+
+        $PSDefaultParameterValues.Remove("It:Skip")
     }
 }
 
@@ -141,6 +153,10 @@ function Remove-InstalledScripts
 }
 
 Describe "PowerShellGet - Script tests" -tags "Feature" {
+
+    BeforeAll {
+        $PSDefaultParameterValues = @{"It:Skip" = $true }
+    }
 
     BeforeEach {
         Remove-InstalledScripts
@@ -163,10 +179,16 @@ Describe "PowerShellGet - Script tests" -tags "Feature" {
 
     AfterAll {
         Remove-InstalledScripts
+
+        $PSDefaultParameterValues.Remove("It:Skip")
     }
 }
 
 Describe "PowerShellGet - Script tests (Admin)" -tags @('Feature', 'RequireAdminOnWindows') {
+
+    BeforeAll {
+        $PSDefaultParameterValues = @{"It:Skip" = $true }
+    }
 
     BeforeEach {
         Remove-InstalledScripts
@@ -183,6 +205,8 @@ Describe "PowerShellGet - Script tests (Admin)" -tags @('Feature', 'RequireAdmin
 
     AfterAll {
         Remove-InstalledScripts
+
+        $PSDefaultParameterValues.Remove("It:Skip")
     }
 }
 

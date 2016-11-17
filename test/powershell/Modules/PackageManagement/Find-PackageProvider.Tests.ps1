@@ -18,6 +18,15 @@ $InternalGallery = "https://dtlgalleryint.cloudapp.net/api/v2/"
 # Actual Tests:
 
 Describe "find-packageprovider" -Tags "Feature" {
+    
+    BeforeAll {
+        $PSDefaultParameterValues = @{"It:Skip" = $true }
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     #make sure the package repository exists
     $a=Get-PackageSource  -force| select Location, ProviderName
     
@@ -134,6 +143,14 @@ Describe "find-packageprovider" -Tags "Feature" {
     
 Describe "Find-Package With FilterOnTag" -Tags "Feature" {
 
+    BeforeAll {
+        $PSDefaultParameterValues = @{"It:Skip" = $true }
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     it "EXPECTED: Find a package with FilterOnTag" {
 
         $a=find-package -ProviderName nuget -source $InternalGallery -Name gistprovider -FilterOnTag Provider
@@ -168,6 +185,14 @@ Describe "Find-PackageProvider with Versions" -Tags "Feature" {
     2.8.5.101
     2.8.5.24#>
 
+    BeforeAll {
+        $PSDefaultParameterValues = @{"It:Skip" = $true }
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     It "EXPECTED: success 'Find a provider  -requiredVersion 3.5'" -Skip {
         (find-packageprovider -name Nuget -RequiredVersion 2.8.5.122).Version.ToString() | should match "2.8.5.122"
     }
@@ -186,12 +211,18 @@ Describe "Find-PackageProvider with Versions" -Tags "Feature" {
 
 Describe "find-packageprovider Error Cases" -Tags "Feature" {
 
+    BeforeAll {
+        $PSDefaultParameterValues = @{"It:Skip" = $true }
+    }
+
     AfterAll {
         $x =Get-PackageSource -Name OneGetTestSource -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
         if($x)
         {
             Unregister-PackageSource -Name OneGetTestSource
         }
+
+        $PSDefaultParameterValues.Remove("It:Skip")
     }
 
     It "EXPECTED:  returns an error when inputting a bad version format" {

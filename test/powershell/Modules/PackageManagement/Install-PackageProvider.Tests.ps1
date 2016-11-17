@@ -43,6 +43,14 @@ Register-PackageSource -Name $InternalSource2 -Location $InternalGallery2 -Provi
 
 Describe "install-packageprovider" -Tags "Feature" {
 
+    BeforeAll {
+        $PSDefaultParameterValues = @{"It:Skip" = $true }
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     <#
     BeforeEach {
 
@@ -243,6 +251,15 @@ Describe "install-packageprovider with local source" -Tags "Feature" {
 #>
 
 Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
+
+    BeforeAll {
+        $PSDefaultParameterValues = @{"It:Skip" = $true }
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     $destination = Join-Path $TestDrive "installpp"
 
     It "install-package with array of registered sources with a single provider, Expect succeed" -Pending {
@@ -454,6 +471,15 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
     }
 }
  Describe "install-packageprovider with Whatif" -Tags "Feature" {
+
+     BeforeAll {
+        $PSDefaultParameterValues = @{"It:Skip" = $true }
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     # make sure that packagemanagement is loaded
     #import-packagemanagement
 
@@ -510,6 +536,7 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
 }
 
 Describe "install-packageprovider with Scope" -Tags "Feature" {
+
     # PENDING a lot of these tests because jobs are broken on PowerShell from GitHub
 
     BeforeAll {
@@ -522,6 +549,12 @@ Describe "install-packageprovider with Scope" -Tags "Feature" {
             $securestring = ConvertTo-SecureString $password -AsPlainText -Force
             $credential = new-object -typename System.Management.Automation.PSCredential -argumentlist $userName, $securestring
         }
+    
+        $PSDefaultParameterValues = @{"It:Skip" = $true }
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
     }
     
     AfterEach {
@@ -609,6 +642,15 @@ Describe "install-packageprovider with Scope" -Tags "Feature" {
     } 
 }
 Describe "install-PackageProvider with Versions" -Tags "Feature" {
+
+    BeforeAll {
+        $PSDefaultParameterValues = @{"It:Skip" = $true }
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     # make sure that packagemanagement is loaded
     <# Nuget
     2.8.5.127
@@ -658,6 +700,14 @@ Describe "install-PackageProvider with Versions" -Tags "Feature" {
 
 Describe "Get-package with multiple providers" -Tags "Feature" {
 
+    BeforeAll {
+        $PSDefaultParameterValues = @{"It:Skip" = $true }
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     It "Get-package with multiple providers" -Pending {
 
         $a = Install-package -Name TSDProvider -Source $InternalSource -ProviderName PowerShellGet -Force
@@ -679,9 +729,15 @@ Describe "Get-package with multiple providers" -Tags "Feature" {
 
 Describe "install-packageprovider Error Cases" -Tags "Feature" {
 
+    BeforeAll {
+        $PSDefaultParameterValues = @{"It:Skip" = $true }
+    }
+
   AfterAll {
         Unregister-PackageSource -Name OneGetTestSource -Verbose -ErrorAction SilentlyContinue
         Unregister-PackageSource -Name OneGetTestSource2 -Verbose -ErrorAction SilentlyContinue
+
+        $PSDefaultParameterValues.Remove("It:Skip")
    }
   BeforeAll {
         <#
