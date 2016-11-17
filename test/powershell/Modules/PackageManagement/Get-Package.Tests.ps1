@@ -19,6 +19,15 @@ $source = "http://www.nuget.org/api/v2/"
 # Actual Tests:
 
 Describe "Get-package" -Tags "Feature" {
+
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     # make sure that packagemanagement is loaded
     It "EXPECTED: Get-package accepts array of strings for -providername parameter" -Skip {
         $x = (get-package -providername Programs,Msi)
@@ -26,6 +35,14 @@ Describe "Get-package" -Tags "Feature" {
 }
 
 Describe "Get-package with version parameter  - valid scenarios" -Tags "Feature" {
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     $destination = Join-Path $TestDrive GetPackageTests
 
     It "Get-package supports -AllVersions parameter" -Skip {
@@ -65,6 +82,14 @@ Describe "Get-package with version parameter  - valid scenarios" -Tags "Feature"
 }
 
 Describe "Get-package with version parameter - Error scenarios" -Tags "Feature" {
+
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
 
     It "Get-package -AllVersions -- Cannot be used with other version parameters" {
         $Error.Clear()

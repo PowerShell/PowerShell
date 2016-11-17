@@ -43,6 +43,14 @@ Register-PackageSource -Name $InternalSource2 -Location $InternalGallery2 -Provi
 
 Describe "install-packageprovider" -Tags "Feature" {
 
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     <#
     BeforeEach {
 
@@ -243,6 +251,15 @@ Describe "install-packageprovider with local source" -Tags "Feature" {
 #>
 
 Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
+
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     $destination = Join-Path $TestDrive "installpp"
 
     It "install-package with array of registered sources with a single provider, Expect succeed" -Pending {
@@ -457,6 +474,14 @@ Describe "Install-Save-Package with multiple sources" -Tags "Feature" {
     # make sure that packagemanagement is loaded
     #import-packagemanagement
 
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     BeforeEach{
         $tempFile = [System.IO.Path]::GetTempFileName() 
         $whatif = "What if: Performing the operation";
@@ -522,6 +547,12 @@ Describe "install-packageprovider with Scope" -Tags "Feature" {
             $securestring = ConvertTo-SecureString $password -AsPlainText -Force
             $credential = new-object -typename System.Management.Automation.PSCredential -argumentlist $userName, $securestring
         }
+
+        $PSDefaultParameterValues["It:Skip"] = $true
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
     }
     
     AfterEach {
@@ -609,6 +640,14 @@ Describe "install-packageprovider with Scope" -Tags "Feature" {
     } 
 }
 Describe "install-PackageProvider with Versions" -Tags "Feature" {
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     # make sure that packagemanagement is loaded
     <# Nuget
     2.8.5.127
@@ -658,6 +697,14 @@ Describe "install-PackageProvider with Versions" -Tags "Feature" {
 
 Describe "Get-package with multiple providers" -Tags "Feature" {
 
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     It "Get-package with multiple providers" -Pending {
 
         $a = Install-package -Name TSDProvider -Source $InternalSource -ProviderName PowerShellGet -Force
@@ -682,6 +729,8 @@ Describe "install-packageprovider Error Cases" -Tags "Feature" {
   AfterAll {
         Unregister-PackageSource -Name OneGetTestSource -Verbose -ErrorAction SilentlyContinue
         Unregister-PackageSource -Name OneGetTestSource2 -Verbose -ErrorAction SilentlyContinue
+
+        $PSDefaultParameterValues.Remove("It:Skip")
    }
   BeforeAll {
         <#
@@ -690,6 +739,8 @@ Describe "install-packageprovider Error Cases" -Tags "Feature" {
         Register-PackageSource -Name $InternalSource -Location $InternalGallery -ProviderName 'PowerShellGet' -Trusted -ForceBootstrap -ErrorAction SilentlyContinue
         Register-PackageSource -Name $InternalSource2 -Location $InternalGallery2 -ProviderName 'PowerShellGet' -ForceBootstrap -ErrorAction SilentlyContinue
         #>
+
+        $PSDefaultParameterValues["It:Skip"] = $true
    }
 
     It "install-packageprovider -name with wildcards, Expect error" -Pending {

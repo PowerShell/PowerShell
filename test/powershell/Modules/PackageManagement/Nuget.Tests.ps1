@@ -56,6 +56,14 @@ function SkipVersion([version]$minVersion,[version]$maxVersion) {
 
 Describe "Find, Get, Save, and Install-Package with Culture" -Tags "Feature" {
 
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     <#
     (get-packageprovider -name "OneGetTest" -list).name | should match "OneGetTest"
     $x = PowerShell '(Import-PackageProvider -name OneGetTest -RequiredVersion 9.9 -WarningAction SilentlyContinue -force ).Name'
@@ -99,6 +107,14 @@ Describe "Find, Get, Save, and Install-Package with Culture" -Tags "Feature" {
 }
 
 Describe "Event Test" -Tags "Feature" {
+
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
  
     it "EXPECTED: install a package should raise event" -Skip:(-not $IsWindows) {
      
@@ -284,6 +300,15 @@ Describe "Event Test" -Tags "Feature" {
 }
 
 Describe "Find-Package" -Tags @('Feature','SLOW'){
+
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     it "EXPECTED: Find a package with a location created via new-psdrive" -Skip:(-not $IsWindows) {
         $Error.Clear()
         New-PSDrive -Name xx -PSProvider FileSystem -Root $TestDrive -warningaction:silentlycontinue -ea silentlycontinue > $null; find-package -name "fooobarrr" -provider nuget -source xx:\  -warningaction:silentlycontinue -ea silentlycontinue
@@ -489,6 +514,14 @@ Describe "Find-Package" -Tags @('Feature','SLOW'){
 }
 
 Describe Save-Package -Tags "Feature" {
+    
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
 	# make sure packagemanagement is loaded
     $destination = $TestDrive
 
@@ -731,6 +764,14 @@ Describe Save-Package -Tags "Feature" {
 Describe "save-package with Whatif" -Tags "Feature" {
     # make sure that packagemanagement is loaded
     #import-packagemanagement
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     $tempDir = Join-Path $TestDrive "nugettesttempfolder"    
 
     BeforeEach{
@@ -777,6 +818,14 @@ Describe "save-package with Whatif" -Tags "Feature" {
 
 
 Describe "install-package with Whatif" -Tags "Feature" {
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     # make sure that packagemanagement is loaded
     #import-packagemanagement
     $installationPath = Join-Path $TestDrive "InstallationPath"
@@ -820,6 +869,14 @@ Describe "install-package with Whatif" -Tags "Feature" {
 }
 
 Describe "install-package with Scope" -tags @('Feature', 'RequireAdminOnWindows') {
+
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
 
      it "EXPECTED Success: Get and Install-Package without Scope without destination" {
             
@@ -935,6 +992,15 @@ Describe "install-package with Scope" -tags @('Feature', 'RequireAdminOnWindows'
 }
 
 Describe Install-Package -Tags "Feature" {
+
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     $destination = Join-Path $TestDrive "NugetPackages"
     $relativetestpath = Join-Path $TestDrive "RelativeTestPath"
  
@@ -1118,6 +1184,15 @@ Describe Install-Package -Tags "Feature" {
 }
 
 Describe Get-Package -Tags "Feature" {
+
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     $destination = Join-Path $TestDrive "NuGetPackages"
 
 	it "EXPECTED: Gets The 'Adept.NugetRunner' Package After Installing" {
@@ -1170,6 +1245,15 @@ Describe Get-Package -Tags "Feature" {
 }
 
 Describe Uninstall-Package -Tags "Feature" {
+
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     $destination = Join-Path $TestDrive "NuGetPackages"
 
 	it "EXPECTED: Uninstalls The Right version of 'Jquery'" {
@@ -1291,6 +1375,14 @@ Describe Uninstall-Package -Tags "Feature" {
 
 Describe Get-PackageProvider -Tags "Feature" {
 
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
 	it "EXPECTED: Gets The 'Nuget' Package Provider" -Skip {
     	(get-packageprovider -name $nuget -force).name | should be $nuget
     }
@@ -1310,10 +1402,12 @@ Describe Get-PackageSource -Tags "Feature" {
          #make sure the package repository exists
         Register-PackageSource -Name 'NugetTemp1' -Location "https://www.PowerShellGallery.com/Api/V2/" -ProviderName 'nuget' -Trusted -ForceBootstrap -force -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
         Register-PackageSource -Name 'NugetTemp2' -Location "https://www.nuget.org/api/v2" -ProviderName 'nuget' -Trusted -ForceBootstrap -force -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+        $PSDefaultParameterValues["It:Skip"] = $true 
     }
     AfterAll    {
         UnRegister-PackageSource -Name 'NugetTemp1' -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
         UnRegister-PackageSource -Name 'NugetTemp2' -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+        $PSDefaultParameterValues.Remove("It:Skip")
     }
 
     It "find-install-get-package Expect succeed" {      
@@ -1351,6 +1445,15 @@ Describe Get-PackageSource -Tags "Feature" {
 }
 
 Describe Register-PackageSource -Tags "Feature" {
+
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     $Destination = Join-Path $TestDrive "NUgettest"
 
 	it "EXPECTED: Register a package source with a location created via new-psdrive" -Skip {
@@ -1460,6 +1563,14 @@ Describe Register-PackageSource -Tags "Feature" {
 
 Describe Unregister-PackageSource -Tags "Feature" {
 
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
 	it "EXPECTED: Unregisters The 'NugetTest.org' Package Source" {
 		(register-packagesource -name "nugettest.org" -provider $nuget -location $source)
         (Find-Package -name jquery -Source "nugettest.org").Name | should not BeNullOrEmpty
@@ -1481,6 +1592,14 @@ Describe Unregister-PackageSource -Tags "Feature" {
 }
 
 Describe Set-PackageSource -Tags "Feature" {
+
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
 
 	it "EXPECTED: Sets The 'NugetTest' Package Source to 'NugetTest2'" {
 		(register-packagesource -name "nugettest" -provider $nuget -location "https://www.nuget.org/api/v2")
@@ -1524,6 +1643,14 @@ Describe Set-PackageSource -Tags "Feature" {
 
 Describe Check-ForCorrectError -Tags "Feature" {
 
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     it "EXPECTED: returns a correct error for find-package with dynamic parameter when package source is wrong" {
         $Error.Clear()
         find-package -provider $nuget -source http://wrongsource/api/v2 -FilterOnTag tag -ea silentlycontinue
@@ -1539,6 +1666,14 @@ Describe Check-ForCorrectError -Tags "Feature" {
 }
 
 Describe Test-Proxy -Tags "Feature" {
+
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
 
     It "EXPECTED: Register package source using proxy" -Skip {
         try {
