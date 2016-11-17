@@ -24,7 +24,7 @@ namespace System.Management.Automation
         internal Token TokenBeforeCursor { get; set; }
         internal IScriptPosition CursorPosition { get; set; }
 
-        internal CompletionExecutionHelper Helper { get; set; }
+        internal PowerShellExecutionHelper Helper { get; set; }
         internal Hashtable Options { get; set; }
         internal Dictionary<string, ScriptBlock> CustomArgumentCompleters { get; set; }
         internal Dictionary<string, ScriptBlock> NativeArgumentCompleters { get; set; }
@@ -279,7 +279,7 @@ namespace System.Management.Automation
         internal List<CompletionResult> GetResults(PowerShell powerShell, out int replacementIndex, out int replacementLength)
         {
             var completionContext = CreateCompletionContext(powerShell.GetContextFromTLS());
-            completionContext.Helper = new CompletionExecutionHelper(powerShell);
+            completionContext.Helper = new PowerShellExecutionHelper(powerShell);
 
             PSLanguageMode? previousLanguageMode = null;
             try

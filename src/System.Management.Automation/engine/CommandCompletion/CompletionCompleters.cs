@@ -83,7 +83,7 @@ namespace System.Management.Automation
                 return CommandCompletion.EmptyCompletionResult;
             }
 
-            var helper = new CompletionExecutionHelper(PowerShell.Create(RunspaceMode.CurrentRunspace));
+            var helper = new PowerShellExecutionHelper(PowerShell.Create(RunspaceMode.CurrentRunspace));
             return CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = helper }, moduleName, commandTypes);
         }
 
@@ -4075,7 +4075,7 @@ namespace System.Management.Automation
                 return CommandCompletion.EmptyCompletionResult;
             }
 
-            var helper = new CompletionExecutionHelper(PowerShell.Create(RunspaceMode.CurrentRunspace));
+            var helper = new PowerShellExecutionHelper(PowerShell.Create(RunspaceMode.CurrentRunspace));
             return CompleteFilename(new CompletionContext { WordToComplete = fileName, Helper = helper });
         }
 
@@ -4522,7 +4522,7 @@ namespace System.Management.Automation
                 return CommandCompletion.EmptyCompletionResult;
             }
 
-            var helper = new CompletionExecutionHelper(PowerShell.Create(RunspaceMode.CurrentRunspace));
+            var helper = new PowerShellExecutionHelper(PowerShell.Create(RunspaceMode.CurrentRunspace));
             return CompleteVariable(new CompletionContext { WordToComplete = variableName, Helper = helper });
         }
 
@@ -6042,7 +6042,7 @@ namespace System.Management.Automation
                                  ? PowerShell.Create()
                                  : PowerShell.Create(RunspaceMode.CurrentRunspace);
 
-            var helper = new CompletionExecutionHelper(powershell);
+            var helper = new PowerShellExecutionHelper(powershell);
             return CompleteType(new CompletionContext { WordToComplete = typeName, Helper = helper });
         }
 
