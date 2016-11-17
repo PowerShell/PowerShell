@@ -132,6 +132,42 @@ function Get-CoverageSummary([xml.xmlelement] $element)
     return $CoverageSummary
 }
 
+# needed for PowerShell v4 as Archive module isn't available by default
+function Expand-ZipArchive([string] $Path, [string] $DestinationPath)
+{
+    try
+    {
+        Add-Type -AssemblyName System.IO.Compression
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+        $fileStream = New-Object System.IO.FileStream -ArgumentList @($Path, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read) 
+        $zipArchive = New-Object System.IO.Compression.ZipArchive -ArgumentList @($fileStream, [System.IO.Compression.ZipArchiveMode]::Read, $false)
+
+        foreach($entry in $zipArchive.Entries)
+        {
+            $extractPath = (Join-Path $DestinationPath $entry.FullName)
+
+            $fileInfo = New-Object System.IO.FileInfo -ArgumentList $extractPath
+            if(-not $fileInfo.Directory.Exists) { New-Item -Path $fileInfo.Directory.FullName -ItemType Directory | Out-Null }
+
+            try
+            {
+                $newfileStream = [System.IO.File]::Create($extractPath)
+                $entry.Open().CopyTo($newfileStream)
+            }
+            finally
+            {                
+                if($newfileStream) { $newfileStream.Dispose() }
+            }
+        }
+    }
+    finally
+    {
+        if($zipArchive) { $zipArchive.Dispose() }
+        if($fileStream) { $fileStream.Dispose() }
+    }    
+}
+
 #endregion
 
 <#
@@ -318,7 +354,12 @@ function Install-OpenCover
     }
     
     import-module Microsoft.PowerShell.Archive
-    Expand-Archive -Path $tempPath -DestinationPath "$TargetDirectory/OpenCover"
+
+    if ((Get-Command Expand-Archive -ErrorAction Ignore) -ne $null) {
+        Expand-Archive -Path $tempPath -DestinationPath "$TargetDirectory/OpenCover"
+    } else {
+        Expand-ZipArchive -Path $tempPath -DestinationPath "$TargetDirectory/OpenCover"
+    }
     Remove-Item -force $tempPath
 }
 
