@@ -33,7 +33,7 @@ namespace System.Management.Automation
         internal int ReplacementLength { get; set; }
         internal ExecutionContext ExecutionContext { get; set; }
         internal PseudoBindingInfo PseudoBindingInfo { get; set; }
-        internal TypeDefinitionAst CurrentTypeDefinitionAst { get; set; }
+        internal TypeInferenceContext TypeInferenceContext {get;set;}
 
         internal bool GetOption(string option, bool @default)
         {
@@ -96,8 +96,9 @@ namespace System.Management.Automation
             return cursor.Offset < extent.StartOffset || cursor.Offset > extent.EndOffset;
         }
 
-        internal CompletionContext CreateCompletionContext(ExecutionContext executionContext)
+        internal CompletionContext CreateCompletionContext(PowerShell powerShell)
         {
+            ExecutionContext executionContext = powerShell.GetContextFromTLS();
             Token tokenBeforeCursor = null;
             IScriptPosition positionForAstSearch = _cursorPosition;
             var adjustLineAndColumn = false;
@@ -125,6 +126,10 @@ namespace System.Management.Automation
             var asts = AstSearcher.FindAll(_ast, ast => IsCursorWithinOrJustAfterExtent(positionForAstSearch, ast.Extent), searchNestedScriptBlocks: true).ToList();
 
             Diagnostics.Assert(tokenAtCursor == null || tokenBeforeCursor == null, "Only one of these tokens can be non-null");
+            var typeInferenceContext = new TypeInferenceContext(powerShell)
+            {
+                CurrentTypeDefinitionAst = Ast.GetAncestorTypeDefinitionAst(asts.Last())
+            };
             return new CompletionContext
             {
                 TokenAtCursor = tokenAtCursor,
@@ -134,7 +139,8 @@ namespace System.Management.Automation
                 Options = _options,
                 ExecutionContext = executionContext,
                 ReplacementIndex = adjustLineAndColumn ? _cursorPosition.Offset : 0,
-                CurrentTypeDefinitionAst = Ast.GetAncestorTypeDefinitionAst(asts.Last()),
+                TypeInferenceContext                = typeInferenceContext,
+                Helper = typeInferenceContext.Helper,
                 CustomArgumentCompleters = executionContext.CustomArgumentCompleters,
                 NativeArgumentCompleters = executionContext.NativeArgumentCompleters,
             };
@@ -278,8 +284,7 @@ namespace System.Management.Automation
 
         internal List<CompletionResult> GetResults(PowerShell powerShell, out int replacementIndex, out int replacementLength)
         {
-            var completionContext = CreateCompletionContext(powerShell.GetContextFromTLS());
-            completionContext.Helper = new PowerShellExecutionHelper(powerShell);
+            var completionContext = CreateCompletionContext(powerShell);
 
             PSLanguageMode? previousLanguageMode = null;
             try
@@ -590,7 +595,7 @@ namespace System.Management.Automation
                     // and an assignment is pending.  For cases like:
                     //   new-object System.Drawing.Point -prop @{ X=  -> Tab should not complete
                     // Note: This check works when all statements preceding the last are complete,
-                    //       but if a preceding statement is incomplete this test fails because
+                    //       but if a preceding statement is incomplete this test fails because 
                     //       the Ast mixes the statements due to incomplete parsing.
                     //   e.g.,
                     //   new-object System.Drawing.Point -prop @{ X = 100; Y =      <- Incomplete line
@@ -1262,7 +1267,7 @@ namespace System.Management.Automation
         /// Generate auto complete results for identifier within configuration.
         /// Results are generated based on DynamicKeywords matches given identifier.
         /// For example, following "Fi" matches "File", and "Us" matches "User"
-        ///
+        /// 
         ///     Configuration
         ///     {
         ///         Fi^
@@ -1271,7 +1276,7 @@ namespace System.Management.Automation
         ///             Us^
         ///         }
         ///     }
-        ///
+        /// 
         /// </summary>
         /// <param name="completionContext"></param>
         /// <param name="configureAst"></param>
