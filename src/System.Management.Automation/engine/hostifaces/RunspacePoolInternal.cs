@@ -574,13 +574,13 @@ namespace System.Management.Automation.Runspaces.Internal
                     int unUsedCapacity = (maxPoolSz - totalRunspaces) < 0 ? 0 : (maxPoolSz - totalRunspaces);
                     return (pool.Count + unUsedCapacity);
                 }
-                else if (stateInfo.State != RunspacePoolState.BeforeOpen && stateInfo.State != RunspacePoolState.Opening)
-                {
-                    throw new InvalidOperationException(HostInterfaceExceptionsStrings.RunspacePoolNotOpened);
-                }
                 else if (stateInfo.State == RunspacePoolState.Disconnected)
                 {
                     throw new InvalidOperationException(RunspacePoolStrings.CannotWhileDisconnected);
+                }
+                else if (stateInfo.State != RunspacePoolState.BeforeOpen && stateInfo.State != RunspacePoolState.Opening)
+                {
+                    throw new InvalidOperationException(HostInterfaceExceptionsStrings.RunspacePoolNotOpened);
                 }
                 else
                 {

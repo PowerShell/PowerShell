@@ -433,8 +433,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             TraversalInfo level = new TraversalInfo(0, maxDepth);
 
             List<MshParameter> mshParameterList = null;
-            if (inputParameters != null)
-                mshParameterList = inputParameters.mshParameterList;
+            mshParameterList = inputParameters.mshParameterList;
 
             // create a top level entry as root of the tree
             ComplexViewEntry cve = new ComplexViewEntry();
