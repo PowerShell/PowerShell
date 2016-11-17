@@ -83,7 +83,6 @@
         "Microsoft.PowerShell.PSReadLine": "6.0.0-*",
         "Microsoft.PowerShell.Commands.Diagnostics": "6.0.0-*",
         "Microsoft.PowerShell.LocalAccounts": "6.0.0-*",
-        "Microsoft.PowerShell.PackageManagement": "6.0.0-*",
         "Microsoft.Management.Infrastructure.CimCmdlets": "6.0.0-*",
         "Microsoft.WSMan.Management": "6.0.0-*",
         "PSDesiredStateConfiguration": "1.0.0-alpha01"

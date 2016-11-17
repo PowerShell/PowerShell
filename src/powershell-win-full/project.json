@@ -35,7 +35,6 @@
         "Microsoft.PowerShell.GraphicalHost": "6.0.0-*",
         "Microsoft.PowerShell.LocalAccounts": "6.0.0-*",
         "Microsoft.PowerShell.Management.Activities": "6.0.0-*",
-        "Microsoft.PowerShell.PackageManagement": "6.0.0-*",
         "Microsoft.PowerShell.PSReadLine": "6.0.0-*",
         "Microsoft.PowerShell.ScheduledJob": "6.0.0-*",
         "Microsoft.PowerShell.Security.Activities": "6.0.0-*",
