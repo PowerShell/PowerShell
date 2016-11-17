@@ -1,6 +1,9 @@
 ﻿#region privateFunctions
 
-$script:psRepoPath = git rev-parse --show-toplevel
+$script:psRepoPath = [string]::Empty
+if ((Get-Command -Name 'git' -ErrorAction Ignore) -ne $Null) {
+    $script:psRepoPath = git rev-parse --show-toplevel
+}
 
 function Get-AssemblyCoverageData([xml.xmlelement] $element)
 {
@@ -334,7 +337,7 @@ function Invoke-OpenCover
         [parameter()]$OutputLog = "$pwd/OpenCover.xml",
         [parameter()]$TestDirectory = "$($script:psRepoPath)/test/powershell",
         [parameter()]$OpenCoverPath = "~/OpenCover",
-        [parameter()]$PowerShellExeDirectory = "$($script:psRepoPath)/src/powershell-win-core/bin/debug/netcoreapp1.0/win10-x64",
+        [parameter()]$PowerShellExeDirectory = "$($script:psRepoPath)/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win10-x64",
         [switch]$CIOnly
         )
 
@@ -344,7 +347,11 @@ function Invoke-OpenCover
 
     if ( ! (test-path $OpenCoverBin)) 
     {
-        throw "$OpenCoverBin does not exist"
+        # see if it's somewhere else in the path
+        $openCoverBin = (Get-Command -Name 'opencover.console' -ErrorAction Ignore).Source
+        if ($openCoverBin -eq $null) {
+            throw "$OpenCoverBin does not exist"
+        }
     }
 
     # check to be sure that powershell.exe is present
