@@ -15,13 +15,15 @@ namespace Microsoft.PowerShell.Commands
     /// A command to resolve MSH paths containing glob characters to
     /// MSH paths that match the glob strings.
     /// </summary>
-    [Cmdlet("Split", "Path", DefaultParameterSetName = "ParentSet", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113404")]
-    [OutputType(typeof(string), ParameterSetName = new string[] { leafSet,
-                                                                  noQualifierSet,
-                                                                  parentSet,
-                                                                  qualifierSet,
-                                                                  literalPathSet})]
-    [OutputType(typeof(bool), ParameterSetName = new string[] { isAbsoluteSet })]
+    [Cmdlet(VerbsCommon.Split, "Path", DefaultParameterSetName = "ParentSet", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113404")]
+    [OutputType(typeof(string), ParameterSetName = new[] { leafSet,
+                                                           leafBaseSet,
+                                                           extensionSet,
+                                                           noQualifierSet,
+                                                           parentSet,
+                                                           qualifierSet,
+                                                           literalPathSet})]
+    [OutputType(typeof(bool), ParameterSetName = new[] { isAbsoluteSet })]
     public class SplitPathCommand : CoreCommandWithCredentialsBase
     {
         #region Parameters
@@ -35,6 +37,17 @@ namespace Microsoft.PowerShell.Commands
         /// The parameter set name to get the leaf name
         /// </summary>
         private const string leafSet = "LeafSet";
+
+        /// <summary>
+        /// The parameter set name to get the leaf base name
+        /// </summary>
+        private const string leafBaseSet = "LeafBaseSet";
+
+        /// <summary>
+        /// The parameter set name to get the extension
+        /// </summary>
+        private const string extensionSet = "ExtensionSet";
+
 
         /// <summary>
         /// The parameter set name to get the qualifier set.
@@ -61,6 +74,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = parentSet, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Parameter(Position = 0, ParameterSetName = leafSet, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 0, ParameterSetName = leafBaseSet, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 0, ParameterSetName = extensionSet, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Parameter(Position = 0, ParameterSetName = qualifierSet, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Parameter(Position = 0, ParameterSetName = noQualifierSet, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Parameter(Position = 0, ParameterSetName = isAbsoluteSet, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -133,6 +148,27 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = leafSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public SwitchParameter Leaf { get; set; }
 
+        /// <summary>
+        /// Determines if the leaf base name (name without extension) should be returned
+        /// </summary>
+        ///
+        /// <value>
+        /// If true the leaf base name of the path will be returned.
+        /// </value>
+        ///
+        [Parameter(ParameterSetName = leafBaseSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
+        public SwitchParameter LeafBase { get; set; }
+
+        /// <summary>
+        /// Determines if the extension should be returned
+        /// </summary>
+        ///
+        /// <value>
+        /// If true the extension of the path will be returned.
+        /// </value>
+        ///
+        [Parameter(ParameterSetName = extensionSet, Mandatory = false, ValueFromPipelineByPropertyName = true)]
+        public SwitchParameter Extension { get; set; }
 
         /// <summary>
         /// Determines if the path should be resolved before being parsed.
@@ -341,13 +377,24 @@ namespace Microsoft.PowerShell.Commands
                         break;
 
                     case leafSet:
+                    case leafBaseSet:
+                    case extensionSet:
                         try
                         {
+                            // default handles leafSet
                             result =
                                 SessionState.Path.ParseChildName(
                                     pathsToParse[index],
                                     CmdletProviderContext,
                                     true);
+                            if (LeafBase)
+                            {
+                                result = System.IO.Path.GetFileNameWithoutExtension(result);
+                            }
+                            else if (Extension)
+                            {
+                                result = System.IO.Path.GetExtension(result);
+                            }
                         }
                         catch (PSNotSupportedException)
                         {
