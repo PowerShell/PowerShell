@@ -1630,4 +1630,10 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   <data name="UnknownSSHConnectionParameter" xml:space="preserve">
     <value>The provided SSHConnection hash table parameter {0} is not supported.</value>
   </data>
+  <data name="SSHConnectionDuplicateHostName" xml:space="preserve">
+    <value>The provided SSHConnection hash table contains both a ComputerName and HostName parameter.  Only one can be specified.</value>
+  </data>
+  <data name="SSHConnectionDuplicateKeyPath" xml:space="preserve">
+    <value>The provided SSHConnection hash table contains both a KeyFilePath and IdentityFilePath parameter.  Only one can be specified.</value>
+  </data>
 </root>

@@ -1,40 +1,29 @@
 ##
 ## SSH Remoting cmdlet tests
-## Copyright (c) Microsoft Corporation, 2016
 ##
 
 Describe "SSHTransport switch parameter value" -Tags 'CI' {
 
-    It "New-PSSession SSHTransport parameter cannot have false value" {
+    BeforeAll {
 
-        [System.Management.Automation.ErrorRecord] $paramError = $null
-        try
-        {
-            New-PSSession -HostName localhost -UserName UserA -SSHTransport:$false
-        }
-        catch { $paramError = $_ }
-
-        $paramError.FullyQualifiedErrorId | Should Match "ParameterArgumentValidationError"
+        $TestCasesSSHTransport = @(
+            @{scriptBlock = {New-PSSession -HostName localhost -UserName UserA -SSHTransport:$false}; testName = 'New-PSSession SSHTransport parameter cannot have false value'}
+            @{scriptBlock = {Enter-PSSession -HostName localhost -UserName UserA -SSHTransport:$false}; testName = 'Enter-PSSession SSHTransport parameter cannot have false value'}
+            @{scriptBlock = {Invoke-Command -ScriptBlock {"Hello"} -HostName localhost -UserName UserA -SSHTransport:$false}; testName = 'Invoke-Command SSHTransport parameter cannot have false value'}
+        )
     }
 
-    It "Enter-PSSession SSHTransport parameter cannot have false value" {
-
+    BeforeEach {
         [System.Management.Automation.ErrorRecord] $paramError = $null
-        try
-        {
-            Enter-PSSession -HostName localhost -UserName UserA -SSHTransport:$false
-        }
-        catch { $paramError = $_ }
-
-        $paramError.FullyQualifiedErrorId | Should Match "ParameterArgumentValidationError"
     }
 
-    It "Invoke-Command SSHTransport parameter cannot have false value" {
+    It "<testName>" -TestCases $TestCasesSSHTransport {
 
-        [System.Management.Automation.ErrorRecord] $paramError = $null
+        param($scriptBlock)
         try
         {
-            Invoke-Command -ScriptBlock {"Hello"} -HostName localhost -UserName UserA -SSHTransport:$false
+            & $scriptBlock
+            throw "Parameter argument should not be valid"
         }
         catch { $paramError = $_ }
 
@@ -44,48 +33,28 @@ Describe "SSHTransport switch parameter value" -Tags 'CI' {
 
 Describe "SSHConnection parameter hashtable error conditions" -Tags 'CI' {
 
-    It "SSHConnection parameter hashtable cannot contain empty parameter names" {
+    BeforeAll {
 
-        [System.Management.Automation.ErrorRecord] $paramError = $null
-        try
-        {
-            New-PSSession -SSHConnection @{ ComputerName = 'localhost'; "" = 'noParameter' }
-        }
-        catch { $paramError = $_ }
-
-        $paramError.FullyQualifiedErrorId | Should Match "Argument,Microsoft.PowerShell.Commands.NewPSSessionCommand"
+        $TestCasesSSHConnection = @(
+            @{scriptBlock = {New-PSSession -SSHConnection @{ ComputerName = "localhost"; "" = "noParameter" }}; testName = 'SSHConnection parameter hashtable cannot contain empty parameter names'}
+            @{scriptBlock = {New-PSSession -SSHConnection @{ HostName = $null }}; testName = 'SSHConnection parameter hashtable cannot contain empty parameter values'}
+            @{scriptBlock = {New-PSSession -SSHConnection @{ ComputerName = "localhost"; UnknownParameter = "Hello" }}; testName = 'SSHConnection parameter hashtable cannot contain unknown parameter names'}
+            @{scriptBlock = {New-PSSession -SSHConnection @{ UserName = "UserName"; KeyFilePath = "path" }}; testName = 'SSHConnection parmeter hashtable must contain the ComputerName parameter'}
+            @{scriptBlock = {New-PSSession -SSHConnection @{ ComputerName = "computerA"; hostname = "computerB" }}; testName = 'SSHConnection parameter hashtable cannot contain both ComputerName and HostName parameters' }
+            @{scriptBlock = {New-PSSession -SSHConnection @{ keyfilepath = "pathA"; IdentityFilePath = "pathB" }}; testName = 'SSHConnection parameter hashtable cannot contain both KeyFilePath and IdentityFilePath parameters' }
+        )
     }
 
-    It "SSHConnection parameter hashtable cannot contain empty parameter values" {
-
+    BeforeEach {
         [System.Management.Automation.ErrorRecord] $paramError = $null
-        try
-        {
-            New-PSSession -SSHConnection @{ HostName = $null }
-        }
-        catch { $paramError = $_ }
-
-        $paramError.FullyQualifiedErrorId | Should Match "Argument,Microsoft.PowerShell.Commands.NewPSSessionCommand"
     }
 
-    It "SSHConnection parameter hashtable cannot contain unknown parameter names" {
-
-        [System.Management.Automation.ErrorRecord] $paramError = $null
+    It "<testName>" -TestCases $TestCasesSSHConnection {
+        param ($scriptBlock)
         try
         {
-            New-PSSession -SSHConnection @{ ComputerName = 'localhost'; UnknownParameter = 'Hello' }
-        }
-        catch { $paramError = $_ }
-
-        $paramError.FullyQualifiedErrorId | Should Match "Argument,Microsoft.PowerShell.Commands.NewPSSessionCommand"
-    }
-
-    It "SSHConnection parmeter hashtable must contain the ComputerName parameter" {
-
-        [System.Management.Automation.ErrorRecord] $paramError = $null
-        try
-        {
-            New-PSSession -SSHConnection @{ UserName = 'UserName'; KeyFilePath = 'path' }
+            & $scriptBlock
+            throw "Parameter set should not be valid"
         }
         catch { $paramError = $_ }
 

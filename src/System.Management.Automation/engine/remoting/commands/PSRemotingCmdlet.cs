@@ -801,14 +801,28 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Parse the Connection parameter HashTable array.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Array of SSHConnection objects</returns>
+        private const string ComputerNameParameter = "ComputerName";
+        private const string HostNameAlias = "HostName";
+        private const string UserNameParameter = "UserName";
+        private const string KeyFilePathParameter = "KeyFilePath";
+        private const string IdentityFilePathAlias = "IdentityFilePath";
         internal SSHConnection[] ParseSSHConnectionHashTable()
         {
             List<SSHConnection> connections = new List<SSHConnection>();
             foreach (var item in this.SSHConnection)
             {
-                SSHConnection connectionInfo = new SSHConnection();
+                if (item.ContainsKey(ComputerNameParameter) && item.ContainsKey(HostNameAlias))
+                {
+                    throw new PSArgumentException(RemotingErrorIdStrings.SSHConnectionDuplicateHostName);
+                }
 
+                if (item.ContainsKey(KeyFilePathParameter) && item.ContainsKey(IdentityFilePathAlias))
+                {
+                    throw new PSArgumentException(RemotingErrorIdStrings.SSHConnectionDuplicateKeyPath);
+                }
+
+                SSHConnection connectionInfo = new SSHConnection();
                 foreach (var key in item.Keys)
                 {
                     string paramName = key as string;
@@ -823,17 +837,17 @@ namespace Microsoft.PowerShell.Commands
                         throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
                     }
 
-                    if (paramName.Equals("ComputerName", StringComparison.OrdinalIgnoreCase) || paramName.Equals("HostName", StringComparison.OrdinalIgnoreCase))
+                    if (paramName.Equals(ComputerNameParameter, StringComparison.OrdinalIgnoreCase) || paramName.Equals(HostNameAlias, StringComparison.OrdinalIgnoreCase))
                     {
                         var resolvedComputerName = ResolveComputerName(paramValue);
                         ValidateComputerName(new string[] { resolvedComputerName });
                         connectionInfo.ComputerName = resolvedComputerName;
                     }
-                    else if (paramName.Equals("UserName", StringComparison.OrdinalIgnoreCase))
+                    else if (paramName.Equals(UserNameParameter, StringComparison.OrdinalIgnoreCase))
                     {
                         connectionInfo.UserName = paramValue;
                     }
-                    else if (paramName.Equals("KeyFilePath", StringComparison.OrdinalIgnoreCase) || paramName.Equals("IdentityFilePath", StringComparison.OrdinalIgnoreCase))
+                    else if (paramName.Equals(KeyFilePathParameter, StringComparison.OrdinalIgnoreCase) || paramName.Equals(IdentityFilePathAlias, StringComparison.OrdinalIgnoreCase))
                     {
                         connectionInfo.KeyFilePath = paramValue;
                     }
