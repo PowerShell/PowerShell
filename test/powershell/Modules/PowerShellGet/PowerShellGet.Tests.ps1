@@ -62,6 +62,15 @@ $script:MyDocumentsScriptsPath = Microsoft.PowerShell.Management\Join-Path -Path
 
 #region Register a test repository
 
+# Check if the PackageManagement works in the base-oS or PowerShellCore
+$PSHome
+$PSVersionTable
+$env:PSModulePath
+
+Get-Module -ListAvailable -Name PackageManagement, PowerShellGet
+Import-Module PackageManagement -force -verbose
+Get-PackageProvider -ListAvailable
+
 $repo = Get-PSRepository -ErrorAction SilentlyContinue | 
             Where-Object {$_.SourceLocation.StartsWith($SourceLocation, [System.StringComparison]::OrdinalIgnoreCase)}
 if($repo)

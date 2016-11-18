@@ -160,11 +160,11 @@ function Invoke-AppVeyorBuild
 
       if(Test-DailyBuild)
       {
-          Start-PSBuild -Configuration 'CodeCoverage'
+          Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore
       }
 
-      Start-PSBuild -FullCLR
-      Start-PSBuild -CrossGen
+      Start-PSBuild -FullCLR -PSModuleRestore
+      Start-PSBuild -CrossGen -PSModuleRestore
 }
 
 # Implements the AppVeyor 'install' step
