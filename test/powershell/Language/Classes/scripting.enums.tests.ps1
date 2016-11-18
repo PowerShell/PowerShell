@@ -3,12 +3,6 @@
 #
 
 Describe 'enums' -Tags "CI" {
-    Context 'Enum definition' {
-        It "Enum values definition have space-insensitive syntax" {
-            { enum E0 {e=0} } | Should Not Throw
-        }
-    }
-
     Context 'basic enums' {
         enum E1
         {
@@ -84,6 +78,15 @@ Describe 'Basic enum errors' -Tags "CI" {
 
     AfterAll {
         Remove-Module LanguageTestSupport
+    }
+
+    Context 'Enum definition' {
+        It "Enum values definition have space-insensitive syntax" {
+            $errors0 = Get-ParseResults -Src 'enum E0 {e=0}'
+            $errors1 = Get-ParseResults -Src 'enum E0 {e =0}'
+            $errors0.Count | Should Be 0
+            $errors1.Count | Should Be 0
+        }
     }
 
     ShouldBeParseError 'enum' MissingNameAfterKeyword 4
