@@ -63,7 +63,7 @@ function Start-PSBuild {
         [switch]$ResGen,
         [switch]$TypeGen,
         [switch]$Clean,
-        [switch]$NoPSModuleRestore,
+        [switch]$PSModuleRestore,
 
         # this switch will re-build only System.Management.Automation.dll
         # it's useful for development, to do a quick changes in the engine
@@ -399,13 +399,14 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
         Pop-Location
     }
 
-    if(-not $NoPSModuleRestore)
+    if($PSModuleRestore)
     {
         # downloading the PackageManagement module
-        # $Options.Output is pointing to something like "...\src\powershell-win-core\bin\Debug\netcoreapp1.0\win10-x64\powershell.exe", 
+        # $Options.Output is pointing to something like "...\src\powershell-win-core\bin\Debug\netcoreapp1.0\win10-x64\publish\powershell.exe", 
         # so we need to get its parent directory
-        $PowerShellPath = Split-Path $Options.Output -Parent
-        Restore-PSModule -Name PackageManagement -Destination "$PowerShellPath\Modules"
+        $publishPath = Split-Path $Options.Output -Parent
+        log "Restore PowerShell modules to $publishPath"
+        Restore-PSModule -Name PackageManagement -Destination (Join-Path -Path $publishPath -ChildPath "Modules")
     }
 }
 
@@ -2607,7 +2608,7 @@ function Restore-PSModule
         }
     }
 
-    log ("Name='{0}', Dsetination='{1}', Repository='{2}'" -f $Name, $Destination, $RepositoryName)
+    log ("Name='{0}', Destination='{1}', Repository='{2}'" -f $Name, $Destination, $RepositoryName)
 
     $command = @{
                     Name=$Name
@@ -2621,18 +2622,14 @@ function Restore-PSModule
     }
 
     # pull down the module
-    log ("running save-module $Name")
-    PowerShellGet\Save-Module @command -Force -Verbose:$VerbosePreference
+    log "running save-module $Name"
+    PowerShellGet\Save-Module @command -Force -Verbose
 
     # Clean up
     if($needRegister)
     {
-        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName -ErrorAction SilentlyContinue
-        if($regVar)
-        {
-            log "Unregistering PSRepository with name: $RepositoryName"
-            PowerShellGet\UnRegister-PSRepository -Name $RepositoryName
-        }
+        log "Unregistering PSRepository with name: $RepositoryName"
+        PowerShellGet\Get-PSRepository -Name $RepositoryName -ErrorAction SilentlyContinue | PowerShellGet\UnRegister-PSRepository -Name $RepositoryName
     }
 }
 
