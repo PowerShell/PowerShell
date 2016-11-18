@@ -61,9 +61,10 @@ Describe 'enums' -Tags "CI" {
             e0 = [E6]::e0 + 2
         }
 
+        # Don't add space after 'e0 ='! Fix #2543
         enum E6
         {
-            e0 = 38
+            e0 =38
         }
 
         It 'E4 has correct value' { [E4]::e0 | Should Be ([E4]42) }
@@ -78,15 +79,6 @@ Describe 'Basic enum errors' -Tags "CI" {
 
     AfterAll {
         Remove-Module LanguageTestSupport
-    }
-
-    Context 'Enum definition' {
-        It "Enum values definition have space-insensitive syntax" {
-            $errors0 = Get-ParseResults -Src 'enum E0 {e=0}'
-            $errors1 = Get-ParseResults -Src 'enum E0 {e =0}'
-            $errors0.Count | Should Be 0
-            $errors1.Count | Should Be 0
-        }
     }
 
     ShouldBeParseError 'enum' MissingNameAfterKeyword 4
