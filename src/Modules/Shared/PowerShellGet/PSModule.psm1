@@ -88,6 +88,9 @@ $script:PSGetSettings = $null
 $script:MyDocumentsInstalledScriptInfosPath = Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsScriptsPath -ChildPath 'InstalledScriptInfos'
 $script:ProgramFilesInstalledScriptInfosPath = Microsoft.PowerShell.Management\Join-Path -Path $script:ProgramFilesScriptsPath -ChildPath 'InstalledScriptInfos'
 
+$script:IsRunningAsElevated = $true
+$script:IsRunningAsElevatedTested = $false
+
 $script:InstalledScriptInfoFileName = 'InstalledScriptInfo.xml'
 $script:PSGetInstalledScripts = $null
 
@@ -7580,21 +7583,26 @@ function Test-RunningAsElevated
     [OutputType([bool])]
     Param()
 
-    if($script:IsWindows)
+    if(-not $script:IsRunningAsElevatedTested -and $script:IsRunningAsElevated)
     {
-        $wid=[System.Security.Principal.WindowsIdentity]::GetCurrent()
-        $prp=new-object System.Security.Principal.WindowsPrincipal($wid)
-        $adm=[System.Security.Principal.WindowsBuiltInRole]::Administrator
-        return $prp.IsInRole($adm)
-    }
-    elseif($script:IsCoreCLR)
-    {
-        # Permission models on *nix can be very complex, to the point that you could never possibly guess without simply trying what you need to try;
-        # This is totally different from Windows where you can know what you can or cannot do with/without admin rights.
-        return $true
+        if($script:IsWindows)
+        {
+            $wid=[System.Security.Principal.WindowsIdentity]::GetCurrent()
+            $prp=new-object System.Security.Principal.WindowsPrincipal($wid)
+            $adm=[System.Security.Principal.WindowsBuiltInRole]::Administrator
+            $script:IsRunningAsElevated = $prp.IsInRole($adm)
+        }
+        elseif($script:IsCoreCLR)
+        {
+            # Permission models on *nix can be very complex, to the point that you could never possibly guess without simply trying what you need to try;
+            # This is totally different from Windows where you can know what you can or cannot do with/without admin rights.
+            $script:IsRunningAsElevated = $true
+        }
+
+        $script:IsRunningAsElevatedTested = $true
     }
 
-    return $false
+    return $script:IsRunningAsElevated
 }
 
 function Get-EscapedString
@@ -13664,6 +13672,9 @@ function Copy-ScriptFile
         [string]
         $Scope
     )
+
+    $ev = $null
+    $message = $LocalizedData.AdministratorRightsNeededOrSpecifyCurrentUserScope
     
     # Copy the script file to destination
     if(-not (Microsoft.PowerShell.Management\Test-Path -Path $DestinationPath))
@@ -13671,13 +13682,42 @@ function Copy-ScriptFile
         $null = Microsoft.PowerShell.Management\New-Item -Path $DestinationPath `
                                                          -ItemType Directory `
                                                          -Force `
+                                                         -ErrorVariable ev `
                                                          -ErrorAction SilentlyContinue `
                                                          -WarningAction SilentlyContinue `
                                                          -Confirm:$false `
                                                          -WhatIf:$false
+        
+        if($ev)
+        {
+            $script:IsRunningAsElevated = $false
+            ThrowError -ExceptionName "System.ArgumentException" `
+                       -ExceptionMessage $message `
+                       -ErrorId "AdministratorRightsNeededOrSpecifyCurrentUserScope" `
+                       -CallerPSCmdlet $PSCmdlet `
+                       -ErrorCategory InvalidArgument `
+                       -ExceptionObject $ev
+        }
     }
 
-    Microsoft.PowerShell.Management\Copy-Item -Path $SourcePath -Destination $DestinationPath -Force -Confirm:$false -WhatIf:$false -Verbose
+    Microsoft.PowerShell.Management\Copy-Item -Path $SourcePath `
+                                              -Destination $DestinationPath `
+                                              -Force `
+                                              -Confirm:$false `
+                                              -WhatIf:$false `
+                                              -ErrorVariable ev `
+                                              -ErrorAction SilentlyContinue
+
+    if($ev)
+    {
+        $script:IsRunningAsElevated = $false
+        ThrowError -ExceptionName "System.ArgumentException" `
+                   -ExceptionMessage $message `
+                   -ErrorId "AdministratorRightsNeededOrSpecifyCurrentUserScope" `
+                   -CallerPSCmdlet $PSCmdlet `
+                   -ErrorCategory InvalidArgument `
+                   -ExceptionObject $ev
+    }
 
     if($Scope)
     {
@@ -13721,16 +13761,75 @@ function Copy-Module
         [PSCustomObject]
         $PSGetItemInfo
     )
-    
+
+    $ev = $null
+    $message = $LocalizedData.AdministratorRightsNeededOrSpecifyCurrentUserScope
+        
     if(Microsoft.PowerShell.Management\Test-Path $DestinationPath)
     {
-        Microsoft.PowerShell.Management\Remove-Item -Path $DestinationPath -Recurse -Force -ErrorAction SilentlyContinue -WarningAction SilentlyContinue -Confirm:$false -WhatIf:$false
+        Microsoft.PowerShell.Management\Remove-Item -Path $DestinationPath `
+                                                    -Recurse `
+                                                    -Force `
+                                                    -ErrorVariable ev `
+                                                    -ErrorAction SilentlyContinue `
+                                                    -WarningAction SilentlyContinue `
+                                                    -Confirm:$false `
+                                                    -WhatIf:$false
+
+        if($ev)
+        {
+            $script:IsRunningAsElevated = $false
+            ThrowError -ExceptionName "System.ArgumentException" `
+                       -ExceptionMessage $message `
+                       -ErrorId "AdministratorRightsNeededOrSpecifyCurrentUserScope" `
+                       -CallerPSCmdlet $PSCmdlet `
+                       -ErrorCategory InvalidArgument `
+                       -ExceptionObject $ev
+        }
     }
 
+
     # Copy the module to destination
-    $null = Microsoft.PowerShell.Management\New-Item -Path $DestinationPath -ItemType Directory -Force -ErrorAction SilentlyContinue -WarningAction SilentlyContinue -Confirm:$false -WhatIf:$false
-    Microsoft.PowerShell.Management\Copy-Item -Path "$SourcePath\*" -Destination $DestinationPath -Force -Recurse -Confirm:$false -WhatIf:$false
+    $null = Microsoft.PowerShell.Management\New-Item -Path $DestinationPath `
+                                                     -ItemType Directory `
+                                                     -Force `
+                                                     -ErrorVariable ev `
+                                                     -ErrorAction SilentlyContinue `
+                                                     -WarningAction SilentlyContinue `
+                                                     -Confirm:$false `
+                                                     -WhatIf:$false
+
+    if($ev)
+    {
+        $script:IsRunningAsElevated = $false
+        ThrowError -ExceptionName "System.ArgumentException" `
+                   -ExceptionMessage $message `
+                   -ErrorId "AdministratorRightsNeededOrSpecifyCurrentUserScope" `
+                   -CallerPSCmdlet $PSCmdlet `
+                   -ErrorCategory InvalidArgument `
+                   -ExceptionObject $ev
+    }
+
+    Microsoft.PowerShell.Management\Copy-Item -Path "$SourcePath\*" `
+                                              -Destination $DestinationPath `
+                                              -Force `
+                                              -Recurse `
+                                              -ErrorVariable ev `
+                                              -ErrorAction SilentlyContinue `
+                                              -Confirm:$false `
+                                              -WhatIf:$false
     
+    if($ev)
+    {
+        $script:IsRunningAsElevated = $false
+        ThrowError -ExceptionName "System.ArgumentException" `
+                   -ExceptionMessage $message `
+                   -ErrorId "AdministratorRightsNeededOrSpecifyCurrentUserScope" `
+                   -CallerPSCmdlet $PSCmdlet `
+                   -ErrorCategory InvalidArgument `
+                   -ExceptionObject $ev
+    }
+
     # Remove the *.nupkg file
     if(Microsoft.PowerShell.Management\Test-Path "$DestinationPath\$($PSGetItemInfo.Name).nupkg")
     {
@@ -14633,11 +14732,20 @@ function ThrowError
 # Create install locations for scripts if they are not already created
 if(-not (Microsoft.PowerShell.Management\Test-Path -Path $script:ProgramFilesInstalledScriptInfosPath) -and (Test-RunningAsElevated))
 {
+    $ev = $null
     $null = Microsoft.PowerShell.Management\New-Item -Path $script:ProgramFilesInstalledScriptInfosPath `
                                                      -ItemType Directory `
                                                      -Force `
+                                                     -ErrorVariable ev `
+                                                     -ErrorAction SilentlyContinue `
+                                                     -WarningAction SilentlyContinue `
                                                      -Confirm:$false `
                                                      -WhatIf:$false
+    
+    if($ev)
+    {
+        $script:IsRunningAsElevated = $false
+    }
 }
 
 if(-not (Microsoft.PowerShell.Management\Test-Path -Path $script:MyDocumentsInstalledScriptInfosPath))
