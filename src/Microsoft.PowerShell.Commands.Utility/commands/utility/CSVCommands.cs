@@ -1190,11 +1190,31 @@ namespace Microsoft.PowerShell.Commands
                 TypeName = ReadTypeInformation();
             }
 
-            if ((Header == null) && (!this.EOF))
+            while ((Header == null) && (!this.EOF))
             {
-                Collection<string> values = ParseNextRecord(true);
-                if (values.Count != 0)
+                Collection<string> values = ParseNextRecord();
+
+                // Trim all trailing blankspaces and delimiters ( single/multiple ).
+                // If there is only one element in the row and if its a blankspace we dont trim it.
+                // A trailing delimiter is represented as a blankspace while being added to result collection
+                // which is getting trimmed along with blankspaces supplied through the CSV in the below loop.
+                while (values.Count > 1 && values[values.Count - 1].Equals(string.Empty))
                 {
+                    values.RemoveAt(values.Count - 1);
+                }
+
+                // File starts with '#' and contains '#Fields:' is W3C Extended Log File Format
+                if (values.Count != 0 && values[0].StartsWith("#Fields: "))
+                {
+                    values[0] = values[0].Substring(9);
+                    Header = values;
+                } else if (values.Count != 0 && values[0].StartsWith("#"))
+                {
+                    // Skip all lines starting with '#'
+                } else 
+                {
+                    // This is not W3C Extended Log File Format
+                    // By default first line is Header
                     Header = values;
                 }
             }
@@ -1213,7 +1233,7 @@ namespace Microsoft.PowerShell.Commands
             ReadHeader();
             while (true)
             {
-                Collection<string> values = ParseNextRecord(false);
+                Collection<string> values = ParseNextRecord();
                 if (values.Count == 0)
                     break;
 
@@ -1300,14 +1320,11 @@ namespace Microsoft.PowerShell.Commands
         /// Reads the next record from the file and returns parsed collection
         /// of string.
         /// </summary>
-        /// <param name="isHeaderRow">
-        /// Indicates if the parsed row is a header row or a values row.
-        /// </param>
         /// <returns>
         /// Parsed collection of strings.
         /// </returns>
         private Collection<string>
-        ParseNextRecord(bool isHeaderRow)
+        ParseNextRecord()
         {
             //Collection of strings to return
             Collection<string> result = new Collection<string>();
@@ -1469,18 +1486,6 @@ namespace Microsoft.PowerShell.Commands
             if (current.Length != 0)
             {
                 result.Add(current.ToString());
-            }
-
-            //Trim all trailing blankspaces and delimiters ( single/multiple ).
-            // If there is only one element in the row and if its a blankspace we dont trim it.
-            // A trailing delimiter is represented as a blankspace while being added to result collection
-            // which is getting trimmed along with blankspaces supplied through the CSV in the below loop.
-            if (isHeaderRow)
-            {
-                while (result.Count > 1 && result[result.Count - 1].Equals(string.Empty))
-                {
-                    result.RemoveAt(result.Count - 1);
-                }
             }
 
             return result;
