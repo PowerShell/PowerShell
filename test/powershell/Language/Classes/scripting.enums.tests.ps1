@@ -3,7 +3,6 @@
 #
 
 Describe 'enums' -Tags "CI" {
-
     Context 'basic enums' {
         enum E1
         {
@@ -62,9 +61,10 @@ Describe 'enums' -Tags "CI" {
             e0 = [E6]::e0 + 2
         }
 
+        # Don't add space after 'e0 ='! Fix #2543
         enum E6
         {
-            e0 = 38
+            e0 =38
         }
 
         It 'E4 has correct value' { [E4]::e0 | Should Be ([E4]42) }
