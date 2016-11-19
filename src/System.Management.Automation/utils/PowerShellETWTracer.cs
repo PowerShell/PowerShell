@@ -1085,7 +1085,7 @@ namespace System.Management.Automation.Tracing
             {
                 return DebugChannel.TraceDebug(PowerShellTraceEvent.Job,
                                                PowerShellTraceOperationCode.Method, PowerShellTraceTask.None,
-                                               job.Id.ToString(CultureInfo.InvariantCulture), job.InstanceId.ToString(), "NULL job");
+                                               "", "", "NULL job");
             }
         }
 

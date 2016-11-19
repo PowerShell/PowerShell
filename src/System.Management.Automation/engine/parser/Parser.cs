@@ -4311,22 +4311,32 @@ namespace System.Management.Automation.Language
 
             IScriptExtent endExtent = enumeratorName.Extent;
             ExpressionAst initialValueAst = null;
-            var assignToken = PeekToken();
             var missingInitializer = false;
-            if (assignToken.Kind == TokenKind.Equals)
+            var oldTokenizerMode = _tokenizer.Mode;
+            Token assignToken = null;
+            try
             {
-                SkipToken();
-                initialValueAst = ExpressionRule();
-                if (initialValueAst == null)
+                SetTokenizerMode(TokenizerMode.Expression);
+                assignToken = PeekToken();
+                if (assignToken.Kind == TokenKind.Equals)
                 {
-                    ReportError(After(assignToken), () => ParserStrings.ExpectedValueExpression, assignToken.Kind.Text());
-                    endExtent = assignToken.Extent;
-                    missingInitializer = true;
+                    SkipToken();
+                    initialValueAst = ExpressionRule();
+                    if (initialValueAst == null)
+                    {
+                        ReportError(After(assignToken), () => ParserStrings.ExpectedValueExpression, assignToken.Kind.Text());
+                        endExtent = assignToken.Extent;
+                        missingInitializer = true;
+                    }
+                    else
+                    {
+                        endExtent = initialValueAst.Extent;
+                    }
                 }
-                else
-                {
-                    endExtent = initialValueAst.Extent;
-                }
+            }
+            finally
+            {
+                SetTokenizerMode(oldTokenizerMode);
             }
 
             Token terminatorToken = PeekToken();
@@ -4970,9 +4980,8 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        errorAsts.Concat(exceptionTypes);
+                        errorAsts.AddRange(exceptionTypes);
                     }
-                    // REVIEW: seems like some code is missing here, errorAsts isn't used
                 }
                 return null;
             }

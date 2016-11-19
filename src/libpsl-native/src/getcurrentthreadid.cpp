@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/syscall.h>
+#include <pthread.h>
 
 pid_t GetCurrentThreadId()
 {
@@ -10,7 +11,9 @@ pid_t GetCurrentThreadId()
 #if defined(__linux__)
     tid = syscall(SYS_gettid);
 #elif defined(__APPLE__) && defined(__MACH__)
-    tid = syscall(SYS_thread_selfid);
+    uint64_t tid64;
+    pthread_threadid_np(NULL, &tid64);
+    tid = (pid_t)tid64;
 #endif
     return tid;
 }

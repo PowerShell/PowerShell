@@ -189,12 +189,9 @@ namespace System.Management.Automation
             _parameters = new Dictionary<string, ParameterMetadata>(other.Parameters.Count, StringComparer.OrdinalIgnoreCase);
 
             // deep copy
-            if (other.Parameters != null)
+            foreach (KeyValuePair<string, ParameterMetadata> entry in other.Parameters)
             {
-                foreach (KeyValuePair<string, ParameterMetadata> entry in other.Parameters)
-                {
-                    _parameters.Add(entry.Key, new ParameterMetadata(entry.Value));
-                }
+                _parameters.Add(entry.Key, new ParameterMetadata(entry.Value));
             }
 
             // deep copy of the collection, collection items (Attributes) copied by reference

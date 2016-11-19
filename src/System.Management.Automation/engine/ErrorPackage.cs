@@ -1129,7 +1129,7 @@ namespace System.Management.Automation
         {
             PopulateProperties(exception, targetObject, fullyQualifiedErrorId, errorCategory, errorCategory_Activity,
                                errorCategory_Reason, errorCategory_TargetName, errorCategory_TargetType,
-                               errorDetails_Message, errorDetails_Message, errorDetails_RecommendedAction, null);
+                               errorCategory_Message, errorDetails_Message, errorDetails_RecommendedAction, null);
         }
 
         private void PopulateProperties(Exception exception,

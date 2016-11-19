@@ -90,11 +90,11 @@ Start-PSPester
 ```
 If you wish to run specific tests, that is possible as well:
 ```
-Start-PSPester -Directory test/powershell/engine/Api
+Start-PSPester -Path test/powershell/engine/Api
 ```
 Or a specific Pester test file:
 ```
-Start-PSPester -Directory test/powershell/engine/Api -Test XmlAdapter.Tests.Api
+Start-PSPester -Path test/powershell/engine/Api/XmlAdapter.Tests.ps1
 ```
 
 ### What happens after your PR?

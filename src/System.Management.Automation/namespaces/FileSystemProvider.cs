@@ -4125,7 +4125,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Check if the remote source file has any alternate data streams
                     ArrayList remoteFileStreams = GetRemoteSourceAlternateStreams(ps, sourceFileFullName);
-                    if ((remoteFileStreams.Count > 0) && (remoteFileStreams != null))
+                    if ((remoteFileStreams != null) && (remoteFileStreams.Count > 0))
                     {
                         foreach (string streamName in remoteFileStreams)
                         {

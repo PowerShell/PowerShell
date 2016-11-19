@@ -1660,7 +1660,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         protected override void ProcessRecord()
         {
-            if (BaseMaximumVersion != null && BaseMaximumVersion != null && BaseMaximumVersion < BaseMinimumVersion)
+            if (BaseMaximumVersion != null && BaseMinimumVersion != null && BaseMaximumVersion < BaseMinimumVersion)
             {
                 string message = StringUtil.Format(Modules.MinimumVersionAndMaximumVersionInvalidRange, BaseMinimumVersion, BaseMaximumVersion);
                 throw new PSArgumentOutOfRangeException(message);

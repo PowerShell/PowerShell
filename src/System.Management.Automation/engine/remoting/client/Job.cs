@@ -1873,7 +1873,7 @@ namespace System.Management.Automation
             foreach (Job j in ChildJobs)
             {
                 PSRemotingChildJob child = j as PSRemotingChildJob;
-                if (j == null) continue;
+                if (child == null) continue;
                 if (String.Equals(child.Runspace.ConnectionInfo.ComputerName, computerName,
                                 StringComparison.OrdinalIgnoreCase))
                 {
@@ -1897,7 +1897,7 @@ namespace System.Management.Automation
             foreach (Job j in ChildJobs)
             {
                 PSRemotingChildJob child = j as PSRemotingChildJob;
-                if (j == null) continue;
+                if (child == null) continue;
                 if (child.Runspace.InstanceId.Equals(runspace.InstanceId))
                 {
                     returnJobList.Add(child);
@@ -1920,7 +1920,7 @@ namespace System.Management.Automation
             foreach (Job j in ChildJobs)
             {
                 PSRemotingChildJob child = j as PSRemotingChildJob;
-                if (j == null) continue;
+                if (child == null) continue;
                 if (child.Helper.Equals(helper))
                 {
                     returnJobList.Add(child);

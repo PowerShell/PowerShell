@@ -193,6 +193,9 @@
     <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetUnique.cs">
       <Link>commands\utility\GetUnique.cs</Link>
     </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetUptime.cs">
+      <Link>commands\utility\GetUptime.cs</Link>
+    </Compile>
     <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\group-object.cs">
       <Link>commands\utility\group-object.cs</Link>
     </Compile>
