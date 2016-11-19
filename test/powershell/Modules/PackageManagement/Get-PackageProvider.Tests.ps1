@@ -18,6 +18,14 @@
 
 Describe "get-packageprovider" -Tags "Feature" {
 
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
+
     It "lists package providers installed" {
         $x = (get-packageprovider -name "nuget").name | should match "nuget"
     }
@@ -73,6 +81,14 @@ Describe "get-packageprovider" -Tags "Feature" {
 
 
 Describe "Get-PackageProvider with list" -Tags "Feature" {
+
+    BeforeAll {
+        $PSDefaultParameterValues["It:Skip"] = $true 
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove("It:Skip")
+    }
 
     It "lists package providers installed" {
         $x = (Get-PackageProvider).Count -gt 1 | should be $true
