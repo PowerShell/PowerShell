@@ -21,4 +21,12 @@ Describe "Tab completion bug fix" -Tags "CI" {
         $result.CompletionMatches[0].CompletionText | Should Be "-and"
         $result.CompletionMatches[1].CompletionText | Should Be "-as"
     }
+
+    It "Issue#430 - Tab completion should give unique results for commands" {
+        $result = TabExpansion2 -inputScript "get-psreadline" -cursorColumn "get-psreadline".Length
+        $result | Should Not BeNullOrEmpty
+        $result.CompletionMatches.Count | Should Be 2
+        $result.CompletionMatches[0].CompletionText | Should Be "Get-PSReadlineKeyHandler"
+        $result.CompletionMatches[1].CompletionText | Should Be "Get-PSReadlineOption"
+    }
 }

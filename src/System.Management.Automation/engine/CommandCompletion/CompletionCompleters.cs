@@ -261,6 +261,38 @@ namespace System.Management.Automation
             return new CompletionResult(name, listItem, CompletionResultType.Command, syntax);
         }
 
+        private static bool isNested(PSModuleInfo rootModule, PSModuleInfo childModule)
+        {
+            var nestedModules = rootModule.NestedModules;
+            if(null != nestedModules)
+            {
+                foreach(PSModuleInfo nestedModule in nestedModules)
+                {
+                    if(String.Equals(nestedModule.Name, childModule.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private static bool isDuplicateEntry(CommandInfo cmd1, CommandInfo cmd2)
+        {
+            bool result = false;
+            // If the commandType is not 'Cmdlet', no need to check.
+            if (cmd1.CommandType == cmd2.CommandType && 
+                System.Management.Automation.CommandTypes.Cmdlet == cmd1.CommandType)
+            {
+                result = isNested(cmd1.Module, cmd2.Module);
+                if (!result)
+                {
+                    result = isNested(cmd2.Module, cmd1.Module);
+                }
+            }
+            return result;
+        }
+
         internal static List<CompletionResult> MakeCommandsUnique(IEnumerable<PSObject> commandInfoPsObjs, bool includeModulePrefix, bool addAmpersandIfNecessary, string quote, CompletionContext context)
         {
             List<CompletionResult> results = new List<CompletionResult>();
@@ -308,15 +340,31 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    var list = value as List<object>;
-                    if (list != null)
+                    bool isDuplicate = false;
+                    if (includeModulePrefix)
                     {
-                        list.Add(baseObj);
+                        var commandInfoObjOld = value as CommandInfo;
+                        // Need to add extra check here for the following scenario
+                        // For example, Get-PSReadlineOption is available from Microsoft.PowerShell.PSReadline.dll as well as PSReadLine
+                        // But because it appears here as Microsoft.PowerShell.PSReadline.dll\Get-PSReadlineOption and PSReadLine\Get-PSReadlineOption
+                        // both entries are considered valid and hence duplicate values appear in the result
+                        // The solution is to check if the module for each cmdlet is a nested module for other.
+                        // If yes, then consider it a duplicate.
+                        // This solution is only applied to a 'cmdlet' commandType.
+                        isDuplicate = isDuplicateEntry(commandInfoObjOld, commandInfo);
                     }
-                    else
+                    if (!isDuplicate)
                     {
-                        list = new List<object> { value, baseObj };
-                        commandTable[name] = list;
+                        var list = value as List<object>;
+                        if (list != null)
+                        {
+                            list.Add(baseObj);
+                        }
+                        else
+                        {    
+                            list = new List<object> { value, baseObj };
+                            commandTable[name] = list;
+                        }
                     }
                 }
             }

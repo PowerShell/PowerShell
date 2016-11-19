@@ -97,6 +97,29 @@ namespace System.Management.Automation
             return result;
         }
 
+        internal static List<PSModuleInfo> GetNestedModules(string modulePath)
+        {
+            List<PSModuleInfo> result = new List<PSModuleInfo>();
+            var extension = Path.GetExtension(modulePath);
+            if (extension.Equals(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
+            {
+                var moduleManifestProperties = PsUtils.GetModuleManifestProperties(modulePath, PsUtils.FastModuleManifestAnalysisPropertyNames);
+                if (moduleManifestProperties != null)
+                {
+                    object[] nestedModules = moduleManifestProperties["NestedModules"] as object[];
+                    if (null != nestedModules)
+                    {
+                        foreach (string nestedModuleName in nestedModules)
+                        {
+                            PSModuleInfo module = new PSModuleInfo(nestedModuleName, null, null, null);
+                            result.Add(module);
+                        }
+                    }
+                }
+            }           
+            return result;
+        }
+
         private static ConcurrentDictionary<string, CommandTypes> AnalyzeManifestModule(string modulePath, ExecutionContext context, DateTime lastWriteTime, bool etwEnabled)
         {
             ConcurrentDictionary<string, CommandTypes> result = null;

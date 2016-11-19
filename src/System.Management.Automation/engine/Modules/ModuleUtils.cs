@@ -362,7 +362,15 @@ namespace System.Management.Automation.Internal
                             PSModuleInfo psModule = modules[0];
                             tempModuleInfo = new PSModuleInfo(psModule.Name, psModule.Path, null, null);
                             tempModuleInfo.SetModuleBase(psModule.ModuleBase);
-
+                            // Also add information for nested modules.
+                            // Need this information to check for duplicate commands in tab completion.
+                            if (null != psModule.NestedModules)
+                            {
+                                foreach (PSModuleInfo nestedModule in psModule.NestedModules)
+                                {
+                                    tempModuleInfo.AddNestedModule(nestedModule);
+                                }
+                            }
                             foreach (var entry in psModule.ExportedCommands)
                             {
                                 if (commandPattern.IsMatch(entry.Value.Name))
@@ -419,7 +427,13 @@ namespace System.Management.Automation.Internal
                         tempModuleInfo.SetVersion(ModuleIntrinsics.GetManifestModuleVersion(modulePath));
                         tempModuleInfo.SetGuid(ModuleIntrinsics.GetManifestGuid(modulePath));
                     }
-
+                    // Also add information for nested modules.
+                    // Need this information to check for duplicate commands in tab completion.
+                    List<PSModuleInfo> nestedModules = AnalysisCache.GetNestedModules(modulePath);
+                    foreach (PSModuleInfo nestedModule in nestedModules)
+                    {
+                        tempModuleInfo.AddNestedModule(nestedModule);
+                    }
                     foreach (var pair in exportedCommands)
                     {
                         var commandName = pair.Key;
