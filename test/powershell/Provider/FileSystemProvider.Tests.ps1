@@ -2,7 +2,29 @@
 
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if ( ! $IsWindows ) {
+        if ( $IsWindows ) {
+            
+            $multilevelPath = 'C:\Temp\folder1'
+            $singlelevelPath = 'C:\Temp'
+            $multilevelUNC = '\\server1\share1\folder'
+            $UNCRoot = '\\server1\share1'
+
+            $splitPathParentCases = @(
+                @{TestName='Multilevel'; Path = $multiLevelPath; Result = 'C:\temp'}
+                @{TestName='Single Level'; Path = $singlelevelPath; Result = 'C:\'}
+                @{TestName='Multilevel UNC'; Path = $multilevelUNC; Result = '\\server1\share1'}
+                @{TestName='UNC Root'; Path = $UNCRoot; Result = '\\server1'}
+            )
+
+            $splitPathChildCases = @(
+                @{TestName='Multilevel'; Path = $multiLevelPath; Result = 'folder1'}
+                @{TestName='Single Level'; Path = $singlelevelPath; Result = 'temp'}
+                @{TestName='Multilevel UNC'; Path = $multilevelUNC; Result = 'folder'}
+                @{TestName='UNC Root'; Path = $UNCRoot; Result = 'share1'}
+            )
+
+        }
+        else{
             $PSDefaultParameterValues["it:skip"] = $true
         }
     }
@@ -10,38 +32,16 @@
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
     
-    It 'Splits a multilevel path' {
-        Split-Path -Path 'C:\Temp\folder1' | Should be 'C:\temp'
+    It 'Splits Path on a <TestName> Path and gets the parent' -TestCases $splitPathParentCases -test {
+        param($TestName,$Path,$Result)
+            Split-Path -Path $Path -Parent | Should be $Result
     }
 
-    It 'Returns a multilevel path child' {
-        Split-Path -Path 'C:\Temp\folder1' -Leaf | Should be 'folder1'
+    It 'Splits Path on a <TestName> Path and gets the child' -TestCases $splitPathChildCases -test {
+        param($TestName,$Path,$Result)
+            Split-Path -Path $Path -Leaf | Should be $Result
     }
-   
-    It 'Splits a single level path' {
-        Split-Path -Path 'C:\Temp' | Should be 'C:\'
-    }
-
-    It 'Returns a single level child' {
-        Split-Path -Path 'C:\Temp' -Leaf | Should be 'temp'
-    }
-
-    It 'Splits a multilevel unc path' {
-        Split-Path -Path '\\server1\share1\folder' | Should be '\\server1\share1'
-    }
-
-    It 'Returns a multilevel unc path child' {
-        Split-Path -Path '\\server1\share1\folder' -Leaf | Should be 'folder'
-    }
-
-    It 'Splits a unc path' {
-        Split-Path -Path '\\server1\share1' | Should be '\\server1'
-    }
-
-    It 'Returns a unc path child' {
-        Split-Path -Path '\\server1\share1' -Leaf | Should be 'share1'
-    }
-
+    
     It 'Does not split a drive leter'{
         Split-Path -Path 'C:\' | Should be ''
     }

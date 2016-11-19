@@ -4738,7 +4738,7 @@ namespace Microsoft.PowerShell.Commands
             if (!IsUNCPath(path))
             {
                 parentPath = EnsureDriveIsRooted(parentPath);
-			}
+            }
             return parentPath;
         } // GetParentPath
 
