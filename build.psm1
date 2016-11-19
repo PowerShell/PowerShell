@@ -407,6 +407,7 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
         $publishPath = Split-Path $Options.Output -Parent
         log "Restore PowerShell modules to $publishPath"
         Restore-PSModule -Name PackageManagement -Destination (Join-Path -Path $publishPath -ChildPath "Modules")
+        Restore-PSModule -Name PowerShellGet -Destination (Join-Path -Path $publishPath -ChildPath "Modules")
     }
 }
 
