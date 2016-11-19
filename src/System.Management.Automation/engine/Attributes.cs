@@ -1114,6 +1114,11 @@ namespace System.Management.Automation
         public RegexOptions Options { set; get; } = RegexOptions.IgnoreCase;
 
         /// <summary>
+        /// Gets or sets the custom error message that is displayed to the user
+        /// </summary>
+        public string ErrorMessage { get; set; }
+
+        /// <summary>
         /// Validates that each parameter argument matches the RegexPattern
         /// </summary>
         /// <param name="element">object to validate</param>
@@ -1136,8 +1141,9 @@ namespace System.Management.Automation
             Match match = regex.Match(objectString);
             if (!match.Success)
             {
+                var errorMessageFormat = String.IsNullOrEmpty(ErrorMessage) ? Metadata.ValidatePatternFailure : ErrorMessage;
                 throw new ValidationMetadataException("ValidatePatternFailure",
-                        null, Metadata.ValidatePatternFailure,
+                        null, errorMessageFormat,
                         objectString, RegexPattern);
             }
         }
@@ -1163,6 +1169,11 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class ValidateScriptAttribute : ValidateEnumeratedArgumentsAttribute
     {
+        /// <summary>
+        /// Gets or sets the custom error message that is displayed to the user
+        /// </summary>
+        public string ErrorMessage { get; set; }
+
         /// <summary>
         /// Gets the scriptblock to be used in the validation
         /// </summary>
@@ -1193,8 +1204,9 @@ namespace System.Management.Automation
 
             if (!LanguagePrimitives.IsTrue(result))
             {
+                var errorMessageFormat = String.IsNullOrEmpty(ErrorMessage) ? Metadata.ValidateScriptFailure : ErrorMessage;
                 throw new ValidationMetadataException("ValidateScriptFailure",
-                        null, Metadata.ValidateScriptFailure,
+                        null, errorMessageFormat,
                         element, ScriptBlock);
             }
         }
@@ -1337,6 +1349,11 @@ namespace System.Management.Automation
         private string[] _validValues;
 
         /// <summary>
+        /// Gets or sets the custom error message that is displayed to the user
+        /// </summary>
+        public string ErrorMessage { get; set; }
+
+        /// <summary>
         /// Gets a flag specifying if we should ignore the case when performing string comparison. The
         /// default is true.
         /// </summary>
@@ -1386,8 +1403,10 @@ namespace System.Management.Automation
                     return;
                 }
             }
+
+            var errorMessageFormat = String.IsNullOrEmpty(ErrorMessage) ? Metadata.ValidateSetFailure : ErrorMessage;
             throw new ValidationMetadataException("ValidateSetFailure", null,
-                Metadata.ValidateSetFailure,
+                errorMessageFormat,
                 element.ToString(), SetAsString());
         }
 
