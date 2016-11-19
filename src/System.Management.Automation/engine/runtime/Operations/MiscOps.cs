@@ -1261,6 +1261,46 @@ namespace System.Management.Automation
     {
         internal class CatchAll { }
 
+        /// <summary>
+        /// Rank the exception types based on how specific they are.
+        /// Smaller ranking number indicates more specific exception type.
+        /// </summary>
+        /// <remarks>
+        /// The ranking number for each type represent how many other
+        /// types from the array derive from it.
+        /// For example, 0 means no other types in the array derive from 
+        /// the corresponding type, while 3 means there are 3 other types
+        /// in the array actually derive from the corresponding type.
+        /// 'CatchAll' is considered to be derived by all exception types.
+        /// </remarks>
+        private static int[] RankExceptionTypes(Type[] types)
+        {
+            int[] ranks = new int[types.Length];
+            int length = types.Length;
+
+            // If 'CatchAll' is specified, it must be the last catch block.
+            // Handle it specially. This can save a few iterations in the
+            // 'for' loop below, and also avoid some type comparisons.
+            if (types[length - 1].Equals(typeof(CatchAll)))
+            {
+                ranks[length - 1] = length - 1;
+                length = length - 1;
+            }
+
+            // For each type check if it's a sub-class of any types after it.
+            // The ordering of the type array guarantees the more specific type comes first.
+            for (int i = 0; i < length - 1; i++)
+            {
+                for (int j = i + 1; j < length; j++)
+                {
+                    if (types[i].IsSubclassOf(types[j]))
+                        ranks[j]++;
+                }
+            }
+
+            return ranks;
+        }
+
         internal static int FindMatchingHandler(MutableTuple tuple, RuntimeException rte, Type[] types, ExecutionContext context)
         {
             Exception exceptionToPass = null;
