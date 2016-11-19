@@ -15,6 +15,7 @@ using System.Management.Automation;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Principal;
@@ -201,17 +202,29 @@ namespace Microsoft.PowerShell.Commands
                     found = true;
                     AddIdempotent(process);
                 }
+
                 if (!found &&
                     !WildcardPattern.ContainsWildcardCharacters(pattern))
                 {
-                    WriteNonTerminatingError(
-                        pattern,
-                        0,
-                        pattern,
-                        null,
-                        ProcessResources.NoProcessFoundForGivenName,
-                        "NoProcessFoundForGivenName",
-                        ErrorCategory.ObjectNotFound);
+                    int processIdCandidate;
+                    if (int.TryParse(pattern, out processIdCandidate) && processIdCandidate > 0)
+                    {
+                        var process = AllProcesses.FirstOrDefault(p => p.Id == processIdCandidate);
+                        if (process != null)
+                        {
+                            AddIdempotent(process);
+                        }
+                    }
+                    else {
+                        WriteNonTerminatingError(
+                            pattern,
+                            0,
+                            pattern,
+                            null,
+                            ProcessResources.NoProcessFoundForGivenName,
+                            "NoProcessFoundForGivenName",
+                            ErrorCategory.ObjectNotFound);
+                    }
                 }
             }
         } // MatchingProcessesByProcessName
