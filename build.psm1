@@ -2561,7 +2561,7 @@ function Restore-PSModule
         [ValidateNotNullOrEmpty()]
         [string]$Destination,
 
-        [string]$SourceLocation="https://powershell.myget.org/F/powershellmodule/api/v2",
+        [string]$SourceLocation="https://powershell.myget.org/F/powershellmodule/api/v2/",
 
         [string]$RequiredVersion
         )
@@ -2571,6 +2571,7 @@ function Restore-PSModule
 
     # Check if the PackageManagement works in the base-oS or PowerShellCore
     Get-PackageProvider -Name NuGet -ForceBootstrap -Verbose:$VerbosePreference
+    Get-PackageProvider -Name PowerShellGet -Verbose:$VerbosePreference
 
     # Get the existing registered PowerShellGet repositories
     $psrepos = PowerShellGet\Get-PSRepository
@@ -2628,8 +2629,12 @@ function Restore-PSModule
     # Clean up
     if($needRegister)
     {
-        log "Unregistering PSRepository with name: $RepositoryName"
-        PowerShellGet\Get-PSRepository -Name $RepositoryName -ErrorAction SilentlyContinue | PowerShellGet\UnRegister-PSRepository -Name $RepositoryName
+        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName -ErrorAction SilentlyContinue
+        if($regVar)
+        {
+            log "Unregistering PSRepository with name: $RepositoryName"
+            PowerShellGet\UnRegister-PSRepository -Name $RepositoryName
+        }
     }
 }
 

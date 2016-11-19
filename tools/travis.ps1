@@ -5,7 +5,7 @@ $isCron = $env:TRAVIS_EVENT_TYPE -eq 'cron'
 
 Start-PSBootstrap -Package:(-not $isPr)
 $output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
-Start-PSBuild -CrossGen
+Start-PSBuild -CrossGen -PSModuleRestore
 
 $pesterParam = @{ 'binDir' = $output }
 
