@@ -33,7 +33,8 @@ install:
     fi
 
 script:
-  - ./tools/travis.sh
+  - ulimit -n 4096
+  - powershell -File tools/travis.ps1
   # spellcheck
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       mdspell "**/*.md" --ignore-numbers --ignore-acronyms --report;
