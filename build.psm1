@@ -406,8 +406,7 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
         # so we need to get its parent directory
         $publishPath = Split-Path $Options.Output -Parent
         log "Restore PowerShell modules to $publishPath"
-        Restore-PSModule -Name PackageManagement -Destination (Join-Path -Path $publishPath -ChildPath "Modules")
-        Restore-PSModule -Name PowerShellGet -Destination (Join-Path -Path $publishPath -ChildPath "Modules")
+        Restore-PSModule -Name @('PackageManagement','PowerShellGet') -Destination (Join-Path -Path $publishPath -ChildPath "Modules")
     }
 }
 
@@ -2556,7 +2555,7 @@ function Restore-PSModule
     param(
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [string]$Name,
+        [string[]]$Name,
 
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
@@ -2612,20 +2611,23 @@ function Restore-PSModule
 
     log ("Name='{0}', Destination='{1}', Repository='{2}'" -f $Name, $Destination, $RepositoryName)
 
-    $command = @{
-                    Name=$Name
-                    Path = $Destination
-                    Repository =$RepositoryName
-                }
+    $Name | ForEach-Object {
 
-    if($RequiredVersion)
-    {
-        $command.Add("RequiredVersion", $RequiredVersion)
+        $command = @{
+                        Name=$_
+                        Path = $Destination
+                        Repository =$RepositoryName
+                    }
+
+        if($RequiredVersion)
+        {
+            $command.Add("RequiredVersion", $RequiredVersion)
+        }
+
+        # pull down the module
+        log "running save-module $Name"
+        PowerShellGet\Save-Module @command -Force -Verbose
     }
-
-    # pull down the module
-    log "running save-module $Name"
-    PowerShellGet\Save-Module @command -Force -Verbose
 
     # Clean up
     if($needRegister)
