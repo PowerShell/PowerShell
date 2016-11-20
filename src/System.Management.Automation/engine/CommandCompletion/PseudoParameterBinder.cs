@@ -1253,10 +1253,7 @@ namespace System.Management.Automation.Language
                         var expressionArgument = _commandElements[commandIndex] as ExpressionAst;
                         if (expressionArgument != null)
                         {
-                            if (argumentsToGetDynamicParameters != null)
-                            {
-                                argumentsToGetDynamicParameters.Add(expressionArgument.Extent.Text);
-                            }
+                            argumentsToGetDynamicParameters?.Add(expressionArgument.Extent.Text);
 
                             _arguments.Add(new AstPair(null, expressionArgument));
                         }
@@ -1338,79 +1335,76 @@ namespace System.Management.Automation.Language
             if (_commandAst.IsInWorkflow())
             {
                 var converterType = Type.GetType(Utils.WorkflowType);
-                if (converterType != null)
+                var activityParameters = (Dictionary<string, Type>) converterType?.GetMethod("GetActivityParameters").Invoke(null, new object[] { _commandAst });
+                if (activityParameters != null)
                 {
-                    var activityParameters = (Dictionary<string, Type>)converterType.GetMethod("GetActivityParameters").Invoke(null, new object[] { _commandAst });
-                    if (activityParameters != null)
+                    bool needToRemoveReplacedProperty = activityParameters.ContainsKey("PSComputerName") &&
+                                                        !activityParameters.ContainsKey("ComputerName");
+
+                    var parametersToAdd = new List<MergedCompiledCommandParameter>();
+                    var attrCollection = new Collection<Attribute> { new ParameterAttribute() };
+                    foreach (var pair in activityParameters)
                     {
-                        bool needToRemoveReplacedProperty = activityParameters.ContainsKey("PSComputerName") &&
-                                                            !activityParameters.ContainsKey("ComputerName");
-
-                        var parametersToAdd = new List<MergedCompiledCommandParameter>();
-                        var attrCollection = new Collection<Attribute> { new ParameterAttribute() };
-                        foreach (var pair in activityParameters)
+                        if (psuedoWorkflowCommand || !_bindableParameters.BindableParameters.ContainsKey(pair.Key))
                         {
-                            if (psuedoWorkflowCommand || !_bindableParameters.BindableParameters.ContainsKey(pair.Key))
-                            {
-                                Type parameterType = GetActualActivityParameterType(pair.Value);
-                                var runtimeDefinedParameter = new RuntimeDefinedParameter(pair.Key, parameterType, attrCollection);
-                                var compiledCommandParameter = new CompiledCommandParameter(runtimeDefinedParameter, false) { IsInAllSets = true };
-                                var mergedCompiledCommandParameter = new MergedCompiledCommandParameter(compiledCommandParameter, ParameterBinderAssociation.DeclaredFormalParameters);
-                                parametersToAdd.Add(mergedCompiledCommandParameter);
-                            }
+                            Type parameterType = GetActualActivityParameterType(pair.Value);
+                            var runtimeDefinedParameter = new RuntimeDefinedParameter(pair.Key, parameterType, attrCollection);
+                            var compiledCommandParameter = new CompiledCommandParameter(runtimeDefinedParameter, false) { IsInAllSets = true };
+                            var mergedCompiledCommandParameter = new MergedCompiledCommandParameter(compiledCommandParameter, ParameterBinderAssociation.DeclaredFormalParameters);
+                            parametersToAdd.Add(mergedCompiledCommandParameter);
                         }
-                        if (parametersToAdd.Any())
+                    }
+                    if (parametersToAdd.Any())
+                    {
+                        var mergedBindableParameters = new MergedCommandParameterMetadata();
+                        if (!psuedoWorkflowCommand)
                         {
-                            var mergedBindableParameters = new MergedCommandParameterMetadata();
-                            if (!psuedoWorkflowCommand)
-                            {
-                                mergedBindableParameters.ReplaceMetadata(_bindableParameters);
-                            }
-                            foreach (var p in parametersToAdd)
-                            {
-                                mergedBindableParameters.BindableParameters.Add(p.Parameter.Name, p);
-                            }
-                            _bindableParameters = mergedBindableParameters;
+                            mergedBindableParameters.ReplaceMetadata(_bindableParameters);
                         }
-
-                        // Remove common parameters that are supported by all commands, but not
-                        // by workflows
-                        bool fixedReadOnly = false;
-                        foreach (var ignored in _ignoredWorkflowParameters)
+                        foreach (var p in parametersToAdd)
                         {
-                            if (_bindableParameters.BindableParameters.ContainsKey(ignored))
+                            mergedBindableParameters.BindableParameters.Add(p.Parameter.Name, p);
+                        }
+                        _bindableParameters = mergedBindableParameters;
+                    }
+
+                    // Remove common parameters that are supported by all commands, but not
+                    // by workflows
+                    bool fixedReadOnly = false;
+                    foreach (var ignored in _ignoredWorkflowParameters)
+                    {
+                        if (_bindableParameters.BindableParameters.ContainsKey(ignored))
+                        {
+                            // However, some ignored parameters are explicitly implemented by
+                            // activities, so keep them.
+                            if (!activityParameters.ContainsKey(ignored))
                             {
-                                // However, some ignored parameters are explicitly implemented by
-                                // activities, so keep them.
-                                if (!activityParameters.ContainsKey(ignored))
+                                if (!fixedReadOnly)
                                 {
-                                    if (!fixedReadOnly)
-                                    {
-                                        _bindableParameters.ResetReadOnly();
-                                        fixedReadOnly = true;
-                                    }
-
-                                    _bindableParameters.BindableParameters.Remove(ignored);
+                                    _bindableParameters.ResetReadOnly();
+                                    fixedReadOnly = true;
                                 }
+
+                                _bindableParameters.BindableParameters.Remove(ignored);
                             }
                         }
+                    }
 
-                        if (_bindableParameters.BindableParameters.ContainsKey("ComputerName") && needToRemoveReplacedProperty)
+                    if (_bindableParameters.BindableParameters.ContainsKey("ComputerName") && needToRemoveReplacedProperty)
+                    {
+                        if (!fixedReadOnly)
                         {
-                            if (!fixedReadOnly)
-                            {
-                                _bindableParameters.ResetReadOnly();
-                                fixedReadOnly = true;
-                            }
+                            _bindableParameters.ResetReadOnly();
+                            fixedReadOnly = true;
+                        }
 
-                            _bindableParameters.BindableParameters.Remove("ComputerName");
-                            string aliasOfComputerName = (from aliasPair in _bindableParameters.AliasedParameters
-                                                          where String.Equals("ComputerName", aliasPair.Value.Parameter.Name)
-                                                          select aliasPair.Key).FirstOrDefault();
-                            if (aliasOfComputerName != null)
-                            {
-                                _bindableParameters.AliasedParameters.Remove(aliasOfComputerName);
-                            }
+                        _bindableParameters.BindableParameters.Remove("ComputerName");
+                        string aliasOfComputerName = (from aliasPair in _bindableParameters.AliasedParameters
+                            where String.Equals("ComputerName", aliasPair.Value.Parameter.Name)
+                            select aliasPair.Key).FirstOrDefault();
+                        if (aliasOfComputerName != null)
+                        {
+                            _bindableParameters.AliasedParameters.Remove(aliasOfComputerName);
                         }
                     }
                 }
@@ -1451,32 +1445,36 @@ namespace System.Management.Automation.Language
             }
             ast.Visit(exportVisitor);
 
-            resolvedCommandName = _commandAst.GetCommandName();
             CommandProcessorBase commandProcessor = null;
 
-            string alias;
-            int resolvedAliasCount = 0;
-            while (exportVisitor.DiscoveredAliases.TryGetValue(resolvedCommandName, out alias))
+            resolvedCommandName = _commandAst.GetCommandName();
+            if (resolvedCommandName != null)
             {
-                resolvedAliasCount += 1;
-                if (resolvedAliasCount > 5)
-                    break;  // give up, assume it's recursive
-                resolvedCommandName = alias;
-            }
+                string alias;
+                int resolvedAliasCount = 0;
 
-            FunctionDefinitionAst functionDefinitionAst;
-            if (exportVisitor.DiscoveredFunctions.TryGetValue(resolvedCommandName, out functionDefinitionAst))
-            {
-                // We could use the IAstToScriptBlockConverter to get the actual script block, but that can be fairly expensive for workflows.
-                // IAstToScriptBlockConverter is public, so we might consider converting non-workflows, but the interface isn't really designed
-                // for Intellisense, so we can't really expect good performance, so instead we'll just fall back on the actual
-                // parameters we see in the ast.
-                var scriptBlock = functionDefinitionAst.IsWorkflow
-                                  ? CreateFakeScriptBlockForWorkflow(functionDefinitionAst)
-                                  : new ScriptBlock(functionDefinitionAst, functionDefinitionAst.IsFilter);
-                commandProcessor = CommandDiscovery.CreateCommandProcessorForScript(scriptBlock, context, true, context.EngineSessionState);
-            }
+                while (exportVisitor.DiscoveredAliases.TryGetValue(resolvedCommandName, out alias))
+                {
+                    resolvedAliasCount += 1;
+                    if (resolvedAliasCount > 5)
+                        break;  // give up, assume it's recursive
+                    resolvedCommandName = alias;
+                }
 
+                FunctionDefinitionAst functionDefinitionAst;
+                if (exportVisitor.DiscoveredFunctions.TryGetValue(resolvedCommandName, out functionDefinitionAst))
+                {
+                    // We could use the IAstToScriptBlockConverter to get the actual script block, but that can be fairly expensive for workflows.
+                    // IAstToScriptBlockConverter is public, so we might consider converting non-workflows, but the interface isn't really designed
+                    // for Intellisense, so we can't really expect good performance, so instead we'll just fall back on the actual
+                    // parameters we see in the ast.
+                    var scriptBlock = functionDefinitionAst.IsWorkflow
+                                      ? CreateFakeScriptBlockForWorkflow(functionDefinitionAst)
+                                      : new ScriptBlock(functionDefinitionAst, functionDefinitionAst.IsFilter);
+                    commandProcessor = CommandDiscovery.CreateCommandProcessorForScript(scriptBlock, context, true, context.EngineSessionState);
+                }
+
+            }
             return commandProcessor;
         }
 
@@ -1525,7 +1523,7 @@ namespace System.Management.Automation.Language
             var paramBlockAst = functionDefinitionAst.Body.ParamBlock;
             if (paramBlockAst != null)
             {
-                var outputTypeAttrs = paramBlockAst.Attributes.Where(attribute => typeof(OutputTypeAttribute).Equals(attribute.TypeName.GetReflectionAttributeType()));
+                var outputTypeAttrs = paramBlockAst.Attributes.Where(attribute => typeof(OutputTypeAttribute) == attribute.TypeName.GetReflectionAttributeType());
 
                 foreach (AttributeAst attributeAst in outputTypeAttrs)
                 {

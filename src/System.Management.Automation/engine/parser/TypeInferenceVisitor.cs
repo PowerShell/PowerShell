@@ -10,7 +10,6 @@ using Microsoft.PowerShell.Commands;
 
 using CimClass = Microsoft.Management.Infrastructure.CimClass;
 using CimInstance = Microsoft.Management.Infrastructure.CimInstance;
-using CimPropertyDeclaration = Microsoft.Management.Infrastructure.CimPropertyDeclaration;
 
 namespace System.Management.Automation
 {
@@ -387,7 +386,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            if (!match.Groups["NetTypeName"].Value.Equals(typeof(CimInstance).FullName, StringComparison.OrdinalIgnoreCase))
+            if (!match.Groups["NetTypeName"].Value.EqualsOrdinalIgnoreCase(typeof(CimInstance).FullName))
             {
                 return false;
             }
@@ -399,21 +398,17 @@ namespace System.Management.Automation
 
         private static bool IsMemberHidden(object member)
         {
-            var psMemberInfo = member as PSMemberInfo;
-            if (psMemberInfo != null)
-                return psMemberInfo.IsHidden;
-
-            var memberInfo = member as MemberInfo;
-            if (memberInfo != null)
-                return memberInfo.GetCustomAttributes(typeof(HiddenAttribute), false).Any();
-
-            var propertyMemberAst = member as PropertyMemberAst;
-            if (propertyMemberAst != null)
-                return propertyMemberAst.IsHidden;
-
-            var functionMemberAst = member as FunctionMemberAst;
-            if (functionMemberAst != null)
-                return functionMemberAst.IsHidden;
+            switch (member)
+            {
+                case PSMemberInfo psMemberInfo:
+                    return psMemberInfo.IsHidden;
+                case MemberInfo memberInfo:
+                    return memberInfo.GetCustomAttributes(typeof(HiddenAttribute), false).Any();
+                case PropertyMemberAst propertyMember:
+                    return propertyMember.IsHidden;
+                case FunctionMemberAst functionMember:
+                    return functionMember.IsHidden;
+            }
 
             return false;
         }
@@ -710,7 +705,17 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitTryStatement(TryStatementAst tryStatementAst)
         {
-            return tryStatementAst.Body.Accept(this);
+            var res = new List<PSTypeName>(5);
+            res.AddRange(InferTypes(tryStatementAst.Body));
+            foreach (var catchClauseAst in tryStatementAst.CatchClauses)
+            {
+                res.AddRange(InferTypes(catchClauseAst));
+            }
+            if (tryStatementAst.Finally != null)
+            {
+                res.AddRange(InferTypes(tryStatementAst.Finally));
+            }
+            return res;
         }
 
         object ICustomAstVisitor.VisitBreakStatement(BreakStatementAst breakStatementAst)
@@ -809,11 +814,15 @@ namespace System.Management.Automation
             if (cmdletInfo != null)
             {
                 // Special cases
-                foreach (var objectCmdletTypes in InferTypesFromObjectCmdlets(commandAst, cmdletInfo, pseudoBinding))
+                var inferTypesFromObjectCmdlets = InferTypesFromObjectCmdlets(commandAst, cmdletInfo, pseudoBinding).ToArray();
+                if (inferTypesFromObjectCmdlets.Length > 0)
                 {
-                    yield return objectCmdletTypes;
+                    foreach (var objectCmdletTypes in inferTypesFromObjectCmdlets)
+                    {
+                        yield return objectCmdletTypes;
+                    }
+                    yield break;
                 }
-                yield break;
             }
 
             // The OutputType property ignores the parameter set specified in the OutputTypeAttribute.
@@ -836,8 +845,7 @@ namespace System.Management.Automation
         private IEnumerable<PSTypeName> InferTypesFromObjectCmdlets(CommandAst commandAst, CmdletInfo cmdletInfo, PseudoBindingInfo pseudoBinding)
         {
             // new-object - yields an instance of whatever -Type is bound to
-            if (cmdletInfo.ImplementingType.FullName.Equals("Microsoft.PowerShell.Commands.NewObjectCommand",
-                StringComparison.Ordinal))
+            if (cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.PowerShell.Commands.NewObjectCommand"))
             {
                 var newObjectType = InferTypesFromNewObjectCommand(pseudoBinding);
                 if (newObjectType != null)
@@ -850,10 +858,8 @@ namespace System.Management.Automation
 
             // Get-CimInstance/New-CimInstance - yields a CimInstance with ETS type based on its arguments for -Namespace and -ClassName parameters
             if (
-                cmdletInfo.ImplementingType.FullName.Equals(
-                    "Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand", StringComparison.Ordinal) ||
-                cmdletInfo.ImplementingType.FullName.Equals(
-                    "Microsoft.Management.Infrastructure.CimCmdlets.NewCimInstanceCommand", StringComparison.Ordinal))
+                cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand") ||
+                cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.Management.Infrastructure.CimCmdlets.NewCimInstanceCommand"))
             {
                 foreach (var cimType in InferTypesFromCimCommand(pseudoBinding))
                 {
@@ -866,8 +872,7 @@ namespace System.Management.Automation
             // same for sort-object
             if (cmdletInfo.ImplementingType == typeof(WhereObjectCommand)
                 ||
-                cmdletInfo.ImplementingType.FullName.Equals("Microsoft.PowerShell.Commands.SortObjectCommand",
-                    StringComparison.Ordinal))
+                cmdletInfo.ImplementingType.FullName.EqualsOrdinalIgnoreCase("Microsoft.PowerShell.Commands.SortObjectCommand"))
             {
                 foreach (var whereOrSortType in InferTypesFromWhereAndSortCommand(commandAst))
                 {
@@ -991,7 +996,7 @@ namespace System.Management.Automation
 
             var maybeWantDefaultCtor = isStatic
                 && memberExpressionAst is InvokeMemberExpressionAst
-                && memberAsStringConst.Value.Equals("new", StringComparison.OrdinalIgnoreCase);
+                && memberAsStringConst.Value.EqualsOrdinalIgnoreCase("new");
 
             // We use a list of member names because we might discover aliases properties
             // and if we do, we'll add to the list.
@@ -1005,83 +1010,41 @@ namespace System.Management.Automation
                     string memberName = memberNameList[i];
                     foreach (var member in members)
                     {
-                        var propertyInfo = member as PropertyInfo;
                         var isInvokeMemberAst = memberExpressionAst is InvokeMemberExpressionAst;
-                        if (propertyInfo != null)
+                        switch (member)
                         {
-                            if (propertyInfo.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase) &&
-                                !isInvokeMemberAst)
+                            case PropertyInfo propertyInfo: // .net property
                             {
-                                yield return new PSTypeName(propertyInfo.PropertyType);
-                                break;
-                            }
-                            continue;
-                        }
-
-                        var fieldInfo = member as FieldInfo;
-                        if (fieldInfo != null)
-                        {
-                            if (fieldInfo.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase) &&
-                                !isInvokeMemberAst)
-                            {
-                                yield return new PSTypeName(fieldInfo.FieldType);
-                                break;
-                            }
-                            continue;
-                        }
-
-                        var methodCacheEntry = member as DotNetAdapter.MethodCacheEntry;
-                        if (methodCacheEntry != null)
-                        {
-                            if (methodCacheEntry[0].method.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
-                            {
-                                maybeWantDefaultCtor = false;
-                                if (isInvokeMemberAst)
+                                if (propertyInfo.Name.EqualsOrdinalIgnoreCase(memberName) && !isInvokeMemberAst)
                                 {
-                                    foreach (var method in methodCacheEntry.methodInformationStructures)
-                                    {
-                                        var methodInfo = method.method as MethodInfo;
-                                        if (methodInfo != null && !methodInfo.ReturnType.GetTypeInfo().ContainsGenericParameters)
-                                        {
-                                            yield return new PSTypeName(methodInfo.ReturnType);
-                                        }
-                                    }
+                                    yield return new PSTypeName(propertyInfo.PropertyType);
+                                    goto NextMember;
                                 }
-                                else
-                                {
-                                    // Accessing a method as a property, we'd return a wrapper over the method.
-                                    yield return new PSTypeName(typeof(PSMethod));
-                                }
-                                break;
+                                continue;
                             }
-                            continue;
-                        }
-
-                        var memberAst = member as MemberAst;
-                        if (memberAst != null)
-                        {
-                            if (memberAst.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
+                            case FieldInfo fieldInfo:       // .net field
                             {
-                                if (isInvokeMemberAst)
+                                if (fieldInfo.Name.EqualsOrdinalIgnoreCase(memberName) && !isInvokeMemberAst)
                                 {
-                                    var functionMemberAst = memberAst as FunctionMemberAst;
-                                    if (functionMemberAst != null && !functionMemberAst.IsReturnTypeVoid())
-                                    {
-                                        yield return new PSTypeName(functionMemberAst.ReturnType.TypeName);
-                                    }
+                                    yield return new PSTypeName(fieldInfo.FieldType);
                                 }
-                                else
+                                continue;
+                            }
+
+                            case DotNetAdapter.MethodCacheEntry methodCacheEntry: // .net method
+                            {
+                                if (methodCacheEntry[0].method.Name.EqualsOrdinalIgnoreCase(memberName))
                                 {
-                                    var propertyMemberAst = memberAst as PropertyMemberAst;
-                                    if (propertyMemberAst != null)
+                                    maybeWantDefaultCtor = false;
+                                    if (isInvokeMemberAst)
                                     {
-                                        if (propertyMemberAst.PropertyType != null)
+                                        foreach (var method in methodCacheEntry.methodInformationStructures)
                                         {
-                                            yield return new PSTypeName(propertyMemberAst.PropertyType.TypeName);
-                                        }
-                                        else
-                                        {
-                                            yield return new PSTypeName(typeof(object));
+                                            var methodInfo = method.method as MethodInfo;
+                                            if (methodInfo != null && !methodInfo.ReturnType.GetTypeInfo().ContainsGenericParameters)
+                                            {
+                                                yield return new PSTypeName(methodInfo.ReturnType);
+                                            }
                                         }
                                     }
                                     else
@@ -1090,64 +1053,98 @@ namespace System.Management.Automation
                                         yield return new PSTypeName(typeof(PSMethod));
                                     }
                                 }
+                                continue;
                             }
-                            continue;
-                        }
-
-                        var memberInfo = member as PSMemberInfo;
-                        if (memberInfo == null ||
-                            !memberInfo.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            continue;
-                        }
-
-                        var noteProperty = member as PSNoteProperty;
-                        if (noteProperty != null)
-                        {
-                            yield return new PSTypeName(noteProperty.Value.GetType());
-                            break;
-                        }
-
-                        var aliasProperty = member as PSAliasProperty;
-                        if (aliasProperty != null)
-                        {
-                            memberNameList.Add(aliasProperty.ReferencedMemberName);
-                            break;
-                        }
-
-                        var codeProperty = member as PSCodeProperty;
-                        if (codeProperty != null)
-                        {
-                            if (codeProperty.GetterCodeReference != null)
+                            case MemberAst memberAst: // this is for members defined by PowerShell classes
                             {
-                                yield return new PSTypeName(codeProperty.GetterCodeReference.ReturnType);
+                                if (memberAst.Name.EqualsOrdinalIgnoreCase(memberName))
+                                {
+                                    if (isInvokeMemberAst)
+                                    {
+                                        var functionMemberAst = memberAst as FunctionMemberAst;
+                                        if (functionMemberAst != null && !functionMemberAst.IsReturnTypeVoid())
+                                        {
+                                            yield return new PSTypeName(functionMemberAst.ReturnType.TypeName);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var propertyMemberAst = memberAst as PropertyMemberAst;
+                                        if (propertyMemberAst != null)
+                                        {
+                                            if (propertyMemberAst.PropertyType != null)
+                                            {
+                                                yield return new PSTypeName(propertyMemberAst.PropertyType.TypeName);
+                                            }
+                                            else
+                                            {
+                                                yield return new PSTypeName(typeof(object));
+                                            }
+                                        }
+                                        else
+                                        {
+                                            // Accessing a method as a property, we'd return a wrapper over the method.
+                                            yield return new PSTypeName(typeof(PSMethod));
+                                        }
+                                    }
+                                }
+                                continue;
                             }
-                            break;
-                        }
-
-                        ScriptBlock scriptBlock = null;
-                        var scriptProperty = member as PSScriptProperty;
-                        if (scriptProperty != null)
-                        {
-                            scriptBlock = scriptProperty.GetterScript;
-                        }
-
-                        var scriptMethod = member as PSScriptMethod;
-                        if (scriptMethod != null)
-                        {
-                            scriptBlock = scriptMethod.Script;
-                        }
-
-                        if (scriptBlock != null)
-                        {
-                            foreach (var t in scriptBlock.OutputType)
+                            case PSMemberInfo memberInfo:
                             {
-                                yield return t;
+                                if (!memberInfo.Name.EqualsOrdinalIgnoreCase(memberName))
+                                {
+                                    continue;
+                                }
+                                switch (member)
+                                {
+                                    case PSProperty p:
+                                    {
+                                        yield return new PSTypeName(p.Value.GetType());
+                                        goto NextMember;
+                                    }
+                                    case PSNoteProperty noteProperty:
+                                    {
+                                        yield return new PSTypeName(noteProperty.Value.GetType());
+                                        goto NextMember;
+                                    }
+                                    case PSAliasProperty aliasProperty:
+                                    {
+                                        memberNameList.Add(aliasProperty.ReferencedMemberName);
+                                        goto NextMember;
+                                    }
+                                    case PSCodeProperty codeProperty:
+                                    {
+                                        if (codeProperty.GetterCodeReference != null)
+                                        {
+                                            yield return new PSTypeName(codeProperty.GetterCodeReference.ReturnType);
+                                        }
+                                        goto NextMember;
+                                    }
+                                    case PSScriptProperty scriptProperty:
+                                    {
+                                        var scriptBlock = scriptProperty.GetterScript;
+                                        foreach (var t in scriptBlock.OutputType)
+                                        {
+                                            yield return t;
+                                        }
+                                        goto NextMember;
+                                    }
+                                    case PSScriptMethod scriptMethod:
+                                    {
+                                        var scriptBlock = scriptMethod.Script;
+                                        foreach (var t in scriptBlock.OutputType)
+                                        {
+                                            yield return t;
+                                        }
+                                        goto NextMember;
+                                    }
+                                }
+                                break;
                             }
                         }
-
-                        break;
                     }
+                    NextMember: {}
                 }
 
                 // We didn't find any constructors but they used [T]::new() syntax
@@ -1160,7 +1157,7 @@ namespace System.Management.Automation
 
         private PSTypeName[] GetExpressionType(ExpressionAst expression, bool isStatic)
         {
-            PSTypeName[] exprType = null;
+            PSTypeName[] exprType;
             if (isStatic)
             {
                 var exprAsType = expression as TypeExpressionAst;
@@ -1185,8 +1182,7 @@ namespace System.Management.Automation
                 exprType = InferTypes(expression).ToArray();
                 if (exprType.Length == 0)
                 {
-                    PSTypeName typeName;
-                    if (_context.TryGetRepresentativeTypeNameFromExpressionSafeEval(expression, out typeName))
+                    if (_context.TryGetRepresentativeTypeNameFromExpressionSafeEval(expression, out PSTypeName _))
                     {
                         return exprType;
                     }
@@ -1211,7 +1207,7 @@ namespace System.Management.Automation
             Ast parent = variableExpressionAst.Parent;
             if (astVariablePath.IsUnqualified &&
                 (SpecialVariables.IsUnderbar(astVariablePath.UserPath)
-                 || astVariablePath.UserPath.Equals(SpecialVariables.PSItem, StringComparison.OrdinalIgnoreCase)))
+                 || astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.PSItem)))
             {
                 // $_ is special, see if we're used in a script block in some pipeline.
                 while (parent != null)
@@ -1286,15 +1282,15 @@ namespace System.Management.Automation
             // For certain variables, we always know their type, well at least we can assume we know.
             if (astVariablePath.IsUnqualified)
             {
-                if (!astVariablePath.UserPath.Equals(SpecialVariables.This, StringComparison.OrdinalIgnoreCase) ||
+                if (!astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.This) ||
                     _context.CurrentTypeDefinitionAst == null)
                 {
                     for (int i = 0; i < SpecialVariables.AutomaticVariables.Length; i++)
                     {
-                        if (!astVariablePath.UserPath.Equals(SpecialVariables.AutomaticVariables[i], StringComparison.OrdinalIgnoreCase))
+                        if (!astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.AutomaticVariables[i]))
                             continue;
                         var type = SpecialVariables.AutomaticVariableTypes[i];
-                        if (!(type == typeof(object)))
+                        if (type != typeof(object))
                             yield return new PSTypeName(type);
                         break;
                     }
@@ -1406,6 +1402,7 @@ namespace System.Management.Automation
         private IEnumerable<PSTypeName> InferTypeFrom(IndexExpressionAst indexExpressionAst)
         {
             var targetTypes = InferTypes(indexExpressionAst.Target);
+            bool foundAny = false;
             foreach (var psType in targetTypes)
             {
                 var type = psType.Type;
@@ -1417,13 +1414,24 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    foreach (var i in type.GetInterfaces())
+                    foreach (var iface in type.GetInterfaces())
                     {
-                        if (i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+                        var isGenericType = iface.GetTypeInfo().IsGenericType;
+                        if (isGenericType && iface.GetGenericTypeDefinition() == typeof(IDictionary<,>))
                         {
-                            var valueType = i.GetGenericArguments()[1];
+                            var valueType = iface.GetGenericArguments()[1];
                             if (!valueType.GetTypeInfo().ContainsGenericParameters)
                             {
+                                foundAny = true;
+                                yield return new PSTypeName(valueType);
+                            }
+                        }
+                        else if (isGenericType && iface.GetGenericTypeDefinition() == typeof(IList<>))
+                        {
+                            var valueType = iface.GetGenericArguments()[0];
+                            if (!valueType.GetTypeInfo().ContainsGenericParameters)
+                            {
+                                foundAny = true;
                                 yield return new PSTypeName(valueType);
                             }
                         }
@@ -1432,29 +1440,23 @@ namespace System.Management.Automation
                     var defaultMember = type.GetCustomAttributes<DefaultMemberAttribute>(true).FirstOrDefault();
                     if (defaultMember != null)
                     {
-                        var indexers =
-                            type.GetMethods(BindingFlags.Public | BindingFlags.Instance).Where(
-                                m =>
-                                {
-                                    var name = m.Name;
-                                    var memberName = defaultMember.MemberName;
-                                    // Equals without string allocation
-                                    return name.Length == memberName.Length + 4 &&
-                                           name.StartsWith("get_") && memberName.IndexOf(name, 4, StringComparison.Ordinal) == 4;
-                                }
-                                );
+                        var indexers = type.GetGetterProperty(defaultMember.MemberName);
                         foreach (var indexer in indexers)
                         {
+                            foundAny = true;
                             yield return new PSTypeName(indexer.ReturnType);
                         }
                     }
                 }
 
-                // Inferred type of target wasn't indexable.  Assume (perhaps incorrectly)
-                // that it came from OutputType and that more than one object was returned
-                // and that we're indexing because of that, in which case, OutputType really
-                // is the inferred type.
-                yield return psType;
+                if (!foundAny)
+                {
+                    // Inferred type of target wasn't indexable.  Assume (perhaps incorrectly)
+                    // that it came from OutputType and that more than one object was returned
+                    // and that we're indexing because of that, in which case, OutputType really
+                    // is the inferred type.
+                    yield return psType;
+                }
             }
         }
 
@@ -1503,6 +1505,27 @@ namespace System.Management.Automation
         {
             // TODO: What is the right InferredType for the AST
             return dynamicKeywordAst.CommandElements[0].Accept(this);
+        }
+    }
+
+    static class TypeInferenceExtension
+    {
+        public static bool EqualsOrdinalIgnoreCase(this string s, string t)
+        {
+            return string.Equals(s, t, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static IEnumerable<MethodInfo> GetGetterProperty(this Type type, string propertyName)
+        {
+            return type.GetMethods(BindingFlags.Public | BindingFlags.Instance).Where(
+                m =>
+                {
+                    var name = m.Name;
+                    // Equals without string allocation
+                    return name.Length == propertyName.Length + 4 &&
+                           name.StartsWith("get_") && propertyName.IndexOf(name, 4, StringComparison.Ordinal) == 4;
+                }
+            );
         }
     }
 }
