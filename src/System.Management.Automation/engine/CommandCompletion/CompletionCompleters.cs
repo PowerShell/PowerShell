@@ -1901,7 +1901,7 @@ namespace System.Management.Automation
                 }
             }
 
-            foreach (PSTypeName typeName in AstTypeInference.InferTypeOf(argumentAst, context.TypeInferenceContext))
+            foreach (PSTypeName typeName in AstTypeInference.InferTypeOf(argumentAst, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval))
             {
                 yield return typeName;
             }
@@ -3792,11 +3792,11 @@ namespace System.Management.Automation
                 {
                     return;
                 }
-                prevType = AstTypeInference.InferTypeOf(astPair.Argument, context.TypeInferenceContext);
+                prevType = AstTypeInference.InferTypeOf(astPair.Argument, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
             }
             else
             {
-                prevType = AstTypeInference.InferTypeOf(pipelineAst.PipelineElements[i - 1], context.TypeInferenceContext);
+                prevType = AstTypeInference.InferTypeOf(pipelineAst.PipelineElements[i - 1], context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
             }
 
             CompleteMemberByInferredType(context, prevType, result, wordToComplete + "*", filter: IsPropertyMember, isStatic: false);
@@ -4625,7 +4625,7 @@ namespace System.Management.Automation
                             var commandAst = ast as CommandAst;
                             if (commandAst != null)
                             {
-                                PSTypeName discoveredType = AstTypeInference.InferTypeOf(ast, context.TypeInferenceContext).FirstOrDefault<PSTypeName>();
+                                PSTypeName discoveredType = AstTypeInference.InferTypeOf(ast, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval).FirstOrDefault<PSTypeName>();
                                 if (discoveredType != null)
                                 {
                                     tooltip = StringUtil.Format("[{0}]${1}", discoveredType.Name, userPath);
@@ -5074,7 +5074,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    inferredTypes = AstTypeInference.InferTypeOf(targetExpr, context.TypeInferenceContext).ToArray();
+                    inferredTypes = AstTypeInference.InferTypeOf(targetExpr, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval).ToArray();
                 }
 
                 if (inferredTypes != null && inferredTypes.Length > 0)
@@ -6330,7 +6330,7 @@ namespace System.Management.Automation
             {
                 var result = new List<CompletionResult>();
                 CompleteMemberByInferredType(
-                    completionContext, AstTypeInference.InferTypeOf(typeAst, completionContext.TypeInferenceContext),
+                    completionContext, AstTypeInference.InferTypeOf(typeAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval),
                     result, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false);
                 return result;
             }
@@ -6433,7 +6433,7 @@ namespace System.Management.Automation
                         switch (binding.CommandName)
                         {
                             case "New-Object":
-                                var inferredType = AstTypeInference.InferTypeOf(commandAst, completionContext.TypeInferenceContext);
+                                var inferredType = AstTypeInference.InferTypeOf(commandAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
                                 var result = new List<CompletionResult>();
                                 CompleteMemberByInferredType(
                                     completionContext, inferredType,
