@@ -191,12 +191,6 @@ function Start-PSBuild {
     }
     $script:Options = New-PSOptions @OptionsArguments
 
-    if (($script:Options.Runtime -match "-x86") -AND
-        ($CrossGen))
-    {
-        throw "CrossGen is not currently supported for x86 releases."
-    }
-
     if ($StopDevPowerShell) {
         Stop-DevPowerShell
     }
@@ -390,7 +384,7 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
 
         if ($CrossGen) {
             $publishPath = Split-Path $Options.Output
-            Start-CrossGen -PublishPath $publishPath
+            Start-CrossGen -PublishPath $publishPath -Runtime $script:Options.Runtime
             log "PowerShell.exe with ngen binaries is available at: $($Options.Output)"
         } else {
             log "PowerShell output: $($Options.Output)"
@@ -1126,11 +1120,11 @@ function Start-PSPackage {
     Write-Verbose "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'" -Verbose
 
     # Make sure the most recent build satisfies the package requirement
-    if (-not $Script:Options -or                                                    ## Start-PSBuild hasn't been executed yet
-        ((-not $Script:Options.CrossGen) -AND -not ($Runtime -match "-x86")) -or    ## Last build didn't specify -CrossGen OR CrossGen check skipped since it is not supported for x86
-        $Script:Options.Runtime -ne $Runtime -or                                    ## Last build wasn't for the required RID
-        $Script:Options.Configuration -ne $Configuration -or                        ## Last build was with configuration other than 'Release'
-        $Script:Options.Framework -ne "netcoreapp1.0")                              ## Last build wasn't for CoreCLR
+    if (-not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
+        -not $Script:Options.CrossGen -or                       ## Last build didn't specify -CrossGen
+        $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
+        $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
+        $Script:Options.Framework -ne "netcoreapp1.0")          ## Last build wasn't for CoreCLR
     {
         # It's possible that the most recent build doesn't satisfy the package requirement but
         # an earlier build does. e.g., run the following in order on win10-x64:
@@ -2380,7 +2374,20 @@ function Start-CrossGen {
         [Parameter(Mandatory= $true)]
         [ValidateNotNullOrEmpty()]
         [String]
-        $PublishPath
+        $PublishPath,
+
+        [Parameter(Mandatory=$true)]
+        [ValidateSet("ubuntu.14.04-x64",
+                     "ubuntu.16.04-x64",
+                     "debian.8-x64",
+                     "centos.7-x64",
+                     "win7-x86",
+                     "win7-x64",
+                     "win81-x64",
+                     "win10-x64",
+                     "osx.10.11-x64")]
+        [string]
+        $Runtime
     )
 
     function Generate-CrossGenAssembly {
@@ -2434,7 +2441,11 @@ function Start-CrossGen {
 
     # The crossgen tool is only published for these particular runtimes
     $crossGenRuntime = if ($IsWindows) {
-        "win7-x64"
+        if ($Runtime -match "-x86") {
+            "win7-x86"
+        } else {
+            "win7-x64"
+        }
     } elseif ($IsLinux) {
         if ($IsUbuntu) {
             "ubuntu.14.04-x64"
@@ -2458,6 +2469,7 @@ function Start-CrossGen {
     if (-not $crossGenPath) {
         throw "Unable to find latest version of crossgen.exe. 'Please run Start-PSBuild -Clean' first, and then try again."
     }
+    Write-Verbose "Matched CrossGen.exe: $crossGenPath" -Verbose
 
     # Crossgen.exe requires the following assemblies:
     # mscorlib.dll
