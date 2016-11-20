@@ -421,8 +421,19 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
         # so we need to get its parent directory
         $publishPath = Split-Path $Options.Output -Parent
         log "Restore PowerShell modules to $publishPath"
-        # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
-        Restore-PSModule -Name @('PowerShellGet') -Destination (Join-Path -Path $publishPath -ChildPath "Modules")
+
+        $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
+
+        # Restore modules from myget feed
+        Restore-PSModule -Destination $modulesDir -Name @(
+            # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
+            'PowerShellGet'
+        )
+
+        # Restore modules from powershellgallery feed
+        Restore-PSModule -Destination $modulesDir -Name @(
+            'Microsoft.PowerShell.Archive'
+        ) -SourceLocation "https://www.powershellgallery.com/api/v2/"
     }
 }
 
