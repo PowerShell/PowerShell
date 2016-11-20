@@ -1004,10 +1004,11 @@ function Start-PSBootstrap {
             $Deps += "openssl"
 
             # Install dependencies
-            Start-NativeExecution { brew install $Deps }
+            # ignore exitcode, because they may be already installed
+            Start-NativeExecution { brew install $Deps } -IgnoreExitcode
 
             # Install patched version of curl
-            Start-NativeExecution { brew install curl --with-openssl }
+            Start-NativeExecution { brew install curl --with-openssl } -IgnoreExitcode
         }
 
         # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
@@ -2115,7 +2116,7 @@ function script:Convert-PSObjectToHashtable {
 
 # this function wraps native command Execution
 # for more information, read https://mnaoumov.wordpress.com/2015/01/11/execution-of-external-commands-in-powershell-done-right/
-function script:Start-NativeExecution([scriptblock]$sb)
+function script:Start-NativeExecution([scriptblock]$sb, [switch]$IgnoreExitcode)
 {
     $backupEAP = $script:ErrorActionPreference
     $script:ErrorActionPreference = "Continue"
@@ -2123,7 +2124,7 @@ function script:Start-NativeExecution([scriptblock]$sb)
         & $sb
         # note, if $sb doesn't have a native invocation, $LASTEXITCODE will
         # point to the obsolete value
-        if ($LASTEXITCODE -ne 0) {
+        if ($LASTEXITCODE -ne 0 -and -not $IgnoreExitcode) {
             throw "Execution of {$sb} failed with exit code $LASTEXITCODE"
         }
     } finally {
