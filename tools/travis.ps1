@@ -1,7 +1,12 @@
 Import-Module $PSScriptRoot/../build.psm1 -Force
 
-$isPR = $env:TRAVIS_PULL_REQUEST -eq 'true'
-$isCron = $env:TRAVIS_EVENT_TYPE -eq 'cron'
+# https://docs.travis-ci.com/user/environment-variables/
+# TRAVIS_EVENT_TYPE: Indicates how the build was triggered.
+# One of push, pull_request, api, cron.
+$isPR = $env:TRAVIS_EVENT_TYPE -eq 'pull_request'
+$isFullBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api'
+
+Write-Host -Foreground Green "Executing travis.ps1 `$isPR='$isPr' `$isFullBuild='$isFullBuild'"
 
 Start-PSBootstrap -Package:(-not $isPr)
 $output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
@@ -9,8 +14,7 @@ Start-PSBuild -CrossGen -PSModuleRestore
 
 $pesterParam = @{ 'binDir' = $output }
 
-if ($cron) {
-    # daily builds
+if ($isFullBuild) {
     $pesterParam['Tag'] = @('CI','Feature','Scenario')
     $pesterParam['ExcludeTag'] = @()
 } else {
