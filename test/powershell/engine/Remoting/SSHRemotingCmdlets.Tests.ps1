@@ -2,7 +2,7 @@
 ## SSH Remoting cmdlet tests
 ##
 
-Describe "SSHTransport switch parameter value" -Tags 'CI' {
+Describe "SSHTransport switch parameter value" -Tags 'Feature' {
 
     BeforeAll {
 
@@ -13,10 +13,6 @@ Describe "SSHTransport switch parameter value" -Tags 'CI' {
         )
     }
 
-    BeforeEach {
-        [System.Management.Automation.ErrorRecord] $paramError = $null
-    }
-
     It "<testName>" -TestCases $TestCasesSSHTransport {
 
         param($scriptBlock)
@@ -25,13 +21,14 @@ Describe "SSHTransport switch parameter value" -Tags 'CI' {
             & $scriptBlock
             throw "Parameter argument should not be valid"
         }
-        catch { $paramError = $_ }
-
-        $paramError.FullyQualifiedErrorId | Should Match "ParameterArgumentValidationError"
+        catch 
+        { 
+            $_.FullyQualifiedErrorId | Should Match "ParameterArgumentValidationError"
+        }
     }
 }
 
-Describe "SSHConnection parameter hashtable error conditions" -Tags 'CI' {
+Describe "SSHConnection parameter hashtable error conditions" -Tags 'Feature' {
 
     BeforeAll {
 
@@ -45,10 +42,6 @@ Describe "SSHConnection parameter hashtable error conditions" -Tags 'CI' {
         )
     }
 
-    BeforeEach {
-        [System.Management.Automation.ErrorRecord] $paramError = $null
-    }
-
     It "<testName>" -TestCases $TestCasesSSHConnection {
         param ($scriptBlock)
         try
@@ -56,8 +49,9 @@ Describe "SSHConnection parameter hashtable error conditions" -Tags 'CI' {
             & $scriptBlock
             throw "Parameter set should not be valid"
         }
-        catch { $paramError = $_ }
-
-        $paramError.FullyQualifiedErrorId | Should Match "Argument,Microsoft.PowerShell.Commands.NewPSSessionCommand"
+        catch 
+        { 
+            $_.FullyQualifiedErrorId | Should Match "Argument,Microsoft.PowerShell.Commands.NewPSSessionCommand"
+        }
     }
 }

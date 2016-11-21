@@ -267,6 +267,9 @@ namespace Microsoft.PowerShell.Commands
         #endregion
     }
 
+    /// <summary>
+    /// Contains SSH connection information
+    /// </summary>
     internal struct SSHConnection
     {
         public string ComputerName;
@@ -798,15 +801,20 @@ namespace Microsoft.PowerShell.Commands
 
         #region Internal Methods
 
-        /// <summary>
-        /// Parse the Connection parameter HashTable array.
-        /// </summary>
-        /// <returns>Array of SSHConnection objects</returns>
+        #region SSH Connection Strings
+
         private const string ComputerNameParameter = "ComputerName";
         private const string HostNameAlias = "HostName";
         private const string UserNameParameter = "UserName";
         private const string KeyFilePathParameter = "KeyFilePath";
         private const string IdentityFilePathAlias = "IdentityFilePath";
+
+        #endregion
+
+        /// <summary>
+        /// Parse the Connection parameter HashTable array.
+        /// </summary>
+        /// <returns>Array of SSHConnection objects</returns>
         internal SSHConnection[] ParseSSHConnectionHashTable()
         {
             List<SSHConnection> connections = new List<SSHConnection>();

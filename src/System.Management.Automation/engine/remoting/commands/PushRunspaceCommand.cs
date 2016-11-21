@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
         #region Supress PSRemotingBaseCmdlet SSH hash parameter set
 
         /// <summary>
-        /// Connection
+        /// Suppress SSHConnection parameter set
         /// </summary>
         public override Hashtable[] SSHConnection
         {
