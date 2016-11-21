@@ -18,13 +18,13 @@ Describe "NativeLinuxCommands" -tags "CI" {
 
     It "Should not redirect standard input if native command is the first command in pipeline (1)" -Skip:$IsWindows {
         stty | ForEach-Object -Begin { $out = @() } -Process { $out += $_ }
-        $out.Length > 0 | Should Be $true
+        $out.Length -gt 0 | Should Be $true
         $out[0] -like "speed * baud; line =*" | Should Be $true
     }
 
     It "Should not redirect standard input if native command is the first command in pipeline (2)" -Skip:$IsWindows {
         $out = stty
-        $out.Length > 0 | Should Be $true
+        $out.Length -gt 0 | Should Be $true
         $out[0] -like "speed * baud; line =*" | Should Be $true
     }
 }
