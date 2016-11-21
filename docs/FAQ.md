@@ -162,34 +162,3 @@ A submodule is just a Git repository; it just happens to be nested inside anothe
 Please read the Git Book chapter on [submodules][].
 
 [submodules]: https://git-scm.com/book/en/v2/Git-Tools-Submodules
-
-Why does AppVeyor say "Project not found or access denied" when opening a build?
-================================================================================
-
-This error means you're not signed into AppVeyor. 
-Follow these steps carefully:
-
-1. Click "SIGN IN" link in upper right corner
-2. Click the blue "GitHub" button under "Login with your developer account" on the left
-3. Click the green "Authorize Application" button in the pop-up from GitHub
-4. Click the "- select account -" menu and choose "PowerShell" (**not** your user)
-5. Click the blue "GitHub" button below the menu
-6. Go back to the original link you followed to AppVeyor and click it again
-
-You should now be signed into AppVeyor and able to access our builds.
-
-Why did my Travis CI build fail with `GITHUB_TOKEN variable is undefined, please provide token`?
-================================================================================================
-
-Travis CI uses an encrypted environment variable to authorize with GitHub and
-download PowerShell (which it then uses to build and test through the `build.psm1` module). 
-However, the following caveat applies:
-
-> Encrypted variables are not added to untrusted builds such as pull requests
-> coming from another repository.
-
-Thus a pull request made from a fork of the PowerShell repository will not pass
-the Travis CI as it will be unable to build. 
-Please instead push your branch to the upstream PowerShell repository on GitHub (that is,
-https://github.com/PowerShell/PowerShell), and issue a new Pull Request. 
-If you cannot do this, please get in contact with us to obtain the necessary permissions.
