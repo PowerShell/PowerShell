@@ -1186,7 +1186,7 @@ namespace System.Management.Automation
         /// <param name="redirectInput"></param>
         private void CalculateIORedirection(out bool redirectOutput, out bool redirectError, out bool redirectInput)
         {
-            redirectInput = this.Command.MyInvocation.PipelinePosition > 0;
+            redirectInput = this.Command.MyInvocation.ExpectingInput;
             redirectOutput = true;
             redirectError = true;
 
