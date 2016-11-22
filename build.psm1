@@ -2261,6 +2261,7 @@ function New-MSIPackage
     
     Write-Verbose "Create MSI for Product $productSemanticVersionWithName"
 
+    [Environment]::SetEnvironmentVariable("ProductSourcePath", $ProductSourcePath, "Process")
     # These variables are used by Product.wxs in assets directory
     [Environment]::SetEnvironmentVariable("ProductName", $ProductName, "Process")
     [Environment]::SetEnvironmentVariable("ProductGuid", $ProductGuid, "Process")
