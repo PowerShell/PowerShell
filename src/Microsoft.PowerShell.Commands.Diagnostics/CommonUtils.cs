@@ -37,7 +37,6 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
         private const string LocalizationDllName = "api-ms-win-core-localization-l1-2-1.dll";
         private const string SysInfoDllName = "api-ms-win-core-sysinfo-l1-2-1.dll";
 
-
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct OSVERSIONINFOEX
         {
@@ -164,12 +163,7 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
 
         private static Version GetOsVersion()
         {
-#if !CORECLR
-            return System.Environment.OSVersion.Version;
-#else
- #if UNIX
-            throw new NotImplementedException("GetOsVersion");
- #else
+#if CORECLR
             var osVerEx = new OSVERSIONINFOEX();
 
             osVerEx.OSVersionInfoSize = Marshal.SizeOf<OSVERSIONINFOEX>(osVerEx);
@@ -177,7 +171,8 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
                 throw new Win32Exception(Marshal.GetLastWin32Error());
 
             return new Version(osVerEx.MajorVersion, osVerEx.MinorVersion);
- #endif
+#else
+            return System.Environment.OSVersion.Version;
 #endif
         }
     }
