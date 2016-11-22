@@ -1026,8 +1026,8 @@ namespace System.Management.Automation.Internal
                 myInfo.PipelinePosition = i + 1;
                 myInfo.PipelineLength = _commands.Count;
                 myInfo.PipelineIterationInfo = pipelineIterationInfo;
-                commandProcessor.DoPrepare(psDefaultParameterValues);
                 myInfo.ExpectingInput = commandProcessor.IsPipelineInputExpected();
+                commandProcessor.DoPrepare(psDefaultParameterValues);
             }
 
             // Clear ErrorVariable as appropriate
