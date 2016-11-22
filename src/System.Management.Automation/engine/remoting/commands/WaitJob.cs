@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This cmdlet waits for job to complete.
     /// </summary>
-    [Cmdlet("Wait", "Job", DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113422")]
+    [Cmdlet(VerbsLifecycle.Wait, "Job", DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113422")]
     [OutputType(typeof(Job))]
     public class WaitJobCommand : JobCmdletBase, IDisposable
     {

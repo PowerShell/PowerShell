@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to resolve MSH paths containing glob characters to
     /// MSH paths that match the glob strings.
     /// </summary>
-    [Cmdlet("Split", "Path", DefaultParameterSetName = "ParentSet", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113404")]
+    [Cmdlet(VerbsCommon.Split, "Path", DefaultParameterSetName = "ParentSet", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113404")]
     [OutputType(typeof(string), ParameterSetName = new string[] { SplitPathCommand.leafSet,
                                                                   SplitPathCommand.noQualifierSet,
                                                                   SplitPathCommand.parentSet,
