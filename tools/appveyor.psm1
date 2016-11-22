@@ -326,11 +326,14 @@ function Invoke-AppVeyorTest
     Write-Host -Foreground Green 'Upload FullCLR test results'
     Update-AppVeyorTestResults -resultsFile $testResultsFileFullCLR
 
-    ## Publish code coverage build, tests and OpenCover module to artifacts, so webhook has the information.
-    ## Build webhook is called after 'after_test' phase, hence we need to do this here and not in AppveyorFinish. 
-    $env:CodeCoverageOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Configuration CodeCoverage))
-    $codeCoverageArtifacts = Compress-CoverageArtifacts
-    $codeCoverageArtifacts | % { Update-AppVeyorTestResults -resultsFile $_ }
+    if(Test-DailyBuild)
+    {
+        ## Publish code coverage build, tests and OpenCover module to artifacts, so webhook has the information.
+        ## Build webhook is called after 'after_test' phase, hence we need to do this here and not in AppveyorFinish. 
+        $env:CodeCoverageOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Configuration CodeCoverage))
+        $codeCoverageArtifacts = Compress-CoverageArtifacts
+        $codeCoverageArtifacts | % { Update-AppVeyorTestResults -resultsFile $_ }
+    }
 
     #
     # Fail the build, if tests failed
