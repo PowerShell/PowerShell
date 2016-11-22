@@ -120,6 +120,11 @@ function Start-PSBuild {
         Push-Location $PSScriptRoot
         try {
             git clean -fdX
+            # Extra cleaning is required to delete the CMake temporary files. 
+            # These are not cleaned when using "X" and cause CMake to retain state, leading to
+            # mis-configured environment issues when switching between x86 and x64 compilation
+            # environments.
+            git clean -fdx .\src\powershell-native
         } finally {
             Pop-Location
         }
