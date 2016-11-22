@@ -400,12 +400,13 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
 
     if($PSModuleRestore)
     {
-        # downloading the PackageManagement module
+        # Downloading the PowerShellGet and PackageManagement modules.
         # $Options.Output is pointing to something like "...\src\powershell-win-core\bin\Debug\netcoreapp1.0\win10-x64\publish\powershell.exe", 
         # so we need to get its parent directory
         $publishPath = Split-Path $Options.Output -Parent
-        log "Restore PowerShell modules to $publishPath"
-        Restore-PSModule -Name @('PackageManagement','PowerShellGet') -Destination (Join-Path -Path $publishPath -ChildPath "Modules")
+        log "Restore PowerShell modules to $publishPath"    
+        # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
+        Restore-PSModule -Name @('PowerShellGet') -Destination (Join-Path -Path $publishPath -ChildPath "Modules")
     }
 }
 
@@ -2627,7 +2628,7 @@ function Restore-PSModule
         }
     }
 
-    log ("Name='{0}', Destination='{1}', Repository='{2}'" -f $Name, $Destination, $RepositoryName)
+    log ("Name='{0}', Destination='{1}', Repository='{2}'" -f ($Name -join ','), $Destination, $RepositoryName)
 
     $Name | ForEach-Object {
 
@@ -2643,8 +2644,13 @@ function Restore-PSModule
         }
 
         # pull down the module
-        log "running save-module $Name"
+        log "running save-module $_"
         PowerShellGet\Save-Module @command -Force -Verbose
+        
+        # Remove PSGetModuleInfo.xml file
+        Find-Module -Name $_ -Repository $RepositoryName -IncludeDependencies | ForEach-Object {
+            Get-ChildItem -Path (Join-Path -Path $Destination -ChildPath $_.Name) -Recurse -Depth 2 -File -Include 'PSGetModuleInfo.xml' -Attributes h,a,r | Remove-Item -Force
+        }
     }
 
     # Clean up

@@ -40,7 +40,7 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
     }
 
      It "install-packageprovider, Expect succeed" {
-        $ipp = (install-PackageProvider -name gistprovider -force -source $InternalSource).name 
+        $ipp = (install-PackageProvider -name gistprovider -force -source $InternalSource -Scope CurrentUser).name 
         $ipp -contains "gistprovider" | should be $true      
     }
        
@@ -51,7 +51,7 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 	}
 
     it "Install-package"  {
-        $i = install-Package -ProviderName NuGet -Name jquery -force -source Nugettest
+        $i = install-Package -ProviderName NuGet -Name jquery -force -source Nugettest -Scope CurrentUser 
         $i.Name -contains "jquery" | should be $true
 	}
 

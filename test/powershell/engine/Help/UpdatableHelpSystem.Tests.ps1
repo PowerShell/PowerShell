@@ -103,14 +103,14 @@ $testCases = @{
         HelpFiles            = "Microsoft.PowerShell.PackageManagement.dll-help.xml"
         HelpInfoFiles        = "PackageManagement_4ae9fd46-338a-459c-8186-07f910774cb8_HelpInfo.xml"
         CompressedFiles      = "PackageManagement_4ae9fd46-338a-459c-8186-07f910774cb8_en-US_helpcontent$extension"
-        HelpInstallationPath = "$pshome\Modules\PackageManagement\en-US"
+        HelpInstallationPath = "$pshome\Modules\PackageManagement\*\en-US"
     }
 
     "PowershellGet" = @{
         HelpFiles            = "PSGet.psm1-help.xml"
         HelpInfoFiles        = "PowershellGet_1d73a601-4a6c-43c5-ba3f-619b18bbb404_HelpInfo.xml"
         CompressedFiles      = "PowershellGet_1d73a601-4a6c-43c5-ba3f-619b18bbb404_en-US_helpcontent$extension"
-        HelpInstallationPath = "$pshome\Modules\PowershellGet\en-US"
+        HelpInstallationPath = "$pshome\Modules\PowershellGet\*\en-US"
     }
 
     "PSReadline" = @{
