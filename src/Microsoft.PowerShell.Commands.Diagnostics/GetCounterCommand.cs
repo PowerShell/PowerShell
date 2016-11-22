@@ -318,10 +318,10 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-#if !CORECLR
-            CultureInfo culture = Thread.CurrentThread.CurrentUICulture;
-#else
+#if CORECLR
             CultureInfo culture = System.Globalization.CultureInfo.CurrentCulture;
+#else
+            CultureInfo culture = Thread.CurrentThread.CurrentUICulture;
 #endif
 
             List<Tuple<char, char>> characterReplacementList = null;
@@ -432,10 +432,10 @@ namespace Microsoft.PowerShell.Commands
             // 4. OpenQuery/ AddCounters
             // 5. Skip the first reading       
 
-#if !CORECLR
-            CultureInfo culture = Thread.CurrentThread.CurrentUICulture;
-#else
+#if CORECLR
             CultureInfo culture = System.Globalization.CultureInfo.CurrentCulture;
+#else
+            CultureInfo culture = Thread.CurrentThread.CurrentUICulture;
 #endif
             List<Tuple<char, char>> characterReplacementList = null;
             List<string> paths = CombineMachinesAndCounterPaths();
@@ -562,11 +562,11 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
 
-#if !CORECLR
-                bool cancelled = _cancelEventArrived.WaitOne((int)_sampleInterval * 1000, true);
-#else
-    //TODO: Is there no exitContext in CORECLR?
+#if CORECLR
+                // CoreCLR has no overload of WaitOne with (interval, exitContext)
                 bool cancelled = _cancelEventArrived.WaitOne((int)_sampleInterval * 1000);
+#else
+                bool cancelled = _cancelEventArrived.WaitOne((int)_sampleInterval * 1000, true);
 #endif
                 if (cancelled)
                 {
