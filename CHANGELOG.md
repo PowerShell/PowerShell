@@ -1,12 +1,31 @@
 Changelog
 =========
 
-Unreleased
-----------
-- Improve pipeline for native commands.
-  Start native process in Prepare() instead of Complete().
-  `ping | grep` doesn't block anymore.
-- Added -Top and -Bottom parameters to Sort-Object
+v6.0.0-alpha.13 - 2016-11-22
+----------------------------
+- Fix `NullReferenceException` in binder after turning on constrained language mode
+- Enable `Invoke-WebRequest` and `Invoke-RestMethod` to not validate the HTTPS certificate of the server if required.
+- Enable binder debug logging in PowerShell Core
+- Add parameters `-Top` and `-Bottom` to `Sort-Object` or Top/Bottom N sort
+- Enable `Update-Help` and `Save-Help` on Unix platforms
+- Update the formatter for `System.Diagnostics.Process` to not show the `Handles` column
+- Improve `Write-Progress` performance by adding timer to update a progress pane every 100 ms
+- Enable correct table width calculations with ANSI escape sequences on Unix
+- Fix background jobs for Unix and Windows
+- Add `Get-Uptime` to `Microsoft.PowerShell.Utility`
+- Make `Out-Null` as fast as `> $null`
+- Add Dockerfile for windowsservercore and NanoServer
+- Fix WebRequest failure to handle missing ContentType in response header
+- Make `Write-Host` fast by delay initializing some properties in InformationRecord
+- Ensure PowerShell Core adds an initial `/` rooted drive on Unix platforms
+- Enable streaming behavior for native command execution in pipeline, so that `ping | grep` doesn't block
+- Make `Write-Information` accept objects from pipeline
+- Fixes deprecated syscall issue on macOS 10.12
+- Fix code errors found by the static analysis using PVS-Studio
+- Add support to W3C Extended Log File Format in `Import-Csv`
+- Guard against `ReflectionTypeLoadException` in type name auto-completion
+- Update build scripts to support win7-x86 runtime
+- Move PackageManagement code/test to oneget.org
 
 v6.0.0-alpha.12 - 2016-11-03
 ----------------------------
