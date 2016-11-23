@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Write-Debug command
     /// 
     /// </summary>
-    [Cmdlet("Write", "Debug", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113424", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommunications.Write, "Debug", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113424", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteDebugCommand : PSCmdlet
     {
         /// <summary>
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Write-Verbose command
     /// 
     /// </summary>
-    [Cmdlet("Write", "Verbose", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113429", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommunications.Write, "Verbose", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113429", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteVerboseCommand : PSCmdlet
     {
         /// <summary>
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Write-Warning command
     /// 
     /// </summary>
-    [Cmdlet("Write", "Warning", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113430", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommunications.Write, "Warning", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113430", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteWarningCommand : PSCmdlet
     {
         /// <summary>
@@ -406,7 +406,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Write-Error command
     /// </summary>
-    [Cmdlet("Write", "Error", DefaultParameterSetName = "NoException",
+    [Cmdlet(VerbsCommunications.Write, "Error", DefaultParameterSetName = "NoException",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113425", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteErrorCommand : WriteOrThrowErrorCommand
     {
