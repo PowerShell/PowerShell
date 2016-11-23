@@ -1216,6 +1216,6 @@ namespace Microsoft.PowerShell
         private ArrayList _topLevelNodes = new ArrayList();
         private int _nodeCount;
         private const int maxNodeCount = 128;
-        private static object _pendingProgressLock = new object();
+        private object _pendingProgressLock = new object();
     }
 }   // namespace 
