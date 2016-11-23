@@ -204,21 +204,24 @@ namespace Microsoft.PowerShell
         void
         RemoveNode(ArrayList nodes, int indexToRemove)
         {
+            lock (_pendingProgressLock)
+            {
 #if DEBUG || ASSERTIONS_TRACE
-            ProgressNode nodeToRemove = (ProgressNode)nodes[indexToRemove];
+                ProgressNode nodeToRemove = (ProgressNode)nodes[indexToRemove];
 
-            Dbg.Assert(nodes != null, "can't remove nodes from a null list");
-            Dbg.Assert(indexToRemove < nodes.Count, "index is not in list");
-            Dbg.Assert(nodes[indexToRemove] != null, "no node at specified index");
-            Dbg.Assert(nodeToRemove.Children == null || nodeToRemove.Children.Count == 0, "can't remove a node with children");
+                Dbg.Assert(nodes != null, "can't remove nodes from a null list");
+                Dbg.Assert(indexToRemove < nodes.Count, "index is not in list");
+                Dbg.Assert(nodes[indexToRemove] != null, "no node at specified index");
+                Dbg.Assert(nodeToRemove.Children == null || nodeToRemove.Children.Count == 0, "can't remove a node with children");
 #endif
 
-            nodes.RemoveAt(indexToRemove);
-            --_nodeCount;
+                nodes.RemoveAt(indexToRemove);
+                --_nodeCount;
 
 #if DEBUG || ASSERTIONS_ON
-            Dbg.Assert(_nodeCount == this.CountNodes(), "We've lost track of the number of nodes in the tree");
+                Dbg.Assert(_nodeCount == this.CountNodes(), "We've lost track of the number of nodes in the tree");
 #endif
+            }
         }
 
 
@@ -289,13 +292,16 @@ namespace Microsoft.PowerShell
         void
         AddNode(ArrayList nodes, ProgressNode nodeToAdd)
         {
-            nodes.Add(nodeToAdd);
-            ++_nodeCount;
+            lock (_pendingProgressLock)
+            {
+                nodes.Add(nodeToAdd);
+                ++_nodeCount;
 
 #if DEBUG || ASSERTIONS_TRACE
             Dbg.Assert(_nodeCount == this.CountNodes(), "We've lost track of the number of nodes in the tree");
             Dbg.Assert(_nodeCount <= maxNodeCount, "Too many nodes in tree!");
 #endif
+            }
         }
 
 
@@ -760,19 +766,22 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            foreach (ProgressNode node in nodes)
+            lock (_pendingProgressLock) // nodes might get updated when timer thread is trying to render
             {
-                int lines = strings.Count;
-
-                node.Render(strings, indentation, maxWidth, rawUI);
-
-                if (node.Children != null)
+                foreach (ProgressNode node in nodes)
                 {
-                    // indent only if the rendering of node actually added lines to the strings.
+                    int lines = strings.Count;
 
-                    int indentationIncrement = (strings.Count > lines) ? 2 : 0;
+                    node.Render(strings, indentation, maxWidth, rawUI);
 
-                    RenderHelper(strings, node.Children, indentation + indentationIncrement, maxWidth, rawUI);
+                    if (node.Children != null)
+                    {
+                        // indent only if the rendering of node actually added lines to the strings.
+
+                        int indentationIncrement = (strings.Count > lines) ? 2 : 0;
+
+                        RenderHelper(strings, node.Children, indentation + indentationIncrement, maxWidth, rawUI);
+                    }
                 }
             }
         }
@@ -1207,8 +1216,6 @@ namespace Microsoft.PowerShell
         private ArrayList _topLevelNodes = new ArrayList();
         private int _nodeCount;
         private const int maxNodeCount = 128;
+        private static object _pendingProgressLock = new object();
     }
 }   // namespace 
-
-
-
