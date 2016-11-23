@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
     /// Create a new runspace and use it to execute a command on a remote machine
     ///     $runspace = New-PSSession -computername "Server1"
     ///     $credential = get-credential "user01"
-    ///     invoke-command -command {get-process} �Crunspace $runspace -credential $credential
+    ///     invoke-command -command {get-process} -runspace $runspace -credential $credential
     /// 
     /// Execute a command in a set of remote machines by specifying the
     /// complete uri for the machines
