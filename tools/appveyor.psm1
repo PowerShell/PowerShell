@@ -326,9 +326,6 @@ function Invoke-AppVeyorTest
     Write-Host -Foreground Green 'Upload FullCLR test results'
     Update-AppVeyorTestResults -resultsFile $testResultsFileFullCLR
 
-    ## CodeCoverage
-    $env:CodeCoverageOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Configuration CodeCoverage))
- 
     #
     # Fail the build, if tests failed
     @(
@@ -340,6 +337,49 @@ function Invoke-AppVeyorTest
     }
 
     Set-BuildVariable -Name TestPassed -Value True
+}
+
+#Implement AppVeyor 'after_test' phase
+function Invoke-AppVeyorAfterTest
+{
+    [CmdletBinding()]
+    param()
+
+    if(Test-DailyBuild)
+    {
+        ## Publish code coverage build, tests and OpenCover module to artifacts, so webhook has the information.
+        ## Build webhook is called after 'after_test' phase, hence we need to do this here and not in AppveyorFinish. 
+        $codeCoverageOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Configuration CodeCoverage))
+        $codeCoverageArtifacts = Compress-CoverageArtifacts -CodeCoverageOutput $codeCoverageOutput
+
+        Write-Host -ForegroundColor Green 'Upload CodeCoverage artifacts'
+        $codeCoverageArtifacts | % { Push-AppveyorArtifact $_ }
+    }
+}
+
+function Compress-CoverageArtifacts
+{
+    param([string] $CodeCoverageOutput)
+
+    # Create archive for test content, OpenCover module and CodeCoverage build
+    $artifacts = New-Object System.Collections.ArrayList
+
+    $zipTestContentPath = Join-Path $pwd 'tests.zip'
+    Compress-TestContent -Destination $zipTestContentPath
+    $artifacts.Add($zipTestContentPath)
+
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath((Join-Path $PSScriptRoot '..\test\tools\OpenCover'))
+    $zipOpenCoverPath = Join-Path $pwd 'OpenCover.zip'
+    [System.IO.Compression.ZipFile]::CreateFromDirectory($resolvedPath, $zipOpenCoverPath) 
+    $artifacts.Add($zipOpenCoverPath)
+
+    $zipCodeCoveragePath = Join-Path $pwd "$name.CodeCoverage.zip"
+    Write-Verbose "Zipping ${CodeCoverageOutput} into $zipCodeCoveragePath" -verbose
+    [System.IO.Compression.ZipFile]::CreateFromDirectory($CodeCoverageOutput, $zipCodeCoveragePath)
+    $artifacts.Add($zipCodeCoveragePath)
+
+    return $artifacts
 }
 
 # Implements AppVeyor 'on_finish' step
@@ -372,25 +412,6 @@ function Invoke-AppveyorFinish
 
         $artifacts.Add($zipFilePath)
         $artifacts.Add($zipFileFullPath)
-
-        # Create archive for test content, OpenCover module and CodeCoverage build
-        if(Test-DailyBuild) 
-        {
-            $zipTestContentPath = Join-Path $pwd 'tests.zip' 
-            Compress-TestContent -Destination $zipTestContentPath
-            $artifacts.Add($zipTestContentPath)
-
-            Add-Type -AssemblyName System.IO.Compression.FileSystem
-            $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath((Join-Path $PSScriptRoot '..\test\tools\OpenCover'))
-            $zipOpenCoverPath = Join-Path $pwd 'OpenCover.zip'
-            [System.IO.Compression.ZipFile]::CreateFromDirectory($resolvedPath, $zipOpenCoverPath) 
-            $artifacts.Add($zipOpenCoverPath)
-
-            $zipCodeCoveragePath = Join-Path $pwd "$name.CodeCoverage.zip"
-            Write-Verbose "Zipping ${env:CodeCoverageOutput} into $zipCodeCoveragePath" -verbose
-            [System.IO.Compression.ZipFile]::CreateFromDirectory($env:CodeCoverageOutput, $zipCodeCoveragePath)
-            $artifacts.Add($zipCodeCoveragePath)
-        }
 
         if ($env:APPVEYOR_REPO_TAG_NAME)
         {

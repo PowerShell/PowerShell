@@ -20,5 +20,8 @@ build_script:
 test_script:
   - ps: Invoke-AppveyorTest
 
+after_test:
+  - ps: Invoke-AppVeyorAfterTest
+
 on_finish: 
   - ps: Invoke-AppveyorFinish
