@@ -164,7 +164,7 @@ function Invoke-AppVeyorBuild
       }
 
       Start-PSBuild -FullCLR -PSModuleRestore
-      Start-PSBuild -CrossGen -PSModuleRestore
+      Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release'
 }
 
 # Implements the AppVeyor 'install' step
@@ -285,7 +285,7 @@ function Invoke-AppVeyorTest
     #
     # CoreCLR
     
-    $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
+    $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish -Configuration 'Release'))
     Write-Host -Foreground Green 'Run CoreCLR tests'
     $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
     $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"

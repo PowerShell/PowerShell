@@ -10,7 +10,6 @@ nuget:
 
 install:
   - git submodule update --init
-  - ps: $buildConfiguration = 'Release'
   - ps: Import-Module .\tools\Appveyor.psm1
   - ps: Invoke-AppveyorInstall
 
