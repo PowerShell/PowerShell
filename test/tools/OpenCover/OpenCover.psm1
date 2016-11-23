@@ -369,7 +369,7 @@ function Install-OpenCover
 .Description
    Invoke-OpenCover runs tests under OpenCover by executing tests on PowerShell.exe located at $PowerShellExeDirectory.
 .EXAMPLE
-   Invoke-OpenCover -TestDirectory $pwd/test/powershell -PowerShellExeDirectory $pwd/src/powershell-win-core/bin/debug/netcoreapp1.0/win10-x64 
+   Invoke-OpenCover -TestDirectory $pwd/test/powershell -PowerShellExeDirectory $pwd/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win10-x64 
 #>
 function Invoke-OpenCover
 {
@@ -391,7 +391,7 @@ function Invoke-OpenCover
         # see if it's somewhere else in the path
         $openCoverBin = (Get-Command -Name 'opencover.console' -ErrorAction Ignore).Source
         if ($openCoverBin -eq $null) {
-            throw "$OpenCoverBin does not exist"
+            throw "$OpenCoverBin does not exist, use Install-OpenCover"
         }
     }
 
@@ -399,7 +399,7 @@ function Invoke-OpenCover
     $target = "${PowerShellExeDirectory}\powershell.exe"
     if ( ! (test-path $target) ) 
     {
-        throw "$target does not exist"
+        throw "$target does not exist, use 'Start-PSBuild -configuration CodeCoverage'"
     }
 
     # create the arguments for OpenCover
