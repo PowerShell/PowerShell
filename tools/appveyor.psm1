@@ -366,18 +366,18 @@ function Compress-CoverageArtifacts
 
     $zipTestContentPath = Join-Path $pwd 'tests.zip'
     Compress-TestContent -Destination $zipTestContentPath
-    $artifacts.Add($zipTestContentPath)
+    $null = $artifacts.Add($zipTestContentPath)
 
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath((Join-Path $PSScriptRoot '..\test\tools\OpenCover'))
     $zipOpenCoverPath = Join-Path $pwd 'OpenCover.zip'
     [System.IO.Compression.ZipFile]::CreateFromDirectory($resolvedPath, $zipOpenCoverPath) 
-    $artifacts.Add($zipOpenCoverPath)
+    $null = $artifacts.Add($zipOpenCoverPath)
 
     $zipCodeCoveragePath = Join-Path $pwd "$name.CodeCoverage.zip"
     Write-Verbose "Zipping ${CodeCoverageOutput} into $zipCodeCoveragePath" -verbose
     [System.IO.Compression.ZipFile]::CreateFromDirectory($CodeCoverageOutput, $zipCodeCoveragePath)
-    $artifacts.Add($zipCodeCoveragePath)
+    $null = $artifacts.Add($zipCodeCoveragePath)
 
     return $artifacts
 }
@@ -407,11 +407,11 @@ function Invoke-AppveyorFinish
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
-            $artifacts.Add($package)
+            $null = $artifacts.Add($package)
         }
 
-        $artifacts.Add($zipFilePath)
-        $artifacts.Add($zipFileFullPath)
+        $null = $artifacts.Add($zipFilePath)
+        $null = $artifacts.Add($zipFileFullPath)
 
         if ($env:APPVEYOR_REPO_TAG_NAME)
         {
@@ -435,7 +435,8 @@ function Invoke-AppveyorFinish
             Publish-NuGetFeed -OutputPath .\nuget-artifacts -VersionSuffix $preReleaseVersion
         }
 
-        $artifacts += (Get-ChildItem .\nuget-artifacts -ErrorAction SilentlyContinue | ForEach-Object {$_.FullName})
+        $nugetArtifacts = Get-ChildItem .\nuget-artifacts -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
+        $artifacts.AddRange($nugetArtifacts)
 
         $pushedAllArtifacts = $true
         $artifacts | ForEach-Object { 
