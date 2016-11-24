@@ -6,7 +6,7 @@ v6.0.0-alpha.13 - 2016-11-22
 - Fix `NullReferenceException` in binder after turning on constrained language mode
 - Enable `Invoke-WebRequest` and `Invoke-RestMethod` to not validate the HTTPS certificate of the server if required.
 - Enable binder debug logging in PowerShell Core
-- Add parameters `-Top` and `-Bottom` to `Sort-Object` or Top/Bottom N sort
+- Add parameters `-Top` and `-Bottom` to `Sort-Object` for Top/Bottom N sort
 - Enable `Update-Help` and `Save-Help` on Unix platforms
 - Update the formatter for `System.Diagnostics.Process` to not show the `Handles` column
 - Improve `Write-Progress` performance by adding timer to update a progress pane every 100 ms
