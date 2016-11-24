@@ -353,7 +353,8 @@ function Install-OpenCover
         throw "Download failed: $packageUrl"
     }
     
-    import-module Microsoft.PowerShell.Archive
+    ## We add ErrorAction as we do not have this module on PS v4 and below. Calling import-module will throw an error otherwise.
+    import-module Microsoft.PowerShell.Archive -ErrorAction SilentlyContinue
 
     if ((Get-Command Expand-Archive -ErrorAction Ignore) -ne $null) {
         Expand-Archive -Path $tempPath -DestinationPath "$TargetDirectory/OpenCover"
