@@ -436,7 +436,7 @@ function Invoke-AppveyorFinish
         }
 
         $nugetArtifacts = Get-ChildItem .\nuget-artifacts -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
-        $null = $artifacts.AddRange($nugetArtifacts)
+        $artifacts.AddRange($nugetArtifacts)
 
         $pushedAllArtifacts = $true
         $artifacts | ForEach-Object { 
