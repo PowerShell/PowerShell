@@ -435,7 +435,11 @@ function Invoke-AppveyorFinish
             Publish-NuGetFeed -OutputPath .\nuget-artifacts -VersionSuffix $preReleaseVersion
         }
 
-        $artifacts += (Get-ChildItem .\nuget-artifacts -ErrorAction SilentlyContinue | ForEach-Object {$_.FullName})
+        $nugetArtifacts = Get-ChildItem .\nuget-artifacts -ErrorAction SilentlyContinue
+        foreach($artifact in $nugetArtifacts)
+        {
+            $null = $artifacts.Add($artifact.FullName)
+        }
 
         $pushedAllArtifacts = $true
         $artifacts | ForEach-Object { 
