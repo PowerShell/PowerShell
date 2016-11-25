@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// implementation for the format-default command
     /// </summary>
-    [Cmdlet("Format", "Default")]
+    [Cmdlet(VerbsCommon.Format, "Default")]
     public class FormatDefaultCommand : FrontEndCommandBase
     {
         /// <summary>

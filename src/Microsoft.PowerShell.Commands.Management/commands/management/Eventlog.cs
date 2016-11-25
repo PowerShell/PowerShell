@@ -694,7 +694,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the Write-EventLog command
     /// </summary>
 
-    [Cmdlet("Write", "EventLog", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135281", RemotingCapability = RemotingCapability.SupportedByCommand)]
+    [Cmdlet(VerbsCommunications.Write, "EventLog", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135281", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public sealed class WriteEventLogCommand : PSCmdlet
     {
         #region Parameters

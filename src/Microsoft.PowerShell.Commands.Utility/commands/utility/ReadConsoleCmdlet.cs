@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// </summary>
 
-    [Cmdlet("Read", "Host", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113371")]
+    [Cmdlet(VerbsCommunications.Read, "Host", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113371")]
     [OutputType(typeof(String), typeof(SecureString))]
     public sealed class ReadHostCommand : PSCmdlet
     {
