@@ -141,38 +141,6 @@ function Get-FileHash
     }
 }
 
-<# This cmdlet is used to create a new temporary file in $env:temp #>
-function New-TemporaryFile
-{
-    [CmdletBinding(
-        HelpURI='https://go.microsoft.com/fwlink/?LinkId=526726',
-        SupportsShouldProcess=$true)]
-    [OutputType([System.IO.FileInfo])]
-    Param()
-
-    Begin
-    {
-        try
-        {
-            if($PSCmdlet.ShouldProcess($env:TEMP))
-            {
-                $tempFilePath = [System.IO.Path]::GetTempFileName()            
-            }
-        }
-        catch
-        {
-            $errorRecord = [System.Management.Automation.ErrorRecord]::new($_.Exception,"NewTemporaryFileWriteError", "WriteError", $env:TEMP)
-            Write-Error -ErrorRecord $errorRecord
-            return
-        } 
-
-        if($tempFilePath)
-        {
-            Get-Item $tempFilePath
-        }
-    }    
-}
-
 <# This cmdlet is used to generate a new guid #>
 function New-Guid
 {
@@ -419,7 +387,7 @@ function Format-Hex
                     # 170..180 | format-hex
                     #           Path:
                     #           00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
-                    #00000000   AA AB AC AD AE AF B0 B1 B2 B3 B4                 ª«¬­®¯°±²³´
+                    #00000000   AA AB AC AD AE AF B0 B1 B2 B3 B4                 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                     #
                     # any integer padding is likely to be more confusing than this
                     # fairly compact representation.
@@ -432,9 +400,9 @@ function Format-Hex
                     # 
                     #            00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
                     # 
-                    # 00000000   AA 00 00 00 AB 00 00 00 AC 00 00 00 AD 00 00 00  ª...«...¬...­...
-                    # 00000010   AE 00 00 00 AF 00 00 00 B0 00 00 00 B1 00 00 00  ®...¯...°...±...
-                    # 00000020   B2 00 00 00 B3 00 00 00 B4 00 00 00              ²...³...´...
+                    # 00000000   AA 00 00 00 AB 00 00 00 AC 00 00 00 AD 00 00 00  ï¿½...ï¿½...ï¿½...ï¿½...
+                    # 00000010   AE 00 00 00 AF 00 00 00 B0 00 00 00 B1 00 00 00  ï¿½...ï¿½...ï¿½...ï¿½...
+                    # 00000020   B2 00 00 00 B3 00 00 00 B4 00 00 00              ï¿½...ï¿½...ï¿½...
                     #
                     # this provides a representation of the piped numbers which includes all
                     # of the bytes which are in an int32
