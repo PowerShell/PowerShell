@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
             bool headChar = true;
             bool beforeQuote = true;
             int newSpaceCount = 0;
-            const int spaceCountAfterQuoteMark = 2;
+            const int spaceCountAfterQuoteMark = 1;
 
             for (int i = index; i < json.Length; i++)
             {
@@ -327,7 +327,7 @@ namespace Microsoft.PowerShell.Commands
                         int end = ConvertQuotedString(json, i + 1, result);
                         if (beforeQuote)
                         {
-                            newSpaceCount += (end - i + 1);
+                            newSpaceCount = 0;
                         }
                         i = end;
                         headChar = false;
@@ -335,7 +335,6 @@ namespace Microsoft.PowerShell.Commands
                     case ':':
                         result.Append(json[i]);
                         AddSpaces(spaceCountAfterQuoteMark, result);
-                        newSpaceCount += 3;
                         headChar = false;
                         beforeQuote = false;
                         break;
@@ -373,7 +372,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="result"></param>
         private void AddIndentations(int numberOfTabsToReturn, StringBuilder result)
         {
-            int realNumber = numberOfTabsToReturn * 4;
+            int realNumber = numberOfTabsToReturn * 2;
             for (int i = 0; i < realNumber; i++)
             {
                 result.Append(' ');
