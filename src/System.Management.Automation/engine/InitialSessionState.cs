@@ -4748,7 +4748,11 @@ end {
 param(
     [Parameter(ValueFromPipeline=$true)]
     [string[]]
-    $verb = '*'
+    $Verb = '*',
+
+    [Parameter(ValueFromPipeline=$true)]
+    [string[]]
+    $Group
 )
 begin {
     $allVerbs = [System.Reflection.IntrospectionExtensions]::GetTypeInfo([PSObject]).Assembly.ExportedTypes |
@@ -4766,8 +4770,17 @@ begin {
         }
 }
 process {
-    foreach ($v in $verb) {
+    $verbMatches = foreach ($v in $Verb) {
         $allVerbs | Microsoft.PowerShell.Core\Where-Object { $_.Verb -like $v }
+    }
+    
+    if($Group)
+    {
+        $verbMatches | Microsoft.PowerShell.Core\Where-Object { $_.Group -in $Group }
+    }
+    else
+    {
+        $verbMatches
     }
 }
 # .Link
