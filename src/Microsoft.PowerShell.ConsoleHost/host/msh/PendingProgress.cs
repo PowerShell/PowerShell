@@ -9,6 +9,7 @@ using System.Collections;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
+using System.Threading;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -204,7 +205,8 @@ namespace Microsoft.PowerShell
         void
         RemoveNode(ArrayList nodes, int indexToRemove)
         {
-            lock (_pendingProgressLock)
+            _pendingProgressLock.EnterWriteLock();
+            try
             {
 #if DEBUG || ASSERTIONS_TRACE
                 ProgressNode nodeToRemove = (ProgressNode)nodes[indexToRemove];
@@ -221,6 +223,10 @@ namespace Microsoft.PowerShell
 #if DEBUG || ASSERTIONS_ON
                 Dbg.Assert(_nodeCount == this.CountNodes(), "We've lost track of the number of nodes in the tree");
 #endif
+            }
+            finally
+            {
+                _pendingProgressLock.ExitWriteLock();
             }
         }
 
@@ -292,7 +298,8 @@ namespace Microsoft.PowerShell
         void
         AddNode(ArrayList nodes, ProgressNode nodeToAdd)
         {
-            lock (_pendingProgressLock)
+            _pendingProgressLock.EnterWriteLock();
+            try
             {
                 nodes.Add(nodeToAdd);
                 ++_nodeCount;
@@ -301,6 +308,10 @@ namespace Microsoft.PowerShell
             Dbg.Assert(_nodeCount == this.CountNodes(), "We've lost track of the number of nodes in the tree");
             Dbg.Assert(_nodeCount <= maxNodeCount, "Too many nodes in tree!");
 #endif
+            }
+            finally
+            {
+                _pendingProgressLock.ExitWriteLock();
             }
         }
 
@@ -766,7 +777,8 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            lock (_pendingProgressLock) // nodes might get updated when timer thread is trying to render
+            _pendingProgressLock.EnterReadLock();
+            try
             {
                 foreach (ProgressNode node in nodes)
                 {
@@ -783,6 +795,10 @@ namespace Microsoft.PowerShell
                         RenderHelper(strings, node.Children, indentation + indentationIncrement, maxWidth, rawUI);
                     }
                 }
+            }
+            finally
+            {
+                _pendingProgressLock.ExitReadLock();
             }
         }
 
@@ -1216,6 +1232,6 @@ namespace Microsoft.PowerShell
         private ArrayList _topLevelNodes = new ArrayList();
         private int _nodeCount;
         private const int maxNodeCount = 128;
-        private object _pendingProgressLock = new object();
+        private ReaderWriterLockSlim _pendingProgressLock = new ReaderWriterLockSlim();
     }
 }   // namespace 
