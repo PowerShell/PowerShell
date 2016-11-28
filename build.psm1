@@ -667,7 +667,8 @@ function Start-PSPester {
         [string]$binDir = (Split-Path (New-PSOptions -FullCLR:$FullCLR).Output),
         [string]$powershell = (Join-Path $binDir 'powershell'),
         [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester")),
-        [switch]$Unelevate
+        [switch]$Unelevate,
+        [switch]$Quiet
     )
 
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
@@ -725,6 +726,11 @@ function Start-PSPester {
     }
     if ($Tag) {
         $Command += "-Tag @('" + (${Tag} -join "','") + "') "
+    }
+    # sometimes we need to eliminate Pester output, especially when we're
+    # doing a daily build as the log file is too large
+    if ( $Quiet ) {
+        $Command += "-Quiet "
     }
 
     $Command += "'" + $Path + "'"
