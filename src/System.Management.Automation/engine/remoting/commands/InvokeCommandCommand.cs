@@ -162,11 +162,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
         [Parameter(Position = 0,
                    ParameterSetName = InvokeCommandCommand.FilePathComputerNameParameterSet)]
-        [Parameter(Position = 0, Mandatory = true, 
-                   ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
-        [Parameter(Position = 0, Mandatory = true, 
-                   ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
-        [Alias("Cn","HostName")]
+        [Alias("Cn")]
         [ValidateNotNullOrEmpty]
         public override String[] ComputerName
         {
@@ -518,11 +514,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1,
                    Mandatory = true,
                    ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
-        [Parameter(Position = 1,
-                   Mandatory = true,
+        [Parameter(Mandatory = true,
                    ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
-        [Parameter(Position = 1,
-                   Mandatory = true,
+        [Parameter(Mandatory = true,
                    ParameterSetName = InvokeCommandCommand.SSHHostHashParameterSet)]
         [ValidateNotNull]
         [Alias("Command")]
@@ -567,11 +561,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1,
                    Mandatory = true,
                    ParameterSetName = FilePathContainerIdParameterSet)]
-        [Parameter(Position = 1,
-                   Mandatory = true,
+        [Parameter(Mandatory = true,
                    ParameterSetName = FilePathSSHHostParameterSet)]
-        [Parameter(Position = 1,
-                   Mandatory = true,
+        [Parameter(Mandatory = true,
                    ParameterSetName = FilePathSSHHostHashParameterSet)]
         [ValidateNotNull]
         [Alias("PSPath")]
@@ -677,6 +669,20 @@ namespace Microsoft.PowerShell.Commands
         #region SSH Parameters
 
         /// <summary>
+        /// Host name for an SSH remote connection
+        /// </summary>
+        [Parameter(Mandatory = true,
+            ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(Mandatory = true,
+            ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        [ValidateNotNullOrEmpty()]
+        public override string[] HostName
+        {
+            get { return base.HostName; }
+            set { base.HostName = value; }
+        }
+
+        /// <summary>
         /// User Name
         /// </summary>
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
@@ -707,8 +713,8 @@ namespace Microsoft.PowerShell.Commands
         /// as the remoting transport.  Using the SSH transport requires that SSH is
         /// installed and PowerShell remoting is enabled on both client and remote machines.
         /// </summary>
-        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet, Mandatory = true)]
-        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet, Mandatory = true)]
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
         [ValidateSet("true")]
         public override SwitchParameter SSHTransport
         {

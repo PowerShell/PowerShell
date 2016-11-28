@@ -700,6 +700,18 @@ namespace Microsoft.PowerShell.Commands
         #region SSHHostParameters
 
         /// <summary>
+        /// Host name for an SSH remote connection.
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true,
+            ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        [ValidateNotNullOrEmpty()]
+        public virtual string[] HostName
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// SSH User Name
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
@@ -728,7 +740,7 @@ namespace Microsoft.PowerShell.Commands
         /// as the remoting transport.  Using the SSH transport requires that SSH is
         /// installed and PowerShell remoting is enabled on both client and remote machines.
         /// </summary>
-        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet, Mandatory = true)]
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
         [ValidateSet("true")]
         public virtual SwitchParameter SSHTransport
         {
@@ -1942,7 +1954,7 @@ namespace Microsoft.PowerShell.Commands
                 case PSExecutionCmdlet.FilePathSSHHostParameterSet:
                     {
                         String[] resolvedComputerNames = null;
-                        ResolveComputerNames(ComputerName, out resolvedComputerNames);
+                        ResolveComputerNames(HostName, out resolvedComputerNames);
                         ResolvedComputerNames = resolvedComputerNames;
 
                         CreateHelpersForSpecifiedSSHComputerNames();

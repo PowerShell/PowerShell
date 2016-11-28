@@ -44,14 +44,24 @@ namespace Microsoft.PowerShell.Commands
 
         #region Parameters
 
+        #region SSH Parameter Set
+
+        /// <summary>
+        /// Host name for an SSH remote connection
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true,
+            ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        [ValidateNotNullOrEmpty()]
+        public new string HostName { get; set; }
+
+        #endregion
+
         /// <summary>
         /// Computer name parameter.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true,
             ValueFromPipelineByPropertyName = true, ParameterSetName = ComputerNameParameterSet)]
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true,
-            ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
-        [Alias("Cn","HostName")]
+        [Alias("Cn")]
         [ValidateNotNullOrEmpty]
         public new string ComputerName { get; set; }
 
@@ -1262,7 +1272,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private RemoteRunspace GetRunspaceForSSHSession()
         {
-            var sshConnectionInfo = new SSHConnectionInfo(this.UserName, ResolveComputerName(ComputerName), this.KeyFilePath);
+            var sshConnectionInfo = new SSHConnectionInfo(this.UserName, ResolveComputerName(HostName), this.KeyFilePath);
             var typeTable = TypeTable.LoadDefaultTypeFiles();
             var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
             remoteRunspace.Open();

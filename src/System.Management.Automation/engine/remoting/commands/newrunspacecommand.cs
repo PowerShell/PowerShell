@@ -72,11 +72,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipeline = true,
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = NewPSSessionCommand.ComputerNameParameterSet)]
-        [Parameter(Position = 0,
-            Mandatory = true,
-            ValueFromPipelineByPropertyName = true,
-            ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
-        [Alias("Cn","HostName")]
+        [Alias("Cn")]
         [ValidateNotNullOrEmpty]
         public override String[] ComputerName { get; set; }
 
@@ -1073,7 +1069,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Resolve all the machine names
             String[] resolvedComputerNames;
-            ResolveComputerNames(ComputerName, out resolvedComputerNames);
+            ResolveComputerNames(HostName, out resolvedComputerNames);
             ValidateComputerName(resolvedComputerNames);
 
             var remoteRunspaces = new List<RemoteRunspace>();
