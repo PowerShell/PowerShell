@@ -669,7 +669,7 @@ namespace System.Management.Automation.Runspaces
             yield return new FormatViewDefinition("System.TimeSpan",
                 CustomControl.Create()
                     .StartEntry()
-                        .AddScriptBlockExpressionBinding("$_.ToString()")
+                        .AddScriptBlockExpressionBinding("[Microsoft.PowerShell.ToStringCodeMethods]::ToHumanString($_)")
                     .EndEntry()
                 .EndControl());
             yield return new FormatViewDefinition("System.TimeSpan",
