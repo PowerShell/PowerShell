@@ -4913,13 +4913,6 @@ namespace System.Management.Automation
         {
             // XML is always a string so implicitly convert to string
             string valueString = LanguagePrimitives.ConvertTo<string>(setValue);
-            if (valueString == null)
-            {
-                throw new SetValueException("XmlNodeSetShouldBeAString",
-                    null,
-                    ExtendedTypeSystem.XmlNodeSetShouldBeAString,
-                    property.Name);
-            }
             XmlNode[] nodes = (XmlNode[])property.adapterData;
             Diagnostics.Assert(nodes.Length != 0, "DoGetProperty would not return an empty array, it would return null instead");
             if (nodes.Length > 1)
