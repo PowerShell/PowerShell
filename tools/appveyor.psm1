@@ -160,7 +160,7 @@ function Invoke-AppVeyorBuild
 
       if(Test-DailyBuild)
       {
-          Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore
+          Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -Publish
       }
 
       Start-PSBuild -FullCLR -PSModuleRestore
@@ -373,6 +373,12 @@ function Compress-CoverageArtifacts
     $zipOpenCoverPath = Join-Path $pwd 'OpenCover.zip'
     [System.IO.Compression.ZipFile]::CreateFromDirectory($resolvedPath, $zipOpenCoverPath) 
     $null = $artifacts.Add($zipOpenCoverPath)
+
+    $name = git describe
+
+    # Remove 'v' from version, prepend 'PowerShell' - to be consistent with other package names
+    $name = $name -replace 'v',''
+    $name = 'PowerShell_' + $name
 
     $zipCodeCoveragePath = Join-Path $pwd "$name.CodeCoverage.zip"
     Write-Verbose "Zipping ${CodeCoverageOutput} into $zipCodeCoveragePath" -verbose
