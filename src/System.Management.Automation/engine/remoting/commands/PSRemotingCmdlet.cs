@@ -728,7 +728,7 @@ namespace Microsoft.PowerShell.Commands
         /// as the remoting transport.  Using the SSH transport requires that SSH is
         /// installed and PowerShell remoting is enabled on both client and remote machines.
         /// </summary>
-        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet, Mandatory = true)]
         [ValidateSet("true")]
         public virtual SwitchParameter SSHTransport
         {
