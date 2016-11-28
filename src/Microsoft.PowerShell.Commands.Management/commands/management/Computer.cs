@@ -5715,7 +5715,7 @@ $result
     /// Resets the computer machine password used to authenticate with DCs.
     /// </summary>
 
-    [Cmdlet("Reset", "ComputerMachinePassword",
+    [Cmdlet(VerbsCommon.Reset, "ComputerMachinePassword",
              SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135252")]
     public class ResetComputerMachinePasswordCommand : PSCmdlet
     {

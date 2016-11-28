@@ -194,7 +194,7 @@ namespace Microsoft.PowerShell.Commands
     /// Group-Object implementation
     ///
     /// </summary>
-    [Cmdlet("Group", "Object", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113338", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsData.Group, "Object", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113338", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(Hashtable), typeof(GroupInfo))]
     public class GroupObjectCommand : ObjectBase
     {

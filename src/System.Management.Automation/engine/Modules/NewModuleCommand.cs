@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements a cmdlet that creates a dynamic module from a scriptblock..
     /// </summary>
-    [Cmdlet("New", "Module", DefaultParameterSetName = "ScriptBlock", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141554")]
+    [Cmdlet(VerbsCommon.New, "Module", DefaultParameterSetName = "ScriptBlock", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141554")]
     [OutputType(typeof(PSModuleInfo))]
     public sealed class NewModuleCommand : ModuleCmdletBase
     {

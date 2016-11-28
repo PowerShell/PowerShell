@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// it provides a wrapper for the OutCommandInner class,
     /// which is the general purpose output command
     /// </summary>
-    [Cmdlet("Out", "LineOutput")]
+    [Cmdlet(VerbsData.Out, "LineOutput")]
     public class OutLineOutputCommand : FrontEndCommandBase
     {
         /// <summary>
