@@ -35,7 +35,7 @@ function Get-CronTab ([String] $user) {
 }
 
 function ConvertTo-CronJob ([String] $crontab) {
-    $split = $crontab.split(" ", 6)
+    $split = $crontab -split " ", 6
     $cronjob = [CronJob]@{
         Minute = $split[0];
         Hour = $split[1];
