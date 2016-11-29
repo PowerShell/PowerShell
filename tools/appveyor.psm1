@@ -160,7 +160,7 @@ function Invoke-AppVeyorBuild
 
       if(Test-DailyBuild)
       {
-          Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore
+          Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -Publish
       }
 
       Start-PSBuild -FullCLR -PSModuleRestore
@@ -374,12 +374,22 @@ function Compress-CoverageArtifacts
     [System.IO.Compression.ZipFile]::CreateFromDirectory($resolvedPath, $zipOpenCoverPath) 
     $null = $artifacts.Add($zipOpenCoverPath)
 
+    $name = Get-PackageName
     $zipCodeCoveragePath = Join-Path $pwd "$name.CodeCoverage.zip"
     Write-Verbose "Zipping ${CodeCoverageOutput} into $zipCodeCoveragePath" -verbose
     [System.IO.Compression.ZipFile]::CreateFromDirectory($CodeCoverageOutput, $zipCodeCoveragePath)
     $null = $artifacts.Add($zipCodeCoveragePath)
 
     return $artifacts
+}
+
+function Get-PackageName
+{
+    $name = git describe
+    # Remove 'v' from version, prepend 'PowerShell' - to be consistent with other package names
+    $name = $name -replace 'v',''
+    $name = 'PowerShell_' + $name
+    return $name
 }
 
 # Implements AppVeyor 'on_finish' step
@@ -389,12 +399,7 @@ function Invoke-AppveyorFinish
         # Build packages
         $packages = Start-PSPackage
 
-        # Creating project artifact
-        $name = git describe
-
-        # Remove 'v' from version, append 'PowerShell' - to be consistent with other package names
-        $name = $name -replace 'v',''
-        $name = 'PowerShell_' + $name
+        $name = Get-PackageName
 
         $zipFilePath = Join-Path $pwd "$name.zip"
         $zipFileFullPath = Join-Path $pwd "$name.FullCLR.zip"
