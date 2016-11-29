@@ -583,4 +583,69 @@ Describe "Test try/catch" -Tags "CI" {
             ($a -eq "test passed") | Should Be $true
         }
     }
+
+    Context "Additional try/catch tests by exception types" {
+
+        It "Catch ActionPreferenceStopException" {
+            $exception = $null
+            $a = try {
+                    Get-ChildItem TESTDRIVE:\NotExist -ErrorAction Stop
+                 } catch [System.Management.Automation.ActionPreferenceStopException] {
+                    $exception = $_.Exception.GetType().FullName
+                    "ActionPreferenceStopException Caught"
+                 }
+            $a | Should Be "ActionPreferenceStopException Caught"
+            ## Many legacy scripts from PSv2 catch 'ActionPreferenceStopException' and then check '$_.Exception' to do the real handling
+            $exception | Should Be "System.Management.Automation.ItemNotFoundException"
+        }
+
+        It "Catch CmdletInvocationException" {
+            $exception = $null
+            $a = try {
+                    Invoke-Expression "Get-Command -Name"
+                 } catch [System.Management.Automation.CmdletInvocationException] {
+                    $exception = $_.Exception.GetType().FullName
+                    "CmdletInvocationException Caught"
+                 }
+            $a | Should Be "CmdletInvocationException Caught"
+            $exception | Should Be "System.Management.Automation.ParameterBindingException"
+        }
+
+        It "Choose 'ItemNotFoundException' over 'Exception' when searching handler" {
+            $a = try {
+                    Get-ChildItem TESTDRIVE:\NotExist -ErrorAction Stop
+                 } catch [System.Management.Automation.ItemNotFoundException] {
+                    "ItemNotFoundException caught"
+                 } catch [System.Exception] {
+                    "System.Exception caught"
+                 }
+            $a | Should Be "ItemNotFoundException caught"
+        }
+
+        It "Choose 'ItemNotFoundException' over 'RuntimeException' when searching handler" {
+            $a = try {
+                    Get-ChildItem TESTDRIVE:\NotExist -ErrorAction Stop
+                 } catch [System.Management.Automation.ItemNotFoundException] {
+                    "ItemNotFoundException caught"
+                 } catch [System.Management.Automation.RuntimeException] {
+                    "RuntimeException caught"
+                 } catch [System.Exception] {
+                    "System.Exception caught"
+                 }
+            $a | Should Be "ItemNotFoundException caught"
+        }
+
+        It "Choose 'ItemNotFoundException' over 'RuntimeException' and 'Exception' when throw ItemNotFoundException directly" {
+            $a = try {
+                    throw [System.Management.Automation.ItemNotFoundException]::new()
+                 } catch [System.Management.Automation.ItemNotFoundException] {
+                    "ItemNotFoundException caught"
+                 } catch [System.Management.Automation.RuntimeException] {
+                    "RuntimeException caught"
+                 } catch [System.Exception] {
+                    "System.Exception caught"
+                 }
+            $a | Should Be "ItemNotFoundException caught"
+        }
+    }
 }
