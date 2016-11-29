@@ -1,22 +1,32 @@
+$testroot = resolve-path (join-path $psscriptroot ../../..)
+$common = join-path $testroot Common
+$helperModule = join-path $common Test.Helpers.psm1
+
 Describe 'native commands lifecycle' -tags 'Feature' {
 
     BeforeAll {
+        Import-Module $helperModule -force
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
     }
 
-    #Marking this test as Pending due to issue # https://github.com/PowerShell/PowerShell/issues/2802
-    It "native | ps | native doesn't block" -Pending {
-        $first = $true
-        & $powershell -command '1..10 | % {Start-Sleep -mill 100; $_}' | %{$_} | & $powershell -command '$input' | % {
-            if ($first)
-            {
-                $first = $false
-                $firstTime = [datetime]::Now
-            }
-            $lastTime = [datetime]::Now
-        }
+    It "native | ps | native doesn't block" {
+        $iss = [initialsessionstate]::CreateDefault2();
+        $rs = [runspacefactory]::CreateRunspace($iss)
+        $rs.Name = "TestRunspaceDebuggerReset"
+        $rs.Open()
 
-        $lastTime - $firstTime | Should BeGreaterThan ([timespan]::new(0, 0, 0, 0, 100)) # 100 milliseconds
+        $ps = [powershell]::Create()
+        $ps.Runspace = $rs
+
+        # waiting 30 seconds, because powershell startup time could be long on the slow machines,
+        # such as CI
+        Wait-CompleteExecution {
+            $ps.AddScript("& $powershell -noprofile -command '100; Start-Sleep -Seconds 100' |
+                %{ if (`$_ -eq 100) { 'foo'; exit; }}").Invoke()
+        } -timeout 30000 -interval 100 | Should Be $true
+
+        $ps.Stop()
+        $rs.ResetRunspaceState()
     }
 }
 
