@@ -1,28 +1,24 @@
-#  <Test>
-#    <TestType>DRT</TestType>
-#    <summary>Exception handling</summary>
-#  </Test>
 
-. "$($args[0])\..\asserts.ps1"
+Describe "Test trap" -Tags "CI" {
+    Context "Line after exception should not be invoked" {
+        It "line after exception should not be invoked" {
+            $a = . {trap {"trapped"; continue;}; . {"hello"; throw "exception"; "world"}}
+            $a.Length | Should Be 2
+        }
 
-#############################################################
-#
-# Line after exception should not be invoked.
-#
-#############################################################
+        It "line after exception should not be invoked" {
+            $a = . {trap {"outside trapped"; continue;}; . {trap {break;}; "hello"; throw "exception"; "world"}}
+            $a.Length | Should Be 2
+        }
 
-$a = . {trap {"trapped"; continue;}; . {"hello"; throw "exception"; "world"}}
+        It "line after exception should be invoked after continue" {
+            $a = . {trap {"outside trapped"; continue;} "hello"; throw "exception"; "world"}
+            $a.Length | Should Be 3
+        }
 
-Assert ($a.Length -eq 2) "line after exception should not be invoked"
-
-$a = . {trap {"outside trapped"; continue;}; . {trap {break;}; "hello"; throw "exception"; "world"}}
-
-Assert ($a.Length -eq 2) "line after exception should not be invoked"
-
-$a = . {trap {"outside trapped"; continue;} "hello"; throw "exception"; "world"}
-
-Assert ($a.Length -eq 3) "line after exception should be invoked after continue"
-
-$a = . {trap {"outside trapped"; continue;}; . {trap [system.Argumentexception] {continue;}; "hello"; throw "exception"; "world"}}
-
-Assert ($a.Length -eq 2) "line after exception should not be invoked"
+        It "line after exception should not be invoked" {
+            $a = . {trap {"outside trapped"; continue;}; . {trap [system.Argumentexception] {continue;}; "hello"; throw "exception"; "world"}}
+            $a.Length | Should Be 2
+        }
+    }
+}

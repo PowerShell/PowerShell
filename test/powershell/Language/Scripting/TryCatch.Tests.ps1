@@ -1,16 +1,3 @@
-#  <Test>
-#    <TestType>DRT</TestType>
-#    <summary>Exception handling (try/catch/finally)</summary>
-#  </Test>
-
-param($path = $null)
-
-if ($path -eq $null)
-{
-    $path = split-path $MyInvocation.InvocationName
-}
-
-. "$path\..\asserts.ps1"
 
 #############################################################
 #
@@ -18,543 +5,582 @@ if ($path -eq $null)
 #
 #############################################################
 
-try
-{
-}
-catch
-{
-}
+Describe "Test try/catch" -Tags "CI" {
 
-try
-{
-}
-catch
-[int]
-{
-}
-
-try
-{
-}
-catch
-[int]
-,
-[char]
-{
-}
-
-try
-{
-}
-finally
-{
-}
-
-try
-{
-}
-catch
-{
-}
-finally
-{
-}
-
-try
-{
-}
-catch
-[int]
-{
-}
-finally
-{
-}
-
-try
-{
-}
-catch
-[int]
-,
-[char]
-{
-}
-finally
-{
-}
-
-
-#############################################################
-#
-# Basic exception handling
-#
-#############################################################
-
-$a = . { try { 1; throw "exception"; "test failed" } catch { 2 } }
-AssertArraysEqual $a (1,2) "Simple throw and catch"
-
-$a = . { try { 1 } finally { 2 } }
-AssertArraysEqual $a (1,2) "Simple try finally"
-
-$a = . { try { 1; throw "exception"; "test failed" } catch { 2 } finally { 3 } }
-AssertArraysEqual $a (1..3) "Simple try, throw, catch, and finally"
-
-
-#############################################################
-#
-# Mix traps with try/catch
-#
-#############################################################
-
-$a = . { trap { "test failed" } try { 1; throw "exception"; "test failed" } catch { 2 } }
-AssertArraysEqual $a (1,2) "Trap shouldn't catch exception"
-
-$a = . { try { 1; throw "exception"; trap { 2; return }; "test failed" } catch { "test failed" } }
-AssertArraysEqual $a (1,2) "Trap should catch exception"
-
-
-#############################################################
-#
-# Catch by type
-#
-#############################################################
-
-$a = . { try { 1; $a = 0; 1/$a; "test failed" } catch [DivideByZeroException] { 2 } }
-AssertArraysEqual $a (1,2) "Catch by type #1"
-
-$a = . { try { 1; $a = 0; 1/$a; "test failed" } catch [DivideByZeroException] { 2 } catch [Exception] { "test failed" } }
-AssertArraysEqual $a (1,2) "Catch by type #2"
-
-$a = . { try { 1; $a = 0; 1/$a; "test failed" } catch [DivideByZeroException] { 2 } catch { "test failed" } }
-AssertArraysEqual $a (1,2) "Catch by type #3"
-
-$a = . { try { 1; $a = 0; 1/$a; "test failed" } catch [DivideByZeroException],[StackOverflowException] { 2 } }
-AssertArraysEqual $a (1,2) "Catch by type #3"
-
-#############################################################
-#
-# Control flow in try
-#    exit not tested
-#    throw tested elsewhere
-#
-#############################################################
-
-$a = . {
-  foreach ($i in (1..3)) {
-    try {
-      if ($i -eq 2) {
-        break
-      }
-      $i
-    } catch {
-      "test failed"
-    } finally {
-      "finally: $i"
-    }
-  }
-}
-AssertArraysEqual $a (1, "finally: 1", "finally: 2") "break in try"
-
-$a = . {
-  foreach ($i in (1..3)) {
-    try {
-      if ($i -eq 2) {
-        continue
-      }
-      $i
-    } catch {
-      "test failed"
-    } finally {
-      "finally: $i"
-    }
-  }
-}
-AssertArraysEqual $a (1, "finally: 1", "finally: 2", 3, "finally: 3") "continue in try"
-
-$a = . {
-  function foo($i) {
-    try {
-      if ($i -eq 2) {
-        return "return: $i"
-      }
-      $i
-    } catch {
-      "test failed"
-    } finally {
-      "finally: $i"
-    }
-  }
-  foo 1
-  foo 2
-}
-
-# Disabled - Compiled script has differing (but better) behavior
-#AssertArraysEqual $a (1, "finally: 1", "finally: 2", "return: 2") "return in try"
-
-$a = . {
-    foreach ($i in (1..3)) {
-        try { #1
-            try { #2
-                if ($i -eq 2) {
-                    continue
-                }
-                $i
-            } catch {
-                "test failed: catch#2"
-            } finally {
-                "finally#2: $i"
+    BeforeAll {
+        function AssertArraysEqual ($result, $expected)
+        {
+            $result.Count | Should Be $expected.Count
+            for ($i = 0; $i -lt $result.Count; $i++) {
+                $result[$i] | Should Be $expected[$i]
             }
-        } catch {
-            "test failed: catch#1"
-        } finally {
-            "finally#1: $i"
         }
     }
-}
-AssertArraysEqual $a (1, "finally#2: 1", "finally#1: 1", "finally#2: 2", "finally#1: 2", 3, "finally#2: 3", "finally#1: 3")
+    
+    It "Test simple parsing, ensure newlines allowed everywhere" {
+        {
+            try
+            {
+            }
+            catch
+            {
+            }
 
+            try
+            {
+            }
+            catch
+            [int]
+            {
+            }
 
-$a = . {
-    foreach ($i in (1..3)) {
-        try { #1
-            try { #2
-                if ($i -eq 2) {
+            try
+            {
+            }
+            catch
+            [int]
+            ,
+            [char]
+            {
+            }
+
+            try
+            {
+            }
+            finally
+            {
+            }
+
+            try
+            {
+            }
+            catch
+            {
+            }
+            finally
+            {
+            }
+
+            try
+            {
+            }
+            catch
+            [int]
+            {
+            }
+            finally
+            {
+            }
+
+            try
+            {
+            }
+            catch
+            [int]
+            ,
+            [char]
+            {
+            }
+            finally
+            {
+            }
+        } | Should Not Throw
+    }
+
+    Context "Basic exception handling" {
+        It "Simple throw and catch" {
+            $a = . { try { 1; throw "exception"; "test failed" } catch { 2 } }
+            AssertArraysEqual $a (1, 2)
+        }
+
+        It "Simple try finally" {
+            $a = . { try { 1 } finally { 2 } }
+            AssertArraysEqual $a (1,2)
+        }
+
+        It "Simple try, throw, catch, and finally" {
+            $a = . { try { 1; throw "exception"; "test failed" } catch { 2 } finally { 3 } }
+            AssertArraysEqual $a (1..3)
+        }
+    }
+
+    Context "Mix traps with try/catch" {
+        It "Trap shouldn't catch exception" {
+            $a = . { trap { "test failed" } try { 1; throw "exception"; "test failed" } catch { 2 } }
+            AssertArraysEqual $a (1,2)
+        }
+
+        It "Trap should catch exception" {
+            $a = . { try { 1; throw "exception"; trap { 2; return }; "test failed" } catch { "test failed" } }
+            AssertArraysEqual $a (1,2)
+        }
+    }
+
+    Context "Catch by type" {
+        It "Catch by type #1" {
+            $a = . { try { 1; $a = 0; 1/$a; "test failed" } catch [DivideByZeroException] { 2 } }
+            AssertArraysEqual $a (1,2)
+        }
+
+        It "Catch by type #2" {
+            $a = . { try { 1; $a = 0; 1/$a; "test failed" } catch [DivideByZeroException] { 2 } catch [Exception] { "test failed" } }
+            AssertArraysEqual $a (1,2)
+        }
+
+        It "Catch by type #3" {
+            $a = . { try { 1; $a = 0; 1/$a; "test failed" } catch [DivideByZeroException] { 2 } catch { "test failed" } }
+            AssertArraysEqual $a (1,2)
+        }
+
+        It "Catch by type #4" {
+            $a = . { try { 1; $a = 0; 1/$a; "test failed" } catch [DivideByZeroException],[ArgumentNullException] { 2 } }
+            AssertArraysEqual $a (1,2)
+        }
+    }
+
+    Context "Control flow in try [exit not tested and throw tested elsewhere]" {
+        It "break in try" {
+            $a = . {
+              foreach ($i in (1..3)) {
+                try {
+                  if ($i -eq 2) {
                     break
+                  }
+                  $i
+                } catch {
+                  "test failed"
+                } finally {
+                  "finally: $i"
                 }
-                $i
-            } catch {
-                "test failed: catch#2"
-            } finally {
-                "finally#2: $i"
+              }
             }
-        } catch {
-            "test failed: catch#1"
-        } finally {
-            "finally#1: $i"
+            AssertArraysEqual $a (1, "finally: 1", "finally: 2")
         }
-    }
-}
-AssertArraysEqual $a (1, "finally#2: 1", "finally#1: 1", "finally#2: 2", "finally#1: 2")
 
-
-#############################################################
-#
-# Control flow in catch
-#    exit not tested
-#    throw tested elsewhere
-#
-#############################################################
-$a = . {
-  try {
-    throw 1
-  } catch {
-    foreach ($i in (1..3)) {
-      if ($i -eq 2) {
-        break
-      }
-      $i
-    }
-  } finally {
-    "finally"
-  }
-}
-AssertArraysEqual $a (1, "finally") "break in catch"
-
-$a = . {
-  foreach ($i in (1..3)) {
-    try {
-      throw 1
-    } catch {
-      if ($i -eq 2) {
-        break
-      }
-      $i
-    } finally {
-      "finally $i"
-    }
-  }
-}
-AssertArraysEqual $a (1, "finally 1", "finally 2") "break in catch"
-
-$a = . {
-  try {
-    throw 1
-  } catch {
-    foreach ($i in (1..3)) {
-      if ($i -eq 2) {
-        continue
-      }
-      $i
-    }
-  } finally {
-    "finally"
-  }
-}
-AssertArraysEqual $a (1, 3, "finally") "continue in catch"
-
-$a = . {
-  foreach ($i in (1..3)) {
-    try {
-    throw 1
-    } catch {
-      if ($i -eq 2) {
-        continue
-      }
-      $i
-    } finally {
-      "finally $i"
-    }
-  }
-}
-AssertArraysEqual $a (1, "finally 1", "finally 2", 3, "finally 3") "continue in catch"
-
-$a = . {
-    foreach ($i in (1..3)) {
-        try { #1
-            try { #2
-                throw 1
-            } catch {
-                if ($i -eq 2) {
+        It "continue in try" {
+            $a = . {
+              foreach ($i in (1..3)) {
+                try {
+                  if ($i -eq 2) {
                     continue
+                  }
+                  $i
+                } catch {
+                  "test failed"
+                } finally {
+                  "finally: $i"
                 }
-                $i
-            } finally {
-                "finally#2: $i"
+              }
             }
-        } catch {
-            "test failed: catch#1"
-        } finally {
-            "finally#1: $i"
+            AssertArraysEqual $a (1, "finally: 1", "finally: 2", 3, "finally: 3")
+        }
+
+        # Disabled - Compiled script has differing (but better) behavior
+        It "return in try" -Skip:$true {
+            $a = . {
+              function foo($i) {
+                try {
+                  if ($i -eq 2) {
+                    return "return: $i"
+                  }
+                  $i
+                } catch {
+                  "test failed"
+                } finally {
+                  "finally: $i"
+                }
+              }
+              foo 1
+              foo 2
+            }
+
+            AssertArraysEqual $a (1, "finally: 1", "finally: 2", "return: 2")
+        }
+
+        It "continue in nested try within foreach loop" {
+            $a = . {
+                foreach ($i in (1..3)) {
+                    try { #1
+                        try { #2
+                            if ($i -eq 2) {
+                                continue
+                            }
+                            $i
+                        } catch {
+                            "test failed: catch#2"
+                        } finally {
+                            "finally#2: $i"
+                        }
+                    } catch {
+                        "test failed: catch#1"
+                    } finally {
+                        "finally#1: $i"
+                    }
+                }
+            }
+            AssertArraysEqual $a (1, "finally#2: 1", "finally#1: 1", "finally#2: 2", "finally#1: 2", 3, "finally#2: 3", "finally#1: 3")
+        }
+
+        It "break in nested try within foreach loop" {
+            $a = . {
+                foreach ($i in (1..3)) {
+                    try { #1
+                        try { #2
+                            if ($i -eq 2) {
+                                break
+                            }
+                            $i
+                        } catch {
+                            "test failed: catch#2"
+                        } finally {
+                            "finally#2: $i"
+                        }
+                    } catch {
+                        "test failed: catch#1"
+                    } finally {
+                        "finally#1: $i"
+                    }
+                }
+            }
+            AssertArraysEqual $a (1, "finally#2: 1", "finally#1: 1", "finally#2: 2", "finally#1: 2")
         }
     }
-}
-AssertArraysEqual $a (1, "finally#2: 1", "finally#1: 1", "finally#2: 2", "finally#1: 2", 3, "finally#2: 3", "finally#1: 3")
 
-
-$a = . {
-    foreach ($i in (1..3)) {
-        try { #1
-            try { #2
+    Context "Control flow in catch [exit not tested and throw tested elsewhere]" {
+        It "break in catch without loop" {
+            $a = . {
+              try {
                 throw 1
-            } catch {
-                if ($i -eq 2) {
+              } catch {
+                foreach ($i in (1..3)) {
+                  if ($i -eq 2) {
                     break
+                  }
+                  $i
                 }
-                $i
-            } finally {
-                "finally#2: $i"
+              } finally {
+                "finally"
+              }
             }
-        } catch {
-            "test failed: catch#1"
-        } finally {
-            "finally#1: $i"
+            AssertArraysEqual $a (1, "finally")
+        }
+
+        It "break in catch within foreach loop" {
+            $a = . {
+              foreach ($i in (1..3)) {
+                try {
+                  throw 1
+                } catch {
+                  if ($i -eq 2) {
+                    break
+                  }
+                  $i
+                } finally {
+                  "finally $i"
+                }
+              }
+            }
+            AssertArraysEqual $a (1, "finally 1", "finally 2")
+        }
+
+        It "continue in catch without loop" {
+            $a = . {
+              try {
+                throw 1
+              } catch {
+                foreach ($i in (1..3)) {
+                  if ($i -eq 2) {
+                    continue
+                  }
+                  $i
+                }
+              } finally {
+                "finally"
+              }
+            }
+            AssertArraysEqual $a (1, 3, "finally")
+        }
+
+        It "continue in catch within foreach loop" {
+            $a = . {
+              foreach ($i in (1..3)) {
+                try {
+                throw 1
+                } catch {
+                  if ($i -eq 2) {
+                    continue
+                  }
+                  $i
+                } finally {
+                  "finally $i"
+                }
+              }
+            }
+            AssertArraysEqual $a (1, "finally 1", "finally 2", 3, "finally 3")
+        }
+
+        It "continue in nested catch within foreach loop" {
+            $a = . {
+                foreach ($i in (1..3)) {
+                    try { #1
+                        try { #2
+                            throw 1
+                        } catch {
+                            if ($i -eq 2) {
+                                continue
+                            }
+                            $i
+                        } finally {
+                            "finally#2: $i"
+                        }
+                    } catch {
+                        "test failed: catch#1"
+                    } finally {
+                        "finally#1: $i"
+                    }
+                }
+            }
+            AssertArraysEqual $a (1, "finally#2: 1", "finally#1: 1", "finally#2: 2", "finally#1: 2", 3, "finally#2: 3", "finally#1: 3")
+        }
+
+        It "break in nested catch within foreach loop" {
+            $a = . {
+                foreach ($i in (1..3)) {
+                    try { #1
+                        try { #2
+                            throw 1
+                        } catch {
+                            if ($i -eq 2) {
+                                break
+                            }
+                            $i
+                        } finally {
+                            "finally#2: $i"
+                        }
+                    } catch {
+                        "test failed: catch#1"
+                    } finally {
+                        "finally#1: $i"
+                    }
+                }
+            }
+            AssertArraysEqual $a (1, "finally#2: 1", "finally#1: 1", "finally#2: 2", "finally#1: 2")
+        }
+
+        # Disabled - Compiled script has differing (but better) behavior
+        It "return in catch without loop" -Skip:$true {
+            $a = . {
+              function foo {
+                try {
+                  throw 1
+                } catch {
+                  foreach ($i in (1..3)) {
+                    if ($i -eq 2) {
+                      return "returned"
+                    }
+                    $i
+                  }
+                } finally {
+                  "finally"
+                }
+              }
+              foo
+            }
+
+            AssertArraysEqual $a (1, "finally", "returned") "return in catch"
+        }
+
+        # Disabled - Compiled script has differing (but better) behavior
+        It "return in catch within foreach loop" -Skip:$true {
+            $a = . {
+              function foo {
+                foreach ($i in (1..3)) {
+                  try {
+                    throw 1
+                  } catch {
+                    if ($i -eq 2) {
+                      return "returned"
+                    }
+                    $i
+                  } finally {
+                     "finally $i"
+                  }
+                }
+              }
+              foo
+            }
+            
+            AssertArraysEqual $a (1, "finally 1", "finally 2", "returned")
+        }
+    }
+
+    Context "Control flow in finally, normal execution" {
+        It "break in finally normal execution" {
+            $a = . {
+              try {
+                "try"
+              } catch {
+              } finally {
+                "finally"
+                foreach ($i in (1..3)) {
+                  if ($i -eq 2) {
+                    break
+                  }
+                  $i
+                }
+              }
+            }
+            
+            AssertArraysEqual $a ("try", "finally", 1)
+        }
+
+        It "continue in finally normal execution" {
+            $a = . {
+              try {
+                "try"
+              } catch {
+              } finally {
+                "finally"
+                foreach ($i in (1..3)) {
+                  if ($i -eq 2) {
+                    continue
+                  }
+                  $i
+                }
+              }
+            }
+            
+            AssertArraysEqual $a ("try", "finally", 1, 3)
+        }
+    }
+
+    Context "Control flow in finally, abnormal execution" {
+        It "break in finally normal execution" {
+            $a = . {
+              try {
+                "try"
+                throw 1
+              } catch {
+                "catch"
+              } finally {
+                "finally"
+                foreach ($i in (1..3)) {
+                  if ($i -eq 2) {
+                    break
+                  }
+                  $i
+                }
+              }
+            }
+
+            AssertArraysEqual $a ("try", "catch", "finally", 1)
+        }
+
+        It "continue in finally normal execution" {
+            $a = . {
+              try {
+                "try"
+                throw 1
+              } catch {
+                "catch"
+              } finally {
+                "finally"
+                foreach ($i in (1..3)) {
+                  if ($i -eq 2) {
+                    continue
+                  }
+                  $i
+                }
+              }
+            }
+
+            AssertArraysEqual $a ("try", "catch", "finally", 1, 3)
+        }
+    }
+
+    Context "Exception object" {
+        It "ErrorRecord object is set correctly" {
+            $a = . {
+              try {
+                throw 42
+              } catch {
+                $_
+              }
+            }
+
+            [int]$a.ToString() | Should Be 42
+        }
+    }
+
+    It "Nested try/catch" {
+        $a = . {
+          try {
+            "outer try"
+            try {
+              "inner try"
+              $a = 0
+              1 / $a
+            }
+            catch [OutOfMemoryException] {
+              "test failed"
+            }
+            finally {
+              "inner finally"
+            }
+          }
+          catch [DivideByZeroException] {
+            "caught"
+          }
+          finally {
+            "outer finally"
+          }
+        }
+
+        AssertArraysEqual $a ("outer try", "inner try", "inner finally", "caught", "outer finally")
+    }
+
+    Context "Rethrow" {
+        It "rethrow flow up" {
+            $a = . {
+              try {
+                try {
+                  $a = 0
+                  1 / $a
+                } catch {
+                  "inner catch"
+                  $ex_inner = $_
+                  throw
+                }
+              } catch {
+                "outer catch"
+                $ex_outer = $_
+              }
+            }
+
+            AssertArraysEqual $a ("inner catch", "outer catch")
+            ($ex_inner.Exception -eq $ex_outer.Exception) | Should Be $true
+        }
+
+        It "throw; outside catch threw wrong object" {
+            $a = . {
+              function foo {
+                trap [system.management.automation.runtimeexception] {      
+                  return "test passed"
+                }
+                trap {
+                  return "test failed"
+                }
+                throw
+              }
+              try {
+                $a = 0
+                1 / $a
+              } catch {
+                foo
+              }
+            }
+
+            ($a -eq "test passed") | Should Be $true
         }
     }
 }
-AssertArraysEqual $a (1, "finally#2: 1", "finally#1: 1", "finally#2: 2", "finally#1: 2")
-
-
-$a = . {
-  function foo {
-    try {
-      throw 1
-    } catch {
-      foreach ($i in (1..3)) {
-        if ($i -eq 2) {
-          return "returned"
-        }
-        $i
-      }
-    } finally {
-      "finally"
-    }
-  }
-  foo
-}
-
-# Disabled - Compiled script has differing (but better) behavior
-#AssertArraysEqual $a (1, "finally", "returned") "return in catch"
-
-$a = . {
-  function foo {
-    foreach ($i in (1..3)) {
-      try {
-        throw 1
-      } catch {
-        if ($i -eq 2) {
-          return "returned"
-        }
-        $i
-      } finally {
-         "finally $i"
-      }
-    }
-  }
-  foo
-}
-# Disabled - Compiled script has differing (but better) behavior
-#AssertArraysEqual $a (1, "finally 1", "finally 2", "returned") "return in catch"
-
-#############################################################
-#
-# Control flow in finally, normal execution
-#
-#############################################################
-$a = . {
-  try {
-    "try"
-  } catch {
-  } finally {
-    "finally"
-    foreach ($i in (1..3)) {
-      if ($i -eq 2) {
-        break
-      }
-      $i
-    }
-  }
-}
-AssertArraysEqual $a ("try", "finally", 1) "break in finally normal execution"
-
-$a = . {
-  try {
-    "try"
-  } catch {
-  } finally {
-    "finally"
-    foreach ($i in (1..3)) {
-      if ($i -eq 2) {
-        continue
-      }
-      $i
-    }
-  }
-}
-AssertArraysEqual $a ("try", "finally", 1, 3) "continue in finally normal execution"
-
-#############################################################
-#
-# Control flow in finally, abnormal execution
-#
-#############################################################
-$a = . {
-  try {
-    "try"
-    throw 1
-  } catch {
-    "catch"
-  } finally {
-    "finally"
-    foreach ($i in (1..3)) {
-      if ($i -eq 2) {
-        break
-      }
-      $i
-    }
-  }
-}
-AssertArraysEqual $a ("try", "catch", "finally", 1) "break in finally normal execution"
-
-$a = . {
-  try {
-    "try"
-    throw 1
-  } catch {
-    "catch"
-  } finally {
-    "finally"
-    foreach ($i in (1..3)) {
-      if ($i -eq 2) {
-        continue
-      }
-      $i
-    }
-  }
-}
-AssertArraysEqual $a ("try", "catch", "finally", 1, 3) "continue in finally normal execution"
-
-#############################################################
-#
-# Exception object
-#
-#############################################################
-$a = . {
-  try {
-    throw 42
-  } catch {
-    $_
-  }
-}
-Assert ([int]$a.ToString() -eq 42) "ErrorRecord object is set correctly"
-
-#############################################################
-#
-# Nested tries
-#
-#############################################################
-$a = . {
-  try {
-    "outer try"
-    try {
-      "inner try"
-      $a = 0
-      1 / $a
-    }
-    catch [OutOfMemoryException] {
-      "test failed"
-    }
-    finally {
-      "inner finally"
-    }
-  }
-  catch [DivideByZeroException] {
-    "caught"
-  }
-  finally {
-    "outer finally"
-  }
-}
-AssertArraysEqual $a ("outer try", "inner try", "inner finally", "caught", "outer finally") "Nested try/catch"
-
-#############################################################
-#
-# Rethrow
-#
-#############################################################
-$a = . {
-  try {
-    try {
-      $a = 0
-      1 / $a
-    } catch {
-      "inner catch"
-      $ex_inner = $_
-      throw
-    }
-  } catch {
-    "outer catch"
-    $ex_outer = $_
-  }
-}  
-AssertArraysEqual $a ("inner catch", "outer catch") "rethrow flow"
-Assert ($ex_inner.Exception -eq $ex_outer.Exception) "rethrow correct object"
-
-$a = . {
-  function foo {
-    trap [system.management.automation.runtimeexception] {      
-      return "test passed"
-    }
-    trap {
-      return "test failed"
-    }
-    throw
-  }
-  try {
-    $a = 0
-    1 / $a
-  } catch {
-    foo
-  }
-}
-Assert ($a -eq "test passed") "throw; outside catch threw wrong object"
