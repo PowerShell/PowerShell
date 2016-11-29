@@ -1250,7 +1250,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="name">name of the property</param>
         /// <param name="value">value of the property</param>
-        /// <exception cref="ArgumentException">for an empty or null name</exception>
+        /// <exception cref="ArgumentException">for a null name</exception>
         public PSNoteProperty(string name, object value)
         {
             if (name == null)
