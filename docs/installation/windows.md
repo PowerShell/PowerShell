@@ -3,7 +3,7 @@ Package Installation Instructions
 
 # MSI:
 To install PowerShell on Windows Full SKU (works on Win8 and above - x64 based systems), download either the MSI from [AppVeyor][] for a nightly build, 
-or a released package from our GitHub [releases][] page. The MSI file looks like this - `PowerShell_6.0.0.buildversion.msi`
+or a released package from our GitHub [releases][] page. ON this page scrolll down to the MSI file that looks like this - `PowerShell_6.0.0.buildversion.msi`.  There are also .zip files available which can be used for xcopy deployment.
 
 Once downloaded, double-click the installer and follow the prompts.
 
