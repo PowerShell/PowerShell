@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Management.Automation;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Reflection;
 
 namespace Microsoft.PowerShell.Commands
@@ -16,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Optional Verb filter
         /// </summary>
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, Position = 0)]
         public string[] Verb
         {
             get; set;
@@ -25,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Optional Group filter
         /// </summary>
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, Position = 1)]
         [ValidateSet("Common", "Communications", "Data", "Diagnostic", "Lifecycle", "Other", "Security")]
         public string[] Group
         {
@@ -35,10 +36,11 @@ namespace Microsoft.PowerShell.Commands
         private List<VerbInfo> _allVerbs = new List<VerbInfo>();
 
         /// <summary>
-        /// populates a list of all avaiable verbs 
+        /// Returns a list of verbs 
         /// </summary>
-        protected override void BeginProcessing()
+        protected override void ProcessRecord()
         {
+
             Type[] verbTypes = new Type[] { typeof(VerbsCommon), typeof(VerbsCommunications), typeof(VerbsData),
                 typeof(VerbsDiagnostic), typeof(VerbsLifecycle), typeof(VerbsOther), typeof(VerbsSecurity) };
 
@@ -48,48 +50,33 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (field.IsLiteral)
                     {
+                        if(this.Verb != null)
+                        {
+                            Collection<WildcardPattern> matchingVerbs = SessionStateUtilities.CreateWildcardsFromStrings(
+                                this.Verb,
+                                WildcardOptions.IgnoreCase
+                            );
+                            
+                            if(!SessionStateUtilities.MatchesAnyWildcardPattern(field.Name,matchingVerbs,false))
+                            {
+                                continue;
+                            }
+                        }
+
+                        if(this.Group != null)
+                        {
+                            if(!SessionStateUtilities.CollectionContainsValue(this.Group,type.Name.Substring(5),StringComparer.OrdinalIgnoreCase))
+                            {
+                                continue;
+                            }                            
+                        }
+                        
                         VerbInfo verb = new VerbInfo();
-                        verb.Verb = field.GetValue(null).ToString();
-                        verb.Group = type.Name.Replace("Verbs", "");
-                        _allVerbs.Add(verb);
+                        verb.Verb = field.Name;
+                        verb.Group = type.Name.Substring(5);
+                        WriteObject(verb);
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// Returns a list of verbs 
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            List<VerbInfo> matchingVerbs = new List<VerbInfo>();
-            if (this.Verb == null)
-            {
-                matchingVerbs.AddRange(_allVerbs);
-            }
-            else
-            {
-                foreach (string currentVerb in this.Verb)
-                {
-                    WildcardPattern pattern = new WildcardPattern(currentVerb, WildcardOptions.IgnoreCase);
-                    _allVerbs.FindAll(x => pattern.IsMatch(x.Verb) && !matchingVerbs.Exists(y => pattern.IsMatch(y.Verb)))
-                        .ForEach(x => matchingVerbs.Add(x));
-                }
-            }
-            
-            if(this.Group == null)
-            {
-                 WriteObject(matchingVerbs);
-            }
-            else
-            {
-                List<VerbInfo> uniqueGroups = new List<VerbInfo>();
-                foreach(string currentGroup in this.Group)
-                {
-                    matchingVerbs.FindAll(x => x.Group.ToLower() == currentGroup.ToLower() && !uniqueGroups.Exists(y => y.Group.ToLower() == currentGroup.ToLower()))
-                        .ForEach(x => uniqueGroups.Add(x));
-                }
-                WriteObject(uniqueGroups);
             }
         }
     }
