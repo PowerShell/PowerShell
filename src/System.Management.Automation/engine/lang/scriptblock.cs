@@ -97,6 +97,13 @@ namespace System.Management.Automation
         /// <param name="script">The string to compile.</param>
         internal static ScriptBlock Create(ExecutionContext context, string script)
         {
+            EventHandler<DynamicScriptBlockCreationEventArgs> preDynamicScriptBlockCreationEvent = CommandInvocationIntrinsics.PreDynamicScriptBlockCreationAction;
+
+            if (preDynamicScriptBlockCreationEvent != null)
+            {
+                preDynamicScriptBlockCreationEvent.Invoke(null, new DynamicScriptBlockCreationEventArgs(script));
+            }
+
             ScriptBlock sb = Create(context.Engine.EngineParser, null, script);
             if (context.EngineSessionState != null && context.EngineSessionState.Module != null)
             {
@@ -112,6 +119,13 @@ namespace System.Management.Automation
         /// <param name="script">The string to compile.</param>
         public static ScriptBlock Create(string script)
         {
+            EventHandler<DynamicScriptBlockCreationEventArgs> preDynamicScriptBlockCreationEvent = CommandInvocationIntrinsics.PreDynamicScriptBlockCreationAction;
+
+            if (preDynamicScriptBlockCreationEvent != null)
+            {
+                preDynamicScriptBlockCreationEvent.Invoke(null, new DynamicScriptBlockCreationEventArgs(script));
+            }
+
             return Create(new Language.Parser(), null, script);
         }
 
