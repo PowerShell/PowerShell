@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = EnterPSSessionCommand.VMNameParameterSet)]
         public String ConfigurationName { get; set; }
 
-        #region Supress PSRemotingBaseCmdlet SSH hash parameter set
+        #region Suppress PSRemotingBaseCmdlet SSH hash parameter set
 
         /// <summary>
         /// Suppress SSHConnection parameter set
