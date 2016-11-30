@@ -33,8 +33,6 @@ namespace Microsoft.PowerShell.Commands
             get; set;
         }
 
-        private List<VerbInfo> _allVerbs = new List<VerbInfo>();
-
         /// <summary>
         /// Returns a list of verbs 
         /// </summary>
