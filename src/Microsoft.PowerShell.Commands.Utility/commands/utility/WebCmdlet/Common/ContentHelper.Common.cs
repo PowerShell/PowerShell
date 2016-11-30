@@ -87,6 +87,7 @@ namespace Microsoft.PowerShell.Commands
             || CheckIsXml(contentType)
             || CheckIsJson(contentType);
 
+            #if !CORECLR // Registry access not supported on CoreCLR
             if (!isText)
             {
                 // Media types registered with Windows as having a perceived type of text, are text
@@ -109,6 +110,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+            #endif
 
             return (isText);
         }
@@ -135,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
             // the correct type for JSON content, as specified in RFC 4627
             bool isJson = contentType.Equals("application/json", StringComparison.OrdinalIgnoreCase);
 
-            // add in these other "javascript" related types that 
+            // add in these other "javascript" related types that
             // sometimes get sent down as the mime type for JSON content
             isJson |= contentType.Equals("text/json", StringComparison.OrdinalIgnoreCase)
             || contentType.Equals("application/x-javascript", StringComparison.OrdinalIgnoreCase)
