@@ -158,7 +158,8 @@ function RunUpdateHelpTests
 {
     param (
         [string]$tag = "CI",
-        [switch]$useSourcePath
+        [switch]$useSourcePath,
+        [switch]$Pending
     )
 
     foreach ($moduleName in $modulesInBox)
@@ -166,7 +167,7 @@ function RunUpdateHelpTests
         if ($powershellCoreModules -contains $moduleName)
         {
 
-            It "Validate Update-Help for module '$moduleName'" {
+            It "Validate Update-Help for module '$moduleName'" -Pending:$Pending {
 
                 # If the help file is already installed, delete it.
                 Get-ChildItem $testCases[$moduleName].HelpInstallationPath -Include @("about_*.txt","*help.xml") -Recurse -ea SilentlyContinue |
@@ -209,7 +210,8 @@ function RunUpdateHelpTests
 function RunSaveHelpTests
 {
     param (
-        [string]$tag = "CI"
+        [string]$tag = "CI",
+        [switch]$Pending
     )
 
     foreach ($moduleName in $modulesInBox)
@@ -221,7 +223,7 @@ function RunSaveHelpTests
                 $saveHelpFolder = Join-Path $TestDrive (Get-Random).ToString()
                 New-Item  $saveHelpFolder -Force -ItemType Directory
 
-                It "Validate Save-Help for the '$moduleName' module" {
+                It "Validate Save-Help for the '$moduleName' module" -Pending:$Pending {
 
                     if ((Get-UICulture).Name -ne "en-Us")
                     {
@@ -266,7 +268,7 @@ function ValidateSaveHelp
 
 Describe "Validate Update-Help from the Web for one PowerShell Core module." -Tags @('CI', 'RequireAdminOnWindows') {
 
-    RunUpdateHelpTests -tag "CI"
+    RunUpdateHelpTests -tag "CI" -Pending
 }
 
 Describe "Validate Update-Help from the Web for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows') {
@@ -285,7 +287,7 @@ Describe "Validate Update-Help -SourcePath for all PowerShell Core modules." -Ta
 }
 
 Describe "Validate 'Save-Help -DestinationPath for one PowerShell Core modules." -Tags @('CI', 'RequireAdminOnWindows') {
-    RunSaveHelpTests -tag "CI"
+    RunSaveHelpTests -tag "CI" -Pending
 }
 
 Describe "Validate 'Save-Help -DestinationPath for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows') {
