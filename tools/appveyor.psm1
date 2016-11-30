@@ -81,12 +81,15 @@ function Add-UserToGroup
 # or is a pushed tag
 Function Test-DailyBuild
 {
-    if(($env:PS_DAILY_BUILD -eq 'True') -or ($env:APPVEYOR_SCHEDULED_BUILD -eq 'True') -or ($env:APPVEYOR_REPO_TAG_NAME))
+    return $true
+
+<#    if(($env:PS_DAILY_BUILD -eq 'True') -or ($env:APPVEYOR_SCHEDULED_BUILD -eq 'True') -or ($env:APPVEYOR_REPO_TAG_NAME))
     {
         return $true
     }
 
     return $false
+#>
 }
 
 # Sets a build variable
@@ -281,7 +284,9 @@ function Update-AppVeyorTestResults
 function Invoke-AppVeyorTest 
 {
     [CmdletBinding()]
-    param()
+    param(
+    [switch] $waitDebugger
+    )
     #
     # CoreCLR
     
@@ -309,6 +314,16 @@ function Invoke-AppVeyorTest
         Write-Host -Foreground Green 'Running all CoreCLR tests..'
     }
     
+
+
+    if ($waitDebugger)
+    {
+        Write-Warning 'Invoking Wait-Debugger'
+        $runspaceId = [System.Management.Automation.Runspaces.Runspace]::DefaultRunSpace.Id
+        Write-Warning "ProcessId: $pid`nRunspaceId: $runspaceId"
+        Wait-Debugger
+    }
+
     Start-PSPester -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
     Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
     Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
