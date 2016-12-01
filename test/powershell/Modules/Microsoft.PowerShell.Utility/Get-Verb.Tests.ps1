@@ -5,12 +5,12 @@
     }
 
     It "Should get a specific verb" {
-        (Get-Verb -Verb Add | Measure-Object).Count | Should be 1
-        (Get-Verb -Verb Add -Group Common | Measure-Object).Count | Should be 1
+        @(Get-Verb -Verb Add).Count | Should be 1
+        @(Get-Verb -Verb Add -Group Common).Count | Should be 1
     }
 
     It "Should get a specific group" {
-        Get-Verb -Group Common | Should not be $null
+        (Get-Verb -Group Common).Group | Sort-Object -Unique | Should be Common
     }
 
     It "Should not return duplicate Verbs with Verb paramater" {
@@ -34,6 +34,7 @@
     It "Should not accept Groups that are not in the validate set" {
         try{
             Get-Verb -Group FakeGroupNeverExists -ErrorAction Stop
+            throw "Expected error did not occur"
         }
         Catch{
             $PSItem.FullyQualifiedErrorId | Should be 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetVerbCommand' 
