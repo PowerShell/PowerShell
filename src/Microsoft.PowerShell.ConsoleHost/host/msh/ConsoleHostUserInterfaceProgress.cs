@@ -7,6 +7,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation.Diagnostics;
+using System.Threading;
 
 
 namespace Microsoft.PowerShell
@@ -28,10 +29,19 @@ namespace Microsoft.PowerShell
             // destroy the data structures representing outstanding progress records
             // take down and destroy the progress display
 
+            if (_progPaneUpdateTimer != null)
+            {
+                // Stop update a progress pane and destroy timer
+                _progPaneUpdateTimer.Dispose();
+                _progPaneUpdateTimer = null;
+            }
+            progPaneUpdateFlag = false;
+
             if (_progPane != null)
             {
                 Dbg.Assert(_pendingProgress != null, "How can you have a progress pane and no backing data structure?");
 
+                // lock (_instanceLock) is not needed here because lock is done at global level
                 _progPane.Hide();
                 _progPane = null;
             }
@@ -60,18 +70,59 @@ namespace Microsoft.PowerShell
                 _pendingProgress = new PendingProgress();
             }
 
-            _pendingProgress.Update(sourceId, record);
-
             if (_progPane == null)
             {
-                // This is the first time we've received a progress record. Create a progress pane, then show it.
+                // This is the first time we've received a progress record
+                // Create a progress pane
+                // Set up a update flag
+                // Create a timer for updating the flag
 
                 _progPane = new ProgressPane(this);
+
+                if (_progPaneUpdateTimer == null && _progPane != null)
+                {
+                    // Show a progress pane at the first time we've received a progress record
+                    progPaneUpdateFlag = true;
+
+                    // Invoke the timer only once to exclude overlaps
+                    // The timer will be restarted in 'ProgressPaneUpdateTimerElapsed'
+                    _progPaneUpdateTimer = new Timer( new TimerCallback(ProgressPaneUpdateTimerElapsed), null, UpdateTimerThreshold, Timeout.Infinite);
+                }
             }
-            _progPane.Show(_pendingProgress);
+
+            if (progPaneUpdateFlag)
+            {
+                // Update the progress pane only when the timer set up the flag
+                // as a result, we do not block WriteProgress and whole script
+                // and eliminate unnecessary console locks and updates
+                lock (_instanceLock)
+                {
+                    _pendingProgress?.Update(sourceId, record);
+                    _progPane?.Show(_pendingProgress);
+                    progPaneUpdateFlag = false;
+                }
+            }
         }
 
 
+
+        /// <summary>
+        ///
+        /// TimerCallback for _progPaneUpdateTimer to update 'progPaneUpdateFlag' and restart the timer
+        ///
+        /// </summary>
+
+        private
+        void
+        ProgressPaneUpdateTimerElapsed(object sender)
+        {
+            if (_progPane != null)
+            {
+                progPaneUpdateFlag = true;
+            }
+
+            _progPaneUpdateTimer?.Change(UpdateTimerThreshold, Timeout.Infinite);
+        }
 
         private
         void
@@ -166,6 +217,10 @@ namespace Microsoft.PowerShell
 
         private ProgressPane _progPane = null;
         private PendingProgress _pendingProgress = null;
+        // The timer set up 'progPaneUpdateFlag' every 'UpdateTimerThreshold' milliseconds to update 'ProgressPane'
+        private Timer _progPaneUpdateTimer;
+        private const int UpdateTimerThreshold = 200;
+        private bool progPaneUpdateFlag;
     }
 }   // namespace 
 
