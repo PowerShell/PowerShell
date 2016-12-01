@@ -87,8 +87,8 @@ namespace Microsoft.PowerShell.Commands
             || CheckIsXml(contentType)
             || CheckIsJson(contentType);
 
-            #if !CORECLR // Registry access not supported on CoreCLR
-            if (!isText)
+            // Further content type analysis is available on Windows
+            if (Platform.IsWindows && !isText)
             {
                 // Media types registered with Windows as having a perceived type of text, are text
                 using (RegistryKey contentTypeKey = Registry.ClassesRoot.OpenSubKey(@"MIME\Database\Content Type\" + contentType))
@@ -110,7 +110,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            #endif
 
             return (isText);
         }
