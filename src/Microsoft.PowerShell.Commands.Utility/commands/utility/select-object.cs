@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// 
     /// </summary>
-    [Cmdlet("Select", "Object", DefaultParameterSetName = "DefaultParameter",
+    [Cmdlet(VerbsCommon.Select, "Object", DefaultParameterSetName = "DefaultParameter",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113387", RemotingCapability = RemotingCapability.None)]
     public sealed class SelectObjectCommand : PSCmdlet
     {

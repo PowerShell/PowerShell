@@ -722,3 +722,6 @@ AssemblyLoadContext
 csharp
 fullclr
 shebang
+ - CHANGELOG.md
+v6.0.0
+alpha.13

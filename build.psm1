@@ -120,6 +120,11 @@ function Start-PSBuild {
         Push-Location $PSScriptRoot
         try {
             git clean -fdX
+            # Extra cleaning is required to delete the CMake temporary files. 
+            # These are not cleaned when using "X" and cause CMake to retain state, leading to
+            # mis-configured environment issues when switching between x86 and x64 compilation
+            # environments.
+            git clean -fdx .\src\powershell-native
         } finally {
             Pop-Location
         }
@@ -395,12 +400,13 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
 
     if($PSModuleRestore)
     {
-        # downloading the PackageManagement module
+        # Downloading the PowerShellGet and PackageManagement modules.
         # $Options.Output is pointing to something like "...\src\powershell-win-core\bin\Debug\netcoreapp1.0\win10-x64\publish\powershell.exe", 
         # so we need to get its parent directory
         $publishPath = Split-Path $Options.Output -Parent
-        log "Restore PowerShell modules to $publishPath"
-        Restore-PSModule -Name @('PackageManagement','PowerShellGet') -Destination (Join-Path -Path $publishPath -ChildPath "Modules")
+        log "Restore PowerShell modules to $publishPath"    
+        # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
+        Restore-PSModule -Name @('PowerShellGet') -Destination (Join-Path -Path $publishPath -ChildPath "Modules")
     }
 }
 
@@ -661,7 +667,8 @@ function Start-PSPester {
         [string]$binDir = (Split-Path (New-PSOptions -FullCLR:$FullCLR).Output),
         [string]$powershell = (Join-Path $binDir 'powershell'),
         [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester")),
-        [switch]$Unelevate
+        [switch]$Unelevate,
+        [switch]$Quiet
     )
 
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
@@ -719,6 +726,11 @@ function Start-PSPester {
     }
     if ($Tag) {
         $Command += "-Tag @('" + (${Tag} -join "','") + "') "
+    }
+    # sometimes we need to eliminate Pester output, especially when we're
+    # doing a daily build as the log file is too large
+    if ( $Quiet ) {
+        $Command += "-Quiet "
     }
 
     $Command += "'" + $Path + "'"
@@ -793,6 +805,17 @@ function script:Start-UnelevatedProcess
     runas.exe /trustlevel:0x20000 "$process $arguments"
 }
 
+function Show-PSPesterError
+{
+    param ( [Xml.XmlElement]$testFailure )
+    logerror ("Description: " + $testFailure.description)
+    logerror ("Name:        " + $testFailure.name)
+    logerror "message:"
+    logerror $testFailure.failure.message
+    logerror "stack-trace:"
+    logerror $testFailure.failure."stack-trace"
+}
+
 #
 # Read the test result file and
 # Throw if a test failed 
@@ -800,7 +823,7 @@ function Test-PSPesterResults
 {
     param(
         [string]$TestResultsFile = "pester-tests.xml",
-        [string] $TestArea = 'test/powershell'
+        [string]$TestArea = 'test/powershell'
     )
 
     if(!(Test-Path $TestResultsFile))
@@ -811,6 +834,11 @@ function Test-PSPesterResults
     $x = [xml](Get-Content -raw $testResultsFile)
     if ([int]$x.'test-results'.failures -gt 0)
     {
+        logerror "TEST FAILURES"
+        foreach ( $testfail in $x.SelectNodes('.//test-case[@result = "Failure"]'))
+        {
+            Show-PSPesterError $testfail
+        }
         throw "$($x.'test-results'.failures) tests in $TestArea failed"
     }
 }
@@ -2052,6 +2080,12 @@ function script:log([string]$message) {
     [console]::ResetColor()
 }
 
+function script:logerror([string]$message) {
+    Write-Host -Foreground Red $message
+    #reset colors for older package to at return to default after error message on a compilation error
+    [console]::ResetColor()
+}
+
 function script:precheck([string]$command, [string]$missedMessage) {
     $c = Get-Command $command -ErrorAction SilentlyContinue
     if (-not $c) {
@@ -2712,7 +2746,7 @@ function Restore-PSModule
         }
     }
 
-    log ("Name='{0}', Destination='{1}', Repository='{2}'" -f $Name, $Destination, $RepositoryName)
+    log ("Name='{0}', Destination='{1}', Repository='{2}'" -f ($Name -join ','), $Destination, $RepositoryName)
 
     $Name | ForEach-Object {
 
@@ -2728,8 +2762,13 @@ function Restore-PSModule
         }
 
         # pull down the module
-        log "running save-module $Name"
+        log "running save-module $_"
         PowerShellGet\Save-Module @command -Force -Verbose
+        
+        # Remove PSGetModuleInfo.xml file
+        Find-Module -Name $_ -Repository $RepositoryName -IncludeDependencies | ForEach-Object {
+            Get-ChildItem -Path (Join-Path -Path $Destination -ChildPath $_.Name) -Recurse -Depth 2 -File -Include 'PSGetModuleInfo.xml' -Attributes h,a,r | Remove-Item -Force
+        }
     }
 
     # Clean up

@@ -1,4 +1,4 @@
-version: 6.0.0-alpha.12-{build}
+version: 6.0.0-alpha.13-{build}
 
 image: Visual Studio 2015
 
@@ -10,7 +10,6 @@ nuget:
 
 install:
   - git submodule update --init
-  - ps: $buildConfiguration = 'Release'
   - ps: Import-Module .\tools\Appveyor.psm1
   - ps: Invoke-AppveyorInstall
 
@@ -19,6 +18,9 @@ build_script:
 
 test_script:
   - ps: Invoke-AppveyorTest
+
+after_test:
+  - ps: Invoke-AppVeyorAfterTest
 
 on_finish: 
   - ps: Invoke-AppveyorFinish

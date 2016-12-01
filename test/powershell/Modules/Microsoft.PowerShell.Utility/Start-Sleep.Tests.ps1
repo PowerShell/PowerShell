@@ -12,7 +12,7 @@ Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
         Start-Sleep -Milliseconds 1000
         $dtEnd = [DateTime]::Now
         $milliseconds = (New-TimeSpan -Start $dtStart -End $dtEnd).TotalMilliseconds
-        $milliseconds | Should BeGreaterThan 1000
+        $milliseconds -ge 1000 | Should Be $true
     }
 
 }

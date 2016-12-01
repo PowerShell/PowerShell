@@ -4534,7 +4534,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Invokes an item at the specified location
     /// </summary>
-    [Cmdlet("Invoke", "Item", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
+    [Cmdlet(VerbsLifecycle.Invoke, "Item", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113345")]
     public class InvokeItemCommand : CoreCommandWithCredentialsBase
     {
