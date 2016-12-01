@@ -1430,9 +1430,7 @@ namespace System.Management.Automation.Language
                 var indexResult = PSSetIndexBinder.Get(1).FallbackSetIndex(target, new[] { args[0] }, args[1]);
                 resultExpr = Expression.TryCatch(
                     indexResult.Expression,
-                    Expression.Catch(exception,
-                        Expression.Block(
-                            result)));
+                    Expression.Catch(exception, result));
             }
             else
             {
@@ -1723,7 +1721,8 @@ namespace System.Management.Automation.Language
 
                 // We wrap the block of assignments in a try/catch and issue a general error message whenever the assignment fails.
                 var exception = Expression.Parameter(typeof(Exception));
-                var block = Expression.Block(
+                result = Expression.Block(
+                    new ParameterExpression[] { tmp },
                     Expression.Assign(tmp, result),
                     Expression.TryCatch(
                         Expression.Block(typeof(void), blockExprs),
@@ -1733,7 +1732,6 @@ namespace System.Management.Automation.Language
                                Compiler.ThrowRuntimeErrorWithInnerException("PropertyAssignmentException", Expression.Property(exception, "Message"), exception, typeof(void))))),
                     // The result of the block is the object constructed, so the tmp must be the last expr in the block.
                     tmp);
-                result = Expression.Block(new ParameterExpression[] { tmp }, block);
             }
 
             return new DynamicMetaObject(result, target.CombineRestrictions(args));
@@ -5361,7 +5359,6 @@ namespace System.Management.Automation.Language
             // If we decide that the dynamic keyword should not mask exceptions, then we should create a new binder
             // from PSObject.PSDynamicMetaObject.BindGetMember that passes in a flag so we know not to wrap in a try/catch.
 
-            var ex = Expression.Variable(typeof(Exception));
             return Expression.TryCatch(
                 expr.Cast(typeof(object)),
                 Expression.Catch(typeof(TerminateException), Expression.Rethrow(typeof(object))),
@@ -5369,9 +5366,7 @@ namespace System.Management.Automation.Language
                 Expression.Catch(typeof(MethodException), Expression.Rethrow(typeof(object))),
                 // This catch is only needed if we have an IDictionary
                 Expression.Catch(typeof(PropertyNotFoundException), Expression.Rethrow(typeof(object))),
-                Expression.Catch(ex,
-                    Expression.Block(
-                        ExpressionCache.NullConstant)));
+                Expression.Catch(typeof(Exception), ExpressionCache.NullConstant));
         }
 
         /// <summary>
